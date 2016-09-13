@@ -81,9 +81,9 @@ Begin Window DocWindow
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   True
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   False
       Height          =   580
       HelpTag         =   ""
       Index           =   -2147483648
@@ -99,7 +99,7 @@ Begin Window DocWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
-      Transparent     =   True
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   1
@@ -115,7 +115,6 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True

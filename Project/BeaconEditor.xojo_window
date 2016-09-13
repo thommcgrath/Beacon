@@ -290,9 +290,9 @@ Begin ContainerControl BeaconEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   True
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   False
       Height          =   1
       HelpTag         =   ""
       Index           =   0
@@ -308,7 +308,7 @@ Begin ContainerControl BeaconEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   120
-      Transparent     =   True
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   598
@@ -368,9 +368,9 @@ Begin ContainerControl BeaconEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   True
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   False
       Height          =   343
       HelpTag         =   ""
       Index           =   1
@@ -386,7 +386,7 @@ Begin ContainerControl BeaconEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   121
-      Transparent     =   True
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   1
@@ -821,21 +821,21 @@ End
 			MaxQuality = Ark.QualityApprentice
 			End If
 			
-			Self.AddTemplate(Set, "PrimalItemArmor_RexSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_Paracer_Saddle_C", 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_RexSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_Paracer_Saddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			
 			If Self.mBeacon.IsScorchedEarth Then
-			Self.AddTemplate(Set, "PrimalItemArmor_RockGolemSaddle_C", 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_RockGolemSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Else
-			Self.AddTemplate(Set, "PrimalItemArmor_AlloSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_SpinoSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_SauroSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_GigantSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_MosaSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_DunkleosteusSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_DiplodocusSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_PlesiaSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_QuetzSaddle_C", 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_AlloSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_SpinoSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_SauroSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_GigantSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_MosaSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_DunkleosteusSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_DiplodocusSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_PlesiaSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_QuetzSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			End If
 			
 			Self.AddSet(Set)
@@ -859,27 +859,27 @@ End
 			MaxQuality = Ark.QualityApprentice
 			End If
 			
-			Self.AddTemplate(Set, "PrimalItemArmor_DoedSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_CarnoSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_Gallimimus_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_AnkyloSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_ArgentavisSaddle_C", 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_DoedSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_CarnoSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_Gallimimus_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_AnkyloSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_ArgentavisSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			
 			If Self.mBeacon.IsScorchedEarth Then
-			Self.AddTemplate(Set, "PrimalItemArmor_CamelsaurusSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_MantisSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_SpineyLizardSaddle_C", 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_CamelsaurusSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_MantisSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_SpineyLizardSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Else
-			Self.AddTemplate(Set, "PrimalItemArmor_TrikeSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_MammothSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_RhinoSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_SarcoSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_StegoSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_ParaSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_DireBearSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_TurtleSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_MegalodonSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_PelaSaddle_C", 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_TrikeSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_MammothSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_RhinoSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_SarcoSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_StegoSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_ParaSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_DireBearSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_TurtleSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_MegalodonSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_PelaSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			End If
 			
 			Self.AddSet(Set)
@@ -1050,25 +1050,25 @@ End
 			MaxQuality = Ark.QualityApprentice
 			End If
 			
-			Self.AddTemplate(Set, "PrimalItemArmor_ProcoptodonSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_ScorpionSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_RaptorSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_TerrorBirdSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_ArthroSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_SaberSaddle_C", 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_ProcoptodonSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_ScorpionSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_RaptorSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_TerrorBirdSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_ArthroSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_SaberSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			
 			If Self.mBeacon.IsScorchedEarth Then
-			Self.AddTemplate(Set, "PrimalItemArmor_MothSaddle_C", 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_MothSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Else
-			Self.AddTemplate(Set, "PrimalItemArmor_PhiomiaSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_StagSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_PachySaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_BeaverSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_SpiderSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_ToadSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_DolphinSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_PteroSaddle_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_MantaSaddle_C", 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_PhiomiaSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_StagSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_PachySaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_BeaverSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_SpiderSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_ToadSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_DolphinSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_PteroSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_MantaSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			End If
 			
 			Self.AddSet(Set)
