@@ -1,0 +1,440 @@
+#tag Window
+Begin Window BeaconAddSheet
+   BackColor       =   &cFFFFFF00
+   Backdrop        =   0
+   CloseButton     =   False
+   Compatibility   =   ""
+   Composite       =   False
+   Frame           =   8
+   FullScreen      =   False
+   FullScreenButton=   False
+   HasBackColor    =   False
+   Height          =   92
+   ImplicitInstance=   False
+   LiveResize      =   True
+   MacProcID       =   0
+   MaxHeight       =   32000
+   MaximizeButton  =   False
+   MaxWidth        =   32000
+   MenuBar         =   0
+   MenuBarVisible  =   True
+   MinHeight       =   64
+   MinimizeButton  =   False
+   MinWidth        =   64
+   Placement       =   1
+   Resizeable      =   False
+   Title           =   "Add Beacon"
+   Visible         =   True
+   Width           =   362
+   Begin PopupMenu BeaconMenu
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   20
+      ListIndex       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Underline       =   False
+      Visible         =   True
+      Width           =   322
+   End
+   Begin PushButton ActionButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "OK"
+      Default         =   True
+      Enabled         =   False
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   262
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   52
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin PushButton CancelButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   True
+      Caption         =   "Cancel"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   170
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   52
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+End
+#tag EndWindow
+
+#tag WindowCode
+	#tag Method, Flags = &h0
+		 Shared Function Present(Parent As DocWindow, Document As BeaconDocument) As Ark.Beacon
+		  Static AllowedBeacons() As Ark.Beacon
+		  If UBound(AllowedBeacons) = -1 Then
+		    AllowedBeacons.Append(New Ark.Beacon("Island White (Level 3)", Ark.Beacon.TypeIslandWhite))
+		    AllowedBeacons.Append(New Ark.Beacon("Island White + Bonus (Level 3)", Ark.Beacon.TypeIslandWhite2x))
+		    AllowedBeacons.Append(New Ark.Beacon("Island Green (Level 15)", Ark.Beacon.TypeIslandGreen))
+		    AllowedBeacons.Append(New Ark.Beacon("Island Green + Bonus (Level 15)", Ark.Beacon.TypeIslandGreen2x))
+		    AllowedBeacons.Append(New Ark.Beacon("Island Blue (Level 25)", Ark.Beacon.TypeIslandBlue))
+		    AllowedBeacons.Append(New Ark.Beacon("Island Blue + Bonus (Level 25)", Ark.Beacon.TypeIslandBlue2x))
+		    AllowedBeacons.Append(New Ark.Beacon("Island Purple (Level 35)", Ark.Beacon.TypeIslandPurple))
+		    AllowedBeacons.Append(New Ark.Beacon("Island Purple + Bonus (Level 35)", Ark.Beacon.TypeIslandPurple2x))
+		    AllowedBeacons.Append(New Ark.Beacon("Island Yellow (Level 45)", Ark.Beacon.TypeIslandYellow))
+		    AllowedBeacons.Append(New Ark.Beacon("Island Yellow + Bonus (Level 45)", Ark.Beacon.TypeIslandYellow2x))
+		    AllowedBeacons.Append(New Ark.Beacon("Island Red (Level 60)", Ark.Beacon.TypeIslandRed))
+		    AllowedBeacons.Append(New Ark.Beacon("Island Red + Bonus (Level 60)", Ark.Beacon.TypeIslandRed2x))
+		    AllowedBeacons.Append(New Ark.Beacon("Scorched White (Level 3)", Ark.Beacon.TypeScorchedWhite))
+		    AllowedBeacons.Append(New Ark.Beacon("Scorched White + Bonus (Level 3)", Ark.Beacon.TypeScorchedWhite2x))
+		    AllowedBeacons.Append(New Ark.Beacon("Scorched Green (Level 15)", Ark.Beacon.TypeScorchedGreen))
+		    AllowedBeacons.Append(New Ark.Beacon("Scorched Green + Bonus (Level 15)", Ark.Beacon.TypeScorchedGreen2x))
+		    AllowedBeacons.Append(New Ark.Beacon("Scorched Blue (Level 30)", Ark.Beacon.TypeScorchedBlue))
+		    AllowedBeacons.Append(New Ark.Beacon("Scorched Blue + Bonus (Level 30)", Ark.Beacon.TypeScorchedBlue2x))
+		    AllowedBeacons.Append(New Ark.Beacon("Scorched Purple (Level 45)", Ark.Beacon.TypeScorchedPurple))
+		    AllowedBeacons.Append(New Ark.Beacon("Scorched Purple + Bonus (Level 45)", Ark.Beacon.TypeScorchedPurple2x))
+		    AllowedBeacons.Append(New Ark.Beacon("Scorched Yellow (Level 55)", Ark.Beacon.TypeScorchedYellow))
+		    AllowedBeacons.Append(New Ark.Beacon("Scorched Yellow + Bonus (Level 55)", Ark.Beacon.TypeScorchedYellow2x))
+		    AllowedBeacons.Append(New Ark.Beacon("Scorched Red (Level 70)", Ark.Beacon.TypeScorchedRed))
+		    AllowedBeacons.Append(New Ark.Beacon("Scorched Red + Bonus (Level 70)", Ark.Beacon.TypeScorchedRed2x))
+		  End If
+		  
+		  Dim Win As New BeaconAddSheet
+		  For Each Beacon As Ark.Beacon In AllowedBeacons
+		    If Document.HasBeacon(Beacon) Then
+		      Continue
+		    End If
+		    Win.BeaconMenu.AddRow(Beacon.Label)
+		    Win.BeaconMenu.RowTag(Win.BeaconMenu.ListCount - 1) = Beacon
+		  Next
+		  If Win.BeaconMenu.ListCount = 0 Then
+		    Win.Close
+		    Dim Dialog As New MessageDialog
+		    Dialog.Message = "There are no more beacons to add"
+		    Dialog.Explanation = "Sorry, there are only so many."
+		    Call Dialog.ShowModalWithin(Parent)
+		    Return Nil
+		  End If
+		  Win.ShowModalWithin(Parent)
+		  If Win.mCancelled Or Win.BeaconMenu.ListIndex = -1 Then
+		    Win.Close
+		    Return Nil
+		  End If
+		  
+		  Dim Beacon As Ark.Beacon = Win.BeaconMenu.RowTag(Win.BeaconMenu.ListIndex)
+		  Win.Close
+		  Return New Ark.Beacon(Beacon)
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mCancelled As Boolean
+	#tag EndProperty
+
+
+#tag EndWindowCode
+
+#tag Events BeaconMenu
+	#tag Event
+		Sub Change()
+		  ActionButton.Enabled = Me.ListIndex > -1
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ActionButton
+	#tag Event
+		Sub Action()
+		  Self.mCancelled = False
+		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CancelButton
+	#tag Event
+		Sub Action()
+		  Self.mCancelled = True
+		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag ViewBehavior
+	#tag ViewProperty
+		Name="BackColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Backdrop"
+		Visible=true
+		Group="Background"
+		Type="Picture"
+		EditorType="Picture"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="CloseButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Composite"
+		Group="OS X (Carbon)"
+		InitialValue="False"
+		Type="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Frame"
+		Visible=true
+		Group="Frame"
+		InitialValue="0"
+		Type="Integer"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Document"
+			"1 - Movable Modal"
+			"2 - Modal Dialog"
+			"3 - Floating Window"
+			"4 - Plain Box"
+			"5 - Shadowed Box"
+			"6 - Rounded Window"
+			"7 - Global Floating Window"
+			"8 - Sheet Window"
+			"9 - Metal Window"
+			"11 - Modeless Dialog"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="FullScreen"
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="FullScreenButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackColor"
+		Visible=true
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Height"
+		Visible=true
+		Group="Size"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ImplicitInstance"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Interfaces"
+		Visible=true
+		Group="ID"
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="LiveResize"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MacProcID"
+		Group="OS X (Carbon)"
+		InitialValue="0"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaxHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaximizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaxWidth"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MenuBar"
+		Visible=true
+		Group="Menus"
+		Type="MenuBar"
+		EditorType="MenuBar"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MenuBarVisible"
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinWidth"
+		Visible=true
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Name"
+		Visible=true
+		Group="ID"
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Placement"
+		Visible=true
+		Group="Behavior"
+		InitialValue="0"
+		Type="Integer"
+		EditorType="Enum"
+		#tag EnumValues
+			"0 - Default"
+			"1 - Parent Window"
+			"2 - Main Screen"
+			"3 - Parent Window Screen"
+			"4 - Stagger"
+		#tag EndEnumValues
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Resizeable"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Super"
+		Visible=true
+		Group="ID"
+		Type="String"
+		EditorType="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Title"
+		Visible=true
+		Group="Frame"
+		InitialValue="Untitled"
+		Type="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Visible"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Width"
+		Visible=true
+		Group="Size"
+		InitialValue="600"
+		Type="Integer"
+	#tag EndViewProperty
+#tag EndViewBehavior

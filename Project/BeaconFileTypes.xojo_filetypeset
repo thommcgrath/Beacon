@@ -1,0 +1,16 @@
+#tag FileTypeSet
+	#tag FileType
+		CodeName=BeaconDocument
+		Extension=.arkbeacon
+		Flags=&h2
+		MacCreator=????
+		MacType=
+		Name=Beacon Document
+		UTI=com.thezaz.beacon.document
+		UTIConformsTo=public.data, public.content
+		Description=
+		MimeType=
+		Imported=False
+	#tag EndFileType
+
+#tag EndFileTypeSet
