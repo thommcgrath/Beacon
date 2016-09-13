@@ -35,7 +35,7 @@ Begin ContainerControl SetEditor
       ColumnWidths    =   "*,80,80,80,80,80"
       DataField       =   ""
       DataSource      =   ""
-      DefaultRowHeight=   -1
+      DefaultRowHeight=   22
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
