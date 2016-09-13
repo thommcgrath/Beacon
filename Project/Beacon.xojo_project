@@ -22,6 +22,7 @@ Window=SetEditor;SetEditor.xojo_window;&h5F0DBFFF;&h0;false
 Class=ArkData;ArkData.xojo_code;&h2F8CCFFF;&h0;false
 Window=EntryEditor;EntryEditor.xojo_window;&h423027FF;&h0;false
 Class=ArkEngram;ArkEngram.xojo_code;&h19E797FF;&h0;false
+Window=ImporterWindow;ImporterWindow.xojo_window;&h3AE27FF;&h0;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

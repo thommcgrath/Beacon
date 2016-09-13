@@ -254,6 +254,7 @@ End
 		Function FileExportConfig() As Boolean Handles FileExportConfig.Action
 			Dim Dialog As New SaveAsDialog
 			Dialog.SuggestedFileName = "Game.ini"
+			Dialog.Filter = BeaconFileTypes.IniFile
 			
 			Dim File As FolderItem = Dialog.ShowModalWithin(Self)
 			If File <> Nil Then
@@ -292,6 +293,15 @@ End
 		Sub Constructor()
 		  Self.Doc = New BeaconDocument
 		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Doc As BeaconDocument)
+		  Self.Doc = Doc
+		  Super.Constructor
+		  Self.ContentsChanged = True
+		  
 		End Sub
 	#tag EndMethod
 

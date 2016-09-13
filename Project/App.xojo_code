@@ -5,6 +5,7 @@ Inherits Application
 		Sub EnableMenuItems()
 		  FileNew.Enable
 		  FileOpen.Enable
+		  FileImportConfig.Enable
 		End Sub
 	#tag EndEvent
 
@@ -22,6 +23,20 @@ Inherits Application
 		End Sub
 	#tag EndEvent
 
+
+	#tag MenuHandler
+		Function FileImportConfig() As Boolean Handles FileImportConfig.Action
+			Dim Dialog As New OpenDialog
+			Dialog.Filter = BeaconFileTypes.IniFile
+			
+			Dim File As FolderItem = Dialog.ShowModal
+			If File <> Nil Then
+			ImporterWindow.Import(File)
+			End If
+			
+			Return True
+		End Function
+	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileNew() As Boolean Handles FileNew.Action
