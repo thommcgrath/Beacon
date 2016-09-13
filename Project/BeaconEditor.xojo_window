@@ -89,6 +89,7 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Label:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -165,6 +166,7 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Min Sets:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -241,6 +243,7 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Max Sets:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -402,6 +405,7 @@ Begin ContainerControl BeaconEditor
       HasBackColor    =   False
       Height          =   343
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -1015,7 +1019,6 @@ End
 			Self.AddTemplate(Set, "PrimalItem_WeaponCrossbow_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItem_WeaponGun_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItem_WeaponShotgun_C", 1, 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItem_WeaponCompoundBow_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItem_WeaponOneShotRifle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItem_WeaponBow_C", 1, 1, 1, MinQuality, MaxQuality)
 			
