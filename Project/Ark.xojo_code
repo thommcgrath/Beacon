@@ -96,6 +96,10 @@ Protected Module Ark
 
 	#tag Method, Flags = &h21
 		Private Function ImportIntrinsic(Content As Text) As Auto
+		  If Content = "" Then
+		    Return Nil
+		  End If
+		  
 		  If Content.Left(1) = """" And Content.Right(1) = """" Then
 		    // Text
 		    Return Content.Mid(1, Content.Length - 2)

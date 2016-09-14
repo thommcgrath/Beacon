@@ -7,7 +7,7 @@
 		MacType=
 		Name=Beacon Document
 		UTI=com.thezaz.beacon.document
-		UTIConformsTo=public.data, public.content
+		UTIConformsTo=public.text
 		Description=
 		MimeType=
 		Imported=False
@@ -20,8 +20,8 @@
 		MacCreator=????
 		MacType=TEXT
 		Name=Ini File
-		UTI=public.text
-		UTIConformsTo=public.data, public.content
+		UTI=
+		UTIConformsTo=public.text
 		Description=
 		MimeType=
 		Imported=True
