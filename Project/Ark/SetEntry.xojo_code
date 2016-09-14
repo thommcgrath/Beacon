@@ -49,6 +49,29 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		 Shared Function Import(Dict As Xojo.Core.Dictionary) As Ark.SetEntry
+		  // (EntryWeight=1.000000,ItemClassStrings=("PrimalItemStructure_ThatchFloor_C"),ItemsWeights=(1.000000),MinQuantity=1,MaxQuantity=16,MinQuality=1.000000,MaxQuality=1.000000,bForceBlueprint=false,ChanceToBeBlueprintOverride=0.250000)
+		  
+		  Dim Entry As New Ark.SetEntry
+		  Entry.Weight = Dict.Lookup("EntryWeight", Entry.Weight)
+		  Entry.MinQuantity = Dict.Lookup("MinQuantity", Entry.MinQuantity)
+		  Entry.MaxQuantity = Dict.Lookup("MaxQuantity", Entry.MaxQuantity)
+		  Entry.MinQuality = Dict.Lookup("MinQuality", Entry.MinQuality)
+		  Entry.MaxQuality = Dict.Lookup("MaxQuality", Entry.MaxQuality)
+		  Entry.ChanceToBeBlueprint = Dict.Lookup("ChanceToBeBlueprintOverride", Entry.ChanceToBeBlueprint)
+		  
+		  Dim ClassStrings() As Auto = Dict.Value("ItemClassStrings")
+		  Dim ClassWeights() As Auto = Dict.Value("ItemsWeights")
+		  
+		  For I As Integer = 0 To UBound(ClassStrings)
+		    Entry.Append(New Ark.ItemClass(ClassStrings(I), ClassWeights(I)))
+		  Next
+		  
+		  Return Entry
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IndexOf(Item As Ark.ItemClass) As Integer
 		  For I As Integer = 0 To UBound(Self.mItems)
 		    If Self.mItems(I) = Item Then

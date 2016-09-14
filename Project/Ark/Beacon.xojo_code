@@ -67,6 +67,15 @@ Implements Ark.Countable
 		  Beacon.MinItemSets = Dict.Lookup("MinItemSets", Beacon.MinItemSets)
 		  Beacon.NumItemSetsPower = Dict.Lookup("NumItemSetsPower", Beacon.NumItemSetsPower)
 		  Beacon.SetsRandomWithoutReplacement = Dict.Lookup("bSetsRandomWithoutReplacement", Beacon.SetsRandomWithoutReplacement)
+		  
+		  Dim Children() As Auto = Dict.Value("ItemSets")
+		  For Each Child As Xojo.Core.Dictionary In Children
+		    Dim Set As Ark.ItemSet = Ark.ItemSet.Import(Child)
+		    If Set <> Nil Then
+		      Beacon.Append(Set)
+		    End If
+		  Next
+		  
 		  Return Beacon
 		End Function
 	#tag EndMethod

@@ -172,9 +172,21 @@ End
 		    Self.mErrored = True
 		  End Try
 		  If Beacons <> Nil Then
+		    // Since imported beacons will not have labels, look up what we can.
+		    For Each Beacon As Ark.Beacon In Beacons
+		      Beacon.Label = App.DataSource.NameOfBeacon(Beacon.Type).ToText
+		    Next
 		    Self.mBeacons = Beacons
 		  End If
 		  Self.mFinished = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CancelButton
+	#tag Event
+		Sub Action()
+		  ImportThread.Kill
+		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents
