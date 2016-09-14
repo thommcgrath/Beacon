@@ -28,7 +28,21 @@ Inherits SQLiteDatabase
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NameForClassString(ClassString As String) As String
+		Function NameOfBeacon(ClassString As String) As String
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"" FROM ""beacons"" WHERE ""classstring"" = ?;")
+		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		  
+		  Dim RS As RecordSet = Statement.SQLSelect(ClassString)
+		  If RS = Nil Or RS.RecordCount = 0 Then
+		    Return ClassString
+		  End If
+		  
+		  Return RS.Field("label").StringValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function NameOfEngram(ClassString As String) As String
 		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"" FROM ""engrams"" WHERE ""classstring"" = ?;")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  
@@ -38,6 +52,32 @@ Inherits SQLiteDatabase
 		  End If
 		  
 		  Return RS.Field("label").StringValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SearchForBeacons(SearchText As String) As Ark.Beacon()
+		  Dim Results() As Ark.Beacon
+		  
+		  Dim RS As RecordSet
+		  If SearchText = "" Then
+		    RS = Self.SQLSelect("SELECT ""label"", ""classstring"" FROM ""beacons"" ORDER BY ""label"";")
+		  Else
+		    Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"", ""classstring"" FROM ""beacons"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
+		    Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		    
+		    RS = Statement.SQLSelect("%" + SearchText + "%")
+		  End If
+		  If RS = Nil Then
+		    Return Results()
+		  End If
+		  
+		  while Not RS.EOF
+		    Results.Append(New Ark.Beacon(RS.Field("label").StringValue.ToText, RS.Field("classstring").StringValue.ToText))
+		    RS.MoveNext
+		  wend
+		  
+		  Return Results()
 		End Function
 	#tag EndMethod
 
@@ -80,7 +120,7 @@ Inherits SQLiteDatabase
 		  Dim MethodName As Text = "UpdateToVersion" + Version.ToText()
 		  Dim MethodDef As Xojo.Introspection.MethodInfo
 		  For Each Candidate As Xojo.Introspection.MethodInfo In Methods
-		    If Candidate.Name = MethodName Then
+		    If Candidate.Name = MethodName And Candidate.ReturnType <> Nil And Candidate.ReturnType.FullName = "Boolean" Then
 		      MethodDef = Candidate
 		      Exit
 		    End If
@@ -815,8 +855,78 @@ Inherits SQLiteDatabase
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function UpdateToVersion2() As Boolean
+		  Self.SQLExecute("CREATE TABLE ""beacons"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL);")
+		  
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("INSERT INTO ""beacons"" (""classstring"", ""label"") VALUES (?, ?);")
+		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		  Statement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
+		  
+		  // The Island + The Center
+		  
+		  Statement.SQLExecute("SupplyCrate_Level03_C", "Island White (Level 3)")
+		  Statement.SQLExecute("SupplyCrate_Level03_Double_C", "Island White + Bonus (Level 3)")
+		  Statement.SQLExecute("SupplyCrate_Level15_C", "Island Green (Level 15)")
+		  Statement.SQLExecute("SupplyCrate_Level15_Double_C", "Island Green + Bonus (Level 15)")
+		  Statement.SQLExecute("SupplyCrate_Level25_C", "Island Blue (Level 25)")
+		  Statement.SQLExecute("SupplyCrate_Level25_Double_C", "Island Blue + Bonus (Level 25)")
+		  Statement.SQLExecute("SupplyCrate_Level35_C", "Island Purple (Level 35)")
+		  Statement.SQLExecute("SupplyCrate_Level35_Double_C", "Island Purple + Bonus (Level 35)")
+		  Statement.SQLExecute("SupplyCrate_Level45_C", "Island Yellow (Level 45)")
+		  Statement.SQLExecute("SupplyCrate_Level45_Double_C", "Island Yellow + Bonus (Level 45)")
+		  Statement.SQLExecute("SupplyCrate_Level60_C", "Island Red (Level 60)")
+		  Statement.SQLExecute("SupplyCrate_Level60_Double_C", "Island Red + Bonus (Level 60)")
+		  
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier1_C", "Island Cave Tier 1")
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier2_C", "Island Cave Tier 2")
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier3_C", "Island Cave Tier 3")
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier4_C", "Island Cave Tier 4")
+		  Statement.SQLExecute("SupplyCrate_SwampCaveTier1_C", "Island Swamp Cave Blue")
+		  Statement.SQLExecute("SupplyCrate_SwampCaveTier2_C", "Island Swamp Cave Yellow")
+		  Statement.SQLExecute("SupplyCrate_SwampCaveTier3_C", "Island Swamp Cave Red")
+		  Statement.SQLExecute("SupplyCrate_IceCaveTier1_C", "Island Ice Cave Blue")
+		  Statement.SQLExecute("SupplyCrate_IceCaveTier2_C", "Island Ice Cave Yellow")
+		  Statement.SQLExecute("SupplyCrate_IceCaveTier3_C", "Island Ice Cave Red")
+		  Statement.SQLExecute("SupplyCrate_OceanInstant_C", "Island Deep Sea")
+		  Statement.SQLExecute("ArtifactCrate_1_C", "Island Artifact Hunter")
+		  Statement.SQLExecute("ArtifactCrate_2_C", "Island Artifact Pack")
+		  Statement.SQLExecute("ArtifactCrate_3_C", "Island Artifact Massive")
+		  Statement.SQLExecute("ArtifactCrate_4_C", "Island Artifact Devious")
+		  Statement.SQLExecute("ArtifactCrate_5_C", "Island Artifact Clever")
+		  Statement.SQLExecute("ArtifactCrate_6_C", "Island Artifact Skylord")
+		  Statement.SQLExecute("ArtifactCrate_7_C", "Island Artifact Devourer")
+		  Statement.SQLExecute("ArtifactCrate_8_C", "Island Artifact Immune")
+		  Statement.SQLExecute("ArtifactCrate_9_C", "Island Artifact Strong")
+		  
+		  // Scorched Earth
+		  
+		  Statement.SQLExecute("SupplyCrate_Level03_ScorchedEarth_C", "Scorched White (Level 3)")
+		  Statement.SQLExecute("SupplyCrate_Level03_Double_ScorchedEarth_C", "Scorched White + Bonus (Level 3)")
+		  Statement.SQLExecute("SupplyCrate_Level15_ScorchedEarth_C", "Scorched Green (Level 15)")
+		  Statement.SQLExecute("SupplyCrate_Level15_Double_ScorchedEarth_C", "Scorched Green + Bonus (Level 15)")
+		  Statement.SQLExecute("SupplyCrate_Level30_ScorchedEarth_C", "Scorched Blue (Level 30)")
+		  Statement.SQLExecute("SupplyCrate_Level30_Double_ScorchedEarth_C", "Scorched Blue + Bonus (Level 30)")
+		  Statement.SQLExecute("SupplyCrate_Level45_ScorchedEarth_C", "Scorched Purple (Level 45)")
+		  Statement.SQLExecute("SupplyCrate_Level45_Double_ScorchedEarth_C", "Scorched Purple + Bonus (Level 45)")
+		  Statement.SQLExecute("SupplyCrate_Level55_ScorchedEarth_C", "Scorched Yellow (Level 55)")
+		  Statement.SQLExecute("SupplyCrate_Level55_Double_ScorchedEarth_C", "Scorched Yellow + Bonus (Level 55)")
+		  Statement.SQLExecute("SupplyCrate_Level70_ScorchedEarth_C", "Scorched Red (Level 70)")
+		  Statement.SQLExecute("SupplyCrate_Level70_Double_ScorchedEarth_C", "Scorched Red + Bonus (Level 70)")
+		  
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier1_ScorchedEarth_C", "Scorched Cave Tier 1")
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier2_ScorchedEarth_C", "Scorched Cave Tier 2")
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier3_ScorchedEarth_C", "Scorched Cave Tier 3")
+		  Statement.SQLExecute("ArtifactCrate_SE_C", "Scorched Artifact Destroyer")
+		  Statement.SQLExecute("ArtifactCrate_2_SE_C", "Scorched Artifact Gatekeeper")
+		  Statement.SQLExecute("ArtifactCrate_3_SE_C", "Scorched Artifact Crag")
+		  
+		  Return True
+		End Function
+	#tag EndMethod
 
-	#tag Constant, Name = CurrentVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+
+	#tag Constant, Name = CurrentVersion, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
 
 

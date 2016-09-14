@@ -139,6 +139,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Label:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -378,6 +379,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   9
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "100"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -412,6 +414,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   10
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Min Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -446,6 +449,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   11
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Max Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -480,6 +484,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   12
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Weight:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -533,7 +538,7 @@ End
 		  If UBound(Entry) = -1 Then
 		    Return "No Items"
 		  ElseIf UBound(Entry) = 0 Then
-		    Return App.DataSource.NameForClassString(Entry(0).ClassString)
+		    Return App.DataSource.NameOfEngram(Entry(0).ClassString)
 		  Else
 		    Dim TotalWeight As Double
 		    For I As Integer = 0 To UBound(Entry)
@@ -542,7 +547,7 @@ End
 		    
 		    Dim Labels() As String
 		    For I As Integer = 0 To UBound(Entry)
-		      Labels.Append(App.DataSource.NameForClassString(Entry(I).ClassString) + ":" + Str(Entry(I).Weight / TotalWeight, "0%"))
+		      Labels.Append(App.DataSource.NameOfEngram(Entry(I).ClassString) + ":" + Str(Entry(I).Weight / TotalWeight, "0%"))
 		    Next
 		    Return Join(Labels, ", ")
 		  End If
