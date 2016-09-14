@@ -45,7 +45,7 @@ Begin Window EntryEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   592
       Begin PushButton CancelButton
@@ -220,12 +220,12 @@ Begin Window EntryEditor
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   True
-         ColumnCount     =   2
+         ColumnCount     =   3
          ColumnsResizable=   False
-         ColumnWidths    =   ""
+         ColumnWidths    =   "22,*,*"
          DataField       =   ""
          DataSource      =   ""
-         DefaultRowHeight=   -1
+         DefaultRowHeight=   22
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -238,7 +238,7 @@ Begin Window EntryEditor
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
-         InitialValue    =   "Name	Class String"
+         InitialValue    =   " 	Name	Class String"
          Italic          =   False
          Left            =   20
          LockBottom      =   True
@@ -250,7 +250,7 @@ Begin Window EntryEditor
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
-         SelectionType   =   1
+         SelectionType   =   0
          TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
@@ -1069,6 +1069,40 @@ Begin Window EntryEditor
          Visible         =   False
          Width           =   100
       End
+      Begin Label SelectionCountLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   4
+         TabPanelIndex   =   1
+         Text            =   "No items selected"
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   282
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   368
+      End
    End
 End
 #tag EndWindow
@@ -1213,20 +1247,14 @@ End
 		  End If
 		  
 		  Dim Engrams() As ArkEngram = App.DataSource.SearchForEngrams(SearchText)
-		  Dim SelectedEngram As String
-		  If EngramList.ListIndex > -1 Then
-		    SelectedEngram = EngramList.Cell(EngramList.ListIndex, 1)
-		  End If
-		  
 		  EngramList.DeleteAllRows
 		  
 		  Dim PerfectMatch As Boolean
+		  Dim Indexes As New Dictionary
 		  For Each Engram As ArkEngram In Engrams
-		    EngramList.AddRow(Engram.Name, Engram.ClassString)
+		    EngramList.AddRow("", Engram.Name, Engram.ClassString)
 		    EngramList.RowTag(EngramList.LastIndex) = Engram
-		    If Engram.ClassString = SelectedEngram Then
-		      EngramList.ListIndex = EngramList.LastIndex
-		    End If
+		    Indexes.Value(Engram.ClassString) = EngramList.LastIndex
 		    If Engram.ClassString = SearchText Or Engram.Name = SearchText Then
 		      PerfectMatch = True
 		    End If
@@ -1235,11 +1263,15 @@ End
 		  If Not PerfectMatch And SearchText <> "" Then
 		    EngramList.AddRow(SearchText, SearchText)
 		    EngramList.RowTag(EngramList.LastIndex) = New ArkEngram("", SearchText)
+		    Indexes.Value(SearchText) = EngramList.LastIndex
 		  End If
 		  
-		  If EngramList.ListCount = 1 Then
-		    EngramList.ListIndex = 0
-		  End If
+		  For Each Engram As ArkEngram In Self.mSelectedEngrams
+		    Dim Idx As Integer = Indexes.Lookup(Engram.ClassString, -1)
+		    If Idx > -1 Then
+		      EngramList.CellCheck(Idx, 0) = True
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -1291,15 +1323,6 @@ End
 #tag Events NextButton
 	#tag Event
 		Sub Action()
-		  Redim Self.mSelectedEngrams(-1)
-		  For I As Integer = 0 To EngramList.ListCount - 1
-		    If Not EngramList.Selected(I) Then
-		      Continue
-		    End If
-		    
-		    Self.mSelectedEngrams.Append(EngramList.RowTag(I))
-		  Next
-		  
 		  PagePanel1.Value = 1
 		  
 		  ClassField.Text = if(UBound(Self.mSelectedEngrams) = 0, Self.mSelectedEngrams(0).ClassString, "Multiple")
@@ -1336,8 +1359,43 @@ End
 #tag EndEvents
 #tag Events EngramList
 	#tag Event
-		Sub Change()
-		  NextButton.Enabled = Me.SelCount > -1
+		Sub CellAction(row As Integer, column As Integer)
+		  If Column <> 0 Then
+		    Return
+		  End If
+		  
+		  Dim Selected As Boolean = Me.CellCheck(Row, Column)
+		  Dim Engram As ArkEngram = Me.RowTag(Row)
+		  Dim Idx As Integer = -1
+		  
+		  For I As Integer = 0 To UBound(Self.mSelectedEngrams)
+		    If Self.mSelectedEngrams(I).ClassString = Engram.ClassString Then
+		      Idx = I
+		      Exit For I
+		    End If
+		  Next
+		  
+		  If Selected = True And Idx = -1 Then
+		    Self.mSelectedEngrams.Append(Engram)
+		  ElseIf Selected = False And Idx > -1 Then
+		    Self.mSelectedEngrams.Remove(Idx)
+		  End If
+		  
+		  Select Case UBound(Self.mSelectedEngrams)
+		  Case -1
+		    SelectionCountLabel.Text = "No classes selected"
+		  Case 0
+		    SelectionCountLabel.Text = "1 class selected"
+		  Else
+		    SelectionCountLabel.Text = Str(UBound(Self.mSelectedEngrams) + 1, "-0") + " classes selected"
+		  End Select
+		  
+		  NextButton.Enabled = UBound(Self.mSelectedEngrams) > -1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.ColumnType(0) = Listbox.TypeCheckbox
 		End Sub
 	#tag EndEvent
 #tag EndEvents
