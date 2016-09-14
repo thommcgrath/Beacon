@@ -1,0 +1,43 @@
+#tag MultiImage
+Image IconEditPressed
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAH2AAAAAAH2AAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMKJMTSWNvbkVkaXRQcmVzc2VkLnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUworNP/KFxQTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANP/YJwAAAABABwBTCiTAUH25wFB9eIAEfYrABCOngAQedEAEHjgAAIAaE1hY2ludG9zaCBIRDpVc2VyczoAdGhvbW1jZ3JhdGg6AERvY3VtZW50czoAVGhlIFpBWiBTb3VyY2VzOgBCZWFjb246AFByb2plY3Q6AEljb25zOgBJY29uRWRpdFByZXNzZWQucG5nAA4AKAATAEkAYwBvAG4ARQBkAGkAdABQAHIAZQBzAHMAZQBkAC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBUVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vUHJvamVjdC9JY29ucy9JY29uRWRpdFByZXNzZWQucG5nABMAAS8AABUAAgAS//8AAAAAAAAAAA==
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Project/Icons/IconEditPressed.png
+		PartialPath = ..\Icons\IconEditPressed.png
+		#tag ImageSpecification
+			Comment =
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 72
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAIEAAAAAAIEAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMKJMWSWNvbkVkaXRQcmVzc2VkQDJ4LnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUwo2dP/KIhQTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANP/YMgAAAABABwBTCiTAUH25wFB9eIAEfYrABCOngAQedEAEHjgAAIAa01hY2ludG9zaCBIRDpVc2VyczoAdGhvbW1jZ3JhdGg6AERvY3VtZW50czoAVGhlIFpBWiBTb3VyY2VzOgBCZWFjb246AFByb2plY3Q6AEljb25zOgBJY29uRWRpdFByZXNzZWRAMngucG5nAAAOAC4AFgBJAGMAbwBuAEUAZABpAHQAUAByAGUAcwBzAGUAZABAADIAeAAuAHAAbgBnAA8AGgAMAE0AYQBjAGkAbgB0AG8AcwBoACAASABEABIAV1VzZXJzL3Rob21tY2dyYXRoL0RvY3VtZW50cy9UaGUgWkFaIFNvdXJjZXMvQmVhY29uL1Byb2plY3QvSWNvbnMvSWNvbkVkaXRQcmVzc2VkQDJ4LnBuZwAAEwABLwAAFQACABL//wAAAAAAAAAA
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Project/Icons/IconEditPressed@2x.png
+		PartialPath = ..\Icons\IconEditPressed@2x.png
+		#tag ImageSpecification
+			Comment =
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 144
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		#tag ImageSpecification
+			Comment =
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 216
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+End Image
+#tag EndMultiImage

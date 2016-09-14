@@ -1,0 +1,43 @@
+#tag MultiImage
+Image IconAddNormal
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAHuAAAAAAHuAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMKJMRSWNvbkFkZE5vcm1hbC5wbmcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUwontP/KFxQTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANP/YJwAAAABABwBTCiTAUH25wFB9eIAEfYrABCOngAQedEAEHjgAAIAZk1hY2ludG9zaCBIRDpVc2VyczoAdGhvbW1jZ3JhdGg6AERvY3VtZW50czoAVGhlIFpBWiBTb3VyY2VzOgBCZWFjb246AFByb2plY3Q6AEljb25zOgBJY29uQWRkTm9ybWFsLnBuZwAOACQAEQBJAGMAbwBuAEEAZABkAE4AbwByAG0AYQBsAC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBSVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vUHJvamVjdC9JY29ucy9JY29uQWRkTm9ybWFsLnBuZwATAAEvAAAVAAIAEv//AAAAAAAAAAA=
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Project/Icons/IconAddNormal.png
+		PartialPath = ..\Icons\IconAddNormal.png
+		#tag ImageSpecification
+			Comment =
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 72
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAH8AAAAAAH8AAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMKJMUSWNvbkFkZE5vcm1hbEAyeC5wbmcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUwoy9P/KIhQTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANP/YMgAAAABABwBTCiTAUH25wFB9eIAEfYrABCOngAQedEAEHjgAAIAaU1hY2ludG9zaCBIRDpVc2VyczoAdGhvbW1jZ3JhdGg6AERvY3VtZW50czoAVGhlIFpBWiBTb3VyY2VzOgBCZWFjb246AFByb2plY3Q6AEljb25zOgBJY29uQWRkTm9ybWFsQDJ4LnBuZwAADgAqABQASQBjAG8AbgBBAGQAZABOAG8AcgBtAGEAbABAADIAeAAuAHAAbgBnAA8AGgAMAE0AYQBjAGkAbgB0AG8AcwBoACAASABEABIAVVVzZXJzL3Rob21tY2dyYXRoL0RvY3VtZW50cy9UaGUgWkFaIFNvdXJjZXMvQmVhY29uL1Byb2plY3QvSWNvbnMvSWNvbkFkZE5vcm1hbEAyeC5wbmcAABMAAS8AABUAAgAS//8AAAAAAAAAAA==
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Project/Icons/IconAddNormal@2x.png
+		PartialPath = ..\Icons\IconAddNormal@2x.png
+		#tag ImageSpecification
+			Comment =
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 144
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		#tag ImageSpecification
+			Comment =
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 216
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+End Image
+#tag EndMultiImage

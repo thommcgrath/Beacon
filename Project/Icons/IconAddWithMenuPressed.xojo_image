@@ -1,0 +1,43 @@
+#tag MultiImage
+Image IconAddWithMenuPressed
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAIUAAAAAAIUAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMKJMaSWNvbkFkZFdpdGhNZW51UHJlc3NlZC5wbmcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUwomtP/KFxQTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANP/YJwAAAABABwBTCiTAUH25wFB9eIAEfYrABCOngAQedEAEHjgAAIAb01hY2ludG9zaCBIRDpVc2VyczoAdGhvbW1jZ3JhdGg6AERvY3VtZW50czoAVGhlIFpBWiBTb3VyY2VzOgBCZWFjb246AFByb2plY3Q6AEljb25zOgBJY29uQWRkV2l0aE1lbnVQcmVzc2VkLnBuZwAADgA2ABoASQBjAG8AbgBBAGQAZABXAGkAdABoAE0AZQBuAHUAUAByAGUAcwBzAGUAZAAuAHAAbgBnAA8AGgAMAE0AYQBjAGkAbgB0AG8AcwBoACAASABEABIAW1VzZXJzL3Rob21tY2dyYXRoL0RvY3VtZW50cy9UaGUgWkFaIFNvdXJjZXMvQmVhY29uL1Byb2plY3QvSWNvbnMvSWNvbkFkZFdpdGhNZW51UHJlc3NlZC5wbmcAABMAAS8AABUAAgAS//8AAAAAAAAAAA==
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Project/Icons/IconAddWithMenuPressed.png
+		PartialPath = ..\Icons\IconAddWithMenuPressed.png
+		#tag ImageSpecification
+			Comment =
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 72
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAIeAAAAAAIeAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMKJMdSWNvbkFkZFdpdGhNZW51UHJlc3NlZEAyeC5wbmcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUwox9P/KIhQTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANP/YMgAAAABABwBTCiTAUH25wFB9eIAEfYrABCOngAQedEAEHjgAAIAck1hY2ludG9zaCBIRDpVc2VyczoAdGhvbW1jZ3JhdGg6AERvY3VtZW50czoAVGhlIFpBWiBTb3VyY2VzOgBCZWFjb246AFByb2plY3Q6AEljb25zOgBJY29uQWRkV2l0aE1lbnVQcmVzc2VkQDJ4LnBuZwAOADwAHQBJAGMAbwBuAEEAZABkAFcAaQB0AGgATQBlAG4AdQBQAHIAZQBzAHMAZQBkAEAAMgB4AC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBeVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vUHJvamVjdC9JY29ucy9JY29uQWRkV2l0aE1lbnVQcmVzc2VkQDJ4LnBuZwATAAEvAAAVAAIAEv//AAAAAAAAAAA=
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Project/Icons/IconAddWithMenuPressed@2x.png
+		PartialPath = ..\Icons\IconAddWithMenuPressed@2x.png
+		#tag ImageSpecification
+			Comment =
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 144
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		#tag ImageSpecification
+			Comment =
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 216
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+End Image
+#tag EndMultiImage

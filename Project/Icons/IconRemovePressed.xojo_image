@@ -1,0 +1,43 @@
+#tag MultiImage
+Image IconRemovePressed
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAH+AAAAAAH+AAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMKJMVSWNvblJlbW92ZVByZXNzZWQucG5nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUwoptP/KFxQTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANP/YJwAAAABABwBTCiTAUH25wFB9eIAEfYrABCOngAQedEAEHjgAAIAak1hY2ludG9zaCBIRDpVc2VyczoAdGhvbW1jZ3JhdGg6AERvY3VtZW50czoAVGhlIFpBWiBTb3VyY2VzOgBCZWFjb246AFByb2plY3Q6AEljb25zOgBJY29uUmVtb3ZlUHJlc3NlZC5wbmcADgAsABUASQBjAG8AbgBSAGUAbQBvAHYAZQBQAHIAZQBzAHMAZQBkAC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBWVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vUHJvamVjdC9JY29ucy9JY29uUmVtb3ZlUHJlc3NlZC5wbmcAEwABLwAAFQACABL//wAAAAAAAAAA
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Project/Icons/IconRemovePressed.png
+		PartialPath = ..\Icons\IconRemovePressed.png
+		#tag ImageSpecification
+			Comment =
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 72
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAIMAAAAAAIMAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMKJMYSWNvblJlbW92ZVByZXNzZWRAMngucG5nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUwo09P/KIhQTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANP/YMgAAAABABwBTCiTAUH25wFB9eIAEfYrABCOngAQedEAEHjgAAIAbU1hY2ludG9zaCBIRDpVc2VyczoAdGhvbW1jZ3JhdGg6AERvY3VtZW50czoAVGhlIFpBWiBTb3VyY2VzOgBCZWFjb246AFByb2plY3Q6AEljb25zOgBJY29uUmVtb3ZlUHJlc3NlZEAyeC5wbmcAAA4AMgAYAEkAYwBvAG4AUgBlAG0AbwB2AGUAUAByAGUAcwBzAGUAZABAADIAeAAuAHAAbgBnAA8AGgAMAE0AYQBjAGkAbgB0AG8AcwBoACAASABEABIAWVVzZXJzL3Rob21tY2dyYXRoL0RvY3VtZW50cy9UaGUgWkFaIFNvdXJjZXMvQmVhY29uL1Byb2plY3QvSWNvbnMvSWNvblJlbW92ZVByZXNzZWRAMngucG5nAAATAAEvAAAVAAIAEv//AAAAAAAAAAA=
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Project/Icons/IconRemovePressed@2x.png
+		PartialPath = ..\Icons\IconRemovePressed@2x.png
+		#tag ImageSpecification
+			Comment =
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 144
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		#tag ImageSpecification
+			Comment =
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 216
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+End Image
+#tag EndMultiImage
