@@ -56,6 +56,22 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		 Shared Function Import(Dict As Xojo.Core.Dictionary) As Ark.Beacon
+		  If Not Dict.HasKey("SupplyCrateClassString") Then
+		    Return Nil
+		  End If
+		  
+		  Dim Type As Text = Dict.Value("SupplyCrateClassString")
+		  Dim Beacon As New Ark.Beacon("", Type)
+		  Beacon.MaxItemSets = Dict.Lookup("MaxItemSets", Beacon.MaxItemSets)
+		  Beacon.MinItemSets = Dict.Lookup("MinItemSets", Beacon.MinItemSets)
+		  Beacon.NumItemSetsPower = Dict.Lookup("NumItemSetsPower", Beacon.NumItemSetsPower)
+		  Beacon.SetsRandomWithoutReplacement = Dict.Lookup("bSetsRandomWithoutReplacement", Beacon.SetsRandomWithoutReplacement)
+		  Return Beacon
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IndexOf(Item As Ark.ItemSet) As Integer
 		  For I As Integer = 0 To UBound(Self.mItems)
 		    If Self.mItems(I) = Item Then

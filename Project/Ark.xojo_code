@@ -1,46 +1,102 @@
 #tag Module
 Protected Module Ark
 	#tag Method, Flags = &h21
-		Private Function Import(Content As Text, ByRef Key As Text) As Auto
-		  Dim Pos As Integer = Content.IndexOf("=")
-		  Key = Content.Left(Pos)
-		  
-		  Dim Body As Text = Content.Mid(Pos + 1).Trim
-		  If Body.Left(1) = "(" Then
-		    // Array or dictionary
-		    Body = Body.Mid(1, Body.Length - 2)
-		    If Body.IndexOf("=") > -1 Then
-		      // Dictionary
-		      Dim Dict As New Xojo.Core.Dictionary
-		      Pos = 0
-		      Do
-		        Dim Idx As Integer = Body.IndexOf(Pos, ",")
-		        If Idx = -1 Then
-		          Exit
-		        End If
-		        
-		        Dim Child As Text = Body.Mid(Pos, Idx - Pos)
-		        Pos = Pos + Child.Length + 1
-		        
-		        Dim ChildKey As Text
-		        Dim ChildValue As Auto = Ark.Import(Child, ChildKey)
-		        Dict.Value(ChildKey) = ChildValue
-		      Loop
-		      Return Dict
-		    Else
-		      // Array
-		      Break
-		    End If
-		  Else
-		    // Intrinsic
-		    Return Ark.ImportIntrinsic(Body)
-		  End If
+		Private Function Import(Content As Text) As Auto
+		  Dim Offset As Integer = 0
+		  Return Ark.Import(Content, Offset)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ImportAsBeacon(Content As Text) As Ark.Beacon
+		Private Function Import(Content As Text, ByRef Offset As Integer) As Auto
+		  If Content.Mid(Offset, 1) = "(" Then
+		    Dim IsDictionary As Boolean = True
+		    Dim Children() As Auto
+		    Do Until Content.Mid(Offset, 1) = ")"
+		      Offset = Offset + 1
+		      Dim Value As Auto = Ark.Import(Content, Offset)
+		      If IsDictionary Then
+		        Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		        IsDictionary = Info.FullName = "Ark.Pair"
+		      End If
+		      Children.Append(Value)
+		    Loop
+		    Offset = Offset + 1
+		    
+		    If IsDictionary Then
+		      Dim Dict As New Xojo.Core.Dictionary
+		      For Each Child As Ark.Pair In Children
+		        Dict.Value(Child.Key) = Child.Value
+		      Next
+		      Return Dict
+		    Else
+		      Return Children
+		    End If
+		  End If
 		  
+		  Dim Pos As Integer = Min(Content.IndexOf(Offset, "="), Content.IndexOf(Offset, ","), Content.IndexOf(OffSet, ")"))
+		  If Pos = -1 Then
+		    Dim Piece As Text = Content.Mid(Offset)
+		    Return Ark.ImportIntrinsic(Content)
+		  End If
+		  
+		  If Content.Mid(Pos, 1) = "=" Then
+		    // Pair
+		    Dim Key As Text = Content.Mid(Offset, Pos - Offset)
+		    Offset = Pos + 1
+		    Dim Value As Auto = Ark.Import(Content, Offset)
+		    Return New Ark.Pair(Key, Value)
+		  Else
+		    // Array entry
+		    Dim Piece As Text = Content.Mid(Offset, Pos - Offset)
+		    Offset = Pos
+		    Dim Value As Auto = Ark.ImportIntrinsic(Piece)
+		    Return Value
+		  End If
+		  
+		  #if false
+		    Key = Content.Left(Pos)
+		    
+		    Dim Body As Text = Content.Mid(Pos + 1).Trim
+		    If Body.Left(1) = "(" Then
+		      // Array or dictionary
+		      Body = Body.Mid(1, Body.Length - 2)
+		      If Body.IndexOf("=") > -1 Then
+		        // Dictionary
+		        Dim Dict As New Xojo.Core.Dictionary
+		        Pos = 0
+		        Do
+		          Dim Idx As Integer = Body.IndexOf(Pos, ",")
+		          If Idx = -1 Then
+		            Exit
+		          End If
+		          
+		          Dim Child As Text = Body.Mid(Pos, Idx - Pos)
+		          Pos = Pos + Child.Length + 1
+		          
+		          Dim ChildKey As Text
+		          Dim ChildValue As Auto = Ark.Import(Child, ChildKey)
+		          Dict.Value(ChildKey) = ChildValue
+		        Loop
+		        Return Dict
+		      Else
+		        // Array
+		        Break
+		      End If
+		    Else
+		      // Intrinsic
+		      Return Ark.ImportIntrinsic(Body)
+		    End If
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ImportAsBeacon(Dict As Xojo.Core.Dictionary) As Ark.Beacon
+		  If Not Dict.HasKey("
+		    
+		    Dim Beacon As New Ark.Beacon
+		    Beacon.
 		End Function
 	#tag EndMethod
 
@@ -65,9 +121,14 @@ Protected Module Ark
 		  
 		  Dim Beacons() As Ark.Beacon
 		  For Each Line As Text In Lines
-		    Dim Key As Text
-		    Dim Value As Auto = Ark.Import(Line, Key)
-		    Break
+		    Dim Value As Auto = Ark.Import(Line)
+		    If Value IsA Ark.Pair And Ark.Pair(Value).Key = "ConfigOverrideSupplyCrateItems" Then
+		      Dim Dict As Xojo.Core.Dictionary = Ark.Pair(Value).Value
+		      Dim Beacon As Ark.Beacon = Ark.ImportAsBeacon(Dict)
+		      If Beacon <> Nil Then
+		        Beacons.Append(Beacon)
+		      End If
+		    End If
 		  Next
 		  Return Beacons
 		End Function

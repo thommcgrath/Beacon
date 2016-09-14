@@ -23,6 +23,7 @@ Class=ArkData;ArkData.xojo_code;&h2F8CCFFF;&h0;false
 Window=EntryEditor;EntryEditor.xojo_window;&h423027FF;&h0;false
 Class=ArkEngram;ArkEngram.xojo_code;&h19E797FF;&h0;false
 Window=ImporterWindow;ImporterWindow.xojo_window;&h3AE27FF;&h0;false
+Class=Pair;Ark/Pair.xojo_code;&h54C79FFF;&h248637FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0
