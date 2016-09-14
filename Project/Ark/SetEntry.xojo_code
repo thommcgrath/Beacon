@@ -63,8 +63,22 @@ Implements Ark.Countable
 		  Dim ClassStrings() As Auto = Dict.Value("ItemClassStrings")
 		  Dim ClassWeights() As Auto = Dict.Value("ItemsWeights")
 		  
+		  If UBound(ClassWeights) < UBound(ClassStrings) Then
+		    // Add more values
+		    While UBound(ClassWeights) < UBound(ClassStrings)
+		      ClassWeights.Append(1)
+		    Wend
+		  ElseIf UBound(ClassWeights) > UBound(ClassStrings) Then
+		    // Just truncate
+		    Redim ClassWeights(UBound(ClassStrings))
+		  End If
+		  
 		  For I As Integer = 0 To UBound(ClassStrings)
-		    Entry.Append(New Ark.ItemClass(ClassStrings(I), ClassWeights(I)))
+		    Try
+		      Entry.Append(New Ark.ItemClass(ClassStrings(I), ClassWeights(I)))
+		    Catch Err As TypeMismatchException
+		      Continue
+		    End Try
 		  Next
 		  
 		  Return Entry
