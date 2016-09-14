@@ -45,7 +45,7 @@ Begin Window EntryEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   592
       Begin PushButton CancelButton
@@ -877,6 +877,198 @@ Begin Window EntryEditor
          Visible         =   True
          Width           =   152
       End
+      Begin CheckBox EditChanceCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Edit"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   23
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   472
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         State           =   1
+         TabIndex        =   22
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   251
+         Underline       =   False
+         Value           =   True
+         Visible         =   False
+         Width           =   100
+      End
+      Begin CheckBox EditWeightCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Edit"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   23
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   472
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         State           =   1
+         TabIndex        =   23
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   216
+         Underline       =   False
+         Value           =   True
+         Visible         =   False
+         Width           =   100
+      End
+      Begin CheckBox EditMaxQualityCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Edit"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   472
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         State           =   1
+         TabIndex        =   24
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   184
+         Underline       =   False
+         Value           =   True
+         Visible         =   False
+         Width           =   100
+      End
+      Begin CheckBox EditMinQualityCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Edit"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   472
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         State           =   1
+         TabIndex        =   25
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   152
+         Underline       =   False
+         Value           =   True
+         Visible         =   False
+         Width           =   100
+      End
+      Begin CheckBox EditMaxQuantityCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Edit"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   472
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         State           =   1
+         TabIndex        =   26
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   118
+         Underline       =   False
+         Value           =   True
+         Visible         =   False
+         Width           =   100
+      End
+      Begin CheckBox EditMinQuantityCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Edit"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   472
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         State           =   1
+         TabIndex        =   27
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   84
+         Underline       =   False
+         Value           =   True
+         Visible         =   False
+         Width           =   100
+      End
    End
 End
 #tag EndWindow
@@ -941,6 +1133,15 @@ End
 		        Exit For I
 		      End If
 		    Next
+		    
+		    If UBound(Sources) > 0 Then
+		      Win.EditChanceCheck.Visible = True
+		      Win.EditMaxQualityCheck.Visible = True
+		      Win.EditMaxQuantityCheck.Visible = True
+		      Win.EditMinQualityCheck.Visible = True
+		      Win.EditMinQuantityCheck.Visible = True
+		      Win.EditWeightCheck.Visible = True
+		    End If
 		  End If
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
@@ -950,16 +1151,37 @@ End
 		  End If
 		  
 		  Dim Entries() As Ark.SetEntry
-		  For Each Engram As ArkEngram In Win.mSelectedEngrams
-		    Dim Entry As New Ark.SetEntry
-		    Entry.Append(New Ark.ItemClass(Engram.ClassString.ToText, 1))
-		    Entry.MaxQuantity = Val(Win.MaxQuantityField.Text)
-		    Entry.MinQuantity = Val(Win.MinQuantityField.Text)
-		    Entry.ChanceToBeBlueprint = Win.ChanceSlider.Value / 100
-		    Entry.Weight = Win.WeightSlider.Value / 100
-		    Entry.MaxQuality = EntryEditor.ValueForQuality(Win.MaxQualityMenu.Text)
-		    Entry.MinQuality = EntryEditor.ValueForQuality(Win.MinQualityMenu.Text)
-		    Entries.Append(Entry)
+		  If Win.mEditing Then
+		    For Each Source As Ark.SetEntry In Sources
+		      Entries.Append(New Ark.SetEntry(Source))
+		    Next
+		  Else
+		    For Each Engram As ArkEngram In Win.mSelectedEngrams
+		      Dim Entry As New Ark.SetEntry
+		      Entry.Append(New Ark.ItemClass(Engram.ClassString.ToText, 1))
+		      Entries.Append(Entry)
+		    Next
+		  End If
+		  
+		  For Each Entry As Ark.SetEntry In Entries
+		    If Win.EditMaxQuantityCheck.Value Then
+		      Entry.MaxQuantity = Val(Win.MaxQuantityField.Text)
+		    End If
+		    If Win.EditMinQuantityCheck.Value Then
+		      Entry.MinQuantity = Val(Win.MinQuantityField.Text)
+		    End If
+		    If Win.EditChanceCheck.Value Then
+		      Entry.ChanceToBeBlueprint = Win.ChanceSlider.Value / 100
+		    End If
+		    If Win.EditWeightCheck.Value Then
+		      Entry.Weight = Win.WeightSlider.Value / 100
+		    End If
+		    If Win.EditMaxQualityCheck.Value Then
+		      Entry.MaxQuality = EntryEditor.ValueForQuality(Win.MaxQualityMenu.Text)
+		    End If
+		    If Win.EditMinQualityCheck.Value Then
+		      Entry.MinQuality = EntryEditor.ValueForQuality(Win.MinQualityMenu.Text)
+		    End If
 		  Next
 		  Win.Close
 		  Return Entries
