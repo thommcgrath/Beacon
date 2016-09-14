@@ -60,7 +60,7 @@ Begin ContainerControl SetEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionType   =   0
+      SelectionType   =   1
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -139,7 +139,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Label:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -379,7 +378,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   9
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "100"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -414,7 +412,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   10
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Min Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -449,7 +446,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   11
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Max Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -484,7 +480,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   12
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Weight:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -624,8 +619,8 @@ End
 #tag Events EntryList
 	#tag Event
 		Sub Change()
-		  EditButton.Enabled = Me.ListIndex > -1
-		  DeleteButton.Enabled = Me.ListIndex > -1
+		  EditButton.Enabled = Me.SelCount > 0
+		  DeleteButton.Enabled = Me.SelCount > 0
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -644,37 +639,68 @@ End
 #tag Events AddButton
 	#tag Event
 		Sub Action()
-		  Dim Entry As Ark.SetEntry = EntryEditor.Present(Self)
-		  If Entry <> Nil Then
-		    Self.mSet.Append(Entry)
-		    Self.UpdateEntryList()
-		    RaiseEvent Updated
+		  Dim Entries() As Ark.SetEntry = EntryEditor.Present(Self)
+		  If Entries = Nil Then
+		    Return
 		  End If
+		  
+		  For Each Entry As Ark.SetEntry In Entries
+		    Self.mSet.Append(Entry)
+		  Next
+		  
+		  Self.UpdateEntryList()
+		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EditButton
 	#tag Event
 		Sub Action()
-		  Dim Source As Ark.SetEntry = EntryList.RowTag(EntryList.ListIndex)
-		  Dim Entry As Ark.SetEntry = EntryEditor.Present(Self, Source)
-		  If Entry <> Nil Then
-		    Dim Idx As Integer = Self.mSet.IndexOf(Source)
-		    Self.mSet(Idx) = Entry
-		    Self.UpdateEntryList()
-		    RaiseEvent Updated
+		  Dim Sources() As Ark.SetEntry
+		  For I As Integer = 0 To EntryList.ListCount - 1
+		    If Not EntryList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Sources.Append(EntryList.RowTag(I))
+		  Next
+		  
+		  Dim Entries() As Ark.SetEntry = EntryEditor.Present(Self, Sources)
+		  If Entries = Nil Then
+		    Return
 		  End If
+		  
+		  For I As Integer = 0 To UBound(Entries)
+		    Dim Source As Ark.SetEntry = Sources(I)
+		    Dim Idx As Integer = Self.mSet.IndexOf(Source)
+		    Self.mSet(Idx) = Entries(I)
+		  Next
+		  
+		  Self.UpdateEntryList()
+		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DeleteButton
 	#tag Event
 		Sub Action()
-		  Dim Entry As Ark.SetEntry = EntryList.RowTag(EntryList.ListIndex)
-		  Dim Idx As Integer = Self.mSet.IndexOf(Entry)
-		  Self.mSet.Remove(Idx)
-		  Self.UpdateEntryList()
-		  RaiseEvent Updated
+		  Dim Changed As Boolean
+		  
+		  For I As Integer = EntryList.ListCount - 1 DownTo 0
+		    If Not EntryList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim Entry As Ark.SetEntry = EntryList.RowTag(I)
+		    Dim Idx As Integer = Self.mSet.IndexOf(Entry)
+		    Self.mSet.Remove(Idx)
+		    Changed = True
+		  Next
+		  
+		  If Changed Then
+		    Self.UpdateEntryList()
+		    RaiseEvent Updated
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

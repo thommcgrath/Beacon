@@ -44,9 +44,8 @@ Begin Window EntryEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   592
       Begin PushButton CancelButton
@@ -251,7 +250,7 @@ Begin Window EntryEditor
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
-         SelectionType   =   0
+         SelectionType   =   1
          TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
@@ -288,7 +287,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Untitled"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -323,7 +321,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Untitled"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -358,7 +355,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   4
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Class:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -393,7 +389,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Name:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -576,7 +571,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   12
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Min Quantity:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -611,7 +605,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   13
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Max Quantity:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -646,7 +639,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   14
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Min Quality:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -681,7 +673,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   15
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Max Quality:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -716,7 +707,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   16
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Weight:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -779,7 +769,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   18
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "100"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -842,7 +831,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   20
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "25%"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -877,7 +865,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   21
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Chance To Be Blueprint:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -903,22 +890,43 @@ End
 
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Source As Ark.SetEntry = Nil) As Ark.SetEntry
+		Shared Function Present(Parent As Window, Sources() As Ark.SetEntry = Nil) As Ark.SetEntry()
 		  Dim Win As New EntryEditor
-		  If Source <> Nil Then
+		  If Sources <> Nil And UBound(Sources) > -1 Then
 		    Win.mEditing = True
-		    Win.mSelectedEngram = New ArkEngram(App.DataSource.NameOfEngram(Source(0).ClassString), Source(0).ClassString)
-		    Win.NameField.Text = Win.mSelectedEngram.Name
-		    Win.ClassField.Text = Win.mSelectedEngram.ClassString
+		    Redim Win.mSelectedEngrams(UBound(Sources))
+		    For I As Integer = 0 To UBound(Sources)
+		      Dim Source As Ark.SetEntry = Sources(I)
+		      Win.mSelectedEngrams(I) = New ArkEngram(App.DataSource.NameOfEngram(Source(0).ClassString), Source(0).ClassString)
+		    Next
+		    Win.NameField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).Name, "Multiple")
+		    Win.ClassField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).ClassString, "Multiple")
 		    Win.PagePanel1.Value = 1
 		    Win.BackButton.Caption = "Cancel"
 		    Win.DoneButton.Caption = "Save"
-		    Win.MinQuantityField.Text = Str(Source.MinQuantity)
-		    Win.MaxQuantityField.Text = Str(Source.MaxQuantity)
-		    Win.WeightSlider.Value = 100 * Source.Weight
-		    Win.ChanceSlider.Value = 100 * Source.ChanceToBeBlueprint
 		    
-		    Dim MinQuality As String = QualityForValue(Source.MinQuality)
+		    Dim MinQuantities(), MaxQuantities() As Integer
+		    Dim TotalWeight, TotalChance, MinQualities(), MaxQualities() As Double
+		    For Each Source As Ark.SetEntry In Sources
+		      MinQuantities.Append(Source.MinQuantity)
+		      MaxQuantities.Append(Source.MaxQuantity)
+		      TotalWeight = TotalWeight + Source.Weight
+		      TotalChance = TotalChance + Source.ChanceToBeBlueprint
+		      MinQualities.Append(Source.MinQuality)
+		      MaxQualities.Append(Source.MaxQuality)
+		    Next
+		    
+		    MinQuantities.Sort
+		    MaxQuantities.Sort
+		    MinQualities.Sort
+		    MaxQualities.Sort
+		    
+		    Win.MinQuantityField.Text = Str(MinQuantities(0))
+		    Win.MaxQuantityField.Text = Str(MaxQuantities(UBound(MaxQuantities)))
+		    Win.WeightSlider.Value = 100 * (TotalWeight / (UBound(Sources) + 1))
+		    Win.ChanceSlider.Value = 100 * (TotalChance / (UBound(Sources) + 1))
+		    
+		    Dim MinQuality As String = QualityForValue(MinQualities(0))
 		    For I As Integer = 0 To Win.MinQualityMenu.ListCount - 1
 		      If Win.MinQualityMenu.List(I) = MinQuality Then
 		        Win.MinQualityMenu.ListIndex = I
@@ -926,7 +934,7 @@ End
 		      End If
 		    Next
 		    
-		    Dim MaxQuality As String = QualityForValue(Source.MaxQuality)
+		    Dim MaxQuality As String = QualityForValue(MaxQualities(UBound(MaxQualities)))
 		    For I As Integer = 0 To Win.MaxQualityMenu.ListCount - 1
 		      If Win.MaxQualityMenu.List(I) = MaxQuality Then
 		        Win.MaxQualityMenu.ListIndex = I
@@ -935,9 +943,26 @@ End
 		    Next
 		  End If
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Dim Entry As Ark.SetEntry = Win.mEntry
+		  
+		  If Win.mCancelled Then
+		    Win.Close
+		    Return Nil
+		  End If
+		  
+		  Dim Entries() As Ark.SetEntry
+		  For Each Engram As ArkEngram In Win.mSelectedEngrams
+		    Dim Entry As New Ark.SetEntry
+		    Entry.Append(New Ark.ItemClass(Engram.ClassString.ToText, 1))
+		    Entry.MaxQuantity = Val(Win.MaxQuantityField.Text)
+		    Entry.MinQuantity = Val(Win.MinQuantityField.Text)
+		    Entry.ChanceToBeBlueprint = Win.ChanceSlider.Value / 100
+		    Entry.Weight = Win.WeightSlider.Value / 100
+		    Entry.MaxQuality = EntryEditor.ValueForQuality(Win.MaxQualityMenu.Text)
+		    Entry.MinQuality = EntryEditor.ValueForQuality(Win.MinQualityMenu.Text)
+		    Entries.Append(Entry)
+		  Next
 		  Win.Close
-		  Return Entry
+		  Return Entries
 		End Function
 	#tag EndMethod
 
@@ -1019,15 +1044,15 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mCancelled As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mEditing As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEntry As Ark.SetEntry
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSelectedEngram As ArkEngram
+		Private mSelectedEngrams() As ArkEngram
 	#tag EndProperty
 
 
@@ -1036,7 +1061,7 @@ End
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.mEntry = Nil
+		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -1044,11 +1069,19 @@ End
 #tag Events NextButton
 	#tag Event
 		Sub Action()
-		  Self.mSelectedEngram = EngramList.RowTag(EngramList.ListIndex)
+		  Redim Self.mSelectedEngrams(-1)
+		  For I As Integer = 0 To EngramList.ListCount - 1
+		    If Not EngramList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Self.mSelectedEngrams.Append(EngramList.RowTag(I))
+		  Next
+		  
 		  PagePanel1.Value = 1
 		  
-		  ClassField.Text = Self.mSelectedEngram.ClassString
-		  NameField.Text = Self.mSelectedEngram.Name
+		  ClassField.Text = if(UBound(Self.mSelectedEngrams) = 0, Self.mSelectedEngrams(0).ClassString, "Multiple")
+		  NameField.Text = if(UBound(Self.mSelectedEngrams) = 0, Self.mSelectedEngrams(0).Name, "Multiple")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1056,7 +1089,7 @@ End
 	#tag Event
 		Sub Action()
 		  If Self.mEditing Then
-		    Self.mEntry = Nil
+		    Self.mCancelled = True
 		    Self.Hide
 		  Else
 		    Self.PagePanel1.Value = 0
@@ -1067,16 +1100,7 @@ End
 #tag Events DoneButton
 	#tag Event
 		Sub Action()
-		  Dim Entry As New Ark.SetEntry
-		  Entry.Append(New Ark.ItemClass(Self.mSelectedEngram.ClassString.ToText, 1))
-		  Entry.MaxQuantity = Val(MaxQuantityField.Text)
-		  Entry.MinQuantity = Val(MinQuantityField.Text)
-		  Entry.ChanceToBeBlueprint = ChanceSlider.Value / 100
-		  Entry.Weight = WeightSlider.Value / 100
-		  Entry.MaxQuality = Self.ValueForQuality(MaxQualityMenu.Text)
-		  Entry.MinQuality = Self.ValueForQuality(MinQualityMenu.Text)
-		  
-		  Self.mEntry = Entry
+		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -1091,7 +1115,7 @@ End
 #tag Events EngramList
 	#tag Event
 		Sub Change()
-		  NextButton.Enabled = Me.ListIndex > -1
+		  NextButton.Enabled = Me.SelCount > -1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
