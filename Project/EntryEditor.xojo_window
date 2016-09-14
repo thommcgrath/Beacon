@@ -907,7 +907,7 @@ End
 		  Dim Win As New EntryEditor
 		  If Source <> Nil Then
 		    Win.mEditing = True
-		    Win.mSelectedEngram = New ArkEngram(App.DataSource.NameForClassString(Source(0).ClassString), Source(0).ClassString)
+		    Win.mSelectedEngram = New ArkEngram(App.DataSource.NameOfEngram(Source(0).ClassString), Source(0).ClassString)
 		    Win.NameField.Text = Win.mSelectedEngram.Name
 		    Win.ClassField.Text = Win.mSelectedEngram.ClassString
 		    Win.PagePanel1.Value = 1

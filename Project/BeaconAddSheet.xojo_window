@@ -127,30 +127,7 @@ End
 		 Shared Function Present(Parent As DocWindow, Document As BeaconDocument) As Ark.Beacon
 		  Static AllowedBeacons() As Ark.Beacon
 		  If UBound(AllowedBeacons) = -1 Then
-		    AllowedBeacons.Append(New Ark.Beacon("Island White (Level 3)", Ark.Beacon.TypeIslandWhite))
-		    AllowedBeacons.Append(New Ark.Beacon("Island White + Bonus (Level 3)", Ark.Beacon.TypeIslandWhite2x))
-		    AllowedBeacons.Append(New Ark.Beacon("Island Green (Level 15)", Ark.Beacon.TypeIslandGreen))
-		    AllowedBeacons.Append(New Ark.Beacon("Island Green + Bonus (Level 15)", Ark.Beacon.TypeIslandGreen2x))
-		    AllowedBeacons.Append(New Ark.Beacon("Island Blue (Level 25)", Ark.Beacon.TypeIslandBlue))
-		    AllowedBeacons.Append(New Ark.Beacon("Island Blue + Bonus (Level 25)", Ark.Beacon.TypeIslandBlue2x))
-		    AllowedBeacons.Append(New Ark.Beacon("Island Purple (Level 35)", Ark.Beacon.TypeIslandPurple))
-		    AllowedBeacons.Append(New Ark.Beacon("Island Purple + Bonus (Level 35)", Ark.Beacon.TypeIslandPurple2x))
-		    AllowedBeacons.Append(New Ark.Beacon("Island Yellow (Level 45)", Ark.Beacon.TypeIslandYellow))
-		    AllowedBeacons.Append(New Ark.Beacon("Island Yellow + Bonus (Level 45)", Ark.Beacon.TypeIslandYellow2x))
-		    AllowedBeacons.Append(New Ark.Beacon("Island Red (Level 60)", Ark.Beacon.TypeIslandRed))
-		    AllowedBeacons.Append(New Ark.Beacon("Island Red + Bonus (Level 60)", Ark.Beacon.TypeIslandRed2x))
-		    AllowedBeacons.Append(New Ark.Beacon("Scorched White (Level 3)", Ark.Beacon.TypeScorchedWhite))
-		    AllowedBeacons.Append(New Ark.Beacon("Scorched White + Bonus (Level 3)", Ark.Beacon.TypeScorchedWhite2x))
-		    AllowedBeacons.Append(New Ark.Beacon("Scorched Green (Level 15)", Ark.Beacon.TypeScorchedGreen))
-		    AllowedBeacons.Append(New Ark.Beacon("Scorched Green + Bonus (Level 15)", Ark.Beacon.TypeScorchedGreen2x))
-		    AllowedBeacons.Append(New Ark.Beacon("Scorched Blue (Level 30)", Ark.Beacon.TypeScorchedBlue))
-		    AllowedBeacons.Append(New Ark.Beacon("Scorched Blue + Bonus (Level 30)", Ark.Beacon.TypeScorchedBlue2x))
-		    AllowedBeacons.Append(New Ark.Beacon("Scorched Purple (Level 45)", Ark.Beacon.TypeScorchedPurple))
-		    AllowedBeacons.Append(New Ark.Beacon("Scorched Purple + Bonus (Level 45)", Ark.Beacon.TypeScorchedPurple2x))
-		    AllowedBeacons.Append(New Ark.Beacon("Scorched Yellow (Level 55)", Ark.Beacon.TypeScorchedYellow))
-		    AllowedBeacons.Append(New Ark.Beacon("Scorched Yellow + Bonus (Level 55)", Ark.Beacon.TypeScorchedYellow2x))
-		    AllowedBeacons.Append(New Ark.Beacon("Scorched Red (Level 70)", Ark.Beacon.TypeScorchedRed))
-		    AllowedBeacons.Append(New Ark.Beacon("Scorched Red + Bonus (Level 70)", Ark.Beacon.TypeScorchedRed2x))
+		    AllowedBeacons = App.DataSource.SearchForBeacons("")
 		  End If
 		  
 		  Dim Win As New BeaconAddSheet
