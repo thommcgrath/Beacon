@@ -903,7 +903,7 @@ End
 
 
 	#tag Method, Flags = &h0
-		 Shared Function Present(Parent As Window, Source As Ark.SetEntry = Nil) As Ark.SetEntry
+		Shared Function Present(Parent As Window, Source As Ark.SetEntry = Nil) As Ark.SetEntry
 		  Dim Win As New EntryEditor
 		  If Source <> Nil Then
 		    Win.mEditing = True

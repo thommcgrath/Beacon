@@ -191,7 +191,7 @@ Protected Class BeaconDocument
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		 Shared Function Read(File As Xojo.IO.FolderItem) As BeaconDocument
+		Shared Function Read(File As Xojo.IO.FolderItem) As BeaconDocument
 		  Dim Stream As Xojo.IO.TextInputStream = Xojo.IO.TextInputStream.Open(File, Xojo.Core.TextEncoding.UTF8)
 		  Dim Contents As Text = Stream.ReadAll
 		  Stream.Close

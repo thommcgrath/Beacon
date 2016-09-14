@@ -94,7 +94,7 @@ Implements Ark.Countable
 		  For Each Entry As Ark.SetEntry In Entries
 		    Values.Append(Entry.TextValue)
 		  Next
-		  Return Text.Join(Values, Separator)
+		  Return Text.Join(Values, ",")
 		End Function
 	#tag EndMethod
 

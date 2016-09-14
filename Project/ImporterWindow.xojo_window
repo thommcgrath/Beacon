@@ -27,6 +27,7 @@ Begin Window ImporterWindow
    Visible         =   True
    Width           =   400
    Begin Thread ImportThread
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -80,7 +81,9 @@ Begin Window ImporterWindow
       LockTop         =   True
       Maximum         =   0
       Scope           =   2
+      TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   52
       Value           =   0
       Visible         =   True
@@ -108,6 +111,7 @@ Begin Window ImporterWindow
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Importing from """""
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -121,6 +125,7 @@ Begin Window ImporterWindow
       Width           =   360
    End
    Begin Timer WatchTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -133,7 +138,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		 Shared Sub Import(File As FolderItem)
+		Shared Sub Import(File As FolderItem)
 		  Dim Win As New ImporterWindow
 		  Win.MessageLabel.Text = "Importing from """ + File.Name + """"
 		  Win.mImportFile = File

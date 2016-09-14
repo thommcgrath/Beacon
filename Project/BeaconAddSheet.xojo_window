@@ -124,7 +124,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		 Shared Function Present(Parent As DocWindow, Document As BeaconDocument) As Ark.Beacon
+		Shared Function Present(Parent As DocWindow, Document As BeaconDocument) As Ark.Beacon
 		  Static AllowedBeacons() As Ark.Beacon
 		  If UBound(AllowedBeacons) = -1 Then
 		    AllowedBeacons = App.DataSource.SearchForBeacons("")

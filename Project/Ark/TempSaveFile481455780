@@ -93,7 +93,7 @@ Implements Ark.Countable
 		  For Each Set As Ark.ItemSet In Sets
 		    Values.Append(Set.TextValue)
 		  Next
-		  Return Text.Join(Values, Separator)
+		  Return Text.Join(Values, ",")
 		End Function
 	#tag EndMethod
 

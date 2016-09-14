@@ -56,7 +56,7 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		 Shared Function Import(Dict As Xojo.Core.Dictionary) As Ark.Beacon
+		Shared Function Import(Dict As Xojo.Core.Dictionary) As Ark.Beacon
 		  If Not Dict.HasKey("SupplyCrateClassString") Then
 		    Return Nil
 		  End If

@@ -139,8 +139,6 @@ End
 #tag WindowCode
 	#tag Event
 		Function CancelClose(appQuitting as Boolean) As Boolean
-		  #Pragma Unused appQuitting
-		  
 		  If Not Self.ContentsChanged Then
 		    Return False
 		  End If
@@ -384,8 +382,6 @@ End
 #tag Events Separators
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused areas
-		  
 		  G.ForeColor = &cBBBBBB
 		  G.FillRect(0, 0, G.Width, G.Height)
 		End Sub
