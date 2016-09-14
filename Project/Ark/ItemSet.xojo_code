@@ -50,6 +50,27 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		 Shared Function Import(Dict As Xojo.Core.Dictionary) As Ark.ItemSet
+		  Dim Set As New Ark.ItemSet
+		  Set.MinNumItems = Dict.Lookup("MinNumItems", Set.MinNumItems)
+		  Set.MaxNumItems = Dict.Lookup("MaxNumItems", Set.MaxNumItems)
+		  Set.NumItemsPower = Dict.Lookup("NumItemsPower", Set.NumItemsPower)
+		  Set.Weight = Dict.Lookup("SetWeight", Set.Weight)
+		  Set.ItemsRandomWithoutReplacement = Dict.Lookup("bItemsRandomWithoutReplacement", Set.ItemsRandomWithoutReplacement)
+		  
+		  Dim Children() As Auto = Dict.Value("ItemEntries")
+		  For Each Child As Xojo.Core.Dictionary In Children
+		    Dim Entry As Ark.SetEntry = Ark.SetEntry.Import(Child)
+		    If Entry <> Nil Then
+		      Set.Append(Entry)
+		    End If
+		  Next
+		  
+		  Return Set
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IndexOf(Entry As Ark.SetEntry) As Integer
 		  For I As Integer = 0 To UBound(Self.mEntries)
 		    If Self.mEntries(I) = Entry Then

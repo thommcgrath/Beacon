@@ -13,4 +13,18 @@
 		Imported=False
 	#tag EndFileType
 
+	#tag FileType
+		CodeName=IniFile
+		Extension=.ini
+		Flags=&h0
+		MacCreator=????
+		MacType=TEXT
+		Name=Ini File
+		UTI=public.text
+		UTIConformsTo=public.data, public.content
+		Description=
+		MimeType=
+		Imported=True
+	#tag EndFileType
+
 #tag EndFileTypeSet

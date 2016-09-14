@@ -27,6 +27,23 @@ Protected Class BeaconDocument
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Beacons() As Ark.Beacon)
+		  Self.Constructor()
+		  
+		  Redim Self.mBeacons(UBound(Beacons))
+		  For I As Integer = 0 To UBound(Beacons)
+		    Self.mBeacons(I) = New Ark.Beacon(Beacons(I))
+		  Next
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Shared Function Export(Beacon As Ark.Beacon) As Xojo.Core.Dictionary
 		  Dim Children() As Xojo.Core.Dictionary
