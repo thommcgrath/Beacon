@@ -729,7 +729,7 @@ End
 		  If Self.mSet <> Nil Then
 		    For I As Integer = 0 To UBound(Self.mSet)
 		      Dim Entry As Ark.SetEntry = Self.mSet(I)
-		      EntryList.AddRow(Self.Describe(Entry), Str(Entry.MinQuantity), Str(Entry.MaxQuantity), Str(Entry.MinQuality), Str(Entry.MaxQuality), Str(Self.mSet.RelativeWeight(I), "0%"))
+		      EntryList.AddRow(Self.Describe(Entry), Str(Entry.MinQuantity), Str(Entry.MaxQuantity), Ark.QualityForValue(Entry.MinQuality, Self.Multipliers.Min), Ark.QualityForValue(Entry.MaxQuality, Self.Multipliers.Max), Str(Self.mSet.RelativeWeight(I), "0%"))
 		      EntryList.RowTag(EntryList.LastIndex) = Entry
 		    Next
 		  End If
@@ -743,8 +743,31 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mMultipliers As Ark.Range
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSet As Ark.ItemSet
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mMultipliers = Nil Then
+			    Return New Ark.Range(1, 1)
+			  Else
+			    Return Self.mMultipliers
+			  End If
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mMultipliers = Value
+			  Self.UpdateEntryList()
+			End Set
+		#tag EndSetter
+		Multipliers As Ark.Range
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mUpdating As Boolean
@@ -864,7 +887,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Dim Entries() As Ark.SetEntry = EntryEditor.Present(Self)
+		  Dim Entries() As Ark.SetEntry = EntryEditor.Present(Self, Self.Multipliers)
 		  If Entries = Nil Then
 		    Return
 		  End If
@@ -897,7 +920,7 @@ End
 		    Sources.Append(EntryList.RowTag(I))
 		  Next
 		  
-		  Dim Entries() As Ark.SetEntry = EntryEditor.Present(Self, Sources)
+		  Dim Entries() As Ark.SetEntry = EntryEditor.Present(Self, Self.Multipliers, Sources)
 		  If Entries = Nil Then
 		    Return
 		  End If

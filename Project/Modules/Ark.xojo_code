@@ -135,6 +135,26 @@ Protected Module Ark
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function QualityForValue(Quality As Double, Multiplier As Double) As Text
+		  Quality = Quality * Multiplier
+		  
+		  If Quality < Ark.QualityRamshackle Then
+		    Return Ark.LabelPrimitive
+		  ElseIf Quality < Ark.QualityApprentice Then
+		    Return Ark.LabelRamshackle
+		  ElseIf Quality < Ark.QualityJourneyman Then
+		    Return Ark.LabelApprentice
+		  ElseIf Quality < Ark.QualityMastercraft Then
+		    Return Ark.LabelJourneyman
+		  ElseIf Quality < Ark.QualityAscendant Then
+		    Return Ark.LabelMastercraft
+		  Else
+		    Return Ark.LabelAscendant
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function UBound(Item As Ark.Countable) As Integer
 		  Return Item.Count - 1
@@ -147,6 +167,45 @@ Protected Module Ark
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function ValueForQuality(Quality As Text, Multiplier As Double) As Double
+		  Select Case Quality
+		  Case Ark.LabelPrimitive
+		    Return Ark.QualityPrimitive / Multiplier
+		  Case Ark.LabelRamshackle
+		    Return Ark.QualityRamshackle / Multiplier
+		  Case Ark.LabelApprentice
+		    Return Ark.QualityApprentice / Multiplier
+		  Case Ark.LabelJourneyman
+		    Return Ark.QualityJourneyman / Multiplier
+		  Case Ark.LabelMastercraft
+		    Return Ark.QualityMastercraft / Multiplier
+		  Case Ark.LabelAscendant
+		    Return Ark.QualityAscendant / Multiplier
+		  Else
+		    Return Ark.QualityPrimitive / Multiplier
+		  End Select
+		End Function
+	#tag EndMethod
+
+
+	#tag Constant, Name = LabelApprentice, Type = Text, Dynamic = False, Default = \"Apprentice", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = LabelAscendant, Type = Text, Dynamic = False, Default = \"Ascendant", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = LabelJourneyman, Type = Text, Dynamic = False, Default = \"Journeyman", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = LabelMastercraft, Type = Text, Dynamic = False, Default = \"Mastercraft", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = LabelPrimitive, Type = Text, Dynamic = False, Default = \"Primitive", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = LabelRamshackle, Type = Text, Dynamic = False, Default = \"Ramshackle", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = QualityApprentice, Type = Double, Dynamic = False, Default = \"2.5", Scope = Protected
 	#tag EndConstant
