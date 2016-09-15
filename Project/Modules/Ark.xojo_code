@@ -207,16 +207,16 @@ Protected Module Ark
 	#tag Constant, Name = LabelRamshackle, Type = Text, Dynamic = False, Default = \"Ramshackle", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityApprentice, Type = Double, Dynamic = False, Default = \"2.5", Scope = Protected
+	#tag Constant, Name = QualityApprentice, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityAscendant, Type = Double, Dynamic = False, Default = \"10", Scope = Protected
+	#tag Constant, Name = QualityAscendant, Type = Double, Dynamic = False, Default = \"7", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityJourneyman, Type = Double, Dynamic = False, Default = \"4.5", Scope = Protected
+	#tag Constant, Name = QualityJourneyman, Type = Double, Dynamic = False, Default = \"3.75", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityMastercraft, Type = Double, Dynamic = False, Default = \"7", Scope = Protected
+	#tag Constant, Name = QualityMastercraft, Type = Double, Dynamic = False, Default = \"5.5", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = QualityPrimitive, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
