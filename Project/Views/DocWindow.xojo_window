@@ -115,7 +115,6 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -142,7 +141,7 @@ Begin Window DocWindow
       Enabled         =   True
       EraseBackground =   True
       Height          =   24
-      HelpTag         =   ""
+      HelpTag         =   "Add a beacon. Click to show the  ""Add Beacon"" dialog, hold to show a menu of possible beacons."
       IconDisabled    =   0
       IconNormal      =   0
       IconPressed     =   0
@@ -173,7 +172,7 @@ Begin Window DocWindow
       Enabled         =   False
       EraseBackground =   True
       Height          =   24
-      HelpTag         =   ""
+      HelpTag         =   "Remove the selected beacon."
       IconDisabled    =   0
       IconNormal      =   0
       IconPressed     =   0

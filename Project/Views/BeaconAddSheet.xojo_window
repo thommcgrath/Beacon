@@ -141,7 +141,7 @@ Begin Window BeaconAddSheet
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
-      Text            =   "Add Custom Beacon"
+      Text            =   "Add Beacon"
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"

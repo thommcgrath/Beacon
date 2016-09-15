@@ -89,7 +89,6 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Label:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -166,7 +165,6 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Min Sets:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -243,7 +241,6 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Max Sets:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -405,7 +402,6 @@ Begin ContainerControl BeaconEditor
       HasBackColor    =   False
       Height          =   343
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -460,7 +456,7 @@ Begin ContainerControl BeaconEditor
       Enabled         =   True
       EraseBackground =   True
       Height          =   24
-      HelpTag         =   ""
+      HelpTag         =   "Add an item set to this beacon. Click to add an empty set, hold to show a menu of presets."
       IconDisabled    =   0
       IconNormal      =   0
       IconPressed     =   0
@@ -491,7 +487,7 @@ Begin ContainerControl BeaconEditor
       Enabled         =   False
       EraseBackground =   True
       Height          =   24
-      HelpTag         =   ""
+      HelpTag         =   "Remove the selected item set."
       IconDisabled    =   0
       IconNormal      =   0
       IconPressed     =   0

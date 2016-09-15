@@ -139,7 +139,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Label:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -286,7 +285,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   9
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "100"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -321,7 +319,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   10
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Min Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -356,7 +353,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   11
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Max Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -391,7 +387,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   12
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Weight:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -445,7 +440,7 @@ Begin ContainerControl SetEditor
       Enabled         =   True
       EraseBackground =   True
       Height          =   24
-      HelpTag         =   ""
+      HelpTag         =   "Add items to this set."
       IconDisabled    =   0
       IconNormal      =   0
       IconPressed     =   0
@@ -504,7 +499,7 @@ Begin ContainerControl SetEditor
       Enabled         =   False
       EraseBackground =   True
       Height          =   24
-      HelpTag         =   ""
+      HelpTag         =   "Edit the selected items."
       IconDisabled    =   0
       IconNormal      =   0
       IconPressed     =   0
@@ -591,7 +586,7 @@ Begin ContainerControl SetEditor
       Enabled         =   False
       EraseBackground =   True
       Height          =   24
-      HelpTag         =   ""
+      HelpTag         =   "Remove the selected items from the set."
       IconDisabled    =   0
       IconNormal      =   0
       IconPressed     =   0
@@ -943,7 +938,7 @@ End
 #tag EndEvents
 #tag Events Separators
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
 		  G.ForeColor = &cCCCCCC
