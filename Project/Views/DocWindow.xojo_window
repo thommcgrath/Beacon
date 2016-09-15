@@ -115,6 +115,7 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -609,6 +610,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Function MouseHold(X As Integer, Y As Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
 		  Dim Base As New MenuItem
 		  Dim Beacons() As Ark.Beacon = App.DataSource.SearchForBeacons("")
 		  For I As Integer = UBound(Beacons) DownTo 0

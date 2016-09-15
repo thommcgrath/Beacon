@@ -89,6 +89,7 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Label:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -165,6 +166,7 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Min Sets:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -241,6 +243,7 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Max Sets:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -402,6 +405,7 @@ Begin ContainerControl BeaconEditor
       HasBackColor    =   False
       Height          =   343
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -1654,6 +1658,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Function MouseHold(X As Integer, Y As Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
 		  Dim Source As MenuItem = DocumentAddItemSet
 		  Dim Base As New MenuItem
 		  For I As Integer = 0 To Source.Count - 1

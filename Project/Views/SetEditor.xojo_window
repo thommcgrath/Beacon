@@ -139,6 +139,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Label:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -285,6 +286,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   9
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "100"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -319,6 +321,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   10
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Min Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -353,6 +356,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   11
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Max Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -387,6 +391,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   12
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Weight:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -915,7 +920,7 @@ End
 #tag EndEvents
 #tag Events Separators
 	#tag Event
-		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
 		  G.ForeColor = &cCCCCCC

@@ -11,27 +11,48 @@ Inherits Canvas
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  If Not Self.Transparent Then
+		    Dim TempColor As Color = G.ForeColor
+		    G.ForeColor = FillColor
+		    G.FillRect(0, 0, G.Width, G.Height)
+		    G.ForeColor = TempColor
+		  End If
+		  
+		  RaiseEvent Paint(g, areas)
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h0
 		Sub Invalidate(eraseBackground As Boolean = True)
+		  #Pragma Unused eraseBackground
+		  
 		  Super.Invalidate(Self.EraseBackground)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Invalidate(x As Integer, y As Integer, width As Integer, height As Integer, eraseBackground As Boolean = True)
+		  #Pragma Unused eraseBackground
+		  
 		  Super.Invalidate(X, Y, Width, Height, Self.EraseBackground)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Refresh(eraseBackground As Boolean = True)
+		  #Pragma Unused eraseBackground
+		  
 		  Super.Refresh(Self.EraseBackground)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RefreshRect(x As Integer, y As Integer, width As Integer, height As Integer, eraseBackground As Boolean = True)
+		  #Pragma Unused eraseBackground
+		  
 		  Super.RefreshRect(X, Y, Width, Height, Self.EraseBackground)
 		End Sub
 	#tag EndMethod
@@ -39,6 +60,10 @@ Inherits Canvas
 
 	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Paint(g As Graphics, areas() As REALbasic.Rect)
 	#tag EndHook
 
 

@@ -59,6 +59,14 @@ Inherits Application
 		End Function
 	#tag EndMenuHandler
 
+	#tag MenuHandler
+		Function HelpAboutBeacon() As Boolean Handles HelpAboutBeacon.Action
+			AboutWindow.Show
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
 
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
