@@ -9,7 +9,7 @@ Begin ContainerControl SetEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   346
+   Height          =   428
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -29,7 +29,7 @@ Begin ContainerControl SetEditor
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
-      Border          =   True
+      Border          =   False
       ColumnCount     =   6
       ColumnsResizable=   False
       ColumnWidths    =   "*,80,80,80,80,80"
@@ -43,14 +43,14 @@ Begin ContainerControl SetEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
-      Height          =   105
+      Height          =   213
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Description	Min Quantity	Max Quantity	Min Quality	Max Quality	Chance"
       Italic          =   False
-      Left            =   20
+      Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -67,11 +67,11 @@ Begin ContainerControl SetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   189
+      Top             =   190
       Underline       =   False
-      UseFocusRing    =   True
+      UseFocusRing    =   False
       Visible         =   True
-      Width           =   520
+      Width           =   560
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -151,99 +151,6 @@ Begin ContainerControl SetEditor
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton AddButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "Add…"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   306
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin PushButton EditButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "Edit"
-      Default         =   False
-      Enabled         =   False
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   112
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   306
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin PushButton DeleteButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "Delete"
-      Default         =   False
-      Enabled         =   False
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   204
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   306
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
    Begin TextField MinItemsField
       AcceptTabs      =   False
       Alignment       =   0
@@ -271,7 +178,7 @@ Begin ContainerControl SetEditor
       Mask            =   "###"
       Password        =   False
       ReadOnly        =   False
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
@@ -313,7 +220,7 @@ Begin ContainerControl SetEditor
       Mask            =   "###"
       Password        =   False
       ReadOnly        =   False
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
@@ -524,6 +431,267 @@ Begin ContainerControl SetEditor
       Visible         =   True
       Width           =   251
    End
+   Begin GraphicButton AddButton
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   24
+      HelpTag         =   ""
+      IconDisabled    =   0
+      IconNormal      =   0
+      IconPressed     =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   404
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   30
+   End
+   Begin FooterBar FooterBar1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   24
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   93
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   404
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   467
+   End
+   Begin GraphicButton EditButton
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   False
+      EraseBackground =   True
+      Height          =   24
+      HelpTag         =   ""
+      IconDisabled    =   0
+      IconNormal      =   0
+      IconPressed     =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   31
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   404
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   30
+   End
+   Begin ControlCanvas Separators
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   0
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   189
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   560
+   End
+   Begin ControlCanvas Separators
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   1
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   403
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   560
+   End
+   Begin GraphicButton DeleteButton
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   False
+      EraseBackground =   True
+      Height          =   24
+      HelpTag         =   ""
+      IconDisabled    =   0
+      IconNormal      =   0
+      IconPressed     =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   62
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   404
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   30
+   End
+   Begin ControlCanvas Separators
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   24
+      HelpTag         =   ""
+      Index           =   2
+      InitialParent   =   ""
+      Left            =   30
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   20
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   404
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
+   End
+   Begin ControlCanvas Separators
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   24
+      HelpTag         =   ""
+      Index           =   3
+      InitialParent   =   ""
+      Left            =   61
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   21
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   404
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
+   End
+   Begin ControlCanvas Separators
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   24
+      HelpTag         =   ""
+      Index           =   4
+      InitialParent   =   ""
+      Left            =   92
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   22
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   404
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
+   End
 End
 #tag EndWindow
 
@@ -636,74 +804,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AddButton
-	#tag Event
-		Sub Action()
-		  Dim Entries() As Ark.SetEntry = EntryEditor.Present(Self)
-		  If Entries = Nil Then
-		    Return
-		  End If
-		  
-		  For Each Entry As Ark.SetEntry In Entries
-		    Self.mSet.Append(Entry)
-		  Next
-		  
-		  Self.UpdateEntryList()
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events EditButton
-	#tag Event
-		Sub Action()
-		  Dim Sources() As Ark.SetEntry
-		  For I As Integer = 0 To EntryList.ListCount - 1
-		    If Not EntryList.Selected(I) Then
-		      Continue
-		    End If
-		    
-		    Sources.Append(EntryList.RowTag(I))
-		  Next
-		  
-		  Dim Entries() As Ark.SetEntry = EntryEditor.Present(Self, Sources)
-		  If Entries = Nil Then
-		    Return
-		  End If
-		  
-		  For I As Integer = 0 To UBound(Entries)
-		    Dim Source As Ark.SetEntry = Sources(I)
-		    Dim Idx As Integer = Self.mSet.IndexOf(Source)
-		    Self.mSet(Idx) = Entries(I)
-		  Next
-		  
-		  Self.UpdateEntryList()
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DeleteButton
-	#tag Event
-		Sub Action()
-		  Dim Changed As Boolean
-		  
-		  For I As Integer = EntryList.ListCount - 1 DownTo 0
-		    If Not EntryList.Selected(I) Then
-		      Continue
-		    End If
-		    
-		    Dim Entry As Ark.SetEntry = EntryList.RowTag(I)
-		    Dim Idx As Integer = Self.mSet.IndexOf(Entry)
-		    Self.mSet.Remove(Idx)
-		    Changed = True
-		  Next
-		  
-		  If Changed Then
-		    Self.UpdateEntryList()
-		    RaiseEvent Updated
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events MinItemsField
 	#tag Event
 		Sub TextChange()
@@ -751,6 +851,105 @@ End
 		  
 		  Self.mSet.ItemsRandomWithoutReplacement = Me.Value
 		  RaiseEvent Updated
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AddButton
+	#tag Event
+		Sub Open()
+		  Me.IconNormal = IconAddNormal
+		  Me.IconPressed = IconAddPressed
+		  Me.IconDisabled = IconAddDisabled
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  Dim Entries() As Ark.SetEntry = EntryEditor.Present(Self)
+		  If Entries = Nil Then
+		    Return
+		  End If
+		  
+		  For Each Entry As Ark.SetEntry In Entries
+		    Self.mSet.Append(Entry)
+		  Next
+		  
+		  Self.UpdateEntryList()
+		  RaiseEvent Updated
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EditButton
+	#tag Event
+		Sub Open()
+		  Me.IconNormal = IconEditNormal
+		  Me.IconPressed = IconEditPressed
+		  Me.IconDisabled = IconEditDisabled
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  Dim Sources() As Ark.SetEntry
+		  For I As Integer = 0 To EntryList.ListCount - 1
+		    If Not EntryList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Sources.Append(EntryList.RowTag(I))
+		  Next
+		  
+		  Dim Entries() As Ark.SetEntry = EntryEditor.Present(Self, Sources)
+		  If Entries = Nil Then
+		    Return
+		  End If
+		  
+		  For I As Integer = 0 To UBound(Entries)
+		    Dim Source As Ark.SetEntry = Sources(I)
+		    Dim Idx As Integer = Self.mSet.IndexOf(Source)
+		    Self.mSet(Idx) = Entries(I)
+		  Next
+		  
+		  Self.UpdateEntryList()
+		  RaiseEvent Updated
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Separators
+	#tag Event
+		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused areas
+		  
+		  G.ForeColor = &cCCCCCC
+		  G.FillRect(0, 0, G.Width, G.Height)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DeleteButton
+	#tag Event
+		Sub Open()
+		  Me.IconNormal = IconRemoveNormal
+		  Me.IconPressed = IconRemovePressed
+		  Me.IconDisabled = IconRemoveDisabled
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  Dim Changed As Boolean
+		  
+		  For I As Integer = EntryList.ListCount - 1 DownTo 0
+		    If Not EntryList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim Entry As Ark.SetEntry = EntryList.RowTag(I)
+		    Dim Idx As Integer = Self.mSet.IndexOf(Entry)
+		    Self.mSet.Remove(Idx)
+		    Changed = True
+		  Next
+		  
+		  If Changed Then
+		    Self.UpdateEntryList()
+		    RaiseEvent Updated
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -89,7 +89,6 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Label:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -166,7 +165,6 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Min Sets:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -243,7 +241,6 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Max Sets:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -288,7 +285,7 @@ Begin ContainerControl BeaconEditor
       Visible         =   True
       Width           =   446
    End
-   Begin Canvas Separators
+   Begin ControlCanvas Separators
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
@@ -334,7 +331,7 @@ Begin ContainerControl BeaconEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   343
+      Height          =   318
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -366,7 +363,7 @@ Begin ContainerControl BeaconEditor
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin Canvas Separators
+   Begin ControlCanvas Separators
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
@@ -405,7 +402,6 @@ Begin ContainerControl BeaconEditor
       HasBackColor    =   False
       Height          =   343
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -422,6 +418,180 @@ Begin ContainerControl BeaconEditor
       UseFocusRing    =   False
       Visible         =   True
       Width           =   407
+   End
+   Begin ControlCanvas Separators
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   2
+      InitialParent   =   ""
+      Left            =   1
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   439
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   190
+   End
+   Begin GraphicButton AddSetButton
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   24
+      HelpTag         =   ""
+      IconDisabled    =   0
+      IconNormal      =   0
+      IconPressed     =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   440
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   30
+   End
+   Begin GraphicButton RemoveSetButton
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   False
+      EraseBackground =   True
+      Height          =   24
+      HelpTag         =   ""
+      IconDisabled    =   0
+      IconNormal      =   0
+      IconPressed     =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   31
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   440
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   30
+   End
+   Begin FooterBar FooterBar1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   24
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   62
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   440
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   128
+   End
+   Begin ControlCanvas Separators
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   24
+      HelpTag         =   ""
+      Index           =   3
+      InitialParent   =   ""
+      Left            =   30
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   440
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
+   End
+   Begin ControlCanvas Separators
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   24
+      HelpTag         =   ""
+      Index           =   4
+      InitialParent   =   ""
+      Left            =   61
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   440
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
    End
 End
 #tag EndWindow
@@ -1242,18 +1412,7 @@ End
 
 	#tag MenuHandler
 		Function DocumentRemoveItemSet() As Boolean Handles DocumentRemoveItemSet.Action
-			If SetList.ListIndex = -1 Then
-			Return True
-			End If
-			
-			Dim Set As Ark.ItemSet = SetList.RowTag(SetList.ListIndex)
-			Dim Idx As Integer = Self.mBeacon.IndexOf(Set)
-			If Idx > -1 Then
-			Self.mBeacon.Remove(Idx)
-			RaiseEvent Updated
-			End If
-			SetList.RemoveRow(SetList.ListIndex)
-			
+			Self.RemoveSelectedItemSet()
 			Return True
 			
 		End Function
@@ -1319,6 +1478,22 @@ End
 		    DocumentRemoveItemSet.Enable
 		    Editor.EnableMenuItems
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RemoveSelectedItemSet()
+		  If SetList.ListIndex = -1 Then
+		    Return
+		  End If
+		  
+		  Dim Set As Ark.ItemSet = SetList.RowTag(SetList.ListIndex)
+		  Dim Idx As Integer = Self.mBeacon.IndexOf(Set)
+		  If Idx > -1 Then
+		    Self.mBeacon.Remove(Idx)
+		    RaiseEvent Updated
+		  End If
+		  SetList.RemoveRow(SetList.ListIndex)
 		End Sub
 	#tag EndMethod
 
@@ -1442,6 +1617,8 @@ End
 #tag Events SetList
 	#tag Event
 		Sub Change()
+		  RemoveSetButton.Enabled = Me.ListIndex > -1
+		  
 		  If Me.ListIndex = -1 Then
 		    Editor.Enabled = False
 		    Editor.Set = Nil
@@ -1459,6 +1636,49 @@ End
 		    SetList.Cell(SetList.ListIndex, 0) = Ark.ItemSet(SetList.RowTag(SetList.ListIndex)).Label
 		  End If
 		  RaiseEvent Updated
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AddSetButton
+	#tag Event
+		Sub Open()
+		  Me.IconNormal = IconAddWithMenuNormal
+		  Me.IconPressed = IconAddWithMenuPressed
+		  Me.IconDisabled = IconAddWithMenuDisabled
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  Self.AddSet(New Ark.ItemSet)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function MouseHold(X As Integer, Y As Integer) As Boolean
+		  Dim Source As MenuItem = DocumentAddItemSet
+		  Dim Base As New MenuItem
+		  For I As Integer = 0 To Source.Count - 1
+		    Dim Item As New MenuItem(Source.Item(I))
+		    Base.Append(Item)
+		  Next
+		  
+		  Dim Position As Xojo.Core.Point = Self.GlobalPosition
+		  Call Base.PopUp(Position.X + Me.Left, Position.Y + Me.Top + Me.Height)
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events RemoveSetButton
+	#tag Event
+		Sub Open()
+		  Me.IconNormal = IconRemoveNormal
+		  Me.IconPressed = IconRemovePressed
+		  Me.IconDisabled = IconRemoveDisabled
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  Self.RemoveSelectedItemSet()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

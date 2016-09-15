@@ -160,7 +160,11 @@ Implements Ark.Countable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mLabel
+			  If Self.mLabel <> "" Then
+			    Return Self.mLabel
+			  Else
+			    Return Self.mType
+			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter

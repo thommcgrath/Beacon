@@ -10,7 +10,7 @@ Begin Window DocWindow
    FullScreenButton=   False
    HasBackColor    =   False
    Height          =   580
-   ImplicitInstance=   True
+   ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
    MaxHeight       =   32000
@@ -44,7 +44,7 @@ Begin Window DocWindow
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   580
+      Height          =   555
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -76,7 +76,7 @@ Begin Window DocWindow
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin Canvas Separators
+   Begin ControlCanvas Separators
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
@@ -86,7 +86,7 @@ Begin Window DocWindow
       EraseBackground =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
+      Index           =   0
       InitialParent   =   ""
       Left            =   190
       LockBottom      =   True
@@ -115,7 +115,6 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -132,6 +131,180 @@ Begin Window DocWindow
       UseFocusRing    =   False
       Visible         =   True
       Width           =   809
+   End
+   Begin GraphicButton AddBeaconButton
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   24
+      HelpTag         =   ""
+      IconDisabled    =   0
+      IconNormal      =   0
+      IconPressed     =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   556
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   30
+   End
+   Begin GraphicButton RemoveBeaconButton
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   False
+      EraseBackground =   True
+      Height          =   24
+      HelpTag         =   ""
+      IconDisabled    =   0
+      IconNormal      =   0
+      IconPressed     =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   31
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   556
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   30
+   End
+   Begin FooterBar Footer
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   24
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   62
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   556
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   128
+   End
+   Begin ControlCanvas Separators
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   24
+      HelpTag         =   ""
+      Index           =   1
+      InitialParent   =   ""
+      Left            =   30
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   556
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
+   End
+   Begin ControlCanvas Separators
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   24
+      HelpTag         =   ""
+      Index           =   2
+      InitialParent   =   ""
+      Left            =   61
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   556
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
+   End
+   Begin ControlCanvas Separators
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   3
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   555
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   190
    End
 End
 #tag EndWindow
@@ -199,14 +372,7 @@ End
 
 	#tag MenuHandler
 		Function DocumentAddBeacon() As Boolean Handles DocumentAddBeacon.Action
-			Dim Beacon As Ark.Beacon = BeaconAddSheet.Present(Self, Self.Doc)
-			If Beacon <> Nil Then
-			BeaconList.AddRow(Beacon.Label)
-			BeaconList.RowTag(BeaconList.LastIndex) = Beacon
-			BeaconList.ListIndex = BeaconList.LastIndex
-			Self.Doc.Add(Beacon)
-			Self.ContentsChanged = True
-			End If
+			Self.ShowAddBeacon()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -235,13 +401,7 @@ End
 
 	#tag MenuHandler
 		Function DocumentRemoveBeacon() As Boolean Handles DocumentRemoveBeacon.Action
-			If BeaconList.ListIndex = -1 Then
-			Return True
-			End If
-			Dim CurrentBeacon As Ark.Beacon = BeaconList.RowTag(BeaconList.ListIndex)
-			Self.Doc.Remove(CurrentBeacon)
-			Self.ContentsChanged = True
-			BeaconList.RemoveRow(BeaconList.ListIndex)
+			Self.RemoveSelectedBeacon()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -292,6 +452,16 @@ End
 	#tag EndMenuHandler
 
 
+	#tag Method, Flags = &h21
+		Private Sub AddBeacon(Beacon As Ark.Beacon)
+		  BeaconList.AddRow(Beacon.Label)
+		  BeaconList.RowTag(BeaconList.LastIndex) = Beacon
+		  BeaconList.ListIndex = BeaconList.LastIndex
+		  Self.Doc.Add(Beacon)
+		  Self.ContentsChanged = True
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.Doc = New BeaconDocument
@@ -314,6 +484,18 @@ End
 		  Self.Doc = BeaconDocument.Read(Self.File)
 		  Self.Title = File.Name
 		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RemoveSelectedBeacon()
+		  If BeaconList.ListIndex = -1 Then
+		    Return
+		  End If
+		  Dim CurrentBeacon As Ark.Beacon = BeaconList.RowTag(BeaconList.ListIndex)
+		  Self.Doc.Remove(CurrentBeacon)
+		  Self.ContentsChanged = True
+		  BeaconList.RemoveRow(BeaconList.ListIndex)
 		End Sub
 	#tag EndMethod
 
@@ -356,6 +538,15 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ShowAddBeacon()
+		  Dim Beacon As Ark.Beacon = BeaconAddSheet.Present(Self, Self.Doc)
+		  If Beacon <> Nil Then
+		    Self.AddBeacon(Beacon)
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private Doc As BeaconDocument
@@ -371,6 +562,8 @@ End
 #tag Events BeaconList
 	#tag Event
 		Sub Change()
+		  RemoveBeaconButton.Enabled = Me.ListIndex > -1
+		  
 		  If Me.ListIndex = -1 Then
 		    Editor.Enabled = False
 		    Editor.Beacon = Nil
@@ -383,10 +576,10 @@ End
 #tag EndEvents
 #tag Events Separators
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
-		  G.ForeColor = &cBBBBBB
+		  G.ForeColor = &cCCCCCC
 		  G.FillRect(0, 0, G.Width, G.Height)
 		End Sub
 	#tag EndEvent
@@ -398,6 +591,74 @@ End
 		  If BeaconList.ListIndex > -1 Then
 		    BeaconList.Cell(BeaconList.ListIndex, 0) = Ark.Beacon(BeaconList.RowTag(BeaconList.ListIndex)).Label
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AddBeaconButton
+	#tag Event
+		Sub Open()
+		  Me.IconNormal = IconAddWithMenuNormal
+		  Me.IconPressed = IconAddWithMenuPressed
+		  Me.IconDisabled = IconAddWithMenuDisabled
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  Self.ShowAddBeacon()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function MouseHold(X As Integer, Y As Integer) As Boolean
+		  Dim Base As New MenuItem
+		  Dim Beacons() As Ark.Beacon = App.DataSource.SearchForBeacons("")
+		  For I As Integer = UBound(Beacons) DownTo 0
+		    If Self.Doc.HasBeacon(Beacons(I)) Then
+		      Beacons.Remove(I)
+		    End If
+		  Next
+		  
+		  For Each Beacon As Ark.Beacon In Beacons
+		    Base.Append(New MenuItem(Beacon.Label, Beacon))
+		  Next
+		  
+		  If UBound(Beacons) > -1 Then
+		    Base.Append(New MenuItem(MenuItem.TextSeparator))
+		  End If
+		  
+		  Base.Append(New MenuItem("New custom beacon…"))
+		  
+		  Dim Position As Xojo.Core.Point = Self.GlobalPosition
+		  Dim Choice As MenuItem = Base.PopUp(Position.X + Me.Left, Position.Y + Me.Top + Me.Height)
+		  If Choice = Nil Then
+		    Return True
+		  End If
+		  
+		  Dim SelectedBeacon As Ark.Beacon
+		  If Choice.Tag = Nil Then
+		    SelectedBeacon = CustomBeaconSheet.Present(Self)
+		  Else
+		    SelectedBeacon = Choice.Tag
+		  End If
+		  
+		  If SelectedBeacon <> Nil Then
+		    Self.AddBeacon(SelectedBeacon)
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events RemoveBeaconButton
+	#tag Event
+		Sub Open()
+		  Me.IconNormal = IconRemoveNormal
+		  Me.IconPressed = IconRemovePressed
+		  Me.IconDisabled = IconRemoveDisabled
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  Self.RemoveSelectedBeacon()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

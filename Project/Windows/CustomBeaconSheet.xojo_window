@@ -1,5 +1,5 @@
 #tag Window
-Begin Window BeaconAddSheet
+Begin Window CustomBeaconSheet
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
@@ -9,9 +9,9 @@ Begin Window BeaconAddSheet
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   124
+   Height          =   126
    ImplicitInstance=   False
-   LiveResize      =   True
+   LiveResize      =   False
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   False
@@ -23,37 +23,48 @@ Begin Window BeaconAddSheet
    MinWidth        =   64
    Placement       =   1
    Resizeable      =   False
-   Title           =   "Add Beacon"
+   Title           =   "Define Custom Beacon"
    Visible         =   True
    Width           =   500
-   Begin PopupMenu BeaconMenu
+   Begin TextField ClassField
+      AcceptTabs      =   False
+      Alignment       =   0
       AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
       Bold            =   False
+      Border          =   True
+      CueText         =   "Class String"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      Height          =   20
+      Format          =   ""
+      Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   ""
       Italic          =   False
       Left            =   20
-      ListIndex       =   0
+      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   52
       Underline       =   False
+      UseFocusRing    =   True
       Visible         =   True
       Width           =   460
    End
@@ -77,13 +88,13 @@ Begin Window BeaconAddSheet
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   84
+      Top             =   86
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -108,13 +119,13 @@ Begin Window BeaconAddSheet
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   84
+      Top             =   86
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -139,7 +150,7 @@ Begin Window BeaconAddSheet
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   3
+      TabIndex        =   6
       TabPanelIndex   =   0
       Text            =   "Add Custom Beacon"
       TextAlign       =   0
@@ -158,59 +169,36 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DocWindow, Document As BeaconDocument) As Ark.Beacon
-		  Static AllowedBeacons() As Ark.Beacon
-		  If UBound(AllowedBeacons) = -1 Then
-		    AllowedBeacons = App.DataSource.SearchForBeacons("")
-		  End If
-		  
-		  Dim Win As New BeaconAddSheet
-		  For Each Beacon As Ark.Beacon In AllowedBeacons
-		    If Document.HasBeacon(Beacon) Then
-		      Continue
-		    End If
-		    Win.BeaconMenu.AddRow(Beacon.Label)
-		    Win.BeaconMenu.RowTag(Win.BeaconMenu.ListCount - 1) = Beacon
-		  Next
-		  If Win.BeaconMenu.ListCount = 0 Then
-		    Win.Close
-		    Dim Dialog As New MessageDialog
-		    Dialog.Message = "There are no more beacons to add"
-		    Dialog.Explanation = "Sorry, there are only so many."
-		    Call Dialog.ShowModalWithin(Parent)
-		    Return Nil
-		  End If
-		  Win.ShowModalWithin(Parent)
-		  If Win.mCancelled Or Win.BeaconMenu.ListIndex = -1 Then
-		    Win.Close
-		    Return Nil
-		  End If
-		  
-		  Dim Beacon As Ark.Beacon = Win.BeaconMenu.RowTag(Win.BeaconMenu.ListIndex)
+		Shared Function Present(Parent As Window) As Ark.Beacon
+		  Dim Win As New CustomBeaconSheet
+		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Dim Beacon As Ark.Beacon = Win.mBeacon
 		  Win.Close
-		  Return New Ark.Beacon(Beacon)
+		  Return Beacon
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mCancelled As Boolean
+		Private mBeacon As Ark.Beacon
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events BeaconMenu
+#tag Events ClassField
 	#tag Event
-		Sub Change()
-		  ActionButton.Enabled = Me.ListIndex > -1
+		Sub TextChange()
+		  ActionButton.Enabled = Me.Text <> ""
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Self.mCancelled = False
+		  Dim Type As String = ClassField.Text
+		  Dim Label As String = App.DataSource.NameOfBeacon(Type)
+		  Self.mBeacon = New Ark.Beacon(Label.ToText, Type.ToText)
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -218,7 +206,7 @@ End
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.mCancelled = True
+		  Self.mBeacon = Nil
 		  Self.Hide
 		End Sub
 	#tag EndEvent
