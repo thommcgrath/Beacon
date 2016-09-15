@@ -39,6 +39,7 @@ MultiImage=IconRemoveDisabled;Icons/IconRemoveDisabled.xojo_image;&h4CFC7FFF;&h7
 MultiImage=IconRemoveNormal;Icons/IconRemoveNormal.xojo_image;&h3CD3C7FF;&h7F977FF;false
 MultiImage=IconRemovePressed;Icons/IconRemovePressed.xojo_image;&h11C047FF;&h7F977FF;false
 Folder=Custom Controls;Custom Controls;&h30DCFFFF;&h0;false
+Class=ClipboardListbox;Custom Controls/ClipboardListbox.xojo_code;&h2536EFFF;&h30DCFFFF;false
 Class=ControlCanvas;Custom Controls/ControlCanvas.xojo_code;&h74CEBFFF;&h30DCFFFF;false
 Class=GraphicButton;Custom Controls/GraphicButton.xojo_code;&h1CE52FFF;&h30DCFFFF;false
 Class=FooterBar;Custom Controls/FooterBar.xojo_code;&h6A761FFF;&h30DCFFFF;false

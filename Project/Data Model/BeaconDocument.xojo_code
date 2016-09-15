@@ -44,8 +44,8 @@ Protected Class BeaconDocument
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function Export(Beacon As Ark.Beacon) As Xojo.Core.Dictionary
+	#tag Method, Flags = &h0
+		Shared Function Export(Beacon As Ark.Beacon) As Xojo.Core.Dictionary
 		  Dim Children() As Xojo.Core.Dictionary
 		  For Each Set As Ark.ItemSet In Beacon
 		    Children.Append(BeaconDocument.Export(Set))
@@ -63,8 +63,8 @@ Protected Class BeaconDocument
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function Export(Item As Ark.ItemClass) As Xojo.Core.Dictionary
+	#tag Method, Flags = &h0
+		Shared Function Export(Item As Ark.ItemClass) As Xojo.Core.Dictionary
 		  Dim Keys As New Xojo.Core.Dictionary
 		  Keys.Value("Class") = Item.ClassString
 		  Keys.Value("Weight") = Item.Weight
@@ -72,8 +72,8 @@ Protected Class BeaconDocument
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function Export(Set As Ark.ItemSet) As Xojo.Core.Dictionary
+	#tag Method, Flags = &h0
+		Shared Function Export(Set As Ark.ItemSet) As Xojo.Core.Dictionary
 		  Dim Children() As Xojo.Core.Dictionary
 		  For Each Entry As Ark.SetEntry In Set
 		    Children.Append(BeaconDocument.Export(Entry))
@@ -91,8 +91,8 @@ Protected Class BeaconDocument
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function Export(Entry As Ark.SetEntry) As Xojo.Core.Dictionary
+	#tag Method, Flags = &h0
+		Shared Function Export(Entry As Ark.SetEntry) As Xojo.Core.Dictionary
 		  Dim Children() As Xojo.Core.Dictionary
 		  For Each Item As Ark.ItemClass In Entry
 		    Children.Append(BeaconDocument.Export(Item))
@@ -121,8 +121,8 @@ Protected Class BeaconDocument
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function ImportAsBeacon(Keys As Xojo.Core.Dictionary) As Ark.Beacon
+	#tag Method, Flags = &h0
+		Shared Function ImportAsBeacon(Keys As Xojo.Core.Dictionary) As Ark.Beacon
 		  Dim Beacon As New Ark.Beacon
 		  Beacon.Label = Keys.Lookup("Label", Beacon.Label)
 		  Beacon.MaxItemSets = Keys.Lookup("MaxItemSets", Beacon.MaxItemSets)
@@ -142,8 +142,8 @@ Protected Class BeaconDocument
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function ImportAsEntry(Keys As Xojo.Core.Dictionary) As Ark.SetEntry
+	#tag Method, Flags = &h0
+		Shared Function ImportAsEntry(Keys As Xojo.Core.Dictionary) As Ark.SetEntry
 		  Dim Entry As New Ark.SetEntry
 		  Entry.ChanceToBeBlueprint = Keys.Lookup("ChanceToBeBlueprint", Entry.ChanceToBeBlueprint)
 		  Entry.MaxQuality = Keys.Lookup("MaxQuality", Entry.MaxQuality)
@@ -163,14 +163,14 @@ Protected Class BeaconDocument
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function ImportAsItemClass(Keys As Xojo.Core.Dictionary) As Ark.ItemClass
+	#tag Method, Flags = &h0
+		Shared Function ImportAsItemClass(Keys As Xojo.Core.Dictionary) As Ark.ItemClass
 		  Return New Ark.ItemClass(Keys.Value("Class"), Keys.Value("Weight"))
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function ImportAsItemSet(Keys As Xojo.Core.Dictionary) As Ark.ItemSet
+	#tag Method, Flags = &h0
+		Shared Function ImportAsItemSet(Keys As Xojo.Core.Dictionary) As Ark.ItemSet
 		  Dim Set As New Ark.ItemSet
 		  Set.ItemsRandomWithoutReplacement = Keys.Lookup("ItemsRandomWithoutReplacement", Set.ItemsRandomWithoutReplacement)
 		  Set.Label = Keys.Lookup("Label", Set.Label)

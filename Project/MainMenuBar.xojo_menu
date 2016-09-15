@@ -132,7 +132,7 @@ Begin Menu MainMenuBar
          ShortcutKey = "X"
          Shortcut = "Cmd+X"
          MenuModifier = True
-         AutoEnable = True
+         AutoEnable = False
          Visible = True
       End
       Begin MenuItem EditCopy
@@ -142,7 +142,7 @@ Begin Menu MainMenuBar
          ShortcutKey = "C"
          Shortcut = "Cmd+C"
          MenuModifier = True
-         AutoEnable = True
+         AutoEnable = False
          Visible = True
       End
       Begin MenuItem EditPaste
@@ -152,14 +152,14 @@ Begin Menu MainMenuBar
          ShortcutKey = "V"
          Shortcut = "Cmd+V"
          MenuModifier = True
-         AutoEnable = True
+         AutoEnable = False
          Visible = True
       End
       Begin MenuItem EditClear
          SpecialMenu = 0
          Text = "#App.kEditClear"
          Index = -2147483648
-         AutoEnable = True
+         AutoEnable = False
          Visible = True
       End
       Begin MenuItem EditSeparator2

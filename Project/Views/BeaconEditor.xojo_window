@@ -313,7 +313,7 @@ Begin ContainerControl BeaconEditor
       Visible         =   True
       Width           =   598
    End
-   Begin Listbox SetList
+   Begin ClipboardListbox SetList
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -1547,6 +1547,10 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.itemset", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
 #tag Events LabelField
@@ -1628,6 +1632,55 @@ End
 		    Editor.Enabled = True
 		  End If
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.ListIndex > -1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.RawDataAvailable(Self.kClipboardType)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear()
+		  Self.RemoveSelectedItemSet()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Dim Set As Ark.ItemSet = Me.RowTag(Me.ListIndex)
+		  Dim Dict As Xojo.Core.Dictionary = BeaconDocument.Export(Set)
+		  If Dict <> Nil Then
+		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
+		    Board.AddRawData(Contents, Self.kClipboardType)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
+		    Return
+		  End If
+		  
+		  Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
+		  Dim Dict As Xojo.Core.Dictionary
+		  Try
+		    Dict = Xojo.Data.ParseJSON(Contents.ToText)
+		  Catch Err As RuntimeException
+		    Beep
+		    Return
+		  End Try
+		  
+		  Dim Set As Ark.ItemSet = BeaconDocument.ImportAsItemSet(Dict)
+		  Self.AddSet(Set)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.ListIndex > -1
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events Editor

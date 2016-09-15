@@ -26,7 +26,7 @@ Begin Window DocWindow
    Title           =   "Beacon"
    Visible         =   True
    Width           =   1000
-   Begin Listbox BeaconList
+   Begin ClipboardListbox BeaconList
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -352,6 +352,7 @@ End
 		    DocumentDuplicateBeacon.Enable
 		    DocumentRemoveBeacon.Enable
 		    Editor.EnableMenuItems
+		    EditClear.Enable
 		  End If
 		  If Self.Doc.BeaconCount > 0 Then
 		    FileExportConfig.Enable
@@ -454,9 +455,24 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddBeacon(Beacon As Ark.Beacon)
-		  BeaconList.AddRow(Beacon.Label)
-		  BeaconList.RowTag(BeaconList.LastIndex) = Beacon
-		  BeaconList.ListIndex = BeaconList.LastIndex
+		  Dim Idx As Integer
+		  If Self.Doc.HasBeacon(Beacon) Then
+		    Self.Doc.Remove(Beacon)
+		    
+		    For I As Integer = 0 To BeaconList.ListCount - 1
+		      If Ark.Beacon(BeaconList.RowTag(I)).Type = Beacon.Type Then
+		        Idx = I
+		        Exit For I
+		      End If
+		    Next
+		  Else
+		    BeaconList.AddRow("")
+		    Idx = BeaconList.LastIndex
+		  End If
+		  
+		  BeaconList.RowTag(Idx) = Beacon
+		  BeaconList.Cell(Idx, 0) = Beacon.Label
+		  BeaconList.ListIndex = Idx
 		  Self.Doc.Add(Beacon)
 		  Self.ContentsChanged = True
 		End Sub
@@ -557,6 +573,10 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.beacon", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
 #tag Events BeaconList
@@ -572,6 +592,55 @@ End
 		    Editor.Enabled = True
 		  End If
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.ListIndex > -1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.RawDataAvailable(Self.kClipboardType)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Dim Beacon As Ark.Beacon = Me.RowTag(Me.ListIndex)
+		  Dim Dict As Xojo.Core.Dictionary = BeaconDocument.Export(Beacon)
+		  If Dict <> Nil Then
+		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
+		    Board.AddRawData(Contents, Self.kClipboardType)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear()
+		  Self.RemoveSelectedBeacon()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
+		    Return
+		  End If
+		  
+		  Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
+		  Dim Dict As Xojo.Core.Dictionary
+		  Try
+		    Dict = Xojo.Data.ParseJSON(Contents.ToText)
+		  Catch Err As RuntimeException
+		    Beep
+		    Return
+		  End Try
+		  
+		  Dim Beacon As Ark.Beacon = BeaconDocument.ImportAsBeacon(Dict)
+		  Self.AddBeacon(Beacon)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.ListIndex > -1
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events Separators

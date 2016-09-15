@@ -25,7 +25,7 @@ Begin ContainerControl SetEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   560
-   Begin Listbox EntryList
+   Begin ClipboardListbox EntryList
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -724,6 +724,28 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub RemoveSelectedEntry()
+		  Dim Changed As Boolean
+		  
+		  For I As Integer = EntryList.ListCount - 1 DownTo 0
+		    If Not EntryList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim Entry As Ark.SetEntry = EntryList.RowTag(I)
+		    Dim Idx As Integer = Self.mSet.IndexOf(Entry)
+		    Self.mSet.Remove(Idx)
+		    Changed = True
+		  Next
+		  
+		  If Changed Then
+		    Self.UpdateEntryList()
+		    RaiseEvent Updated
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateEntryList()
 		  EntryList.DeleteAllRows
 		  If Self.mSet <> Nil Then
@@ -805,6 +827,10 @@ End
 	#tag EndComputedProperty
 
 
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.setentry", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
 #tag Events EntryList
@@ -813,6 +839,57 @@ End
 		  EditButton.Enabled = Me.SelCount > 0
 		  DeleteButton.Enabled = Me.SelCount > 0
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.ListIndex > -1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.RawDataAvailable(Self.kClipboardType)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear()
+		  Self.RemoveSelectedEntry()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Dim Entry As Ark.SetEntry = Me.RowTag(Me.ListIndex)
+		  Dim Dict As Xojo.Core.Dictionary = BeaconDocument.Export(Entry)
+		  If Dict <> Nil Then
+		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
+		    Board.AddRawData(Contents, Self.kClipboardType)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
+		    Return
+		  End If
+		  
+		  Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
+		  Dim Dict As Xojo.Core.Dictionary
+		  Try
+		    Dict = Xojo.Data.ParseJSON(Contents.ToText)
+		  Catch Err As RuntimeException
+		    Beep
+		    Return
+		  End Try
+		  
+		  Dim Entry As Ark.SetEntry = BeaconDocument.ImportAsEntry(Dict)
+		  Self.mSet.Append(Entry)
+		  Self.UpdateEntryList()
+		  RaiseEvent Updated
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.ListIndex > -1
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events LabelField
@@ -956,23 +1033,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Dim Changed As Boolean
-		  
-		  For I As Integer = EntryList.ListCount - 1 DownTo 0
-		    If Not EntryList.Selected(I) Then
-		      Continue
-		    End If
-		    
-		    Dim Entry As Ark.SetEntry = EntryList.RowTag(I)
-		    Dim Idx As Integer = Self.mSet.IndexOf(Entry)
-		    Self.mSet.Remove(Idx)
-		    Changed = True
-		  Next
-		  
-		  If Changed Then
-		    Self.UpdateEntryList()
-		    RaiseEvent Updated
-		  End If
+		  Self.RemoveSelectedEntry()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
