@@ -1439,8 +1439,8 @@ End
 		  Entry.Append(New Ark.ItemClass(ClassString.ToText, 1))
 		  Entry.MinQuantity = MinQuantity
 		  Entry.MaxQuantity = MaxQuantity
-		  Entry.MinQuality = MinQuality
-		  Entry.MaxQuality = MaxQuality
+		  Entry.MinQuality = MinQuality / Editor.Multipliers.Min
+		  Entry.MaxQuality = MaxQuality / Editor.Multipliers.Max
 		  Entry.Weight = Weight
 		  Entry.ChanceToBeBlueprint = 0.1
 		  Set.Append(Entry)
@@ -1528,6 +1528,7 @@ End
 			      SetList.AddRow(Set.Label)
 			      SetList.RowTag(SetList.LastIndex) = Set
 			    Next
+			    Editor.Multipliers = App.DataSource.MultipliersForBeacon(Self.mBeacon)
 			  Else
 			    LabelField.Text = ""
 			    MaxSetsField.Text = ""

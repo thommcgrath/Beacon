@@ -28,6 +28,26 @@ Inherits SQLiteDatabase
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MultipliersForBeacon(Beacon As Ark.Beacon) As Ark.Range
+		  Return Self.MultipliersForBeacon(Beacon.Type)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MultipliersForBeacon(ClassString As String) As Ark.Range
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""minmult"", ""maxmult"" FROM ""beacons"" WHERE ""classstring"" = ?;")
+		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		  
+		  Dim RS As RecordSet = Statement.SQLSelect(ClassString)
+		  If RS = Nil Or RS.RecordCount = 0 Then
+		    Return New Ark.Range(1, 1)
+		  End If
+		  
+		  Return New Ark.Range(RS.Field("minmult").DoubleValue, RS.Field("maxmult").DoubleValue)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function NameOfBeacon(ClassString As String) As String
 		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"" FROM ""beacons"" WHERE ""classstring"" = ?;")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
@@ -857,69 +877,71 @@ Inherits SQLiteDatabase
 
 	#tag Method, Flags = &h21
 		Private Function UpdateToVersion2() As Boolean
-		  Self.SQLExecute("CREATE TABLE ""beacons"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE ""beacons"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""minmult"" REAL NOT NULL DEFAULT 1, ""maxmult"" REAL NOT NULL DEFAULT 1);")
 		  
-		  Dim Statement As SQLitePreparedStatement = Self.Prepare("INSERT INTO ""beacons"" (""classstring"", ""label"") VALUES (?, ?);")
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("INSERT INTO ""beacons"" (""classstring"", ""label"", ""minmult"", ""maxmult"") VALUES (?, ?, ?, ?);")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  Statement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
+		  Statement.BindType(2, SQLitePreparedStatement.SQLITE_DOUBLE)
+		  Statement.BindType(3, SQLitePreparedStatement.SQLITE_DOUBLE)
 		  
 		  // The Island + The Center
 		  
-		  Statement.SQLExecute("SupplyCrate_Level03_C", "Island White (Level 3)")
-		  Statement.SQLExecute("SupplyCrate_Level03_Double_C", "Island White + Bonus (Level 3)")
-		  Statement.SQLExecute("SupplyCrate_Level15_C", "Island Green (Level 15)")
-		  Statement.SQLExecute("SupplyCrate_Level15_Double_C", "Island Green + Bonus (Level 15)")
-		  Statement.SQLExecute("SupplyCrate_Level25_C", "Island Blue (Level 25)")
-		  Statement.SQLExecute("SupplyCrate_Level25_Double_C", "Island Blue + Bonus (Level 25)")
-		  Statement.SQLExecute("SupplyCrate_Level35_C", "Island Purple (Level 35)")
-		  Statement.SQLExecute("SupplyCrate_Level35_Double_C", "Island Purple + Bonus (Level 35)")
-		  Statement.SQLExecute("SupplyCrate_Level45_C", "Island Yellow (Level 45)")
-		  Statement.SQLExecute("SupplyCrate_Level45_Double_C", "Island Yellow + Bonus (Level 45)")
-		  Statement.SQLExecute("SupplyCrate_Level60_C", "Island Red (Level 60)")
-		  Statement.SQLExecute("SupplyCrate_Level60_Double_C", "Island Red + Bonus (Level 60)")
+		  Statement.SQLExecute("SupplyCrate_Level03_C", "Island White (Level 3)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level03_Double_C", "Island White + Bonus (Level 3)", 2, 2)
+		  Statement.SQLExecute("SupplyCrate_Level15_C", "Island Green (Level 15)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level15_Double_C", "Island Green + Bonus (Level 15)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level25_C", "Island Blue (Level 25)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level25_Double_C", "Island Blue + Bonus (Level 25)", 2, 2)
+		  Statement.SQLExecute("SupplyCrate_Level35_C", "Island Purple (Level 35)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level35_Double_C", "Island Purple + Bonus (Level 35)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level45_C", "Island Yellow (Level 45)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level45_Double_C", "Island Yellow + Bonus (Level 45)", 2, 2)
+		  Statement.SQLExecute("SupplyCrate_Level60_C", "Island Red (Level 60)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level60_Double_C", "Island Red + Bonus (Level 60)", 2, 2)
 		  
-		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier1_C", "Island Cave Tier 1")
-		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier2_C", "Island Cave Tier 2")
-		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier3_C", "Island Cave Tier 3")
-		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier4_C", "Island Cave Tier 4")
-		  Statement.SQLExecute("SupplyCrate_SwampCaveTier1_C", "Island Swamp Cave Blue")
-		  Statement.SQLExecute("SupplyCrate_SwampCaveTier2_C", "Island Swamp Cave Yellow")
-		  Statement.SQLExecute("SupplyCrate_SwampCaveTier3_C", "Island Swamp Cave Red")
-		  Statement.SQLExecute("SupplyCrate_IceCaveTier1_C", "Island Ice Cave Blue")
-		  Statement.SQLExecute("SupplyCrate_IceCaveTier2_C", "Island Ice Cave Yellow")
-		  Statement.SQLExecute("SupplyCrate_IceCaveTier3_C", "Island Ice Cave Red")
-		  Statement.SQLExecute("SupplyCrate_OceanInstant_C", "Island Deep Sea")
-		  Statement.SQLExecute("ArtifactCrate_1_C", "Island Artifact Hunter")
-		  Statement.SQLExecute("ArtifactCrate_2_C", "Island Artifact Pack")
-		  Statement.SQLExecute("ArtifactCrate_3_C", "Island Artifact Massive")
-		  Statement.SQLExecute("ArtifactCrate_4_C", "Island Artifact Devious")
-		  Statement.SQLExecute("ArtifactCrate_5_C", "Island Artifact Clever")
-		  Statement.SQLExecute("ArtifactCrate_6_C", "Island Artifact Skylord")
-		  Statement.SQLExecute("ArtifactCrate_7_C", "Island Artifact Devourer")
-		  Statement.SQLExecute("ArtifactCrate_8_C", "Island Artifact Immune")
-		  Statement.SQLExecute("ArtifactCrate_9_C", "Island Artifact Strong")
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier1_C", "Island Cave Green", 1, 1.75)
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier2_C", "Island Cave Blue", 1.75, 2.5)
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier3_C", "Island Cave Yellow", 2.5, 3.25)
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier4_C", "Island Cave Red", 3.25, 4)
+		  Statement.SQLExecute("SupplyCrate_SwampCaveTier1_C", "Island Swamp Cave Blue", 1.75, 2.5)
+		  Statement.SQLExecute("SupplyCrate_SwampCaveTier2_C", "Island Swamp Cave Yellow", 2.5, 3.25)
+		  Statement.SQLExecute("SupplyCrate_SwampCaveTier3_C", "Island Swamp Cave Red", 3.25, 4)
+		  Statement.SQLExecute("SupplyCrate_IceCaveTier1_C", "Island Ice Cave Blue", 1.75, 2.5)
+		  Statement.SQLExecute("SupplyCrate_IceCaveTier2_C", "Island Ice Cave Yellow", 2.5, 3.25)
+		  Statement.SQLExecute("SupplyCrate_IceCaveTier3_C", "Island Ice Cave Red", 3.25, 4)
+		  Statement.SQLExecute("SupplyCrate_OceanInstant_C", "Island Deep Sea", 3.25, 4)
+		  Statement.SQLExecute("ArtifactCrate_1_C", "Island Artifact Hunter", 1, 1)
+		  Statement.SQLExecute("ArtifactCrate_2_C", "Island Artifact Pack", 1, 1)
+		  Statement.SQLExecute("ArtifactCrate_3_C", "Island Artifact Massive", 1, 1)
+		  Statement.SQLExecute("ArtifactCrate_4_C", "Island Artifact Devious", 1, 1)
+		  Statement.SQLExecute("ArtifactCrate_5_C", "Island Artifact Clever", 1, 1)
+		  Statement.SQLExecute("ArtifactCrate_6_C", "Island Artifact Skylord", 1, 1)
+		  Statement.SQLExecute("ArtifactCrate_7_C", "Island Artifact Devourer", 1, 1)
+		  Statement.SQLExecute("ArtifactCrate_8_C", "Island Artifact Immune", 1, 1)
+		  Statement.SQLExecute("ArtifactCrate_9_C", "Island Artifact Strong", 1, 1)
 		  
 		  // Scorched Earth
 		  
-		  Statement.SQLExecute("SupplyCrate_Level03_ScorchedEarth_C", "Scorched White (Level 3)")
-		  Statement.SQLExecute("SupplyCrate_Level03_Double_ScorchedEarth_C", "Scorched White + Bonus (Level 3)")
-		  Statement.SQLExecute("SupplyCrate_Level15_ScorchedEarth_C", "Scorched Green (Level 15)")
-		  Statement.SQLExecute("SupplyCrate_Level15_Double_ScorchedEarth_C", "Scorched Green + Bonus (Level 15)")
-		  Statement.SQLExecute("SupplyCrate_Level30_ScorchedEarth_C", "Scorched Blue (Level 30)")
-		  Statement.SQLExecute("SupplyCrate_Level30_Double_ScorchedEarth_C", "Scorched Blue + Bonus (Level 30)")
-		  Statement.SQLExecute("SupplyCrate_Level45_ScorchedEarth_C", "Scorched Purple (Level 45)")
-		  Statement.SQLExecute("SupplyCrate_Level45_Double_ScorchedEarth_C", "Scorched Purple + Bonus (Level 45)")
-		  Statement.SQLExecute("SupplyCrate_Level55_ScorchedEarth_C", "Scorched Yellow (Level 55)")
-		  Statement.SQLExecute("SupplyCrate_Level55_Double_ScorchedEarth_C", "Scorched Yellow + Bonus (Level 55)")
-		  Statement.SQLExecute("SupplyCrate_Level70_ScorchedEarth_C", "Scorched Red (Level 70)")
-		  Statement.SQLExecute("SupplyCrate_Level70_Double_ScorchedEarth_C", "Scorched Red + Bonus (Level 70)")
+		  Statement.SQLExecute("SupplyCrate_Level03_ScorchedEarth_C", "Scorched White (Level 3)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level03_Double_ScorchedEarth_C", "Scorched White + Bonus (Level 3)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level15_ScorchedEarth_C", "Scorched Green (Level 15)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level15_Double_ScorchedEarth_C", "Scorched Green + Bonus (Level 15)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level30_ScorchedEarth_C", "Scorched Blue (Level 30)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level30_Double_ScorchedEarth_C", "Scorched Blue + Bonus (Level 30)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level45_ScorchedEarth_C", "Scorched Purple (Level 45)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level45_Double_ScorchedEarth_C", "Scorched Purple + Bonus (Level 45)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level55_ScorchedEarth_C", "Scorched Yellow (Level 55)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level55_Double_ScorchedEarth_C", "Scorched Yellow + Bonus (Level 55)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level70_ScorchedEarth_C", "Scorched Red (Level 70)", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Level70_Double_ScorchedEarth_C", "Scorched Red + Bonus (Level 70)", 1, 1)
 		  
-		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier1_ScorchedEarth_C", "Scorched Cave Tier 1")
-		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier2_ScorchedEarth_C", "Scorched Cave Tier 2")
-		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier3_ScorchedEarth_C", "Scorched Cave Tier 3")
-		  Statement.SQLExecute("ArtifactCrate_SE_C", "Scorched Artifact Destroyer")
-		  Statement.SQLExecute("ArtifactCrate_2_SE_C", "Scorched Artifact Gatekeeper")
-		  Statement.SQLExecute("ArtifactCrate_3_SE_C", "Scorched Artifact Crag")
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier1_ScorchedEarth_C", "Scorched Cave Tier 1", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier2_ScorchedEarth_C", "Scorched Cave Tier 2", 1, 1)
+		  Statement.SQLExecute("SupplyCrate_Cave_QualityTier3_ScorchedEarth_C", "Scorched Cave Tier 3", 1, 1)
+		  Statement.SQLExecute("ArtifactCrate_SE_C", "Scorched Artifact Destroyer", 1, 1)
+		  Statement.SQLExecute("ArtifactCrate_2_SE_C", "Scorched Artifact Gatekeeper", 1, 1)
+		  Statement.SQLExecute("ArtifactCrate_3_SE_C", "Scorched Artifact Crag", 1, 1)
 		  
 		  Return True
 		End Function

@@ -44,6 +44,7 @@ Class=GraphicButton;Custom Controls/GraphicButton.xojo_code;&h1CE52FFF;&h30DCFFF
 Class=FooterBar;Custom Controls/FooterBar.xojo_code;&h6A761FFF;&h30DCFFFF;false
 Folder=Modules;Modules;&h1444B7FF;&h0;false
 Module=Ark;Modules/Ark.xojo_code;&h248637FF;&h1444B7FF;false
+Class=Range;Modules/Ark/Range.xojo_code;&h59ACFFF;&h248637FF;false
 Module=Extensions;Modules/Extensions.xojo_code;&h55ADDFFF;&h1444B7FF;false
 Folder=Data Model;Data Model;&h7CAFFFFF;&h0;false
 Class=BeaconDocument;Data Model/BeaconDocument.xojo_code;&h60A74FFF;&h7CAFFFFF;false

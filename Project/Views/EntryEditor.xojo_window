@@ -45,7 +45,7 @@ Begin Window EntryEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   592
       Begin PushButton CancelButton
@@ -497,7 +497,7 @@ Begin Window EntryEditor
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
-         InitialValue    =   "Primitive\nRamshackle\nApprentice\nJourneyman\nMastercraft\nAscendant"
+         InitialValue    =   "#Ark.LabelPrimitive\n#Ark.LabelRamshackle\n#Ark.LabelApprentice\n#Ark.LabelJourneyman\n#Ark.LabelMastercraft\n#Ark.LabelAscendant"
          Italic          =   False
          Left            =   184
          ListIndex       =   0
@@ -528,7 +528,7 @@ Begin Window EntryEditor
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
-         InitialValue    =   "Primitive\nRamshackle\nApprentice\nJourneyman\nMastercraft\nAscendant"
+         InitialValue    =   "#Ark.LabelPrimitive\n#Ark.LabelRamshackle\n#Ark.LabelApprentice\n#Ark.LabelJourneyman\n#Ark.LabelMastercraft\n#Ark.LabelAscendant"
          Italic          =   False
          Left            =   184
          ListIndex       =   0
@@ -1116,7 +1116,7 @@ End
 
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Sources() As Ark.SetEntry = Nil) As Ark.SetEntry()
+		Shared Function Present(Parent As Window, Multipliers As Ark.Range, Sources() As Ark.SetEntry = Nil) As Ark.SetEntry()
 		  Dim Win As New EntryEditor
 		  If Sources <> Nil And UBound(Sources) > -1 Then
 		    Win.mEditing = True
@@ -1152,7 +1152,7 @@ End
 		    Win.WeightSlider.Value = 100 * (TotalWeight / (UBound(Sources) + 1))
 		    Win.ChanceSlider.Value = 100 * (TotalChance / (UBound(Sources) + 1))
 		    
-		    Dim MinQuality As String = QualityForValue(MinQualities(0))
+		    Dim MinQuality As String = Ark.QualityForValue(MinQualities(0), Multipliers.Min)
 		    For I As Integer = 0 To Win.MinQualityMenu.ListCount - 1
 		      If Win.MinQualityMenu.List(I) = MinQuality Then
 		        Win.MinQualityMenu.ListIndex = I
@@ -1160,7 +1160,7 @@ End
 		      End If
 		    Next
 		    
-		    Dim MaxQuality As String = QualityForValue(MaxQualities(UBound(MaxQualities)))
+		    Dim MaxQuality As String = Ark.QualityForValue(MaxQualities(UBound(MaxQualities)), Multipliers.Max)
 		    For I As Integer = 0 To Win.MaxQualityMenu.ListCount - 1
 		      If Win.MaxQualityMenu.List(I) = MaxQuality Then
 		        Win.MaxQualityMenu.ListIndex = I
@@ -1211,32 +1211,14 @@ End
 		      Entry.Weight = Win.WeightSlider.Value / 100
 		    End If
 		    If Win.EditMaxQualityCheck.Value Then
-		      Entry.MaxQuality = EntryEditor.ValueForQuality(Win.MaxQualityMenu.Text)
+		      Entry.MaxQuality = Ark.ValueForQuality(Win.MaxQualityMenu.Text.ToText, Multipliers.Max)
 		    End If
 		    If Win.EditMinQualityCheck.Value Then
-		      Entry.MinQuality = EntryEditor.ValueForQuality(Win.MinQualityMenu.Text)
+		      Entry.MinQuality = Ark.ValueForQuality(Win.MinQualityMenu.Text.ToText, Multipliers.Min)
 		    End If
 		  Next
 		  Win.Close
 		  Return Entries
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function QualityForValue(Quality As Double) As String
-		  If Quality < 1.25 Then
-		    Return "Primitive"
-		  ElseIf Quality < 2.5 Then
-		    Return "Ramshackle"
-		  ElseIf Quality < 4.5 Then
-		    Return "Apprentice"
-		  ElseIf Quality < 7 Then
-		    Return "Journeyman"
-		  ElseIf Quality < 10 Then
-		    Return "Mastercraft"
-		  Else
-		    Return "Ascendant"
-		  End If
 		End Function
 	#tag EndMethod
 
@@ -1273,27 +1255,6 @@ End
 		    End If
 		  Next
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function ValueForQuality(Quality As String) As Double
-		  Select Case Quality
-		  Case "Primitive"
-		    Return 1
-		  Case "Ramshackle"
-		    Return 1.25
-		  Case "Apprentice"
-		    Return 2.5
-		  Case "Journeyman"
-		    Return 4.5
-		  Case "Mastercraft"
-		    Return 7
-		  Case "Ascendant"
-		    Return 10
-		  Else
-		    Return 1
-		  End Select
-		End Function
 	#tag EndMethod
 
 
