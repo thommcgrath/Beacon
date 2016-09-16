@@ -41,7 +41,6 @@ Inherits Listbox
 		Function EditClear() As Boolean Handles EditClear.Action
 			RaiseEvent PerformClear
 			Return True
-			
 		End Function
 	#tag EndMenuHandler
 
@@ -73,16 +72,12 @@ Inherits Listbox
 
 	#tag Method, Flags = &h0
 		Function CanCopy() As Boolean
-		  // Part of the ClipboardSupporter interface.
-		  
 		  Return RaiseEvent CanCopy()
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CanPaste() As Boolean
-		  // Part of the ClipboardSupporter interface.
-		  
 		  Dim Board As New Clipboard
 		  Return RaiseEvent CanPaste(Board)
 		End Function
