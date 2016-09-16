@@ -89,6 +89,7 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Label:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -165,6 +166,7 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Min Sets:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -241,6 +243,7 @@ Begin ContainerControl BeaconEditor
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Max Sets:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -402,6 +405,7 @@ Begin ContainerControl BeaconEditor
       HasBackColor    =   False
       Height          =   343
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -1529,7 +1533,7 @@ End
 			    LabelField.Text = ""
 			    MaxSetsField.Text = ""
 			    MinSetsField.Text = ""
-			    DuplicatesCheck.Value = False
+			    DuplicatesCheck.Value = True
 			    SetList.DeleteAllRows
 			  End If
 			  Self.mUpdating = False
@@ -1611,7 +1615,7 @@ End
 #tag EndEvents
 #tag Events Separators
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
 		  G.ForeColor = &cCCCCCC

@@ -115,6 +115,7 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -307,10 +308,13 @@ Begin Window DocWindow
       Width           =   190
    End
    Begin Ark.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
       Scope           =   2
+      StackSize       =   ""
+      State           =   ""
       TabPanelIndex   =   0
    End
 End
@@ -642,7 +646,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType)
+		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Left(Board.Text, 30) = "ConfigOverrideSupplyCrateItems")
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -653,6 +657,7 @@ End
 		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
 		    Board.AddRawData(Contents, Self.kClipboardType)
 		  End If
+		  Board.Text = "ConfigOverrideSupplyCrateItems=" + Beacon.TextValue
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -662,21 +667,24 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
-		    Return
+		  If Board.RawDataAvailable(Self.kClipboardType) Then
+		    Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
+		    Dim Dict As Xojo.Core.Dictionary
+		    Try
+		      Dict = Xojo.Data.ParseJSON(Contents.ToText)
+		    Catch Err As RuntimeException
+		      Beep
+		      Return
+		    End Try
+		    
+		    Dim Beacon As Ark.Beacon = BeaconDocument.ImportAsBeacon(Dict)
+		    Self.AddBeacon(Beacon)
+		  ElseIf Board.TextAvailable Then
+		    Dim Contents As String = Board.Text
+		    If Left(Contents, 30) = "ConfigOverrideSupplyCrateItems" Then
+		      Self.Import(Contents, "Clipboard")
+		    End If
 		  End If
-		  
-		  Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		  Dim Dict As Xojo.Core.Dictionary
-		  Try
-		    Dict = Xojo.Data.ParseJSON(Contents.ToText)
-		  Catch Err As RuntimeException
-		    Beep
-		    Return
-		  End Try
-		  
-		  Dim Beacon As Ark.Beacon = BeaconDocument.ImportAsBeacon(Dict)
-		  Self.AddBeacon(Beacon)
 		End Sub
 	#tag EndEvent
 	#tag Event
