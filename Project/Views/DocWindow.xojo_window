@@ -115,6 +115,7 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -306,6 +307,16 @@ Begin Window DocWindow
       Visible         =   True
       Width           =   190
    End
+   Begin Ark.ImportThread Importer
+      Enabled         =   True
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   0
+      Scope           =   2
+      StackSize       =   ""
+      State           =   ""
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -478,6 +489,17 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub CancelImport()
+		  Importer.Stop
+		  
+		  If Self.ImportProgress <> Nil Then
+		    Self.ImportProgress.Close
+		    Self.ImportProgress = Nil
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.Doc = New BeaconDocument
@@ -500,6 +522,26 @@ End
 		  Self.Doc = BeaconDocument.Read(Self.File)
 		  Self.Title = File.Name
 		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Import(File As FolderItem)
+		  Self.ImportProgress = New ImporterWindow
+		  Self.ImportProgress.Source = File.Name
+		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
+		  Self.ImportProgress.ShowWithin(Self)
+		  Self.Importer.Run(File)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Import(Content As String, Source As String)
+		  Self.ImportProgress = New ImporterWindow
+		  Self.ImportProgress.Source = Source
+		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
+		  Self.ImportProgress.ShowWithin(Self)
+		  Self.Importer.Run(Content.ToText)
 		End Sub
 	#tag EndMethod
 
@@ -572,6 +614,10 @@ End
 		Private File As Xojo.IO.FolderItem
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private ImportProgress As ImporterWindow
+	#tag EndProperty
+
 
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.beacon", Scope = Private
 	#tag EndConstant
@@ -600,7 +646,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType)
+		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Left(Board.Text, 30) = "ConfigOverrideSupplyCrateItems")
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -611,6 +657,7 @@ End
 		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
 		    Board.AddRawData(Contents, Self.kClipboardType)
 		  End If
+		  Board.Text = "ConfigOverrideSupplyCrateItems=" + Beacon.TextValue
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -620,21 +667,24 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
-		    Return
+		  If Board.RawDataAvailable(Self.kClipboardType) Then
+		    Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
+		    Dim Dict As Xojo.Core.Dictionary
+		    Try
+		      Dict = Xojo.Data.ParseJSON(Contents.ToText)
+		    Catch Err As RuntimeException
+		      Beep
+		      Return
+		    End Try
+		    
+		    Dim Beacon As Ark.Beacon = BeaconDocument.ImportAsBeacon(Dict)
+		    Self.AddBeacon(Beacon)
+		  ElseIf Board.TextAvailable Then
+		    Dim Contents As String = Board.Text
+		    If Left(Contents, 30) = "ConfigOverrideSupplyCrateItems" Then
+		      Self.Import(Contents, "Clipboard")
+		    End If
 		  End If
-		  
-		  Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		  Dim Dict As Xojo.Core.Dictionary
-		  Try
-		    Dict = Xojo.Data.ParseJSON(Contents.ToText)
-		  Catch Err As RuntimeException
-		    Beep
-		    Return
-		  End Try
-		  
-		  Dim Beacon As Ark.Beacon = BeaconDocument.ImportAsBeacon(Dict)
-		  Self.AddBeacon(Beacon)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -731,6 +781,32 @@ End
 	#tag Event
 		Sub Action()
 		  Self.RemoveSelectedBeacon()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Importer
+	#tag Event
+		Sub UpdateUI()
+		  If Me.BeaconsProcessed = Me.BeaconCount Then
+		    If Self.ImportProgress <> Nil Then
+		      Self.ImportProgress.Close
+		      Self.ImportProgress = Nil
+		    End If
+		    
+		    Dim Beacons() As Ark.Beacon = Me.Beacons
+		    Me.Reset
+		    
+		    For Each Beacon As Ark.Beacon In Beacons
+		      Beacon.Label = App.DataSource.NameOfBeacon(Beacon.Type).ToText
+		      Self.AddBeacon(Beacon)
+		    Next
+		    Return
+		  End If
+		  
+		  If Self.ImportProgress <> Nil Then
+		    Self.ImportProgress.BeaconCount = Me.BeaconCount
+		    Self.ImportProgress.BeaconsProcessed = Me.BeaconsProcessed
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

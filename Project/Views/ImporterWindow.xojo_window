@@ -5,7 +5,7 @@ Begin Window ImporterWindow
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   1
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -21,20 +21,11 @@ Begin Window ImporterWindow
    MinHeight       =   64
    MinimizeButton  =   False
    MinWidth        =   64
-   Placement       =   2
+   Placement       =   1
    Resizeable      =   False
    Title           =   "Import From Config"
    Visible         =   True
    Width           =   400
-   Begin Thread ImportThread
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Priority        =   5
-      Scope           =   2
-      StackSize       =   0
-      TabPanelIndex   =   0
-   End
    Begin PushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
@@ -42,7 +33,7 @@ Begin Window ImporterWindow
       Cancel          =   True
       Caption         =   "Cancel"
       Default         =   False
-      Enabled         =   True
+      Enabled         =   False
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -81,9 +72,7 @@ Begin Window ImporterWindow
       LockTop         =   True
       Maximum         =   0
       Scope           =   2
-      TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   52
       Value           =   0
       Visible         =   True
@@ -111,7 +100,6 @@ Begin Window ImporterWindow
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Importing from """""
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -124,92 +112,144 @@ Begin Window ImporterWindow
       Visible         =   True
       Width           =   360
    End
-   Begin Timer WatchTimer
+   Begin Label StatusLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
       Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
       Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
       LockedInPosition=   False
-      Mode            =   2
-      Period          =   100
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
       Scope           =   2
+      Selectable      =   False
+      TabIndex        =   2
       TabPanelIndex   =   0
+      Text            =   ""
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   84
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   268
    End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Method, Flags = &h0
-		Shared Sub Import(File As FolderItem)
-		  Dim Win As New ImporterWindow
-		  Win.MessageLabel.Text = "Importing from """ + File.Name + """"
-		  Win.mImportFile = File
-		  Win.ImportThread.Run
-		  Win.Show()
-		End Sub
-	#tag EndMethod
+	#tag DelegateDeclaration, Flags = &h0
+		Delegate Sub CancelDelegate()
+	#tag EndDelegateDeclaration
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mBeaconCount
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mBeaconCount = Value
+			  If Self.mBeaconCount = 0 Then
+			    Self.JobProgress.Maximum = 0
+			    Self.StatusLabel.Text = ""
+			  Else
+			    Self.JobProgress.Maximum = 1000
+			    Self.StatusLabel.Text = Str(Self.mBeaconsProcessed, "0") + " of " + Str(Self.mBeaconCount, "0") + " processed"
+			  End If
+			  Self.JobProgress.Value = (Self.mBeaconsProcessed / Self.mBeaconCount) * Self.JobProgress.Maximum
+			End Set
+		#tag EndSetter
+		BeaconCount As UInteger
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mBeaconsProcessed
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mBeaconsProcessed = Value
+			  If Self.mBeaconCount = 0 Then
+			    Self.StatusLabel.Text = ""
+			  Else
+			    Self.StatusLabel.Text = Str(Self.mBeaconsProcessed, "0") + " of " + Str(Self.mBeaconCount, "0") + " processed"
+			  End If
+			  Self.JobProgress.Value = (Self.mBeaconsProcessed / Self.mBeaconCount) * Self.JobProgress.Maximum
+			End Set
+		#tag EndSetter
+		BeaconsProcessed As UInteger
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mCancelAction
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mCancelAction = Value
+			  Self.CancelButton.Enabled = Self.mCancelAction <> Nil
+			End Set
+		#tag EndSetter
+		CancelAction As ImporterWindow.CancelDelegate
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mBeacons() As Ark.Beacon
+		Private mBeaconCount As UInteger
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mErrored As Boolean
+		Private mBeaconsProcessed As UInteger
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mFinished As Boolean
+		Private mCancelAction As ImporterWindow.CancelDelegate
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mImportFile As FolderItem
+		Private mSource As String
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mSource
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.MessageLabel.Text = "Importing from " + Value
+			End Set
+		#tag EndSetter
+		Source As String
+	#tag EndComputedProperty
 
 
 #tag EndWindowCode
 
-#tag Events ImportThread
-	#tag Event
-		Sub Run()
-		  Dim Beacons() As Ark.Beacon
-		  Try
-		    Beacons = Ark.ImportFromConfig(Self.mImportFile)
-		  Catch Err As RuntimeException
-		    Self.mErrored = True
-		  End Try
-		  If Beacons <> Nil Then
-		    // Since imported beacons will not have labels, look up what we can.
-		    For Each Beacon As Ark.Beacon In Beacons
-		      Beacon.Label = App.DataSource.NameOfBeacon(Beacon.Type).ToText
-		    Next
-		    Self.mBeacons = Beacons
-		  End If
-		  Self.mFinished = True
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  ImportThread.Kill
-		  Self.Close
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events WatchTimer
-	#tag Event
-		Sub Action()
-		  If Self.mFinished Then
-		    If Self.mErrored Then
-		      Dim Dialog As New MessageDialog
-		      Dialog.Message = "Unable to import from this config file"
-		      Dialog.Explanation = "This is usually the result of a syntax error."
-		      Call Dialog.ShowModalWithin(Self)
-		    Else
-		      Dim Doc As New BeaconDocument(Self.mBeacons)
-		      Dim Win As New DocWindow(Doc)
-		      Win.Show
-		    End If
-		    Self.Close
+		  If Self.mCancelAction <> Nil Then
+		    Self.mCancelAction.Invoke()
 		  End If
 		End Sub
 	#tag EndEvent
