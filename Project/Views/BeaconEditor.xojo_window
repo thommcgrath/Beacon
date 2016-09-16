@@ -1435,12 +1435,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddTemplate(Set As Ark.ItemSet, ClassString As String, MinQuantity As Integer, MaxQuantity As Integer, Weight As Double = 1, MinQuality As Double = 1, MaxQuality As Double = 1)
+		  Dim Multipliers As Ark.Range = Editor.Multipliers
 		  Dim Entry As New Ark.SetEntry
 		  Entry.Append(New Ark.ItemClass(ClassString.ToText, 1))
 		  Entry.MinQuantity = MinQuantity
 		  Entry.MaxQuantity = MaxQuantity
-		  Entry.MinQuality = MinQuality / Editor.Multipliers.Min
-		  Entry.MaxQuality = MaxQuality / Editor.Multipliers.Max
+		  Entry.MinQuality = MinQuality / Multipliers.Min
+		  Entry.MaxQuality = MaxQuality / Multipliers.Max
 		  Entry.Weight = Weight
 		  Entry.ChanceToBeBlueprint = 0.1
 		  Set.Append(Entry)

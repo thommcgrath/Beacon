@@ -192,7 +192,7 @@ Implements Ark.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mMaxQuality = Max(Value, 1)
+			  Self.mMaxQuality = Max(Value, 0)
 			End Set
 		#tag EndSetter
 		MaxQuality As Double
@@ -224,7 +224,7 @@ Implements Ark.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mMinQuality = Max(Value, 1)
+			  Self.mMinQuality = Max(Value, 0)
 			End Set
 		#tag EndSetter
 		MinQuality As Double
