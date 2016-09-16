@@ -306,6 +306,13 @@ Begin Window DocWindow
       Visible         =   True
       Width           =   190
    End
+   Begin Ark.ImportThread Importer
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   0
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -478,6 +485,17 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub CancelImport()
+		  Importer.Stop
+		  
+		  If Self.ImportProgress <> Nil Then
+		    Self.ImportProgress.Close
+		    Self.ImportProgress = Nil
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.Doc = New BeaconDocument
@@ -500,6 +518,26 @@ End
 		  Self.Doc = BeaconDocument.Read(Self.File)
 		  Self.Title = File.Name
 		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Import(File As FolderItem)
+		  Self.ImportProgress = New ImporterWindow
+		  Self.ImportProgress.Source = File.Name
+		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
+		  Self.ImportProgress.ShowWithin(Self)
+		  Self.Importer.Run(File)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Import(Content As String, Source As String)
+		  Self.ImportProgress = New ImporterWindow
+		  Self.ImportProgress.Source = Source
+		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
+		  Self.ImportProgress.ShowWithin(Self)
+		  Self.Importer.Run(Content.ToText)
 		End Sub
 	#tag EndMethod
 
@@ -570,6 +608,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private File As Xojo.IO.FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private ImportProgress As ImporterWindow
 	#tag EndProperty
 
 
@@ -731,6 +773,32 @@ End
 	#tag Event
 		Sub Action()
 		  Self.RemoveSelectedBeacon()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Importer
+	#tag Event
+		Sub UpdateUI()
+		  If Me.BeaconsProcessed = Me.BeaconCount Then
+		    If Self.ImportProgress <> Nil Then
+		      Self.ImportProgress.Close
+		      Self.ImportProgress = Nil
+		    End If
+		    
+		    Dim Beacons() As Ark.Beacon = Me.Beacons
+		    Me.Reset
+		    
+		    For Each Beacon As Ark.Beacon In Beacons
+		      Beacon.Label = App.DataSource.NameOfBeacon(Beacon.Type).ToText
+		      Self.AddBeacon(Beacon)
+		    Next
+		    Return
+		  End If
+		  
+		  If Self.ImportProgress <> Nil Then
+		    Self.ImportProgress.BeaconCount = Me.BeaconCount
+		    Self.ImportProgress.BeaconsProcessed = Me.BeaconsProcessed
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -99,13 +99,13 @@ Implements Ark.Countable
 
 	#tag Method, Flags = &h0
 		Function IsBonus() As Boolean
-		  Return InStr(Self.mType, "_Double_") > 0
+		  Return Self.mType.IndexOf("_Double_") > -1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsScorchedEarth() As Boolean
-		  Return Right(Self.mType, 16) = "_ScorchedEarth_C"
+		  Return Self.mType.Right(16) = "_ScorchedEarth_C"
 		End Function
 	#tag EndMethod
 

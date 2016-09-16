@@ -31,7 +31,9 @@ Inherits Application
 			
 			Dim File As FolderItem = Dialog.ShowModal
 			If File <> Nil Then
-			ImporterWindow.Import(File)
+			Dim Win As New DocWindow
+			Win.Show
+			Win.Import(File)
 			End If
 			
 			Return True
