@@ -141,6 +141,7 @@ Begin Window BeaconAddSheet
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Add Beacon"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -158,7 +159,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As DocWindow, Document As BeaconDocument) As Ark.Beacon
+		Shared Function Present(Parent As DocWindow, Document As Beacon.Document) As Ark.Beacon
 		  Static AllowedBeacons() As Ark.Beacon
 		  If UBound(AllowedBeacons) = -1 Then
 		    AllowedBeacons = App.DataSource.SearchForBeacons("")

@@ -50,6 +50,25 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Export() As Xojo.Core.Dictionary
+		  Dim Children() As Xojo.Core.Dictionary
+		  For Each Set As Ark.ItemSet In Self.mItems
+		    Children.Append(Set.Export)
+		  Next
+		  
+		  Dim Keys As New Xojo.Core.Dictionary
+		  Keys.Value("ItemSets") = Children
+		  Keys.Value("Label") = Self.Label
+		  Keys.Value("MaxItemSets") = Self.MaxItemSets
+		  Keys.Value("MinItemSets") = Self.MinItemSets
+		  Keys.Value("NumItemSetsPower") = Self.NumItemSetsPower
+		  Keys.Value("bSetsRandomWithoutReplacement") = Self.SetsRandomWithoutReplacement
+		  Keys.Value("SupplyCrateClassString") = Self.Type
+		  Return Keys
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetIterator() As Xojo.Core.Iterator
 		  Return New Ark.BeaconIterator(Self)
 		End Function
@@ -57,18 +76,36 @@ Implements Ark.Countable
 
 	#tag Method, Flags = &h0
 		Shared Function Import(Dict As Xojo.Core.Dictionary) As Ark.Beacon
-		  If Not Dict.HasKey("SupplyCrateClassString") Then
-		    Return Nil
+		  // This could be a beacon save or a config line
+		  
+		  Dim Beacon As New Ark.Beacon
+		  If Dict.HasKey("SupplyCrateClassString") Then
+		    Beacon.Type = Dict.Value("SupplyCrateClassString")
+		  Else
+		    Beacon.Type = Dict.Value("Type")
 		  End If
 		  
-		  Dim Type As Text = Dict.Value("SupplyCrateClassString")
-		  Dim Beacon As New Ark.Beacon("", Type)
+		  If Dict.HasKey("Label") Then
+		    Beacon.Label = Dict.Value("Label")
+		  End If
+		  
 		  Beacon.MaxItemSets = Dict.Lookup("MaxItemSets", Beacon.MaxItemSets)
 		  Beacon.MinItemSets = Dict.Lookup("MinItemSets", Beacon.MinItemSets)
 		  Beacon.NumItemSetsPower = Dict.Lookup("NumItemSetsPower", Beacon.NumItemSetsPower)
-		  Beacon.SetsRandomWithoutReplacement = Dict.Lookup("bSetsRandomWithoutReplacement", Beacon.SetsRandomWithoutReplacement)
 		  
-		  Dim Children() As Auto = Dict.Value("ItemSets")
+		  If Dict.HasKey("bSetsRandomWithoutReplacement") Then
+		    Beacon.SetsRandomWithoutReplacement = Dict.Value("bSetsRandomWithoutReplacement")
+		  Else
+		    Beacon.SetsRandomWithoutReplacement = Dict.Lookup("SetsRandomWithoutReplacement", Beacon.SetsRandomWithoutReplacement)
+		  End If
+		  
+		  Dim Children() As Auto
+		  If Dict.HasKey("ItemSets") Then
+		    Children = Dict.Value("ItemSets")
+		  Else
+		    Children = Dict.Value("Items")
+		  End If
+		  
 		  For Each Child As Xojo.Core.Dictionary In Children
 		    Dim Set As Ark.ItemSet = Ark.ItemSet.Import(Child)
 		    If Set <> Nil Then
@@ -77,6 +114,7 @@ Implements Ark.Countable
 		  Next
 		  
 		  Return Beacon
+		  
 		End Function
 	#tag EndMethod
 

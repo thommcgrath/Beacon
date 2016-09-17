@@ -1656,7 +1656,7 @@ End
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
 		  Dim Set As Ark.ItemSet = Me.RowTag(Me.ListIndex)
-		  Dim Dict As Xojo.Core.Dictionary = BeaconDocument.Export(Set)
+		  Dim Dict As Xojo.Core.Dictionary = Set.Export
 		  If Dict <> Nil Then
 		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
 		    Board.AddRawData(Contents, Self.kClipboardType)
@@ -1678,7 +1678,7 @@ End
 		    Return
 		  End Try
 		  
-		  Dim Set As Ark.ItemSet = BeaconDocument.ImportAsItemSet(Dict)
+		  Dim Set As Ark.ItemSet = Ark.ItemSet.Import(Dict)
 		  Self.AddSet(Set)
 		End Sub
 	#tag EndEvent

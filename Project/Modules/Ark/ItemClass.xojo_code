@@ -21,6 +21,21 @@ Protected Class ItemClass
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Export() As Xojo.Core.Dictionary
+		  Dim Keys As New Xojo.Core.Dictionary
+		  Keys.Value("Class") = Self.ClassString
+		  Keys.Value("Weight") = Self.Weight
+		  Return Keys
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Import(Dict As Xojo.Core.Dictionary) As Ark.ItemClass
+		  Return New Ark.ItemClass(Dict.Value("Class"), Dict.Value("Weight"))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Weight() As Double
 		  Return Self.mWeight
 		End Function

@@ -502,13 +502,13 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.Doc = New BeaconDocument
+		  Self.Doc = New Beacon.Document
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Doc As BeaconDocument)
+		Sub Constructor(Doc As Beacon.Document)
 		  Self.Doc = Doc
 		  Super.Constructor
 		  Self.ContentsChanged = True
@@ -519,7 +519,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor(File As FolderItem)
 		  Self.File = New Xojo.IO.FolderItem(File.NativePath.ToText)
-		  Self.Doc = BeaconDocument.Read(Self.File)
+		  Self.Doc = Beacon.Document.Read(Self.File)
 		  Self.Title = File.Name
 		  Super.Constructor
 		End Sub
@@ -607,7 +607,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private Doc As BeaconDocument
+		Private Doc As Beacon.Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -652,7 +652,7 @@ End
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
 		  Dim Beacon As Ark.Beacon = Me.RowTag(Me.ListIndex)
-		  Dim Dict As Xojo.Core.Dictionary = BeaconDocument.Export(Beacon)
+		  Dim Dict As Xojo.Core.Dictionary = Beacon.Export
 		  If Dict <> Nil Then
 		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
 		    Board.AddRawData(Contents, Self.kClipboardType)
@@ -677,7 +677,7 @@ End
 		      Return
 		    End Try
 		    
-		    Dim Beacon As Ark.Beacon = BeaconDocument.ImportAsBeacon(Dict)
+		    Dim Beacon As Ark.Beacon = Ark.Beacon.Import(Dict)
 		    Self.AddBeacon(Beacon)
 		  ElseIf Board.TextAvailable Then
 		    Dim Contents As String = Board.Text

@@ -44,6 +44,25 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Export() As Xojo.Core.Dictionary
+		  Dim Children() As Xojo.Core.Dictionary
+		  For Each Entry As Ark.SetEntry In Self.mEntries
+		    Children.Append(Entry.Export)
+		  Next
+		  
+		  Dim Keys As New Xojo.Core.Dictionary
+		  Keys.Value("ItemEntries") = Children
+		  Keys.Value("bItemsRandomWithoutReplacement") = Self.ItemsRandomWithoutReplacement
+		  Keys.Value("Label") = Self.Label
+		  Keys.Value("MaxNumItems") = Self.MaxNumItems
+		  Keys.Value("MinNumItems") = Self.MinNumItems
+		  Keys.Value("NumItemsPower") = Self.NumItemsPower
+		  Keys.Value("SetWeight") = Self.Weight
+		  Return Keys
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetIterator() As Xojo.Core.Iterator
 		  Return New Ark.ItemSetIterator(Self)
 		End Function
@@ -55,10 +74,26 @@ Implements Ark.Countable
 		  Set.MinNumItems = Dict.Lookup("MinNumItems", Set.MinNumItems)
 		  Set.MaxNumItems = Dict.Lookup("MaxNumItems", Set.MaxNumItems)
 		  Set.NumItemsPower = Dict.Lookup("NumItemsPower", Set.NumItemsPower)
-		  Set.Weight = Dict.Lookup("SetWeight", Set.Weight)
-		  Set.ItemsRandomWithoutReplacement = Dict.Lookup("bItemsRandomWithoutReplacement", Set.ItemsRandomWithoutReplacement)
+		  If Dict.HasKey("SetWeight") Then
+		    Set.Weight = Dict.Value("SetWeight")
+		  Else
+		    Set.Weight = Dict.Lookup("Weight", Set.Weight)
+		  End If
+		  If Dict.HasKey("bItemsRandomWithoutReplacement") Then
+		    Set.ItemsRandomWithoutReplacement = Dict.Value("bItemsRandomWithoutReplacement")
+		  Else
+		    Set.ItemsRandomWithoutReplacement = Dict.Lookup("ItemsRandomWithoutReplacement", Set.ItemsRandomWithoutReplacement)
+		  End If
+		  If Dict.HasKey("Label") Then
+		    Set.Label = Dict.Value("Label")
+		  End If
 		  
-		  Dim Children() As Auto = Dict.Value("ItemEntries")
+		  Dim Children() As Auto
+		  If Dict.HasKey("ItemEntries") Then
+		    Children = Dict.Value("ItemEntries")
+		  Else
+		    Children = Dict.Value("Items")
+		  End If
 		  For Each Child As Xojo.Core.Dictionary In Children
 		    Dim Entry As Ark.SetEntry = Ark.SetEntry.Import(Child)
 		    If Entry <> Nil Then

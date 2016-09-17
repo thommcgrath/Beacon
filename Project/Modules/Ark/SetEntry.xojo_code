@@ -43,6 +43,25 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Export() As Xojo.Core.Dictionary
+		  Dim Children() As Xojo.Core.Dictionary
+		  For Each Item As Ark.ItemClass In Self.mItems
+		    Children.Append(Item.Export)
+		  Next
+		  
+		  Dim Keys As New Xojo.Core.Dictionary
+		  Keys.Value("ChanceToBeBlueprintOverride") = Self.ChanceToBeBlueprint
+		  Keys.Value("Items") = Children
+		  Keys.Value("MaxQuality") = Self.MaxQuality
+		  Keys.Value("MaxQuantity") = Self.MaxQuantity
+		  Keys.Value("MinQuality") = Self.MinQuality
+		  Keys.Value("MinQuantity") = Self.MinQuantity
+		  Keys.Value("EntryWeight") = Self.Weight
+		  Return Keys
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetIterator() As Xojo.Core.Iterator
 		  Return New Ark.SetEntryIterator(Self)
 		End Function
@@ -50,36 +69,49 @@ Implements Ark.Countable
 
 	#tag Method, Flags = &h0
 		Shared Function Import(Dict As Xojo.Core.Dictionary) As Ark.SetEntry
-		  // (EntryWeight=1.000000,ItemClassStrings=("PrimalItemStructure_ThatchFloor_C"),ItemsWeights=(1.000000),MinQuantity=1,MaxQuantity=16,MinQuality=1.000000,MaxQuality=1.000000,bForceBlueprint=false,ChanceToBeBlueprintOverride=0.250000)
-		  
 		  Dim Entry As New Ark.SetEntry
-		  Entry.Weight = Dict.Lookup("EntryWeight", Entry.Weight)
+		  If Dict.HasKey("EntryWeight") Then
+		    Entry.Weight = Dict.Value("EntryWeight")
+		  Else
+		    Entry.Weight = Dict.Lookup("Weight", Entry.Weight)
+		  End If
 		  Entry.MinQuantity = Dict.Lookup("MinQuantity", Entry.MinQuantity)
 		  Entry.MaxQuantity = Dict.Lookup("MaxQuantity", Entry.MaxQuantity)
 		  Entry.MinQuality = Dict.Lookup("MinQuality", Entry.MinQuality)
 		  Entry.MaxQuality = Dict.Lookup("MaxQuality", Entry.MaxQuality)
-		  Entry.ChanceToBeBlueprint = Dict.Lookup("ChanceToBeBlueprintOverride", Entry.ChanceToBeBlueprint)
-		  
-		  Dim ClassStrings() As Auto = Dict.Value("ItemClassStrings")
-		  Dim ClassWeights() As Auto = Dict.Value("ItemsWeights")
-		  
-		  If UBound(ClassWeights) < UBound(ClassStrings) Then
-		    // Add more values
-		    While UBound(ClassWeights) < UBound(ClassStrings)
-		      ClassWeights.Append(1)
-		    Wend
-		  ElseIf UBound(ClassWeights) > UBound(ClassStrings) Then
-		    // Just truncate
-		    Redim ClassWeights(UBound(ClassStrings))
+		  If Dict.HasKey("ChanceToBeBlueprintOverride") Then
+		    Entry.ChanceToBeBlueprint = Dict.Value("ChanceToBeBlueprintOverride")
+		  Else
+		    Entry.ChanceToBeBlueprint = Dict.Lookup("ChanceToBeBlueprint", Entry.ChanceToBeBlueprint)
 		  End If
 		  
-		  For I As Integer = 0 To UBound(ClassStrings)
-		    Try
-		      Entry.Append(New Ark.ItemClass(ClassStrings(I), ClassWeights(I)))
-		    Catch Err As TypeMismatchException
-		      Continue
-		    End Try
-		  Next
+		  If Dict.HasKey("ItemClassStrings") And Dict.HasKey("ItemsWeights") Then
+		    Dim ClassStrings() As Auto = Dict.Value("ItemClassStrings")
+		    Dim ClassWeights() As Auto = Dict.Value("ItemsWeights")
+		    
+		    If UBound(ClassWeights) < UBound(ClassStrings) Then
+		      // Add more values
+		      While UBound(ClassWeights) < UBound(ClassStrings)
+		        ClassWeights.Append(1)
+		      Wend
+		    ElseIf UBound(ClassWeights) > UBound(ClassStrings) Then
+		      // Just truncate
+		      Redim ClassWeights(UBound(ClassStrings))
+		    End If
+		    
+		    For I As Integer = 0 To UBound(ClassStrings)
+		      Try
+		        Entry.Append(New Ark.ItemClass(ClassStrings(I), ClassWeights(I)))
+		      Catch Err As TypeMismatchException
+		        Continue
+		      End Try
+		    Next
+		  ElseIf Dict.HasKey("Items") Then
+		    Dim Children() As Auto = Dict.Value("Items")
+		    For Each Child As Xojo.Core.Dictionary In Children
+		      Entry.Append(Ark.ItemClass.Import(Child))
+		    Next
+		  End If
 		  
 		  Return Entry
 		End Function
