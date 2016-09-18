@@ -55,6 +55,7 @@ Class=Range;Modules/Ark/Range.xojo_code;&h59ACFFF;&h248637FF;false
 Class=Thread;Modules/Ark/Thread.xojo_code;&h141DFFF;&h248637FF;false
 Class=ImportThread;Modules/Ark/ImportThread.xojo_code;&h690D2FFF;&h248637FF;false
 Class=ThreadStopException;Modules/Ark/ThreadStopException.xojo_code;&h9CA27FF;&h248637FF;false
+MultiImage=IconApp;Icons/IconApp.xojo_image;&h1078D7FF;&h7F977FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

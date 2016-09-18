@@ -31,9 +31,9 @@ Begin Window AboutWindow
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   True
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   False
       Height          =   64
       HelpTag         =   ""
       Index           =   -2147483648
@@ -49,7 +49,7 @@ Begin Window AboutWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   20
-      Transparent     =   True
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   64
@@ -196,6 +196,13 @@ End
 #tag WindowCode
 #tag EndWindowCode
 
+#tag Events IconCanvas
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  G.DrawPicture(IconApp, 0, 0)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events VersionLabel
 	#tag Event
 		Sub Open()
