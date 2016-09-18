@@ -17,6 +17,28 @@ Inherits Application
 	#tag EndEvent
 
 	#tag Event
+		Sub Open()
+		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default.arkidentity")
+		  If IdentityFile.Exists Then
+		    Dim Stream As BinaryStream = BinaryStream.Open(IdentityFile, False)
+		    Dim Contents As String = DefineEncoding(Stream.Read(Stream.Length), Encodings.UTF8)
+		    Stream.Close
+		    
+		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents.ToText)
+		    Dim Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
+		    Self.mIdentity = Identity
+		  Else
+		    Dim Identity As New Beacon.Identity
+		    Dim Dict As Xojo.Core.Dictionary = Identity.Export
+		    Dim Stream As BinaryStream = BinaryStream.Create(IdentityFile, False)
+		    Stream.Write(Xojo.Data.GenerateJSON(Dict))
+		    Stream.Close
+		    Self.mIdentity = Identity
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub OpenDocument(item As FolderItem)
 		  Dim Win As New DocWindow(Item)
 		  Win.Show
@@ -105,9 +127,19 @@ Inherits Application
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Identity() As Beacon.Identity
+		  Return Self.mIdentity
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mDataSource As ArkData
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIdentity As Beacon.Identity
 	#tag EndProperty
 
 

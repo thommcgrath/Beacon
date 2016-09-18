@@ -30,6 +30,28 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function DecodeHex(Source As Text) As Xojo.Core.MemoryBlock
+		  Dim Bytes() As UInt8
+		  For I As Integer = 0 To Source.Length - 2 Step 2
+		    Dim Value As UInt8 = UInt8.FromHex(Source.Mid(I, 2))
+		    Bytes.Append(Value)
+		  Next
+		  Return New Xojo.Core.MemoryBlock(Bytes)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function EncodeHex(Block As Xojo.Core.MemoryBlock) As Text
+		  Dim Chars() As Text
+		  For I As Integer = 0 To Block.Size - 1
+		    Dim Value As UInt8 = Block.UInt8Value(I)
+		    Chars.Append(Value.ToHex(2))
+		  Next
+		  Return Text.Join(Chars, "")
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Function GlobalPosition(Extends Target As Window) As Xojo.Core.Point
 		  Dim Left As Integer = Target.Left
