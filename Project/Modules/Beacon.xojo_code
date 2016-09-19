@@ -1,5 +1,19 @@
 #tag Module
 Protected Module Beacon
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function Convert(Extends File As Global.FolderItem) As Xojo.IO.FolderItem
+		  Dim Path As String = File.NativePath
+		  Return New Xojo.IO.FolderItem(Path.ToText)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function Convert(Extends File As Xojo.IO.FolderItem) As Global.FolderItem
+		  Dim Path As Text = File.Path
+		  Return GetFolderItem(Path, FolderItem.PathTypeNative)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function CreateUUID() As Text
 		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)
@@ -67,6 +81,64 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function IsType(Extends File As FolderItem, Type As FileType) As Boolean
+		  Dim Extension As String = Type.PrimaryExtension
+		  Return Right(File.Name, Len(Extension)) = Extension
+		End Function
+	#tag EndMethod
 
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
+		Function PrimaryExtension(Extends Type As FileType) As String
+		  Dim Extensions() As String = Split(Type.Extensions, ";")
+		  If UBound(Extensions) = -1 Then
+		    Return ""
+		  End If
+		  
+		  Dim Extension As String = Extensions(0)
+		  If Left(Extension, 1) <> "." Then
+		    Extension = "." + Extension
+		  End If
+		  
+		  Return Extension
+		End Function
+	#tag EndMethod
+
+
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Module
 #tag EndModule

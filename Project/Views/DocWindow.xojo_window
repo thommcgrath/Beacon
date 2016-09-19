@@ -115,7 +115,6 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -308,7 +307,6 @@ Begin Window DocWindow
       Width           =   190
    End
    Begin Ark.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -518,10 +516,22 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor(File As FolderItem)
-		  Self.File = New Xojo.IO.FolderItem(File.NativePath.ToText)
-		  Self.Doc = Beacon.Document.Read(Self.File)
-		  Self.Title = File.Name
-		  Super.Constructor
+		  If File.IsType(BeaconFileTypes.BeaconDocument) Then
+		    // Beacon document
+		    Self.File = New Xojo.IO.FolderItem(File.NativePath.ToText)
+		    Self.Doc = Beacon.Document.Read(Self.File)
+		    Self.Title = File.Name
+		    Super.Constructor
+		    Return
+		  End If
+		  
+		  Self.Constructor
+		  
+		  If File.IsType(BeaconFileTypes.IniFile) Then
+		    // Config file
+		    Self.Import(File)
+		  End If
+		  
 		End Sub
 	#tag EndMethod
 

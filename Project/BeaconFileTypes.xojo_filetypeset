@@ -1,8 +1,8 @@
 #tag FileTypeSet
 	#tag FileType
 		CodeName=BeaconDocument
-		Extension=.arkbeacon
-		Flags=&h2
+		Extension=.beacon
+		Flags=&h5
 		MacCreator=????
 		MacType=
 		Name=Beacon Document
@@ -16,7 +16,7 @@
 	#tag FileType
 		CodeName=IniFile
 		Extension=.ini
-		Flags=&h0
+		Flags=&h9
 		MacCreator=????
 		MacType=TEXT
 		Name=Ini File
@@ -25,6 +25,20 @@
 		Description=
 		MimeType=
 		Imported=True
+	#tag EndFileType
+
+	#tag FileType
+		CodeName=BeaconIdentity
+		Extension=.beaconidentity
+		Flags=&h2
+		MacCreator=
+		MacType=
+		Name=Beacon Identity
+		UTI=com.thezaz.beacon.identity
+		UTIConformsTo=public.text
+		Description=
+		MimeType=
+		Imported=False
 	#tag EndFileType
 
 #tag EndFileTypeSet

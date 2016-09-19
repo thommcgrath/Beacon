@@ -18,20 +18,26 @@ Inherits Application
 
 	#tag Event
 		Sub Open()
-		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default.arkidentity")
+		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
 		  If IdentityFile.Exists Then
-		    Dim Stream As BinaryStream = BinaryStream.Open(IdentityFile, False)
-		    Dim Contents As String = DefineEncoding(Stream.Read(Stream.Length), Encodings.UTF8)
+		    Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(IdentityFile.Convert, Xojo.IO.BinaryStream.LockModes.Read)
+		    Dim Data As Xojo.Core.MemoryBlock = Stream.Read(Stream.Length)
 		    Stream.Close
 		    
-		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents.ToText)
+		    Dim Contents As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Data)
+		    
+		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents)
 		    Dim Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
 		    Self.mIdentity = Identity
 		  Else
 		    Dim Identity As New Beacon.Identity
 		    Dim Dict As Xojo.Core.Dictionary = Identity.Export
-		    Dim Stream As BinaryStream = BinaryStream.Create(IdentityFile, False)
-		    Stream.Write(Xojo.Data.GenerateJSON(Dict))
+		    
+		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
+		    Dim Data As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Contents)
+		    
+		    Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(IdentityFile.Convert, Xojo.IO.BinaryStream.LockModes.Write)
+		    Stream.Write(Data)
 		    Stream.Close
 		    Self.mIdentity = Identity
 		  End If
@@ -72,7 +78,7 @@ Inherits Application
 	#tag MenuHandler
 		Function FileOpen() As Boolean Handles FileOpen.Action
 			Dim Dialog As New OpenDialog
-			Dialog.Filter = BeaconFileTypes.BeaconDocument
+			Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile
 			
 			Dim File As FolderItem = Dialog.ShowModal()
 			If File <> Nil Then

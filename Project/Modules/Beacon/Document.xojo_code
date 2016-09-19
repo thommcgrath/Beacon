@@ -79,9 +79,11 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Shared Function Read(File As Xojo.IO.FolderItem) As Beacon.Document
-		  Dim Stream As Xojo.IO.TextInputStream = Xojo.IO.TextInputStream.Open(File, Xojo.Core.TextEncoding.UTF8)
-		  Dim Contents As Text = Stream.ReadAll
+		  Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(File, Xojo.IO.BinaryStream.LockModes.Read)
+		  Dim Data As Xojo.Core.MemoryBlock = Stream.Read(Stream.Length)
 		  Stream.Close
+		  
+		  Dim Contents As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Data)
 		  
 		  Dim Parsed As Auto
 		  Try
@@ -147,8 +149,9 @@ Protected Class Document
 		  Document.Value("Beacons") = Beacons
 		  
 		  Dim Contents As Text = Xojo.Data.GenerateJSON(Document)
-		  Dim Stream As Xojo.IO.TextOutputStream = Xojo.IO.TextOutputStream.Create(File, Xojo.Core.TextEncoding.UTF8)
-		  Stream.Write(Contents)
+		  Dim Data As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Contents)
+		  Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(File, Xojo.IO.BinaryStream.LockModes.Write)
+		  Stream.Write(Data)
 		  Stream.Close
 		End Sub
 	#tag EndMethod
