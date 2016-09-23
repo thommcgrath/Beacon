@@ -32,7 +32,7 @@
 		CodeName=BeaconIdentity
 		DocIcon=Beacon.xojo_resources;&hAA582C
 		Extension=.beaconidentity
-		Flags=&h2
+		Flags=&h5
 		MacCreator=
 		MacType=
 		Name=Beacon Identity
