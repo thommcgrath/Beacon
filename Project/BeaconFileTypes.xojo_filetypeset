@@ -1,6 +1,7 @@
 #tag FileTypeSet
 	#tag FileType
 		CodeName=BeaconDocument
+		DocIcon=Beacon.xojo_resources;&h0
 		Extension=.beacon
 		Flags=&h5
 		MacCreator=????
@@ -29,6 +30,7 @@
 
 	#tag FileType
 		CodeName=BeaconIdentity
+		DocIcon=Beacon.xojo_resources;&hAA582C
 		Extension=.beaconidentity
 		Flags=&h2
 		MacCreator=
