@@ -336,6 +336,7 @@ Inherits SQLiteDatabase
 		  Self.SQLExecute(Statement, "PrimalItemArmor_MothSaddle_C", "Lymantria Saddle")
 		  Self.SQLExecute(Statement, "PrimalItemArmor_RockGolemSaddle_C", "Rock Golem Saddle")
 		  Self.SQLExecute(Statement, "PrimalItemArmor_SpineyLizardSaddle_C", "Thorny Dragon Saddle")
+		  Self.SQLExecute(Statement, "PrimalItemArmor_TapejaraSaddle_C", "Tapejara Saddle")
 		  
 		  Self.SQLExecute(Statement, "PrimalItemResource_Wood_C", "Wood")
 		  Self.SQLExecute(Statement, "PrimalItemResource_Stone_C", "Stone")
