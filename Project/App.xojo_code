@@ -2,6 +2,14 @@
 Protected Class App
 Inherits Application
 	#tag Event
+		Sub Close()
+		  If Self.LaunchOnQuit <> Nil And Self.LaunchOnQuit.Exists Then
+		    Self.LaunchOnQuit.Launch
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub EnableMenuItems()
 		  FileNew.Enable
 		  FileOpen.Enable
@@ -41,6 +49,10 @@ Inherits Application
 		    Stream.Close
 		    Self.mIdentity = Identity
 		  End If
+		  
+		  Self.mUpdateChecker = New UpdateChecker
+		  AddHandler Self.mUpdateChecker.UpdateAvailable, WeakAddressOf Self.mUpdateChecker_UpdateAvailable
+		  Self.mUpdateChecker.Check(True)
 		End Sub
 	#tag EndEvent
 
@@ -97,6 +109,20 @@ Inherits Application
 		End Function
 	#tag EndMenuHandler
 
+	#tag MenuHandler
+		Function HelpCheckforUpdates() As Boolean Handles HelpCheckforUpdates.Action
+			UpdateWindow.Present()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function HelpReportaProblem() As Boolean Handles HelpReportaProblem.Action
+			Beacon.ReportAProblem()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
 
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
@@ -139,6 +165,16 @@ Inherits Application
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub mUpdateChecker_UpdateAvailable(Sender As UpdateChecker, Version As String, Notes As String, URL As String, Signature As String)
+		  UpdateWindow.Present(Version, Notes, URL, Signature)
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h0
+		LaunchOnQuit As FolderItem
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDataSource As ArkData
@@ -146,6 +182,10 @@ Inherits Application
 
 	#tag Property, Flags = &h21
 		Private mIdentity As Beacon.Identity
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpdateChecker As UpdateChecker
 	#tag EndProperty
 
 

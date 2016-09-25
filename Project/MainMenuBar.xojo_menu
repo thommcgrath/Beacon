@@ -474,6 +474,20 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin ApplicationMenuItem HelpCheckforUpdates
+         SpecialMenu = 0
+         Text = "Check for Updates…"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem HelpReportaProblem
+         SpecialMenu = 0
+         Text = "Report a Problem…"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
    End
 End
 #tag EndMenu
