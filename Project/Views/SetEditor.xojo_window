@@ -751,7 +751,7 @@ End
 		  If Self.mSet <> Nil Then
 		    For I As Integer = 0 To UBound(Self.mSet)
 		      Dim Entry As Ark.SetEntry = Self.mSet(I)
-		      EntryList.AddRow(Self.Describe(Entry), Str(Entry.MinQuantity), Str(Entry.MaxQuantity), Ark.QualityToText(Entry.MinQuality), Ark.QualityToText(Entry.MaxQuality), Str(Self.mSet.RelativeWeight(I), "0%"))
+		      EntryList.AddRow(Self.Describe(Entry), Str(Entry.MinQuantity), Str(Entry.MaxQuantity), Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MaxQuality), Str(Self.mSet.RelativeWeight(I), "0%"))
 		      EntryList.RowTag(EntryList.LastIndex) = Entry
 		    Next
 		  End If

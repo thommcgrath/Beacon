@@ -487,7 +487,7 @@ Begin Window EntryEditor
          Visible         =   True
          Width           =   80
       End
-      Begin PopupMenu MinQualityMenu
+      Begin PopupMenu QualityMenus
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
@@ -495,9 +495,9 @@ Begin Window EntryEditor
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
-         Index           =   -2147483648
+         Index           =   0
          InitialParent   =   "PagePanel1"
-         InitialValue    =   "#Ark.LabelPrimitive\n#Ark.LabelRamshackle\n#Ark.LabelApprentice\n#Ark.LabelJourneyman\n#Ark.LabelMastercraft\n#Ark.LabelAscendant"
+         InitialValue    =   ""
          Italic          =   False
          Left            =   184
          ListIndex       =   0
@@ -518,7 +518,7 @@ Begin Window EntryEditor
          Visible         =   True
          Width           =   139
       End
-      Begin PopupMenu MaxQualityMenu
+      Begin PopupMenu QualityMenus
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
@@ -526,9 +526,9 @@ Begin Window EntryEditor
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
-         Index           =   -2147483648
+         Index           =   1
          InitialParent   =   "PagePanel1"
-         InitialValue    =   "#Ark.LabelPrimitive\n#Ark.LabelRamshackle\n#Ark.LabelApprentice\n#Ark.LabelJourneyman\n#Ark.LabelMastercraft\n#Ark.LabelAscendant"
+         InitialValue    =   ""
          Italic          =   False
          Left            =   184
          ListIndex       =   0
@@ -1115,6 +1115,18 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Function MaxQualityMenu() As PopupMenu
+		  Return Self.QualityMenus(1)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function MinQualityMenu() As PopupMenu
+		  Return Self.QualityMenus(0)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Sources() As Ark.SetEntry = Nil) As Ark.SetEntry()
 		  Dim Win As New EntryEditor
@@ -1153,21 +1165,8 @@ End
 		    Win.WeightSlider.Value = 100 * (TotalWeight / (UBound(Sources) + 1))
 		    Win.ChanceSlider.Value = 100 * (TotalChance / (UBound(Sources) + 1))
 		    
-		    Dim MinQuality As Text = Ark.QualityToText(MinQualities(0))
-		    For I As Integer = 0 To Win.MinQualityMenu.ListCount - 1
-		      If Win.MinQualityMenu.List(I) = MinQuality Then
-		        Win.MinQualityMenu.ListIndex = I
-		        Exit For I
-		      End If
-		    Next
-		    
-		    Dim MaxQuality As Text = Ark.QualityToText(MaxQualities(UBound(MaxQualities)))
-		    For I As Integer = 0 To Win.MaxQualityMenu.ListCount - 1
-		      If Win.MaxQualityMenu.List(I) = MaxQuality Then
-		        Win.MaxQualityMenu.ListIndex = I
-		        Exit For I
-		      End If
-		    Next
+		    Win.MinQualityMenu.SelectByTag(MinQualities(0))
+		    Win.MaxQualityMenu.SelectByTag(MaxQualities(UBound(MaxQualities)))
 		    
 		    If UBound(Sources) > 0 Then
 		      Win.EditChanceCheck.Visible = True
@@ -1212,10 +1211,10 @@ End
 		      Entry.Weight = Win.WeightSlider.Value / 100
 		    End If
 		    If Win.EditMaxQualityCheck.Value Then
-		      Entry.MaxQuality = Ark.TextToQuality(Win.MaxQualityMenu.Text.ToText)
+		      Entry.MaxQuality = Win.MaxQualityMenu.Tag
 		    End If
 		    If Win.EditMinQualityCheck.Value Then
-		      Entry.MinQuality = Ark.TextToQuality(Win.MinQualityMenu.Text.ToText)
+		      Entry.MinQuality = Win.MinQualityMenu.Tag
 		    End If
 		  Next
 		  Win.Close
@@ -1358,6 +1357,28 @@ End
 	#tag Event
 		Sub Open()
 		  Me.ColumnType(0) = Listbox.TypeCheckbox
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events QualityMenus
+	#tag Event
+		Sub Open(index as Integer)
+		  Me.DeleteAllRows()
+		  
+		  Dim Value As Integer
+		  Do
+		    Dim Quality As Ark.Qualities = CType(Value, Ark.Qualities)
+		    Value = Value + 1
+		    
+		    Dim Label As String = Language.LabelForQuality(Quality)
+		    If Label = "" Then
+		      Return
+		    End If
+		    
+		    Me.AddRow(Label, Quality)
+		  Loop
+		  
+		  Me.ListIndex = 0
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -14,8 +14,14 @@ Protected Module Ark
 		    Return Ark.Qualities.Journeyman
 		  ElseIf Quality < Ark.QualityAscendant Then
 		    Return Ark.Qualities.Mastercraft
-		  Else
+		  ElseIf Quality < Ark.QualityAscendantPlus Then
 		    Return Ark.Qualities.Ascendant
+		  ElseIf Quality < Ark.QualityAscendantPlusPlus Then
+		    Return Ark.Qualities.AscendantPlus
+		  ElseIf Quality < Ark.QualityAscendantPlusPlusPlus Then
+		    Return Ark.Qualities.AscendantPlusPlus
+		  Else
+		    Return Ark.Qualities.AscendantPlusPlusPlus
 		  End If
 		End Function
 	#tag EndMethod
@@ -24,17 +30,23 @@ Protected Module Ark
 		Protected Function QualityToText(Quality As Ark.Qualities) As Text
 		  Select Case Quality
 		  Case Ark.Qualities.Primitive
-		    Return Ark.LabelPrimitive
+		    Return "Tier1"
 		  Case Ark.Qualities.Ramshackle
-		    Return Ark.LabelRamshackle
+		    Return "Tier2"
 		  Case Ark.Qualities.Apprentice
-		    Return Ark.LabelApprentice
+		    Return "Tier3"
 		  Case Ark.Qualities.Journeyman
-		    Return Ark.LabelJourneyman
+		    Return "Tier4"
 		  Case Ark.Qualities.Mastercraft
-		    Return Ark.LabelMastercraft
+		    Return "Tier5"
 		  Case Ark.Qualities.Ascendant
-		    Return Ark.LabelAscendant
+		    Return "Tier6"
+		  Case Ark.Qualities.AscendantPlus
+		    Return "Tier7"
+		  Case Ark.Qualities.AscendantPlusPlus
+		    Return "Tier8"
+		  Case Ark.Qualities.AscendantPlusPlusPlus
+		    Return "Tier9"
 		  End Select
 		End Function
 	#tag EndMethod
@@ -42,18 +54,24 @@ Protected Module Ark
 	#tag Method, Flags = &h1
 		Protected Function TextToQuality(Quality As Text) As Ark.Qualities
 		  Select Case Quality
-		  Case Ark.LabelPrimitive
+		  Case "Tier1"
 		    Return Ark.Qualities.Primitive
-		  Case Ark.LabelRamshackle
+		  Case "Tier2"
 		    Return Ark.Qualities.Ramshackle
-		  Case Ark.LabelApprentice
+		  Case "Tier3"
 		    Return Ark.Qualities.Apprentice
-		  Case Ark.LabelJourneyman
+		  Case "Tier4"
 		    Return Ark.Qualities.Journeyman
-		  Case Ark.LabelMastercraft
+		  Case "Tier5"
 		    Return Ark.Qualities.Mastercraft
-		  Case Ark.LabelAscendant
+		  Case "Tier6"
 		    Return Ark.Qualities.Ascendant
+		  Case "Tier7"
+		    Return Ark.Qualities.AscendantPlus
+		  Case "Tier8"
+		    Return Ark.Qualities.AscendantPlusPlus
+		  Case "Tier9"
+		    Return Ark.Qualities.AscendantPlusPlusPlus
 		  End Select
 		End Function
 	#tag EndMethod
@@ -85,6 +103,12 @@ Protected Module Ark
 		    Return Ark.QualityMastercraft / Multiplier
 		  Case Ark.Qualities.Ascendant
 		    Return Ark.QualityAscendant / Multiplier
+		  Case Ark.Qualities.AscendantPlus
+		    Return Ark.QualityAscendantPlus / Multiplier
+		  Case Ark.Qualities.AscendantPlusPlus
+		    Return Ark.QualityAscendantPlusPlus / Multiplier
+		  Case Ark.Qualities.AscendantPlusPlusPlus
+		    Return Ark.QualityAscendantPlusPlusPlus / Multiplier
 		  Else
 		    Return Ark.QualityPrimitive / Multiplier
 		  End Select
@@ -92,28 +116,19 @@ Protected Module Ark
 	#tag EndMethod
 
 
-	#tag Constant, Name = LabelApprentice, Type = Text, Dynamic = False, Default = \"Apprentice", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = LabelAscendant, Type = Text, Dynamic = False, Default = \"Ascendant", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = LabelJourneyman, Type = Text, Dynamic = False, Default = \"Journeyman", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = LabelMastercraft, Type = Text, Dynamic = False, Default = \"Mastercraft", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = LabelPrimitive, Type = Text, Dynamic = False, Default = \"Primitive", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = LabelRamshackle, Type = Text, Dynamic = False, Default = \"Ramshackle", Scope = Protected
-	#tag EndConstant
-
 	#tag Constant, Name = QualityApprentice, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = QualityAscendant, Type = Double, Dynamic = False, Default = \"7", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = QualityAscendantPlus, Type = Double, Dynamic = False, Default = \"9", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = QualityAscendantPlusPlus, Type = Double, Dynamic = False, Default = \"12", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = QualityAscendantPlusPlusPlus, Type = Double, Dynamic = False, Default = \"16", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = QualityJourneyman, Type = Double, Dynamic = False, Default = \"3.75", Scope = Protected
@@ -135,7 +150,10 @@ Protected Module Ark
 		  Apprentice
 		  Journeyman
 		  Mastercraft
-		Ascendant
+		  Ascendant
+		  AscendantPlus
+		  AscendantPlusPlus
+		AscendantPlusPlusPlus
 	#tag EndEnum
 
 
