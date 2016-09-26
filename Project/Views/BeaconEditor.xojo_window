@@ -628,14 +628,15 @@ End
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality, AmmoMultiplier As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
+			Dim AmmoMultiplier As Double
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			AmmoMultiplier = 2
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			AmmoMultiplier = 1
 			End If
 			
@@ -754,13 +755,13 @@ End
 		Function AddItemSetChitinArmor() As Boolean Handles AddItemSetChitinArmor.Action
 			Dim Set As New Ark.ItemSet
 			Set.Label = "Chitin Armor"
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -780,13 +781,13 @@ End
 		Function AddItemSetClothClothing() As Boolean Handles AddItemSetClothClothing.Action
 			Dim Set As New Ark.ItemSet
 			Set.Label = "Cloth Clothing"
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -806,13 +807,13 @@ End
 		Function AddItemSetDesertClothClothing() As Boolean Handles AddItemSetDesertClothClothing.Action
 			Dim Set As New Ark.ItemSet
 			Set.Label = "Desert Cloth Clothing"
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -840,13 +841,13 @@ End
 		Function AddItemSetFlakArmor() As Boolean Handles AddItemSetFlakArmor.Action
 			Dim Set As New Ark.ItemSet
 			Set.Label = "Flak Armor"
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -867,13 +868,13 @@ End
 		Function AddItemSetFurArmor() As Boolean Handles AddItemSetFurArmor.Action
 			Dim Set As New Ark.ItemSet
 			Set.Label = "Flak Clothing"
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -930,13 +931,13 @@ End
 		Function AddItemSetGhillieSuit() As Boolean Handles AddItemSetGhillieSuit.Action
 			Dim Set As New Ark.ItemSet
 			Set.Label = "Ghillie Suit"
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -956,13 +957,13 @@ End
 		Function AddItemSetHideClothing() As Boolean Handles AddItemSetHideClothing.Action
 			Dim Set As New Ark.ItemSet
 			Set.Label = "Hide Clothing"
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -986,13 +987,13 @@ End
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			
 			Self.AddTemplate(Set, "PrimalItemArmor_RexSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1024,13 +1025,13 @@ End
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			
 			Self.AddTemplate(Set, "PrimalItemArmor_DoedSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1092,13 +1093,13 @@ End
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			
 			Self.AddTemplate(Set, "PrimalItem_WeaponMetalPick_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1120,21 +1121,21 @@ End
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			
-			Self.AddTemplate(Set, "PrimalItemArmor_SauroSaddle_Platform_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_ParacerSaddle_Platform_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_PlesiSaddle_Platform_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_QuetzSaddle_Platform_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_MosaSaddle_Platform_C", 1, 1, MinQuality, MaxQuality)
-			Self.AddTemplate(Set, "PrimalItemArmor_TitanSaddle_Platform_C", 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_SauroSaddle_Platform_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_ParacerSaddle_Platform_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_PlesiSaddle_Platform_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_QuetzSaddle_Platform_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_MosaSaddle_Platform_C", 1, 1, 1, MinQuality, MaxQuality)
+			Self.AddTemplate(Set, "PrimalItemArmor_TitanSaddle_Platform_C", 1, 1, 1, MinQuality, MaxQuality)
 			
 			Self.AddSet(Set)
 			Return True
@@ -1145,13 +1146,13 @@ End
 		Function AddItemSetRiotArmor() As Boolean Handles AddItemSetRiotArmor.Action
 			Dim Set As New Ark.ItemSet
 			Set.Label = "Riot Armor"
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -1175,14 +1176,15 @@ End
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality, AmmoMultiplier As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
+			Dim AmmoMultiplier As Double
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			AmmoMultiplier = 2
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			AmmoMultiplier = 1
 			End If
 			
@@ -1214,13 +1216,13 @@ End
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			
 			Self.AddTemplate(Set, "PrimalItemArmor_ProcoptodonSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1279,13 +1281,13 @@ End
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Double
+			Dim MinQuality, MaxQuality As Ark.Qualities
 			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.QualityJourneyman
-			MaxQuality = Ark.QualityAscendant
+			MinQuality = Ark.Qualities.Journeyman
+			MaxQuality = Ark.Qualities.Ascendant
 			Else
-			MinQuality = Ark.QualityPrimitive
-			MaxQuality = Ark.QualityApprentice
+			MinQuality = Ark.Qualities.Primitive
+			MaxQuality = Ark.Qualities.Apprentice
 			End If
 			
 			Self.AddTemplate(Set, "PrimalItem_WeaponStonePick_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1430,14 +1432,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub AddTemplate(Set As Ark.ItemSet, ClassString As String, MinQuantity As Integer, MaxQuantity As Integer, Weight As Double = 1, MinQuality As Double = 1, MaxQuality As Double = 1)
-		  Dim Multipliers As Ark.Range = Editor.Multipliers
+		Private Sub AddTemplate(Set As Ark.ItemSet, ClassString As String, MinQuantity As Integer, MaxQuantity As Integer, Weight As Double = 1, MinQuality As Ark.Qualities = Ark.Qualities.Primitive, MaxQuality As Ark.Qualities = Ark.Qualities.Primitive)
 		  Dim Entry As New Ark.SetEntry
 		  Entry.Append(New Ark.ItemClass(ClassString.ToText, 1))
 		  Entry.MinQuantity = MinQuantity
 		  Entry.MaxQuantity = MaxQuantity
-		  Entry.MinQuality = MinQuality / Multipliers.Min
-		  Entry.MaxQuality = MaxQuality / Multipliers.Max
+		  Entry.MinQuality = MinQuality
+		  Entry.MaxQuality = MaxQuality
 		  Entry.Weight = Weight
 		  Entry.ChanceToBeBlueprint = 0.1
 		  Set.Append(Entry)
@@ -1525,7 +1526,6 @@ End
 			      SetList.AddRow(Set.Label)
 			      SetList.RowTag(SetList.LastIndex) = Set
 			    Next
-			    Editor.Multipliers = App.DataSource.MultipliersForBeacon(Self.mBeacon)
 			  Else
 			    LabelField.Text = ""
 			    MaxSetsField.Text = ""
@@ -1612,7 +1612,7 @@ End
 #tag EndEvents
 #tag Events Separators
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
 		  G.ForeColor = &cCCCCCC

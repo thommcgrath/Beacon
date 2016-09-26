@@ -167,6 +167,8 @@ Inherits Application
 
 	#tag Method, Flags = &h21
 		Private Sub mUpdateChecker_UpdateAvailable(Sender As UpdateChecker, Version As String, Notes As String, URL As String, Signature As String)
+		  #Pragma Unused Sender
+		  
 		  UpdateWindow.Present(Version, Notes, URL, Signature)
 		End Sub
 	#tag EndMethod

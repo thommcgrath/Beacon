@@ -637,6 +637,8 @@ End
 #tag Events ResultsIconCanvas
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused areas
+		  
 		  G.DrawPicture(IconApp, 0, 0)
 		End Sub
 	#tag EndEvent
@@ -687,6 +689,8 @@ End
 #tag Events Checker
 	#tag Event
 		Sub CheckError(Message As String)
+		  #Pragma Unused Message
+		  
 		  Dim Dialog As New MessageDialog
 		  Dialog.Message = "Unable to check for updates."
 		  Dialog.Explanation = "Uh oh, something seems to be wrong. Please report this problem so it can be fixed as soon as possible."
@@ -764,6 +768,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ReceiveProgress(BytesReceived as Int64, TotalBytes as Int64, NewData as xojo.Core.MemoryBlock)
+		  #Pragma Unused NewData
+		  
 		  If Self.DownloadProgressBar.Maximum <> 1000 Then
 		    Self.DownloadProgressBar.Maximum = 1000
 		  End If

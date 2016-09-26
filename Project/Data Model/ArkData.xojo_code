@@ -32,6 +32,8 @@ Inherits SQLiteDatabase
 
 	#tag Method, Flags = &h21
 		Private Sub HandleError(SQLString As String, ErrorCode As Integer, ErrorMessage As String)
+		  #Pragma Unused ErrorCode
+		  
 		  Dim Err As New UnsupportedOperationException
 		  Err.Message = ErrorMessage + "EndOfLine" + SQLString
 		  Raise Err

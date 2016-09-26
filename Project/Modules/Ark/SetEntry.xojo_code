@@ -11,8 +11,8 @@ Implements Ark.Countable
 		Sub Constructor()
 		  Self.mMinQuantity = 1
 		  Self.mMaxQuantity = 1
-		  Self.mMinQuality = 3
-		  Self.mMaxQuality = 10
+		  Self.mMinQuality = Ark.Qualities.Primitive
+		  Self.mMaxQuality = Ark.Qualities.Ascendant
 		  Self.mChanceToBeBlueprint = 0.1
 		End Sub
 	#tag EndMethod
@@ -52,9 +52,9 @@ Implements Ark.Countable
 		  Dim Keys As New Xojo.Core.Dictionary
 		  Keys.Value("ChanceToBeBlueprintOverride") = Self.ChanceToBeBlueprint
 		  Keys.Value("Items") = Children
-		  Keys.Value("MaxQuality") = Self.MaxQuality
+		  Keys.Value("MaxQuality") = Ark.QualityToText(Self.MaxQuality)
 		  Keys.Value("MaxQuantity") = Self.MaxQuantity
-		  Keys.Value("MinQuality") = Self.MinQuality
+		  Keys.Value("MinQuality") = Ark.QualityToText(Self.MinQuality)
 		  Keys.Value("MinQuantity") = Self.MinQuantity
 		  Keys.Value("EntryWeight") = Self.Weight
 		  Return Keys
@@ -75,10 +75,28 @@ Implements Ark.Countable
 		  Else
 		    Entry.Weight = Dict.Lookup("Weight", Entry.Weight)
 		  End If
+		  
+		  If Dict.HasKey("MinQuality") Then
+		    Dim Value As Auto = Dict.Value("MinQuality")
+		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		    If Info.FullName = "Text" Then
+		      Entry.MinQuality = Ark.TextToQuality(Value)
+		    Else
+		      Entry.MinQuality = Ark.QualityForValue(Value, 1)
+		    End If
+		  End If
+		  If Dict.HasKey("MaxQuality") Then
+		    Dim Value As Auto = Dict.Value("MaxQuality")
+		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		    If Info.FullName = "Text" Then
+		      Entry.MaxQuality = Ark.TextToQuality(Value)
+		    Else
+		      Entry.MaxQuality = Ark.QualityForValue(Value, 1)
+		    End If
+		  End If
+		  
 		  Entry.MinQuantity = Dict.Lookup("MinQuantity", Entry.MinQuantity)
 		  Entry.MaxQuantity = Dict.Lookup("MaxQuantity", Entry.MaxQuantity)
-		  Entry.MinQuality = Dict.Lookup("MinQuality", Entry.MinQuality)
-		  Entry.MaxQuality = Dict.Lookup("MaxQuality", Entry.MaxQuality)
 		  If Dict.HasKey("ChanceToBeBlueprintOverride") Then
 		    Entry.ChanceToBeBlueprint = Dict.Value("ChanceToBeBlueprintOverride")
 		  Else
@@ -135,10 +153,10 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Entries() As Ark.SetEntry, Separator As Text) As Text
+		Shared Function Join(Entries() As Ark.SetEntry, Separator As Text, Multipliers As Ark.Range) As Text
 		  Dim Values() As Text
 		  For Each Entry As Ark.SetEntry In Entries
-		    Values.Append(Entry.TextValue)
+		    Values.Append(Entry.TextValue(Multipliers))
 		  Next
 		  Return Text.Join(Values, Separator)
 		End Function
@@ -169,7 +187,7 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue() As Text
+		Function TextValue(Multipliers As Ark.Range) As Text
 		  Dim Classes(), Weights() As Text
 		  Redim Classes(UBound(Self.mItems))
 		  Redim Weights(UBound(Self.mItems))
@@ -178,14 +196,17 @@ Implements Ark.Countable
 		    Weights(I) = Self.mItems(I).Weight.ToText
 		  Next
 		  
+		  Dim MinQuality As Double = Ark.ValueForQuality(Self.mMinQuality, Multipliers.Min)
+		  Dim MaxQuality As Double = Ark.ValueForQuality(Self.mMaxQuality, Multipliers.Max)
+		  
 		  Dim Values() As Text
 		  Values.Append("EntryWeight=" + Self.mWeight.ToText)
 		  Values.Append("ItemClassStrings=(""" + Text.Join(Classes, """,""") + """)")
 		  Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
 		  Values.Append("MinQuantity=" + Self.mMinQuantity.ToText)
 		  Values.Append("MaxQuantity=" + Self.mMaxQuantity.ToText)
-		  Values.Append("MinQuality=" + Self.mMinQuality.ToText)
-		  Values.Append("MaxQuality=" + Self.mMaxQuality.ToText)
+		  Values.Append("MinQuality=" + MinQuality.ToText)
+		  Values.Append("MaxQuality=" + MaxQuality.ToText)
 		  Values.Append("bForceBlueprint=" + if(Self.ForceBlueprint, "true", "false"))
 		  Values.Append("ChanceToBeBlueprintOverride=" + Self.mChanceToBeBlueprint.ToText)
 		  Return "(" + Text.Join(Values, ",") + ")"
@@ -224,10 +245,10 @@ Implements Ark.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mMaxQuality = Max(Value, 0)
+			  Self.mMaxQuality = Value
 			End Set
 		#tag EndSetter
-		MaxQuality As Double
+		MaxQuality As Ark.Qualities
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -256,10 +277,10 @@ Implements Ark.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mMinQuality = Max(Value, 0)
+			  Self.mMinQuality = Value
 			End Set
 		#tag EndSetter
-		MinQuality As Double
+		MinQuality As Ark.Qualities
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -281,7 +302,7 @@ Implements Ark.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMaxQuality As Double
+		Private mMaxQuality As Ark.Qualities
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -289,7 +310,7 @@ Implements Ark.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMinQuality As Double
+		Private mMinQuality As Ark.Qualities
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

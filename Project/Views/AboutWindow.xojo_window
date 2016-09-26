@@ -199,6 +199,8 @@ End
 #tag Events IconCanvas
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused areas
+		  
 		  G.DrawPicture(IconApp, 0, 0)
 		End Sub
 	#tag EndEvent

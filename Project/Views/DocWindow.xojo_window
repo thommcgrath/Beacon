@@ -115,7 +115,6 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -308,7 +307,6 @@ Begin Window DocWindow
       Width           =   190
    End
    Begin Ark.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -438,7 +436,8 @@ End
 			
 			Dim Beacons() As Ark.Beacon = Self.Doc.Beacons
 			For Each Beacon As Ark.Beacon In Beacons
-			Lines.Append("ConfigOverrideSupplyCrateItems=" + Beacon.TextValue)
+			Dim Multipliers As Ark.Range = App.DataSource.MultipliersForBeacon(Beacon)
+			Lines.Append("ConfigOverrideSupplyCrateItems=" + Beacon.TextValue(Multipliers))
 			Next
 			
 			Dim Stream As TextOutputStream = TextOutputStream.Create(File)
@@ -669,7 +668,8 @@ End
 		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
 		    Board.AddRawData(Contents, Self.kClipboardType)
 		  End If
-		  Board.Text = "ConfigOverrideSupplyCrateItems=" + Beacon.TextValue
+		  Dim Multipliers As Ark.Range = App.DataSource.MultipliersForBeacon(Beacon)
+		  Board.Text = "ConfigOverrideSupplyCrateItems=" + Beacon.TextValue(Multipliers)
 		End Sub
 	#tag EndEvent
 	#tag Event

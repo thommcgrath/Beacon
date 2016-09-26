@@ -1116,7 +1116,7 @@ End
 
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Multipliers As Ark.Range, Sources() As Ark.SetEntry = Nil) As Ark.SetEntry()
+		Shared Function Present(Parent As Window, Sources() As Ark.SetEntry = Nil) As Ark.SetEntry()
 		  Dim Win As New EntryEditor
 		  If Sources <> Nil And UBound(Sources) > -1 Then
 		    Win.mEditing = True
@@ -1132,7 +1132,8 @@ End
 		    Win.DoneButton.Caption = "Save"
 		    
 		    Dim MinQuantities(), MaxQuantities() As Integer
-		    Dim TotalWeight, TotalChance, MinQualities(), MaxQualities() As Double
+		    Dim MinQualities(), MaxQualities() As Ark.Qualities
+		    Dim TotalWeight, TotalChance As Double
 		    For Each Source As Ark.SetEntry In Sources
 		      MinQuantities.Append(Source.MinQuantity)
 		      MaxQuantities.Append(Source.MaxQuantity)
@@ -1152,7 +1153,7 @@ End
 		    Win.WeightSlider.Value = 100 * (TotalWeight / (UBound(Sources) + 1))
 		    Win.ChanceSlider.Value = 100 * (TotalChance / (UBound(Sources) + 1))
 		    
-		    Dim MinQuality As String = Ark.QualityForValue(MinQualities(0), Multipliers.Min)
+		    Dim MinQuality As Text = Ark.QualityToText(MinQualities(0))
 		    For I As Integer = 0 To Win.MinQualityMenu.ListCount - 1
 		      If Win.MinQualityMenu.List(I) = MinQuality Then
 		        Win.MinQualityMenu.ListIndex = I
@@ -1160,7 +1161,7 @@ End
 		      End If
 		    Next
 		    
-		    Dim MaxQuality As String = Ark.QualityForValue(MaxQualities(UBound(MaxQualities)), Multipliers.Max)
+		    Dim MaxQuality As Text = Ark.QualityToText(MaxQualities(UBound(MaxQualities)))
 		    For I As Integer = 0 To Win.MaxQualityMenu.ListCount - 1
 		      If Win.MaxQualityMenu.List(I) = MaxQuality Then
 		        Win.MaxQualityMenu.ListIndex = I
@@ -1211,10 +1212,10 @@ End
 		      Entry.Weight = Win.WeightSlider.Value / 100
 		    End If
 		    If Win.EditMaxQualityCheck.Value Then
-		      Entry.MaxQuality = Ark.ValueForQuality(Win.MaxQualityMenu.Text.ToText, Multipliers.Max)
+		      Entry.MaxQuality = Ark.TextToQuality(Win.MaxQualityMenu.Text.ToText)
 		    End If
 		    If Win.EditMinQualityCheck.Value Then
-		      Entry.MinQuality = Ark.ValueForQuality(Win.MinQualityMenu.Text.ToText, Multipliers.Min)
+		      Entry.MinQuality = Ark.TextToQuality(Win.MinQualityMenu.Text.ToText)
 		    End If
 		  Next
 		  Win.Close

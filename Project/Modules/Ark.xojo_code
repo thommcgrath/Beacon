@@ -1,22 +1,60 @@
 #tag Module
 Protected Module Ark
 	#tag Method, Flags = &h1
-		Protected Function QualityForValue(Quality As Double, Multiplier As Double) As Text
+		Protected Function QualityForValue(Quality As Double, Multiplier As Double) As Ark.Qualities
 		  Quality = Quality * Multiplier
 		  
 		  If Quality < Ark.QualityRamshackle Then
-		    Return Ark.LabelPrimitive
+		    Return Ark.Qualities.Primitive
 		  ElseIf Quality < Ark.QualityApprentice Then
-		    Return Ark.LabelRamshackle
+		    Return Ark.Qualities.Ramshackle
 		  ElseIf Quality < Ark.QualityJourneyman Then
-		    Return Ark.LabelApprentice
+		    Return Ark.Qualities.Apprentice
 		  ElseIf Quality < Ark.QualityMastercraft Then
-		    Return Ark.LabelJourneyman
+		    Return Ark.Qualities.Journeyman
 		  ElseIf Quality < Ark.QualityAscendant Then
-		    Return Ark.LabelMastercraft
+		    Return Ark.Qualities.Mastercraft
 		  Else
-		    Return Ark.LabelAscendant
+		    Return Ark.Qualities.Ascendant
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function QualityToText(Quality As Ark.Qualities) As Text
+		  Select Case Quality
+		  Case Ark.Qualities.Primitive
+		    Return Ark.LabelPrimitive
+		  Case Ark.Qualities.Ramshackle
+		    Return Ark.LabelRamshackle
+		  Case Ark.Qualities.Apprentice
+		    Return Ark.LabelApprentice
+		  Case Ark.Qualities.Journeyman
+		    Return Ark.LabelJourneyman
+		  Case Ark.Qualities.Mastercraft
+		    Return Ark.LabelMastercraft
+		  Case Ark.Qualities.Ascendant
+		    Return Ark.LabelAscendant
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function TextToQuality(Quality As Text) As Ark.Qualities
+		  Select Case Quality
+		  Case Ark.LabelPrimitive
+		    Return Ark.Qualities.Primitive
+		  Case Ark.LabelRamshackle
+		    Return Ark.Qualities.Ramshackle
+		  Case Ark.LabelApprentice
+		    Return Ark.Qualities.Apprentice
+		  Case Ark.LabelJourneyman
+		    Return Ark.Qualities.Journeyman
+		  Case Ark.LabelMastercraft
+		    Return Ark.Qualities.Mastercraft
+		  Case Ark.LabelAscendant
+		    Return Ark.Qualities.Ascendant
+		  End Select
 		End Function
 	#tag EndMethod
 
@@ -33,19 +71,19 @@ Protected Module Ark
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ValueForQuality(Quality As Text, Multiplier As Double) As Double
+		Protected Function ValueForQuality(Quality As Ark.Qualities, Multiplier As Double) As Double
 		  Select Case Quality
-		  Case Ark.LabelPrimitive
+		  Case Ark.Qualities.Primitive
 		    Return Ark.QualityPrimitive / Multiplier
-		  Case Ark.LabelRamshackle
+		  Case Ark.Qualities.Ramshackle
 		    Return Ark.QualityRamshackle / Multiplier
-		  Case Ark.LabelApprentice
+		  Case Ark.Qualities.Apprentice
 		    Return Ark.QualityApprentice / Multiplier
-		  Case Ark.LabelJourneyman
+		  Case Ark.Qualities.Journeyman
 		    Return Ark.QualityJourneyman / Multiplier
-		  Case Ark.LabelMastercraft
+		  Case Ark.Qualities.Mastercraft
 		    Return Ark.QualityMastercraft / Multiplier
-		  Case Ark.LabelAscendant
+		  Case Ark.Qualities.Ascendant
 		    Return Ark.QualityAscendant / Multiplier
 		  Else
 		    Return Ark.QualityPrimitive / Multiplier
@@ -89,6 +127,16 @@ Protected Module Ark
 
 	#tag Constant, Name = QualityRamshackle, Type = Double, Dynamic = False, Default = \"1.25", Scope = Protected
 	#tag EndConstant
+
+
+	#tag Enum, Name = Qualities, Type = Integer, Flags = &h1
+		Primitive
+		  Ramshackle
+		  Apprentice
+		  Journeyman
+		  Mastercraft
+		Ascendant
+	#tag EndEnum
 
 
 	#tag ViewBehavior

@@ -123,10 +123,10 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Sets() As Ark.ItemSet, Separator As Text) As Text
+		Shared Function Join(Sets() As Ark.ItemSet, Separator As Text, Multipliers As Ark.Range) As Text
 		  Dim Values() As Text
 		  For Each Set As Ark.ItemSet In Sets
-		    Values.Append(Set.TextValue)
+		    Values.Append(Set.TextValue(Multipliers))
 		  Next
 		  Return Text.Join(Values, Separator)
 		End Function
@@ -164,14 +164,14 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue() As Text
+		Function TextValue(Multipliers As Ark.Range) As Text
 		  Dim Values() As Text
 		  Values.Append("MinNumItems=" + Self.mMinNumItems.ToText)
 		  Values.Append("MaxNumItems=" + Self.mMaxNumItems.ToText)
 		  Values.Append("NumItemsPower=" + Self.mNumItemsPower.ToText)
 		  Values.Append("SetWeight=" + Self.mSetWeight.ToText)
 		  Values.Append("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("ItemEntries=(" + Ark.SetEntry.Join(Self.mEntries, ",") + ")")
+		  Values.Append("ItemEntries=(" + Ark.SetEntry.Join(Self.mEntries, ",", Multipliers) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod

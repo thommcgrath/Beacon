@@ -182,14 +182,14 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue() As Text
+		Function TextValue(Multipliers As Ark.Range) As Text
 		  Dim Values() As Text
 		  Values.Append("SupplyCrateClassString=""" + Self.mType + """")
 		  Values.Append("MinItemSets=" + Self.mMinItemSets.ToText)
 		  Values.Append("MaxItemSets=" + Self.mMaxItemSets.ToText)
 		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.ToText)
 		  Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("ItemSets=(" + Ark.ItemSet.Join(Self.mItems, ",") + ")")
+		  Values.Append("ItemSets=(" + Ark.ItemSet.Join(Self.mItems, ",", Multipliers) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod
