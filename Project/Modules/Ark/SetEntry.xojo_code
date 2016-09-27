@@ -198,18 +198,42 @@ Implements Ark.Countable
 		  
 		  Dim MinQuality As Double = Ark.ValueForQuality(Self.mMinQuality, Multipliers.Min)
 		  Dim MaxQuality As Double = Ark.ValueForQuality(Self.mMaxQuality, Multipliers.Max)
+		  Dim InverseChance As Double = 1 - Self.mChanceToBeBlueprint
+		  Dim Entries() As Text
 		  
-		  Dim Values() As Text
-		  Values.Append("EntryWeight=" + Self.mWeight.ToText)
-		  Values.Append("ItemClassStrings=(""" + Text.Join(Classes, """,""") + """)")
-		  Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
-		  Values.Append("MinQuantity=" + Self.mMinQuantity.ToText)
-		  Values.Append("MaxQuantity=" + Self.mMaxQuantity.ToText)
-		  Values.Append("MinQuality=" + MinQuality.ToText)
-		  Values.Append("MaxQuality=" + MaxQuality.ToText)
-		  Values.Append("bForceBlueprint=" + if(Self.ForceBlueprint, "true", "false"))
-		  Values.Append("ChanceToBeBlueprintOverride=" + Self.mChanceToBeBlueprint.ToText)
-		  Return "(" + Text.Join(Values, ",") + ")"
+		  If InverseChance > 0 Then
+		    // Usable item code
+		    Dim EntryWeight As Double = Self.mWeight * InverseChance
+		    Dim Values() As Text
+		    Values.Append("EntryWeight=" + EntryWeight.ToText)
+		    Values.Append("ItemClassStrings=(""" + Text.Join(Classes, """,""") + """)")
+		    Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
+		    Values.Append("MinQuantity=" + Self.mMinQuantity.ToText)
+		    Values.Append("MaxQuantity=" + Self.mMaxQuantity.ToText)
+		    Values.Append("MinQuality=" + MinQuality.ToText)
+		    Values.Append("MaxQuality=" + MaxQuality.ToText)
+		    Values.Append("bForceBlueprint=false")
+		    Values.Append("ChanceToBeBlueprintOverride=0.0")
+		    Entries.Append("(" + Text.Join(Values, ",") + ")")
+		  End If
+		  
+		  If Self.mChanceToBeBlueprint > 0 Then
+		    // Blueprint code
+		    Dim EntryWeight As Double = Self.mWeight * Self.mChanceToBeBlueprint
+		    Dim Values() As Text
+		    Values.Append("EntryWeight=" + EntryWeight.ToText)
+		    Values.Append("ItemClassStrings=(""" + Text.Join(Classes, """,""") + """)")
+		    Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
+		    Values.Append("MinQuantity=1")
+		    Values.Append("MaxQuantity=1")
+		    Values.Append("MinQuality=" + MinQuality.ToText)
+		    Values.Append("MaxQuality=" + MaxQuality.ToText)
+		    Values.Append("bForceBlueprint=true")
+		    Values.Append("ChanceToBeBlueprintOverride=1.0")
+		    Entries.Append("(" + Text.Join(Values, ",") + ")")
+		  End If
+		  
+		  Return Text.Join(Entries, ",")
 		End Function
 	#tag EndMethod
 
@@ -364,7 +388,19 @@ Implements Ark.Countable
 		#tag ViewProperty
 			Name="MaxQuality"
 			Group="Behavior"
-			Type="Double"
+			Type="Ark.Qualities"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Primitive"
+				"1 - Ramshackle"
+				"2 - Apprentice"
+				"3 - Journeyman"
+				"4 - Mastercraft"
+				"5 - Ascendant"
+				"6 - AscendantPlus"
+				"7 - AscendantPlusPlus"
+				"8 - AscendantPlusPlusPlus"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MaxQuantity"
@@ -374,7 +410,19 @@ Implements Ark.Countable
 		#tag ViewProperty
 			Name="MinQuality"
 			Group="Behavior"
-			Type="Double"
+			Type="Ark.Qualities"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Primitive"
+				"1 - Ramshackle"
+				"2 - Apprentice"
+				"3 - Journeyman"
+				"4 - Mastercraft"
+				"5 - Ascendant"
+				"6 - AscendantPlus"
+				"7 - AscendantPlusPlus"
+				"8 - AscendantPlusPlusPlus"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinQuantity"
