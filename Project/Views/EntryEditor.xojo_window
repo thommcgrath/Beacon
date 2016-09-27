@@ -1135,7 +1135,7 @@ End
 		    Redim Win.mSelectedEngrams(UBound(Sources))
 		    For I As Integer = 0 To UBound(Sources)
 		      Dim Source As Ark.SetEntry = Sources(I)
-		      Win.mSelectedEngrams(I) = New ArkEngram(App.DataSource.NameOfEngram(Source(0).ClassString), Source(0).ClassString)
+		      Win.mSelectedEngrams(I) = New Ark.Engram(App.DataSource.NameOfEngram(Source(0).ClassString), Source(0).ClassString)
 		    Next
 		    Win.NameField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).Name, "Multiple")
 		    Win.ClassField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).ClassString, "Multiple")
@@ -1190,9 +1190,9 @@ End
 		      Entries.Append(New Ark.SetEntry(Source))
 		    Next
 		  Else
-		    For Each Engram As ArkEngram In Win.mSelectedEngrams
+		    For Each Engram As Ark.Engram In Win.mSelectedEngrams
 		      Dim Entry As New Ark.SetEntry
-		      Entry.Append(New Ark.ItemClass(Engram.ClassString.ToText, 1))
+		      Entry.Append(New Ark.ItemClass(Engram.ClassString, 1))
 		      Entries.Append(Entry)
 		    Next
 		  End If
@@ -1228,12 +1228,12 @@ End
 		    FilterField.Text = SearchText
 		  End If
 		  
-		  Dim Engrams() As ArkEngram = App.DataSource.SearchForEngrams(SearchText)
+		  Dim Engrams() As Ark.Engram = App.DataSource.SearchForEngrams(SearchText.ToText)
 		  EngramList.DeleteAllRows
 		  
 		  Dim PerfectMatch As Boolean
 		  Dim Indexes As New Dictionary
-		  For Each Engram As ArkEngram In Engrams
+		  For Each Engram As Ark.Engram In Engrams
 		    EngramList.AddRow("", Engram.Name, Engram.ClassString)
 		    EngramList.RowTag(EngramList.LastIndex) = Engram
 		    Indexes.Value(Engram.ClassString) = EngramList.LastIndex
@@ -1244,11 +1244,11 @@ End
 		  
 		  If Not PerfectMatch And SearchText <> "" Then
 		    EngramList.AddRow(SearchText, SearchText)
-		    EngramList.RowTag(EngramList.LastIndex) = New ArkEngram("", SearchText)
+		    EngramList.RowTag(EngramList.LastIndex) = New Ark.Engram("", SearchText.ToText)
 		    Indexes.Value(SearchText) = EngramList.LastIndex
 		  End If
 		  
-		  For Each Engram As ArkEngram In Self.mSelectedEngrams
+		  For Each Engram As Ark.Engram In Self.mSelectedEngrams
 		    Dim Idx As Integer = Indexes.Lookup(Engram.ClassString, -1)
 		    If Idx > -1 Then
 		      EngramList.CellCheck(Idx, 0) = True
@@ -1267,7 +1267,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedEngrams() As ArkEngram
+		Private mSelectedEngrams() As Ark.Engram
 	#tag EndProperty
 
 
@@ -1326,7 +1326,7 @@ End
 		  End If
 		  
 		  Dim Selected As Boolean = Me.CellCheck(Row, Column)
-		  Dim Engram As ArkEngram = Me.RowTag(Row)
+		  Dim Engram As Ark.Engram = Me.RowTag(Row)
 		  Dim Idx As Integer = -1
 		  
 		  For I As Integer = 0 To UBound(Self.mSelectedEngrams)

@@ -152,6 +152,7 @@ Begin Window CustomBeaconSheet
       Selectable      =   False
       TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Add Custom Beacon"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -196,9 +197,9 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim Type As String = ClassField.Text
-		  Dim Label As String = App.DataSource.NameOfBeacon(Type)
-		  Self.mBeacon = New Ark.Beacon(Label.ToText, Type.ToText)
+		  Dim Type As Text = ClassField.Text.ToText
+		  Dim Label As Text = App.DataSource.NameOfBeacon(Type)
+		  Self.mBeacon = New Ark.Beacon(Label, Type)
 		  Self.Hide
 		End Sub
 	#tag EndEvent

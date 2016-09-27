@@ -1,6 +1,7 @@
 #tag Class
 Protected Class ArkData
 Inherits SQLiteDatabase
+Implements Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function Connect() As Boolean
 		  If Self.DatabaseFile.Exists Then
@@ -41,19 +42,17 @@ Inherits SQLiteDatabase
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MultipliersForBeacon(Beacon As Ark.Beacon) As Ark.Range
-		  Return Self.MultipliersForBeacon(Beacon.Type)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function MultipliersForBeacon(ClassString As String) As Ark.Range
+		Function MultipliersForBeacon(ClassString As Text) As Ark.Range
+		  // Part of the Beacon.DataSource interface.
+		  
 		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""minmult"", ""maxmult"" FROM ""beacons"" WHERE ""classstring"" = ?;")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  
+		  Dim StringValue As String = ClassString
+		  
 		  Dim RS As RecordSet
 		  Try
-		    RS = Self.SQLSelect(Statement, ClassString)
+		    RS = Self.SQLSelect(Statement, StringValue)
 		  Catch Err As UnsupportedOperationException
 		    Return New Ark.Range(1, 1)
 		  End Try
@@ -66,13 +65,17 @@ Inherits SQLiteDatabase
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NameOfBeacon(ClassString As String) As String
+		Function NameOfBeacon(ClassString As Text) As Text
+		  // Part of the Beacon.DataSource interface.
+		  
 		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"" FROM ""beacons"" WHERE ""classstring"" = ?;")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  
+		  Dim StringValue As String = ClassString
+		  
 		  Dim RS As RecordSet
 		  Try
-		    RS = Self.SQLSelect(Statement, ClassString)
+		    RS = Self.SQLSelect(Statement, StringValue)
 		  Catch Err As UnsupportedOperationException
 		    Return ClassString
 		  End Try
@@ -80,18 +83,22 @@ Inherits SQLiteDatabase
 		    Return ClassString
 		  End If
 		  
-		  Return RS.Field("label").StringValue
+		  Return RS.Field("label").StringValue.ToText
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NameOfEngram(ClassString As String) As String
+		Function NameOfEngram(ClassString As Text) As Text
+		  // Part of the Beacon.DataSource interface.
+		  
 		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"" FROM ""engrams"" WHERE ""classstring"" = ?;")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  
+		  Dim StringValue As String = ClassString
+		  
 		  Dim RS As RecordSet
 		  Try
-		    RS = Self.SQLSelect(Statement, ClassString)
+		    RS = Self.SQLSelect(Statement, StringValue)
 		  Catch Err As UnsupportedOperationException
 		    Return ClassString
 		  End Try
@@ -99,7 +106,7 @@ Inherits SQLiteDatabase
 		    Return ClassString
 		  End If
 		  
-		  Return RS.Field("label").StringValue
+		  Return RS.Field("label").StringValue.ToText
 		End Function
 	#tag EndMethod
 
@@ -115,7 +122,9 @@ Inherits SQLiteDatabase
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForBeacons(SearchText As String) As Ark.Beacon()
+		Function SearchForBeacons(SearchText As Text) As Ark.Beacon()
+		  // Part of the Beacon.DataSource interface.
+		  
 		  Dim Results() As Ark.Beacon
 		  
 		  Dim RS As RecordSet
@@ -126,7 +135,8 @@ Inherits SQLiteDatabase
 		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"", ""classstring"" FROM ""beacons"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
 		      Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		      
-		      RS = Self.SQLSelect(Statement, "%" + SearchText + "%")
+		      Dim StringValue As String = SearchText
+		      RS = Self.SQLSelect(Statement, "%" + StringValue + "%")
 		    End If
 		  Catch Err As UnsupportedOperationException
 		    Return Results()
@@ -145,8 +155,10 @@ Inherits SQLiteDatabase
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As String) As ArkEngram()
-		  Dim Results() As ArkEngram
+		Function SearchForEngrams(SearchText As Text) As Ark.Engram()
+		  // Part of the Beacon.DataSource interface.
+		  
+		  Dim Results() As Ark.Engram
 		  
 		  Dim RS As RecordSet
 		  Try
@@ -156,7 +168,8 @@ Inherits SQLiteDatabase
 		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"", ""classstring"" FROM ""engrams"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
 		      Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		      
-		      RS = Self.SQLSelect(Statement, "%" + SearchText + "%")
+		      Dim StringValue As String = SearchText
+		      RS = Self.SQLSelect(Statement, "%" + StringValue + "%")
 		    End If
 		  Catch Err As UnsupportedOperationException
 		    Return Results()
@@ -166,7 +179,7 @@ Inherits SQLiteDatabase
 		  End If
 		  
 		  while Not RS.EOF
-		    Results.Append(New ArkEngram(RS.Field("label").StringValue, RS.Field("classstring").StringValue))
+		    Results.Append(New Ark.Engram(RS.Field("label").StringValue.ToText, RS.Field("classstring").StringValue.ToText))
 		    RS.MoveNext
 		  wend
 		  

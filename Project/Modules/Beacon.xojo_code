@@ -88,6 +88,12 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function MultipliersForBeacon(Extends Source As Beacon.DataSource, Beacon As Ark.Beacon) As Ark.Range
+		  Return Source.MultipliersForBeacon(Beacon.Type)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Function PrimaryExtension(Extends Type As FileType) As String
 		  Dim Extensions() As String = Split(Type.Extensions, ";")
