@@ -3,6 +3,15 @@
 ## Build 3
 
 - Now supports copy & paste. Users can now copy a beacon and paste it into another document or even directly into their text editor. When pasting into a text editor, the text is a properly constructed ConfigOverrideSupplyCrateItems line ready for use. It is also possible to go in the opposite direction. Copy a ConfigOverrideSupplyCrateItems line from a text editor and paste into Beacon.
+- Fixed an artificial minimum quality.
+- Updated document format for more future-proofing.
+- Added application and document icons.
+- Added Tapejara Saddle to known engrams database.
+- Beacon can now check for updates.
+- Added three new quality options. Careful with these, they will produce some very powerful gear. The current Ascendant multiplier is 7. The new multipliers are Epic (9), Legendary (12), and Pearlescent (16).
+- Quality values will no longer change when moving a beacon from one location to another.
+- Changed how blueprints are handled. This will prevent excessive blueprints found in loot sources.
+- Added "Report a Problem" to the Help/Application menu.
 
 ## Build 2
 

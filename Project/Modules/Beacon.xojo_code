@@ -124,7 +124,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 
-	#tag Constant, Name = WebURL, Type = Text, Dynamic = False, Default = \"https://workbench.thezaz.com/beacon", Scope = Protected
+	#tag Constant, Name = WebURL, Type = Text, Dynamic = False, Default = \"https://thezaz.com/beacon", Scope = Protected
 	#tag EndConstant
 
 
