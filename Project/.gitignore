@@ -9,3 +9,4 @@ Debug*/Debug*\ Libs
 *.rbuistate
 *.xojo_uistate
 *.obsolete
+Debug*.tar.gz
