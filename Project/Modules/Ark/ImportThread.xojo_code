@@ -16,7 +16,7 @@ Inherits Ark.Thread
 		  
 		  Dim Lines() As Text = Self.mContent.Split(LF)
 		  For I As Integer = UBound(Lines) DownTo 0
-		    If Lines(I).Left(30) <> "ConfigOverrideSupplyCrateItems" Then
+		    If Lines(I).Length < 30 Or Lines(I).Left(30) <> "ConfigOverrideSupplyCrateItems" Then
 		      Lines.Remove(I)
 		    End If
 		  Next
@@ -326,6 +326,14 @@ Inherits Ark.Thread
 			Name="State"
 			Group="Behavior"
 			Type="Ark.Thread.States"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Running"
+				"1 - Waiting"
+				"2 - Suspended"
+				"3 - Sleeping"
+				"4 - NotRunning"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
