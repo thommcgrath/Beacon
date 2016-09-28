@@ -1,25 +1,25 @@
 #tag Module
 Protected Module Language
 	#tag Method, Flags = &h1
-		Protected Function LabelForQuality(Quality As Ark.Qualities) As String
+		Protected Function LabelForQuality(Quality As Beacon.Qualities) As String
 		  Select Case Quality
-		  Case Ark.Qualities.Primitive
+		  Case Beacon.Qualities.Primitive
 		    Return QualityPrimitive
-		  Case Ark.Qualities.Ramshackle
+		  Case Beacon.Qualities.Ramshackle
 		    Return QualityRamshackle
-		  Case Ark.Qualities.Apprentice
+		  Case Beacon.Qualities.Apprentice
 		    Return QualityApprentice
-		  Case Ark.Qualities.Journeyman
+		  Case Beacon.Qualities.Journeyman
 		    Return QualityJourneyman
-		  Case Ark.Qualities.Mastercraft
+		  Case Beacon.Qualities.Mastercraft
 		    Return QualityMastercraft
-		  Case Ark.Qualities.Ascendant
+		  Case Beacon.Qualities.Ascendant
 		    Return QualityAscendant
-		  Case Ark.Qualities.AscendantPlus
+		  Case Beacon.Qualities.AscendantPlus
 		    Return QualityAscendantPlus
-		  Case Ark.Qualities.AscendantPlusPlus
+		  Case Beacon.Qualities.AscendantPlusPlus
 		    Return QualityAscendantPlusPlus
-		  Case Ark.Qualities.AscendantPlusPlusPlus
+		  Case Beacon.Qualities.AscendantPlusPlusPlus
 		    Return QualityAscendantPlusPlusPlus
 		  Else
 		    Return ""
@@ -56,5 +56,40 @@ Protected Module Language
 	#tag EndConstant
 
 
+	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+	#tag EndViewBehavior
 End Module
 #tag EndModule

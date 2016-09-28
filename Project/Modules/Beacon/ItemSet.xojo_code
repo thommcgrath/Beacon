@@ -1,8 +1,8 @@
 #tag Class
 Protected Class ItemSet
-Implements Ark.Countable
+Implements Beacon.Countable
 	#tag Method, Flags = &h0
-		Sub Append(Entry As Ark.SetEntry)
+		Sub Append(Entry As Beacon.SetEntry)
 		  Self.mEntries.Append(Entry)
 		End Sub
 	#tag EndMethod
@@ -19,7 +19,7 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Ark.ItemSet)
+		Sub Constructor(Source As Beacon.ItemSet)
 		  Self.Constructor()
 		  
 		  Redim Self.mEntries(UBound(Source.mEntries))
@@ -32,7 +32,7 @@ Implements Ark.Countable
 		  Self.mLabel = Source.mLabel
 		  
 		  For I As Integer = 0 To UBound(Source.mEntries)
-		    Self.mEntries(I) = New Ark.SetEntry(Source.mEntries(I))
+		    Self.mEntries(I) = New Beacon.SetEntry(Source.mEntries(I))
 		  Next
 		End Sub
 	#tag EndMethod
@@ -46,7 +46,7 @@ Implements Ark.Countable
 	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Children() As Xojo.Core.Dictionary
-		  For Each Entry As Ark.SetEntry In Self.mEntries
+		  For Each Entry As Beacon.SetEntry In Self.mEntries
 		    Children.Append(Entry.Export)
 		  Next
 		  
@@ -64,13 +64,13 @@ Implements Ark.Countable
 
 	#tag Method, Flags = &h0
 		Function GetIterator() As Xojo.Core.Iterator
-		  Return New Ark.ItemSetIterator(Self)
+		  Return New Beacon.ItemSetIterator(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Xojo.Core.Dictionary) As Ark.ItemSet
-		  Dim Set As New Ark.ItemSet
+		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.ItemSet
+		  Dim Set As New Beacon.ItemSet
 		  Set.MinNumItems = Dict.Lookup("MinNumItems", Set.MinNumItems)
 		  Set.MaxNumItems = Dict.Lookup("MaxNumItems", Set.MaxNumItems)
 		  Set.NumItemsPower = Dict.Lookup("NumItemsPower", Set.NumItemsPower)
@@ -95,7 +95,7 @@ Implements Ark.Countable
 		    Children = Dict.Value("Items")
 		  End If
 		  For Each Child As Xojo.Core.Dictionary In Children
-		    Dim Entry As Ark.SetEntry = Ark.SetEntry.Import(Child)
+		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Child)
 		    If Entry <> Nil Then
 		      Set.Append(Entry)
 		    End If
@@ -106,7 +106,7 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IndexOf(Entry As Ark.SetEntry) As Integer
+		Function IndexOf(Entry As Beacon.SetEntry) As Integer
 		  For I As Integer = 0 To UBound(Self.mEntries)
 		    If Self.mEntries(I) = Entry Then
 		      Return I
@@ -117,15 +117,15 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Insert(Index As Integer, Entry As Ark.SetEntry)
+		Sub Insert(Index As Integer, Entry As Beacon.SetEntry)
 		  Self.mEntries.Insert(Index, Entry)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Sets() As Ark.ItemSet, Separator As Text, Multipliers As Ark.Range) As Text
+		Shared Function Join(Sets() As Beacon.ItemSet, Separator As Text, Multipliers As Beacon.Range) As Text
 		  Dim Values() As Text
-		  For Each Set As Ark.ItemSet In Sets
+		  For Each Set As Beacon.ItemSet In Sets
 		    Values.Append(Set.TextValue(Multipliers))
 		  Next
 		  Return Text.Join(Values, Separator)
@@ -139,20 +139,20 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Subscript(Index As Integer) As Ark.SetEntry
+		Function Operator_Subscript(Index As Integer) As Beacon.SetEntry
 		  Return Self.mEntries(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Subscript(Index As Integer, Assigns Entry As Ark.SetEntry)
+		Sub Operator_Subscript(Index As Integer, Assigns Entry As Beacon.SetEntry)
 		  Self.mEntries(Index) = Entry
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function RelativeWeight(Index As Integer) As Double
-		  Dim Item As Ark.SetEntry = Self.mEntries(Index)
+		  Dim Item As Beacon.SetEntry = Self.mEntries(Index)
 		  Return Item.Weight / Self.TotalWeight()
 		End Function
 	#tag EndMethod
@@ -164,14 +164,14 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Ark.Range) As Text
+		Function TextValue(Multipliers As Beacon.Range) As Text
 		  Dim Values() As Text
 		  Values.Append("MinNumItems=" + Self.mMinNumItems.ToText)
 		  Values.Append("MaxNumItems=" + Self.mMaxNumItems.ToText)
 		  Values.Append("NumItemsPower=" + Self.mNumItemsPower.ToText)
 		  Values.Append("SetWeight=" + Self.mSetWeight.ToText)
 		  Values.Append("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("ItemEntries=(" + Ark.SetEntry.Join(Self.mEntries, ",", Multipliers) + ")")
+		  Values.Append("ItemEntries=(" + Beacon.SetEntry.Join(Self.mEntries, ",", Multipliers) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod
@@ -179,7 +179,7 @@ Implements Ark.Countable
 	#tag Method, Flags = &h0
 		Function TotalWeight() As Double
 		  Dim Value As Double
-		  For Each Entry As Ark.SetEntry In Self.mEntries
+		  For Each Entry As Beacon.SetEntry In Self.mEntries
 		    Value = Value + Entry.Weight
 		  Next
 		  Return Value
@@ -230,7 +230,7 @@ Implements Ark.Countable
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mEntries() As Ark.SetEntry
+		Private mEntries() As Beacon.SetEntry
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

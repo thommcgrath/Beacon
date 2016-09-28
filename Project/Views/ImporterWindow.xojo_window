@@ -72,7 +72,9 @@ Begin Window ImporterWindow
       LockTop         =   True
       Maximum         =   0
       Scope           =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   52
       Value           =   0
       Visible         =   True
@@ -100,6 +102,7 @@ Begin Window ImporterWindow
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Importing from """""
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -134,6 +137,7 @@ Begin Window ImporterWindow
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -169,32 +173,12 @@ End
 			    Self.StatusLabel.Text = ""
 			  Else
 			    Self.JobProgress.Maximum = 1000
-			    Self.StatusLabel.Text = Str(Self.mBeaconsProcessed, "0") + " of " + Str(Self.mBeaconCount, "0") + " processed"
+			    Self.StatusLabel.Text = Str(Self.mLootSourcesProcessed, "0") + " of " + Str(Self.mBeaconCount, "0") + " processed"
 			  End If
-			  Self.JobProgress.Value = (Self.mBeaconsProcessed / Self.mBeaconCount) * Self.JobProgress.Maximum
+			  Self.JobProgress.Value = (Self.mLootSourcesProcessed / Self.mBeaconCount) * Self.JobProgress.Maximum
 			End Set
 		#tag EndSetter
 		BeaconCount As UInteger
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mBeaconsProcessed
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Self.mBeaconsProcessed = Value
-			  If Self.mBeaconCount = 0 Then
-			    Self.StatusLabel.Text = ""
-			  Else
-			    Self.StatusLabel.Text = Str(Self.mBeaconsProcessed, "0") + " of " + Str(Self.mBeaconCount, "0") + " processed"
-			  End If
-			  Self.JobProgress.Value = (Self.mBeaconsProcessed / Self.mBeaconCount) * Self.JobProgress.Maximum
-			End Set
-		#tag EndSetter
-		BeaconsProcessed As UInteger
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -212,16 +196,36 @@ End
 		CancelAction As ImporterWindow.CancelDelegate
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mLootSourcesProcessed
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mLootSourcesProcessed = Value
+			  If Self.mBeaconCount = 0 Then
+			    Self.StatusLabel.Text = ""
+			  Else
+			    Self.StatusLabel.Text = Str(Self.mLootSourcesProcessed, "0") + " of " + Str(Self.mBeaconCount, "0") + " processed"
+			  End If
+			  Self.JobProgress.Value = (Self.mLootSourcesProcessed / Self.mBeaconCount) * Self.JobProgress.Maximum
+			End Set
+		#tag EndSetter
+		LootSourcesProcessed As UInteger
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mBeaconCount As UInteger
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mBeaconsProcessed As UInteger
+		Private mCancelAction As ImporterWindow.CancelDelegate
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCancelAction As ImporterWindow.CancelDelegate
+		Private mLootSourcesProcessed As UInteger
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -268,6 +272,16 @@ End
 		Group="Background"
 		Type="Picture"
 		EditorType="Picture"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BeaconCount"
+		Group="Behavior"
+		Type="UInteger"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BeaconsProcessed"
+		Group="Behavior"
+		Type="UInteger"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="CloseButton"
@@ -449,6 +463,11 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Source"
+		Group="Behavior"
+		Type="String"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"

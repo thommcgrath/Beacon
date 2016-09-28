@@ -1,7 +1,7 @@
 #tag Interface
 Protected Interface DataSource
 	#tag Method, Flags = &h0
-		Function MultipliersForBeacon(ClassString As Text) As Ark.Range
+		Function MultipliersForBeacon(ClassString As Text) As Beacon.Range
 		  
 		End Function
 	#tag EndMethod
@@ -19,17 +19,19 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForBeacons(SearchText As Text) As Ark.Beacon()
+		Function SearchForEngrams(SearchText As Text) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As Text) As Ark.Engram()
+		Function SearchForLootSources(SearchText As Text) As Beacon.LootSource()
 		  
 		End Function
 	#tag EndMethod
 
 
+	#tag ViewBehavior
+	#tag EndViewBehavior
 End Interface
 #tag EndInterface

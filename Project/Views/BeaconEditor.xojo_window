@@ -599,7 +599,7 @@ End
 #tag WindowCode
 	#tag MenuHandler
 		Function AddItemSetAdobeHousing() As Boolean Handles AddItemSetAdobeHousing.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Adobe Housing"
 			Set.MinNumItems = 2
 			Set.MaxNumItems = 6
@@ -623,20 +623,20 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetAdvancedFirearms() As Boolean Handles AddItemSetAdvancedFirearms.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Advanced Firearms"
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Ark.Qualities
+			Dim MinQuality, MaxQuality As Beacon.Qualities
 			Dim AmmoMultiplier As Double
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			AmmoMultiplier = 2
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			AmmoMultiplier = 1
 			End If
 			
@@ -667,9 +667,9 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetAdvancedFurniture() As Boolean Handles AddItemSetAdvancedFurniture.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Advanced Furniture"
-			If Self.mBeacon.IsBonus Then
+			If Self.mLootSource.IsBonus Then
 			Set.MinNumItems = 2
 			Set.MaxNumItems = 8
 			Else
@@ -702,7 +702,7 @@ End
 			Self.AddTemplate(Set, "PrimalItemStructure_ChemBench_C", 1, 1)
 			Self.AddTemplate(Set, "PrimalItemStructure_Cannon_C", 1, 1)
 			
-			If Self.mBeacon.IsScorchedEarth Then
+			If Self.mLootSource.IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemStructure_oilPump_C", 1, 1)
 			Self.AddTemplate(Set, "PrimalItemStructure_WindTurbine_C", 1, 1)
 			End If
@@ -714,9 +714,9 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetBasicFurniture() As Boolean Handles AddItemSetBasicFurniture.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Basic Furniture"
-			If Self.mBeacon.IsBonus Then
+			If Self.mLootSource.IsBonus Then
 			Set.MinNumItems = 2
 			Set.MaxNumItems = 8
 			Else
@@ -740,7 +740,7 @@ End
 			Self.AddTemplate(Set, "PrimalItemStructure_PreservingBin_C", 1, 3)
 			Self.AddTemplate(Set, "PrimalItemStructure_Bookshelf_C", 1, 1)
 			
-			If Self.mBeacon.IsScorchedEarth Then
+			If Self.mLootSource.IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemStructure_Tent_C", 1, 1)
 			Self.AddTemplate(Set, "PrimalItemStructure_Vessel_C", 1, 1)
 			Self.AddTemplate(Set, "PrimalItemStructure_WaterWell_C", 1, 1)
@@ -753,15 +753,15 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetChitinArmor() As Boolean Handles AddItemSetChitinArmor.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Chitin Armor"
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -779,15 +779,15 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetClothClothing() As Boolean Handles AddItemSetClothClothing.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Cloth Clothing"
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -805,15 +805,15 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetDesertClothClothing() As Boolean Handles AddItemSetDesertClothClothing.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Desert Cloth Clothing"
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -831,7 +831,7 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetEmpty() As Boolean Handles AddItemSetEmpty.Action
-			Self.AddSet(New Ark.ItemSet)
+			Self.AddSet(New Beacon.ItemSet)
 			Return True
 			
 		End Function
@@ -839,15 +839,15 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetFlakArmor() As Boolean Handles AddItemSetFlakArmor.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Flak Armor"
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -866,15 +866,15 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetFurArmor() As Boolean Handles AddItemSetFurArmor.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Flak Clothing"
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -892,9 +892,9 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetGardening() As Boolean Handles AddItemSetGardening.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Gardening"
-			If Self.mBeacon.IsBonus Then
+			If Self.mLootSource.IsBonus Then
 			Set.MinNumItems = 2
 			Set.MaxNumItems = 8
 			Else
@@ -912,7 +912,7 @@ End
 			Self.AddTemplate(Set, "PrimalItemConsumable_Seed_Savoroot_C", 10, 20)
 			Self.AddTemplate(Set, "PrimalItemConsumable_Seed_Longrass_C", 10, 20)
 			Self.AddTemplate(Set, "PrimalItemConsumable_Seed_Rockarrot_C", 10, 20)
-			If Self.mBeacon.IsScorchedEarth Then
+			If Self.mLootSource.IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemConsumable_Seed_PlantSpeciesY_C", 100, 100)
 			Else
 			Self.AddTemplate(Set, "PrimalItemConsumable_Seed_DefensePlant_C", 100, 100)
@@ -929,15 +929,15 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetGhillieSuit() As Boolean Handles AddItemSetGhillieSuit.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Ghillie Suit"
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -955,15 +955,15 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetHideClothing() As Boolean Handles AddItemSetHideClothing.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Hide Clothing"
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -982,24 +982,24 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetLargeSaddles() As Boolean Handles AddItemSetLargeSaddles.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Large Saddles"
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			
 			Self.AddTemplate(Set, "PrimalItemArmor_RexSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItemArmor_Paracer_Saddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			
-			If Self.mBeacon.IsScorchedEarth Then
+			If Self.mLootSource.IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemArmor_RockGolemSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Else
 			Self.AddTemplate(Set, "PrimalItemArmor_AlloSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1020,18 +1020,18 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetMediumSaddles() As Boolean Handles AddItemSetMediumSaddles.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Medium Saddles"
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			
 			Self.AddTemplate(Set, "PrimalItemArmor_DoedSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1040,7 +1040,7 @@ End
 			Self.AddTemplate(Set, "PrimalItemArmor_AnkyloSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItemArmor_ArgentavisSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			
-			If Self.mBeacon.IsScorchedEarth Then
+			If Self.mLootSource.IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemArmor_CamelsaurusSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItemArmor_MantisSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItemArmor_SpineyLizardSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1064,7 +1064,7 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetMetalHousing() As Boolean Handles AddItemSetMetalHousing.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Metal Housing"
 			Set.MinNumItems = 2
 			Set.MaxNumItems = 6
@@ -1088,18 +1088,18 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetMetalTools() As Boolean Handles AddItemSetMetalTools.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Advanced Tools"
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			
 			Self.AddTemplate(Set, "PrimalItem_WeaponMetalPick_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1116,18 +1116,18 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetPlatformSaddles() As Boolean Handles AddItemSetPlatformSaddles.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Platform Saddles"
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			
 			Self.AddTemplate(Set, "PrimalItemArmor_SauroSaddle_Platform_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1144,15 +1144,15 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetRiotArmor() As Boolean Handles AddItemSetRiotArmor.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Riot Armor"
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 5
@@ -1171,20 +1171,20 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetSimpleFirearms() As Boolean Handles AddItemSetSimpleFirearms.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Simple Firearms"
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Ark.Qualities
+			Dim MinQuality, MaxQuality As Beacon.Qualities
 			Dim AmmoMultiplier As Double
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			AmmoMultiplier = 2
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			AmmoMultiplier = 1
 			End If
 			
@@ -1211,18 +1211,18 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetSmallSaddles() As Boolean Handles AddItemSetSmallSaddles.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Small Saddles"
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			
 			Self.AddTemplate(Set, "PrimalItemArmor_ProcoptodonSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1232,7 +1232,7 @@ End
 			Self.AddTemplate(Set, "PrimalItemArmor_ArthroSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItemArmor_SaberSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			
-			If Self.mBeacon.IsScorchedEarth Then
+			If Self.mLootSource.IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemArmor_MothSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Else
 			Self.AddTemplate(Set, "PrimalItemArmor_PhiomiaSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1253,7 +1253,7 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetStoneHousing() As Boolean Handles AddItemSetStoneHousing.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Stone Housing"
 			Set.MinNumItems = 2
 			Set.MaxNumItems = 6
@@ -1276,18 +1276,18 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetStoneTools() As Boolean Handles AddItemSetStoneTools.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Primitive Tools"
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 2
 			
-			Dim MinQuality, MaxQuality As Ark.Qualities
-			If Self.mBeacon.IsBonus Then
-			MinQuality = Ark.Qualities.Journeyman
-			MaxQuality = Ark.Qualities.Ascendant
+			Dim MinQuality, MaxQuality As Beacon.Qualities
+			If Self.mLootSource.IsBonus Then
+			MinQuality = Beacon.Qualities.Journeyman
+			MaxQuality = Beacon.Qualities.Ascendant
 			Else
-			MinQuality = Ark.Qualities.Primitive
-			MaxQuality = Ark.Qualities.Apprentice
+			MinQuality = Beacon.Qualities.Primitive
+			MaxQuality = Beacon.Qualities.Apprentice
 			End If
 			
 			Self.AddTemplate(Set, "PrimalItem_WeaponStonePick_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1305,13 +1305,13 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetSupplies() As Boolean Handles AddItemSetSupplies.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Raw Materials"
 			Set.MinNumItems = 1
 			Set.MaxNumItems = 4
 			Set.ItemsRandomWithoutReplacement = False
 			
-			If Self.mBeacon.IsBonus Then
+			If Self.mLootSource.IsBonus Then
 			Set.MinNumItems = Set.MinNumItems * 2
 			Set.MaxNumItems = Set.MaxNumItems * 2
 			End If
@@ -1353,7 +1353,7 @@ End
 			Self.AddTemplate(Set, "PrimalItemResource_Sap_C", 20, 20)
 			Self.AddTemplate(Set, "PrimalItemResource_SubstrateAbsorbent_C", 100, 100)
 			
-			If Self.mBeacon.IsScorchedEarth Then
+			If Self.mLootSource.IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemResource_Clay_C", 100, 100)
 			Self.AddTemplate(Set, "PrimalItemResource_KeratinSpike_C", 20, 20)
 			Self.AddTemplate(Set, "PrimalItemResource_PreservingSalt_C", 6, 6)
@@ -1369,7 +1369,7 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetThatchHousing() As Boolean Handles AddItemSetThatchHousing.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Thatch Housing"
 			Set.MinNumItems = 2
 			Set.MaxNumItems = 4
@@ -1390,7 +1390,7 @@ End
 
 	#tag MenuHandler
 		Function AddItemSetWoodHousing() As Boolean Handles AddItemSetWoodHousing.Action
-			Dim Set As New Ark.ItemSet
+			Dim Set As New Beacon.ItemSet
 			Set.Label = "Wood Housing"
 			Set.MinNumItems = 2
 			Set.MaxNumItems = 6
@@ -1422,8 +1422,8 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub AddSet(Set As Ark.ItemSet)
-		  Self.mBeacon.Append(Set)
+		Private Sub AddSet(Set As Beacon.ItemSet)
+		  Self.mLootSource.Append(Set)
 		  SetList.AddRow(Set.Label)
 		  SetList.RowTag(SetList.LastIndex) = Set
 		  SetList.ListIndex = SetList.LastIndex
@@ -1432,9 +1432,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub AddTemplate(Set As Ark.ItemSet, ClassString As String, MinQuantity As Integer, MaxQuantity As Integer, Weight As Double = 1, MinQuality As Ark.Qualities = Ark.Qualities.Primitive, MaxQuality As Ark.Qualities = Ark.Qualities.Primitive)
-		  Dim Entry As New Ark.SetEntry
-		  Entry.Append(New Ark.ItemClass(ClassString.ToText, 1))
+		Private Sub AddTemplate(Set As Beacon.ItemSet, ClassString As String, MinQuantity As Integer, MaxQuantity As Integer, Weight As Double = 1, MinQuality As Beacon.Qualities = Beacon.Qualities.Primitive, MaxQuality As Beacon.Qualities = Beacon.Qualities.Primitive)
+		  Dim Entry As New Beacon.SetEntry
+		  Entry.Append(New Beacon.ItemClass(ClassString.ToText, 1))
 		  Entry.MinQuantity = MinQuantity
 		  Entry.MaxQuantity = MaxQuantity
 		  Entry.MinQuality = MinQuality
@@ -1448,7 +1448,7 @@ End
 	#tag Method, Flags = &h0
 		Sub EnableMenuItems()
 		  AddItemSetEmpty.Enable
-		  If Self.mBeacon.IsScorchedEarth Then
+		  If Self.mLootSource.IsScorchedEarth Then
 		    AddItemSetDesertClothClothing.Enable
 		  Else
 		    AddItemSetPlatformSaddles.Enable
@@ -1489,10 +1489,10 @@ End
 		    Return
 		  End If
 		  
-		  Dim Set As Ark.ItemSet = SetList.RowTag(SetList.ListIndex)
-		  Dim Idx As Integer = Self.mBeacon.IndexOf(Set)
+		  Dim Set As Beacon.ItemSet = SetList.RowTag(SetList.ListIndex)
+		  Dim Idx As Integer = Self.mLootSource.IndexOf(Set)
 		  If Idx > -1 Then
-		    Self.mBeacon.Remove(Idx)
+		    Self.mLootSource.Remove(Idx)
 		    RaiseEvent Updated
 		  End If
 		  SetList.RemoveRow(SetList.ListIndex)
@@ -1508,21 +1508,21 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mBeacon
+			  Return Self.mLootSource
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mBeacon = Value
+			  Self.mLootSource = Value
 			  
 			  Self.mUpdating = True
-			  If Self.mBeacon <> Nil Then
-			    LabelField.Text = Self.mBeacon.Label
-			    MaxSetsField.Text = Str(Self.mBeacon.MaxItemSets, "-0")
-			    MinSetsField.Text = Str(Self.mBeacon.MinItemSets, "-0")
-			    DuplicatesCheck.Value = Self.mBeacon.SetsRandomWithoutReplacement
+			  If Self.mLootSource <> Nil Then
+			    LabelField.Text = Self.mLootSource.Label
+			    MaxSetsField.Text = Str(Self.mLootSource.MaxItemSets, "-0")
+			    MinSetsField.Text = Str(Self.mLootSource.MinItemSets, "-0")
+			    DuplicatesCheck.Value = Self.mLootSource.SetsRandomWithoutReplacement
 			    SetList.DeleteAllRows
-			    For Each Set As Ark.ItemSet In Self.mBeacon
+			    For Each Set As Beacon.ItemSet In Self.mLootSource
 			      SetList.AddRow(Set.Label)
 			      SetList.RowTag(SetList.LastIndex) = Set
 			    Next
@@ -1536,11 +1536,11 @@ End
 			  Self.mUpdating = False
 			End Set
 		#tag EndSetter
-		Beacon As Ark.Beacon
+		LootSource As Beacon.LootSource
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mBeacon As Ark.Beacon
+		Private mLootSource As Beacon.LootSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1561,8 +1561,8 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mBeacon <> Nil Then
-		    Self.mBeacon.Label = Me.Text.ToText
+		  If Self.mLootSource <> Nil Then
+		    Self.mLootSource.Label = Me.Text.ToText
 		    RaiseEvent Updated
 		  End If
 		End Sub
@@ -1575,8 +1575,8 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mBeacon <> Nil Then
-		    Self.mBeacon.MinItemSets = Val(Me.Text)
+		  If Self.mLootSource <> Nil Then
+		    Self.mLootSource.MinItemSets = Val(Me.Text)
 		    RaiseEvent Updated
 		  End If
 		End Sub
@@ -1589,8 +1589,8 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mBeacon <> Nil Then
-		    Self.mBeacon.MaxItemSets = Val(Me.Text)
+		  If Self.mLootSource <> Nil Then
+		    Self.mLootSource.MaxItemSets = Val(Me.Text)
 		    RaiseEvent Updated
 		  End If
 		End Sub
@@ -1603,8 +1603,8 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mBeacon <> Nil Then
-		    Self.mBeacon.SetsRandomWithoutReplacement = Me.Value
+		  If Self.mLootSource <> Nil Then
+		    Self.mLootSource.SetsRandomWithoutReplacement = Me.Value
 		    RaiseEvent Updated
 		  End If
 		End Sub
@@ -1651,7 +1651,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Set As Ark.ItemSet = Me.RowTag(Me.ListIndex)
+		  Dim Set As Beacon.ItemSet = Me.RowTag(Me.ListIndex)
 		  Dim Dict As Xojo.Core.Dictionary = Set.Export
 		  If Dict <> Nil Then
 		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
@@ -1674,7 +1674,7 @@ End
 		    Return
 		  End Try
 		  
-		  Dim Set As Ark.ItemSet = Ark.ItemSet.Import(Dict)
+		  Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Dict)
 		  Self.AddSet(Set)
 		End Sub
 	#tag EndEvent
@@ -1688,7 +1688,7 @@ End
 	#tag Event
 		Sub Updated()
 		  If SetList.ListIndex > -1 Then
-		    SetList.Cell(SetList.ListIndex, 0) = Ark.ItemSet(SetList.RowTag(SetList.ListIndex)).Label
+		    SetList.Cell(SetList.ListIndex, 0) = Beacon.ItemSet(SetList.RowTag(SetList.ListIndex)).Label
 		  End If
 		  RaiseEvent Updated
 		End Sub
@@ -1704,7 +1704,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Self.AddSet(New Ark.ItemSet)
+		  Self.AddSet(New Beacon.ItemSet)
 		End Sub
 	#tag EndEvent
 	#tag Event

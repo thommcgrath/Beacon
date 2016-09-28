@@ -697,7 +697,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Function Describe(Entry As Ark.SetEntry) As String
+		Private Function Describe(Entry As Beacon.SetEntry) As String
 		  If UBound(Entry) = -1 Then
 		    Return "No Items"
 		  ElseIf UBound(Entry) = 0 Then
@@ -732,7 +732,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Entry As Ark.SetEntry = EntryList.RowTag(I)
+		    Dim Entry As Beacon.SetEntry = EntryList.RowTag(I)
 		    Dim Idx As Integer = Self.mSet.IndexOf(Entry)
 		    Self.mSet.Remove(Idx)
 		    Changed = True
@@ -750,7 +750,7 @@ End
 		  EntryList.DeleteAllRows
 		  If Self.mSet <> Nil Then
 		    For I As Integer = 0 To UBound(Self.mSet)
-		      Dim Entry As Ark.SetEntry = Self.mSet(I)
+		      Dim Entry As Beacon.SetEntry = Self.mSet(I)
 		      EntryList.AddRow(Self.Describe(Entry), Str(Entry.MinQuantity), Str(Entry.MaxQuantity), Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MaxQuality), Str(Self.mSet.RelativeWeight(I), "0%"))
 		      EntryList.RowTag(EntryList.LastIndex) = Entry
 		    Next
@@ -765,7 +765,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mSet As Ark.ItemSet
+		Private mSet As Beacon.ItemSet
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -800,7 +800,7 @@ End
 			  Self.mUpdating = False
 			End Set
 		#tag EndSetter
-		Set As Ark.ItemSet
+		Set As Beacon.ItemSet
 	#tag EndComputedProperty
 
 
@@ -834,7 +834,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Entry As Ark.SetEntry = Me.RowTag(Me.ListIndex)
+		  Dim Entry As Beacon.SetEntry = Me.RowTag(Me.ListIndex)
 		  Dim Dict As Xojo.Core.Dictionary = Entry.Export
 		  If Dict <> Nil Then
 		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
@@ -857,7 +857,7 @@ End
 		    Return
 		  End Try
 		  
-		  Dim Entry As Ark.SetEntry = Ark.SetEntry.Import(Dict)
+		  Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Dict)
 		  Self.mSet.Append(Entry)
 		  Self.UpdateEntryList()
 		  RaiseEvent Updated
@@ -941,12 +941,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Dim Entries() As Ark.SetEntry = EntryEditor.Present(Self)
+		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self)
 		  If Entries = Nil Then
 		    Return
 		  End If
 		  
-		  For Each Entry As Ark.SetEntry In Entries
+		  For Each Entry As Beacon.SetEntry In Entries
 		    Self.mSet.Append(Entry)
 		  Next
 		  
@@ -965,7 +965,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Dim Sources() As Ark.SetEntry
+		  Dim Sources() As Beacon.SetEntry
 		  For I As Integer = 0 To EntryList.ListCount - 1
 		    If Not EntryList.Selected(I) Then
 		      Continue
@@ -974,13 +974,13 @@ End
 		    Sources.Append(EntryList.RowTag(I))
 		  Next
 		  
-		  Dim Entries() As Ark.SetEntry = EntryEditor.Present(Self, Sources)
+		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Sources)
 		  If Entries = Nil Then
 		    Return
 		  End If
 		  
 		  For I As Integer = 0 To UBound(Entries)
-		    Dim Source As Ark.SetEntry = Sources(I)
+		    Dim Source As Beacon.SetEntry = Sources(I)
 		    Dim Idx As Integer = Self.mSet.IndexOf(Source)
 		    Self.mSet(Idx) = Entries(I)
 		  Next
@@ -992,7 +992,7 @@ End
 #tag EndEvents
 #tag Events Separators
 	#tag Event
-		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
 		  G.ForeColor = &cCCCCCC

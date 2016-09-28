@@ -115,7 +115,6 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -142,7 +141,7 @@ Begin Window DocWindow
       Enabled         =   True
       EraseBackground =   True
       Height          =   24
-      HelpTag         =   "Add a beacon. Click to show the  ""Add Beacon"" dialog, hold to show a menu of possible beacons."
+      HelpTag         =   "Add a beacon. Click to show the  ""Add Loot Source"" dialog, hold to show a menu of possible loot sources."
       IconDisabled    =   0
       IconNormal      =   0
       IconPressed     =   0
@@ -307,14 +306,11 @@ Begin Window DocWindow
       Visible         =   True
       Width           =   190
    End
-   Begin Ark.ImportThread Importer
-      Enabled         =   True
+   Begin Beacon.ImportThread Importer
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
-      Scope           =   2
-      StackSize       =   ""
-      State           =   ""
+      Scope           =   0
       TabPanelIndex   =   0
    End
 End
@@ -373,10 +369,10 @@ End
 
 	#tag Event
 		Sub Open()
-		  Dim Beacons() As Ark.Beacon = Self.Doc.Beacons
-		  For Each Beacon As Ark.Beacon In Beacons
-		    BeaconList.AddRow(Beacon.Label)
-		    BeaconList.RowTag(BeaconList.LastIndex) = Beacon
+		  Dim LootSources() As Beacon.LootSource = Self.Doc.LootSources
+		  For Each LootSource As Beacon.LootSource In LootSources
+		    BeaconList.AddRow(LootSource.Label)
+		    BeaconList.RowTag(BeaconList.LastIndex) = LootSource
 		  Next
 		End Sub
 	#tag EndEvent
@@ -391,20 +387,20 @@ End
 
 	#tag MenuHandler
 		Function DocumentDuplicateBeacon() As Boolean Handles DocumentDuplicateBeacon.Action
-			Dim Beacon As Ark.Beacon = BeaconAddSheet.Present(Self, Self.Doc)
-			If Beacon <> Nil Then
-			Dim Type As Text = Beacon.Type
-			Dim Label As Text = Beacon.Label
-			Dim Source As Ark.Beacon = BeaconList.RowTag(BeaconList.ListIndex)
-			Beacon.Constructor(Source)
-			Beacon.Type = Type
-			Beacon.Label = Label
+			Dim LootSource As Beacon.LootSource = LootSourceAddSheet.Present(Self, Self.Doc)
+			If LootSource <> Nil Then
+			Dim Type As Text = LootSource.Type
+			Dim Label As Text = LootSource.Label
+			Dim Source As Beacon.LootSource = BeaconList.RowTag(BeaconList.ListIndex)
+			LootSource.Constructor(Source)
+			LootSource.Type = Type
+			LootSource.Label = Label
 			
-			BeaconList.AddRow(Beacon.Label)
-			BeaconList.RowTag(BeaconList.LastIndex) = Beacon
+			BeaconList.AddRow(LootSource.Label)
+			BeaconList.RowTag(BeaconList.LastIndex) = LootSource
 			BeaconList.ListIndex = BeaconList.LastIndex
 			
-			Self.Doc.Add(Beacon)
+			Self.Doc.Add(LootSource)
 			Self.ContentsChanged = True
 			End If
 			Return True
@@ -436,10 +432,10 @@ End
 			Dim Lines() As String
 			Lines.Append("[/script/shootergame.shootergamemode]")
 			
-			Dim Beacons() As Ark.Beacon = Self.Doc.Beacons
-			For Each Beacon As Ark.Beacon In Beacons
-			Dim Multipliers As Ark.Range = App.DataSource.MultipliersForBeacon(Beacon)
-			Lines.Append("ConfigOverrideSupplyCrateItems=" + Beacon.TextValue(Multipliers))
+			Dim LootSources() As Beacon.LootSource = Self.Doc.LootSources
+			For Each LootSource As Beacon.LootSource In LootSources
+			Dim Multipliers As Beacon.Range = App.DataSource.MultipliersForBeacon(LootSource)
+			Lines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Multipliers))
 			Next
 			
 			Dim Stream As TextOutputStream = TextOutputStream.Create(File)
@@ -466,13 +462,13 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub AddBeacon(Beacon As Ark.Beacon)
+		Private Sub AddLootSource(LootSource As Beacon.LootSource)
 		  Dim Idx As Integer
-		  If Self.Doc.HasBeacon(Beacon) Then
-		    Self.Doc.Remove(Beacon)
+		  If Self.Doc.HasBeacon(LootSource) Then
+		    Self.Doc.Remove(LootSource)
 		    
 		    For I As Integer = 0 To BeaconList.ListCount - 1
-		      If Ark.Beacon(BeaconList.RowTag(I)).Type = Beacon.Type Then
+		      If Beacon.LootSource(BeaconList.RowTag(I)).Type = LootSource.Type Then
 		        Idx = I
 		        Exit For I
 		      End If
@@ -482,10 +478,10 @@ End
 		    Idx = BeaconList.LastIndex
 		  End If
 		  
-		  BeaconList.RowTag(Idx) = Beacon
-		  BeaconList.Cell(Idx, 0) = Beacon.Label
+		  BeaconList.RowTag(Idx) = LootSource
+		  BeaconList.Cell(Idx, 0) = LootSource.Label
 		  BeaconList.ListIndex = Idx
-		  Self.Doc.Add(Beacon)
+		  Self.Doc.Add(LootSource)
 		  Self.ContentsChanged = True
 		End Sub
 	#tag EndMethod
@@ -563,8 +559,8 @@ End
 		  If BeaconList.ListIndex = -1 Then
 		    Return
 		  End If
-		  Dim CurrentBeacon As Ark.Beacon = BeaconList.RowTag(BeaconList.ListIndex)
-		  Self.Doc.Remove(CurrentBeacon)
+		  Dim CurrentLootSource As Beacon.LootSource = BeaconList.RowTag(BeaconList.ListIndex)
+		  Self.Doc.Remove(CurrentLootSource)
 		  Self.ContentsChanged = True
 		  BeaconList.RemoveRow(BeaconList.ListIndex)
 		End Sub
@@ -611,9 +607,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddBeacon()
-		  Dim Beacon As Ark.Beacon = BeaconAddSheet.Present(Self, Self.Doc)
-		  If Beacon <> Nil Then
-		    Self.AddBeacon(Beacon)
+		  Dim LootSource As Beacon.LootSource = LootSourceAddSheet.Present(Self, Self.Doc)
+		  If LootSource <> Nil Then
+		    Self.AddLootSource(LootSource)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -645,9 +641,9 @@ End
 		  
 		  If Me.ListIndex = -1 Then
 		    Editor.Enabled = False
-		    Editor.Beacon = Nil
+		    Editor.LootSource = Nil
 		  Else
-		    Editor.Beacon = Me.RowTag(Me.ListIndex)
+		    Editor.LootSource = Me.RowTag(Me.ListIndex)
 		    Editor.Enabled = True
 		  End If
 		End Sub
@@ -664,14 +660,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Beacon As Ark.Beacon = Me.RowTag(Me.ListIndex)
-		  Dim Dict As Xojo.Core.Dictionary = Beacon.Export
+		  Dim LootSource As Beacon.LootSource = Me.RowTag(Me.ListIndex)
+		  Dim Dict As Xojo.Core.Dictionary = LootSource.Export
 		  If Dict <> Nil Then
 		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
 		    Board.AddRawData(Contents, Self.kClipboardType)
 		  End If
-		  Dim Multipliers As Ark.Range = App.DataSource.MultipliersForBeacon(Beacon)
-		  Board.Text = "ConfigOverrideSupplyCrateItems=" + Beacon.TextValue(Multipliers)
+		  Dim Multipliers As Beacon.Range = App.DataSource.MultipliersForBeacon(LootSource)
+		  Board.Text = "ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Multipliers)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -691,8 +687,8 @@ End
 		      Return
 		    End Try
 		    
-		    Dim Beacon As Ark.Beacon = Ark.Beacon.Import(Dict)
-		    Self.AddBeacon(Beacon)
+		    Dim LootSource As Beacon.LootSource = Beacon.LootSource.Import(Dict)
+		    Self.AddLootSource(LootSource)
 		  ElseIf Board.TextAvailable Then
 		    Dim Contents As String = Board.Text
 		    If Left(Contents, 30) = "ConfigOverrideSupplyCrateItems" Then
@@ -722,7 +718,7 @@ End
 		Sub Updated()
 		  Self.ContentsChanged = True
 		  If BeaconList.ListIndex > -1 Then
-		    BeaconList.Cell(BeaconList.ListIndex, 0) = Ark.Beacon(BeaconList.RowTag(BeaconList.ListIndex)).Label
+		    BeaconList.Cell(BeaconList.ListIndex, 0) = Beacon.LootSource(BeaconList.RowTag(BeaconList.ListIndex)).Label
 		  End If
 		End Sub
 	#tag EndEvent
@@ -746,18 +742,18 @@ End
 		  #Pragma Unused Y
 		  
 		  Dim Base As New MenuItem
-		  Dim Beacons() As Ark.Beacon = App.DataSource.SearchForBeacons("")
-		  For I As Integer = UBound(Beacons) DownTo 0
-		    If Self.Doc.HasBeacon(Beacons(I)) Then
-		      Beacons.Remove(I)
+		  Dim LootSources() As Beacon.LootSource = App.DataSource.SearchForLootSources("")
+		  For I As Integer = UBound(LootSources) DownTo 0
+		    If Self.Doc.HasBeacon(LootSources(I)) Then
+		      LootSources.Remove(I)
 		    End If
 		  Next
 		  
-		  For Each Beacon As Ark.Beacon In Beacons
-		    Base.Append(New MenuItem(Beacon.Label, Beacon))
+		  For Each LootSource As Beacon.LootSource In LootSources
+		    Base.Append(New MenuItem(LootSource.Label, LootSource))
 		  Next
 		  
-		  If UBound(Beacons) > -1 Then
+		  If UBound(LootSources) > -1 Then
 		    Base.Append(New MenuItem(MenuItem.TextSeparator))
 		  End If
 		  
@@ -769,15 +765,15 @@ End
 		    Return True
 		  End If
 		  
-		  Dim SelectedBeacon As Ark.Beacon
+		  Dim SelectedLootSource As Beacon.LootSource
 		  If Choice.Tag = Nil Then
-		    SelectedBeacon = CustomBeaconSheet.Present(Self)
+		    SelectedLootSource = CustomLootSourceSheet.Present(Self)
 		  Else
-		    SelectedBeacon = Choice.Tag
+		    SelectedLootSource = Choice.Tag
 		  End If
 		  
-		  If SelectedBeacon <> Nil Then
-		    Self.AddBeacon(SelectedBeacon)
+		  If SelectedLootSource <> Nil Then
+		    Self.AddLootSource(SelectedLootSource)
 		  End If
 		  
 		  Return True
@@ -801,25 +797,25 @@ End
 #tag Events Importer
 	#tag Event
 		Sub UpdateUI()
-		  If Me.BeaconsProcessed = Me.BeaconCount Then
+		  If Me.LootSourcesProcessed = Me.BeaconCount Then
 		    If Self.ImportProgress <> Nil Then
 		      Self.ImportProgress.Close
 		      Self.ImportProgress = Nil
 		    End If
 		    
-		    Dim Beacons() As Ark.Beacon = Me.Beacons
+		    Dim LootSources() As Beacon.LootSource = Me.LootSources
 		    Me.Reset
 		    
-		    For Each Beacon As Ark.Beacon In Beacons
-		      Beacon.Label = App.DataSource.NameOfBeacon(Beacon.Type)
-		      Self.AddBeacon(Beacon)
+		    For Each LootSource As Beacon.LootSource In LootSources
+		      LootSource.Label = App.DataSource.NameOfBeacon(LootSource.Type)
+		      Self.AddLootSource(LootSource)
 		    Next
 		    Return
 		  End If
 		  
 		  If Self.ImportProgress <> Nil Then
 		    Self.ImportProgress.BeaconCount = Me.BeaconCount
-		    Self.ImportProgress.BeaconsProcessed = Me.BeaconsProcessed
+		    Self.ImportProgress.LootSourcesProcessed = Me.LootSourcesProcessed
 		  End If
 		End Sub
 	#tag EndEvent

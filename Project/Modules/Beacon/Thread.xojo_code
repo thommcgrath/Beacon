@@ -165,33 +165,33 @@ Protected Class Thread
 			  #if Self.UseClassic
 			    Select Case Self.mThreadClassic.State
 			    Case Global.Thread.Running
-			      Return Ark.Thread.States.Running
+			      Return Beacon.Thread.States.Running
 			    Case Global.Thread.Waiting
-			      Return Ark.Thread.States.Waiting
+			      Return Beacon.Thread.States.Waiting
 			    Case Global.Thread.Suspended
-			      Return Ark.Thread.States.Suspended
+			      Return Beacon.Thread.States.Suspended
 			    Case Global.Thread.Sleeping
-			      Return Ark.Thread.States.Sleeping
+			      Return Beacon.Thread.States.Sleeping
 			    Case Global.Thread.NotRunning
-			      Return Ark.Thread.States.NotRunning
+			      Return Beacon.Thread.States.NotRunning
 			    End Select
 			  #else
 			    Select Case Self.mThread.State
 			    Case Xojo.Threading.Thread.ThreadStates.Running
-			      Return Ark.Thread.States.Running
+			      Return Beacon.Thread.States.Running
 			    Case Xojo.Threading.Thread.ThreadStates.Waiting
-			      Return Ark.Thread.States.Waiting
+			      Return Beacon.Thread.States.Waiting
 			    Case Xojo.Threading.Thread.ThreadStates.Suspended
-			      Return Ark.Thread.States.Suspended
+			      Return Beacon.Thread.States.Suspended
 			    Case Xojo.Threading.Thread.ThreadStates.Sleeping
-			      Return Ark.Thread.States.Sleeping
+			      Return Beacon.Thread.States.Sleeping
 			    Case Xojo.Threading.Thread.ThreadStates.NotRunning
-			      Return Ark.Thread.States.NotRunning
+			      Return Beacon.Thread.States.NotRunning
 			    End Select
 			  #endif
 			End Get
 		#tag EndGetter
-		State As Ark.Thread.States
+		State As Beacon.Thread.States
 	#tag EndComputedProperty
 
 
@@ -253,6 +253,14 @@ Protected Class Thread
 			Name="State"
 			Group="Behavior"
 			Type="Ark.Thread.States"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Running"
+				"1 - Waiting"
+				"2 - Suspended"
+				"3 - Sleeping"
+				"4 - NotRunning"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

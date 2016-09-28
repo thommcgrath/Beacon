@@ -1,29 +1,19 @@
 #tag Class
 Protected Class Document
 	#tag Method, Flags = &h0
-		Sub Add(Beacon As Ark.Beacon)
-		  For I As Integer = 0 To UBound(Self.mBeacons)
-		    If Self.mBeacons(I) = Beacon Then
+		Sub Add(LootSource As Beacon.LootSource)
+		  For I As Integer = 0 To UBound(Self.mLootSources)
+		    If Self.mLootSources(I) = LootSource Then
 		      Return
 		    End If
 		  Next
-		  Self.mBeacons.Append(Beacon)
+		  Self.mLootSources.Append(LootSource)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function BeaconCount() As Integer
-		  Return UBound(Self.mBeacons) + 1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Beacons() As Ark.Beacon()
-		  Dim Results() As Ark.Beacon
-		  For Each Beacon As Ark.Beacon In Self.mBeacons
-		    Results.Append(Beacon)
-		  Next
-		  Return Results
+		  Return UBound(Self.mLootSources) + 1
 		End Function
 	#tag EndMethod
 
@@ -58,12 +48,22 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasBeacon(Beacon As Ark.Beacon) As Boolean
-		  For I As Integer = 0 To UBound(Self.mBeacons)
-		    If Self.mBeacons(I) = Beacon Then
+		Function HasBeacon(LootSource As Beacon.LootSource) As Boolean
+		  For I As Integer = 0 To UBound(Self.mLootSources)
+		    If Self.mLootSources(I) = LootSource Then
 		      Return True
 		    End If
 		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LootSources() As Beacon.LootSource()
+		  Dim Results() As Beacon.LootSource
+		  For Each LootSource As Beacon.LootSource In Self.mLootSources
+		    Results.Append(LootSource)
+		  Next
+		  Return Results
 		End Function
 	#tag EndMethod
 
@@ -93,13 +93,13 @@ Protected Class Document
 		  End Try
 		  
 		  Dim Doc As New Beacon.Document
-		  Dim Beacons() As Auto
+		  Dim LootSources() As Auto
 		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
 		  If Info.FullName = "Xojo.Core.Dictionary" Then
 		    // New style document
 		    Dim Dict As Xojo.Core.Dictionary = Parsed
 		    Try
-		      Beacons = Dict.Value("Beacons")
+		      LootSources = Dict.Value("LootSources")
 		      Doc.mIdentifier = Dict.Value("Identifier")
 		      Doc.mRevision = Dict.Value("Revision")
 		    Catch Err As RuntimeException
@@ -108,14 +108,14 @@ Protected Class Document
 		    End Try
 		  ElseIf Info.FullName = "Auto()" Then
 		    // Old style document
-		    Beacons = Parsed
+		    LootSources = Parsed
 		  Else
 		    // What on earth is this?
 		    Return Nil
 		  End If
 		  
-		  For Each Beacon As Xojo.Core.Dictionary In Beacons
-		    Doc.mBeacons.Append(Ark.Beacon.Import(Beacon))
+		  For Each LootSource As Xojo.Core.Dictionary In LootSources
+		    Doc.mLootSources.Append(Beacon.LootSource.Import(LootSource))
 		  Next
 		  
 		  Return Doc
@@ -123,10 +123,10 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(Beacon As Ark.Beacon)
-		  For I As Integer = 0 To UBound(Self.mBeacons)
-		    If Self.mBeacons(I) = Beacon Then
-		      Self.mBeacons.Remove(I)
+		Sub Remove(LootSource As Beacon.LootSource)
+		  For I As Integer = 0 To UBound(Self.mLootSources)
+		    If Self.mLootSources(I) = LootSource Then
+		      Self.mLootSources.Remove(I)
 		      Return
 		    End If
 		  Next
@@ -135,9 +135,9 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Sub Write(File As Xojo.IO.FolderItem)
-		  Dim Beacons() As Xojo.Core.Dictionary
-		  For Each Beacon As Ark.Beacon In Self.mBeacons
-		    Beacons.Append(Beacon.Export)
+		  Dim LootSources() As Xojo.Core.Dictionary
+		  For Each LootSource As Beacon.LootSource In Self.mLootSources
+		    LootSources.Append(LootSource.Export)
 		  Next
 		  
 		  Self.mRevision = Self.mRevision + 1
@@ -146,7 +146,7 @@ Protected Class Document
 		  Document.Value("Revision") = Self.mRevision
 		  Document.Value("Version") = Self.DocumentVersion
 		  Document.Value("Identifier") = Self.mIdentifier
-		  Document.Value("Beacons") = Beacons
+		  Document.Value("LootSources") = LootSources
 		  
 		  Dim Contents As Text = Xojo.Data.GenerateJSON(Document)
 		  Dim Data As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Contents)
@@ -158,11 +158,11 @@ Protected Class Document
 
 
 	#tag Property, Flags = &h21
-		Private mBeacons() As Ark.Beacon
+		Private mIdentifier As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mIdentifier As Text
+		Private mLootSources() As Beacon.LootSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -1,6 +1,6 @@
 #tag Class
 Protected Class ImportThread
-Inherits Ark.Thread
+Inherits Beacon.Thread
 	#tag Event
 		Sub Run()
 		  Static CR As Text = Text.FromUnicodeCodepoint(13)
@@ -27,21 +27,21 @@ Inherits Ark.Thread
 		  For Each Line As Text In Lines
 		    Try
 		      Dim Value As Auto = Self.Import(Line)
-		      If Value IsA Ark.Pair And Ark.Pair(Value).Key = "ConfigOverrideSupplyCrateItems" Then
-		        Dim Dict As Xojo.Core.Dictionary = Ark.Pair(Value).Value
-		        Dim Beacon As Ark.Beacon = Ark.Beacon.Import(Dict)
-		        If Beacon <> Nil Then
-		          Self.mBeacons.Append(Beacon)
+		      If Value IsA Beacon.Pair And Beacon.Pair(Value).Key = "ConfigOverrideSupplyCrateItems" Then
+		        Dim Dict As Xojo.Core.Dictionary = Beacon.Pair(Value).Value
+		        Dim LootSource As Beacon.LootSource = Beacon.LootSource.Import(Dict)
+		        If LootSource <> Nil Then
+		          Self.mLootSources.Append(LootSource)
 		        End If
 		      End If
-		    Catch Stop As Ark.ThreadStopException
+		    Catch Stop As Beacon.ThreadStopException
 		      Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Off
 		      Self.Reset
 		      Return
 		    Catch Err As RuntimeException
 		      // Don't let an error halt processing, skip and move on
 		    End Try
-		    Self.mBeaconsProcessed = Self.mBeaconsProcessed + 1
+		    Self.mLootSourcesProcessed = Self.mLootSourcesProcessed + 1
 		    Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Single
 		  Next
 		End Sub
@@ -51,25 +51,6 @@ Inherits Ark.Thread
 	#tag Method, Flags = &h0
 		Function BeaconCount() As UInteger
 		  Return Self.mBeaconCount
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Beacons() As Ark.Beacon()
-		  Dim Results() As Ark.Beacon
-		  Redim Results(UBound(Self.mBeacons))
-		  
-		  For I As Integer = 0 To UBound(Self.mBeacons)
-		    Results(I) = New Ark.Beacon(Self.mBeacons(I))
-		  Next
-		  
-		  Return Results
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function BeaconsProcessed() As UInteger
-		  Return Self.mBeaconsProcessed
 		End Function
 	#tag EndMethod
 
@@ -94,7 +75,7 @@ Inherits Ark.Thread
 	#tag Method, Flags = &h21
 		Private Function Import(Content As Text, ByRef Offset As Integer) As Auto
 		  If Self.ShouldStop Then
-		    Raise New Ark.ThreadStopException
+		    Raise New Beacon.ThreadStopException
 		  End If
 		  
 		  If Content.Mid(Offset, 1) = "(" Then
@@ -108,7 +89,7 @@ Inherits Ark.Thread
 		      End If
 		      If IsDictionary Then
 		        Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		        IsDictionary = Info.FullName = "Ark.Pair"
+		        IsDictionary = Info.FullName = "Beacon.Pair"
 		      End If
 		      Children.Append(Value)
 		    Loop
@@ -116,7 +97,7 @@ Inherits Ark.Thread
 		    
 		    If IsDictionary Then
 		      Dim Dict As New Xojo.Core.Dictionary
-		      For Each Child As Ark.Pair In Children
+		      For Each Child As Beacon.Pair In Children
 		        Dict.Value(Child.Key) = Child.Value
 		      Next
 		      Return Dict
@@ -137,7 +118,7 @@ Inherits Ark.Thread
 		    Dim Key As Text = Content.Mid(Offset, Pos - Offset)
 		    Offset = Pos + 1
 		    Dim Value As Auto = Self.Import(Content, Offset)
-		    Return New Ark.Pair(Key, Value)
+		    Return New Beacon.Pair(Key, Value)
 		  Else
 		    // Array entry
 		    Dim Piece As Text = Content.Mid(Offset, Pos - Offset)
@@ -151,7 +132,7 @@ Inherits Ark.Thread
 	#tag Method, Flags = &h21
 		Private Function ImportIntrinsic(Content As Text) As Auto
 		  If Self.ShouldStop Then
-		    Raise New Ark.ThreadStopException
+		    Raise New Beacon.ThreadStopException
 		  End If
 		  
 		  If Content = "" Then
@@ -171,6 +152,25 @@ Inherits Ark.Thread
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function LootSources() As Beacon.LootSource()
+		  Dim Results() As Beacon.LootSource
+		  Redim Results(UBound(Self.mLootSources))
+		  
+		  For I As Integer = 0 To UBound(Self.mLootSources)
+		    Results(I) = New Beacon.LootSource(Self.mLootSources(I))
+		  Next
+		  
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LootSourcesProcessed() As UInteger
+		  Return Self.mLootSourcesProcessed
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub mUpdateTimer_Action(Sender As Xojo.Core.Timer)
 		  #Pragma Unused Sender
@@ -182,7 +182,7 @@ Inherits Ark.Thread
 	#tag Method, Flags = &h21
 		Private Function PositionOfNextDelimeter(Offset As Integer, Content As Text) As Integer
 		  If Self.ShouldStop Then
-		    Raise New Ark.ThreadStopException
+		    Raise New Beacon.ThreadStopException
 		  End If
 		  
 		  Dim Positions() As Integer
@@ -208,8 +208,8 @@ Inherits Ark.Thread
 	#tag Method, Flags = &h0
 		Sub Reset()
 		  Self.mBeaconCount = 0
-		  Self.mBeaconsProcessed = 0
-		  Redim Self.mBeacons(-1)
+		  Self.mLootSourcesProcessed = 0
+		  Redim Self.mLootSources(-1)
 		End Sub
 	#tag EndMethod
 
@@ -221,7 +221,7 @@ Inherits Ark.Thread
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub Run(File As Global.FolderItem)
-		  If Self.State <> Ark.Thread.States.NotRunning Then
+		  If Self.State <> Beacon.Thread.States.NotRunning Then
 		    Dim Err As New RuntimeException
 		    Err.Reason = "Importer is already running"
 		    Raise Err
@@ -237,7 +237,7 @@ Inherits Ark.Thread
 
 	#tag Method, Flags = &h0
 		Sub Run(Content As Text)
-		  If Self.State <> Ark.Thread.States.NotRunning Then
+		  If Self.State <> Beacon.Thread.States.NotRunning Then
 		    Dim Err As New RuntimeException
 		    Err.Reason = "Importer is already running"
 		    Raise Err
@@ -250,7 +250,7 @@ Inherits Ark.Thread
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
 		Sub Run(File As Xojo.IO.FolderItem)
-		  If Self.State <> Ark.Thread.States.NotRunning Then
+		  If Self.State <> Beacon.Thread.States.NotRunning Then
 		    Dim Err As New RuntimeException
 		    Err.Reason = "Importer is already running"
 		    Raise Err
@@ -275,15 +275,15 @@ Inherits Ark.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mBeacons() As Ark.Beacon
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mBeaconsProcessed As UInteger
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mContent As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLootSources() As Beacon.LootSource
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLootSourcesProcessed As UInteger
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -1,5 +1,5 @@
 #tag Window
-Begin Window CustomBeaconSheet
+Begin Window LootSourceAddSheet
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
@@ -9,9 +9,9 @@ Begin Window CustomBeaconSheet
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   126
+   Height          =   124
    ImplicitInstance=   False
-   LiveResize      =   False
+   LiveResize      =   True
    MacProcID       =   0
    MaxHeight       =   32000
    MaximizeButton  =   False
@@ -23,48 +23,37 @@ Begin Window CustomBeaconSheet
    MinWidth        =   64
    Placement       =   1
    Resizeable      =   False
-   Title           =   "Define Custom Beacon"
+   Title           =   "Add Beacon"
    Visible         =   True
    Width           =   500
-   Begin TextField ClassField
-      AcceptTabs      =   False
-      Alignment       =   0
+   Begin PopupMenu BeaconMenu
       AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      CueText         =   "Class String"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      Format          =   ""
-      Height          =   22
+      Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
       Italic          =   False
       Left            =   20
-      LimitText       =   0
+      ListIndex       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   52
       Underline       =   False
-      UseFocusRing    =   True
       Visible         =   True
       Width           =   460
    End
@@ -88,13 +77,13 @@ Begin Window CustomBeaconSheet
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   86
+      Top             =   84
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -119,13 +108,13 @@ Begin Window CustomBeaconSheet
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   86
+      Top             =   84
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -150,10 +139,9 @@ Begin Window CustomBeaconSheet
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Add Custom Beacon"
+      Text            =   "Add Loot Source"
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -170,36 +158,59 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window) As Ark.Beacon
-		  Dim Win As New CustomBeaconSheet
-		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Dim Beacon As Ark.Beacon = Win.mBeacon
+		Shared Function Present(Parent As DocWindow, Document As Beacon.Document) As Beacon.LootSource
+		  Static AllowedLootSources() As Beacon.LootSource
+		  If UBound(AllowedLootSources) = -1 Then
+		    AllowedLootSources = App.DataSource.SearchForLootSources("")
+		  End If
+		  
+		  Dim Win As New LootSourceAddSheet
+		  For Each LootSource As Beacon.LootSource In AllowedLootSources
+		    If Document.HasBeacon(LootSource) Then
+		      Continue
+		    End If
+		    Win.BeaconMenu.AddRow(LootSource.Label)
+		    Win.BeaconMenu.RowTag(Win.BeaconMenu.ListCount - 1) = LootSource
+		  Next
+		  If Win.BeaconMenu.ListCount = 0 Then
+		    Win.Close
+		    Dim Dialog As New MessageDialog
+		    Dialog.Message = "There are no more beacons to add"
+		    Dialog.Explanation = "Sorry, there are only so many."
+		    Call Dialog.ShowModalWithin(Parent)
+		    Return Nil
+		  End If
+		  Win.ShowModalWithin(Parent)
+		  If Win.mCancelled Or Win.BeaconMenu.ListIndex = -1 Then
+		    Win.Close
+		    Return Nil
+		  End If
+		  
+		  Dim LootSource As Beacon.LootSource = Win.BeaconMenu.RowTag(Win.BeaconMenu.ListIndex)
 		  Win.Close
-		  Return Beacon
+		  Return New Beacon.LootSource(LootSource)
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mBeacon As Ark.Beacon
+		Private mCancelled As Boolean
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events ClassField
+#tag Events BeaconMenu
 	#tag Event
-		Sub TextChange()
-		  ActionButton.Enabled = Me.Text <> ""
+		Sub Change()
+		  ActionButton.Enabled = Me.ListIndex > -1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim Type As Text = ClassField.Text.ToText
-		  Dim Label As Text = App.DataSource.NameOfBeacon(Type)
-		  Self.mBeacon = New Ark.Beacon(Label, Type)
+		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -207,7 +218,7 @@ End
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.mBeacon = Nil
+		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
 	#tag EndEvent

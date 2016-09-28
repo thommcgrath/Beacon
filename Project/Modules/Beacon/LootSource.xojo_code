@@ -1,8 +1,8 @@
 #tag Class
-Protected Class Beacon
-Implements Ark.Countable
+Protected Class LootSource
+Implements Beacon.Countable
 	#tag Method, Flags = &h0
-		Sub Append(Item As Ark.ItemSet)
+		Sub Append(Item As Beacon.ItemSet)
 		  Self.mItems.Append(Item)
 		End Sub
 	#tag EndMethod
@@ -17,7 +17,7 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Ark.Beacon)
+		Sub Constructor(Source As Beacon.LootSource)
 		  Self.Constructor()
 		  
 		  Redim Self.mItems(UBound(Source.mItems))
@@ -30,7 +30,7 @@ Implements Ark.Countable
 		  Self.mLabel = Source.mLabel
 		  
 		  For I As Integer = 0 To UBound(Source.mItems)
-		    Self.mItems(I) = New Ark.ItemSet(Source.mItems(I))
+		    Self.mItems(I) = New Beacon.ItemSet(Source.mItems(I))
 		  Next
 		End Sub
 	#tag EndMethod
@@ -52,7 +52,7 @@ Implements Ark.Countable
 	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Children() As Xojo.Core.Dictionary
-		  For Each Set As Ark.ItemSet In Self.mItems
+		  For Each Set As Beacon.ItemSet In Self.mItems
 		    Children.Append(Set.Export)
 		  Next
 		  
@@ -70,33 +70,33 @@ Implements Ark.Countable
 
 	#tag Method, Flags = &h0
 		Function GetIterator() As Xojo.Core.Iterator
-		  Return New Ark.BeaconIterator(Self)
+		  Return New Beacon.LootSourceIterator(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Xojo.Core.Dictionary) As Ark.Beacon
+		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.LootSource
 		  // This could be a beacon save or a config line
 		  
-		  Dim Beacon As New Ark.Beacon
+		  Dim LootSource As New Beacon.LootSource
 		  If Dict.HasKey("SupplyCrateClassString") Then
-		    Beacon.Type = Dict.Value("SupplyCrateClassString")
+		    LootSource.Type = Dict.Value("SupplyCrateClassString")
 		  Else
-		    Beacon.Type = Dict.Value("Type")
+		    LootSource.Type = Dict.Value("Type")
 		  End If
 		  
 		  If Dict.HasKey("Label") Then
-		    Beacon.Label = Dict.Value("Label")
+		    LootSource.Label = Dict.Value("Label")
 		  End If
 		  
-		  Beacon.MaxItemSets = Dict.Lookup("MaxItemSets", Beacon.MaxItemSets)
-		  Beacon.MinItemSets = Dict.Lookup("MinItemSets", Beacon.MinItemSets)
-		  Beacon.NumItemSetsPower = Dict.Lookup("NumItemSetsPower", Beacon.NumItemSetsPower)
+		  LootSource.MaxItemSets = Dict.Lookup("MaxItemSets", LootSource.MaxItemSets)
+		  LootSource.MinItemSets = Dict.Lookup("MinItemSets", LootSource.MinItemSets)
+		  LootSource.NumItemSetsPower = Dict.Lookup("NumItemSetsPower", LootSource.NumItemSetsPower)
 		  
 		  If Dict.HasKey("bSetsRandomWithoutReplacement") Then
-		    Beacon.SetsRandomWithoutReplacement = Dict.Value("bSetsRandomWithoutReplacement")
+		    LootSource.SetsRandomWithoutReplacement = Dict.Value("bSetsRandomWithoutReplacement")
 		  Else
-		    Beacon.SetsRandomWithoutReplacement = Dict.Lookup("SetsRandomWithoutReplacement", Beacon.SetsRandomWithoutReplacement)
+		    LootSource.SetsRandomWithoutReplacement = Dict.Lookup("SetsRandomWithoutReplacement", LootSource.SetsRandomWithoutReplacement)
 		  End If
 		  
 		  Dim Children() As Auto
@@ -107,19 +107,19 @@ Implements Ark.Countable
 		  End If
 		  
 		  For Each Child As Xojo.Core.Dictionary In Children
-		    Dim Set As Ark.ItemSet = Ark.ItemSet.Import(Child)
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Child)
 		    If Set <> Nil Then
-		      Beacon.Append(Set)
+		      LootSource.Append(Set)
 		    End If
 		  Next
 		  
-		  Return Beacon
+		  Return LootSource
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IndexOf(Item As Ark.ItemSet) As Integer
+		Function IndexOf(Item As Beacon.ItemSet) As Integer
 		  For I As Integer = 0 To UBound(Self.mItems)
 		    If Self.mItems(I) = Item Then
 		      Return I
@@ -130,7 +130,7 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Insert(Index As Integer, Item As Ark.ItemSet)
+		Sub Insert(Index As Integer, Item As Beacon.ItemSet)
 		  Self.mItems.Insert(Index, Item)
 		End Sub
 	#tag EndMethod
@@ -148,7 +148,7 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As Ark.Beacon) As Integer
+		Function Operator_Compare(Other As Beacon.LootSource) As Integer
 		  If Other = Nil Then
 		    Return 1
 		  End If
@@ -164,13 +164,13 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Subscript(Index As Integer) As Ark.ItemSet
+		Function Operator_Subscript(Index As Integer) As Beacon.ItemSet
 		  Return Self.mItems(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Subscript(Index As Integer, Assigns Value As Ark.ItemSet)
+		Sub Operator_Subscript(Index As Integer, Assigns Value As Beacon.ItemSet)
 		  Self.mItems(Index) = Value
 		End Sub
 	#tag EndMethod
@@ -182,14 +182,14 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Ark.Range) As Text
+		Function TextValue(Multipliers As Beacon.Range) As Text
 		  Dim Values() As Text
 		  Values.Append("SupplyCrateClassString=""" + Self.mType + """")
 		  Values.Append("MinItemSets=" + Self.mMinItemSets.ToText)
 		  Values.Append("MaxItemSets=" + Self.mMaxItemSets.ToText)
 		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.ToText)
 		  Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("ItemSets=(" + Ark.ItemSet.Join(Self.mItems, ",", Multipliers) + ")")
+		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mItems, ",", Multipliers) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod
@@ -242,7 +242,7 @@ Implements Ark.Countable
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mItems() As Ark.ItemSet
+		Private mItems() As Beacon.ItemSet
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -1,8 +1,8 @@
 #tag Class
 Protected Class SetEntry
-Implements Ark.Countable
+Implements Beacon.Countable
 	#tag Method, Flags = &h0
-		Sub Append(Item As Ark.ItemClass)
+		Sub Append(Item As Beacon.ItemClass)
 		  Self.mItems.Append(Item)
 		End Sub
 	#tag EndMethod
@@ -11,14 +11,14 @@ Implements Ark.Countable
 		Sub Constructor()
 		  Self.mMinQuantity = 1
 		  Self.mMaxQuantity = 1
-		  Self.mMinQuality = Ark.Qualities.Primitive
-		  Self.mMaxQuality = Ark.Qualities.Ascendant
+		  Self.mMinQuality = Beacon.Qualities.Primitive
+		  Self.mMaxQuality = Beacon.Qualities.Ascendant
 		  Self.mChanceToBeBlueprint = 0.1
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Ark.SetEntry)
+		Sub Constructor(Source As Beacon.SetEntry)
 		  Self.Constructor()
 		  
 		  Redim Self.mItems(UBound(Source.mItems))
@@ -31,7 +31,7 @@ Implements Ark.Countable
 		  Self.mWeight = Source.mWeight
 		  
 		  For I As Integer = 0 To UBound(Source.mItems)
-		    Self.mItems(I) = New Ark.ItemClass(Source.mItems(I))
+		    Self.mItems(I) = New Beacon.ItemClass(Source.mItems(I))
 		  Next
 		End Sub
 	#tag EndMethod
@@ -45,16 +45,16 @@ Implements Ark.Countable
 	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Children() As Xojo.Core.Dictionary
-		  For Each Item As Ark.ItemClass In Self.mItems
+		  For Each Item As Beacon.ItemClass In Self.mItems
 		    Children.Append(Item.Export)
 		  Next
 		  
 		  Dim Keys As New Xojo.Core.Dictionary
 		  Keys.Value("ChanceToBeBlueprintOverride") = Self.ChanceToBeBlueprint
 		  Keys.Value("Items") = Children
-		  Keys.Value("MaxQuality") = Ark.QualityToText(Self.MaxQuality)
+		  Keys.Value("MaxQuality") = Beacon.QualityToText(Self.MaxQuality)
 		  Keys.Value("MaxQuantity") = Self.MaxQuantity
-		  Keys.Value("MinQuality") = Ark.QualityToText(Self.MinQuality)
+		  Keys.Value("MinQuality") = Beacon.QualityToText(Self.MinQuality)
 		  Keys.Value("MinQuantity") = Self.MinQuantity
 		  Keys.Value("EntryWeight") = Self.Weight
 		  Return Keys
@@ -63,13 +63,13 @@ Implements Ark.Countable
 
 	#tag Method, Flags = &h0
 		Function GetIterator() As Xojo.Core.Iterator
-		  Return New Ark.SetEntryIterator(Self)
+		  Return New Beacon.SetEntryIterator(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Xojo.Core.Dictionary) As Ark.SetEntry
-		  Dim Entry As New Ark.SetEntry
+		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.SetEntry
+		  Dim Entry As New Beacon.SetEntry
 		  If Dict.HasKey("EntryWeight") Then
 		    Entry.Weight = Dict.Value("EntryWeight")
 		  Else
@@ -80,18 +80,18 @@ Implements Ark.Countable
 		    Dim Value As Auto = Dict.Value("MinQuality")
 		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
 		    If Info.FullName = "Text" Then
-		      Entry.MinQuality = Ark.TextToQuality(Value)
+		      Entry.MinQuality = Beacon.TextToQuality(Value)
 		    Else
-		      Entry.MinQuality = Ark.QualityForValue(Value, 1)
+		      Entry.MinQuality = Beacon.QualityForValue(Value, 1)
 		    End If
 		  End If
 		  If Dict.HasKey("MaxQuality") Then
 		    Dim Value As Auto = Dict.Value("MaxQuality")
 		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
 		    If Info.FullName = "Text" Then
-		      Entry.MaxQuality = Ark.TextToQuality(Value)
+		      Entry.MaxQuality = Beacon.TextToQuality(Value)
 		    Else
-		      Entry.MaxQuality = Ark.QualityForValue(Value, 1)
+		      Entry.MaxQuality = Beacon.QualityForValue(Value, 1)
 		    End If
 		  End If
 		  
@@ -119,7 +119,7 @@ Implements Ark.Countable
 		    
 		    For I As Integer = 0 To UBound(ClassStrings)
 		      Try
-		        Entry.Append(New Ark.ItemClass(ClassStrings(I), ClassWeights(I)))
+		        Entry.Append(New Beacon.ItemClass(ClassStrings(I), ClassWeights(I)))
 		      Catch Err As TypeMismatchException
 		        Continue
 		      End Try
@@ -127,7 +127,7 @@ Implements Ark.Countable
 		  ElseIf Dict.HasKey("Items") Then
 		    Dim Children() As Auto = Dict.Value("Items")
 		    For Each Child As Xojo.Core.Dictionary In Children
-		      Entry.Append(Ark.ItemClass.Import(Child))
+		      Entry.Append(Beacon.ItemClass.Import(Child))
 		    Next
 		  End If
 		  
@@ -136,7 +136,7 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IndexOf(Item As Ark.ItemClass) As Integer
+		Function IndexOf(Item As Beacon.ItemClass) As Integer
 		  For I As Integer = 0 To UBound(Self.mItems)
 		    If Self.mItems(I) = Item Then
 		      Return I
@@ -147,15 +147,15 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Insert(Index As Integer, Item As Ark.ItemClass)
+		Sub Insert(Index As Integer, Item As Beacon.ItemClass)
 		  Self.mItems.Insert(Index, Item)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Entries() As Ark.SetEntry, Separator As Text, Multipliers As Ark.Range) As Text
+		Shared Function Join(Entries() As Beacon.SetEntry, Separator As Text, Multipliers As Beacon.Range) As Text
 		  Dim Values() As Text
-		  For Each Entry As Ark.SetEntry In Entries
+		  For Each Entry As Beacon.SetEntry In Entries
 		    Values.Append(Entry.TextValue(Multipliers))
 		  Next
 		  Return Text.Join(Values, Separator)
@@ -169,13 +169,13 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Subscript(Index As Integer) As Ark.ItemClass
+		Function Operator_Subscript(Index As Integer) As Beacon.ItemClass
 		  Return Self.mItems(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Subscript(Index As Integer, Assigns Item As Ark.ItemClass)
+		Sub Operator_Subscript(Index As Integer, Assigns Item As Beacon.ItemClass)
 		  Self.mItems(Index) = Item
 		End Sub
 	#tag EndMethod
@@ -187,7 +187,7 @@ Implements Ark.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Ark.Range) As Text
+		Function TextValue(Multipliers As Beacon.Range) As Text
 		  Dim Classes(), Weights() As Text
 		  Redim Classes(UBound(Self.mItems))
 		  Redim Weights(UBound(Self.mItems))
@@ -196,8 +196,8 @@ Implements Ark.Countable
 		    Weights(I) = Self.mItems(I).Weight.ToText
 		  Next
 		  
-		  Dim MinQuality As Double = Ark.ValueForQuality(Self.mMinQuality, Multipliers.Min)
-		  Dim MaxQuality As Double = Ark.ValueForQuality(Self.mMaxQuality, Multipliers.Max)
+		  Dim MinQuality As Double = Beacon.ValueForQuality(Self.mMinQuality, Multipliers.Min)
+		  Dim MaxQuality As Double = Beacon.ValueForQuality(Self.mMaxQuality, Multipliers.Max)
 		  Dim InverseChance As Double = 1 - Self.mChanceToBeBlueprint
 		  Dim Entries() As Text
 		  
@@ -272,7 +272,7 @@ Implements Ark.Countable
 			  Self.mMaxQuality = Value
 			End Set
 		#tag EndSetter
-		MaxQuality As Ark.Qualities
+		MaxQuality As Beacon.Qualities
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -304,7 +304,7 @@ Implements Ark.Countable
 			  Self.mMinQuality = Value
 			End Set
 		#tag EndSetter
-		MinQuality As Ark.Qualities
+		MinQuality As Beacon.Qualities
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -322,11 +322,11 @@ Implements Ark.Countable
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mItems() As Ark.ItemClass
+		Private mItems() As Beacon.ItemClass
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMaxQuality As Ark.Qualities
+		Private mMaxQuality As Beacon.Qualities
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -334,7 +334,7 @@ Implements Ark.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMinQuality As Ark.Qualities
+		Private mMinQuality As Beacon.Qualities
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

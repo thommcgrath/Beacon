@@ -1,40 +1,53 @@
 #tag Class
-Protected Class SetEntryIterator
-Implements xojo.Core.Iterator
+Protected Class ItemClass
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Ark.SetEntry)
-		  Redim Self.mItems(UBound(Source))
-		  For I As Integer = 0 To UBound(Self.mItems)
-		    Self.mItems(I) = Source(I)
-		  Next
-		  Self.mIndex = -1
+		Function ClassString() As Text
+		  Return Self.mClassString
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Source As Beacon.ItemClass)
+		  Self.mClassString = Source.mClassString
+		  Self.mWeight = Source.mWeight
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MoveNext() As Boolean
-		  // Part of the xojo.Core.Iterator interface.
-		  
-		  Self.mIndex = Self.mIndex + 1
-		  Return Self.mIndex <= UBound(Self.mItems)
+		Sub Constructor(ClassString As Text, Weight As Double)
+		  Self.mClassString = ClassString
+		  Self.mWeight = Weight
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Export() As Xojo.Core.Dictionary
+		  Dim Keys As New Xojo.Core.Dictionary
+		  Keys.Value("Class") = Self.ClassString
+		  Keys.Value("Weight") = Self.Weight
+		  Return Keys
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Value() As Auto
-		  // Part of the xojo.Core.Iterator interface.
-		  
-		  Return Self.mItems(Self.mIndex)
+		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.ItemClass
+		  Return New Beacon.ItemClass(Dict.Value("Class"), Dict.Value("Weight"))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Weight() As Double
+		  Return Self.mWeight
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mIndex As Integer
+		Private mClassString As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mItems() As Ark.ItemClass
+		Private mWeight As Double
 	#tag EndProperty
 
 

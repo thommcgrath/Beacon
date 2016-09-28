@@ -89,8 +89,8 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MultipliersForBeacon(Extends Source As Beacon.DataSource, Beacon As Ark.Beacon) As Ark.Range
-		  Return Source.MultipliersForBeacon(Beacon.Type)
+		Function MultipliersForBeacon(Extends Source As Beacon.DataSource, LootSource As Beacon.LootSource) As Beacon.Range
+		  Return Source.MultipliersForBeacon(LootSource.Type)
 		End Function
 	#tag EndMethod
 
@@ -107,6 +107,57 @@ Protected Module Beacon
 		  End If
 		  
 		  Return Extension
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function QualityForValue(Quality As Double, Multiplier As Double) As Beacon.Qualities
+		  Quality = Quality * Multiplier
+		  
+		  If Quality < Beacon.QualityRamshackle Then
+		    Return Beacon.Qualities.Primitive
+		  ElseIf Quality < Beacon.QualityApprentice Then
+		    Return Beacon.Qualities.Ramshackle
+		  ElseIf Quality < Beacon.QualityJourneyman Then
+		    Return Beacon.Qualities.Apprentice
+		  ElseIf Quality < Beacon.QualityMastercraft Then
+		    Return Beacon.Qualities.Journeyman
+		  ElseIf Quality < Beacon.QualityAscendant Then
+		    Return Beacon.Qualities.Mastercraft
+		  ElseIf Quality < Beacon.QualityAscendantPlus Then
+		    Return Beacon.Qualities.Ascendant
+		  ElseIf Quality < Beacon.QualityAscendantPlusPlus Then
+		    Return Beacon.Qualities.AscendantPlus
+		  ElseIf Quality < Beacon.QualityAscendantPlusPlusPlus Then
+		    Return Beacon.Qualities.AscendantPlusPlus
+		  Else
+		    Return Beacon.Qualities.AscendantPlusPlusPlus
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function QualityToText(Quality As Beacon.Qualities) As Text
+		  Select Case Quality
+		  Case Beacon.Qualities.Primitive
+		    Return "Tier1"
+		  Case Beacon.Qualities.Ramshackle
+		    Return "Tier2"
+		  Case Beacon.Qualities.Apprentice
+		    Return "Tier3"
+		  Case Beacon.Qualities.Journeyman
+		    Return "Tier4"
+		  Case Beacon.Qualities.Mastercraft
+		    Return "Tier5"
+		  Case Beacon.Qualities.Ascendant
+		    Return "Tier6"
+		  Case Beacon.Qualities.AscendantPlus
+		    Return "Tier7"
+		  Case Beacon.Qualities.AscendantPlusPlus
+		    Return "Tier8"
+		  Case Beacon.Qualities.AscendantPlusPlusPlus
+		    Return "Tier9"
+		  End Select
 		End Function
 	#tag EndMethod
 
@@ -129,9 +180,113 @@ Protected Module Beacon
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function TextToQuality(Quality As Text) As Beacon.Qualities
+		  Select Case Quality
+		  Case "Tier1"
+		    Return Beacon.Qualities.Primitive
+		  Case "Tier2"
+		    Return Beacon.Qualities.Ramshackle
+		  Case "Tier3"
+		    Return Beacon.Qualities.Apprentice
+		  Case "Tier4"
+		    Return Beacon.Qualities.Journeyman
+		  Case "Tier5"
+		    Return Beacon.Qualities.Mastercraft
+		  Case "Tier6"
+		    Return Beacon.Qualities.Ascendant
+		  Case "Tier7"
+		    Return Beacon.Qualities.AscendantPlus
+		  Case "Tier8"
+		    Return Beacon.Qualities.AscendantPlusPlus
+		  Case "Tier9"
+		    Return Beacon.Qualities.AscendantPlusPlusPlus
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UBound(Item As Beacon.Countable) As Integer
+		  Return Item.Count - 1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UBound(Extends Item As Beacon.Countable) As Integer
+		  Return Item.Count - 1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ValueForQuality(Quality As Beacon.Qualities, Multiplier As Double) As Double
+		  Select Case Quality
+		  Case Beacon.Qualities.Primitive
+		    Return Beacon.QualityPrimitive / Multiplier
+		  Case Beacon.Qualities.Ramshackle
+		    Return Beacon.QualityRamshackle / Multiplier
+		  Case Beacon.Qualities.Apprentice
+		    Return Beacon.QualityApprentice / Multiplier
+		  Case Beacon.Qualities.Journeyman
+		    Return Beacon.QualityJourneyman / Multiplier
+		  Case Beacon.Qualities.Mastercraft
+		    Return Beacon.QualityMastercraft / Multiplier
+		  Case Beacon.Qualities.Ascendant
+		    Return Beacon.QualityAscendant / Multiplier
+		  Case Beacon.Qualities.AscendantPlus
+		    Return Beacon.QualityAscendantPlus / Multiplier
+		  Case Beacon.Qualities.AscendantPlusPlus
+		    Return Beacon.QualityAscendantPlusPlus / Multiplier
+		  Case Beacon.Qualities.AscendantPlusPlusPlus
+		    Return Beacon.QualityAscendantPlusPlusPlus / Multiplier
+		  Else
+		    Return Beacon.QualityPrimitive / Multiplier
+		  End Select
+		End Function
+	#tag EndMethod
+
+
+	#tag Constant, Name = QualityApprentice, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = QualityAscendant, Type = Double, Dynamic = False, Default = \"7", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = QualityAscendantPlus, Type = Double, Dynamic = False, Default = \"9", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = QualityAscendantPlusPlus, Type = Double, Dynamic = False, Default = \"12", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = QualityAscendantPlusPlusPlus, Type = Double, Dynamic = False, Default = \"16", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = QualityJourneyman, Type = Double, Dynamic = False, Default = \"3.75", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = QualityMastercraft, Type = Double, Dynamic = False, Default = \"5.5", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = QualityPrimitive, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = QualityRamshackle, Type = Double, Dynamic = False, Default = \"1.25", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = WebURL, Type = Text, Dynamic = False, Default = \"https://thezaz.com/beacon", Scope = Protected
 	#tag EndConstant
+
+
+	#tag Enum, Name = Qualities, Type = Integer, Flags = &h1
+		Primitive
+		  Ramshackle
+		  Apprentice
+		  Journeyman
+		  Mastercraft
+		  Ascendant
+		  AscendantPlus
+		  AscendantPlusPlus
+		AscendantPlusPlusPlus
+	#tag EndEnum
 
 
 	#tag ViewBehavior

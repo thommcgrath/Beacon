@@ -1128,14 +1128,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Sources() As Ark.SetEntry = Nil) As Ark.SetEntry()
+		Shared Function Present(Parent As Window, Sources() As Beacon.SetEntry = Nil) As Beacon.SetEntry()
 		  Dim Win As New EntryEditor
 		  If Sources <> Nil And UBound(Sources) > -1 Then
 		    Win.mEditing = True
 		    Redim Win.mSelectedEngrams(UBound(Sources))
 		    For I As Integer = 0 To UBound(Sources)
-		      Dim Source As Ark.SetEntry = Sources(I)
-		      Win.mSelectedEngrams(I) = New Ark.Engram(App.DataSource.NameOfEngram(Source(0).ClassString), Source(0).ClassString)
+		      Dim Source As Beacon.SetEntry = Sources(I)
+		      Win.mSelectedEngrams(I) = New Beacon.Engram(App.DataSource.NameOfEngram(Source(0).ClassString), Source(0).ClassString)
 		    Next
 		    Win.NameField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).Name, "Multiple")
 		    Win.ClassField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).ClassString, "Multiple")
@@ -1144,9 +1144,9 @@ End
 		    Win.DoneButton.Caption = "Save"
 		    
 		    Dim MinQuantities(), MaxQuantities() As Integer
-		    Dim MinQualities(), MaxQualities() As Ark.Qualities
+		    Dim MinQualities(), MaxQualities() As Beacon.Qualities
 		    Dim TotalWeight, TotalChance As Double
-		    For Each Source As Ark.SetEntry In Sources
+		    For Each Source As Beacon.SetEntry In Sources
 		      MinQuantities.Append(Source.MinQuantity)
 		      MaxQuantities.Append(Source.MaxQuantity)
 		      TotalWeight = TotalWeight + Source.Weight
@@ -1184,20 +1184,20 @@ End
 		    Return Nil
 		  End If
 		  
-		  Dim Entries() As Ark.SetEntry
+		  Dim Entries() As Beacon.SetEntry
 		  If Win.mEditing Then
-		    For Each Source As Ark.SetEntry In Sources
-		      Entries.Append(New Ark.SetEntry(Source))
+		    For Each Source As Beacon.SetEntry In Sources
+		      Entries.Append(New Beacon.SetEntry(Source))
 		    Next
 		  Else
-		    For Each Engram As Ark.Engram In Win.mSelectedEngrams
-		      Dim Entry As New Ark.SetEntry
-		      Entry.Append(New Ark.ItemClass(Engram.ClassString, 1))
+		    For Each Engram As Beacon.Engram In Win.mSelectedEngrams
+		      Dim Entry As New Beacon.SetEntry
+		      Entry.Append(New Beacon.ItemClass(Engram.ClassString, 1))
 		      Entries.Append(Entry)
 		    Next
 		  End If
 		  
-		  For Each Entry As Ark.SetEntry In Entries
+		  For Each Entry As Beacon.SetEntry In Entries
 		    If Win.EditMaxQuantityCheck.Value Then
 		      Entry.MaxQuantity = Val(Win.MaxQuantityField.Text)
 		    End If
@@ -1228,12 +1228,12 @@ End
 		    FilterField.Text = SearchText
 		  End If
 		  
-		  Dim Engrams() As Ark.Engram = App.DataSource.SearchForEngrams(SearchText.ToText)
+		  Dim Engrams() As Beacon.Engram = App.DataSource.SearchForEngrams(SearchText.ToText)
 		  EngramList.DeleteAllRows
 		  
 		  Dim PerfectMatch As Boolean
 		  Dim Indexes As New Dictionary
-		  For Each Engram As Ark.Engram In Engrams
+		  For Each Engram As Beacon.Engram In Engrams
 		    EngramList.AddRow("", Engram.Name, Engram.ClassString)
 		    EngramList.RowTag(EngramList.LastIndex) = Engram
 		    Indexes.Value(Engram.ClassString) = EngramList.LastIndex
@@ -1244,11 +1244,11 @@ End
 		  
 		  If Not PerfectMatch And SearchText <> "" Then
 		    EngramList.AddRow(SearchText, SearchText)
-		    EngramList.RowTag(EngramList.LastIndex) = New Ark.Engram("", SearchText.ToText)
+		    EngramList.RowTag(EngramList.LastIndex) = New Beacon.Engram("", SearchText.ToText)
 		    Indexes.Value(SearchText) = EngramList.LastIndex
 		  End If
 		  
-		  For Each Engram As Ark.Engram In Self.mSelectedEngrams
+		  For Each Engram As Beacon.Engram In Self.mSelectedEngrams
 		    Dim Idx As Integer = Indexes.Lookup(Engram.ClassString, -1)
 		    If Idx > -1 Then
 		      EngramList.CellCheck(Idx, 0) = True
@@ -1267,7 +1267,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedEngrams() As Ark.Engram
+		Private mSelectedEngrams() As Beacon.Engram
 	#tag EndProperty
 
 
@@ -1326,7 +1326,7 @@ End
 		  End If
 		  
 		  Dim Selected As Boolean = Me.CellCheck(Row, Column)
-		  Dim Engram As Ark.Engram = Me.RowTag(Row)
+		  Dim Engram As Beacon.Engram = Me.RowTag(Row)
 		  Dim Idx As Integer = -1
 		  
 		  For I As Integer = 0 To UBound(Self.mSelectedEngrams)
@@ -1367,7 +1367,7 @@ End
 		  
 		  Dim Value As Integer
 		  Do
-		    Dim Quality As Ark.Qualities = CType(Value, Ark.Qualities)
+		    Dim Quality As Beacon.Qualities = CType(Value, Beacon.Qualities)
 		    Value = Value + 1
 		    
 		    Dim Label As String = Language.LabelForQuality(Quality)

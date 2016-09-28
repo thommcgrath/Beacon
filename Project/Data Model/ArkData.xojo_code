@@ -42,7 +42,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MultipliersForBeacon(ClassString As Text) As Ark.Range
+		Function MultipliersForBeacon(ClassString As Text) As Beacon.Range
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""minmult"", ""maxmult"" FROM ""beacons"" WHERE ""classstring"" = ?;")
@@ -54,13 +54,13 @@ Implements Beacon.DataSource
 		  Try
 		    RS = Self.SQLSelect(Statement, StringValue)
 		  Catch Err As UnsupportedOperationException
-		    Return New Ark.Range(1, 1)
+		    Return New Beacon.Range(1, 1)
 		  End Try
 		  If RS = Nil Or RS.RecordCount = 0 Then
-		    Return New Ark.Range(1, 1)
+		    Return New Beacon.Range(1, 1)
 		  End If
 		  
-		  Return New Ark.Range(RS.Field("minmult").DoubleValue, RS.Field("maxmult").DoubleValue)
+		  Return New Beacon.Range(RS.Field("minmult").DoubleValue, RS.Field("maxmult").DoubleValue)
 		End Function
 	#tag EndMethod
 
@@ -122,43 +122,10 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForBeacons(SearchText As Text) As Ark.Beacon()
+		Function SearchForEngrams(SearchText As Text) As Beacon.Engram()
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Dim Results() As Ark.Beacon
-		  
-		  Dim RS As RecordSet
-		  Try
-		    If SearchText = "" Then
-		      RS = Self.SQLSelect("SELECT ""label"", ""classstring"" FROM ""beacons"" ORDER BY ""label"";")
-		    Else
-		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"", ""classstring"" FROM ""beacons"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
-		      Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
-		      
-		      Dim StringValue As String = SearchText
-		      RS = Self.SQLSelect(Statement, "%" + StringValue + "%")
-		    End If
-		  Catch Err As UnsupportedOperationException
-		    Return Results()
-		  End Try
-		  If RS = Nil Then
-		    Return Results()
-		  End If
-		  
-		  while Not RS.EOF
-		    Results.Append(New Ark.Beacon(RS.Field("label").StringValue.ToText, RS.Field("classstring").StringValue.ToText))
-		    RS.MoveNext
-		  wend
-		  
-		  Return Results()
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As Text) As Ark.Engram()
-		  // Part of the Beacon.DataSource interface.
-		  
-		  Dim Results() As Ark.Engram
+		  Dim Results() As Beacon.Engram
 		  
 		  Dim RS As RecordSet
 		  Try
@@ -179,7 +146,40 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  while Not RS.EOF
-		    Results.Append(New Ark.Engram(RS.Field("label").StringValue.ToText, RS.Field("classstring").StringValue.ToText))
+		    Results.Append(New Beacon.Engram(RS.Field("label").StringValue.ToText, RS.Field("classstring").StringValue.ToText))
+		    RS.MoveNext
+		  wend
+		  
+		  Return Results()
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SearchForLootSources(SearchText As Text) As Beacon.LootSource()
+		  // Part of the Beacon.DataSource interface.
+		  
+		  Dim Results() As Beacon.LootSource
+		  
+		  Dim RS As RecordSet
+		  Try
+		    If SearchText = "" Then
+		      RS = Self.SQLSelect("SELECT ""label"", ""classstring"" FROM ""beacons"" ORDER BY ""label"";")
+		    Else
+		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"", ""classstring"" FROM ""beacons"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
+		      Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		      
+		      Dim StringValue As String = SearchText
+		      RS = Self.SQLSelect(Statement, "%" + StringValue + "%")
+		    End If
+		  Catch Err As UnsupportedOperationException
+		    Return Results()
+		  End Try
+		  If RS = Nil Then
+		    Return Results()
+		  End If
+		  
+		  while Not RS.EOF
+		    Results.Append(New Beacon.LootSource(RS.Field("label").StringValue.ToText, RS.Field("classstring").StringValue.ToText))
 		    RS.MoveNext
 		  wend
 		  

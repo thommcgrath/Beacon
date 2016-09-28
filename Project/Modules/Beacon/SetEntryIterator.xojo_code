@@ -1,8 +1,8 @@
 #tag Class
-Protected Class BeaconIterator
+Protected Class SetEntryIterator
 Implements xojo.Core.Iterator
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Ark.Beacon)
+		Sub Constructor(Source As Beacon.SetEntry)
 		  Redim Self.mItems(UBound(Source))
 		  For I As Integer = 0 To UBound(Self.mItems)
 		    Self.mItems(I) = Source(I)
@@ -34,7 +34,7 @@ Implements xojo.Core.Iterator
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mItems() As Ark.ItemSet
+		Private mItems() As Beacon.ItemClass
 	#tag EndProperty
 
 
