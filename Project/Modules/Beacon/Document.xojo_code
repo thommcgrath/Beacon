@@ -99,7 +99,11 @@ Protected Class Document
 		    // New style document
 		    Dim Dict As Xojo.Core.Dictionary = Parsed
 		    Try
-		      LootSources = Dict.Value("LootSources")
+		      If Dict.HasKey("LootSources") Then
+		        LootSources = Dict.Value("LootSources")
+		      Else
+		        LootSources = Dict.Value("Beacons")
+		      End If
 		      Doc.mIdentifier = Dict.Value("Identifier")
 		      Doc.mRevision = Dict.Value("Revision")
 		    Catch Err As RuntimeException
