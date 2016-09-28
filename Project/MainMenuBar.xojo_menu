@@ -188,21 +188,21 @@ Begin Menu MainMenuBar
       Visible = True
       Begin MenuItem DocumentAddBeacon
          SpecialMenu = 0
-         Text = "Add Beacon…"
+         Text = "Add Loot Source…"
          Index = -2147483648
          AutoEnable = False
          Visible = True
       End
       Begin MenuItem DocumentDuplicateBeacon
          SpecialMenu = 0
-         Text = "Duplicate Beacon"
+         Text = "Duplicate Loot Source"
          Index = -2147483648
          AutoEnable = False
          Visible = True
       End
       Begin MenuItem DocumentRemoveBeacon
          SpecialMenu = 0
-         Text = "Remove Beacon"
+         Text = "Remove Loot Source"
          Index = -2147483648
          AutoEnable = False
          Visible = True

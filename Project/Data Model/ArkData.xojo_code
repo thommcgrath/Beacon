@@ -42,10 +42,10 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function MultipliersForBeacon(ClassString As Text) As Beacon.Range
+		Function MultipliersForLootSource(ClassString As Text) As Beacon.Range
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""minmult"", ""maxmult"" FROM ""beacons"" WHERE ""classstring"" = ?;")
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""minmult"", ""maxmult"" FROM ""loot_sources"" WHERE ""classstring"" = ?;")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  
 		  Dim StringValue As String = ClassString
@@ -65,10 +65,10 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NameOfBeacon(ClassString As Text) As Text
+		Function NameOfEngram(ClassString As Text) As Text
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"" FROM ""beacons"" WHERE ""classstring"" = ?;")
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"" FROM ""engrams"" WHERE ""classstring"" = ?;")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  
 		  Dim StringValue As String = ClassString
@@ -88,10 +88,10 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NameOfEngram(ClassString As Text) As Text
+		Function NameOfLootSource(ClassString As Text) As Text
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"" FROM ""engrams"" WHERE ""classstring"" = ?;")
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"" FROM ""loot_sources"" WHERE ""classstring"" = ?;")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  
 		  Dim StringValue As String = ClassString
@@ -163,9 +163,9 @@ Implements Beacon.DataSource
 		  Dim RS As RecordSet
 		  Try
 		    If SearchText = "" Then
-		      RS = Self.SQLSelect("SELECT ""label"", ""classstring"" FROM ""beacons"" ORDER BY ""label"";")
+		      RS = Self.SQLSelect("SELECT ""label"", ""classstring"" FROM ""loot_sources"" ORDER BY ""label"";")
 		    Else
-		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"", ""classstring"" FROM ""beacons"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
+		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"", ""classstring"" FROM ""loot_sources"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
 		      Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		      
 		      Dim StringValue As String = SearchText
@@ -1050,8 +1050,15 @@ Implements Beacon.DataSource
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function UpdateToVersion3() As Boolean
+		  Self.SQLExecute("ALTER TABLE ""beacons"" RENAME TO ""loot_sources"";")
+		  Return True
+		End Function
+	#tag EndMethod
 
-	#tag Constant, Name = CurrentVersion, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+
+	#tag Constant, Name = CurrentVersion, Type = Double, Dynamic = False, Default = \"3", Scope = Public
 	#tag EndConstant
 
 

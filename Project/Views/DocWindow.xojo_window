@@ -141,7 +141,7 @@ Begin Window DocWindow
       Enabled         =   True
       EraseBackground =   True
       Height          =   24
-      HelpTag         =   "Add a beacon. Click to show the  ""Add Loot Source"" dialog, hold to show a menu of possible loot sources."
+      HelpTag         =   "Add a loot source. Click to show the  ""Add Loot Source"" dialog, hold to show a menu of possible loot sources."
       IconDisabled    =   0
       IconNormal      =   0
       IconPressed     =   0
@@ -172,7 +172,7 @@ Begin Window DocWindow
       Enabled         =   False
       EraseBackground =   True
       Height          =   24
-      HelpTag         =   "Remove the selected beacon."
+      HelpTag         =   "Remove the selected loot source."
       IconDisabled    =   0
       IconNormal      =   0
       IconPressed     =   0
@@ -311,6 +311,8 @@ Begin Window DocWindow
       LockedInPosition=   False
       Priority        =   0
       Scope           =   0
+      StackSize       =   ""
+      State           =   ""
       TabPanelIndex   =   0
    End
 End
@@ -434,7 +436,7 @@ End
 			
 			Dim LootSources() As Beacon.LootSource = Self.Doc.LootSources
 			For Each LootSource As Beacon.LootSource In LootSources
-			Dim Multipliers As Beacon.Range = App.DataSource.MultipliersForBeacon(LootSource)
+			Dim Multipliers As Beacon.Range = App.DataSource.MultipliersForLootSource(LootSource)
 			Lines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Multipliers))
 			Next
 			
@@ -666,7 +668,7 @@ End
 		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
 		    Board.AddRawData(Contents, Self.kClipboardType)
 		  End If
-		  Dim Multipliers As Beacon.Range = App.DataSource.MultipliersForBeacon(LootSource)
+		  Dim Multipliers As Beacon.Range = App.DataSource.MultipliersForLootSource(LootSource)
 		  Board.Text = "ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Multipliers)
 		End Sub
 	#tag EndEvent
@@ -807,7 +809,7 @@ End
 		    Me.Reset
 		    
 		    For Each LootSource As Beacon.LootSource In LootSources
-		      LootSource.Label = App.DataSource.NameOfBeacon(LootSource.Type)
+		      LootSource.Label = App.DataSource.NameOfLootSource(LootSource.Type)
 		      Self.AddLootSource(LootSource)
 		    Next
 		    Return

@@ -456,7 +456,7 @@ Begin ContainerControl BeaconEditor
       Enabled         =   True
       EraseBackground =   True
       Height          =   24
-      HelpTag         =   "Add an item set to this beacon. Click to add an empty set, hold to show a menu of presets."
+      HelpTag         =   "Add an item set to this loot source. Click to add an empty set, hold to show a menu of presets."
       IconDisabled    =   0
       IconNormal      =   0
       IconPressed     =   0
