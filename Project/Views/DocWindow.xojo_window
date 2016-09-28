@@ -711,7 +711,7 @@ End
 		  #Pragma Unused areas
 		  
 		  G.ForeColor = &cCCCCCC
-		  G.FillRect(0, 0, G.Width, G.Height)
+		  G.FillRect(-1, -1, G.Width + 2, G.Height + 2)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

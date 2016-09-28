@@ -992,11 +992,11 @@ End
 #tag EndEvents
 #tag Events Separators
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
 		  G.ForeColor = &cCCCCCC
-		  G.FillRect(0, 0, G.Width, G.Height)
+		  G.FillRect(-1, -1, G.Width + 2, G.Height + 2)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
