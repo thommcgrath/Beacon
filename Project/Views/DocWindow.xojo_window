@@ -61,7 +61,7 @@ Begin Window DocWindow
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionType   =   0
+      SelectionType   =   1
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -357,12 +357,23 @@ End
 		  FileSaveAs.Enable
 		  FileClose.Enable
 		  DocumentAddBeacon.Enable
-		  If BeaconList.ListIndex > -1 Then
+		  
+		  Select Case BeaconList.SelCount
+		  Case 0
+		    DocumentRemoveBeacon.Text = "Remove Loot Source"
+		  Case 1
+		    DocumentRemoveBeacon.Text = "Remove Loot Source"
 		    DocumentDuplicateBeacon.Enable
 		    DocumentRemoveBeacon.Enable
 		    Editor.EnableMenuItems
 		    EditClear.Enable
-		  End If
+		  Else
+		    DocumentRemoveBeacon.Text = "Remove Loot Sources"
+		    DocumentRemoveBeacon.Enable
+		    Editor.EnableMenuItems
+		    EditClear.Enable
+		  End Select
+		  
 		  If Self.Doc.BeaconCount > 0 Then
 		    FileExportConfig.Enable
 		  End If
@@ -389,6 +400,10 @@ End
 
 	#tag MenuHandler
 		Function DocumentDuplicateBeacon() As Boolean Handles DocumentDuplicateBeacon.Action
+			If BeaconList.SelCount <> 1 Then
+			Return True
+			End If
+			
 			Dim LootSource As Beacon.LootSource = LootSourceAddSheet.Present(Self, Self.Doc)
 			If LootSource <> Nil Then
 			Dim Type As Text = LootSource.Type
@@ -411,7 +426,7 @@ End
 
 	#tag MenuHandler
 		Function DocumentRemoveBeacon() As Boolean Handles DocumentRemoveBeacon.Action
-			Self.RemoveSelectedBeacon()
+			Self.RemoveSelectedBeacons()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -465,25 +480,41 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddLootSource(LootSource As Beacon.LootSource)
-		  Dim Idx As Integer
-		  If Self.Doc.HasBeacon(LootSource) Then
-		    Self.Doc.Remove(LootSource)
-		    
-		    For I As Integer = 0 To BeaconList.ListCount - 1
-		      If Beacon.LootSource(BeaconList.RowTag(I)).Type = LootSource.Type Then
-		        Idx = I
-		        Exit For I
-		      End If
-		    Next
-		  Else
-		    BeaconList.AddRow("")
-		    Idx = BeaconList.LastIndex
+		  Dim Arr(0) As Beacon.LootSource
+		  Arr(0) = LootSource
+		  Self.AddLootSources(Arr)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AddLootSources(Sources() As Beacon.LootSource)
+		  If UBound(Sources) = -1 Then
+		    Return
 		  End If
 		  
-		  BeaconList.RowTag(Idx) = LootSource
-		  BeaconList.Cell(Idx, 0) = LootSource.Label
-		  BeaconList.ListIndex = Idx
-		  Self.Doc.Add(LootSource)
+		  BeaconList.ListIndex = -1
+		  For Each Source As Beacon.LootSource In Sources
+		    Dim Idx As Integer
+		    If Self.Doc.HasBeacon(Source) Then
+		      Self.Doc.Remove(Source)
+		      
+		      For I As Integer = 0 To BeaconList.ListCount - 1
+		        If Beacon.LootSource(BeaconList.RowTag(I)).Type = Source.Type Then
+		          Idx = I
+		          Exit For I
+		        End If
+		      Next
+		    Else
+		      BeaconList.AddRow("")
+		      Idx = BeaconList.LastIndex
+		    End If
+		    
+		    BeaconList.RowTag(Idx) = Source
+		    BeaconList.Cell(Idx, 0) = Source.Label
+		    BeaconList.Selected(Idx) = True
+		    Self.Doc.Add(Source)
+		  Next
+		  
 		  Self.ContentsChanged = True
 		End Sub
 	#tag EndMethod
@@ -557,14 +588,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub RemoveSelectedBeacon()
-		  If BeaconList.ListIndex = -1 Then
+		Private Sub RemoveSelectedBeacons()
+		  If BeaconList.SelCount = 0 Then
 		    Return
 		  End If
-		  Dim CurrentLootSource As Beacon.LootSource = BeaconList.RowTag(BeaconList.ListIndex)
-		  Self.Doc.Remove(CurrentLootSource)
+		  
+		  For I As Integer = BeaconList.ListCount - 1 DownTo 0
+		    If BeaconList.Selected(I) Then
+		      Self.Doc.Remove(BeaconList.RowTag(I))
+		      BeaconList.RemoveRow(I)
+		    End If
+		  Next
+		  
 		  Self.ContentsChanged = True
-		  BeaconList.RemoveRow(BeaconList.ListIndex)
 		End Sub
 	#tag EndMethod
 
@@ -639,20 +675,22 @@ End
 #tag Events BeaconList
 	#tag Event
 		Sub Change()
-		  RemoveBeaconButton.Enabled = Me.ListIndex > -1
+		  RemoveBeaconButton.Enabled = Me.SelCount > 0
 		  
-		  If Me.ListIndex = -1 Then
-		    Editor.Enabled = False
-		    Editor.LootSource = Nil
-		  Else
-		    Editor.LootSource = Me.RowTag(Me.ListIndex)
-		    Editor.Enabled = True
-		  End If
+		  Dim Sources() As Beacon.LootSource
+		  For I As Integer = 0 To Me.ListCount - 1
+		    If Me.Selected(I) Then
+		      Sources.Append(Me.RowTag(I))
+		    End If
+		  Next
+		  
+		  Editor.Sources = Sources
+		  Editor.Enabled = UBound(Sources) > -1
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
-		  Return Me.ListIndex > -1
+		  Return Me.SelCount > 0
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -662,35 +700,68 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim LootSource As Beacon.LootSource = Me.RowTag(Me.ListIndex)
-		  Dim Dict As Xojo.Core.Dictionary = LootSource.Export
-		  If Dict <> Nil Then
-		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
-		    Board.AddRawData(Contents, Self.kClipboardType)
+		  If Me.SelCount = 0 Then
+		    Return
 		  End If
-		  Dim Multipliers As Beacon.Range = App.DataSource.MultipliersForLootSource(LootSource)
-		  Board.Text = "ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Multipliers)
+		  
+		  Dim Lines() As Text
+		  Dim Dicts() As Xojo.Core.Dictionary
+		  For I As Integer = 0 To Me.ListCount - 1
+		    If Me.Selected(I) Then
+		      Dim Source As Beacon.LootSource = Me.RowTag(I)
+		      Dim Multipliers As Beacon.Range = App.DataSource.MultipliersForLootSource(Source)
+		      Dicts.Append(Source.Export)
+		      Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue(Multipliers))
+		    End If
+		  Next
+		  
+		  Dim RawData As Text
+		  If UBound(Dicts) = 0 Then
+		    RawData = Xojo.Data.GenerateJSON(Dicts(0))
+		  Else
+		    RawData = Xojo.Data.GenerateJSON(Dicts)
+		  End If
+		  
+		  Board.AddRawData(RawData, Self.kClipboardType)
+		  Board.Text = Text.Join(Lines, Text.FromUnicodeCodepoint(10))
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear()
-		  Self.RemoveSelectedBeacon()
+		  Self.RemoveSelectedBeacons()
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
 		    Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		    Dim Dict As Xojo.Core.Dictionary
+		    Dim Parsed As Auto
 		    Try
-		      Dict = Xojo.Data.ParseJSON(Contents.ToText)
-		    Catch Err As RuntimeException
+		      Parsed = Xojo.Data.ParseJSON(Contents.ToText)
+		    Catch Err As Xojo.Data.InvalidJSONException
 		      Beep
 		      Return
 		    End Try
 		    
-		    Dim LootSource As Beacon.LootSource = Beacon.LootSource.Import(Dict)
-		    Self.AddLootSource(LootSource)
+		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
+		    Dim Dicts() As Xojo.Core.Dictionary
+		    If Info.FullName = "Xojo.Core.Dictionary" Then
+		      Dicts.Append(Parsed)
+		    ElseIf Info.FullName = "Auto()" Then
+		      Dim Values() As Auto = Parsed
+		      For Each Dict As Xojo.Core.Dictionary In Values
+		        Dicts.Append(Dict)
+		      Next
+		    Else
+		      Beep
+		      Return
+		    End If
+		    
+		    Dim Sources() As Beacon.LootSource
+		    For Each Dict As Xojo.Core.Dictionary In Dicts
+		      Sources.Append(Beacon.LootSource.Import(Dict))
+		    Next
+		    Self.AddLootSources(Sources)
 		  ElseIf Board.TextAvailable Then
 		    Dim Contents As String = Board.Text
 		    If Left(Contents, 30) = "ConfigOverrideSupplyCrateItems" Then
@@ -701,7 +772,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanDelete() As Boolean
-		  Return Me.ListIndex > -1
+		  Return Me.SelCount > 0
 		End Function
 	#tag EndEvent
 #tag EndEvents
@@ -719,9 +790,12 @@ End
 	#tag Event
 		Sub Updated()
 		  Self.ContentsChanged = True
-		  If BeaconList.ListIndex > -1 Then
-		    BeaconList.Cell(BeaconList.ListIndex, 0) = Beacon.LootSource(BeaconList.RowTag(BeaconList.ListIndex)).Label
-		  End If
+		  
+		  For I As Integer = 0 To BeaconList.ListCount - 1
+		    If BeaconList.Selected(I) Then
+		      BeaconList.Cell(I, 0) = Beacon.LootSource(BeaconList.RowTag(I)).Label
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -792,7 +866,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Self.RemoveSelectedBeacon()
+		  Self.RemoveSelectedBeacons()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

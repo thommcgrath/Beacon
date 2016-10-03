@@ -133,6 +133,19 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.ItemSet) As Integer
+		  If Other = Nil Then
+		    Return 1
+		  End If
+		  
+		  Dim SelfHash As Text = Self.Hash
+		  Dim OtherHash As Text = Other.Hash
+		  
+		  Return SelfHash.Compare(OtherHash, 0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Operator_Redim(Bound As Integer)
 		  Redim Self.mEntries(Bound)
 		End Sub
@@ -186,6 +199,33 @@ Implements Beacon.Countable
 		End Function
 	#tag EndMethod
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Dim Entries() As Text
+			  Redim Entries(UBound(Self.mEntries))
+			  For I As Integer = 0 To UBound(Entries)
+			    Entries(I) = Self.mEntries(I).Hash
+			  Next
+			  Entries.Sort
+			  
+			  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
+			  Dim Format As Text = "0.000"
+			  
+			  Dim Parts(5) As Text
+			  Parts(0) = Beacon.MD5(Text.Join(Entries, ",")).Lowercase
+			  Parts(1) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
+			  Parts(2) = Self.MaxNumItems.ToText(Locale, Format)
+			  Parts(3) = Self.MinNumItems.ToText(Locale, Format)
+			  Parts(4) = Self.NumItemsPower.ToText(Locale, Format)
+			  Parts(5) = Self.Weight.ToText(Locale, Format)
+			  
+			  Return Beacon.MD5(Text.Join(Parts, ",")).Lowercase
+			End Get
+		#tag EndGetter
+		Hash As Text
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
