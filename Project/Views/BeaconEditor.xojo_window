@@ -25,7 +25,7 @@ Begin ContainerControl BeaconEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   598
-   Begin TextField LabelField
+   Begin UITweaks.ResizedTextField LabelField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
@@ -101,7 +101,7 @@ Begin ContainerControl BeaconEditor
       Visible         =   True
       Width           =   70
    End
-   Begin TextField MinSetsField
+   Begin UITweaks.ResizedTextField MinSetsField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
@@ -177,7 +177,7 @@ Begin ContainerControl BeaconEditor
       Visible         =   True
       Width           =   70
    End
-   Begin TextField MaxSetsField
+   Begin UITweaks.ResizedTextField MaxSetsField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True

@@ -75,7 +75,7 @@ Begin ContainerControl SetEditor
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin TextField LabelField
+   Begin UITweaks.ResizedTextField LabelField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
@@ -151,7 +151,7 @@ Begin ContainerControl SetEditor
       Visible         =   True
       Width           =   80
    End
-   Begin TextField MinItemsField
+   Begin UITweaks.ResizedTextField MinItemsField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
@@ -193,7 +193,7 @@ Begin ContainerControl SetEditor
       Visible         =   True
       Width           =   80
    End
-   Begin TextField MaxItemsField
+   Begin UITweaks.ResizedTextField MaxItemsField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True

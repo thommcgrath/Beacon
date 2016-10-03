@@ -45,7 +45,7 @@ Begin Window UpdateWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   1
+      Value           =   2
       Visible         =   True
       Width           =   600
       Begin Label CheckMessageLabel
@@ -103,7 +103,7 @@ Begin Window UpdateWindow
          Visible         =   True
          Width           =   560
       End
-      Begin PushButton CheckCancelButton
+      Begin UITweaks.ResizedPushButton CheckCancelButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -218,7 +218,7 @@ Begin Window UpdateWindow
          Visible         =   True
          Width           =   482
       End
-      Begin PushButton ResultsActionButton
+      Begin UITweaks.ResizedPushButton ResultsActionButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -249,7 +249,7 @@ Begin Window UpdateWindow
          Visible         =   True
          Width           =   80
       End
-      Begin PushButton ResultsCancelButton
+      Begin UITweaks.ResizedPushButton ResultsCancelButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -447,7 +447,7 @@ Begin Window UpdateWindow
          Visible         =   True
          Width           =   560
       End
-      Begin PushButton DownloadCancelButton
+      Begin UITweaks.ResizedPushButton DownloadCancelButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -490,6 +490,7 @@ Begin Window UpdateWindow
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
    End
    Begin Timer DownloadFinishTimer
       Index           =   -2147483648

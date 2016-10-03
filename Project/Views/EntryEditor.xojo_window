@@ -110,7 +110,7 @@ Begin Window EntryEditor
          Visible         =   True
          Width           =   80
       End
-      Begin PushButton BackButton
+      Begin UITweaks.ResizedPushButton BackButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -141,7 +141,7 @@ Begin Window EntryEditor
          Visible         =   True
          Width           =   80
       End
-      Begin PushButton DoneButton
+      Begin UITweaks.ResizedPushButton DoneButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -401,7 +401,7 @@ Begin Window EntryEditor
          Visible         =   True
          Width           =   152
       End
-      Begin TextField MinQuantityField
+      Begin UITweaks.ResizedTextField MinQuantityField
          AcceptTabs      =   False
          Alignment       =   0
          AutoDeactivate  =   True
@@ -444,7 +444,7 @@ Begin Window EntryEditor
          Visible         =   True
          Width           =   80
       End
-      Begin TextField MaxQuantityField
+      Begin UITweaks.ResizedTextField MaxQuantityField
          AcceptTabs      =   False
          Alignment       =   0
          AutoDeactivate  =   True
@@ -487,7 +487,7 @@ Begin Window EntryEditor
          Visible         =   True
          Width           =   80
       End
-      Begin PopupMenu QualityMenus
+      Begin UITweaks.ResizedPopupMenu QualityMenus
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
@@ -518,7 +518,7 @@ Begin Window EntryEditor
          Visible         =   True
          Width           =   139
       End
-      Begin PopupMenu QualityMenus
+      Begin UITweaks.ResizedPopupMenu QualityMenus
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""

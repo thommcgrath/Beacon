@@ -26,7 +26,7 @@ Begin Window ImporterWindow
    Title           =   "Import From Config"
    Visible         =   True
    Width           =   400
-   Begin PushButton CancelButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -72,9 +72,7 @@ Begin Window ImporterWindow
       LockTop         =   True
       Maximum         =   0
       Scope           =   2
-      TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   52
       Value           =   0
       Visible         =   True
@@ -102,7 +100,6 @@ Begin Window ImporterWindow
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Importing from """""
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -137,7 +134,6 @@ Begin Window ImporterWindow
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -279,11 +275,6 @@ End
 		Type="UInteger"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="BeaconsProcessed"
-		Group="Behavior"
-		Type="UInteger"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="CloseButton"
 		Visible=true
 		Group="Frame"
@@ -369,6 +360,11 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="LootSourcesProcessed"
+		Group="Behavior"
+		Type="UInteger"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MacProcID"
@@ -468,6 +464,7 @@ End
 		Name="Source"
 		Group="Behavior"
 		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Super"
