@@ -1,5 +1,12 @@
 # Beacon Version History
 
+## Build 4
+
+- Fixed crash while importing an empty config.
+- A beacon is know known as a loot source, since Beacon works for more than just beacons.
+- UI elements will be sized nicer on each platform.
+- It is now possible to edit multiple loot sources at the same time. Select multiple loot sources and only the sets common to all selected sources will be shown. Adding, editing, and removing sets will affect the all selected loot sources.
+
 ## Build 3
 
 - Now supports copy & paste. Users can now copy a beacon and paste it into another document or even directly into their text editor. When pasting into a text editor, the text is a properly constructed ConfigOverrideSupplyCrateItems line ready for use. It is also possible to go in the opposite direction. Copy a ConfigOverrideSupplyCrateItems line from a text editor and paste into Beacon.
