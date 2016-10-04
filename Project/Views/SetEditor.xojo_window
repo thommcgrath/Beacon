@@ -42,7 +42,7 @@ Begin ContainerControl SetEditor
       GridLinesHorizontal=   0
       GridLinesVertical=   0
       HasHeading      =   True
-      HeadingIndex    =   -1
+      HeadingIndex    =   0
       Height          =   213
       HelpTag         =   ""
       Hierarchical    =   False
@@ -755,6 +755,8 @@ End
 		      EntryList.RowTag(EntryList.LastIndex) = Entry
 		    Next
 		  End If
+		  
+		  EntryList.Sort
 		End Sub
 	#tag EndMethod
 
@@ -866,6 +868,42 @@ End
 	#tag Event
 		Function CanDelete() As Boolean
 		  Return Me.ListIndex > -1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  Dim Entry1 As Beacon.SetEntry = Me.RowTag(Row1)
+		  Dim Entry2 As Beacon.SetEntry = Me.RowTag(Row2)
+		  
+		  Dim Value1, Value2 As Double
+		  Select Case Column
+		  Case 0 // Description
+		    Return False
+		  Case 1 // Min quantity
+		    Value1 = Entry1.MinQuantity
+		    Value2 = Entry2.MinQuantity
+		  Case 2 // Max quantity
+		    Value1 = Entry1.MaxQuantity
+		    Value2 = Entry2.MaxQuantity
+		  Case 3 // Min quality
+		    Value1 = Beacon.ValueForQuality(Entry1.MinQuality, 1)
+		    Value2 = Beacon.ValueForQuality(Entry2.MinQuality, 1)
+		  Case 4 // Max quality
+		    Value1 = Beacon.ValueForQuality(Entry1.MaxQuality, 1)
+		    Value2 = Beacon.ValueForQuality(Entry2.MaxQuality, 1)
+		  Case 5 // Chance
+		    Value1 = Entry1.Weight
+		    Value2 = Entry2.Weight
+		  End Select
+		  
+		  If Value1 = Value2 Then
+		    Result = 0
+		  ElseIf Value1 > Value2 Then
+		    Result = 1
+		  Else
+		    Result = -1
+		  End If
+		  Return True
 		End Function
 	#tag EndEvent
 #tag EndEvents
@@ -992,7 +1030,7 @@ End
 #tag EndEvents
 #tag Events Separators
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
 		  G.ForeColor = &cCCCCCC
