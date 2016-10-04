@@ -68,6 +68,31 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Hash() As Text
+		  Dim Items() As Text
+		  Redim Items(UBound(Self.mItems))
+		  For I As Integer = 0 To UBound(Items)
+		    Items(I) = Self.mItems(I).Hash
+		  Next
+		  Items.Sort
+		  
+		  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
+		  Dim Format As Text = "0.000"
+		  
+		  Dim Parts(6) As Text
+		  Parts(0) = Beacon.MD5(Text.Join(Items, ",")).Lowercase
+		  Parts(1) = Self.ChanceToBeBlueprint.ToText(Locale, Format)
+		  Parts(2) = Beacon.QualityToText(Self.MaxQuality).Lowercase
+		  Parts(3) = Self.MaxQuantity.ToText(Locale, Format)
+		  Parts(4) = Beacon.QualityToText(Self.MinQuality).Lowercase
+		  Parts(5) = Self.MinQuantity.ToText(Locale, Format)
+		  Parts(6) = Self.Weight.ToText(Locale, Format)
+		  
+		  Return Beacon.MD5(Text.Join(Parts, ",")).Lowercase
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.SetEntry
 		  Dim Entry As New Beacon.SetEntry
 		  If Dict.HasKey("EntryWeight") Then
@@ -159,6 +184,19 @@ Implements Beacon.Countable
 		    Values.Append(Entry.TextValue(Multipliers))
 		  Next
 		  Return Text.Join(Values, Separator)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.SetEntry) As Integer
+		  If Other = Nil Then
+		    Return 1
+		  End If
+		  
+		  Dim SelfHash As Text = Self.Hash
+		  Dim OtherHash As Text = Other.Hash
+		  
+		  Return SelfHash.Compare(OtherHash, 0)
 		End Function
 	#tag EndMethod
 
@@ -388,7 +426,7 @@ Implements Beacon.Countable
 		#tag ViewProperty
 			Name="MaxQuality"
 			Group="Behavior"
-			Type="Ark.Qualities"
+			Type="Beacon.Qualities"
 			EditorType="Enum"
 			#tag EnumValues
 				"0 - Primitive"
@@ -410,7 +448,7 @@ Implements Beacon.Countable
 		#tag ViewProperty
 			Name="MinQuality"
 			Group="Behavior"
-			Type="Ark.Qualities"
+			Type="Beacon.Qualities"
 			EditorType="Enum"
 			#tag EnumValues
 				"0 - Primitive"

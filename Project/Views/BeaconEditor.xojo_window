@@ -630,7 +630,7 @@ End
 			
 			Dim MinQuality, MaxQuality As Beacon.Qualities
 			Dim AmmoMultiplier As Double
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			AmmoMultiplier = 2
@@ -669,7 +669,7 @@ End
 		Function AddItemSetAdvancedFurniture() As Boolean Handles AddItemSetAdvancedFurniture.Action
 			Dim Set As New Beacon.ItemSet
 			Set.Label = "Advanced Furniture"
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			Set.MinNumItems = 2
 			Set.MaxNumItems = 8
 			Else
@@ -702,7 +702,7 @@ End
 			Self.AddTemplate(Set, "PrimalItemStructure_ChemBench_C", 1, 1)
 			Self.AddTemplate(Set, "PrimalItemStructure_Cannon_C", 1, 1)
 			
-			If Self.mLootSource.IsScorchedEarth Then
+			If Self.mSources(0).IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemStructure_oilPump_C", 1, 1)
 			Self.AddTemplate(Set, "PrimalItemStructure_WindTurbine_C", 1, 1)
 			End If
@@ -716,7 +716,7 @@ End
 		Function AddItemSetBasicFurniture() As Boolean Handles AddItemSetBasicFurniture.Action
 			Dim Set As New Beacon.ItemSet
 			Set.Label = "Basic Furniture"
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			Set.MinNumItems = 2
 			Set.MaxNumItems = 8
 			Else
@@ -740,7 +740,7 @@ End
 			Self.AddTemplate(Set, "PrimalItemStructure_PreservingBin_C", 1, 3)
 			Self.AddTemplate(Set, "PrimalItemStructure_Bookshelf_C", 1, 1)
 			
-			If Self.mLootSource.IsScorchedEarth Then
+			If Self.mSources(0).IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemStructure_Tent_C", 1, 1)
 			Self.AddTemplate(Set, "PrimalItemStructure_Vessel_C", 1, 1)
 			Self.AddTemplate(Set, "PrimalItemStructure_WaterWell_C", 1, 1)
@@ -756,7 +756,7 @@ End
 			Dim Set As New Beacon.ItemSet
 			Set.Label = "Chitin Armor"
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -782,7 +782,7 @@ End
 			Dim Set As New Beacon.ItemSet
 			Set.Label = "Cloth Clothing"
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -808,7 +808,7 @@ End
 			Dim Set As New Beacon.ItemSet
 			Set.Label = "Desert Cloth Clothing"
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -842,7 +842,7 @@ End
 			Dim Set As New Beacon.ItemSet
 			Set.Label = "Flak Armor"
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -869,7 +869,7 @@ End
 			Dim Set As New Beacon.ItemSet
 			Set.Label = "Flak Clothing"
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -894,7 +894,7 @@ End
 		Function AddItemSetGardening() As Boolean Handles AddItemSetGardening.Action
 			Dim Set As New Beacon.ItemSet
 			Set.Label = "Gardening"
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			Set.MinNumItems = 2
 			Set.MaxNumItems = 8
 			Else
@@ -912,7 +912,7 @@ End
 			Self.AddTemplate(Set, "PrimalItemConsumable_Seed_Savoroot_C", 10, 20)
 			Self.AddTemplate(Set, "PrimalItemConsumable_Seed_Longrass_C", 10, 20)
 			Self.AddTemplate(Set, "PrimalItemConsumable_Seed_Rockarrot_C", 10, 20)
-			If Self.mLootSource.IsScorchedEarth Then
+			If Self.mSources(0).IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemConsumable_Seed_PlantSpeciesY_C", 100, 100)
 			Else
 			Self.AddTemplate(Set, "PrimalItemConsumable_Seed_DefensePlant_C", 100, 100)
@@ -932,7 +932,7 @@ End
 			Dim Set As New Beacon.ItemSet
 			Set.Label = "Ghillie Suit"
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -958,7 +958,7 @@ End
 			Dim Set As New Beacon.ItemSet
 			Set.Label = "Hide Clothing"
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -988,7 +988,7 @@ End
 			Set.MaxNumItems = 2
 			
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -999,7 +999,7 @@ End
 			Self.AddTemplate(Set, "PrimalItemArmor_RexSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItemArmor_Paracer_Saddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			
-			If Self.mLootSource.IsScorchedEarth Then
+			If Self.mSources(0).IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemArmor_RockGolemSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Else
 			Self.AddTemplate(Set, "PrimalItemArmor_AlloSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1026,7 +1026,7 @@ End
 			Set.MaxNumItems = 2
 			
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -1040,7 +1040,7 @@ End
 			Self.AddTemplate(Set, "PrimalItemArmor_AnkyloSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItemArmor_ArgentavisSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			
-			If Self.mLootSource.IsScorchedEarth Then
+			If Self.mSources(0).IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemArmor_CamelsaurusSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItemArmor_MantisSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItemArmor_SpineyLizardSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1094,7 +1094,7 @@ End
 			Set.MaxNumItems = 2
 			
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -1122,7 +1122,7 @@ End
 			Set.MaxNumItems = 2
 			
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -1147,7 +1147,7 @@ End
 			Dim Set As New Beacon.ItemSet
 			Set.Label = "Riot Armor"
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -1178,7 +1178,7 @@ End
 			
 			Dim MinQuality, MaxQuality As Beacon.Qualities
 			Dim AmmoMultiplier As Double
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			AmmoMultiplier = 2
@@ -1217,7 +1217,7 @@ End
 			Set.MaxNumItems = 2
 			
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -1232,7 +1232,7 @@ End
 			Self.AddTemplate(Set, "PrimalItemArmor_ArthroSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Self.AddTemplate(Set, "PrimalItemArmor_SaberSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			
-			If Self.mLootSource.IsScorchedEarth Then
+			If Self.mSources(0).IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemArmor_MothSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
 			Else
 			Self.AddTemplate(Set, "PrimalItemArmor_PhiomiaSaddle_C", 1, 1, 1, MinQuality, MaxQuality)
@@ -1282,7 +1282,7 @@ End
 			Set.MaxNumItems = 2
 			
 			Dim MinQuality, MaxQuality As Beacon.Qualities
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			MinQuality = Beacon.Qualities.Journeyman
 			MaxQuality = Beacon.Qualities.Ascendant
 			Else
@@ -1311,7 +1311,7 @@ End
 			Set.MaxNumItems = 4
 			Set.ItemsRandomWithoutReplacement = False
 			
-			If Self.mLootSource.IsBonus Then
+			If Self.mSources(0).IsBonus Then
 			Set.MinNumItems = Set.MinNumItems * 2
 			Set.MaxNumItems = Set.MaxNumItems * 2
 			End If
@@ -1353,7 +1353,7 @@ End
 			Self.AddTemplate(Set, "PrimalItemResource_Sap_C", 20, 20)
 			Self.AddTemplate(Set, "PrimalItemResource_SubstrateAbsorbent_C", 100, 100)
 			
-			If Self.mLootSource.IsScorchedEarth Then
+			If Self.mSources(0).IsScorchedEarth Then
 			Self.AddTemplate(Set, "PrimalItemResource_Clay_C", 100, 100)
 			Self.AddTemplate(Set, "PrimalItemResource_KeratinSpike_C", 20, 20)
 			Self.AddTemplate(Set, "PrimalItemResource_PreservingSalt_C", 6, 6)
@@ -1423,7 +1423,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddSet(Set As Beacon.ItemSet)
-		  Self.mLootSource.Append(Set)
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    Source.Append(New Beacon.ItemSet(Set))
+		  Next
 		  SetList.AddRow(Set.Label)
 		  SetList.RowTag(SetList.LastIndex) = Set
 		  SetList.ListIndex = SetList.LastIndex
@@ -1448,11 +1450,8 @@ End
 	#tag Method, Flags = &h0
 		Sub EnableMenuItems()
 		  AddItemSetEmpty.Enable
-		  If Self.mLootSource.IsScorchedEarth Then
-		    AddItemSetDesertClothClothing.Enable
-		  Else
-		    AddItemSetPlatformSaddles.Enable
-		  End If
+		  AddItemSetDesertClothClothing.Enable
+		  AddItemSetPlatformSaddles.Enable
 		  AddItemSetAdobeHousing.Enable
 		  AddItemSetAdvancedFirearms.Enable
 		  AddItemSetAdvancedFurniture.Enable
@@ -1489,13 +1488,102 @@ End
 		    Return
 		  End If
 		  
+		  Dim Updated As Boolean
 		  Dim Set As Beacon.ItemSet = SetList.RowTag(SetList.ListIndex)
-		  Dim Idx As Integer = Self.mLootSource.IndexOf(Set)
-		  If Idx > -1 Then
-		    Self.mLootSource.Remove(Idx)
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    Dim Idx As Integer = Source.IndexOf(Set)
+		    If Idx > -1 Then
+		      Source.Remove(Idx)
+		      Updated = True
+		    End If
+		  Next
+		  SetList.RemoveRow(SetList.ListIndex)
+		  If Updated Then
 		    RaiseEvent Updated
 		  End If
-		  SetList.RemoveRow(SetList.ListIndex)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Sources() As Beacon.LootSource()
+		  // Clone the array, but not the items
+		  Dim Results() As Beacon.LootSource
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    Results.Append(Source)
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Sources(Assigns Values() As Beacon.LootSource)
+		  Self.mUpdating = True
+		  
+		  Redim Self.mSources(UBound(Values))
+		  For I As Integer = 0 To UBound(Self.mSources)
+		    Self.mSources(I) = Values(I)
+		  Next
+		  
+		  // Find sets that are common to all sources
+		  Dim Sets As New Dictionary
+		  Dim Weights As New Dictionary
+		  Dim MatchWeight As Integer = UBound(Self.mSources) + 1
+		  
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    For Each Set As Beacon.ItemSet In Source
+		      Dim Hash As String = Set.Hash
+		      Sets.Value(Hash) = Set
+		      Weights.Value(Hash) = Weights.Lookup(Hash, 0).IntegerValue + 1
+		    Next
+		  Next
+		  
+		  // Now each common set will have a value of MatchWeight in Weights
+		  Dim Hashes() As Variant = Weights.Keys
+		  Dim CommonSets() As Beacon.ItemSet
+		  For Each Hash As String In Hashes
+		    If Weights.Value(Hash).IntegerValue = MatchWeight Then
+		      CommonSets.Append(New Beacon.ItemSet(Sets.Value(Hash)))
+		    End If
+		  Next
+		  
+		  SetList.DeleteAllRows
+		  For Each Set As Beacon.ItemSet In CommonSets
+		    SetList.AddRow(Set.Label)
+		    SetList.RowTag(SetList.LastIndex) = Set
+		  Next
+		  
+		  If UBound(Self.mSources) = -1 Then
+		    LabelField.Text = ""
+		    MaxSetsField.Text = ""
+		    MinSetsField.Text = ""
+		    DuplicatesCheck.Value = True
+		  Else
+		    Dim DuplicatesState As CheckBox.CheckedStates = if(Self.mSources(0).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
+		    Dim Label As Text = Self.mSources(0).Label
+		    Dim MinSets As Integer = Self.mSources(0).MinItemSets
+		    Dim MaxSets As Integer = Self.mSources(0).MaxItemSets
+		    
+		    For I As Integer = 1 To UBound(Self.mSources)
+		      MinSets = Min(MinSets, Self.mSources(I).MinItemSets)
+		      MaxSets = Max(MaxSets, Self.mSources(I).MaxItemSets)
+		      
+		      If Self.mSources(I).Label <> Label Then
+		        Label = ""
+		      End If
+		      
+		      Dim State As CheckBox.CheckedStates = if(Self.mSources(I).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
+		      If State <> DuplicatesState Then
+		        DuplicatesState = CheckBox.CheckedStates.Indeterminate
+		      End If
+		    Next
+		    
+		    LabelField.Text = Label
+		    MaxSetsField.Text = Str(MaxSets, "-0")
+		    MinSetsField.Text = Str(MinSets, "-0")
+		    DuplicatesCheck.State = DuplicatesState
+		  End If
+		  
+		  Self.mUpdating = False
 		End Sub
 	#tag EndMethod
 
@@ -1505,42 +1593,8 @@ End
 	#tag EndHook
 
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mLootSource
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Self.mLootSource = Value
-			  
-			  Self.mUpdating = True
-			  If Self.mLootSource <> Nil Then
-			    LabelField.Text = Self.mLootSource.Label
-			    MaxSetsField.Text = Str(Self.mLootSource.MaxItemSets, "-0")
-			    MinSetsField.Text = Str(Self.mLootSource.MinItemSets, "-0")
-			    DuplicatesCheck.Value = Self.mLootSource.SetsRandomWithoutReplacement
-			    SetList.DeleteAllRows
-			    For Each Set As Beacon.ItemSet In Self.mLootSource
-			      SetList.AddRow(Set.Label)
-			      SetList.RowTag(SetList.LastIndex) = Set
-			    Next
-			  Else
-			    LabelField.Text = ""
-			    MaxSetsField.Text = ""
-			    MinSetsField.Text = ""
-			    DuplicatesCheck.Value = True
-			    SetList.DeleteAllRows
-			  End If
-			  Self.mUpdating = False
-			End Set
-		#tag EndSetter
-		LootSource As Beacon.LootSource
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
-		Private mLootSource As Beacon.LootSource
+		Private mSources() As Beacon.LootSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1561,10 +1615,12 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mLootSource <> Nil Then
-		    Self.mLootSource.Label = Me.Text.ToText
-		    RaiseEvent Updated
-		  End If
+		  Dim Updated As Boolean
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    Source.Label = Me.Text.ToText
+		    Updated = True
+		  Next
+		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1575,10 +1631,12 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mLootSource <> Nil Then
-		    Self.mLootSource.MinItemSets = Val(Me.Text)
-		    RaiseEvent Updated
-		  End If
+		  Dim Updated As Boolean
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    Source.MinItemSets = Val(Me.Text)
+		    Updated = True
+		  Next
+		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1589,10 +1647,12 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mLootSource <> Nil Then
-		    Self.mLootSource.MaxItemSets = Val(Me.Text)
-		    RaiseEvent Updated
-		  End If
+		  Dim Updated As Boolean
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    Source.MaxItemSets = Val(Me.Text)
+		    Updated = True
+		  Next
+		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1603,10 +1663,12 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mLootSource <> Nil Then
-		    Self.mLootSource.SetsRandomWithoutReplacement = Me.Value
-		    RaiseEvent Updated
-		  End If
+		  Dim Updated As Boolean
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    Source.SetsRandomWithoutReplacement = Me.Value
+		    Updated = True
+		  Next
+		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1629,7 +1691,7 @@ End
 		    Editor.Enabled = False
 		    Editor.Set = Nil
 		  Else
-		    Editor.Set = Me.RowTag(Me.ListIndex)
+		    Editor.Set = New Beacon.ItemSet(Me.RowTag(Me.ListIndex))
 		    Editor.Enabled = True
 		  End If
 		End Sub
@@ -1687,9 +1749,24 @@ End
 #tag Events Editor
 	#tag Event
 		Sub Updated()
-		  If SetList.ListIndex > -1 Then
-		    SetList.Cell(SetList.ListIndex, 0) = Beacon.ItemSet(SetList.RowTag(SetList.ListIndex)).Label
+		  // The set needs to be cloned into each loot source
+		  
+		  If SetList.ListIndex = -1 Then
+		    Return
 		  End If
+		  
+		  Dim OriginalSet As Beacon.ItemSet = SetList.RowTag(SetList.ListIndex)
+		  Dim NewSet As Beacon.ItemSet = Editor.Set
+		  
+		  SetList.Cell(SetList.ListIndex, 0) = NewSet.Label
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    Dim Idx As Integer = Source.IndexOf(OriginalSet)
+		    If Idx > -1 Then
+		      Source(Idx) = New Beacon.ItemSet(NewSet)
+		    End If
+		  Next
+		  
+		  SetList.RowTag(SetList.ListIndex) = New Beacon.ItemSet(NewSet)
 		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent

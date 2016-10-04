@@ -56,6 +56,13 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function EncodeHex(Value As Text, Encoding As Xojo.Core.TextEncoding) As Text
+		  Dim Bytes As Xojo.Core.MemoryBlock = Encoding.ConvertTextToData(Value)
+		  Return Beacon.EncodeHex(Bytes)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function EncodeHex(Block As Xojo.Core.MemoryBlock) As Text
 		  Dim Chars() As Text
 		  For I As Integer = 0 To Block.Size - 1
@@ -85,6 +92,14 @@ Protected Module Beacon
 		Function IsType(Extends File As FolderItem, Type As FileType) As Boolean
 		  Dim Extension As String = Type.PrimaryExtension
 		  Return Right(File.Name, Len(Extension)) = Extension
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function MD5(Value As Text) As Text
+		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Value)
+		  Dim Hash As Xojo.Core.MemoryBlock = Xojo.Crypto.MD5(Bytes)
+		  Return Beacon.EncodeHex(Hash)
 		End Function
 	#tag EndMethod
 

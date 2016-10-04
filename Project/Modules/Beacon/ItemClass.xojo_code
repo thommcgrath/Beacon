@@ -30,8 +30,27 @@ Protected Class ItemClass
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Hash() As Text
+		  Return Beacon.MD5(Self.mClassString.Lowercase + "@" + Self.mWeight.ToText(Xojo.Core.Locale.Raw, "0.0000")).Lowercase
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.ItemClass
 		  Return New Beacon.ItemClass(Dict.Value("Class"), Dict.Value("Weight"))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.ItemClass) As Integer
+		  If Other = Nil Then
+		    Return 1
+		  End If
+		  
+		  Dim SelfHash As Text = Self.Hash
+		  Dim OtherHash As Text = Other.Hash
+		  
+		  Return SelfHash.Compare(OtherHash, 0)
 		End Function
 	#tag EndMethod
 
