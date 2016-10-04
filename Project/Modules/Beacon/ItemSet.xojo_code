@@ -69,6 +69,30 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Hash() As Text
+		  Dim Entries() As Text
+		  Redim Entries(UBound(Self.mEntries))
+		  For I As Integer = 0 To UBound(Entries)
+		    Entries(I) = Self.mEntries(I).Hash
+		  Next
+		  Entries.Sort
+		  
+		  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
+		  Dim Format As Text = "0.000"
+		  
+		  Dim Parts(5) As Text
+		  Parts(0) = Beacon.MD5(Text.Join(Entries, ",")).Lowercase
+		  Parts(1) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
+		  Parts(2) = Self.MaxNumItems.ToText(Locale, Format)
+		  Parts(3) = Self.MinNumItems.ToText(Locale, Format)
+		  Parts(4) = Self.NumItemsPower.ToText(Locale, Format)
+		  Parts(5) = Self.Weight.ToText(Locale, Format)
+		  
+		  Return Beacon.MD5(Text.Join(Parts, ",")).Lowercase
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
 		  Set.MinNumItems = Dict.Lookup("MinNumItems", Set.MinNumItems)
@@ -203,33 +227,6 @@ Implements Beacon.Countable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Entries() As Text
-			  Redim Entries(UBound(Self.mEntries))
-			  For I As Integer = 0 To UBound(Entries)
-			    Entries(I) = Self.mEntries(I).Hash
-			  Next
-			  Entries.Sort
-			  
-			  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
-			  Dim Format As Text = "0.000"
-			  
-			  Dim Parts(5) As Text
-			  Parts(0) = Beacon.MD5(Text.Join(Entries, ",")).Lowercase
-			  Parts(1) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
-			  Parts(2) = Self.MaxNumItems.ToText(Locale, Format)
-			  Parts(3) = Self.MinNumItems.ToText(Locale, Format)
-			  Parts(4) = Self.NumItemsPower.ToText(Locale, Format)
-			  Parts(5) = Self.Weight.ToText(Locale, Format)
-			  
-			  Return Beacon.MD5(Text.Join(Parts, ",")).Lowercase
-			End Get
-		#tag EndGetter
-		Hash As Text
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
 			  Return Self.mItemsRandomWithoutReplacement
 			End Get
 		#tag EndGetter
@@ -341,6 +338,11 @@ Implements Beacon.Countable
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Hash"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
