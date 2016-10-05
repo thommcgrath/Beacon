@@ -720,7 +720,14 @@ End
 	#tag Method, Flags = &h21
 		Private Function HandlePresetMenu(Sender As MenuItem) As Boolean
 		  Dim SelectedPreset As Beacon.Preset = Sender.Tag
-		  If Keyboard.OptionKey Then
+		  Dim Editing As Boolean
+		  #if TargetMacOS
+		    Editing = Keyboard.OptionKey
+		  #else
+		    Editing = Keyboard.AltKey
+		  #endif
+		  
+		  If Editing Then
 		    PresetCreationSheet.Present(Self, SelectedPreset, True)
 		  Else
 		    If SelectedPreset = Nil Then

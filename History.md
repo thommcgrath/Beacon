@@ -6,6 +6,8 @@
 - A beacon is know known as a loot source, since Beacon works for more than just beacons.
 - UI elements will be sized nicer on each platform.
 - It is now possible to edit multiple loot sources at the same time. Select multiple loot sources and only the sets common to all selected sources will be shown. Adding, editing, and removing sets will affect the all selected loot sources.
+- Set entry sorting is now correct.
+- It is now possible to create, edit, and customize presets! This is a power user feature, so it is hidden, but possible. First, setup an item set in any beacon. Include all possible items for both The Island and Scorched Earth. Right-click the set in the list and choose "Create Preset" to show the editor dialog. From here, items can be unchecked to exclude them from each map. More details available on the edit dialog itself. To edit a preset, hold the Option/Alt key while selecting the preset from the "Add Item Set" menu.
 
 ## Build 3
 
