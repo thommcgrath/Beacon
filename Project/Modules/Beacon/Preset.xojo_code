@@ -54,8 +54,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function CreateSet(Source As Beacon.LootSource) As Beacon.ItemSet
-		  // Temporary until loot sources actually list kinds
-		  Dim Kind As Beacon.LootSource.Kinds = Beacon.LootSource.Kinds.Standard
+		  Dim Kind As Beacon.LootSource.Kinds = Source.Kind
 		  
 		  Dim Entries() As Beacon.SetEntry
 		  For Each Item As Beacon.PresetEntry In Self
@@ -98,17 +97,17 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Shared Function FromDictionary(Dict As Xojo.Core.Dictionary) As Beacon.Preset
 		  Dim Preset As New Beacon.MutablePreset
-		  Preset.Label = Dict.Lookup("label", Preset.Label)
-		  Preset.Grouping = Dict.Lookup("grouping", Preset.Grouping)
-		  Preset.MinItems = Dict.Lookup("min", Preset.MinItems)
-		  Preset.MaxItems = Dict.Lookup("max", Preset.MaxItems)
-		  Preset.Weight = Dict.Lookup("weight", Preset.Weight)
+		  Preset.Label = Dict.Lookup("Label", Preset.Label)
+		  Preset.Grouping = Dict.Lookup("Grouping", Preset.Grouping)
+		  Preset.MinItems = Dict.Lookup("Min", Preset.MinItems)
+		  Preset.MaxItems = Dict.Lookup("Max", Preset.MaxItems)
+		  Preset.Weight = Dict.Lookup("Weight", Preset.Weight)
 		  
-		  Dim Contents As Xojo.Core.Dictionary = Dict.Lookup("contents", Nil)
+		  Dim Contents As Xojo.Core.Dictionary = Dict.Lookup("Contents", Nil)
 		  If Contents <> Nil Then
 		    For Each Set As Xojo.Core.DictionaryEntry In Contents
-		      Dim ValidForIsland As Boolean = (Set.Key = "common" Or Set.Key = "island")
-		      Dim ValidForScorched As Boolean = (Set.Key = "common" Or Set.Key = "scorched")
+		      Dim ValidForIsland As Boolean = (Set.Key = "Common" Or Set.Key = "Island")
+		      Dim ValidForScorched As Boolean = (Set.Key = "Common" Or Set.Key = "Scorched")
 		      Dim Items() As Auto = Set.Value
 		      For Each Item As Xojo.Core.Dictionary In Items
 		        Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Item)
@@ -122,26 +121,26 @@ Implements Beacon.Countable
 		    Next
 		  End If
 		  
-		  Dim Modifiers As Xojo.Core.Dictionary = Dict.Lookup("modifiers", Nil)
+		  Dim Modifiers As Xojo.Core.Dictionary = Dict.Lookup("Modifiers", Nil)
 		  If Modifiers <> Nil Then
-		    For Each Set As Xojo.Core.DictionaryEntry In Contents
+		    For Each Set As Xojo.Core.DictionaryEntry In Modifiers
 		      Dim Kind As Beacon.LootSource.Kinds
 		      Select Case Set.Key
-		      Case "standard"
+		      Case "Standard"
 		        Kind = Beacon.LootSource.Kinds.Standard
-		      Case "bonus"
+		      Case "Bonus"
 		        Kind = Beacon.LootSource.Kinds.Bonus
-		      Case "cave"
+		      Case "Cave"
 		        Kind = Beacon.LootSource.Kinds.Cave
-		      Case "sea"
+		      Case "Sea"
 		        Kind = Beacon.LootSource.Kinds.Sea
 		      Else
 		        Continue
 		      End Select
 		      
 		      Dim Item As Xojo.Core.Dictionary = Set.Value
-		      Preset.QualityModifier(Kind) = Item.Lookup("quality", Preset.QualityModifier(Kind))
-		      Preset.QuantityMultiplier(Kind) = Item.Lookup("quantity", Preset.QuantityMultiplier(Kind))
+		      Preset.QualityModifier(Kind) = Item.Lookup("Quality", Preset.QualityModifier(Kind))
+		      Preset.QuantityMultiplier(Kind) = Item.Lookup("Quantity", Preset.QuantityMultiplier(Kind))
 		    Next
 		  End If
 		  
@@ -309,6 +308,26 @@ Implements Beacon.Countable
 		  Stream.Write(Contents)
 		  Stream.Close
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValidForIsland() As Boolean
+		  For Each Entry As Beacon.PresetEntry In Self.mContents
+		    If Entry.ValidForIsland Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValidForScorched() As Boolean
+		  For Each Entry As Beacon.PresetEntry In Self.mContents
+		    If Entry.ValidForScorched Then
+		      Return True
+		    End If
+		  Next
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

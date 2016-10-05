@@ -361,6 +361,11 @@ End
 		  Select Case BeaconList.SelCount
 		  Case 0
 		    DocumentRemoveBeacon.Text = "Remove Loot Source"
+		    For I As Integer = DocumentAddItemSet.Count - 1 DownTo 0
+		      DocumentAddItemSet.Remove(I)
+		    Next
+		    DocumentAddItemSet.Append(New MenuItem("New Empty Set"))
+		    DocumentAddItemSet.Item(0).Enabled = False
 		  Case 1
 		    DocumentRemoveBeacon.Text = "Remove Loot Source"
 		    DocumentDuplicateBeacon.Enable

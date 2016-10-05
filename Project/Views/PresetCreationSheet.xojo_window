@@ -26,7 +26,7 @@ Begin Window PresetCreationSheet
    Title           =   "Create Preset"
    Visible         =   True
    Width           =   718
-   Begin PushButton ActionButton
+   Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -57,7 +57,7 @@ Begin Window PresetCreationSheet
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton CancelButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -1180,6 +1180,37 @@ Begin Window PresetCreationSheet
       Visible         =   True
       Width           =   76
    End
+   Begin UITweaks.ResizedPushButton DeleteButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Delete"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   108
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   660
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
 End
 #tag EndWindow
 
@@ -1197,12 +1228,12 @@ End
 		    Preset.Append(New Beacon.PresetEntry(Entry))
 		  Next
 		  
-		  PresetCreationSheet.Present(Parent, Preset)
+		  PresetCreationSheet.Present(Parent, Preset, False)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window, Preset As Beacon.Preset)
+		Shared Sub Present(Parent As Window, Preset As Beacon.Preset, AllowDelete As Boolean)
 		  Dim Win As New PresetCreationSheet
 		  
 		  Win.mPreset = Preset
@@ -1224,6 +1255,8 @@ End
 		    Win.ContentsList.CellCheck(Idx, 1) = Entry.ValidForScorched
 		    Win.ContentsList.RowTag(Idx) = Entry
 		  Next
+		  
+		  Win.DeleteButton.Visible = AllowDelete And LocalData.SharedInstance.IsPresetCustom(Preset)
 		  
 		  Win.ShowWithin(Parent.TrueWindow)
 		End Sub
@@ -1261,10 +1294,7 @@ End
 		    Preset.Append(Entry)
 		  Next
 		  
-		  Dim Filename As String = Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
-		  Dim File As FolderItem = App.PresetsFolder(False).Child(Filename)
-		  
-		  Preset.ToFile(New Xojo.IO.FolderItem(File.NativePath.ToText))
+		  LocalData.SharedInstance.SavePreset(Preset)
 		  
 		  Self.Close
 		End Sub
@@ -1289,6 +1319,14 @@ End
 		Sub Open()
 		  Me.ColumnType(0) = ListBox.TypeCheckbox
 		  Me.ColumnType(1) = ListBox.TypeCheckbox
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DeleteButton
+	#tag Event
+		Sub Action()
+		  LocalData.SharedInstance.RemovePreset(Self.mPreset)
+		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents

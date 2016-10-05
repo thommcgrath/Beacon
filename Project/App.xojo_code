@@ -26,6 +26,8 @@ Inherits Application
 
 	#tag Event
 		Sub Open()
+		  LocalData.SharedInstance.LoadPresets()
+		  
 		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
 		  If IdentityFile.Exists Then
 		    Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(IdentityFile.Convert, Xojo.IO.BinaryStream.LockModes.Read)
@@ -174,13 +176,17 @@ Inherits Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PresetsFolder(Official As Boolean) As FolderItem
-		  Dim SupportFolder As FolderItem = Self.ApplicationSupport
-		  Dim PresetsFolder As FolderItem = SupportFolder.Child("Presets")
-		  Self.CheckFolder(PresetsFolder)
-		  Dim Subfolder As FolderItem = PresetsFolder.Child(if(Official, "Built-In", "Custom"))
-		  Self.CheckFolder(Subfolder)
-		  Return Subfolder
+		Function ResourcesFolder() As FolderItem
+		  #if TargetMacOS
+		    Return App.ExecutableFile.Parent.Parent.Child("Resources")
+		  #else
+		    Dim Parent As FolderItem = App.ExecutableFile.Parent
+		    If Parent.Child("Resources").Exists Then
+		      Return Parent.Child("Resources")
+		    Else
+		      Return Parent.Child("Beacon Resources")
+		    End If
+		  #endif
 		End Function
 	#tag EndMethod
 

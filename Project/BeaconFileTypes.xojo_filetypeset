@@ -45,8 +45,9 @@
 
 	#tag FileType
 		CodeName=BeaconPreset
+		DocIcon=Beacon.xojo_resources;&h154B058
 		Extension=.beaconpreset
-		Flags=&h0
+		Flags=&h5
 		MacCreator=
 		MacType=
 		Name=Beacon Preset

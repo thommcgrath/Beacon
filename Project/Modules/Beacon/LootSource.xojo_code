@@ -36,7 +36,7 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Label As Text, Type As Text)
+		Sub Constructor(Label As Text, Type As Text, Kind As Beacon.LootSource.Kinds = Beacon.LootSource.Kinds.Standard)
 		  Self.Constructor()
 		  Self.mType = Type
 		  Self.mLabel = Label
@@ -136,14 +136,22 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsBonus() As Boolean
-		  Return Self.mType.IndexOf("_Double_") > -1
+		Function IsScorchedEarth() As Boolean
+		  Return Self.mType.Right(16) = "_ScorchedEarth_C" Or Self.mType.Right(5) = "_SE_C"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsScorchedEarth() As Boolean
-		  Return Self.mType.Right(16) = "_ScorchedEarth_C"
+		Function Kind() As Beacon.LootSource.Kinds
+		  If Self.mType.IndexOf("Cave") > -1 Or Self.mType.IndexOf("ArtifactCrate") > -1 Then
+		    Return Beacon.LootSource.Kinds.Cave
+		  ElseIf Self.mType.IndexOf("Ocean") > -1 Then
+		    Return Beacon.LootSource.Kinds.Sea
+		  ElseIf Self.mType.IndexOf("_Double_") > -1 Then
+		    Return Beacon.LootSource.Kinds.Bonus
+		  Else
+		    Return Beacon.LootSource.Kinds.Standard
+		  End If
 		End Function
 	#tag EndMethod
 
