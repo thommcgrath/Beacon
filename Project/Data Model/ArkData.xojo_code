@@ -31,6 +31,27 @@ Implements Beacon.DataSource
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Describe(Entry As Beacon.SetEntry) As String
+		  If UBound(Entry) = -1 Then
+		    Return "No Items"
+		  ElseIf UBound(Entry) = 0 Then
+		    Return Self.NameOfEngram(Entry(0).ClassString)
+		  Else
+		    Dim TotalWeight As Double
+		    For I As Integer = 0 To UBound(Entry)
+		      TotalWeight = TotalWeight + Entry(I).Weight
+		    Next
+		    
+		    Dim Labels() As String
+		    For I As Integer = 0 To UBound(Entry)
+		      Labels.Append(Self.NameOfEngram(Entry(I).ClassString) + ":" + Str(Entry(I).Weight / TotalWeight, "0%"))
+		    Next
+		    Return Join(Labels, ", ")
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub HandleError(SQLString As String, ErrorCode As Integer, ErrorMessage As String)
 		  #Pragma Unused ErrorCode

@@ -43,4 +43,18 @@
 		Imported=False
 	#tag EndFileType
 
+	#tag FileType
+		CodeName=BeaconPreset
+		Extension=.beaconpreset
+		Flags=&h0
+		MacCreator=
+		MacType=
+		Name=Beacon Preset
+		UTI=com.thezaz.beacon.preset
+		UTIConformsTo=public.text
+		Description=
+		MimeType=
+		Imported=False
+	#tag EndFileType
+
 #tag EndFileTypeSet

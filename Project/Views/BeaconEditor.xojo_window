@@ -313,7 +313,7 @@ Begin ContainerControl BeaconEditor
       Visible         =   True
       Width           =   598
    End
-   Begin ClipboardListbox SetList
+   Begin BeaconListbox SetList
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -1743,6 +1743,35 @@ End
 	#tag Event
 		Function CanDelete() As Boolean
 		  Return Me.ListIndex > -1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		  Dim Idx As Integer = Me.RowFromXY(X, Y)
+		  If Idx = -1 Then
+		    Return False
+		  End If
+		  
+		  Dim Set As Beacon.ItemSet = Me.RowTag(Idx)
+		  
+		  Dim PresetItem As New MenuItem("Create Preset…", Set)
+		  PresetItem.Enabled = Set.Count > 0
+		  Base.Append(PresetItem)
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
+		  If HitItem = Nil Then
+		    Return False
+		  End If
+		  
+		  Select Case HitItem.Text
+		  Case "Create Preset…"
+		    Dim Set As Beacon.ItemSet = HitItem.Tag
+		    PresetCreationSheet.Present(Self, Set)
+		  End Select
 		End Function
 	#tag EndEvent
 #tag EndEvents

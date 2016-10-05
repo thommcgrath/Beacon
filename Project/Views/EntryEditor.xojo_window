@@ -215,7 +215,7 @@ Begin Window EntryEditor
          Visible         =   True
          Width           =   552
       End
-      Begin Listbox EngramList
+      Begin BeaconListbox EngramList
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
@@ -1372,7 +1372,7 @@ End
 		    
 		    Dim Label As String = Language.LabelForQuality(Quality)
 		    If Label = "" Then
-		      Return
+		      Exit
 		    End If
 		    
 		    Me.AddRow(Label, Quality)

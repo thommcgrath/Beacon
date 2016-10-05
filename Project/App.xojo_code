@@ -173,6 +173,17 @@ Inherits Application
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function PresetsFolder(Official As Boolean) As FolderItem
+		  Dim SupportFolder As FolderItem = Self.ApplicationSupport
+		  Dim PresetsFolder As FolderItem = SupportFolder.Child("Presets")
+		  Self.CheckFolder(PresetsFolder)
+		  Dim Subfolder As FolderItem = PresetsFolder.Child(if(Official, "Built-In", "Custom"))
+		  Self.CheckFolder(Subfolder)
+		  Return Subfolder
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h0
 		LaunchOnQuit As FolderItem

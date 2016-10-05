@@ -312,6 +312,14 @@ Implements Beacon.Countable
 	#tag EndComputedProperty
 
 
+	#tag Enum, Name = Kinds, Type = Integer, Flags = &h0
+		Standard
+		  Bonus
+		  Cave
+		Sea
+	#tag EndEnum
+
+
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Index"

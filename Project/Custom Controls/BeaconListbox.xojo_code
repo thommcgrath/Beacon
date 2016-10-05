@@ -1,6 +1,35 @@
 #tag Class
-Protected Class ClipboardListbox
+Protected Class BeaconListbox
 Inherits Listbox
+	#tag Event
+		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
+		  If Row < Self.ListCount And Self.Selected(Row) Then
+		    G.ForeColor = if(Self.Highlighted, Self.SelectedRowColor, Self.SelectedRowColorInactive)
+		  Else
+		    G.ForeColor = if(Row Mod 2 = 0, Self.PrimaryRowColor, Self.AlternateRowColor)
+		  End If
+		  
+		  G.FillRect(0, 0, G.Width, G.Height)
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function CellTextPaint(g As Graphics, row As Integer, column As Integer, x as Integer, y as Integer) As Boolean
+		  If Self.Selected(Row) Then
+		    G.ForeColor = if(Self.Highlighted, Self.SelectedTextColor, Self.SelectedTextColorInactive)
+		  Else
+		    G.ForeColor = Self.TextColor
+		  End If
+		  
+		  G.TextFont = "System"
+		  G.DrawString(Self.Cell(Row, Column), X, Y + 1, Self.Column(Column).WidthActual - (X * 2), True)
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+
 	#tag Event
 		Sub EnableMenuItems()
 		  Dim Board As New Clipboard
@@ -34,6 +63,15 @@ Inherits Listbox
 		    Return RaiseEvent KeyDown(Key)
 		  End If
 		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
+		  Self.TextFont = "SmallSystem"
+		  Self.DefaultRowHeight = 22
+		  
+		  RaiseEvent Open
+		End Sub
 	#tag EndEvent
 
 
@@ -83,6 +121,20 @@ Inherits Listbox
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function Highlighted() As Boolean
+		  If Self.Enabled Then
+		    #if TargetCocoa
+		      Declare Function IsMainWindow Lib "Cocoa.framework" Selector "isMainWindow" (Target As Integer) As Boolean
+		      Declare Function IsKeyWindow Lib "Cocoa.framework" Selector "isKeyWindow" (Target As Integer) As Boolean
+		      Return IsKeyWindow(Self.TrueWindow.Handle) Or IsMainWindow(Self.TrueWindow.Handle)
+		    #else
+		      Return True
+		    #endif
+		  End If
+		End Function
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event CanCopy() As Boolean
@@ -105,6 +157,10 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event PerformClear()
 	#tag EndHook
 
@@ -115,6 +171,28 @@ Inherits Listbox
 	#tag Hook, Flags = &h0
 		Event PerformPaste(Board As Clipboard)
 	#tag EndHook
+
+
+	#tag Constant, Name = AlternateRowColor, Type = Color, Dynamic = False, Default = \"&cFAFAFA", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = PrimaryRowColor, Type = Color, Dynamic = False, Default = \"&cFFFFFF", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = SelectedRowColor, Type = Color, Dynamic = False, Default = \"&c0850CE", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = SelectedRowColorInactive, Type = Color, Dynamic = False, Default = \"&cCACACA", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = SelectedTextColor, Type = Color, Dynamic = False, Default = \"&cFFFFFF", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = SelectedTextColorInactive, Type = Color, Dynamic = False, Default = \"&c000000", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = TextColor, Type = Color, Dynamic = False, Default = \"&c000000", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

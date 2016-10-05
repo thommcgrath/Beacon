@@ -26,7 +26,7 @@ Begin Window DocWindow
    Title           =   "Beacon"
    Visible         =   True
    Width           =   1000
-   Begin ClipboardListbox BeaconList
+   Begin BeaconListbox BeaconList
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False

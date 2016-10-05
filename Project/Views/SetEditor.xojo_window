@@ -25,7 +25,7 @@ Begin ContainerControl SetEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   560
-   Begin ClipboardListbox EntryList
+   Begin BeaconListbox EntryList
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -696,27 +696,6 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Method, Flags = &h21
-		Private Function Describe(Entry As Beacon.SetEntry) As String
-		  If UBound(Entry) = -1 Then
-		    Return "No Items"
-		  ElseIf UBound(Entry) = 0 Then
-		    Return App.DataSource.NameOfEngram(Entry(0).ClassString)
-		  Else
-		    Dim TotalWeight As Double
-		    For I As Integer = 0 To UBound(Entry)
-		      TotalWeight = TotalWeight + Entry(I).Weight
-		    Next
-		    
-		    Dim Labels() As String
-		    For I As Integer = 0 To UBound(Entry)
-		      Labels.Append(App.DataSource.NameOfEngram(Entry(I).ClassString) + ":" + Str(Entry(I).Weight / TotalWeight, "0%"))
-		    Next
-		    Return Join(Labels, ", ")
-		  End If
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub EnableMenuItems()
 		  
@@ -751,7 +730,7 @@ End
 		  If Self.mSet <> Nil Then
 		    For I As Integer = 0 To UBound(Self.mSet)
 		      Dim Entry As Beacon.SetEntry = Self.mSet(I)
-		      EntryList.AddRow(Self.Describe(Entry), Str(Entry.MinQuantity), Str(Entry.MaxQuantity), Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MaxQuality), Str(Self.mSet.RelativeWeight(I), "0%"))
+		      EntryList.AddRow(App.DataSource.Describe(Entry), Str(Entry.MinQuantity), Str(Entry.MaxQuantity), Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MaxQuality), Str(Self.mSet.RelativeWeight(I), "0%"))
 		      EntryList.RowTag(EntryList.LastIndex) = Entry
 		    Next
 		  End If
