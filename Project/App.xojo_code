@@ -119,7 +119,14 @@ Inherits Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
-		Function HelpReportaProblem() As Boolean Handles HelpReportaProblem.Action
+		Function HelpMakeADonation() As Boolean Handles HelpMakeADonation.Action
+			ShowURL(Beacon.WebURL + "/donate.php")
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function HelpReportAProblem() As Boolean Handles HelpReportAProblem.Action
 			Beacon.ReportAProblem()
 			Return True
 		End Function

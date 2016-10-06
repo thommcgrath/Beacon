@@ -257,9 +257,16 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem HelpReportaProblem
+      Begin MenuItem HelpReportAProblem
          SpecialMenu = 0
          Text = "Report a Problem…"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem HelpMakeADonation
+         SpecialMenu = 0
+         Text = "Make a Donation…"
          Index = -2147483648
          AutoEnable = True
          Visible = True
