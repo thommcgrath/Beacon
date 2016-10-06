@@ -152,6 +152,7 @@ Begin Window CustomLootSourceSheet
       Selectable      =   False
       TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Add Custom Loot Source"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -197,7 +198,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Type As Text = ClassField.Text.ToText
-		  Dim Label As Text = App.DataSource.NameOfLootSource(Type)
+		  Dim Label As Text = LocalData.SharedInstance.NameOfLootSource(Type)
 		  Self.mLootSource = New Beacon.LootSource(Label, Type)
 		  Self.Hide
 		End Sub

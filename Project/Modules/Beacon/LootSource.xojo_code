@@ -36,7 +36,7 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Label As Text, Type As Text, Kind As Beacon.LootSource.Kinds = Beacon.LootSource.Kinds.Standard)
+		Sub Constructor(Label As Text, Type As Text)
 		  Self.Constructor()
 		  Self.mType = Type
 		  Self.mLabel = Label

@@ -141,6 +141,7 @@ Begin Window LootSourceAddSheet
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Add Loot Source"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -161,7 +162,7 @@ End
 		Shared Function Present(Parent As DocWindow, Document As Beacon.Document) As Beacon.LootSource
 		  Static AllowedLootSources() As Beacon.LootSource
 		  If UBound(AllowedLootSources) = -1 Then
-		    AllowedLootSources = App.DataSource.SearchForLootSources("")
+		    AllowedLootSources = LocalData.SharedInstance.SearchForLootSources("")
 		  End If
 		  
 		  Dim Win As New LootSourceAddSheet

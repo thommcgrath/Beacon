@@ -3,6 +3,8 @@ Protected Class BeaconListbox
 Inherits Listbox
 	#tag Event
 		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
+		  #Pragma Unused Column
+		  
 		  If Row < Self.ListCount And Self.Selected(Row) Then
 		    G.ForeColor = if(Self.Highlighted, Self.SelectedRowColor, Self.SelectedRowColorInactive)
 		  Else

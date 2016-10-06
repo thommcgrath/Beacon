@@ -151,17 +151,6 @@ Inherits Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DataSource() As ArkData
-		  If Self.mDataSource = Nil Then
-		    Self.mDataSource = New ArkData
-		    Self.mDataSource.DatabaseFile = Self.ApplicationSupport.Child("Beacon.sqlite")
-		    Call Self.mDataSource.Connect
-		  End If
-		  Return Self.mDataSource
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Identity() As Beacon.Identity
 		  Return Self.mIdentity
 		End Function
@@ -193,10 +182,6 @@ Inherits Application
 
 	#tag Property, Flags = &h0
 		LaunchOnQuit As FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDataSource As ArkData
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

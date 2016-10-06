@@ -52,7 +52,6 @@ Class=LootSourceIterator;Modules/Beacon/LootSourceIterator.xojo_code;&h4736D7FF;
 Class=LootSource;Modules/Beacon/LootSource.xojo_code;&h2D5DC7FF;&h55ADDFFF;false
 Class=Document;Modules/Beacon/Document.xojo_code;&h60A74FFF;&h55ADDFFF;false
 Folder=Data Model;Data Model;&h7CAFFFFF;&h0;false
-Class=ArkData;Data Model/ArkData.xojo_code;&h2F8CCFFF;&h7CAFFFFF;false
 Window=AboutWindow;Views/AboutWindow.xojo_window;&h295977FF;&h8A387FF;false
 MultiImage=IconApp;Icons/IconApp.xojo_image;&h1078D7FF;&h7F977FF;false
 Class=Identity;Modules/Beacon/Identity.xojo_code;&h77887FFF;&h55ADDFFF;false

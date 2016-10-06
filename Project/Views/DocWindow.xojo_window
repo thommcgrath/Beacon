@@ -115,6 +115,7 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -307,6 +308,7 @@ Begin Window DocWindow
       Width           =   190
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -456,7 +458,7 @@ End
 			
 			Dim LootSources() As Beacon.LootSource = Self.Doc.LootSources
 			For Each LootSource As Beacon.LootSource In LootSources
-			Dim Multipliers As Beacon.Range = App.DataSource.MultipliersForLootSource(LootSource)
+			Dim Multipliers As Beacon.Range = LocalData.SharedInstance.MultipliersForLootSource(LootSource)
 			Lines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Multipliers))
 			Next
 			
@@ -714,7 +716,7 @@ End
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Me.Selected(I) Then
 		      Dim Source As Beacon.LootSource = Me.RowTag(I)
-		      Dim Multipliers As Beacon.Range = App.DataSource.MultipliersForLootSource(Source)
+		      Dim Multipliers As Beacon.Range = LocalData.SharedInstance.MultipliersForLootSource(Source)
 		      Dicts.Append(Source.Export)
 		      Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue(Multipliers))
 		    End If
@@ -783,7 +785,7 @@ End
 #tag EndEvents
 #tag Events Separators
 	#tag Event
-		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
 		  G.ForeColor = &cCCCCCC
@@ -823,7 +825,7 @@ End
 		  #Pragma Unused Y
 		  
 		  Dim Base As New MenuItem
-		  Dim LootSources() As Beacon.LootSource = App.DataSource.SearchForLootSources("")
+		  Dim LootSources() As Beacon.LootSource = LocalData.SharedInstance.SearchForLootSources("")
 		  For I As Integer = UBound(LootSources) DownTo 0
 		    If Self.Doc.HasBeacon(LootSources(I)) Then
 		      LootSources.Remove(I)
@@ -888,7 +890,7 @@ End
 		    Me.Reset
 		    
 		    For Each LootSource As Beacon.LootSource In LootSources
-		      LootSource.Label = App.DataSource.NameOfLootSource(LootSource.Type)
+		      LootSource.Label = LocalData.SharedInstance.NameOfLootSource(LootSource.Type)
 		      Self.AddLootSource(LootSource)
 		    Next
 		    Return
