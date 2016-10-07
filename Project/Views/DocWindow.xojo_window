@@ -115,7 +115,6 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -308,7 +307,6 @@ Begin Window DocWindow
       Width           =   190
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -360,6 +358,8 @@ End
 		  FileClose.Enable
 		  DocumentAddBeacon.Enable
 		  
+		  
+		  
 		  Select Case BeaconList.SelCount
 		  Case 0
 		    DocumentRemoveBeacon.Text = "Remove Loot Source"
@@ -383,6 +383,7 @@ End
 		  
 		  If Self.Doc.BeaconCount > 0 Then
 		    FileExportConfig.Enable
+		    DocumentPublishDocument.Enable
 		  End If
 		End Sub
 	#tag EndEvent
@@ -426,6 +427,17 @@ End
 			
 			Self.Doc.Add(LootSource)
 			Self.ContentsChanged = True
+			End If
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function DocumentPublishDocument() As Boolean Handles DocumentPublishDocument.Action
+			Dim OriginalTitle As Text = Self.Doc.Title
+			Dim OriginalDescription As Text = Self.Doc.Description
+			If DocumentPublishWindow.Present(Self, Self.Doc) Then
+			Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Title.Compare(OriginalTitle, 0) <> 0 Or Self.Doc.Description.Compare(OriginalDescription, 0) <> 0
 			End If
 			Return True
 		End Function
@@ -785,7 +797,7 @@ End
 #tag EndEvents
 #tag Events Separators
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
 		  G.ForeColor = &cCCCCCC

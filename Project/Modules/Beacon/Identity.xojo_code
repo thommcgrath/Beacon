@@ -7,6 +7,8 @@ Protected Class Identity
 		    Raise New Xojo.Crypto.CryptoException
 		  End If
 		  
+		  // Keys are already hex encoded, despite being MemoryBlock objects. Brilliant.
+		  
 		  Self.mIdentifier = Beacon.CreateUUID
 		  Self.mPrivateKey = PrivateKey
 		  Self.mPublicKey = PublicKey
@@ -17,8 +19,9 @@ Protected Class Identity
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("Identifier") = Self.mIdentifier
-		  Dict.Value("Public") = Beacon.EncodeHex(Self.mPublicKey)
-		  Dict.Value("Private") = Beacon.EncodeHex(Self.mPrivateKey)
+		  Dict.Value("Public") = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mPublicKey)
+		  Dict.Value("Private") = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mPrivateKey)
+		  Dict.Value("Version") = 2
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -35,12 +38,19 @@ Protected Class Identity
 		    Return Nil
 		  End If
 		  
-		  Dim PublicKey As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Source.Value("Public"))
+		  Dim PublicKey, PrivateKey As Xojo.Core.MemoryBlock
+		  If Source.HasKey("Version") And Source.Value("Version") = 2 Then
+		    PublicKey = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source.Value("Public"))
+		    PrivateKey = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source.Value("PrivateKey"))
+		  Else
+		    PublicKey = Beacon.DecodeHex(Source.Value("Public"))
+		    PrivateKey = Beacon.DecodeHex(Source.Value("Private"))
+		  End If
+		  
 		  If Not Xojo.Crypto.RSAVerifyKey(PublicKey) Then
 		    Return Nil
 		  End If
 		  
-		  Dim PrivateKey As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Source.Value("Private"))
 		  If Not Xojo.Crypto.RSAVerifyKey(PrivateKey) Then
 		    Return Nil
 		  End If
@@ -54,8 +64,8 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PublicKey() As xojo.Core.MemoryBlock
-		  Return Self.mPublicKey
+		Function PublicKey() As Text
+		  Return Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mPublicKey)
 		End Function
 	#tag EndMethod
 
@@ -92,11 +102,6 @@ Protected Class Identity
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mIdentifier"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty

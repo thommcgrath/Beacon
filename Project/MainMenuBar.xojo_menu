@@ -236,6 +236,20 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
+      Begin MenuItem UntitledSeparator2
+         SpecialMenu = 0
+         Text = "-"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem DocumentPublishDocument
+         SpecialMenu = 0
+         Text = "Publish Document…"
+         Index = -2147483648
+         AutoEnable = False
+         Visible = True
+      End
    End
    Begin MenuItem HelpMenu
       SpecialMenu = 0

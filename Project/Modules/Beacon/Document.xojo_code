@@ -48,6 +48,24 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Export() As Xojo.Core.Dictionary
+		  Dim LootSources() As Xojo.Core.Dictionary
+		  For Each LootSource As Beacon.LootSource In Self.mLootSources
+		    LootSources.Append(LootSource.Export)
+		  Next
+		  
+		  Dim Document As New Xojo.Core.Dictionary
+		  Document.Value("Version") = Self.DocumentVersion
+		  Document.Value("Identifier") = Self.mIdentifier
+		  Document.Value("LootSources") = LootSources
+		  Document.Value("Title") = Self.Title
+		  Document.Value("Description") = Self.Description
+		  
+		  Return Document
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasBeacon(LootSource As Beacon.LootSource) As Boolean
 		  For I As Integer = 0 To UBound(Self.mLootSources)
 		    If Self.mLootSources(I) = LootSource Then
@@ -105,7 +123,13 @@ Protected Class Document
 		        LootSources = Dict.Value("Beacons")
 		      End If
 		      Doc.mIdentifier = Dict.Value("Identifier")
-		      Doc.mRevision = Dict.Value("Revision")
+		      
+		      If Dict.HasKey("Title") Then
+		        Doc.Title = Dict.Value("Title")
+		      End If
+		      If Dict.HasKey("Description") Then
+		        Doc.Description = Dict.Value("Description")
+		      End If
 		    Catch Err As RuntimeException
 		      // Likely a KeyNotFoundException or TypeMismatchException, either way, we can't handle it
 		      Return Nil
@@ -139,20 +163,7 @@ Protected Class Document
 
 	#tag Method, Flags = &h0
 		Sub Write(File As Xojo.IO.FolderItem)
-		  Dim LootSources() As Xojo.Core.Dictionary
-		  For Each LootSource As Beacon.LootSource In Self.mLootSources
-		    LootSources.Append(LootSource.Export)
-		  Next
-		  
-		  Self.mRevision = Self.mRevision + 1
-		  
-		  Dim Document As New Xojo.Core.Dictionary
-		  Document.Value("Revision") = Self.mRevision
-		  Document.Value("Version") = Self.DocumentVersion
-		  Document.Value("Identifier") = Self.mIdentifier
-		  Document.Value("LootSources") = LootSources
-		  
-		  Dim Contents As Text = Xojo.Data.GenerateJSON(Document)
+		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.Export)
 		  Dim Data As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Contents)
 		  Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(File, Xojo.IO.BinaryStream.LockModes.Write)
 		  Stream.Write(Data)
@@ -160,6 +171,10 @@ Protected Class Document
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h0
+		Description As Text
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mIdentifier As Text
@@ -169,8 +184,8 @@ Protected Class Document
 		Private mLootSources() As Beacon.LootSource
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mRevision As Integer = 0
+	#tag Property, Flags = &h0
+		Title As Text
 	#tag EndProperty
 
 

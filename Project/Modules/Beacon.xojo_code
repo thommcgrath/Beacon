@@ -259,6 +259,16 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function WebURL() As Text
+		  #if DebugBuild
+		    Return "https://workbench.thezaz.com/beacon"
+		  #else
+		    Return "https://thezaz.com/beacon"
+		  #endif
+		End Function
+	#tag EndMethod
+
 
 	#tag Constant, Name = QualityApprentice, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
 	#tag EndConstant
@@ -285,9 +295,6 @@ Protected Module Beacon
 	#tag EndConstant
 
 	#tag Constant, Name = QualityRamshackle, Type = Double, Dynamic = False, Default = \"1.25", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = WebURL, Type = Text, Dynamic = False, Default = \"https://thezaz.com/beacon", Scope = Protected
 	#tag EndConstant
 
 
