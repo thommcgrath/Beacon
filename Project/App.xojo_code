@@ -174,13 +174,14 @@ Inherits Application
 	#tag Method, Flags = &h0
 		Function ResourcesFolder() As FolderItem
 		  #if TargetMacOS
-		    Return App.ExecutableFile.Parent.Parent.Child("Resources")
+		    Return Self.ExecutableFile.Parent.Parent.Child("Resources")
 		  #else
-		    Dim Parent As FolderItem = App.ExecutableFile.Parent
+		    Dim Parent As FolderItem = Self.ExecutableFile.Parent
 		    If Parent.Child("Resources").Exists Then
 		      Return Parent.Child("Resources")
 		    Else
-		      Return Parent.Child("Beacon Resources")
+		      Dim Name As String = Left(Self.ExecutableFile.Name, Len(Self.ExecutableFile.Name) - 4)
+		      Return Parent.Child(Name + " Resources")
 		    End If
 		  #endif
 		End Function

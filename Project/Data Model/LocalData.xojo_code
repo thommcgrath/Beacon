@@ -110,6 +110,10 @@ Implements Beacon.DataSource
 		  Dim Names() As String
 		  
 		  For Each Folder As FolderItem In Folders
+		    If Folder = Nil Then
+		      Continue
+		    End If
+		    
 		    For I As Integer = 1 To Folder.Count
 		      Dim File As FolderItem = Folder.Item(I)
 		      If Right(File.Name, ExtensionLength) <> Extension Then
