@@ -22,7 +22,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-OutputBaseFilename=SetupBeacon
+OutputBaseFilename=Install {#MyAppName}
 Compression=lzma
 SolidCompression=yes
 
