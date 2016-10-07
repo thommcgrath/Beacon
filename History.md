@@ -9,6 +9,7 @@
 - Set entry sorting is now correct.
 - It is now possible to create, edit, and customize presets! This is a power user feature, so it is hidden, but possible. First, setup an item set in any beacon. Include all possible items for both The Island and Scorched Earth. Right-click the set in the list and choose "Create Preset" to show the editor dialog. From here, items can be unchecked to exclude them from each map. More details available on the edit dialog itself. To edit a preset, hold the Option/Alt key while selecting the preset from the "Add Item Set" menu.
 - Introducing document sharing! This couldn't be simpler. Just open your Beacon document and choose "Publish Document…" from the "Document" menu. Give the document a title and description, that's it! The document will be stored online and a shareable URL will be returned. Need to make changes? Just publish again, the URL will stay the same!
+- Hidden multipliers for all loot sources are now known. Thanks to https://survivetheark.com/index.php?/profile/290980-qowyn/ for the missing Scorched Earth multipliers.
 
 ## Build 3
 

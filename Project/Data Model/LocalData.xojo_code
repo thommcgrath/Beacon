@@ -1186,6 +1186,60 @@ Implements Beacon.DataSource
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function UpdateToVersion4() As Boolean
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("UPDATE ""loot_sources"" SET ""minmult"" = ?, ""maxmult"" = ? WHERE ""classstring"" = ?;")
+		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_DOUBLE)
+		  Statement.BindType(1, SQLitePreparedStatement.SQLITE_DOUBLE)
+		  Statement.BindType(2, SQLitePreparedStatement.SQLITE_TEXT)
+		  
+		  Self.SQLExecute(Statement, 1, 1, "SupplyCrate_Level03_C")
+		  Self.SQLExecute(Statement, 2, 2.5, "SupplyCrate_Level03_Double_C")
+		  Self.SQLExecute(Statement, 1, 1, "SupplyCrate_Level15_C")
+		  Self.SQLExecute(Statement, 2, 2.5, "SupplyCrate_Level15_Double_C")
+		  Self.SQLExecute(Statement, 1, 1, "SupplyCrate_Level25_C")
+		  Self.SQLExecute(Statement, 2, 2.5, "SupplyCrate_Level25_Double_C")
+		  Self.SQLExecute(Statement, 1, 1, "SupplyCrate_Level35_C")
+		  Self.SQLExecute(Statement, 2, 2.5, "SupplyCrate_Level35_Double_C")
+		  Self.SQLExecute(Statement, 1, 1, "SupplyCrate_Level45_C")
+		  Self.SQLExecute(Statement, 2, 2.5, "SupplyCrate_Level45_Double_C")
+		  Self.SQLExecute(Statement, 1, 1, "SupplyCrate_Level60_C")
+		  Self.SQLExecute(Statement, 2, 2.5, "SupplyCrate_Level60_Double_C")
+		  Self.SQLExecute(Statement, 3.25, 4, "SupplyCrate_OceanInstant_C")
+		  Self.SQLExecute(Statement, 1.0, 1.75, "SupplyCrate_Cave_QualityTier1_C")
+		  Self.SQLExecute(Statement, 1.75, 2.5, "SupplyCrate_Cave_QualityTier2_C")
+		  Self.SQLExecute(Statement, 2.5, 3.25, "SupplyCrate_Cave_QualityTier3_C")
+		  Self.SQLExecute(Statement, 3.25, 4.0, "SupplyCrate_Cave_QualityTier4_C")
+		  Self.SQLExecute(Statement, 1.75, 2.5, "SupplyCrate_IceCaveTier1_C")
+		  Self.SQLExecute(Statement, 2.5, 3.25, "SupplyCrate_IceCaveTier2_C")
+		  Self.SQLExecute(Statement, 3.25, 4.0, "SupplyCrate_IceCaveTier3_C")
+		  Self.SQLExecute(Statement, 1.75, 2.5, "SupplyCrate_SwampCaveTier1_C")
+		  Self.SQLExecute(Statement, 2.5, 3.25, "SupplyCrate_SwampCaveTier2_C")
+		  Self.SQLExecute(Statement, 3.25, 4.0, "SupplyCrate_SwampCaveTier3_C")
+		  
+		  Self.SQLExecute(Statement, 1, 1, "ArtifactCrate_2_SE_C")
+		  Self.SQLExecute(Statement, 1, 1, "ArtifactCrate_3_SE_C")
+		  Self.SQLExecute(Statement, 1, 1, "ArtifactCrate_SE_C")
+		  Self.SQLExecute(Statement, 1, 2.1, "SupplyCrate_Cave_QualityTier1_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 2.4, 3.4, "SupplyCrate_Cave_QualityTier2_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 3.5, 4.5, "SupplyCrate_Cave_QualityTier3_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 2, 2.75, "SupplyCrate_Level03_Double_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 1, 1, "SupplyCrate_Level03_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 2, 2.75, "SupplyCrate_Level15_Double_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 1, 1, "SupplyCrate_Level15_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 2, 2.75, "SupplyCrate_Level30_Double_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 1, 1, "SupplyCrate_Level30_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 2, 2.75, "SupplyCrate_Level45_Double_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 1, 1, "SupplyCrate_Level45_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 2, 2.75, "SupplyCrate_Level55_Double_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 1, 1, "SupplyCrate_Level55_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 2, 2.75, "SupplyCrate_Level70_Double_ScorchedEarth_C")
+		  Self.SQLExecute(Statement, 1, 1, "SupplyCrate_Level70_ScorchedEarth_C")
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mBase As SQLiteDatabase
@@ -1200,7 +1254,7 @@ Implements Beacon.DataSource
 	#tag EndProperty
 
 
-	#tag Constant, Name = CurrentVersion, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = CurrentVersion, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 
