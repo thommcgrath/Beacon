@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Beacon"
-#define MyAppVersion "1.0.0a4"
+#define MyAppVersion "1.0.0a5"
 #define MyAppPublisher "The ZAZ Studios"
 #define MyAppURL "https://thezaz.com/beacon"
 #define MyAppExeName "Beacon.exe"
@@ -22,7 +22,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-OutputBaseFilename=Install {#MyAppName}
+OutputBaseFilename=Install {#MyAppName} {#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
 
