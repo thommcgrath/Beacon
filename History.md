@@ -1,5 +1,9 @@
 # Beacon Version History
 
+## Build 5
+
+- Fixed KeyNotFoundExceptions on subsequent launches for some users.
+
 ## Build 4
 
 - Fixed crash while importing an empty config.
