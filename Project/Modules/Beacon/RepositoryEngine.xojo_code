@@ -9,6 +9,19 @@ Protected Class RepositoryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub DeleteDocument(Document As Beacon.Document, Identity As Beacon.Identity)
+		  If Self.mCurrentAction <> Beacon.RepositoryEngine.Actions.None Then
+		    Raise New Xojo.Core.UnsupportedOperationException
+		  End If
+		  
+		  Dim Signature As Xojo.Core.MemoryBlock = Identity.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Document.Identifier))
+		  
+		  Self.mCurrentAction = Beacon.RepositoryEngine.Actions.Delete
+		  Self.mSocket.Send("DELETE", Beacon.WebURL + "/documents.php/" + Document.Identifier + "?signature=" + Beacon.EncodeHex(Signature))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub GetDocument(DocumentID As Text)
 		  If Self.mCurrentAction <> Beacon.RepositoryEngine.Actions.None Then
 		    Raise New Xojo.Core.UnsupportedOperationException
@@ -75,6 +88,12 @@ Protected Class RepositoryEngine
 		    Else
 		      RaiseEvent SaveSuccess(Response)
 		    End If
+		  Case Beacon.RepositoryEngine.Actions.Delete
+		    If HTTPStatus <> 200 Then
+		      RaiseEvent DeleteSuccess()
+		    Else
+		      RaiseEvent DeleteError(Response)
+		    End If
 		  End Select
 		  
 		  Self.mCurrentAction = Beacon.RepositoryEngine.Actions.None
@@ -82,7 +101,7 @@ Protected Class RepositoryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveDocument(Identity As Beacon.Identity, Document As Beacon.Document)
+		Sub SaveDocument(Document As Beacon.Document, Identity As Beacon.Identity)
 		  If Self.mCurrentAction <> Beacon.RepositoryEngine.Actions.None Then
 		    Raise New Xojo.Core.UnsupportedOperationException
 		  End If
@@ -101,6 +120,14 @@ Protected Class RepositoryEngine
 
 
 	#tag Hook, Flags = &h0
+		Event DeleteError(Reason As Text)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event DeleteSuccess()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event DocumentListError(Reason As Text)
 	#tag EndHook
 
@@ -110,6 +137,10 @@ Protected Class RepositoryEngine
 
 	#tag Hook, Flags = &h0
 		Event DocumentRetrieveError(Reason As Text)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event DocumentsReceived(Documents() As Beacon.Document)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -134,7 +165,8 @@ Protected Class RepositoryEngine
 		None
 		  List
 		  Get
-		Save
+		  Save
+		Delete
 	#tag EndEnum
 
 

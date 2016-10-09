@@ -27,6 +27,7 @@ Begin Window DocumentPublishWindow
    Visible         =   True
    Width           =   500
    Begin Beacon.RepositoryEngine Engine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -116,6 +117,7 @@ Begin Window DocumentPublishWindow
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Publish Document"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -150,6 +152,7 @@ Begin Window DocumentPublishWindow
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Share Beacon documents online! Other Beacon users will be able to browse and load documents for deployment to other servers."
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -226,6 +229,7 @@ Begin Window DocumentPublishWindow
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Title:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -307,6 +311,7 @@ Begin Window DocumentPublishWindow
       Selectable      =   False
       TabIndex        =   7
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Description:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -417,7 +422,7 @@ End
 		  Self.mDocument.Title = Self.TitleField.Text.ToText
 		  Self.mDocument.Description = Self.DescriptionField.Text.ToText
 		  
-		  Engine.SaveDocument(App.Identity, Self.mDocument)
+		  Engine.SaveDocument(Self.mDocument, App.Identity)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
