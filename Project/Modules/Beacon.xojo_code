@@ -297,6 +297,9 @@ Protected Module Beacon
 	#tag Constant, Name = QualityRamshackle, Type = Double, Dynamic = False, Default = \"1.25", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = URLScheme, Type = Text, Dynamic = False, Default = \"beacon", Scope = Protected
+	#tag EndConstant
+
 
 	#tag Enum, Name = Qualities, Type = Integer, Flags = &h1
 		Primitive

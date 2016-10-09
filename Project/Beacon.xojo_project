@@ -73,6 +73,7 @@ Window=PresetCreationSheet;Views/PresetCreationSheet.xojo_window;&h52F13FFF;&h8A
 Class=LocalData;Data Model/LocalData.xojo_code;&h338F4FFF;&h7CAFFFFF;false
 Class=RepositoryEngine;Modules/Beacon/RepositoryEngine.xojo_code;&h76CB97FF;&h55ADDFFF;false
 Window=DocumentPublishWindow;Views/DocumentPublishWindow.xojo_window;&h55E0B7FF;&h8A387FF;false
+Window=DocumentManagerWindow;Views/DocumentManagerWindow.xojo_window;&hBB2DFFF;&h8A387FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0
