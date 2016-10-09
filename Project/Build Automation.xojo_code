@@ -6,6 +6,10 @@
 			Begin BuildStepList Mac OS X
 				Begin BuildProjectStep Build
 				End
+				Begin IDEScriptBuildStep UpdateInfoPlist , AppliesTo = 0
+					Dim App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
+					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""CFBundleURLTypes"" ""( { CFBundleURLName = Beacon; CFBundleTypeRole = Editor; CFBundleURLSchemes = (" + ConstantValue("Beacon.URLScheme") + "); } )""")
+				End
 				Begin CopyFilesBuildStep ReplaceIcons
 					AppliesTo = 0
 					Destination = 1
