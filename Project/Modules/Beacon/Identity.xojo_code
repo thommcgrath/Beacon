@@ -41,7 +41,7 @@ Protected Class Identity
 		  Dim PublicKey, PrivateKey As Xojo.Core.MemoryBlock
 		  If Source.HasKey("Version") And Source.Value("Version") = 2 Then
 		    PublicKey = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source.Value("Public"))
-		    PrivateKey = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source.Value("PrivateKey"))
+		    PrivateKey = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source.Value("Private"))
 		  Else
 		    PublicKey = Beacon.DecodeHex(Source.Value("Public"))
 		    PrivateKey = Beacon.DecodeHex(Source.Value("Private"))

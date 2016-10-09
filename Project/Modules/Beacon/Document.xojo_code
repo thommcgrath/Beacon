@@ -96,13 +96,7 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Read(File As Xojo.IO.FolderItem) As Beacon.Document
-		  Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(File, Xojo.IO.BinaryStream.LockModes.Read)
-		  Dim Data As Xojo.Core.MemoryBlock = Stream.Read(Stream.Length)
-		  Stream.Close
-		  
-		  Dim Contents As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Data)
-		  
+		Shared Function Read(Contents As Text) As Beacon.Document
 		  Dim Parsed As Auto
 		  Try
 		    Parsed = Xojo.Data.ParseJSON(Contents)
@@ -151,6 +145,18 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function Read(File As Xojo.IO.FolderItem) As Beacon.Document
+		  Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(File, Xojo.IO.BinaryStream.LockModes.Read)
+		  Dim Data As Xojo.Core.MemoryBlock = Stream.Read(Stream.Length)
+		  Stream.Close
+		  
+		  Dim Contents As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Data)
+		  
+		  Return Beacon.Document.Read(Contents)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(LootSource As Beacon.LootSource)
 		  For I As Integer = 0 To UBound(Self.mLootSources)
 		    If Self.mLootSources(I) = LootSource Then
@@ -195,6 +201,11 @@ Protected Class Document
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Description"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -219,6 +230,11 @@ Protected Class Document
 			Visible=true
 			Group="ID"
 			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Title"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

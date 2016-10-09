@@ -32,20 +32,44 @@ Protected Class RepositoryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub mSocket_Error(Sender As Xojo.Net.HTTPSocket, Err As RuntimeException)
-		  Break
+		  #Pragma Unused Sender
+		  
+		  Select Case Self.mCurrentAction
+		  Case Beacon.RepositoryEngine.Actions.List
+		    RaiseEvent DocumentListError(Err.Reason)
+		  Case Beacon.RepositoryEngine.Actions.Get
+		    RaiseEvent DocumentRetrieveError(Err.Reason)
+		  Case Beacon.RepositoryEngine.Actions.Save
+		    RaiseEvent SaveError(Err.Reason)
+		  End Select
+		  
 		  Self.mCurrentAction = Beacon.RepositoryEngine.Actions.None
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub mSocket_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
+		  #Pragma Unused Sender
+		  #Pragma Unused URL
+		  
+		  Dim Response As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
+		  
 		  Select Case Self.mCurrentAction
 		  Case Beacon.RepositoryEngine.Actions.List
-		    
+		    If HTTPStatus = 200 Then
+		      Dim Results() As Auto = Xojo.Data.ParseJSON(Response)
+		      Break
+		    Else
+		      RaiseEvent DocumentListError(Response)
+		    End If
 		  Case Beacon.RepositoryEngine.Actions.Get
-		    
+		    If HTTPStatus = 200 Then
+		      Dim Document As Beacon.Document = Beacon.Document.Read(Response)
+		      RaiseEvent DocumentReceived(Document)
+		    Else
+		      RaiseEvent DocumentRetrieveError(Response)
+		    End If
 		  Case Beacon.RepositoryEngine.Actions.Save
-		    Dim Response As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
 		    If HTTPStatus <> 200 Then
 		      RaiseEvent SaveError(Response)
 		    Else
@@ -75,6 +99,18 @@ Protected Class RepositoryEngine
 		End Sub
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event DocumentListError(Reason As Text)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event DocumentReceived(Document As Beacon.Document)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event DocumentRetrieveError(Reason As Text)
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event SaveError(Reason As Text)
