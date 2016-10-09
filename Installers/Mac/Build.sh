@@ -21,6 +21,7 @@ fi
 cp -R "${SOURCE}/${APPNAME}.app/Contents" "${DEST}/${APPNAME}.app";
 find "${DEST}/${APPNAME}.app" -type d -exec chmod 755 {} +;
 find "${DEST}/${APPNAME}.app" -type f -exec chmod 644 {} +;
+chmod 755 "${DEST}/${APPNAME}.app/Contents/MacOS/${APPNAME}";
 
 hdiutil eject "${DEST}";
 if [ -e "${OUTPUT}/${APPNAME}.dmg" ]; then
