@@ -1,1 +1,217 @@
-{"Contents":{"Common":[{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItem_WeaponCrossbow_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItem_WeaponGun_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItem_WeaponShotgun_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItem_WeaponOneShotRifle_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItem_WeaponBow_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItem_WeaponGrenade_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":6,"MinQuality":"Tier1","MinQuantity":2},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemAmmo_SimpleBullet_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":52,"MinQuality":"Tier1","MinQuantity":13},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemAmmo_SimpleShotgunBullet_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":24,"MinQuality":"Tier1","MinQuantity":6},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemAmmo_SimpleRifleBullet_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":32,"MinQuality":"Tier1","MinQuantity":8},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemAmmo_ArrowStone_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":40,"MinQuality":"Tier1","MinQuantity":10},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemAmmo_ArrowTranq_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":40,"MinQuality":"Tier1","MinQuantity":10},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemAmmo_ArrowFlame_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":40,"MinQuality":"Tier1","MinQuantity":10},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemAmmo_GrapplingHook_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":8,"MinQuality":"Tier1","MinQuantity":2}],"Island":[],"Scorched":[]},"Grouping":"Firearms","Label":"Simple Firearms","Max":2,"Min":1,"Modifiers":{"Bonus":{"Quality":3,"Quantity":2.0},"Cave":{"Quality":6,"Quantity":1.0},"Sea":{"Quality":6,"Quantity":1.0},"Standard":{"Quality":0,"Quantity":1.0}},"Weight":0.5}
+{
+  "Contents": {
+    "Common": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItem_WeaponCrossbow_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItem_WeaponGun_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItem_WeaponShotgun_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItem_WeaponOneShotRifle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItem_WeaponBow_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItem_WeaponGrenade_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 6,
+        "MinQuality": "Tier1",
+        "MinQuantity": 2
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemAmmo_SimpleBullet_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 52,
+        "MinQuality": "Tier1",
+        "MinQuantity": 13
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemAmmo_SimpleShotgunBullet_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 24,
+        "MinQuality": "Tier1",
+        "MinQuantity": 6
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemAmmo_SimpleRifleBullet_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 32,
+        "MinQuality": "Tier1",
+        "MinQuantity": 8
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemAmmo_ArrowStone_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 40,
+        "MinQuality": "Tier1",
+        "MinQuantity": 10
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemAmmo_ArrowTranq_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 40,
+        "MinQuality": "Tier1",
+        "MinQuantity": 10
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemAmmo_ArrowFlame_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 40,
+        "MinQuality": "Tier1",
+        "MinQuantity": 10
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemAmmo_GrapplingHook_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 8,
+        "MinQuality": "Tier1",
+        "MinQuantity": 2
+      }
+    ],
+    "Island": [
+
+    ],
+    "Scorched": [
+
+    ]
+  },
+  "Grouping": "Firearms",
+  "Label": "Simple Firearms",
+  "Max": 2,
+  "Min": 1,
+  "Modifiers": {
+    "Bonus": {
+      "Quality": 3,
+      "Quantity": 2
+    },
+    "Cave": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Sea": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Standard": {
+      "Quality": 0,
+      "Quantity": 1
+    }
+  },
+  "Weight": 0.5
+}

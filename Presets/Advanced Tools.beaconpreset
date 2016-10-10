@@ -1,1 +1,175 @@
-{"Contents":{"Common":[{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItem_WeaponMetalPick_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItem_WeaponMetalHatchet_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItem_WeaponGPS_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemRadio_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItem_WeaponSickle_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItem_ChainSaw_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemArmor_NightVisionGoggles_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItem_WeaponSword_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItem_WeaponPike_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemConsumable_CanteenRefill_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1}],"Island":[],"Scorched":[]},"Grouping":"Tools","Label":"Advanced Tools","Max":2,"Min":1,"Modifiers":{"Bonus":{"Quality":3,"Quantity":2.0},"Cave":{"Quality":6,"Quantity":1.0},"Sea":{"Quality":6,"Quantity":1.0},"Standard":{"Quality":0,"Quantity":1.0}},"Weight":0.5}
+{
+  "Contents": {
+    "Common": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItem_WeaponMetalPick_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItem_WeaponMetalHatchet_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItem_WeaponGPS_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemRadio_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItem_WeaponSickle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItem_ChainSaw_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_NightVisionGoggles_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItem_WeaponSword_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItem_WeaponPike_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_CanteenRefill_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ],
+    "Island": [
+
+    ],
+    "Scorched": [
+
+    ]
+  },
+  "Grouping": "Tools",
+  "Label": "Advanced Tools",
+  "Max": 2,
+  "Min": 1,
+  "Modifiers": {
+    "Bonus": {
+      "Quality": 3,
+      "Quantity": 2
+    },
+    "Cave": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Sea": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Standard": {
+      "Quality": 0,
+      "Quantity": 1
+    }
+  },
+  "Weight": 0.5
+}

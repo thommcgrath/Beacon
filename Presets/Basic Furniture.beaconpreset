@@ -1,1 +1,286 @@
-{"Contents":{"Common":[{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_Campfire_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":3,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_StandingTorch_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":3,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_SleepingBag_Hide_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":3,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_StorageBox_Small_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":5,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_StorageBox_Large_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":5,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_MortarAndPestle_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_Forge_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_AnvilBench_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_CompostBin_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_CookingPot_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_Bed_Simple_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_FeedingTrough_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_WallTorch_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":3,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_PreservingBin_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":3,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_Bookshelf_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1}],"Island":[],"Scorched":[{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_Tent_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_Vessel_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_WaterWell_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1}]},"Grouping":"Furniture","Label":"Basic Furniture","Max":4,"Min":1,"Modifiers":{"Bonus":{"Quality":3,"Quantity":2.0},"Cave":{"Quality":6,"Quantity":1.0},"Sea":{"Quality":6,"Quantity":1.0},"Standard":{"Quality":0,"Quantity":1.0}},"Weight":0.5}
+{
+  "Contents": {
+    "Common": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_Campfire_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 3,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_StandingTorch_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 3,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_SleepingBag_Hide_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 3,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_StorageBox_Small_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 5,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_StorageBox_Large_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 5,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_MortarAndPestle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_Forge_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_AnvilBench_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_CompostBin_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_CookingPot_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_Bed_Simple_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_FeedingTrough_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WallTorch_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 3,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_PreservingBin_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 3,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_Bookshelf_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ],
+    "Island": [
+
+    ],
+    "Scorched": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_Tent_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_Vessel_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WaterWell_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ]
+  },
+  "Grouping": "Furniture",
+  "Label": "Basic Furniture",
+  "Max": 4,
+  "Min": 1,
+  "Modifiers": {
+    "Bonus": {
+      "Quality": 3,
+      "Quantity": 2
+    },
+    "Cave": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Sea": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Standard": {
+      "Quality": 0,
+      "Quantity": 1
+    }
+  },
+  "Weight": 0.5
+}
