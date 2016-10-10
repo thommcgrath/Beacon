@@ -4,6 +4,7 @@ Protected Class RepositoryEngine
 		Sub Constructor()
 		  Self.mSocket = New Xojo.Net.HTTPSocket
 		  AddHandler Self.mSocket.PageReceived, WeakAddressOf Self.mSocket_PageReceived
+		  AddHandler Self.mSocket.HeadersReceived, WeakAddressOf Self.mSocket_HeadersReceived
 		  AddHandler Self.mSocket.Error, WeakAddressOf Self.mSocket_Error
 		End Sub
 	#tag EndMethod
@@ -17,8 +18,20 @@ Protected Class RepositoryEngine
 		  Dim Signature As Xojo.Core.MemoryBlock = Identity.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Document.Identifier))
 		  
 		  Self.mCurrentAction = Beacon.RepositoryEngine.Actions.Delete
-		  Self.mSocket.Send("DELETE", Beacon.WebURL + "/documents.php/" + Document.Identifier + "?signature=" + Beacon.EncodeHex(Signature))
+		  Self.mSocket.Send("DELETE", Self.DocumentURL(Document) + "?signature=" + Beacon.EncodeHex(Signature))
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DocumentURL(Document As Beacon.Document) As Text
+		  Return Self.DocumentURL(Document.Identifier)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DocumentURL(DocumentID As Text) As Text
+		  Return Beacon.WebURL + "/documents.php/" + DocumentID
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -28,7 +41,24 @@ Protected Class RepositoryEngine
 		  End If
 		  
 		  Self.mCurrentAction = Beacon.RepositoryEngine.Actions.Get
-		  Self.mSocket.Send("GET", Beacon.WebURL + "/documents.php/" + DocumentID)
+		  Self.mSocket.Send("GET", Self.DocumentURL(DocumentID))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub GetDocumentStatus(Document As Beacon.Document)
+		  Self.GetDocumentStatus(Document.Identifier)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub GetDocumentStatus(DocumentID As Text)
+		  If Self.mCurrentAction <> Beacon.RepositoryEngine.Actions.None Then
+		    Raise New Xojo.Core.UnsupportedOperationException
+		  End If
+		  
+		  Self.mCurrentAction = Beacon.RepositoryEngine.Actions.Status
+		  Self.mSocket.Send("HEAD", Self.DocumentURL(DocumentID))
 		End Sub
 	#tag EndMethod
 
@@ -54,9 +84,38 @@ Protected Class RepositoryEngine
 		    RaiseEvent DocumentRetrieveError(Err.Reason)
 		  Case Beacon.RepositoryEngine.Actions.Save
 		    RaiseEvent SaveError(Err.Reason)
+		  Case Beacon.RepositoryEngine.Actions.Delete
+		    RaiseEvent DeleteError
+		  Case Beacon.RepositoryEngine.Actions.Status
+		    RaiseEvent DocumentStatus(False, "", Nil, "")
 		  End Select
 		  
 		  Self.mCurrentAction = Beacon.RepositoryEngine.Actions.None
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mSocket_HeadersReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer)
+		  #Pragma Unused URL
+		  
+		  If Self.mCurrentAction = Beacon.RepositoryEngine.Actions.Status Then
+		    If HTTPStatus <> 200 Then
+		      RaiseEvent DocumentStatus(False, "", Nil, "")
+		    Else
+		      Try
+		        Dim AuthorID As Text = Sender.ResponseHeader("X-Beacon-UserID")
+		        Dim Hash As Text = Sender.ResponseHeader("X-Beacon-MD5")
+		        Dim LastUpdateText As Text = Sender.ResponseHeader("X-Beacon-Date")
+		        
+		        Dim LastUpdate As Xojo.Core.Date = Xojo.Core.Date.FromText(LastUpdateText, Xojo.Core.Locale.Raw)
+		        LastUpdate = New Xojo.Core.Date(LastUpdate.SecondsFrom1970 + LastUpdate.TimeZone.SecondsFromGMT, New Xojo.Core.TimeZone("UTC"))
+		        
+		        RaiseEvent DocumentStatus(True, AuthorID, LastUpdate, Hash)
+		      Catch Err As RuntimeException
+		        RaiseEvent DocumentStatus(True, "", Nil, "")
+		      End Try
+		    End If
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -90,9 +149,9 @@ Protected Class RepositoryEngine
 		    End If
 		  Case Beacon.RepositoryEngine.Actions.Delete
 		    If HTTPStatus <> 200 Then
-		      RaiseEvent DeleteSuccess()
+		      RaiseEvent DeleteError
 		    Else
-		      RaiseEvent DeleteError(Response)
+		      RaiseEvent DeleteSuccess
 		    End If
 		  End Select
 		  
@@ -120,7 +179,7 @@ Protected Class RepositoryEngine
 
 
 	#tag Hook, Flags = &h0
-		Event DeleteError(Reason As Text)
+		Event DeleteError()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -141,6 +200,10 @@ Protected Class RepositoryEngine
 
 	#tag Hook, Flags = &h0
 		Event DocumentsReceived(Documents() As Beacon.Document)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event DocumentStatus(Published As Boolean, AuthorID As Text, LastUpdate As Xojo.Core.Date, ContentHash As Text)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -166,7 +229,8 @@ Protected Class RepositoryEngine
 		  List
 		  Get
 		  Save
-		Delete
+		  Delete
+		Status
 	#tag EndEnum
 
 

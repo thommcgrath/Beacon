@@ -315,6 +315,12 @@ Begin Window DocWindow
       State           =   ""
       TabPanelIndex   =   0
    End
+   Begin Beacon.RepositoryEngine Repository
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -383,7 +389,12 @@ End
 		  
 		  If Self.Doc.BeaconCount > 0 Then
 		    FileExportConfig.Enable
-		    DocumentPublishDocument.Enable
+		    If Self.mIsPublished = False Or (Self.mIsPublished = True And Self.mPublishedByUser) Then
+		      DocumentPublishDocument.Enable
+		    End If
+		  End If
+		  If Self.mIsPublished = True And Self.mPublishedByUser Then
+		    DocumentUnpublishDocument.Enable
 		  End If
 		End Sub
 	#tag EndEvent
@@ -395,6 +406,14 @@ End
 		    BeaconList.AddRow(LootSource.Label)
 		    BeaconList.RowTag(BeaconList.LastIndex) = LootSource
 		  Next
+		  
+		  If UBound(LootSources) > -1 Then
+		    // Check publish status
+		    Self.Repository.GetDocumentStatus(Self.Doc)
+		  Else
+		    Self.mIsPublished = False
+		    Self.mPublishedByUser = True
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -446,6 +465,23 @@ End
 	#tag MenuHandler
 		Function DocumentRemoveBeacon() As Boolean Handles DocumentRemoveBeacon.Action
 			Self.RemoveSelectedBeacons()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function DocumentUnpublishDocument() As Boolean Handles DocumentUnpublishDocument.Action
+			Dim Dialog As New MessageDialog
+			Dialog.Message = "Are you sure you want to unpublish this document?"
+			Dialog.Explanation = "This document will no longer be available to download. If you choose to publish again, the document url will remain the same, so you can always change your mind."
+			Dialog.ActionButton.Caption = "Unpublish"
+			Dialog.CancelButton.Visible = True
+			
+			Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
+			If Choice = Dialog.ActionButton Then
+			Repository.DeleteDocument(Self.Doc, App.Identity)
+			End If
+			
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -684,6 +720,22 @@ End
 		Private ImportProgress As ImporterWindow
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mCanPublish As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		#tag Note
+			The default value is true to prevent the publish option from
+			enabling before the status check has completed
+		#tag EndNote
+		Private mIsPublished As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPublishedByUser As Boolean = False
+	#tag EndProperty
+
 
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.beacon", Scope = Private
 	#tag EndConstant
@@ -912,6 +964,33 @@ End
 		    Self.ImportProgress.BeaconCount = Me.BeaconCount
 		    Self.ImportProgress.LootSourcesProcessed = Me.LootSourcesProcessed
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Repository
+	#tag Event
+		Sub DocumentStatus(Published As Boolean, AuthorID As Text, LastUpdate As Xojo.Core.Date, ContentHash As Text)
+		  Self.mIsPublished = Published
+		  Self.mPublishedByUser = AuthorID = App.Identity.Identifier
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DeleteError()
+		  Dim Dialog As New MessageDialog
+		  Dialog.Message = "Unable to unpublish document"
+		  Dialog.Explanation = "The server denied your request to unpublish the document. Would you like to report this problem?"
+		  Dialog.ActionButton.Caption = "Report"
+		  Dialog.CancelButton.Visible = True
+		  
+		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
+		  If Choice = Dialog.ActionButton Then
+		    Beacon.ReportAProblem()
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DeleteSuccess()
+		  Self.mIsPublished = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents

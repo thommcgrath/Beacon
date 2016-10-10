@@ -30,4 +30,4 @@ CREATE TABLE "documents" (
 	"contents" TEXT NOT NULL,
 	"contents_hash" TEXT NOT NULL
 );
-GRANT SELECT, INSERT, UPDATE ON TABLE "documents" TO "thezaz_website";
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE "documents" TO "thezaz_website";
