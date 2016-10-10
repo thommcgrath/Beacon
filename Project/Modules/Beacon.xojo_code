@@ -291,7 +291,7 @@ Protected Module Beacon
 	#tag Constant, Name = QualityMastercraft, Type = Double, Dynamic = False, Default = \"5.5", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityPrimitive, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag Constant, Name = QualityPrimitive, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = QualityRamshackle, Type = Double, Dynamic = False, Default = \"1.25", Scope = Protected
