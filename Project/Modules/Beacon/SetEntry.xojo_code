@@ -115,7 +115,7 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range = Nil) As Beacon.SetEntry
+		Shared Function Import(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range) As Beacon.SetEntry
 		  Dim Entry As New Beacon.SetEntry
 		  If Dict.HasKey("EntryWeight") Then
 		    Entry.Weight = Dict.Value("EntryWeight")
@@ -129,11 +129,6 @@ Implements Beacon.Countable
 		    If Info.FullName = "Text" Then
 		      Entry.MinQuality = Beacon.TextToQuality(Value)
 		    Else
-		      If Multipliers = Nil Then
-		        Dim Err As New Xojo.Core.UnsupportedOperationException
-		        Err.Reason = "Loot source multipliers are required when importing numeric quality values."
-		        Raise Err
-		      End If
 		      Entry.MinQuality = Beacon.QualityForValue(Value, Multipliers.Min)
 		    End If
 		  End If
@@ -143,11 +138,6 @@ Implements Beacon.Countable
 		    If Info.FullName = "Text" Then
 		      Entry.MaxQuality = Beacon.TextToQuality(Value)
 		    Else
-		      If Multipliers = Nil Then
-		        Dim Err As New Xojo.Core.UnsupportedOperationException
-		        Err.Reason = "Loot source multipliers are required when importing numeric quality values."
-		        Raise Err
-		      End If
 		      Entry.MaxQuality = Beacon.QualityForValue(Value, Multipliers.Max)
 		    End If
 		  End If

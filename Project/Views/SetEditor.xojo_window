@@ -838,7 +838,7 @@ End
 		    Return
 		  End Try
 		  
-		  Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Dict)
+		  Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Dict, New Beacon.Range(1, 1))
 		  Self.mSet.Append(Entry)
 		  Self.UpdateEntryList()
 		  RaiseEvent Updated
