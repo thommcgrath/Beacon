@@ -838,6 +838,9 @@ End
 		    Return
 		  End Try
 		  
+		  // The multipliers parameter here is 100% useless as a copied set entry will always use text
+		  // quality values and not numeric ones. But this is what the signature is, so something must
+		  // be supplied.
 		  Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Dict, New Beacon.Range(1, 1))
 		  Self.mSet.Append(Entry)
 		  Self.UpdateEntryList()
