@@ -43,6 +43,28 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Description() As Text
+		  If UBound(Self.mItems) = -1 Then
+		    Return "No Items"
+		  ElseIf UBound(Self.mItems) = 0 Then
+		    Return Beacon.Data.NameOfEngram(Self.mItems(0).ClassString)
+		  Else
+		    Dim TotalWeight As Double
+		    For I As Integer = 0 To UBound(Self.mItems)
+		      TotalWeight = TotalWeight + Self.mItems(I).Weight
+		    Next
+		    
+		    Dim Labels() As Text
+		    For I As Integer = 0 To UBound(Self.mItems)
+		      Dim Weight As Double = Self.mItems(I).Weight / TotalWeight
+		      Labels.Append(Beacon.Data.NameOfEngram(Self.mItems(I).ClassString) + ":" + Weight.ToText(Xojo.Core.Locale.Current, "0%"))
+		    Next
+		    Return Text.Join(Labels, ", ")
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Children() As Xojo.Core.Dictionary
 		  For Each Item As Beacon.ItemClass In Self.mItems
@@ -93,7 +115,7 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.SetEntry
+		Shared Function Import(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range = Nil) As Beacon.SetEntry
 		  Dim Entry As New Beacon.SetEntry
 		  If Dict.HasKey("EntryWeight") Then
 		    Entry.Weight = Dict.Value("EntryWeight")
@@ -107,7 +129,12 @@ Implements Beacon.Countable
 		    If Info.FullName = "Text" Then
 		      Entry.MinQuality = Beacon.TextToQuality(Value)
 		    Else
-		      Entry.MinQuality = Beacon.QualityForValue(Value, 1)
+		      If Multipliers = Nil Then
+		        Dim Err As New Xojo.Core.UnsupportedOperationException
+		        Err.Reason = "Loot source multipliers are required when importing numeric quality values."
+		        Raise Err
+		      End If
+		      Entry.MinQuality = Beacon.QualityForValue(Value, Multipliers.Min)
 		    End If
 		  End If
 		  If Dict.HasKey("MaxQuality") Then
@@ -116,7 +143,12 @@ Implements Beacon.Countable
 		    If Info.FullName = "Text" Then
 		      Entry.MaxQuality = Beacon.TextToQuality(Value)
 		    Else
-		      Entry.MaxQuality = Beacon.QualityForValue(Value, 1)
+		      If Multipliers = Nil Then
+		        Dim Err As New Xojo.Core.UnsupportedOperationException
+		        Err.Reason = "Loot source multipliers are required when importing numeric quality values."
+		        Raise Err
+		      End If
+		      Entry.MaxQuality = Beacon.QualityForValue(Value, Multipliers.Max)
 		    End If
 		  End If
 		  

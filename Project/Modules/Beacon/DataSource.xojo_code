@@ -1,6 +1,18 @@
 #tag Interface
 Protected Interface DataSource
 	#tag Method, Flags = &h0
+		Function IsPresetCustom(Preset As Beacon.Preset) As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadPresets()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function MultipliersForLootSource(ClassString As Text) As Beacon.Range
 		  
 		End Function
@@ -16,6 +28,24 @@ Protected Interface DataSource
 		Function NameOfLootSource(ClassString As Text) As Text
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Presets() As Beacon.Preset()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemovePreset(Preset As Beacon.Preset)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SavePreset(Preset As Beacon.Preset)
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

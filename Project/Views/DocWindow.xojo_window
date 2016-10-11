@@ -506,8 +506,7 @@ End
 			
 			Dim LootSources() As Beacon.LootSource = Self.Doc.LootSources
 			For Each LootSource As Beacon.LootSource In LootSources
-			Dim Multipliers As Beacon.Range = LocalData.SharedInstance.MultipliersForLootSource(LootSource)
-			Lines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Multipliers))
+			Lines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue())
 			Next
 			
 			Dim Stream As TextOutputStream = TextOutputStream.Create(File)
@@ -780,9 +779,8 @@ End
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Me.Selected(I) Then
 		      Dim Source As Beacon.LootSource = Me.RowTag(I)
-		      Dim Multipliers As Beacon.Range = LocalData.SharedInstance.MultipliersForLootSource(Source)
 		      Dicts.Append(Source.Export)
-		      Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue(Multipliers))
+		      Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue())
 		    End If
 		  Next
 		  
@@ -889,7 +887,7 @@ End
 		  #Pragma Unused Y
 		  
 		  Dim Base As New MenuItem
-		  Dim LootSources() As Beacon.LootSource = LocalData.SharedInstance.SearchForLootSources("")
+		  Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("")
 		  For I As Integer = UBound(LootSources) DownTo 0
 		    If Self.Doc.HasBeacon(LootSources(I)) Then
 		      LootSources.Remove(I)
@@ -954,7 +952,7 @@ End
 		    Me.Reset
 		    
 		    For Each LootSource As Beacon.LootSource In LootSources
-		      LootSource.Label = LocalData.SharedInstance.NameOfLootSource(LootSource.Type)
+		      LootSource.Label = Beacon.Data.NameOfLootSource(LootSource.Type)
 		      Self.AddLootSource(LootSource)
 		    Next
 		    Return

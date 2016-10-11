@@ -13,6 +13,7 @@ Implements Beacon.Countable
 		  Self.mMaxItemSets = 3
 		  Self.mNumItemSetsPower = 1.0
 		  Self.mSetsRandomWithoutReplacement = True
+		  Self.mMultipliers = New Beacon.Range(1, 1)
 		End Sub
 	#tag EndMethod
 
@@ -28,6 +29,7 @@ Implements Beacon.Countable
 		  Self.mSetsRandomWithoutReplacement = Source.mSetsRandomWithoutReplacement
 		  Self.mType = Source.mType
 		  Self.mLabel = Source.mLabel
+		  Self.mMultipliers = New Beacon.Range(Source.mMultipliers.Min, Source.mMultipliers.Max)
 		  
 		  For I As Integer = 0 To UBound(Source.mItems)
 		    Self.mItems(I) = New Beacon.ItemSet(Source.mItems(I))
@@ -40,6 +42,7 @@ Implements Beacon.Countable
 		  Self.Constructor()
 		  Self.mType = Type
 		  Self.mLabel = Label
+		  Self.mMultipliers = Beacon.Data.MultipliersForLootSource(Type)
 		End Sub
 	#tag EndMethod
 
@@ -107,7 +110,7 @@ Implements Beacon.Countable
 		  End If
 		  
 		  For Each Child As Xojo.Core.Dictionary In Children
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Child)
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Child, LootSource)
 		    If Set <> Nil Then
 		      LootSource.Append(Set)
 		    End If
@@ -156,6 +159,12 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Multipliers() As Beacon.Range
+		  Return Self.mMultipliers
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.LootSource) As Integer
 		  If Other = Nil Then
 		    Return 1
@@ -190,14 +199,14 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range) As Text
+		Function TextValue() As Text
 		  Dim Values() As Text
 		  Values.Append("SupplyCrateClassString=""" + Self.mType + """")
 		  Values.Append("MinItemSets=" + Self.mMinItemSets.ToText)
 		  Values.Append("MaxItemSets=" + Self.mMaxItemSets.ToText)
 		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.ToText)
 		  Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mItems, ",", Multipliers) + ")")
+		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mItems, ",", Self.Multipliers) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod
@@ -266,6 +275,10 @@ Implements Beacon.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mMultipliers As Beacon.Range
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mNumItemSetsPower As Double
 	#tag EndProperty
 
@@ -314,6 +327,7 @@ Implements Beacon.Countable
 		#tag Setter
 			Set
 			  Self.mType = Value
+			  Self.mMultipliers = Beacon.Data.MultipliersForLootSource(Value)
 			End Set
 		#tag EndSetter
 		Type As Text

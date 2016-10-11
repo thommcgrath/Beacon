@@ -37,7 +37,7 @@ Inherits Application
 
 	#tag Event
 		Sub Open()
-		  LocalData.SharedInstance.LoadPresets()
+		  Beacon.Data = New LocalData
 		  
 		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
 		  If IdentityFile.Exists Then

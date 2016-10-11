@@ -1149,7 +1149,7 @@ End
 		    Redim Win.mSelectedEngrams(UBound(Sources))
 		    For I As Integer = 0 To UBound(Sources)
 		      Dim Source As Beacon.SetEntry = Sources(I)
-		      Win.mSelectedEngrams(I) = New Beacon.Engram(LocalData.SharedInstance.NameOfEngram(Source(0).ClassString), Source(0).ClassString)
+		      Win.mSelectedEngrams(I) = New Beacon.Engram(Beacon.Data.NameOfEngram(Source(0).ClassString), Source(0).ClassString)
 		    Next
 		    Win.NameField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).Name, "Multiple")
 		    Win.ClassField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).ClassString, "Multiple")
@@ -1242,7 +1242,7 @@ End
 		    FilterField.Text = SearchText
 		  End If
 		  
-		  Dim Engrams() As Beacon.Engram = LocalData.SharedInstance.SearchForEngrams(SearchText.ToText)
+		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText)
 		  EngramList.DeleteAllRows
 		  
 		  Dim PerfectMatch As Boolean

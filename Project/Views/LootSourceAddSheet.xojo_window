@@ -162,7 +162,7 @@ End
 		Shared Function Present(Parent As DocWindow, Document As Beacon.Document) As Beacon.LootSource
 		  Static AllowedLootSources() As Beacon.LootSource
 		  If UBound(AllowedLootSources) = -1 Then
-		    AllowedLootSources = LocalData.SharedInstance.SearchForLootSources("")
+		    AllowedLootSources = Beacon.Data.SearchForLootSources("")
 		  End If
 		  
 		  Dim Win As New LootSourceAddSheet

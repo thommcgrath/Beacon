@@ -634,7 +634,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BuildPresetMenu(Parent As MenuItem)
-		  Dim Presets() As Beacon.Preset = LocalData.SharedInstance.Presets
+		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets
 		  Dim Groups As New Dictionary
 		  Dim GroupNames() As Text
 		  For Each Preset As Beacon.Preset In Presets
@@ -982,7 +982,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
+		  If Not Board.RawDataAvailable(Self.kClipboardType) Or UBound(Self.mSources) = -1 Then
 		    Return
 		  End If
 		  
@@ -995,7 +995,7 @@ End
 		    Return
 		  End Try
 		  
-		  Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Dict)
+		  Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Dict, Self.mSources(0))
 		  Self.AddSet(Set)
 		End Sub
 	#tag EndEvent

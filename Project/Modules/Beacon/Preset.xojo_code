@@ -103,6 +103,7 @@ Implements Beacon.Countable
 		  Preset.MaxItems = Dict.Lookup("Max", Preset.MaxItems)
 		  Preset.Weight = Dict.Lookup("Weight", Preset.Weight)
 		  
+		  Dim Multipliers As New Beacon.Range(1, 1)
 		  Dim Contents As Xojo.Core.Dictionary = Dict.Lookup("Contents", Nil)
 		  If Contents <> Nil Then
 		    For Each Set As Xojo.Core.DictionaryEntry In Contents
@@ -110,7 +111,7 @@ Implements Beacon.Countable
 		      Dim ValidForScorched As Boolean = (Set.Key = "Common" Or Set.Key = "Scorched")
 		      Dim Items() As Auto = Set.Value
 		      For Each Item As Xojo.Core.Dictionary In Items
-		        Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Item)
+		        Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Item, Multipliers)
 		        If Entry <> Nil Then
 		          Dim Child As New Beacon.PresetEntry(Entry)
 		          Child.ValidForIsland = ValidForIsland

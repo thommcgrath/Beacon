@@ -93,7 +93,7 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.ItemSet
+		Shared Function Import(Dict As Xojo.Core.Dictionary, Source As Beacon.LootSource) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
 		  Set.MinNumItems = Dict.Lookup("MinNumItems", Set.MinNumItems)
 		  Set.MaxNumItems = Dict.Lookup("MaxNumItems", Set.MaxNumItems)
@@ -119,7 +119,7 @@ Implements Beacon.Countable
 		    Children = Dict.Value("Items")
 		  End If
 		  For Each Child As Xojo.Core.Dictionary In Children
-		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Child)
+		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Child, Source.Multipliers)
 		    If Entry <> Nil Then
 		      Set.Append(Entry)
 		    End If
@@ -338,11 +338,6 @@ Implements Beacon.Countable
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="Hash"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true

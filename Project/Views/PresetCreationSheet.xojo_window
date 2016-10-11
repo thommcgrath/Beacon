@@ -1264,7 +1264,7 @@ End
 		  Win.StandardQuantityField.Text = Preset.QuantityMultiplier(Beacon.LootSource.Kinds.Standard).ToText(Xojo.Core.Locale.Current)
 		  
 		  For Each Entry As Beacon.PresetEntry In Preset
-		    Win.ContentsList.AddRow("", "", LocalData.SharedInstance.Describe(Entry))
+		    Win.ContentsList.AddRow("", "", Entry.Description)
 		    
 		    Dim Idx As Integer = Win.ContentsList.LastIndex
 		    Win.ContentsList.CellCheck(Idx, 0) = Entry.ValidForIsland
@@ -1272,7 +1272,7 @@ End
 		    Win.ContentsList.RowTag(Idx) = Entry
 		  Next
 		  
-		  Win.DeleteButton.Visible = AllowDelete And LocalData.SharedInstance.IsPresetCustom(Preset)
+		  Win.DeleteButton.Visible = AllowDelete And Beacon.Data.IsPresetCustom(Preset)
 		  
 		  Win.ShowWithin(Parent.TrueWindow)
 		End Sub
@@ -1310,7 +1310,7 @@ End
 		    Preset.Append(Entry)
 		  Next
 		  
-		  LocalData.SharedInstance.SavePreset(Preset)
+		  Beacon.Data.SavePreset(Preset)
 		  
 		  Self.Close
 		End Sub
@@ -1341,7 +1341,7 @@ End
 #tag Events DeleteButton
 	#tag Event
 		Sub Action()
-		  LocalData.SharedInstance.RemovePreset(Self.mPreset)
+		  Beacon.Data.RemovePreset(Self.mPreset)
 		  Self.Close
 		End Sub
 	#tag EndEvent
