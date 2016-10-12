@@ -2,7 +2,7 @@
 Protected Class SetEntry
 Implements Beacon.Countable
 	#tag Method, Flags = &h0
-		Sub Append(Item As Beacon.ItemClass)
+		Sub Append(Item As Beacon.SetEntryOption)
 		  Self.mItems.Append(Item)
 		End Sub
 	#tag EndMethod
@@ -31,7 +31,7 @@ Implements Beacon.Countable
 		  Self.mWeight = Source.mWeight
 		  
 		  For I As Integer = 0 To UBound(Source.mItems)
-		    Self.mItems(I) = New Beacon.ItemClass(Source.mItems(I))
+		    Self.mItems(I) = New Beacon.SetEntryOption(Source.mItems(I))
 		  Next
 		End Sub
 	#tag EndMethod
@@ -47,7 +47,7 @@ Implements Beacon.Countable
 		  If UBound(Self.mItems) = -1 Then
 		    Return "No Items"
 		  ElseIf UBound(Self.mItems) = 0 Then
-		    Return Beacon.Data.NameOfEngram(Self.mItems(0).ClassString)
+		    Return Self.mItems(0).Engram.Name
 		  Else
 		    Dim TotalWeight As Double
 		    For I As Integer = 0 To UBound(Self.mItems)
@@ -57,7 +57,7 @@ Implements Beacon.Countable
 		    Dim Labels() As Text
 		    For I As Integer = 0 To UBound(Self.mItems)
 		      Dim Weight As Double = Self.mItems(I).Weight / TotalWeight
-		      Labels.Append(Beacon.Data.NameOfEngram(Self.mItems(I).ClassString) + ":" + Weight.ToText(Xojo.Core.Locale.Current, "0%"))
+		      Labels.Append(Self.mItems(I).Engram.Name + ":" + Weight.ToText(Xojo.Core.Locale.Current, "0%"))
 		    Next
 		    Return Text.Join(Labels, ", ")
 		  End If
@@ -67,7 +67,7 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Children() As Xojo.Core.Dictionary
-		  For Each Item As Beacon.ItemClass In Self.mItems
+		  For Each Item As Beacon.SetEntryOption In Self.mItems
 		    Children.Append(Item.Export)
 		  Next
 		  
@@ -166,7 +166,7 @@ Implements Beacon.Countable
 		    
 		    For I As Integer = 0 To UBound(ClassStrings)
 		      Try
-		        Entry.Append(New Beacon.ItemClass(ClassStrings(I), ClassWeights(I)))
+		        Entry.Append(New Beacon.SetEntryOption(ClassStrings(I), ClassWeights(I)))
 		      Catch Err As TypeMismatchException
 		        Continue
 		      End Try
@@ -174,7 +174,7 @@ Implements Beacon.Countable
 		  ElseIf Dict.HasKey("Items") Then
 		    Dim Children() As Auto = Dict.Value("Items")
 		    For Each Child As Xojo.Core.Dictionary In Children
-		      Entry.Append(Beacon.ItemClass.Import(Child))
+		      Entry.Append(Beacon.SetEntryOption.Import(Child))
 		    Next
 		  End If
 		  
@@ -183,7 +183,7 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IndexOf(Item As Beacon.ItemClass) As Integer
+		Function IndexOf(Item As Beacon.SetEntryOption) As Integer
 		  For I As Integer = 0 To UBound(Self.mItems)
 		    If Self.mItems(I) = Item Then
 		      Return I
@@ -194,7 +194,7 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Insert(Index As Integer, Item As Beacon.ItemClass)
+		Sub Insert(Index As Integer, Item As Beacon.SetEntryOption)
 		  Self.mItems.Insert(Index, Item)
 		End Sub
 	#tag EndMethod
@@ -229,13 +229,13 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Subscript(Index As Integer) As Beacon.ItemClass
+		Function Operator_Subscript(Index As Integer) As Beacon.SetEntryOption
 		  Return Self.mItems(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Subscript(Index As Integer, Assigns Item As Beacon.ItemClass)
+		Sub Operator_Subscript(Index As Integer, Assigns Item As Beacon.SetEntryOption)
 		  Self.mItems(Index) = Item
 		End Sub
 	#tag EndMethod
@@ -252,7 +252,7 @@ Implements Beacon.Countable
 		  Redim Classes(UBound(Self.mItems))
 		  Redim Weights(UBound(Self.mItems))
 		  For I As Integer = 0 To UBound(Self.mItems)
-		    Classes(I) = Self.mItems(I).ClassString
+		    Classes(I) = Self.mItems(I).Engram.ClassString
 		    Weights(I) = Self.mItems(I).Weight.ToText
 		  Next
 		  
@@ -382,7 +382,7 @@ Implements Beacon.Countable
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mItems() As Beacon.ItemClass
+		Private mItems() As Beacon.SetEntryOption
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -38,10 +38,10 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Label As Text, Type As Text)
+		Sub Constructor(Type As Text)
 		  Self.Constructor()
 		  Self.mType = Type
-		  Self.mLabel = Label
+		  Self.mLabel = Beacon.Data.NameOfLootSource(Type)
 		  Self.mMultipliers = Beacon.Data.MultipliersForLootSource(Type)
 		End Sub
 	#tag EndMethod
@@ -61,7 +61,6 @@ Implements Beacon.Countable
 		  
 		  Dim Keys As New Xojo.Core.Dictionary
 		  Keys.Value("ItemSets") = Children
-		  Keys.Value("Label") = Self.Label
 		  Keys.Value("MaxItemSets") = Self.MaxItemSets
 		  Keys.Value("MinItemSets") = Self.MinItemSets
 		  Keys.Value("NumItemSetsPower") = Self.NumItemSetsPower
@@ -86,10 +85,6 @@ Implements Beacon.Countable
 		    LootSource.Type = Dict.Value("SupplyCrateClassString")
 		  Else
 		    LootSource.Type = Dict.Value("Type")
-		  End If
-		  
-		  If Dict.HasKey("Label") Then
-		    LootSource.Label = Dict.Value("Label")
 		  End If
 		  
 		  LootSource.MaxItemSets = Dict.Lookup("MaxItemSets", LootSource.MaxItemSets)
@@ -222,11 +217,6 @@ Implements Beacon.Countable
 			  End If
 			End Get
 		#tag EndGetter
-		#tag Setter
-			Set
-			  Self.mLabel = Value
-			End Set
-		#tag EndSetter
 		Label As Text
 	#tag EndComputedProperty
 
@@ -328,6 +318,7 @@ Implements Beacon.Countable
 			Set
 			  Self.mType = Value
 			  Self.mMultipliers = Beacon.Data.MultipliersForLootSource(Value)
+			  Self.mLabel = Beacon.Data.NameOfLootSource(Value)
 			End Set
 		#tag EndSetter
 		Type As Text

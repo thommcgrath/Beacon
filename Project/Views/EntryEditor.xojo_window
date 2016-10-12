@@ -44,7 +44,6 @@ Begin Window EntryEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   1
       Visible         =   True
@@ -288,7 +287,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Untitled"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -323,7 +321,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Untitled"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -358,7 +355,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   4
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Class:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -393,7 +389,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Name:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -576,7 +571,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   12
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Min Quantity:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -611,7 +605,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   13
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Max Quantity:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -646,7 +639,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   14
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Min Quality:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -681,7 +673,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   15
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Max Quality:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -716,7 +707,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   16
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Weight:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -779,7 +769,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   18
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "100"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -842,7 +831,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   20
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "25%"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -877,7 +865,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   21
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Chance To Be Blueprint:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1104,7 +1091,6 @@ Begin Window EntryEditor
          Selectable      =   False
          TabIndex        =   4
          TabPanelIndex   =   1
-         TabStop         =   True
          Text            =   "No items selected"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -1149,7 +1135,7 @@ End
 		    Redim Win.mSelectedEngrams(UBound(Sources))
 		    For I As Integer = 0 To UBound(Sources)
 		      Dim Source As Beacon.SetEntry = Sources(I)
-		      Win.mSelectedEngrams(I) = New Beacon.Engram(Beacon.Data.NameOfEngram(Source(0).ClassString), Source(0).ClassString)
+		      Win.mSelectedEngrams(I) = Source(0).Engram
 		    Next
 		    Win.NameField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).Name, "Multiple")
 		    Win.ClassField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).ClassString, "Multiple")
@@ -1206,7 +1192,7 @@ End
 		  Else
 		    For Each Engram As Beacon.Engram In Win.mSelectedEngrams
 		      Dim Entry As New Beacon.SetEntry
-		      Entry.Append(New Beacon.ItemClass(Engram.ClassString, 1))
+		      Entry.Append(New Beacon.SetEntryOption(Engram.ClassString, 1))
 		      Entries.Append(Entry)
 		    Next
 		  End If
@@ -1257,9 +1243,10 @@ End
 		  Next
 		  
 		  If Not PerfectMatch And SearchText <> "" Then
-		    EngramList.AddRow(SearchText, SearchText)
-		    EngramList.RowTag(EngramList.LastIndex) = New Beacon.Engram("", SearchText.ToText)
-		    Indexes.Value(SearchText) = EngramList.LastIndex
+		    Dim Engram As New Beacon.Engram(SearchText.ToText)
+		    EngramList.AddRow("", Engram.Name, Engram.ClassString)
+		    EngramList.RowTag(EngramList.LastIndex) = Engram
+		    Indexes.Value(Engram.ClassString) = EngramList.LastIndex
 		  End If
 		  
 		  For Each Engram As Beacon.Engram In Self.mSelectedEngrams
@@ -1376,7 +1363,7 @@ End
 #tag EndEvents
 #tag Events QualityMenus
 	#tag Event
-		Sub Open()
+		Sub Open(index as Integer)
 		  Me.DeleteAllRows()
 		  
 		  Dim Value As Integer

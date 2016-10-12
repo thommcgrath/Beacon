@@ -233,7 +233,7 @@ Implements Beacon.DataSource
 		  Dim RS As RecordSet
 		  Try
 		    If SearchText = "" Then
-		      RS = Self.SQLSelect("SELECT ""label"", ""classstring"" FROM ""engrams"" ORDER BY ""label"";")
+		      RS = Self.SQLSelect("SELECT ""classstring"" FROM ""engrams"" ORDER BY ""label"";")
 		    Else
 		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"", ""classstring"" FROM ""engrams"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
 		      Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
@@ -249,7 +249,7 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  while Not RS.EOF
-		    Results.Append(New Beacon.Engram(RS.Field("label").StringValue.ToText, RS.Field("classstring").StringValue.ToText))
+		    Results.Append(New Beacon.Engram(RS.Field("classstring").StringValue.ToText))
 		    RS.MoveNext
 		  wend
 		  
@@ -266,7 +266,7 @@ Implements Beacon.DataSource
 		  Dim RS As RecordSet
 		  Try
 		    If SearchText = "" Then
-		      RS = Self.SQLSelect("SELECT ""label"", ""classstring"" FROM ""loot_sources"" ORDER BY ""label"";")
+		      RS = Self.SQLSelect("SELECT ""classstring"" FROM ""loot_sources"" ORDER BY ""label"";")
 		    Else
 		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"", ""classstring"" FROM ""loot_sources"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
 		      Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
@@ -282,7 +282,7 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  while Not RS.EOF
-		    Results.Append(New Beacon.LootSource(RS.Field("label").StringValue.ToText, RS.Field("classstring").StringValue.ToText))
+		    Results.Append(New Beacon.LootSource(RS.Field("classstring").StringValue.ToText))
 		    RS.MoveNext
 		  wend
 		  

@@ -7,29 +7,26 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Name As Text, ClassString As Text)
-		  Self.mName = Name
+		Sub Constructor(ClassString As Text)
 		  Self.mClassString = ClassString
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Name() As Text
-		  If Self.mName = "" Then
-		    Return Self.mClassString
-		  Else
-		    Return Self.mName
-		  End If
+		  Return Beacon.Data.NameOfEngram(Self.mClassString)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Operator_Convert(ClassString As Text)
+		  Self.Constructor(ClassString)
+		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
 		Private mClassString As Text
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mName As Text
 	#tag EndProperty
 
 
@@ -46,11 +43,6 @@ Protected Class Engram
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mName"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty

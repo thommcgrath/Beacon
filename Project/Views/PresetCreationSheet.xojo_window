@@ -1272,7 +1272,7 @@ End
 		    Win.ContentsList.RowTag(Idx) = Entry
 		  Next
 		  
-		  Win.DeleteButton.Visible = AllowDelete And Beacon.Data.IsPresetCustom(Preset)
+		  Win.DeleteButton.Visible = AllowDelete And Preset.IsCustom
 		  
 		  Win.ShowWithin(Parent.TrueWindow)
 		End Sub

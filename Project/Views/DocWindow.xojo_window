@@ -438,7 +438,6 @@ End
 			Dim Source As Beacon.LootSource = BeaconList.RowTag(BeaconList.ListIndex)
 			LootSource.Constructor(Source)
 			LootSource.Type = Type
-			LootSource.Label = Label
 			
 			BeaconList.AddRow(LootSource.Label)
 			BeaconList.RowTag(BeaconList.LastIndex) = LootSource
@@ -952,7 +951,6 @@ End
 		    Me.Reset
 		    
 		    For Each LootSource As Beacon.LootSource In LootSources
-		      LootSource.Label = Beacon.Data.NameOfLootSource(LootSource.Type)
 		      Self.AddLootSource(LootSource)
 		    Next
 		    Return

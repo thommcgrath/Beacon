@@ -25,82 +25,6 @@ Begin ContainerControl BeaconEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   598
-   Begin UITweaks.ResizedTextField LabelField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   102
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   476
-   End
-   Begin Label LabelLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      Text            =   "Label:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   70
-   End
    Begin UITweaks.ResizedTextField MinSetsField
       AcceptTabs      =   False
       Alignment       =   0
@@ -137,7 +61,7 @@ Begin ContainerControl BeaconEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   20
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -171,7 +95,7 @@ Begin ContainerControl BeaconEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   20
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -213,7 +137,7 @@ Begin ContainerControl BeaconEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   20
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -247,7 +171,7 @@ Begin ContainerControl BeaconEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   20
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -279,7 +203,7 @@ Begin ContainerControl BeaconEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   54
       Underline       =   False
       Value           =   True
       Visible         =   True
@@ -307,7 +231,7 @@ Begin ContainerControl BeaconEditor
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   120
+      Top             =   86
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -331,7 +255,7 @@ Begin ContainerControl BeaconEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   318
+      Height          =   352
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -355,7 +279,7 @@ Begin ContainerControl BeaconEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   121
+      Top             =   87
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -371,7 +295,7 @@ Begin ContainerControl BeaconEditor
       DoubleBuffer    =   True
       Enabled         =   True
       EraseBackground =   False
-      Height          =   343
+      Height          =   377
       HelpTag         =   ""
       Index           =   1
       InitialParent   =   ""
@@ -385,7 +309,7 @@ Begin ContainerControl BeaconEditor
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   121
+      Top             =   87
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -400,7 +324,7 @@ Begin ContainerControl BeaconEditor
       Enabled         =   False
       EraseBackground =   True
       HasBackColor    =   False
-      Height          =   343
+      Height          =   377
       HelpTag         =   ""
       InitialParent   =   ""
       Left            =   191
@@ -413,7 +337,7 @@ Begin ContainerControl BeaconEditor
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   121
+      Top             =   87
       Transparent     =   True
       UseFocusRing    =   False
       Visible         =   True
@@ -621,7 +545,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub AddTemplate(Set As Beacon.ItemSet, ClassString As String, MinQuantity As Integer, MaxQuantity As Integer, Weight As Double = 1, MinQuality As Beacon.Qualities = Beacon.Qualities.Primitive, MaxQuality As Beacon.Qualities = Beacon.Qualities.Primitive)
 		  Dim Entry As New Beacon.SetEntry
-		  Entry.Append(New Beacon.ItemClass(ClassString.ToText, 1))
+		  Entry.Append(New Beacon.SetEntryOption(ClassString.ToText, 1))
 		  Entry.MinQuantity = MinQuantity
 		  Entry.MaxQuantity = MaxQuantity
 		  Entry.MinQuality = MinQuality
@@ -812,7 +736,6 @@ End
 		  Next
 		  
 		  If UBound(Self.mSources) = -1 Then
-		    LabelField.Text = ""
 		    MaxSetsField.Text = ""
 		    MinSetsField.Text = ""
 		    DuplicatesCheck.Value = True
@@ -836,7 +759,6 @@ End
 		      End If
 		    Next
 		    
-		    LabelField.Text = Label
 		    MaxSetsField.Text = Str(MaxSets, "-0")
 		    MinSetsField.Text = Str(MinSets, "-0")
 		    DuplicatesCheck.State = DuplicatesState
@@ -867,22 +789,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events LabelField
-	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating = True Then
-		    Return
-		  End If
-		  
-		  Dim Updated As Boolean
-		  For Each Source As Beacon.LootSource In Self.mSources
-		    Source.Label = Me.Text.ToText
-		    Updated = True
-		  Next
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events MinSetsField
 	#tag Event
 		Sub TextChange()
