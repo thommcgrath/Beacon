@@ -25,6 +25,10 @@
 					Subdirectory = 
 					FolderItem = Li4vLi4vUHJlc2V0cy8=
 				End
+				Begin IDEScriptBuildStep DownloadClasses , AppliesTo = 2
+					Dim App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
+					Call DoShellCommand("/usr/bin/curl https://thezaz.com/beacon/classes.php > " + App + "/Contents/Resources/Classes.json")
+				End
 			End
 			Begin BuildStepList Windows
 				Begin BuildProjectStep Build

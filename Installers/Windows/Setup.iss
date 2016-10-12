@@ -30,9 +30,10 @@ SolidCompression=yes
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "\\vmware-host\Shared Folders\Beacon\Project\Builds - Beacon.xojo_project\Windows\Beacon\Beacon.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "\\vmware-host\Shared Folders\Beacon\Project\Builds - Beacon.xojo_project\Windows\Beacon\Beacon Libs\*"; DestDir: "{app}\Libs"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "\\vmware-host\Shared Folders\Beacon\Project\Builds - Beacon.xojo_project\Windows\Beacon\Beacon Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\Beacon.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\Beacon Libs\*"; DestDir: "{app}\Libs"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\Beacon Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\Project\Builds - Beacon.xojo_project\Mac OS X (Cocoa Intel)\Beacon.app\Contents\Resources\Classes.json"; DestDir: "{app}\Resources"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
