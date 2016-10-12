@@ -1214,6 +1214,13 @@ Implements Beacon.DataSource
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function UpdateToVersion5() As Boolean
+		  Self.SQLExecute("INSERT INTO ""engrams"" (""classstring"", ""label"") VALUES ('PrimalItemConsumable_Egg_Galli_C', 'Gallimimus Egg');")
+		  Return True
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mBase As SQLiteDatabase
@@ -1224,7 +1231,7 @@ Implements Beacon.DataSource
 	#tag EndProperty
 
 
-	#tag Constant, Name = CurrentVersion, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = CurrentVersion, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
 
