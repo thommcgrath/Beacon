@@ -115,6 +115,7 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -307,6 +308,7 @@ Begin Window DocWindow
       Width           =   190
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -316,6 +318,7 @@ Begin Window DocWindow
       TabPanelIndex   =   0
    End
    Begin Beacon.RepositoryEngine Repository
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -434,7 +437,6 @@ End
 			Dim LootSource As Beacon.LootSource = LootSourceAddSheet.Present(Self, Self.Doc)
 			If LootSource <> Nil Then
 			Dim Type As Text = LootSource.Type
-			Dim Label As Text = LootSource.Label
 			Dim Source As Beacon.LootSource = BeaconList.RowTag(BeaconList.ListIndex)
 			LootSource.Constructor(Source)
 			LootSource.Type = Type
@@ -966,6 +968,9 @@ End
 #tag Events Repository
 	#tag Event
 		Sub DocumentStatus(Published As Boolean, AuthorID As Text, LastUpdate As Xojo.Core.Date, ContentHash As Text)
+		  #Pragma Unused LastUpdate
+		  #Pragma Unused ContentHash
+		  
 		  Self.mIsPublished = Published
 		  Self.mPublishedByUser = AuthorID = App.Identity.Identifier
 		End Sub

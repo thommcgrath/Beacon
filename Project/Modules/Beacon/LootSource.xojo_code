@@ -135,7 +135,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function IsScorchedEarth() As Boolean
-		  Return Self.mType.Right(16) = "_ScorchedEarth_C" Or Self.mType.Right(5) = "_SE_C"
+		  Return (Self.mType.Length >= 16 And Self.mType.Right(16) = "_ScorchedEarth_C") Or (Self.mType.Length >= 5 And Self.mType.Right(5) = "_SE_C")
 		End Function
 	#tag EndMethod
 

@@ -216,6 +216,11 @@ Inherits Application
 		Private Function mFileLoader_AuthenticationRequired(Sender As Xojo.Net.HTTPSocket, Realm As Text, ByRef Name As Text, ByRef Password As Text) As Boolean
 		  // Can't authenticate
 		  
+		  #Pragma Unused Sender
+		  #Pragma Unused Realm
+		  #Pragma Unused Name
+		  #Pragma Unused Password
+		  
 		  Self.mFileLoading = False
 		  Self.DownloadNextFile
 		  Return False
@@ -224,6 +229,9 @@ Inherits Application
 
 	#tag Method, Flags = &h21
 		Private Sub mFileLoader_Error(Sender As Xojo.Net.HTTPSocket, Err As RuntimeException)
+		  #Pragma Unused Sender
+		  #Pragma Unused Err
+		  
 		  Self.mFileLoading = False
 		  Self.DownloadNextFile
 		End Sub
@@ -231,6 +239,10 @@ Inherits Application
 
 	#tag Method, Flags = &h21
 		Private Sub mFileLoader_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
+		  #Pragma Unused Sender
+		  #Pragma Unused URL
+		  #Pragma Unused HTTPStatus
+		  
 		  Self.mFileLoading = False
 		  Self.DownloadNextFile
 		  
