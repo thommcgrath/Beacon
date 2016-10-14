@@ -1,5 +1,9 @@
 # Beacon Version History
 
+## Build 7
+
+- Fixing cast issue with importing from text.
+
 ## Build 6
 
 - Added missing items to presets: night vision goggles, tapejara saddle, metal sword, pike, water jar, and canteen.
