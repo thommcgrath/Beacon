@@ -166,7 +166,9 @@ Implements Beacon.Countable
 		    
 		    For I As Integer = 0 To UBound(ClassStrings)
 		      Try
-		        Entry.Append(New Beacon.SetEntryOption(ClassStrings(I), ClassWeights(I)))
+		        Dim ClassString As Text = ClassStrings(I)
+		        Dim ClassWeight As Double = ClassWeights(I)
+		        Entry.Append(New Beacon.SetEntryOption(ClassString, ClassWeight))
 		      Catch Err As TypeMismatchException
 		        Continue
 		      End Try
