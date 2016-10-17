@@ -120,7 +120,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function MultipliersForLootSource(Extends Source As Beacon.DataSource, LootSource As Beacon.LootSource) As Beacon.Range
-		  Return Source.MultipliersForLootSource(LootSource.Type)
+		  Return Source.MultipliersForLootSource(LootSource.ClassString)
 		End Function
 	#tag EndMethod
 
