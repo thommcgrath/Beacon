@@ -45,7 +45,7 @@ Begin Window EntryEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   592
       Begin PushButton CancelButton
@@ -1130,53 +1130,37 @@ End
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Sources() As Beacon.SetEntry = Nil) As Beacon.SetEntry()
 		  Dim Win As New EntryEditor
-		  If Sources <> Nil And UBound(Sources) > -1 Then
-		    Win.mEditing = True
-		    Redim Win.mSelectedEngrams(UBound(Sources))
+		  
+		  If Sources <> Nil Then
+		    Redim Win.mEntries(UBound(Sources))
 		    For I As Integer = 0 To UBound(Sources)
-		      Dim Source As Beacon.SetEntry = Sources(I)
-		      Win.mSelectedEngrams(I) = Source(0).Engram
+		      Win.mEntries(I) = New Beacon.SetEntry(Sources(I))
 		    Next
-		    Win.NameField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).Label, "Multiple")
-		    Win.ClassField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).ClassString, "Multiple")
+		  End If
+		  
+		  If UBound(Win.mEntries) > -1 Then
+		    Win.mEditing = True
 		    Win.PagePanel1.Value = 1
 		    Win.BackButton.Caption = "Cancel"
 		    Win.DoneButton.Caption = "Save"
-		    
-		    Dim MinQuantities(), MaxQuantities() As Integer
-		    Dim MinQualities(), MaxQualities() As Beacon.Qualities
-		    Dim TotalWeight, TotalChance As Double
-		    For Each Source As Beacon.SetEntry In Sources
-		      MinQuantities.Append(Source.MinQuantity)
-		      MaxQuantities.Append(Source.MaxQuantity)
-		      TotalWeight = TotalWeight + Source.Weight
-		      TotalChance = TotalChance + Source.ChanceToBeBlueprint
-		      MinQualities.Append(Source.MinQuality)
-		      MaxQualities.Append(Source.MaxQuality)
-		    Next
-		    
-		    MinQuantities.Sort
-		    MaxQuantities.Sort
-		    MinQualities.Sort
-		    MaxQualities.Sort
-		    
-		    Win.MinQuantityField.Text = Str(MinQuantities(0))
-		    Win.MaxQuantityField.Text = Str(MaxQuantities(UBound(MaxQuantities)))
-		    Win.WeightSlider.Value = 100 * (TotalWeight / (UBound(Sources) + 1))
-		    Win.ChanceSlider.Value = 100 * (TotalChance / (UBound(Sources) + 1))
-		    
-		    Win.MinQualityMenu.SelectByTag(MinQualities(0))
-		    Win.MaxQualityMenu.SelectByTag(MaxQualities(UBound(MaxQualities)))
-		    
-		    If UBound(Sources) > 0 Then
-		      Win.EditChanceCheck.Visible = True
-		      Win.EditMaxQualityCheck.Visible = True
-		      Win.EditMaxQuantityCheck.Visible = True
-		      Win.EditMinQualityCheck.Visible = True
-		      Win.EditMinQuantityCheck.Visible = True
-		      Win.EditWeightCheck.Visible = True
-		    End If
 		  End If
+		  
+		  If UBound(Win.mEntries) > 0 Then
+		    Win.EditChanceCheck.Visible = True
+		    Win.EditMaxQualityCheck.Visible = True
+		    Win.EditMaxQuantityCheck.Visible = True
+		    Win.EditMinQualityCheck.Visible = True
+		    Win.EditMinQuantityCheck.Visible = True
+		    Win.EditWeightCheck.Visible = True
+		    
+		    Win.EditChanceCheck.Value = False
+		    Win.EditMaxQualityCheck.Value = False
+		    Win.EditMaxQuantityCheck.Value = False
+		    Win.EditMinQualityCheck.Value = False
+		    Win.EditMinQuantityCheck.Value = False
+		    Win.EditWeightCheck.Value = False
+		  End If
+		  
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  If Win.mCancelled Then
@@ -1184,39 +1168,7 @@ End
 		    Return Nil
 		  End If
 		  
-		  Dim Entries() As Beacon.SetEntry
-		  If Win.mEditing Then
-		    For Each Source As Beacon.SetEntry In Sources
-		      Entries.Append(New Beacon.SetEntry(Source))
-		    Next
-		  Else
-		    For Each Engram As Beacon.Engram In Win.mSelectedEngrams
-		      Dim Entry As New Beacon.SetEntry
-		      Entry.Append(New Beacon.SetEntryOption(Engram, 1))
-		      Entries.Append(Entry)
-		    Next
-		  End If
-		  
-		  For Each Entry As Beacon.SetEntry In Entries
-		    If Win.EditMaxQuantityCheck.Value Then
-		      Entry.MaxQuantity = Val(Win.MaxQuantityField.Text)
-		    End If
-		    If Win.EditMinQuantityCheck.Value Then
-		      Entry.MinQuantity = Val(Win.MinQuantityField.Text)
-		    End If
-		    If Win.EditChanceCheck.Value Then
-		      Entry.ChanceToBeBlueprint = Win.ChanceSlider.Value / 100
-		    End If
-		    If Win.EditWeightCheck.Value Then
-		      Entry.Weight = Win.WeightSlider.Value / 100
-		    End If
-		    If Win.EditMaxQualityCheck.Value Then
-		      Entry.MaxQuality = Win.MaxQualityMenu.Tag
-		    End If
-		    If Win.EditMinQualityCheck.Value Then
-		      Entry.MinQuality = Win.MinQualityMenu.Tag
-		    End If
-		  Next
+		  Dim Entries() As Beacon.SetEntry = Win.mEntries
 		  Win.Close
 		  Return Entries
 		End Function
@@ -1268,12 +1220,59 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mEntries() As Beacon.SetEntry
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIgnoreChanges As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSelectedEngrams() As Beacon.Engram
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
+#tag Events PagePanel1
+	#tag Event
+		Sub Change()
+		  Select Case Me.Value
+		  Case 0
+		    
+		  Case 1
+		    ClassField.Text = if(UBound(Self.mEntries) = 0, Self.mEntries(0).ClassesLabel, "Multiple")
+		    NameField.Text = if(UBound(Self.mEntries) = 0, Self.mEntries(0).Label, "Multiple")
+		    
+		    Dim MinQuantities(), MaxQuantities() As Integer
+		    Dim MinQualities(), MaxQualities() As Beacon.Qualities
+		    Dim TotalWeight, TotalChance As Double
+		    For Each Entry As Beacon.SetEntry In Self.mEntries
+		      MinQuantities.Append(Entry.MinQuantity)
+		      MaxQuantities.Append(Entry.MaxQuantity)
+		      TotalWeight = TotalWeight + Entry.Weight
+		      TotalChance = TotalChance + Entry.ChanceToBeBlueprint
+		      MinQualities.Append(Entry.MinQuality)
+		      MaxQualities.Append(Entry.MaxQuality)
+		    Next
+		    
+		    MinQuantities.Sort
+		    MaxQuantities.Sort
+		    MinQualities.Sort
+		    MaxQualities.Sort
+		    
+		    Self.mIgnoreChanges = True
+		    MinQuantityField.Text = Str(MinQuantities(0))
+		    MaxQuantityField.Text = Str(MaxQuantities(UBound(MaxQuantities)))
+		    WeightSlider.Value = 100 * (TotalWeight / (UBound(Self.mEntries) + 1))
+		    ChanceSlider.Value = 100 * (TotalChance / (UBound(Self.mEntries) + 1))
+		    MinQualityMenu.SelectByTag(MinQualities(0))
+		    MaxQualityMenu.SelectByTag(MaxQualities(UBound(MaxQualities)))
+		    Self.mIgnoreChanges = False
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
@@ -1285,10 +1284,13 @@ End
 #tag Events NextButton
 	#tag Event
 		Sub Action()
-		  PagePanel1.Value = 1
+		  For Each Engram As Beacon.Engram In Self.mSelectedEngrams
+		    Dim Entry As New Beacon.SetEntry
+		    Entry.Append(New Beacon.SetEntryOption(Engram, 1))
+		    Self.mEntries.Append(Entry)
+		  Next
 		  
-		  ClassField.Text = if(UBound(Self.mSelectedEngrams) = 0, Self.mSelectedEngrams(0).ClassString, "Multiple")
-		  NameField.Text = if(UBound(Self.mSelectedEngrams) = 0, Self.mSelectedEngrams(0).Label, "Multiple")
+		  PagePanel1.Value = 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1307,6 +1309,27 @@ End
 #tag Events DoneButton
 	#tag Event
 		Sub Action()
+		  For Each Entry As Beacon.SetEntry In Self.mEntries
+		    If EditMaxQuantityCheck.Value Then
+		      Entry.MaxQuantity = Val(MaxQuantityField.Text)
+		    End If
+		    If EditMinQuantityCheck.Value Then
+		      Entry.MinQuantity = Val(MinQuantityField.Text)
+		    End If
+		    If EditChanceCheck.Value Then
+		      Entry.ChanceToBeBlueprint = ChanceSlider.Value / 100
+		    End If
+		    If EditWeightCheck.Value Then
+		      Entry.Weight = WeightSlider.Value / 100
+		    End If
+		    If EditMaxQualityCheck.Value Then
+		      Entry.MaxQuality = MaxQualityMenu.Tag
+		    End If
+		    If EditMinQualityCheck.Value Then
+		      Entry.MinQuality = MinQualityMenu.Tag
+		    End If
+		  Next
+		  
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
@@ -1361,6 +1384,28 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events MinQuantityField
+	#tag Event
+		Sub TextChange()
+		  If Self.mIgnoreChanges Then
+		    Return
+		  End If
+		  
+		  EditMinQuantityCheck.Value = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MaxQuantityField
+	#tag Event
+		Sub TextChange()
+		  If Self.mIgnoreChanges Then
+		    Return
+		  End If
+		  
+		  EditMaxQuantityCheck.Value = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events QualityMenus
 	#tag Event
 		Sub Open(index as Integer)
@@ -1382,11 +1427,31 @@ End
 		  Me.ListIndex = 0
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub Change(index as Integer)
+		  If Self.mIgnoreChanges Then
+		    Return
+		  End If
+		  
+		  Select Case Index
+		  Case 0 // Min
+		    EditMinQualityCheck.Value = True
+		  Case 1 // Max
+		    EditMaxQualityCheck.Value = True
+		  End Select
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events WeightSlider
 	#tag Event
 		Sub ValueChanged()
 		  WeightField.Text = Str(Me.Value, "-0")
+		  
+		  If Self.mIgnoreChanges Then
+		    Return
+		  End If
+		  
+		  EditWeightCheck.Value = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1394,6 +1459,12 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  ChanceField.Text = Str(Me.Value, "-0") + "%"
+		  
+		  If Self.mIgnoreChanges Then
+		    Return
+		  End If
+		  
+		  EditChanceCheck.Value = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents

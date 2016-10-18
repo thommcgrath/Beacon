@@ -18,6 +18,26 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ClassesLabel() As Text
+		  If UBound(Self.mItems) = -1 Then
+		    Return "No Items"
+		  ElseIf UBound(Self.mItems) = 0 Then
+		    Return Self.mItems(0).Engram.ClassString
+		  ElseIf UBound(Self.mItems) = 1 Then
+		    Return Self.mItems(0).Engram.ClassString + " or " + Self.mItems(1).Engram.ClassString
+		  Else
+		    Dim Labels() As Text
+		    For I As Integer = 0 To UBound(Self.mItems) - 1
+		      Labels.Append(Self.mItems(I).Engram.ClassString)
+		    Next
+		    Labels.Append(" or " + Self.mItems(UBound(Self.mItems)).Engram.ClassString)
+		    
+		    Return Text.Join(Labels, ", ")
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mMinQuantity = 1
 		  Self.mMaxQuantity = 1
@@ -49,28 +69,6 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function Count() As Integer
 		  Return UBound(Self.mItems) + 1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Description() As Text
-		  If UBound(Self.mItems) = -1 Then
-		    Return "No Items"
-		  ElseIf UBound(Self.mItems) = 0 Then
-		    Return Self.mItems(0).Engram.Label
-		  Else
-		    Dim TotalWeight As Double
-		    For I As Integer = 0 To UBound(Self.mItems)
-		      TotalWeight = TotalWeight + Self.mItems(I).Weight
-		    Next
-		    
-		    Dim Labels() As Text
-		    For I As Integer = 0 To UBound(Self.mItems)
-		      Dim Weight As Double = Self.mItems(I).Weight / TotalWeight
-		      Labels.Append(Self.mItems(I).Engram.Label + ":" + Weight.ToText(Xojo.Core.Locale.Current, "0%"))
-		    Next
-		    Return Text.Join(Labels, ", ")
-		  End If
 		End Function
 	#tag EndMethod
 
@@ -218,6 +216,26 @@ Implements Beacon.Countable
 		    Values.Append(Entry.TextValue(Multipliers))
 		  Next
 		  Return Text.Join(Values, Separator)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Label() As Text
+		  If UBound(Self.mItems) = -1 Then
+		    Return "No Items"
+		  ElseIf UBound(Self.mItems) = 0 Then
+		    Return Self.mItems(0).Engram.Label
+		  ElseIf UBound(Self.mItems) = 1 Then
+		    Return Self.mItems(0).Engram.Label + " or " + Self.mItems(1).Engram.Label
+		  Else
+		    Dim Labels() As Text
+		    For I As Integer = 0 To UBound(Self.mItems) - 1
+		      Labels.Append(Self.mItems(I).Engram.Label)
+		    Next
+		    Labels.Append(" or " + Self.mItems(UBound(Self.mItems)).Engram.Label)
+		    
+		    Return Text.Join(Labels, ", ")
+		  End If
 		End Function
 	#tag EndMethod
 
