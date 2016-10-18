@@ -39,7 +39,7 @@ Protected Class SetEntryOption
 		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.SetEntryOption
 		  Dim ClassString As Text = Dict.Value("Class")
 		  Dim Weight As Double = Dict.Value("Weight")
-		  Return New Beacon.SetEntryOption(ClassString, Weight)
+		  Return New Beacon.SetEntryOption(Beacon.Engram.Lookup(ClassString), Weight)
 		End Function
 	#tag EndMethod
 

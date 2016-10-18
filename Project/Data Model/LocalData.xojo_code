@@ -105,6 +105,54 @@ Implements Beacon.DataSource
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GetEngram(ClassString As Text) As Beacon.Engram
+		  // Part of the Beacon.DataSource interface.
+		  
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""availability"", ""can_blueprint"" FROM ""engrams"" WHERE LOWER(""classstring"") = ?;")
+		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		  
+		  Dim StringValue As String = Lowercase(ClassString)
+		  
+		  Dim RS As RecordSet
+		  Try
+		    RS = Self.SQLSelect(Statement, StringValue)
+		  Catch Err As UnsupportedOperationException
+		    Return Nil
+		  End Try
+		  If RS = Nil Or RS.RecordCount = 0 Then
+		    Return Nil
+		  End If
+		  
+		  Dim Engrams() As Beacon.Engram = Self.RecordSetToEngram(RS)
+		  Return Engrams(0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetLootSource(ClassString As Text) As Beacon.LootSource
+		  // Part of the Beacon.DataSource interface.
+		  
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"" FROM ""loot_sources"" WHERE LOWER(""classstring"") = ?;")
+		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		  
+		  Dim StringValue As String = Lowercase(ClassString)
+		  
+		  Dim RS As RecordSet
+		  Try
+		    RS = Self.SQLSelect(Statement, StringValue)
+		  Catch Err As UnsupportedOperationException
+		    Return Nil
+		  End Try
+		  If RS = Nil Or RS.RecordCount = 0 Then
+		    Return Nil
+		  End If
+		  
+		  Dim Sources() As Beacon.LootSource = Self.RecordSetToLootSource(RS)
+		  Return Sources(0)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub HandleError(SQLString As String, ErrorCode As Integer, ErrorMessage As String)
 		  #Pragma Unused ErrorCode
@@ -236,29 +284,6 @@ Implements Beacon.DataSource
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function MultipliersForLootSource(ClassString As Text) As Beacon.Range
-		  // Part of the Beacon.DataSource interface.
-		  
-		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""multiplier_min"", ""multiplier_max"" FROM ""loot_sources"" WHERE ""classstring"" = ?;")
-		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
-		  
-		  Dim StringValue As String = ClassString
-		  
-		  Dim RS As RecordSet
-		  Try
-		    RS = Self.SQLSelect(Statement, StringValue)
-		  Catch Err As UnsupportedOperationException
-		    Return New Beacon.Range(1, 1)
-		  End Try
-		  If RS = Nil Or RS.RecordCount = 0 Then
-		    Return New Beacon.Range(1, 1)
-		  End If
-		  
-		  Return New Beacon.Range(RS.Field("multiplier_min").DoubleValue, RS.Field("multiplier_max").DoubleValue)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub mUpdater_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Sender
@@ -271,52 +296,6 @@ Implements Beacon.DataSource
 		  Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
 		  Self.Import(TextContent)
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function NameOfEngram(ClassString As Text) As Text
-		  // Part of the Beacon.DataSource interface.
-		  
-		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"" FROM ""engrams"" WHERE ""classstring"" = ?;")
-		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
-		  
-		  Dim StringValue As String = ClassString
-		  
-		  Dim RS As RecordSet
-		  Try
-		    RS = Self.SQLSelect(Statement, StringValue)
-		  Catch Err As UnsupportedOperationException
-		    Return ClassString
-		  End Try
-		  If RS = Nil Or RS.RecordCount = 0 Then
-		    Return ClassString
-		  End If
-		  
-		  Return RS.Field("label").StringValue.ToText
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function NameOfLootSource(ClassString As Text) As Text
-		  // Part of the Beacon.DataSource interface.
-		  
-		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"" FROM ""loot_sources"" WHERE ""classstring"" = ?;")
-		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
-		  
-		  Dim StringValue As String = ClassString
-		  
-		  Dim RS As RecordSet
-		  Try
-		    RS = Self.SQLSelect(Statement, StringValue)
-		  Catch Err As UnsupportedOperationException
-		    Return ClassString
-		  End Try
-		  If RS = Nil Or RS.RecordCount = 0 Then
-		    Return ClassString
-		  End If
-		  
-		  Return RS.Field("label").StringValue.ToText
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -337,6 +316,37 @@ Implements Beacon.DataSource
 		    Results.Append(New Beacon.Preset(Preset))
 		  Next
 		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function RecordSetToEngram(Results As RecordSet) As Beacon.Engram()
+		  Dim Engrams() As Beacon.Engram
+		  While Not Results.EOF
+		    Dim Engram As New Beacon.MutableEngram(Results.Field("classstring").StringValue.ToText)
+		    Engram.Label = Results.Field("label").StringValue.ToText
+		    Engram.Availability = Results.Field("availability").IntegerValue
+		    Engram.CanBeBlueprint = Results.Field("can_blueprint").BooleanValue
+		    Engrams.Append(Engram)
+		    Results.MoveNext
+		  Wend
+		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function RecordSetToLootSource(Results As RecordSet) As Beacon.LootSource()
+		  Dim Sources() As Beacon.LootSource
+		  While Not Results.EOF
+		    Dim Source As New Beacon.MutableLootSource(Results.Field("classstring").StringValue.ToText, True)
+		    Source.Label = Results.Field("label").StringValue.ToText
+		    Source.Kind = Beacon.LootSource.TextToKind(Results.Field("kind").StringValue.ToText)
+		    Source.Package = Beacon.LootSource.IntegerToPackage(Results.Field("engram_mask").IntegerValue)
+		    Source.Multipliers = New Beacon.Range(Results.Field("multiplier_min").IntegerValue, Results.Field("multiplier_max").IntegerValue)
+		    Sources.Append(New Beacon.LootSource(Source))
+		    Results.MoveNext
+		  Wend
+		  Return Sources
 		End Function
 	#tag EndMethod
 
@@ -367,9 +377,9 @@ Implements Beacon.DataSource
 		  Dim RS As RecordSet
 		  Try
 		    If SearchText = "" Then
-		      RS = Self.SQLSelect("SELECT ""classstring"" FROM ""engrams"" ORDER BY ""label"";")
+		      RS = Self.SQLSelect("SELECT ""classstring"", ""label"", ""availability"", ""can_blueprint"" FROM ""engrams"" ORDER BY ""label"";")
 		    Else
-		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"", ""classstring"" FROM ""engrams"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
+		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""availability"", ""can_blueprint"" FROM ""engrams"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
 		      Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		      
 		      Dim StringValue As String = SearchText
@@ -382,10 +392,7 @@ Implements Beacon.DataSource
 		    Return Results()
 		  End If
 		  
-		  while Not RS.EOF
-		    Results.Append(New Beacon.Engram(RS.Field("classstring").StringValue.ToText))
-		    RS.MoveNext
-		  wend
+		  Results = Self.RecordSetToEngram(RS)
 		  
 		  Return Results()
 		End Function
@@ -400,9 +407,9 @@ Implements Beacon.DataSource
 		  Dim RS As RecordSet
 		  Try
 		    If SearchText = "" Then
-		      RS = Self.SQLSelect("SELECT ""classstring"" FROM ""loot_sources"" ORDER BY ""label"";")
+		      RS = Self.SQLSelect("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"" FROM ""loot_sources"" ORDER BY ""label"";")
 		    Else
-		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""label"", ""classstring"" FROM ""loot_sources"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
+		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"" FROM ""loot_sources"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
 		      Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		      
 		      Dim StringValue As String = SearchText
@@ -415,10 +422,7 @@ Implements Beacon.DataSource
 		    Return Results()
 		  End If
 		  
-		  while Not RS.EOF
-		    Results.Append(New Beacon.LootSource(RS.Field("classstring").StringValue.ToText))
-		    RS.MoveNext
-		  wend
+		  Results = Self.RecordSetToLootSource(RS)
 		  
 		  Return Results()
 		End Function

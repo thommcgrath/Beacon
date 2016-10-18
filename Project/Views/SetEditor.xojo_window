@@ -30,17 +30,17 @@ Begin ContainerControl SetEditor
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   False
-      ColumnCount     =   6
+      ColumnCount     =   7
       ColumnsResizable=   False
-      ColumnWidths    =   "*,80,80,80,80,80"
+      ColumnWidths    =   "*,80,80,80,80,80,80"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      GridLinesHorizontal=   1
+      GridLinesVertical=   1
       HasHeading      =   True
       HeadingIndex    =   0
       Height          =   213
@@ -48,7 +48,7 @@ Begin ContainerControl SetEditor
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Description	Min Quantity	Max Quantity	Min Quality	Max Quality	Chance"
+      InitialValue    =   "Description	Min Quantity	Max Quantity	Min Quality	Max Quality	Select %	Blueprint %"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -253,7 +253,7 @@ Begin ContainerControl SetEditor
       Maximum         =   100
       Minimum         =   0
       PageStep        =   25
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -281,7 +281,7 @@ Begin ContainerControl SetEditor
       LockRight       =   False
       LockTop         =   True
       Multiline       =   False
-      Scope           =   0
+      Scope           =   2
       Selectable      =   False
       TabIndex        =   9
       TabPanelIndex   =   0
@@ -730,7 +730,9 @@ End
 		  If Self.mSet <> Nil Then
 		    For I As Integer = 0 To UBound(Self.mSet)
 		      Dim Entry As Beacon.SetEntry = Self.mSet(I)
-		      EntryList.AddRow(Entry.Description, Str(Entry.MinQuantity), Str(Entry.MaxQuantity), Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MaxQuality), Str(Self.mSet.RelativeWeight(I), "0%"))
+		      Dim BlueprintChance As Double = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint, 0)
+		      
+		      EntryList.AddRow(Entry.Description, Str(Entry.MinQuantity), Str(Entry.MaxQuantity), Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MaxQuality), Str(Self.mSet.RelativeWeight(I) * 100, "0") + "%", Str(BlueprintChance * 100, "0") + "%")
 		      EntryList.RowTag(EntryList.LastIndex) = Entry
 		    Next
 		  End If
@@ -887,6 +889,14 @@ End
 		  End If
 		  Return True
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.ColumnAlignment(1) = Listbox.AlignRight
+		  Me.ColumnAlignment(2) = Listbox.AlignRight
+		  Me.ColumnAlignment(5) = Listbox.AlignRight
+		  Me.ColumnAlignment(6) = Listbox.AlignRight
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events LabelField

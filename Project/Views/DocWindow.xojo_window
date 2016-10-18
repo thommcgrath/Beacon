@@ -115,7 +115,6 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -179,7 +178,7 @@ Begin Window DocWindow
       IconPressed     =   0
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   31
+      Left            =   62
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -207,7 +206,7 @@ Begin Window DocWindow
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   62
+      Left            =   93
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -221,7 +220,7 @@ Begin Window DocWindow
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   128
+      Width           =   97
    End
    Begin ControlCanvas Separators
       AcceptFocus     =   False
@@ -263,7 +262,7 @@ Begin Window DocWindow
       HelpTag         =   ""
       Index           =   2
       InitialParent   =   ""
-      Left            =   61
+      Left            =   92
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -308,7 +307,6 @@ Begin Window DocWindow
       Width           =   190
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -318,11 +316,69 @@ Begin Window DocWindow
       TabPanelIndex   =   0
    End
    Begin Beacon.RepositoryEngine Repository
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+   End
+   Begin ControlCanvas Separators
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   24
+      HelpTag         =   ""
+      Index           =   4
+      InitialParent   =   ""
+      Left            =   61
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   556
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
+   End
+   Begin GraphicButton EditBeaconButton
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   False
+      EraseBackground =   True
+      Height          =   24
+      HelpTag         =   "Edit the selected items."
+      IconDisabled    =   0
+      IconNormal      =   0
+      IconPressed     =   0
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   31
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   556
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   30
    End
 End
 #tag EndWindow
@@ -434,19 +490,9 @@ End
 			Return True
 			End If
 			
-			Dim LootSource As Beacon.LootSource = LootSourceAddSheet.Present(Self, Self.Doc)
+			Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentDuplicate(Self, Self.Doc, BeaconList.RowTag(BeaconList.ListIndex))
 			If LootSource <> Nil Then
-			Dim Type As Text = LootSource.Type
-			Dim Source As Beacon.LootSource = BeaconList.RowTag(BeaconList.ListIndex)
-			LootSource.Constructor(Source)
-			LootSource.Type = Type
-			
-			BeaconList.AddRow(LootSource.Label)
-			BeaconList.RowTag(BeaconList.LastIndex) = LootSource
-			BeaconList.ListIndex = BeaconList.LastIndex
-			
-			Self.Doc.Add(LootSource)
-			Self.ContentsChanged = True
+			Self.AddLootSource(LootSource)
 			End If
 			Return True
 		End Function
@@ -554,7 +600,7 @@ End
 		      Self.Doc.Remove(Source)
 		      
 		      For I As Integer = 0 To BeaconList.ListCount - 1
-		        If Beacon.LootSource(BeaconList.RowTag(I)).Type = Source.Type Then
+		        If Beacon.LootSource(BeaconList.RowTag(I)).ClassString = Source.ClassString Then
 		          Idx = I
 		          Exit For I
 		        End If
@@ -700,7 +746,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddBeacon()
-		  Dim LootSource As Beacon.LootSource = LootSourceAddSheet.Present(Self, Self.Doc)
+		  //Dim LootSource As Beacon.LootSource = LootSourceAddSheet.Present(Self, Self.Doc)
+		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self, Self.Doc)
 		  If LootSource <> Nil Then
 		    Self.AddLootSource(LootSource)
 		  End If
@@ -747,6 +794,7 @@ End
 	#tag Event
 		Sub Change()
 		  RemoveBeaconButton.Enabled = Me.SelCount > 0
+		  EditBeaconButton.Enabled = Me.SelCount = 1
 		  
 		  Dim Sources() As Beacon.LootSource
 		  For I As Integer = 0 To Me.ListCount - 1
@@ -895,15 +943,14 @@ End
 		    End If
 		  Next
 		  
+		  If UBound(LootSources) = -1 Then
+		    Self.ShowAddBeacon()
+		    Return True
+		  End If
+		  
 		  For Each LootSource As Beacon.LootSource In LootSources
 		    Base.Append(New MenuItem(LootSource.Label, LootSource))
 		  Next
-		  
-		  If UBound(LootSources) > -1 Then
-		    Base.Append(New MenuItem(MenuItem.TextSeparator))
-		  End If
-		  
-		  Base.Append(New MenuItem("New custom beacon…"))
 		  
 		  Dim Position As Xojo.Core.Point = Self.GlobalPosition
 		  Dim Choice As MenuItem = Base.PopUp(Position.X + Me.Left, Position.Y + Me.Top + Me.Height)
@@ -911,12 +958,7 @@ End
 		    Return True
 		  End If
 		  
-		  Dim SelectedLootSource As Beacon.LootSource
-		  If Choice.Tag = Nil Then
-		    SelectedLootSource = CustomLootSourceSheet.Present(Self)
-		  Else
-		    SelectedLootSource = Choice.Tag
-		  End If
+		  Dim SelectedLootSource As Beacon.LootSource = Choice.Tag
 		  
 		  If SelectedLootSource <> Nil Then
 		    Self.AddLootSource(SelectedLootSource)
@@ -992,6 +1034,28 @@ End
 	#tag Event
 		Sub DeleteSuccess()
 		  Self.mIsPublished = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EditBeaconButton
+	#tag Event
+		Sub Open()
+		  Me.IconNormal = IconEditNormal
+		  Me.IconPressed = IconEditPressed
+		  Me.IconDisabled = IconEditDisabled
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  If BeaconList.SelCount <> 1 Then
+		    Return
+		  End If
+		  
+		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self, Self.Doc, BeaconList.RowTag(BeaconList.ListIndex))
+		  If LootSource <> Nil Then
+		    Self.AddLootSource(LootSource)
+		  End If
+		  Return
 		End Sub
 	#tag EndEvent
 #tag EndEvents

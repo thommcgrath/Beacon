@@ -118,12 +118,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function MultipliersForLootSource(Extends Source As Beacon.DataSource, LootSource As Beacon.LootSource) As Beacon.Range
-		  Return Source.MultipliersForLootSource(LootSource.Type)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Function PrimaryExtension(Extends Type As FileType) As String
 		  Dim Extensions() As String = Split(Type.Extensions, ";")
