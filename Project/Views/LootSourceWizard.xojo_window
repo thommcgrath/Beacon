@@ -14,15 +14,15 @@ Begin Window LootSourceWizard
    LiveResize      =   True
    MacProcID       =   0
    MaxHeight       =   32000
-   MaximizeButton  =   False
+   MaximizeButton  =   True
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
+   MinHeight       =   294
    MinimizeButton  =   False
-   MinWidth        =   64
+   MinWidth        =   500
    Placement       =   1
-   Resizeable      =   False
+   Resizeable      =   True
    Title           =   "Add Loot Source"
    Visible         =   True
    Width           =   600
@@ -45,7 +45,7 @@ Begin Window LootSourceWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -880,7 +880,7 @@ Begin Window LootSourceWizard
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Mask            =   ""
+         Mask            =   "###"
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -957,7 +957,7 @@ Begin Window LootSourceWizard
          LockLeft        =   True
          LockRight       =   False
          LockTop         =   True
-         Mask            =   ""
+         Mask            =   "###"
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
@@ -1067,10 +1067,10 @@ Begin Window LootSourceWizard
          InitialValue    =   ""
          Italic          =   False
          Left            =   136
-         LockBottom      =   False
+         LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
          Scope           =   2
@@ -1113,7 +1113,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   6
          TabPanelIndex   =   3
-         Text            =   "Add Presets:"
+         Text            =   "Presets:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"

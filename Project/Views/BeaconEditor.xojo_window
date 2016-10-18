@@ -333,7 +333,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub AddTemplate(Set As Beacon.ItemSet, ClassString As String, MinQuantity As Integer, MaxQuantity As Integer, Weight As Double = 1, MinQuality As Beacon.Qualities = Beacon.Qualities.Primitive, MaxQuality As Beacon.Qualities = Beacon.Qualities.Primitive)
 		  Dim Entry As New Beacon.SetEntry
-		  Entry.Append(New Beacon.SetEntryOption(ClassString.ToText, 1))
+		  Entry.Append(New Beacon.SetEntryOption(Beacon.Engram.Lookup(ClassString.ToText), 1))
 		  Entry.MinQuantity = MinQuantity
 		  Entry.MaxQuantity = MaxQuantity
 		  Entry.MinQuality = MinQuality

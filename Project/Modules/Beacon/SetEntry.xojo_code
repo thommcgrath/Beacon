@@ -8,6 +8,16 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CanBeBlueprint() As Boolean
+		  For Each Option As Beacon.SetEntryOption In Self.mItems
+		    If Option.Engram.CanBeBlueprint Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mMinQuantity = 1
 		  Self.mMaxQuantity = 1
@@ -47,7 +57,7 @@ Implements Beacon.Countable
 		  If UBound(Self.mItems) = -1 Then
 		    Return "No Items"
 		  ElseIf UBound(Self.mItems) = 0 Then
-		    Return Self.mItems(0).Engram.Name
+		    Return Self.mItems(0).Engram.Label
 		  Else
 		    Dim TotalWeight As Double
 		    For I As Integer = 0 To UBound(Self.mItems)
@@ -57,7 +67,7 @@ Implements Beacon.Countable
 		    Dim Labels() As Text
 		    For I As Integer = 0 To UBound(Self.mItems)
 		      Dim Weight As Double = Self.mItems(I).Weight / TotalWeight
-		      Labels.Append(Self.mItems(I).Engram.Name + ":" + Weight.ToText(Xojo.Core.Locale.Current, "0%"))
+		      Labels.Append(Self.mItems(I).Engram.Label + ":" + Weight.ToText(Xojo.Core.Locale.Current, "0%"))
 		    Next
 		    Return Text.Join(Labels, ", ")
 		  End If
@@ -168,7 +178,7 @@ Implements Beacon.Countable
 		      Try
 		        Dim ClassString As Text = ClassStrings(I)
 		        Dim ClassWeight As Double = ClassWeights(I)
-		        Entry.Append(New Beacon.SetEntryOption(ClassString, ClassWeight))
+		        Entry.Append(New Beacon.SetEntryOption(Beacon.Engram.Lookup(ClassString), ClassWeight))
 		      Catch Err As TypeMismatchException
 		        Continue
 		      End Try

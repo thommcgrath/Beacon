@@ -75,6 +75,7 @@ Window=DocumentManagerWindow;Views/DocumentManagerWindow.xojo_window;&hBB2DFFF;&
 Window=LootSourceWizard;Views/LootSourceWizard.xojo_window;&h4DB59FFF;&h8A387FF;false
 Class=ResizedLabel;Modules/UITweaks/ResizedLabel.xojo_code;&h3F399FFF;&h316ECFFF;false
 Class=MutableLootSource;Modules/Beacon/MutableLootSource.xojo_code;&hFF87FFF;&h55ADDFFF;false
+Class=MutableEngram;Modules/Beacon/MutableEngram.xojo_code;&h41C8BFFF;&h55ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

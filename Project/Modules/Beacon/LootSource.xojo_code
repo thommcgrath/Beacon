@@ -189,6 +189,17 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function Lookup(ClassString As Text) As Beacon.LootSource
+		  Dim Source As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
+		  If Source = Nil Then
+		    Source = New Beacon.LootSource
+		    Source.mClassString = ClassString
+		  End If
+		  Return Source
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Multipliers() As Beacon.Range
 		  Return Self.mMultipliers
 		End Function

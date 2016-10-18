@@ -794,7 +794,7 @@ End
 	#tag Event
 		Sub Change()
 		  RemoveBeaconButton.Enabled = Me.SelCount > 0
-		  EditBeaconButton.Enabled = Me.SelCount > 0
+		  EditBeaconButton.Enabled = Me.SelCount = 1
 		  
 		  Dim Sources() As Beacon.LootSource
 		  For I As Integer = 0 To Me.ListCount - 1

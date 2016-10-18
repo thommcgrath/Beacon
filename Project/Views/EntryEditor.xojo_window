@@ -1137,7 +1137,7 @@ End
 		      Dim Source As Beacon.SetEntry = Sources(I)
 		      Win.mSelectedEngrams(I) = Source(0).Engram
 		    Next
-		    Win.NameField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).Name, "Multiple")
+		    Win.NameField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).Label, "Multiple")
 		    Win.ClassField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).ClassString, "Multiple")
 		    Win.PagePanel1.Value = 1
 		    Win.BackButton.Caption = "Cancel"
@@ -1192,7 +1192,7 @@ End
 		  Else
 		    For Each Engram As Beacon.Engram In Win.mSelectedEngrams
 		      Dim Entry As New Beacon.SetEntry
-		      Entry.Append(New Beacon.SetEntryOption(Engram.ClassString, 1))
+		      Entry.Append(New Beacon.SetEntryOption(Engram, 1))
 		      Entries.Append(Entry)
 		    Next
 		  End If
@@ -1234,17 +1234,17 @@ End
 		  Dim PerfectMatch As Boolean
 		  Dim Indexes As New Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
-		    EngramList.AddRow("", Engram.Name, Engram.ClassString)
+		    EngramList.AddRow("", Engram.Label, Engram.ClassString)
 		    EngramList.RowTag(EngramList.LastIndex) = Engram
 		    Indexes.Value(Engram.ClassString) = EngramList.LastIndex
-		    If Engram.ClassString = SearchText Or Engram.Name = SearchText Then
+		    If Engram.ClassString = SearchText Or Engram.Label = SearchText Then
 		      PerfectMatch = True
 		    End If
 		  Next
 		  
 		  If Not PerfectMatch And SearchText <> "" Then
-		    Dim Engram As New Beacon.Engram(SearchText.ToText)
-		    EngramList.AddRow("", Engram.Name, Engram.ClassString)
+		    Dim Engram As New Beacon.MutableEngram(SearchText.ToText)
+		    EngramList.AddRow("", Engram.Label, Engram.ClassString)
 		    EngramList.RowTag(EngramList.LastIndex) = Engram
 		    Indexes.Value(Engram.ClassString) = EngramList.LastIndex
 		  End If
@@ -1288,7 +1288,7 @@ End
 		  PagePanel1.Value = 1
 		  
 		  ClassField.Text = if(UBound(Self.mSelectedEngrams) = 0, Self.mSelectedEngrams(0).ClassString, "Multiple")
-		  NameField.Text = if(UBound(Self.mSelectedEngrams) = 0, Self.mSelectedEngrams(0).Name, "Multiple")
+		  NameField.Text = if(UBound(Self.mSelectedEngrams) = 0, Self.mSelectedEngrams(0).Label, "Multiple")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
