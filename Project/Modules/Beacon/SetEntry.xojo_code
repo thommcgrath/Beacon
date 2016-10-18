@@ -30,7 +30,7 @@ Implements Beacon.Countable
 		    For I As Integer = 0 To UBound(Self.mItems) - 1
 		      Labels.Append(Self.mItems(I).Engram.ClassString)
 		    Next
-		    Labels.Append(" or " + Self.mItems(UBound(Self.mItems)).Engram.ClassString)
+		    Labels.Append("or " + Self.mItems(UBound(Self.mItems)).Engram.ClassString)
 		    
 		    Return Text.Join(Labels, ", ")
 		  End If
@@ -44,6 +44,7 @@ Implements Beacon.Countable
 		  Self.mMinQuality = Beacon.Qualities.Primitive
 		  Self.mMaxQuality = Beacon.Qualities.Ascendant
 		  Self.mChanceToBeBlueprint = 0.1
+		  Self.mWeight = 1
 		End Sub
 	#tag EndMethod
 
@@ -232,7 +233,7 @@ Implements Beacon.Countable
 		    For I As Integer = 0 To UBound(Self.mItems) - 1
 		      Labels.Append(Self.mItems(I).Engram.Label)
 		    Next
-		    Labels.Append(" or " + Self.mItems(UBound(Self.mItems)).Engram.Label)
+		    Labels.Append("or " + Self.mItems(UBound(Self.mItems)).Engram.Label)
 		    
 		    Return Text.Join(Labels, ", ")
 		  End If

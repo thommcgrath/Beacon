@@ -9,7 +9,7 @@ Begin Window EntryEditor
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   322
+   Height          =   442
    ImplicitInstance=   False
    LiveResize      =   False
    MacProcID       =   0
@@ -29,7 +29,7 @@ Begin Window EntryEditor
    Begin PagePanel PagePanel1
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   322
+      Height          =   442
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -74,7 +74,7 @@ Begin Window EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   282
+         Top             =   402
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -105,7 +105,7 @@ Begin Window EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   282
+         Top             =   402
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -136,7 +136,7 @@ Begin Window EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   282
+         Top             =   402
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -167,7 +167,7 @@ Begin Window EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   282
+         Top             =   402
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -280,7 +280,7 @@ Begin Window EntryEditor
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
          Multiline       =   False
          Scope           =   2
@@ -297,7 +297,7 @@ Begin Window EntryEditor
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   244
+         Width           =   388
       End
       Begin Label NameField
          AutoDeactivate  =   True
@@ -314,7 +314,7 @@ Begin Window EntryEditor
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
          Multiline       =   False
          Scope           =   2
@@ -331,7 +331,7 @@ Begin Window EntryEditor
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   244
+         Width           =   388
       End
       Begin Label ClassLabel
          AutoDeactivate  =   True
@@ -1097,11 +1097,97 @@ Begin Window EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   282
+         Top             =   402
          Transparent     =   True
          Underline       =   False
          Visible         =   True
          Width           =   368
+      End
+      Begin GroupBox BehaviorGroup
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Behavior"
+         Enabled         =   True
+         Height          =   108
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   282
+         Underline       =   False
+         Visible         =   True
+         Width           =   552
+         Begin RadioButton BehaviorMultipleEntriesRadio
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "Create one entry for each selected engram"
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "BehaviorGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            Scope           =   2
+            TabIndex        =   0
+            TabPanelIndex   =   1
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   318
+            Underline       =   False
+            Value           =   True
+            Visible         =   True
+            Width           =   512
+         End
+         Begin RadioButton BehaviorSingleEntryRadio
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "Create a single entry containing the selected engrams"
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "BehaviorGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            Scope           =   2
+            TabIndex        =   1
+            TabPanelIndex   =   1
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   350
+            Underline       =   False
+            Value           =   False
+            Visible         =   True
+            Width           =   512
+         End
       End
    End
 End
@@ -1241,12 +1327,13 @@ End
 		  Case 0
 		    
 		  Case 1
-		    ClassField.Text = if(UBound(Self.mEntries) = 0, Self.mEntries(0).ClassesLabel, "Multiple")
-		    NameField.Text = if(UBound(Self.mEntries) = 0, Self.mEntries(0).Label, "Multiple")
+		    ClassField.Text = if(UBound(Self.mEntries) = 0, Self.mEntries(0).ClassesLabel, "Multiple (" + Str(UBound(Self.mEntries) + 1, "0") + " Entries)")
+		    NameField.Text = if(UBound(Self.mEntries) = 0, Self.mEntries(0).Label, "Multiple (" + Str(UBound(Self.mEntries) + 1, "0") + " Entries)")
 		    
 		    Dim MinQuantities(), MaxQuantities() As Integer
 		    Dim MinQualities(), MaxQualities() As Beacon.Qualities
 		    Dim TotalWeight, TotalChance As Double
+		    Dim CanBeBlueprint As Boolean
 		    For Each Entry As Beacon.SetEntry In Self.mEntries
 		      MinQuantities.Append(Entry.MinQuantity)
 		      MaxQuantities.Append(Entry.MaxQuantity)
@@ -1254,6 +1341,7 @@ End
 		      TotalChance = TotalChance + Entry.ChanceToBeBlueprint
 		      MinQualities.Append(Entry.MinQuality)
 		      MaxQualities.Append(Entry.MaxQuality)
+		      CanBeBlueprint = CanBeBlueprint Or Entry.CanBeBlueprint
 		    Next
 		    
 		    MinQuantities.Sort
@@ -1265,7 +1353,19 @@ End
 		    MinQuantityField.Text = Str(MinQuantities(0))
 		    MaxQuantityField.Text = Str(MaxQuantities(UBound(MaxQuantities)))
 		    WeightSlider.Value = 100 * (TotalWeight / (UBound(Self.mEntries) + 1))
-		    ChanceSlider.Value = 100 * (TotalChance / (UBound(Self.mEntries) + 1))
+		    If CanBeBlueprint Then
+		      ChanceSlider.Value = 100 * (TotalChance / (UBound(Self.mEntries) + 1))
+		      ChanceSlider.Enabled = True
+		      ChanceLabel.Enabled = True
+		      ChanceField.Enabled = True
+		      EditChanceCheck.Enabled = True
+		    Else
+		      ChanceSlider.Value = 0
+		      ChanceSlider.Enabled = False
+		      ChanceLabel.Enabled = False
+		      ChanceField.Enabled = False
+		      EditChanceCheck.Enabled = False
+		    End If
 		    MinQualityMenu.SelectByTag(MinQualities(0))
 		    MaxQualityMenu.SelectByTag(MaxQualities(UBound(MaxQualities)))
 		    Self.mIgnoreChanges = False
@@ -1284,11 +1384,21 @@ End
 #tag Events NextButton
 	#tag Event
 		Sub Action()
-		  For Each Engram As Beacon.Engram In Self.mSelectedEngrams
+		  Redim Self.mEntries(-1)
+		  
+		  If BehaviorMultipleEntriesRadio.Value Then
+		    For Each Engram As Beacon.Engram In Self.mSelectedEngrams
+		      Dim Entry As New Beacon.SetEntry
+		      Entry.Append(New Beacon.SetEntryOption(Engram, 1))
+		      Self.mEntries.Append(Entry)
+		    Next
+		  Else
 		    Dim Entry As New Beacon.SetEntry
-		    Entry.Append(New Beacon.SetEntryOption(Engram, 1))
+		    For Each Engram As Beacon.Engram In Self.mSelectedEngrams
+		      Entry.Append(New Beacon.SetEntryOption(Engram, 1))
+		    Next
 		    Self.mEntries.Append(Entry)
-		  Next
+		  End If
 		  
 		  PagePanel1.Value = 1
 		End Sub
