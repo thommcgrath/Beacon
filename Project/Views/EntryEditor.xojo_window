@@ -25,7 +25,7 @@ Begin Window EntryEditor
    Resizeable      =   True
    Title           =   "Set Entry"
    Visible         =   True
-   Width           =   592
+   Width           =   600
    Begin PagePanel PagePanel1
       AutoDeactivate  =   True
       Enabled         =   True
@@ -47,7 +47,7 @@ Begin Window EntryEditor
       Top             =   0
       Value           =   1
       Visible         =   True
-      Width           =   592
+      Width           =   600
       Begin PushButton CancelButton
          AutoDeactivate  =   True
          Bold            =   False
@@ -61,7 +61,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   400
+         Left            =   408
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -92,7 +92,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   492
+         Left            =   500
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -123,7 +123,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   400
+         Left            =   408
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -154,7 +154,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   492
+         Left            =   500
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -213,7 +213,7 @@ Begin Window EntryEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   552
+         Width           =   560
       End
       Begin BeaconListbox EngramList
          AutoDeactivate  =   True
@@ -261,7 +261,7 @@ Begin Window EntryEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   552
+         Width           =   560
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -297,7 +297,7 @@ Begin Window EntryEditor
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   388
+         Width           =   396
       End
       Begin Label NameField
          AutoDeactivate  =   True
@@ -331,7 +331,7 @@ Begin Window EntryEditor
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   388
+         Width           =   396
       End
       Begin Label ClassLabel
          AutoDeactivate  =   True
@@ -889,7 +889,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   472
+         Left            =   480
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -921,7 +921,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   472
+         Left            =   480
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -953,7 +953,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   472
+         Left            =   480
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -985,7 +985,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   472
+         Left            =   480
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -1017,7 +1017,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   472
+         Left            =   480
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -1049,7 +1049,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   472
+         Left            =   480
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -1101,7 +1101,7 @@ Begin Window EntryEditor
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   368
+         Width           =   376
       End
       Begin GroupBox BehaviorGroup
          AutoDeactivate  =   True
@@ -1129,7 +1129,7 @@ Begin Window EntryEditor
          Top             =   282
          Underline       =   False
          Visible         =   True
-         Width           =   552
+         Width           =   560
          Begin RadioButton BehaviorMultipleEntriesRadio
             AutoDeactivate  =   True
             Bold            =   False
@@ -1157,7 +1157,7 @@ Begin Window EntryEditor
             Underline       =   False
             Value           =   True
             Visible         =   True
-            Width           =   512
+            Width           =   520
          End
          Begin RadioButton BehaviorSingleEntryRadio
             AutoDeactivate  =   True
@@ -1186,7 +1186,7 @@ Begin Window EntryEditor
             Underline       =   False
             Value           =   False
             Visible         =   True
-            Width           =   512
+            Width           =   520
          End
       End
    End
@@ -1196,7 +1196,21 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
+		  Dim DefaultSize As New Xojo.Core.Size(600, 442)
+		  Dim PreferredSize As Xojo.Core.Size = App.Preferences.SizeValue("Entry Editor Size", DefaultSize)
+		  
+		  Self.Width = PreferredSize.Width
+		  Self.Height = PreferredSize.Height
+		  
 		  Self.Search("")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  If PagePanel1.Value = 0 And Self.mAnimating = False Then
+		    App.Preferences.SizeValue("Entry Editor Size") = New Xojo.Core.Size(Self.Width, Self.Height)
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -1260,6 +1274,16 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ResizeCompleted(Sender As AnimationKit.MoveTask)
+		  If PagePanel1.Value = 1 Then
+		    Self.MaxHeight = Self.MinHeight
+		  End If
+		  
+		  Self.mAnimating = False
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Search(SearchText As String)
 		  If FilterField.Text <> SearchText Then
@@ -1296,6 +1320,38 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Show()
+		  Self.mReadyForAnimation = True
+		  Super.Show
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowModal()
+		  Self.mReadyForAnimation = True
+		  Super.ShowModal()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowModalWithin(ParentWindow As Window)
+		  Self.mReadyForAnimation = True
+		  Super.ShowModalWithin(ParentWindow)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowWithin(ParentWindow As Window, Facing As Integer = - 1)
+		  Self.mReadyForAnimation = True
+		  Super.ShowWithin(ParentWindow, Facing)
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mAnimating As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
@@ -1314,6 +1370,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mReadyForAnimation As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSelectedEngrams() As Beacon.Engram
 	#tag EndProperty
 
@@ -1325,8 +1385,37 @@ End
 		Sub Change()
 		  Select Case Me.Value
 		  Case 0
+		    Dim DefaultSize As New Xojo.Core.Size(600, 442)
+		    Dim PreferredSize As Xojo.Core.Size = App.Preferences.SizeValue("Entry Editor Size", DefaultSize)
 		    
+		    Self.MaxHeight = 32000
+		    
+		    If Self.mReadyForAnimation Then
+		      Self.mAnimating = True
+		      
+		      Dim Task As New AnimationKit.MoveTask(Self)
+		      Task.Height = PreferredSize.Height
+		      Task.Curve = AnimationKit.Curve.CreateEaseOut
+		      Task.DurationInSeconds = 0.15
+		      AddHandler Task.Completed, AddressOf Self.ResizeCompleted
+		      Task.Run
+		    Else
+		      Self.Height = PreferredSize.Height
+		    End If
 		  Case 1
+		    If Self.mReadyForAnimation Then
+		      Self.mAnimating = True
+		      
+		      Dim Task As New AnimationKit.MoveTask(Self)
+		      Task.Height = Self.MinHeight
+		      Task.Curve = AnimationKit.Curve.CreateEaseOut
+		      Task.DurationInSeconds = 0.15
+		      AddHandler Task.Completed, AddressOf Self.ResizeCompleted
+		      Task.Run
+		    Else
+		      Self.Height = Self.MinHeight
+		    End If
+		    
 		    ClassField.Text = if(UBound(Self.mEntries) = 0, Self.mEntries(0).ClassesLabel, "Multiple (" + Str(UBound(Self.mEntries) + 1, "0") + " Entries)")
 		    NameField.Text = if(UBound(Self.mEntries) = 0, Self.mEntries(0).Label, "Multiple (" + Str(UBound(Self.mEntries) + 1, "0") + " Entries)")
 		    

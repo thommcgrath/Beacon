@@ -2,7 +2,7 @@
   "Contents": {
     "Common": [
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -16,7 +16,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -30,7 +30,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -44,7 +44,7 @@
         "MinQuantity": 200
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -58,7 +58,7 @@
         "MinQuantity": 200
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -72,7 +72,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -86,7 +86,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -100,7 +100,7 @@
         "MinQuantity": 5
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -114,7 +114,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -128,7 +128,7 @@
         "MinQuantity": 200
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -142,7 +142,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -156,7 +156,7 @@
         "MinQuantity": 200
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -170,7 +170,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -184,7 +184,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -198,7 +198,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -212,7 +212,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -226,7 +226,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -240,7 +240,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -254,7 +254,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -268,7 +268,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -282,7 +282,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -296,7 +296,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -310,7 +310,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -324,7 +324,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -338,7 +338,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -352,7 +352,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -366,7 +366,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -380,7 +380,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -394,7 +394,7 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -403,40 +403,12 @@
           }
         ],
         "MaxQuality": "Tier1",
-        "MaxQuantity": 100,
+        "MaxQuantity": 200,
         "MinQuality": "Tier1",
-        "MinQuantity": 100
+        "MinQuantity": 200
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
-        "EntryWeight": 1,
-        "Items": [
-          {
-            "Class": "PrimalItemResource_Polymer_Organic_C",
-            "Weight": 1
-          }
-        ],
-        "MaxQuality": "Tier1",
-        "MaxQuantity": 10,
-        "MinQuality": "Tier1",
-        "MinQuantity": 10
-      },
-      {
-        "ChanceToBeBlueprintOverride": 0,
-        "EntryWeight": 1,
-        "Items": [
-          {
-            "Class": "PrimalItemResource_AnglerGel_C",
-            "Weight": 1
-          }
-        ],
-        "MaxQuality": "Tier1",
-        "MaxQuantity": 100,
-        "MinQuality": "Tier1",
-        "MinQuantity": 100
-      },
-      {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -450,21 +422,7 @@
         "MinQuantity": 200
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
-        "EntryWeight": 1,
-        "Items": [
-          {
-            "Class": "PrimalItemResource_Horn_C",
-            "Weight": 1
-          }
-        ],
-        "MaxQuality": "Tier1",
-        "MaxQuantity": 20,
-        "MinQuality": "Tier1",
-        "MinQuantity": 20
-      },
-      {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -478,7 +436,7 @@
         "MinQuantity": 50
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -492,7 +450,7 @@
         "MinQuantity": 20
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -507,11 +465,38 @@
       }
     ],
     "Island": [
-
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_AnglerGel_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Horn_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 20
+      }
     ],
     "Scorched": [
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -525,35 +510,49 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
-            "Class": "PrimalItemResource_KeratinSpike_C",
+            "Class": "PrimalItemConsumable_CactusSap_C",
             "Weight": 1
           }
         ],
         "MaxQuality": "Tier1",
-        "MaxQuantity": 20,
+        "MaxQuantity": 100,
         "MinQuality": "Tier1",
-        "MinQuantity": 20
+        "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
-            "Class": "PrimalItemResource_PreservingSalt_C",
+            "Class": "PrimalItemResource_Sulfur_C",
             "Weight": 1
           }
         ],
         "MaxQuality": "Tier1",
-        "MaxQuantity": 6,
+        "MaxQuantity": 100,
         "MinQuality": "Tier1",
-        "MinQuantity": 6
+        "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_RawSalt_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -567,7 +566,21 @@
         "MinQuantity": 100
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Propellant_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
@@ -581,18 +594,32 @@
         "MinQuantity": 200
       },
       {
-        "ChanceToBeBlueprintOverride": 0,
+        "ChanceToBeBlueprintOverride": 0.1,
         "EntryWeight": 1,
         "Items": [
           {
-            "Class": "PrimalItemResource_Sulfur_C",
+            "Class": "PrimalItemResource_PreservingSalt_C",
             "Weight": 1
           }
         ],
         "MaxQuality": "Tier1",
-        "MaxQuantity": 100,
+        "MaxQuantity": 6,
         "MinQuality": "Tier1",
-        "MinQuantity": 100
+        "MinQuantity": 6
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_KeratinSpike_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 20
       }
     ]
   },

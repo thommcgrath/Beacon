@@ -274,6 +274,15 @@ Inherits Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Preferences() As Preferences
+		  If Self.mPreferences = Nil Then
+		    Self.mPreferences = New Preferences(New Xojo.IO.FolderItem(Self.ApplicationSupport.Child("Preferences.json").NativePath.ToText))
+		  End If
+		  Return Self.mPreferences
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ResourcesFolder() As FolderItem
 		  #if TargetMacOS
 		    Return Self.ExecutableFile.Parent.Parent.Child("Resources")
@@ -308,6 +317,10 @@ Inherits Application
 
 	#tag Property, Flags = &h21
 		Private mIdentity As Beacon.Identity
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPreferences As Preferences
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

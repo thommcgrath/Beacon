@@ -139,7 +139,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Label:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -286,7 +285,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   9
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "100"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -321,7 +319,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   10
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Min Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -356,7 +353,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   11
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Max Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -391,7 +387,6 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   12
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Weight:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -730,19 +725,62 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateEntryList()
-		  EntryList.DeleteAllRows
-		  If Self.mSet <> Nil Then
-		    For I As Integer = 0 To UBound(Self.mSet)
-		      Dim Entry As Beacon.SetEntry = Self.mSet(I)
-		      Dim BlueprintChance As Double = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint, 0)
-		      
-		      EntryList.AddRow(Entry.Label, Str(Entry.MinQuantity), Str(Entry.MaxQuantity), Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MaxQuality), Str(Self.mSet.RelativeWeight(I) * 100, "0") + "%", Str(BlueprintChance * 100, "0") + "%")
-		      EntryList.RowTag(EntryList.LastIndex) = Entry
+		Private Sub UpdateEntryList(SelectEntries() As Beacon.SetEntry = Nil)
+		  If Self.mSet = Nil Then
+		    EntryList.DeleteAllRows
+		    Return
+		  End If
+		  
+		  Dim Selected() As Text
+		  Dim ScrollToSelection As Boolean
+		  If SelectEntries <> Nil Then
+		    For Each Entry As Beacon.SetEntry In SelectEntries
+		      Selected.Append(Entry.UniqueID)
+		    Next
+		    ScrollToSelection = True
+		  Else
+		    For I As Integer = 0 To EntryList.ListCount - 1
+		      If EntryList.Selected(I) Then
+		        Dim Entry As Beacon.SetEntry = EntryList.RowTag(I)
+		        Selected.Append(Entry.UniqueID)
+		      End If
 		    Next
 		  End If
 		  
+		  Dim RequiredRows As Integer = UBound(Self.mSet) + 1
+		  While EntryList.ListCount < RequiredRows
+		    EntryList.AddRow("")
+		  Wend
+		  While EntryList.ListCount > RequiredRows
+		    EntryList.RemoveRow(0)
+		  Wend
+		  
+		  For I As Integer = 0 To UBound(Self.mSet)
+		    Dim Entry As Beacon.SetEntry = Self.mSet(I)
+		    Dim BlueprintChance As Double = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint, 0)
+		    
+		    EntryList.Cell(I, 0) = Entry.Label
+		    EntryList.Cell(I, 1) = Str(Entry.MinQuantity)
+		    EntryList.Cell(I, 2) = Str(Entry.MaxQuantity)
+		    EntryList.Cell(I, 3) = Language.LabelForQuality(Entry.MinQuality)
+		    EntryList.Cell(I, 4) = Language.LabelForQuality(Entry.MaxQuality)
+		    EntryList.Cell(I, 5) = Str(Self.mSet.RelativeWeight(I) * 100, "0") + "%"
+		    EntryList.Cell(I, 6) = Str(BlueprintChance * 100, "0") + "%"
+		    
+		    EntryList.RowTag(I) = Entry
+		    EntryList.Selected(I) = Selected.IndexOf(Entry.UniqueID) > -1
+		  Next
+		  
 		  EntryList.Sort
+		  
+		  If ScrollToSelection Then
+		    For I As Integer = 0 To EntryList.ListCount - 1
+		      If EntryList.Selected(I) Then
+		        EntryList.ScrollPosition = I
+		        Exit For I
+		      End If
+		    Next
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -985,7 +1023,7 @@ End
 		    Self.mSet.Append(Entry)
 		  Next
 		  
-		  Self.UpdateEntryList()
+		  Self.UpdateEntryList(Entries)
 		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent

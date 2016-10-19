@@ -45,6 +45,7 @@ Implements Beacon.Countable
 		  Self.mMaxQuality = Beacon.Qualities.Ascendant
 		  Self.mChanceToBeBlueprint = 0.1
 		  Self.mWeight = 1
+		  Self.mUniqueID = Beacon.CreateUUID
 		End Sub
 	#tag EndMethod
 
@@ -60,6 +61,7 @@ Implements Beacon.Countable
 		  Self.mMinQuality = Source.mMinQuality
 		  Self.mMinQuantity = Source.mMinQuantity
 		  Self.mWeight = Source.mWeight
+		  Self.mUniqueID = Source.mUniqueID
 		  
 		  For I As Integer = 0 To UBound(Source.mItems)
 		    Self.mItems(I) = New Beacon.SetEntryOption(Source.mItems(I))
@@ -289,7 +291,8 @@ Implements Beacon.Countable
 		  
 		  Dim MinQuality As Double = Beacon.ValueForQuality(Self.mMinQuality, Multipliers.Min)
 		  Dim MaxQuality As Double = Beacon.ValueForQuality(Self.mMaxQuality, Multipliers.Max)
-		  Dim InverseChance As Double = 1 - Self.mChanceToBeBlueprint
+		  Dim Chance As Double = if(Self.CanBeBlueprint, Self.mChanceToBeBlueprint, 0)
+		  Dim InverseChance As Double = 1 - Chance
 		  Dim Entries() As Text
 		  
 		  If InverseChance > 0 Then
@@ -308,9 +311,9 @@ Implements Beacon.Countable
 		    Entries.Append("(" + Text.Join(Values, ",") + ")")
 		  End If
 		  
-		  If Self.mChanceToBeBlueprint > 0 Then
+		  If Chance > 0 Then
 		    // Blueprint code
-		    Dim EntryWeight As Double = Self.mWeight * Self.mChanceToBeBlueprint
+		    Dim EntryWeight As Double = Self.mWeight * Chance
 		    Dim Values() As Text
 		    Values.Append("EntryWeight=" + EntryWeight.ToText)
 		    Values.Append("ItemClassStrings=(""" + Text.Join(Classes, """,""") + """)")
@@ -325,6 +328,12 @@ Implements Beacon.Countable
 		  End If
 		  
 		  Return Text.Join(Entries, ",")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UniqueID() As Text
+		  Return Self.mUniqueID
 		End Function
 	#tag EndMethod
 
@@ -430,6 +439,10 @@ Implements Beacon.Countable
 
 	#tag Property, Flags = &h21
 		Private mMinQuantity As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUniqueID As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -35,8 +35,14 @@ Inherits Beacon.SetEntry
 		  // Constructor() -- From SetEntry
 		  // Constructor(Source As Beacon.SetEntry) -- From SetEntry
 		  Super.Constructor(Source)
-		  Self.ValidForIsland = True
-		  Self.ValidForScorched = True
+		  
+		  Self.ValidForIsland = False
+		  Self.ValidForScorched = False
+		  
+		  For Each Option As Beacon.SetEntryOption In Self
+		    Self.ValidForIsland = Self.ValidForIsland Or Option.Engram.AvailableTo(Beacon.LootSource.Packages.Island)
+		    Self.ValidForScorched = Self.ValidForScorched Or Option.Engram.AvailableTo(Beacon.LootSource.Packages.Scorched)
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -137,6 +143,16 @@ Inherits Beacon.SetEntry
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ValidForIsland"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ValidForScorched"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Weight"
