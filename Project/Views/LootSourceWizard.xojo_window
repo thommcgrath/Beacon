@@ -45,7 +45,7 @@ Begin Window LootSourceWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -149,25 +149,25 @@ Begin Window LootSourceWizard
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   True
-         ColumnCount     =   3
+         ColumnCount     =   4
          ColumnsResizable=   False
-         ColumnWidths    =   "*,100,175"
+         ColumnWidths    =   "30,*,100,175"
          DataField       =   ""
          DataSource      =   ""
-         DefaultRowHeight=   22
+         DefaultRowHeight=   30
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
          GridLinesHorizontal=   0
          GridLinesVertical=   0
          HasHeading      =   True
-         HeadingIndex    =   0
+         HeadingIndex    =   1
          Height          =   294
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         InitialValue    =   "Label	Kind	Package"
+         InitialValue    =   " 	Label	Kind	Package"
          Italic          =   False
          Left            =   20
          LockBottom      =   True
@@ -1145,7 +1145,7 @@ End
 		  For Each Source As Beacon.LootSource In AllowedLootSources
 		    Dim Package As String = if(Source.Package = Beacon.LootSource.Packages.Scorched, "Scorched Earth", "The Island & The Center")
 		    
-		    SourceList.AddRow(Source.Label, Beacon.LootSource.KindToText(Source.Kind), Package)
+		    SourceList.AddRow("", Source.Label, Beacon.LootSource.KindToText(Source.Kind), Package)
 		    SourceList.RowTag(SourceList.LastIndex) = Source
 		  Next
 		  
@@ -1306,6 +1306,31 @@ End
 		Sub Change()
 		  SelectionActionButton.Enabled = Me.ListIndex > -1
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer) As Boolean
+		  If Column <> 0 Then
+		    Return False
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color) As Boolean
+		  If Column <> 0 Or Row >= Me.ListCount Then
+		    Return False
+		  End If
+		  
+		  Dim Source As Beacon.LootSource = Me.RowTag(Row)
+		  Dim Icon As Picture = LocalData.IconForLootSource(Source, TextColor)
+		  Dim SpaceWidth As Integer = Me.Column(Column).WidthActual
+		  Dim SpaceHeight As Integer = Me.DefaultRowHeight
+		  
+		  G.DrawPicture(Icon, (SpaceWidth - Icon.Width) / 2, (SpaceHeight - Icon.Height) / 2)
+		  
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events SelectionCustomButton

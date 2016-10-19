@@ -5,13 +5,18 @@ Inherits Listbox
 		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
 		  #Pragma Unused Column
 		  
+		  Dim TextColor As Color
 		  If Row < Self.ListCount And Self.Selected(Row) Then
 		    G.ForeColor = if(Self.Highlighted, Self.SelectedRowColor, Self.SelectedRowColorInactive)
+		    TextColor = if(Self.Highlighted, Self.SelectedTextColor, Self.SelectedTextColorInactive)
 		  Else
 		    G.ForeColor = if(Row Mod 2 = 0, Self.PrimaryRowColor, Self.AlternateRowColor)
+		    TextColor = Self.TextColor
 		  End If
 		  
 		  G.FillRect(0, 0, G.Width, G.Height)
+		  
+		  Call CellBackgroundPaint(G, Row, Column, G.ForeColor, TextColor)
 		  
 		  Return True
 		End Function
@@ -28,6 +33,10 @@ Inherits Listbox
 		  Dim LeftEdge As Integer = 0
 		  Dim DrawWidth As Integer = Self.Column(Column).WidthActual - 8
 		  Dim RightEdge As Integer = LeftEdge + DrawWidth
+		  
+		  If CellTextPaint(G, Row, Column, G.ForeColor, New Xojo.Core.Rect(LeftEdge, 0, DrawWidth, Self.DefaultRowHeight), Y) Then
+		    Return True
+		  End If
 		  
 		  G.TextFont = "System"
 		  
@@ -93,7 +102,7 @@ Inherits Listbox
 	#tag Event
 		Sub Open()
 		  Self.TextFont = "SmallSystem"
-		  Self.DefaultRowHeight = 22
+		  Self.DefaultRowHeight = Max(22, Self.DefaultRowHeight)
 		  
 		  RaiseEvent Open
 		End Sub
@@ -171,6 +180,14 @@ Inherits Listbox
 
 	#tag Hook, Flags = &h0
 		Event CanPaste(Board As Clipboard) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event CellTextPaint(G As Graphics, Row As Integer, Column As Integer, TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

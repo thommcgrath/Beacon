@@ -19,6 +19,7 @@ Implements Beacon.Countable
 		  Self.mMaxItemSets = 3
 		  Self.mMultipliers = New Beacon.Range(1, 1)
 		  Self.mSetsRandomWithoutReplacement = True
+		  Self.mUIColor = &cE4E4E4
 		End Sub
 	#tag EndMethod
 
@@ -38,6 +39,7 @@ Implements Beacon.Countable
 		  Self.mKind = Source.mKind
 		  Self.mPackage = Source.mPackage
 		  Self.mIsOfficial = Source.mIsOfficial
+		  Self.mUIColor = Source.mUIColor
 		  
 		  For I As Integer = 0 To UBound(Source.mItems)
 		    Self.mItems(I) = New Beacon.ItemSet(Source.mItems(I))
@@ -279,6 +281,12 @@ Implements Beacon.Countable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function UIColor() As Color
+		  Return Self.mUIColor
+		End Function
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -352,6 +360,10 @@ Implements Beacon.Countable
 		Private mSetsRandomWithoutReplacement As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h1
+		Protected mUIColor As Color
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -403,11 +415,6 @@ Implements Beacon.Countable
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Label"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Left"
 			Visible=true
 			Group="Position"
@@ -452,11 +459,6 @@ Implements Beacon.Countable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Type"
-			Group="Behavior"
-			Type="Text"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

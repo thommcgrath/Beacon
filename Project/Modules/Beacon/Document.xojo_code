@@ -82,6 +82,12 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LootSource(Index As Integer) As Beacon.LootSource
+		  Return Self.mLootSources(Index)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LootSources() As Beacon.LootSource()
 		  Dim Results() As Beacon.LootSource
 		  For Each LootSource As Beacon.LootSource In Self.mLootSources
