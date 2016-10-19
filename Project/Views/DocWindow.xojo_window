@@ -31,12 +31,12 @@ Begin Window DocWindow
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   False
-      ColumnCount     =   1
+      ColumnCount     =   2
       ColumnsResizable=   False
-      ColumnWidths    =   ""
+      ColumnWidths    =   "36,*"
       DataField       =   ""
       DataSource      =   ""
-      DefaultRowHeight=   22
+      DefaultRowHeight=   36
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -44,7 +44,7 @@ Begin Window DocWindow
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   555
+      Height          =   490
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -68,11 +68,11 @@ Begin Window DocWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   0
+      Top             =   65
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
-      Width           =   190
+      Width           =   234
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -88,7 +88,7 @@ Begin Window DocWindow
       HelpTag         =   ""
       Index           =   0
       InitialParent   =   ""
-      Left            =   190
+      Left            =   234
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -116,7 +116,7 @@ Begin Window DocWindow
       Height          =   580
       HelpTag         =   ""
       InitialParent   =   ""
-      Left            =   191
+      Left            =   235
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -130,7 +130,7 @@ Begin Window DocWindow
       Transparent     =   True
       UseFocusRing    =   False
       Visible         =   True
-      Width           =   809
+      Width           =   765
    End
    Begin GraphicButton AddBeaconButton
       AcceptFocus     =   False
@@ -220,7 +220,7 @@ Begin Window DocWindow
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   97
+      Width           =   141
    End
    Begin ControlCanvas Separators
       AcceptFocus     =   False
@@ -304,7 +304,7 @@ Begin Window DocWindow
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   190
+      Width           =   234
    End
    Begin Beacon.ImportThread Importer
       Index           =   -2147483648
@@ -379,6 +379,64 @@ Begin Window DocWindow
       UseFocusRing    =   True
       Visible         =   True
       Width           =   30
+   End
+   Begin ListHeader LootSourceHeader
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   64
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      SegmentIndex    =   0
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Title           =   "Loot Sources"
+      Top             =   0
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   234
+   End
+   Begin ControlCanvas Separators
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   5
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   64
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   234
    End
 End
 #tag EndWindow
@@ -593,30 +651,33 @@ End
 		    Return
 		  End If
 		  
-		  BeaconList.ListIndex = -1
+		  Dim Packages As New Dictionary
 		  For Each Source As Beacon.LootSource In Sources
-		    Dim Idx As Integer
 		    If Self.Doc.HasBeacon(Source) Then
 		      Self.Doc.Remove(Source)
-		      
-		      For I As Integer = 0 To BeaconList.ListCount - 1
-		        If Beacon.LootSource(BeaconList.RowTag(I)).ClassString = Source.ClassString Then
-		          Idx = I
-		          Exit For I
-		        End If
-		      Next
-		    Else
-		      BeaconList.AddRow("")
-		      Idx = BeaconList.LastIndex
 		    End If
-		    
-		    BeaconList.RowTag(Idx) = Source
-		    BeaconList.Cell(Idx, 0) = Source.Label
-		    BeaconList.Selected(Idx) = True
 		    Self.Doc.Add(Source)
+		    Packages.Value(Source.Package) = Packages.Lookup(Source.Package, 0).IntegerValue + 1
 		  Next
 		  
-		  Self.ContentsChanged = True
+		  Dim TargetIndex As Integer = 0
+		  If LootSourceHeader.SegmentIndex <> 0 Then
+		    If Packages.Count = 1 Then
+		      Dim Package As Beacon.LootSource.Packages = Packages.Key(0)
+		      If Package = Beacon.LootSource.Packages.Island Then
+		        TargetIndex = 1
+		      Else
+		        TargetIndex = 2
+		      End If
+		    Else
+		      TargetIndex = 0
+		    End If
+		  End If
+		  
+		  If LootSourceHeader.SegmentIndex <> TargetIndex Then
+		    LootSourceHeader.SegmentIndex = TargetIndex
+		  End If
+		  Self.UpdateSourceList(Sources)
 		End Sub
 	#tag EndMethod
 
@@ -751,6 +812,57 @@ End
 		  If LootSource <> Nil Then
 		    Self.AddLootSource(LootSource)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
+		  Dim Sources() As Beacon.LootSource = Self.Doc.LootSources
+		  Dim Filter As Integer = LootSourceHeader.SegmentIndex
+		  Dim VisibleSources() As Beacon.LootSource
+		  Select Case Filter
+		  Case 0
+		    VisibleSources = Sources
+		  Case 1
+		    For Each Source As Beacon.LootSource In Sources
+		      If Source.Package = Beacon.LootSource.Packages.Island Then
+		        VisibleSources.Append(Source)
+		      End If
+		    Next
+		  Case 2
+		    For Each Source As Beacon.LootSource In Sources
+		      If Source.Package = Beacon.LootSource.Packages.Scorched Then
+		        VisibleSources.Append(Source)
+		      End If
+		    Next
+		  End Select
+		  
+		  Dim SelectedClasses() As Text
+		  If SelectedSources <> Nil Then
+		    For Each Source As Beacon.LootSource In SelectedSources
+		      SelectedClasses.Append(Source.ClassString)
+		    Next
+		  Else
+		    For I As Integer = 0 To BeaconList.ListCount
+		      If BeaconList.Selected(I) Then
+		        SelectedClasses.Append(Beacon.LootSource(BeaconList.RowTag(I)).ClassString)
+		      End If
+		    Next
+		  End If
+		  
+		  Dim TargetRowCount As Integer = UBound(VisibleSources) + 1
+		  While BeaconList.ListCount > TargetRowCount
+		    BeaconList.RemoveRow(0)
+		  Wend
+		  While BeaconList.ListCount < TargetRowCount
+		    BeaconList.AddRow("")
+		  Wend
+		  
+		  For I As Integer = 0 To UBound(VisibleSources)
+		    BeaconList.RowTag(I) = VisibleSources(I)
+		    BeaconList.Cell(I, 1) = VisibleSources(I).Label
+		    BeaconList.Selected(I) = SelectedClasses.IndexOf(VisibleSources(I).ClassString) > -1
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -891,6 +1003,29 @@ End
 	#tag Event
 		Function CanDelete() As Boolean
 		  Return Me.SelCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color) As Boolean
+		  If Column <> 0 Or Row >= Me.ListCount Then
+		    Return False
+		  End If
+		  
+		  Dim Source As Beacon.LootSource = Me.RowTag(Row)
+		  Dim Icon As Picture = LocalData.IconForLootSource(Source, TextColor)
+		  Dim SpaceWidth As Integer = Me.Column(Column).WidthActual
+		  Dim SpaceHeight As Integer = Me.DefaultRowHeight
+		  
+		  G.DrawPicture(Icon, (SpaceWidth - Icon.Width) / 2, (SpaceHeight - Icon.Height) / 2)
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer) As Boolean
+		  If Column = 0 Then
+		    Return True
+		  End If
 		End Function
 	#tag EndEvent
 #tag EndEvents
@@ -1056,6 +1191,22 @@ End
 		    Self.AddLootSource(LootSource)
 		  End If
 		  Return
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LootSourceHeader
+	#tag Event
+		Sub SegmentChange()
+		  Self.UpdateSourceList()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.AddSegment("All")
+		  Me.AddSegment("Island")
+		  Me.AddSegment("Scorched")
+		  
+		  Me.SegmentIndex = 0
 		End Sub
 	#tag EndEvent
 #tag EndEvents
