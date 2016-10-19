@@ -45,6 +45,12 @@ Inherits Beacon.LootSource
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub UIColor(Assigns Value As Color)
+		  Self.mUIColor = Value
+		End Sub
+	#tag EndMethod
+
 
 End Class
 #tag EndClass

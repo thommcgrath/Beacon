@@ -6,7 +6,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("PRAGMA foreign_keys = ON;")
 		  Self.SQLExecute("PRAGMA journal_mode = WAL;")
 		  
-		  Self.SQLExecute("CREATE TABLE ""loot_sources"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""kind"" TEXT NOT NULL, ""engram_mask"" INTEGER NOT NULL, ""multiplier_min"" REAL NOT NULL, ""multiplier_max"" REAL NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE ""loot_sources"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""kind"" TEXT NOT NULL, ""engram_mask"" INTEGER NOT NULL, ""multiplier_min"" REAL NOT NULL, ""multiplier_max"" REAL NOT NULL, ""uicolor"" TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE ""engrams"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""availability"" INTEGER NOT NULL, ""can_blueprint"" INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE ""vars"" (""key"" TEXT NOT NULL PRIMARY KEY, ""value"" TEXT NOT NULL);")
 		End Sub
@@ -133,7 +133,7 @@ Implements Beacon.DataSource
 		Function GetLootSource(ClassString As Text) As Beacon.LootSource
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"" FROM ""loot_sources"" WHERE LOWER(""classstring"") = ?;")
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"" FROM ""loot_sources"" WHERE LOWER(""classstring"") = ?;")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  
 		  Dim StringValue As String = Lowercase(ClassString)
@@ -163,6 +163,59 @@ Implements Beacon.DataSource
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function IconForLootSource(Source As Beacon.LootSource, HighlightColor As Color) As Picture
+		  Const Size = 24
+		  
+		  Dim HighlightMask As Picture
+		  Dim ColorMask As Picture
+		  
+		  Select Case Source.Kind
+		  Case Beacon.LootSource.Kinds.Standard
+		    HighlightMask = IconLootStandard
+		    ColorMask = IconLootStandardColorMask
+		  Case Beacon.LootSource.Kinds.Bonus
+		    HighlightMask = IconLootBonus
+		    ColorMask = IconLootBonusColorMask
+		  Case Beacon.LootSource.Kinds.Cave
+		    HighlightMask = IconLootCave
+		    ColorMask = IconLootCaveColorMask
+		  Case Beacon.LootSource.Kinds.Sea
+		    HighlightMask = IconLootSea
+		    ColorMask = IconLootSeaColorMask
+		  End Select
+		  
+		  Dim Bitmaps() As Picture
+		  For Factor As Integer = 1 To 2
+		    Dim HighlightRep As Picture = HighlightMask.BestRepresentation(Size, Size, Factor)
+		    Dim ColorRep As Picture = ColorMask.BestRepresentation(Size, Size, Factor)
+		    
+		    Dim Highlight As New Picture(Size * Factor, Size * Factor, 32)
+		    Highlight.VerticalResolution = 72 * Factor
+		    Highlight.HorizontalResolution = 72 * Factor
+		    Highlight.Graphics.ForeColor = HighlightColor
+		    Highlight.Graphics.FillRect(0, 0, Highlight.Width, Highlight.Height)
+		    Highlight.Mask.Graphics.DrawPicture(HighlightRep, 0, 0, Highlight.Width, Highlight.Height, 0, 0, HighlightRep.Width, HighlightRep.Height)
+		    
+		    Dim Fill As New Picture(Size * Factor, Size * Factor, 32)
+		    Fill.VerticalResolution = 72 * Factor
+		    Fill.HorizontalResolution = 72 * Factor
+		    Fill.Graphics.ForeColor = Source.UIColor
+		    Fill.Graphics.FillRect(0, 0, Fill.Width, Fill.Height)
+		    Fill.Mask.Graphics.DrawPicture(ColorRep, 0, 0, Fill.Width, Fill.Height, 0, 0, ColorRep.Width, ColorRep.Height)
+		    
+		    Dim Combined As New Picture(Size * Factor, Size * Factor)
+		    Combined.VerticalResolution = 72 * Factor
+		    Combined.HorizontalResolution = 72 * Factor
+		    Combined.Graphics.DrawPicture(Highlight, 0, 0, Combined.Width, Combined.Height, 0, 0, Highlight.Width, Highlight.Height)
+		    Combined.Graphics.DrawPicture(Fill, 0, 0, Combined.Width, Combined.Height, 0, 0, Fill.Width, Fill.Height)
+		    
+		    Bitmaps.Append(Combined)
+		  Next
+		  Return New Picture(Size, Size, Bitmaps)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Import(Content As Text)
 		  Dim ChangeDict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content)
@@ -184,13 +237,14 @@ Implements Beacon.DataSource
 		    End If
 		    
 		    If UBound(SourceAdditions) > -1 Then
-		      Dim SourceInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""loot_sources"" (""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"") VALUES (?, ?, ?, ?, ?, ?);")
+		      Dim SourceInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""loot_sources"" (""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"") VALUES (?, ?, ?, ?, ?, ?, ?);")
 		      SourceInsertStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		      SourceInsertStatement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
 		      SourceInsertStatement.BindType(2, SQLitePreparedStatement.SQLITE_TEXT)
 		      SourceInsertStatement.BindType(3, SQLitePreparedStatement.SQLITE_INTEGER)
 		      SourceInsertStatement.BindType(4, SQLitePreparedStatement.SQLITE_DOUBLE)
 		      SourceInsertStatement.BindType(5, SQLitePreparedStatement.SQLITE_DOUBLE)
+		      SourceInsertStatement.BindType(6, SQLitePreparedStatement.SQLITE_TEXT)
 		      For Each Dict As Xojo.Core.Dictionary In SourceAdditions
 		        Dim ClassString As Text = Dict.Value("class")
 		        Dim Label As Text = Dict.Value("label")
@@ -198,7 +252,8 @@ Implements Beacon.DataSource
 		        Dim Mask As Integer = Dict.Value("mask")
 		        Dim MultMin As Double = Dict.Value("mult_min")
 		        Dim MultMax As Double = Dict.Value("mult_max")
-		        Self.SQLExecute(SourceInsertStatement, ClassString, Label, Kind, Mask, MultMin, MultMax)
+		        Dim UIColor As String = "FF00FF" // Temporary
+		        Self.SQLExecute(SourceInsertStatement, ClassString, Label, Kind, Mask, MultMin, MultMax, UIColor)
 		      Next
 		    End If
 		    Self.SQLExecute("COMMIT TRANSACTION;")
@@ -338,11 +393,34 @@ Implements Beacon.DataSource
 		Private Shared Function RecordSetToLootSource(Results As RecordSet) As Beacon.LootSource()
 		  Dim Sources() As Beacon.LootSource
 		  While Not Results.EOF
+		    Dim HexColor As String = Results.Field("uicolor").StringValue
+		    Dim RedHex, GreenHex, BlueHex, AlphaHex As String = "00"
+		    If Len(HexColor) = 3 Then
+		      RedHex = Mid(HexColor, 1, 1) + Mid(HexColor, 1, 1)
+		      GreenHex = Mid(HexColor, 2, 1) + Mid(HexColor, 2, 1)
+		      BlueHex = Mid(HexColor, 3, 1) + Mid(HexColor, 3, 1)
+		    ElseIf Len(HexColor) = 4 Then
+		      RedHex = Mid(HexColor, 1, 1) + Mid(HexColor, 1, 1)
+		      GreenHex = Mid(HexColor, 2, 1) + Mid(HexColor, 2, 1)
+		      BlueHex = Mid(HexColor, 3, 1) + Mid(HexColor, 3, 1)
+		      AlphaHex = Mid(HexColor, 4, 1) + Mid(HexColor, 4, 1)
+		    ElseIf Len(HexColor) = 6 Then
+		      RedHex = Mid(HexColor, 1, 2)
+		      GreenHex = Mid(HexColor, 3, 2)
+		      BlueHex = Mid(HexColor, 5, 2)
+		    ElseIf Len(HexColor) = 8 Then
+		      RedHex = Mid(HexColor, 1, 2)
+		      GreenHex = Mid(HexColor, 3, 2)
+		      BlueHex = Mid(HexColor, 5, 2)
+		      AlphaHex = Mid(HexColor, 7, 2)
+		    End If
+		    
 		    Dim Source As New Beacon.MutableLootSource(Results.Field("classstring").StringValue.ToText, True)
 		    Source.Label = Results.Field("label").StringValue.ToText
 		    Source.Kind = Beacon.LootSource.TextToKind(Results.Field("kind").StringValue.ToText)
 		    Source.Package = Beacon.LootSource.IntegerToPackage(Results.Field("engram_mask").IntegerValue)
 		    Source.Multipliers = New Beacon.Range(Results.Field("multiplier_min").IntegerValue, Results.Field("multiplier_max").IntegerValue)
+		    Source.UIColor = RGB(Integer.FromHex(RedHex.ToText), Integer.FromHex(GreenHex.ToText), Integer.FromHex(BlueHex.ToText), Integer.FromHex(AlphaHex.ToText))
 		    Sources.Append(New Beacon.LootSource(Source))
 		    Results.MoveNext
 		  Wend
@@ -407,9 +485,9 @@ Implements Beacon.DataSource
 		  Dim RS As RecordSet
 		  Try
 		    If SearchText = "" Then
-		      RS = Self.SQLSelect("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"" FROM ""loot_sources"" ORDER BY ""label"";")
+		      RS = Self.SQLSelect("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"" FROM ""loot_sources"" ORDER BY ""label"";")
 		    Else
-		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"" FROM ""loot_sources"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
+		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"" FROM ""loot_sources"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
 		      Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		      
 		      Dim StringValue As String = SearchText
@@ -514,10 +592,6 @@ Implements Beacon.DataSource
 	#tag Property, Flags = &h21
 		Private mUpdater As Xojo.Net.HTTPSocket
 	#tag EndProperty
-
-
-	#tag Constant, Name = CurrentVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Private
-	#tag EndConstant
 
 
 	#tag ViewBehavior
