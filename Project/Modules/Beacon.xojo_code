@@ -45,6 +45,21 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function Data() As Beacon.DataSource
+		  Return mDataSource
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Data(Assigns Value As Beacon.DataSource)
+		  If mDataSource <> Value Then
+		    mDataSource = Value
+		    mDataSource.LoadPresets
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function DecodeHex(Source As Text) As Xojo.Core.MemoryBlock
 		  Dim Bytes() As UInt8
 		  For I As Integer = 0 To Source.Length - 2 Step 2
@@ -103,12 +118,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function MultipliersForLootSource(Extends Source As Beacon.DataSource, LootSource As Beacon.LootSource) As Beacon.Range
-		  Return Source.MultipliersForLootSource(LootSource.Type)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Function PrimaryExtension(Extends Type As FileType) As String
 		  Dim Extensions() As String = Split(Type.Extensions, ";")
@@ -128,6 +137,9 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function QualityForValue(Quality As Double, Multiplier As Double) As Beacon.Qualities
 		  Quality = Quality * Multiplier
+		  
+		  // Thanks to math, we can get the quality as 15.99999 instead of 16. So rounding it is.
+		  Quality = Xojo.Math.Round(Quality * 10000) / 10000
 		  
 		  If Quality < Beacon.QualityRamshackle Then
 		    Return Beacon.Qualities.Primitive
@@ -270,6 +282,11 @@ Protected Module Beacon
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h21
+		Private mDataSource As Beacon.DataSource
+	#tag EndProperty
+
+
 	#tag Constant, Name = QualityApprentice, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
 	#tag EndConstant
 
@@ -291,7 +308,7 @@ Protected Module Beacon
 	#tag Constant, Name = QualityMastercraft, Type = Double, Dynamic = False, Default = \"5.5", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityPrimitive, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag Constant, Name = QualityPrimitive, Type = Double, Dynamic = False, Default = \"0", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = QualityRamshackle, Type = Double, Dynamic = False, Default = \"1.25", Scope = Protected

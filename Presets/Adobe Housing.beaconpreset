@@ -1,1 +1,189 @@
-{"Contents":{"Common":[],"Island":[],"Scorched":[{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_AdobeFloor_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":16,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_AdobeWall_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":32,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_AdobeCeiling_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":16,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":0.75,"Items":[{"Class":"PrimalItemStructure_AdobeWallWithDoor_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":2,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":0.75,"Items":[{"Class":"PrimalItemStructure_AdobeDoor_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":2,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":0.5,"Items":[{"Class":"PrimalItemStructure_AdobeWall_Sloped_Right_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":4,"MinQuality":"Tier1","MinQuantity":2},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":0.5,"Items":[{"Class":"PrimalItemStructure_AdobeWall_Sloped_Left_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":4,"MinQuality":"Tier1","MinQuantity":2},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":0.5,"Items":[{"Class":"PrimalItemStructure_AdobeRoof_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":16,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":0.25,"Items":[{"Class":"PrimalItemStructure_AdobeRamp_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":0.5,"Items":[{"Class":"PrimalItemStructure_AdobeWallWithWindow_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":4,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":0.5,"Items":[{"Class":"PrimalItemStructure_AdobeWindow_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":4,"MinQuality":"Tier1","MinQuantity":1}]},"Grouping":"Housing","Label":"Adobe Housing","Max":6,"Min":2,"Modifiers":{"Bonus":{"Quality":3,"Quantity":2.0},"Cave":{"Quality":6,"Quantity":1.0},"Sea":{"Quality":6,"Quantity":1.0},"Standard":{"Quality":0,"Quantity":1.0}},"Weight":0.5}
+{
+  "Contents": {
+    "Common": [
+
+    ],
+    "Island": [
+
+    ],
+    "Scorched": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_AdobeFloor_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 16,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_AdobeWall_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 32,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_AdobeCeiling_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 16,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.75,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_AdobeWallWithDoor_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 2,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.75,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_AdobeDoor_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 2,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.5,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_AdobeWall_Sloped_Right_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 4,
+        "MinQuality": "Tier1",
+        "MinQuantity": 2
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.5,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_AdobeWall_Sloped_Left_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 4,
+        "MinQuality": "Tier1",
+        "MinQuantity": 2
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.5,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_AdobeRoof_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 16,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.25,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_AdobeRamp_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.5,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_AdobeWallWithWindow_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 4,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.5,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_AdobeWindow_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 4,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ]
+  },
+  "Grouping": "Housing",
+  "Label": "Adobe Housing",
+  "Max": 6,
+  "Min": 2,
+  "Modifiers": {
+    "Bonus": {
+      "Quality": 3,
+      "Quantity": 2
+    },
+    "Cave": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Sea": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Standard": {
+      "Quality": 0,
+      "Quantity": 1
+    }
+  },
+  "Weight": 0.5
+}

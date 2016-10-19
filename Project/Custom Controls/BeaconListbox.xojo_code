@@ -25,8 +25,31 @@ Inherits Listbox
 		    G.ForeColor = Self.TextColor
 		  End If
 		  
+		  Dim LeftEdge As Integer = 0
+		  Dim DrawWidth As Integer = Self.Column(Column).WidthActual - 8
+		  Dim RightEdge As Integer = LeftEdge + DrawWidth
+		  
 		  G.TextFont = "System"
-		  G.DrawString(Self.Cell(Row, Column), X, Y + 1, Self.Column(Column).WidthActual - (X * 2), True)
+		  
+		  Dim Contents As String = Self.Cell(Row, Column)
+		  Dim ContentsWidth As Integer = Min(Ceil(G.StringWidth(Contents)), DrawWidth)
+		  Dim ContentsLeft As Integer
+		  Dim Align As Integer = Self.CellAlignment(Row, Column)
+		  If Align = Listbox.AlignDefault Then
+		    Align = Self.ColumnAlignment(Column)
+		  End If
+		  Select Case Align
+		  Case Listbox.AlignLeft, Listbox.AlignDefault
+		    ContentsLeft = LeftEdge
+		  Case Listbox.AlignCenter
+		    ContentsLeft = ((DrawWidth - ContentsWidth) / 2) + LeftEdge
+		  Case Listbox.AlignRight, Listbox.AlignDecimal
+		    ContentsLeft = RightEdge - ContentsWidth
+		  End Select
+		  
+		  ContentsLeft = ContentsLeft + Self.ColumnAlignmentOffset(Column) + Self.CellAlignmentOffset(Row, Column)
+		  
+		  G.DrawString(Contents, ContentsLeft, Y + 1, DrawWidth, True)
 		  
 		  Return True
 		End Function

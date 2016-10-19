@@ -1,1 +1,105 @@
-{"Contents":{"Common":[{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemArmor_ChitinPants_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemArmor_ChitinShirt_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemArmor_ChitinHelmet_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemArmor_ChitinBoots_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemArmor_ChitinGloves_C","Weight":1.0}],"MaxQuality":"Tier3","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1}],"Island":[],"Scorched":[]},"Grouping":"Wearables","Label":"Chitin Armor","Max":5,"Min":1,"Modifiers":{"Bonus":{"Quality":3,"Quantity":2.0},"Cave":{"Quality":6,"Quantity":1.0},"Sea":{"Quality":6,"Quantity":1.0},"Standard":{"Quality":0,"Quantity":1.0}},"Weight":0.5}
+{
+  "Contents": {
+    "Common": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_ChitinPants_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_ChitinShirt_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_ChitinHelmet_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_ChitinBoots_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_ChitinGloves_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ],
+    "Island": [
+
+    ],
+    "Scorched": [
+
+    ]
+  },
+  "Grouping": "Wearables",
+  "Label": "Chitin Armor",
+  "Max": 5,
+  "Min": 1,
+  "Modifiers": {
+    "Bonus": {
+      "Quality": 3,
+      "Quantity": 2
+    },
+    "Cave": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Sea": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Standard": {
+      "Quality": 0,
+      "Quantity": 1
+    }
+  },
+  "Weight": 0.5
+}

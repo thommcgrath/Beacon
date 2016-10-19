@@ -1,29 +1,29 @@
 #tag Class
-Protected Class ItemClass
+Protected Class SetEntryOption
 	#tag Method, Flags = &h0
-		Function ClassString() As Text
-		  Return Self.mClassString
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Source As Beacon.ItemClass)
-		  Self.mClassString = Source.mClassString
-		  Self.mWeight = Source.mWeight
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(ClassString As Text, Weight As Double)
-		  Self.mClassString = ClassString
+		Sub Constructor(Engram As Beacon.Engram, Weight As Double)
+		  Self.mEngram = Engram
 		  Self.mWeight = Weight
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Source As Beacon.SetEntryOption)
+		  Self.mEngram = Source.mEngram
+		  Self.mWeight = Source.mWeight
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Engram() As Beacon.Engram
+		  Return Self.mEngram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Keys As New Xojo.Core.Dictionary
-		  Keys.Value("Class") = Self.ClassString
+		  Keys.Value("Class") = Self.Engram.ClassString
 		  Keys.Value("Weight") = Self.Weight
 		  Return Keys
 		End Function
@@ -31,18 +31,20 @@ Protected Class ItemClass
 
 	#tag Method, Flags = &h0
 		Function Hash() As Text
-		  Return Beacon.MD5(Self.mClassString.Lowercase + "@" + Self.mWeight.ToText(Xojo.Core.Locale.Raw, "0.0000")).Lowercase
+		  Return Beacon.MD5(Self.mEngram.ClassString.Lowercase + "@" + Self.mWeight.ToText(Xojo.Core.Locale.Raw, "0.0000")).Lowercase
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.ItemClass
-		  Return New Beacon.ItemClass(Dict.Value("Class"), Dict.Value("Weight"))
+		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.SetEntryOption
+		  Dim ClassString As Text = Dict.Value("Class")
+		  Dim Weight As Double = Dict.Value("Weight")
+		  Return New Beacon.SetEntryOption(Beacon.Engram.Lookup(ClassString), Weight)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As Beacon.ItemClass) As Integer
+		Function Operator_Compare(Other As Beacon.SetEntryOption) As Integer
 		  If Other = Nil Then
 		    Return 1
 		  End If
@@ -62,7 +64,7 @@ Protected Class ItemClass
 
 
 	#tag Property, Flags = &h21
-		Private mClassString As Text
+		Private mEngram As Beacon.Engram
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

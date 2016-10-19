@@ -34,7 +34,7 @@ Implements xojo.Core.Iterator
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mItems() As Beacon.ItemClass
+		Private mItems() As Beacon.SetEntryOption
 	#tag EndProperty
 
 

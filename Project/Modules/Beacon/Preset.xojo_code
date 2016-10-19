@@ -58,7 +58,7 @@ Implements Beacon.Countable
 		  
 		  Dim Entries() As Beacon.SetEntry
 		  For Each Item As Beacon.PresetEntry In Self
-		    If (Item.ValidForIsland And Source.IsScorchedEarth = False) Or (Item.ValidForScorched And Source.IsScorchedEarth = True) Then
+		    If (Item.ValidForIsland And Source.Package = Beacon.LootSource.Packages.Island) Or (Item.ValidForScorched And Source.Package = Beacon.LootSource.Packages.Scorched) Then
 		      Entries.Append(New Beacon.SetEntry(Item))
 		    End If
 		  Next
@@ -103,6 +103,7 @@ Implements Beacon.Countable
 		  Preset.MaxItems = Dict.Lookup("Max", Preset.MaxItems)
 		  Preset.Weight = Dict.Lookup("Weight", Preset.Weight)
 		  
+		  Dim Multipliers As New Beacon.Range(1, 1)
 		  Dim Contents As Xojo.Core.Dictionary = Dict.Lookup("Contents", Nil)
 		  If Contents <> Nil Then
 		    For Each Set As Xojo.Core.DictionaryEntry In Contents
@@ -110,7 +111,7 @@ Implements Beacon.Countable
 		      Dim ValidForScorched As Boolean = (Set.Key = "Common" Or Set.Key = "Scorched")
 		      Dim Items() As Auto = Set.Value
 		      For Each Item As Xojo.Core.Dictionary In Items
-		        Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Item)
+		        Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Item, Multipliers)
 		        If Entry <> Nil Then
 		          Dim Child As New Beacon.PresetEntry(Entry)
 		          Child.ValidForIsland = ValidForIsland
@@ -155,9 +156,11 @@ Implements Beacon.Countable
 		  End If
 		  
 		  Try
-		    Dim Stream As Xojo.IO.TextInputStream = Xojo.IO.TextInputStream.Open(File, Xojo.Core.TextEncoding.UTF8)
-		    Dim TextContents As Text = Stream.ReadAll
+		    Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(File, Xojo.IO.BinaryStream.LockModes.Read)
+		    Dim Bytes As Xojo.Core.MemoryBlock = Stream.Read(Stream.Length)
 		    Stream.Close
+		    
+		    Dim TextContents As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Bytes)
 		    
 		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContents)
 		    Return Beacon.Preset.FromDictionary(Dict)
@@ -191,6 +194,12 @@ Implements Beacon.Countable
 		    End If
 		  Next
 		  Return -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsCustom() As Boolean
+		  Return Beacon.Data.IsPresetCustom(Self)
 		End Function
 	#tag EndMethod
 
@@ -304,8 +313,9 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Sub ToFile(File As Xojo.IO.FolderItem)
 		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.ToDictionary)
-		  Dim Stream As Xojo.IO.TextOutputStream = Xojo.IO.TextOutputStream.Create(File, Xojo.Core.TextEncoding.UTF8)
-		  Stream.Write(Contents)
+		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Contents)
+		  Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(File, Xojo.IO.BinaryStream.LockModes.Write)
+		  Stream.Write(Bytes)
 		  Stream.Close
 		End Sub
 	#tag EndMethod

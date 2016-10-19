@@ -25,294 +25,6 @@ Begin ContainerControl BeaconEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   598
-   Begin UITweaks.ResizedTextField LabelField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   102
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   476
-   End
-   Begin Label LabelLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      Text            =   "Label:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   70
-   End
-   Begin UITweaks.ResizedTextField MinSetsField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   102
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   "###"
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   54
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   80
-   End
-   Begin Label BetweenLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      Text            =   "Min Sets:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   54
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   70
-   End
-   Begin UITweaks.ResizedTextField MaxSetsField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   276
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   "###"
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   54
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   80
-   End
-   Begin Label MaxSetsLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   194
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      Text            =   "Max Sets:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   54
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   70
-   End
-   Begin CheckBox DuplicatesCheck
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "No duplicates"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   102
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      State           =   1
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   88
-      Underline       =   False
-      Value           =   True
-      Visible         =   True
-      Width           =   446
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   0
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   120
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   598
-   End
    Begin BeaconListbox SetList
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
@@ -331,7 +43,7 @@ Begin ContainerControl BeaconEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   318
+      Height          =   439
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -355,7 +67,7 @@ Begin ContainerControl BeaconEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   121
+      Top             =   0
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -371,7 +83,7 @@ Begin ContainerControl BeaconEditor
       DoubleBuffer    =   True
       Enabled         =   True
       EraseBackground =   False
-      Height          =   343
+      Height          =   464
       HelpTag         =   ""
       Index           =   1
       InitialParent   =   ""
@@ -385,7 +97,7 @@ Begin ContainerControl BeaconEditor
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   121
+      Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -400,7 +112,7 @@ Begin ContainerControl BeaconEditor
       Enabled         =   False
       EraseBackground =   True
       HasBackColor    =   False
-      Height          =   343
+      Height          =   464
       HelpTag         =   ""
       InitialParent   =   ""
       Left            =   191
@@ -413,7 +125,7 @@ Begin ContainerControl BeaconEditor
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   121
+      Top             =   0
       Transparent     =   True
       UseFocusRing    =   False
       Visible         =   True
@@ -621,7 +333,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub AddTemplate(Set As Beacon.ItemSet, ClassString As String, MinQuantity As Integer, MaxQuantity As Integer, Weight As Double = 1, MinQuality As Beacon.Qualities = Beacon.Qualities.Primitive, MaxQuality As Beacon.Qualities = Beacon.Qualities.Primitive)
 		  Dim Entry As New Beacon.SetEntry
-		  Entry.Append(New Beacon.ItemClass(ClassString.ToText, 1))
+		  Entry.Append(New Beacon.SetEntryOption(Beacon.Engram.Lookup(ClassString.ToText), 1))
 		  Entry.MinQuantity = MinQuantity
 		  Entry.MaxQuantity = MaxQuantity
 		  Entry.MinQuality = MinQuality
@@ -634,7 +346,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BuildPresetMenu(Parent As MenuItem)
-		  Dim Presets() As Beacon.Preset = LocalData.SharedInstance.Presets
+		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets
 		  Dim Groups As New Dictionary
 		  Dim GroupNames() As Text
 		  For Each Preset As Beacon.Preset In Presets
@@ -668,7 +380,7 @@ End
 		    
 		    Dim Arr() As Beacon.Preset = Groups.Value(Group)
 		    For Each Preset As Beacon.Preset In Arr
-		      If (Self.mSources(0).IsScorchedEarth = False And Preset.ValidForIsland) Or (Self.mSources(0).IsScorchedEarth = True And Preset.ValidForScorched) Then
+		      If (Self.mSources(0).Package = Beacon.LootSource.Packages.Island And Preset.ValidForIsland) Or (Self.mSources(0).Package = Beacon.LootSource.Packages.Scorched And Preset.ValidForScorched) Then
 		        Dim PresetItem As New MenuItem(Preset.Label, Preset)
 		        AddHandler PresetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		        Parent.Append(PresetItem)
@@ -811,12 +523,7 @@ End
 		    SetList.RowTag(SetList.LastIndex) = Set
 		  Next
 		  
-		  If UBound(Self.mSources) = -1 Then
-		    LabelField.Text = ""
-		    MaxSetsField.Text = ""
-		    MinSetsField.Text = ""
-		    DuplicatesCheck.Value = True
-		  Else
+		  If UBound(Self.mSources) > -1 Then
 		    Dim DuplicatesState As CheckBox.CheckedStates = if(Self.mSources(0).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
 		    Dim Label As Text = Self.mSources(0).Label
 		    Dim MinSets As Integer = Self.mSources(0).MinItemSets
@@ -835,11 +542,6 @@ End
 		        DuplicatesState = CheckBox.CheckedStates.Indeterminate
 		      End If
 		    Next
-		    
-		    LabelField.Text = Label
-		    MaxSetsField.Text = Str(MaxSets, "-0")
-		    MinSetsField.Text = Str(MinSets, "-0")
-		    DuplicatesCheck.State = DuplicatesState
 		  End If
 		  
 		  Self.mUpdating = False
@@ -867,80 +569,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events LabelField
-	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating = True Then
-		    Return
-		  End If
-		  
-		  Dim Updated As Boolean
-		  For Each Source As Beacon.LootSource In Self.mSources
-		    Source.Label = Me.Text.ToText
-		    Updated = True
-		  Next
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MinSetsField
-	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating = True Then
-		    Return
-		  End If
-		  
-		  Dim Updated As Boolean
-		  For Each Source As Beacon.LootSource In Self.mSources
-		    Source.MinItemSets = Val(Me.Text)
-		    Updated = True
-		  Next
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MaxSetsField
-	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating = True Then
-		    Return
-		  End If
-		  
-		  Dim Updated As Boolean
-		  For Each Source As Beacon.LootSource In Self.mSources
-		    Source.MaxItemSets = Val(Me.Text)
-		    Updated = True
-		  Next
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DuplicatesCheck
-	#tag Event
-		Sub Action()
-		  If Self.mUpdating = True Then
-		    Return
-		  End If
-		  
-		  Dim Updated As Boolean
-		  For Each Source As Beacon.LootSource In Self.mSources
-		    Source.SetsRandomWithoutReplacement = Me.Value
-		    Updated = True
-		  Next
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Separators
-	#tag Event
-		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused areas
-		  
-		  G.ForeColor = &cCCCCCC
-		  G.FillRect(-1, -1, G.Width + 2, G.Height + 2)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events SetList
 	#tag Event
 		Sub Change()
@@ -982,7 +610,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
+		  If Not Board.RawDataAvailable(Self.kClipboardType) Or UBound(Self.mSources) = -1 Then
 		    Return
 		  End If
 		  
@@ -995,7 +623,7 @@ End
 		    Return
 		  End Try
 		  
-		  Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Dict)
+		  Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Dict, Self.mSources(0))
 		  Self.AddSet(Set)
 		End Sub
 	#tag EndEvent
@@ -1032,6 +660,16 @@ End
 		    PresetCreationSheet.Present(Self, Set)
 		  End Select
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events Separators
+	#tag Event
+		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused areas
+		  
+		  G.ForeColor = &cCCCCCC
+		  G.FillRect(-1, -1, G.Width + 2, G.Height + 2)
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Editor

@@ -30,17 +30,17 @@ Begin ContainerControl SetEditor
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   False
-      ColumnCount     =   6
+      ColumnCount     =   7
       ColumnsResizable=   False
-      ColumnWidths    =   "*,80,80,80,80,80"
+      ColumnWidths    =   "*,80,80,80,80,80,80"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
+      GridLinesHorizontal=   1
+      GridLinesVertical=   1
       HasHeading      =   True
       HeadingIndex    =   0
       Height          =   213
@@ -48,7 +48,7 @@ Begin ContainerControl SetEditor
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Description	Min Quantity	Max Quantity	Min Quality	Max Quality	Chance"
+      InitialValue    =   "Description	Min Quantity	Max Quantity	Min Quality	Max Quality	Select %	Blueprint %"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -253,7 +253,7 @@ Begin ContainerControl SetEditor
       Maximum         =   100
       Minimum         =   0
       PageStep        =   25
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -281,7 +281,7 @@ Begin ContainerControl SetEditor
       LockRight       =   False
       LockTop         =   True
       Multiline       =   False
-      Scope           =   0
+      Scope           =   2
       Selectable      =   False
       TabIndex        =   9
       TabPanelIndex   =   0
@@ -725,17 +725,62 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateEntryList()
-		  EntryList.DeleteAllRows
-		  If Self.mSet <> Nil Then
-		    For I As Integer = 0 To UBound(Self.mSet)
-		      Dim Entry As Beacon.SetEntry = Self.mSet(I)
-		      EntryList.AddRow(LocalData.SharedInstance.Describe(Entry), Str(Entry.MinQuantity), Str(Entry.MaxQuantity), Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MaxQuality), Str(Self.mSet.RelativeWeight(I), "0%"))
-		      EntryList.RowTag(EntryList.LastIndex) = Entry
+		Private Sub UpdateEntryList(SelectEntries() As Beacon.SetEntry = Nil)
+		  If Self.mSet = Nil Then
+		    EntryList.DeleteAllRows
+		    Return
+		  End If
+		  
+		  Dim Selected() As Text
+		  Dim ScrollToSelection As Boolean
+		  If SelectEntries <> Nil Then
+		    For Each Entry As Beacon.SetEntry In SelectEntries
+		      Selected.Append(Entry.UniqueID)
+		    Next
+		    ScrollToSelection = True
+		  Else
+		    For I As Integer = 0 To EntryList.ListCount - 1
+		      If EntryList.Selected(I) Then
+		        Dim Entry As Beacon.SetEntry = EntryList.RowTag(I)
+		        Selected.Append(Entry.UniqueID)
+		      End If
 		    Next
 		  End If
 		  
+		  Dim RequiredRows As Integer = UBound(Self.mSet) + 1
+		  While EntryList.ListCount < RequiredRows
+		    EntryList.AddRow("")
+		  Wend
+		  While EntryList.ListCount > RequiredRows
+		    EntryList.RemoveRow(0)
+		  Wend
+		  
+		  For I As Integer = 0 To UBound(Self.mSet)
+		    Dim Entry As Beacon.SetEntry = Self.mSet(I)
+		    Dim BlueprintChance As Double = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint, 0)
+		    
+		    EntryList.Cell(I, 0) = Entry.Label
+		    EntryList.Cell(I, 1) = Str(Entry.MinQuantity)
+		    EntryList.Cell(I, 2) = Str(Entry.MaxQuantity)
+		    EntryList.Cell(I, 3) = Language.LabelForQuality(Entry.MinQuality)
+		    EntryList.Cell(I, 4) = Language.LabelForQuality(Entry.MaxQuality)
+		    EntryList.Cell(I, 5) = Str(Self.mSet.RelativeWeight(I) * 100, "0") + "%"
+		    EntryList.Cell(I, 6) = Str(BlueprintChance * 100, "0") + "%"
+		    
+		    EntryList.RowTag(I) = Entry
+		    EntryList.Selected(I) = Selected.IndexOf(Entry.UniqueID) > -1
+		  Next
+		  
 		  EntryList.Sort
+		  
+		  If ScrollToSelection Then
+		    For I As Integer = 0 To EntryList.ListCount - 1
+		      If EntryList.Selected(I) Then
+		        EntryList.ScrollPosition = I
+		        Exit For I
+		      End If
+		    Next
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -838,7 +883,10 @@ End
 		    Return
 		  End Try
 		  
-		  Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Dict)
+		  // The multipliers parameter here is 100% useless as a copied set entry will always use text
+		  // quality values and not numeric ones. But this is what the signature is, so something must
+		  // be supplied.
+		  Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Dict, New Beacon.Range(1, 1))
 		  Self.mSet.Append(Entry)
 		  Self.UpdateEntryList()
 		  RaiseEvent Updated
@@ -884,6 +932,14 @@ End
 		  End If
 		  Return True
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.ColumnAlignment(1) = Listbox.AlignRight
+		  Me.ColumnAlignment(2) = Listbox.AlignRight
+		  Me.ColumnAlignment(5) = Listbox.AlignRight
+		  Me.ColumnAlignment(6) = Listbox.AlignRight
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events LabelField
@@ -967,7 +1023,7 @@ End
 		    Self.mSet.Append(Entry)
 		  Next
 		  
-		  Self.UpdateEntryList()
+		  Self.UpdateEntryList(Entries)
 		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent

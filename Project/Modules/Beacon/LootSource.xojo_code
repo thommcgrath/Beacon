@@ -8,10 +8,16 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor()
+		Function ClassString() As Text
+		  Return Self.mClassString
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Constructor()
 		  Self.mMinItemSets = 1
 		  Self.mMaxItemSets = 3
-		  Self.mNumItemSetsPower = 1.0
+		  Self.mMultipliers = New Beacon.Range(1, 1)
 		  Self.mSetsRandomWithoutReplacement = True
 		End Sub
 	#tag EndMethod
@@ -26,20 +32,16 @@ Implements Beacon.Countable
 		  Self.mMinItemSets = Source.mMinItemSets
 		  Self.mNumItemSetsPower = Source.mNumItemSetsPower
 		  Self.mSetsRandomWithoutReplacement = Source.mSetsRandomWithoutReplacement
-		  Self.mType = Source.mType
+		  Self.mClassString = Source.mClassString
 		  Self.mLabel = Source.mLabel
+		  Self.mMultipliers = New Beacon.Range(Source.mMultipliers.Min, Source.mMultipliers.Max)
+		  Self.mKind = Source.mKind
+		  Self.mPackage = Source.mPackage
+		  Self.mIsOfficial = Source.mIsOfficial
 		  
 		  For I As Integer = 0 To UBound(Source.mItems)
 		    Self.mItems(I) = New Beacon.ItemSet(Source.mItems(I))
 		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Label As Text, Type As Text)
-		  Self.Constructor()
-		  Self.mType = Type
-		  Self.mLabel = Label
 		End Sub
 	#tag EndMethod
 
@@ -58,12 +60,15 @@ Implements Beacon.Countable
 		  
 		  Dim Keys As New Xojo.Core.Dictionary
 		  Keys.Value("ItemSets") = Children
-		  Keys.Value("Label") = Self.Label
 		  Keys.Value("MaxItemSets") = Self.MaxItemSets
 		  Keys.Value("MinItemSets") = Self.MinItemSets
 		  Keys.Value("NumItemSetsPower") = Self.NumItemSetsPower
 		  Keys.Value("bSetsRandomWithoutReplacement") = Self.SetsRandomWithoutReplacement
-		  Keys.Value("SupplyCrateClassString") = Self.Type
+		  Keys.Value("SupplyCrateClassString") = Self.ClassString
+		  Keys.Value("Availability") = Self.PackageToInteger(Self.mPackage)
+		  Keys.Value("Kind") = Self.KindToText(Self.mKind)
+		  Keys.Value("Multiplier_Min") = Self.Multipliers.Min
+		  Keys.Value("Multiplier_Max") = Self.Multipliers.Max
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -78,15 +83,20 @@ Implements Beacon.Countable
 		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.LootSource
 		  // This could be a beacon save or a config line
 		  
-		  Dim LootSource As New Beacon.LootSource
+		  Dim ClassString As Text
 		  If Dict.HasKey("SupplyCrateClassString") Then
-		    LootSource.Type = Dict.Value("SupplyCrateClassString")
+		    ClassString = Dict.Value("SupplyCrateClassString")
 		  Else
-		    LootSource.Type = Dict.Value("Type")
+		    ClassString = Dict.Value("Type")
 		  End If
 		  
-		  If Dict.HasKey("Label") Then
-		    LootSource.Label = Dict.Value("Label")
+		  Dim LootSource As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
+		  If LootSource = Nil Then
+		    Dim MutableSource As New Beacon.MutableLootSource(ClassString, False)
+		    MutableSource.Multipliers = New Beacon.Range(Dict.Value("Multipliers_Min"), Dict.Value("Multipliers_Max"))
+		    MutableSource.Package = Beacon.LootSource.IntegerToPackage(Dict.Value("Availability"))
+		    MutableSource.Kind = Beacon.LootSource.TextToKind(Dict.Value("Kind"))
+		    LootSource = New Beacon.LootSource(MutableSource)
 		  End If
 		  
 		  LootSource.MaxItemSets = Dict.Lookup("MaxItemSets", LootSource.MaxItemSets)
@@ -107,7 +117,7 @@ Implements Beacon.Countable
 		  End If
 		  
 		  For Each Child As Xojo.Core.Dictionary In Children
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Child)
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Child, LootSource)
 		    If Set <> Nil Then
 		      LootSource.Append(Set)
 		    End If
@@ -136,22 +146,62 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsScorchedEarth() As Boolean
-		  Return Self.mType.Right(16) = "_ScorchedEarth_C" Or Self.mType.Right(5) = "_SE_C"
+		Shared Function IntegerToPackage(Value As UInteger) As Beacon.LootSource.Packages
+		  Return CType(Value, Beacon.LootSource.Packages)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsOfficial() As Boolean
+		  Return Self.mIsOfficial
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Kind() As Beacon.LootSource.Kinds
-		  If Self.mType.IndexOf("Cave") > -1 Or Self.mType.IndexOf("ArtifactCrate") > -1 Then
-		    Return Beacon.LootSource.Kinds.Cave
-		  ElseIf Self.mType.IndexOf("Ocean") > -1 Then
-		    Return Beacon.LootSource.Kinds.Sea
-		  ElseIf Self.mType.IndexOf("_Double_") > -1 Then
-		    Return Beacon.LootSource.Kinds.Bonus
+		  Return Self.mKind
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function KindToText(Kind As Beacon.LootSource.Kinds) As Text
+		  Select Case Kind
+		  Case Beacon.LootSource.Kinds.Standard
+		    Return "Standard"
+		  Case Beacon.LootSource.Kinds.Bonus
+		    Return "Bonus"
+		  Case Beacon.LootSource.Kinds.Cave
+		    Return "Cave"
+		  Case Beacon.LootSource.Kinds.Sea
+		    Return "Sea"
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Label() As Text
+		  If Self.mLabel <> "" Then
+		    Return Self.mLabel
 		  Else
-		    Return Beacon.LootSource.Kinds.Standard
+		    Return Self.mClassString
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Lookup(ClassString As Text) As Beacon.LootSource
+		  Dim Source As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
+		  If Source = Nil Then
+		    Source = New Beacon.LootSource
+		    Source.mClassString = ClassString
+		  End If
+		  Return Source
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Multipliers() As Beacon.Range
+		  Return Self.mMultipliers
 		End Function
 	#tag EndMethod
 
@@ -161,7 +211,7 @@ Implements Beacon.Countable
 		    Return 1
 		  End If
 		  
-		  Return Self.mType.Compare(Other.mType, Text.CompareCaseSensitive)
+		  Return Self.mClassString.Compare(Other.mClassString, Text.CompareCaseSensitive)
 		End Function
 	#tag EndMethod
 
@@ -184,42 +234,51 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Package() As Beacon.LootSource.Packages
+		  Return Self.mPackage
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function PackageToInteger(Package As Beacon.LootSource.Packages) As UInteger
+		  Return CType(Package, UInteger)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Self.mItems.Remove(Index)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range) As Text
+		Shared Function TextToKind(Kind As Text) As Beacon.LootSource.Kinds
+		  Select Case Kind
+		  Case "Standard"
+		    Return Beacon.LootSource.Kinds.Standard
+		  Case "Bonus"
+		    Return Beacon.LootSource.Kinds.Bonus
+		  Case "Cave"
+		    Return Beacon.LootSource.Kinds.Cave
+		  Case "Sea"
+		    Return Beacon.LootSource.Kinds.Sea
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TextValue() As Text
 		  Dim Values() As Text
-		  Values.Append("SupplyCrateClassString=""" + Self.mType + """")
+		  Values.Append("SupplyCrateClassString=""" + Self.mClassString + """")
 		  Values.Append("MinItemSets=" + Self.mMinItemSets.ToText)
 		  Values.Append("MaxItemSets=" + Self.mMaxItemSets.ToText)
 		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.ToText)
 		  Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mItems, ",", Multipliers) + ")")
+		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mItems, ",", Self.Multipliers) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod
 
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If Self.mLabel <> "" Then
-			    Return Self.mLabel
-			  Else
-			    Return Self.mType
-			  End If
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Self.mLabel = Value
-			End Set
-		#tag EndSetter
-		Label As Text
-	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -235,6 +294,10 @@ Implements Beacon.Countable
 		MaxItemSets As Integer
 	#tag EndComputedProperty
 
+	#tag Property, Flags = &h1
+		Protected mClassString As Text
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -249,12 +312,20 @@ Implements Beacon.Countable
 		MinItemSets As Integer
 	#tag EndComputedProperty
 
+	#tag Property, Flags = &h1
+		Protected mIsOfficial As Boolean
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mItems() As Beacon.ItemSet
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mLabel As Text
+	#tag Property, Flags = &h1
+		Protected mKind As Beacon.LootSource.Kinds
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mLabel As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -265,16 +336,20 @@ Implements Beacon.Countable
 		Private mMinItemSets As Integer
 	#tag EndProperty
 
+	#tag Property, Flags = &h1
+		Protected mMultipliers As Beacon.Range
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mNumItemSetsPower As Double
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mSetsRandomWithoutReplacement As Boolean
+	#tag Property, Flags = &h1
+		Protected mPackage As Beacon.LootSource.Packages
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mType As Text
+		Private mSetsRandomWithoutReplacement As Boolean
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -305,26 +380,17 @@ Implements Beacon.Countable
 		SetsRandomWithoutReplacement As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mType
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Self.mType = Value
-			End Set
-		#tag EndSetter
-		Type As Text
-	#tag EndComputedProperty
-
 
 	#tag Enum, Name = Kinds, Type = Integer, Flags = &h0
 		Standard
 		  Bonus
 		  Cave
 		Sea
+	#tag EndEnum
+
+	#tag Enum, Name = Packages, Type = Integer, Flags = &h0
+		Island = 1
+		Scorched = 2
 	#tag EndEnum
 
 

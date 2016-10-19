@@ -1,21 +1,45 @@
 #tag Interface
 Protected Interface DataSource
 	#tag Method, Flags = &h0
-		Function MultipliersForLootSource(ClassString As Text) As Beacon.Range
+		Function GetEngram(ClassString As Text) As Beacon.Engram
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NameOfEngram(ClassString As Text) As Text
+		Function GetLootSource(ClassString As Text) As Beacon.LootSource
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function NameOfLootSource(ClassString As Text) As Text
+		Function IsPresetCustom(Preset As Beacon.Preset) As Boolean
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub LoadPresets()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Presets() As Beacon.Preset()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemovePreset(Preset As Beacon.Preset)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SavePreset(Preset As Beacon.Preset)
+		  
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

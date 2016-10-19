@@ -1,5 +1,18 @@
 # Beacon Version History
 
+## Build 7
+
+- Fixing cast issue with importing from text.
+
+## Build 6
+
+- Added missing items to presets: night vision goggles, tapejara saddle, metal sword, pike, water jar, and canteen.
+- Added new presets: SCUBA Gear, Player Consumables, and Dino Consumables.
+- Now possible to unpublish previously published documents.
+- Fixed bug causing imported configurations to have their quality scaled too low.
+- Local database of loot sources and engrams is now automatically updated online.
+- Missing items added to engram database: Tapejara Egg, and Archaeopteryx Egg.
+
 ## Build 5
 
 - Fixed KeyNotFoundExceptions on subsequent launches for some users.

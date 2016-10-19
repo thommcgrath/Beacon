@@ -325,7 +325,7 @@ Inherits Beacon.Thread
 		#tag ViewProperty
 			Name="State"
 			Group="Behavior"
-			Type="Ark.Thread.States"
+			Type="Beacon.Thread.States"
 			EditorType="Enum"
 			#tag EnumValues
 				"0 - Running"

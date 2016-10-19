@@ -250,6 +250,13 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
+      Begin MenuItem DocumentUnpublishDocument
+         SpecialMenu = 0
+         Text = "Unpublish Document"
+         Index = -2147483648
+         AutoEnable = False
+         Visible = True
+      End
    End
    Begin MenuItem HelpMenu
       SpecialMenu = 0

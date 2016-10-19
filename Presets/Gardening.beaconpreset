@@ -1,1 +1,243 @@
-{"Contents":{"Common":[{"ChanceToBeBlueprintOverride":0.0,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemConsumable_Seed_Amarberry_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":20,"MinQuality":"Tier1","MinQuantity":10},{"ChanceToBeBlueprintOverride":0.0,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemConsumable_Seed_Citronal_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":20,"MinQuality":"Tier1","MinQuantity":10},{"ChanceToBeBlueprintOverride":0.0,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemConsumable_Seed_Azulberry_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":20,"MinQuality":"Tier1","MinQuantity":10},{"ChanceToBeBlueprintOverride":0.0,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemConsumable_Seed_Tintoberry_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":20,"MinQuality":"Tier1","MinQuantity":10},{"ChanceToBeBlueprintOverride":0.0,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemConsumable_Seed_Mejoberry_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":20,"MinQuality":"Tier1","MinQuantity":10},{"ChanceToBeBlueprintOverride":0.0,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemConsumable_Seed_Narcoberry_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":20,"MinQuality":"Tier1","MinQuantity":10},{"ChanceToBeBlueprintOverride":0.0,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemConsumable_Seed_Stimberry_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":20,"MinQuality":"Tier1","MinQuantity":10},{"ChanceToBeBlueprintOverride":0.0,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemConsumable_Seed_Savoroot_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":20,"MinQuality":"Tier1","MinQuantity":10},{"ChanceToBeBlueprintOverride":0.0,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemConsumable_Seed_Longrass_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":20,"MinQuality":"Tier1","MinQuantity":10},{"ChanceToBeBlueprintOverride":0.0,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemConsumable_Seed_Rockarrot_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":20,"MinQuality":"Tier1","MinQuantity":10},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_CropPlot_Small_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":10,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_CropPlot_Medium_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":10,"MinQuality":"Tier1","MinQuantity":1},{"ChanceToBeBlueprintOverride":0.10000000000000000555,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemStructure_CropPlot_Large_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":10,"MinQuality":"Tier1","MinQuantity":1}],"Island":[{"ChanceToBeBlueprintOverride":0.0,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemConsumable_Seed_DefensePlant_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":100,"MinQuality":"Tier1","MinQuantity":100}],"Scorched":[{"ChanceToBeBlueprintOverride":0.0,"EntryWeight":1.0,"Items":[{"Class":"PrimalItemConsumable_Seed_PlantSpeciesY_C","Weight":1.0}],"MaxQuality":"Tier1","MaxQuantity":1,"MinQuality":"Tier1","MinQuantity":1}]},"Grouping":"Miscellaneous","Label":"Gardening","Max":4,"Min":1,"Modifiers":{"Bonus":{"Quality":3,"Quantity":2.0},"Cave":{"Quality":6,"Quantity":1.0},"Sea":{"Quality":6,"Quantity":1.0},"Standard":{"Quality":0,"Quantity":1.0}},"Weight":0.5}
+{
+  "Contents": {
+    "Common": [
+      {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Seed_Amarberry_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 10
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Seed_Citronal_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 10
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Seed_Azulberry_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 10
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Seed_Tintoberry_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 10
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Seed_Mejoberry_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 10
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Seed_Narcoberry_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 10
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Seed_Stimberry_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 10
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Seed_Savoroot_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 10
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Seed_Longrass_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 10
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Seed_Rockarrot_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 10
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_CropPlot_Small_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 10,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_CropPlot_Medium_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 10,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_CropPlot_Large_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 10,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ],
+    "Island": [
+      {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Seed_DefensePlant_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      }
+    ],
+    "Scorched": [
+      {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Seed_PlantSpeciesY_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ]
+  },
+  "Grouping": "Miscellaneous",
+  "Label": "Gardening",
+  "Max": 4,
+  "Min": 1,
+  "Modifiers": {
+    "Bonus": {
+      "Quality": 3,
+      "Quantity": 2
+    },
+    "Cave": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Sea": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Standard": {
+      "Quality": 0,
+      "Quantity": 1
+    }
+  },
+  "Weight": 0.5
+}
