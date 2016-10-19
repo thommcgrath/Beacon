@@ -252,7 +252,7 @@ Implements Beacon.DataSource
 		        Dim Mask As Integer = Dict.Value("mask")
 		        Dim MultMin As Double = Dict.Value("mult_min")
 		        Dim MultMax As Double = Dict.Value("mult_max")
-		        Dim UIColor As String = "FF00FF" // Temporary
+		        Dim UIColor As Text = Dict.Value("uicolor")
 		        Self.SQLExecute(SourceInsertStatement, ClassString, Label, Kind, Mask, MultMin, MultMax, UIColor)
 		      Next
 		    End If
