@@ -45,7 +45,7 @@ Begin Window EntryEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin PushButton CancelButton
@@ -1201,8 +1201,6 @@ End
 		  
 		  Self.Width = PreferredSize.Width
 		  Self.Height = PreferredSize.Height
-		  
-		  Self.Search("")
 		End Sub
 	#tag EndEvent
 
@@ -1238,28 +1236,14 @@ End
 		    Next
 		  End If
 		  
-		  If UBound(Win.mEntries) > -1 Then
-		    Win.mEditing = True
-		    Win.PagePanel1.Value = 1
-		    Win.BackButton.Caption = "Cancel"
-		    Win.DoneButton.Caption = "Save"
-		  End If
-		  
-		  If UBound(Win.mEntries) > 0 Then
-		    Win.EditChanceCheck.Visible = True
-		    Win.EditMaxQualityCheck.Visible = True
-		    Win.EditMaxQuantityCheck.Visible = True
-		    Win.EditMinQualityCheck.Visible = True
-		    Win.EditMinQuantityCheck.Visible = True
-		    Win.EditWeightCheck.Visible = True
-		    
-		    Win.EditChanceCheck.Value = False
-		    Win.EditMaxQualityCheck.Value = False
-		    Win.EditMaxQuantityCheck.Value = False
-		    Win.EditMinQualityCheck.Value = False
-		    Win.EditMinQuantityCheck.Value = False
-		    Win.EditWeightCheck.Value = False
-		  End If
+		  Select Case UBound(Win.mEntries)
+		  Case -1
+		    Win.mMode = EntryEditor.Modes.NewEntry
+		  Case 0
+		    Win.mMode = EntryEditor.Modes.SingleEdit
+		  Else
+		    Win.mMode = EntryEditor.Modes.MultiEdit
+		  End Select
 		  
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
@@ -1320,8 +1304,55 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SetupUI()
+		  Select Case Self.mMode
+		  Case EntryEditor.Modes.NewEntry
+		    Self.Search("")
+		  Case EntryEditor.Modes.SingleEdit
+		    BehaviorGroup.Visible = False
+		    BehaviorSingleEntryRadio.Value = True
+		    EngramList.Height = (BehaviorGroup.Top + BehaviorGroup.Height) - EngramList.Top
+		    DoneButton.Caption = "Save"
+		    
+		    For Each Option As Beacon.SetEntryOption In Self.mEntries(0)
+		      Self.mSelectedEngrams.Append(Option.Engram)
+		    Next
+		    
+		    Self.Search("")
+		    Self.UpdateSelectionUI()
+		    
+		    For I As Integer = 0 To EngramList.ListCount - 1
+		      If EngramList.CellCheck(I, 0) Then
+		        EngramList.ScrollPosition = I
+		        Exit For I
+		      End If
+		    Next
+		  Case EntryEditor.Modes.MultiEdit
+		    PagePanel1.Value = 1
+		    BackButton.Caption = "Cancel"
+		    DoneButton.Caption = "Save"
+		    
+		    EditChanceCheck.Visible = True
+		    EditMaxQualityCheck.Visible = True
+		    EditMaxQuantityCheck.Visible = True
+		    EditMinQualityCheck.Visible = True
+		    EditMinQuantityCheck.Visible = True
+		    EditWeightCheck.Visible = True
+		    
+		    EditChanceCheck.Value = False
+		    EditMaxQualityCheck.Value = False
+		    EditMaxQuantityCheck.Value = False
+		    EditMinQualityCheck.Value = False
+		    EditMinQuantityCheck.Value = False
+		    EditWeightCheck.Value = False
+		  End Select
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Show()
+		  Self.SetupUI()
 		  Self.mReadyForAnimation = True
 		  Super.Show
 		End Sub
@@ -1329,6 +1360,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowModal()
+		  Self.SetupUI()
 		  Self.mReadyForAnimation = True
 		  Super.ShowModal()
 		End Sub
@@ -1336,6 +1368,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowModalWithin(ParentWindow As Window)
+		  Self.SetupUI()
 		  Self.mReadyForAnimation = True
 		  Super.ShowModalWithin(ParentWindow)
 		End Sub
@@ -1343,8 +1376,24 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowWithin(ParentWindow As Window, Facing As Integer = - 1)
+		  Self.SetupUI()
 		  Self.mReadyForAnimation = True
 		  Super.ShowWithin(ParentWindow, Facing)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateSelectionUI()
+		  Select Case UBound(Self.mSelectedEngrams)
+		  Case -1
+		    SelectionCountLabel.Text = "No classes selected"
+		  Case 0
+		    SelectionCountLabel.Text = "1 class selected"
+		  Else
+		    SelectionCountLabel.Text = Str(UBound(Self.mSelectedEngrams) + 1, "-0") + " classes selected"
+		  End Select
+		  
+		  NextButton.Enabled = UBound(Self.mSelectedEngrams) > -1
 		End Sub
 	#tag EndMethod
 
@@ -1358,15 +1407,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEditing As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mEntries() As Beacon.SetEntry
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mIgnoreChanges As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMode As EntryEditor.Modes
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1376,6 +1425,13 @@ End
 	#tag Property, Flags = &h21
 		Private mSelectedEngrams() As Beacon.Engram
 	#tag EndProperty
+
+
+	#tag Enum, Name = Modes, Type = Integer, Flags = &h21
+		NewEntry
+		  SingleEdit
+		MultiEdit
+	#tag EndEnum
 
 
 #tag EndWindowCode
@@ -1473,21 +1529,32 @@ End
 #tag Events NextButton
 	#tag Event
 		Sub Action()
-		  Redim Self.mEntries(-1)
-		  
-		  If BehaviorMultipleEntriesRadio.Value Then
-		    For Each Engram As Beacon.Engram In Self.mSelectedEngrams
+		  Select Case Self.mMode
+		  Case EntryEditor.Modes.NewEntry
+		    Redim Self.mEntries(-1)
+		    
+		    If BehaviorMultipleEntriesRadio.Value Then
+		      For Each Engram As Beacon.Engram In Self.mSelectedEngrams
+		        Dim Entry As New Beacon.SetEntry
+		        Entry.Append(New Beacon.SetEntryOption(Engram, 1))
+		        Self.mEntries.Append(Entry)
+		      Next
+		    Else
 		      Dim Entry As New Beacon.SetEntry
-		      Entry.Append(New Beacon.SetEntryOption(Engram, 1))
+		      For Each Engram As Beacon.Engram In Self.mSelectedEngrams
+		        Entry.Append(New Beacon.SetEntryOption(Engram, 1))
+		      Next
 		      Self.mEntries.Append(Entry)
-		    Next
-		  Else
-		    Dim Entry As New Beacon.SetEntry
+		    End If
+		  Case EntryEditor.Modes.SingleEdit
+		    Dim Entry As Beacon.SetEntry = Self.mEntries(0)
+		    While Entry.Count > 0
+		      Entry.Remove(0)
+		    Wend
 		    For Each Engram As Beacon.Engram In Self.mSelectedEngrams
 		      Entry.Append(New Beacon.SetEntryOption(Engram, 1))
 		    Next
-		    Self.mEntries.Append(Entry)
-		  End If
+		  End Select
 		  
 		  PagePanel1.Value = 1
 		End Sub
@@ -1496,7 +1563,7 @@ End
 #tag Events BackButton
 	#tag Event
 		Sub Action()
-		  If Self.mEditing Then
+		  If Self.mMode = EntryEditor.Modes.MultiEdit Then
 		    Self.mCancelled = True
 		    Self.Hide
 		  Else
@@ -1565,16 +1632,7 @@ End
 		    Self.mSelectedEngrams.Remove(Idx)
 		  End If
 		  
-		  Select Case UBound(Self.mSelectedEngrams)
-		  Case -1
-		    SelectionCountLabel.Text = "No classes selected"
-		  Case 0
-		    SelectionCountLabel.Text = "1 class selected"
-		  Else
-		    SelectionCountLabel.Text = Str(UBound(Self.mSelectedEngrams) + 1, "-0") + " classes selected"
-		  End Select
-		  
-		  NextButton.Enabled = UBound(Self.mSelectedEngrams) > -1
+		  Self.UpdateSelectionUI()
 		End Sub
 	#tag EndEvent
 	#tag Event
