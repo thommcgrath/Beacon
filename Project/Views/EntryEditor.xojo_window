@@ -9,7 +9,7 @@ Begin Window EntryEditor
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   322
+   Height          =   442
    ImplicitInstance=   False
    LiveResize      =   False
    MacProcID       =   0
@@ -25,11 +25,11 @@ Begin Window EntryEditor
    Resizeable      =   True
    Title           =   "Set Entry"
    Visible         =   True
-   Width           =   592
+   Width           =   600
    Begin PagePanel PagePanel1
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   322
+      Height          =   442
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -45,9 +45,9 @@ Begin Window EntryEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   1
       Visible         =   True
-      Width           =   592
+      Width           =   600
       Begin PushButton CancelButton
          AutoDeactivate  =   True
          Bold            =   False
@@ -61,7 +61,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   400
+         Left            =   408
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -74,7 +74,7 @@ Begin Window EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   282
+         Top             =   402
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -92,7 +92,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   492
+         Left            =   500
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -105,7 +105,7 @@ Begin Window EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   282
+         Top             =   402
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -123,7 +123,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   400
+         Left            =   408
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -136,7 +136,7 @@ Begin Window EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   282
+         Top             =   402
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -154,7 +154,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   492
+         Left            =   500
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -167,7 +167,7 @@ Begin Window EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   282
+         Top             =   402
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -213,7 +213,7 @@ Begin Window EntryEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   552
+         Width           =   560
       End
       Begin BeaconListbox EngramList
          AutoDeactivate  =   True
@@ -261,7 +261,7 @@ Begin Window EntryEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   552
+         Width           =   560
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -280,7 +280,7 @@ Begin Window EntryEditor
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
          Multiline       =   False
          Scope           =   2
@@ -297,7 +297,7 @@ Begin Window EntryEditor
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   244
+         Width           =   396
       End
       Begin Label NameField
          AutoDeactivate  =   True
@@ -314,7 +314,7 @@ Begin Window EntryEditor
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
          Multiline       =   False
          Scope           =   2
@@ -331,7 +331,7 @@ Begin Window EntryEditor
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   244
+         Width           =   396
       End
       Begin Label ClassLabel
          AutoDeactivate  =   True
@@ -889,7 +889,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   472
+         Left            =   480
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -921,7 +921,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   472
+         Left            =   480
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -953,7 +953,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   472
+         Left            =   480
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -985,7 +985,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   472
+         Left            =   480
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -1017,7 +1017,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   472
+         Left            =   480
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -1049,7 +1049,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   472
+         Left            =   480
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   False
@@ -1097,11 +1097,97 @@ Begin Window EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   282
+         Top             =   402
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   368
+         Width           =   376
+      End
+      Begin GroupBox BehaviorGroup
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Behavior"
+         Enabled         =   True
+         Height          =   108
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   282
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+         Begin RadioButton BehaviorMultipleEntriesRadio
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "Create one entry for each selected engram"
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "BehaviorGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            Scope           =   2
+            TabIndex        =   0
+            TabPanelIndex   =   1
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   318
+            Underline       =   False
+            Value           =   True
+            Visible         =   True
+            Width           =   520
+         End
+         Begin RadioButton BehaviorSingleEntryRadio
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "Create a single entry containing the selected engrams"
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "BehaviorGroup"
+            Italic          =   False
+            Left            =   40
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            Scope           =   2
+            TabIndex        =   1
+            TabPanelIndex   =   1
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   350
+            Underline       =   False
+            Value           =   False
+            Visible         =   True
+            Width           =   520
+         End
       End
    End
 End
@@ -1110,7 +1196,21 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
+		  Dim DefaultSize As New Xojo.Core.Size(600, 442)
+		  Dim PreferredSize As Xojo.Core.Size = App.Preferences.SizeValue("Entry Editor Size", DefaultSize)
+		  
+		  Self.Width = PreferredSize.Width
+		  Self.Height = PreferredSize.Height
+		  
 		  Self.Search("")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  If PagePanel1.Value = 0 And Self.mAnimating = False Then
+		    App.Preferences.SizeValue("Entry Editor Size") = New Xojo.Core.Size(Self.Width, Self.Height)
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -1130,53 +1230,37 @@ End
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Sources() As Beacon.SetEntry = Nil) As Beacon.SetEntry()
 		  Dim Win As New EntryEditor
-		  If Sources <> Nil And UBound(Sources) > -1 Then
-		    Win.mEditing = True
-		    Redim Win.mSelectedEngrams(UBound(Sources))
+		  
+		  If Sources <> Nil Then
+		    Redim Win.mEntries(UBound(Sources))
 		    For I As Integer = 0 To UBound(Sources)
-		      Dim Source As Beacon.SetEntry = Sources(I)
-		      Win.mSelectedEngrams(I) = Source(0).Engram
+		      Win.mEntries(I) = New Beacon.SetEntry(Sources(I))
 		    Next
-		    Win.NameField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).Label, "Multiple")
-		    Win.ClassField.Text = if(UBound(Sources) = 0, Win.mSelectedEngrams(0).ClassString, "Multiple")
+		  End If
+		  
+		  If UBound(Win.mEntries) > -1 Then
+		    Win.mEditing = True
 		    Win.PagePanel1.Value = 1
 		    Win.BackButton.Caption = "Cancel"
 		    Win.DoneButton.Caption = "Save"
-		    
-		    Dim MinQuantities(), MaxQuantities() As Integer
-		    Dim MinQualities(), MaxQualities() As Beacon.Qualities
-		    Dim TotalWeight, TotalChance As Double
-		    For Each Source As Beacon.SetEntry In Sources
-		      MinQuantities.Append(Source.MinQuantity)
-		      MaxQuantities.Append(Source.MaxQuantity)
-		      TotalWeight = TotalWeight + Source.Weight
-		      TotalChance = TotalChance + Source.ChanceToBeBlueprint
-		      MinQualities.Append(Source.MinQuality)
-		      MaxQualities.Append(Source.MaxQuality)
-		    Next
-		    
-		    MinQuantities.Sort
-		    MaxQuantities.Sort
-		    MinQualities.Sort
-		    MaxQualities.Sort
-		    
-		    Win.MinQuantityField.Text = Str(MinQuantities(0))
-		    Win.MaxQuantityField.Text = Str(MaxQuantities(UBound(MaxQuantities)))
-		    Win.WeightSlider.Value = 100 * (TotalWeight / (UBound(Sources) + 1))
-		    Win.ChanceSlider.Value = 100 * (TotalChance / (UBound(Sources) + 1))
-		    
-		    Win.MinQualityMenu.SelectByTag(MinQualities(0))
-		    Win.MaxQualityMenu.SelectByTag(MaxQualities(UBound(MaxQualities)))
-		    
-		    If UBound(Sources) > 0 Then
-		      Win.EditChanceCheck.Visible = True
-		      Win.EditMaxQualityCheck.Visible = True
-		      Win.EditMaxQuantityCheck.Visible = True
-		      Win.EditMinQualityCheck.Visible = True
-		      Win.EditMinQuantityCheck.Visible = True
-		      Win.EditWeightCheck.Visible = True
-		    End If
 		  End If
+		  
+		  If UBound(Win.mEntries) > 0 Then
+		    Win.EditChanceCheck.Visible = True
+		    Win.EditMaxQualityCheck.Visible = True
+		    Win.EditMaxQuantityCheck.Visible = True
+		    Win.EditMinQualityCheck.Visible = True
+		    Win.EditMinQuantityCheck.Visible = True
+		    Win.EditWeightCheck.Visible = True
+		    
+		    Win.EditChanceCheck.Value = False
+		    Win.EditMaxQualityCheck.Value = False
+		    Win.EditMaxQuantityCheck.Value = False
+		    Win.EditMinQualityCheck.Value = False
+		    Win.EditMinQuantityCheck.Value = False
+		    Win.EditWeightCheck.Value = False
+		  End If
+		  
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  If Win.mCancelled Then
@@ -1184,42 +1268,20 @@ End
 		    Return Nil
 		  End If
 		  
-		  Dim Entries() As Beacon.SetEntry
-		  If Win.mEditing Then
-		    For Each Source As Beacon.SetEntry In Sources
-		      Entries.Append(New Beacon.SetEntry(Source))
-		    Next
-		  Else
-		    For Each Engram As Beacon.Engram In Win.mSelectedEngrams
-		      Dim Entry As New Beacon.SetEntry
-		      Entry.Append(New Beacon.SetEntryOption(Engram, 1))
-		      Entries.Append(Entry)
-		    Next
-		  End If
-		  
-		  For Each Entry As Beacon.SetEntry In Entries
-		    If Win.EditMaxQuantityCheck.Value Then
-		      Entry.MaxQuantity = Val(Win.MaxQuantityField.Text)
-		    End If
-		    If Win.EditMinQuantityCheck.Value Then
-		      Entry.MinQuantity = Val(Win.MinQuantityField.Text)
-		    End If
-		    If Win.EditChanceCheck.Value Then
-		      Entry.ChanceToBeBlueprint = Win.ChanceSlider.Value / 100
-		    End If
-		    If Win.EditWeightCheck.Value Then
-		      Entry.Weight = Win.WeightSlider.Value / 100
-		    End If
-		    If Win.EditMaxQualityCheck.Value Then
-		      Entry.MaxQuality = Win.MaxQualityMenu.Tag
-		    End If
-		    If Win.EditMinQualityCheck.Value Then
-		      Entry.MinQuality = Win.MinQualityMenu.Tag
-		    End If
-		  Next
+		  Dim Entries() As Beacon.SetEntry = Win.mEntries
 		  Win.Close
 		  Return Entries
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ResizeCompleted(Sender As AnimationKit.MoveTask)
+		  If PagePanel1.Value = 1 Then
+		    Self.MaxHeight = Self.MinHeight
+		  End If
+		  
+		  Self.mAnimating = False
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1258,6 +1320,38 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Show()
+		  Self.mReadyForAnimation = True
+		  Super.Show
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowModal()
+		  Self.mReadyForAnimation = True
+		  Super.ShowModal()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowModalWithin(ParentWindow As Window)
+		  Self.mReadyForAnimation = True
+		  Super.ShowModalWithin(ParentWindow)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowWithin(ParentWindow As Window, Facing As Integer = - 1)
+		  Self.mReadyForAnimation = True
+		  Super.ShowWithin(ParentWindow, Facing)
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mAnimating As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
@@ -1268,12 +1362,106 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mEntries() As Beacon.SetEntry
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIgnoreChanges As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mReadyForAnimation As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSelectedEngrams() As Beacon.Engram
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
+#tag Events PagePanel1
+	#tag Event
+		Sub Change()
+		  Select Case Me.Value
+		  Case 0
+		    Dim DefaultSize As New Xojo.Core.Size(600, 442)
+		    Dim PreferredSize As Xojo.Core.Size = App.Preferences.SizeValue("Entry Editor Size", DefaultSize)
+		    
+		    Self.MaxHeight = 32000
+		    
+		    If Self.mReadyForAnimation Then
+		      Self.mAnimating = True
+		      
+		      Dim Task As New AnimationKit.MoveTask(Self)
+		      Task.Height = PreferredSize.Height
+		      Task.Curve = AnimationKit.Curve.CreateEaseOut
+		      Task.DurationInSeconds = 0.15
+		      AddHandler Task.Completed, AddressOf Self.ResizeCompleted
+		      Task.Run
+		    Else
+		      Self.Height = PreferredSize.Height
+		    End If
+		  Case 1
+		    If Self.mReadyForAnimation Then
+		      Self.mAnimating = True
+		      
+		      Dim Task As New AnimationKit.MoveTask(Self)
+		      Task.Height = Self.MinHeight
+		      Task.Curve = AnimationKit.Curve.CreateEaseOut
+		      Task.DurationInSeconds = 0.15
+		      AddHandler Task.Completed, AddressOf Self.ResizeCompleted
+		      Task.Run
+		    Else
+		      Self.Height = Self.MinHeight
+		    End If
+		    
+		    ClassField.Text = if(UBound(Self.mEntries) = 0, Self.mEntries(0).ClassesLabel, "Multiple (" + Str(UBound(Self.mEntries) + 1, "0") + " Entries)")
+		    NameField.Text = if(UBound(Self.mEntries) = 0, Self.mEntries(0).Label, "Multiple (" + Str(UBound(Self.mEntries) + 1, "0") + " Entries)")
+		    
+		    Dim MinQuantities(), MaxQuantities() As Integer
+		    Dim MinQualities(), MaxQualities() As Beacon.Qualities
+		    Dim TotalWeight, TotalChance As Double
+		    Dim CanBeBlueprint As Boolean
+		    For Each Entry As Beacon.SetEntry In Self.mEntries
+		      MinQuantities.Append(Entry.MinQuantity)
+		      MaxQuantities.Append(Entry.MaxQuantity)
+		      TotalWeight = TotalWeight + Entry.Weight
+		      TotalChance = TotalChance + Entry.ChanceToBeBlueprint
+		      MinQualities.Append(Entry.MinQuality)
+		      MaxQualities.Append(Entry.MaxQuality)
+		      CanBeBlueprint = CanBeBlueprint Or Entry.CanBeBlueprint
+		    Next
+		    
+		    MinQuantities.Sort
+		    MaxQuantities.Sort
+		    MinQualities.Sort
+		    MaxQualities.Sort
+		    
+		    Self.mIgnoreChanges = True
+		    MinQuantityField.Text = Str(MinQuantities(0))
+		    MaxQuantityField.Text = Str(MaxQuantities(UBound(MaxQuantities)))
+		    WeightSlider.Value = 100 * (TotalWeight / (UBound(Self.mEntries) + 1))
+		    If CanBeBlueprint Then
+		      ChanceSlider.Value = 100 * (TotalChance / (UBound(Self.mEntries) + 1))
+		      ChanceSlider.Enabled = True
+		      ChanceLabel.Enabled = True
+		      ChanceField.Enabled = True
+		      EditChanceCheck.Enabled = True
+		    Else
+		      ChanceSlider.Value = 0
+		      ChanceSlider.Enabled = False
+		      ChanceLabel.Enabled = False
+		      ChanceField.Enabled = False
+		      EditChanceCheck.Enabled = False
+		    End If
+		    MinQualityMenu.SelectByTag(MinQualities(0))
+		    MaxQualityMenu.SelectByTag(MaxQualities(UBound(MaxQualities)))
+		    Self.mIgnoreChanges = False
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
@@ -1285,10 +1473,23 @@ End
 #tag Events NextButton
 	#tag Event
 		Sub Action()
-		  PagePanel1.Value = 1
+		  Redim Self.mEntries(-1)
 		  
-		  ClassField.Text = if(UBound(Self.mSelectedEngrams) = 0, Self.mSelectedEngrams(0).ClassString, "Multiple")
-		  NameField.Text = if(UBound(Self.mSelectedEngrams) = 0, Self.mSelectedEngrams(0).Label, "Multiple")
+		  If BehaviorMultipleEntriesRadio.Value Then
+		    For Each Engram As Beacon.Engram In Self.mSelectedEngrams
+		      Dim Entry As New Beacon.SetEntry
+		      Entry.Append(New Beacon.SetEntryOption(Engram, 1))
+		      Self.mEntries.Append(Entry)
+		    Next
+		  Else
+		    Dim Entry As New Beacon.SetEntry
+		    For Each Engram As Beacon.Engram In Self.mSelectedEngrams
+		      Entry.Append(New Beacon.SetEntryOption(Engram, 1))
+		    Next
+		    Self.mEntries.Append(Entry)
+		  End If
+		  
+		  PagePanel1.Value = 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1307,6 +1508,27 @@ End
 #tag Events DoneButton
 	#tag Event
 		Sub Action()
+		  For Each Entry As Beacon.SetEntry In Self.mEntries
+		    If EditMaxQuantityCheck.Value Then
+		      Entry.MaxQuantity = Val(MaxQuantityField.Text)
+		    End If
+		    If EditMinQuantityCheck.Value Then
+		      Entry.MinQuantity = Val(MinQuantityField.Text)
+		    End If
+		    If EditChanceCheck.Value Then
+		      Entry.ChanceToBeBlueprint = ChanceSlider.Value / 100
+		    End If
+		    If EditWeightCheck.Value Then
+		      Entry.Weight = WeightSlider.Value / 100
+		    End If
+		    If EditMaxQualityCheck.Value Then
+		      Entry.MaxQuality = MaxQualityMenu.Tag
+		    End If
+		    If EditMinQualityCheck.Value Then
+		      Entry.MinQuality = MinQualityMenu.Tag
+		    End If
+		  Next
+		  
 		  Self.mCancelled = False
 		  Self.Hide
 		End Sub
@@ -1361,6 +1583,28 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events MinQuantityField
+	#tag Event
+		Sub TextChange()
+		  If Self.mIgnoreChanges Then
+		    Return
+		  End If
+		  
+		  EditMinQuantityCheck.Value = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MaxQuantityField
+	#tag Event
+		Sub TextChange()
+		  If Self.mIgnoreChanges Then
+		    Return
+		  End If
+		  
+		  EditMaxQuantityCheck.Value = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events QualityMenus
 	#tag Event
 		Sub Open(index as Integer)
@@ -1382,11 +1626,31 @@ End
 		  Me.ListIndex = 0
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub Change(index as Integer)
+		  If Self.mIgnoreChanges Then
+		    Return
+		  End If
+		  
+		  Select Case Index
+		  Case 0 // Min
+		    EditMinQualityCheck.Value = True
+		  Case 1 // Max
+		    EditMaxQualityCheck.Value = True
+		  End Select
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events WeightSlider
 	#tag Event
 		Sub ValueChanged()
 		  WeightField.Text = Str(Me.Value, "-0")
+		  
+		  If Self.mIgnoreChanges Then
+		    Return
+		  End If
+		  
+		  EditWeightCheck.Value = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1394,6 +1658,12 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  ChanceField.Text = Str(Me.Value, "-0") + "%"
+		  
+		  If Self.mIgnoreChanges Then
+		    Return
+		  End If
+		  
+		  EditChanceCheck.Value = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents

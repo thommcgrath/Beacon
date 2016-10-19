@@ -110,7 +110,6 @@ Begin Window PresetCreationSheet
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "New Preset"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -145,7 +144,6 @@ Begin Window PresetCreationSheet
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Group:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -292,7 +290,6 @@ Begin Window PresetCreationSheet
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Adjust Quality By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -327,7 +324,6 @@ Begin Window PresetCreationSheet
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Tiers"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -405,7 +401,6 @@ Begin Window PresetCreationSheet
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -511,7 +506,6 @@ Begin Window PresetCreationSheet
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Adjust Quality By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -546,7 +540,6 @@ Begin Window PresetCreationSheet
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Tiers"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -624,7 +617,6 @@ Begin Window PresetCreationSheet
          Selectable      =   False
          TabIndex        =   4
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -730,7 +722,6 @@ Begin Window PresetCreationSheet
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Adjust Quality By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -765,7 +756,6 @@ Begin Window PresetCreationSheet
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Tiers"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -843,7 +833,6 @@ Begin Window PresetCreationSheet
          Selectable      =   False
          TabIndex        =   4
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -949,7 +938,6 @@ Begin Window PresetCreationSheet
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Adjust Quality By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -984,7 +972,6 @@ Begin Window PresetCreationSheet
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Tiers"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -1062,7 +1049,6 @@ Begin Window PresetCreationSheet
          Selectable      =   False
          TabIndex        =   4
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1098,7 +1084,6 @@ Begin Window PresetCreationSheet
       Selectable      =   False
       TabIndex        =   11
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Presets behave differently based on the loot source they are added to. For each loot source below, both quantity and quality can be adjusted. ""Adjust Quality By"" is a fixed number of quality levels to adjust. So a value of 2 would bring a Primitive quality to Apprentice. ""Multiply Quantity By"" simply multiplies the quantity of each entry by the given multiplier.\n\nEach individual item can be included in loot sources for The Island && The Center, Scorched Earth, or both."
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -1183,7 +1168,6 @@ Begin Window PresetCreationSheet
       Selectable      =   False
       TabIndex        =   13
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Contents:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -1264,7 +1248,7 @@ End
 		  Win.StandardQuantityField.Text = Preset.QuantityMultiplier(Beacon.LootSource.Kinds.Standard).ToText(Xojo.Core.Locale.Current)
 		  
 		  For Each Entry As Beacon.PresetEntry In Preset
-		    Win.ContentsList.AddRow("", "", Entry.Description)
+		    Win.ContentsList.AddRow("", "", Entry.Label)
 		    
 		    Dim Idx As Integer = Win.ContentsList.LastIndex
 		    Win.ContentsList.CellCheck(Idx, 0) = Entry.ValidForIsland
