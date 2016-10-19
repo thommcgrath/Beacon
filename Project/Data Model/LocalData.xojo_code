@@ -186,7 +186,7 @@ Implements Beacon.DataSource
 		  End Select
 		  
 		  Dim Bitmaps() As Picture
-		  For Factor As Integer = 1 To 2
+		  For Factor As Integer = 1 To 3
 		    Dim HighlightRep As Picture = HighlightMask.BestRepresentation(Size, Size, Factor)
 		    Dim ColorRep As Picture = ColorMask.BestRepresentation(Size, Size, Factor)
 		    
