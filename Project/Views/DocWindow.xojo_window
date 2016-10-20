@@ -649,7 +649,6 @@ End
 		    LootSourceHeader.SegmentIndex = TargetIndex
 		  End If
 		  Self.UpdateSourceList(Sources)
-		  Editor.Sources = Sources
 		End Sub
 	#tag EndMethod
 
@@ -832,11 +831,21 @@ End
 		    BeaconList.AddRow("")
 		  Wend
 		  
+		  Self.mBlockSelectionChanged = True
+		  Dim Selection() As Beacon.LootSource
 		  For I As Integer = 0 To UBound(VisibleSources)
 		    BeaconList.RowTag(I) = VisibleSources(I)
 		    BeaconList.Cell(I, 1) = VisibleSources(I).Label
-		    BeaconList.Selected(I) = SelectedClasses.IndexOf(VisibleSources(I).ClassString) > -1
+		    If SelectedClasses.IndexOf(VisibleSources(I).ClassString) > -1 Then
+		      BeaconList.Selected(I) = True
+		      Selection.Append(VisibleSources(I))
+		    Else
+		      BeaconList.Selected(I) = False
+		    End If
 		  Next
+		  Self.mBlockSelectionChanged = False
+		  Editor.Sources = Selection
+		  Editor.Enabled = UBound(Selection) > -1
 		End Sub
 	#tag EndMethod
 
@@ -851,6 +860,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private ImportProgress As ImporterWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBlockSelectionChanged As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -881,6 +894,10 @@ End
 		Sub Change()
 		  RemoveBeaconButton.Enabled = Me.SelCount > 0
 		  EditBeaconButton.Enabled = Me.SelCount = 1
+		  
+		  If Self.mBlockSelectionChanged Then
+		    Return
+		  End If
 		  
 		  Dim Sources() As Beacon.LootSource
 		  For I As Integer = 0 To Me.ListCount - 1

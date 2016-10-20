@@ -524,6 +524,13 @@ End
 		Sub Sources(Assigns Values() As Beacon.LootSource)
 		  Self.mUpdating = True
 		  
+		  Dim SelectedSetNames() As String
+		  For I As Integer = 0 To SetList.ListCount - 1
+		    If SetList.Selected(I) Then
+		      SelectedSetNames.Append(SetList.Cell(I, 0))
+		    End If
+		  Next
+		  
 		  Redim Self.mSources(UBound(Values))
 		  For I As Integer = 0 To UBound(Self.mSources)
 		    Self.mSources(I) = Values(I)
@@ -555,6 +562,7 @@ End
 		  For Each Set As Beacon.ItemSet In CommonSets
 		    SetList.AddRow(Set.Label)
 		    SetList.RowTag(SetList.LastIndex) = Set
+		    SetList.Selected(SetList.LastIndex) = SelectedSetNames.IndexOf(Set.Label) > -1
 		  Next
 		  Self.mSorting = True
 		  SetList.Sort
