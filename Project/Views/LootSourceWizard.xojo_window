@@ -161,7 +161,7 @@ Begin Window LootSourceWizard
          GridLinesHorizontal=   0
          GridLinesVertical=   0
          HasHeading      =   True
-         HeadingIndex    =   1
+         HeadingIndex    =   0
          Height          =   294
          HelpTag         =   ""
          Hierarchical    =   False
@@ -1141,6 +1141,7 @@ End
 		      End If
 		    Next
 		  Next
+		  AllowedLootSources.Sort
 		  
 		  For Each Source As Beacon.LootSource In AllowedLootSources
 		    Dim Package As String = if(Source.Package = Beacon.LootSource.Packages.Scorched, "Scorched Earth", "The Island & The Center")
@@ -1328,6 +1329,24 @@ End
 		  Dim SpaceHeight As Integer = Me.DefaultRowHeight
 		  
 		  G.DrawPicture(Icon, (SpaceWidth - Icon.Width) / 2, (SpaceHeight - Icon.Height) / 2)
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  If Column <> 0 Then
+		    Return False
+		  End If
+		  
+		  Dim Source1 As Beacon.LootSource = Me.RowTag(Row1)
+		  Dim Source2 As Beacon.LootSource = Me.RowTag(Row2)
+		  
+		  If Source1.SortValue > Source2.SortValue Then
+		    Result = 1
+		  ElseIf Source1.SortValue < Source2.SortValue Then
+		    Result = -1
+		  End If
 		  
 		  Return True
 		End Function
