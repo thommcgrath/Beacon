@@ -48,7 +48,8 @@ CREATE TABLE "loot_sources" (
 	"multiplier_min" NUMERIC(6,4) NOT NULL,
 	"multiplier_max" NUMERIC(6,4) NOT NULL,
 	"last_update" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0),
-	"uicolor" TEXT NOT NULL CHECK ("uicolor" ~* '^[0-9a-fA-F]{8}$')
+	"uicolor" TEXT NOT NULL CHECK ("uicolor" ~* '^[0-9a-fA-F]{8}$'),
+	"sort" INTEGER NOT NULL UNIQUE
 );
 GRANT SELECT ON TABLE "loot_sources" TO "thezaz_website";
 

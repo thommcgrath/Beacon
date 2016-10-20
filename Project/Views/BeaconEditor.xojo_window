@@ -42,7 +42,7 @@ Begin ContainerControl BeaconEditor
       GridLinesHorizontal=   0
       GridLinesVertical=   0
       HasHeading      =   False
-      HeadingIndex    =   -1
+      HeadingIndex    =   0
       Height          =   407
       HelpTag         =   ""
       Hierarchical    =   False
@@ -357,6 +357,9 @@ End
 		  SetList.AddRow(Set.Label)
 		  SetList.RowTag(SetList.LastIndex) = Set
 		  SetList.ListIndex = SetList.LastIndex
+		  Self.mSorting = True
+		  SetList.Sort
+		  Self.mSorting = False
 		  RaiseEvent Updated
 		End Sub
 	#tag EndMethod
@@ -553,6 +556,9 @@ End
 		    SetList.AddRow(Set.Label)
 		    SetList.RowTag(SetList.LastIndex) = Set
 		  Next
+		  Self.mSorting = True
+		  SetList.Sort
+		  Self.mSorting = False
 		  
 		  If UBound(Self.mSources) > -1 Then
 		    Dim DuplicatesState As CheckBox.CheckedStates = if(Self.mSources(0).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
@@ -586,6 +592,10 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mSorting As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSources() As Beacon.LootSource
 	#tag EndProperty
 
@@ -603,6 +613,10 @@ End
 #tag Events SetList
 	#tag Event
 		Sub Change()
+		  If Self.mSorting = True Then
+		    Return
+		  End If
+		  
 		  RemoveSetButton.Enabled = Me.ListIndex > -1
 		  
 		  If Me.ListIndex = -1 Then
@@ -716,6 +730,9 @@ End
 		  Dim NewSet As Beacon.ItemSet = Editor.Set
 		  
 		  SetList.Cell(SetList.ListIndex, 0) = NewSet.Label
+		  Self.mSorting = True
+		  SetList.Sort
+		  Self.mSorting = False
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    Dim Idx As Integer = Source.IndexOf(OriginalSet)
 		    If Idx > -1 Then

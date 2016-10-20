@@ -33,10 +33,10 @@ Begin Window DocWindow
       Border          =   False
       ColumnCount     =   2
       ColumnsResizable=   False
-      ColumnWidths    =   "36,*"
+      ColumnWidths    =   "30,*"
       DataField       =   ""
       DataSource      =   ""
-      DefaultRowHeight=   36
+      DefaultRowHeight=   30
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -492,10 +492,7 @@ End
 	#tag Event
 		Sub Open()
 		  Dim LootSources() As Beacon.LootSource = Self.Doc.LootSources
-		  For Each LootSource As Beacon.LootSource In LootSources
-		    BeaconList.AddRow(LootSource.Label)
-		    BeaconList.RowTag(BeaconList.LastIndex) = LootSource
-		  Next
+		  Self.UpdateSourceList()
 		  
 		  If UBound(LootSources) > -1 Then
 		    // Check publish status
@@ -809,6 +806,8 @@ End
 		      End If
 		    Next
 		  End Select
+		  
+		  VisibleSources.Sort
 		  
 		  Dim SelectedClasses() As Text
 		  If SelectedSources <> Nil Then

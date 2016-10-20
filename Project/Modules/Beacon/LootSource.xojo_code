@@ -19,7 +19,8 @@ Implements Beacon.Countable
 		  Self.mMaxItemSets = 3
 		  Self.mMultipliers = New Beacon.Range(1, 1)
 		  Self.mSetsRandomWithoutReplacement = True
-		  Self.mUIColor = &cE4E4E4
+		  Self.mUIColor = &cFFFFFF00
+		  Self.mSortValue = 99
 		End Sub
 	#tag EndMethod
 
@@ -40,6 +41,7 @@ Implements Beacon.Countable
 		  Self.mPackage = Source.mPackage
 		  Self.mIsOfficial = Source.mIsOfficial
 		  Self.mUIColor = Source.mUIColor
+		  Self.mSortValue = Source.mSortValue
 		  
 		  For I As Integer = 0 To UBound(Source.mItems)
 		    Self.mItems(I) = New Beacon.ItemSet(Source.mItems(I))
@@ -71,6 +73,9 @@ Implements Beacon.Countable
 		  Keys.Value("Kind") = Self.KindToText(Self.mKind)
 		  Keys.Value("Multiplier_Min") = Self.Multipliers.Min
 		  Keys.Value("Multiplier_Max") = Self.Multipliers.Max
+		  Keys.Value("UIColor") = Self.mUIColor.Red.ToHex(2) + Self.mUIColor.Green.ToHex(2) + Self.mUIColor.Blue.ToHex(2) + Self.mUIColor.Alpha.ToHex(2)
+		  Keys.Value("SortValue") = Self.mSortValue
+		  Keys.Value("Label") = Self.mLabel
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -94,10 +99,14 @@ Implements Beacon.Countable
 		  
 		  Dim LootSource As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
 		  If LootSource = Nil Then
+		    Dim UIColor As Text = Dict.Lookup("UIColor", "FFFFFF00")
 		    Dim MutableSource As New Beacon.MutableLootSource(ClassString, False)
-		    MutableSource.Multipliers = New Beacon.Range(Dict.Value("Multipliers_Min"), Dict.Value("Multipliers_Max"))
-		    MutableSource.Package = Beacon.LootSource.IntegerToPackage(Dict.Value("Availability"))
-		    MutableSource.Kind = Beacon.LootSource.TextToKind(Dict.Value("Kind"))
+		    MutableSource.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
+		    MutableSource.Package = Beacon.LootSource.IntegerToPackage(Dict.Lookup("Availability", 1))
+		    MutableSource.Kind = Beacon.LootSource.TextToKind(Dict.Lookup("Kind", "Standard"))
+		    MutableSource.UIColor = RGB(Integer.FromHex(UIColor.Mid(0, 2)), Integer.FromHex(UIColor.Mid(2, 2)), Integer.FromHex(UIColor.Mid(4, 2)), Integer.FromHex(UIColor.Mid(6, 2)))
+		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
+		    MutableSource.Label = Dict.Lookup("Label", "Unnamed Custom Loot Source")
 		    LootSource = New Beacon.LootSource(MutableSource)
 		  End If
 		  
@@ -254,6 +263,12 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SortValue() As Integer
+		  Return Self.mSortValue
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function TextToKind(Kind As Text) As Beacon.LootSource.Kinds
 		  Select Case Kind
 		  Case "Standard"
@@ -358,6 +373,10 @@ Implements Beacon.Countable
 
 	#tag Property, Flags = &h21
 		Private mSetsRandomWithoutReplacement As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mSortValue As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

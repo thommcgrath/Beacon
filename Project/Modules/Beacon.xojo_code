@@ -207,6 +207,18 @@ Protected Module Beacon
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Sort(Extends Sources() As Beacon.LootSource)
+		  Dim Order() As Integer
+		  Redim Order(UBound(Sources))
+		  For I As Integer = 0 To UBound(Order)
+		    Order(I) = Sources(I).SortValue
+		  Next
+		  
+		  Order.SortWith(Sources)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function TextToQuality(Quality As Text) As Beacon.Qualities
 		  Select Case Quality

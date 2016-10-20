@@ -6,7 +6,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("PRAGMA foreign_keys = ON;")
 		  Self.SQLExecute("PRAGMA journal_mode = WAL;")
 		  
-		  Self.SQLExecute("CREATE TABLE ""loot_sources"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""kind"" TEXT NOT NULL, ""engram_mask"" INTEGER NOT NULL, ""multiplier_min"" REAL NOT NULL, ""multiplier_max"" REAL NOT NULL, ""uicolor"" TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE ""loot_sources"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""kind"" TEXT NOT NULL, ""engram_mask"" INTEGER NOT NULL, ""multiplier_min"" REAL NOT NULL, ""multiplier_max"" REAL NOT NULL, ""uicolor"" TEXT NOT NULL, ""sort"" INTEGER NOT NULL UNIQUE);")
 		  Self.SQLExecute("CREATE TABLE ""engrams"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""availability"" INTEGER NOT NULL, ""can_blueprint"" INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE ""vars"" (""key"" TEXT NOT NULL PRIMARY KEY, ""value"" TEXT NOT NULL);")
 		End Sub
@@ -133,7 +133,7 @@ Implements Beacon.DataSource
 		Function GetLootSource(ClassString As Text) As Beacon.LootSource
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"" FROM ""loot_sources"" WHERE LOWER(""classstring"") = ?;")
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"", ""sort"" FROM ""loot_sources"" WHERE LOWER(""classstring"") = ?;")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  
 		  Dim StringValue As String = Lowercase(ClassString)
@@ -244,7 +244,7 @@ Implements Beacon.DataSource
 		    End If
 		    
 		    If UBound(SourceAdditions) > -1 Then
-		      Dim SourceInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""loot_sources"" (""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"") VALUES (?, ?, ?, ?, ?, ?, ?);")
+		      Dim SourceInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""loot_sources"" (""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"", ""sort"") VALUES (?, ?, ?, ?, ?, ?, ?, ?);")
 		      SourceInsertStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		      SourceInsertStatement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
 		      SourceInsertStatement.BindType(2, SQLitePreparedStatement.SQLITE_TEXT)
@@ -252,6 +252,7 @@ Implements Beacon.DataSource
 		      SourceInsertStatement.BindType(4, SQLitePreparedStatement.SQLITE_DOUBLE)
 		      SourceInsertStatement.BindType(5, SQLitePreparedStatement.SQLITE_DOUBLE)
 		      SourceInsertStatement.BindType(6, SQLitePreparedStatement.SQLITE_TEXT)
+		      SourceInsertStatement.BindType(7, SQLitePreparedStatement.SQLITE_INTEGER)
 		      For Each Dict As Xojo.Core.Dictionary In SourceAdditions
 		        Dim ClassString As Text = Dict.Value("class")
 		        Dim Label As Text = Dict.Value("label")
@@ -260,7 +261,8 @@ Implements Beacon.DataSource
 		        Dim MultMin As Double = Dict.Value("mult_min")
 		        Dim MultMax As Double = Dict.Value("mult_max")
 		        Dim UIColor As Text = Dict.Value("uicolor")
-		        Self.SQLExecute(SourceInsertStatement, ClassString, Label, Kind, Mask, MultMin, MultMax, UIColor)
+		        Dim SortValue As Integer = Dict.Value("sort")
+		        Self.SQLExecute(SourceInsertStatement, ClassString, Label, Kind, Mask, MultMin, MultMax, UIColor, SortValue)
 		      Next
 		    End If
 		    Self.SQLExecute("COMMIT TRANSACTION;")
@@ -428,6 +430,7 @@ Implements Beacon.DataSource
 		    Source.Package = Beacon.LootSource.IntegerToPackage(Results.Field("engram_mask").IntegerValue)
 		    Source.Multipliers = New Beacon.Range(Results.Field("multiplier_min").IntegerValue, Results.Field("multiplier_max").IntegerValue)
 		    Source.UIColor = RGB(Integer.FromHex(RedHex.ToText), Integer.FromHex(GreenHex.ToText), Integer.FromHex(BlueHex.ToText), Integer.FromHex(AlphaHex.ToText))
+		    Source.SortValue = Results.Field("sort").IntegerValue
 		    Sources.Append(New Beacon.LootSource(Source))
 		    Results.MoveNext
 		  Wend
@@ -492,9 +495,9 @@ Implements Beacon.DataSource
 		  Dim RS As RecordSet
 		  Try
 		    If SearchText = "" Then
-		      RS = Self.SQLSelect("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"" FROM ""loot_sources"" ORDER BY ""label"";")
+		      RS = Self.SQLSelect("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"", ""sort"" FROM ""loot_sources"" ORDER BY ""label"";")
 		    Else
-		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"" FROM ""loot_sources"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
+		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"", ""sort"" FROM ""loot_sources"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
 		      Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		      
 		      Dim StringValue As String = SearchText
