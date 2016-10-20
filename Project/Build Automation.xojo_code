@@ -19,12 +19,6 @@
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25JZGVudGl0eS5pY25z
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25QcmVzZXQuaWNucw==
 				End
-				Begin CopyFilesBuildStep CopyPresetsMac
-					AppliesTo = 0
-					Destination = 1
-					Subdirectory = 
-					FolderItem = Li4vLi4vUHJlc2V0cy8=
-				End
 				Begin IDEScriptBuildStep DownloadClasses , AppliesTo = 0
 					Dim App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
 					Call DoShellCommand("/usr/bin/curl https://thezaz.com/beacon/classes.php > " + App + "/Contents/Resources/Classes.json")
@@ -32,12 +26,6 @@
 			End
 			Begin BuildStepList Windows
 				Begin BuildProjectStep Build
-				End
-				Begin CopyFilesBuildStep CopyPresetsWin
-					AppliesTo = 0
-					Destination = 1
-					Subdirectory = 
-					FolderItem = Li4vLi4vUHJlc2V0cy8=
 				End
 			End
 #tag EndBuildAutomation

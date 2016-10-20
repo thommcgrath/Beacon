@@ -248,6 +248,7 @@
     ]
   },
   "Grouping": "Firearms",
+  "ID": "279bca28-43fa-4742-8c8b-6b0de13591ef",
   "Label": "Advanced Firearms",
   "Max": 2,
   "Min": 1,

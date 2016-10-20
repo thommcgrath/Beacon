@@ -9,14 +9,8 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE ""loot_sources"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""kind"" TEXT NOT NULL, ""engram_mask"" INTEGER NOT NULL, ""multiplier_min"" REAL NOT NULL, ""multiplier_max"" REAL NOT NULL, ""uicolor"" TEXT NOT NULL, ""sort"" INTEGER NOT NULL UNIQUE);")
 		  Self.SQLExecute("CREATE TABLE ""engrams"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""availability"" INTEGER NOT NULL, ""can_blueprint"" INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE ""vars"" (""key"" TEXT NOT NULL PRIMARY KEY, ""value"" TEXT NOT NULL);")
-		  
+		  Self.SQLExecute("CREATE TABLE ""presets"" (""preset_id"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""contents"" TEXT NOT NULL);")
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function BuiltinPresetsFolder() As FolderItem
-		  Return App.ResourcesFolder.Child("Presets")
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -104,7 +98,7 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h1
 		Protected Function FileForCustomPreset(Preset As Beacon.Preset) As FolderItem
-		  Return Self.CustomPresetsFolder.Child(Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension)
+		  Return Self.CustomPresetsFolder.Child(Preset.PresetID + BeaconFileTypes.BeaconPreset.PrimaryExtension)
 		End Function
 	#tag EndMethod
 
@@ -239,6 +233,7 @@ Implements Beacon.DataSource
 		  
 		  Dim SourcesDict As Xojo.Core.Dictionary = ChangeDict.Value("loot_sources")
 		  Dim EngramsDict As Xojo.Core.Dictionary = ChangeDict.Value("engrams")
+		  Dim PresetsDict As Xojo.Core.Dictionary = ChangeDict.Value("presets")
 		  Dim LastSync As Text = ChangeDict.Value("timestamp")
 		  
 		  Dim SourceAdditions() As Auto = SourcesDict.Value("additions")
@@ -307,6 +302,33 @@ Implements Beacon.DataSource
 		    Self.SQLExecute("COMMIT TRANSACTION;")
 		  End If
 		  
+		  Dim PresetAdditions() As Auto = PresetsDict.Value("additions")
+		  Dim PresetRemovals() As Auto = PresetsDict.Value("removals")
+		  If UBound(PresetAdditions) > -1 Or UBound(PresetRemovals) > -1 Then
+		    Self.SQLExecute("BEGIN TRANSACTION;")
+		    If UBound(PresetRemovals) > -1 Then
+		      Dim PresetDeleteStatement As SQLitePreparedStatement = Self.Prepare("DELETE FROM ""presets"" WHERE LOWER(""preset_id"") = ?;")
+		      PresetDeleteStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		      For Each PresetID As Text In PresetRemovals
+		        Self.SQLExecute(PresetDeleteStatement, PresetID.Lowercase)
+		      Next
+		    End If
+		    
+		    If UBound(PresetAdditions) > -1 Then
+		      Dim PresetInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""presets"" (""preset_id"", ""label"", ""contents"") VALUES (?, ?, ?);")
+		      PresetInsertStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		      PresetInsertStatement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
+		      PresetInsertStatement.BindType(2, SQLitePreparedStatement.SQLITE_TEXT)
+		      For Each Dict As Xojo.Core.Dictionary In PresetAdditions
+		        Dim PresetID As Text = Dict.Value("id")
+		        Dim Label As Text = Dict.Value("label")
+		        Dim Contents As Text = Dict.Value("contents")
+		        Self.SQLExecute(PresetInsertStatement, PresetID, Label, Contents)
+		      Next
+		    End If
+		    Self.SQLExecute("COMMIT TRANSACTION;")
+		  End If
+		  
 		  Self.Variable("last_sync") = LastSync
 		End Sub
 	#tag EndMethod
@@ -320,20 +342,22 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Sub LoadPresets()
-		  Dim Folders(1) As FolderItem
-		  Folders(0) = Self.BuiltinPresetsFolder
-		  Folders(1) = Self.CustomPresetsFolder
+		  Dim Presets As New Dictionary
 		  
-		  Dim Extension As String = BeaconFileTypes.BeaconPreset.PrimaryExtension
-		  Dim ExtensionLength As Integer = Len(Extension)
-		  
-		  Redim Self.mPresets(-1)
-		  Dim Names() As String
-		  
-		  For Each Folder As FolderItem In Folders
-		    If Folder = Nil Then
-		      Continue
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT contents FROM presets")
+		  While Not Results.EOF
+		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Results.Field("contents").StringValue.ToText)
+		    Dim Preset As Beacon.Preset = Beacon.Preset.FromDictionary(Dict)
+		    If Preset <> Nil Then
+		      Presets.Value(Preset.PresetID) = Preset
 		    End If
+		    Results.MoveNext
+		  Wend
+		  
+		  Dim Folder As FolderItem = Self.CustomPresetsFolder
+		  If Folder <> Nil Then
+		    Dim Extension As String = BeaconFileTypes.BeaconPreset.PrimaryExtension
+		    Dim ExtensionLength As Integer = Len(Extension)
 		    
 		    For I As Integer = 1 To Folder.Count
 		      Dim File As FolderItem = Folder.Item(I)
@@ -343,18 +367,24 @@ Implements Beacon.DataSource
 		      
 		      Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(New Xojo.IO.FolderItem(File.NativePath.ToText))
 		      If Preset <> Nil Then
-		        Dim Idx As Integer = Names.IndexOf(Preset.Label)
-		        If Idx > -1 Then
-		          Self.mPresets(Idx) = Preset
-		        Else
-		          Self.mPresets.Append(Preset)
-		          Names.Append(Preset.Label)
+		        Dim CorrectFile As FolderItem = Self.FileForCustomPreset(Preset)
+		        If File.NativePath <> CorrectFile.NativePath Then
+		          If Not CorrectFile.Exists Then
+		            Self.SavePreset(Preset, False)
+		          End If
+		          File.Delete
 		        End If
+		        
+		        Presets.Value(Preset.PresetID) = Preset
 		      End If
 		    Next
-		  Next
+		  End If
 		  
-		  Names.SortWith(Self.mPresets)
+		  Redim Self.mPresets(Presets.Count - 1)
+		  Dim Keys() As Variant = Presets.Keys
+		  For I As Integer = 0 To UBound(Keys)
+		    Self.mPresets(I) = Presets.Value(Keys(I))
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -460,9 +490,17 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Sub SavePreset(Preset As Beacon.Preset)
+		  Self.SavePreset(Preset, True)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SavePreset(Preset As Beacon.Preset, Reload As Boolean)
 		  Dim File As FolderItem = Self.FileForCustomPreset(Preset)
 		  Preset.ToFile(New Xojo.IO.FolderItem(File.NativePath.ToText))
-		  Self.LoadPresets()
+		  If Reload Then
+		    Self.LoadPresets()
+		  End If
 		End Sub
 	#tag EndMethod
 

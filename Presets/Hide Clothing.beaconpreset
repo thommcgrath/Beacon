@@ -94,6 +94,7 @@
     ]
   },
   "Grouping": "Wearables",
+  "ID": "f8c6f914-0835-4a8a-ace2-d5ce53f52022",
   "Label": "Hide Clothing",
   "Max": 5,
   "Min": 1,

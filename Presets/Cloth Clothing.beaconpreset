@@ -80,6 +80,7 @@
     ]
   },
   "Grouping": "Wearables",
+  "ID": "fc02c0d0-908b-4110-bcb4-53165aa6eef9",
   "Label": "Cloth Clothing",
   "Max": 5,
   "Min": 1,

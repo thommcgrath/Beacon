@@ -43,6 +43,8 @@ Implements Beacon.Countable
 		  For I As Integer = 0 To UBound(Self.mContents)
 		    Self.mContents(I) = New Beacon.PresetEntry(Source.mContents(I))
 		  Next
+		  
+		  Self.mPresetID = Source.mPresetID
 		End Sub
 	#tag EndMethod
 
@@ -96,12 +98,16 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Shared Function FromDictionary(Dict As Xojo.Core.Dictionary) As Beacon.Preset
-		  Dim Preset As New Beacon.MutablePreset
-		  Preset.Label = Dict.Lookup("Label", Preset.Label)
-		  Preset.Grouping = Dict.Lookup("Grouping", Preset.Grouping)
-		  Preset.MinItems = Dict.Lookup("Min", Preset.MinItems)
-		  Preset.MaxItems = Dict.Lookup("Max", Preset.MaxItems)
-		  Preset.Weight = Dict.Lookup("Weight", Preset.Weight)
+		  Dim Preset As New Beacon.Preset
+		  If Dict.HasKey("ID") Then
+		    // Don't use lookup here to prevent creating the UUID unless necessary
+		    Preset.mPresetID = Dict.Value("ID")
+		  End If
+		  Preset.mLabel = Dict.Lookup("Label", Preset.Label)
+		  Preset.mGrouping = Dict.Lookup("Grouping", Preset.Grouping)
+		  Preset.mMinItems = Dict.Lookup("Min", Preset.MinItems)
+		  Preset.mMaxItems = Dict.Lookup("Max", Preset.MaxItems)
+		  Preset.mWeight = Dict.Lookup("Weight", Preset.Weight)
 		  
 		  Dim Multipliers As New Beacon.Range(1, 1)
 		  Dim Contents As Xojo.Core.Dictionary = Dict.Lookup("Contents", Nil)
@@ -116,7 +122,7 @@ Implements Beacon.Countable
 		          Dim Child As New Beacon.PresetEntry(Entry)
 		          Child.ValidForIsland = ValidForIsland
 		          Child.ValidForScorched = ValidForScorched
-		          Preset.Append(Child)
+		          Preset.mContents.Append(Child)
 		        End If
 		      Next
 		    Next
@@ -125,23 +131,22 @@ Implements Beacon.Countable
 		  Dim Modifiers As Xojo.Core.Dictionary = Dict.Lookup("Modifiers", Nil)
 		  If Modifiers <> Nil Then
 		    For Each Set As Xojo.Core.DictionaryEntry In Modifiers
-		      Dim Kind As Beacon.LootSource.Kinds
+		      Dim Item As Xojo.Core.Dictionary = Set.Value
+		      
 		      Select Case Set.Key
 		      Case "Standard"
-		        Kind = Beacon.LootSource.Kinds.Standard
+		        Preset.mQualityModifierStandard = Item.Lookup("Quality", Preset.QualityModifier(Beacon.LootSource.Kinds.Standard))
+		        Preset.mQuantityMultiplierStandard = Item.Lookup("Quantity", Preset.QuantityMultiplier(Beacon.LootSource.Kinds.Standard))
 		      Case "Bonus"
-		        Kind = Beacon.LootSource.Kinds.Bonus
+		        Preset.mQualityModifierBonus = Item.Lookup("Quality", Preset.QualityModifier(Beacon.LootSource.Kinds.Bonus))
+		        Preset.mQuantityMultiplierBonus = Item.Lookup("Quantity", Preset.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus))
 		      Case "Cave"
-		        Kind = Beacon.LootSource.Kinds.Cave
+		        Preset.mQualityModifierCave = Item.Lookup("Quality", Preset.QualityModifier(Beacon.LootSource.Kinds.Cave))
+		        Preset.mQuantityMultiplierCave = Item.Lookup("Quantity", Preset.QuantityMultiplier(Beacon.LootSource.Kinds.Cave))
 		      Case "Sea"
-		        Kind = Beacon.LootSource.Kinds.Sea
-		      Else
-		        Continue
+		        Preset.mQualityModifierSea = Item.Lookup("Quality", Preset.QualityModifier(Beacon.LootSource.Kinds.Sea))
+		        Preset.mQuantityMultiplierSea = Item.Lookup("Quantity", Preset.QuantityMultiplier(Beacon.LootSource.Kinds.Sea))
 		      End Select
-		      
-		      Dim Item As Xojo.Core.Dictionary = Set.Value
-		      Preset.QualityModifier(Kind) = Item.Lookup("Quality", Preset.QualityModifier(Kind))
-		      Preset.QuantityMultiplier(Kind) = Item.Lookup("Quantity", Preset.QuantityMultiplier(Kind))
 		    Next
 		  End If
 		  
@@ -228,6 +233,15 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function PresetID() As Text
+		  If Self.mPresetID = "" Then
+		    Self.mPresetID = Beacon.CreateUUID
+		  End If
+		  Return Self.mPresetID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function QualityModifier(Kind As Beacon.LootSource.Kinds) As Integer
 		  Select Case Kind
 		  Case Beacon.LootSource.Kinds.Standard
@@ -299,6 +313,7 @@ Implements Beacon.Countable
 		  Modifiers.Value("Sea") = SeaModifiers
 		  
 		  Dim Dict As New Xojo.Core.Dictionary
+		  Dict.Value("ID") = Self.mPresetID
 		  Dict.Value("Label") = Self.mLabel
 		  Dict.Value("Grouping") = Self.mGrouping
 		  Dict.Value("Min") = Self.mMinItems
@@ -365,6 +380,10 @@ Implements Beacon.Countable
 
 	#tag Property, Flags = &h1
 		Protected mMinItems As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPresetID As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

@@ -192,6 +192,7 @@
     ]
   },
   "Grouping": "Firearms",
+  "ID": "2d5881a8-25d9-40a7-96a8-5e5b234b52e0",
   "Label": "Simple Firearms",
   "Max": 2,
   "Min": 1,

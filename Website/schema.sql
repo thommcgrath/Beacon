@@ -41,7 +41,7 @@ CREATE TYPE "loot_source_kind" AS ENUM (
 );
 
 CREATE TABLE "loot_sources" (
-	"classstring" CITEXT NOT NULL,
+	"classstring" CITEXT NOT NULL PRIMARY KEY,
 	"label" CITEXT NOT NULL,
 	"kind" "loot_source_kind" NOT NULL,
 	"engram_mask" INTEGER NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE "loot_sources" (
 GRANT SELECT ON TABLE "loot_sources" TO "thezaz_website";
 
 CREATE TABLE "engrams" (
-	"classstring" CITEXT NOT NULL,
+	"classstring" CITEXT NOT NULL PRIMARY KEY,
 	"label" CITEXT NOT NULL,
 	"availability" INTEGER NOT NULL DEFAULT 0,
 	"can_blueprint" BOOLEAN NOT NULL DEFAULT TRUE,
@@ -62,6 +62,15 @@ CREATE TABLE "engrams" (
 	CHECK ("classstring" LIKE '%_C')
 );
 GRANT SELECT ON TABLE "engrams" TO "thezaz_website";
+
+-- the primary key really should be "preset_id" UUID but this needs to match engrams and loot_sources for the triggers to work
+CREATE TABLE "presets" (
+	"classstring" CITEXT NOT NULL PRIMARY KEY,
+	"label" CITEXT NOT NULL,
+	"contents" JSON NOT NULL,
+	"last_update" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0)
+);
+GRANT SELECT ON TABLE "presets" TO "thezaz_website";
 
 CREATE TABLE "deletions" (
 	"deletion_id" UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -79,6 +88,11 @@ DROP TRIGGER IF EXISTS "engrams_after_delete_trigger" ON "engrams";
 DROP TRIGGER IF EXISTS "loot_sources_before_insert_trigger" ON "loot_sources";
 DROP TRIGGER IF EXISTS "loot_sources_before_update_trigger" ON "loot_sources";
 DROP TRIGGER IF EXISTS "loot_sources_after_delete_trigger" ON "loot_sources";
+
+DROP TRIGGER IF EXISTS "presets_before_insert_trigger" ON "presets";
+DROP TRIGGER IF EXISTS "presets_before_update_trigger" ON "presets";
+DROP TRIGGER IF EXISTS "presets_after_delete_trigger" ON "presets";
+DROP TRIGGER IF EXISTS "presets_json_sync_trigger" ON "presets";
 
 CREATE OR REPLACE FUNCTION "cache_insert_trigger" () RETURNS TRIGGER AS $$
 BEGIN
@@ -106,6 +120,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION "presets_json_sync_function" () RETURNS TRIGGER AS $$
+BEGIN
+	NEW."label" = NEW."contents"->>'Label';
+	NEW."classstring" = NEW."contents"->>'ID';
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE TRIGGER "engrams_before_insert_trigger" BEFORE INSERT ON "engrams" FOR EACH ROW EXECUTE PROCEDURE "cache_insert_trigger"();
 CREATE TRIGGER "engrams_before_update_trigger" BEFORE UPDATE ON "engrams" FOR EACH ROW EXECUTE PROCEDURE "cache_update_trigger"();
 CREATE TRIGGER "engrams_after_delete_trigger" AFTER DELETE ON "engrams" FOR EACH ROW EXECUTE PROCEDURE "cache_delete_trigger"();
@@ -113,3 +135,8 @@ CREATE TRIGGER "engrams_after_delete_trigger" AFTER DELETE ON "engrams" FOR EACH
 CREATE TRIGGER "loot_sources_before_insert_trigger" BEFORE INSERT ON "loot_sources" FOR EACH ROW EXECUTE PROCEDURE "cache_insert_trigger"();
 CREATE TRIGGER "loot_sources_before_update_trigger" BEFORE UPDATE ON "loot_sources" FOR EACH ROW EXECUTE PROCEDURE "cache_update_trigger"();
 CREATE TRIGGER "loot_sources_after_delete_trigger" AFTER DELETE ON "loot_sources" FOR EACH ROW EXECUTE PROCEDURE "cache_delete_trigger"();
+
+CREATE TRIGGER "presets_before_insert_trigger" BEFORE INSERT ON "presets" FOR EACH ROW EXECUTE PROCEDURE "cache_insert_trigger"();
+CREATE TRIGGER "presets_before_update_trigger" BEFORE UPDATE ON "presets" FOR EACH ROW EXECUTE PROCEDURE "cache_update_trigger"();
+CREATE TRIGGER "presets_after_delete_trigger" AFTER DELETE ON "presets" FOR EACH ROW EXECUTE PROCEDURE "cache_delete_trigger"();
+CREATE TRIGGER "presets_json_sync_trigger" BEFORE INSERT OR UPDATE ON "presets" FOR EACH ROW EXECUTE PROCEDURE "presets_json_sync_function"();
