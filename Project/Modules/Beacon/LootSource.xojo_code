@@ -104,7 +104,7 @@ Implements Beacon.Countable
 		    MutableSource.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
 		    MutableSource.Package = Beacon.LootSource.IntegerToPackage(Dict.Lookup("Availability", 1))
 		    MutableSource.Kind = Beacon.LootSource.TextToKind(Dict.Lookup("Kind", "Standard"))
-		    MutableSource.UIColor = RGB(Integer.FromHex(UIColor.Mid(0, 2)), Integer.FromHex(UIColor.Mid(2, 2)), Integer.FromHex(UIColor.Mid(4, 2)), Integer.FromHex(UIColor.Mid(6, 2)))
+		    MutableSource.UIColor = Color.RGBA(Integer.FromHex(UIColor.Mid(0, 2)), Integer.FromHex(UIColor.Mid(2, 2)), Integer.FromHex(UIColor.Mid(4, 2)), Integer.FromHex(UIColor.Mid(6, 2)))
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
 		    MutableSource.Label = Dict.Lookup("Label", "Unnamed Custom Loot Source")
 		    LootSource = New Beacon.LootSource(MutableSource)

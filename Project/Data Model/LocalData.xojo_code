@@ -9,6 +9,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE ""loot_sources"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""kind"" TEXT NOT NULL, ""engram_mask"" INTEGER NOT NULL, ""multiplier_min"" REAL NOT NULL, ""multiplier_max"" REAL NOT NULL, ""uicolor"" TEXT NOT NULL, ""sort"" INTEGER NOT NULL UNIQUE);")
 		  Self.SQLExecute("CREATE TABLE ""engrams"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""availability"" INTEGER NOT NULL, ""can_blueprint"" INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE ""vars"" (""key"" TEXT NOT NULL PRIMARY KEY, ""value"" TEXT NOT NULL);")
+		  
 		End Sub
 	#tag EndMethod
 
