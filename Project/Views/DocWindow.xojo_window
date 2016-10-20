@@ -115,6 +115,7 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -307,6 +308,7 @@ Begin Window DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -316,6 +318,7 @@ Begin Window DocWindow
       TabPanelIndex   =   0
    End
    Begin Beacon.RepositoryEngine Repository
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -628,6 +631,7 @@ End
 		    End If
 		    Self.Doc.Add(Source)
 		    Packages.Value(Source.Package) = Packages.Lookup(Source.Package, 0).IntegerValue + 1
+		    Self.ContentsChanged = True
 		  Next
 		  
 		  Dim TargetIndex As Integer = 0
