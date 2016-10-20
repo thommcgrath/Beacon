@@ -45,7 +45,7 @@ Begin Window LootSourceWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -1059,7 +1059,7 @@ Begin Window LootSourceWizard
          GridLinesVertical=   0
          HasHeading      =   False
          HeadingIndex    =   1
-         Height          =   194
+         Height          =   162
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -1124,6 +1124,38 @@ Begin Window LootSourceWizard
          Underline       =   False
          Visible         =   True
          Width           =   104
+      End
+      Begin CheckBox CustomizeReconfigureCheckbox
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Reconfigure Exiting Presets"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   "This option will basically delete the existing presets and build new item sets with using the adjustments for the selected loot source."
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Italic          =   False
+         Left            =   136
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         State           =   0
+         TabIndex        =   10
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   328
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   444
       End
    End
 End
@@ -1270,6 +1302,11 @@ End
 		      
 		      CustomizePresetsList.CellCheck(I, 0) = False
 		    Next
+		    
+		    If Self.mOriginal = Nil Then
+		      CustomizeReconfigureCheckbox.Visible = False
+		      CustomizePresetsList.Height = (CustomizeReconfigureCheckbox.Top + CustomizeReconfigureCheckbox.Height) - CustomizePresetsList.Top
+		    End If
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1412,9 +1449,13 @@ End
 		  For I As Integer = 0 To CustomizePresetsList.ListCount - 1
 		    Dim Preset As Beacon.Preset = CustomizePresetsList.RowTag(I)
 		    If CustomizePresetsList.CellCheck(I, 0) Then
-		      For Each Set As Beacon.ItemSet In Self.mEditing
+		      For X As Integer = 0 To UBound(Self.mEditing)
+		        Dim Set As Beacon.ItemSet = Self.mEditing(X)
 		        If Set.Label = Preset.Label Then
-		          // Already there, skip it
+		          If CustomizeReconfigureCheckbox.Value Then
+		            // Wants to rebuild it
+		            Self.mEditing(X) = Preset.CreateSet(Self.mEditing)
+		          End If
 		          Continue For I
 		        End If
 		      Next
