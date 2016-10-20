@@ -20,12 +20,12 @@ Begin Window DocWindow
    MenuBarVisible  =   True
    MinHeight       =   580
    MinimizeButton  =   True
-   MinWidth        =   1000
+   MinWidth        =   1100
    Placement       =   0
    Resizeable      =   True
    Title           =   "Beacon"
    Visible         =   True
-   Width           =   1000
+   Width           =   1100
    Begin BeaconListbox BeaconList
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
@@ -130,7 +130,7 @@ Begin Window DocWindow
       Transparent     =   True
       UseFocusRing    =   False
       Visible         =   True
-      Width           =   765
+      Width           =   865
    End
    Begin GraphicButton AddBeaconButton
       AcceptFocus     =   False
@@ -649,6 +649,7 @@ End
 		    LootSourceHeader.SegmentIndex = TargetIndex
 		  End If
 		  Self.UpdateSourceList(Sources)
+		  Editor.Sources = Sources
 		End Sub
 	#tag EndMethod
 

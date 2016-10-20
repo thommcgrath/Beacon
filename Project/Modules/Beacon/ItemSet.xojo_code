@@ -30,6 +30,7 @@ Implements Beacon.Countable
 		  Self.mNumItemsPower = Source.mNumItemsPower
 		  Self.mSetWeight = Source.mSetWeight
 		  Self.mLabel = Source.mLabel
+		  Self.mSourcePresetID = Source.mSourcePresetID
 		  
 		  For I As Integer = 0 To UBound(Source.mEntries)
 		    Self.mEntries(I) = New Beacon.SetEntry(Source.mEntries(I))
@@ -58,7 +59,47 @@ Implements Beacon.Countable
 		  Keys.Value("MinNumItems") = Self.MinNumItems
 		  Keys.Value("NumItemsPower") = Self.NumItemsPower
 		  Keys.Value("SetWeight") = Self.Weight
+		  If Self.SourcePresetID <> "" Then
+		    Keys.Value("SourcePresetID") = Self.SourcePresetID
+		  End If
 		  Return Keys
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource) As Beacon.ItemSet
+		  Dim Kind As Beacon.LootSource.Kinds = ForLootSource.Kind
+		  
+		  Dim Entries() As Beacon.SetEntry
+		  For Each Item As Beacon.PresetEntry In Preset
+		    If (Item.ValidForIsland And ForLootSource.Package = Beacon.LootSource.Packages.Island) Or (Item.ValidForScorched And ForLootSource.Package = Beacon.LootSource.Packages.Scorched) Then
+		      Entries.Append(New Beacon.SetEntry(Item))
+		    End If
+		  Next
+		  
+		  Dim Set As New Beacon.ItemSet
+		  Set.Label = Preset.Label
+		  Set.MinNumItems = Preset.MinItems
+		  Set.MaxNumItems = Preset.MaxItems
+		  Set.Weight = Preset.Weight
+		  Set.mSourcePresetID = Preset.PresetID
+		  
+		  For Each Entry As Beacon.SetEntry In Entries
+		    Dim QuantityMultiplier As Double = Preset.QuantityMultiplier(Kind)
+		    Dim QualityModifier As Integer = Preset.QualityModifier(Kind)
+		    
+		    Dim MinQuality As Integer = Max(Min(CType(Entry.MinQuality, Integer) + QualityModifier, 8), 0)
+		    Dim MaxQuality As Integer = Max(Min(CType(Entry.MaxQuality, Integer) + QualityModifier, 8), 0)
+		    
+		    Entry.MinQuantity = Entry.MinQuantity * QuantityMultiplier
+		    Entry.MaxQuantity = Entry.MaxQuantity * QuantityMultiplier
+		    Entry.MinQuality = CType(MinQuality, Beacon.Qualities)
+		    Entry.MaxQuality = CType(MaxQuality, Beacon.Qualities)
+		    
+		    Set.Append(Entry)
+		  Next
+		  
+		  Return Set
 		End Function
 	#tag EndMethod
 
@@ -124,6 +165,10 @@ Implements Beacon.Countable
 		      Set.Append(Entry)
 		    End If
 		  Next
+		  
+		  If Dict.HasKey("SourcePresetID") Then
+		    Set.mSourcePresetID = Dict.Value("SourcePresetID")
+		  End If
 		  
 		  Return Set
 		End Function
@@ -198,6 +243,12 @@ Implements Beacon.Countable
 		Sub Remove(Index As Integer)
 		  Self.mEntries.Remove(Index)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SourcePresetID() As Text
+		  Return Self.mSourcePresetID
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -306,6 +357,10 @@ Implements Beacon.Countable
 
 	#tag Property, Flags = &h21
 		Private mSetWeight As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSourcePresetID As Text
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

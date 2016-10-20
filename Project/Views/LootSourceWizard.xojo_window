@@ -1292,10 +1292,30 @@ End
 		    CustomizeMaxSetsField.Text = Format(Self.mEditing.MaxItemSets, "-0")
 		    CustomizePreventDuplicatesCheck.Value = Self.mEditing.SetsRandomWithoutReplacement
 		    
+		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets()
+		    
+		    CustomizePresetsList.DeleteAllRows()
+		    For Each Preset As Beacon.Preset In Presets
+		      If (Preset.ValidForIsland And Self.mEditing.Package = Beacon.LootSource.Packages.Island) Or (Preset.ValidForScorched And Self.mEditing.Package = Beacon.LootSource.Packages.Scorched) Then
+		        CustomizePresetsList.AddRow("", Preset.Label)
+		        CustomizePresetsList.RowTag(CustomizePresetsList.LastIndex) = Preset
+		      End If
+		    Next
+		    CustomizePresetsList.Sort
+		    
+		    Dim Scrolled As Boolean
 		    For I As Integer = 0 To CustomizePresetsList.ListCount - 1
+		      Dim Preset As Beacon.Preset = CustomizePresetsList.RowTag(I)
 		      For Each Set As Beacon.ItemSet In Self.mEditing
-		        If Set.Label = Beacon.Preset(CustomizePresetsList.RowTag(I)).Label Then
+		        If Set.SourcePresetID = Preset.PresetID Then
 		          CustomizePresetsList.CellCheck(I, 0) = True
+		          If Set.Label <> Preset.Label Then
+		            CustomizePresetsList.Cell(I, 1) = Set.Label + " (" + Preset.Label + ")"
+		          End If
+		          If Not Scrolled Then
+		            CustomizePresetsList.ScrollPosition = I
+		            Scrolled = True
+		          End If
 		          Continue For I
 		        End If
 		      Next
@@ -1451,21 +1471,23 @@ End
 		    If CustomizePresetsList.CellCheck(I, 0) Then
 		      For X As Integer = 0 To UBound(Self.mEditing)
 		        Dim Set As Beacon.ItemSet = Self.mEditing(X)
-		        If Set.Label = Preset.Label Then
+		        If Set.SourcePresetID = Preset.PresetID Then
 		          If CustomizeReconfigureCheckbox.Value Then
-		            // Wants to rebuild it
-		            Self.mEditing(X) = Preset.CreateSet(Self.mEditing)
+		            // Wants to rebuild it, preserve name
+		            Dim OriginalName As Text = Set.Label
+		            Self.mEditing(X) = Beacon.ItemSet.FromPreset(Preset, Self.mEditing)
+		            Self.mEditing(X).Label = OriginalName
 		          End If
 		          Continue For I
 		        End If
 		      Next
 		      
-		      Dim Set As Beacon.ItemSet = Preset.CreateSet(Self.mEditing)
+		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Self.mEditing)
 		      Self.mEditing.Append(Set)
 		    Else
 		      For X As Integer = 0 To UBound(Self.mEditing)
 		        Dim Set As Beacon.ItemSet = Self.mEditing(X)
-		        If Set.Label = Preset.Label Then
+		        If Set.SourcePresetID = Preset.PresetID Then
 		          // Remove this set
 		          Self.mEditing.Remove(X)
 		          Continue For I
@@ -1563,14 +1585,6 @@ End
 #tag Events CustomizePresetsList
 	#tag Event
 		Sub Open()
-		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets()
-		  
-		  For Each Preset As Beacon.Preset In Presets
-		    Me.AddRow("", Preset.Label)
-		    Me.RowTag(Me.LastIndex) = Preset
-		  Next
-		  
-		  Me.Sort
 		  Me.ColumnType(0) = ListBox.TypeCheckbox
 		End Sub
 	#tag EndEvent

@@ -55,42 +55,6 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CreateSet(Source As Beacon.LootSource) As Beacon.ItemSet
-		  Dim Kind As Beacon.LootSource.Kinds = Source.Kind
-		  
-		  Dim Entries() As Beacon.SetEntry
-		  For Each Item As Beacon.PresetEntry In Self
-		    If (Item.ValidForIsland And Source.Package = Beacon.LootSource.Packages.Island) Or (Item.ValidForScorched And Source.Package = Beacon.LootSource.Packages.Scorched) Then
-		      Entries.Append(New Beacon.SetEntry(Item))
-		    End If
-		  Next
-		  
-		  Dim Set As New Beacon.ItemSet
-		  Set.Label = Self.Label
-		  Set.MinNumItems = Self.MinItems
-		  Set.MaxNumItems = Self.MaxItems
-		  Set.Weight = Self.Weight
-		  
-		  For Each Entry As Beacon.SetEntry In Entries
-		    Dim QuantityMultiplier As Double = Self.QuantityMultiplier(Kind)
-		    Dim QualityModifier As Integer = Self.QualityModifier(Kind)
-		    
-		    Dim MinQuality As Integer = Max(Min(CType(Entry.MinQuality, Integer) + QualityModifier, 8), 0)
-		    Dim MaxQuality As Integer = Max(Min(CType(Entry.MaxQuality, Integer) + QualityModifier, 8), 0)
-		    
-		    Entry.MinQuantity = Entry.MinQuantity * QuantityMultiplier
-		    Entry.MaxQuantity = Entry.MaxQuantity * QuantityMultiplier
-		    Entry.MinQuality = CType(MinQuality, Beacon.Qualities)
-		    Entry.MaxQuality = CType(MaxQuality, Beacon.Qualities)
-		    
-		    Set.Append(Entry)
-		  Next
-		  
-		  Return Set
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Entry(Index As Integer) As Beacon.PresetEntry
 		  Return New Beacon.PresetEntry(Self.mContents(Index))
 		End Function

@@ -479,7 +479,7 @@ End
 		    If SelectedPreset = Nil Then
 		      Self.AddSet(New Beacon.ItemSet)
 		    Else
-		      Dim Set As Beacon.ItemSet = SelectedPreset.CreateSet(Self.mSources(0))
+		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Self.mSources(0))
 		      Self.AddSet(Set)
 		    End If
 		  End If
