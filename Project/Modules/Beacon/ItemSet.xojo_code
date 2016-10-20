@@ -233,6 +233,14 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ReconfigureWithPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource)
+		  Dim Clone As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, ForLootSource)
+		  Self.mEntries = Clone.mEntries
+		  Self.mSourcePresetID = Clone.mSourcePresetID
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function RelativeWeight(Index As Integer) As Double
 		  Dim Item As Beacon.SetEntry = Self.mEntries(Index)
 		  Return Item.Weight / Self.TotalWeight()

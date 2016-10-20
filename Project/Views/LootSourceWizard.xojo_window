@@ -1473,10 +1473,8 @@ End
 		        Dim Set As Beacon.ItemSet = Self.mEditing(X)
 		        If Set.SourcePresetID = Preset.PresetID Then
 		          If CustomizeReconfigureCheckbox.Value Then
-		            // Wants to rebuild it, preserve name
-		            Dim OriginalName As Text = Set.Label
-		            Self.mEditing(X) = Beacon.ItemSet.FromPreset(Preset, Self.mEditing)
-		            Self.mEditing(X).Label = OriginalName
+		            // Wants to rebuild it
+		            Self.mEditing(X).ReconfigureWithPreset(Preset, Self.mEditing)
 		          End If
 		          Continue For I
 		        End If
