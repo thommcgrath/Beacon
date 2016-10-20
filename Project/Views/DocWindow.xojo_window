@@ -115,7 +115,6 @@ Begin Window DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -308,7 +307,6 @@ Begin Window DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -318,7 +316,6 @@ Begin Window DocWindow
       TabPanelIndex   =   0
    End
    Begin Beacon.RepositoryEngine Repository
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1051,13 +1048,18 @@ End
 		  For I As Integer = UBound(LootSources) DownTo 0
 		    If Self.Doc.HasBeacon(LootSources(I)) Then
 		      LootSources.Remove(I)
+		      Continue For I
+		    End If
+		    If (LootSourceHeader.SegmentIndex = 1 And LootSources(I).Package <> Beacon.LootSource.Packages.Island) Or (LootSourceHeader.SegmentIndex = 2 And LootSources(I).Package <> Beacon.LootSource.Packages.Scorched) Then
+		      LootSources.Remove(I)
 		    End If
 		  Next
 		  
 		  If UBound(LootSources) = -1 Then
-		    Self.ShowAddBeacon()
-		    Return True
+		    Return False
 		  End If
+		  
+		  LootSources.Sort
 		  
 		  For Each LootSource As Beacon.LootSource In LootSources
 		    Base.Append(New MenuItem(LootSource.Label, LootSource))
