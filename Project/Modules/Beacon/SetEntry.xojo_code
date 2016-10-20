@@ -45,7 +45,7 @@ Implements Beacon.Countable
 		  Self.mMaxQuality = Beacon.Qualities.Ascendant
 		  Self.mChanceToBeBlueprint = 0.1
 		  Self.mWeight = 1
-		  Self.mUniqueID = Beacon.CreateUUID
+		  Self.mUniqueID = ""
 		End Sub
 	#tag EndMethod
 
@@ -333,6 +333,10 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function UniqueID() As Text
+		  // For efficiency, don't create a UUID until it is needed
+		  If Self.mUniqueID = "" Then
+		    Self.mUniqueID = Beacon.CreateUUID
+		  End If
 		  Return Self.mUniqueID
 		End Function
 	#tag EndMethod

@@ -20,6 +20,8 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
+		  Self.mEngramCache = New Dictionary
+		  
 		  Dim LegacyFile As FolderItem = App.ApplicationSupport.Child("Beacon.sqlite")
 		  If LegacyFile.Exists Then
 		    LegacyFile.Delete
@@ -109,6 +111,10 @@ Implements Beacon.DataSource
 		Function GetEngram(ClassString As Text) As Beacon.Engram
 		  // Part of the Beacon.DataSource interface.
 		  
+		  If Self.mEngramCache.HasKey(ClassString) Then
+		    Return Self.mEngramCache.Value(ClassString)
+		  End If
+		  
 		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""availability"", ""can_blueprint"" FROM ""engrams"" WHERE LOWER(""classstring"") = ?;")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  
@@ -125,6 +131,9 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Dim Engrams() As Beacon.Engram = Self.RecordSetToEngram(RS)
+		  For Each Engram As Beacon.Engram In Engrams
+		    Self.mEngramCache.Value(Engram.ClassString) = Engram
+		  Next
 		  Return Engrams(0)
 		End Function
 	#tag EndMethod
@@ -481,7 +490,9 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Results = Self.RecordSetToEngram(RS)
-		  
+		  For Each Engram As Beacon.Engram In Results
+		    Self.mEngramCache.Value(Engram.ClassString) = Engram
+		  Next
 		  Return Results()
 		End Function
 	#tag EndMethod
@@ -593,6 +604,10 @@ Implements Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private mBase As SQLiteDatabase
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEngramCache As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
