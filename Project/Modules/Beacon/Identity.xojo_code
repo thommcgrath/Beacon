@@ -15,6 +15,14 @@ Protected Class Identity
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub Constructor(Identifier As Text, PublicKey As Xojo.Core.MemoryBlock, PrivateKey As Xojo.Core.MemoryBlock)
+		  Self.mIdentifier = Identifier
+		  Self.mPublicKey = PublicKey
+		  Self.mPrivateKey = PrivateKey
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
@@ -55,11 +63,7 @@ Protected Class Identity
 		    Return Nil
 		  End If
 		  
-		  Dim Iden As New Beacon.Identity
-		  Iden.mIdentifier = Source.Value("Identifier")
-		  Iden.mPublicKey = PublicKey
-		  Iden.mPrivateKey = PrivateKey
-		  Return Iden
+		  Return New Beacon.Identity(Source.Value("Identifier"), PublicKey, PrivateKey)
 		End Function
 	#tag EndMethod
 
