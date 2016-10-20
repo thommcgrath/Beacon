@@ -87,10 +87,24 @@ Inherits ControlCanvas
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  G.ForeColor = Self.BackgroundColor
+		  G.ForeColor = Self.mColorBackground
 		  G.FillRect(0, 0, G.Width, G.Height)
 		  
 		  Dim HasSegments As Boolean = UBound(Self.mSegments) > -1
+		  
+		  Dim IdealHeight As Integer = (Self.Padding * 2) + Self.TitleHeight + 1
+		  If HasSegments Then
+		    IdealHeight = IdealHeight + Self.SegmentCellHeight + Self.Padding
+		  End If
+		  If Self.Height <> IdealHeight Then
+		    Dim OriginalHeight As Integer = Self.Height
+		    RaiseEvent Resize(IdealHeight)
+		    If Self.Height <> OriginalHeight Then
+		      Self.Refresh()
+		      Return
+		    End If
+		  End If
+		  
 		  If HasSegments Then
 		    Self.DrawSegments(G, New Xojo.Core.Rect(Self.Padding, (Self.Padding * 2) + Self.TitleHeight, G.Width - (Self.Padding * 2), Self.SegmentCellHeight))
 		  End If
@@ -98,10 +112,13 @@ Inherits ControlCanvas
 		  Dim TitleLeft As Integer = (G.Width - TitleWidth) / 2
 		  Dim TitleBottom As Integer = Self.Padding + Self.TitleHeight
 		  G.Bold = True
-		  G.ForeColor = &cFFFFFF00
+		  G.ForeColor = Self.mColorTitleShadow
 		  G.DrawString(Self.Title, TitleLeft, TitleBottom + 1, G.Width - (Self.Padding * 2), True)
-		  G.ForeColor = &c686a6b00
+		  G.ForeColor = Self.mColorTitleText
 		  G.DrawString(Self.Title, TitleLeft, TitleBottom, G.Width - (Self.Padding * 2), True)
+		  
+		  G.ForeColor = Self.mColorBorder
+		  G.DrawLine(0, G.Height - 1, G.Width, G.Height - 1)
 		End Sub
 	#tag EndEvent
 
@@ -115,11 +132,23 @@ Inherits ControlCanvas
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function AdjustColor(SourceColor As Color, BrightnessAdjust As Double) As Color
+		  If BrightnessAdjust = 0 Then
+		    Return SourceColor
+		  End If
+		  
+		  Dim Adjust As Integer = 255 * BrightnessAdjust
+		  Return RGB(SourceColor.Red + Adjust, SourceColor.Green + Adjust, SourceColor.Blue + Adjust, SourceColor.Alpha)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Calling the overridden superclass constructor.
 		  Super.Constructor
 		  Self.mClickRects = New Xojo.Core.Dictionary
+		  Self.TintColor = Self.DefaultColor
 		End Sub
 	#tag EndMethod
 
@@ -133,11 +162,11 @@ Inherits ControlCanvas
 		  Dim ControlTop As Integer = Rect.Top
 		  Dim ControlHeight As Integer = Rect.Height
 		  
-		  G.ForeColor = &cFFFFFF00
+		  G.ForeColor = Self.mColorSegmentShadow
 		  G.FillRoundRect(ControlLeft, ControlTop + 1, ControlWidth, ControlHeight, Self.CornerRadius, Self.CornerRadius)
-		  G.ForeColor = Self.SegmentColor
+		  G.ForeColor = Self.mColorSegmentFrame
 		  G.FillRoundRect(ControlLeft, ControlTop, ControlWidth, ControlHeight, Self.CornerRadius, Self.CornerRadius)
-		  G.ForeColor = Self.BackgroundColor
+		  G.ForeColor = Self.mColorBackground
 		  G.FillRoundRect(ControlLeft + Self.SegmentBorderSize, ControlTop + Self.SegmentBorderSize, ControlWidth - (Self.SegmentBorderSize * 2), ControlHeight - (Self.SegmentBorderSize * 2), Self.CornerRadius - Self.SegmentBorderSize, Self.CornerRadius - Self.SegmentBorderSize)
 		  
 		  Dim NextLeft As Integer = ControlLeft + Self.SegmentBorderSize
@@ -153,18 +182,18 @@ Inherits ControlCanvas
 		    Dim Segment As Graphics = G.Clip(NextLeft, ControlTop + Self.SegmentBorderSize, CellWidth, ControlHeight - (Self.SegmentBorderSize * 2))
 		    Dim TextColor, ShadowColor As Color
 		    If Pressed Then
-		      Segment.ForeColor = RGB(Self.SegmentColor.Red * 0.7, Self.SegmentColor.Green * 0.7, Self.SegmentColor.Blue * 0.7, Self.SegmentColor.Alpha)
+		      Segment.ForeColor = Self.mColorSegmentPressed
 		      Segment.FillRect(0, 0, Segment.Width, Segment.Height)
-		      TextColor = &cFFFFFF00
-		      ShadowColor = Segment.ForeColor
+		      TextColor = Self.mColorSegmentSelectedText
+		      ShadowColor = Self.mColorSegmentPressed
 		    ElseIf Selected Then
-		      Segment.ForeColor = Self.SegmentColor
+		      Segment.ForeColor = Self.mColorSegmentFrame
 		      Segment.FillRect(0, 0, Segment.Width, Segment.Height)
-		      TextColor = &cFFFFFF00
-		      ShadowColor = Segment.ForeColor
+		      TextColor = Self.mColorSegmentSelectedText
+		      ShadowColor = Self.mColorSegmentFrame
 		    Else
-		      TextColor = &c00000000
-		      ShadowColor = &cFFFFFF00
+		      TextColor = Self.mColorSegmentText
+		      ShadowColor = Self.mColorSegmentShadow
 		    End If
 		    
 		    Dim SegmentText As String = Self.mSegments(I)
@@ -180,7 +209,7 @@ Inherits ControlCanvas
 		    
 		    NextLeft = NextLeft + CellWidth
 		    If I < UBound(Self.mSegments) Then
-		      G.ForeColor = Self.SegmentColor
+		      G.ForeColor = Self.mColorSegmentFrame
 		      G.FillRect(NextLeft, ControlTop, Self.SegmentBorderSize, ControlHeight)
 		    End If
 		    NextLeft = NextLeft + Self.SegmentBorderSize
@@ -251,6 +280,10 @@ Inherits ControlCanvas
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event Resize(NewSize As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event SegmentChange()
 	#tag EndHook
 
@@ -261,6 +294,42 @@ Inherits ControlCanvas
 
 	#tag Property, Flags = &h21
 		Private mClickRects As Xojo.Core.Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mColorBackground As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mColorBorder As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mColorSegmentFrame As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mColorSegmentPressed As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mColorSegmentSelectedText As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mColorSegmentShadow As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mColorSegmentText As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mColorTitleShadow As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mColorTitleText As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -281,6 +350,10 @@ Inherits ControlCanvas
 
 	#tag Property, Flags = &h21
 		Private mSubclassHandlesMouse As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTintColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -310,6 +383,40 @@ Inherits ControlCanvas
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mTintColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Const BrightnessLimit = 170
+			  
+			  If Self.mTintColor = Value Then
+			    Return
+			  End If
+			  
+			  Dim Brightness As Integer = Exp(Log((Value.Red * Value.Red * 0.241) + (Value.Green * Value.Green * 0.691) + (Value.Blue * Value.Blue * 0.068)) * 0.5)
+			  Dim IsDark As Boolean = Brightness < BrightnessLimit
+			  
+			  Self.mTintColor = Value
+			  Self.mColorBackground = Value
+			  Self.mColorTitleText = if(IsDark, &cFFFFFF, Self.AdjustColor(Value, -0.60))
+			  Self.mColorTitleShadow = if(IsDark, Self.AdjustColor(Value, -0.75), &cFFFFFF)
+			  Self.mColorSegmentFrame = if(IsDark, &cFFFFFF, Self.AdjustColor(Value, -0.50))
+			  Self.mColorSegmentShadow = if(IsDark, Self.AdjustColor(Value, -0.75), &cFFFFFF)
+			  Self.mColorSegmentText = if(IsDark, &cFFFFFF, Self.AdjustColor(Value, -0.70))
+			  Self.mColorSegmentPressed = if(IsDark, Self.AdjustColor(Value, 0.75), Self.AdjustColor(Value, -0.75))
+			  Self.mColorSegmentSelectedText = if(IsDark, &c000000, &cFFFFFF)
+			  Self.mColorBorder = if(IsDark, Self.AdjustColor(Value, -0.1), Self.AdjustColor(Value, -0.2))
+			  
+			  Self.Invalidate
+			End Set
+		#tag EndSetter
+		TintColor As Color
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mTitle
 			End Get
 		#tag EndGetter
@@ -325,19 +432,13 @@ Inherits ControlCanvas
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = AlternateRowColor, Type = Color, Dynamic = False, Default = \"&cFAFAFA", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = BackgroundColor, Type = Color, Dynamic = False, Default = \"&cEAEEF100", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = CornerRadius, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = Padding, Type = Double, Dynamic = False, Default = \"10", Scope = Private
+	#tag Constant, Name = DefaultColor, Type = Color, Dynamic = False, Default = \"&cEAEEF1", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = PrimaryRowColor, Type = Color, Dynamic = False, Default = \"&cFFFFFF", Scope = Private
+	#tag Constant, Name = Padding, Type = Double, Dynamic = False, Default = \"10", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = RowHeight, Type = Double, Dynamic = False, Default = \"36", Scope = Private
@@ -350,9 +451,6 @@ Inherits ControlCanvas
 	#tag EndConstant
 
 	#tag Constant, Name = SegmentCellWidth, Type = Double, Dynamic = False, Default = \"68", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = SegmentColor, Type = Color, Dynamic = False, Default = \"&c80838400", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = TitleHeight, Type = Double, Dynamic = False, Default = \"10", Scope = Private
@@ -501,6 +599,13 @@ Inherits ControlCanvas
 			Group="Position"
 			InitialValue="True"
 			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TintColor"
+			Visible=true
+			Group="Behavior"
+			InitialValue="&cEAEEF1"
+			Type="Color"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Title"

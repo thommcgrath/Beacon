@@ -44,7 +44,7 @@ Begin Window DocWindow
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   490
+      Height          =   491
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -68,7 +68,7 @@ Begin Window DocWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   65
+      Top             =   64
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -400,40 +400,13 @@ Begin Window DocWindow
       LockTop         =   True
       Scope           =   2
       SegmentIndex    =   0
-      TabIndex        =   11
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
+      TintColor       =   &cEAEEF100
       Title           =   "Loot Sources"
       Top             =   0
       Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   234
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   5
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   12
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   64
-      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   234
@@ -1012,7 +985,7 @@ End
 		  End If
 		  
 		  Dim Source As Beacon.LootSource = Me.RowTag(Row)
-		  Dim Icon As Picture = LocalData.IconForLootSource(Source, TextColor)
+		  Dim Icon As Picture = LocalData.IconForLootSource(Source, RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 150))
 		  Dim SpaceWidth As Integer = Me.Column(Column).WidthActual
 		  Dim SpaceHeight As Integer = Me.DefaultRowHeight
 		  
@@ -1196,17 +1169,24 @@ End
 #tag EndEvents
 #tag Events LootSourceHeader
 	#tag Event
-		Sub SegmentChange()
-		  Self.UpdateSourceList()
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub Open()
 		  Me.AddSegment("All")
 		  Me.AddSegment("Island")
 		  Me.AddSegment("Scorched")
 		  
 		  Me.SegmentIndex = 0
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Resize(NewSize As Integer)
+		  Me.Height = NewSize
+		  BeaconList.Top = NewSize
+		  BeaconList.Height = Separators(3).Top - NewSize
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SegmentChange()
+		  Self.UpdateSourceList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

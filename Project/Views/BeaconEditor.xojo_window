@@ -43,7 +43,7 @@ Begin ContainerControl BeaconEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   439
+      Height          =   407
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -67,7 +67,7 @@ Begin ContainerControl BeaconEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   0
+      Top             =   32
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -304,6 +304,37 @@ Begin ContainerControl BeaconEditor
       UseFocusRing    =   True
       Visible         =   True
       Width           =   1
+   End
+   Begin ListHeader Header
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   32
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      SegmentIndex    =   0
+      TabIndex        =   20
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TintColor       =   &cEAEEF100
+      Title           =   "Item Sets"
+      Top             =   0
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   190
    End
 End
 #tag EndWindow
@@ -740,6 +771,16 @@ End
 	#tag Event
 		Sub Action()
 		  Self.RemoveSelectedItemSet()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Header
+	#tag Event
+		Sub Resize(NewSize As Integer)
+		  Me.Height = NewSize
+		  SetList.Top = NewSize
+		  SetList.Height = Separators(2).Top - NewSize
+		  Self.Refresh(False)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

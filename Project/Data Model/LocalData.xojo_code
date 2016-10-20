@@ -185,6 +185,9 @@ Implements Beacon.DataSource
 		    ColorMask = IconLootSeaColorMask
 		  End Select
 		  
+		  Dim HighlightOpacity As Integer = HighlightColor.Alpha
+		  Dim FillOpacity As Integer = Source.UIColor.Alpha
+		  
 		  Dim Bitmaps() As Picture
 		  For Factor As Integer = 1 To 3
 		    Dim HighlightRep As Picture = HighlightMask.BestRepresentation(Size, Size, Factor)
@@ -193,9 +196,11 @@ Implements Beacon.DataSource
 		    Dim Highlight As New Picture(Size * Factor, Size * Factor, 32)
 		    Highlight.VerticalResolution = 72 * Factor
 		    Highlight.HorizontalResolution = 72 * Factor
-		    Highlight.Graphics.ForeColor = HighlightColor
+		    Highlight.Graphics.ForeColor = RGB(HighlightColor.Red, HighlightColor.Green, HighlightColor.Blue)
 		    Highlight.Graphics.FillRect(0, 0, Highlight.Width, Highlight.Height)
 		    Highlight.Mask.Graphics.DrawPicture(HighlightRep, 0, 0, Highlight.Width, Highlight.Height, 0, 0, HighlightRep.Width, HighlightRep.Height)
+		    Highlight.Mask.Graphics.ForeColor = RGB(255, 255, 255, 255 - HighlightOpacity)
+		    Highlight.Mask.Graphics.FillRect(0, 0, Highlight.Width, Highlight.Height)
 		    
 		    Dim Fill As New Picture(Size * Factor, Size * Factor, 32)
 		    Fill.VerticalResolution = 72 * Factor
@@ -203,6 +208,8 @@ Implements Beacon.DataSource
 		    Fill.Graphics.ForeColor = Source.UIColor
 		    Fill.Graphics.FillRect(0, 0, Fill.Width, Fill.Height)
 		    Fill.Mask.Graphics.DrawPicture(ColorRep, 0, 0, Fill.Width, Fill.Height, 0, 0, ColorRep.Width, ColorRep.Height)
+		    Fill.Mask.Graphics.ForeColor = RGB(255, 255, 255, 255 - FillOpacity)
+		    Fill.Mask.Graphics.FillRect(0, 0, Fill.Width, Fill.Height)
 		    
 		    Dim Combined As New Picture(Size * Factor, Size * Factor)
 		    Combined.VerticalResolution = 72 * Factor

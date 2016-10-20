@@ -1323,7 +1323,7 @@ End
 		  End If
 		  
 		  Dim Source As Beacon.LootSource = Me.RowTag(Row)
-		  Dim Icon As Picture = LocalData.IconForLootSource(Source, TextColor)
+		  Dim Icon As Picture = LocalData.IconForLootSource(Source, RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 150))
 		  Dim SpaceWidth As Integer = Me.Column(Column).WidthActual
 		  Dim SpaceHeight As Integer = Me.DefaultRowHeight
 		  
