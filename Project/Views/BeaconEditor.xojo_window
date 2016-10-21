@@ -713,8 +713,7 @@ End
 		  
 		  Select Case HitItem.Text
 		  Case "Create Preset…"
-		    Dim Set As Beacon.ItemSet = HitItem.Tag
-		    PresetCreationSheet.Present(Self, Set)
+		    PresetManagerWindow.SharedWindow.NewPreset(HitItem.Tag)
 		  Case "Reconfigure From Preset"
 		    Dim Set As Beacon.ItemSet = HitItem.Tag
 		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets

@@ -7,7 +7,6 @@ Implements Beacon.Countable
 		  Self.mGrouping = "Miscellaneous"
 		  Self.mMinItems = 1
 		  Self.mMaxItems = 3
-		  Self.mWeight = 1
 		  
 		  Self.mQualityModifierStandard = 0
 		  Self.mQualityModifierBonus = 3
@@ -27,7 +26,6 @@ Implements Beacon.Countable
 		  Self.mGrouping = Source.mGrouping
 		  Self.mMinItems = Source.mMinItems
 		  Self.mMaxItems = Source.mMaxItems
-		  Self.mWeight = Source.mWeight
 		  
 		  Self.mQualityModifierStandard = Source.mQualityModifierStandard
 		  Self.mQualityModifierBonus = Source.mQualityModifierBonus
@@ -71,7 +69,6 @@ Implements Beacon.Countable
 		  Preset.mGrouping = Dict.Lookup("Grouping", Preset.Grouping)
 		  Preset.mMinItems = Dict.Lookup("Min", Preset.MinItems)
 		  Preset.mMaxItems = Dict.Lookup("Max", Preset.MaxItems)
-		  Preset.mWeight = Dict.Lookup("Weight", Preset.Weight)
 		  
 		  If Dict.HasKey("Entries") Then
 		    Dim Contents() As Auto = Dict.Value("Entries")
@@ -280,7 +277,6 @@ Implements Beacon.Countable
 		  Dict.Value("Grouping") = Self.mGrouping
 		  Dict.Value("Min") = Self.mMinItems
 		  Dict.Value("Max") = Self.mMaxItems
-		  Dict.Value("Weight") = Self.mWeight
 		  Dict.Value("Entries") = Contents
 		  Dict.Value("Modifiers") = Modifiers
 		  Return Dict
@@ -304,12 +300,6 @@ Implements Beacon.Countable
 		      Return True
 		    End If
 		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Weight() As Double
-		  Return Self.mWeight
 		End Function
 	#tag EndMethod
 
@@ -368,10 +358,6 @@ Implements Beacon.Countable
 
 	#tag Property, Flags = &h1
 		Protected mQuantityMultiplierStandard As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mWeight As Double
 	#tag EndProperty
 
 

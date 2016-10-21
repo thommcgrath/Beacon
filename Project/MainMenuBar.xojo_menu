@@ -258,6 +258,44 @@ Begin Menu MainMenuBar
          Visible = True
       End
    End
+   Begin MenuItem WindowMenu
+      SpecialMenu = 0
+      Text = "Window"
+      Index = -2147483648
+      AutoEnable = True
+      Visible = True
+      Begin MenuItem WindowMinimize
+         SpecialMenu = 0
+         Text = "Minimize"
+         Index = -2147483648
+         ShortcutKey = "M"
+         Shortcut = "Cmd+M"
+         MenuModifier = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem WindowZoom
+         SpecialMenu = 0
+         Text = "Zoom"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem UntitledSeparator3
+         SpecialMenu = 0
+         Text = "-"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem WindowPresetLibrary
+         SpecialMenu = 0
+         Text = "Preset Library"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
+   End
    Begin MenuItem HelpMenu
       SpecialMenu = 0
       Text = "Help"

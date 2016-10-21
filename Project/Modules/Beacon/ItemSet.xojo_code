@@ -72,7 +72,7 @@ Implements Beacon.Countable
 		  Set.Label = Preset.Label
 		  Set.MinNumItems = Preset.MinItems
 		  Set.MaxNumItems = Preset.MaxItems
-		  Set.Weight = Preset.Weight
+		  // Weight is intentionally skipped, as that is relative to the source, no reason for a preset to alter that.
 		  Set.mSourcePresetID = Preset.PresetID
 		  
 		  Dim QuantityMultiplier As Double = Preset.QuantityMultiplier(ForLootSource.Kind)

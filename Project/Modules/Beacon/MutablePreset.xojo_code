@@ -50,8 +50,14 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Operator_Subscript(Index As Integer) As Beacon.PresetEntry
+		  Return Self.mContents(Index)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Operator_Subscript(Index As Integer, Assigns Item As Beacon.PresetEntry)
-		  Self.mContents(Index) = New Beacon.PresetEntry(Item)
+		  Self.mContents(Index) = Item
 		End Sub
 	#tag EndMethod
 
@@ -88,12 +94,6 @@ Inherits Beacon.Preset
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Self.mContents.Remove(Index)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Weight(Assigns Value As Double)
-		  Self.mWeight = Max(Value, 0)
 		End Sub
 	#tag EndMethod
 

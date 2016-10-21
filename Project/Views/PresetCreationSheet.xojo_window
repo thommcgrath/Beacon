@@ -1222,7 +1222,6 @@ End
 		  Preset.Label = Set.Label
 		  Preset.MinItems = Set.MinNumItems
 		  Preset.MaxItems = Set.MaxNumItems
-		  Preset.Weight = Set.Weight
 		  
 		  For Each Entry As Beacon.SetEntry In Set
 		    Preset.Append(New Beacon.PresetEntry(Entry))

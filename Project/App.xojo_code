@@ -83,7 +83,27 @@ Inherits Application
 		  End If
 		  
 		  If Item.IsType(BeaconFileTypes.BeaconPreset) Then
-		    Break
+		    Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(New Xojo.IO.FolderItem(Item.NativePath.ToText))
+		    If Preset <> Nil Then
+		      Dim Dialog As New MessageDialog
+		      Dialog.Message = "Import preset " + Preset.Label + "?"
+		      If Beacon.Data.IsPresetCustom(Preset) Then
+		        Dialog.Explanation = "You have already customized this preset, so the imported preset will replace your changes."
+		      Else
+		        Dialog.Explanation = "If this preset customizes a built-in preset, it will take precedence. You can revert these changes."
+		      End If
+		      Dialog.ActionButton.Caption = "Import"
+		      Dialog.CancelButton.Visible = True
+		      
+		      Dim Choice As MessageDialogButton = Dialog.ShowModal()
+		      If Choice = Dialog.ActionButton Then
+		        Beacon.Data.SavePreset(Preset)
+		        If PresetManagerWindow.SharedWindow(False) <> Nil Then
+		          PresetManagerWindow.SharedWindow.UpdatePresets()
+		        End If
+		        PresetManagerWindow.SharedWindow.ShowPreset(Preset)
+		      End If
+		    End If
 		    Return
 		  End If
 		  
@@ -157,6 +177,13 @@ Inherits Application
 	#tag MenuHandler
 		Function HelpReportAProblem() As Boolean Handles HelpReportAProblem.Action
 			Beacon.ReportAProblem()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function WindowPresetLibrary() As Boolean Handles WindowPresetLibrary.Action
+			PresetManagerWindow.SharedWindow.Show
 			Return True
 		End Function
 	#tag EndMenuHandler
