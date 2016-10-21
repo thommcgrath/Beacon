@@ -1,5 +1,22 @@
 # Beacon Version History
 
+## Build 8
+
+- Loot source list now includes icons and can be filtered to show all sources, island sources, or scorched sources.
+- New loot source wizard. Selecting a defined source is clearer, allows adding presets while adding a loot source. Custom loot sources now have a full range of settings available to ensure proper loot calculation on export.
+- Editing multiple entries is now much nicer, as the "edit" checkboxes will default to off, and automatically enable when changing a setting.
+- No longer possible to set an entry's blueprint chance if no blueprint exists for the engram.
+- Exporting no longer creates set entries for blueprints if the engram has no blueprint.
+- It is now possible to change the engrams in a set entry.
+- When adding multiple engrams, it is now possible to choose between creating one entry per engram (the previous behavior) or adding all engrams to a single entry. This is useful, for example, to include both a Quetzal Saddle and Quetzal Platform Saddle in the same entry so the game will pick one or the other, but not both.
+- Added increased resolution icons, supporting Windows scaling settings up to 300%.
+- Loot sources are now sorted by design instead of alphabetically.
+- Built-in presets are now updated automatically by the server.
+- Editing or duplicating a loot source allows the item sets added by a preset to be reconfigured. This is useful when duplicating a standard beacon into a bonus beacon, for example, as it will adjust qualities and quantities accordingly.
+- Item sets now know which preset defined them. This allows an item set to be renamed, but can still be reconfigured by the loot source wizard without altering the other settings such as name and weight.
+- Improved engram lookup speed, which should make the loading files faster.
+- Added right-click option to reconfigure item sets from their preset.
+
 ## Build 7
 
 - Fixing cast issue with importing from text.
