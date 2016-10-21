@@ -860,12 +860,25 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Entry As Beacon.SetEntry = Me.RowTag(Me.ListIndex)
-		  Dim Dict As Xojo.Core.Dictionary = Entry.Export
-		  If Dict <> Nil Then
-		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
-		    Board.AddRawData(Contents, Self.kClipboardType)
+		  Dim Entries() As Xojo.Core.Dictionary
+		  For I As Integer = 0 To Me.ListCount - 1
+		    If Me.Selected(I) Then
+		      Entries.Append(Beacon.SetEntry(Me.RowTag(I)).Export)
+		    End If
+		  Next
+		  
+		  If UBound(Entries) = -1 Then
+		    Return
 		  End If
+		  
+		  Dim Contents As Text
+		  If UBound(Entries) = 0 Then
+		    Contents = Xojo.Data.GenerateJSON(Entries(0))
+		  Else
+		    Contents = Xojo.Data.GenerateJSON(Entries)
+		  End If
+		  
+		  Board.AddRawData(Contents, Self.kClipboardType)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -875,10 +888,10 @@ End
 		  End If
 		  
 		  Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		  Dim Dict As Xojo.Core.Dictionary
+		  Dim Parsed As Auto
 		  Try
-		    Dict = Xojo.Data.ParseJSON(Contents.ToText)
-		  Catch Err As RuntimeException
+		    Parsed = Xojo.Data.ParseJSON(Contents.ToText)
+		  Catch Err As Xojo.Data.InvalidJSONException
 		    Beep
 		    Return
 		  End Try
@@ -886,10 +899,33 @@ End
 		  // The multipliers parameter here is 100% useless as a copied set entry will always use text
 		  // quality values and not numeric ones. But this is what the signature is, so something must
 		  // be supplied.
-		  Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Dict, New Beacon.Range(1, 1))
-		  Self.mSet.Append(Entry)
-		  Self.UpdateEntryList()
-		  RaiseEvent Updated
+		  Dim Range As New Beacon.Range(1, 1)
+		  
+		  Dim Modified As Boolean
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
+		  If Info.FullName = "Xojo.Core.Dictionary" Then
+		    // Single item
+		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Parsed, Range)
+		    If Entry <> Nil Then
+		      Self.mSet.Append(Entry)
+		      Modified = True
+		    End If
+		  ElseIf Info.FullName = "Auto()" Then
+		    // Multiple items
+		    Dim Dicts() As Auto = Parsed
+		    For Each Dict As Xojo.Core.Dictionary In Dicts
+		      Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Dict, Range)
+		      If Entry <> Nil Then
+		        Self.mSet.Append(Entry)
+		        Modified = True
+		      End If
+		    Next
+		  End If
+		  
+		  If Modified Then
+		    Self.UpdateEntryList()
+		    RaiseEvent Updated
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event

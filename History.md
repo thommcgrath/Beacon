@@ -16,6 +16,7 @@
 - Item sets now know which preset defined them. This allows an item set to be renamed, but can still be reconfigured by the loot source wizard without altering the other settings such as name and weight.
 - Improved engram lookup speed, which should make the loading files faster.
 - Added right-click option to reconfigure item sets from their preset.
+- Set entries list now supports multiple item copy and paste.
 
 ## Build 7
 
