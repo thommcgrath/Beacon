@@ -68,15 +68,6 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Shared Function FromPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource) As Beacon.ItemSet
-		  Dim Kind As Beacon.LootSource.Kinds = ForLootSource.Kind
-		  
-		  Dim Entries() As Beacon.SetEntry
-		  For Each Item As Beacon.PresetEntry In Preset
-		    If Item.ValidForPackage(ForLootSource.Package) Then
-		      Entries.Append(New Beacon.SetEntry(Item))
-		    End If
-		  Next
-		  
 		  Dim Set As New Beacon.ItemSet
 		  Set.Label = Preset.Label
 		  Set.MinNumItems = Preset.MinItems
@@ -84,19 +75,26 @@ Implements Beacon.Countable
 		  Set.Weight = Preset.Weight
 		  Set.mSourcePresetID = Preset.PresetID
 		  
-		  For Each Entry As Beacon.SetEntry In Entries
-		    Dim QuantityMultiplier As Double = Preset.QuantityMultiplier(Kind)
-		    Dim QualityModifier As Integer = Preset.QualityModifier(Kind)
+		  Dim QuantityMultiplier As Double = Preset.QuantityMultiplier(ForLootSource.Kind)
+		  Dim QualityModifier As Integer = Preset.QualityModifier(ForLootSource.Kind)
+		  
+		  For Each Entry As Beacon.PresetEntry In Preset
+		    If Not Entry.ValidForPackage(ForLootSource.Package) Then
+		      Continue
+		    End If
 		    
-		    Dim MinQuality As Integer = Max(Min(CType(Entry.MinQuality, Integer) + QualityModifier, 8), 0)
-		    Dim MaxQuality As Integer = Max(Min(CType(Entry.MaxQuality, Integer) + QualityModifier, 8), 0)
+		    Dim EntryQuantityMultiplier As Double = If(Entry.RespectQuantityMultiplier, QuantityMultiplier, 1)
+		    Dim EntryQualityModifier As Integer = If(Entry.RespectQualityModifier, QualityModifier, 0)
 		    
-		    Entry.MinQuantity = Entry.MinQuantity * QuantityMultiplier
-		    Entry.MaxQuantity = Entry.MaxQuantity * QuantityMultiplier
+		    Dim MinQuality As Integer = Max(Min(CType(Entry.MinQuality, Integer) + EntryQualityModifier, 8), 0)
+		    Dim MaxQuality As Integer = Max(Min(CType(Entry.MaxQuality, Integer) + EntryQualityModifier, 8), 0)
+		    
+		    Entry.MinQuantity = Entry.MinQuantity * EntryQuantityMultiplier
+		    Entry.MaxQuantity = Entry.MaxQuantity * EntryQuantityMultiplier
 		    Entry.MinQuality = CType(MinQuality, Beacon.Qualities)
 		    Entry.MaxQuality = CType(MaxQuality, Beacon.Qualities)
 		    
-		    Set.Append(Entry)
+		    Set.Append(New Beacon.SetEntry(Entry))
 		  Next
 		  
 		  Return Set

@@ -73,23 +73,33 @@ Implements Beacon.Countable
 		  Preset.mMaxItems = Dict.Lookup("Max", Preset.MaxItems)
 		  Preset.mWeight = Dict.Lookup("Weight", Preset.Weight)
 		  
-		  Dim Multipliers As New Beacon.Range(1, 1)
-		  Dim Contents As Xojo.Core.Dictionary = Dict.Lookup("Contents", Nil)
-		  If Contents <> Nil Then
-		    For Each Set As Xojo.Core.DictionaryEntry In Contents
-		      Dim ValidForIsland As Boolean = (Set.Key = "Common" Or Set.Key = "Island")
-		      Dim ValidForScorched As Boolean = (Set.Key = "Common" Or Set.Key = "Scorched")
-		      Dim Items() As Auto = Set.Value
-		      For Each Item As Xojo.Core.Dictionary In Items
-		        Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Item, Multipliers)
-		        If Entry <> Nil Then
-		          Dim Child As New Beacon.PresetEntry(Entry)
-		          Child.ValidForPackage(Beacon.LootSource.Packages.Island) = ValidForIsland
-		          Child.ValidForPackage(Beacon.LootSource.Packages.Scorched) = ValidForScorched
-		          Preset.mContents.Append(Child)
-		        End If
-		      Next
+		  If Dict.HasKey("Entries") Then
+		    Dim Contents() As Auto = Dict.Value("Entries")
+		    For Each EntryDict As Xojo.Core.Dictionary In Contents
+		      Dim Entry As Beacon.PresetEntry = Beacon.PresetEntry.Import(EntryDict)
+		      If Entry <> Nil Then
+		        Preset.mContents.Append(Entry)
+		      End If
 		    Next
+		  ElseIf Dict.HasKey("Contents") Then
+		    Dim Multipliers As New Beacon.Range(1, 1)
+		    Dim Contents As Xojo.Core.Dictionary = Dict.Value("Contents")
+		    If Contents <> Nil Then
+		      For Each Set As Xojo.Core.DictionaryEntry In Contents
+		        Dim ValidForIsland As Boolean = (Set.Key = "Common" Or Set.Key = "Island")
+		        Dim ValidForScorched As Boolean = (Set.Key = "Common" Or Set.Key = "Scorched")
+		        Dim Items() As Auto = Set.Value
+		        For Each Item As Xojo.Core.Dictionary In Items
+		          Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Item, Multipliers)
+		          If Entry <> Nil Then
+		            Dim Child As New Beacon.PresetEntry(Entry)
+		            Child.ValidForPackage(Beacon.LootSource.Packages.Island) = ValidForIsland
+		            Child.ValidForPackage(Beacon.LootSource.Packages.Scorched) = ValidForScorched
+		            Preset.mContents.Append(Child)
+		          End If
+		        Next
+		      Next
+		    End If
 		  End If
 		  
 		  Dim Modifiers As Xojo.Core.Dictionary = Dict.Lookup("Modifiers", Nil)
@@ -237,22 +247,10 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Xojo.Core.Dictionary
-		  Dim CommonItems(), IslandItems(), ScorchedItems() As Xojo.Core.Dictionary
+		  Dim Contents() As Xojo.Core.Dictionary
 		  For Each Entry As Beacon.PresetEntry In Self.mContents
-		    Dim Exported As Xojo.Core.Dictionary = Entry.Export
-		    If Entry.ValidForPackage(Beacon.LootSource.Packages.Island) And Entry.ValidForPackage(Beacon.LootSource.Packages.Scorched) Then
-		      CommonItems.Append(Exported)
-		    ElseIf Entry.ValidForPackage(Beacon.LootSource.Packages.Island) Then
-		      IslandItems.Append(Exported)
-		    ElseIf Entry.ValidForPackage(Beacon.LootSource.Packages.Scorched) Then
-		      ScorchedItems.Append(Exported)
-		    End If
+		    Contents.Append(Entry.Export)
 		  Next
-		  
-		  Dim Contents As New Xojo.Core.Dictionary
-		  Contents.Value("Common") = CommonItems
-		  Contents.Value("Island") = IslandItems
-		  Contents.Value("Scorched") = ScorchedItems
 		  
 		  Dim StandardModifiers As New Xojo.Core.Dictionary
 		  StandardModifiers.Value("Quality") = Self.mQualityModifierStandard
@@ -283,7 +281,7 @@ Implements Beacon.Countable
 		  Dict.Value("Min") = Self.mMinItems
 		  Dict.Value("Max") = Self.mMaxItems
 		  Dict.Value("Weight") = Self.mWeight
-		  Dict.Value("Contents") = Contents
+		  Dict.Value("Entries") = Contents
 		  Dict.Value("Modifiers") = Modifiers
 		  Return Dict
 		End Function

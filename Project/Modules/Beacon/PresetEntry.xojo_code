@@ -2,6 +2,12 @@
 Protected Class PresetEntry
 Inherits Beacon.SetEntry
 	#tag Method, Flags = &h0
+		Function Availability() As Integer
+		  Return Self.mAvailability
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Calling the overridden superclass constructor.
 		  // Note that this may need modifications if there are multiple constructor choices.
@@ -10,6 +16,8 @@ Inherits Beacon.SetEntry
 		  // Constructor(Source As Beacon.SetEntry) -- From SetEntry
 		  Super.Constructor
 		  Self.mAvailability = Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Island) Or Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Scorched)
+		  Self.mRespectQualityModifier = True
+		  Self.mRespectQuantityMultiplier = True
 		End Sub
 	#tag EndMethod
 
@@ -22,6 +30,8 @@ Inherits Beacon.SetEntry
 		  // Constructor(Source As Beacon.SetEntry) -- From SetEntry
 		  Super.Constructor(Source)
 		  Self.mAvailability = Source.mAvailability
+		  Self.mRespectQualityModifier = Source.mRespectQualityModifier
+		  Self.mRespectQuantityMultiplier = Source.mRespectQuantityMultiplier
 		End Sub
 	#tag EndMethod
 
@@ -38,6 +48,55 @@ Inherits Beacon.SetEntry
 		  For Each Option As Beacon.SetEntryOption In Self
 		    Self.mAvailability = Self.mAvailability Or Option.Engram.Availability
 		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Export() As Xojo.Core.Dictionary
+		  Dim Dict As Xojo.Core.Dictionary = Super.Export
+		  Dict.Value("Availability") = Self.mAvailability
+		  Dict.Value("RespectQualityModifier") = Self.mRespectQualityModifier
+		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultiplier
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.PresetEntry
+		  Dim SetEntry As Beacon.SetEntry = Beacon.SetEntry.Import(Dict, New Beacon.Range(1, 1))
+		  If SetEntry = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Dim Entry As New Beacon.PresetEntry(SetEntry)
+		  Entry.mAvailability = Dict.Lookup("Availability", Entry.mAvailability)
+		  Entry.mRespectQualityModifier = Dict.Lookup("RespectQualityModifier", Entry.mRespectQualityModifier)
+		  Entry.mRespectQuantityMultiplier = Dict.Lookup("RespectQuantityMultiplier", Entry.mRespectQuantityMultiplier)
+		  Return Entry
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RespectQualityModifier() As Boolean
+		  Return Self.mRespectQualityModifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RespectQualityModifier(Assigns Value As Boolean)
+		  Self.mRespectQualityModifier = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RespectQuantityMultiplier() As Boolean
+		  Return Self.mRespectQuantityMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RespectQuantityMultiplier(Assigns Value As Boolean)
+		  Self.mRespectQuantityMultiplier = Value
 		End Sub
 	#tag EndMethod
 
@@ -61,6 +120,14 @@ Inherits Beacon.SetEntry
 
 	#tag Property, Flags = &h21
 		Private mAvailability As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRespectQualityModifier As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRespectQuantityMultiplier As Boolean
 	#tag EndProperty
 
 
