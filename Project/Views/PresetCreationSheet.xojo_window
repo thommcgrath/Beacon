@@ -1251,8 +1251,8 @@ End
 		    Win.ContentsList.AddRow("", "", Entry.Label)
 		    
 		    Dim Idx As Integer = Win.ContentsList.LastIndex
-		    Win.ContentsList.CellCheck(Idx, 0) = Entry.ValidForIsland
-		    Win.ContentsList.CellCheck(Idx, 1) = Entry.ValidForScorched
+		    Win.ContentsList.CellCheck(Idx, 0) = Entry.ValidForPackage(Beacon.LootSource.Packages.Island)
+		    Win.ContentsList.CellCheck(Idx, 1) = Entry.ValidForPackage(Beacon.LootSource.Packages.Scorched)
 		    Win.ContentsList.RowTag(Idx) = Entry
 		  Next
 		  
@@ -1289,8 +1289,8 @@ End
 		  Redim Preset(-1)
 		  For I As Integer = 0 To Self.ContentsList.ListCount - 1
 		    Dim Entry As Beacon.PresetEntry = Self.ContentsList.RowTag(I)
-		    Entry.ValidForIsland = Self.ContentsList.CellCheck(I, 0)
-		    Entry.ValidForScorched = Self.ContentsList.CellCheck(I, 1)
+		    Entry.ValidForPackage(Beacon.LootSource.Packages.Island) = Self.ContentsList.CellCheck(I, 0)
+		    Entry.ValidForPackage(Beacon.LootSource.Packages.Scorched) = Self.ContentsList.CellCheck(I, 1)
 		    Preset.Append(Entry)
 		  Next
 		  

@@ -1,6 +1,12 @@
 #tag Class
 Protected Class Engram
 	#tag Method, Flags = &h0
+		Function Availability() As UInteger
+		  Return Self.mAvailability
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function AvailableTo(Package As Beacon.LootSource.Packages) As Boolean
 		  Dim PackageValue As UInteger = Beacon.LootSource.PackageToInteger(Package)
 		  Return (PackageValue And Self.mAvailability) = PackageValue

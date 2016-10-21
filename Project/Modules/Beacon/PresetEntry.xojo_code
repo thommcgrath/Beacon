@@ -9,8 +9,7 @@ Inherits Beacon.SetEntry
 		  // Constructor() -- From SetEntry
 		  // Constructor(Source As Beacon.SetEntry) -- From SetEntry
 		  Super.Constructor
-		  Self.ValidForIsland = True
-		  Self.ValidForScorched = True
+		  Self.mAvailability = Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Island) Or Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Scorched)
 		End Sub
 	#tag EndMethod
 
@@ -22,8 +21,7 @@ Inherits Beacon.SetEntry
 		  // Constructor() -- From SetEntry
 		  // Constructor(Source As Beacon.SetEntry) -- From SetEntry
 		  Super.Constructor(Source)
-		  Self.ValidForIsland = Source.ValidForIsland
-		  Self.ValidForScorched = Source.ValidForScorched
+		  Self.mAvailability = Source.mAvailability
 		End Sub
 	#tag EndMethod
 
@@ -36,23 +34,33 @@ Inherits Beacon.SetEntry
 		  // Constructor(Source As Beacon.SetEntry) -- From SetEntry
 		  Super.Constructor(Source)
 		  
-		  Self.ValidForIsland = False
-		  Self.ValidForScorched = False
-		  
+		  Self.mAvailability = 0
 		  For Each Option As Beacon.SetEntryOption In Self
-		    Self.ValidForIsland = Self.ValidForIsland Or Option.Engram.AvailableTo(Beacon.LootSource.Packages.Island)
-		    Self.ValidForScorched = Self.ValidForScorched Or Option.Engram.AvailableTo(Beacon.LootSource.Packages.Scorched)
+		    Self.mAvailability = Self.mAvailability Or Option.Engram.Availability
 		  Next
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ValidForPackage(Package As Beacon.LootSource.Packages) As Boolean
+		  Dim Value As Integer = Beacon.LootSource.PackageToInteger(Package)
+		  Return (Self.mAvailability And Value) = Value
+		End Function
+	#tag EndMethod
 
-	#tag Property, Flags = &h0
-		ValidForIsland As Boolean
-	#tag EndProperty
+	#tag Method, Flags = &h0
+		Sub ValidForPackage(Package As Beacon.LootSource.Packages, Assigns Value As Boolean)
+		  If Value Then
+		    Self.mAvailability = Self.mAvailability Or Beacon.LootSource.PackageToInteger(Package)
+		  Else
+		    Self.mAvailability = Self.mAvailability And Not Beacon.LootSource.PackageToInteger(Package)
+		  End If
+		End Sub
+	#tag EndMethod
 
-	#tag Property, Flags = &h0
-		ValidForScorched As Boolean
+
+	#tag Property, Flags = &h21
+		Private mAvailability As Integer
 	#tag EndProperty
 
 

@@ -1296,7 +1296,7 @@ End
 		    
 		    CustomizePresetsList.DeleteAllRows()
 		    For Each Preset As Beacon.Preset In Presets
-		      If (Preset.ValidForIsland And Self.mEditing.Package = Beacon.LootSource.Packages.Island) Or (Preset.ValidForScorched And Self.mEditing.Package = Beacon.LootSource.Packages.Scorched) Then
+		      If Preset.ValidForPackage(Self.mEditing.Package) Then
 		        CustomizePresetsList.AddRow("", Preset.Label)
 		        CustomizePresetsList.RowTag(CustomizePresetsList.LastIndex) = Preset
 		      End If

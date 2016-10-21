@@ -76,8 +76,21 @@ Inherits Application
 
 	#tag Event
 		Sub OpenDocument(item As FolderItem)
-		  Dim Win As New DocWindow(Item)
-		  Win.Show
+		  If Item.IsType(BeaconFileTypes.BeaconDocument) Then
+		    Dim Win As New DocWindow(Item)
+		    Win.Show
+		    Return
+		  End If
+		  
+		  If Item.IsType(BeaconFileTypes.BeaconPreset) Then
+		    Break
+		    Return
+		  End If
+		  
+		  Dim Dialog As New MessageDialog
+		  Dialog.Message = "Unable to open """ + Item.DisplayName + """"
+		  Dialog.Explanation = "Beacon can only open " + BeaconFileTypes.BeaconDocument.PrimaryExtension + " and " + BeaconFileTypes.BeaconPreset.PrimaryExtension + " files."
+		  Call Dialog.ShowModal()
 		End Sub
 	#tag EndEvent
 

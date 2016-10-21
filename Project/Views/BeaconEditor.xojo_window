@@ -414,7 +414,7 @@ End
 		    
 		    Dim Arr() As Beacon.Preset = Groups.Value(Group)
 		    For Each Preset As Beacon.Preset In Arr
-		      If (Self.mSources(0).Package = Beacon.LootSource.Packages.Island And Preset.ValidForIsland) Or (Self.mSources(0).Package = Beacon.LootSource.Packages.Scorched And Preset.ValidForScorched) Then
+		      If Preset.ValidForPackage(Self.mSources(0).Package) Then
 		        Dim PresetItem As New MenuItem(Preset.Label, Preset)
 		        AddHandler PresetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		        Parent.Append(PresetItem)

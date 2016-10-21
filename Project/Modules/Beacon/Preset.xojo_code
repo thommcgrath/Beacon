@@ -84,8 +84,8 @@ Implements Beacon.Countable
 		        Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Item, Multipliers)
 		        If Entry <> Nil Then
 		          Dim Child As New Beacon.PresetEntry(Entry)
-		          Child.ValidForIsland = ValidForIsland
-		          Child.ValidForScorched = ValidForScorched
+		          Child.ValidForPackage(Beacon.LootSource.Packages.Island) = ValidForIsland
+		          Child.ValidForPackage(Beacon.LootSource.Packages.Scorched) = ValidForScorched
 		          Preset.mContents.Append(Child)
 		        End If
 		      Next
@@ -240,11 +240,11 @@ Implements Beacon.Countable
 		  Dim CommonItems(), IslandItems(), ScorchedItems() As Xojo.Core.Dictionary
 		  For Each Entry As Beacon.PresetEntry In Self.mContents
 		    Dim Exported As Xojo.Core.Dictionary = Entry.Export
-		    If Entry.ValidForIsland And Entry.ValidForScorched Then
+		    If Entry.ValidForPackage(Beacon.LootSource.Packages.Island) And Entry.ValidForPackage(Beacon.LootSource.Packages.Scorched) Then
 		      CommonItems.Append(Exported)
-		    ElseIf Entry.ValidForIsland Then
+		    ElseIf Entry.ValidForPackage(Beacon.LootSource.Packages.Island) Then
 		      IslandItems.Append(Exported)
-		    ElseIf Entry.ValidForScorched Then
+		    ElseIf Entry.ValidForPackage(Beacon.LootSource.Packages.Scorched) Then
 		      ScorchedItems.Append(Exported)
 		    End If
 		  Next
@@ -300,19 +300,9 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ValidForIsland() As Boolean
+		Function ValidForPackage(Package As Beacon.LootSource.Packages) As Boolean
 		  For Each Entry As Beacon.PresetEntry In Self.mContents
-		    If Entry.ValidForIsland Then
-		      Return True
-		    End If
-		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ValidForScorched() As Boolean
-		  For Each Entry As Beacon.PresetEntry In Self.mContents
-		    If Entry.ValidForScorched Then
+		    If Entry.ValidForPackage(Package) Then
 		      Return True
 		    End If
 		  Next

@@ -72,7 +72,7 @@ Implements Beacon.Countable
 		  
 		  Dim Entries() As Beacon.SetEntry
 		  For Each Item As Beacon.PresetEntry In Preset
-		    If (Item.ValidForIsland And ForLootSource.Package = Beacon.LootSource.Packages.Island) Or (Item.ValidForScorched And ForLootSource.Package = Beacon.LootSource.Packages.Scorched) Then
+		    If Item.ValidForPackage(ForLootSource.Package) Then
 		      Entries.Append(New Beacon.SetEntry(Item))
 		    End If
 		  Next
