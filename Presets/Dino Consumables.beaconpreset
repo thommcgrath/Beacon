@@ -504,6 +504,34 @@
         "MaxQuantity": 20,
         "MinQuality": "Tier1",
         "MinQuantity": 5
+      },
+	  {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Kibble_TapejaraEgg_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 5
+      },
+	  {
+        "ChanceToBeBlueprintOverride": 0,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Kibble_ArchaEgg_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 5
       }
     ],
     "Island": [

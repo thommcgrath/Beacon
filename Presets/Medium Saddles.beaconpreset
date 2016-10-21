@@ -226,6 +226,34 @@
         "MaxQuantity": 1,
         "MinQuality": "Tier1",
         "MinQuantity": 1
+      },
+	  {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_KaprosuchusSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+	  {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_ChalicoSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
       }
     ],
     "Scorched": [
