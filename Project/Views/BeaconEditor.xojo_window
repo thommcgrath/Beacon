@@ -698,6 +698,10 @@ End
 		  PresetItem.Enabled = Set.Count > 0
 		  Base.Append(PresetItem)
 		  
+		  Dim ReconfigureItem As New MenuItem("Reconfigure From Preset", Set)
+		  ReconfigureItem.Enabled = Set.SourcePresetID <> ""
+		  Base.Append(ReconfigureItem)
+		  
 		  Return True
 		End Function
 	#tag EndEvent
@@ -711,7 +715,39 @@ End
 		  Case "Create Preset…"
 		    Dim Set As Beacon.ItemSet = HitItem.Tag
 		    PresetCreationSheet.Present(Self, Set)
+		  Case "Reconfigure From Preset"
+		    Dim Set As Beacon.ItemSet = HitItem.Tag
+		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets
+		    For Each Preset As Beacon.Preset In Presets
+		      If Set.SourcePresetID = Preset.PresetID Then
+		        Dim OriginalHash As Text = Set.Hash
+		        Dim NewSet As Beacon.ItemSet = New Beacon.ItemSet(Set)
+		        NewSet.ReconfigureWithPreset(Preset, Self.mSources(0))
+		        If NewSet.Hash = OriginalHash Then
+		          // No changes
+		          Dim Dialog As New MessageDialog
+		          Dialog.Message = "No changes made"
+		          Dialog.Explanation = "This item set is already identical to the preset."
+		          Call Dialog.ShowModalWithin(Self.TrueWindow)
+		          Return True
+		        End If
+		        
+		        For Each Source As Beacon.LootSource In Self.mSources
+		          Dim Idx As Integer = Source.IndexOf(Set)
+		          If Idx > -1 Then
+		            Source(Idx) = NewSet
+		          End If
+		        Next
+		        
+		        Editor.Set = NewSet
+		        SetList.RowTag(SetList.ListIndex) = NewSet
+		        RaiseEvent Updated
+		        Exit For Preset
+		      End If
+		    Next
 		  End Select
+		  
+		  Return True
 		End Function
 	#tag EndEvent
 #tag EndEvents

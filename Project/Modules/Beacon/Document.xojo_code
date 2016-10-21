@@ -119,6 +119,7 @@ Protected Class Document
 		  Dim Doc As New Beacon.Document
 		  Dim LootSources() As Auto
 		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
+		  Dim Version As Integer
 		  If Info.FullName = "Xojo.Core.Dictionary" Then
 		    // New style document
 		    Dim Dict As Xojo.Core.Dictionary = Parsed
@@ -129,6 +130,7 @@ Protected Class Document
 		        LootSources = Dict.Value("Beacons")
 		      End If
 		      Doc.mIdentifier = Dict.Value("Identifier")
+		      Version = Dict.Lookup("Version", 0)
 		      
 		      If Dict.HasKey("Title") Then
 		        Doc.Title = Dict.Value("Title")
@@ -148,9 +150,43 @@ Protected Class Document
 		    Return Nil
 		  End If
 		  
+		  Dim Presets() As Beacon.Preset
+		  If Version < 2 Then
+		    // Will need this in a few lines
+		    Presets = Beacon.Data.Presets
+		  End If
 		  For Each LootSource As Xojo.Core.Dictionary In LootSources
-		    Doc.mLootSources.Append(Beacon.LootSource.Import(LootSource))
+		    Dim Source As Beacon.LootSource = Beacon.LootSource.Import(LootSource)
+		    If Source <> Nil Then
+		      If Version < 2 Then
+		        // Match item set names to presets
+		        For Each Set As Beacon.ItemSet In Source
+		          For Each Preset As Beacon.Preset In Presets
+		            If Set.Label = Preset.Label Then
+		              // Here's a hack to make assigning a preset possible: save current entries
+		              Dim Entries() As Beacon.SetEntry
+		              For Each Entry As Beacon.SetEntry In Set
+		                Entries.Append(New Beacon.SetEntry(Entry))
+		              Next
+		              
+		              // Reconfigure
+		              Set.ReconfigureWithPreset(Preset, Source)
+		              
+		              // Now "deconfigure" it
+		              Redim Set(UBound(Entries))
+		              For I As Integer = 0 To UBound(Entries)
+		                Set(I) = Entries(I)
+		              Next
+		              Continue For Set
+		            End If
+		          Next
+		        Next
+		      End If
+		      Doc.mLootSources.Append(Source)
+		    End If
 		  Next
+		  
+		  Doc.mUpgraded = Version < Beacon.Document.DocumentVersion
 		  
 		  Return Doc
 		End Function
@@ -180,6 +216,12 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Upgraded() As Boolean
+		  Return Self.mUpgraded
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Write(File As Xojo.IO.FolderItem)
 		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.Export)
 		  Dim Data As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Contents)
@@ -202,12 +244,16 @@ Protected Class Document
 		Private mLootSources() As Beacon.LootSource
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mUpgraded As Boolean
+	#tag EndProperty
+
 	#tag Property, Flags = &h0
 		Title As Text
 	#tag EndProperty
 
 
-	#tag Constant, Name = DocumentVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = DocumentVersion, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 

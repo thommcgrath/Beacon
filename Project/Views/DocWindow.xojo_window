@@ -686,6 +686,7 @@ End
 		    Self.File = New Xojo.IO.FolderItem(File.NativePath.ToText)
 		    Self.Doc = Beacon.Document.Read(Self.File)
 		    Self.Title = File.Name
+		    Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Upgraded
 		    Super.Constructor
 		    Return
 		  End If

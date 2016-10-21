@@ -327,6 +327,8 @@ Implements Beacon.DataSource
 		      Next
 		    End If
 		    Self.SQLExecute("COMMIT TRANSACTION;")
+		    
+		    Self.LoadPresets()
 		  End If
 		  
 		  Self.Variable("last_sync") = LastSync
