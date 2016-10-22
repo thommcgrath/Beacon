@@ -71,16 +71,16 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem FileImportConfig
+      Begin MenuItem FileImport
          SpecialMenu = 0
-         Text = "Import Config…"
+         Text = "Import…"
          Index = -2147483648
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem FileExportConfig
+      Begin MenuItem FileExport
          SpecialMenu = 0
-         Text = "Export Config…"
+         Text = "Export…"
          Index = -2147483648
          AutoEnable = False
          Visible = True
