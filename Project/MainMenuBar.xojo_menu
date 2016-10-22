@@ -16,6 +16,17 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
+      Begin MenuItem FileNewPreset
+         SpecialMenu = 0
+         Text = "New Preset"
+         Index = -2147483648
+         ShortcutKey = "N"
+         Shortcut = "Cmd+Shift+N"
+         MenuModifier = True
+         AltMenuModifier = True
+         AutoEnable = False
+         Visible = True
+      End
       Begin MenuItem FileOpen
          SpecialMenu = 0
          Text = "Open…"
@@ -271,14 +282,14 @@ Begin Menu MainMenuBar
          ShortcutKey = "M"
          Shortcut = "Cmd+M"
          MenuModifier = True
-         AutoEnable = True
+         AutoEnable = False
          Visible = True
       End
       Begin MenuItem WindowZoom
          SpecialMenu = 0
          Text = "Zoom"
          Index = -2147483648
-         AutoEnable = True
+         AutoEnable = False
          Visible = True
       End
       Begin MenuItem UntitledSeparator3

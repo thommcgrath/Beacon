@@ -1634,6 +1634,40 @@ End
 
 #tag EndWindowCode
 
+#tag Events NameField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GroupField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MinItemsField
+	#tag Event
+		Sub TextChange()
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MaxItemsField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ContentsList
 	#tag Event
 		Sub Open()
@@ -1688,6 +1722,78 @@ End
 		Sub Change()
 		  EditButton.Enabled = Me.ListIndex > -1
 		  DeleteButton.Enabled = Me.ListIndex > -1
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events StandardQualityField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events StandardQuantityField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BonusQualityField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BonusQuantityField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CaveQualityField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CaveQuantityField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SeaQualityField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SeaQuantityField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

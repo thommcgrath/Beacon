@@ -14,6 +14,7 @@ Inherits Application
 		  FileNew.Enable
 		  FileOpen.Enable
 		  FileImport.Enable
+		  FileNewPreset.Enable
 		End Sub
 	#tag EndEvent
 
@@ -83,7 +84,7 @@ Inherits Application
 		  End If
 		  
 		  If Item.IsType(BeaconFileTypes.BeaconPreset) Then
-		    Break
+		    PresetWindow.Present(Item)
 		    Return
 		  End If
 		  
@@ -98,7 +99,7 @@ Inherits Application
 	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
 			Dim Dialog As New OpenDialog
-			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconDocument
+			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset
 			
 			Dim File As FolderItem = Dialog.ShowModal
 			If File <> Nil Then
@@ -112,6 +113,13 @@ Inherits Application
 	#tag MenuHandler
 		Function FileNew() As Boolean Handles FileNew.Action
 			Self.NewDocument()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function FileNewPreset() As Boolean Handles FileNewPreset.Action
+			PresetWindow.Present()
 			Return True
 		End Function
 	#tag EndMenuHandler

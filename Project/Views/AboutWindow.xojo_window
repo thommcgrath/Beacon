@@ -1,5 +1,5 @@
 #tag Window
-Begin Window AboutWindow
+Begin BeaconWindow AboutWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True

@@ -1,5 +1,5 @@
 #tag Window
-Begin Window PresetManagerWindow
+Begin BeaconWindow PresetManagerWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True

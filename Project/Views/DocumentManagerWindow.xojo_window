@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DocumentManagerWindow
+Begin BeaconWindow DocumentManagerWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True

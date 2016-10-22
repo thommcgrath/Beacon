@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DocWindow
+Begin BeaconWindow DocWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
