@@ -304,6 +304,10 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 
+	#tag Property, Flags = &h0
+		Custom As Boolean
+	#tag EndProperty
+
 	#tag Property, Flags = &h1
 		Protected mContents() As Beacon.PresetEntry
 	#tag EndProperty

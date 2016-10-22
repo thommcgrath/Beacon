@@ -351,6 +351,7 @@ Implements Beacon.DataSource
 		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Results.Field("contents").StringValue.ToText)
 		    Dim Preset As Beacon.Preset = Beacon.Preset.FromDictionary(Dict)
 		    If Preset <> Nil Then
+		      Preset.Custom = False
 		      Presets.Value(Preset.PresetID) = Preset
 		    End If
 		    Results.MoveNext
@@ -377,6 +378,7 @@ Implements Beacon.DataSource
 		          File.Delete
 		        End If
 		        
+		        Preset.Custom = True
 		        Presets.Value(Preset.PresetID) = Preset
 		      End If
 		    Next
