@@ -9,7 +9,7 @@ Begin BeaconWindow PresetWindow
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   600
+   Height          =   700
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -18,14 +18,14 @@ Begin BeaconWindow PresetWindow
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   558
+   MinHeight       =   700
    MinimizeButton  =   True
-   MinWidth        =   732
+   MinWidth        =   748
    Placement       =   0
    Resizeable      =   True
    Title           =   "Preset"
    Visible         =   True
-   Width           =   732
+   Width           =   788
    Begin PresetEditor Editor
       AcceptFocus     =   False
       AcceptTabs      =   True
@@ -35,10 +35,10 @@ Begin BeaconWindow PresetWindow
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      Height          =   600
+      Height          =   672
       HelpTag         =   ""
       InitialParent   =   ""
-      Left            =   0
+      Left            =   14
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -48,11 +48,11 @@ Begin BeaconWindow PresetWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   0
+      Top             =   14
       Transparent     =   True
       UseFocusRing    =   False
       Visible         =   True
-      Width           =   732
+      Width           =   760
    End
 End
 #tag EndWindow

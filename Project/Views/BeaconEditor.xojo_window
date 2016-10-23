@@ -474,7 +474,7 @@ End
 		  #endif
 		  
 		  If Editing Then
-		    PresetCreationSheet.Present(Self, SelectedPreset, True)
+		    PresetDialog.Present(Self, SelectedPreset)
 		  Else
 		    If SelectedPreset = Nil Then
 		      Self.AddSet(New Beacon.ItemSet)
@@ -714,7 +714,7 @@ End
 		  Select Case HitItem.Text
 		  Case "Create Preset…"
 		    Dim Set As Beacon.ItemSet = HitItem.Tag
-		    PresetWindow.Present(Set)
+		    PresetDialog.Present(Self.TrueWindow, Set)
 		  Case "Reconfigure From Preset"
 		    Dim Set As Beacon.ItemSet = HitItem.Tag
 		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets

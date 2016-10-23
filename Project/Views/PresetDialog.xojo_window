@@ -1,15 +1,15 @@
 #tag Window
-Begin BeaconWindow PresetManagerWindow
+Begin Window PresetDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   CloseButton     =   True
+   CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   0
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   400
+   Height          =   750
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -18,298 +18,175 @@ Begin BeaconWindow PresetManagerWindow
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   400
+   MinHeight       =   680
    MinimizeButton  =   True
-   MinWidth        =   600
-   Placement       =   2
+   MinWidth        =   748
+   Placement       =   1
    Resizeable      =   True
-   Title           =   "Preset Library"
+   Title           =   "Create Preset"
    Visible         =   True
-   Width           =   600
-   Begin BeaconListbox List
+   Width           =   788
+   Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
-      AutoHideScrollbars=   True
       Bold            =   False
-      Border          =   True
-      ColumnCount     =   2
-      ColumnsResizable=   False
-      ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      DefaultRowHeight=   -1
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "OK"
+      Default         =   True
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
-      HeadingIndex    =   0
-      Height          =   335
+      Height          =   20
       HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Name	Type"
       Italic          =   False
-      Left            =   20
+      Left            =   688
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   710
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton CancelButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   True
+      Caption         =   "Cancel"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   596
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   710
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin PresetEditor Editor
+      AcceptFocus     =   False
+      AcceptTabs      =   True
+      AutoDeactivate  =   True
+      BackColor       =   &cFFFFFF00
+      Backdrop        =   0
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackColor    =   False
+      Height          =   690
+      HelpTag         =   ""
+      InitialParent   =   ""
+      Left            =   14
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      RequiresSelection=   False
-      Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   0
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   13
-      Underline       =   False
-      UseFocusRing    =   False
-      Visible         =   True
-      Width           =   560
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
-   End
-   Begin PushButton AddButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "New"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   360
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin PushButton EditButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "Edit"
-      Default         =   False
-      Enabled         =   False
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   112
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   360
-      Underline       =   False
+      Top             =   14
+      Transparent     =   True
+      UseFocusRing    =   False
       Visible         =   True
-      Width           =   80
-   End
-   Begin PushButton DeleteButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "Delete"
-      Default         =   False
-      Enabled         =   False
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   204
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   360
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
+      Width           =   760
    End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
-		  Self.SavePreset()
-		  
-		  If Self = mInstance Then
-		    mInstance = Nil
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
-		  Self.UpdatePresets()
+		  // This is a big window. The height is set comfortably for larger screens, but we want to make it fit
+		  // for at least 1280x720 screens.
+		  
+		  Dim AvailableHeight As Integer = Screen(0).AvailableHeight
+		  If Self.Height > AvailableHeight Then
+		    Self.Height = Max(Self.MinHeight, AvailableHeight)
+		  End If
 		End Sub
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Sub HandleSelectionChange()
-		  Self.SavePreset()
-		  
-		  If List.ListIndex > -1 Then
-		    //Editor.Preset = List.RowTag(List.ListIndex)
-		    //Editor.Enabled = True
+	#tag Method, Flags = &h0
+		Shared Sub Present(Parent As Window, Set As Beacon.ItemSet)
+		  Dim Preset As Beacon.MutablePreset
+		  If Set.SourcePresetID <> "" Then
+		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets
+		    For Each LoadedPreset As Beacon.Preset In Presets
+		      If LoadedPreset.PresetID = Set.SourcePresetID Then
+		        // Clone this one
+		        Preset = New Beacon.MutablePreset(LoadedPreset)
+		        Exit For LoadedPreset
+		      End If
+		    Next
 		  Else
-		    //Editor.Enabled = False
-		    //Editor.Preset = Nil
+		    Preset = New Beacon.MutablePreset
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SavePreset()
-		  #if false
-		    If Not Editor.ContentsChanged Then
-		      Return
-		    End If
-		    
-		    Dim Preset As Beacon.Preset = Editor.Preset
-		    If Preset <> Nil Then
-		      Beacon.Data.SavePreset(Preset)
-		      For I As Integer = 0 To List.ListCount - 1
-		        If Beacon.Preset(List.RowTag(I)).PresetID = Preset.PresetID Then
-		          List.RowTag(I) = Preset
-		          List.Cell(I, 0) = Preset.Label
-		          Self.mBlockSelectionChange = True
-		          List.Sort
-		          Self.mBlockSelectionChange = False
-		          Return
-		        End If
-		      Next
-		      List.AddRow(Preset.Label)
-		      List.RowTag(List.LastIndex) = Preset
-		      Self.mBlockSelectionChange = True
-		      List.Sort
-		      Self.mBlockSelectionChange = False
-		    End If
-		  #endif
+		  
+		  Preset.Label = Set.Label
+		  Preset.MinItems = Set.MinNumItems
+		  Preset.MaxItems = Set.MaxNumItems
+		  For I As Integer = UBound(Preset) DownTo 0
+		    Preset.Remove(I)
+		  Next
+		  For Each Entry As Beacon.SetEntry In Set
+		    Preset.Append(New Beacon.PresetEntry(Entry))
+		  Next
+		  
+		  PresetDialog.Present(Parent, Preset)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function SharedWindow(Create As Boolean = True) As PresetManagerWindow
-		  If mInstance = Nil And Create = True Then
-		    mInstance = New PresetManagerWindow
-		  End If
-		  Return mInstance
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ShowPreset(Preset As Beacon.Preset)
-		  Self.mBlockSelectionChange = True
-		  Dim Scrolled As Boolean
-		  For I As Integer = 0 To List.ListCount - 1
-		    List.Selected(I) = (Beacon.Preset(List.RowTag(I)).PresetID = Preset.PresetID)
-		    If Scrolled = False And List.Selected(I) Then
-		      Scrolled = True
-		      List.ScrollPosition = I
-		    End If
-		  Next
-		  Self.mBlockSelectionChange = False
-		  Self.HandleSelectionChange()
+		Shared Sub Present(Parent As Window, Preset As Beacon.Preset)
+		  Dim Win As New PresetDialog
+		  Win.Editor.Preset = Preset
+		  Win.ShowWithin(Parent.TrueWindow)
 		End Sub
 	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub UpdatePresets()
-		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets
-		  Dim PresetCount As Integer = UBound(Presets) + 1
-		  
-		  Dim Selected() As Text
-		  For I As Integer = 0 To List.ListCount - 1
-		    Selected.Append(Beacon.Preset(List.RowTag(I)).PresetID)
-		  Next
-		  
-		  Self.mBlockSelectionChange = True
-		  
-		  While List.ListCount > PresetCount
-		    List.RemoveRow(0)
-		  Wend
-		  While List.ListCount < PresetCount
-		    List.AddRow("")
-		  Wend
-		  
-		  For I As Integer = 0 To List.ListCount - 1
-		    List.Cell(I, 0) = Presets(I).Label
-		    List.RowTag(I) = Presets(I)
-		    List.Selected(I) = Selected.IndexOf(Presets(I).PresetID) > -1
-		  Next
-		  
-		  List.Sort
-		  Self.mBlockSelectionChange = False
-		  Self.HandleSelectionChange()
-		End Sub
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mBlockSelectionChange As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private Shared mInstance As PresetManagerWindow
-	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events List
+#tag Events ActionButton
 	#tag Event
-		Sub Change()
-		  If Self.mBlockSelectionChange Then
-		    Return
-		  End If
-		  
-		  Self.HandleSelectionChange()
+		Sub Action()
+		  Dim Preset As Beacon.Preset = Editor.Preset
+		  Beacon.Data.SavePreset(Preset)
+		  Self.Close
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CancelButton
+	#tag Event
+		Sub Action()
+		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents

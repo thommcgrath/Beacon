@@ -9,7 +9,7 @@ Begin ContainerControl PresetEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   558
+   Height          =   733
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -24,360 +24,513 @@ Begin ContainerControl PresetEditor
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   732
-   Begin UITweaks.ResizedTextField NameField
-      AcceptTabs      =   False
-      Alignment       =   0
+   Width           =   720
+   Begin GroupBox ContentsGroup
       AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
+      Caption         =   "Contents"
       Enabled         =   True
-      Format          =   ""
-      Height          =   22
+      Height          =   281
       HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   122
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   590
-   End
-   Begin UITweaks.ResizedTextField GroupField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   122
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   54
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   590
-   End
-   Begin UITweaks.ResizedTextField MinItemsField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   122
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   "###"
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   88
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedTextField MaxItemsField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   122
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   "###"
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   122
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   80
-   End
-   Begin BeaconListbox ContentsList
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
-      Bold            =   False
-      Border          =   False
-      ColumnCount     =   7
-      ColumnsResizable=   False
-      ColumnWidths    =   "90,90,90,90,*,100,100"
-      DataField       =   ""
-      DataSource      =   ""
-      DefaultRowHeight=   -1
-      Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
-      HeadingIndex    =   4
-      Height          =   128
-      HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Island	Scorched	Lock Quality	Lock Quantity	Description	Quality	Quantity"
       Italic          =   False
-      Left            =   0
+      Left            =   6
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      RequiresSelection=   False
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   1
-      TabIndex        =   4
+      TabIndex        =   26
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "SmallSystem"
+      TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   405
+      Top             =   446
       Underline       =   False
-      UseFocusRing    =   False
       Visible         =   True
-      Width           =   732
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
+      Width           =   708
+      Begin BeaconListbox ContentsList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   7
+         ColumnsResizable=   False
+         ColumnWidths    =   "90,90,90,90,*,100,100"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   -1
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   4
+         Height          =   193
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "ContentsGroup"
+         InitialValue    =   "Island	Scorched	Lock Quality	Lock Quantity	Description	Quality	Quantity"
+         Italic          =   False
+         Left            =   26
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionType   =   1
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   482
+         Underline       =   False
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   668
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin PushButton AddButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Add"
+         Default         =   False
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ContentsGroup"
+         Italic          =   False
+         Left            =   26
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   687
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin PushButton EditButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Edit"
+         Default         =   False
+         Enabled         =   False
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ContentsGroup"
+         Italic          =   False
+         Left            =   118
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   687
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin PushButton DeleteButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Remove"
+         Default         =   False
+         Enabled         =   False
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ContentsGroup"
+         Italic          =   False
+         Left            =   210
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   687
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
    End
-   Begin UITweaks.ResizedLabel NameLabel
+   Begin GroupBox SettingsGroup
       AutoDeactivate  =   True
       Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
+      Caption         =   "Settings"
       Enabled         =   True
-      Height          =   22
+      Height          =   180
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   6
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
-      Multiline       =   False
       Scope           =   2
-      Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   25
       TabPanelIndex   =   0
-      Text            =   "Preset Name:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
+      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
-      Transparent     =   True
+      Top             =   6
       Underline       =   False
       Visible         =   True
-      Width           =   90
-   End
-   Begin UITweaks.ResizedLabel GroupLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      Text            =   "Group:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   54
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   90
-   End
-   Begin UITweaks.ResizedLabel MinItemsLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      Text            =   "Min Items:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   88
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   90
-   End
-   Begin UITweaks.ResizedLabel MaxItemsLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      Text            =   "Max Items:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   122
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   90
+      Width           =   708
+      Begin UITweaks.ResizedTextField NameField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "SettingsGroup"
+         Italic          =   False
+         Left            =   128
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Mask            =   ""
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   42
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   566
+      End
+      Begin UITweaks.ResizedTextField GroupField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "SettingsGroup"
+         Italic          =   False
+         Left            =   128
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Mask            =   ""
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   76
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   566
+      End
+      Begin UITweaks.ResizedTextField MinItemsField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "SettingsGroup"
+         Italic          =   False
+         Left            =   128
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Mask            =   "###"
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   110
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedTextField MaxItemsField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "SettingsGroup"
+         Italic          =   False
+         Left            =   128
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Mask            =   "###"
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   144
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedLabel NameLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "SettingsGroup"
+         Italic          =   False
+         Left            =   26
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   4
+         TabPanelIndex   =   0
+         Text            =   "Preset Name:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   42
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   90
+      End
+      Begin UITweaks.ResizedLabel GroupLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "SettingsGroup"
+         Italic          =   False
+         Left            =   26
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   5
+         TabPanelIndex   =   0
+         Text            =   "Group:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   76
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   90
+      End
+      Begin UITweaks.ResizedLabel MinItemsLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "SettingsGroup"
+         Italic          =   False
+         Left            =   26
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   6
+         TabPanelIndex   =   0
+         Text            =   "Min Items:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   110
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   90
+      End
+      Begin UITweaks.ResizedLabel MaxItemsLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "SettingsGroup"
+         Italic          =   False
+         Left            =   26
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   7
+         TabPanelIndex   =   0
+         Text            =   "Max Items:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   144
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   90
+      End
    End
    Begin GroupBox StandardGroup
       AutoDeactivate  =   True
@@ -389,7 +542,7 @@ Begin ContainerControl PresetEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   122
+      Left            =   6
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -402,10 +555,10 @@ Begin ContainerControl PresetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   156
+      Top             =   198
       Underline       =   False
       Visible         =   True
-      Width           =   289
+      Width           =   348
       Begin UITweaks.ResizedTextField StandardQualityField
          AcceptTabs      =   False
          Alignment       =   2
@@ -424,7 +577,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "StandardGroup"
          Italic          =   False
-         Left            =   279
+         Left            =   163
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -443,7 +596,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   192
+         Top             =   234
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -460,7 +613,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "StandardGroup"
          Italic          =   False
-         Left            =   142
+         Left            =   26
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -477,7 +630,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   192
+         Top             =   234
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -494,7 +647,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "StandardGroup"
          Italic          =   False
-         Left            =   351
+         Left            =   235
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -511,7 +664,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   192
+         Top             =   234
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -535,7 +688,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "StandardGroup"
          Italic          =   False
-         Left            =   279
+         Left            =   163
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -554,7 +707,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   226
+         Top             =   268
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -571,7 +724,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "StandardGroup"
          Italic          =   False
-         Left            =   142
+         Left            =   26
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -588,7 +741,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   226
+         Top             =   268
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -605,7 +758,7 @@ Begin ContainerControl PresetEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   423
+      Left            =   366
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -618,10 +771,10 @@ Begin ContainerControl PresetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   156
+      Top             =   198
       Underline       =   False
       Visible         =   True
-      Width           =   289
+      Width           =   348
       Begin UITweaks.ResizedTextField BonusQualityField
          AcceptTabs      =   False
          Alignment       =   2
@@ -640,7 +793,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "BonusGroup"
          Italic          =   False
-         Left            =   580
+         Left            =   523
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -659,7 +812,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   192
+         Top             =   234
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -676,7 +829,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "BonusGroup"
          Italic          =   False
-         Left            =   443
+         Left            =   386
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -693,7 +846,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   192
+         Top             =   234
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -710,7 +863,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "BonusGroup"
          Italic          =   False
-         Left            =   652
+         Left            =   595
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -727,7 +880,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   192
+         Top             =   234
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -751,7 +904,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "BonusGroup"
          Italic          =   False
-         Left            =   580
+         Left            =   523
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -770,7 +923,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   226
+         Top             =   268
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -787,7 +940,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "BonusGroup"
          Italic          =   False
-         Left            =   443
+         Left            =   386
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -804,7 +957,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   226
+         Top             =   268
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -821,7 +974,7 @@ Begin ContainerControl PresetEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   122
+      Left            =   6
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -834,10 +987,10 @@ Begin ContainerControl PresetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   280
+      Top             =   322
       Underline       =   False
       Visible         =   True
-      Width           =   289
+      Width           =   348
       Begin UITweaks.ResizedTextField CaveQualityField
          AcceptTabs      =   False
          Alignment       =   2
@@ -856,7 +1009,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "CaveGroup"
          Italic          =   False
-         Left            =   279
+         Left            =   163
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -875,7 +1028,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   316
+         Top             =   358
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -892,7 +1045,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "CaveGroup"
          Italic          =   False
-         Left            =   142
+         Left            =   26
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -909,7 +1062,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   316
+         Top             =   358
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -926,7 +1079,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "CaveGroup"
          Italic          =   False
-         Left            =   351
+         Left            =   235
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -943,7 +1096,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   316
+         Top             =   358
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -967,7 +1120,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "CaveGroup"
          Italic          =   False
-         Left            =   279
+         Left            =   163
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -986,7 +1139,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   350
+         Top             =   392
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -1003,7 +1156,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "CaveGroup"
          Italic          =   False
-         Left            =   142
+         Left            =   26
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -1020,7 +1173,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   350
+         Top             =   392
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -1037,7 +1190,7 @@ Begin ContainerControl PresetEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   423
+      Left            =   366
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -1050,10 +1203,10 @@ Begin ContainerControl PresetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   280
+      Top             =   322
       Underline       =   False
       Visible         =   True
-      Width           =   289
+      Width           =   348
       Begin UITweaks.ResizedTextField SeaQualityField
          AcceptTabs      =   False
          Alignment       =   2
@@ -1072,7 +1225,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "SeaGroup"
          Italic          =   False
-         Left            =   580
+         Left            =   523
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -1091,7 +1244,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   316
+         Top             =   358
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -1108,7 +1261,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "SeaGroup"
          Italic          =   False
-         Left            =   443
+         Left            =   386
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -1125,7 +1278,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   316
+         Top             =   358
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -1142,7 +1295,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "SeaGroup"
          Italic          =   False
-         Left            =   652
+         Left            =   595
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -1159,7 +1312,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   316
+         Top             =   358
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -1183,7 +1336,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "SeaGroup"
          Italic          =   False
-         Left            =   580
+         Left            =   523
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -1202,7 +1355,7 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   350
+         Top             =   392
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -1219,7 +1372,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "SeaGroup"
          Italic          =   False
-         Left            =   443
+         Left            =   386
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -1236,278 +1389,30 @@ Begin ContainerControl PresetEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   350
+         Top             =   392
          Transparent     =   True
          Underline       =   False
          Visible         =   True
          Width           =   125
       End
    End
-   Begin GraphicButton AddButton
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   24
-      HelpTag         =   "Add items to this set."
-      IconDisabled    =   0
-      IconNormal      =   0
-      IconPressed     =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   15
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   534
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   30
-   End
-   Begin FooterBar FooterBar1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   93
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   16
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   534
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   639
-   End
-   Begin GraphicButton EditButton
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   False
-      EraseBackground =   True
-      Height          =   24
-      HelpTag         =   "Edit the selected items."
-      IconDisabled    =   0
-      IconNormal      =   0
-      IconPressed     =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   31
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   17
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   534
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   30
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   1
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   18
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   533
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   732
-   End
-   Begin GraphicButton DeleteButton
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   False
-      EraseBackground =   True
-      Height          =   24
-      HelpTag         =   "Remove the selected items from the set."
-      IconDisabled    =   0
-      IconNormal      =   0
-      IconPressed     =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   62
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   19
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   534
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   30
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   2
-      InitialParent   =   ""
-      Left            =   30
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   20
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   534
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   3
-      InitialParent   =   ""
-      Left            =   61
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   21
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   534
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   4
-      InitialParent   =   ""
-      Left            =   92
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   22
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   534
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   6
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   24
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   404
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   732
-   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Resized()
+		  Self.Resize()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resizing()
+		  Self.Resize()
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
 		Private Sub AddEntriesToList(Entries() As Beacon.PresetEntry)
 		  For Each Entry As Beacon.PresetEntry In Entries
@@ -1594,6 +1499,26 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub Resize()
+		  Dim Width As Integer = Max(Self.Width, 720) // Containers will not do this automatically
+		  
+		  SettingsGroup.Width = Width - 12
+		  ContentsGroup.Width = Width - 12
+		  
+		  Dim PairWidth As Integer = Width - 24
+		  Dim LeftWidth As Integer = Ceil(PairWidth / 2)
+		  Dim RightWidth As Integer = Floor(PairWidth / 2)
+		  
+		  StandardGroup.Width = LeftWidth
+		  CaveGroup.Width = LeftWidth
+		  BonusGroup.Left = StandardGroup.Left + StandardGroup.Width + 12
+		  BonusGroup.Width = RightWidth
+		  SeaGroup.Left = CaveGroup.Left + CaveGroup.Width + 12
+		  SeaGroup.Width = RightWidth
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mPreset As Beacon.MutablePreset
@@ -1625,49 +1550,9 @@ End
 	#tag Constant, Name = ColumnScorchedValid, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = MinimumHeight, Type = Double, Dynamic = False, Default = \"558", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"732", Scope = Public
-	#tag EndConstant
-
 
 #tag EndWindowCode
 
-#tag Events NameField
-	#tag Event
-		Sub TextChange()
-		  If Not Self.mUpdating Then
-		    Self.ContentsChanged = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events GroupField
-	#tag Event
-		Sub TextChange()
-		  If Not Self.mUpdating Then
-		    Self.ContentsChanged = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MinItemsField
-	#tag Event
-		Sub TextChange()
-		  
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MaxItemsField
-	#tag Event
-		Sub TextChange()
-		  If Not Self.mUpdating Then
-		    Self.ContentsChanged = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ContentsList
 	#tag Event
 		Sub Open()
@@ -1722,6 +1607,118 @@ End
 		Sub Change()
 		  EditButton.Enabled = Me.ListIndex > -1
 		  DeleteButton.Enabled = Me.ListIndex > -1
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AddButton
+	#tag Event
+		Sub Action()
+		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow)
+		  For Each Entry As Beacon.SetEntry In Entries
+		    Dim Item As New Beacon.PresetEntry(Entry)
+		    Self.PutEntryInRow(Item, -1)
+		  Next
+		  ContentsList.Sort
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EditButton
+	#tag Event
+		Sub Action()
+		  Dim Entries() As Beacon.PresetEntry
+		  For I As Integer = 0 To ContentsList.ListCount - 1
+		    If Not ContentsList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim Entry As Beacon.PresetEntry = ContentsList.RowTag(I)
+		    Call Entry.UniqueID // Triggers generation if necessary so we can compare when done
+		    Entries.Append(Entry)
+		  Next
+		  
+		  Dim NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, Entries)
+		  If NewEntries = Nil Then
+		    Return
+		  End If
+		  
+		  For Each NewEntry As Beacon.SetEntry In NewEntries
+		    Dim OriginalEntry As Beacon.PresetEntry
+		    Dim OriginalIndex As Integer
+		    For I As Integer = 0 To UBound(Self.mPreset)
+		      If Self.mPreset(I).UniqueID = NewEntry.UniqueID Then
+		        OriginalEntry = Self.mPreset(I)
+		        OriginalIndex = I
+		        Exit For I
+		      End If
+		    Next
+		    
+		    Dim Item As New Beacon.PresetEntry(NewEntry)
+		    Item.Availability = OriginalEntry.Availability
+		    Item.RespectQualityModifier = OriginalEntry.RespectQualityModifier
+		    Item.RespectQuantityMultiplier = OriginalEntry.RespectQuantityMultiplier
+		    Self.mPreset(OriginalIndex) = Item
+		    
+		    For I As Integer = 0 To ContentsList.ListCount - 1
+		      If Beacon.PresetEntry(ContentsList.RowTag(I)).UniqueID = OriginalEntry.UniqueID Then
+		        Self.PutEntryInRow(Item, I)
+		        Exit For I
+		      End If
+		    Next
+		  Next
+		  
+		  ContentsList.Sort
+		  Self.ContentsChanged = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DeleteButton
+	#tag Event
+		Sub Action()
+		  For I As Integer = ContentsList.ListCount - 1 DownTo 0
+		    If Not ContentsList.Selected(I) Then
+		      Continue
+		    End If
+		    Dim Entry As Beacon.PresetEntry = ContentsList.RowTag(I)
+		    Dim Idx As Integer = Self.mPreset.IndexOf(Entry)
+		    If Idx > -1 Then
+		      Self.mPreset.Remove(Idx)
+		    End If
+		    ContentsList.RemoveRow(I)
+		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NameField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GroupField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MinItemsField
+	#tag Event
+		Sub TextChange()
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MaxItemsField
+	#tag Event
+		Sub TextChange()
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1794,115 +1791,6 @@ End
 		  If Not Self.mUpdating Then
 		    Self.ContentsChanged = True
 		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events AddButton
-	#tag Event
-		Sub Open()
-		  Me.IconNormal = IconAddNormal
-		  Me.IconPressed = IconAddPressed
-		  Me.IconDisabled = IconAddDisabled
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow)
-		  For Each Entry As Beacon.SetEntry In Entries
-		    Dim Item As New Beacon.PresetEntry(Entry)
-		    Self.PutEntryInRow(Item, -1)
-		  Next
-		  ContentsList.Sort
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events EditButton
-	#tag Event
-		Sub Open()
-		  Me.IconNormal = IconEditNormal
-		  Me.IconPressed = IconEditPressed
-		  Me.IconDisabled = IconEditDisabled
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  Dim Entries() As Beacon.PresetEntry
-		  For I As Integer = 0 To ContentsList.ListCount - 1
-		    If Not ContentsList.Selected(I) Then
-		      Continue
-		    End If
-		    
-		    Dim Entry As Beacon.PresetEntry = ContentsList.RowTag(I)
-		    Call Entry.UniqueID // Triggers generation if necessary so we can compare when done
-		    Entries.Append(Entry)
-		  Next
-		  
-		  Dim NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, Entries)
-		  If NewEntries = Nil Then
-		    Return
-		  End If
-		  
-		  For Each NewEntry As Beacon.SetEntry In NewEntries
-		    Dim OriginalEntry As Beacon.PresetEntry
-		    Dim OriginalIndex As Integer
-		    For I As Integer = 0 To UBound(Self.mPreset)
-		      If Self.mPreset(I).UniqueID = NewEntry.UniqueID Then
-		        OriginalEntry = Self.mPreset(I)
-		        OriginalIndex = I
-		        Exit For I
-		      End If
-		    Next
-		    
-		    Dim Item As New Beacon.PresetEntry(NewEntry)
-		    Item.Availability = OriginalEntry.Availability
-		    Item.RespectQualityModifier = OriginalEntry.RespectQualityModifier
-		    Item.RespectQuantityMultiplier = OriginalEntry.RespectQuantityMultiplier
-		    Self.mPreset(OriginalIndex) = Item
-		    
-		    For I As Integer = 0 To ContentsList.ListCount - 1
-		      If Beacon.PresetEntry(ContentsList.RowTag(I)).UniqueID = OriginalEntry.UniqueID Then
-		        Self.PutEntryInRow(Item, I)
-		        Exit For I
-		      End If
-		    Next
-		  Next
-		  
-		  ContentsList.Sort
-		  Self.ContentsChanged = True
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Separators
-	#tag Event
-		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused areas
-		  
-		  G.ForeColor = &cCCCCCC
-		  G.FillRect(-1, -1, G.Width + 2, G.Height + 2)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DeleteButton
-	#tag Event
-		Sub Open()
-		  Me.IconNormal = IconRemoveNormal
-		  Me.IconPressed = IconRemovePressed
-		  Me.IconDisabled = IconRemoveDisabled
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  For I As Integer = ContentsList.ListCount - 1 DownTo 0
-		    If Not ContentsList.Selected(I) Then
-		      Continue
-		    End If
-		    Dim Entry As Beacon.PresetEntry = ContentsList.RowTag(I)
-		    Dim Idx As Integer = Self.mPreset.IndexOf(Entry)
-		    If Idx > -1 Then
-		      Self.mPreset.Remove(Idx)
-		    End If
-		    ContentsList.RemoveRow(I)
-		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
