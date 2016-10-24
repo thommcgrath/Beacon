@@ -17,6 +17,9 @@
 - Improved engram lookup speed, which should make the loading files faster.
 - Added right-click option to reconfigure item sets from their preset.
 - Set entries list now supports multiple item copy and paste.
+- Added "Preset Library" to the "Window" menu, which is used for managing presets.
+- Option/Alt while selecting a preset from a menu will no longer trigger an edit action. Instead, edit presets from the preset library.
+- New per-item options for presets to prevent modification of quality and or quantity based on the loot source.
 
 ## Build 7
 
