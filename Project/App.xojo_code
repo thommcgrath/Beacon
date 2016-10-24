@@ -14,7 +14,16 @@ Inherits Application
 		  FileNew.Enable
 		  FileOpen.Enable
 		  FileImport.Enable
-		  FileNewPreset.Enable
+		  
+		  Dim Counter As Integer = 1
+		  For I As Integer = 0 To WindowCount - 1
+		    Dim Win As Window = Window(I)
+		    If Win IsA BeaconWindow Then
+		      Dim Cmd As String = ""
+		      BeaconWindow(Win).UpdateWindowMenu()
+		      Counter = Counter + 1
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 
@@ -113,13 +122,6 @@ Inherits Application
 	#tag MenuHandler
 		Function FileNew() As Boolean Handles FileNew.Action
 			Self.NewDocument()
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
-		Function FileNewPreset() As Boolean Handles FileNewPreset.Action
-			PresetWindow.Present()
 			Return True
 		End Function
 	#tag EndMenuHandler

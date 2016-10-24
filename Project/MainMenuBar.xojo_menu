@@ -16,17 +16,6 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem FileNewPreset
-         SpecialMenu = 0
-         Text = "New Preset"
-         Index = -2147483648
-         ShortcutKey = "N"
-         Shortcut = "Cmd+Shift+N"
-         MenuModifier = True
-         AltMenuModifier = True
-         AutoEnable = False
-         Visible = True
-      End
       Begin MenuItem FileOpen
          SpecialMenu = 0
          Text = "Open…"
@@ -305,6 +294,13 @@ Begin Menu MainMenuBar
          Index = -2147483648
          AutoEnable = True
          Visible = True
+      End
+      Begin MenuItem UntitledSeparator4
+         SpecialMenu = 0
+         Text = "-"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = False
       End
    End
    Begin MenuItem HelpMenu

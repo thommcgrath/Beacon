@@ -23,7 +23,7 @@ Begin BeaconWindow DocWindow
    MinWidth        =   1100
    Placement       =   0
    Resizeable      =   True
-   Title           =   "Beacon"
+   Title           =   "Untitled Document"
    Visible         =   True
    Width           =   1100
    Begin BeaconListbox BeaconList
@@ -667,6 +667,8 @@ End
 		Sub Constructor()
 		  Self.Doc = New Beacon.Document
 		  Super.Constructor
+		  Self.DocumentCounter = Self.DocumentCounter + 1
+		  Self.Title = "Untitled " + Str(Self.DocumentCounter, "-0")
 		End Sub
 	#tag EndMethod
 
@@ -674,6 +676,8 @@ End
 		Sub Constructor(Doc As Beacon.Document)
 		  Self.Doc = Doc
 		  Super.Constructor
+		  Self.DocumentCounter = Self.DocumentCounter + 1
+		  Self.Title = "Untitled " + Str(Self.DocumentCounter, "-0")
 		  Self.ContentsChanged = True
 		  
 		End Sub
@@ -697,7 +701,6 @@ End
 		    // Config file
 		    Self.Import(File)
 		  End If
-		  
 		End Sub
 	#tag EndMethod
 
@@ -853,6 +856,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private Doc As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared DocumentCounter As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
