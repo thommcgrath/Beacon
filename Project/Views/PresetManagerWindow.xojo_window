@@ -44,7 +44,7 @@ Begin BeaconWindow PresetManagerWindow
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   0
-      Height          =   335
+      Height          =   328
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -68,7 +68,7 @@ Begin BeaconWindow PresetManagerWindow
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   13
+      Top             =   20
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
