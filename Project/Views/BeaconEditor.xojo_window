@@ -43,7 +43,7 @@ Begin ContainerControl BeaconEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   407
+      Height          =   408
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -67,7 +67,7 @@ Begin ContainerControl BeaconEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   32
+      Top             =   31
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -313,7 +313,7 @@ Begin ContainerControl BeaconEditor
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   32
+      Height          =   31
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""

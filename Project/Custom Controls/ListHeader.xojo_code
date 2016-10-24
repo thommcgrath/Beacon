@@ -118,8 +118,7 @@ Inherits ControlCanvas
 		    Dim OriginalHeight As Integer = Self.Height
 		    RaiseEvent Resize(IdealHeight)
 		    If Self.Height <> OriginalHeight Then
-		      Self.Refresh()
-		      Return
+		      Xojo.Core.Timer.CallLater(1, AddressOf Self.CallbackInvalidate)
 		    End If
 		  End If
 		  
@@ -182,6 +181,12 @@ Inherits ControlCanvas
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub CallbackInvalidate()
+		  Self.Invalidate
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Calling the overridden superclass constructor.
@@ -203,13 +208,25 @@ Inherits ControlCanvas
 		  Dim ControlTop As Integer = Rect.Top
 		  Dim ControlHeight As Integer = Rect.Height
 		  
+		  // Because Xojo on Windows draws like old people fuck...
 		  G.ForeColor = Scheme.SegmentShadowColor
-		  G.FillRoundRect(ControlLeft, ControlTop + 1, ControlWidth, ControlHeight, Self.CornerRadius, Self.CornerRadius)
+		  #if TargetWin32
+		    G.FillRect(ControlLeft, ControlTop + 1, ControlWidth, ControlHeight)
+		  #else
+		    G.FillRoundRect(ControlLeft, ControlTop + 1, ControlWidth, ControlHeight, Self.CornerRadius, Self.CornerRadius)
+		  #endif
 		  G.ForeColor = Scheme.SegmentFrameColor
-		  G.FillRoundRect(ControlLeft, ControlTop, ControlWidth, ControlHeight, Self.CornerRadius, Self.CornerRadius)
+		  #if TargetWin32
+		    G.FillRect(ControlLeft, ControlTop, ControlWidth, ControlHeight)
+		  #else
+		    G.FillRoundRect(ControlLeft, ControlTop, ControlWidth, ControlHeight, Self.CornerRadius, Self.CornerRadius)
+		  #endif
 		  G.ForeColor = Scheme.BackgroundColor
-		  G.FillRoundRect(ControlLeft + Self.SegmentBorderSize, ControlTop + Self.SegmentBorderSize, ControlWidth - (Self.SegmentBorderSize * 2), ControlHeight - (Self.SegmentBorderSize * 2), Self.CornerRadius - Self.SegmentBorderSize, Self.CornerRadius - Self.SegmentBorderSize)
-		  
+		  #if TargetWin32
+		    G.FillRect(ControlLeft + Self.SegmentBorderSize, ControlTop + Self.SegmentBorderSize, ControlWidth - (Self.SegmentBorderSize * 2), ControlHeight - (Self.SegmentBorderSize * 2))
+		  #else
+		    G.FillRoundRect(ControlLeft + Self.SegmentBorderSize, ControlTop + Self.SegmentBorderSize, ControlWidth - (Self.SegmentBorderSize * 2), ControlHeight - (Self.SegmentBorderSize * 2), Self.CornerRadius - Self.SegmentBorderSize, Self.CornerRadius - Self.SegmentBorderSize)
+		  #endif
 		  Dim NextLeft As Integer = ControlLeft + Self.SegmentBorderSize
 		  For I As Integer = 0 To UBound(Self.mSegments)
 		    Dim Selected As Boolean = I = Self.mSelectedSegmentIndex
@@ -238,9 +255,12 @@ Inherits ControlCanvas
 		    End If
 		    
 		    Dim SegmentText As String = Self.mSegments(I)
-		    Dim TextWidth As Integer = Min(Ceil(G.StringWidth(SegmentText)), CellWidth - 10)
+		    Dim TextWidth As Integer = Min(Ceil(Segment.StringWidth(SegmentText)), CellWidth - 10)
 		    Dim TextLeft As Integer = (Segment.Width - TextWidth) / 2
-		    Dim TextBottom As Integer = Segment.Height - 5
+		    Dim TextBottom As Integer = (Segment.Height / 2) + ((Segment.TextAscent * 0.9) / 2)
+		    #if TargetWin32
+		      TextBottom = TextBottom - 1
+		    #endif
 		    Segment.ForeColor = ShadowColor
 		    Segment.DrawString(SegmentText, TextLeft, TextBottom + 1, CellWidth - 10, True)
 		    Segment.ForeColor = TextColor

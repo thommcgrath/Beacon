@@ -44,7 +44,7 @@ Begin BeaconWindow DocWindow
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   491
+      Height          =   492
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -68,7 +68,7 @@ Begin BeaconWindow DocWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   64
+      Top             =   63
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -388,7 +388,7 @@ Begin BeaconWindow DocWindow
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   64
+      Height          =   63
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
