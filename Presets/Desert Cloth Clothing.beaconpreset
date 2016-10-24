@@ -1,0 +1,106 @@
+{
+  "Contents": {
+    "Common": [
+
+    ],
+    "Island": [
+
+    ],
+    "Scorched": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_DesertClothPants_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_DesertClothShirt_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_DesertClothGogglesHelmet_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_DesertClothBoots_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_DesertClothGloves_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ]
+  },
+  "Grouping": "Wearables",
+  "ID": "0b0be285-2211-4e6e-9426-cf6f457e7af5",
+  "Label": "Desert Cloth Clothing",
+  "Max": 5,
+  "Min": 1,
+  "Modifiers": {
+    "Bonus": {
+      "Quality": 3,
+      "Quantity": 2
+    },
+    "Cave": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Sea": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Standard": {
+      "Quality": 0,
+      "Quantity": 1
+    }
+  },
+  "Weight": 0.5
+}

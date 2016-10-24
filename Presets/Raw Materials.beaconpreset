@@ -1,0 +1,650 @@
+{
+  "Contents": {
+    "Common": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Wood_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Stone_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Metal_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 200,
+        "MinQuality": "Tier1",
+        "MinQuantity": 200
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Hide_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 200,
+        "MinQuality": "Tier1",
+        "MinQuantity": 200
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Chitin_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_BloodPack_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Fertilizer_Compost_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 10,
+        "MinQuality": "Tier1",
+        "MinQuantity": 5
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Flint_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_MetalIngot_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 200,
+        "MinQuality": "Tier1",
+        "MinQuantity": 200
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Thatch_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Fibers_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 200,
+        "MinQuality": "Tier1",
+        "MinQuantity": 200
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Charcoal_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Crystal_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Sparkpowder_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Gunpowder_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Narcotic_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_Stimulant_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Obsidian_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_ChitinPaste_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Oil_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Silicon_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Gasoline_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Electronics_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Polymer_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Keratin_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_RareFlower_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_RareMushroom_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumableMiracleGro_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Pelt_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 200,
+        "MinQuality": "Tier1",
+        "MinQuantity": 200
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_BlackPearl_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 200,
+        "MinQuality": "Tier1",
+        "MinQuantity": 200
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_LeechBlood_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 50,
+        "MinQuality": "Tier1",
+        "MinQuantity": 50
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Sap_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 20
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_SubstrateAbsorbent_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      }
+    ],
+    "Island": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_AnglerGel_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Horn_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 20
+      }
+    ],
+    "Scorched": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Clay_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemConsumable_CactusSap_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Sulfur_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_RawSalt_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Sand_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Propellant_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 100,
+        "MinQuality": "Tier1",
+        "MinQuantity": 100
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_Silk_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 200,
+        "MinQuality": "Tier1",
+        "MinQuantity": 200
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_PreservingSalt_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 6,
+        "MinQuality": "Tier1",
+        "MinQuantity": 6
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemResource_KeratinSpike_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 20
+      }
+    ]
+  },
+  "Grouping": "Miscellaneous",
+  "ID": "1abe6864-dabf-4b5c-b0a0-cb79cfdd17ba",
+  "Label": "Raw Materials",
+  "Max": 4,
+  "Min": 1,
+  "Modifiers": {
+    "Bonus": {
+      "Quality": 0,
+      "Quantity": 2
+    },
+    "Cave": {
+      "Quality": 0,
+      "Quantity": 3
+    },
+    "Sea": {
+      "Quality": 0,
+      "Quantity": 4
+    },
+    "Standard": {
+      "Quality": 0,
+      "Quantity": 1
+    }
+  },
+  "Weight": 0.5
+}

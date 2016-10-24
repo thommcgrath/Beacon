@@ -1,0 +1,328 @@
+{
+  "Contents": {
+    "Common": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_DoedSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_CarnoSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_Gallimimus_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_AnkyloSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_ArgentavisSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_TapejaraSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ],
+    "Island": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_TrikeSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_MammothSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_RhinoSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_SarcoSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_StegoSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_ParaSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_DireBearSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_TurtleSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_MegalodonSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_PelaSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+	  {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_KaprosuchusSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+	  {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_ChalicoSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ],
+    "Scorched": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_CamelsaurusSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_MantisSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_SpineyLizardSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ]
+  },
+  "Grouping": "Saddles",
+  "ID": "5ee9ae01-7002-4b01-a350-aa4bce3a71b0",
+  "Label": "Medium Saddles",
+  "Max": 2,
+  "Min": 1,
+  "Modifiers": {
+    "Bonus": {
+      "Quality": 3,
+      "Quantity": 2
+    },
+    "Cave": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Sea": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Standard": {
+      "Quality": 0,
+      "Quantity": 1
+    }
+  },
+  "Weight": 0.5
+}

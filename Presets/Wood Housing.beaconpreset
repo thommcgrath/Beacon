@@ -1,0 +1,190 @@
+{
+  "Contents": {
+    "Common": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WoodFloor_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 16,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WoodWall_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 32,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WoodCeiling_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 16,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.75,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WoodWallWithDoor_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 2,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.75,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WoodDoor_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 2,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.5,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WoodWall_Sloped_Right_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 4,
+        "MinQuality": "Tier1",
+        "MinQuantity": 2
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.5,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WoodWall_Sloped_Left_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 4,
+        "MinQuality": "Tier1",
+        "MinQuantity": 2
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.5,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WoodRoof_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 16,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.25,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WoodRamp_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.5,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WoodWallWithWindow_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 4,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 0.5,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WoodWindow_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 4,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ],
+    "Island": [
+
+    ],
+    "Scorched": [
+
+    ]
+  },
+  "Grouping": "Housing",
+  "ID": "3f693c95-e2ab-4cfa-9492-6294f332fa1f",
+  "Label": "Wood Housing",
+  "Max": 6,
+  "Min": 2,
+  "Modifiers": {
+    "Bonus": {
+      "Quality": 3,
+      "Quantity": 2
+    },
+    "Cave": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Sea": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Standard": {
+      "Quality": 0,
+      "Quantity": 1
+    }
+  },
+  "Weight": 0.5
+}

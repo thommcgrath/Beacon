@@ -114,7 +114,6 @@ Begin ContainerControl BeaconEditor
       HasBackColor    =   False
       Height          =   464
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -725,7 +724,7 @@ End
 		  Select Case HitItem.Name
 		  Case "createpreset"
 		    Dim Set As Beacon.ItemSet = HitItem.Tag
-		    Dim Preset As Beacon.Preset = PresetDialog.Present(Set)
+		    Dim Preset As Beacon.Preset = PresetDialog.Present(Self.TrueWindow, Set)
 		    If Preset <> Nil Then
 		      Beacon.Data.SavePreset(Preset)
 		      PresetManagerWindow.UpdateIfVisible()

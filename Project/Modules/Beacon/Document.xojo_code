@@ -1,6 +1,5 @@
 #tag Class
 Protected Class Document
-Implements Beacon.Publishable
 	#tag Method, Flags = &h0
 		Sub Add(LootSource As Beacon.LootSource)
 		  For I As Integer = 0 To UBound(Self.mLootSources)
@@ -105,23 +104,6 @@ Implements Beacon.Publishable
 		  End If
 		  
 		  Return Self.mIdentifier.Compare(Other.mIdentifier)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function PublishBody() As Text
-		  // Part of the Beacon.Publishable interface.
-		  
-		  Dim Dict As Xojo.Core.Dictionary = Self.Export
-		  Return Xojo.Data.GenerateJSON(Dict)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function PublishID() As Text
-		  // Part of the Beacon.Publishable interface.
-		  
-		  Return Self.mIdentifier
 		End Function
 	#tag EndMethod
 

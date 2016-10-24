@@ -304,7 +304,7 @@ End
 #tag Events AddButton
 	#tag Event
 		Sub Action()
-		  Dim Preset As Beacon.Preset = PresetDialog.Present()
+		  Dim Preset As Beacon.Preset = PresetDialog.Present(Self)
 		  If Preset <> Nil Then
 		    Beacon.Data.SavePreset(Preset)
 		    Self.UpdatePresets(Preset)
@@ -315,7 +315,7 @@ End
 #tag Events EditButton
 	#tag Event
 		Sub Action()
-		  Dim Preset As Beacon.Preset = PresetDialog.Present(Beacon.Preset(List.RowTag(List.ListIndex)))
+		  Dim Preset As Beacon.Preset = PresetDialog.Present(Self, Beacon.Preset(List.RowTag(List.ListIndex)))
 		  If Preset <> Nil Then
 		    Beacon.Data.SavePreset(Preset)
 		    Self.UpdatePresets(Preset)

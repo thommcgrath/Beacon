@@ -1,0 +1,399 @@
+{
+  "Contents": {
+    "Common": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_Fabricator_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_AirConditioner_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 3,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_PowerGenerator_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_PowerOutlet_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 9,
+        "MinQuality": "Tier1",
+        "MinQuantity": 3
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_PowerCableIncline_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 9,
+        "MinQuality": "Tier1",
+        "MinQuantity": 3
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_PowerCableIntersection_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 9,
+        "MinQuality": "Tier1",
+        "MinQuantity": 3
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_PowerCableStraight_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 20,
+        "MinQuality": "Tier1",
+        "MinQuantity": 5
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_PowerCableVertical_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 9,
+        "MinQuality": "Tier1",
+        "MinQuantity": 3
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_Lamppost_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 5,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_IceBox_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 3,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_Turret_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_Keypad_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_StorageBox_Huge_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_LamppostOmni_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 5,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_Grill_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_TurretBallista_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_TurretMinigun_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_TurretCatapult_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_TurretRocket_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_IndustrialForge_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_IndustrialCookingPot_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_Bed_Modern_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_ChemBench_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_Cannon_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ],
+    "Island": [
+
+    ],
+    "Scorched": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_oilPump_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemStructure_WindTurbine_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier1",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ]
+  },
+  "Grouping": "Furniture",
+  "ID": "1b274bfc-913b-4d10-9e6e-3ddc2b754806",
+  "Label": "Advanced Furniture",
+  "Max": 4,
+  "Min": 1,
+  "Modifiers": {
+    "Bonus": {
+      "Quality": 3,
+      "Quantity": 2
+    },
+    "Cave": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Sea": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Standard": {
+      "Quality": 0,
+      "Quantity": 1
+    }
+  },
+  "Weight": 0.5
+}

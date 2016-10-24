@@ -139,10 +139,10 @@ End
 
 
 	#tag Method, Flags = &h0
-		Shared Function Present() As Beacon.Preset
+		Shared Function Present(Parent As Window) As Beacon.Preset
 		  Dim Win As New PresetDialog
 		  Win.Editor.Preset = New Beacon.MutablePreset
-		  Win.ShowModal
+		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  Dim NewPreset As Beacon.Preset
 		  If Not Win.mCancelled Then
@@ -154,7 +154,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Set As Beacon.ItemSet) As Beacon.Preset
+		Shared Function Present(Parent As Window, Set As Beacon.ItemSet) As Beacon.Preset
 		  Dim Preset As Beacon.MutablePreset
 		  If Set.SourcePresetID <> "" Then
 		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets
@@ -179,17 +179,16 @@ End
 		    Preset.Append(New Beacon.PresetEntry(Entry))
 		  Next
 		  
-		  Return PresetDialog.Present(Preset)
+		  Return PresetDialog.Present(Parent, Preset)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Preset As Beacon.Preset, SaveCaption As String = "Save") As Beacon.Preset
+		Shared Function Present(Parent As Window, Preset As Beacon.Preset) As Beacon.Preset
 		  Dim Win As New PresetDialog
 		  Win.Editor.Preset = Preset
 		  Win.Title = Preset.Label
-		  Win.ActionButton.Caption = SaveCaption
-		  Win.ShowModal()
+		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  Dim NewPreset As Beacon.Preset
 		  If Not Win.mCancelled Then

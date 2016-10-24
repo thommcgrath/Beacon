@@ -1,0 +1,120 @@
+{
+  "Contents": {
+    "Common": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_RiotPants_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_RiotShirt_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_RiotHelmet_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_RiotBoots_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_RiotGloves_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_TransparentRiotShield_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ],
+    "Island": [
+
+    ],
+    "Scorched": [
+
+    ]
+  },
+  "Grouping": "Wearables",
+  "ID": "f748a593-1770-4e82-ac25-4fe4464311b2",
+  "Label": "Riot Armor",
+  "Max": 5,
+  "Min": 1,
+  "Modifiers": {
+    "Bonus": {
+      "Quality": 3,
+      "Quantity": 2
+    },
+    "Cave": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Sea": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Standard": {
+      "Quality": 0,
+      "Quantity": 1
+    }
+  },
+  "Weight": 0.5
+}

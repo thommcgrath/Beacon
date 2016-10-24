@@ -1,6 +1,6 @@
 #tag Class
 Protected Class Preset
-Implements Beacon.Countable, Beacon.Publishable
+Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mLabel = "Untitled Preset"
@@ -214,23 +214,6 @@ Implements Beacon.Countable, Beacon.Publishable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PublishBody() As Text
-		  // Part of the Beacon.Publishable interface.
-		  
-		  Dim Dict As Xojo.Core.Dictionary = Self.ToDictionary
-		  Return Xojo.Data.GenerateJSON(Dict)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function PublishID() As Text
-		  // Part of the Beacon.Publishable interface.
-		  
-		  Return Self.PresetID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function QualityModifier(Kind As Beacon.LootSource.Kinds) As Integer
 		  Select Case Kind
 		  Case Beacon.LootSource.Kinds.Standard
@@ -392,6 +375,11 @@ Implements Beacon.Countable, Beacon.Publishable
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Custom"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -423,17 +411,6 @@ Implements Beacon.Countable, Beacon.Publishable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Type"
-			Group="Behavior"
-			Type="Beacon.Preset.Types"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - BuiltIn"
-				"1 - Custom"
-				"2 - CustomizedBuiltIn"
-			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

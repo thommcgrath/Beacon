@@ -1,0 +1,258 @@
+{
+  "Contents": {
+    "Common": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_ProcoptodonSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_ScorpionSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_RaptorSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_TerrorBirdSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_ArthroSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_SaberSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ],
+    "Island": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_PhiomiaSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_StagSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_PachySaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_BeaverSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_SpiderSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_ToadSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_DolphinSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_PteroSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      },
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_MantaSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ],
+    "Scorched": [
+      {
+        "ChanceToBeBlueprintOverride": 0.1,
+        "EntryWeight": 1,
+        "Items": [
+          {
+            "Class": "PrimalItemArmor_MothSaddle_C",
+            "Weight": 1
+          }
+        ],
+        "MaxQuality": "Tier3",
+        "MaxQuantity": 1,
+        "MinQuality": "Tier1",
+        "MinQuantity": 1
+      }
+    ]
+  },
+  "Grouping": "Saddles",
+  "ID": "fc6064ae-dc83-4cb7-bc80-a0ceb2fd4b29",
+  "Label": "Small Saddles",
+  "Max": 2,
+  "Min": 1,
+  "Modifiers": {
+    "Bonus": {
+      "Quality": 3,
+      "Quantity": 2
+    },
+    "Cave": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Sea": {
+      "Quality": 6,
+      "Quantity": 1
+    },
+    "Standard": {
+      "Quality": 0,
+      "Quantity": 1
+    }
+  },
+  "Weight": 0.5
+}
