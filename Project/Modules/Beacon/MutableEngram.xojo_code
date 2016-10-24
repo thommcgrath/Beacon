@@ -2,12 +2,6 @@
 Protected Class MutableEngram
 Inherits Beacon.Engram
 	#tag Method, Flags = &h0
-		Function Availability() As UInteger
-		  Return Self.mAvailability
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Availability(Assigns Value As UInteger)
 		  Self.mAvailability = Value
 		End Sub

@@ -3,13 +3,19 @@ Protected Class MutablePreset
 Inherits Beacon.Preset
 	#tag Method, Flags = &h0
 		Sub Append(Item As Beacon.PresetEntry)
-		  Self.mContents.Append(New Beacon.PresetEntry(Item))
+		  Self.mContents.Append(Item)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Entry(Index As Integer) As Beacon.PresetEntry
+		  Return Self.mContents(Index)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Entry(Index As Integer, Assigns Item As Beacon.PresetEntry)
-		  Self.mContents(Index) = New Beacon.PresetEntry(Item)
+		  Self.mContents(Index) = Item
 		End Sub
 	#tag EndMethod
 
@@ -21,7 +27,7 @@ Inherits Beacon.Preset
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As Beacon.PresetEntry)
-		  Self.mContents.Insert(Index, New Beacon.PresetEntry(Item))
+		  Self.mContents.Insert(Index, Item)
 		End Sub
 	#tag EndMethod
 
@@ -50,8 +56,14 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Operator_Subscript(Index As Integer) As Beacon.PresetEntry
+		  Return Self.mContents(Index)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Operator_Subscript(Index As Integer, Assigns Item As Beacon.PresetEntry)
-		  Self.mContents(Index) = New Beacon.PresetEntry(Item)
+		  Self.mContents(Index) = Item
 		End Sub
 	#tag EndMethod
 
@@ -91,14 +103,13 @@ Inherits Beacon.Preset
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Weight(Assigns Value As Double)
-		  Self.mWeight = Max(Value, 0)
-		End Sub
-	#tag EndMethod
-
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Custom"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true

@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DocWindow
+Begin BeaconWindow DocWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -478,7 +478,7 @@ End
 		  End Select
 		  
 		  If Self.Doc.BeaconCount > 0 Then
-		    FileExportConfig.Enable
+		    FileExport.Enable
 		    If Self.mIsPublished = False Or (Self.mIsPublished = True And Self.mPublishedByUser) Then
 		      DocumentPublishDocument.Enable
 		    End If
@@ -569,7 +569,7 @@ End
 	#tag EndMenuHandler
 
 	#tag MenuHandler
-		Function FileExportConfig() As Boolean Handles FileExportConfig.Action
+		Function FileExport() As Boolean Handles FileExport.Action
 			Dim Dialog As New SaveAsDialog
 			Dialog.SuggestedFileName = "Game.ini"
 			Dialog.Filter = BeaconFileTypes.IniFile

@@ -2,6 +2,18 @@
 Protected Class PresetEntry
 Inherits Beacon.SetEntry
 	#tag Method, Flags = &h0
+		Function Availability() As Integer
+		  Return Self.mAvailability
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Availability(Assigns Value As Integer)
+		  Self.mAvailability = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Calling the overridden superclass constructor.
 		  // Note that this may need modifications if there are multiple constructor choices.
@@ -9,8 +21,9 @@ Inherits Beacon.SetEntry
 		  // Constructor() -- From SetEntry
 		  // Constructor(Source As Beacon.SetEntry) -- From SetEntry
 		  Super.Constructor
-		  Self.ValidForIsland = True
-		  Self.ValidForScorched = True
+		  Self.mAvailability = Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Island) Or Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Scorched)
+		  Self.mRespectQualityModifier = True
+		  Self.mRespectQuantityMultiplier = True
 		End Sub
 	#tag EndMethod
 
@@ -22,8 +35,9 @@ Inherits Beacon.SetEntry
 		  // Constructor() -- From SetEntry
 		  // Constructor(Source As Beacon.SetEntry) -- From SetEntry
 		  Super.Constructor(Source)
-		  Self.ValidForIsland = Source.ValidForIsland
-		  Self.ValidForScorched = Source.ValidForScorched
+		  Self.mAvailability = Source.mAvailability
+		  Self.mRespectQualityModifier = Source.mRespectQualityModifier
+		  Self.mRespectQuantityMultiplier = Source.mRespectQuantityMultiplier
 		End Sub
 	#tag EndMethod
 
@@ -36,23 +50,90 @@ Inherits Beacon.SetEntry
 		  // Constructor(Source As Beacon.SetEntry) -- From SetEntry
 		  Super.Constructor(Source)
 		  
-		  Self.ValidForIsland = False
-		  Self.ValidForScorched = False
-		  
+		  Self.mAvailability = 0
 		  For Each Option As Beacon.SetEntryOption In Self
-		    Self.ValidForIsland = Self.ValidForIsland Or Option.Engram.AvailableTo(Beacon.LootSource.Packages.Island)
-		    Self.ValidForScorched = Self.ValidForScorched Or Option.Engram.AvailableTo(Beacon.LootSource.Packages.Scorched)
+		    Self.mAvailability = Self.mAvailability Or Option.Engram.Availability
 		  Next
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Export() As Xojo.Core.Dictionary
+		  Dim Dict As Xojo.Core.Dictionary = Super.Export
+		  Dict.Value("Availability") = Self.mAvailability
+		  Dict.Value("RespectQualityModifier") = Self.mRespectQualityModifier
+		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultiplier
+		  Return Dict
+		End Function
+	#tag EndMethod
 
-	#tag Property, Flags = &h0
-		ValidForIsland As Boolean
+	#tag Method, Flags = &h0
+		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.PresetEntry
+		  Dim SetEntry As Beacon.SetEntry = Beacon.SetEntry.Import(Dict, New Beacon.Range(1, 1))
+		  If SetEntry = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Dim Entry As New Beacon.PresetEntry(SetEntry)
+		  Entry.mAvailability = Dict.Lookup("Availability", Entry.mAvailability)
+		  Entry.mRespectQualityModifier = Dict.Lookup("RespectQualityModifier", Entry.mRespectQualityModifier)
+		  Entry.mRespectQuantityMultiplier = Dict.Lookup("RespectQuantityMultiplier", Entry.mRespectQuantityMultiplier)
+		  Return Entry
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RespectQualityModifier() As Boolean
+		  Return Self.mRespectQualityModifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RespectQualityModifier(Assigns Value As Boolean)
+		  Self.mRespectQualityModifier = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RespectQuantityMultiplier() As Boolean
+		  Return Self.mRespectQuantityMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RespectQuantityMultiplier(Assigns Value As Boolean)
+		  Self.mRespectQuantityMultiplier = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValidForPackage(Package As Beacon.LootSource.Packages) As Boolean
+		  Dim Value As Integer = Beacon.LootSource.PackageToInteger(Package)
+		  Return (Self.mAvailability And Value) = Value
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ValidForPackage(Package As Beacon.LootSource.Packages, Assigns Value As Boolean)
+		  If Value Then
+		    Self.mAvailability = Self.mAvailability Or Beacon.LootSource.PackageToInteger(Package)
+		  Else
+		    Self.mAvailability = Self.mAvailability And Not Beacon.LootSource.PackageToInteger(Package)
+		  End If
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mAvailability As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		ValidForScorched As Boolean
+	#tag Property, Flags = &h21
+		Private mRespectQualityModifier As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRespectQuantityMultiplier As Boolean
 	#tag EndProperty
 
 
@@ -143,16 +224,6 @@ Inherits Beacon.SetEntry
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ValidForIsland"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ValidForScorched"
-			Group="Behavior"
-			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Weight"

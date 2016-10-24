@@ -346,12 +346,15 @@ Implements Beacon.DataSource
 		Sub LoadPresets()
 		  Dim Presets As New Dictionary
 		  
+		  Dim BuiltInIDs() As Text
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT contents FROM presets")
 		  While Not Results.EOF
 		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Results.Field("contents").StringValue.ToText)
 		    Dim Preset As Beacon.Preset = Beacon.Preset.FromDictionary(Dict)
 		    If Preset <> Nil Then
+		      Preset.Type = Beacon.Preset.Types.BuiltIn
 		      Presets.Value(Preset.PresetID) = Preset
+		      BuiltInIDs.Append(Preset.PresetID)
 		    End If
 		    Results.MoveNext
 		  Wend
@@ -377,6 +380,7 @@ Implements Beacon.DataSource
 		          File.Delete
 		        End If
 		        
+		        Preset.Type = if(BuiltInIDs.IndexOf(Preset.PresetID) > -1, Beacon.Preset.Types.CustomizedBuiltIn, Beacon.Preset.Types.Custom)
 		        Presets.Value(Preset.PresetID) = Preset
 		      End If
 		    Next

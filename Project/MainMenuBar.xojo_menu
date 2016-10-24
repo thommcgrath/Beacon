@@ -16,6 +16,17 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
+      Begin MenuItem FileNewPreset
+         SpecialMenu = 0
+         Text = "New Preset"
+         Index = -2147483648
+         ShortcutKey = "N"
+         Shortcut = "Cmd+Shift+N"
+         MenuModifier = True
+         AltMenuModifier = True
+         AutoEnable = False
+         Visible = True
+      End
       Begin MenuItem FileOpen
          SpecialMenu = 0
          Text = "Open…"
@@ -71,16 +82,16 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem FileImportConfig
+      Begin MenuItem FileImport
          SpecialMenu = 0
-         Text = "Import Config…"
+         Text = "Import…"
          Index = -2147483648
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem FileExportConfig
+      Begin MenuItem FileExport
          SpecialMenu = 0
-         Text = "Export Config…"
+         Text = "Export…"
          Index = -2147483648
          AutoEnable = False
          Visible = True
@@ -255,6 +266,44 @@ Begin Menu MainMenuBar
          Text = "Unpublish Document"
          Index = -2147483648
          AutoEnable = False
+         Visible = True
+      End
+   End
+   Begin MenuItem WindowMenu
+      SpecialMenu = 0
+      Text = "Window"
+      Index = -2147483648
+      AutoEnable = True
+      Visible = True
+      Begin MenuItem WindowMinimize
+         SpecialMenu = 0
+         Text = "Minimize"
+         Index = -2147483648
+         ShortcutKey = "M"
+         Shortcut = "Cmd+M"
+         MenuModifier = True
+         AutoEnable = False
+         Visible = True
+      End
+      Begin MenuItem WindowZoom
+         SpecialMenu = 0
+         Text = "Zoom"
+         Index = -2147483648
+         AutoEnable = False
+         Visible = True
+      End
+      Begin MenuItem UntitledSeparator3
+         SpecialMenu = 0
+         Text = "-"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem WindowPresetLibrary
+         SpecialMenu = 0
+         Text = "Preset Library"
+         Index = -2147483648
+         AutoEnable = True
          Visible = True
       End
    End

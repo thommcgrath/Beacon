@@ -13,7 +13,8 @@ Inherits Application
 		Sub EnableMenuItems()
 		  FileNew.Enable
 		  FileOpen.Enable
-		  FileImportConfig.Enable
+		  FileImport.Enable
+		  FileNewPreset.Enable
 		End Sub
 	#tag EndEvent
 
@@ -76,22 +77,33 @@ Inherits Application
 
 	#tag Event
 		Sub OpenDocument(item As FolderItem)
-		  Dim Win As New DocWindow(Item)
-		  Win.Show
+		  If Item.IsType(BeaconFileTypes.BeaconDocument) Or Item.IsType(BeaconFileTypes.IniFile) Then
+		    Dim Win As New DocWindow(Item)
+		    Win.Show
+		    Return
+		  End If
+		  
+		  If Item.IsType(BeaconFileTypes.BeaconPreset) Then
+		    PresetWindow.Present(Item)
+		    Return
+		  End If
+		  
+		  Dim Dialog As New MessageDialog
+		  Dialog.Message = "Unable to open """ + Item.DisplayName + """"
+		  Dialog.Explanation = "Beacon can only open " + BeaconFileTypes.BeaconDocument.PrimaryExtension + " and " + BeaconFileTypes.BeaconPreset.PrimaryExtension + " files."
+		  Call Dialog.ShowModal()
 		End Sub
 	#tag EndEvent
 
 
 	#tag MenuHandler
-		Function FileImportConfig() As Boolean Handles FileImportConfig.Action
+		Function FileImport() As Boolean Handles FileImport.Action
 			Dim Dialog As New OpenDialog
-			Dialog.Filter = BeaconFileTypes.IniFile
+			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset
 			
 			Dim File As FolderItem = Dialog.ShowModal
 			If File <> Nil Then
-			Dim Win As New DocWindow
-			Win.Show
-			Win.Import(File)
+			Self.ImportDocument(File)
 			End If
 			
 			Return True
@@ -106,9 +118,16 @@ Inherits Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function FileNewPreset() As Boolean Handles FileNewPreset.Action
+			PresetWindow.Present()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function FileOpen() As Boolean Handles FileOpen.Action
 			Dim Dialog As New OpenDialog
-			Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile
+			Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset
 			
 			Dim File As FolderItem = Dialog.ShowModal()
 			If File <> Nil Then
@@ -144,6 +163,13 @@ Inherits Application
 	#tag MenuHandler
 		Function HelpReportAProblem() As Boolean Handles HelpReportAProblem.Action
 			Beacon.ReportAProblem()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function WindowPresetLibrary() As Boolean Handles WindowPresetLibrary.Action
+			PresetManagerWindow.SharedWindow.Show
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -210,6 +236,21 @@ Inherits Application
 		Function Identity() As Beacon.Identity
 		  Return Self.mIdentity
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ImportDocument(File As FolderItem)
+		  If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
+		    Self.OpenDocument(File)
+		    Return
+		  End If
+		  
+		  Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(New Xojo.IO.FolderItem(File.NativePath.ToText))
+		  If Preset <> Nil Then
+		    Beacon.Data.SavePreset(Preset)
+		    PresetManagerWindow.ShowPreset(Preset)
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

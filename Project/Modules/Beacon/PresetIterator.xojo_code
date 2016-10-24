@@ -54,11 +54,6 @@ Implements xojo.Core.Iterator
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mIndex"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"

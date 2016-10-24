@@ -1,15 +1,15 @@
 #tag Window
-Begin BeaconWindow DocumentManagerWindow
+Begin Window PresetDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   CloseButton     =   True
+   CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   0
+   Frame           =   1
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   400
+   Height          =   750
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -18,50 +18,206 @@ Begin BeaconWindow DocumentManagerWindow
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   400
-   MinimizeButton  =   False
-   MinWidth        =   600
-   Placement       =   2
+   MinHeight       =   680
+   MinimizeButton  =   True
+   MinWidth        =   748
+   Placement       =   1
    Resizeable      =   True
-   Title           =   "Document Browser"
+   Title           =   "Create Preset"
    Visible         =   True
-   Width           =   600
-   Begin Beacon.RepositoryEngine Engine
+   Width           =   788
+   Begin UITweaks.ResizedPushButton ActionButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "OK"
+      Default         =   True
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
       Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   688
+      LockBottom      =   True
       LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
       Scope           =   2
+      TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   710
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton CancelButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   True
+      Caption         =   "Cancel"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   596
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   710
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin PresetEditor Editor
+      AcceptFocus     =   False
+      AcceptTabs      =   True
+      AutoDeactivate  =   True
+      BackColor       =   &cFFFFFF00
+      Backdrop        =   0
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackColor    =   False
+      Height          =   690
+      HelpTag         =   ""
+      InitialParent   =   ""
+      Left            =   14
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   14
+      Transparent     =   True
+      UseFocusRing    =   False
+      Visible         =   True
+      Width           =   760
    End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
-		  If Self = mInstance Then
-		    mInstance = Nil
+		Sub Open()
+		  // This is a big window. The height is set comfortably for larger screens, but we want to make it fit
+		  // for at least 1280x720 screens.
+		  
+		  Dim AvailableHeight As Integer = Screen(0).AvailableHeight
+		  If Self.Height > AvailableHeight Then
+		    Self.Height = Max(Self.MinHeight, AvailableHeight)
 		  End If
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Shared Function SharedInstance(Create As Boolean = True) As DocumentManagerWindow
-		  If mInstance = Nil And Create = True Then
-		    mInstance = New DocumentManagerWindow
+		Shared Function Present(Parent As Window) As Beacon.Preset
+		  Dim Win As New PresetDialog
+		  Win.Editor.Preset = New Beacon.MutablePreset
+		  Win.ShowModalWithin(Parent.TrueWindow)
+		  
+		  Dim NewPreset As Beacon.Preset
+		  If Not Win.mCancelled Then
+		    NewPreset = Win.Editor.Preset
 		  End If
-		  Return mInstance
+		  Win.Close
+		  Return NewPreset
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window, Set As Beacon.ItemSet) As Beacon.Preset
+		  Dim Preset As Beacon.MutablePreset
+		  If Set.SourcePresetID <> "" Then
+		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets
+		    For Each LoadedPreset As Beacon.Preset In Presets
+		      If LoadedPreset.PresetID = Set.SourcePresetID Then
+		        // Clone this one
+		        Preset = New Beacon.MutablePreset(LoadedPreset)
+		        Exit For LoadedPreset
+		      End If
+		    Next
+		  Else
+		    Preset = New Beacon.MutablePreset
+		  End If
+		  
+		  Preset.Label = Set.Label
+		  Preset.MinItems = Set.MinNumItems
+		  Preset.MaxItems = Set.MaxNumItems
+		  For I As Integer = UBound(Preset) DownTo 0
+		    Preset.Remove(I)
+		  Next
+		  For Each Entry As Beacon.SetEntry In Set
+		    Preset.Append(New Beacon.PresetEntry(Entry))
+		  Next
+		  
+		  Return PresetDialog.Present(Parent, Preset)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window, Preset As Beacon.Preset) As Beacon.Preset
+		  Dim Win As New PresetDialog
+		  Win.Editor.Preset = Preset
+		  Win.Title = Preset.Label
+		  Win.ShowModalWithin(Parent.TrueWindow)
+		  
+		  Dim NewPreset As Beacon.Preset
+		  If Not Win.mCancelled Then
+		    NewPreset = Win.Editor.Preset
+		  End If
+		  Win.Close
+		  Return NewPreset
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private Shared mInstance As DocumentManagerWindow
+		Private mCancelled As Boolean
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
+#tag Events ActionButton
+	#tag Event
+		Sub Action()
+		  Self.mCancelled = False
+		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CancelButton
+	#tag Event
+		Sub Action()
+		  Self.mCancelled = True
+		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="BackColor"

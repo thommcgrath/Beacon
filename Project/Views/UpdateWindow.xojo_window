@@ -1,5 +1,5 @@
 #tag Window
-Begin Window UpdateWindow
+Begin BeaconWindow UpdateWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
