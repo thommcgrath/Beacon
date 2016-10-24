@@ -54,16 +54,9 @@ Implements Beacon.DataSource
 		    End If
 		    
 		    Self.BuildSchema()
+		    Self.Variable("app_version") = Str(App.NonReleaseVersion, "-0")
 		    
-		    Dim File As FolderItem = App.ResourcesFolder.Child("Classes.json")
-		    If File.Exists Then
-		      Dim Stream As TextInputStream = TextInputStream.Open(File)
-		      Dim Content As String = Stream.ReadAll(Encodings.UTF8)
-		      Stream.Close
-		      
-		      Self.Import(Content.ToText)
-		      Self.Variable("app_version") = Str(App.NonReleaseVersion, "-0")
-		    End If
+		    Xojo.Core.Timer.CallLater(1, AddressOf Self.ImportLocalClasses)
 		  End If
 		  
 		  Dim LastSync As String = Self.Variable("last_sync")
@@ -330,6 +323,19 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Self.Variable("last_sync") = LastSync
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ImportLocalClasses()
+		  Dim File As FolderItem = App.ResourcesFolder.Child("Classes.json")
+		  If File.Exists Then
+		    Dim Stream As TextInputStream = TextInputStream.Open(File)
+		    Dim Content As String = Stream.ReadAll(Encodings.UTF8)
+		    Stream.Close
+		    
+		    Self.Import(Content.ToText)
+		  End If
 		End Sub
 	#tag EndMethod
 
