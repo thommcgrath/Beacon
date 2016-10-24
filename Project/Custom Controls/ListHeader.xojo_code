@@ -2,6 +2,22 @@
 Protected Class ListHeader
 Inherits ControlCanvas
 	#tag Event
+		Sub Activate()
+		  RaiseEvent Activate()
+		  
+		  Self.Invalidate
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Deactivate()
+		  RaiseEvent Deactivate
+		  
+		  Self.Invalidate
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  If MouseDown(X, Y) Then
 		    Self.mSubclassHandlesMouse = True
@@ -87,7 +103,9 @@ Inherits ControlCanvas
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  G.ForeColor = Self.mColorBackground
+		  Dim Scheme As ColorScheme = If(Self.Highlighted, Self.mActiveColors, Self.mInactiveColors)
+		  
+		  G.ForeColor = Scheme.BackgroundColor
 		  G.FillRect(0, 0, G.Width, G.Height)
 		  
 		  Dim HasSegments As Boolean = UBound(Self.mSegments) > -1
@@ -106,18 +124,18 @@ Inherits ControlCanvas
 		  End If
 		  
 		  If HasSegments Then
-		    Self.DrawSegments(G, New Xojo.Core.Rect(Self.Padding, (Self.Padding * 2) + Self.TitleHeight, G.Width - (Self.Padding * 2), Self.SegmentCellHeight))
+		    Self.DrawSegments(G, New Xojo.Core.Rect(Self.Padding, (Self.Padding * 2) + Self.TitleHeight, G.Width - (Self.Padding * 2), Self.SegmentCellHeight), Scheme)
 		  End If
 		  Dim TitleWidth As Integer = Min(G.StringWidth(Self.Title), G.Width - (Self.Padding * 2))
 		  Dim TitleLeft As Integer = (G.Width - TitleWidth) / 2
 		  Dim TitleBottom As Integer = Self.Padding + Self.TitleHeight
 		  G.Bold = True
-		  G.ForeColor = Self.mColorTitleShadow
+		  G.ForeColor = Scheme.TitleShadowColor
 		  G.DrawString(Self.Title, TitleLeft, TitleBottom + 1, G.Width - (Self.Padding * 2), True)
-		  G.ForeColor = Self.mColorTitleText
+		  G.ForeColor = Scheme.TitleTextColor
 		  G.DrawString(Self.Title, TitleLeft, TitleBottom, G.Width - (Self.Padding * 2), True)
 		  
-		  G.ForeColor = Self.mColorBorder
+		  G.ForeColor = Scheme.BorderColor
 		  G.DrawLine(0, G.Height - 1, G.Width, G.Height - 1)
 		End Sub
 	#tag EndEvent
@@ -143,17 +161,40 @@ Inherits ControlCanvas
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function BuildColorScheme(SourceColor As Color) As ColorScheme
+		  Const BrightnessLimit = 170
+		  
+		  Dim Brightness As Integer = Exp(Log((SourceColor.Red * SourceColor.Red * 0.241) + (SourceColor.Green * SourceColor.Green * 0.691) + (SourceColor.Blue * SourceColor.Blue * 0.068)) * 0.5)
+		  Dim IsDark As Boolean = Brightness < BrightnessLimit
+		  
+		  Dim Scheme As ColorScheme
+		  Scheme.BackgroundColor = SourceColor
+		  Scheme.TitleTextColor = if(IsDark, &cFFFFFF, Self.AdjustColor(SourceColor, -0.60))
+		  Scheme.TitleShadowColor = if(IsDark, Self.AdjustColor(SourceColor, -0.75), &cFFFFFF)
+		  Scheme.SegmentFrameColor = if(IsDark, &cFFFFFF, Self.AdjustColor(SourceColor, -0.50))
+		  Scheme.SegmentShadowColor = if(IsDark, Self.AdjustColor(SourceColor, -0.75), &cFFFFFF)
+		  Scheme.SegmentTextColor = if(IsDark, &cFFFFFF, Self.AdjustColor(SourceColor, -0.70))
+		  Scheme.SegmentPressedColor = if(IsDark, Self.AdjustColor(SourceColor, 0.75), Self.AdjustColor(SourceColor, -0.75))
+		  Scheme.SegmentSelectedTextColor = if(IsDark, &c000000, &cFFFFFF)
+		  Scheme.BorderColor = if(IsDark, Self.AdjustColor(SourceColor, -0.1), Self.AdjustColor(SourceColor, -0.2))
+		  Return Scheme
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Calling the overridden superclass constructor.
 		  Super.Constructor
 		  Self.mClickRects = New Xojo.Core.Dictionary
+		  
 		  Self.TintColor = Self.DefaultColor
+		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawSegments(G As Graphics, Rect As Xojo.Core.Rect)
+		Private Sub DrawSegments(G As Graphics, Rect As Xojo.Core.Rect, Scheme As ColorScheme)
 		  Dim SegmentCount As Integer = UBound(Self.mSegments) + 1
 		  Dim BorderCount As Integer = SegmentCount + 1
 		  Dim CellWidth As Integer = Min(Self.SegmentCellWidth, Floor((Rect.Width - (Self.SegmentBorderSize * BorderCount)) / SegmentCount))
@@ -162,11 +203,11 @@ Inherits ControlCanvas
 		  Dim ControlTop As Integer = Rect.Top
 		  Dim ControlHeight As Integer = Rect.Height
 		  
-		  G.ForeColor = Self.mColorSegmentShadow
+		  G.ForeColor = Scheme.SegmentShadowColor
 		  G.FillRoundRect(ControlLeft, ControlTop + 1, ControlWidth, ControlHeight, Self.CornerRadius, Self.CornerRadius)
-		  G.ForeColor = Self.mColorSegmentFrame
+		  G.ForeColor = Scheme.SegmentFrameColor
 		  G.FillRoundRect(ControlLeft, ControlTop, ControlWidth, ControlHeight, Self.CornerRadius, Self.CornerRadius)
-		  G.ForeColor = Self.mColorBackground
+		  G.ForeColor = Scheme.BackgroundColor
 		  G.FillRoundRect(ControlLeft + Self.SegmentBorderSize, ControlTop + Self.SegmentBorderSize, ControlWidth - (Self.SegmentBorderSize * 2), ControlHeight - (Self.SegmentBorderSize * 2), Self.CornerRadius - Self.SegmentBorderSize, Self.CornerRadius - Self.SegmentBorderSize)
 		  
 		  Dim NextLeft As Integer = ControlLeft + Self.SegmentBorderSize
@@ -182,18 +223,18 @@ Inherits ControlCanvas
 		    Dim Segment As Graphics = G.Clip(NextLeft, ControlTop + Self.SegmentBorderSize, CellWidth, ControlHeight - (Self.SegmentBorderSize * 2))
 		    Dim TextColor, ShadowColor As Color
 		    If Pressed Then
-		      Segment.ForeColor = Self.mColorSegmentPressed
+		      Segment.ForeColor = Scheme.SegmentPressedColor
 		      Segment.FillRect(0, 0, Segment.Width, Segment.Height)
-		      TextColor = Self.mColorSegmentSelectedText
-		      ShadowColor = Self.mColorSegmentPressed
+		      TextColor = Scheme.SegmentSelectedTextColor
+		      ShadowColor = Scheme.SegmentPressedColor
 		    ElseIf Selected Then
-		      Segment.ForeColor = Self.mColorSegmentFrame
+		      Segment.ForeColor = Scheme.SegmentFrameColor
 		      Segment.FillRect(0, 0, Segment.Width, Segment.Height)
-		      TextColor = Self.mColorSegmentSelectedText
-		      ShadowColor = Self.mColorSegmentFrame
+		      TextColor = Scheme.SegmentSelectedTextColor
+		      ShadowColor = Scheme.SegmentFrameColor
 		    Else
-		      TextColor = Self.mColorSegmentText
-		      ShadowColor = Self.mColorSegmentShadow
+		      TextColor = Scheme.SegmentTextColor
+		      ShadowColor = Scheme.SegmentShadowColor
 		    End If
 		    
 		    Dim SegmentText As String = Self.mSegments(I)
@@ -209,12 +250,26 @@ Inherits ControlCanvas
 		    
 		    NextLeft = NextLeft + CellWidth
 		    If I < UBound(Self.mSegments) Then
-		      G.ForeColor = Self.mColorSegmentFrame
+		      G.ForeColor = Scheme.SegmentFrameColor
 		      G.FillRect(NextLeft, ControlTop, Self.SegmentBorderSize, ControlHeight)
 		    End If
 		    NextLeft = NextLeft + Self.SegmentBorderSize
 		  Next
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function Highlighted() As Boolean
+		  If Self.Enabled Then
+		    #if TargetCocoa
+		      Declare Function IsMainWindow Lib "Cocoa.framework" Selector "isMainWindow" (Target As Integer) As Boolean
+		      Declare Function IsKeyWindow Lib "Cocoa.framework" Selector "isKeyWindow" (Target As Integer) As Boolean
+		      Return IsKeyWindow(Self.TrueWindow.Handle) Or IsMainWindow(Self.TrueWindow.Handle)
+		    #else
+		      Return True
+		    #endif
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -268,6 +323,14 @@ Inherits ControlCanvas
 
 
 	#tag Hook, Flags = &h0
+		Event Activate()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Deactivate()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event MouseDown(X As Integer, Y As Integer) As Boolean
 	#tag EndHook
 
@@ -293,43 +356,19 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mActiveColors As ColorScheme
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mClickRects As Xojo.Core.Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mColorBackground As Color
+		Private mInactiveColors As ColorScheme
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mColorBorder As Color
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mColorSegmentFrame As Color
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mColorSegmentPressed As Color
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mColorSegmentSelectedText As Color
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mColorSegmentShadow As Color
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mColorSegmentText As Color
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mColorTitleShadow As Color
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mColorTitleText As Color
+		Private mInactiveTintColor As Color
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -388,25 +427,13 @@ Inherits ControlCanvas
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Const BrightnessLimit = 170
-			  
 			  If Self.mTintColor = Value Then
 			    Return
 			  End If
 			  
-			  Dim Brightness As Integer = Exp(Log((Value.Red * Value.Red * 0.241) + (Value.Green * Value.Green * 0.691) + (Value.Blue * Value.Blue * 0.068)) * 0.5)
-			  Dim IsDark As Boolean = Brightness < BrightnessLimit
-			  
-			  Self.mTintColor = Value
-			  Self.mColorBackground = Value
-			  Self.mColorTitleText = if(IsDark, &cFFFFFF, Self.AdjustColor(Value, -0.60))
-			  Self.mColorTitleShadow = if(IsDark, Self.AdjustColor(Value, -0.75), &cFFFFFF)
-			  Self.mColorSegmentFrame = if(IsDark, &cFFFFFF, Self.AdjustColor(Value, -0.50))
-			  Self.mColorSegmentShadow = if(IsDark, Self.AdjustColor(Value, -0.75), &cFFFFFF)
-			  Self.mColorSegmentText = if(IsDark, &cFFFFFF, Self.AdjustColor(Value, -0.70))
-			  Self.mColorSegmentPressed = if(IsDark, Self.AdjustColor(Value, 0.75), Self.AdjustColor(Value, -0.75))
-			  Self.mColorSegmentSelectedText = if(IsDark, &c000000, &cFFFFFF)
-			  Self.mColorBorder = if(IsDark, Self.AdjustColor(Value, -0.1), Self.AdjustColor(Value, -0.2))
+			  Dim Grey As Integer = (Value.Red * 0.71) + (Value.Green * 0.72) + (Value.Blue * 0.07)
+			  Self.mActiveColors = Self.BuildColorScheme(Value)
+			  Self.mInactiveColors = Self.BuildColorScheme(RGB(Grey, Grey, Grey, Value.Alpha))
 			  
 			  Self.Invalidate
 			End Set
@@ -455,6 +482,19 @@ Inherits ControlCanvas
 
 	#tag Constant, Name = TitleHeight, Type = Double, Dynamic = False, Default = \"10", Scope = Private
 	#tag EndConstant
+
+
+	#tag Structure, Name = ColorScheme, Flags = &h21
+		BackgroundColor As Color
+		  BorderColor As Color
+		  SegmentFrameColor As Color
+		  SegmentPressedColor As Color
+		  SegmentSelectedTextColor As Color
+		  SegmentShadowColor As Color
+		  SegmentTextColor As Color
+		  TitleTextColor As Color
+		TitleShadowColor As Color
+	#tag EndStructure
 
 
 	#tag ViewBehavior
