@@ -76,7 +76,7 @@ Begin BeaconWindow PresetManagerWindow
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin PushButton AddButton
+   Begin UITweaks.ResizedPushButton AddButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -107,7 +107,7 @@ Begin BeaconWindow PresetManagerWindow
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton EditButton
+   Begin UITweaks.ResizedPushButton EditButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -138,7 +138,7 @@ Begin BeaconWindow PresetManagerWindow
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton DeleteButton
+   Begin UITweaks.ResizedPushButton DeleteButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"

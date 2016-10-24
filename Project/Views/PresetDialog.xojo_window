@@ -125,9 +125,14 @@ End
 		  // This is a big window. The height is set comfortably for larger screens, but we want to make it fit
 		  // for at least 1280x720 screens.
 		  
+		  Dim AvailableTop As Integer = Screen(0).AvailableTop
 		  Dim AvailableHeight As Integer = Screen(0).AvailableHeight
-		  If Self.Height > AvailableHeight Then
-		    Self.Height = Max(Self.MinHeight, AvailableHeight)
+		  Dim Bounds As REALbasic.Rect = Self.Bounds
+		  If Bounds.Height > AvailableHeight Then
+		    Dim Diff As Integer = Bounds.Height - Self.Height
+		    Bounds.Top = AvailableTop
+		    Bounds.Height = Max(Self.MinHeight + Diff, AvailableHeight)
+		    Self.Bounds = Bounds
 		  End If
 		End Sub
 	#tag EndEvent

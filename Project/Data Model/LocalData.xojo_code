@@ -56,16 +56,14 @@ Implements Beacon.DataSource
 		    Self.BuildSchema()
 		    
 		    Dim File As FolderItem = App.ResourcesFolder.Child("Classes.json")
-		    If Not File.Exists Then
-		      Return
+		    If File.Exists Then
+		      Dim Stream As TextInputStream = TextInputStream.Open(File)
+		      Dim Content As String = Stream.ReadAll(Encodings.UTF8)
+		      Stream.Close
+		      
+		      Self.Import(Content.ToText)
+		      Self.Variable("app_version") = Str(App.NonReleaseVersion, "-0")
 		    End If
-		    
-		    Dim Stream As TextInputStream = TextInputStream.Open(File)
-		    Dim Content As String = Stream.ReadAll(Encodings.UTF8)
-		    Stream.Close
-		    
-		    Self.Import(Content.ToText)
-		    Self.Variable("app_version") = Str(App.NonReleaseVersion, "-0")
 		  End If
 		  
 		  Dim LastSync As String = Self.Variable("last_sync")

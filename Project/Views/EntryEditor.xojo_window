@@ -45,10 +45,10 @@ Begin Window EntryEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   600
-      Begin PushButton CancelButton
+      Begin UITweaks.ResizedPushButton CancelButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -79,7 +79,7 @@ Begin Window EntryEditor
          Visible         =   True
          Width           =   80
       End
-      Begin PushButton NextButton
+      Begin UITweaks.ResizedPushButton NextButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
