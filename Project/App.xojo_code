@@ -248,10 +248,7 @@ Inherits Application
 		  Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(New Xojo.IO.FolderItem(File.NativePath.ToText))
 		  If Preset <> Nil Then
 		    Beacon.Data.SavePreset(Preset)
-		    If PresetManagerWindow.SharedWindow(False) <> Nil Then
-		      PresetManagerWindow.SharedWindow.UpdatePresets()
-		    End If
-		    PresetManagerWindow.SharedWindow.ShowPreset(Preset)
+		    PresetManagerWindow.ShowPreset(Preset)
 		  End If
 		End Sub
 	#tag EndMethod

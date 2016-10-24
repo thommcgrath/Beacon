@@ -42,7 +42,7 @@ Begin ContainerControl PresetEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   26
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -96,7 +96,7 @@ Begin ContainerControl PresetEditor
          TextUnit        =   0
          Top             =   482
          Underline       =   False
-         UseFocusRing    =   False
+         UseFocusRing    =   True
          Visible         =   True
          Width           =   668
          _ScrollOffset   =   0
@@ -213,7 +213,7 @@ Begin ContainerControl PresetEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   25
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -252,7 +252,7 @@ Begin ContainerControl PresetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
@@ -295,7 +295,7 @@ Begin ContainerControl PresetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
@@ -338,7 +338,7 @@ Begin ContainerControl PresetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   5
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
@@ -381,7 +381,7 @@ Begin ContainerControl PresetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   7
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   ""
@@ -415,7 +415,7 @@ Begin ContainerControl PresetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   4
+         TabIndex        =   0
          TabPanelIndex   =   0
          Text            =   "Preset Name:"
          TextAlign       =   2
@@ -449,7 +449,7 @@ Begin ContainerControl PresetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   5
+         TabIndex        =   2
          TabPanelIndex   =   0
          Text            =   "Group:"
          TextAlign       =   2
@@ -483,7 +483,7 @@ Begin ContainerControl PresetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   6
+         TabIndex        =   4
          TabPanelIndex   =   0
          Text            =   "Min Items:"
          TextAlign       =   2
@@ -517,7 +517,7 @@ Begin ContainerControl PresetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   7
+         TabIndex        =   6
          TabPanelIndex   =   0
          Text            =   "Max Items:"
          TextAlign       =   2
@@ -549,7 +549,7 @@ Begin ContainerControl PresetEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -588,7 +588,7 @@ Begin ContainerControl PresetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "1"
@@ -622,7 +622,7 @@ Begin ContainerControl PresetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   0
          Text            =   "Adjust Quality By"
          TextAlign       =   2
@@ -699,7 +699,7 @@ Begin ContainerControl PresetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "1"
@@ -733,7 +733,7 @@ Begin ContainerControl PresetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   4
+         TabIndex        =   3
          TabPanelIndex   =   0
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
@@ -765,7 +765,7 @@ Begin ContainerControl PresetEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -804,7 +804,7 @@ Begin ContainerControl PresetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "1"
@@ -838,7 +838,7 @@ Begin ContainerControl PresetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   0
          Text            =   "Adjust Quality By"
          TextAlign       =   2
@@ -915,7 +915,7 @@ Begin ContainerControl PresetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "1"
@@ -949,7 +949,7 @@ Begin ContainerControl PresetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   4
+         TabIndex        =   3
          TabPanelIndex   =   0
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
@@ -981,7 +981,7 @@ Begin ContainerControl PresetEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -1020,7 +1020,7 @@ Begin ContainerControl PresetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "1"
@@ -1054,7 +1054,7 @@ Begin ContainerControl PresetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   0
          Text            =   "Adjust Quality By"
          TextAlign       =   2
@@ -1131,7 +1131,7 @@ Begin ContainerControl PresetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "1"
@@ -1165,7 +1165,7 @@ Begin ContainerControl PresetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   4
+         TabIndex        =   3
          TabPanelIndex   =   0
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
@@ -1197,7 +1197,7 @@ Begin ContainerControl PresetEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   14
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -1236,7 +1236,7 @@ Begin ContainerControl PresetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "1"
@@ -1270,7 +1270,7 @@ Begin ContainerControl PresetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   0
          Text            =   "Adjust Quality By"
          TextAlign       =   2
@@ -1347,7 +1347,7 @@ Begin ContainerControl PresetEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
          Text            =   "1"
@@ -1381,7 +1381,7 @@ Begin ContainerControl PresetEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   4
+         TabIndex        =   3
          TabPanelIndex   =   0
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
@@ -1617,6 +1617,7 @@ End
 		  For Each Entry As Beacon.SetEntry In Entries
 		    Dim Item As New Beacon.PresetEntry(Entry)
 		    Self.PutEntryInRow(Item, -1)
+		    Self.mPreset.Append(Item)
 		  Next
 		  ContentsList.Sort
 		End Sub
@@ -1643,7 +1644,7 @@ End
 		  
 		  For Each NewEntry As Beacon.SetEntry In NewEntries
 		    Dim OriginalEntry As Beacon.PresetEntry
-		    Dim OriginalIndex As Integer
+		    Dim OriginalIndex As Integer = -1
 		    For I As Integer = 0 To UBound(Self.mPreset)
 		      If Self.mPreset(I).UniqueID = NewEntry.UniqueID Then
 		        OriginalEntry = Self.mPreset(I)
@@ -1651,6 +1652,10 @@ End
 		        Exit For I
 		      End If
 		    Next
+		    If OriginalIndex = -1 Then
+		      System.DebugLog("Unable to find original entry " + NewEntry.UniqueID)
+		      Break
+		    End If
 		    
 		    Dim Item As New Beacon.PresetEntry(NewEntry)
 		    Item.Availability = OriginalEntry.Availability
@@ -1693,6 +1698,7 @@ End
 		Sub TextChange()
 		  If Not Self.mUpdating Then
 		    Self.ContentsChanged = True
+		    Self.mPreset.Label = Me.Text.ToText
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1702,6 +1708,7 @@ End
 		Sub TextChange()
 		  If Not Self.mUpdating Then
 		    Self.ContentsChanged = True
+		    Self.mPreset.Grouping = Me.Text.ToText
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1709,7 +1716,10 @@ End
 #tag Events MinItemsField
 	#tag Event
 		Sub TextChange()
-		  
+		  If Not Self.mUpdating Then
+		    Self.ContentsChanged = True
+		    Self.mPreset.MinItems = CDbl(Me.Text)
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1718,6 +1728,7 @@ End
 		Sub TextChange()
 		  If Not Self.mUpdating Then
 		    Self.ContentsChanged = True
+		    Self.mPreset.MaxItems = CDbl(Me.Text)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1727,6 +1738,7 @@ End
 		Sub TextChange()
 		  If Not Self.mUpdating Then
 		    Self.ContentsChanged = True
+		    Self.mPreset.QualityModifier(Beacon.LootSource.Kinds.Standard) = CDbl(Me.Text)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1736,6 +1748,7 @@ End
 		Sub TextChange()
 		  If Not Self.mUpdating Then
 		    Self.ContentsChanged = True
+		    Self.mPreset.QuantityMultiplier(Beacon.LootSource.Kinds.Standard) = CDbl(Me.Text)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1745,6 +1758,7 @@ End
 		Sub TextChange()
 		  If Not Self.mUpdating Then
 		    Self.ContentsChanged = True
+		    Self.mPreset.QualityModifier(Beacon.LootSource.Kinds.Bonus) = CDbl(Me.Text)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1754,6 +1768,7 @@ End
 		Sub TextChange()
 		  If Not Self.mUpdating Then
 		    Self.ContentsChanged = True
+		    Self.mPreset.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus) = CDbl(Me.Text)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1763,6 +1778,7 @@ End
 		Sub TextChange()
 		  If Not Self.mUpdating Then
 		    Self.ContentsChanged = True
+		    Self.mPreset.QualityModifier(Beacon.LootSource.Kinds.Cave) = CDbl(Me.Text)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1772,6 +1788,7 @@ End
 		Sub TextChange()
 		  If Not Self.mUpdating Then
 		    Self.ContentsChanged = True
+		    Self.mPreset.QuantityMultiplier(Beacon.LootSource.Kinds.Cave) = CDbl(Me.Text)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1781,6 +1798,7 @@ End
 		Sub TextChange()
 		  If Not Self.mUpdating Then
 		    Self.ContentsChanged = True
+		    Self.mPreset.QualityModifier(Beacon.LootSource.Kinds.Sea) = CDbl(Me.Text)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1790,6 +1808,7 @@ End
 		Sub TextChange()
 		  If Not Self.mUpdating Then
 		    Self.ContentsChanged = True
+		    Self.mPreset.QuantityMultiplier(Beacon.LootSource.Kinds.Sea) = CDbl(Me.Text)
 		  End If
 		End Sub
 	#tag EndEvent

@@ -43,6 +43,7 @@ Implements Beacon.Countable
 		  Next
 		  
 		  Self.mPresetID = Source.mPresetID
+		  Self.Type = Source.Type
 		End Sub
 	#tag EndMethod
 
@@ -304,10 +305,6 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h0
-		Custom As Boolean
-	#tag EndProperty
-
 	#tag Property, Flags = &h1
 		Protected mContents() As Beacon.PresetEntry
 	#tag EndProperty
@@ -364,8 +361,24 @@ Implements Beacon.Countable
 		Protected mQuantityMultiplierStandard As Double
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		Type As Beacon.Preset.Types
+	#tag EndProperty
+
+
+	#tag Enum, Name = Types, Type = Integer, Flags = &h0
+		BuiltIn
+		  Custom
+		CustomizedBuiltIn
+	#tag EndEnum
+
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Custom"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true

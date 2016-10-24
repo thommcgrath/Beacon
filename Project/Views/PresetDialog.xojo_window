@@ -5,7 +5,7 @@ Begin Window PresetDialog
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   8
+   Frame           =   1
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -134,7 +134,22 @@ End
 
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window, Set As Beacon.ItemSet)
+		Shared Function Present(Parent As Window) As Beacon.Preset
+		  Dim Win As New PresetDialog
+		  Win.Editor.Preset = New Beacon.MutablePreset
+		  Win.ShowModalWithin(Parent.TrueWindow)
+		  
+		  Dim NewPreset As Beacon.Preset
+		  If Not Win.mCancelled Then
+		    NewPreset = Win.Editor.Preset
+		  End If
+		  Win.Close
+		  Return NewPreset
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window, Set As Beacon.ItemSet) As Beacon.Preset
 		  Dim Preset As Beacon.MutablePreset
 		  If Set.SourcePresetID <> "" Then
 		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets
@@ -159,17 +174,30 @@ End
 		    Preset.Append(New Beacon.PresetEntry(Entry))
 		  Next
 		  
-		  PresetDialog.Present(Parent, Preset)
-		End Sub
+		  Return PresetDialog.Present(Parent, Preset)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window, Preset As Beacon.Preset)
+		Shared Function Present(Parent As Window, Preset As Beacon.Preset) As Beacon.Preset
 		  Dim Win As New PresetDialog
 		  Win.Editor.Preset = Preset
-		  Win.ShowWithin(Parent.TrueWindow)
-		End Sub
+		  Win.Title = Preset.Label
+		  Win.ShowModalWithin(Parent.TrueWindow)
+		  
+		  Dim NewPreset As Beacon.Preset
+		  If Not Win.mCancelled Then
+		    NewPreset = Win.Editor.Preset
+		  End If
+		  Win.Close
+		  Return NewPreset
+		End Function
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mCancelled As Boolean
+	#tag EndProperty
 
 
 #tag EndWindowCode
@@ -177,16 +205,16 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim Preset As Beacon.Preset = Editor.Preset
-		  Beacon.Data.SavePreset(Preset)
-		  Self.Close
+		  Self.mCancelled = False
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.Close
+		  Self.mCancelled = True
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -466,22 +466,12 @@ End
 	#tag Method, Flags = &h21
 		Private Function HandlePresetMenu(Sender As MenuItem) As Boolean
 		  Dim SelectedPreset As Beacon.Preset = Sender.Tag
-		  Dim Editing As Boolean
-		  #if TargetMacOS
-		    Editing = Keyboard.OptionKey
-		  #else
-		    Editing = Keyboard.AltKey
-		  #endif
 		  
-		  If Editing Then
-		    PresetDialog.Present(Self, SelectedPreset)
+		  If SelectedPreset = Nil Then
+		    Self.AddSet(New Beacon.ItemSet)
 		  Else
-		    If SelectedPreset = Nil Then
-		      Self.AddSet(New Beacon.ItemSet)
-		    Else
-		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Self.mSources(0))
-		      Self.AddSet(Set)
-		    End If
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Self.mSources(0))
+		    Self.AddSet(Set)
 		  End If
 		  Return True
 		End Function
@@ -714,7 +704,11 @@ End
 		  Select Case HitItem.Text
 		  Case "Create Preset…"
 		    Dim Set As Beacon.ItemSet = HitItem.Tag
-		    PresetDialog.Present(Self.TrueWindow, Set)
+		    Dim Preset As Beacon.Preset = PresetDialog.Present(Self.TrueWindow, Set)
+		    If Preset <> Nil Then
+		      Beacon.Data.SavePreset(Preset)
+		      PresetManagerWindow.UpdateIfVisible()
+		    End If
 		  Case "Reconfigure From Preset"
 		    Dim Set As Beacon.ItemSet = HitItem.Tag
 		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets

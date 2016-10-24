@@ -175,8 +175,6 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  Self.SavePreset()
-		  
 		  If Self = mInstance Then
 		    mInstance = Nil
 		  End If
@@ -190,50 +188,6 @@ End
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Sub HandleSelectionChange()
-		  Self.SavePreset()
-		  
-		  If List.ListIndex > -1 Then
-		    //Editor.Preset = List.RowTag(List.ListIndex)
-		    //Editor.Enabled = True
-		  Else
-		    //Editor.Enabled = False
-		    //Editor.Preset = Nil
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SavePreset()
-		  #if false
-		    If Not Editor.ContentsChanged Then
-		      Return
-		    End If
-		    
-		    Dim Preset As Beacon.Preset = Editor.Preset
-		    If Preset <> Nil Then
-		      Beacon.Data.SavePreset(Preset)
-		      For I As Integer = 0 To List.ListCount - 1
-		        If Beacon.Preset(List.RowTag(I)).PresetID = Preset.PresetID Then
-		          List.RowTag(I) = Preset
-		          List.Cell(I, 0) = Preset.Label
-		          Self.mBlockSelectionChange = True
-		          List.Sort
-		          Self.mBlockSelectionChange = False
-		          Return
-		        End If
-		      Next
-		      List.AddRow(Preset.Label)
-		      List.RowTag(List.LastIndex) = Preset
-		      Self.mBlockSelectionChange = True
-		      List.Sort
-		      Self.mBlockSelectionChange = False
-		    End If
-		  #endif
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Shared Function SharedWindow(Create As Boolean = True) As PresetManagerWindow
 		  If mInstance = Nil And Create = True Then
@@ -244,32 +198,37 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowPreset(Preset As Beacon.Preset)
-		  Self.mBlockSelectionChange = True
-		  Dim Scrolled As Boolean
-		  For I As Integer = 0 To List.ListCount - 1
-		    List.Selected(I) = (Beacon.Preset(List.RowTag(I)).PresetID = Preset.PresetID)
-		    If Scrolled = False And List.Selected(I) Then
-		      Scrolled = True
-		      List.ScrollPosition = I
-		    End If
-		  Next
-		  Self.mBlockSelectionChange = False
-		  Self.HandleSelectionChange()
+		Shared Sub ShowPreset(Preset As Beacon.Preset)
+		  Dim Win As PresetManagerWindow = PresetManagerWindow.SharedWindow(False)
+		  If Win = Nil Then
+		    // Not visible, show it
+		    Win = PresetManagerWindow.SharedWindow(True)
+		    Win.Show
+		  End If
+		  Win.UpdatePresets(Preset)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub UpdatePresets()
+		Shared Sub UpdateIfVisible()
+		  Dim Win As PresetManagerWindow = SharedWindow(False)
+		  If Win <> Nil Then
+		    Win.UpdatePresets()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdatePresets(SelectPreset As Beacon.Preset = Nil)
 		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets
 		  Dim PresetCount As Integer = UBound(Presets) + 1
 		  
-		  Dim Selected() As Text
-		  For I As Integer = 0 To List.ListCount - 1
-		    Selected.Append(Beacon.Preset(List.RowTag(I)).PresetID)
-		  Next
-		  
-		  Self.mBlockSelectionChange = True
+		  Dim Selected As Text
+		  If SelectPreset <> Nil Then
+		    Selected = SelectPreset.PresetID
+		  ElseIf List.ListIndex > -1 Then
+		    Selected = Beacon.Preset(List.RowTag(List.ListIndex)).PresetID
+		  End If
 		  
 		  While List.ListCount > PresetCount
 		    List.RemoveRow(0)
@@ -280,20 +239,33 @@ End
 		  
 		  For I As Integer = 0 To List.ListCount - 1
 		    List.Cell(I, 0) = Presets(I).Label
+		    Select Case Presets(I).Type
+		    Case Beacon.Preset.Types.BuiltIn
+		      List.Cell(I, 1) = "Built-In"
+		    Case Beacon.Preset.Types.Custom
+		      List.Cell(I, 1) = "Custom"
+		    Case Beacon.Preset.Types.CustomizedBuiltIn
+		      List.Cell(I, 1) = "Customized Built-In"
+		    End Select
 		    List.RowTag(I) = Presets(I)
-		    List.Selected(I) = Selected.IndexOf(Presets(I).PresetID) > -1
 		  Next
 		  
 		  List.Sort
-		  Self.mBlockSelectionChange = False
-		  Self.HandleSelectionChange()
+		  
+		  If Selected <> "" Then
+		    For I As Integer = 0 To List.ListCount - 1
+		      If Beacon.Preset(List.RowTag(I)).PresetID = Selected Then
+		        List.ListIndex = I
+		        List.ScrollPosition = I
+		        Exit For I
+		      End If
+		    Next
+		  Else
+		    List.ListIndex = -1
+		  End If
 		End Sub
 	#tag EndMethod
 
-
-	#tag Property, Flags = &h21
-		Private mBlockSelectionChange As Boolean
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private Shared mInstance As PresetManagerWindow
@@ -305,11 +277,58 @@ End
 #tag Events List
 	#tag Event
 		Sub Change()
-		  If Self.mBlockSelectionChange Then
+		  If Me.ListIndex = -1 Then
+		    EditButton.Enabled = False
+		    DeleteButton.Enabled = False
+		    DeleteButton.Caption = "Delete"
 		    Return
 		  End If
 		  
-		  Self.HandleSelectionChange()
+		  Dim Preset As Beacon.Preset = Me.RowTag(Me.ListIndex)
+		  EditButton.Enabled = True
+		  
+		  Select Case Preset.Type
+		  Case Beacon.Preset.Types.BuiltIn
+		    DeleteButton.Enabled = False
+		    DeleteButton.Caption = "Delete"
+		  Case Beacon.Preset.Types.Custom
+		    DeleteButton.Enabled = True
+		    DeleteButton.Caption = "Delete"
+		  Case Beacon.Preset.Types.CustomizedBuiltIn
+		    DeleteButton.Enabled = True
+		    DeleteButton.Caption = "Revert"
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AddButton
+	#tag Event
+		Sub Action()
+		  Dim Preset As Beacon.Preset = PresetDialog.Present(Self)
+		  If Preset <> Nil Then
+		    Beacon.Data.SavePreset(Preset)
+		    Self.UpdatePresets(Preset)
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EditButton
+	#tag Event
+		Sub Action()
+		  Dim Preset As Beacon.Preset = PresetDialog.Present(Self, Beacon.Preset(List.RowTag(List.ListIndex)))
+		  If Preset <> Nil Then
+		    Beacon.Data.SavePreset(Preset)
+		    Self.UpdatePresets(Preset)
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DeleteButton
+	#tag Event
+		Sub Action()
+		  Dim Preset As Beacon.Preset = List.RowTag(List.ListIndex)
+		  Beacon.Data.RemovePreset(Preset)
+		  Self.UpdatePresets()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

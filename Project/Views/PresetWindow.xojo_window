@@ -133,40 +133,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Set As Beacon.ItemSet)
-		  Dim Preset As Beacon.MutablePreset
-		  If Set.SourcePresetID <> "" Then
-		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets
-		    For Each LoadedPreset As Beacon.Preset In Presets
-		      If LoadedPreset.PresetID = Set.SourcePresetID Then
-		        // Clone this one
-		        Preset = New Beacon.MutablePreset(LoadedPreset)
-		        Exit For LoadedPreset
-		      End If
-		    Next
-		  Else
-		    Preset = New Beacon.MutablePreset
-		  End If
-		  
-		  Preset.Label = Set.Label
-		  Preset.MinItems = Set.MinNumItems
-		  Preset.MaxItems = Set.MaxNumItems
-		  For I As Integer = UBound(Preset) DownTo 0
-		    Preset.Remove(I)
-		  Next
-		  For Each Entry As Beacon.SetEntry In Set
-		    Preset.Append(New Beacon.PresetEntry(Entry))
-		  Next
-		  
-		  Dim Win As New PresetWindow
-		  Win.Editor.Preset = Preset
-		  Win.Title = Preset.Label
-		  Win.SourceMode = PresetWindow.SourceModes.FromItemSet
-		  Win.Show
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Sub Present(File As FolderItem)
 		  Dim Item As Xojo.IO.FolderItem = New Xojo.IO.FolderItem(File.NativePath.ToText)
 		  
@@ -202,10 +168,7 @@ End
 		      Dim Preset As Beacon.Preset = Editor.Preset
 		      
 		      Beacon.Data.SavePreset(Preset)
-		      If PresetManagerWindow.SharedWindow(False) <> Nil Then
-		        PresetManagerWindow.SharedWindow.UpdatePresets()
-		      End If
-		      PresetManagerWindow.SharedWindow.ShowPreset(Preset)
+		      PresetManagerWindow.UpdateIfVisible()
 		      
 		      Self.Title = Preset.Label
 		      Self.ContentsChanged = False

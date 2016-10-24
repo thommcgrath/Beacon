@@ -89,8 +89,8 @@ Implements Beacon.Countable
 		    Dim MinQuality As Integer = Max(Min(CType(Entry.MinQuality, Integer) + EntryQualityModifier, 8), 0)
 		    Dim MaxQuality As Integer = Max(Min(CType(Entry.MaxQuality, Integer) + EntryQualityModifier, 8), 0)
 		    
-		    Entry.MinQuantity = Entry.MinQuantity * EntryQuantityMultiplier
-		    Entry.MaxQuantity = Entry.MaxQuantity * EntryQuantityMultiplier
+		    Entry.MinQuantity = Round(Entry.MinQuantity * EntryQuantityMultiplier)
+		    Entry.MaxQuantity = Round(Entry.MaxQuantity * EntryQuantityMultiplier)
 		    Entry.MinQuality = CType(MinQuality, Beacon.Qualities)
 		    Entry.MaxQuality = CType(MaxQuality, Beacon.Qualities)
 		    
