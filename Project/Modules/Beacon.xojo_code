@@ -118,6 +118,25 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function ParsePublishedDocument(Contents As Text) As Beacon.Publishable
+		  Dim Document As Beacon.Document = Beacon.Document.Read(Contents)
+		  If Document <> Nil Then
+		    Return Document
+		  End If
+		  
+		  Try
+		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents)
+		    Dim Preset As Beacon.Preset = Beacon.Preset.FromDictionary(Dict)
+		    If Preset <> Nil Then
+		      Return Preset
+		    End If
+		  Catch Err As RuntimeException
+		    
+		  End Try
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Function PrimaryExtension(Extends Type As FileType) As String
 		  Dim Extensions() As String = Split(Type.Extensions, ";")

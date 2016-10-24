@@ -10,12 +10,12 @@ Protected Class RepositoryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DeleteDocument(Document As Beacon.Document, Identity As Beacon.Identity)
+		Sub DeleteDocument(Document As Beacon.Publishable, Identity As Beacon.Identity)
 		  If Self.mCurrentAction <> Beacon.RepositoryEngine.Actions.None Then
 		    Raise New Xojo.Core.UnsupportedOperationException
 		  End If
 		  
-		  Dim Signature As Xojo.Core.MemoryBlock = Identity.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Document.Identifier))
+		  Dim Signature As Xojo.Core.MemoryBlock = Identity.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Document.PublishID))
 		  
 		  Self.mCurrentAction = Beacon.RepositoryEngine.Actions.Delete
 		  Self.mSocket.Send("DELETE", Self.DocumentURL(Document) + "?signature=" + Beacon.EncodeHex(Signature))
@@ -23,13 +23,13 @@ Protected Class RepositoryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DocumentURL(Document As Beacon.Document) As Text
-		  Return Self.DocumentURL(Document.Identifier)
+		Function DocumentURL(Document As Beacon.Publishable) As Text
+		  Return Self.DocumentURL(Document.PublishID)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function DocumentURL(DocumentID As Text) As Text
+	#tag Method, Flags = &h21
+		Private Function DocumentURL(DocumentID As Text) As Text
 		  Return Beacon.WebURL + "/documents.php/" + DocumentID
 		End Function
 	#tag EndMethod
@@ -46,19 +46,30 @@ Protected Class RepositoryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub GetDocumentStatus(Document As Beacon.Document)
-		  Self.GetDocumentStatus(Document.Identifier)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub GetDocumentStatus(DocumentID As Text)
+		Sub GetDocumentStatus(Document As Beacon.Publishable)
 		  If Self.mCurrentAction <> Beacon.RepositoryEngine.Actions.None Then
 		    Raise New Xojo.Core.UnsupportedOperationException
 		  End If
 		  
 		  Self.mCurrentAction = Beacon.RepositoryEngine.Actions.Status
-		  Self.mSocket.Send("HEAD", Self.DocumentURL(DocumentID))
+		  Self.mSocket.Send("HEAD", Self.DocumentURL(Document))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub HandleReceivedDocument(Body As Text)
+		  Dim Document As Beacon.Document = Beacon.Document.Read(Body)
+		  If Document <> Nil Then
+		    RaiseEvent DocumentReceived(Document)
+		    Return
+		  End If
+		  
+		  Try
+		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Body)
+		    Dim Preset As Beacon.Preset = Beacon.Preset.FromDictionary(Dict)
+		  Catch Err As RuntimeException
+		    
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -127,17 +138,24 @@ Protected Class RepositoryEngine
 		  Dim Response As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
 		  
 		  Select Case Self.mCurrentAction
+		    
 		  Case Beacon.RepositoryEngine.Actions.List
-		    If HTTPStatus = 200 Then
-		      Dim Results() As Auto = Xojo.Data.ParseJSON(Response)
-		      Break
-		    Else
-		      RaiseEvent DocumentListError(Response)
-		    End If
+		    #if false
+		      If HTTPStatus = 200 Then
+		        Dim Results() As Auto = Xojo.Data.ParseJSON(Response)
+		        Break
+		      Else
+		        RaiseEvent DocumentListError(Response)
+		      End If
+		    #endif
 		  Case Beacon.RepositoryEngine.Actions.Get
 		    If HTTPStatus = 200 Then
-		      Dim Document As Beacon.Document = Beacon.Document.Read(Response)
-		      RaiseEvent DocumentReceived(Document)
+		      Dim Document As Beacon.Publishable = Beacon.ParsePublishedDocument(Response)
+		      If Document <> Nil Then
+		        RaiseEvent DocumentReceived(Document)
+		      Else
+		        RaiseEvent DocumentRetrieveError("Unknown document contents")
+		      End If
 		    Else
 		      RaiseEvent DocumentRetrieveError(Response)
 		    End If
@@ -160,13 +178,12 @@ Protected Class RepositoryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveDocument(Document As Beacon.Document, Identity As Beacon.Identity)
+		Sub SaveDocument(Document As Beacon.Publishable, Identity As Beacon.Identity)
 		  If Self.mCurrentAction <> Beacon.RepositoryEngine.Actions.None Then
 		    Raise New Xojo.Core.UnsupportedOperationException
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = Document.Export
-		  Dim Contents As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Xojo.Data.GenerateJSON(Dict))
+		  Dim Contents As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Document.PublishBody)
 		  Dim Signature As Xojo.Core.MemoryBlock = Identity.Sign(Contents)
 		  Dim UserID As Text = Identity.Identifier
 		  Dim PublicKey As Text = Identity.PublicKey
@@ -191,7 +208,7 @@ Protected Class RepositoryEngine
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event DocumentReceived(Document As Beacon.Document)
+		Event DocumentReceived(Document As Beacon.Publishable)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -199,7 +216,7 @@ Protected Class RepositoryEngine
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event DocumentsReceived(Documents() As Beacon.Document)
+		Event DocumentsReceived(Documents() As Beacon.Publishable)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

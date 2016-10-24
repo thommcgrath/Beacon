@@ -284,10 +284,13 @@ Inherits Application
 		Private Sub mFileLoader_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
-		  #Pragma Unused HTTPStatus
 		  
 		  Self.mFileLoading = False
 		  Self.DownloadNextFile
+		  
+		  If HTTPStatus <> 200 Then
+		    Return
+		  End If
 		  
 		  Dim TextValue As Text
 		  Try
@@ -297,14 +300,23 @@ Inherits Application
 		    Return
 		  End Try
 		  
-		  Dim Document As Beacon.Document = Beacon.Document.Read(TextValue)
+		  Dim Document As Beacon.Publishable = Beacon.ParsePublishedDocument(TextValue)
 		  If Document = Nil Then
 		    // Cannot be parsed correctly
 		    Return
 		  End If
 		  
-		  Dim Win As New DocWindow(Document)
-		  Win.Show
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Document)
+		  Select Case Info.FullName
+		  Case "Beacon.Document"
+		    Dim Win As New DocWindow(Beacon.Document(Document))
+		    Win.Show
+		  Case "Beacon.Preset"
+		    Dim Preset As Beacon.Preset = PresetDialog.Present(Beacon.Preset(Document), "Import")
+		    If Preset <> Nil Then
+		      Break
+		    End If
+		  End Select
 		End Sub
 	#tag EndMethod
 
