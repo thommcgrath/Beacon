@@ -683,13 +683,33 @@ End
 		  End If
 		  
 		  Dim Set As Beacon.ItemSet = Me.RowTag(Idx)
+		  Dim Preset As Beacon.Preset
+		  If Set.SourcePresetID <> "" Then
+		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets
+		    For I As Integer = 0 To UBound(Presets)
+		      If Presets(I).PresetID = Set.SourcePresetID Then
+		        Preset = Presets(I)
+		        Exit For I
+		      End If
+		    Next
+		  End If
 		  
 		  Dim PresetItem As New MenuItem("Create Preset…", Set)
+		  If Preset <> Nil Then
+		    PresetItem.Text = "Update """ + Preset.Label + """ Preset…"
+		  End If
+		  PresetItem.Name = "createpreset"
 		  PresetItem.Enabled = Set.Count > 0
 		  Base.Append(PresetItem)
 		  
 		  Dim ReconfigureItem As New MenuItem("Reconfigure From Preset", Set)
-		  ReconfigureItem.Enabled = Set.SourcePresetID <> ""
+		  If Preset <> Nil Then
+		    ReconfigureItem.Text = "Reconfigure From """ + Preset.Label + """ Preset"
+		    ReconfigureItem.Enabled = True
+		  Else
+		    ReconfigureItem.Enabled = False
+		  End If
+		  ReconfigureItem.Name = "reconfigure"
 		  Base.Append(ReconfigureItem)
 		  
 		  Return True
@@ -701,15 +721,15 @@ End
 		    Return False
 		  End If
 		  
-		  Select Case HitItem.Text
-		  Case "Create Preset…"
+		  Select Case HitItem.Name
+		  Case "createpreset"
 		    Dim Set As Beacon.ItemSet = HitItem.Tag
 		    Dim Preset As Beacon.Preset = PresetDialog.Present(Self.TrueWindow, Set)
 		    If Preset <> Nil Then
 		      Beacon.Data.SavePreset(Preset)
 		      PresetManagerWindow.UpdateIfVisible()
 		    End If
-		  Case "Reconfigure From Preset"
+		  Case "reconfigure"
 		    Dim Set As Beacon.ItemSet = HitItem.Tag
 		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets
 		    For Each Preset As Beacon.Preset In Presets
