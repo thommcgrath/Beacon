@@ -696,6 +696,33 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Method, Flags = &h21
+		Private Sub EditSelectedEntries()
+		  Dim Sources() As Beacon.SetEntry
+		  For I As Integer = 0 To EntryList.ListCount - 1
+		    If Not EntryList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Sources.Append(EntryList.RowTag(I))
+		  Next
+		  
+		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Sources)
+		  If Entries = Nil Then
+		    Return
+		  End If
+		  
+		  For I As Integer = 0 To UBound(Entries)
+		    Dim Source As Beacon.SetEntry = Sources(I)
+		    Dim Idx As Integer = Self.mSet.IndexOf(Source)
+		    Self.mSet(Idx) = Entries(I)
+		  Next
+		  
+		  Self.UpdateEntryList()
+		  RaiseEvent Updated
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub EnableMenuItems()
 		  
@@ -703,7 +730,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub RemoveSelectedEntry()
+		Private Sub RemoveSelectedEntries()
 		  Dim Changed As Boolean
 		  
 		  For I As Integer = EntryList.ListCount - 1 DownTo 0
@@ -855,7 +882,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear()
-		  Self.RemoveSelectedEntry()
+		  Self.RemoveSelectedEntries()
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -977,6 +1004,11 @@ End
 		  Me.ColumnAlignment(6) = Listbox.AlignRight
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  Self.EditSelectedEntries()
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events LabelField
 	#tag Event
@@ -1074,34 +1106,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Dim Sources() As Beacon.SetEntry
-		  For I As Integer = 0 To EntryList.ListCount - 1
-		    If Not EntryList.Selected(I) Then
-		      Continue
-		    End If
-		    
-		    Sources.Append(EntryList.RowTag(I))
-		  Next
-		  
-		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Sources)
-		  If Entries = Nil Then
-		    Return
-		  End If
-		  
-		  For I As Integer = 0 To UBound(Entries)
-		    Dim Source As Beacon.SetEntry = Sources(I)
-		    Dim Idx As Integer = Self.mSet.IndexOf(Source)
-		    Self.mSet(Idx) = Entries(I)
-		  Next
-		  
-		  Self.UpdateEntryList()
-		  RaiseEvent Updated
+		  Self.EditSelectedEntries()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Separators
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
 		  G.ForeColor = &cCCCCCC
@@ -1119,7 +1130,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action()
-		  Self.RemoveSelectedEntry()
+		  Self.RemoveSelectedEntries()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
