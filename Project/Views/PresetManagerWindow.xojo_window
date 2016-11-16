@@ -151,7 +151,7 @@ Begin BeaconWindow PresetManagerWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   204
+      Left            =   296
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -159,6 +159,37 @@ Begin BeaconWindow PresetManagerWindow
       LockTop         =   False
       Scope           =   2
       TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   360
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton CloneButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Duplicate"
+      Default         =   False
+      Enabled         =   False
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   204
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -279,6 +310,7 @@ End
 		Sub Change()
 		  If Me.ListIndex = -1 Then
 		    EditButton.Enabled = False
+		    CloneButton.Enabled = False
 		    DeleteButton.Enabled = False
 		    DeleteButton.Caption = "Delete"
 		    Return
@@ -286,6 +318,7 @@ End
 		  
 		  Dim Preset As Beacon.Preset = Me.RowTag(Me.ListIndex)
 		  EditButton.Enabled = True
+		  CloneButton.Enabled = True
 		  
 		  Select Case Preset.Type
 		  Case Beacon.Preset.Types.BuiltIn
@@ -329,6 +362,35 @@ End
 		  Dim Preset As Beacon.Preset = List.RowTag(List.ListIndex)
 		  Beacon.Data.RemovePreset(Preset)
 		  Self.UpdatePresets()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CloneButton
+	#tag Event
+		Sub Action()
+		  Dim Source As Beacon.Preset = List.RowTag(List.ListIndex)
+		  Dim Clone As New Beacon.MutablePreset
+		  Clone.Label = Source.Label
+		  Clone.Grouping = Source.Grouping
+		  Clone.MaxItems = Source.MaxItems
+		  Clone.MinItems = Source.MinItems
+		  Clone.QualityModifier(Beacon.LootSource.Kinds.Standard) = Source.QualityModifier(Beacon.LootSource.Kinds.Standard)
+		  Clone.QualityModifier(Beacon.LootSource.Kinds.Bonus) = Source.QualityModifier(Beacon.LootSource.Kinds.Bonus)
+		  Clone.QualityModifier(Beacon.LootSource.Kinds.Cave) = Source.QualityModifier(Beacon.LootSource.Kinds.Cave)
+		  Clone.QualityModifier(Beacon.LootSource.Kinds.Sea) = Source.QualityModifier(Beacon.LootSource.Kinds.Sea)
+		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Standard) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Standard)
+		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus)
+		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Cave) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Cave)
+		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Sea) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Sea)
+		  For Each Entry As Beacon.PresetEntry In Source
+		    Clone.Append(New Beacon.PresetEntry(Entry))
+		  Next
+		  
+		  Dim Preset As Beacon.Preset = PresetDialog.Present(Self, Clone)
+		  If Preset <> Nil Then
+		    Beacon.Data.SavePreset(Preset)
+		    Self.UpdatePresets(Preset)
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

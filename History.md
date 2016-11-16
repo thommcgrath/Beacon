@@ -2,6 +2,7 @@
 
 ## Build 9
 
+- Now possible to duplicate a preset.
 - Entry editor engram list will correctly sort on the checkbox column.
 
 ## Build 8
