@@ -45,7 +45,7 @@ Begin Window EntryEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton CancelButton
@@ -232,7 +232,7 @@ Begin Window EntryEditor
          GridLinesHorizontal=   0
          GridLinesVertical=   0
          HasHeading      =   True
-         HeadingIndex    =   -1
+         HeadingIndex    =   1
          Height          =   216
          HelpTag         =   ""
          Hierarchical    =   False
@@ -1639,6 +1639,26 @@ End
 		Sub Open()
 		  Me.ColumnType(0) = Listbox.TypeCheckbox
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
+		  If Column <> 0 Then
+		    Return False
+		  End If
+		  
+		  If Me.CellCheck(Row1, 0) = True And Me.CellCheck(Row2, 0) = False Then
+		    Result = -1
+		  ElseIf Me.CellCheck(Row1, 0) = False And Me.CellCheck(Row2, 0) = True Then
+		    Result = 1
+		  Else
+		    Dim Engram1 As Beacon.Engram = Me.RowTag(Row1)
+		    Dim Engram2 As Beacon.Engram = Me.RowTag(Row2)
+		    
+		    Result = StrComp(Engram1.Label, Engram2.Label, 0)
+		  End If
+		  
+		  Return True
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events MinQuantityField

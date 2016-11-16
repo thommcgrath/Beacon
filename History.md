@@ -1,5 +1,9 @@
 # Beacon Version History
 
+## Build 9
+
+- Entry editor engram list will correctly sort on the checkbox column.
+
 ## Build 8
 
 - Loot source list now includes icons and can be filtered to show all sources, island sources, or scorched sources.
