@@ -391,6 +391,7 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
+			  Self.mSetWeight = Min(Max(Value, 0.01), 1)
 			End Set
 		#tag EndSetter
 		Weight As Double
