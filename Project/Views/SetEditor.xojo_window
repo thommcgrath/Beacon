@@ -251,7 +251,7 @@ Begin ContainerControl SetEditor
       LockRight       =   False
       LockTop         =   True
       Maximum         =   100
-      Minimum         =   0
+      Minimum         =   1
       PageStep        =   25
       Scope           =   2
       TabIndex        =   8

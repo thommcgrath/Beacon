@@ -45,7 +45,7 @@ Begin Window EntryEditor
       TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton CancelButton
@@ -735,7 +735,7 @@ Begin Window EntryEditor
          LockRight       =   False
          LockTop         =   True
          Maximum         =   100
-         Minimum         =   0
+         Minimum         =   1
          PageStep        =   25
          Scope           =   2
          TabIndex        =   17
