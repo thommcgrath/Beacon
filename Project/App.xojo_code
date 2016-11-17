@@ -19,7 +19,6 @@ Inherits Application
 		  For I As Integer = 0 To WindowCount - 1
 		    Dim Win As Window = Window(I)
 		    If Win IsA BeaconWindow Then
-		      Dim Cmd As String = ""
 		      BeaconWindow(Win).UpdateWindowMenu()
 		      Counter = Counter + 1
 		    End If

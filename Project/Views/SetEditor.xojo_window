@@ -785,13 +785,20 @@ End
 		  For I As Integer = 0 To UBound(Self.mSet)
 		    Dim Entry As Beacon.SetEntry = Self.mSet(I)
 		    Dim BlueprintChance As Double = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint, 0)
+		    Dim RelativeWeight As Double = Self.mSet.RelativeWeight(I)
+		    Dim ChanceText As String
+		    If RelativeWeight < 0.01 Then
+		      ChanceText = "< 1%"
+		    Else
+		      ChanceText = Str(RelativeWeight * 100, "0") + "%"
+		    End If
 		    
 		    EntryList.Cell(I, 0) = Entry.Label
 		    EntryList.Cell(I, 1) = Str(Entry.MinQuantity)
 		    EntryList.Cell(I, 2) = Str(Entry.MaxQuantity)
 		    EntryList.Cell(I, 3) = Language.LabelForQuality(Entry.MinQuality)
 		    EntryList.Cell(I, 4) = Language.LabelForQuality(Entry.MaxQuality)
-		    EntryList.Cell(I, 5) = Str(Self.mSet.RelativeWeight(I) * 100, "0") + "%"
+		    EntryList.Cell(I, 5) = ChanceText
 		    EntryList.Cell(I, 6) = Str(BlueprintChance * 100, "0") + "%"
 		    
 		    EntryList.RowTag(I) = Entry

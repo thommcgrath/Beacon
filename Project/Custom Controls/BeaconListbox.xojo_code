@@ -24,6 +24,8 @@ Inherits Listbox
 
 	#tag Event
 		Function CellTextPaint(g As Graphics, row As Integer, column As Integer, x as Integer, y as Integer) As Boolean
+		  #Pragma Unused X
+		  
 		  If Self.Selected(Row) Then
 		    G.ForeColor = if(Self.Highlighted, Self.SelectedTextColor, Self.SelectedTextColorInactive)
 		  Else

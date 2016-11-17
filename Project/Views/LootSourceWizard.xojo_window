@@ -44,6 +44,7 @@ Begin Window LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True
@@ -132,6 +133,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "Add Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -247,6 +249,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Define Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -405,6 +408,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "Customize Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -439,6 +443,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   11
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Max Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -473,6 +478,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   9
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Min Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -507,6 +513,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Class String:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -541,6 +548,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Label:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -575,6 +583,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Kind:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -609,6 +618,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   7
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Availability:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -920,6 +930,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "Min Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -997,6 +1008,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "Max Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1113,6 +1125,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   6
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "Presets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1367,6 +1380,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer) As Boolean
+		  #Pragma Unused G
+		  #Pragma Unused Row
+		  #Pragma Unused TextColor
+		  #Pragma Unused DrawSpace
+		  #Pragma Unused VerticalPosition
+		  
 		  If Column <> 0 Then
 		    Return False
 		  End If
@@ -1376,6 +1395,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color) As Boolean
+		  #Pragma Unused BackgroundColor
+		  
 		  If Column <> 0 Or Row >= Me.ListCount Then
 		    Return False
 		  End If

@@ -115,6 +115,7 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -307,6 +308,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -316,6 +318,7 @@ Begin BeaconWindow DocWindow
       TabPanelIndex   =   0
    End
    Begin Beacon.RepositoryEngine Repository
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1006,6 +1009,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color) As Boolean
+		  #Pragma Unused BackgroundColor
+		  
 		  If Column <> 0 Or Row >= Me.ListCount Then
 		    Return False
 		  End If
@@ -1022,6 +1027,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer) As Boolean
+		  #Pragma Unused G
+		  #Pragma Unused Row
+		  #Pragma Unused TextColor
+		  #Pragma Unused DrawSpace
+		  #Pragma Unused VerticalPosition
+		  
 		  If Column = 0 Then
 		    Return True
 		  End If

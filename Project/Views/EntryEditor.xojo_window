@@ -1260,6 +1260,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ResizeCompleted(Sender As AnimationKit.MoveTask)
+		  #Pragma Unused Sender
+		  
 		  If PagePanel1.Value = 1 Then
 		    Self.MaxHeight = Self.MinHeight
 		  End If

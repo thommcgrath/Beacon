@@ -240,8 +240,51 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function RelativeWeight(Index As Integer) As Double
-		  Dim Item As Beacon.SetEntry = Self.mEntries(Index)
-		  Return Item.Weight / Self.TotalWeight()
+		  Return Self.mEntries(Index).Weight / Self.TotalWeight()
+		  
+		  // The following code is much more accurate, but I can't figure out
+		  // how to deal with weights, so it is disabled for now.
+		  #if false
+		    Dim EntryCount As UInteger = UBound(Self.mEntries) + 1
+		    If EntryCount = 0 Then
+		      Return 0
+		    End If
+		    
+		    Dim WeightMin As Double = Self.mEntries(0).Weight
+		    Dim WeightMax As Double = Self.mEntries(0).Weight
+		    For I As Integer = 1 To UBound(Self.mEntries)
+		      WeightMin = Min(WeightMin, Self.mEntries(I).Weight)
+		      WeightMax = Max(WeightMax, Self.mEntries(I).Weight)
+		    Next
+		    Dim WeightRange As Double = WeightMax - WeightMin
+		    Dim CombinationWeight As Double
+		    If WeightRange = 0 Then
+		      CombinationWeight = 1
+		    Else
+		      CombinationWeight = (Self.mEntries(Index).Weight - WeightMin) / WeightRange
+		    End If
+		    
+		    Dim MinNumItems As UInteger = Max(Min(EntryCount, Self.MinNumItems, Self.MaxNumItems), 1)
+		    Dim MaxNumItems As UInteger = Max(Min(Self.MaxNumItems, EntryCount), MinNumItems)
+		    Dim TotalCombinations, TotalMatches As Double
+		    
+		    For I As Integer = MaxNumItems DownTo MinNumItems
+		      Dim Combinations As Double = Beacon.Combinations(EntryCount, I)
+		      Dim Matches As Double = (I / EntryCount) * Combinations
+		      TotalCombinations = TotalCombinations + Combinations
+		      TotalMatches = TotalMatches + Matches
+		    Next
+		    
+		    If TotalCombinations = 1 Then
+		      // Feels dirty, but this is true
+		      Return 1
+		    ElseIf TotalCombinations = 0 Then
+		      Return 0
+		    End If
+		    
+		    Dim Chance As Double = Max(Min(TotalMatches / TotalCombinations, 1), 0.01)
+		    Return Chance
+		  #endif
 		End Function
 	#tag EndMethod
 

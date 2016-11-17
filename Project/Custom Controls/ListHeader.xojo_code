@@ -103,6 +103,8 @@ Inherits ControlCanvas
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
 		  Dim Scheme As ColorScheme = If(Self.Highlighted, Self.mActiveColors, Self.mInactiveColors)
 		  
 		  G.ForeColor = Scheme.BackgroundColor
