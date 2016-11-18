@@ -692,6 +692,50 @@ Begin ContainerControl SetEditor
       Visible         =   True
       Width           =   1
    End
+   Begin UpDownArrows MinItemsStepper
+      AcceptFocus     =   False
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   23
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   192
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   23
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   53
+      Visible         =   True
+      Width           =   13
+   End
+   Begin UpDownArrows MaxItemsStepper
+      AcceptFocus     =   False
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   23
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   192
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   24
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   87
+      Visible         =   True
+      Width           =   13
+   End
 End
 #tag EndWindow
 
@@ -1037,6 +1081,7 @@ End
 		  End If
 		  
 		  Self.mSet.MinNumItems = Val(Me.Text)
+		  Self.UpdateEntryList()
 		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
@@ -1049,6 +1094,7 @@ End
 		  End If
 		  
 		  Self.mSet.MaxNumItems = Val(Me.Text)
+		  Self.UpdateEntryList()
 		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
@@ -1138,6 +1184,41 @@ End
 	#tag Event
 		Sub Action()
 		  Self.RemoveSelectedEntries()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MinItemsStepper
+	#tag Event
+		Sub Down()
+		  Dim MinItems As UInteger = CDbl(MinItemsField.Text)
+		  MinItems = Max(MinItems - 1, 1)
+		  MinItemsField.Text = Format(MinItems, "0")
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Up()
+		  Dim MinItems As UInteger = CDbl(MinItemsField.Text)
+		  Dim MaxItems As UInteger = CDbl(MaxItemsField.Text)
+		  MinItems = Min(MinItems + 1, MaxItems)
+		  MinItemsField.Text = Format(MinItems, "0")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MaxItemsStepper
+	#tag Event
+		Sub Down()
+		  Dim MinItems As UInteger = CDbl(MinItemsField.Text)
+		  Dim MaxItems As UInteger = CDbl(MaxItemsField.Text)
+		  MaxItems = Max(MaxItems - 1, MinItems)
+		  MaxItemsField.Text = Format(MaxItems, "0")
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Up()
+		  Dim EntryCount As UInteger = Self.mSet.Count
+		  Dim MaxItems As UInteger = CDbl(MaxItemsField.Text)
+		  MaxItems = Min(MaxItems + 1, EntryCount)
+		  MaxItemsField.Text = Format(MaxItems, "0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
