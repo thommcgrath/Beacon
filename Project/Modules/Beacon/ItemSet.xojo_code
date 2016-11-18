@@ -250,33 +250,31 @@ Implements Beacon.Countable
 		      Return 0
 		    End If
 		    
-		    Dim WeightMin As Double = Self.mEntries(0).Weight
-		    Dim WeightMax As Double = Self.mEntries(0).Weight
-		    For I As Integer = 1 To UBound(Self.mEntries)
-		      WeightMin = Min(WeightMin, Self.mEntries(I).Weight)
-		      WeightMax = Max(WeightMax, Self.mEntries(I).Weight)
-		    Next
-		    Dim WeightRange As Double = WeightMax - WeightMin
-		    Dim CombinationWeight As Double
-		    If WeightRange = 0 Then
-		      CombinationWeight = 1
-		    Else
-		      CombinationWeight = (Self.mEntries(Index).Weight - WeightMin) / WeightRange
-		    End If
+		    #if false
+		      // Increasing the entry count reduces chance of selection, so the goal
+		      // was to increase the count inverse to the weight. This quickly
+		      // overloads the doubles, and doesn't give me exactly the behavior I'm
+		      // looking for, though it is close
+		      Dim WeightMax As Double
+		      For I As Integer = 1 To UBound(Self.mEntries)
+		        WeightMax = Max(WeightMax, Self.mEntries(I).Weight)
+		      Next
+		      Dim Factor As Double = WeightMax / Self.mEntries(Index).Weight
+		      EntryCount = EntryCount * Factor
+		    #endif
 		    
 		    Dim MinNumItems As UInteger = Max(Min(EntryCount, Self.MinNumItems, Self.MaxNumItems), 1)
 		    Dim MaxNumItems As UInteger = Max(Min(Self.MaxNumItems, EntryCount), MinNumItems)
 		    Dim TotalCombinations, TotalMatches As Double
 		    
 		    For I As Integer = MaxNumItems DownTo MinNumItems
-		      Dim Combinations As Double = Beacon.Combinations(EntryCount, I)
+		      Dim Combinations As Double = Beacon.Combinations(EntryCount, I, Not Self.ItemsRandomWithoutReplacement)
 		      Dim Matches As Double = (I / EntryCount) * Combinations
 		      TotalCombinations = TotalCombinations + Combinations
 		      TotalMatches = TotalMatches + Matches
 		    Next
 		    
 		    If TotalCombinations = 1 Then
-		      // Feels dirty, but this is true
 		      Return 1
 		    ElseIf TotalCombinations = 0 Then
 		      Return 0

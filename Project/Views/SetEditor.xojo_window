@@ -1121,6 +1121,7 @@ End
 		  End If
 		  
 		  Self.mSet.ItemsRandomWithoutReplacement = Me.Value
+		  Self.UpdateEntryList()
 		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent

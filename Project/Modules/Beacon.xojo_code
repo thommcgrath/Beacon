@@ -1,8 +1,12 @@
 #tag Module
 Protected Module Beacon
 	#tag Method, Flags = &h1
-		Protected Function Combinations(TotalCount As UInteger, NumPerSelection As UInteger) As Double
-		  Return Beacon.Factorial(TotalCount) / (Beacon.Factorial(NumPerSelection) * Beacon.Factorial(TotalCount - NumPerSelection))
+		Protected Function Combinations(TotalCount As UInteger, NumPerSelection As UInteger, RepetitionAllowed As Boolean) As Double
+		  If RepetitionAllowed Then
+		    Return Beacon.Factorial((NumPerSelection + TotalCount) - 1) / (Beacon.Factorial(NumPerSelection) * Beacon.Factorial(TotalCount - 1))
+		  Else
+		    Return Beacon.Factorial(TotalCount) / (Beacon.Factorial(NumPerSelection) * Beacon.Factorial(TotalCount - NumPerSelection))
+		  End If
 		End Function
 	#tag EndMethod
 
