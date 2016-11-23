@@ -1,15 +1,5 @@
 #tag Module
 Protected Module Beacon
-	#tag Method, Flags = &h1
-		Protected Function Combinations(TotalCount As UInteger, NumPerSelection As UInteger, RepetitionAllowed As Boolean) As Double
-		  If RepetitionAllowed Then
-		    Return Beacon.Factorial((NumPerSelection + TotalCount) - 1) / (Beacon.Factorial(NumPerSelection) * Beacon.Factorial(TotalCount - 1))
-		  Else
-		    Return Beacon.Factorial(TotalCount) / (Beacon.Factorial(NumPerSelection) * Beacon.Factorial(TotalCount - NumPerSelection))
-		  End If
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function Convert(Extends File As Global.FolderItem) As Xojo.IO.FolderItem
 		  Dim Path As String = File.NativePath
@@ -95,17 +85,6 @@ Protected Module Beacon
 		    Chars.Append(Value.ToHex(2))
 		  Next
 		  Return Text.Join(Chars, "")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Factorial(Value As UInteger) As Double
-		  Dim Result As Double = 1
-		  While Value > 0
-		    Result = Result * Value
-		    Value = Value - 1
-		  Wend
-		  Return Result
 		End Function
 	#tag EndMethod
 

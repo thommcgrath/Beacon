@@ -241,48 +241,6 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function RelativeWeight(Index As Integer) As Double
 		  Return Self.mEntries(Index).Weight / Self.TotalWeight()
-		  
-		  // The following code is much more accurate, but I can't figure out
-		  // how to deal with weights, so it is disabled for now.
-		  #if false
-		    Dim EntryCount As UInteger = UBound(Self.mEntries) + 1
-		    If EntryCount = 0 Then
-		      Return 0
-		    End If
-		    
-		    #if false
-		      // Increasing the entry count reduces chance of selection, so the goal
-		      // was to increase the count inverse to the weight. This quickly
-		      // overloads the doubles, and doesn't give me exactly the behavior I'm
-		      // looking for, though it is close
-		      Dim WeightMax As Double
-		      For I As Integer = 1 To UBound(Self.mEntries)
-		        WeightMax = Max(WeightMax, Self.mEntries(I).Weight)
-		      Next
-		      Dim Factor As Double = WeightMax / Self.mEntries(Index).Weight
-		      EntryCount = EntryCount * Factor
-		    #endif
-		    
-		    Dim MinNumItems As UInteger = Max(Min(EntryCount, Self.MinNumItems, Self.MaxNumItems), 1)
-		    Dim MaxNumItems As UInteger = Max(Min(Self.MaxNumItems, EntryCount), MinNumItems)
-		    Dim TotalCombinations, TotalMatches As Double
-		    
-		    For I As Integer = MaxNumItems DownTo MinNumItems
-		      Dim Combinations As Double = Beacon.Combinations(EntryCount, I, Not Self.ItemsRandomWithoutReplacement)
-		      Dim Matches As Double = (I / EntryCount) * Combinations
-		      TotalCombinations = TotalCombinations + Combinations
-		      TotalMatches = TotalMatches + Matches
-		    Next
-		    
-		    If TotalCombinations = 1 Then
-		      Return 1
-		    ElseIf TotalCombinations = 0 Then
-		      Return 0
-		    End If
-		    
-		    Dim Chance As Double = Max(Min(TotalMatches / TotalCombinations, 1), 0.01)
-		    Return Chance
-		  #endif
 		End Function
 	#tag EndMethod
 
