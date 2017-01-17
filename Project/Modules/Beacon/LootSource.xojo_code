@@ -21,6 +21,7 @@ Implements Beacon.Countable
 		  Self.mSetsRandomWithoutReplacement = True
 		  Self.mUIColor = &cFFFFFF00
 		  Self.mSortValue = 99
+		  Self.mNumItemSetsPower = 1
 		End Sub
 	#tag EndMethod
 
