@@ -478,7 +478,7 @@ Implements Beacon.DataSource
 		    Source.Label = Results.Field("label").StringValue.ToText
 		    Source.Kind = Beacon.LootSource.TextToKind(Results.Field("kind").StringValue.ToText)
 		    Source.Package = Beacon.LootSource.IntegerToPackage(Results.Field("engram_mask").IntegerValue)
-		    Source.Multipliers = New Beacon.Range(Results.Field("multiplier_min").IntegerValue, Results.Field("multiplier_max").IntegerValue)
+		    Source.Multipliers = New Beacon.Range(Results.Field("multiplier_min").DoubleValue, Results.Field("multiplier_max").DoubleValue)
 		    Source.UIColor = RGB(Integer.FromHex(RedHex.ToText), Integer.FromHex(GreenHex.ToText), Integer.FromHex(BlueHex.ToText), Integer.FromHex(AlphaHex.ToText))
 		    Source.SortValue = Results.Field("sort").IntegerValue
 		    Sources.Append(New Beacon.LootSource(Source))
