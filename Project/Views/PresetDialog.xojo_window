@@ -99,6 +99,7 @@ Begin Window PresetDialog
       HasBackColor    =   False
       Height          =   690
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   14
       LockBottom      =   True
@@ -165,7 +166,8 @@ End
 		        Exit For LoadedPreset
 		      End If
 		    Next
-		  Else
+		  End If
+		  If Preset = Nil Then
 		    Preset = New Beacon.MutablePreset
 		  End If
 		  
