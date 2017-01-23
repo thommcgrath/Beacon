@@ -1,11 +1,18 @@
 # Beacon Version History
 
-## Build 9
+## Build 9 (Beta 2)
+
+*All user should rebuild their configs using this version. Quality values were not correct in previous builds.*
 
 - Now possible to duplicate a preset.
 - Entry editor engram list will correctly sort on the checkbox column.
+- Item set entries can now be double-clicked to edit.
+- Added steppers to item set min and max fields.
+- Item sets will correctly default to NumItemSetsPower=1 rather than 0.
+- Fixed critical issue where Beacon was truncating the decimals from loot source multipliers.
+- Fixed exception caused by trying to create a new preset from an item set that was previously created from a preset which no longer exists.
 
-## Build 8
+## Build 8 (Beta 1)
 
 - Loot source list now includes icons and can be filtered to show all sources, island sources, or scorched sources.
 - New loot source wizard. Selecting a defined source is clearer, allows adding presets while adding a loot source. Custom loot sources now have a full range of settings available to ensure proper loot calculation on export.
@@ -26,11 +33,11 @@
 - Option/Alt while selecting a preset from a menu will no longer trigger an edit action. Instead, edit presets from the preset library.
 - New per-item options for presets to prevent modification of quality and or quantity based on the loot source.
 
-## Build 7
+## Build 7 (Alpha 7)
 
 - Fixing cast issue with importing from text.
 
-## Build 6
+## Build 6 (Alpha 6)
 
 - Added missing items to presets: night vision goggles, tapejara saddle, metal sword, pike, water jar, and canteen.
 - Added new presets: SCUBA Gear, Player Consumables, and Dino Consumables.
@@ -39,11 +46,11 @@
 - Local database of loot sources and engrams is now automatically updated online.
 - Missing items added to engram database: Tapejara Egg, and Archaeopteryx Egg.
 
-## Build 5
+## Build 5 (Alpha 5)
 
 - Fixed KeyNotFoundExceptions on subsequent launches for some users.
 
-## Build 4
+## Build 4 (Alpha 4)
 
 - Fixed crash while importing an empty config.
 - A beacon is know known as a loot source, since Beacon works for more than just beacons.
@@ -54,7 +61,7 @@
 - Introducing document sharing! This couldn't be simpler. Just open your Beacon document and choose "Publish Document…" from the "Document" menu. Give the document a title and description, that's it! The document will be stored online and a shareable URL will be returned. Need to make changes? Just publish again, the URL will stay the same!
 - Hidden multipliers for all loot sources are now known. Thanks to https://survivetheark.com/index.php?/profile/290980-qowyn/ for the missing Scorched Earth multipliers.
 
-## Build 3
+## Build 3 (Alpha 3)
 
 - Now supports copy & paste. Users can now copy a beacon and paste it into another document or even directly into their text editor. When pasting into a text editor, the text is a properly constructed ConfigOverrideSupplyCrateItems line ready for use. It is also possible to go in the opposite direction. Copy a ConfigOverrideSupplyCrateItems line from a text editor and paste into Beacon.
 - Fixed an artificial minimum quality.
@@ -67,7 +74,7 @@
 - Changed how blueprints are handled. This will prevent excessive blueprints found in loot sources.
 - Added "Report a Problem" to the Help/Application menu.
 
-## Build 2
+## Build 2 (Alpha 2)
 
 - Added "Import Config" under the File menu. An existing Game.ini file can be imported into Beacon. A new beacon document will be created from it which can be customized, saved, and exported again. This process will parse all ConfigOverrideSupplyCrateItems lines in the file.
 - Multiple set entries can be edited at the same time. Simply select multiple lines with shift or control/command, and press edit. Checkboxes on the right of each value allow users to edit only the intended values.
@@ -81,6 +88,6 @@
 - Added an About window.
 - All known loot sources have been defined.
 
-## Build 1
+## Build 1 (Alpha 1)
 
 Initial release
