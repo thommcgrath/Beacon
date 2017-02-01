@@ -57,6 +57,6 @@ $hero_name = '/beacon/assets/images/' . $hero_name;
 	<p class="text-center"><a href="<?php echo $win_url; ?>" class="download-button">Download for <?php echo $win_label; ?></a><br><a href="<?php echo $mac_url; ?>" class="download-alternate">Or Download for <?php echo $mac_label; ?></a></p>
 	<?php break;
 	} ?>
-	<p class="text-center">Version <?php echo $version; ?>. Engrams database last updated <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A T') . '</time>'; ?>.</p>
+	<p class="text-center">Version <?php echo $version; ?>. Engrams database last updated <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A T') . '</time>'; ?>. <a href="/beacon/classes.php">Download engrams</a></p>
 	<p class="text-center"><a href="https://github.com/thommcgrath/Beacon"><img src="/gfx/GitHubLogo.png" srcset="/gfx/GitHubLogo.png 1x, /gfx/GitHubLogo@2x.png 2x, /gfx/GitHubLogo@3x.png 3x" width="93" height="25" alt="Beacon on GitHub"></a></p>
 </div>

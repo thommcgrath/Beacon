@@ -108,10 +108,15 @@ $values['presets'] = array(
 	'removals' => $presets_deleted
 );
 
-$now = New DateTime('now', New DateTimeZone('UTC'));
-$values['timestamp'] = $now->format('Y-m-d H:i:s');
+$results = $database->Query("SELECT MAX(max) FROM ((SELECT MAX(last_update AT TIME ZONE 'UTC') FROM loot_sources) UNION (SELECT MAX(last_update AT TIME ZONE 'UTC') FROM presets) UNION (SELECT MAX(last_update AT TIME ZONE 'UTC') FROM engrams)) AS dates;");
+$last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
 
-header('Content-Type: text/plain');
+$values['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
+$values['beacon_version'] = 1;
+$values['is_full'] = ($since === null) ? 1 : 0;
+
+header('Content-Type: application/json');
+header('Content-Disposition: attachment; filename="BeaconData' . $last_database_update->format('YmdHis') . '.json"');
 echo json_encode($values);
 
 ?>
