@@ -218,112 +218,136 @@ Implements Beacon.DataSource
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub Import(Content As Text)
+	#tag Method, Flags = &h0
+		Function Import(Content As Text) As Boolean
 		  Dim ChangeDict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content)
 		  
-		  Dim SourcesDict As Xojo.Core.Dictionary = ChangeDict.Value("loot_sources")
-		  Dim EngramsDict As Xojo.Core.Dictionary = ChangeDict.Value("engrams")
-		  Dim PresetsDict As Xojo.Core.Dictionary = ChangeDict.Value("presets")
-		  Dim LastSync As Text = ChangeDict.Value("timestamp")
+		  Dim RequiredKeys() As Text = Array("loot_sources", "engrams", "presets", "timestamp", "is_full", "beacon_version")
+		  For Each RequiredKey As Text In RequiredKeys
+		    If Not ChangeDict.HasKey(RequiredKey) Then
+		      System.DebugLog("Cannot import classes because key '" + RequiredKey + "' is missing.")
+		      Return False
+		    End If
+		  Next
 		  
-		  Dim SourceAdditions() As Auto = SourcesDict.Value("additions")
-		  Dim SourceRemovals() As Auto = SourcesDict.Value("removals")
-		  If UBound(SourceAdditions) > -1 Or UBound(SourceRemovals) > -1 Then
+		  Try
 		    Self.SQLExecute("BEGIN TRANSACTION;")
-		    If UBound(SourceRemovals) > -1 Then
-		      Dim SourceDeleteStatement As SQLitePreparedStatement = Self.Prepare("DELETE FROM ""loot_sources"" WHERE LOWER(""classstring"") = ?;")
-		      SourceDeleteStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
-		      For Each ClassString As Text In SourceRemovals
-		        Self.SQLExecute(SourceDeleteStatement, ClassString.Lowercase)
-		      Next
+		    
+		    Dim ShouldTruncate As Boolean = ChangeDict.Value("is_full") = 1
+		    If ShouldTruncate Then
+		      Self.SQLExecute("DELETE FROM ""loot_sources"";")
+		      Self.SQLExecute("DELETE FROM ""engrams"";")
+		      Self.SQLExecute("DELETE FROM ""presets"";")
 		    End If
 		    
-		    If UBound(SourceAdditions) > -1 Then
-		      Dim SourceInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""loot_sources"" (""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"", ""sort"") VALUES (?, ?, ?, ?, ?, ?, ?, ?);")
-		      SourceInsertStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
-		      SourceInsertStatement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
-		      SourceInsertStatement.BindType(2, SQLitePreparedStatement.SQLITE_TEXT)
-		      SourceInsertStatement.BindType(3, SQLitePreparedStatement.SQLITE_INTEGER)
-		      SourceInsertStatement.BindType(4, SQLitePreparedStatement.SQLITE_DOUBLE)
-		      SourceInsertStatement.BindType(5, SQLitePreparedStatement.SQLITE_DOUBLE)
-		      SourceInsertStatement.BindType(6, SQLitePreparedStatement.SQLITE_TEXT)
-		      SourceInsertStatement.BindType(7, SQLitePreparedStatement.SQLITE_INTEGER)
-		      For Each Dict As Xojo.Core.Dictionary In SourceAdditions
-		        Dim ClassString As Text = Dict.Value("class")
-		        Dim Label As Text = Dict.Value("label")
-		        Dim Kind As Text = Dict.Value("kind")
-		        Dim Mask As Integer = Dict.Value("mask")
-		        Dim MultMin As Double = Dict.Value("mult_min")
-		        Dim MultMax As Double = Dict.Value("mult_max")
-		        Dim UIColor As Text = Dict.Value("uicolor")
-		        Dim SortValue As Integer = Dict.Value("sort")
-		        Self.SQLExecute(SourceInsertStatement, ClassString, Label, Kind, Mask, MultMin, MultMax, UIColor, SortValue)
-		      Next
+		    Dim SourcesDict As Xojo.Core.Dictionary = ChangeDict.Value("loot_sources")
+		    Dim EngramsDict As Xojo.Core.Dictionary = ChangeDict.Value("engrams")
+		    Dim PresetsDict As Xojo.Core.Dictionary = ChangeDict.Value("presets")
+		    Dim LastSync As Text = ChangeDict.Value("timestamp")
+		    
+		    Dim SourceAdditions() As Auto = SourcesDict.Value("additions")
+		    Dim SourceRemovals() As Auto = SourcesDict.Value("removals")
+		    If UBound(SourceAdditions) > -1 Or UBound(SourceRemovals) > -1 Then
+		      If UBound(SourceRemovals) > -1 Then
+		        Dim SourceDeleteStatement As SQLitePreparedStatement = Self.Prepare("DELETE FROM ""loot_sources"" WHERE LOWER(""classstring"") = ?;")
+		        SourceDeleteStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		        For Each ClassString As Text In SourceRemovals
+		          Self.SQLExecute(SourceDeleteStatement, ClassString.Lowercase)
+		        Next
+		      End If
+		      
+		      If UBound(SourceAdditions) > -1 Then
+		        Dim SourceInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""loot_sources"" (""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"", ""sort"") VALUES (?, ?, ?, ?, ?, ?, ?, ?);")
+		        SourceInsertStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		        SourceInsertStatement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
+		        SourceInsertStatement.BindType(2, SQLitePreparedStatement.SQLITE_TEXT)
+		        SourceInsertStatement.BindType(3, SQLitePreparedStatement.SQLITE_INTEGER)
+		        SourceInsertStatement.BindType(4, SQLitePreparedStatement.SQLITE_DOUBLE)
+		        SourceInsertStatement.BindType(5, SQLitePreparedStatement.SQLITE_DOUBLE)
+		        SourceInsertStatement.BindType(6, SQLitePreparedStatement.SQLITE_TEXT)
+		        SourceInsertStatement.BindType(7, SQLitePreparedStatement.SQLITE_INTEGER)
+		        For Each Dict As Xojo.Core.Dictionary In SourceAdditions
+		          Dim ClassString As Text = Dict.Value("class")
+		          Dim Label As Text = Dict.Value("label")
+		          Dim Kind As Text = Dict.Value("kind")
+		          Dim Mask As Integer = Dict.Value("mask")
+		          Dim MultMin As Double = Dict.Value("mult_min")
+		          Dim MultMax As Double = Dict.Value("mult_max")
+		          Dim UIColor As Text = Dict.Value("uicolor")
+		          Dim SortValue As Integer = Dict.Value("sort")
+		          Self.SQLExecute(SourceInsertStatement, ClassString, Label, Kind, Mask, MultMin, MultMax, UIColor, SortValue)
+		        Next
+		      End If
 		    End If
+		    
+		    Dim EngramAdditions() As Auto = EngramsDict.Value("additions")
+		    Dim EngramRemovals() As Auto = EngramsDict.Value("removals")
+		    If UBound(EngramAdditions) > -1 Or UBound(EngramRemovals) > -1 Then
+		      If UBound(EngramRemovals) > -1 Then
+		        Dim EngramDeleteStatement As SQLitePreparedStatement = Self.Prepare("DELETE FROM ""engrams"" WHERE LOWER(""classstring"") = ?;")
+		        EngramDeleteStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		        For Each ClassString As Text In EngramRemovals
+		          Self.SQLExecute(EngramDeleteStatement, ClassString.Lowercase)
+		        Next
+		      End If
+		      
+		      If UBound(EngramAdditions) > -1 Then
+		        Dim EngramInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""engrams"" (""classstring"", ""label"", ""availability"", ""can_blueprint"") VALUES (?, ?, ?, ?);")
+		        EngramInsertStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		        EngramInsertStatement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
+		        EngramInsertStatement.BindType(2, SQLitePreparedStatement.SQLITE_INTEGER)
+		        EngramInsertStatement.BindType(3, SQLitePreparedStatement.SQLITE_INTEGER)
+		        For Each Dict As Xojo.Core.Dictionary In EngramAdditions
+		          Dim ClassString As Text = Dict.Value("class")
+		          Dim Label As Text = Dict.Value("label")
+		          Dim Availability As Integer = Dict.Value("availability")
+		          Dim CanBlueprint As Boolean = (Dict.Value("blueprint") = 1)
+		          Self.SQLExecute(EngramInsertStatement, ClassString, Label, Availability, CanBlueprint)
+		        Next
+		      End If
+		    End If
+		    
+		    Dim PresetAdditions() As Auto = PresetsDict.Value("additions")
+		    Dim PresetRemovals() As Auto = PresetsDict.Value("removals")
+		    Dim ReloadPresets As Boolean = False
+		    If UBound(PresetAdditions) > -1 Or UBound(PresetRemovals) > -1 Then
+		      If UBound(PresetRemovals) > -1 Then
+		        Dim PresetDeleteStatement As SQLitePreparedStatement = Self.Prepare("DELETE FROM ""presets"" WHERE LOWER(""preset_id"") = ?;")
+		        PresetDeleteStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		        For Each PresetID As Text In PresetRemovals
+		          Self.SQLExecute(PresetDeleteStatement, PresetID.Lowercase)
+		        Next
+		      End If
+		      
+		      If UBound(PresetAdditions) > -1 Then
+		        Dim PresetInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""presets"" (""preset_id"", ""label"", ""contents"") VALUES (?, ?, ?);")
+		        PresetInsertStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
+		        PresetInsertStatement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
+		        PresetInsertStatement.BindType(2, SQLitePreparedStatement.SQLITE_TEXT)
+		        For Each Dict As Xojo.Core.Dictionary In PresetAdditions
+		          Dim PresetID As Text = Dict.Value("id")
+		          Dim Label As Text = Dict.Value("label")
+		          Dim Contents As Text = Dict.Value("contents")
+		          Self.SQLExecute(PresetInsertStatement, PresetID, Label, Contents)
+		        Next
+		      End If
+		      
+		      ReloadPresets = True
+		    End If
+		    
 		    Self.SQLExecute("COMMIT TRANSACTION;")
-		  End If
-		  
-		  Dim EngramAdditions() As Auto = EngramsDict.Value("additions")
-		  Dim EngramRemovals() As Auto = EngramsDict.Value("removals")
-		  If UBound(EngramAdditions) > -1 Or UBound(EngramRemovals) > -1 Then
-		    Self.SQLExecute("BEGIN TRANSACTION;")
-		    If UBound(EngramRemovals) > -1 Then
-		      Dim EngramDeleteStatement As SQLitePreparedStatement = Self.Prepare("DELETE FROM ""engrams"" WHERE LOWER(""classstring"") = ?;")
-		      EngramDeleteStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
-		      For Each ClassString As Text In EngramRemovals
-		        Self.SQLExecute(EngramDeleteStatement, ClassString.Lowercase)
-		      Next
+		    If ReloadPresets Then
+		      Self.LoadPresets()
 		    End If
 		    
-		    If UBound(EngramAdditions) > -1 Then
-		      Dim EngramInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""engrams"" (""classstring"", ""label"", ""availability"", ""can_blueprint"") VALUES (?, ?, ?, ?);")
-		      EngramInsertStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
-		      EngramInsertStatement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
-		      EngramInsertStatement.BindType(2, SQLitePreparedStatement.SQLITE_INTEGER)
-		      EngramInsertStatement.BindType(3, SQLitePreparedStatement.SQLITE_INTEGER)
-		      For Each Dict As Xojo.Core.Dictionary In EngramAdditions
-		        Dim ClassString As Text = Dict.Value("class")
-		        Dim Label As Text = Dict.Value("label")
-		        Dim Availability As Integer = Dict.Value("availability")
-		        Dim CanBlueprint As Boolean = (Dict.Value("blueprint") = 1)
-		        Self.SQLExecute(EngramInsertStatement, ClassString, Label, Availability, CanBlueprint)
-		      Next
-		    End If
-		    Self.SQLExecute("COMMIT TRANSACTION;")
-		  End If
-		  
-		  Dim PresetAdditions() As Auto = PresetsDict.Value("additions")
-		  Dim PresetRemovals() As Auto = PresetsDict.Value("removals")
-		  If UBound(PresetAdditions) > -1 Or UBound(PresetRemovals) > -1 Then
-		    Self.SQLExecute("BEGIN TRANSACTION;")
-		    If UBound(PresetRemovals) > -1 Then
-		      Dim PresetDeleteStatement As SQLitePreparedStatement = Self.Prepare("DELETE FROM ""presets"" WHERE LOWER(""preset_id"") = ?;")
-		      PresetDeleteStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
-		      For Each PresetID As Text In PresetRemovals
-		        Self.SQLExecute(PresetDeleteStatement, PresetID.Lowercase)
-		      Next
-		    End If
+		    Self.Variable("last_sync") = LastSync
 		    
-		    If UBound(PresetAdditions) > -1 Then
-		      Dim PresetInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""presets"" (""preset_id"", ""label"", ""contents"") VALUES (?, ?, ?);")
-		      PresetInsertStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
-		      PresetInsertStatement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
-		      PresetInsertStatement.BindType(2, SQLitePreparedStatement.SQLITE_TEXT)
-		      For Each Dict As Xojo.Core.Dictionary In PresetAdditions
-		        Dim PresetID As Text = Dict.Value("id")
-		        Dim Label As Text = Dict.Value("label")
-		        Dim Contents As Text = Dict.Value("contents")
-		        Self.SQLExecute(PresetInsertStatement, PresetID, Label, Contents)
-		      Next
-		    End If
-		    Self.SQLExecute("COMMIT TRANSACTION;")
-		    
-		    Self.LoadPresets()
-		  End If
-		  
-		  Self.Variable("last_sync") = LastSync
-		End Sub
+		    Return True
+		  Catch Err As RuntimeException
+		    Self.SQLExecute("ROLLBACK TRANSACTION;")
+		    Return False
+		  End Try
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -334,7 +358,7 @@ Implements Beacon.DataSource
 		    Dim Content As String = Stream.ReadAll(Encodings.UTF8)
 		    Stream.Close
 		    
-		    Self.Import(Content.ToText)
+		    Call Self.Import(Content.ToText)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -343,6 +367,18 @@ Implements Beacon.DataSource
 		Function IsPresetCustom(Preset As Beacon.Preset) As Boolean
 		  Dim File As FolderItem = Self.FileForCustomPreset(Preset)
 		  Return File.Exists
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LastSync() As Xojo.Core.Date
+		  Dim LastSync As String = Self.Variable("last_sync")
+		  If LastSync = "" Then
+		    Return Nil
+		  End If
+		  
+		  Dim TempDate As Xojo.Core.Date = Xojo.Core.Date.FromText(LastSync.ToText)
+		  Return New Xojo.Core.Date(TempDate.SecondsFrom1970 + TempDate.TimeZone.SecondsFromGMT, New Xojo.Core.TimeZone("UTC"))
 		End Function
 	#tag EndMethod
 
@@ -408,7 +444,7 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
-		  Self.Import(TextContent)
+		  Call Self.Import(TextContent)
 		End Sub
 	#tag EndMethod
 

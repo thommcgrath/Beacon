@@ -1,5 +1,10 @@
 # Beacon Version History
 
+## Build 10 (Beta 3)
+
+- About window now shows when the engram database was last updated.
+- Now possible to import engram definitions. If for some reason your copy of Beacon cannot update definitions automatically, they can be downloaded from the Beacon website and imported using the Import menu item. See https://thezaz.com/beacon to download definitions.
+
 ## Build 9 (Beta 2)
 
 *All user should rebuild their configs using this version. Quality values were not correct in previous builds.*

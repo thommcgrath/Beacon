@@ -9,7 +9,7 @@ Begin BeaconWindow AboutWindow
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   232
+   Height          =   264
    ImplicitInstance=   True
    LiveResize      =   True
    MacProcID       =   0
@@ -18,14 +18,14 @@ Begin BeaconWindow AboutWindow
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   232
+   MinHeight       =   264
    MinimizeButton  =   False
-   MinWidth        =   256
+   MinWidth        =   360
    Placement       =   2
    Resizeable      =   False
    Title           =   ""
    Visible         =   True
-   Width           =   330
+   Width           =   360
    Begin ControlCanvas IconCanvas
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -38,7 +38,7 @@ Begin BeaconWindow AboutWindow
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   133
+      Left            =   148
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -76,7 +76,6 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Beacon"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -87,7 +86,7 @@ Begin BeaconWindow AboutWindow
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   290
+      Width           =   320
    End
    Begin Label VersionLabel
       AutoDeactivate  =   True
@@ -111,7 +110,6 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Version X"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -122,7 +120,7 @@ Begin BeaconWindow AboutWindow
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   290
+      Width           =   320
    End
    Begin Label CopyrightLabel
       AutoDeactivate  =   True
@@ -146,18 +144,17 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "© 2016 Thom McGrath, All Rights Reserved."
       TextAlign       =   1
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   160
+      Top             =   192
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   290
+      Width           =   320
    End
    Begin Label LinkLabel
       AutoDeactivate  =   True
@@ -181,37 +178,73 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "https://thezaz.com/beacon"
       TextAlign       =   1
       TextColor       =   &c0000FF00
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   192
+      Top             =   224
       Transparent     =   True
       Underline       =   True
       Visible         =   True
-      Width           =   290
+      Width           =   320
+   End
+   Begin Label SyncLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      Text            =   "Engrams Updated Y"
+      TextAlign       =   1
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   160
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   320
    End
 End
 #tag EndWindow
 
 #tag WindowCode
-#tag EndWindowCode
-
-#tag Events IconCanvas
-	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused areas
-		  
-		  G.DrawPicture(IconApp, 0, 0)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events VersionLabel
 	#tag Event
 		Sub Open()
+		  Self.Update()
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub Update()
+		  Dim Data As LocalData = LocalData(Beacon.Data)
+		  Dim LastSync As Xojo.Core.Date = Data.LastSync
+		  If LastSync = Nil Then
+		    SyncLabel.Text = "No engram data available"
+		  Else
+		    SyncLabel.Text = "Engrams updated " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC"
+		  End If
+		  
 		  Dim StageText As String
 		  Select Case App.StageCode
 		  Case Application.Alpha, Application.Development
@@ -220,7 +253,19 @@ End
 		    StageText = "Beta"
 		  End Select
 		  
-		  Me.Text = "Version " + Str(App.MajorVersion, "-0") + "." + Str(App.MinorVersion, "-0") + "." + Str(App.BugVersion, "-0") + " " + Trim(StageText + " (Build " + Str(App.NonReleaseVersion, "-0") + ")")
+		  VersionLabel.Text = "Version " + Str(App.MajorVersion, "-0") + "." + Str(App.MinorVersion, "-0") + "." + Str(App.BugVersion, "-0") + " " + Trim(StageText + " (Build " + Str(App.NonReleaseVersion, "-0") + ")")
+		End Sub
+	#tag EndMethod
+
+
+#tag EndWindowCode
+
+#tag Events IconCanvas
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused areas
+		  
+		  G.DrawPicture(IconApp, 0, 0)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

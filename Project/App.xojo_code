@@ -85,21 +85,66 @@ Inherits Application
 
 	#tag Event
 		Sub OpenDocument(item As FolderItem)
+		  If Item.IsType(BeaconFileTypes.JsonFile) Then
+		    Try
+		      Dim Stream As TextInputStream = TextInputStream.Open(Item)
+		      Dim Content As String = Stream.ReadAll(Encodings.UTF8)
+		      Stream.Close
+		      
+		      Dim LocalData As LocalData = LocalData(Beacon.Data)
+		      If LocalData.Import(Content.ToText) Then
+		        // Imported
+		        For I As Integer = 0 To WindowCount - 1
+		          If Window(I) IsA AboutWindow Then
+		            AboutWindow(Window(I)).Update()
+		            Exit For I
+		          End If
+		        Next
+		        
+		        Dim LastSync As Xojo.Core.Date = LocalData.LastSync
+		        
+		        Dim Dialog As New MessageDialog
+		        Dialog.Message = "Engram database has been updated"
+		        Dialog.Explanation = "Engrams, loot sources, and presets are now current as of " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC."
+		        Call Dialog.ShowModal
+		        Return
+		      End If
+		    Catch Err As RuntimeException
+		      
+		    End Try
+		    
+		    Dim Dialog As New MessageDialog
+		    Dialog.Message = "Unable to import engram data"
+		    Dialog.Explanation = "Sorry about that. The file may not be correctly formatted."
+		    Call Dialog.ShowModal
+		    
+		    Return
+		  End If
+		  
+		  If Item.IsType(BeaconFileTypes.BeaconPreset) Then
+		    Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(New Xojo.IO.FolderItem(Item.NativePath.ToText))
+		    If Preset <> Nil Then
+		      Beacon.Data.SavePreset(Preset)
+		      PresetManagerWindow.ShowPreset(Preset)
+		    Else
+		      Dim Dialog As New MessageDialog
+		      Dialog.Message = "Unable to import preset"
+		      Dialog.Explanation = "Sorry about that. The file may not be correctly formatted."
+		      Call Dialog.ShowModal
+		    End If
+		    Return
+		  End If
+		  
 		  If Item.IsType(BeaconFileTypes.BeaconDocument) Or Item.IsType(BeaconFileTypes.IniFile) Then
 		    Dim Win As New DocWindow(Item)
 		    Win.Show
 		    Return
 		  End If
 		  
-		  If Item.IsType(BeaconFileTypes.BeaconPreset) Then
-		    PresetWindow.Present(Item)
-		    Return
-		  End If
-		  
 		  Dim Dialog As New MessageDialog
-		  Dialog.Message = "Unable to open """ + Item.DisplayName + """"
-		  Dialog.Explanation = "Beacon can only open " + BeaconFileTypes.BeaconDocument.PrimaryExtension + " and " + BeaconFileTypes.BeaconPreset.PrimaryExtension + " files."
-		  Call Dialog.ShowModal()
+		  Dialog.Message = "Unable to open file"
+		  Dialog.Explanation = "Beacon doesn't know what to do with the file " + Item.Name
+		  Call Dialog.ShowModal
 		End Sub
 	#tag EndEvent
 
@@ -107,11 +152,11 @@ Inherits Application
 	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
 			Dim Dialog As New OpenDialog
-			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset
+			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.JsonFile
 			
 			Dim File As FolderItem = Dialog.ShowModal
 			If File <> Nil Then
-			Self.ImportDocument(File)
+			Self.OpenDocument(File)
 			End If
 			
 			Return True
@@ -237,21 +282,6 @@ Inherits Application
 		Function Identity() As Beacon.Identity
 		  Return Self.mIdentity
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ImportDocument(File As FolderItem)
-		  If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
-		    Self.OpenDocument(File)
-		    Return
-		  End If
-		  
-		  Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(New Xojo.IO.FolderItem(File.NativePath.ToText))
-		  If Preset <> Nil Then
-		    Beacon.Data.SavePreset(Preset)
-		    PresetManagerWindow.ShowPreset(Preset)
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

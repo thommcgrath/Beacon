@@ -58,4 +58,18 @@
 		Imported=False
 	#tag EndFileType
 
+	#tag FileType
+		CodeName=JsonFile
+		Extension=.json
+		Flags=&h0
+		MacCreator=
+		MacType=TEXT
+		Name=JSON File
+		UTI=
+		UTIConformsTo=public.text
+		Description=
+		MimeType=
+		Imported=True
+	#tag EndFileType
+
 #tag EndFileTypeSet
