@@ -4,6 +4,7 @@
 
 - About window now shows when the engram database was last updated.
 - Now possible to import engram definitions. If for some reason your copy of Beacon cannot update definitions automatically, they can be downloaded from the Beacon website and imported using the Import menu item. See https://thezaz.com/beacon to download definitions.
+- Deleting a loot source or item set now has a confirmation dialog.
 
 ## Build 9 (Beta 2)
 

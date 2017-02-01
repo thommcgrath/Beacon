@@ -115,7 +115,6 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -308,7 +307,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -318,7 +316,6 @@ Begin BeaconWindow DocWindow
       TabPanelIndex   =   0
    End
    Begin Beacon.RepositoryEngine Repository
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -730,6 +727,21 @@ End
 	#tag Method, Flags = &h21
 		Private Sub RemoveSelectedBeacons()
 		  If BeaconList.SelCount = 0 Then
+		    Return
+		  End If
+		  
+		  Dim Dialog As New MessageDialog
+		  If BeaconList.SelCount = 1 Then
+		    Dialog.Message = "Are you sure you want to delete the selected loot source?"
+		  Else
+		    Dialog.Message = "Are you sure you want to delete these " + Str(BeaconList.SelCount, "-0") + " loot sources?"
+		  End If
+		  Dialog.Explanation = "This action cannot be undone."
+		  Dialog.ActionButton.Caption = "Delete"
+		  Dialog.CancelButton.Visible = True
+		  
+		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
+		  If Choice = Dialog.CancelButton Then
 		    Return
 		  End If
 		  

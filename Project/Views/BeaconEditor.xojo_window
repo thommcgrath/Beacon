@@ -483,8 +483,20 @@ End
 		    Return
 		  End If
 		  
-		  Dim Updated As Boolean
 		  Dim Set As Beacon.ItemSet = SetList.RowTag(SetList.ListIndex)
+		  
+		  Dim Dialog As New MessageDialog
+		  Dialog.Message = "Are you sure you want to delete the item set """ + Set.Label + """?"
+		  Dialog.Explanation = "This action cannot be undone."
+		  Dialog.ActionButton.Caption = "Delete"
+		  Dialog.CancelButton.Visible = True
+		  
+		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If Choice = Dialog.CancelButton Then
+		    Return
+		  End If
+		  
+		  Dim Updated As Boolean
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    Dim Idx As Integer = Source.IndexOf(Set)
 		    If Idx > -1 Then
