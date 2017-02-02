@@ -216,14 +216,14 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function QualityModifier(Kind As Beacon.LootSource.Kinds) As Integer
 		  Select Case Kind
-		  Case Beacon.LootSource.Kinds.Standard
-		    Return Self.mQualityModifierStandard
 		  Case Beacon.LootSource.Kinds.Bonus
 		    Return Self.mQualityModifierBonus
 		  Case Beacon.LootSource.Kinds.Cave
 		    Return Self.mQualityModifierCave
 		  Case Beacon.LootSource.Kinds.Sea
 		    Return Self.mQualityModifierSea
+		  Else
+		    Return Self.mQualityModifierStandard
 		  End Select
 		End Function
 	#tag EndMethod
@@ -231,14 +231,14 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function QuantityMultiplier(Kind As Beacon.LootSource.Kinds) As Double
 		  Select Case Kind
-		  Case Beacon.LootSource.Kinds.Standard
-		    Return Self.mQuantityMultiplierStandard
 		  Case Beacon.LootSource.Kinds.Bonus
 		    Return Self.mQuantityMultiplierBonus
 		  Case Beacon.LootSource.Kinds.Cave
 		    Return Self.mQuantityMultiplierCave
 		  Case Beacon.LootSource.Kinds.Sea
 		    Return Self.mQuantityMultiplierSea
+		  Else
+		    Return Self.mQuantityMultiplierStandard
 		  End Select
 		End Function
 	#tag EndMethod
@@ -375,11 +375,6 @@ Implements Beacon.Countable
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="Custom"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -411,6 +406,17 @@ Implements Beacon.Countable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Type"
+			Group="Behavior"
+			Type="Beacon.Preset.Types"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - BuiltIn"
+				"1 - Custom"
+				"2 - CustomizedBuiltIn"
+			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

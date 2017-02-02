@@ -305,7 +305,14 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function TextValue() As Text
 		  Dim Values() As Text
-		  Values.Append("SupplyCrateClassString=""" + Self.mClassString + """")
+		  
+		  // This is terrible, but Ark uses the same code for both Scorched Desert Crates and Island Sea Crates
+		  If Self.mClassString = "Beacon:ScorchedEarthDesertCrate_C" Then
+		    Values.Append("SupplyCrateClassString=""SupplyCrate_OceanInstant_C""")
+		  Else
+		    Values.Append("SupplyCrateClassString=""" + Self.mClassString + """")
+		  End If
+		  
 		  Values.Append("MinItemSets=" + Self.mMinItemSets.ToText)
 		  Values.Append("MaxItemSets=" + Self.mMaxItemSets.ToText)
 		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.ToText)

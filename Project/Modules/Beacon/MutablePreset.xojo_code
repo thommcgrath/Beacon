@@ -70,14 +70,14 @@ Inherits Beacon.Preset
 	#tag Method, Flags = &h0
 		Sub QualityModifier(Kind As Beacon.LootSource.Kinds, Assigns Value As Integer)
 		  Select Case Kind
-		  Case Beacon.LootSource.Kinds.Standard
-		    Self.mQualityModifierStandard = Value
 		  Case Beacon.LootSource.Kinds.Bonus
 		    Self.mQualityModifierBonus = Value
 		  Case Beacon.LootSource.Kinds.Cave
 		    Self.mQualityModifierCave = Value
 		  Case Beacon.LootSource.Kinds.Sea
 		    Self.mQualityModifierSea = Value
+		  Else
+		    Self.mQualityModifierStandard = Value
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -85,14 +85,14 @@ Inherits Beacon.Preset
 	#tag Method, Flags = &h0
 		Sub QuantityMultiplier(Kind As Beacon.LootSource.Kinds, Assigns Value As Double)
 		  Select Case Kind
-		  Case Beacon.LootSource.Kinds.Standard
-		    Self.mQuantityMultiplierStandard = Value
 		  Case Beacon.LootSource.Kinds.Bonus
 		    Self.mQuantityMultiplierBonus = Value
 		  Case Beacon.LootSource.Kinds.Cave
 		    Self.mQuantityMultiplierCave = Value
 		  Case Beacon.LootSource.Kinds.Sea
 		    Self.mQuantityMultiplierSea = Value
+		  Else
+		    Self.mQuantityMultiplierStandard = Value
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -105,11 +105,6 @@ Inherits Beacon.Preset
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="Custom"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -142,6 +137,17 @@ Inherits Beacon.Preset
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Type"
+			Group="Behavior"
+			Type="Beacon.Preset.Types"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - BuiltIn"
+				"1 - Custom"
+				"2 - CustomizedBuiltIn"
+			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

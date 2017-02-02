@@ -570,6 +570,37 @@ End
 
 	#tag MenuHandler
 		Function FileExport() As Boolean Handles FileExport.Action
+			Dim LootSources() As Beacon.LootSource = Self.Doc.LootSources
+			
+			Dim IslandCount, ScorchedCount As Integer
+			For Each LootSource As Beacon.LootSource In LootSources
+			Select Case LootSource.Package
+			Case Beacon.LootSource.Packages.Island
+			IslandCount = IslandCount + 1
+			Case Beacon.LootSource.Packages.Scorched
+			ScorchedCount = ScorchedCount + 1
+			End Select
+			Next
+			
+			Dim Package As Beacon.LootSource.Packages
+			If IslandCount > 0 And ScorchedCount > 0 Then
+			// Need to confirm which map.
+			Package = ExportChooseEnvironmentDialog.Present(Self)
+			If Package = CType(-1, Beacon.LootSource.Packages) Then
+			Return True
+			End If
+			ElseIf IslandCount > 0 Then
+			Package = Beacon.LootSource.Packages.Island
+			ElseIf ScorchedCount > 0 Then
+			Package = Beacon.LootSource.Packages.Scorched
+			Else
+			Dim Warning As New MessageDialog
+			Warning.Message = "No loot sources to export"
+			Warning.Explanation = "Beacon cannot export anything from this document because it contains no loot sources for either environment."
+			Call Warning.ShowModalWithin(Self)
+			Return True
+			End If
+			
 			Dim Dialog As New SaveAsDialog
 			Dialog.SuggestedFileName = "Game.ini"
 			Dialog.Filter = BeaconFileTypes.IniFile
@@ -579,9 +610,10 @@ End
 			Dim Lines() As String
 			Lines.Append("[/script/shootergame.shootergamemode]")
 			
-			Dim LootSources() As Beacon.LootSource = Self.Doc.LootSources
 			For Each LootSource As Beacon.LootSource In LootSources
+			If LootSource.Package = Package Then
 			Lines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue())
+			End If
 			Next
 			
 			Dim Stream As TextOutputStream = TextOutputStream.Create(File)
