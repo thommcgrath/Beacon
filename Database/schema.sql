@@ -37,7 +37,11 @@ CREATE TYPE loot_source_kind AS ENUM (
 	'Standard',
 	'Bonus',
 	'Cave',
-	'Sea'
+	'Sea',
+	'BossSpider',
+	'BossGorilla',
+	'BossDragon',
+	'BossManticore'
 );
 
 CREATE TABLE loot_sources (

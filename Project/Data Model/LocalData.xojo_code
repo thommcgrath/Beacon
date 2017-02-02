@@ -166,9 +166,6 @@ Implements Beacon.DataSource
 		  Dim ColorMask As Picture
 		  
 		  Select Case Source.Kind
-		  Case Beacon.LootSource.Kinds.Standard
-		    HighlightMask = IconLootStandard
-		    ColorMask = IconLootStandardColorMask
 		  Case Beacon.LootSource.Kinds.Bonus
 		    HighlightMask = IconLootBonus
 		    ColorMask = IconLootBonusColorMask
@@ -178,6 +175,9 @@ Implements Beacon.DataSource
 		  Case Beacon.LootSource.Kinds.Sea
 		    HighlightMask = IconLootSea
 		    ColorMask = IconLootSeaColorMask
+		  Else
+		    HighlightMask = IconLootStandard
+		    ColorMask = IconLootStandardColorMask
 		  End Select
 		  
 		  Dim HighlightOpacity As Integer = HighlightColor.Alpha

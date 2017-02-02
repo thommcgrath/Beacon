@@ -186,6 +186,14 @@ Implements Beacon.Countable
 		    Return "Cave"
 		  Case Beacon.LootSource.Kinds.Sea
 		    Return "Sea"
+		  Case Beacon.LootSource.Kinds.BossSpider
+		    Return "BossSpider"
+		  Case Beacon.LootSource.Kinds.BossGorilla
+		    Return "BossGorilla"
+		  Case Beacon.LootSource.Kinds.BossDragon
+		    Return "BossDragon"
+		  Case Beacon.LootSource.Kinds.BossManticore
+		    Return "BossManticore"
 		  End Select
 		End Function
 	#tag EndMethod
@@ -280,6 +288,16 @@ Implements Beacon.Countable
 		    Return Beacon.LootSource.Kinds.Cave
 		  Case "Sea"
 		    Return Beacon.LootSource.Kinds.Sea
+		  Case "BossSpider"
+		    Return Beacon.LootSource.Kinds.BossSpider
+		  Case "BossGorilla"
+		    Return Beacon.LootSource.Kinds.BossGorilla
+		  Case "BossDragon"
+		    Return Beacon.LootSource.Kinds.BossDragon
+		  Case "BossManticore"
+		    Return Beacon.LootSource.Kinds.BossManticore
+		  Else
+		    Return Beacon.LootSource.Kinds.Standard
 		  End Select
 		End Function
 	#tag EndMethod
@@ -417,7 +435,11 @@ Implements Beacon.Countable
 		Standard
 		  Bonus
 		  Cave
-		Sea
+		  Sea
+		  BossSpider
+		  BossGorilla
+		  BossDragon
+		BossManticore
 	#tag EndEnum
 
 	#tag Enum, Name = Packages, Type = Integer, Flags = &h0
