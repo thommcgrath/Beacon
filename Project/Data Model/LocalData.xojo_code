@@ -175,6 +175,18 @@ Implements Beacon.DataSource
 		  Case Beacon.LootSource.Kinds.Sea
 		    HighlightMask = IconLootSea
 		    ColorMask = IconLootSeaColorMask
+		  Case Beacon.LootSource.Kinds.BossSpider
+		    HighlightMask = IconLootSpider
+		    ColorMask = IconLootSpiderColorMask
+		  Case Beacon.LootSource.Kinds.BossGorilla
+		    HighlightMask = IconLootGorilla
+		    ColorMask = IconLootGorillaColorMask
+		  Case Beacon.LootSource.Kinds.BossDragon
+		    HighlightMask = IconLootDragon
+		    ColorMask = IconLootDragonColorMask
+		  Case Beacon.LootSource.Kinds.BossManticore
+		    HighlightMask = IconLootManticore
+		    ColorMask = IconLootManticoreColorMask
 		  Else
 		    HighlightMask = IconLootStandard
 		    ColorMask = IconLootStandardColorMask
