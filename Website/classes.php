@@ -115,8 +115,12 @@ $values['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
 $values['beacon_version'] = 1;
 $values['is_full'] = ($since === null) ? 1 : 0;
 
+$body = json_encode($values);
+$hash = md5($body);
+
 header('Content-Type: application/json');
 header('Content-Disposition: attachment; filename="BeaconData' . $last_database_update->format('YmdHis') . '.json"');
-echo json_encode($values);
+header('Content-MD5: ' . $hash);
+echo $body;
 
 ?>

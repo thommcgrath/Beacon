@@ -470,6 +470,14 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
+		  Dim ExpectedHash As Text = Sender.ResponseHeader("Content-MD5")
+		  Dim ComputedHash As Text = EncodeHex(Crypto.MD5(TextContent)).ToText
+		  
+		  If ComputedHash <> ExpectedHash Then
+		    App.Log("Engram updated hash mismatch. Expected " + ExpectedHash + ", computed " + ComputedHash + ".")
+		    Return
+		  End If
+		  
 		  Call Self.Import(TextContent)
 		End Sub
 	#tag EndMethod
