@@ -46,7 +46,8 @@ Inherits Application
 
 	#tag Event
 		Sub Open()
-		  Beacon.Data = New LocalData
+		  Self.mLocalData = New LocalData
+		  Beacon.Data = Self.mLocalData
 		  
 		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
 		  If IdentityFile.Exists Then
@@ -91,8 +92,7 @@ Inherits Application
 		      Dim Content As String = Stream.ReadAll(Encodings.UTF8)
 		      Stream.Close
 		      
-		      Dim LocalData As LocalData = LocalData(Beacon.Data)
-		      If LocalData.Import(Content.ToText) Then
+		      If Self.mLocalData.Import(Content.ToText) Then
 		        // Imported
 		        For I As Integer = 0 To WindowCount - 1
 		          If Window(I) IsA AboutWindow Then
@@ -101,7 +101,7 @@ Inherits Application
 		          End If
 		        Next
 		        
-		        Dim LastSync As Xojo.Core.Date = LocalData.LastSync
+		        Dim LastSync As Xojo.Core.Date = Self.mLocalData.LastSync
 		        
 		        Dim Dialog As New MessageDialog
 		        Dialog.Message = "Engram database has been updated"
@@ -284,6 +284,12 @@ Inherits Application
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function LocalData() As LocalData
+		  Return Self.mLocalData
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function mFileLoader_AuthenticationRequired(Sender As Xojo.Net.HTTPSocket, Realm As Text, ByRef Name As Text, ByRef Password As Text) As Boolean
 		  // Can't authenticate
@@ -389,6 +395,10 @@ Inherits Application
 
 	#tag Property, Flags = &h21
 		Private mIdentity As Beacon.Identity
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLocalData As LocalData
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -237,8 +237,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Update()
-		  Dim Data As LocalData = LocalData(Beacon.Data)
-		  Dim LastSync As Xojo.Core.Date = Data.LastSync
+		  Dim LastSync As Xojo.Core.Date = App.LocalData.LastSync
 		  If LastSync = Nil Then
 		    SyncLabel.Text = "No engram data available"
 		  Else
