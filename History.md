@@ -1,5 +1,9 @@
 # Beacon Version History
 
+## Build 11 (Beta 4)
+
+- Now offers to subscribe users to the Beacon Announce mailing list. This only happens during the first launch, the dialog will never be seen a second time.
+
 ## Build 10 (Beta 3)
 
 - About window now shows when the engram database was last updated.

@@ -91,7 +91,8 @@ Inherits Application
 		  
 		  Self.mUpdateChecker = New UpdateChecker
 		  AddHandler Self.mUpdateChecker.UpdateAvailable, WeakAddressOf Self.mUpdateChecker_UpdateAvailable
-		  Self.mUpdateChecker.Check(True)
+		  AddHandler Self.mUpdateChecker.NoUpdate, WeakAddressOf Self.mUpdateChecker_NoUpdate
+		  Self.mUpdateChecker.Check(False)
 		End Sub
 	#tag EndEvent
 
@@ -388,6 +389,16 @@ Inherits Application
 		  
 		  Dim Win As New DocWindow(Document)
 		  Win.Show
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mUpdateChecker_NoUpdate(Sender As UpdateChecker)
+		  #Pragma Unused Sender
+		  
+		  If Self.Preferences.BooleanValue("Has Shown Subscribe Dialog") = False Then
+		    SubscribeDialog.Present()
+		  End If
 		End Sub
 	#tag EndMethod
 
