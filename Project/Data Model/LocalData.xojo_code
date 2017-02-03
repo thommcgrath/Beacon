@@ -60,14 +60,19 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Dim LastSync As String = Self.Variable("last_sync")
+		  Dim CheckURL As Text
+		  If LastSync <> "" Then
+		    CheckURL = Beacon.WebURL + "/classes.php?changes_since=" + EncodeURLComponent(LastSync).ToText
+		  Else
+		    CheckURL = Beacon.WebURL + "/classes.php"
+		  End If
+		  
+		  App.Log("Checking for engram updates from " + CheckURL)
 		  
 		  Self.mUpdater = New Xojo.Net.HTTPSocket
 		  AddHandler Self.mUpdater.PageReceived, WeakAddressOf Self.mUpdater_PageReceived
-		  If LastSync <> "" Then
-		    Self.mUpdater.Send("GET", Beacon.WebURL + "/classes.php?changes_since=" + EncodeURLComponent(LastSync).ToText)
-		  Else
-		    Self.mUpdater.Send("GET", Beacon.WebURL + "/classes.php")
-		  End If
+		  AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
+		  Self.mUpdater.Send("GET", CheckURL)
 		End Sub
 	#tag EndMethod
 
@@ -237,7 +242,7 @@ Implements Beacon.DataSource
 		  Dim RequiredKeys() As Text = Array("loot_sources", "engrams", "presets", "timestamp", "is_full", "beacon_version")
 		  For Each RequiredKey As Text In RequiredKeys
 		    If Not ChangeDict.HasKey(RequiredKey) Then
-		      System.DebugLog("Cannot import classes because key '" + RequiredKey + "' is missing.")
+		      App.Log("Cannot import classes because key '" + RequiredKey + "' is missing.")
 		      Return False
 		    End If
 		  Next
@@ -447,11 +452,20 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub mUpdater_Error(Sender As Xojo.Net.HTTPSocket, Error As RuntimeException)
+		  #Pragma Unused Sender
+		  
+		  App.Log("Engram check error: " + Error.Reason)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mUpdater_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus <> 200 Then
+		    App.Log("Engram update returned HTTP " + Str(HTTPStatus, "-0"))
 		    Return
 		  End If
 		  

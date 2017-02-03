@@ -4,8 +4,11 @@ Inherits Application
 	#tag Event
 		Sub Close()
 		  If Self.LaunchOnQuit <> Nil And Self.LaunchOnQuit.Exists Then
+		    Self.Log("Launching " + Self.LaunchOnQuit.NativePath)
 		    Self.LaunchOnQuit.Launch
 		  End If
+		  
+		  Self.Log("Beacon finished gracefully")
 		End Sub
 	#tag EndEvent
 
@@ -46,6 +49,12 @@ Inherits Application
 
 	#tag Event
 		Sub Open()
+		  #if TargetMacOS
+		    Self.Log("Beacon " + Str(Self.NonReleaseVersion, "-0") + " for Mac.")
+		  #elseif TargetWin32
+		    Self.Log("Beacon " + Str(Self.NonReleaseVersion, "-0") + " for Windows.")
+		  #endif
+		  
 		  Self.mLocalData = New LocalData
 		  Beacon.Data = Self.mLocalData
 		  
@@ -61,6 +70,7 @@ Inherits Application
 		    Dim Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
 		    Self.mIdentity = Identity
 		  Else
+		    Self.Log("Creating new identity")
 		    Dim Identity As New Beacon.Identity
 		    Dim Dict As Xojo.Core.Dictionary = Identity.Export
 		    
@@ -72,6 +82,7 @@ Inherits Application
 		    Stream.Close
 		    Self.mIdentity = Identity
 		  End If
+		  Self.Log("Identity is " + Self.mIdentity.Identifier)
 		  
 		  Self.mFileLoader = New Xojo.Net.HTTPSocket
 		  AddHandler Self.mFileLoader.PageReceived, WeakAddressOf Self.mFileLoader_PageReceived
@@ -146,6 +157,25 @@ Inherits Application
 		  Dialog.Explanation = "Beacon doesn't know what to do with the file " + Item.Name
 		  Call Dialog.ShowModal
 		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function UnhandledException(error As RuntimeException) As Boolean
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Error)
+		  Dim Stack() As Xojo.Core.StackFrame = Error.CallStack
+		  Dim Location As String = "Unknown"
+		  If UBound(Stack) >= 0 Then
+		    Location = Stack(0).Name
+		  End If
+		  Dim Reason As String = Error.Reason
+		  If Reason = "" Then
+		    Reason = Error.Message
+		  End If
+		  
+		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": " + Reason)
+		  
+		  Return False
+		End Function
 	#tag EndEvent
 
 
@@ -290,6 +320,24 @@ Inherits Application
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Log(Message As String)
+		  If Self.mLogLock = Nil Then
+		    Self.mLogLock = New CriticalSection
+		  End If
+		  
+		  Self.mLogLock.Enter
+		  
+		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
+		  Dim LogFile As FolderItem = Self.ApplicationSupport.Child("Events.log")
+		  Dim Stream As TextOutputStream = TextOutputStream.Append(LogFile)
+		  Stream.WriteLine(Now.ToText + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Chr(9) + Message)
+		  Stream.Close
+		  
+		  Self.mLogLock.Leave
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function mFileLoader_AuthenticationRequired(Sender As Xojo.Net.HTTPSocket, Realm As Text, ByRef Name As Text, ByRef Password As Text) As Boolean
 		  // Can't authenticate
@@ -399,6 +447,10 @@ Inherits Application
 
 	#tag Property, Flags = &h21
 		Private mLocalData As LocalData
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLogLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
