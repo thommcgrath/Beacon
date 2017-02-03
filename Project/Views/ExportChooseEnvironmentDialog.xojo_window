@@ -159,7 +159,7 @@ Begin Window ExportChooseEnvironmentDialog
       Visible         =   True
       Width           =   87
    End
-   Begin PushButton ExportButton
+   Begin UITweaks.ResizedPushButton ExportButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -190,7 +190,7 @@ Begin Window ExportChooseEnvironmentDialog
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton CancelButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
