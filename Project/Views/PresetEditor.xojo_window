@@ -535,7 +535,7 @@ Begin ContainerControl PresetEditor
    Begin GroupBox StandardGroup
       AutoDeactivate  =   True
       Bold            =   False
-      Caption         =   "Standard Beacons"
+      Caption         =   "Standard Beacons && Boss Loot"
       Enabled         =   True
       Height          =   112
       HelpTag         =   ""
@@ -967,7 +967,7 @@ Begin ContainerControl PresetEditor
    Begin GroupBox CaveGroup
       AutoDeactivate  =   True
       Bold            =   False
-      Caption         =   "Cave Loot Crates"
+      Caption         =   "Cave && Desert Loot Crates"
       Enabled         =   True
       Height          =   112
       HelpTag         =   ""
