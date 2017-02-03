@@ -474,7 +474,7 @@ Implements Beacon.DataSource
 		  Dim ComputedHash As Text = EncodeHex(Crypto.MD5(TextContent)).ToText
 		  
 		  If ComputedHash <> ExpectedHash Then
-		    App.Log("Engram updated hash mismatch. Expected " + ExpectedHash + ", computed " + ComputedHash + ".")
+		    App.Log("Engram update hash mismatch. Expected " + ExpectedHash + ", computed " + ComputedHash + ".")
 		    Return
 		  End If
 		  
