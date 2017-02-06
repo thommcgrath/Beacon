@@ -9,7 +9,7 @@ Begin BeaconWindow AboutWindow
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   264
+   Height          =   286
    ImplicitInstance=   True
    LiveResize      =   True
    MacProcID       =   0
@@ -18,7 +18,7 @@ Begin BeaconWindow AboutWindow
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   264
+   MinHeight       =   256
    MinimizeButton  =   False
    MinWidth        =   360
    Placement       =   2
@@ -150,7 +150,7 @@ Begin BeaconWindow AboutWindow
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   192
+      Top             =   214
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -184,7 +184,7 @@ Begin BeaconWindow AboutWindow
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   224
+      Top             =   246
       Transparent     =   True
       Underline       =   True
       Visible         =   True
@@ -223,6 +223,64 @@ Begin BeaconWindow AboutWindow
       Underline       =   False
       Visible         =   True
       Width           =   320
+   End
+   Begin UITweaks.ResizedPushButton UpdateEngramsButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Update Engrams"
+      Default         =   False
+      Enabled         =   True
+      Height          =   18
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   127
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   184
+      Underline       =   False
+      Visible         =   True
+      Width           =   107
+   End
+   Begin ProgressWheel UpdateEngramsSpinner
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   16
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   172
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   -50
+      Visible         =   True
+      Width           =   16
+   End
+   Begin Xojo.Net.HTTPSocket UpdateEngramsSocket
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
    End
 End
 #tag EndWindow
@@ -299,6 +357,79 @@ End
 		  If X >= 0 And X <= Me.Width And Y >= 0 And Y <= Me.Height Then
 		    ShowURL(Me.Text)
 		    Me.TextColor = &c0000FF
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events UpdateEngramsButton
+	#tag Event
+		Sub Action()
+		  Dim Top As Integer = UpdateEngramsButton.Top
+		  UpdateEngramsButton.Top = -100
+		  UpdateEngramsSpinner.Top = Top + ((UpdateEngramsButton.Height - UpdateEngramsSpinner.Height) / 2)
+		  
+		  Dim URL As Text = App.LocalData.ClassesURL
+		  UpdateEngramsSocket.Send("GET", URL)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events UpdateEngramsSocket
+	#tag Event
+		Sub Error(err as RuntimeException)
+		  Dim Top As Integer = UpdateEngramsSpinner.Top
+		  UpdateEngramsSpinner.Top = -100
+		  UpdateEngramsButton.Top = Top + ((UpdateEngramsButton.Height - UpdateEngramsSpinner.Height) / 2)
+		  
+		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
+		  Dialog.Message = "Unable to update engrams"
+		  Dialog.Explanation = "Unable to contact server. Reason: """ + Err.Reason + """"
+		  Call Dialog.ShowModal
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
+		  Dim Top As Integer = UpdateEngramsSpinner.Top
+		  UpdateEngramsSpinner.Top = -100
+		  UpdateEngramsButton.Top = Top + ((UpdateEngramsButton.Height - UpdateEngramsSpinner.Height) / 2)
+		  
+		  If HTTPStatus <> 200 Then
+		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = "Unable to update engrams"
+		    Dialog.Explanation = "Server replied with HTTP " + Str(HTTPStatus, "-0")
+		    Call Dialog.ShowModal
+		    Return
+		  End If
+		  
+		  Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
+		  Dim ExpectedHash As Text = Me.ResponseHeader("Content-MD5")
+		  Dim ComputedHash As Text = EncodeHex(Crypto.MD5(TextContent)).ToText
+		  
+		  If ComputedHash <> ExpectedHash Then
+		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = "Unable to update engrams"
+		    Dialog.Explanation = "Checksum verification failed. Expected hash " + ExpectedHash + " but computed " + ComputedHash + " instead."
+		    Call Dialog.ShowModal
+		    Return
+		  End If
+		  
+		  If App.LocalData.Import(TextContent) Then
+		    Self.Update()
+		    
+		    Dim LastSync As Xojo.Core.Date = App.LocalData.LastSync
+		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = "Engram database has been updated"
+		    Dialog.Explanation = "Engrams, loot sources, and presets are now current as of " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC."
+		    Call Dialog.ShowModal
+		  Else
+		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = "Unable to import engram data"
+		    Dialog.Explanation = "Sorry about that. The data may not be correctly formatted."
+		    Call Dialog.ShowModal
 		  End If
 		End Sub
 	#tag EndEvent

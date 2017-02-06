@@ -14,6 +14,17 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ClassesURL() As Text
+		  Dim LastSync As String = Self.Variable("last_sync")
+		  Dim CheckURL As Text = Beacon.WebURL + "/classes.php?version=" + App.NonReleaseVersion.ToText
+		  If LastSync <> "" Then
+		    CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync).ToText
+		  End If
+		  Return CheckURL
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mEngramCache = New Dictionary
 		  
@@ -59,12 +70,7 @@ Implements Beacon.DataSource
 		    Xojo.Core.Timer.CallLater(1, AddressOf Self.ImportLocalClasses)
 		  End If
 		  
-		  Dim LastSync As String = Self.Variable("last_sync")
-		  Dim CheckURL As Text = Beacon.WebURL + "/classes.php?version=" + App.NonReleaseVersion.ToText
-		  If LastSync <> "" Then
-		    CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync).ToText
-		  End If
-		  
+		  Dim CheckURL As Text = Self.ClassesURL()
 		  App.Log("Checking for engram updates from " + CheckURL)
 		  
 		  Self.mUpdater = New Xojo.Net.HTTPSocket
