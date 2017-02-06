@@ -44,7 +44,6 @@ Begin Window LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True
@@ -133,7 +132,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
-         TabStop         =   True
          Text            =   "Add Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -249,7 +247,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Define Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -408,7 +405,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Customize Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -443,7 +439,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   11
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Max Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -478,7 +473,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   9
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Min Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -513,7 +507,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Class String:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -548,7 +541,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Label:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -583,7 +575,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Kind:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -618,7 +609,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   7
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Availability:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -930,7 +920,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Min Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1008,7 +997,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Max Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1125,7 +1113,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   6
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Presets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1356,6 +1343,8 @@ End
 		    MutableSource.Package = Source.Package
 		    MutableSource.Multipliers = New Beacon.Range(Source.Multipliers.Min, Source.Multipliers.Max)
 		    MutableSource.IsOfficial = Source.IsOfficial
+		    MutableSource.SortValue = Source.SortValue
+		    MutableSource.UIColor = Source.UIColor
 		    Self.mEditing = MutableSource
 		  Else
 		    Self.mEditing = New Beacon.MutableLootSource(Source)
