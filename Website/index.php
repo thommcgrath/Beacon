@@ -5,15 +5,16 @@ $page_title = 'Beacon';
 AddHeadLine('<link rel="stylesheet" href="/beacon/assets/beacon.css" type="text/css">');
 
 $database = ConnectionManager::BeaconDatabase();
-$results = $database->Query("SELECT mac_url, win_url, build_display FROM updates ORDER BY build_number DESC LIMIT 1;");
+$results = $database->Query("SELECT mac_url, win_url, build_display, build_number FROM updates ORDER BY build_number DESC LIMIT 1;");
 $mac_url = $results->Field('mac_url');
 $win_url = $results->Field('win_url');
 $version = $results->Field('build_display');
+$build   = $results->Field('build_number');
 
 $results = $database->Query("SELECT COUNT(classstring) AS preset_count FROM presets;");
 $preset_count = $results->Field("preset_count");
 
-$results = $database->Query("SELECT MAX(max) FROM ((SELECT MAX(last_update AT TIME ZONE 'UTC') FROM loot_sources) UNION (SELECT MAX(last_update AT TIME ZONE 'UTC') FROM presets) UNION (SELECT MAX(last_update AT TIME ZONE 'UTC') FROM engrams)) AS dates;");
+$results = $database->Query("SELECT MAX(last_update) FROM updatable_objects WHERE min_version IS NULL OR min_version <= $1;", array($build));
 $last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
 
 define('MODE_NA', 0);
@@ -57,6 +58,6 @@ $hero_name = '/beacon/assets/images/' . $hero_name;
 	<p class="text-center"><a href="<?php echo $win_url; ?>" class="download-button">Download for <?php echo $win_label; ?></a><br><a href="<?php echo $mac_url; ?>" class="download-alternate">Or Download for <?php echo $mac_label; ?></a></p>
 	<?php break;
 	} ?>
-	<p class="text-center">Version <?php echo $version; ?>. Engrams database last updated <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A T') . '</time>'; ?>. <a href="/beacon/classes.php">Download engrams</a></p>
+	<p class="text-center">Version <?php echo $version; ?>. Engrams database last updated <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?>. <a href="/beacon/classes.php?version=<?php echo $build; ?>">Download engrams</a></p>
 	<p class="text-center"><a href="https://github.com/thommcgrath/Beacon"><img src="/gfx/GitHubLogo.png" srcset="/gfx/GitHubLogo.png 1x, /gfx/GitHubLogo@2x.png 2x, /gfx/GitHubLogo@3x.png 3x" width="93" height="25" alt="Beacon on GitHub"></a></p>
 </div>

@@ -52,8 +52,10 @@ CREATE TABLE loot_sources (
 	multiplier_min NUMERIC(6,4) NOT NULL,
 	multiplier_max NUMERIC(6,4) NOT NULL,
 	last_update TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0),
+	min_version INTEGER,
 	uicolor TEXT NOT NULL CHECK (uicolor ~* '^[0-9a-fA-F]{8}$'),
-	sort INTEGER NOT NULL UNIQUE
+	sort INTEGER NOT NULL UNIQUE,
+	CHECK (classstring LIKE '%_C')
 );
 GRANT SELECT ON TABLE loot_sources TO thezaz_website;
 
@@ -63,6 +65,7 @@ CREATE TABLE engrams (
 	availability INTEGER NOT NULL DEFAULT 0,
 	can_blueprint BOOLEAN NOT NULL DEFAULT TRUE,
 	last_update TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0),
+	min_version INTEGER,
 	CHECK (classstring LIKE '%_C')
 );
 GRANT SELECT ON TABLE engrams TO thezaz_website;
@@ -76,7 +79,8 @@ CREATE TABLE presets (
 );
 GRANT SELECT ON TABLE presets TO thezaz_website;
 
-CREATE VIEW updatable_objects AS (SELECT classstring, label, last_update FROM loot_sources) UNION (SELECT classstring, label, last_update FROM presets) UNION (SELECT classstring, label, last_update FROM engrams)
+CREATE OR REPLACE VIEW updatable_objects AS (SELECT classstring, label, last_update, min_version FROM loot_sources) UNION (SELECT classstring, label, last_update, NULL FROM presets) UNION (SELECT classstring, label, last_update, min_version FROM engrams);
+GRANT SELECT ON updatable_objects TO thezaz_website;
 
 CREATE TABLE deletions (
 	deletion_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),

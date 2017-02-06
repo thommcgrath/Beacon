@@ -9,16 +9,26 @@ if (array_key_exists('changes_since', $_GET)) {
 	$since = $since->format('Y-m-d H:i:sO');
 }
 
+$min_version = array_key_exists('version', $_GET) ? intval($_GET['version']) : null;
+
 $database = ConnectionManager::BeaconDatabase();
 $values = array();
 
 # Loot Soruces
 
 if ($since === null) {
-	$results = $database->Query("SELECT classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort FROM loot_sources;");
+	if ($min_version === null) {
+		$results = $database->Query("SELECT classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE min_version IS NULL;");
+	} else {
+		$results = $database->Query("SELECT classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE min_version IS NULL OR min_version <= $1;", array($min_version));
+	}
 	$delete_results = null;
 } else {
-	$results = $database->Query("SELECT classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort FROM loot_sources WHERE last_update > $1;", array($since));
+	if ($min_version === null) {
+		$results = $database->Query("SELECT classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE last_update > $1 AND min_version IS NULL;", array($since));
+	} else {
+		$results = $database->Query("SELECT classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE last_update > $1 AND (min_version IS NULL OR min_version <= $2);", array($since, $min_version));
+	}
 	$delete_results = $database->Query("SELECT classstring FROM deletions WHERE \"table\" = 'loot_sources' AND time > $1;", array($since));
 }
 $sources = array();
@@ -31,7 +41,8 @@ while (!$results->EOF()) {
 		'mult_min' => floatval($results->Field('multiplier_min')),
 		'mult_max' => floatval($results->Field('multiplier_max')),
 		'uicolor' => $results->Field('uicolor'),
-		'sort' => intval($results->Field('sort'))
+		'sort' => intval($results->Field('sort')),
+		'version' => intval($results->Field('min_version'))
 	);
 	$results->MoveNext();
 }
@@ -50,10 +61,18 @@ $values['loot_sources'] = array(
 # Engrams
 
 if ($since === null) {
-	$results = $database->Query("SELECT classstring, label, availability, can_blueprint FROM engrams;");
+	if ($min_version === null) {
+		$results = $database->Query("SELECT classstring, label, availability, can_blueprint, min_version FROM engrams WHERE min_version IS NULL;");
+	} else {
+		$results = $database->Query("SELECT classstring, label, availability, can_blueprint, min_version FROM engrams WHERE min_version IS NULL OR min_version <= $1;", array($min_version));
+	}
 	$delete_results = null;
 } else {
-	$results = $database->Query("SELECT classstring, label, availability, can_blueprint FROM engrams WHERE last_update > $1;", array($since));
+	if ($min_version === null) {
+		$results = $database->Query("SELECT classstring, label, availability, can_blueprint, min_version FROM engrams WHERE last_update > $1 AND min_version IS NULL;", array($since));
+	} else {
+		$results = $database->Query("SELECT classstring, label, availability, can_blueprint, min_version FROM engrams WHERE last_update > $1 AND (min_version IS NULL OR min_version <= $2);", array($since, $min_version));
+	}
 	$delete_results = $database->Query("SELECT classstring FROM deletions WHERE \"table\" = 'engrams' AND time > $1;", array($since));
 }
 $engrams = array();
@@ -62,7 +81,8 @@ while (!$results->EOF()) {
 		'class' => $results->Field('classstring'),
 		'label' => $results->Field('label'),
 		'availability' => intval($results->Field('availability')),
-		'blueprint' => ($results->Field('can_blueprint') == 't') ? 1 : 0
+		'blueprint' => ($results->Field('can_blueprint') == 't') ? 1 : 0,
+		'version' => intval($results->Field('min_version'))
 	);
 	$results->MoveNext();
 }
@@ -108,12 +128,21 @@ $values['presets'] = array(
 	'removals' => $presets_deleted
 );
 
-$results = $database->Query("SELECT MAX(max) FROM ((SELECT MAX(last_update AT TIME ZONE 'UTC') FROM loot_sources) UNION (SELECT MAX(last_update AT TIME ZONE 'UTC') FROM presets) UNION (SELECT MAX(last_update AT TIME ZONE 'UTC') FROM engrams)) AS dates;");
+if ($min_version === null) {
+	$results = $database->Query("SELECT MAX(last_update) FROM updatable_objects WHERE min_version IS NULL");
+} else {
+	$results = $database->Query("SELECT MAX(last_update) FROM updatable_objects WHERE min_version IS NULL OR min_version <= $1", array($min_version));
+}
 $last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
 
 $values['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
 $values['beacon_version'] = 1;
 $values['is_full'] = ($since === null) ? 1 : 0;
+if ($min_version === null) {
+	$values['min_version'] = 0;
+} else {
+	$values['min_version'] = $min_version;
+}
 
 $body = json_encode($values);
 $hash = md5($body);

@@ -60,11 +60,9 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Dim LastSync As String = Self.Variable("last_sync")
-		  Dim CheckURL As Text
+		  Dim CheckURL As Text = Beacon.WebURL + "/classes.php?version=" + App.NonReleaseVersion.ToText
 		  If LastSync <> "" Then
-		    CheckURL = Beacon.WebURL + "/classes.php?changes_since=" + EncodeURLComponent(LastSync).ToText
-		  Else
-		    CheckURL = Beacon.WebURL + "/classes.php"
+		    CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync).ToText
 		  End If
 		  
 		  App.Log("Checking for engram updates from " + CheckURL)
