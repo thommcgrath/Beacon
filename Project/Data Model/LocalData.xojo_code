@@ -282,6 +282,10 @@ Implements Beacon.DataSource
 		        SourceInsertStatement.BindType(6, SQLitePreparedStatement.SQLITE_TEXT)
 		        SourceInsertStatement.BindType(7, SQLitePreparedStatement.SQLITE_INTEGER)
 		        For Each Dict As Xojo.Core.Dictionary In SourceAdditions
+		          If Dict.HasKey("version") And Dict.Value("version") > App.NonReleaseVersion Then
+		            Continue
+		          End If
+		          
 		          Dim ClassString As Text = Dict.Value("class")
 		          Dim Label As Text = Dict.Value("label")
 		          Dim Kind As Text = Dict.Value("kind")
@@ -313,6 +317,10 @@ Implements Beacon.DataSource
 		        EngramInsertStatement.BindType(2, SQLitePreparedStatement.SQLITE_INTEGER)
 		        EngramInsertStatement.BindType(3, SQLitePreparedStatement.SQLITE_INTEGER)
 		        For Each Dict As Xojo.Core.Dictionary In EngramAdditions
+		          If Dict.HasKey("version") And Dict.Value("version") > App.NonReleaseVersion Then
+		            Continue
+		          End If
+		          
 		          Dim ClassString As Text = Dict.Value("class")
 		          Dim Label As Text = Dict.Value("label")
 		          Dim Availability As Integer = Dict.Value("availability")

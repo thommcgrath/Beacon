@@ -3,6 +3,7 @@
 ## Build 11 (Beta 4)
 
 - Now offers to subscribe users to the Beacon Announce mailing list. This only happens during the first launch, the dialog will never be seen a second time.
+- Special considerations are now made for the desert loot crates in Scorched Earth. Most users will never notice anything peculiar about this loot source. However, in order to support this particular crate, exporting both The Island and Scorched Earth configs at the same time is no longer possible.
 
 ## Build 10 (Beta 3)
 
