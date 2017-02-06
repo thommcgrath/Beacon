@@ -364,6 +364,7 @@ Implements Beacon.DataSource
 		    End If
 		    
 		    Self.Variable("last_sync") = LastSync
+		    App.Log("Imported classes. Engrams date is " + LastSync)
 		    
 		    Return True
 		  Catch Err As RuntimeException
@@ -400,8 +401,9 @@ Implements Beacon.DataSource
 		    Return Nil
 		  End If
 		  
+		  Dim Now As New Date
 		  Dim TempDate As Xojo.Core.Date = Xojo.Core.Date.FromText(LastSync.ToText)
-		  Return New Xojo.Core.Date(TempDate.SecondsFrom1970 + TempDate.TimeZone.SecondsFromGMT, New Xojo.Core.TimeZone("UTC"))
+		  Return New Xojo.Core.Date(TempDate.SecondsFrom1970 + (Now.GMTOffset * 3600), New Xojo.Core.TimeZone("UTC"))
 		End Function
 	#tag EndMethod
 
