@@ -37,6 +37,7 @@ Begin BeaconWindow PresetWindow
       HasBackColor    =   False
       Height          =   672
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   14
       LockBottom      =   True
@@ -67,6 +68,7 @@ End
 		  End If
 		  
 		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
 		  Dialog.Message = "Do you want to save changes to """ + Self.Title + """ before closing?"
 		  Dialog.Explanation = "If you don't save, your changes will be lost."
 		  Dialog.ActionButton.Caption = "Save"
@@ -155,6 +157,7 @@ End
 		  Select Case Self.SourceMode
 		  Case PresetWindow.SourceModes.FromScratch, PresetWindow.SourceModes.FromItemSet
 		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
 		    Dialog.Message = "Save this preset to library?"
 		    Dialog.Explanation = "Presets can be saved to your personal library for your own use, or saved to a file for sharing."
 		    Dialog.ActionButton.Caption = "To Library"

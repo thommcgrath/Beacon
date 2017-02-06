@@ -99,7 +99,7 @@ Begin BeaconWindow UpdateWindow
          LockTop         =   True
          Maximum         =   0
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   "1"
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   52
@@ -447,7 +447,7 @@ Begin BeaconWindow UpdateWindow
          LockTop         =   True
          Maximum         =   0
          Scope           =   2
-         TabIndex        =   13
+         TabIndex        =   "13"
          TabPanelIndex   =   3
          TabStop         =   True
          Top             =   52
@@ -686,7 +686,7 @@ End
 #tag EndEvents
 #tag Events Borders
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
 		  G.ForeColor = &cCCCCCC
@@ -708,6 +708,7 @@ End
 		  #Pragma Unused Message
 		  
 		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
 		  Dialog.Message = "Unable to check for updates."
 		  Dialog.Explanation = "Uh oh, something seems to be wrong. Please report this problem so it can be fixed as soon as possible."
 		  Dialog.ActionButton.Caption = "Report Now"
@@ -724,6 +725,7 @@ End
 	#tag Event
 		Sub NoUpdate()
 		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
 		  Dialog.Message = "You are using the latest version."
 		  Dialog.Explanation = "That's good news, unless you're having a problem. If you are, please report the problem."
 		  Dialog.ActionButton.Caption = "Report Now"
@@ -749,6 +751,7 @@ End
 		  Me.Disconnect
 		  
 		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
 		  Dialog.Message = "Unable to Download Update"
 		  Dialog.Explanation = Err.Reason
 		  Call Dialog.ShowModalWithin(Self)
@@ -774,6 +777,7 @@ End
 		    Me.Disconnect
 		    
 		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
 		    Dialog.Message = "Unable to Download Update"
 		    Dialog.Explanation = "The address " + URL + " could not be found."
 		    Call Dialog.ShowModalWithin(Self)
@@ -800,6 +804,7 @@ End
 		    Self.Hide
 		    
 		    Dim Confirm As New MessageDialog
+		    Confirm.Title = ""
 		    Confirm.Message = "Beacon is ready to update."
 		    Confirm.Explanation = "Choose ""Install Now"" to quit Beacon and start the update. If you aren't ready to update now, choose ""Install On Quit"" to start the update when you're done, or ""Show Archive"" to install the update yourself."
 		    Confirm.ActionButton.Caption = "Install Now"
@@ -826,6 +831,7 @@ End
 		  Self.mFile = Nil
 		  
 		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
 		  Dialog.Message = "Unable to Download Update"
 		  Dialog.Explanation = "The file was downloaded, but the integrity check did not match. Please report this problem."
 		  Dialog.ActionButton.Caption = "Report Now"

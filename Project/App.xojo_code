@@ -116,6 +116,7 @@ Inherits Application
 		        Dim LastSync As Xojo.Core.Date = Self.mLocalData.LastSync
 		        
 		        Dim Dialog As New MessageDialog
+		        Dialog.Title = ""
 		        Dialog.Message = "Engram database has been updated"
 		        Dialog.Explanation = "Engrams, loot sources, and presets are now current as of " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC."
 		        Call Dialog.ShowModal
@@ -126,6 +127,7 @@ Inherits Application
 		    End Try
 		    
 		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
 		    Dialog.Message = "Unable to import engram data"
 		    Dialog.Explanation = "Sorry about that. The file may not be correctly formatted."
 		    Call Dialog.ShowModal
@@ -140,6 +142,7 @@ Inherits Application
 		      PresetManagerWindow.ShowPreset(Preset)
 		    Else
 		      Dim Dialog As New MessageDialog
+		      Dialog.Title = ""
 		      Dialog.Message = "Unable to import preset"
 		      Dialog.Explanation = "Sorry about that. The file may not be correctly formatted."
 		      Call Dialog.ShowModal
@@ -154,6 +157,7 @@ Inherits Application
 		  End If
 		  
 		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
 		  Dialog.Message = "Unable to open file"
 		  Dialog.Explanation = "Beacon doesn't know what to do with the file " + Item.Name
 		  Call Dialog.ShowModal

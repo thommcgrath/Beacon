@@ -486,6 +486,7 @@ End
 		  Dim Set As Beacon.ItemSet = SetList.RowTag(SetList.ListIndex)
 		  
 		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
 		  Dialog.Message = "Are you sure you want to delete the item set """ + Set.Label + """?"
 		  Dialog.Explanation = "This action cannot be undone."
 		  Dialog.ActionButton.Caption = "Delete"
@@ -752,6 +753,7 @@ End
 		        If NewSet.Hash = OriginalHash Then
 		          // No changes
 		          Dim Dialog As New MessageDialog
+		          Dialog.Title = ""
 		          Dialog.Message = "No changes made"
 		          Dialog.Explanation = "This item set is already identical to the preset."
 		          Call Dialog.ShowModalWithin(Self.TrueWindow)

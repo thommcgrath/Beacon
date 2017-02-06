@@ -424,6 +424,7 @@ End
 		  End If
 		  
 		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
 		  Dialog.Message = "Do you want to save changes to """ + Self.Title + """ before closing?"
 		  Dialog.Explanation = "If you don't save, your changes will be lost."
 		  Dialog.ActionButton.Caption = "Save"
@@ -547,6 +548,7 @@ End
 	#tag MenuHandler
 		Function DocumentUnpublishDocument() As Boolean Handles DocumentUnpublishDocument.Action
 			Dim Dialog As New MessageDialog
+			Dialog.Title = ""
 			Dialog.Message = "Are you sure you want to unpublish this document?"
 			Dialog.Explanation = "This document will no longer be available to download. If you choose to publish again, the document url will remain the same, so you can always change your mind."
 			Dialog.ActionButton.Caption = "Unpublish"
@@ -595,6 +597,7 @@ End
 			Package = Beacon.LootSource.Packages.Scorched
 			Else
 			Dim Warning As New MessageDialog
+			Warning.Title = ""
 			Warning.Message = "No loot sources to export"
 			Warning.Explanation = "Beacon cannot export anything from this document because it contains no loot sources for either environment."
 			Call Warning.ShowModalWithin(Self)
@@ -763,6 +766,7 @@ End
 		  End If
 		  
 		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
 		  If BeaconList.SelCount = 1 Then
 		    Dialog.Message = "Are you sure you want to delete the selected loot source?"
 		  Else
@@ -1214,6 +1218,7 @@ End
 	#tag Event
 		Sub DeleteError()
 		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
 		  Dialog.Message = "Unable to unpublish document"
 		  Dialog.Explanation = "The server denied your request to unpublish the document. Would you like to report this problem?"
 		  Dialog.ActionButton.Caption = "Report"
