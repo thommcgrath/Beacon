@@ -74,6 +74,7 @@ Implements Beacon.DataSource
 		  App.Log("Checking for engram updates from " + CheckURL)
 		  
 		  Self.mUpdater = New Xojo.Net.HTTPSocket
+		  Self.mUpdater.ValidateCertificates = True
 		  AddHandler Self.mUpdater.PageReceived, WeakAddressOf Self.mUpdater_PageReceived
 		  AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
 		  Self.mUpdater.Send("GET", CheckURL)

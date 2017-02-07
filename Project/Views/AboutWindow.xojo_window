@@ -18,7 +18,7 @@ Begin BeaconWindow AboutWindow
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   256
+   MinHeight       =   286
    MinimizeButton  =   False
    MinWidth        =   360
    Placement       =   2
@@ -302,15 +302,7 @@ End
 		    SyncLabel.Text = "Engrams updated " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC"
 		  End If
 		  
-		  Dim StageText As String
-		  Select Case App.StageCode
-		  Case Application.Alpha, Application.Development
-		    StageText = "Alpha"
-		  Case Application.Beta
-		    StageText = "Beta"
-		  End Select
-		  
-		  VersionLabel.Text = "Version " + Str(App.MajorVersion, "-0") + "." + Str(App.MinorVersion, "-0") + "." + Str(App.BugVersion, "-0") + " " + Trim(StageText + " (Build " + Str(App.NonReleaseVersion, "-0") + ")")
+		  VersionLabel.Text = "Version " + App.ShortVersion + " (Build " + Str(App.NonReleaseVersion, "-0") + ")"
 		End Sub
 	#tag EndMethod
 
@@ -369,6 +361,7 @@ End
 		  UpdateEngramsSpinner.Top = Top + ((UpdateEngramsButton.Height - UpdateEngramsSpinner.Height) / 2)
 		  
 		  Dim URL As Text = App.LocalData.ClassesURL
+		  UpdateEngramsSocket.ValidateCertificates = True
 		  UpdateEngramsSocket.Send("GET", URL)
 		End Sub
 	#tag EndEvent

@@ -85,6 +85,7 @@ Inherits Application
 		  Self.Log("Identity is " + Self.mIdentity.Identifier)
 		  
 		  Self.mFileLoader = New Xojo.Net.HTTPSocket
+		  Self.mFileLoader.ValidateCertificates = True
 		  AddHandler Self.mFileLoader.PageReceived, WeakAddressOf Self.mFileLoader_PageReceived
 		  AddHandler Self.mFileLoader.Error, WeakAddressOf Self.mFileLoader_Error
 		  AddHandler Self.mFileLoader.AuthenticationRequired, WeakAddressOf Self.mFileLoader_AuthenticationRequired

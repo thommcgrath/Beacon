@@ -22,6 +22,7 @@ Protected Class UpdateChecker
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mSocket = New Xojo.Net.HTTPSocket
+		  Self.mSocket.ValidateCertificates = True
 		  AddHandler Self.mSocket.Error, WeakAddressOf Self.mSocket_Error
 		  AddHandler Self.mSocket.HeadersReceived, WeakAddressOf Self.mSocket_HeadersReceived
 		  AddHandler Self.mSocket.PageReceived, WeakAddressOf Self.mSocket_PageReceived

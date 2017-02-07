@@ -525,6 +525,7 @@ End
 		  Dim FormString As String = "email=" + EncodeURLComponent(Trim(AddressField.Text)) + "&first_name=" + EncodeURLComponent(Trim(FirstNameField.Text)) + "&last_name=" + EncodeURLComponent(Trim(LastNameField.Text))
 		  Dim Content As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(FormString.ToText)
 		  
+		  SubscribeSocket.ValidateCertificates = True
 		  SubscribeSocket.SetRequestContent(Content, "application/x-www-form-urlencoded")
 		  SubscribeSocket.Send("POST", Beacon.WebURL + "/subscribe.php")
 		End Sub
