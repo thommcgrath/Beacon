@@ -6,6 +6,7 @@
 - Special considerations are now made for the desert loot crates in Scorched Earth. Most users will never notice anything peculiar about this loot source. However, in order to support this particular crate, exporting both The Island and Scorched Earth configs at the same time is no longer possible.
 - Fixed loot source color and sort order of duplicated sources.
 - Fixing bug with showing the engram database date incorrectly on Windows.
+- About window now has a button to update engrams automatically. This should still happen automatically at startup, but the button will provide confirmation of success or failure.
 
 ## Build 10 (Beta 3)
 
