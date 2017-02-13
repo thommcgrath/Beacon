@@ -7,6 +7,7 @@
 - Fixed loot source color and sort order of duplicated sources.
 - Fixing bug with showing the engram database date incorrectly on Windows.
 - About window now has a button to update engrams automatically. This should still happen automatically at startup, but the button will provide confirmation of success or failure.
+- Added offline logging to help track down certain bugs. This is stored in %AppData%\The ZAZ\Beacon on Windows or ~/Library/Application Support/The ZAZ/Beacon on macOS.
 
 ## Build 10 (Beta 3)
 
