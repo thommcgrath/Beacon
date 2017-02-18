@@ -351,16 +351,25 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddSet(Set As Beacon.ItemSet)
+		  Dim Added As Boolean
+		  Dim Hash As Text = Set.Hash
+		  
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Source.Append(New Beacon.ItemSet(Set))
+		    If Source.IndexOf(Set) = -1 Then
+		      Source.Append(New Beacon.ItemSet(Set))
+		      Added = True
+		    End If
 		  Next
-		  SetList.AddRow(Set.Label)
-		  SetList.RowTag(SetList.LastIndex) = Set
-		  SetList.ListIndex = SetList.LastIndex
-		  Self.mSorting = True
-		  SetList.Sort
-		  Self.mSorting = False
-		  RaiseEvent Updated
+		  
+		  If Added Then
+		    SetList.AddRow(Set.Label)
+		    SetList.RowTag(SetList.LastIndex) = Set
+		    SetList.ListIndex = SetList.LastIndex
+		    Self.mSorting = True
+		    SetList.Sort
+		    Self.mSorting = False
+		    RaiseEvent Updated
+		  End If
 		End Sub
 	#tag EndMethod
 

@@ -128,10 +128,13 @@ Implements Beacon.Countable
 		    Children = Dict.Value("Items")
 		  End If
 		  
+		  Dim AddedHashes As New Xojo.Core.Dictionary
 		  For Each Child As Xojo.Core.Dictionary In Children
 		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Child, LootSource)
-		    If Set <> Nil Then
+		    Dim Hash As Text = Set.Hash
+		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
 		      LootSource.Append(Set)
+		      AddedHashes.Value(Hash) = True
 		    End If
 		  Next
 		  
@@ -311,6 +314,10 @@ Implements Beacon.Countable
 		    Values.Append("SupplyCrateClassString=""SupplyCrate_OceanInstant_C""")
 		  Else
 		    Values.Append("SupplyCrateClassString=""" + Self.mClassString + """")
+		  End If
+		  
+		  If Self.mClassString = "SupplyCrate_Level03_C" Then
+		    Break
 		  End If
 		  
 		  Values.Append("MinItemSets=" + Self.mMinItemSets.ToText)
