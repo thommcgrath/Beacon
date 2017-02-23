@@ -3,6 +3,7 @@
 ## Build 12 (Beta 5)
 
 - Removing the special considerations for Scorched Earth desert crates. This means exporting an entire ini file is possible. Beacon will automatically adapt the loot source accordingly. Rebuilding your ini files is recommended.
+- No longer possible to paste duplicate item sets into loot sources. This would end up hiding the sets entirely, only to become visible in the export. Beacon will automatically clean up loot sources which might have been affected by this in the past.
 
 [Developer note regarding the desert loot crates] I had previously concluded, based on Google search results, that SE desert crates and Island deep sea crates used the same class string. It turns out this is incorrect, so all the special workarounds I implemented needed to be removed. My thanks to Ark Community member Gumballz who pointed this out to me. The correct information was right in front of my in the dev kit, and I just didn't notice.
 
