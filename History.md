@@ -1,5 +1,11 @@
 # Beacon Version History
 
+## Build 12 (Beta 5)
+
+- Removing the special considerations for Scorched Earth desert crates. This means exporting an entire ini file is possible. Beacon will automatically adapt the loot source accordingly. Rebuilding your ini files is recommended.
+
+[Developer note regarding the desert loot crates] I had previously concluded, based on Google search results, that SE desert crates and Island deep sea crates used the same class string. It turns out this is incorrect, so all the special workarounds I implemented needed to be removed. My thanks to Ark Community member Gumballz who pointed this out to me. The correct information was right in front of my in the dev kit, and I just didn't notice.
+
 ## Build 11 (Beta 4)
 
 - Now offers to subscribe users to the Beacon Announce mailing list. This only happens during the first launch, the dialog will never be seen a second time.

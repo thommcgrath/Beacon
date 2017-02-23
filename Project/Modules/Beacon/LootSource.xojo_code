@@ -97,6 +97,9 @@ Implements Beacon.Countable
 		  Else
 		    ClassString = Dict.Value("Type")
 		  End If
+		  If ClassString = "Beacon:ScorchedEarthDesertCrate_C" Then
+		    ClassString = "SupplyCreate_OceanInstant_High_C"
+		  End If
 		  
 		  Dim LootSource As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
 		  If LootSource = Nil Then
@@ -311,13 +314,9 @@ Implements Beacon.Countable
 		  
 		  // This is terrible, but Ark uses the same code for both Scorched Desert Crates and Island Sea Crates
 		  If Self.mClassString = "Beacon:ScorchedEarthDesertCrate_C" Then
-		    Values.Append("SupplyCrateClassString=""SupplyCrate_OceanInstant_C""")
+		    Values.Append("SupplyCrateClassString=""SupplyCreate_OceanInstant_High_C""")
 		  Else
 		    Values.Append("SupplyCrateClassString=""" + Self.mClassString + """")
-		  End If
-		  
-		  If Self.mClassString = "SupplyCrate_Level03_C" Then
-		    Break
 		  End If
 		  
 		  Values.Append("MinItemSets=" + Self.mMinItemSets.ToText)

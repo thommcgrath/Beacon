@@ -115,7 +115,6 @@ MultiImage=IconLootDragon;Icons/IconLootDragon.xojo_image;&hD387FF;&h7F977FF;fal
 MultiImage=IconLootDragonColorMask;Icons/IconLootDragonColorMask.xojo_image;&h74480FFF;&h7F977FF;false
 MultiImage=IconLootManticore;Icons/IconLootManticore.xojo_image;&h7CAB87FF;&h7F977FF;false
 MultiImage=IconLootManticoreColorMask;Icons/IconLootManticoreColorMask.xojo_image;&h270F1FFF;&h7F977FF;false
-Window=ExportChooseEnvironmentDialog;Views/ExportChooseEnvironmentDialog.xojo_window;&h6C846FFF;&h8A387FF;false
 Window=SubscribeDialog;Views/SubscribeDialog.xojo_window;&h132627FF;&h8A387FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1

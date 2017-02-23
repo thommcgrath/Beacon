@@ -574,28 +574,7 @@ End
 		Function FileExport() As Boolean Handles FileExport.Action
 			Dim LootSources() As Beacon.LootSource = Self.Doc.LootSources
 			
-			Dim IslandCount, ScorchedCount As Integer
-			For Each LootSource As Beacon.LootSource In LootSources
-			Select Case LootSource.Package
-			Case Beacon.LootSource.Packages.Island
-			IslandCount = IslandCount + 1
-			Case Beacon.LootSource.Packages.Scorched
-			ScorchedCount = ScorchedCount + 1
-			End Select
-			Next
-			
-			Dim Package As Beacon.LootSource.Packages
-			If IslandCount > 0 And ScorchedCount > 0 Then
-			// Need to confirm which map.
-			Package = ExportChooseEnvironmentDialog.Present(Self)
-			If Package = CType(-1, Beacon.LootSource.Packages) Then
-			Return True
-			End If
-			ElseIf IslandCount > 0 Then
-			Package = Beacon.LootSource.Packages.Island
-			ElseIf ScorchedCount > 0 Then
-			Package = Beacon.LootSource.Packages.Scorched
-			Else
+			If UBound(LootSources) = -1 Then
 			Dim Warning As New MessageDialog
 			Warning.Title = ""
 			Warning.Message = "No loot sources to export"
@@ -614,9 +593,7 @@ End
 			Lines.Append("[/script/shootergame.shootergamemode]")
 			
 			For Each LootSource As Beacon.LootSource In LootSources
-			If LootSource.Package = Package Then
 			Lines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue())
-			End If
 			Next
 			
 			Dim Stream As TextOutputStream = TextOutputStream.Create(File)
