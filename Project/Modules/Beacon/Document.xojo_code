@@ -107,6 +107,16 @@ Protected Class Document
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Shared Function Read(File As Global.FolderItem) As Beacon.Document
+		  Dim Stream As TextInputStream = TextInputStream.Open(File)
+		  Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
+		  Stream.Close
+		  
+		  Return Beacon.Document.Read(Contents.ToText)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Function Read(Contents As Text) As Beacon.Document
 		  Dim Parsed As Auto
@@ -192,7 +202,7 @@ Protected Class Document
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
 		Shared Function Read(File As Xojo.IO.FolderItem) As Beacon.Document
 		  Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(File, Xojo.IO.BinaryStream.LockModes.Read)
 		  Dim Data As Xojo.Core.MemoryBlock = Stream.Read(Stream.Length)
@@ -221,7 +231,16 @@ Protected Class Document
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Sub Write(File As Global.FolderItem)
+		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.Export)
+		  Dim Stream As TextOutputStream = TextOutputStream.Create(File)
+		  Stream.Write(Contents)
+		  Stream.Close
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
 		Sub Write(File As Xojo.IO.FolderItem)
 		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.Export)
 		  Dim Data As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Contents)

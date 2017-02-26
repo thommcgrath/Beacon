@@ -699,7 +699,7 @@ End
 		Sub Constructor(File As FolderItem)
 		  If File.IsType(BeaconFileTypes.BeaconDocument) Then
 		    // Beacon document
-		    Self.File = New Xojo.IO.FolderItem(File.NativePath.ToText)
+		    Self.File = File
 		    Self.Doc = Beacon.Document.Read(Self.File)
 		    Self.Title = File.Name
 		    Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Upgraded
@@ -795,12 +795,6 @@ End
 
 	#tag Method, Flags = &h0
 		Sub SaveAs(File As FolderItem)
-		  Self.SaveAs(New Xojo.IO.FolderItem(File.NativePath.ToText))
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SaveAs(File As Xojo.IO.FolderItem)
 		  Self.File = File
 		  Self.Doc.Write(File)
 		  Self.Title = File.Name
@@ -891,7 +885,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private File As Xojo.IO.FolderItem
+		Private File As Global.FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -105,23 +105,6 @@ Protected Class UpdateChecker
 
 	#tag Method, Flags = &h0
 		Shared Function VerifyFile(File As Global.FolderItem, Signature As String) As Boolean
-		  #if false
-		    Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(New Xojo.IO.FolderItem(File.NativePath.ToText), Xojo.IO.BinaryStream.LockModes.Read)
-		    Dim Contents As Xojo.Core.MemoryBlock = Stream.Read(Stream.Length)
-		    Stream.Close
-		    
-		    Dim SignatureText As Text = Signature
-		    Dim KeyText As Text = PublicKey
-		    
-		    Dim Key As New Xojo.Core.MutableMemoryBlock(Sig.Length / 2)
-		    For I As Integer = 0 To Key.Size - 1
-		      Dim Chars As Text = Sig.Mid(I * 2, 2)
-		      Key.UInt8Value(I) = UInt8.FromHex(Chars)
-		    Next
-		    
-		    Return Xojo.Crypto.RSAVerifySignature(Contents,
-		  #endif 
-		  
 		  Dim Stream As BinaryStream = BinaryStream.Open(File, False)
 		  Dim Contents As MemoryBlock = Stream.Read(Stream.Length)
 		  Stream.Close
