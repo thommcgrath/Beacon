@@ -44,7 +44,6 @@ Begin BeaconWindow UpdateWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   1
       Visible         =   True
@@ -71,7 +70,6 @@ Begin BeaconWindow UpdateWindow
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
-         TabStop         =   True
          Text            =   "Check for Beacon updates…"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -99,9 +97,7 @@ Begin BeaconWindow UpdateWindow
          LockTop         =   True
          Maximum         =   0
          Scope           =   2
-         TabIndex        =   "1"
          TabPanelIndex   =   1
-         TabStop         =   True
          Top             =   52
          Value           =   0
          Visible         =   True
@@ -188,7 +184,6 @@ Begin BeaconWindow UpdateWindow
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "A new version of Beacon is available!"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -391,7 +386,6 @@ Begin BeaconWindow UpdateWindow
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Downloading update…"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -447,9 +441,7 @@ Begin BeaconWindow UpdateWindow
          LockTop         =   True
          Maximum         =   0
          Scope           =   2
-         TabIndex        =   "13"
          TabPanelIndex   =   3
-         TabStop         =   True
          Top             =   52
          Value           =   0
          Visible         =   True
@@ -488,28 +480,17 @@ Begin BeaconWindow UpdateWindow
       End
    End
    Begin UpdateChecker Checker
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Xojo.Net.HTTPSocket Downloader
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
       ValidateCertificates=   False
-   End
-   Begin Timer DownloadFinishTimer
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Mode            =   0
-      Period          =   250
-      Scope           =   2
-      TabPanelIndex   =   0
    End
 End
 #tag EndWindow
@@ -667,7 +648,7 @@ End
 		    End If
 		  End If
 		  
-		  Self.Downloader.Send("GET", Self.mURL.ToText, New Xojo.IO.FolderItem(Self.mFile.NativePath.ToText))
+		  Self.Downloader.Send("GET", Self.mURL.ToText)
 		  Self.DownloadProgressBar.Maximum = 0
 		  Self.ViewPanel.Value = Self.ViewDownload
 		End Sub
@@ -760,18 +741,6 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub FileReceived(URL as Text, HTTPStatus as Integer, File as xojo.IO.FolderItem)
-		  #Pragma Unused URL
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused File
-		  
-		  // Ok, this is stupid. The event fires before the final bytes are written. So
-		  // we need to use a timer to wait a moment to complete.
-		  
-		  DownloadFinishTimer.Mode = Timer.ModeSingle
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub HeadersReceived(URL as Text, HTTPStatus as Integer)
 		  If HTTPStatus <> 200 Then
 		    Me.Disconnect
@@ -796,10 +765,17 @@ End
 		  Self.DownloadProgressBar.Value = (BytesReceived / TotalBytes) * Self.DownloadProgressBar.Maximum
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events DownloadFinishTimer
 	#tag Event
-		Sub Action()
+		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
+		  #Pragma Unused URL
+		  #Pragma Unused HTTPStatus
+		  
+		  Dim Stream As BinaryStream = BinaryStream.Create(Self.mFile, True)
+		  For I As Integer = 0 To Content.Size - 1
+		    Stream.WriteUInt8(Content.UInt8Value(I))
+		  Next
+		  Stream.Close
+		  
 		  If UpdateChecker.VerifyFile(Self.mFile, Self.mSignature) Then
 		    Self.Hide
 		    

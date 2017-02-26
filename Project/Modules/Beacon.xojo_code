@@ -1,19 +1,5 @@
 #tag Module
 Protected Module Beacon
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function Convert(Extends File As Global.FolderItem) As Xojo.IO.FolderItem
-		  Dim Path As String = File.NativePath
-		  Return New Xojo.IO.FolderItem(Path.ToText)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function Convert(Extends File As Xojo.IO.FolderItem) As Global.FolderItem
-		  Dim Path As Text = File.Path
-		  Return GetFolderItem(Path, FolderItem.PathTypeNative)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function CreateUUID() As Text
 		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)

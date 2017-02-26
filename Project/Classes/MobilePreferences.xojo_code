@@ -1,6 +1,7 @@
 #tag Class
 Protected Class MobilePreferences
 Inherits Preferences
+	#tag CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
 	#tag Method, Flags = &h0
 		Sub Constructor(File As Xojo.IO.FolderItem)
 		  Super.Constructor()
