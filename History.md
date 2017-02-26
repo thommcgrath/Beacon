@@ -1,5 +1,9 @@
 # Beacon Version History
 
+## Build 13 (Beta 6)
+
+- Fixes exceptions on Windows caused by user account paths containing non-ASCII characters.
+
 ## Build 12 (Beta 5)
 
 - Removing the special considerations for Scorched Earth desert crates. This means exporting an entire ini file is possible. Beacon will automatically adapt the loot source accordingly. Rebuilding your ini files is recommended.

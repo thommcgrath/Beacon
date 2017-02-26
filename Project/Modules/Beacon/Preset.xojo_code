@@ -126,7 +126,30 @@ Implements Beacon.Countable
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Shared Function FromFile(File As Global.FolderItem) As Beacon.Preset
+		  If File = Nil Or File.Exists = False Or File.Directory = True Then
+		    Return Nil
+		  End If
+		  
+		  Try
+		    Dim Stream As TextInputStream = TextInputStream.Open(File)
+		    Dim Bytes As String = Stream.ReadAll(Encodings.UTF8)
+		    Stream.Close
+		    
+		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Bytes.ToText)
+		    Return Beacon.Preset.FromDictionary(Dict)
+		  Catch Err As Xojo.IO.IOException
+		    Return Nil
+		  Catch Err As Xojo.Data.InvalidJSONException
+		    Return Nil
+		  Catch Err As TypeMismatchException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
 		Shared Function FromFile(File As Xojo.IO.FolderItem) As Beacon.Preset
 		  If File = Nil Or File.Exists = False Or File.IsFolder = True Then
 		    Return Nil
@@ -284,7 +307,16 @@ Implements Beacon.Countable
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Sub ToFile(File As Global.FolderItem)
+		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.ToDictionary)
+		  Dim Stream As TextOutputStream = TextOutputStream.Create(File)
+		  Stream.Write(Contents)
+		  Stream.Close
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
 		Sub ToFile(File As Xojo.IO.FolderItem)
 		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.ToDictionary)
 		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Contents)

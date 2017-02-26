@@ -60,13 +60,11 @@ Inherits Application
 		  
 		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
 		  If IdentityFile.Exists Then
-		    Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(IdentityFile.Convert, Xojo.IO.BinaryStream.LockModes.Read)
-		    Dim Data As Xojo.Core.MemoryBlock = Stream.Read(Stream.Length)
+		    Dim Stream As TextInputStream = TextInputStream.Open(IdentityFile)
+		    Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
 		    Stream.Close
 		    
-		    Dim Contents As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Data)
-		    
-		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents)
+		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents.ToText)
 		    Dim Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
 		    Self.mIdentity = Identity
 		  Else
@@ -75,10 +73,9 @@ Inherits Application
 		    Dim Dict As Xojo.Core.Dictionary = Identity.Export
 		    
 		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
-		    Dim Data As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Contents)
 		    
-		    Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(IdentityFile.Convert, Xojo.IO.BinaryStream.LockModes.Write)
-		    Stream.Write(Data)
+		    Dim Stream As TextOutputStream = TextOutputStream.Create(IdentityFile)
+		    Stream.Write(Contents)
 		    Stream.Close
 		    Self.mIdentity = Identity
 		  End If
@@ -137,7 +134,7 @@ Inherits Application
 		  End If
 		  
 		  If Item.IsType(BeaconFileTypes.BeaconPreset) Then
-		    Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(New Xojo.IO.FolderItem(Item.NativePath.ToText))
+		    Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(Item)
 		    If Preset <> Nil Then
 		      Beacon.Data.SavePreset(Preset)
 		      PresetManagerWindow.ShowPreset(Preset)
@@ -418,7 +415,7 @@ Inherits Application
 	#tag Method, Flags = &h0
 		Function Preferences() As Preferences
 		  If Self.mPreferences = Nil Then
-		    Self.mPreferences = New Preferences(New Xojo.IO.FolderItem(Self.ApplicationSupport.Child("Preferences.json").NativePath.ToText))
+		    Self.mPreferences = New DesktopPreferences(Self.ApplicationSupport.Child("Preferences.json"))
 		  End If
 		  Return Self.mPreferences
 		End Function

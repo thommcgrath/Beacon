@@ -109,23 +109,9 @@ Protected Class Preferences
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor(File As Xojo.IO.FolderItem)
-		  Self.mFile = File
+	#tag Method, Flags = &h1
+		Protected Sub Constructor()
 		  
-		  If Self.mFile.Exists Then
-		    Try
-		      Dim Stream As Xojo.IO.TextInputStream = Xojo.IO.TextInputStream.Open(Self.mFile, Xojo.Core.TextEncoding.UTF8)
-		      Dim Contents As Text = Stream.ReadAll
-		      Stream.Close
-		      
-		      Self.mValues = Xojo.Data.ParseJSON(Contents)
-		    Catch Err As RuntimeException
-		      Self.mValues = New Xojo.Core.Dictionary
-		    End Try
-		  Else
-		    Self.mValues = New Xojo.Core.Dictionary
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -349,17 +335,10 @@ Protected Class Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub Write()
-		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.mValues)
-		  Dim Stream As Xojo.IO.TextOutputStream = Xojo.IO.TextOutputStream.Create(Self.mFile, Xojo.Core.TextEncoding.UTF8)
-		  Stream.Write(Contents)
-		  Stream.Close
+		  Raise New UnsupportedOperationException
 		End Sub
 	#tag EndMethod
 
-
-	#tag Property, Flags = &h21
-		Private mFile As Xojo.IO.FolderItem
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSavedValues As Xojo.Core.Dictionary
@@ -369,8 +348,8 @@ Protected Class Preferences
 		Private mTransactionLevel As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mValues As Xojo.Core.Dictionary
+	#tag Property, Flags = &h1
+		Protected mValues As Xojo.Core.Dictionary
 	#tag EndProperty
 
 
@@ -387,11 +366,6 @@ Protected Class Preferences
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mFile"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
