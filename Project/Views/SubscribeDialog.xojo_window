@@ -452,7 +452,7 @@ Begin Window SubscribeDialog
       Visible         =   True
       Width           =   90
    End
-   Begin PushButton PrivacyPolicyButton
+   Begin UITweaks.ResizedPushButton PrivacyPolicyButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -488,6 +488,7 @@ Begin Window SubscribeDialog
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
    End
 End
 #tag EndWindow
