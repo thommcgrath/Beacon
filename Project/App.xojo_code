@@ -418,7 +418,7 @@ Inherits Application
 	#tag Method, Flags = &h0
 		Function Preferences() As Preferences
 		  If Self.mPreferences = Nil Then
-		    Self.mPreferences = New Preferences(New Xojo.IO.FolderItem(Self.ApplicationSupport.Child("Preferences.json").NativePath.ToText))
+		    Self.mPreferences = New DesktopPreferences(Self.ApplicationSupport.Child("Preferences.json"))
 		  End If
 		  Return Self.mPreferences
 		End Function
