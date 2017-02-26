@@ -442,7 +442,7 @@ Implements Beacon.DataSource
 		        Continue For I
 		      End If
 		      
-		      Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(New Xojo.IO.FolderItem(File.NativePath.ToText))
+		      Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
 		      If Preset <> Nil Then
 		        Dim CorrectFile As FolderItem = Self.FileForCustomPreset(Preset)
 		        If File.NativePath <> CorrectFile.NativePath Then
@@ -592,7 +592,7 @@ Implements Beacon.DataSource
 	#tag Method, Flags = &h21
 		Private Sub SavePreset(Preset As Beacon.Preset, Reload As Boolean)
 		  Dim File As FolderItem = Self.FileForCustomPreset(Preset)
-		  Preset.ToFile(New Xojo.IO.FolderItem(File.NativePath.ToText))
+		  Preset.ToFile(File)
 		  If Reload Then
 		    Self.LoadPresets()
 		  End If

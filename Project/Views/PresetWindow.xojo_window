@@ -37,7 +37,6 @@ Begin BeaconWindow PresetWindow
       HasBackColor    =   False
       Height          =   672
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   14
       LockBottom      =   True
@@ -136,9 +135,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(File As FolderItem)
-		  Dim Item As Xojo.IO.FolderItem = New Xojo.IO.FolderItem(File.NativePath.ToText)
-		  
-		  Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(Item)
+		  Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
 		  If Preset = Nil Then
 		    Return
 		  End If
@@ -146,7 +143,7 @@ End
 		  Dim Win As New PresetWindow
 		  Win.Editor.Preset = Preset
 		  Win.Title = File.Name
-		  Win.File = Item
+		  Win.File = File
 		  Win.SourceMode = PresetWindow.SourceModes.FromFile
 		  Win.Show
 		End Sub
@@ -213,12 +210,6 @@ End
 
 	#tag Method, Flags = &h0
 		Sub SaveAs(File As FolderItem)
-		  Self.SaveAs(New Xojo.IO.FolderItem(File.NativePath.ToText))
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SaveAs(File As Xojo.IO.FolderItem)
 		  Self.File = File
 		  Self.Editor.Preset.ToFile(File)
 		  Self.Title = File.Name
@@ -228,7 +219,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private File As Xojo.IO.FolderItem
+		Private File As Global.FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

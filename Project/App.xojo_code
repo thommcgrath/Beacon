@@ -137,7 +137,7 @@ Inherits Application
 		  End If
 		  
 		  If Item.IsType(BeaconFileTypes.BeaconPreset) Then
-		    Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(New Xojo.IO.FolderItem(Item.NativePath.ToText))
+		    Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(Item)
 		    If Preset <> Nil Then
 		      Beacon.Data.SavePreset(Preset)
 		      PresetManagerWindow.ShowPreset(Preset)
