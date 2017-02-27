@@ -3,6 +3,7 @@
 ## Build 13 (Beta 6)
 
 - Fixes exceptions on Windows caused by user account paths containing non-ASCII characters.
+- Fixed issue preventing update checking, engram updates, document publishing, mailing list subscription, and all other online functions from working on Windows 7.
 
 ## Build 12 (Beta 5)
 
