@@ -4,6 +4,7 @@
 
 - Fixes exceptions on Windows caused by user account paths containing non-ASCII characters.
 - Fixed issue preventing update checking, engram updates, document publishing, mailing list subscription, and all other online functions from working on Windows 7.
+- Fixed issue with importing config files which had excess spacing around keys.
 
 ## Build 12 (Beta 5)
 

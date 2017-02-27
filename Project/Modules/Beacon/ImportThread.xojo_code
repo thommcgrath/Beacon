@@ -118,7 +118,7 @@ Inherits Beacon.Thread
 		    Dim Key As Text = Content.Mid(Offset, Pos - Offset)
 		    Offset = Pos + 1
 		    Dim Value As Auto = Self.Import(Content, Offset)
-		    Return New Beacon.Pair(Key, Value)
+		    Return New Beacon.Pair(Key.Trim, Value)
 		  Else
 		    // Array entry
 		    Dim Piece As Text = Content.Mid(Offset, Pos - Offset)
