@@ -2,8 +2,7 @@
 Protected Class RepositoryEngine
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mSocket = New Xojo.Net.HTTPSocket
-		  Self.mSocket.ValidateCertificates = True
+		  Self.mSocket = New Beacon.Socket
 		  AddHandler Self.mSocket.PageReceived, WeakAddressOf Self.mSocket_PageReceived
 		  AddHandler Self.mSocket.HeadersReceived, WeakAddressOf Self.mSocket_HeadersReceived
 		  AddHandler Self.mSocket.Error, WeakAddressOf Self.mSocket_Error
@@ -75,7 +74,7 @@ Protected Class RepositoryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_Error(Sender As Xojo.Net.HTTPSocket, Err As RuntimeException)
+		Private Sub mSocket_Error(Sender As Beacon.Socket, Err As RuntimeException)
 		  #Pragma Unused Sender
 		  
 		  Select Case Self.mCurrentAction
@@ -96,7 +95,7 @@ Protected Class RepositoryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_HeadersReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer)
+		Private Sub mSocket_HeadersReceived(Sender As Beacon.Socket, URL As Text, HTTPStatus As Integer)
 		  #Pragma Unused URL
 		  
 		  If Self.mCurrentAction = Beacon.RepositoryEngine.Actions.Status Then
@@ -121,7 +120,7 @@ Protected Class RepositoryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
+		Private Sub mSocket_PageReceived(Sender As Beacon.Socket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
@@ -221,7 +220,7 @@ Protected Class RepositoryEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSocket As Xojo.Net.HTTPSocket
+		Private mSocket As Beacon.Socket
 	#tag EndProperty
 
 
