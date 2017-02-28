@@ -27,12 +27,7 @@ Protected Class Socket
 
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Private Sub ClassicSocket_HeadersReceived(Sender As Global.HTTPSecureSocket, Headers as InternetHeaders, HTTPStatus as Integer)
-		  If HTTPStatus = 301 Or HTTPStatus = 302 Then
-		    Dim Location As String = Headers.Value("Location")
-		    Sender.Close
-		    Sender.SendRequest(Self.LastMethod, Location)
-		    Return
-		  End If
+		  #Pragma Unused Sender
 		  
 		  Self.ResponseHeaders = Headers
 		  
@@ -44,9 +39,8 @@ Protected Class Socket
 		Private Sub ClassicSocket_PageReceived(Sender As Global.HTTPSecureSocket, URL as String, HTTPStatus as Integer, Headers as InternetHeaders, Content as String)
 		  #Pragma Unused Sender
 		  #Pragma Unused Headers
-		  #Pragma Unused URL
 		  
-		  RaiseEvent PageReceived(Self.LastURL, HTTPStatus, Self.Convert(Content))
+		  RaiseEvent PageReceived(URL.ToText, HTTPStatus, Self.Convert(Content))
 		End Sub
 	#tag EndMethod
 
@@ -230,7 +224,6 @@ Protected Class Socket
 		Sub Send(method As Text, URL As Text)
 		  #if Not TargetiOS
 		    Self.LastURL = URL
-		    Self.LastMethod = Method
 		    
 		    If Self.UseClassic Then
 		      Self.ClassicSocket.SendRequest(Method, URL)
@@ -279,10 +272,6 @@ Protected Class Socket
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Private ClassicSocket As HTTPSecureSocket
-	#tag EndProperty
-
-	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Private LastMethod As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
