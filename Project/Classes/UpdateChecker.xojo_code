@@ -21,7 +21,8 @@ Protected Class UpdateChecker
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mSocket = New Beacon.Socket
+		  Self.mSocket = New Xojo.Net.HTTPSocket
+		  Self.mSocket.ValidateCertificates = True
 		  AddHandler Self.mSocket.Error, WeakAddressOf Self.mSocket_Error
 		  AddHandler Self.mSocket.HeadersReceived, WeakAddressOf Self.mSocket_HeadersReceived
 		  AddHandler Self.mSocket.PageReceived, WeakAddressOf Self.mSocket_PageReceived
@@ -29,7 +30,7 @@ Protected Class UpdateChecker
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_Error(Sender As Beacon.Socket, Error As RuntimeException)
+		Private Sub mSocket_Error(Sender As Xojo.Net.HTTPSocket, Error As RuntimeException)
 		  Sender.Disconnect
 		  Self.mChecking = False
 		  
@@ -40,7 +41,7 @@ Protected Class UpdateChecker
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_HeadersReceived(Sender As Beacon.Socket, URL As Text, HTTPStatus As Integer)
+		Private Sub mSocket_HeadersReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer)
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus <> 200 Then
@@ -55,7 +56,7 @@ Protected Class UpdateChecker
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_PageReceived(Sender As Beacon.Socket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
+		Private Sub mSocket_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  #Pragma Unused HTTPStatus
@@ -138,7 +139,7 @@ Protected Class UpdateChecker
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSocket As Beacon.Socket
+		Private mSocket As Xojo.Net.HTTPSocket
 	#tag EndProperty
 
 

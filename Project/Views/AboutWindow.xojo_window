@@ -276,7 +276,7 @@ Begin BeaconWindow AboutWindow
       Visible         =   True
       Width           =   16
    End
-   Begin Beacon.Socket UpdateEngramsSocket
+   Begin Xojo.Net.HTTPSocket UpdateEngramsSocket
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -361,6 +361,7 @@ End
 		  UpdateEngramsSpinner.Top = Top + ((UpdateEngramsButton.Height - UpdateEngramsSpinner.Height) / 2)
 		  
 		  Dim URL As Text = App.LocalData.ClassesURL
+		  UpdateEngramsSocket.ValidateCertificates = True
 		  UpdateEngramsSocket.Send("GET", URL)
 		End Sub
 	#tag EndEvent

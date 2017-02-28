@@ -81,7 +81,8 @@ Inherits Application
 		  End If
 		  Self.Log("Identity is " + Self.mIdentity.Identifier)
 		  
-		  Self.mFileLoader = New Beacon.Socket
+		  Self.mFileLoader = New Xojo.Net.HTTPSocket
+		  Self.mFileLoader.ValidateCertificates = True
 		  AddHandler Self.mFileLoader.PageReceived, WeakAddressOf Self.mFileLoader_PageReceived
 		  AddHandler Self.mFileLoader.Error, WeakAddressOf Self.mFileLoader_Error
 		  AddHandler Self.mFileLoader.AuthenticationRequired, WeakAddressOf Self.mFileLoader_AuthenticationRequired
@@ -341,7 +342,7 @@ Inherits Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function mFileLoader_AuthenticationRequired(Sender As Beacon.Socket, Realm As Text, ByRef Name As Text, ByRef Password As Text) As Boolean
+		Private Function mFileLoader_AuthenticationRequired(Sender As Xojo.Net.HTTPSocket, Realm As Text, ByRef Name As Text, ByRef Password As Text) As Boolean
 		  // Can't authenticate
 		  
 		  #Pragma Unused Sender
@@ -356,7 +357,7 @@ Inherits Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mFileLoader_Error(Sender As Beacon.Socket, Err As RuntimeException)
+		Private Sub mFileLoader_Error(Sender As Xojo.Net.HTTPSocket, Err As RuntimeException)
 		  #Pragma Unused Sender
 		  #Pragma Unused Err
 		  
@@ -366,7 +367,7 @@ Inherits Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mFileLoader_PageReceived(Sender As Beacon.Socket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
+		Private Sub mFileLoader_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  #Pragma Unused HTTPStatus
@@ -442,7 +443,7 @@ Inherits Application
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mFileLoader As Beacon.Socket
+		Private mFileLoader As Xojo.Net.HTTPSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

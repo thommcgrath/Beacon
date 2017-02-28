@@ -73,7 +73,8 @@ Implements Beacon.DataSource
 		  Dim CheckURL As Text = Self.ClassesURL()
 		  App.Log("Checking for engram updates from " + CheckURL)
 		  
-		  Self.mUpdater = New Beacon.Socket
+		  Self.mUpdater = New Xojo.Net.HTTPSocket
+		  Self.mUpdater.ValidateCertificates = True
 		  AddHandler Self.mUpdater.PageReceived, WeakAddressOf Self.mUpdater_PageReceived
 		  AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
 		  Self.mUpdater.Send("GET", CheckURL)
@@ -466,7 +467,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mUpdater_Error(Sender As Beacon.Socket, Error As RuntimeException)
+		Private Sub mUpdater_Error(Sender As Xojo.Net.HTTPSocket, Error As RuntimeException)
 		  #Pragma Unused Sender
 		  
 		  App.Log("Engram check error: " + Error.Reason)
@@ -474,7 +475,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mUpdater_PageReceived(Sender As Beacon.Socket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
+		Private Sub mUpdater_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
@@ -748,7 +749,7 @@ Implements Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUpdater As Beacon.Socket
+		Private mUpdater As Xojo.Net.HTTPSocket
 	#tag EndProperty
 
 

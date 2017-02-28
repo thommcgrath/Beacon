@@ -485,11 +485,12 @@ Begin BeaconWindow UpdateWindow
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin Beacon.Socket Downloader
+   Begin Xojo.Net.HTTPSocket Downloader
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
    End
 End
 #tag EndWindow
