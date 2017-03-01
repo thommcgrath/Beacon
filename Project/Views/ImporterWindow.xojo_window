@@ -72,7 +72,9 @@ Begin Window ImporterWindow
       LockTop         =   True
       Maximum         =   0
       Scope           =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   52
       Value           =   0
       Visible         =   True
@@ -100,6 +102,7 @@ Begin Window ImporterWindow
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Importing from """""
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -134,6 +137,7 @@ Begin Window ImporterWindow
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   &c00000000

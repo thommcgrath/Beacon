@@ -37,6 +37,7 @@ Begin BeaconWindow PresetWindow
       HasBackColor    =   False
       Height          =   672
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   14
       LockBottom      =   True
