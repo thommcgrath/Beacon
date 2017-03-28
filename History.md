@@ -1,5 +1,9 @@
 # Beacon Version History
 
+## Build 14 (Beta 7)
+
+- macOS version is now compiled as a 64-bit binary. Windows will remain 32-bit for a few more months while the compiler is updated to support 64-bit debugging on Windows. More details at http://blog.xojo.com/2017/03/28/where-is-64-bit-debugging-for-windows/
+
 ## Build 13 (Beta 6)
 
 - Fixes exceptions on Windows caused by user account paths containing non-ASCII characters.
