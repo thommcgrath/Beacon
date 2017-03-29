@@ -15,6 +15,7 @@ Inherits Application
 	#tag Event
 		Sub EnableMenuItems()
 		  FileNew.Enable
+		  FileNewPreset.Enable
 		  FileOpen.Enable
 		  FileImport.Enable
 		  
@@ -134,17 +135,7 @@ Inherits Application
 		  End If
 		  
 		  If Item.IsType(BeaconFileTypes.BeaconPreset) Then
-		    Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(Item)
-		    If Preset <> Nil Then
-		      Beacon.Data.SavePreset(Preset)
-		      PresetManagerWindow.ShowPreset(Preset)
-		    Else
-		      Dim Dialog As New MessageDialog
-		      Dialog.Title = ""
-		      Dialog.Message = "Unable to import preset"
-		      Dialog.Explanation = "Sorry about that. The file may not be correctly formatted."
-		      Call Dialog.ShowModal
-		    End If
+		    PresetWindow.Present(Item)
 		    Return
 		  End If
 		  
@@ -189,7 +180,21 @@ Inherits Application
 			
 			Dim File As FolderItem = Dialog.ShowModal
 			If File <> Nil Then
+			If File.IsType(BeaconFileTypes.BeaconPreset) Then
+			Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
+			If Preset <> Nil Then
+			Beacon.Data.SavePreset(Preset)
+			PresetManagerWindow.ShowPreset(Preset)
+			Else
+			Dim Alert As New MessageDialog
+			Alert.Title = ""
+			Alert.Message = "Unable to import preset"
+			Alert.Explanation = "Sorry about that. The file may not be correctly formatted."
+			Call Alert.ShowModal
+			End If
+			Else
 			Self.OpenDocument(File)
+			End If
 			End If
 			
 			Return True
@@ -199,6 +204,13 @@ Inherits Application
 	#tag MenuHandler
 		Function FileNew() As Boolean Handles FileNew.Action
 			Self.NewDocument()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function FileNewPreset() As Boolean Handles FileNewPreset.Action
+			PresetWindow.Present()
 			Return True
 		End Function
 	#tag EndMenuHandler

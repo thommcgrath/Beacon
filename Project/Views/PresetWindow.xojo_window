@@ -16,12 +16,12 @@ Begin BeaconWindow PresetWindow
    MaxHeight       =   32000
    MaximizeButton  =   True
    MaxWidth        =   32000
-   MenuBar         =   0
+   MenuBar         =   817604607
    MenuBarVisible  =   True
    MinHeight       =   700
    MinimizeButton  =   True
    MinWidth        =   748
-   Placement       =   0
+   Placement       =   2
    Resizeable      =   True
    Title           =   "Preset"
    Visible         =   True
@@ -37,7 +37,6 @@ Begin BeaconWindow PresetWindow
       HasBackColor    =   False
       Height          =   672
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   14
       LockBottom      =   True
@@ -103,8 +102,17 @@ End
 
 	#tag MenuHandler
 		Function FileExport() As Boolean Handles FileExport.Action
-			#Pragma Warning "Export is not the same as save"
-			Call Self.SaveAs()
+			// Reminder: Export is not the same as Save As. Export will create the file, but not change the source mode.
+			
+			Dim Dialog As New SaveAsDialog
+			Dialog.Filter = BeaconFileTypes.BeaconPreset
+			Dialog.SuggestedFileName = Editor.Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
+			
+			Dim File As FolderItem = Dialog.ShowModalWithin(Self)
+			If File <> Nil Then
+			Self.Editor.Preset.ToFile(File)
+			End If
+			
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -130,6 +138,51 @@ End
 		  Win.Editor.Preset = New Beacon.Preset
 		  Win.Title = "Untitled Preset"
 		  Win.SourceMode = PresetWindow.SourceModes.FromScratch
+		  Win.Show
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub Present(Set As Beacon.ItemSet)
+		  Dim Preset As Beacon.MutablePreset
+		  If Set.SourcePresetID <> "" Then
+		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets
+		    For Each LoadedPreset As Beacon.Preset In Presets
+		      If LoadedPreset.PresetID = Set.SourcePresetID Then
+		        // Clone this one
+		        Preset = New Beacon.MutablePreset(LoadedPreset)
+		        Exit For LoadedPreset
+		      End If
+		    Next
+		  End If
+		  If Preset = Nil Then
+		    Preset = New Beacon.MutablePreset
+		  End If
+		  
+		  Preset.Label = Set.Label
+		  Preset.MinItems = Set.MinNumItems
+		  Preset.MaxItems = Set.MaxNumItems
+		  For I As Integer = UBound(Preset) DownTo 0
+		    Preset.Remove(I)
+		  Next
+		  For Each Entry As Beacon.SetEntry In Set
+		    Preset.Append(New Beacon.PresetEntry(Entry))
+		  Next
+		  
+		  Dim Win As New PresetWindow
+		  Win.Editor.Preset = Preset
+		  Win.Title = Preset.Label
+		  Win.SourceMode = PresetWindow.SourceModes.FromItemSet
+		  Win.Show
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub Present(Preset As Beacon.Preset)
+		  Dim Win As New PresetWindow
+		  Win.Editor.Preset = Preset
+		  Win.Title = Preset.Label
+		  Win.SourceMode = PresetWindow.SourceModes.FromLibrary
 		  Win.Show
 		End Sub
 	#tag EndMethod
@@ -169,20 +222,18 @@ End
 		      Dim Preset As Beacon.Preset = Editor.Preset
 		      
 		      Beacon.Data.SavePreset(Preset)
-		      PresetManagerWindow.UpdateIfVisible()
+		      PresetManagerWindow.UpdateIfVisible(Preset)
+		      
+		      Editor.Preset = Preset // So the UUID stays
 		      
 		      Self.Title = Preset.Label
 		      Self.ContentsChanged = False
-		      Self.Close
+		      Self.SourceMode = PresetWindow.SourceModes.FromLibrary
 		      Return True
 		    Case Dialog.CancelButton
 		      Return False
 		    Case Dialog.AlternateActionButton
-		      If Self.SaveAs() Then
-		        Self.SourceMode = PresetWindow.SourceModes.FromFile
-		      Else
-		        Return False
-		      End If
+		      Return Self.SaveAs()
 		    End Select
 		  Case PresetWindow.SourceModes.FromFile
 		    If Self.File <> Nil Then
@@ -191,12 +242,20 @@ End
 		    Else
 		      Return Self.SaveAs()
 		    End If
+		  Case PresetWindow.SourceModes.FromLibrary
+		    Dim Preset As Beacon.Preset = Editor.Preset
+		    
+		    Beacon.Data.SavePreset(Preset)
+		    PresetManagerWindow.UpdateIfVisible(Preset)
+		    Self.ContentsChanged = False
+		    
+		    Return True
 		  End Select
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function SaveAs() As Boolean
+	#tag Method, Flags = &h21
+		Private Function SaveAs() As Boolean
 		  Dim Dialog As New SaveAsDialog
 		  Dialog.Filter = BeaconFileTypes.BeaconPreset
 		  Dialog.SuggestedFileName = Editor.Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
@@ -209,12 +268,13 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub SaveAs(File As FolderItem)
+	#tag Method, Flags = &h21
+		Private Sub SaveAs(File As FolderItem)
 		  Self.File = File
 		  Self.Editor.Preset.ToFile(File)
 		  Self.Title = File.Name
 		  Self.ContentsChanged = False
+		  Self.SourceMode = PresetWindow.SourceModes.FromFile
 		End Sub
 	#tag EndMethod
 
@@ -231,7 +291,8 @@ End
 	#tag Enum, Name = SourceModes, Type = Integer, Flags = &h21
 		FromScratch
 		  FromItemSet
-		FromFile
+		  FromFile
+		FromLibrary
 	#tag EndEnum
 
 

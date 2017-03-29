@@ -747,11 +747,7 @@ End
 		  Select Case HitItem.Name
 		  Case "createpreset"
 		    Dim Set As Beacon.ItemSet = HitItem.Tag
-		    Dim Preset As Beacon.Preset = PresetDialog.Present(Self.TrueWindow, Set)
-		    If Preset <> Nil Then
-		      Beacon.Data.SavePreset(Preset)
-		      PresetManagerWindow.UpdateIfVisible()
-		    End If
+		    PresetWindow.Present(Set)
 		  Case "reconfigure"
 		    Dim Set As Beacon.ItemSet = HitItem.Tag
 		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets
@@ -791,7 +787,7 @@ End
 #tag EndEvents
 #tag Events Separators
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
 		  G.ForeColor = &cCCCCCC

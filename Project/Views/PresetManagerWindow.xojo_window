@@ -213,10 +213,52 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
-		  Self.UpdatePresets()
+		Sub DropObject(obj As DragItem, action As Integer)
+		  Do
+		    If Obj.FolderItemAvailable And Obj.FolderItem.IsType(BeaconFileTypes.BeaconPreset) Then
+		      Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(Obj.FolderItem)
+		      If Preset <> Nil Then
+		        Beacon.Data.SavePreset(Preset)
+		        Self.UpdatePresets(Preset)
+		      End If
+		    End If
+		  Loop Until Obj.NextItem = False
 		End Sub
 	#tag EndEvent
+
+	#tag Event
+		Sub EnableMenuItems()
+		  If List.ListIndex > -1 Then
+		    FileExport.Enable
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
+		  Self.UpdatePresets()
+		  Self.AcceptFileDrop(BeaconFileTypes.BeaconPreset)
+		End Sub
+	#tag EndEvent
+
+
+	#tag MenuHandler
+		Function FileExport() As Boolean Handles FileExport.Action
+			If List.ListIndex > -1 Then
+			Dim Preset As Beacon.Preset = List.RowTag(List.ListIndex)
+			Dim Dialog As New SaveAsDialog
+			Dialog.Filter = BeaconFileTypes.BeaconPreset
+			Dialog.SuggestedFileName = Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
+			
+			Dim File As FolderItem = Dialog.ShowModalWithin(Self)
+			If File <> Nil Then
+			Preset.ToFile(File)
+			End If
+			
+			Return True
+			End If
+		End Function
+	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h0
@@ -241,10 +283,10 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub UpdateIfVisible()
+		Shared Sub UpdateIfVisible(SelectPreset As Beacon.Preset = Nil)
 		  Dim Win As PresetManagerWindow = SharedWindow(False)
 		  If Win <> Nil Then
-		    Win.UpdatePresets()
+		    Win.UpdatePresets(SelectPreset)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -337,22 +379,15 @@ End
 #tag Events AddButton
 	#tag Event
 		Sub Action()
-		  Dim Preset As Beacon.Preset = PresetDialog.Present(Self)
-		  If Preset <> Nil Then
-		    Beacon.Data.SavePreset(Preset)
-		    Self.UpdatePresets(Preset)
-		  End If
+		  PresetWindow.Present()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EditButton
 	#tag Event
 		Sub Action()
-		  Dim Preset As Beacon.Preset = PresetDialog.Present(Self, Beacon.Preset(List.RowTag(List.ListIndex)))
-		  If Preset <> Nil Then
-		    Beacon.Data.SavePreset(Preset)
-		    Self.UpdatePresets(Preset)
-		  End If
+		  Dim Preset As Beacon.Preset = List.RowTag(List.ListIndex)
+		  PresetWindow.Present(Preset)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -386,11 +421,7 @@ End
 		    Clone.Append(New Beacon.PresetEntry(Entry))
 		  Next
 		  
-		  Dim Preset As Beacon.Preset = PresetDialog.Present(Self, Clone)
-		  If Preset <> Nil Then
-		    Beacon.Data.SavePreset(Preset)
-		    Self.UpdatePresets(Preset)
-		  End If
+		  PresetWindow.Present(Clone)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -106,7 +106,6 @@ MultiImage=IconLootSpider;Icons/IconLootSpider.xojo_image;&h49C00FFF;&h7F977FF;f
 Class=ListHeader;Custom Controls/ListHeader.xojo_code;&h3F8577FF;&h30DCFFFF;false
 Window=PresetEditor;Views/PresetEditor.xojo_window;&h404A27FF;&h8A387FF;false
 Window=PresetWindow;Views/PresetWindow.xojo_window;&h1694C7FF;&h8A387FF;false
-Window=PresetDialog;Views/PresetDialog.xojo_window;&h52F13FFF;&h8A387FF;false
 Window=PresetManagerWindow;Views/PresetManagerWindow.xojo_window;&h501D7FF;&h8A387FF;false
 MultiImage=IconLootSpiderColorMask;Icons/IconLootSpiderColorMask.xojo_image;&h4D6E97FF;&h7F977FF;false
 MultiImage=IconLootGorilla;Icons/IconLootGorilla.xojo_image;&h73CCEFFF;&h7F977FF;false
