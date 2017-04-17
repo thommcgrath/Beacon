@@ -31,6 +31,7 @@ Inherits Beacon.Thread
 		        Dim Dict As Xojo.Core.Dictionary = Beacon.Pair(Value).Value
 		        Dim LootSource As Beacon.LootSource = Beacon.LootSource.Import(Dict)
 		        If LootSource <> Nil Then
+		          LootSource.NumItemSetsPower = 1.0
 		          Self.mLootSources.Append(LootSource)
 		        End If
 		      End If
