@@ -1,5 +1,9 @@
 # Beacon Version History
 
+## Build 15 (Beta 8)
+
+- Beacon documents now format their contents nicely, making them easier to version control.
+
 ## Build 14 (Beta 7)
 
 - macOS version is now compiled as a 64-bit binary. Windows will remain 32-bit for a few more months while the compiler is updated to support 64-bit debugging on Windows. More details at http://blog.xojo.com/2017/03/28/where-is-64-bit-debugging-for-windows/
