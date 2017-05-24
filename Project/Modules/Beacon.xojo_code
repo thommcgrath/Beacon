@@ -57,6 +57,13 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function DecodeHex(Source As Text, Encoding As Xojo.Core.TextEncoding) As Text
+		  Dim Bytes As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Source)
+		  Return Encoding.ConvertDataToText(Bytes)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function EncodeHex(Value As Text, Encoding As Xojo.Core.TextEncoding) As Text
 		  Dim Bytes As Xojo.Core.MemoryBlock = Encoding.ConvertTextToData(Value)
 		  Return Beacon.EncodeHex(Bytes)
