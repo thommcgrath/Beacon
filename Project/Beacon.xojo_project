@@ -117,6 +117,7 @@ MultiImage=IconLootManticoreColorMask;Icons/IconLootManticoreColorMask.xojo_imag
 Window=SubscribeDialog;Views/SubscribeDialog.xojo_window;&h132627FF;&h8A387FF;false
 Class=DesktopPreferences;Classes/DesktopPreferences.xojo_code;&h2E6E4FFF;&h56D5FFF;false
 Class=MobilePreferences;Classes/MobilePreferences.xojo_code;&h145AB7FF;&h56D5FFF;false
+Class=JSONWriter;Modules/Beacon/JSONWriter.xojo_code;&h489F37FF;&h55ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

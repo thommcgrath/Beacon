@@ -353,7 +353,6 @@ End
 	#tag Method, Flags = &h21
 		Private Sub AddSet(Set As Beacon.ItemSet)
 		  Dim Added As Boolean
-		  Dim Hash As Text = Set.Hash
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    If Source.IndexOf(Set) = -1 Then

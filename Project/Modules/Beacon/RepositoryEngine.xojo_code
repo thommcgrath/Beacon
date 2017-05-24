@@ -130,7 +130,7 @@ Protected Class RepositoryEngine
 		  Select Case Self.mCurrentAction
 		  Case Beacon.RepositoryEngine.Actions.List
 		    If HTTPStatus = 200 Then
-		      Dim Results() As Auto = Xojo.Data.ParseJSON(Response)
+		      //Dim Results() As Auto = Xojo.Data.ParseJSON(Response)
 		      Break
 		    Else
 		      RaiseEvent DocumentListError(Response)
