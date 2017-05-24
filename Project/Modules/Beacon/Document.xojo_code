@@ -81,6 +81,70 @@ Protected Class Document
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function JSONPrettyPrint(json As Text) As Text
+		  // From https://forum.xojo.com/conversation/post/332504
+		  
+		  const kBuffer as text = "  "
+		  const kEOL as text = &u0A
+		  
+		  dim outArr() as text
+		  dim indents( 0 ) as text
+		  
+		  dim addAsIs as boolean
+		  dim inQuote as boolean
+		  
+		  for each char as text in json.Characters
+		    if addAsIs then
+		      outArr.Append char
+		      addAsIs = false
+		      
+		    elseif char = """" then
+		      outArr.Append char
+		      inQuote = not inQuote
+		      
+		    elseif inQuote then
+		      outArr.Append char
+		      if char = "\" then
+		        addAsIs = true
+		      end if
+		      
+		    elseif char = "{" or char = "[" then
+		      indents.Append indents( indents.Ubound ) + kBuffer
+		      outArr.Append char
+		      outArr.Append kEOL
+		      outArr.Append indents( indents.Ubound )
+		      
+		    elseif char = "}" or char = "]" then
+		      call indents.Pop
+		      outArr.Append kEOL
+		      outArr.Append indents( indents.Ubound )
+		      outArr.Append char
+		      
+		    elseif char = "," then
+		      outArr.Append char
+		      outArr.Append kEOL
+		      outArr.Append indents( indents.Ubound )
+		      
+		    elseif char = ":" then
+		      outArr.Append " : "
+		      
+		    elseif char = &u0A or char = &u0D or char = " " or char = &u09 then
+		      //
+		      // Skip it
+		      //
+		      
+		    else
+		      outArr.Append char
+		      
+		    end if
+		  next
+		  
+		  dim result as text = Text.Join( outArr, "" )
+		  return result
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function LootSource(Index As Integer) As Beacon.LootSource
 		  Return Self.mLootSources(Index)
@@ -233,7 +297,7 @@ Protected Class Document
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub Write(File As Global.FolderItem)
-		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.Export)
+		  Dim Contents As Text = Self.JSONPrettyPrint(Xojo.Data.GenerateJSON(Self.Export))
 		  Dim Stream As TextOutputStream = TextOutputStream.Create(File)
 		  Stream.Write(Contents)
 		  Stream.Close
@@ -242,7 +306,7 @@ Protected Class Document
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
 		Sub Write(File As Xojo.IO.FolderItem)
-		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.Export)
+		  Dim Contents As Text = Self.JSONPrettyPrint(Xojo.Data.GenerateJSON(Self.Export))
 		  Dim Data As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Contents)
 		  Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(File, Xojo.IO.BinaryStream.LockModes.Write)
 		  Stream.Write(Data)
