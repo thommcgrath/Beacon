@@ -1,7 +1,6 @@
 <?php
 
-unset($_SERVER['PREFERRED_DOMAIN']);
-require_once($_SERVER['DOCUMENT_ROOT'] . '/php/engine.php');
+require($_SERVER['DOCUMENT_ROOT'] . '/php/engine.php');
 require_once($_SERVER['DOCUMENT_ROOT'] . '/php/mailchimp.php');
 
 $email_address = array_key_exists('email', $_POST) ? $_POST['email'] : '';

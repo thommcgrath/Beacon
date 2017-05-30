@@ -1,7 +1,6 @@
 <?php
 
-unset($_SERVER['PREFERRED_DOMAIN']);
-require_once($_SERVER['DOCUMENT_ROOT'] . '/php/engine.php');
+require($_SERVER['DOCUMENT_ROOT'] . '/php/engine.php');
 
 $method = strtoupper($_SERVER['REQUEST_METHOD']);
 $document_id = document_id();

@@ -1,7 +1,6 @@
 <?php
 
-unset($_SERVER['PREFERRED_DOMAIN']);
-require_once($_SERVER['DOCUMENT_ROOT'] . '/php/engine.php');
+require($_SERVER['DOCUMENT_ROOT'] . '/php/engine.php');
 
 $since = null;
 if (array_key_exists('changes_since', $_GET)) {

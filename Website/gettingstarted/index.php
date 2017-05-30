@@ -1,8 +1,7 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . '/php/engine.php');
-$page_title = 'Getting Started With Beacon';
-
-AddHeadLine('<link rel="stylesheet" href="/beacon/assets/beacon.css" type="text/css">');
+require($_SERVER['DOCUMENT_ROOT'] . '/php/engine.php');
+ZirconTemplate::SetTitle('Getting Started With Beacon');
+ZirconTemplate::AddHeaderLine('<link rel="stylesheet" href="/beacon/assets/beacon.css" type="text/css">');
 ?>
 <div class="articleheader">
 	<h1>Getting Started With Beacon</h1>

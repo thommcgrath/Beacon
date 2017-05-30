@@ -1,6 +1,6 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . '/php/engine.php');
-$page_title = 'Beacon Privacy Policy';
+require($_SERVER['DOCUMENT_ROOT'] . '/php/engine.php');
+ZirconTemplate::SetTitle('Beacon Privacy Policy');
 ?><div class="articleheader">
 	<h1>Beacon Privacy Policy</h1>
 </div>
