@@ -3,6 +3,7 @@
 ## Build 15 (Beta 8)
 
 - Beacon documents now format their contents nicely, making them easier to version control.
+- Beacon now supports mods! See the new 'Developer Tools' window for more information.
 
 ## Build 14 (Beta 7)
 

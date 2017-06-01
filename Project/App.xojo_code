@@ -259,6 +259,14 @@ Inherits Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function WindowDeveloperTools() As Boolean Handles WindowDeveloperTools.Action
+			DeveloperWindow.SharedWindow.Show()
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function WindowPresetLibrary() As Boolean Handles WindowPresetLibrary.Action
 			PresetManagerWindow.SharedWindow.Show
 			Return True

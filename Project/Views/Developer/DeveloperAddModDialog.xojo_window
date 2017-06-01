@@ -1,60 +1,32 @@
 #tag Window
-Begin BeaconWindow AboutWindow
+Begin Window DeveloperAddModDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   0
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   286
-   ImplicitInstance=   True
+   Height          =   191
+   ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
    MaxHeight       =   32000
-   MaximizeButton  =   False
+   MaximizeButton  =   True
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   286
-   MinimizeButton  =   False
-   MinWidth        =   360
-   Placement       =   2
-   Resizeable      =   False
-   Title           =   ""
+   MinHeight       =   64
+   MinimizeButton  =   True
+   MinWidth        =   64
+   Placement       =   1
+   Resizeable      =   True
+   Title           =   "Register Mod"
    Visible         =   True
-   Width           =   360
-   Begin ControlCanvas IconCanvas
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   64
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   148
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   20
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   64
-   End
-   Begin Label NameLabel
+   Width           =   520
+   Begin Label MessageLabel
       AutoDeactivate  =   True
       Bold            =   True
       DataField       =   ""
@@ -74,28 +46,27 @@ Begin BeaconWindow AboutWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Beacon"
-      TextAlign       =   1
+      Text            =   "Register Mod"
+      TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
-      TextSize        =   14.0
+      TextSize        =   0.0
       TextUnit        =   0
-      Top             =   96
+      Top             =   20
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   320
+      Width           =   480
    End
-   Begin Label VersionLabel
+   Begin Label ExplanationLabel
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      Height          =   20
+      Height          =   53
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -106,331 +77,245 @@ Begin BeaconWindow AboutWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Multiline       =   False
+      Multiline       =   True
       Scope           =   2
       Selectable      =   False
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      Text            =   "Register your mod with Beacon here to add support for your custom items. You will be given a confirmation code which should be added to your mod page temporarily to prove you are the owner of the mod."
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   52
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   480
+   End
+   Begin TextField ModIDField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   "Mod ID or URL"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Version X"
-      TextAlign       =   1
+      Text            =   ""
       TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
+      TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   128
-      Transparent     =   True
+      Top             =   117
       Underline       =   False
+      UseFocusRing    =   True
       Visible         =   True
-      Width           =   320
+      Width           =   480
    End
-   Begin Label CopyrightLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "© 2016 Thom McGrath, All Rights Reserved."
-      TextAlign       =   1
-      TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   214
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   320
-   End
-   Begin Label LinkLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "https://thezaz.com/beacon"
-      TextAlign       =   1
-      TextColor       =   &c0000FF00
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   246
-      Transparent     =   True
-      Underline       =   True
-      Visible         =   True
-      Width           =   320
-   End
-   Begin Label SyncLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Engrams Updated Y"
-      TextAlign       =   1
-      TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   160
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   320
-   End
-   Begin UITweaks.ResizedPushButton UpdateEngramsButton
+   Begin PushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
       Cancel          =   False
-      Caption         =   "Update Engrams"
-      Default         =   False
-      Enabled         =   True
-      Height          =   18
+      Caption         =   "OK"
+      Default         =   True
+      Enabled         =   False
+      Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   127
+      Left            =   420
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
+      LockLeft        =   False
+      LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "SmallSystem"
+      TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   184
+      Top             =   151
       Underline       =   False
       Visible         =   True
-      Width           =   107
+      Width           =   80
    End
-   Begin ProgressWheel UpdateEngramsSpinner
+   Begin PushButton CancelButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   True
+      Caption         =   "Cancel"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   328
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   151
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin ProgressWheel Spinner
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   16
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   172
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   -50
-      Visible         =   True
+      Top             =   155
+      Visible         =   False
       Width           =   16
    End
-   Begin Xojo.Net.HTTPSocket UpdateEngramsSocket
-      Enabled         =   True
+   Begin APISocket Socket
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
-      ValidateCertificates=   False
    End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Open()
-		  Self.Update()
-		End Sub
-	#tag EndEvent
-
-
-	#tag Method, Flags = &h0
-		Sub Update()
-		  Dim LastSync As Xojo.Core.Date = App.LocalData.LastSync
-		  If LastSync = Nil Then
-		    SyncLabel.Text = "No engram data available"
-		  Else
-		    SyncLabel.Text = "Engrams updated " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC"
+	#tag Method, Flags = &h21
+		Private Sub APICallback_RegisterMod(Success As Boolean, Message As Text, Details As Auto)
+		  If Success Then
+		    Self.mRegistered = True
+		    Self.Hide
+		    
+		    Return
 		  End If
 		  
-		  VersionLabel.Text = "Version " + App.ShortVersion + " (Build " + Str(App.NonReleaseVersion, "-0") + ")"
+		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
+		  Dialog.Message = "Mod was not registered"
+		  Dialog.Explanation = Message
+		  Call Dialog.ShowModal()
 		End Sub
 	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window) As Boolean
+		  Dim Win As New DeveloperAddModDialog
+		  Win.ShowModalWithin(Parent.TrueWindow)
+		  Dim Success As Boolean = Win.mRegistered
+		  Win.Close
+		  Return Success
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mRegistered As Boolean
+	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events IconCanvas
+#tag Events ModIDField
 	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused areas
-		  
-		  G.DrawPicture(IconApp, 0, 0)
+		Sub TextChange()
+		  ActionButton.Enabled = Trim(Me.Text) <> ""
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events LinkLabel
-	#tag Event
-		Sub MouseEnter()
-		  Me.MouseCursor = System.Cursors.FingerPointer
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  #Pragma Unused X
-		  #Pragma Unused Y
-		  
-		  Me.TextColor = &cFF0000
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub MouseDrag(X As Integer, Y As Integer)
-		  If X >= 0 And X <= Me.Width And Y >= 0 And Y <= Me.Height Then
-		    Me.TextColor = &cFF0000
-		    Me.MouseCursor = System.Cursors.FingerPointer
-		  Else
-		    Me.TextColor = &c0000FF
-		    Me.MouseCursor = System.Cursors.StandardPointer
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub MouseUp(X As Integer, Y As Integer)
-		  If X >= 0 And X <= Me.Width And Y >= 0 And Y <= Me.Height Then
-		    ShowURL(Me.Text)
-		    Me.TextColor = &c0000FF
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events UpdateEngramsButton
+#tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim Top As Integer = UpdateEngramsButton.Top
-		  UpdateEngramsButton.Top = -100
-		  UpdateEngramsSpinner.Top = Top + ((UpdateEngramsButton.Height - UpdateEngramsSpinner.Height) / 2)
+		  Dim ModID As String = Trim(ModIDField.Text)
+		  If Left(ModID, 4) = "http" Then
+		    Dim Regex As New Regex
+		    Regex.SearchPattern = "id=(\d+)"
+		    
+		    Dim Matches As RegexMatch = Regex.Search(ModID)
+		    If Matches = Nil Then
+		      MsgBox("This url does not appear to be a steam workshop url")
+		      Return
+		    End If
+		    
+		    ModID = Matches.SubExpressionString(1)
+		  End If
+		  ModID = EncodeURLComponent(ModID)
 		  
-		  Dim URL As Text = App.LocalData.ClassesURL
-		  UpdateEngramsSocket.ValidateCertificates = True
-		  UpdateEngramsSocket.Send("GET", URL)
+		  Dim Request As New APIRequest("mod.php/" + ModID.ToText, "POST", New Xojo.Core.Dictionary, AddressOf APICallback_RegisterMod)
+		  Request.Sign(App.Identity)
+		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events UpdateEngramsSocket
+#tag Events CancelButton
 	#tag Event
-		Sub Error(err as RuntimeException)
-		  Dim Top As Integer = UpdateEngramsSpinner.Top
-		  UpdateEngramsSpinner.Top = -100
-		  UpdateEngramsButton.Top = Top + ((UpdateEngramsButton.Height - UpdateEngramsSpinner.Height) / 2)
-		  
-		  Dim Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Unable to update engrams"
-		  Dialog.Explanation = "Unable to contact server. Reason: """ + Err.Reason + """"
-		  Call Dialog.ShowModal
+		Sub Action()
+		  Self.mRegistered = False
+		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Socket
+	#tag Event
+		Sub WorkStarted()
+		  Spinner.Visible = True
+		  ActionButton.Enabled = False
+		  ModIDField.Enabled = False
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
-		  Dim Top As Integer = UpdateEngramsSpinner.Top
-		  UpdateEngramsSpinner.Top = -100
-		  UpdateEngramsButton.Top = Top + ((UpdateEngramsButton.Height - UpdateEngramsSpinner.Height) / 2)
-		  
-		  If HTTPStatus <> 200 Then
-		    Dim Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    Dialog.Message = "Unable to update engrams"
-		    Dialog.Explanation = "Server replied with HTTP " + Str(HTTPStatus, "-0")
-		    Call Dialog.ShowModal
-		    Return
-		  End If
-		  
-		  Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
-		  Dim ExpectedHash As Text = Me.ResponseHeader("Content-MD5")
-		  Dim ComputedHash As Text = EncodeHex(Crypto.MD5(TextContent)).ToText
-		  
-		  If ComputedHash <> ExpectedHash Then
-		    Dim Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    Dialog.Message = "Unable to update engrams"
-		    Dialog.Explanation = "Checksum verification failed. Expected hash " + ExpectedHash + " but computed " + ComputedHash + " instead."
-		    Call Dialog.ShowModal
-		    Return
-		  End If
-		  
-		  If App.LocalData.Import(TextContent) Then
-		    Self.Update()
-		    
-		    Dim LastSync As Xojo.Core.Date = App.LocalData.LastSync
-		    Dim Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    Dialog.Message = "Engram database has been updated"
-		    Dialog.Explanation = "Engrams, loot sources, and presets are now current as of " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC."
-		    Call Dialog.ShowModal
-		  Else
-		    Dim Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    Dialog.Message = "Unable to import engram data"
-		    Dialog.Explanation = "Sorry about that. The data may not be correctly formatted."
-		    Call Dialog.ShowModal
-		  End If
+		Sub WorkCompleted()
+		  Spinner.Visible = False
+		  ActionButton.Enabled = True
+		  ModIDField.Enabled = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -573,7 +458,8 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MenuBarVisible"
-		Group="Behavior"
+		Visible=true
+		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
@@ -598,6 +484,11 @@ End
 		Visible=true
 		Group="Size"
 		InitialValue="64"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="mRegistered"
+		Group="Behavior"
 		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
