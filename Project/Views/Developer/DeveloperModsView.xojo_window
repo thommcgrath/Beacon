@@ -48,7 +48,7 @@ Begin ContainerControl DeveloperModsView
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TintColor       =   &cEAF4FE00
+      TintColor       =   &cF7F7F700
       Title           =   "Mods"
       Top             =   0
       Transparent     =   True
@@ -349,6 +349,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.RefreshMods()
+		  Header.Invalidate()
 		End Sub
 	#tag EndEvent
 

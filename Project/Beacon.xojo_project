@@ -33,6 +33,7 @@ Class=BeaconListbox;Custom Controls/BeaconListbox.xojo_code;&h2536EFFF;&h30DCFFF
 Class=ControlCanvas;Custom Controls/ControlCanvas.xojo_code;&h74CEBFFF;&h30DCFFFF;false
 Class=GraphicButton;Custom Controls/GraphicButton.xojo_code;&h1CE52FFF;&h30DCFFFF;false
 Class=FooterBar;Custom Controls/FooterBar.xojo_code;&h6A761FFF;&h30DCFFFF;false
+Class=FooterBarButton;Custom Controls/FooterBarButton.xojo_code;&h6C7AB7FF;&h30DCFFFF;false
 Folder=Modules;Modules;&h1444B7FF;&h0;false
 Module=Beacon;Modules/Beacon.xojo_code;&h55ADDFFF;&h1444B7FF;false
 Class=ThreadStopException;Modules/Beacon/ThreadStopException.xojo_code;&h9CA27FF;&h55ADDFFF;false

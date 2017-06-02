@@ -292,121 +292,6 @@ Begin ContainerControl DeveloperModView
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
-      Begin ControlCanvas Separators
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   True
-         Enabled         =   True
-         EraseBackground =   False
-         Height          =   1
-         HelpTag         =   ""
-         Index           =   0
-         InitialParent   =   "Panel"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   False
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Top             =   394
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   564
-      End
-      Begin ControlCanvas Separators
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   True
-         Enabled         =   True
-         EraseBackground =   False
-         Height          =   24
-         HelpTag         =   ""
-         Index           =   2
-         InitialParent   =   "Panel"
-         Left            =   61
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   False
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Top             =   395
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   1
-      End
-      Begin ControlCanvas Separators
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   True
-         Enabled         =   True
-         EraseBackground =   False
-         Height          =   24
-         HelpTag         =   ""
-         Index           =   1
-         InitialParent   =   "Panel"
-         Left            =   30
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   False
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Top             =   395
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   1
-      End
-      Begin GraphicButton RemoveEngramButton
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   False
-         EraseBackground =   True
-         Height          =   24
-         HelpTag         =   "Remove the selected engram."
-         IconDisabled    =   0
-         IconNormal      =   0
-         IconPressed     =   0
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   31
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   False
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Top             =   395
-         Transparent     =   True
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   30
-      End
       Begin FooterBar FooterBar1
          AcceptFocus     =   False
          AcceptTabs      =   False
@@ -415,11 +300,11 @@ Begin ContainerControl DeveloperModView
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
-         Height          =   24
+         Height          =   25
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         Left            =   62
+         Left            =   0
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -429,42 +314,11 @@ Begin ContainerControl DeveloperModView
          TabIndex        =   5
          TabPanelIndex   =   4
          TabStop         =   True
-         Top             =   395
+         Top             =   394
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   502
-      End
-      Begin GraphicButton AddEngramButton
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   True
-         Height          =   24
-         HelpTag         =   "Add a new engram to this mod."
-         IconDisabled    =   0
-         IconNormal      =   0
-         IconPressed     =   0
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   False
-         Scope           =   2
-         TabIndex        =   6
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Top             =   395
-         Transparent     =   True
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   30
+         Width           =   564
       End
    End
    Begin APISocket Socket
@@ -572,6 +426,9 @@ End
 		    EngramList.AddRow("")
 		    Self.ShowEngramInRow(EngramList.LastIndex, Engram)
 		  Next
+		  
+		  FooterBar1.Button("PublishButton").Enabled = EngramSet.Modified
+		  FooterBar1.Invalidate
 		End Sub
 	#tag EndMethod
 
@@ -721,48 +578,45 @@ End
 		  End Select
 		  
 		  Self.EngramSet.Add(Engram)
+		  FooterBar1.Button("PublishButton").Enabled = Self.EngramSet.Modified
+		  FooterBar1.Invalidate
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events Separators
 	#tag Event
-		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused areas
-		  
-		  G.ForeColor = &cBBBBBB
-		  G.FillRect(-1, -1, G.Width + 2, G.Height + 2)
+		Sub Change()
+		  FooterBar1.Button("RemoveButton").Enabled = Me.ListIndex > -1
+		  FooterBar1.Invalidate
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events RemoveEngramButton
+#tag Events FooterBar1
 	#tag Event
 		Sub Open()
-		  Me.IconNormal = IconRemoveNormal
-		  Me.IconPressed = IconRemovePressed
-		  Me.IconDisabled = IconRemoveDisabled
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
+		  Me.Append(New FooterBarButton("AddButton", IconAddNormal, FooterBarButton.AlignLeft))
+		  Me.Append(New FooterBarButton("RemoveButton", IconRemoveNormal, FooterBarButton.AlignLeft))
 		  
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events AddEngramButton
-	#tag Event
-		Sub Open()
-		  Me.IconNormal = IconAddNormal
-		  Me.IconPressed = IconAddPressed
-		  Me.IconDisabled = IconAddDisabled
+		  Me.Append(New FooterBarButton("ImportButton", "Import", FooterBarButton.AlignCenter))
+		  
+		  Me.Append(New FooterBarButton("PublishButton", "Publish", FooterBarButton.AlignRight))
+		  
+		  Me.Button("RemoveButton").Enabled = False
+		  Me.Button("PublishButton").Enabled = False
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action()
-		  Dim Engram As New APIEngram
-		  EngramList.AddRow("")
-		  Self.ShowEngramInRow(EngramList.LastIndex, Engram)
-		  EngramList.EditCell(EngramList.LastIndex, 0)
-		  Self.EngramSet.Add(Engram)
+		Sub Action(Button As FooterBarButton)
+		  Select Case Button.Name
+		  Case "AddButton"
+		    Dim Engram As New APIEngram
+		    EngramList.AddRow("")
+		    Self.ShowEngramInRow(EngramList.LastIndex, Engram)
+		    EngramList.EditCell(EngramList.LastIndex, 0)
+		    Self.EngramSet.Add(Engram)
+		  Case "RemoveButton"
+		    Dim Engram As APIEngram = EngramList.RowTag(EngramList.ListIndex)
+		    Self.EngramSet.Remove(Engram)
+		    EngramList.RemoveRow(EngramList.ListIndex)
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -86,7 +86,7 @@ Begin Window DeveloperWindow
    Begin PagePanel Panel
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   420
+      Height          =   419
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -101,7 +101,6 @@ Begin Window DeveloperWindow
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   31
       Value           =   1
       Visible         =   True
@@ -115,9 +114,8 @@ Begin Window DeveloperWindow
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   420
+         Height          =   419
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   0
          LockBottom      =   True
@@ -219,7 +217,6 @@ Begin Window DeveloperWindow
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Untitled"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -249,6 +246,11 @@ End
 		  Self.TabHeader.Append("Documents")
 		  Self.TabHeader.Append("Identity")
 		  Self.TabHeader.Append("API Guide")
+		  
+		  // Dumb workaround because contents are sizing 1 pixels too short.
+		  // A resize causes them to find their correct positions.
+		  Self.Width = Self.Width + 1
+		  Self.Width = Self.Width - 1
 		End Sub
 	#tag EndEvent
 
