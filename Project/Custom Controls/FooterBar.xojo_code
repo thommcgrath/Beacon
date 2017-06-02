@@ -368,6 +368,9 @@ Inherits ControlCanvas
 		      Button.Rect = Rect
 		      NextLeft = NextLeft + Button.Width
 		    Next
+		  Else
+		    Dim Between As Graphics = G.Clip(FillLeft, 0, G.Width - FillLeft, G.Height)
+		    Self.Fill(Between)
 		  End If
 		End Sub
 	#tag EndMethod

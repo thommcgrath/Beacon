@@ -140,7 +140,7 @@ Begin ContainerControl DeveloperModsView
       Visible         =   True
       Width           =   1
    End
-   Begin GraphicButton AddModButton
+   Begin FooterBar Footer
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
@@ -148,42 +148,11 @@ Begin ContainerControl DeveloperModsView
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   24
-      HelpTag         =   "Register your mod with Beacon"
-      IconDisabled    =   0
-      IconNormal      =   0
-      IconPressed     =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   395
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   30
-   End
-   Begin FooterBar FooterBar1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   24
+      Height          =   25
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   62
+      Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -193,126 +162,11 @@ Begin ContainerControl DeveloperModsView
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   395
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   173
-   End
-   Begin GraphicButton RemoveModButton
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   False
-      EraseBackground =   True
-      Height          =   24
-      HelpTag         =   "Deregister your mod. All engrams will be removed."
-      IconDisabled    =   0
-      IconNormal      =   0
-      IconPressed     =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   31
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   395
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   30
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   1
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   394
-      Transparent     =   False
+      Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
       Width           =   235
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   2
-      InitialParent   =   ""
-      Left            =   30
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   395
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   3
-      InitialParent   =   ""
-      Left            =   61
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   395
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
    End
    Begin DeveloperModView ModView
       AcceptFocus     =   False
@@ -349,7 +203,9 @@ End
 	#tag Event
 		Sub Open()
 		  Self.RefreshMods()
-		  Header.Invalidate()
+		  
+		  // Purely because the header is drawing in the "clear" state instead of the active state
+		  Xojo.Core.Timer.CallLater(100, AddressOf RefreshHeader)
 		End Sub
 	#tag EndEvent
 
@@ -398,6 +254,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub RefreshHeader()
+		  Header.Invalidate()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub RefreshMods()
 		  Dim Request As New APIRequest("mod.php", "GET", AddressOf APICallback_ListMods)
 		  Request.Sign(App.Identity)
@@ -421,7 +283,8 @@ End
 #tag Events ModList
 	#tag Event
 		Sub Change()
-		  RemoveModButton.Enabled = Me.ListIndex > -1
+		  Footer.Button("RemoveButton").Enabled = Me.ListIndex > -1
+		  Footer.Invalidate()
 		  ModView.CurrentMod = Self.SelectedMod()
 		End Sub
 	#tag EndEvent
@@ -436,45 +299,39 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AddModButton
+#tag Events Footer
+	#tag Event
+		Sub Action(Button As FooterBarButton)
+		  Select Case Button.Name
+		  Case "AddButton"
+		    If DeveloperAddModDialog.Present(Self) Then
+		      Self.RefreshMods
+		    End If
+		  Case "RemoveButton"
+		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = "Are you sure you want to remove your mod?"
+		    Dialog.Explanation = "This cannot be undone. All associated engrams will also be removed."
+		    Dialog.ActionButton.Caption = "Delete"
+		    Dialog.CancelButton.Visible = True
+		    
+		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		    If Choice = Dialog.ActionButton Then
+		      Dim Request As New APIRequest(Self.SelectedMod.ResourceURL, "DELETE", AddressOf APICallback_DeleteMod)
+		      Request.Sign(App.Identity)
+		      Self.Socket.Start(Request)
+		    End If
+		  End Select
+		End Sub
+	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.IconNormal = IconAddNormal
-		  Me.IconPressed = IconAddPressed
-		  Me.IconDisabled = IconAddDisabled
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  If DeveloperAddModDialog.Present(Self) Then
-		    Self.RefreshMods
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events RemoveModButton
-	#tag Event
-		Sub Open()
-		  Me.IconNormal = IconRemoveNormal
-		  Me.IconPressed = IconRemovePressed
-		  Me.IconDisabled = IconRemoveDisabled
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  Dim Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Are you sure you want to remove your mod?"
-		  Dialog.Explanation = "This cannot be undone. All associated engrams will also be removed."
-		  Dialog.ActionButton.Caption = "Delete"
-		  Dialog.CancelButton.Visible = True
+		  Dim AddButton As New FooterBarButton("AddButton", IconAddNormal)
+		  Me.Append(AddButton)
 		  
-		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
-		  If Choice = Dialog.ActionButton Then
-		    Dim Request As New APIRequest(Self.SelectedMod.ResourceURL, "DELETE", AddressOf APICallback_DeleteMod)
-		    Request.Sign(App.Identity)
-		    Self.Socket.Start(Request)
-		  End If
+		  Dim RemoveButton As New FooterBarButton("RemoveButton", IconRemoveNormal)
+		  RemoveButton.Enabled = False
+		  Me.Append(RemoveButton)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
