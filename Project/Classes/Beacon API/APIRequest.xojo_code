@@ -36,7 +36,7 @@ Protected Class APIRequest
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As Text, Method As Text, Payload As Xojo.Core.Dictionary, Callback As APIRequest.ReplyCallback)
+		Sub Constructor(Path As Text, Method As Text, Payload As Text, ContentType As Text, Callback As APIRequest.ReplyCallback)
 		  If Path.IndexOf("://") = -1 Then
 		    Path = Beacon.WebURL + "/api/" + Path
 		  End If
@@ -46,24 +46,36 @@ Protected Class APIRequest
 		    Raise Err
 		  End If
 		  
-		  Dim Parts() As Text
-		  For Each Entry As Xojo.Core.DictionaryEntry In Payload
-		    Parts.Append(Self.URLEncode(Entry.Key) + "=" + Self.URLEncode(Entry.Value))
-		  Next
-		  
-		  If Method = "GET" Then
+		  If Method = "GET" Or ContentType = "application/x-www-form-urlencoded" Then
 		    Dim QueryIndex As Integer = Path.IndexOf("?")
 		    If QueryIndex <> -1 Then
-		      Parts.Append(Path.Mid(QueryIndex + 1))
+		      Dim Query As Text = Path.Mid(QueryIndex + 1)
+		      If Payload <> "" Then
+		        Payload = Payload + "&" + Query
+		      Else
+		        Payload = Query
+		      End If
 		      Path = Path.Left(QueryIndex)
 		    End If
+		    ContentType = "application/x-www-form-urlencoded"
 		  End If
 		  
 		  Self.mURL = Path
 		  Self.mMethod = Method.Uppercase
 		  Self.mCallback = Callback
-		  Self.mContentType = "application/x-www-form-urlencoded"
-		  Self.mPayload = Text.Join(Parts, "&")
+		  Self.mContentType = ContentType
+		  Self.mPayload = Payload
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Path As Text, Method As Text, Payload As Xojo.Core.Dictionary, Callback As APIRequest.ReplyCallback)
+		  Dim Parts() As Text
+		  For Each Entry As Xojo.Core.DictionaryEntry In Payload
+		    Parts.Append(Self.URLEncode(Entry.Key) + "=" + Self.URLEncode(Entry.Value))
+		  Next
+		  
+		  Self.Constructor(Path, Method, Text.Join(Parts, "&"), "application/x-www-form-urlencoded", Callback)
 		End Sub
 	#tag EndMethod
 
@@ -174,6 +186,11 @@ Protected Class APIRequest
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="AuthCount"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true

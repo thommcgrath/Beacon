@@ -69,7 +69,7 @@ Protected Class APISocket
 		  
 		  Self.ActiveRequest.InvokeCallback(False, Err.Reason, Nil)
 		  Self.ActiveRequest = Nil
-		  Xojo.Core.Timer.CallLater(1, WeakAddressOf Self.AdvanceQueue)
+		  Xojo.Core.Timer.CallLater(50, WeakAddressOf Self.AdvanceQueue)
 		End Sub
 	#tag EndMethod
 
@@ -77,22 +77,34 @@ Protected Class APISocket
 		Private Sub Socket_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
-		  #Pragma Unused HTTPStatus
 		  
-		  Try
-		    Dim Reply As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content))
-		    Dim Success As Boolean = Reply.Value("status") = "success"
-		    Dim Message As Text
-		    Dim Details As Auto = Reply.Value("details")
-		    If Not Success Then
-		      Message = Reply.Value("message")
-		    End If
-		    Self.ActiveRequest.InvokeCallback(Success, Message, Details)
-		  Catch Err As RuntimeException
-		    Self.ActiveRequest.InvokeCallback(False, "Unhandled Exception", Nil)
-		  End Try
+		  Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
+		  Dim Details As Auto
+		  If TextContent <> "" Then
+		    Try
+		      Details = Xojo.Data.ParseJSON(TextContent)
+		    Catch Err As Xojo.Data.InvalidJSONException
+		      Dim Dict As New Xojo.Core.Dictionary
+		      Dict.Value("message") = "Invalid JSON"
+		      Dict.Value("details") = TextContent
+		      Details = Dict
+		      HTTPStatus = 500
+		    End Try
+		  Else
+		    Details = New Xojo.Core.Dictionary
+		  End If
+		  
+		  If HTTPStatus = 200 Then
+		    Self.ActiveRequest.InvokeCallback(True, "", Details)
+		  Else
+		    Dim Dict As Xojo.Core.Dictionary = Details
+		    Dim Message As Text = Dict.Lookup("message", "")
+		    Details = Dict.Lookup("details", Nil)
+		    Self.ActiveRequest.InvokeCallback(False, Message, Details)
+		  End If
+		  
 		  Self.ActiveRequest = Nil
-		  Xojo.Core.Timer.CallLater(1, WeakAddressOf Self.AdvanceQueue)
+		  Xojo.Core.Timer.CallLater(50, WeakAddressOf Self.AdvanceQueue)
 		End Sub
 	#tag EndMethod
 
@@ -100,7 +112,7 @@ Protected Class APISocket
 		Sub Start(Request As APIRequest)
 		  Self.Queue.Append(Request)
 		  If UBound(Self.Queue) = 0 Then
-		    Xojo.Core.Timer.CallLater(1, WeakAddressOf Self.AdvanceQueue)
+		    Xojo.Core.Timer.CallLater(50, WeakAddressOf Self.AdvanceQueue)
 		    Self.Working = True
 		  End If
 		End Sub

@@ -205,7 +205,7 @@ Inherits ControlCanvas
 		    Declare Sub SetAppearance Lib "AppKit" Selector "setAppearance:" (Target As WindowPtr, AppearanceRef As Ptr)
 		    Declare Function GetAppearance Lib "AppKit" Selector "appearanceNamed:" (Target As Ptr, Name As CFStringRef) As Ptr
 		    
-		    Dim AppearanceRef As Ptr = GetAppearance(NSClassFromString("NSAppearance"), if(Value, "NSAppearanceNameVibrantDark", "NSAppearanceNameVibrantLight"))
+		    Dim AppearanceRef As Ptr = GetAppearance(NSClassFromString("NSAppearance"), if(Value, "NSAppearanceNameVibrantDark", "NSAppearanceNameAqua"))
 		    SetAppearance(Self.TrueWindow, AppearanceRef)
 		    Self.mInverted = Value
 		  #endif

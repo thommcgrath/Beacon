@@ -44,7 +44,7 @@ Begin ContainerControl DeveloperModView
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   2
+      Value           =   3
       Visible         =   True
       Width           =   564
       Begin UITweaks.ResizedTextField ConfirmField
@@ -242,6 +242,230 @@ Begin ContainerControl DeveloperModView
          Visible         =   True
          Width           =   340
       End
+      Begin Listbox EngramList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   False
+         ColumnCount     =   5
+         ColumnsResizable=   False
+         ColumnWidths    =   "*,*,100,75,75"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   22
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   -1
+         Height          =   394
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         InitialValue    =   "Class	Label	Blueprintable	Island	Scorched"
+         Italic          =   False
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionType   =   0
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   0
+         Underline       =   False
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   564
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin ControlCanvas Separators
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         DoubleBuffer    =   True
+         Enabled         =   True
+         EraseBackground =   False
+         Height          =   1
+         HelpTag         =   ""
+         Index           =   0
+         InitialParent   =   "Panel"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Top             =   394
+         Transparent     =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   564
+      End
+      Begin ControlCanvas Separators
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         DoubleBuffer    =   True
+         Enabled         =   True
+         EraseBackground =   False
+         Height          =   24
+         HelpTag         =   ""
+         Index           =   2
+         InitialParent   =   "Panel"
+         Left            =   61
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Top             =   395
+         Transparent     =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   1
+      End
+      Begin ControlCanvas Separators
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         DoubleBuffer    =   True
+         Enabled         =   True
+         EraseBackground =   False
+         Height          =   24
+         HelpTag         =   ""
+         Index           =   1
+         InitialParent   =   "Panel"
+         Left            =   30
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Top             =   395
+         Transparent     =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   1
+      End
+      Begin GraphicButton RemoveEngramButton
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   False
+         EraseBackground =   True
+         Height          =   24
+         HelpTag         =   "Remove the selected engram."
+         IconDisabled    =   0
+         IconNormal      =   0
+         IconPressed     =   0
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   31
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Top             =   395
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   30
+      End
+      Begin FooterBar FooterBar1
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   24
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   62
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Top             =   395
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   502
+      End
+      Begin GraphicButton AddEngramButton
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   24
+         HelpTag         =   "Add a new engram to this mod."
+         IconDisabled    =   0
+         IconNormal      =   0
+         IconPressed     =   0
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   6
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Top             =   395
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   30
+      End
    End
    Begin APISocket Socket
       Index           =   -2147483648
@@ -256,6 +480,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.Resize()
+		  Self.mEngramSets = New Xojo.Core.Dictionary
 		End Sub
 	#tag EndEvent
 
@@ -275,36 +500,36 @@ End
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ConfirmMod(Success As Boolean, Message As Text, Details As Auto)
 		  If Success Then
-		    Panel.Value = PageEngrams
-		    Self.ShowAlert("Mod ownership confirmed.", "You may now remove the confirmation code from your Steam page.")
+		    Self.CurrentMod.Constructor(Details)
+		    If Self.CurrentMod.Confirmed Then
+		      Panel.Value = PageEngrams
+		      Self.ShowAlert("Mod ownership confirmed.", "You may now remove the confirmation code from your Steam page.")
+		    Else
+		      Panel.Value = PageNeedsConfirmation
+		      Self.ShowAlert("Mod ownership has not been confirmed.", "The confirmation code was not found on mod's Steam page.")
+		    End If
 		  Else
 		    Panel.Value = PageNeedsConfirmation
-		    Self.ShowAlert("Mod ownership has not been confirmed", Message)
+		    Self.ShowAlert("Mod ownership has not been confirmed.", Message)
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ModLoad(Success As Boolean, Message As Text, Details As Auto)
-		  If Not Success Then
-		    Self.SetModID("")
-		    Self.ShowAlert("Unable to load mod", Message)
-		    Return
-		  End If
-		  
-		  Self.ModData = Details
-		  Dim Confirmed As Boolean = Self.ModData.Value("confirmed")
-		  If Not Confirmed Then
-		    Dim Code As Text = Self.ModData.Value("confirmation_code")
-		    ConfirmField.Text = Code
-		    Panel.Value = PageNeedsConfirmation
-		    Return
-		  End If
-		  
-		  // Load engrams
-		  
+		Private Sub APICallback_EngramsLoad(Success As Boolean, Message As Text, Details As Auto)
+		  Self.mEngramSets.Value(Self.CurrentMod.ModID) = New APIEngramSet(Details)
 		  Panel.Value = PageEngrams
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function EngramSet() As APIEngramSet
+		  If Self.mCurrentMod = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return Self.mEngramSets.Value(Self.mCurrentMod.ModID)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -333,33 +558,87 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub SetModID(ModID As Text)
-		  Xojo.Core.Timer.CancelCall(AddressOf RestoreCopyButton)
-		  Self.RestoreCopyButton()
+	#tag Method, Flags = &h21
+		Private Sub ShowCurrentEngrams()
+		  EngramList.DeleteAllRows
 		  
-		  If ModID = "" Then
-		    Panel.Value = Self.PageNoSelection
-		    Self.ModID = ""
+		  If Self.mCurrentMod = Nil Or Self.mEngramSets.HasKey(Self.mCurrentMod.ModID) = False Then
 		    Return
 		  End If
 		  
-		  Panel.Value = Self.PageLoading
-		  Self.ModID = ModID
+		  Dim EngramSet As APIEngramSet = Self.mEngramSets.Value(Self.mCurrentMod.ModID)
+		  Dim Engrams() As APIEngram = EngramSet.ActiveEngrams
+		  For Each Engram As APIEngram In Engrams
+		    EngramList.AddRow("")
+		    Self.ShowEngramInRow(EngramList.LastIndex, Engram)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowEngramInRow(Index As Integer, Engram As APIEngram)
+		  EngramList.Cell(Index, 0) = Engram.ClassString
+		  EngramList.Cell(Index, 1) = Engram.Label
+		  EngramList.CellCheck(Index, 2) = Engram.CanBeBlueprint
+		  EngramList.CellCheck(Index, 3) = Engram.AvailableTo(Beacon.LootSource.Packages.Island)
+		  EngramList.CellCheck(Index, 4) = Engram.AvailableTo(Beacon.LootSource.Packages.Scorched)
 		  
-		  Dim Request As New APIRequest("mod.php/" + ModID, "GET", AddressOf APICallback_ModLoad)
-		  Request.Sign(App.Identity)
-		  Self.Socket.Start(Request)
+		  EngramList.CellHelpTag(Index, 0) = Engram.ClassString
+		  EngramList.CellHelpTag(Index, 1) = Engram.Label
+		  
+		  EngramList.RowTag(Index) = Engram
 		End Sub
 	#tag EndMethod
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mCurrentMod
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value = Self.mCurrentMod Then
+			    Return
+			  End If
+			  
+			  Xojo.Core.Timer.CancelCall(AddressOf RestoreCopyButton)
+			  Self.RestoreCopyButton()
+			  
+			  Self.mCurrentMod = Value
+			  
+			  If Self.mCurrentMod = Nil Then
+			    Panel.Value = Self.PageNoSelection
+			    Return
+			  End If
+			  
+			  If Not Self.mCurrentMod.Confirmed Then
+			    ConfirmField.Text = Self.mCurrentMod.ConfirmationCode
+			    Panel.Value = PageNeedsConfirmation
+			    Return
+			  End If
+			  
+			  If Self.mEngramSets.HasKey(Self.mCurrentMod.ModID) Then
+			    Self.ShowCurrentEngrams()
+			    Panel.Value = PageEngrams
+			  Else
+			    // Load engrams
+			    Panel.Value = PageLoading
+			    Dim Request As New APIRequest(Self.mCurrentMod.EngramsURL, "GET", AddressOf APICallback_EngramsLoad)
+			    Self.Socket.Start(Request)
+			  End If
+			End Set
+		#tag EndSetter
+		CurrentMod As APIMod
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
-		Private ModData As Xojo.Core.Dictionary
+		Private mCurrentMod As APIMod
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private ModID As Text
+		Private mEngramSets As Xojo.Core.Dictionary
 	#tag EndProperty
 
 
@@ -395,10 +674,95 @@ End
 		Sub Action()
 		  Panel.Value = PageLoading
 		  
-		  Dim ConfirmURL As Text = Self.ModData.Value("confirm_url")
-		  Dim Request As New APIRequest(ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
+		  Dim Request As New APIRequest(Self.CurrentMod.ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
 		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramList
+	#tag Event
+		Sub Open()
+		  Me.ColumnType(0) = Listbox.TypeEditableTextField
+		  Me.ColumnType(1) = Listbox.TypeEditableTextField
+		  Me.ColumnType(2) = Listbox.TypeCheckbox
+		  Me.ColumnType(3) = Listbox.TypeCheckbox
+		  Me.ColumnType(4) = Listbox.TypeCheckbox
+		  
+		  Me.ColumnAlignment(2) = Listbox.AlignCenter
+		  Me.ColumnAlignment(3) = Listbox.AlignCenter
+		  Me.ColumnAlignment(4) = Listbox.AlignCenter
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  Dim Engram As APIEngram = Me.RowTag(Row)
+		  
+		  Select Case Column
+		  Case 0
+		    Engram.ClassString = Me.Cell(Row, Column).ToText
+		    Me.Cell(Row, Column) = Engram.ClassString
+		  Case 1
+		    Engram.Label = Me.Cell(Row, Column).ToText
+		  Case 2
+		    Engram.CanBeBlueprint = Me.CellCheck(Row, Column)
+		  Case 3
+		    If Me.CellCheck(Row, Column) Then
+		      Engram.AddEnvironment(Beacon.LootSource.Packages.Island)
+		    Else
+		      Engram.RemoveEnvironment(Beacon.LootSource.Packages.Island)
+		    End If
+		  Case 4
+		    If Me.CellCheck(Row, Column) Then
+		      Engram.AddEnvironment(Beacon.LootSource.Packages.Scorched)
+		    Else
+		      Engram.RemoveEnvironment(Beacon.LootSource.Packages.Scorched)
+		    End If
+		  End Select
+		  
+		  Self.EngramSet.Add(Engram)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Separators
+	#tag Event
+		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused areas
+		  
+		  G.ForeColor = &cBBBBBB
+		  G.FillRect(-1, -1, G.Width + 2, G.Height + 2)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RemoveEngramButton
+	#tag Event
+		Sub Open()
+		  Me.IconNormal = IconRemoveNormal
+		  Me.IconPressed = IconRemovePressed
+		  Me.IconDisabled = IconRemoveDisabled
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AddEngramButton
+	#tag Event
+		Sub Open()
+		  Me.IconNormal = IconAddNormal
+		  Me.IconPressed = IconAddPressed
+		  Me.IconDisabled = IconAddDisabled
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  Dim Engram As New APIEngram
+		  EngramList.AddRow("")
+		  Self.ShowEngramInRow(EngramList.LastIndex, Engram)
+		  EngramList.EditCell(EngramList.LastIndex, 0)
+		  Self.EngramSet.Add(Engram)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

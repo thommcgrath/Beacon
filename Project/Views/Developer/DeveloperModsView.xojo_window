@@ -371,27 +371,25 @@ End
 		    Return
 		  End If
 		  
-		  Dim SelectedMod As Text
+		  Dim SelectedMod As APIMod
 		  If ModList.ListIndex > -1 Then
-		    SelectedMod = ModList.RowTag(ModList.ListIndex)
+		    SelectedMod = Self.SelectedMod()
 		  End If
 		  
 		  ModList.DeleteAllRows()
 		  
 		  Dim Arr() As Auto = Details
 		  For Each Dict As Xojo.Core.Dictionary In Arr
-		    Dim ModID As Text = Dict.Value("mod_id")
-		    Dim Confirmed As Boolean = Dict.Value("confirmed")
-		    Dim Name As Text = Dict.Value("name")
+		    Dim UserMod As New APIMod(Dict)
 		    
-		    ModList.AddRow(Name)
-		    ModList.RowTag(ModList.LastIndex) = ModID
+		    ModList.AddRow(UserMod.Name)
+		    ModList.RowTag(ModList.LastIndex) = UserMod
 		    
-		    If Not Confirmed Then
+		    If Not UserMod.Confirmed Then
 		      ModList.CellItalic(ModList.LastIndex, 0) = True
 		    End If
 		    
-		    If ModID = SelectedMod Then
+		    If UserMod = SelectedMod Then
 		      ModList.ListIndex = ModList.LastIndex
 		    End If
 		  Next
@@ -400,10 +398,20 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshMods()
-		  Dim Request As New APIRequest("mod.php", "GET", New Xojo.Core.Dictionary, AddressOf APICallback_ListMods)
+		  Dim Request As New APIRequest("mod.php", "GET", AddressOf APICallback_ListMods)
 		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SelectedMod() As APIMod
+		  If ModList.ListIndex = -1 Then
+		    Return Nil
+		  End If
+		  
+		  Return ModList.RowTag(ModList.ListIndex)
+		End Function
 	#tag EndMethod
 
 
@@ -413,11 +421,7 @@ End
 	#tag Event
 		Sub Change()
 		  RemoveModButton.Enabled = Me.ListIndex > -1
-		  If Me.ListIndex > -1 Then
-		    ModView.SetModID(Me.RowTag(Me.ListIndex).StringValue.ToText)
-		  Else
-		    ModView.SetModID("")
-		  End If
+		  ModView.CurrentMod = Self.SelectedMod()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -466,7 +470,7 @@ End
 		  
 		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If Choice = Dialog.ActionButton Then
-		    Dim Request As New APIRequest("mod.php/" + ModList.RowTag(ModList.ListIndex).StringValue.ToText, "DELETE", New Xojo.Core.Dictionary, AddressOf APICallback_DeleteMod)
+		    Dim Request As New APIRequest(Self.SelectedMod.ResourceURL, "DELETE", AddressOf APICallback_DeleteMod)
 		    Request.Sign(App.Identity)
 		    Self.Socket.Start(Request)
 		  End If
