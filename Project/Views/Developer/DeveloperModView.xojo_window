@@ -616,6 +616,7 @@ End
 		    Dim Engram As APIEngram = EngramList.RowTag(EngramList.ListIndex)
 		    Self.EngramSet.Remove(Engram)
 		    EngramList.RemoveRow(EngramList.ListIndex)
+		    FooterBar1.Button("PublishButton").Enabled = Self.EngramSet.Modified
 		  End Select
 		End Sub
 	#tag EndEvent

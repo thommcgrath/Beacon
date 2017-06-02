@@ -78,6 +78,12 @@ Protected Class APIEngram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ID() As Text
+		  Return Self.mID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ModName() As Text
 		  Return Self.mModName
 		End Function
@@ -221,11 +227,32 @@ Protected Class APIEngram
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Availability"
+			Group="Behavior"
+			Type="UInteger"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CanBeBlueprint"
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ClassString"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Label"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -235,9 +262,9 @@ Protected Class APIEngram
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mClassString"
+			Name="ModID"
 			Group="Behavior"
-			Type="Integer"
+			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
