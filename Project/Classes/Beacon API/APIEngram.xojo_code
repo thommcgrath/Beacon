@@ -161,6 +161,10 @@ Protected Class APIEngram
 			      Value = Value.Mid(9)
 			    End If
 			    
+			    If Value.Left(1) = "." Then
+			      Value = Value.Mid(1)
+			    End If
+			    
 			    If Value.Left(1) = "'" Then
 			      Value = Value.Mid(1)
 			    End If

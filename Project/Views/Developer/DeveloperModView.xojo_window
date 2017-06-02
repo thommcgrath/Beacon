@@ -439,6 +439,15 @@ End
 		    Return Nil
 		  End If
 		  
+		  If Self.mEngramSets = Nil Then
+		    Self.mEngramSets = New Xojo.Core.Dictionary
+		  End If
+		  
+		  If Not Self.mEngramSets.HasKey(Self.mCurrentMod.ModID) Then
+		    Dim Placeholder() As Auto
+		    Self.mEngramSets.Value(Self.mCurrentMod.ModID) = New APIEngramSet(Placeholder)
+		  End If
+		  
 		  Return Self.mEngramSets.Value(Self.mCurrentMod.ModID)
 		End Function
 	#tag EndMethod
@@ -537,6 +546,81 @@ End
 		  EngramList.CellHelpTag(Index, 1) = Engram.Label
 		  
 		  EngramList.RowTag(Index) = Engram
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowImport()
+		  Dim Dialog As New OpenDialog
+		  Dialog.Filter = BeaconFileTypes.Any
+		  
+		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If File = Nil Then
+		    Return
+		  End If
+		  
+		  Dim Stream As TextInputStream = TextInputStream.Open(File)
+		  Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
+		  Stream.Close
+		  
+		  Dim Regex As New Regex
+		  Regex.SearchPattern = "((((\.[A-Za-z0-9_]+)|([A-Za-z0-9_]+_C))[^A-Za-z0-9_]+.*)|([A-Za-z0-9_]+_C))$"
+		  
+		  Dim Set As APIEngramSet = Self.EngramSet
+		  Dim Match As RegexMatch = Regex.Search(Contents)
+		  Dim Classes As New Dictionary
+		  Do
+		    If Match = Nil Then
+		      Continue
+		    End If
+		    
+		    Dim Found As String = Match.SubExpressionString(3)
+		    If Found = "" Then
+		      Found = Match.SubExpressionString(6)
+		    End If
+		    If Found <> "" Then
+		      Classes.Value(Found) = True
+		    End If
+		    
+		    Match = Regex.Search
+		  Loop Until Match Is Nil
+		  
+		  If Classes.Count = 0 Then
+		    Self.ShowAlert("Nothing to import", "Sorry, Beacon has tried to find classes to import from the file, but found nothing.")
+		    Return
+		  End If
+		  
+		  Regex = New Regex
+		  Regex.SearchPattern = "([A-Z])"
+		  Regex.ReplacementPattern = " \1"
+		  Regex.Options.ReplaceAllMatches = True
+		  Regex.Options.CaseSensitive = True
+		  
+		  Dim Keys() As Variant = Classes.Keys
+		  For Each Key As String In Keys
+		    Dim Engram As New APIEngram
+		    Engram.ClassString = Key.ToText
+		    
+		    Dim GuessName As String = Engram.ClassString
+		    Dim Parts() As String = GuessName.Split("_")
+		    Parts.Remove(0)
+		    Parts.Remove(UBound(Parts))
+		    GuessName = Join(Parts, " ")
+		    GuessName = Regex.Replace(GuessName)
+		    GuessName = ReplaceAll(GuessName, "_", " ")
+		    While GuessName.InStr("  ") > 0
+		      GuessName = ReplaceAll(GuessName, "  ", " ")
+		    Wend
+		    GuessName = Trim(GuessName)
+		    
+		    Engram.ModID = Self.mCurrentMod.ModID
+		    Engram.Label = GuessName.ToText
+		    Set.Add(Engram)
+		    EngramList.AddRow("")
+		    Self.ShowEngramInRow(EngramList.LastIndex, Engram)
+		  Next
+		  
+		  Footer.Button("PublishButton").Enabled = Set.Modified
 		End Sub
 	#tag EndMethod
 
@@ -711,6 +795,8 @@ End
 		    Footer.Button("PublishButton").Enabled = Self.EngramSet.Modified
 		  Case "PublishButton"
 		    Self.Publish()
+		  Case "ImportButton"
+		    Self.ShowImport()
 		  End Select
 		End Sub
 	#tag EndEvent

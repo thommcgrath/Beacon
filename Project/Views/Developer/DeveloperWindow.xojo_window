@@ -96,13 +96,13 @@ Begin Window DeveloperWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
+      PanelCount      =   4
       Panels          =   ""
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
       Top             =   31
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   800
       Begin DeveloperModsView ModsView
@@ -125,109 +125,13 @@ Begin Window DeveloperWindow
          LockTop         =   True
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   1
+         TabPanelIndex   =   2
          TabStop         =   True
          Top             =   31
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
          Width           =   800
-      End
-      Begin PushButton PushButton1
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   False
-         Caption         =   "OK"
-         Default         =   True
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   240
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   74
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin PushButton PushButton2
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   True
-         Caption         =   "Cancel"
-         Default         =   False
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   332
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   74
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin Label Label1
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   240
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   2
-         TabPanelIndex   =   2
-         Text            =   "Untitled"
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   122
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   100
       End
    End
 End
@@ -242,8 +146,8 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.TabHeader.Append("Mods")
 		  Self.TabHeader.Append("Documents")
+		  Self.TabHeader.Append("Mods")
 		  Self.TabHeader.Append("Identity")
 		  Self.TabHeader.Append("API Guide")
 		  

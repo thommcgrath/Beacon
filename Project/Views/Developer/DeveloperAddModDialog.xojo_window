@@ -48,6 +48,7 @@ Begin Window DeveloperAddModDialog
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Register Mod"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -82,6 +83,7 @@ Begin Window DeveloperAddModDialog
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Register your mod with Beacon here to add support for your custom items. You will be given a confirmation code which should be added to your mod page temporarily to prove you are the owner of the mod."
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -220,6 +222,7 @@ Begin Window DeveloperAddModDialog
       Width           =   16
    End
    Begin APISocket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -287,9 +290,12 @@ End
 		    
 		    ModID = Matches.SubExpressionString(1)
 		  End If
-		  ModID = EncodeURLComponent(ModID)
 		  
-		  Dim Request As New APIRequest("mod.php/" + ModID.ToText, "POST", New Xojo.Core.Dictionary, AddressOf APICallback_RegisterMod)
+		  Dim Dict As New Xojo.Core.Dictionary
+		  Dict.Value("mod_id") = ModID.ToText
+		  Dim Payload As Text = Xojo.Data.GenerateJSON(Dict)
+		  
+		  Dim Request As New APIRequest("mod.php", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
 		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		End Sub
@@ -484,11 +490,6 @@ End
 		Visible=true
 		Group="Size"
 		InitialValue="64"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="mRegistered"
-		Group="Behavior"
 		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
