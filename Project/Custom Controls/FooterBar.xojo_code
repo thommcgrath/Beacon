@@ -1,6 +1,7 @@
 #tag Class
 Protected Class FooterBar
 Inherits ControlCanvas
+Implements ObservationKit.Observer
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  If Not Self.Enabled Then
@@ -110,6 +111,7 @@ Inherits ControlCanvas
 		  Dim Idx As Integer = Self.IndexOf(Button)
 		  If Idx = -1 Then
 		    Self.mButtons.Append(Button)
+		    Button.AddObserver(Self, "Alignment", "Caption", "Enabled", "Icon")
 		    Self.Invalidate
 		  End If
 		End Sub
@@ -124,6 +126,7 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h0
 		Sub Button(Index As Integer, Assigns Value As FooterBarButton)
 		  Self.mButtons(Index) = Value
+		  Value.AddObserver(Self, "Alignment", "Caption", "Enabled", "Icon")
 		  Self.Invalidate
 		End Sub
 	#tag EndMethod
@@ -244,6 +247,7 @@ Inherits ControlCanvas
 		  Dim Idx As Integer = Self.IndexOf(Button)
 		  If Idx = -1 Then
 		    Self.mButtons.Insert(Index, Button)
+		    Button.AddObserver(Self, "Alignment", "Caption", "Enabled", "Icon")
 		    Self.Invalidate
 		  End If
 		End Sub
@@ -259,6 +263,14 @@ Inherits ControlCanvas
 		  
 		  Self.mNoActionOnRelease = RaiseEvent MouseHold(Self.mPressTarget)
 		  Self.mMouseHeld = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
+		  // Part of the ObservationKit.Observer interface.
+		  
+		  Self.Invalidate()
 		End Sub
 	#tag EndMethod
 
@@ -386,6 +398,8 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
+		  Dim Button As FooterBarButton = Self.mButtons(Index)
+		  Button.RemoveObserver(Self, "Alignment", "Caption", "Enabled", "Icon")
 		  Self.mButtons.Remove(Index)
 		  Self.Invalidate
 		End Sub

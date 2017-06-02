@@ -292,7 +292,7 @@ Begin ContainerControl DeveloperModView
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
-      Begin FooterBar FooterBar1
+      Begin FooterBar Footer
          AcceptFocus     =   False
          AcceptTabs      =   False
          AutoDeactivate  =   True
@@ -379,8 +379,7 @@ End
 		  
 		  Panel.Value = PageEngrams
 		  Self.EngramSet.ClearModifications(False)
-		  FooterBar1.Button("PublishButton").Enabled = False
-		  FooterBar1.Invalidate
+		  Footer.Button("PublishButton").Enabled = False
 		  Self.ShowAlert("Engrams published.", "Your changes are now live.")
 		End Sub
 	#tag EndMethod
@@ -407,8 +406,7 @@ End
 		  
 		  Panel.Value = PageEngrams
 		  Self.EngramSet.ClearModifications(False)
-		  FooterBar1.Button("PublishButton").Enabled = False
-		  FooterBar1.Invalidate
+		  Footer.Button("PublishButton").Enabled = False
 		  Self.ShowAlert("Engrams published.", "Your changes are now live.")
 		End Sub
 	#tag EndMethod
@@ -523,8 +521,7 @@ End
 		    Self.ShowEngramInRow(EngramList.LastIndex, Engram)
 		  Next
 		  
-		  FooterBar1.Button("PublishButton").Enabled = EngramSet.Modified
-		  FooterBar1.Invalidate
+		  Footer.Button("PublishButton").Enabled = EngramSet.Modified
 		End Sub
 	#tag EndMethod
 
@@ -674,22 +671,20 @@ End
 		  End Select
 		  
 		  Self.EngramSet.Add(Engram)
-		  FooterBar1.Button("PublishButton").Enabled = Self.EngramSet.Modified
-		  FooterBar1.Invalidate
+		  Footer.Button("PublishButton").Enabled = Self.EngramSet.Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  FooterBar1.Button("RemoveButton").Enabled = Me.ListIndex > -1
-		  FooterBar1.Invalidate
+		  Footer.Button("RemoveButton").Enabled = Me.ListIndex > -1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events FooterBar1
+#tag Events Footer
 	#tag Event
 		Sub Open()
-		  Me.Append(New FooterBarButton("AddButton", IconAddNormal, FooterBarButton.AlignLeft))
-		  Me.Append(New FooterBarButton("RemoveButton", IconRemoveNormal, FooterBarButton.AlignLeft))
+		  Me.Append(New FooterBarButton("AddButton", IconAdd, FooterBarButton.AlignLeft))
+		  Me.Append(New FooterBarButton("RemoveButton", IconRemove, FooterBarButton.AlignLeft))
 		  
 		  Me.Append(New FooterBarButton("ImportButton", "Import", FooterBarButton.AlignCenter))
 		  
@@ -713,7 +708,7 @@ End
 		    Dim Engram As APIEngram = EngramList.RowTag(EngramList.ListIndex)
 		    Self.EngramSet.Remove(Engram)
 		    EngramList.RemoveRow(EngramList.ListIndex)
-		    FooterBar1.Button("PublishButton").Enabled = Self.EngramSet.Modified
+		    Footer.Button("PublishButton").Enabled = Self.EngramSet.Modified
 		  Case "PublishButton"
 		    Self.Publish()
 		  End Select

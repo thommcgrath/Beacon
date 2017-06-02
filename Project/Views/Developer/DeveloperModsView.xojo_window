@@ -326,10 +326,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Dim AddButton As New FooterBarButton("AddButton", IconAddNormal)
+		  Dim AddButton As New FooterBarButton("AddButton", IconAdd)
 		  Me.Append(AddButton)
 		  
-		  Dim RemoveButton As New FooterBarButton("RemoveButton", IconRemoveNormal)
+		  Dim RemoveButton As New FooterBarButton("RemoveButton", IconRemove)
 		  RemoveButton.Enabled = False
 		  Me.Append(RemoveButton)
 		End Sub

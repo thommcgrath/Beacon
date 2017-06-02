@@ -115,7 +115,6 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -133,68 +132,6 @@ Begin BeaconWindow DocWindow
       Visible         =   True
       Width           =   865
    End
-   Begin GraphicButton AddBeaconButton
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   24
-      HelpTag         =   "Add a loot source. Click to show the  ""Add Loot Source"" dialog, hold to show a menu of possible loot sources."
-      IconDisabled    =   0
-      IconNormal      =   0
-      IconPressed     =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   556
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   30
-   End
-   Begin GraphicButton RemoveBeaconButton
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   False
-      EraseBackground =   True
-      Height          =   24
-      HelpTag         =   "Remove the selected loot source."
-      IconDisabled    =   0
-      IconNormal      =   0
-      IconPressed     =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   62
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   556
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   30
-   End
    Begin FooterBar Footer
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -203,11 +140,11 @@ Begin BeaconWindow DocWindow
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   24
+      Height          =   25
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   93
+      Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -217,98 +154,13 @@ Begin BeaconWindow DocWindow
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   556
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   141
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   1
-      InitialParent   =   ""
-      Left            =   30
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   556
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   2
-      InitialParent   =   ""
-      Left            =   92
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   556
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   3
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   555
-      Transparent     =   False
+      Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -318,70 +170,10 @@ Begin BeaconWindow DocWindow
       TabPanelIndex   =   0
    End
    Begin Beacon.RepositoryEngine Repository
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   4
-      InitialParent   =   ""
-      Left            =   61
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   556
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
-   End
-   Begin GraphicButton EditBeaconButton
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   False
-      EraseBackground =   True
-      Height          =   24
-      HelpTag         =   "Edit the selected items."
-      IconDisabled    =   0
-      IconNormal      =   0
-      IconPressed     =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   31
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   556
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   30
    End
    Begin ListHeader LootSourceHeader
       AcceptFocus     =   False
@@ -925,8 +717,8 @@ End
 #tag Events BeaconList
 	#tag Event
 		Sub Change()
-		  RemoveBeaconButton.Enabled = Me.SelCount > 0
-		  EditBeaconButton.Enabled = Me.SelCount = 1
+		  Footer.Button("EditButton").Enabled = Me.SelCount > 0
+		  Footer.Button("DeleteButton").Enabled = Me.SelCount = 1
 		  
 		  If Self.mBlockSelectionChanged Then
 		    Return
@@ -1084,73 +876,80 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AddBeaconButton
+#tag Events Footer
 	#tag Event
-		Sub Open()
-		  Me.IconNormal = IconAddWithMenuNormal
-		  Me.IconPressed = IconAddWithMenuPressed
-		  Me.IconDisabled = IconAddWithMenuDisabled
+		Sub Action(Button As FooterBarButton)
+		  Select Case Button.Name
+		  Case "AddButton"
+		    Self.ShowAddBeacon()
+		  Case "EditButton"
+		    If BeaconList.SelCount <> 1 Then
+		      Return
+		    End If
+		    
+		    Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self, Self.Doc, BeaconList.RowTag(BeaconList.ListIndex))
+		    If LootSource <> Nil Then
+		      Self.AddLootSource(LootSource)
+		    End If
+		  Case "DeleteButton"
+		    Self.RemoveSelectedBeacons()
+		  End Select
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action()
-		  Self.ShowAddBeacon()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function MouseHold(X As Integer, Y As Integer) As Boolean
-		  #Pragma Unused X
-		  #Pragma Unused Y
-		  
-		  Dim Base As New MenuItem
-		  Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("")
-		  For I As Integer = UBound(LootSources) DownTo 0
-		    If Self.Doc.HasBeacon(LootSources(I)) Then
-		      LootSources.Remove(I)
-		      Continue For I
+		Function MouseHold(Button As FooterBarButton) As Boolean
+		  Select Case Button.Name
+		  Case "AddButton"
+		    Dim Base As New MenuItem
+		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("")
+		    For I As Integer = UBound(LootSources) DownTo 0
+		      If Self.Doc.HasBeacon(LootSources(I)) Then
+		        LootSources.Remove(I)
+		        Continue For I
+		      End If
+		      If (LootSourceHeader.SegmentIndex = 1 And LootSources(I).Package <> Beacon.LootSource.Packages.Island) Or (LootSourceHeader.SegmentIndex = 2 And LootSources(I).Package <> Beacon.LootSource.Packages.Scorched) Then
+		        LootSources.Remove(I)
+		      End If
+		    Next
+		    
+		    If UBound(LootSources) = -1 Then
+		      Return False
 		    End If
-		    If (LootSourceHeader.SegmentIndex = 1 And LootSources(I).Package <> Beacon.LootSource.Packages.Island) Or (LootSourceHeader.SegmentIndex = 2 And LootSources(I).Package <> Beacon.LootSource.Packages.Scorched) Then
-		      LootSources.Remove(I)
+		    
+		    LootSources.Sort
+		    
+		    For Each LootSource As Beacon.LootSource In LootSources
+		      Base.Append(New MenuItem(LootSource.Label, LootSource))
+		    Next
+		    
+		    Dim Position As Xojo.Core.Point = Self.GlobalPosition
+		    Dim Choice As MenuItem = Base.PopUp(Position.X + Me.Left + Button.Left, Position.Y + Me.Top + Button.Top + Button.Height)
+		    If Choice = Nil Then
+		      Return True
 		    End If
-		  Next
-		  
-		  If UBound(LootSources) = -1 Then
-		    Return False
-		  End If
-		  
-		  LootSources.Sort
-		  
-		  For Each LootSource As Beacon.LootSource In LootSources
-		    Base.Append(New MenuItem(LootSource.Label, LootSource))
-		  Next
-		  
-		  Dim Position As Xojo.Core.Point = Self.GlobalPosition
-		  Dim Choice As MenuItem = Base.PopUp(Position.X + Me.Left, Position.Y + Me.Top + Me.Height)
-		  If Choice = Nil Then
+		    
+		    Dim SelectedLootSource As Beacon.LootSource = Choice.Tag
+		    
+		    If SelectedLootSource <> Nil Then
+		      Self.AddLootSource(SelectedLootSource)
+		    End If
+		    
 		    Return True
-		  End If
-		  
-		  Dim SelectedLootSource As Beacon.LootSource = Choice.Tag
-		  
-		  If SelectedLootSource <> Nil Then
-		    Self.AddLootSource(SelectedLootSource)
-		  End If
-		  
-		  Return True
+		  End Select
 		End Function
 	#tag EndEvent
-#tag EndEvents
-#tag Events RemoveBeaconButton
 	#tag Event
 		Sub Open()
-		  Me.IconNormal = IconRemoveNormal
-		  Me.IconPressed = IconRemovePressed
-		  Me.IconDisabled = IconRemoveDisabled
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  Self.RemoveSelectedBeacons()
+		  Dim AddButton As New FooterBarButton("AddButton", IconAddWithMenu)
+		  Dim EditButton As New FooterBarButton("EditButton", IconEdit)
+		  Dim DeleteButton As New FooterBarButton("DeleteButton", IconRemove)
+		  
+		  EditButton.Enabled = False
+		  DeleteButton.Enabled = False
+		  
+		  Me.Append(AddButton)
+		  Me.Append(EditButton)
+		  Me.Append(DeleteButton)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1210,28 +1009,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events EditBeaconButton
-	#tag Event
-		Sub Open()
-		  Me.IconNormal = IconEditNormal
-		  Me.IconPressed = IconEditPressed
-		  Me.IconDisabled = IconEditDisabled
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  If BeaconList.SelCount <> 1 Then
-		    Return
-		  End If
-		  
-		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self, Self.Doc, BeaconList.RowTag(BeaconList.ListIndex))
-		  If LootSource <> Nil Then
-		    Self.AddLootSource(LootSource)
-		  End If
-		  Return
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events LootSourceHeader
 	#tag Event
 		Sub Open()
@@ -1246,7 +1023,7 @@ End
 		Sub Resize(NewSize As Integer)
 		  Me.Height = NewSize
 		  BeaconList.Top = NewSize
-		  BeaconList.Height = Separators(3).Top - NewSize
+		  BeaconList.Height = Footer.Top - NewSize
 		End Sub
 	#tag EndEvent
 	#tag Event

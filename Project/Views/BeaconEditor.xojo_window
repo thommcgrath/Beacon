@@ -85,7 +85,7 @@ Begin ContainerControl BeaconEditor
       EraseBackground =   False
       Height          =   464
       HelpTag         =   ""
-      Index           =   1
+      Index           =   0
       InitialParent   =   ""
       Left            =   190
       LockBottom      =   True
@@ -114,7 +114,6 @@ Begin ContainerControl BeaconEditor
       HasBackColor    =   False
       Height          =   464
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -132,35 +131,7 @@ Begin ContainerControl BeaconEditor
       Visible         =   True
       Width           =   407
    End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   2
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   13
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   439
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   190
-   End
-   Begin GraphicButton AddSetButton
+   Begin FooterBar Footer
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
@@ -168,73 +139,11 @@ Begin ContainerControl BeaconEditor
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   24
-      HelpTag         =   "Add an item set to this loot source. Click to add an empty set, hold to show a menu of presets."
-      IconDisabled    =   0
-      IconNormal      =   0
-      IconPressed     =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   14
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   440
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   30
-   End
-   Begin GraphicButton RemoveSetButton
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   False
-      EraseBackground =   True
-      Height          =   24
-      HelpTag         =   "Remove the selected item set."
-      IconDisabled    =   0
-      IconNormal      =   0
-      IconPressed     =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   31
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   15
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   440
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   30
-   End
-   Begin FooterBar FooterBar1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   24
+      Height          =   25
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   62
+      Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -244,67 +153,11 @@ Begin ContainerControl BeaconEditor
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   440
+      Top             =   439
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   128
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   3
-      InitialParent   =   ""
-      Left            =   30
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   17
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   440
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   4
-      InitialParent   =   ""
-      Left            =   61
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   18
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   440
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
+      Width           =   190
    End
    Begin ListHeader Header
       AcceptFocus     =   False
@@ -637,7 +490,7 @@ End
 		    Return
 		  End If
 		  
-		  RemoveSetButton.Enabled = Me.ListIndex > -1
+		  Footer.Button("DeleteButton").Enabled = Me.ListIndex > -1
 		  
 		  If Me.ListIndex = -1 Then
 		    Editor.Enabled = False
@@ -822,50 +675,45 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AddSetButton
+#tag Events Footer
+	#tag Event
+		Sub Action(Button As FooterBarButton)
+		  Select Case Button.Name
+		  Case "AddButton"
+		    Self.AddSet(New Beacon.ItemSet)
+		  Case "DeleteButton"
+		    Self.RemoveSelectedItemSet()
+		  End Select
+		End Sub
+	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.IconNormal = IconAddWithMenuNormal
-		  Me.IconPressed = IconAddWithMenuPressed
-		  Me.IconDisabled = IconAddWithMenuDisabled
+		  Dim AddButton As New FooterBarButton("AddButton", IconAddWithMenu)
+		  Dim DeleteButton As New FooterBarButton("DeleteButton", IconRemove)
+		  
+		  DeleteButton.Enabled = False
+		  
+		  Me.Append(AddButton)
+		  Me.Append(DeleteButton)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action()
-		  Self.AddSet(New Beacon.ItemSet)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function MouseHold(X As Integer, Y As Integer) As Boolean
-		  #Pragma Unused X
-		  #Pragma Unused Y
-		  
-		  Dim Base As New MenuItem
-		  Self.BuildPresetMenu(Base)
-		  
-		  Dim Position As Xojo.Core.Point = Self.GlobalPosition
-		  Dim Choice As MenuItem = Base.PopUp(Position.X + Me.Left, Position.Y + Me.Top + Me.Height)
-		  If Choice = Nil Then
+		Function MouseHold(Button As FooterBarButton) As Boolean
+		  Select Case Button.Name
+		  Case "AddButton"
+		    Dim Base As New MenuItem
+		    Self.BuildPresetMenu(Base)
+		    
+		    Dim Position As Xojo.Core.Point = Self.GlobalPosition
+		    Dim Choice As MenuItem = Base.PopUp(Position.X + Me.Left + Button.Left, Position.Y + Me.Top + Button.Top + Button.Height)
+		    If Choice = Nil Then
+		      Return True
+		    End If
+		    
+		    Call Self.HandlePresetMenu(Choice)
 		    Return True
-		  End If
-		  
-		  Call Self.HandlePresetMenu(Choice)
-		  Return True
+		  End Select
 		End Function
-	#tag EndEvent
-#tag EndEvents
-#tag Events RemoveSetButton
-	#tag Event
-		Sub Open()
-		  Me.IconNormal = IconRemoveNormal
-		  Me.IconPressed = IconRemovePressed
-		  Me.IconDisabled = IconRemoveDisabled
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  Self.RemoveSelectedItemSet()
-		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Header
