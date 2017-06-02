@@ -370,10 +370,69 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub APICallback_EngramsDelete(Success As Boolean, Message As Text, Details As Auto)
+		  If Not Success Then
+		    Panel.Value = PageEngrams
+		    Self.ShowAlert("Unable to delete engrams.", Message)
+		    Return
+		  End If
+		  
+		  Panel.Value = PageEngrams
+		  Self.EngramSet.ClearModifications(False)
+		  FooterBar1.Button("PublishButton").Enabled = False
+		  FooterBar1.Invalidate
+		  Self.ShowAlert("Engrams published.", "Your changes are now live.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub APICallback_EngramsLoad(Success As Boolean, Message As Text, Details As Auto)
 		  Self.mEngramSets.Value(Self.CurrentMod.ModID) = New APIEngramSet(Details)
+		  Self.ShowCurrentEngrams()
 		  Panel.Value = PageEngrams
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_EngramsPost(Success As Boolean, Message As Text, Details As Auto)
+		  If Not Success Then
+		    Panel.Value = PageEngrams
+		    Self.ShowAlert("Unable to save engrams.", Message)
+		    Return
+		  End If
+		  
+		  If Self.DeletePendingEngrams Then
+		    Return
+		  End If
+		  
+		  Panel.Value = PageEngrams
+		  Self.EngramSet.ClearModifications(False)
+		  FooterBar1.Button("PublishButton").Enabled = False
+		  FooterBar1.Invalidate
+		  Self.ShowAlert("Engrams published.", "Your changes are now live.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function DeletePendingEngrams() As Boolean
+		  Dim DeletedEngrams() As APIEngram = Self.EngramSet.EngramsToDelete
+		  If UBound(DeletedEngrams) = -1 Then
+		    Return False
+		  End If
+		  
+		  Panel.Value = PageLoading
+		  
+		  Dim Classes() As Text
+		  For Each Engram As APIEngram In DeletedEngrams
+		    Classes.Append(Engram.ClassString)
+		  Next
+		  
+		  Dim Request As New APIRequest("engram.php/" + Text.Join(Classes, ","), "DELETE", AddressOf APICallback_EngramsDelete)
+		  Request.Sign(App.Identity)
+		  Self.Socket.Start(Request)
+		  
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -384,6 +443,20 @@ End
 		  
 		  Return Self.mEngramSets.Value(Self.mCurrentMod.ModID)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Publish()
+		  If Self.SavePendingEngrams() Then
+		    Return
+		  End If
+		  
+		  If Self.DeletePendingEngrams() Then
+		    Return
+		  End If
+		  
+		  Self.ShowAlert("Nothing to publish", "Sorry about that, it seems like the publish button should not be enabled.")
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -410,6 +483,29 @@ End
 		  CopyButton.Caption = "Copy To Clipboard"
 		  CopyButton.Enabled = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SavePendingEngrams() As Boolean
+		  Dim NewEngrams() As APIEngram = Self.EngramSet.EngramsToSave
+		  If UBound(NewEngrams) = -1 Then
+		    Return False
+		  End If
+		  
+		  Panel.Value = PageLoading
+		  
+		  Dim Dicts() As Xojo.Core.Dictionary
+		  For Each Engram As APIEngram In NewEngrams
+		    Dicts.Append(Engram.AsDictionary)
+		  Next
+		  
+		  Dim Content As Text = Xojo.Data.GenerateJSON(Dicts)
+		  Dim Request As New APIRequest("engram.php", "POST", Content, "application/json", AddressOf APICallback_EngramsPost)
+		  Request.Sign(App.Identity)
+		  Self.Socket.Start(Request)
+		  
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -608,6 +704,7 @@ End
 		  Select Case Button.Name
 		  Case "AddButton"
 		    Dim Engram As New APIEngram
+		    Engram.ModID = Self.CurrentMod.ModID
 		    EngramList.AddRow("")
 		    Self.ShowEngramInRow(EngramList.LastIndex, Engram)
 		    EngramList.EditCell(EngramList.LastIndex, 0)
@@ -617,6 +714,8 @@ End
 		    Self.EngramSet.Remove(Engram)
 		    EngramList.RemoveRow(EngramList.ListIndex)
 		    FooterBar1.Button("PublishButton").Enabled = Self.EngramSet.Modified
+		  Case "PublishButton"
+		    Self.Publish()
 		  End Select
 		End Sub
 	#tag EndEvent

@@ -121,7 +121,7 @@ CREATE TABLE deletions (
 	time TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0)
 );
 CREATE UNIQUE INDEX deletions_table_classstring_idx ON deletions(table, classstring);
-GRANT SELECT ON TABLE deletions TO thezaz_website;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE deletions TO thezaz_website;
 
 DROP TRIGGER IF EXISTS engrams_before_insert_trigger ON engrams;
 DROP TRIGGER IF EXISTS engrams_before_update_trigger ON engrams;

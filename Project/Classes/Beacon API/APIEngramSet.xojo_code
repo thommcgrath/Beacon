@@ -42,6 +42,24 @@ Protected Class APIEngramSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ClearModifications(Revert As Boolean = True)
+		  Dim Engrams() As APIEngram
+		  
+		  If Not Revert Then
+		    Engrams = Self.ActiveEngrams
+		    Self.mOriginalEngrams = New Xojo.Core.Dictionary
+		  End If
+		  
+		  Self.mRemovedEngrams = New Xojo.Core.Dictionary
+		  Self.mUpdatedEngrams = New Xojo.Core.Dictionary
+		  
+		  For Each Engram As APIEngram In Engrams
+		    Self.mOriginalEngrams.Value(Engram.ID) = Engram
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Sources() As Auto)
 		  Self.mOriginalEngrams = New Xojo.Core.Dictionary
 		  Self.mUpdatedEngrams = New Xojo.Core.Dictionary

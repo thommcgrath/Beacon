@@ -8,11 +8,19 @@ Protected Class APIEngram
 
 	#tag Method, Flags = &h0
 		Function AsDictionary() As Xojo.Core.Dictionary
+		  Dim Environments() As Text
+		  If Self.AvailableTo(Beacon.LootSource.Packages.Island) Then
+		    Environments.Append("Island")
+		  End If
+		  If Self.AvailableTo(Beacon.LootSource.Packages.Scorched) Then
+		    Environments.Append("Scorched")
+		  End If
+		  
 		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("class") = Self.ClassString
 		  Dict.Value("label") = Self.Label
 		  Dict.Value("mod_id") = Self.ModID
-		  Dict.Value("availability") = Self.mAvailability
+		  Dict.Value("availability") = Environments
 		  Dict.Value("can_blueprint") = Self.CanBeBlueprint
 		  Return Dict
 		End Function
@@ -63,7 +71,7 @@ Protected Class APIEngram
 		    Self.ModID = Source.Value("mod_id")
 		  End If
 		  
-		  Dim Environments() As Text = Source.Value("environments")
+		  Dim Environments() As Auto = Source.Value("environments")
 		  For Each Environment As Text In Environments
 		    Dim Package As Beacon.LootSource.Packages
 		    Select Case Environment

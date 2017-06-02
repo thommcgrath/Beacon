@@ -16,7 +16,7 @@ Protected Class APIRequest
 		Function CommandLineVersion() As Text
 		  Dim Cmd As Text = "curl"
 		  If Self.mMethod <> "GET" Then
-		    Cmd = Cmd + " --request '" + Self.Method + "' --data '" + Self.mPayload + "'"
+		    Cmd = Cmd + " --request '" + Self.Method + "' --data '" + Self.mPayload + "' --header 'Content-Type: " + Self.mContentType + "'"
 		  End If
 		  If Self.mAuthUser <> "" And Self.mAuthPassword <> "" Then
 		    Cmd = Cmd + " --user " + Self.mAuthUser + ":" + Self.mAuthPassword
