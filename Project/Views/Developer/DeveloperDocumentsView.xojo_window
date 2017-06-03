@@ -323,7 +323,7 @@ End
 		Sub Change()
 		  OpenButton.Enabled = Me.ListIndex > -1
 		  ShareButton.Enabled = Me.ListIndex > -1
-		  DeleteButton.Enabled = Me.ListIndex > -1 And ViewMenu.ListIndex = 2
+		  DeleteButton.Enabled = Me.ListIndex > -1 And APIDocument(Me.RowTag(Me.ListIndex)).UserID = App.Identity.Identifier
 		End Sub
 	#tag EndEvent
 	#tag Event

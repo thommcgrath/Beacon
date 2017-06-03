@@ -329,6 +329,7 @@ End
 			Dim OriginalDescription As Text = Self.Doc.Description
 			If DocumentPublishWindow.Present(Self, Self.Doc) Then
 			Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Title.Compare(OriginalTitle, 0) <> 0 Or Self.Doc.Description.Compare(OriginalDescription, 0) <> 0
+			Self.ShowAlert("Your document has been published.", "You can view more about your document in the Developer Tools window.")
 			End If
 			Return True
 		End Function

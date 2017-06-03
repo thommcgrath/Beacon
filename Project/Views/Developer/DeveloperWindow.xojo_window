@@ -162,6 +162,12 @@ Begin BeaconWindow DeveloperWindow
          Width           =   1100
       End
    End
+   Begin APISocket Socket
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -193,6 +199,9 @@ End
 		    Self.Width = InitialWidth + 1
 		    Self.Width = InitialWidth
 		  End If
+		  
+		  Dim Request As New APIRequest("user.php/" + App.Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
+		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent
 
@@ -205,45 +214,28 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_UserLookup(Success As Boolean, Message As Text, Details As Auto)
-		  ' If Success Then
-		  ' If Self.Identity.APIKey = "" Then
-		  ' // Need to generate one
-		  ' Self.Identity.APIKey = Beacon.CreateUUID()
-		  ' 
-		  ' Dim Payload As New Xojo.Core.Dictionary
-		  ' Payload.Value("api_key") = Self.Identity.APIKey
-		  ' 
-		  ' Dim Request As New APISignedRequest("user.php/" + Self.Identity.Identifier, "POST", Payload, WeakAddressOf APICallback_UserSave, Self.Identity)
-		  ' Self.mAPISocket.Start(Request)
-		  ' Else
-		  ' // Just display the one we have
-		  ' Self.ShowAPIKey(Self.Identity.Identifier, Self.Identity.APIKey)
-		  ' End If
-		  ' Else
-		  ' // User has not yet been created on the server
-		  ' Self.Identity.APIKey = Beacon.CreateUUID()
-		  ' 
-		  ' Dim Payload As New Xojo.Core.Dictionary
-		  ' Payload.Value("public_key") = Self.Identity.PublicKey
-		  ' Payload.Value("api_key") = Self.Identity.APIKey
-		  ' 
-		  ' Dim Request As New APIRequest("user.php/" + Self.Identity.Identifier, "POST", Payload, WeakAddressOf APICallback_UserSave)
-		  ' Self.mAPISocket.Start(Request)
-		  ' End If
+		  If Success Then
+		    // Already exists
+		    Return
+		  End If
+		  
+		  // Create the user
+		  
+		  Dim Params As New Xojo.Core.Dictionary
+		  Params.Value("user_id") = App.Identity.Identifier
+		  Params.Value("public_key") = App.Identity.PublicKey
+		  
+		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
+		  Dim Request As New APIRequest("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
+		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
-		  ' If Success Then
-		  ' Dim Dict As Xojo.Core.Dictionary = Self.Identity.Export
-		  ' Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
-		  ' Dim Stream As TextOutputStream = TextOutputStream.Create(Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension))
-		  ' Stream.Write(Contents)
-		  ' Stream.Close
-		  ' 
-		  ' Self.ShowAPIKey(Self.Identity.Identifier, Self.Identity.APIKey)
-		  ' End If
+		  If Not Success Then
+		    Self.ShowAlert("User profile was not saved to the server. API access is limited.", Message)
+		  End If
 		End Sub
 	#tag EndMethod
 

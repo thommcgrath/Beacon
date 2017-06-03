@@ -347,6 +347,9 @@ End
 	#tag Event
 		Sub Open()
 		  Self.SwapButtons()
+		  
+		  Dim Request As New APIRequest("user.php/" + App.Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
+		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent
 
@@ -360,6 +363,33 @@ End
 		  
 		  Self.mCancelled = False
 		  Self.Hide
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_UserLookup(Success As Boolean, Message As Text, Details As Auto)
+		  If Success Then
+		    // Already exists
+		    Return
+		  End If
+		  
+		  // Create the user
+		  
+		  Dim Params As New Xojo.Core.Dictionary
+		  Params.Value("user_id") = App.Identity.Identifier
+		  Params.Value("public_key") = App.Identity.PublicKey
+		  
+		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
+		  Dim Request As New APIRequest("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
+		  Self.Socket.Start(Request)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
+		  If Not Success Then
+		    Self.ShowAlert("User profile was not saved to the server. API access is limited.", Message)
+		  End If
 		End Sub
 	#tag EndMethod
 
