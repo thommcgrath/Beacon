@@ -10,6 +10,21 @@ $method = BeaconAPI::Method();
 $database = ConnectionManager::BeaconDatabase();
 
 switch ($method) {
+case 'HEAD':
+	header('Content-Type: application/json');
+	
+	if ($document_id !== null) {
+		$results = $database->Query('SELECT document_id, user_id FROM documents WHERE document_id = $1;', $document_id);
+		if ($results->RecordCount() == 1) {
+			http_response_code(200);
+		} else {
+			http_response_code(404);
+		}
+	} else {
+		http_response_code(405);
+	}
+	
+	break;
 case 'GET':
 	if ($document_id === null) {
 		// query documents
@@ -52,8 +67,14 @@ case 'GET':
 		$documents = BeaconDocumentMetadata::GetFromResults($results);
 		BeaconAPI::ReplySuccess($documents);
 	} else {
+		$simple = isset($_GET['simple']);
+		
 		// specific document(s)
-		$documents = BeaconDocument::GetByDocumentID($document_id);
+		if ($simple) {
+			$documents = BeaconDocumentMetadata::GetByDocumentID($document_id);
+		} else {
+			$documents = BeaconDocument::GetByDocumentID($document_id);
+		}
 		if (count($documents) === 0) {
 			BeaconAPI::ReplyError('No document found', null, 404);
 		}
@@ -63,7 +84,15 @@ case 'GET':
 		$database->Commit();
 		
 		if (BeaconAPI::ObjectCount() == 1) {
-			BeaconAPI::ReplySuccess($documents[0]);
+			if ($simple) {
+				BeaconAPI::ReplySuccess($documents[0]);
+			} else {
+				header('Content-Type: application/octet-stream');
+				header('Content-Disposition: attachment; filename="' . $documents[0]->Name() . '.beacon"');
+				http_response_code(200);
+				echo json_encode($documents[0], true);
+				exit;
+			}
 		} else {
 			BeaconAPI::ReplySuccess($documents);
 		}
@@ -109,7 +138,7 @@ case 'POST':
 		// insert
 		$contents = json_encode($document);
 		$hash = md5($contents);
-		$database->Query('INSERT INTO documents (document_id, user_id, title, description, contents, contents_hash) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (document_id) DO UPDATE title = $3, description = $4, contents = $5, contents_hash = $6, revision = revision + 1, last_update = CURRENT_TIMESTAMP(0);', $document_id, BeaconAPI::UserID(), $title, $description, $contents, $hash);
+		$database->Query('INSERT INTO documents (document_id, user_id, title, description, contents, contents_hash) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (document_id) DO UPDATE SET title = $3, description = $4, contents = $5, contents_hash = $6, revision = documents.revision + 1, last_update = CURRENT_TIMESTAMP(0);', $document_id, BeaconAPI::UserID(), $title, $description, $contents, $hash);
 	}
 	$database->Commit();
 	
@@ -118,7 +147,7 @@ case 'POST':
 	break;
 case 'DELETE':
 	BeaconAPI::Authorize();
-	if ($engram_class === null) {
+	if ($document_id === null) {
 		BeaconAPI::ReplyError('No document specified');
 	}
 	

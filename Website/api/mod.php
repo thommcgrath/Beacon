@@ -69,14 +69,14 @@ case 'POST':
 			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' is already registered.');
 		}
 		
-		$workshop_id = ZirconWorkshopItem::Load($workshop_id);
-		if ($workshop_id === null) {
+		$workshop_item = ZirconWorkshopItem::Load($workshop_id);
+		if ($workshop_item === null) {
 			$database->Rollback();
 			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not found on Ark Workshop.');
 		}
 		
 		try {
-			$database->Query('INSERT INTO mods (workshop_id, name, user_id) VALUES ($1, $2, $3);', $workshop_id, $item->Name(), $user_id);
+			$database->Query('INSERT INTO mods (workshop_id, name, user_id) VALUES ($1, $2, $3);', $workshop_id, $workshop_item->Name(), $user_id);
 		} catch (\ZirconQueryException $e) {
 			$database->Rollback();
 			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMesage());
