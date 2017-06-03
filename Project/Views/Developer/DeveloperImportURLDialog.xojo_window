@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DeveloperAddModDialog
+Begin Window DeveloperImportURLDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -21,9 +21,9 @@ Begin Window DeveloperAddModDialog
    MinHeight       =   64
    MinimizeButton  =   True
    MinWidth        =   64
-   Placement       =   1
+   Placement       =   0
    Resizeable      =   True
-   Title           =   "Register Mod"
+   Title           =   "Import From URL"
    Visible         =   True
    Width           =   520
    Begin Label MessageLabel
@@ -48,7 +48,7 @@ Begin Window DeveloperAddModDialog
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
-      Text            =   "Register Mod"
+      Text            =   "Import Engrams From URL"
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -82,7 +82,7 @@ Begin Window DeveloperAddModDialog
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
-      Text            =   "Register your mod with Beacon here to add support for your custom items. You will be given a confirmation code which should be added to your mod page temporarily to prove you are the owner of the mod."
+      Text            =   "If you've posted a list of spawn commands for the items in your mod, paste the url here. Beacon will scan the page and extract whatever it can. It may not be perfect, but it's a nice starting point."
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -94,7 +94,7 @@ Begin Window DeveloperAddModDialog
       Visible         =   True
       Width           =   480
    End
-   Begin TextField ModIDField
+   Begin UITweaks.ResizedTextField URLField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
@@ -102,7 +102,7 @@ Begin Window DeveloperAddModDialog
       BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True
-      CueText         =   "Mod ID or URL"
+      CueText         =   "URL"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
@@ -136,7 +136,7 @@ Begin Window DeveloperAddModDialog
       Visible         =   True
       Width           =   480
    End
-   Begin PushButton ActionButton
+   Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -167,7 +167,7 @@ Begin Window DeveloperAddModDialog
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton CancelButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -219,7 +219,7 @@ Begin Window DeveloperAddModDialog
       Visible         =   False
       Width           =   16
    End
-   Begin APISocket Socket
+   Begin Xojo.Net.HTTPSocket Socket
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -229,96 +229,78 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Method, Flags = &h21
-		Private Sub APICallback_RegisterMod(Success As Boolean, Message As Text, Details As Auto)
-		  If Success Then
-		    Self.mRegistered = True
-		    Self.Hide
-		    
-		    Return
-		  End If
-		  
-		  Dim Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Mod was not registered"
-		  Dialog.Explanation = Message
-		  Call Dialog.ShowModal()
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window) As Boolean
-		  Dim Win As New DeveloperAddModDialog
+		Shared Function Present(Parent As Window) As Text
+		  Dim Win As New DeveloperImportURLDialog
+		  Dim C As New Clipboard
+		  If C.TextAvailable And C.Text.Left(4) = "http" Then
+		    Win.URLField.Text = C.Text
+		  End If
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Dim Success As Boolean = Win.mRegistered
+		  Dim Content As Text = Win.mContent
 		  Win.Close
-		  Return Success
+		  Return Content
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mRegistered As Boolean
+		Private mContent As Text
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events ModIDField
+#tag Events URLField
 	#tag Event
 		Sub TextChange()
-		  ActionButton.Enabled = Trim(Me.Text) <> ""
+		  Self.ActionButton.Enabled = Trim(Me.Text).Left(4) = "http"
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim ModID As String = Trim(ModIDField.Text)
-		  If Left(ModID, 4) = "http" Then
-		    Dim Regex As New Regex
-		    Regex.SearchPattern = "id=(\d+)"
-		    
-		    Dim Matches As RegexMatch = Regex.Search(ModID)
-		    If Matches = Nil Then
-		      MsgBox("This url does not appear to be a steam workshop url")
-		      Return
-		    End If
-		    
-		    ModID = Matches.SubExpressionString(1)
-		  End If
-		  
-		  Dim Dict As New Xojo.Core.Dictionary
-		  Dict.Value("mod_id") = ModID.ToText
-		  Dim Payload As Text = Xojo.Data.GenerateJSON(Dict)
-		  
-		  Dim Request As New APIRequest("mod.php", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
-		  Request.Sign(App.Identity)
-		  Self.Socket.Start(Request)
+		  Self.Socket.Send("GET", Trim(URLField.Text).ToText)
+		  Spinner.Visible = True
+		  ActionButton.Enabled = False
+		  URLField.Enabled = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.mRegistered = False
+		  Self.Socket.Disconnect
 		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Socket
 	#tag Event
-		Sub WorkStarted()
-		  Spinner.Visible = True
-		  ActionButton.Enabled = False
-		  ModIDField.Enabled = False
+		Sub Error(err as RuntimeException)
+		  Spinner.Visible = False
+		  ActionButton.Enabled = True
+		  URLField.Enabled = True
+		  
+		  MsgBox("Error: " + Err.Reason)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub WorkCompleted()
+		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
+		  URLField.Text = URL
+		  
 		  Spinner.Visible = False
 		  ActionButton.Enabled = True
-		  ModIDField.Enabled = True
+		  URLField.Enabled = True
+		  
+		  If HTTPStatus <> 200 Then
+		    MsgBox("The content was not loaded correctly. HTTP status " + HTTPStatus.ToText)
+		    Return
+		  End If
+		  
+		  Self.mContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -450,6 +432,11 @@ End
 		Visible=true
 		Group="Size"
 		InitialValue="32000"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="mContent"
+		Group="Behavior"
 		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
