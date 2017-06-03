@@ -1201,6 +1201,8 @@ End
 		  
 		  Self.Width = PreferredSize.Width
 		  Self.Height = PreferredSize.Height
+		  
+		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
 

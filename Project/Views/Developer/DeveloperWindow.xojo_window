@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DeveloperWindow
+Begin BeaconWindow DeveloperWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -20,12 +20,12 @@ Begin Window DeveloperWindow
    MenuBarVisible  =   True
    MinHeight       =   450
    MinimizeButton  =   True
-   MinWidth        =   800
+   MinWidth        =   1100
    Placement       =   2
    Resizeable      =   True
    Title           =   "Developer Tools"
    Visible         =   True
-   Width           =   800
+   Width           =   1100
    Begin TabHeader TabHeader
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -53,7 +53,7 @@ Begin Window DeveloperWindow
       UseFocusRing    =   True
       Value           =   0
       Visible         =   True
-      Width           =   800
+      Width           =   1100
    End
    Begin ControlCanvas Separators
       AcceptFocus     =   False
@@ -81,7 +81,7 @@ Begin Window DeveloperWindow
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   800
+      Width           =   1100
    End
    Begin PagePanel Panel
       AutoDeactivate  =   True
@@ -102,9 +102,9 @@ Begin Window DeveloperWindow
       TabIndex        =   3
       TabPanelIndex   =   0
       Top             =   31
-      Value           =   0
+      Value           =   1
       Visible         =   True
-      Width           =   800
+      Width           =   1100
       Begin DeveloperModsView ModsView
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -131,7 +131,35 @@ Begin Window DeveloperWindow
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   800
+         Width           =   1100
+      End
+      Begin DeveloperDocumentsView DocsView
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   419
+         HelpTag         =   ""
+         InitialParent   =   "Panel"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   31
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   1100
       End
    End
 End
@@ -145,16 +173,32 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub Moved()
+		  Self.SavePosition("Developer Window Position")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.TabHeader.Append("Documents")
 		  Self.TabHeader.Append("Mods")
 		  Self.TabHeader.Append("Identity")
 		  Self.TabHeader.Append("API Guide")
 		  
-		  // Dumb workaround because contents are sizing 1 pixels too short.
-		  // A resize causes them to find their correct positions.
-		  Self.Width = Self.Width + 1
-		  Self.Width = Self.Width - 1
+		  Dim InitialWidth As Integer = Self.Width
+		  Self.RecallPosition("Developer Window Position")
+		  If Self.Width = InitialWidth Then
+		    // Dumb workaround because contents are sizing 1 pixels too short.
+		    // A resize causes them to find their correct positions.
+		    Self.Width = InitialWidth + 1
+		    Self.Width = InitialWidth
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  Self.SavePosition("Developer Window Position")
 		End Sub
 	#tag EndEvent
 
@@ -244,6 +288,18 @@ End
 		  
 		  G.ForeColor = if(TabHeader.Inverted, &c000000, &cBBBBBB)
 		  G.FillRect(-1, -1, G.Width + 2, G.Height + 2)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Panel
+	#tag Event
+		Sub Change()
+		  Select Case Me.Value
+		  Case 0
+		    DocsView.SwitchedTo()
+		  Case 1
+		    ModsView.SwitchedTo()
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -249,6 +249,7 @@ End
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window) As Boolean
 		  Dim Win As New DeveloperAddModDialog
+		  Win.SwapButtons()
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  Dim Success As Boolean = Win.mRegistered
 		  Win.Close

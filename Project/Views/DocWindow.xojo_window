@@ -115,7 +115,6 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -162,20 +161,12 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
       Scope           =   0
       StackSize       =   ""
       State           =   ""
-      TabPanelIndex   =   0
-   End
-   Begin Beacon.RepositoryEngine Repository
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
       TabPanelIndex   =   0
    End
    Begin ListHeader LootSourceHeader
@@ -208,6 +199,12 @@ Begin BeaconWindow DocWindow
       UseFocusRing    =   True
       Visible         =   True
       Width           =   234
+   End
+   Begin APISocket Socket
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
    End
 End
 #tag EndWindow
@@ -295,7 +292,8 @@ End
 		  
 		  If UBound(LootSources) > -1 Then
 		    // Check publish status
-		    Self.Repository.GetDocumentStatus(Self.Doc)
+		    Dim Request As New APIRequest("document.php/" + Self.Doc.Identifier + "?simple", "GET", AddressOf APICallback_DocumentStatus)
+		    Self.Socket.Start(Request)
 		  Else
 		    Self.mIsPublished = False
 		    Self.mPublishedByUser = True
@@ -354,7 +352,9 @@ End
 			
 			Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
 			If Choice = Dialog.ActionButton Then
-			Repository.DeleteDocument(Self.Doc, App.Identity)
+			Dim Request As New APIRequest("document.php/" + Self.Doc.Identifier, "DELETE", AddressOf APICallback_DocumentDelete)
+			Request.Sign(App.Identity)
+			Self.Socket.Start(Request)
 			End If
 			
 			Return True
@@ -459,6 +459,41 @@ End
 		    LootSourceHeader.SegmentIndex = TargetIndex
 		  End If
 		  Self.UpdateSourceList(Sources)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto)
+		  If Not Success Then
+		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = "Unable to unpublish document"
+		    Dialog.Explanation = "The server denied your request to unpublish the document. Would you like to report this problem?"
+		    Dialog.ActionButton.Caption = "Report"
+		    Dialog.CancelButton.Visible = True
+		    
+		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
+		    If Choice = Dialog.ActionButton Then
+		      Beacon.ReportAProblem()
+		    End If
+		    Return
+		  End If
+		  
+		  Self.mIsPublished = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_DocumentStatus(Success As Boolean, Message As Text, Details As Auto)
+		  If Success Then
+		    Self.mIsPublished = True
+		    Dim Dict As Xojo.Core.Dictionary = Details
+		    Dim Document As New APIDocument(Dict)
+		    Self.mPublishedByUser = Document.UserID = App.Identity.Identifier
+		  Else
+		    Self.mIsPublished = False
+		    Self.mPublishedByUser = False
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -692,10 +727,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mBlockSelectionChanged As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mCanPublish As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -978,37 +1009,6 @@ End
 		    Self.ImportProgress.BeaconCount = Me.BeaconCount
 		    Self.ImportProgress.LootSourcesProcessed = Me.LootSourcesProcessed
 		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Repository
-	#tag Event
-		Sub DocumentStatus(Published As Boolean, AuthorID As Text, LastUpdate As Xojo.Core.Date, ContentHash As Text)
-		  #Pragma Unused LastUpdate
-		  #Pragma Unused ContentHash
-		  
-		  Self.mIsPublished = Published
-		  Self.mPublishedByUser = AuthorID = App.Identity.Identifier
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub DeleteError()
-		  Dim Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Unable to unpublish document"
-		  Dialog.Explanation = "The server denied your request to unpublish the document. Would you like to report this problem?"
-		  Dialog.ActionButton.Caption = "Report"
-		  Dialog.CancelButton.Visible = True
-		  
-		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
-		  If Choice = Dialog.ActionButton Then
-		    Beacon.ReportAProblem()
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub DeleteSuccess()
-		  Self.mIsPublished = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents

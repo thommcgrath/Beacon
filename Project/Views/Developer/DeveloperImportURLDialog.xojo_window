@@ -236,6 +236,7 @@ End
 		  If C.TextAvailable And C.Text.Left(4) = "http" Then
 		    Win.URLField.Text = C.Text
 		  End If
+		  Win.SwapButtons()
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  Dim Content As Text = Win.mContent
 		  Win.Close

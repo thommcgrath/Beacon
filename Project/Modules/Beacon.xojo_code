@@ -111,6 +111,45 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function ParseSQLDate(Value As Text) As Xojo.Core.Date
+		  Value = Value.Trim
+		  
+		  Dim Year, Month, Day, Hour, Minute, Second, Offset As Integer
+		  
+		  If Value.Length >= 10 Then
+		    Year = Integer.FromText(Value.Mid(0, 4))
+		    Month = Integer.FromText(Value.Mid(5, 2))
+		    Day = Integer.FromText(Value.Mid(8, 2))
+		    Value = Value.Mid(10)
+		  End If
+		  
+		  If Value.Length >= 1 And Value.Left(1) = " " Then
+		    Value = Value.Mid(1)
+		  End If
+		  
+		  If Value.Length >= 8 Then
+		    Hour = Integer.FromText(Value.Mid(0, 2))
+		    Minute = Integer.FromText(Value.Mid(3, 2))
+		    Second = Integer.FromText(Value.Mid(6, 2))
+		    Value = Value.Mid(8)
+		  End If
+		  
+		  If Value.Length >= 3 Then
+		    Dim Multiplier As Integer = if(Value.Left(1) = "-", -1, 1)
+		    Dim OffsetHours As Integer = Integer.FromText(Value.Mid(1, 2))
+		    Dim OffsetMinutes As Integer
+		    If Value.Length >= 5 Then
+		      OffsetMinutes = Integer.FromText(Value.Mid(3, 2))
+		    End If
+		    
+		    Offset = ((OffsetHours * 3600) + (OffsetMinutes + 60)) * Multiplier
+		  End If
+		  
+		  Return New Xojo.Core.Date(Year, Month, Day, Hour, Minute, Second, 0, New Xojo.Core.TimeZone(Offset))
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Function PrimaryExtension(Extends Type As FileType) As String
 		  Dim Extensions() As String = Split(Type.Extensions, ";")

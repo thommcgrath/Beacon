@@ -200,16 +200,6 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Open()
-		  Self.RefreshMods()
-		  
-		  // Purely because the header is drawing in the "clear" state instead of the active state
-		  Xojo.Core.Timer.CallLater(100, AddressOf RefreshHeader)
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DeleteMod(Success As Boolean, Message As Text, Details As Auto)
 		  If Success Then
@@ -275,6 +265,15 @@ End
 		  
 		  Return ModList.RowTag(ModList.ListIndex)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SwitchedTo()
+		  Self.RefreshMods()
+		  
+		  // Purely because the header is drawing in the "clear" state instead of the active state
+		  Xojo.Core.Timer.CallLater(100, AddressOf RefreshHeader)
+		End Sub
 	#tag EndMethod
 
 

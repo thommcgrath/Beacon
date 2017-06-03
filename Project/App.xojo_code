@@ -298,6 +298,13 @@ Inherits Application
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub DownloadDocument(URL As Text)
+		  Self.mFileURLs.Append(URL)
+		  Self.DownloadNextFile()
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub DownloadNextFile()
 		  If Self.mFileLoading Or UBound(Self.mFileURLs) = -1 Then
@@ -323,9 +330,10 @@ Inherits Application
 		    Return False
 		  End If
 		  
+		  URL = ReplaceAll(URL, "thezaz.com/beacon/documents.php/", "thezaz.com/beacon/api/document.php/")
+		  
 		  Dim FileURL As String = "https://" + Mid(URL, PrefixLength + 1)
-		  Self.mFileURLs.Append(FileURL.ToText)
-		  Self.DownloadNextFile()
+		  Self.DownloadDocument(FileURL.ToText)
 		  
 		  Return True
 		End Function
