@@ -224,6 +224,7 @@ Begin Window DeveloperImportURLDialog
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
    End
 End
 #tag EndWindow
@@ -262,6 +263,12 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
+		  Dim URL As Text = Trim(URLField.Text).ToText
+		  If URL.IndexOf("pasted.co/") > -1 Then
+		    Self.ShowAlert("Can't import from this url", "TinyPaste/pasted.co prevent pulling content from their pages. Instead, copy and paste the spawn codes into a text file and import that.")
+		    Return
+		  End If
+		  
 		  Self.Socket.Send("GET", Trim(URLField.Text).ToText)
 		  Spinner.Visible = True
 		  ActionButton.Enabled = False
@@ -433,11 +440,6 @@ End
 		Visible=true
 		Group="Size"
 		InitialValue="32000"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="mContent"
-		Group="Behavior"
 		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
