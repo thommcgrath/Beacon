@@ -147,7 +147,10 @@ case 'POST':
 	break;
 case 'DELETE':
 	BeaconAPI::Authorize();
-	if ($document_id === null) {
+	if (($document_id === null) && (BeaconAPI::ContentType() === 'text/plain')) {
+		$document_id = BeaconAPI::Body();
+	}
+	if (($document_id === null) || ($document_id === '')) {
 		BeaconAPI::ReplyError('No document specified');
 	}
 	

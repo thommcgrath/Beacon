@@ -43,7 +43,7 @@ Begin ContainerControl DeveloperDocumentsView
       InitialParent   =   ""
       InitialValue    =   "Recently Updated\nMost Downloaded\nMy Documents"
       Italic          =   False
-      Left            =   20
+      Left            =   314
       ListIndex       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -80,7 +80,7 @@ Begin ContainerControl DeveloperDocumentsView
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
-      Height          =   315
+      Height          =   339
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -104,7 +104,7 @@ Begin ContainerControl DeveloperDocumentsView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   52
+      Top             =   60
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -126,11 +126,11 @@ Begin ContainerControl DeveloperDocumentsView
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   False
+      LockTop         =   True
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -138,7 +138,7 @@ Begin ContainerControl DeveloperDocumentsView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   379
+      Top             =   20
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -169,7 +169,7 @@ Begin ContainerControl DeveloperDocumentsView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   21
+      Top             =   20
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -188,11 +188,11 @@ Begin ContainerControl DeveloperDocumentsView
       InitialParent   =   ""
       Italic          =   False
       Left            =   204
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   False
+      LockTop         =   True
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
@@ -200,7 +200,7 @@ Begin ContainerControl DeveloperDocumentsView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   379
+      Top             =   20
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -219,11 +219,11 @@ Begin ContainerControl DeveloperDocumentsView
       InitialParent   =   ""
       Italic          =   False
       Left            =   112
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   False
+      LockTop         =   True
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
@@ -231,7 +231,7 @@ Begin ContainerControl DeveloperDocumentsView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   379
+      Top             =   20
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -240,6 +240,19 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Resized()
+		  Self.Resize
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resizing()
+		  Self.Resize
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto)
 		  If Success Then
@@ -279,6 +292,12 @@ End
 		  
 		  Dim Request As New APIRequest("document.php", "GET", Params, AddressOf APICallback_DocumentsList)
 		  Self.Socket.Start(Request)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Resize()
+		  ViewMenu.Left = (Self.Width - ViewMenu.Width) / 2
 		End Sub
 	#tag EndMethod
 
@@ -342,6 +361,7 @@ End
 #tag Events OpenButton
 	#tag Event
 		Sub Action()
+		  // This isn't good enough.
 		  Self.ShowAlert("Downloading", "The document is now downloading. It'll open in just a moment.")
 		  
 		  Dim Document As APIDocument = DocList.RowTag(DocList.ListIndex)

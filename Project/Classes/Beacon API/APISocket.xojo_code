@@ -10,7 +10,9 @@ Protected Class APISocket
 		  Dim Request As APIRequest = Self.Queue(0)
 		  Self.Queue.Remove(0)
 		  
-		  System.DebugLog(Request.CommandLineVersion)
+		  #if DebugBuild
+		    System.DebugLog(Request.CommandLineVersion)
+		  #endif
 		  
 		  Self.ActiveRequest = Request
 		  

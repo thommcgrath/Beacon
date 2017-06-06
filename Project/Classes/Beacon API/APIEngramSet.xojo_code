@@ -2,24 +2,8 @@
 Protected Class APIEngramSet
 	#tag Method, Flags = &h0
 		Function ActiveEngrams() As APIEngram()
-		  Dim Merged As New Xojo.Core.Dictionary
-		  
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOriginalEngrams
-		    Merged.Value(Entry.Key) = Entry.Value
-		  Next
-		  
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mUpdatedEngrams
-		    Merged.Value(Entry.Key) = Entry.Value
-		  Next
-		  
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mRemovedEngrams
-		    If Merged.HasKey(Entry.Key) Then
-		      Merged.Remove(Entry.Key)
-		    End If
-		  Next
-		  
 		  Dim Engrams() As APIEngram
-		  For Each Entry As Xojo.Core.DictionaryEntry In Merged
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mNewEngrams
 		    Dim Engram As APIEngram = Entry.Value
 		    Engrams.Append(New APIEngram(Engram))
 		  Next
@@ -33,28 +17,33 @@ Protected Class APIEngramSet
 		    Return
 		  End If
 		  
-		  If Self.mRemovedEngrams.HasKey(Engram.ID) Then
-		    Self.mRemovedEngrams.Remove(Engram.ID)
+		  If Self.mNewEngrams.HasKey(Engram.ID) Then
+		    Dim PreviousEngram As APIEngram = Self.mNewEngrams.Value(Engram.ID)
+		    If Engram.Hash = PreviousEngram.Hash Then
+		      Return
+		    End If
 		  End If
 		  
-		  Self.mUpdatedEngrams.Value(Engram.ID) = New APIEngram(Engram)
+		  Self.mNewEngrams.Value(Engram.ID) = New APIEngram(Engram)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ClearModifications(Revert As Boolean = True)
-		  Dim Engrams() As APIEngram
-		  
-		  If Not Revert Then
-		    Engrams = Self.ActiveEngrams
-		    Self.mOriginalEngrams = New Xojo.Core.Dictionary
+		  Dim Source, Destination As Xojo.Core.Dictionary
+		  If Revert Then
+		    Source = Self.mOriginalEngrams
+		    Destination = Self.mNewEngrams
+		  Else
+		    Source = Self.mNewEngrams
+		    Destination = Self.mOriginalEngrams
 		  End If
 		  
-		  Self.mRemovedEngrams = New Xojo.Core.Dictionary
-		  Self.mUpdatedEngrams = New Xojo.Core.Dictionary
-		  
-		  For Each Engram As APIEngram In Engrams
-		    Self.mOriginalEngrams.Value(Engram.ID) = Engram
+		  Destination.RemoveAll
+		  For Each Entry As Xojo.Core.DictionaryEntry In Source
+		    Dim Engram As APIEngram = Entry.Value
+		    Destination.Value(Entry.Key) = New APIEngram(Engram)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -62,41 +51,64 @@ Protected Class APIEngramSet
 	#tag Method, Flags = &h0
 		Sub Constructor(Sources() As Auto)
 		  Self.mOriginalEngrams = New Xojo.Core.Dictionary
-		  Self.mUpdatedEngrams = New Xojo.Core.Dictionary
-		  Self.mRemovedEngrams = New Xojo.Core.Dictionary
+		  Self.mNewEngrams = New Xojo.Core.Dictionary
 		  
 		  For Each Source As Xojo.Core.Dictionary In Sources
 		    Dim Engram As New APIEngram(Source)
 		    Self.mOriginalEngrams.Value(Engram.ID) = Engram
+		    Self.mNewEngrams.Value(Engram.ID) = Engram
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function EngramsToDelete() As APIEngram()
-		  Dim Engrams() As APIEngram
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mRemovedEngrams
-		    Dim Engram As APIEngram = Entry.Value
-		    Engrams.Append(New APIEngram(Engram))
+		  Dim NewClasses() As Text
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mNewEngrams
+		    NewClasses.Append(APIEngram(Entry.Value).ClassString)
 		  Next
-		  Return Engrams
+		  
+		  Dim DeleteEngrams() As APIEngram
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOriginalEngrams
+		    Dim Engram As APIEngram = Entry.Value
+		    If NewClasses.IndexOf(Engram.ClassString) = -1 Then
+		      DeleteEngrams.Append(New APIEngram(Engram))
+		    End If
+		  Next
+		  
+		  Return DeleteEngrams
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function EngramsToSave() As APIEngram()
-		  Dim Engrams() As APIEngram
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mUpdatedEngrams
-		    Dim Engram As APIEngram = Entry.Value
-		    Engrams.Append(New APIEngram(Engram))
+		  Dim OriginalClasses As New Xojo.Core.Dictionary
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOriginalEngrams
+		    OriginalClasses.Value(APIEngram(Entry.Value).ClassString) = APIEngram(Entry.Value)
 		  Next
-		  Return Engrams
+		  
+		  Dim NewEngrams() As APIEngram
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mNewEngrams
+		    Dim Engram As APIEngram = Entry.Value
+		    If OriginalClasses.HasKey(Engram.ClassString) Then
+		      // Might be changed
+		      Dim OriginalEngram As APIEngram = OriginalClasses.Value(Engram.ClassString)
+		      If Engram.Hash <> OriginalEngram.Hash Then
+		        NewEngrams.Append(New APIEngram(Engram))
+		      End If
+		    Else
+		      // Definitely new
+		      NewEngrams.Append(New APIEngram(Engram))
+		    End If
+		  Next
+		  
+		  Return NewEngrams
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
-		  Return Self.mUpdatedEngrams.Count > 0 Or Self.mRemovedEngrams.Count > 0
+		  Return Self.mModified
 		End Function
 	#tag EndMethod
 
@@ -106,27 +118,24 @@ Protected Class APIEngramSet
 		    Return
 		  End If
 		  
-		  If Self.mUpdatedEngrams.HasKey(Engram.ID) Then
-		    Self.mUpdatedEngrams.Remove(Engram.ID)
-		  End If
-		  
-		  If Self.mOriginalEngrams.HasKey(Engram.ID) Then
-		    Self.mRemovedEngrams.Value(Engram.ID) = New APIEngram(Engram)
+		  If Self.mNewEngrams.HasKey(Engram.ID) Then
+		    Self.mNewEngrams.Remove(Engram.ID)
+		    Self.mModified = True
 		  End If
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
+		Private mModified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNewEngrams As Xojo.Core.Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mOriginalEngrams As Xojo.Core.Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mRemovedEngrams As Xojo.Core.Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUpdatedEngrams As Xojo.Core.Dictionary
 	#tag EndProperty
 
 

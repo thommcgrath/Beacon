@@ -86,6 +86,14 @@ Protected Class APIEngram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Hash() As Text
+		  Dim Value As Text = Self.ClassString.Lowercase + ":" + Self.mAvailability.ToText + ":" + if(Self.CanBeBlueprint, "true", "false")
+		  Dim Hash As Xojo.Core.MemoryBlock = Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Value))
+		  Return Beacon.EncodeHex(Hash)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ID() As Text
 		  Return Self.mID
 		End Function

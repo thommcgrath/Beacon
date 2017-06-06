@@ -425,7 +425,7 @@ End
 		    Classes.Append(Engram.ClassString)
 		  Next
 		  
-		  Dim Request As New APIRequest("engram.php/" + Text.Join(Classes, ","), "DELETE", AddressOf APICallback_EngramsDelete)
+		  Dim Request As New APIRequest("engram.php", "DELETE", Text.Join(Classes, ","), "text/plain", AddressOf APICallback_EngramsDelete)
 		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		  
@@ -607,9 +607,6 @@ End
 		  EngramList.CellCheck(Index, 2) = Engram.CanBeBlueprint
 		  EngramList.CellCheck(Index, 3) = Engram.AvailableTo(Beacon.LootSource.Packages.Island)
 		  EngramList.CellCheck(Index, 4) = Engram.AvailableTo(Beacon.LootSource.Packages.Scorched)
-		  
-		  EngramList.CellHelpTag(Index, 0) = Engram.ClassString
-		  EngramList.CellHelpTag(Index, 1) = Engram.Label
 		  
 		  EngramList.RowTag(Index) = Engram
 		End Sub

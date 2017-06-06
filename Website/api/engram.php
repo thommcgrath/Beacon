@@ -129,7 +129,10 @@ case 'POST':
 	break;
 case 'DELETE':
 	BeaconAPI::Authorize();
-	if ($engram_class === null) {
+	if (($engram_class === null) && (BeaconAPI::ContentType() === 'text/plain')) {
+		$engram_class = BeaconAPI::Body();
+	}
+	if (($engram_class === null) || ($engram_class === '')) {
 		BeaconAPI::ReplyError('No engram specified');
 	}
 	

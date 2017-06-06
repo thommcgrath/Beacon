@@ -78,8 +78,7 @@ case 'POST':
 		try {
 			$database->Query('INSERT INTO mods (workshop_id, name, user_id) VALUES ($1, $2, $3);', $workshop_id, $workshop_item->Name(), $user_id);
 		} catch (\ZirconQueryException $e) {
-			$database->Rollback();
-			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMesage());
+			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMessage());
 		}
 	}
 	$database->Commit();
@@ -88,8 +87,11 @@ case 'POST':
 	
 	break;
 case 'DELETE':
-	if ($workshop_id === null) {
-		BeaconAPI::ReplyError('No mod id.');
+	if (($workshop_id === null) && (BeaconAPI::ContentType() === 'text/plain')) {
+		$workshop_id = BeaconAPI::Body();
+	}
+	if (($workshop_id === null) || ($workshop_id === '')) {
+		BeaconAPI::ReplyError('No mod specified');
 	}
 	
 	$results = $database->Query('SELECT user_id FROM mods WHERE workshop_id = $1;', $workshop_id);
