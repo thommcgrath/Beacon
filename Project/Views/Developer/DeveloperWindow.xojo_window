@@ -96,12 +96,11 @@ Begin BeaconWindow DeveloperWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   4
+      PanelCount      =   5
       Panels          =   ""
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   31
       Value           =   3
       Visible         =   True
@@ -117,7 +116,6 @@ Begin BeaconWindow DeveloperWindow
          HasBackColor    =   False
          Height          =   419
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   0
          LockBottom      =   True
@@ -146,7 +144,6 @@ Begin BeaconWindow DeveloperWindow
          HasBackColor    =   False
          Height          =   419
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   0
          LockBottom      =   True
@@ -175,7 +172,6 @@ Begin BeaconWindow DeveloperWindow
          HasBackColor    =   False
          Height          =   419
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   0
          LockBottom      =   True
@@ -193,7 +189,7 @@ Begin BeaconWindow DeveloperWindow
          Visible         =   True
          Width           =   1100
       End
-      Begin DeveloperAPIView APIView
+      Begin DeveloperAPIView APIBuilderView
          AcceptFocus     =   False
          AcceptTabs      =   True
          AutoDeactivate  =   True
@@ -204,7 +200,34 @@ Begin BeaconWindow DeveloperWindow
          HasBackColor    =   False
          Height          =   419
          HelpTag         =   ""
-         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Top             =   31
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   1100
+      End
+      Begin DeveloperGuideView APIGuideView
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   419
+         HelpTag         =   ""
          InitialParent   =   "Panel"
          Left            =   0
          LockBottom      =   True
@@ -224,7 +247,6 @@ Begin BeaconWindow DeveloperWindow
       End
    End
    Begin APISocket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -251,6 +273,7 @@ End
 		  Self.TabHeader.Append("Documents")
 		  Self.TabHeader.Append("Mods")
 		  Self.TabHeader.Append("Identity")
+		  Self.TabHeader.APpend("API Guide")
 		  Self.TabHeader.Append("API Builder")
 		  
 		  Dim InitialWidth As Integer = Self.Width
@@ -356,7 +379,9 @@ End
 		  Case 2
 		    IdentityView.SwitchedTo()
 		  Case 3
-		    APIView.SwitchedTo()
+		    APIGuideView.SwitchedTo()
+		  Case 4
+		    APIBuilderView.SwitchedTo()
 		  End Select
 		End Sub
 	#tag EndEvent

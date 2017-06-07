@@ -205,7 +205,7 @@ Begin DeveloperView DeveloperDocumentsView
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton ShareButton
+   Begin UITweaks.ResizedPushButton ShareButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"

@@ -127,6 +127,7 @@ Window=DeveloperDocumentsView;Views/Developer/DeveloperDocumentsView.xojo_window
 Window=DeveloperIdentityView;Views/Developer/DeveloperIdentityView.xojo_window;&h35AF8FFF;&h2C1FFFFF;false
 Class=APIDocument;Classes/Beacon API/APIDocument.xojo_code;&h5D145FFF;&h23C23FFF;false
 Window=DeveloperAPIView;Views/Developer/DeveloperAPIView.xojo_window;&h27E777FF;&h2C1FFFFF;false
+Window=DeveloperGuideView;Views/Developer/DeveloperGuideView.xojo_window;&h62A6AFFF;&h2C1FFFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

@@ -94,7 +94,7 @@ Begin Window DeveloperAddModDialog
       Visible         =   True
       Width           =   480
    End
-   Begin TextField ModIDField
+   Begin UITweaks.ResizedTextField ModIDField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
@@ -136,7 +136,7 @@ Begin Window DeveloperAddModDialog
       Visible         =   True
       Width           =   480
    End
-   Begin PushButton ActionButton
+   Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -167,7 +167,7 @@ Begin Window DeveloperAddModDialog
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton CancelButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
