@@ -117,20 +117,32 @@ Protected Class APIRequest
 		  
 		  Dim Lines() As Text
 		  
-		  Lines.Append("$url = '" + Self.URL.ReplaceAll("'", "\'") + "';")
-		  Lines.Append("$method = '" + Self.Method.ReplaceAll("'", "\'").Uppercase + "';")
-		  Lines.Append("$body = '" + Self.Query.ReplaceAll("'", "\'") + "';")
+		  Dim URL As Text = Self.URL
+		  If Self.mMethod = "GET" Then
+		    If Self.mPayload <> "" Then
+		      URL = URL + "?" + Self.Query
+		    End If
+		  End If
+		  Lines.Append("$url = '" + URL.ReplaceAll("'", "\'") + "';")
+		  
+		  If Authenticated Or Self.mMethod <> "GET" Then
+		    Lines.Append("$method = '" + Self.Method.ReplaceAll("'", "\'").Uppercase + "';")
+		  End If
+		  
+		  If Self.mMethod <> "GET" And Self.mPayload <> "" Then
+		    Lines.Append("$body = '" + Self.Query.ReplaceAll("'", "\'") + "';")
+		  End If
 		  
 		  If Authenticated Then
 		    Lines.Append("")
 		    If Self.mMethod = "GET" Then
-		      If Self.mPayload <> "" Then
-		        Lines.Append("$auth = $method . chr(10) . $url . '?' . $body;")
-		      Else
-		        Lines.Append("$auth = $method . chr(10) . $url;")
-		      End If
+		      Lines.Append("$auth = $method . chr(10) . $url;")
 		    Else
-		      Lines.Append("$auth = $method . chr(10) . $url  . chr(10) . $body;")
+		      If Self.mPayload <> "" Then
+		        Lines.Append("$auth = $method . chr(10) . $url  . chr(10) . $body;")
+		      Else
+		        Lines.Append("$auth = $method . chr(10) . $url  . chr(10);")
+		      End If
 		    End If
 		    Lines.Append("// Change Myself.beaconidentiy to point to your identity file!")
 		    Lines.Append("$identity = json_decode(file_get_contents('Myself.beaconidentity'), true);")
