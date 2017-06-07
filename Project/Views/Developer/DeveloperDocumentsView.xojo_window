@@ -1,5 +1,5 @@
 #tag Window
-Begin ContainerControl DeveloperDocumentsView
+Begin DeveloperView DeveloperDocumentsView
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -24,7 +24,7 @@ Begin ContainerControl DeveloperDocumentsView
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   800
+   Width           =   1100
    Begin APISocket Socket
       Index           =   -2147483648
       LockedInPosition=   False
@@ -43,7 +43,7 @@ Begin ContainerControl DeveloperDocumentsView
       InitialParent   =   ""
       InitialValue    =   "Recently Updated\nMost Downloaded\nMy Documents"
       Italic          =   False
-      Left            =   314
+      Left            =   464
       ListIndex       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -108,7 +108,7 @@ Begin ContainerControl DeveloperDocumentsView
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   760
+      Width           =   1060
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -156,7 +156,7 @@ Begin ContainerControl DeveloperDocumentsView
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   700
+      Left            =   1000
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False

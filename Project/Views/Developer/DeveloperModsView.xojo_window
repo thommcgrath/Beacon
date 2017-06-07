@@ -1,5 +1,5 @@
 #tag Window
-Begin ContainerControl DeveloperModsView
+Begin DeveloperView DeveloperModsView
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -24,7 +24,7 @@ Begin ContainerControl DeveloperModsView
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   800
+   Width           =   1100
    Begin ListHeader Header
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -57,6 +57,7 @@ Begin ContainerControl DeveloperModsView
       Width           =   235
    End
    Begin APISocket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -179,6 +180,7 @@ Begin ContainerControl DeveloperModsView
       HasBackColor    =   False
       Height          =   419
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   236
       LockBottom      =   True
@@ -194,7 +196,7 @@ Begin ContainerControl DeveloperModsView
       Transparent     =   True
       UseFocusRing    =   False
       Visible         =   True
-      Width           =   564
+      Width           =   864
    End
 End
 #tag EndWindow

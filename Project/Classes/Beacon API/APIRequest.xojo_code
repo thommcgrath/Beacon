@@ -105,6 +105,63 @@ Protected Class APIRequest
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function PHPVersion() As Text
+		  Dim EOL As Text
+		  #if TargetWin32
+		    EOL = Text.FromUnicodeCodepoint(13) + Text.FromUnicodeCodepoint(10)
+		  #else
+		    EOL = Text.FromUnicodeCodepoint(10)
+		  #endif
+		  
+		  Dim Authenticated As Boolean = Self.mAuthUser <> "" And Self.mAuthPassword <> ""
+		  
+		  Dim Lines() As Text
+		  
+		  Lines.Append("$url = '" + Self.URL.ReplaceAll("'", "\'") + "';")
+		  Lines.Append("$method = '" + Self.Method.ReplaceAll("'", "\'").Uppercase + "';")
+		  Lines.Append("$body = '" + Self.Query.ReplaceAll("'", "\'") + "';")
+		  
+		  If Authenticated Then
+		    Lines.Append("")
+		    If Self.mMethod = "GET" Then
+		      If Self.mPayload <> "" Then
+		        Lines.Append("$auth = $method . chr(10) . $url . '?' . $body;")
+		      Else
+		        Lines.Append("$auth = $method . chr(10) . $url;")
+		      End If
+		    Else
+		      Lines.Append("$auth = $method . chr(10) . $url  . chr(10) . $body;")
+		    End If
+		    Lines.Append("// Change Myself.beaconidentiy to point to your identity file!")
+		    Lines.Append("$identity = json_decode(file_get_contents('Myself.beaconidentity'), true);")
+		    Lines.Append("$username = $identity['Identifier'];")
+		    Lines.Append("$private_key = $identity['Private'];")
+		    Lines.Append("$private_key = trim(chunk_split(base64_encode(hex2bin($private_key)), 64, ""\n""));")
+		    Lines.Append("$private_key = ""-----BEGIN RSA PRIVATE KEY-----\n$private_key\n-----END RSA PRIVATE KEY-----"";")
+		    Lines.Append("openssl_sign($auth, $password, $private_key) or die('Unable to authenticate action');")
+		  End If
+		  
+		  Lines.Append("")
+		  Lines.Append("$http = curl_init();")
+		  Lines.Append("curl_setopt($http, CURLOPT_URL, $url);")
+		  Lines.Append("curl_setopt($http, CURLOPT_RETURNTRANSFER, 1);")
+		  If Self.mMethod <> "GET" Then
+		    Lines.Append("curl_setopt($http, CURLOPT_CUSTOMREQUEST, $method);")
+		    Lines.Append("curl_setopt($http, CURLOPT_POSTFIELDS, $body);")
+		    Lines.Append("curl_setopt($http, CURLOPT_HTTPHEADER, array('Content-Type: " + Self.ContentType.ReplaceAll("'", "\'") + "'));")
+		  End If
+		  If Authenticated Then
+		    Lines.Append("curl_setopt($http, CURLOPT_USERPWD, $username . ':' . bin2hex($password));")
+		  End If
+		  Lines.Append("$response = curl_exec($http);")
+		  Lines.Append("$http_status = curl_getinfo($http, CURLINFO_HTTP_CODE);")
+		  Lines.Append("curl_close($http);")
+		  
+		  Return Text.Join(Lines, EOL)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Query() As Text
 		  Return Self.mPayload
 		End Function

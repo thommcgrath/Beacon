@@ -47,9 +47,14 @@ Protected Class Identity
 		  End If
 		  
 		  Dim PublicKey, PrivateKey As Xojo.Core.MemoryBlock
-		  If Source.HasKey("Version") And Source.Value("Version") = 2 Then
-		    PublicKey = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source.Value("Public"))
-		    PrivateKey = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source.Value("Private"))
+		  If Source.HasKey("Version") Then
+		     Select Case Source.Value("Version")
+		    Case 2
+		      PublicKey = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source.Value("Public"))
+		      PrivateKey = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source.Value("Private"))
+		    Else
+		      Return Nil
+		    End Select
 		  Else
 		    PublicKey = Beacon.DecodeHex(Source.Value("Public"))
 		    PrivateKey = Beacon.DecodeHex(Source.Value("Private"))
@@ -64,6 +69,12 @@ Protected Class Identity
 		  End If
 		  
 		  Return New Beacon.Identity(Source.Value("Identifier"), PublicKey, PrivateKey)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PrivateKey() As Text
+		  Return Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mPrivateKey)
 		End Function
 	#tag EndMethod
 

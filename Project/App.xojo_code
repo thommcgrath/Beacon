@@ -68,7 +68,8 @@ Inherits Application
 		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents.ToText)
 		    Dim Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
 		    Self.mIdentity = Identity
-		  Else
+		  End If
+		  If Self.mIdentity = Nil Then
 		    Self.Log("Creating new identity")
 		    Dim Identity As New Beacon.Identity
 		    Dim Dict As Xojo.Core.Dictionary = Identity.Export
@@ -343,6 +344,16 @@ Inherits Application
 		Function Identity() As Beacon.Identity
 		  Return Self.mIdentity
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Identity(Assigns Value As Beacon.Identity)
+		  Self.mIdentity = Value
+		  
+		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
+		  Dim Writer As New Beacon.JSONWriter(Value.Export, IdentityFile)
+		  Writer.Run
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

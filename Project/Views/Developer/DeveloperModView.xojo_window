@@ -24,7 +24,7 @@ Begin ContainerControl DeveloperModView
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   564
+   Width           =   864
    Begin PagePanel Panel
       AutoDeactivate  =   True
       Enabled         =   True
@@ -46,7 +46,7 @@ Begin ContainerControl DeveloperModView
       Top             =   0
       Value           =   3
       Visible         =   True
-      Width           =   564
+      Width           =   864
       Begin UITweaks.ResizedTextField ConfirmField
          AcceptTabs      =   False
          Alignment       =   2
@@ -218,7 +218,7 @@ Begin ContainerControl DeveloperModView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   524
+         Width           =   824
       End
       Begin ProgressBar LoadingIndicator
          AutoDeactivate  =   True
@@ -288,7 +288,7 @@ Begin ContainerControl DeveloperModView
          Underline       =   False
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   564
+         Width           =   864
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -318,7 +318,7 @@ Begin ContainerControl DeveloperModView
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   564
+         Width           =   864
       End
    End
    Begin APISocket Socket

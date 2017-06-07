@@ -1,5 +1,5 @@
 #tag Class
-Private Class JSONWriter
+Protected Class JSONWriter
 Inherits Beacon.Thread
 	#tag Event
 		Sub Run()
