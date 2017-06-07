@@ -25,13 +25,13 @@ Begin DeveloperView DeveloperIdentityView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   1100
-   Begin Label UserIDField
+   Begin UITweaks.ResizedLabel UserIDLabel
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      Height          =   20
+      Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -48,7 +48,7 @@ Begin DeveloperView DeveloperIdentityView
       TabIndex        =   0
       TabPanelIndex   =   0
       Text            =   "User ID:"
-      TextAlign       =   0
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -57,7 +57,7 @@ Begin DeveloperView DeveloperIdentityView
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   405
+      Width           =   80
    End
    Begin TextArea PublicKeyArea
       AcceptTabs      =   False
@@ -76,7 +76,7 @@ Begin DeveloperView DeveloperIdentityView
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
-      Left            =   20
+      Left            =   112
       LimitText       =   0
       LineHeight      =   0.0
       LineSpacing     =   1.0
@@ -100,7 +100,7 @@ Begin DeveloperView DeveloperIdentityView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   84
+      Top             =   54
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -118,12 +118,12 @@ Begin DeveloperView DeveloperIdentityView
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   105
+      Height          =   167
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
-      Left            =   20
+      Left            =   112
       LimitText       =   0
       LineHeight      =   0.0
       LineSpacing     =   1.0
@@ -147,7 +147,7 @@ Begin DeveloperView DeveloperIdentityView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   294
+      Top             =   232
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -176,16 +176,16 @@ Begin DeveloperView DeveloperIdentityView
       TabIndex        =   3
       TabPanelIndex   =   0
       Text            =   "Public Key:"
-      TextAlign       =   0
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   52
+      Top             =   54
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   524
+      Width           =   80
    End
    Begin Label PrivateKeyLabel
       AutoDeactivate  =   True
@@ -210,16 +210,16 @@ Begin DeveloperView DeveloperIdentityView
       TabIndex        =   4
       TabPanelIndex   =   0
       Text            =   "Private Key:"
-      TextAlign       =   0
+      TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   262
+      Top             =   232
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   586
+      Width           =   80
    End
    Begin UITweaks.ResizedPushButton RestoreIdentityButton
       AutoDeactivate  =   True
@@ -299,7 +299,7 @@ Begin DeveloperView DeveloperIdentityView
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   618
+      Left            =   710
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -315,7 +315,7 @@ Begin DeveloperView DeveloperIdentityView
       Top             =   52
       Underline       =   False
       Visible         =   True
-      Width           =   462
+      Width           =   370
       Begin Label ExplanationLabel
          AutoDeactivate  =   True
          Bold            =   False
@@ -327,7 +327,7 @@ Begin DeveloperView DeveloperIdentityView
          Index           =   -2147483648
          InitialParent   =   "ExplanationGroup"
          Italic          =   False
-         Left            =   638
+         Left            =   730
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -348,8 +348,50 @@ Begin DeveloperView DeveloperIdentityView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   422
+         Width           =   330
       End
+   End
+   Begin TextField UserIDField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   112
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   350
    End
 End
 #tag EndWindow
@@ -440,7 +482,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI(Identity As Beacon.Identity)
-		  UserIDField.Text = "User ID: " + App.Identity.Identifier
+		  UserIDField.Text = App.Identity.Identifier
 		  PublicKeyArea.Text = Self.ExportPublicKey(App.Identity.PublicKey)
 		  PrivateKeyArea.Text = Self.ExportPrivateKey(App.Identity.PrivateKey)
 		End Sub
