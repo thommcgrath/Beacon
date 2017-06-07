@@ -25,37 +25,6 @@ Begin DeveloperView DeveloperAPIView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   1100
-   Begin PushButton GuideButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "Open Guide"
-      Default         =   False
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   980
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Underline       =   False
-      Visible         =   True
-      Width           =   100
-   End
    Begin UITweaks.ResizedTextField PathField
       AcceptTabs      =   False
       Alignment       =   0
@@ -96,7 +65,7 @@ Begin DeveloperView DeveloperAPIView
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   841
+      Width           =   953
    End
    Begin UITweaks.ResizedPopupMenu MethodMenu
       AutoDeactivate  =   True

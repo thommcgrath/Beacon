@@ -1,0 +1,10 @@
+site_name: Beacon API
+pages:
+    - Home: 'index.md'
+    - Objects: [
+        {Document: 'document.md'},
+        {Engram: 'engram.md'},
+        {Mod: 'mod.md'},
+        {User: 'user.md'}
+    ]
+    - Authenticating: 'authenticating.md'
