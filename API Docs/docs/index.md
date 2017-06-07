@@ -14,6 +14,6 @@ JSON is used heavily in the API, so implementors should be able to parse and gen
 
 There are four object types available by the API: [Document](document.md)s, [Engram](engram.md)s, [Mod](mod.md)s, and [User](user.md)s.
 
-The easiest request to make is to get a list of all engrams. This is a GET request to https://thezaz.com/beacon/api/engram.php, which returns an array of JSON structures. In fact, this request is so easy, the browser can do it. Go ahead, visit [https://thezaz.com/beacon/api/engram.php](https://thezaz.com/beacon/api/engram.php) to see the list.
+The easiest request to make is to get a list of all engrams. This is a GET request to https://thezaz.com/beacon/api/engram.php, which returns an array of JSON structures.
 
 Dig into each of the objects listed above. If you need to make [authenticated requests](authenticating.md) then you should read up on how to do that too.

@@ -69,6 +69,13 @@ End
 
 #tag EndWindowCode
 
+#tag Events View
+	#tag Event
+		Function CancelLoad(URL as String) As Boolean
+		  Return App.HandleURL(URL)
+		End Function
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="AcceptFocus"
