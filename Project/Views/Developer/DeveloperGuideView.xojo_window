@@ -57,7 +57,7 @@ End
 		  End If
 		  
 		  Self.mAlreadyStarted = True
-		  View.LoadURL(Beacon.WebURL + "/api/guide.php")
+		  View.LoadURL(Beacon.WebURL + "/apidoc.php")
 		End Sub
 	#tag EndMethod
 
