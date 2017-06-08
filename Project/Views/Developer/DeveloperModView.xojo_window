@@ -321,7 +321,7 @@ Begin ContainerControl DeveloperModView
          Width           =   864
       End
    End
-   Begin APISocket Socket
+   Begin BeaconAPI.Socket Socket
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -387,7 +387,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_EngramsLoad(Success As Boolean, Message As Text, Details As Auto)
-		  Self.mEngramSets.Value(Self.CurrentMod.ModID) = New APIEngramSet(Details)
+		  Self.mEngramSets.Value(Self.CurrentMod.ModID) = New BeaconAPI.EngramSet(Details)
 		  Self.ShowCurrentEngrams()
 		  Panel.Value = PageEngrams
 		End Sub
@@ -415,7 +415,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function DeletePendingEngrams() As Boolean
-		  Dim DeletedEngrams() As APIEngram = Self.EngramSet.EngramsToDelete
+		  Dim DeletedEngrams() As BeaconAPI.Engram = Self.EngramSet.EngramsToDelete
 		  If UBound(DeletedEngrams) = -1 Then
 		    Return False
 		  End If
@@ -423,11 +423,11 @@ End
 		  Panel.Value = PageLoading
 		  
 		  Dim Classes() As Text
-		  For Each Engram As APIEngram In DeletedEngrams
+		  For Each Engram As BeaconAPI.Engram In DeletedEngrams
 		    Classes.Append(Engram.ClassString)
 		  Next
 		  
-		  Dim Request As New APIRequest("engram.php", "DELETE", Text.Join(Classes, ","), "text/plain", AddressOf APICallback_EngramsDelete)
+		  Dim Request As New BeaconAPI.Request("engram.php", "DELETE", Text.Join(Classes, ","), "text/plain", AddressOf APICallback_EngramsDelete)
 		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		  
@@ -436,7 +436,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function EngramSet() As APIEngramSet
+		Private Function EngramSet() As BeaconAPI.EngramSet
 		  If Self.mCurrentMod = Nil Then
 		    Return Nil
 		  End If
@@ -447,7 +447,7 @@ End
 		  
 		  If Not Self.mEngramSets.HasKey(Self.mCurrentMod.ModID) Then
 		    Dim Placeholder() As Auto
-		    Self.mEngramSets.Value(Self.mCurrentMod.ModID) = New APIEngramSet(Placeholder)
+		    Self.mEngramSets.Value(Self.mCurrentMod.ModID) = New BeaconAPI.EngramSet(Placeholder)
 		  End If
 		  
 		  Return Self.mEngramSets.Value(Self.mCurrentMod.ModID)
@@ -459,7 +459,7 @@ End
 		  Dim Regex As New Regex
 		  Regex.SearchPattern = "['""]/Game/Mods/[A-Za-z0-9_/]+/[A-Za-z0-9_]+\.([A-Za-z0-9_]+)['""]|^([A-Za-z0-9_]+_C)$|^.*[^A-Za-z0-9_]([A-Za-z0-9_]+_C)[^A-Za-z0-9_].*$"
 		  
-		  Dim Set As APIEngramSet = Self.EngramSet
+		  Dim Set As BeaconAPI.EngramSet = Self.EngramSet
 		  Dim Match As RegexMatch = Regex.Search(Contents)
 		  Dim Classes As New Dictionary
 		  Do
@@ -494,7 +494,7 @@ End
 		  
 		  Dim Keys() As Variant = Classes.Keys
 		  For Each Key As String In Keys
-		    Dim Engram As New APIEngram
+		    Dim Engram As New BeaconAPI.Engram
 		    Engram.ClassString = Key.ToText
 		    
 		    Dim GuessName As String = Engram.ClassString
@@ -562,7 +562,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function SavePendingEngrams() As Boolean
-		  Dim NewEngrams() As APIEngram = Self.EngramSet.EngramsToSave
+		  Dim NewEngrams() As BeaconAPI.Engram = Self.EngramSet.EngramsToSave
 		  If UBound(NewEngrams) = -1 Then
 		    Return False
 		  End If
@@ -570,12 +570,12 @@ End
 		  Panel.Value = PageLoading
 		  
 		  Dim Dicts() As Xojo.Core.Dictionary
-		  For Each Engram As APIEngram In NewEngrams
+		  For Each Engram As BeaconAPI.Engram In NewEngrams
 		    Dicts.Append(Engram.AsDictionary)
 		  Next
 		  
 		  Dim Content As Text = Xojo.Data.GenerateJSON(Dicts)
-		  Dim Request As New APIRequest("engram.php", "POST", Content, "application/json", AddressOf APICallback_EngramsPost)
+		  Dim Request As New BeaconAPI.Request("engram.php", "POST", Content, "application/json", AddressOf APICallback_EngramsPost)
 		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		  
@@ -591,9 +591,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim EngramSet As APIEngramSet = Self.mEngramSets.Value(Self.mCurrentMod.ModID)
-		  Dim Engrams() As APIEngram = EngramSet.ActiveEngrams
-		  For Each Engram As APIEngram In Engrams
+		  Dim EngramSet As BeaconAPI.EngramSet = Self.mEngramSets.Value(Self.mCurrentMod.ModID)
+		  Dim Engrams() As BeaconAPI.Engram = EngramSet.ActiveEngrams
+		  For Each Engram As BeaconAPI.Engram In Engrams
 		    EngramList.AddRow("")
 		    Self.ShowEngramInRow(EngramList.LastIndex, Engram)
 		  Next
@@ -603,7 +603,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowEngramInRow(Index As Integer, Engram As APIEngram)
+		Private Sub ShowEngramInRow(Index As Integer, Engram As BeaconAPI.Engram)
 		  EngramList.Cell(Index, 0) = Engram.ClassString
 		  EngramList.Cell(Index, 1) = Engram.Label
 		  EngramList.CellCheck(Index, 2) = Engram.CanBeBlueprint
@@ -676,16 +676,16 @@ End
 			  Else
 			    // Load engrams
 			    Panel.Value = PageLoading
-			    Dim Request As New APIRequest(Self.mCurrentMod.EngramsURL, "GET", AddressOf APICallback_EngramsLoad)
+			    Dim Request As New BeaconAPI.Request(Self.mCurrentMod.EngramsURL, "GET", AddressOf APICallback_EngramsLoad)
 			    Self.Socket.Start(Request)
 			  End If
 			End Set
 		#tag EndSetter
-		CurrentMod As APIMod
+		CurrentMod As BeaconAPI.WorkshopMod
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mCurrentMod As APIMod
+		Private mCurrentMod As BeaconAPI.WorkshopMod
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -725,7 +725,7 @@ End
 		Sub Action()
 		  Panel.Value = PageLoading
 		  
-		  Dim Request As New APIRequest(Self.CurrentMod.ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
+		  Dim Request As New BeaconAPI.Request(Self.CurrentMod.ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
 		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		End Sub
@@ -747,7 +747,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
-		  Dim Engram As APIEngram = Me.RowTag(Row)
+		  Dim Engram As BeaconAPI.Engram = Me.RowTag(Row)
 		  
 		  Select Case Column
 		  Case 0
@@ -800,7 +800,7 @@ End
 		Sub Action(Button As FooterBarButton)
 		  Select Case Button.Name
 		  Case "AddButton"
-		    Dim Engram As New APIEngram
+		    Dim Engram As New BeaconAPI.Engram
 		    Engram.ModID = Self.CurrentMod.ModID
 		    EngramList.AddRow("")
 		    Self.ShowEngramInRow(EngramList.LastIndex, Engram)
@@ -809,7 +809,7 @@ End
 		  Case "RemoveButton"
 		    For I As Integer = EngramList.ListCount -1 DownTo 0
 		      If EngramList.Selected(I) Then
-		        Dim Engram As APIEngram = EngramList.RowTag(I)
+		        Dim Engram As BeaconAPI.Engram = EngramList.RowTag(I)
 		        Self.EngramSet.Remove(Engram)
 		        EngramList.RemoveRow(I)
 		      End If

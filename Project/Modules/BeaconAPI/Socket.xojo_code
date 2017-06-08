@@ -1,5 +1,5 @@
 #tag Class
-Protected Class APISocket
+Protected Class Socket
 	#tag Method, Flags = &h1
 		Protected Sub AdvanceQueue()
 		  If UBound(Self.Queue) = -1 Then
@@ -7,7 +7,7 @@ Protected Class APISocket
 		    Return
 		  End If
 		  
-		  Dim Request As APIRequest = Self.Queue(0)
+		  Dim Request As BeaconAPI.Request = Self.Queue(0)
 		  Self.Queue.Remove(0)
 		  
 		  Self.ActiveRequest = Request
@@ -107,7 +107,7 @@ Protected Class APISocket
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Start(Request As APIRequest)
+		Sub Start(Request As BeaconAPI.Request)
 		  Self.Queue.Append(Request)
 		  If UBound(Self.Queue) = 0 Then
 		    Xojo.Core.Timer.CallLater(50, WeakAddressOf Self.AdvanceQueue)
@@ -148,7 +148,7 @@ Protected Class APISocket
 
 
 	#tag Property, Flags = &h21
-		Private ActiveRequest As APIRequest
+		Private ActiveRequest As BeaconAPI.Request
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -156,7 +156,7 @@ Protected Class APISocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Queue() As APIRequest
+		Private Queue() As BeaconAPI.Request
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

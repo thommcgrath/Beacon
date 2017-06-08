@@ -1,39 +1,45 @@
 #tag Class
-Protected Class APIDocument
+Protected Class WorkshopMod
+	#tag Method, Flags = &h0
+		Function ConfirmationCode() As Text
+		  Return Self.mConfirmationCode
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Confirmed() As Boolean
+		  Return Self.mConfirmed
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfirmURL() As Text
+		  Return Self.mConfirmURL
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Xojo.Core.Dictionary)
-		  Self.mDescription = Source.Value("description")
-		  Self.mDocumentID = Source.Value("document_id")
-		  Self.mDownloadCount = Source.Value("download_count")
-		  Self.mLastUpdated = Beacon.ParseSQLDate(Source.Value("last_updated"))
+		  Self.mConfirmationCode = Source.Value("confirmation_code")
+		  Self.mConfirmed = Source.Value("confirmed")
+		  Self.mConfirmURL = Source.Value("confirm_url")
+		  Self.mEngramsURL = Source.Value("engrams_url")
+		  Self.mModID = Source.Value("mod_id")
 		  Self.mName = Source.Value("name")
 		  Self.mResourceURL = Source.Value("resource_url")
-		  Self.mRevision = Source.Value("revision")
-		  Self.mUserID = Source.Value("user_id")
+		  Self.mWorkshopURL = Source.Value("workshop_url")
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Description() As Text
-		  Return Self.mDescription
+		Function EngramsURL() As Text
+		  Return Self.mEngramsURL
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DocumentID() As Text
-		  Return Self.mDocumentID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function DownloadCount() As UInteger
-		  Return Self.mDownloadCount
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function LastUpdated() As Xojo.Core.Date
-		  Return Self.mLastUpdated
+		Function ModID() As Text
+		  Return Self.mModID
 		End Function
 	#tag EndMethod
 
@@ -44,12 +50,12 @@ Protected Class APIDocument
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As APIDocument) As Integer
+		Function Operator_Compare(Other As BeaconAPI.WorkshopMod) As Integer
 		  If Other = Nil Then
 		    Return 1
 		  End If
 		  
-		  Return Self.mDocumentID.Compare(Other.mDocumentID)
+		  Return Self.mModID.Compare(Other.mModID)
 		End Function
 	#tag EndMethod
 
@@ -60,38 +66,30 @@ Protected Class APIDocument
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Revision() As UInteger
-		  Return Self.mRevision
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function UserID() As Text
-		  Return Self.mUserID
+		Function WorkshopURL() As Text
+		  Return Self.mWorkshopURL
 		End Function
 	#tag EndMethod
 
 
-	#tag Note, Name = Beacon.Document
-		Yes, they are different. An APIDocument is metadata, no content, and includes stats.
-		
-	#tag EndNote
-
-
 	#tag Property, Flags = &h21
-		Private mDescription As Text
+		Private mConfirmationCode As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDocumentID As Text
+		Private mConfirmed As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDownloadCount As UInteger
+		Private mConfirmURL As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLastUpdated As Xojo.Core.Date
+		Private mEngramsURL As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mModID As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -103,11 +101,7 @@ Protected Class APIDocument
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mRevision As UInteger
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUserID As Text
+		Private mWorkshopURL As Text
 	#tag EndProperty
 
 

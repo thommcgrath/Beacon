@@ -334,10 +334,10 @@ Begin Window DocumentPublishWindow
       Visible         =   False
       Width           =   16
    End
-   Begin APISocket Socket
+   Begin BeaconAPI.Socket Socket
       Index           =   -2147483648
       LockedInPosition=   False
-      Scope           =   2
+      Scope           =   0
       TabPanelIndex   =   0
    End
 End
@@ -348,7 +348,7 @@ End
 		Sub Open()
 		  Self.SwapButtons()
 		  
-		  Dim Request As New APIRequest("user.php/" + App.Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
+		  Dim Request As New BeaconAPI.Request("user.php/" + App.Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent
@@ -380,7 +380,7 @@ End
 		  Params.Value("public_key") = App.Identity.PublicKey
 		  
 		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
-		  Dim Request As New APIRequest("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
+		  Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndMethod
@@ -434,7 +434,7 @@ End
 		  
 		  Dim Body As Text = Xojo.Data.GenerateJSON(Self.mDocument.Export)
 		  
-		  Dim Request As New APIRequest("document.php", "POST", Body, "application/json", AddressOf APICallback_DocumentPost)
+		  Dim Request As New BeaconAPI.Request("document.php", "POST", Body, "application/json", AddressOf APICallback_DocumentPost)
 		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		End Sub

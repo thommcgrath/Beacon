@@ -200,7 +200,7 @@ Begin BeaconWindow DocWindow
       Visible         =   True
       Width           =   234
    End
-   Begin APISocket Socket
+   Begin BeaconAPI.Socket Socket
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -292,7 +292,7 @@ End
 		  
 		  If UBound(LootSources) > -1 Then
 		    // Check publish status
-		    Dim Request As New APIRequest("document.php/" + Self.Doc.Identifier + "?simple", "GET", AddressOf APICallback_DocumentStatus)
+		    Dim Request As New BeaconAPI.Request("document.php/" + Self.Doc.Identifier + "?simple", "GET", AddressOf APICallback_DocumentStatus)
 		    Self.Socket.Start(Request)
 		  Else
 		    Self.mIsPublished = False
@@ -353,7 +353,7 @@ End
 			
 			Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
 			If Choice = Dialog.ActionButton Then
-			Dim Request As New APIRequest("document.php/" + Self.Doc.Identifier, "DELETE", AddressOf APICallback_DocumentDelete)
+			Dim Request As New BeaconAPI.Request("document.php/" + Self.Doc.Identifier, "DELETE", AddressOf APICallback_DocumentDelete)
 			Request.Sign(App.Identity)
 			Self.Socket.Start(Request)
 			End If
@@ -489,7 +489,7 @@ End
 		  If Success Then
 		    Self.mIsPublished = True
 		    Dim Dict As Xojo.Core.Dictionary = Details
-		    Dim Document As New APIDocument(Dict)
+		    Dim Document As New BeaconAPI.Document(Dict)
 		    Self.mPublishedByUser = Document.UserID = App.Identity.Identifier
 		  Else
 		    Self.mIsPublished = False

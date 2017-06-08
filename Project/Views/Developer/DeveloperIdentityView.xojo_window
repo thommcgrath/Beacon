@@ -283,7 +283,7 @@ Begin DeveloperView DeveloperIdentityView
       Visible         =   True
       Width           =   120
    End
-   Begin APISocket Socket
+   Begin BeaconAPI.Socket Socket
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -431,7 +431,7 @@ End
 		  Params.Value("public_key") = App.Identity.PublicKey
 		  
 		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
-		  Dim Request As New APIRequest("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
+		  Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndMethod
@@ -517,7 +517,7 @@ End
 		  Dim Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
 		  App.Identity = Identity
 		  Self.UpdateUI(Identity)
-		  Dim Request As New APIRequest("user.php/" + Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
+		  Dim Request As New BeaconAPI.Request("user.php/" + Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent

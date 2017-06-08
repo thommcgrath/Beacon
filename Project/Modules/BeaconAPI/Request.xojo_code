@@ -1,5 +1,5 @@
 #tag Class
-Protected Class APIRequest
+Protected Class Request
 	#tag Method, Flags = &h0
 		Function Authenticated() As Boolean
 		  Return Self.mAuthUser <> "" And Self.mAuthPassword <> ""
@@ -19,13 +19,13 @@ Protected Class APIRequest
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As Text, Method As Text, Callback As APIRequest.ReplyCallback)
+		Sub Constructor(Path As Text, Method As Text, Callback As BeaconAPI.Request.ReplyCallback)
 		  Self.Constructor(Path, Method, New Xojo.Core.Dictionary, Callback)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As Text, Method As Text, Payload As Text, ContentType As Text, Callback As APIRequest.ReplyCallback)
+		Sub Constructor(Path As Text, Method As Text, Payload As Text, ContentType As Text, Callback As BeaconAPI.Request.ReplyCallback)
 		  If Path.IndexOf("://") = -1 Then
 		    Path = Beacon.WebURL + "/api/" + Path
 		  End If
@@ -58,7 +58,7 @@ Protected Class APIRequest
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As Text, Method As Text, Payload As Xojo.Core.Dictionary, Callback As APIRequest.ReplyCallback)
+		Sub Constructor(Path As Text, Method As Text, Payload As Xojo.Core.Dictionary, Callback As BeaconAPI.Request.ReplyCallback)
 		  Dim Parts() As Text
 		  For Each Entry As Xojo.Core.DictionaryEntry In Payload
 		    Parts.Append(Self.URLEncode(Entry.Key) + "=" + Self.URLEncode(Entry.Value))

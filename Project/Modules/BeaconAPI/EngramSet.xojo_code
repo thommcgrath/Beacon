@@ -1,30 +1,30 @@
 #tag Class
-Protected Class APIEngramSet
+Protected Class EngramSet
 	#tag Method, Flags = &h0
-		Function ActiveEngrams() As APIEngram()
-		  Dim Engrams() As APIEngram
+		Function ActiveEngrams() As BeaconAPI.Engram()
+		  Dim Engrams() As BeaconAPI.Engram
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mNewEngrams
-		    Dim Engram As APIEngram = Entry.Value
-		    Engrams.Append(New APIEngram(Engram))
+		    Dim Engram As BeaconAPI.Engram = Entry.Value
+		    Engrams.Append(New BeaconAPI.Engram(Engram))
 		  Next
 		  Return Engrams
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Add(Engram As APIEngram)
+		Sub Add(Engram As BeaconAPI.Engram)
 		  If Engram.ClassString = "" Then
 		    Return
 		  End If
 		  
 		  If Self.mNewEngrams.HasKey(Engram.ID) Then
-		    Dim PreviousEngram As APIEngram = Self.mNewEngrams.Value(Engram.ID)
+		    Dim PreviousEngram As BeaconAPI.Engram = Self.mNewEngrams.Value(Engram.ID)
 		    If Engram.Hash = PreviousEngram.Hash Then
 		      Return
 		    End If
 		  End If
 		  
-		  Self.mNewEngrams.Value(Engram.ID) = New APIEngram(Engram)
+		  Self.mNewEngrams.Value(Engram.ID) = New BeaconAPI.Engram(Engram)
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
@@ -42,8 +42,8 @@ Protected Class APIEngramSet
 		  
 		  Destination.RemoveAll
 		  For Each Entry As Xojo.Core.DictionaryEntry In Source
-		    Dim Engram As APIEngram = Entry.Value
-		    Destination.Value(Entry.Key) = New APIEngram(Engram)
+		    Dim Engram As BeaconAPI.Engram = Entry.Value
+		    Destination.Value(Entry.Key) = New BeaconAPI.Engram(Engram)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -54,7 +54,7 @@ Protected Class APIEngramSet
 		  Self.mNewEngrams = New Xojo.Core.Dictionary
 		  
 		  For Each Source As Xojo.Core.Dictionary In Sources
-		    Dim Engram As New APIEngram(Source)
+		    Dim Engram As New BeaconAPI.Engram(Source)
 		    Self.mOriginalEngrams.Value(Engram.ID) = Engram
 		    Self.mNewEngrams.Value(Engram.ID) = Engram
 		  Next
@@ -62,17 +62,17 @@ Protected Class APIEngramSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EngramsToDelete() As APIEngram()
+		Function EngramsToDelete() As BeaconAPI.Engram()
 		  Dim NewClasses() As Text
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mNewEngrams
-		    NewClasses.Append(APIEngram(Entry.Value).ClassString)
+		    NewClasses.Append(BeaconAPI.Engram(Entry.Value).ClassString)
 		  Next
 		  
-		  Dim DeleteEngrams() As APIEngram
+		  Dim DeleteEngrams() As BeaconAPI.Engram
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOriginalEngrams
-		    Dim Engram As APIEngram = Entry.Value
+		    Dim Engram As BeaconAPI.Engram = Entry.Value
 		    If NewClasses.IndexOf(Engram.ClassString) = -1 Then
-		      DeleteEngrams.Append(New APIEngram(Engram))
+		      DeleteEngrams.Append(New BeaconAPI.Engram(Engram))
 		    End If
 		  Next
 		  
@@ -81,24 +81,24 @@ Protected Class APIEngramSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EngramsToSave() As APIEngram()
+		Function EngramsToSave() As BeaconAPI.Engram()
 		  Dim OriginalClasses As New Xojo.Core.Dictionary
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOriginalEngrams
-		    OriginalClasses.Value(APIEngram(Entry.Value).ClassString) = APIEngram(Entry.Value)
+		    OriginalClasses.Value(BeaconAPI.Engram(Entry.Value).ClassString) = BeaconAPI.Engram(Entry.Value)
 		  Next
 		  
-		  Dim NewEngrams() As APIEngram
+		  Dim NewEngrams() As BeaconAPI.Engram
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mNewEngrams
-		    Dim Engram As APIEngram = Entry.Value
+		    Dim Engram As BeaconAPI.Engram = Entry.Value
 		    If OriginalClasses.HasKey(Engram.ClassString) Then
 		      // Might be changed
-		      Dim OriginalEngram As APIEngram = OriginalClasses.Value(Engram.ClassString)
+		      Dim OriginalEngram As BeaconAPI.Engram = OriginalClasses.Value(Engram.ClassString)
 		      If Engram.Hash <> OriginalEngram.Hash Then
-		        NewEngrams.Append(New APIEngram(Engram))
+		        NewEngrams.Append(New BeaconAPI.Engram(Engram))
 		      End If
 		    Else
 		      // Definitely new
-		      NewEngrams.Append(New APIEngram(Engram))
+		      NewEngrams.Append(New BeaconAPI.Engram(Engram))
 		    End If
 		  Next
 		  
@@ -113,7 +113,7 @@ Protected Class APIEngramSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(Engram As APIEngram)
+		Sub Remove(Engram As BeaconAPI.Engram)
 		  If Engram.ClassString = "" Then
 		    Return
 		  End If

@@ -219,10 +219,10 @@ Begin Window DeveloperAddModDialog
       Visible         =   False
       Width           =   16
    End
-   Begin APISocket Socket
+   Begin BeaconAPI.Socket Socket
       Index           =   -2147483648
       LockedInPosition=   False
-      Scope           =   2
+      Scope           =   0
       TabPanelIndex   =   0
    End
 End
@@ -293,7 +293,7 @@ End
 		  Dict.Value("mod_id") = ModID.ToText
 		  Dim Payload As Text = Xojo.Data.GenerateJSON(Dict)
 		  
-		  Dim Request As New APIRequest("mod.php", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
+		  Dim Request As New BeaconAPI.Request("mod.php", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
 		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		End Sub

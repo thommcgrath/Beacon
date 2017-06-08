@@ -246,7 +246,7 @@ Begin BeaconWindow DeveloperWindow
          Width           =   1100
       End
    End
-   Begin APISocket Socket
+   Begin BeaconAPI.Socket Socket
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -285,7 +285,7 @@ End
 		    Self.Width = InitialWidth
 		  End If
 		  
-		  Dim Request As New APIRequest("user.php/" + App.Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
+		  Dim Request As New BeaconAPI.Request("user.php/" + App.Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
 		  Self.Socket.Start(Request)
 		  
 		  Self.DocsView.SwitchedTo()
@@ -313,7 +313,7 @@ End
 		  Params.Value("public_key") = App.Identity.PublicKey
 		  
 		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
-		  Dim Request As New APIRequest("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
+		  Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndMethod

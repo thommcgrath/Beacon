@@ -1,5 +1,5 @@
 #tag Class
-Protected Class APIEngram
+Protected Class Engram
 	#tag Method, Flags = &h0
 		Sub AddEnvironment(Package As Beacon.LootSource.Packages)
 		  Self.mAvailability = Self.mAvailability Or Beacon.LootSource.PackageToInteger(Package)
@@ -41,7 +41,7 @@ Protected Class APIEngram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As APIEngram)
+		Sub Constructor(Source As BeaconAPI.Engram)
 		  Self.CanBeBlueprint = Source.CanBeBlueprint
 		  Self.Label = Source.Label
 		  Self.mAvailability = Source.mAvailability
@@ -106,7 +106,7 @@ Protected Class APIEngram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As APIEngram) As Integer
+		Function Operator_Compare(Other As BeaconAPI.Engram) As Integer
 		  If Other = Nil Then
 		    Return 1
 		  End If

@@ -56,8 +56,7 @@ Begin DeveloperView DeveloperModsView
       Visible         =   True
       Width           =   235
    End
-   Begin APISocket Socket
-      Enabled         =   True
+   Begin BeaconAPI.Socket Socket
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -180,7 +179,6 @@ Begin DeveloperView DeveloperModsView
       HasBackColor    =   False
       Height          =   419
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   236
       LockBottom      =   True
@@ -220,7 +218,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim SelectedMod As APIMod
+		  Dim SelectedMod As BeaconAPI.WorkshopMod
 		  If ModList.ListIndex > -1 Then
 		    SelectedMod = Self.SelectedMod()
 		  End If
@@ -229,7 +227,7 @@ End
 		  
 		  Dim Arr() As Auto = Details
 		  For Each Dict As Xojo.Core.Dictionary In Arr
-		    Dim UserMod As New APIMod(Dict)
+		    Dim UserMod As New BeaconAPI.WorkshopMod(Dict)
 		    
 		    ModList.AddRow(UserMod.Name)
 		    ModList.RowTag(ModList.LastIndex) = UserMod
@@ -253,14 +251,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshMods()
-		  Dim Request As New APIRequest("mod.php", "GET", AddressOf APICallback_ListMods)
+		  Dim Request As New BeaconAPI.Request("mod.php", "GET", AddressOf APICallback_ListMods)
 		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function SelectedMod() As APIMod
+		Private Function SelectedMod() As BeaconAPI.WorkshopMod
 		  If ModList.ListIndex = -1 Then
 		    Return Nil
 		  End If
@@ -318,7 +316,7 @@ End
 		    
 		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If Choice = Dialog.ActionButton Then
-		      Dim Request As New APIRequest(Self.SelectedMod.ResourceURL, "DELETE", AddressOf APICallback_DeleteMod)
+		      Dim Request As New BeaconAPI.Request(Self.SelectedMod.ResourceURL, "DELETE", AddressOf APICallback_DeleteMod)
 		      Request.Sign(App.Identity)
 		      Self.Socket.Start(Request)
 		    End If

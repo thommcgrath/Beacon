@@ -543,7 +543,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function BuildCURLCode(Request As APIRequest) As Text
+		Private Shared Function BuildCURLCode(Request As BeaconAPI.Request) As Text
 		  Dim Cmd As Text = "curl"
 		  If Request.Method <> "GET" Then
 		    Cmd = Cmd + " --request '" + Request.Method + "'"
@@ -566,7 +566,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function BuildHTTPCode(Request As APIRequest) As Text
+		Private Shared Function BuildHTTPCode(Request As BeaconAPI.Request) As Text
 		  Dim StringEOL As String = EndOfLine
 		  Dim EOL As Text = StringEOL.ToText // Really hate that it takes 2 lines of code to do this
 		  
@@ -605,7 +605,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function BuildPHPCode(Request As APIRequest) As Text
+		Private Shared Function BuildPHPCode(Request As BeaconAPI.Request) As Text
 		  Dim StringEOL As String = EndOfLine
 		  Dim EOL As Text = StringEOL.ToText // Really hate that it takes 2 lines of code to do this
 		  Dim Authenticated As Boolean = Request.Authenticated
@@ -693,12 +693,12 @@ End
 		  Dim Body As Text = BodyField.Text.ToText
 		  Dim ContentType As Text = ContentTypeField.Text.ToText
 		  
-		  Dim Request As APIRequest
+		  Dim Request As BeaconAPI.Request
 		  Try
 		    If BodyField.Enabled Then
-		      Request = New APIRequest(Path, Method, Body, ContentType, AddressOf APICallback_DoNothing)
+		      Request = New BeaconAPI.Request(Path, Method, Body, ContentType, AddressOf APICallback_DoNothing)
 		    Else
-		      Request = New APIRequest(Path, Method, AddressOf APICallback_DoNothing)
+		      Request = New BeaconAPI.Request(Path, Method, AddressOf APICallback_DoNothing)
 		    End If
 		    If AuthenticatedCheck.Value Then
 		      Request.Sign(App.Identity)

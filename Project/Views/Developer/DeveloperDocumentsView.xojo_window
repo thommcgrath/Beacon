@@ -25,7 +25,7 @@ Begin DeveloperView DeveloperDocumentsView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   1100
-   Begin APISocket Socket
+   Begin BeaconAPI.Socket Socket
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -267,9 +267,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DocumentsList(Success As Boolean, Message As Text, Details As Auto)
 		  Dim Dicts() As Auto = Details
-		  Dim Documents() As APIDocument
+		  Dim Documents() As BeaconAPI.Document
 		  For Each Dict As Xojo.Core.Dictionary In Dicts
-		    Documents.Append(New APIDocument(Dict))
+		    Documents.Append(New BeaconAPI.Document(Dict))
 		  Next
 		  
 		  Self.ShowDocuments(Documents)
@@ -290,7 +290,7 @@ End
 		    Params.Value("user_id") = App.Identity.Identifier
 		  End Select
 		  
-		  Dim Request As New APIRequest("document.php", "GET", Params, AddressOf APICallback_DocumentsList)
+		  Dim Request As New BeaconAPI.Request("document.php", "GET", Params, AddressOf APICallback_DocumentsList)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndMethod
@@ -302,15 +302,15 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowDocuments(Documents() As APIDocument)
-		  Dim SelectedDocument As APIDocument
+		Private Sub ShowDocuments(Documents() As BeaconAPI.Document)
+		  Dim SelectedDocument As BeaconAPI.Document
 		  If DocList.ListIndex > -1 Then
 		    SelectedDocument = DocList.RowTag(DocList.ListIndex)
 		  End If
 		  
 		  DocList.DeleteAllRows()
 		  
-		  For Each Document As APIDocument In Documents
+		  For Each Document As BeaconAPI.Document In Documents
 		    DocList.AddRow(Document.Name, Document.Description, Document.DownloadCount.ToText, Document.LastUpdated.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Medium, Xojo.Core.Date.FormatStyles.None), Document.Revision.ToText)
 		    DocList.RowTag(DocList.LastIndex) = Document
 		    
@@ -342,7 +342,7 @@ End
 		Sub Change()
 		  OpenButton.Enabled = Me.ListIndex > -1
 		  ShareButton.Enabled = Me.ListIndex > -1
-		  DeleteButton.Enabled = Me.ListIndex > -1 And APIDocument(Me.RowTag(Me.ListIndex)).UserID = App.Identity.Identifier
+		  DeleteButton.Enabled = Me.ListIndex > -1 And BeaconAPI.Document(Me.RowTag(Me.ListIndex)).UserID = App.Identity.Identifier
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -361,7 +361,7 @@ End
 #tag Events OpenButton
 	#tag Event
 		Sub Action()
-		  Dim Document As APIDocument = DocList.RowTag(DocList.ListIndex)
+		  Dim Document As BeaconAPI.Document = DocList.RowTag(DocList.ListIndex)
 		  DocumentDownloadWindow.Begin(Document.ResourceURL)
 		End Sub
 	#tag EndEvent
@@ -392,7 +392,7 @@ End
 #tag Events DeleteButton
 	#tag Event
 		Sub Action()
-		  Dim Document As APIDocument = DocList.RowTag(DocList.ListIndex)
+		  Dim Document As BeaconAPI.Document = DocList.RowTag(DocList.ListIndex)
 		  
 		  Dim Dialog As New MessageDialog
 		  Dialog.Title = ""
@@ -403,7 +403,7 @@ End
 		  
 		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If Choice = Dialog.ActionButton Then
-		    Dim Request As New APIRequest(Document.ResourceURL, "DELETE", AddressOf APICallback_DocumentDelete)
+		    Dim Request As New BeaconAPI.Request(Document.ResourceURL, "DELETE", AddressOf APICallback_DocumentDelete)
 		    Request.Sign(App.Identity)
 		    Self.Socket.Start(Request)
 		  End If
@@ -413,7 +413,7 @@ End
 #tag Events ShareButton
 	#tag Event
 		Sub Action()
-		  Dim Document As APIDocument = DocList.RowTag(DocList.ListIndex)
+		  Dim Document As BeaconAPI.Document = DocList.RowTag(DocList.ListIndex)
 		  Dim C As New Clipboard
 		  C.Text = Document.ResourceURL
 		  
