@@ -76,6 +76,7 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Beacon"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -110,6 +111,7 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Version X"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -144,6 +146,7 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "© 2016 Thom McGrath, All Rights Reserved."
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -178,6 +181,7 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "https://thezaz.com/beacon"
       TextAlign       =   1
       TextColor       =   &c0000FF00
@@ -212,6 +216,7 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Engrams Updated Y"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -277,10 +282,12 @@ Begin BeaconWindow AboutWindow
       Width           =   16
    End
    Begin Xojo.Net.HTTPSocket UpdateEngramsSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
    End
 End
 #tag EndWindow
@@ -382,6 +389,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
+		  #Pragma Unused URL
+		  
 		  Dim Top As Integer = UpdateEngramsSpinner.Top
 		  UpdateEngramsSpinner.Top = -100
 		  UpdateEngramsButton.Top = Top + ((UpdateEngramsButton.Height - UpdateEngramsSpinner.Height) / 2)

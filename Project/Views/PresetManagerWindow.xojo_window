@@ -214,6 +214,8 @@ End
 
 	#tag Event
 		Sub DropObject(obj As DragItem, action As Integer)
+		  #Pragma Unused action
+		  
 		  Do
 		    If Obj.FolderItemAvailable And Obj.FolderItem.IsType(BeaconFileTypes.BeaconPreset) Then
 		      Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(Obj.FolderItem)

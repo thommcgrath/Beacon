@@ -59,6 +59,37 @@ CREATE TABLE loot_sources (
 );
 GRANT SELECT ON TABLE loot_sources TO thezaz_website;
 
+CREATE TABLE mods (
+	mod_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+	workshop_id BIGINT NOT NULL,
+	user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	name TEXT NOT NULL DEFAULT 'Unknown Mod',
+	confirmed BOOLEAN NOT NULL DEFAULT FALSE,
+	confirmation_code UUID NOT NULL DEFAULT gen_random_uuid()
+);
+CREATE UNIQUE INDEX mods_workshop_id_user_id_uidx ON mods(workshop_id, user_id);
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE mods TO thezaz_website;
+
+CREATE OR REPLACE FUNCTION enforce_mod_owner() RETURNS trigger AS $$
+DECLARE
+	confirmed_count INTEGER := 0;
+BEGIN
+	IF (TG_OP = 'INSERT') OR (TG_OP = 'UPDATE' AND NEW.confirmed = TRUE AND OLD.confirmed = FALSE) THEN
+		SELECT INTO confirmed_count COUNT(mod_id) FROM mods WHERE confirmed = TRUE AND workshop_id = NEW.workshop_id;
+		IF confirmed_count > 0 THEN
+			RAISE EXCEPTION 'Mod is already confirmed by another user.';
+		END IF;
+		IF NEW.confirmed THEN
+			DELETE FROM mods WHERE workshop_id = NEW.workshop_id AND mod_id != NEW.mod_id;
+		END IF;
+	END IF;
+	
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER enforce_mod_owner BEFORE INSERT OR UPDATE ON mods FOR EACH ROW EXECUTE PROCEDURE enforce_mod_owner();
+
 CREATE TABLE engrams (
 	classstring CITEXT NOT NULL PRIMARY KEY,
 	label CITEXT NOT NULL,
@@ -66,9 +97,10 @@ CREATE TABLE engrams (
 	can_blueprint BOOLEAN NOT NULL DEFAULT TRUE,
 	last_update TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0),
 	min_version INTEGER,
+	mod_id UUID REFERENCES mods(mod_id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CHECK (classstring LIKE '%_C')
 );
-GRANT SELECT ON TABLE engrams TO thezaz_website;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE engrams TO thezaz_website;
 
 -- the primary key really should be preset_id UUID but this needs to match engrams and loot_sources for the triggers to work
 CREATE TABLE presets (
@@ -89,7 +121,7 @@ CREATE TABLE deletions (
 	time TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0)
 );
 CREATE UNIQUE INDEX deletions_table_classstring_idx ON deletions(table, classstring);
-GRANT SELECT ON TABLE deletions TO thezaz_website;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE deletions TO thezaz_website;
 
 DROP TRIGGER IF EXISTS engrams_before_insert_trigger ON engrams;
 DROP TRIGGER IF EXISTS engrams_before_update_trigger ON engrams;

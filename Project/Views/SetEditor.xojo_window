@@ -431,7 +431,7 @@ Begin ContainerControl SetEditor
       Visible         =   True
       Width           =   251
    End
-   Begin GraphicButton AddButton
+   Begin FooterBar Footer
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
@@ -439,42 +439,11 @@ Begin ContainerControl SetEditor
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   24
-      HelpTag         =   "Add items to this set."
-      IconDisabled    =   0
-      IconNormal      =   0
-      IconPressed     =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   14
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   404
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   30
-   End
-   Begin FooterBar FooterBar1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   24
+      Height          =   25
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   93
+      Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -484,42 +453,11 @@ Begin ContainerControl SetEditor
       TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   404
+      Top             =   403
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   467
-   End
-   Begin GraphicButton EditButton
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   False
-      EraseBackground =   True
-      Height          =   24
-      HelpTag         =   "Edit the selected items."
-      IconDisabled    =   0
-      IconNormal      =   0
-      IconPressed     =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   31
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   16
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   404
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   30
+      Width           =   560
    End
    Begin ControlCanvas Separators
       AcceptFocus     =   False
@@ -548,149 +486,6 @@ Begin ContainerControl SetEditor
       UseFocusRing    =   True
       Visible         =   True
       Width           =   560
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   1
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   18
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   403
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   560
-   End
-   Begin GraphicButton DeleteButton
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   False
-      EraseBackground =   True
-      Height          =   24
-      HelpTag         =   "Remove the selected items from the set."
-      IconDisabled    =   0
-      IconNormal      =   0
-      IconPressed     =   0
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   62
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   19
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   404
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   30
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   2
-      InitialParent   =   ""
-      Left            =   30
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   20
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   404
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   3
-      InitialParent   =   ""
-      Left            =   61
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   21
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   404
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
-   End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   24
-      HelpTag         =   ""
-      Index           =   4
-      InitialParent   =   ""
-      Left            =   92
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   22
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   404
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
    End
    Begin UpDownArrows MinItemsStepper
       AcceptFocus     =   False
@@ -917,8 +712,8 @@ End
 #tag Events EntryList
 	#tag Event
 		Sub Change()
-		  EditButton.Enabled = Me.SelCount > 0
-		  DeleteButton.Enabled = Me.SelCount > 0
+		  Footer.Button("EditButton").Enabled = Me.SelCount > 0
+		  Footer.Button("DeleteButton").Enabled = Me.SelCount > 0
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1126,41 +921,41 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AddButton
+#tag Events Footer
 	#tag Event
 		Sub Open()
-		  Me.IconNormal = IconAddNormal
-		  Me.IconPressed = IconAddPressed
-		  Me.IconDisabled = IconAddDisabled
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self)
-		  If Entries = Nil Then
-		    Return
-		  End If
+		  Dim AddButton As New FooterBarButton("AddButton", IconAdd)
+		  Dim EditButton As New FooterBarButton("EditButton", IconEdit)
+		  Dim DeleteButton As New FooterBarButton("DeleteButton", IconRemove)
 		  
-		  For Each Entry As Beacon.SetEntry In Entries
-		    Self.mSet.Append(Entry)
-		  Next
+		  EditButton.Enabled = False
+		  DeleteButton.Enabled = False
 		  
-		  Self.UpdateEntryList(Entries)
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events EditButton
-	#tag Event
-		Sub Open()
-		  Me.IconNormal = IconEditNormal
-		  Me.IconPressed = IconEditPressed
-		  Me.IconDisabled = IconEditDisabled
+		  Me.Append(AddButton)
+		  Me.Append(EditButton)
+		  Me.Append(DeleteButton)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action()
-		  Self.EditSelectedEntries()
+		Sub Action(Button As FooterBarButton)
+		  Select Case Button.Name
+		  Case "AddButton"
+		    Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self)
+		    If Entries = Nil Then
+		      Return
+		    End If
+		    
+		    For Each Entry As Beacon.SetEntry In Entries
+		      Self.mSet.Append(Entry)
+		    Next
+		    
+		    Self.UpdateEntryList(Entries)
+		    RaiseEvent Updated
+		  Case "EditButton"
+		    Self.EditSelectedEntries()
+		  Case "DeleteButton"
+		    Self.RemoveSelectedEntries()
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1171,20 +966,6 @@ End
 		  
 		  G.ForeColor = &cCCCCCC
 		  G.FillRect(-1, -1, G.Width + 2, G.Height + 2)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DeleteButton
-	#tag Event
-		Sub Open()
-		  Me.IconNormal = IconRemoveNormal
-		  Me.IconPressed = IconRemovePressed
-		  Me.IconDisabled = IconRemoveDisabled
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  Self.RemoveSelectedEntries()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -1162,6 +1162,13 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.SwapButtons()
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
 		Private Sub BuildSourceList(CurrentSources() As Beacon.LootSource)
 		  Dim AllowedLootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("")

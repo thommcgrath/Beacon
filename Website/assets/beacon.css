@@ -24,3 +24,21 @@ div.right-screenshot p {
 	padding-left: 20px;
 	padding-right: 20px;
 }
+
+/*input[type="text"].beacon-spawn-code {
+	background-color: transparent;
+    border: 0px solid;
+}
+
+input[type="text"].beacon-spawn-code:focus {
+	 outline: none;
+}*/
+
+#spawncodes {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+#spawncodes td {
+	padding: 5px;
+}

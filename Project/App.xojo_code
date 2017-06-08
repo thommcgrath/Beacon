@@ -68,7 +68,8 @@ Inherits Application
 		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents.ToText)
 		    Dim Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
 		    Self.mIdentity = Identity
-		  Else
+		  End If
+		  If Self.mIdentity = Nil Then
 		    Self.Log("Creating new identity")
 		    Dim Identity As New Beacon.Identity
 		    Dim Dict As Xojo.Core.Dictionary = Identity.Export
@@ -81,12 +82,6 @@ Inherits Application
 		    Self.mIdentity = Identity
 		  End If
 		  Self.Log("Identity is " + Self.mIdentity.Identifier)
-		  
-		  Self.mFileLoader = New Xojo.Net.HTTPSocket
-		  Self.mFileLoader.ValidateCertificates = True
-		  AddHandler Self.mFileLoader.PageReceived, WeakAddressOf Self.mFileLoader_PageReceived
-		  AddHandler Self.mFileLoader.Error, WeakAddressOf Self.mFileLoader_Error
-		  AddHandler Self.mFileLoader.AuthenticationRequired, WeakAddressOf Self.mFileLoader_AuthenticationRequired
 		  
 		  Self.mUpdateChecker = New UpdateChecker
 		  AddHandler Self.mUpdateChecker.UpdateAvailable, WeakAddressOf Self.mUpdateChecker_UpdateAvailable
@@ -259,6 +254,14 @@ Inherits Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function WindowDeveloperTools() As Boolean Handles WindowDeveloperTools.Action
+			DeveloperWindow.SharedWindow.Show()
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function WindowPresetLibrary() As Boolean Handles WindowPresetLibrary.Action
 			PresetManagerWindow.SharedWindow.Show
 			Return True
@@ -290,22 +293,6 @@ Inherits Application
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub DownloadNextFile()
-		  If Self.mFileLoading Or UBound(Self.mFileURLs) = -1 Then
-		    Return
-		  End If
-		  
-		  Self.mFileLoading = True
-		  Self.mFileLoader.Disconnect
-		  
-		  Dim URL As Text = Self.mFileURLs(0)
-		  Self.mFileURLs.Remove(0)
-		  
-		  Self.mFileLoader.Send("GET", URL)
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function HandleURL(URL As String) As Boolean
 		  Dim Prefix As String = Beacon.URLScheme + "://"
@@ -315,9 +302,37 @@ Inherits Application
 		    Return False
 		  End If
 		  
-		  Dim FileURL As String = "https://" + Mid(URL, PrefixLength + 1)
-		  Self.mFileURLs.Append(FileURL.ToText)
-		  Self.DownloadNextFile()
+		  If Mid(URL, PrefixLength, 8) = "/action/" Then
+		    Dim Instructions As String = Mid(URL, PrefixLength + 8)
+		    Dim ParamsPos As Integer = InStr(Instructions, "?") - 1
+		    Dim Params As String
+		    If ParamsPos > -1 Then
+		      Params = Mid(Instructions, ParamsPos + 1)
+		      Instructions = Left(Instructions, ParamsPos)
+		    End If
+		    
+		    Select Case Instructions
+		    Case "showdocuments"
+		      DeveloperWindow.SharedWindow.ShowPage(0, Params)
+		    Case "showmods"
+		      DeveloperWindow.SharedWindow.ShowPage(1, Params)
+		    Case "showidentity"
+		      DeveloperWindow.SharedWindow.ShowPage(2, Params)
+		    Case "showguide"
+		      DeveloperWindow.SharedWindow.ShowPage(3, Params)
+		    Case "showapibuilder"
+		      DeveloperWindow.SharedWindow.ShowPage(4, Params)
+		    Case "showpresets"
+		      PresetManagerWindow.SharedWindow.Show()
+		    Else
+		      Break
+		    End Select
+		  Else
+		    URL = ReplaceAll(URL, "thezaz.com/beacon/documents.php/", "thezaz.com/beacon/api/document.php/")
+		    
+		    Dim FileURL As String = "https://" + Mid(URL, PrefixLength + 1)
+		    DocumentDownloadWindow.Begin(FileURL.ToText)
+		  End If
 		  
 		  Return True
 		End Function
@@ -327,6 +342,16 @@ Inherits Application
 		Function Identity() As Beacon.Identity
 		  Return Self.mIdentity
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Identity(Assigns Value As Beacon.Identity)
+		  Self.mIdentity = Value
+		  
+		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
+		  Dim Writer As New Beacon.JSONWriter(Value.Export, IdentityFile)
+		  Writer.Run
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -350,59 +375,6 @@ Inherits Application
 		  Stream.Close
 		  
 		  Self.mLogLock.Leave
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function mFileLoader_AuthenticationRequired(Sender As Xojo.Net.HTTPSocket, Realm As Text, ByRef Name As Text, ByRef Password As Text) As Boolean
-		  // Can't authenticate
-		  
-		  #Pragma Unused Sender
-		  #Pragma Unused Realm
-		  #Pragma Unused Name
-		  #Pragma Unused Password
-		  
-		  Self.mFileLoading = False
-		  Self.DownloadNextFile
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mFileLoader_Error(Sender As Xojo.Net.HTTPSocket, Err As RuntimeException)
-		  #Pragma Unused Sender
-		  #Pragma Unused Err
-		  
-		  Self.mFileLoading = False
-		  Self.DownloadNextFile
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mFileLoader_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Sender
-		  #Pragma Unused URL
-		  #Pragma Unused HTTPStatus
-		  
-		  Self.mFileLoading = False
-		  Self.DownloadNextFile
-		  
-		  Dim TextValue As Text
-		  Try
-		    TextValue = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
-		  Catch Err As RuntimeException
-		    // Cannot be converted
-		    Return
-		  End Try
-		  
-		  Dim Document As Beacon.Document = Beacon.Document.Read(TextValue)
-		  If Document = Nil Then
-		    // Cannot be parsed correctly
-		    Return
-		  End If
-		  
-		  Dim Win As New DocWindow(Document)
-		  Win.Show
 		End Sub
 	#tag EndMethod
 
@@ -452,18 +424,6 @@ Inherits Application
 
 	#tag Property, Flags = &h0
 		LaunchOnQuit As FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mFileLoader As Xojo.Net.HTTPSocket
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mFileLoading As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mFileURLs() As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

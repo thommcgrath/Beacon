@@ -97,6 +97,7 @@ Begin BeaconWindow UpdateWindow
          LockTop         =   True
          Maximum         =   0
          Scope           =   2
+         TabIndex        =   1
          TabPanelIndex   =   1
          Top             =   52
          Value           =   0
@@ -441,6 +442,7 @@ Begin BeaconWindow UpdateWindow
          LockTop         =   True
          Maximum         =   0
          Scope           =   2
+         TabIndex        =   13
          TabPanelIndex   =   3
          Top             =   52
          Value           =   0
@@ -499,6 +501,12 @@ End
 	#tag Event
 		Sub Close()
 		  Self.mInstance = Nil
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
+		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
 

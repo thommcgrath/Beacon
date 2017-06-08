@@ -26,13 +26,6 @@ Begin Window DocumentPublishWindow
    Title           =   "Publish"
    Visible         =   True
    Width           =   500
-   Begin Beacon.RepositoryEngine Engine
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
@@ -117,7 +110,6 @@ Begin Window DocumentPublishWindow
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Publish Document"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -152,7 +144,6 @@ Begin Window DocumentPublishWindow
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Share Beacon documents online! Other Beacon users will be able to browse and load documents for deployment to other servers."
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -229,7 +220,6 @@ Begin Window DocumentPublishWindow
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Title:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -311,7 +301,6 @@ Begin Window DocumentPublishWindow
       Selectable      =   False
       TabIndex        =   7
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Description:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -345,15 +334,76 @@ Begin Window DocumentPublishWindow
       Visible         =   False
       Width           =   16
    End
+   Begin BeaconAPI.Socket Socket
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   0
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.SwapButtons()
+		  
+		  Dim Request As New BeaconAPI.Request("user.php/" + App.Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
+		  Self.Socket.Start(Request)
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_DocumentPost(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
+		  If Not Success Then
+		    Self.ShowAlert("Unable to publish document", "The document was not saved. The server said """ + Message + """")
+		    Return
+		  End If
+		  
+		  Self.mCancelled = False
+		  Self.Hide
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_UserLookup(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Message
+		  #Pragma Unused Details
+		  
+		  If Success Then
+		    // Already exists
+		    Return
+		  End If
+		  
+		  // Create the user
+		  
+		  Dim Params As New Xojo.Core.Dictionary
+		  Params.Value("user_id") = App.Identity.Identifier
+		  Params.Value("public_key") = App.Identity.PublicKey
+		  
+		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
+		  Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
+		  Self.Socket.Start(Request)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
+		  If Not Success Then
+		    Self.ShowAlert("User profile was not saved to the server. API access is limited.", Message)
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub CheckEnabled()
-		  Self.ActionButton.Enabled = Self.mWorking = False And Self.TitleField.Text <> "" And Self.DescriptionField.Text <> ""
-		  Self.CancelButton.Enabled = Self.mWorking = False
-		  Self.Spinner.Visible = Self.mWorking
+		  Self.ActionButton.Enabled = Self.Spinner.Visible = False And Self.TitleField.Text <> "" And Self.DescriptionField.Text <> ""
+		  Self.CancelButton.Enabled = Self.Spinner.Visible = False
 		End Sub
 	#tag EndMethod
 
@@ -380,52 +430,20 @@ End
 		Private mDocument As Beacon.Document
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mWorking As Boolean
-	#tag EndProperty
-
 
 #tag EndWindowCode
 
-#tag Events Engine
-	#tag Event
-		Sub SaveError(Reason As Text)
-		  Dim Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Unable to publish document"
-		  Dialog.Explanation = "This document was not saved. The server said """ + Reason + """"
-		  Call Dialog.ShowModal()
-		  
-		  Self.mWorking = False
-		  Self.CheckEnabled
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub SaveSuccess(ShareURL As Text)
-		  Dim Board As New Clipboard
-		  Board.Text = ShareURL
-		  
-		  Dim Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Your document has been published!"
-		  Dialog.Explanation = "The document is now available online at " + ShareURL + " - give it out! If you publish this document again, only the content will change, this url will not. This url has also been copied to your clipboard."
-		  Call Dialog.ShowModal()
-		  
-		  Self.mCancelled = False
-		  Self.Hide
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Self.mWorking = True
-		  Self.CheckEnabled()
-		  
 		  Self.mDocument.Title = Self.TitleField.Text.ToText
 		  Self.mDocument.Description = Self.DescriptionField.Text.ToText
 		  
-		  Engine.SaveDocument(Self.mDocument, App.Identity)
+		  Dim Body As Text = Xojo.Data.GenerateJSON(Self.mDocument.Export)
+		  
+		  Dim Request As New BeaconAPI.Request("document.php", "POST", Body, "application/json", AddressOf APICallback_DocumentPost)
+		  Request.Sign(App.Identity)
+		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -447,6 +465,20 @@ End
 #tag Events DescriptionField
 	#tag Event
 		Sub TextChange()
+		  Self.CheckEnabled()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Socket
+	#tag Event
+		Sub WorkCompleted()
+		  Spinner.Visible = False
+		  Self.CheckEnabled()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub WorkStarted()
+		  Spinner.Visible = True
 		  Self.CheckEnabled()
 		End Sub
 	#tag EndEvent
