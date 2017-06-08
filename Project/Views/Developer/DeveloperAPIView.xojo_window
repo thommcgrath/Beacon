@@ -187,7 +187,7 @@ Begin DeveloperView DeveloperAPIView
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "cURL\nPHP"
+      InitialValue    =   "cURL\nPHP\nHTTP"
       Italic          =   False
       Left            =   127
       ListIndex       =   0
@@ -542,6 +542,136 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function BuildCURLCode(Request As APIRequest) As Text
+		  Dim Cmd As Text = "curl"
+		  If Request.Method <> "GET" Then
+		    Cmd = Cmd + " --request '" + Request.Method + "'"
+		    If Request.Query <> "" Then
+		      Cmd = Cmd + " --data '" + Request.Query + "'"
+		    End If
+		    If Request.ContentType <> "" Then
+		      Cmd = Cmd + " --header 'Content-Type: " + Request.ContentType + "'"
+		    End If
+		  End If
+		  If Request.Authenticated Then
+		    Cmd = Cmd + " --user " + Request.AuthUser + ":" + Request.AuthPassword
+		  End If
+		  Cmd = Cmd + " " + Request.URL
+		  If Request.Method = "GET" And Request.Query <> "" Then
+		    Cmd = Cmd + "?" + Request.Query
+		  End If
+		  Return Cmd
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function BuildHTTPCode(Request As APIRequest) As Text
+		  Dim StringEOL As String = EndOfLine
+		  Dim EOL As Text = StringEOL.ToText // Really hate that it takes 2 lines of code to do this
+		  
+		  Dim URL As Text = Request.URL
+		  Dim SchemeEnd As Integer = URL.IndexOf("://")
+		  URL = URL.Mid(SchemeEnd + 3)
+		  
+		  Dim HostEnd As Integer = URL.IndexOf("/")
+		  Dim Host As Text = URL.Left(HostEnd)
+		  Dim Path As Text = URL.Mid(HostEnd)
+		  
+		  If Request.Method = "GET" Then
+		    If Request.Query <> "" Then
+		      Path = Path + "?" + Request.Query
+		    End If
+		  End If
+		  
+		  Dim Lines() As Text
+		  Lines.Append(Request.Method + " " + Path + " HTTP/1.1")
+		  Lines.Append("Host: " + Host)
+		  
+		  If Request.Authenticated Then
+		    Lines.Append("Authorization: Basic " + EncodeBase64(Request.AuthUser + ":" + Request.AuthPassword, 0).ToText)
+		  End If
+		  
+		  If Request.Method <> "GET" Then
+		    If Request.ContentType <> "" Then
+		      Lines.Append("Content-Type: " + Request.ContentType)
+		    End If
+		    Lines.Append("")
+		    Lines.Append(Request.Query)
+		  End If
+		  
+		  Return Text.Join(Lines, EOL)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function BuildPHPCode(Request As APIRequest) As Text
+		  Dim StringEOL As String = EndOfLine
+		  Dim EOL As Text = StringEOL.ToText // Really hate that it takes 2 lines of code to do this
+		  Dim Authenticated As Boolean = Request.Authenticated
+		  
+		  Dim Lines() As Text
+		  
+		  Dim URL As Text = Request.URL
+		  If Request.Method = "GET" Then
+		    If Request.Query <> "" Then
+		      URL = URL + "?" + Request.Query
+		    End If
+		  End If
+		  Lines.Append("$url = '" + URL.ReplaceAll("'", "\'") + "';")
+		  
+		  If Authenticated Or Request.Method <> "GET" Then
+		    Lines.Append("$method = '" + Request.Method.ReplaceAll("'", "\'").Uppercase + "';")
+		  End If
+		  
+		  If Request.Method <> "GET" And Request.Query <> "" Then
+		    Lines.Append("$body = '" + Request.Query.ReplaceAll("'", "\'") + "';")
+		  End If
+		  
+		  If Authenticated Then
+		    Lines.Append("")
+		    If Request.Method = "GET" Then
+		      Lines.Append("$auth = $method . chr(10) . $url;")
+		    Else
+		      If Request.Query <> "" Then
+		        Lines.Append("$auth = $method . chr(10) . $url  . chr(10) . $body;")
+		      Else
+		        Lines.Append("$auth = $method . chr(10) . $url  . chr(10);")
+		      End If
+		    End If
+		    Lines.Append("// Change Myself.beaconidentiy to point to your identity file!")
+		    Lines.Append("$identity = json_decode(file_get_contents('Myself.beaconidentity'), true);")
+		    Lines.Append("$username = $identity['Identifier'];")
+		    Lines.Append("$private_key = $identity['Private'];")
+		    Lines.Append("$private_key = trim(chunk_split(base64_encode(hex2bin($private_key)), 64, ""\n""));")
+		    Lines.Append("$private_key = ""-----BEGIN RSA PRIVATE KEY-----\n$private_key\n-----END RSA PRIVATE KEY-----"";")
+		    Lines.Append("openssl_sign($auth, $password, $private_key) or die('Unable to authenticate action');")
+		  End If
+		  
+		  Lines.Append("")
+		  Lines.Append("$http = curl_init();")
+		  Lines.Append("curl_setopt($http, CURLOPT_URL, $url);")
+		  Lines.Append("curl_setopt($http, CURLOPT_RETURNTRANSFER, 1);")
+		  If Request.Method <> "GET" Then
+		    Lines.Append("curl_setopt($http, CURLOPT_CUSTOMREQUEST, $method);")
+		    If Request.Query <> "" Then
+		      Lines.Append("curl_setopt($http, CURLOPT_POSTFIELDS, $body);")
+		    End If
+		    If Request.ContentType <> "" Then
+		      Lines.Append("curl_setopt($http, CURLOPT_HTTPHEADER, array('Content-Type: " + Request.ContentType.ReplaceAll("'", "\'") + "'));")
+		    End If
+		  End If
+		  If Authenticated Then
+		    Lines.Append("curl_setopt($http, CURLOPT_USERPWD, $username . ':' . bin2hex($password));")
+		  End If
+		  Lines.Append("$response = curl_exec($http);")
+		  Lines.Append("$http_status = curl_getinfo($http, CURLINFO_HTTP_CODE);")
+		  Lines.Append("curl_close($http);")
+		  
+		  Return Text.Join(Lines, EOL)
+		End Function
+	#tag EndMethod
+
 
 #tag EndWindowCode
 
@@ -564,20 +694,27 @@ End
 		  Dim ContentType As Text = ContentTypeField.Text.ToText
 		  
 		  Dim Request As APIRequest
-		  If BodyField.Enabled Then
-		    Request = New APIRequest(Path, Method, Body, ContentType, AddressOf APICallback_DoNothing)
-		  Else
-		    Request = New APIRequest(Path, Method, AddressOf APICallback_DoNothing)
-		  End If
-		  If AuthenticatedCheck.Value Then
-		    Request.Sign(App.Identity)
-		  End If
+		  Try
+		    If BodyField.Enabled Then
+		      Request = New APIRequest(Path, Method, Body, ContentType, AddressOf APICallback_DoNothing)
+		    Else
+		      Request = New APIRequest(Path, Method, AddressOf APICallback_DoNothing)
+		    End If
+		    If AuthenticatedCheck.Value Then
+		      Request.Sign(App.Identity)
+		    End If
+		  Catch Err As UnsupportedOperationException
+		    Self.ShowAlert("Cannot build the request", Err.Reason)
+		    Return
+		  End Try
 		  
 		  Select Case FormatMenu.ListIndex
 		  Case 0
-		    CodeField.Text = Request.CommandLineVersion
+		    CodeField.Text = Self.BuildCURLCode(Request)
 		  Case 1
-		    CodeField.Text = Request.PHPVersion
+		    CodeField.Text = Self.BuildPHPCode(Request)
+		  Case 2
+		    CodeField.Text = Self.BuildHTTPCode(Request)
 		  End Select
 		End Sub
 	#tag EndEvent
