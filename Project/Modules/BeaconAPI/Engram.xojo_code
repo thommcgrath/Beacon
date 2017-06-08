@@ -41,6 +41,13 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Source As Beacon.Engram)
+		  Self.mClassString = Source.ClassString
+		  Self.Label = Source.Label
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Source As BeaconAPI.Engram)
 		  Self.CanBeBlueprint = Source.CanBeBlueprint
 		  Self.Label = Source.Label
@@ -161,52 +168,7 @@ Protected Class Engram
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Value.Trim
-			  
-			  If Value.IndexOf("/") <> -1 Or Value.IndexOf(".") <> -1 Then
-			    // Likely have a path
-			    If Value.Length > 9 And Value.Left(9) = "Blueprint" Then
-			      Value = Value.Mid(9)
-			    End If
-			    
-			    If Value.Left(1) = "." Then
-			      Value = Value.Mid(1)
-			    End If
-			    
-			    If Value.Left(1) = "'" Then
-			      Value = Value.Mid(1)
-			    End If
-			    
-			    If Value.Left(1) = """" Then
-			      Value = Value.Mid(1)
-			    End If
-			    
-			    If Value.Right(1) = "'" Then
-			      Value = Value.Left(Value.Length - 1)
-			    End If
-			    
-			    If Value.Right(1) = """" Then
-			      Value = Value.Left(Value.Length - 1)
-			    End If
-			    
-			    // Should have a normalized path now, grab the last segment
-			    If Value.IndexOf("/") <> -1 Then
-			      Dim Parts() As Text = Value.Split("/")
-			      Value = Parts(UBound(Parts))
-			    End If
-			    
-			    // Now we need the part after the dot
-			    If Value.IndexOf(".") <> -1 Then
-			      Dim Parts() As Text = Value.Split(".")
-			      Value = Parts(UBound(Parts))
-			    End If
-			  End If
-			  
-			  If Value.Length < 2 Or Value.Right(2) <> "_C" Then
-			    Value = Value + "_C"
-			  End If
-			  
-			  Self.mClassString = Value
+			  Self.mClassString = Beacon.CleanupClassString(Value)
 			End Set
 		#tag EndSetter
 		ClassString As Text

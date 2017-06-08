@@ -45,7 +45,7 @@ Begin Window EntryEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton CancelButton
@@ -180,7 +180,7 @@ Begin Window EntryEditor
          BackColor       =   &cFFFFFF00
          Bold            =   False
          Border          =   True
-         CueText         =   "Filter"
+         CueText         =   "Search or Enter Spawn Command"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
@@ -1292,18 +1292,24 @@ End
 		    End If
 		  Next
 		  
-		  If Not PerfectMatch And SearchText <> "" Then
-		    Dim Engram As New Beacon.MutableEngram(SearchText.ToText)
-		    EngramList.AddRow("", Engram.Label, Engram.ClassString)
-		    EngramList.RowTag(EngramList.LastIndex) = Engram
-		    Indexes.Value(Engram.ClassString) = EngramList.LastIndex
+		  If Not PerfectMatch Then
+		    Dim ParsedEngrams() As Beacon.Engram = Beacon.PullEngramsFromText(SearchText)
+		    For Each Engram As Beacon.Engram In ParsedEngrams
+		      EngramList.AddRow("", Engram.Label, Engram.ClassString)
+		      EngramList.RowTag(EngramList.LastIndex) = Engram
+		      Indexes.Value(Engram.ClassString) = EngramList.LastIndex
+		    Next
 		  End If
 		  
 		  For Each Engram As Beacon.Engram In Self.mSelectedEngrams
 		    Dim Idx As Integer = Indexes.Lookup(Engram.ClassString, -1)
-		    If Idx > -1 Then
-		      EngramList.CellCheck(Idx, 0) = True
+		    If Idx = -1 Then
+		      EngramList.AddRow("", Engram.Label, Engram.ClassString)
+		      EngramList.RowTag(EngramList.LastIndex) = Engram
+		      Indexes.Value(Engram.ClassString) = EngramList.LastIndex
+		      Idx = EngramList.LastIndex
 		    End If
+		    EngramList.CellCheck(Idx, 0) = True
 		  Next
 		End Sub
 	#tag EndMethod

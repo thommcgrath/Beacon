@@ -1,6 +1,57 @@
 #tag Module
 Protected Module Beacon
 	#tag Method, Flags = &h1
+		Protected Function CleanupClassString(Value As Text) As Text
+		  Value = Value.Trim
+		  
+		  If Value.IndexOf("/") <> -1 Or Value.IndexOf(".") <> -1 Then
+		    // Likely have a path
+		    If Value.Length > 9 And Value.Left(9) = "Blueprint" Then
+		      Value = Value.Mid(9)
+		    End If
+		    
+		    If Value.Left(1) = "." Then
+		      Value = Value.Mid(1)
+		    End If
+		    
+		    If Value.Left(1) = "'" Then
+		      Value = Value.Mid(1)
+		    End If
+		    
+		    If Value.Left(1) = """" Then
+		      Value = Value.Mid(1)
+		    End If
+		    
+		    If Value.Right(1) = "'" Then
+		      Value = Value.Left(Value.Length - 1)
+		    End If
+		    
+		    If Value.Right(1) = """" Then
+		      Value = Value.Left(Value.Length - 1)
+		    End If
+		    
+		    // Should have a normalized path now, grab the last segment
+		    If Value.IndexOf("/") <> -1 Then
+		      Dim Parts() As Text = Value.Split("/")
+		      Value = Parts(UBound(Parts))
+		    End If
+		    
+		    // Now we need the part after the dot
+		    If Value.IndexOf(".") <> -1 Then
+		      Dim Parts() As Text = Value.Split(".")
+		      Value = Parts(UBound(Parts))
+		    End If
+		  End If
+		  
+		  If Value.Length < 2 Or Value.Right(2) <> "_C" Then
+		    Value = Value + "_C"
+		  End If
+		  
+		  Return Value
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function CreateUUID() As Text
 		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)
 		  Dim Id As New Xojo.Core.MutableMemoryBlock(Bytes)
@@ -210,6 +261,76 @@ Protected Module Beacon
 		  End If
 		  
 		  Return Extension
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Protected Function PullEngramsFromText(Contents As String) As Beacon.Engram()
+		  // Only available on the desktop
+		  
+		  Dim Engrams() As Beacon.Engram
+		  
+		  Dim Regex As New Regex
+		  Regex.SearchPattern = "['""]/Game/[A-Za-z0-9_/]+/[A-Za-z0-9_]+\.([A-Za-z0-9_]+)['""]|^([A-Za-z0-9_]+_C)$|^.*[^A-Za-z0-9_]([A-Za-z0-9_]+_C)[^A-Za-z0-9_].*$"
+		  
+		  Dim Match As RegexMatch = Regex.Search(Contents)
+		  Dim Classes As New Dictionary
+		  Do
+		    If Match = Nil Then
+		      Continue
+		    End If
+		    
+		    Dim Found As String
+		    For I As Integer = 1 To Match.SubExpressionCount
+		      If Match.SubExpressionString(I) <> "" Then
+		        Found = Match.SubExpressionString(I)
+		        Exit For I
+		      End If
+		    Next
+		    If Found <> "" Then
+		      Classes.Value(Found) = True
+		    End If
+		    
+		    Match = Regex.Search
+		  Loop Until Match Is Nil
+		  
+		  If Classes.Count = 0 Then
+		    Return Engrams
+		  End If
+		  
+		  Regex = New Regex
+		  Regex.SearchPattern = "([A-Z])"
+		  Regex.ReplacementPattern = " \1"
+		  Regex.Options.ReplaceAllMatches = True
+		  Regex.Options.CaseSensitive = True
+		  
+		  Dim Keys() As Variant = Classes.Keys
+		  For Each Key As String In Keys
+		    Dim ClassString As Text = Beacon.CleanupClassString(Key.ToText)
+		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngram(ClassString)
+		    If Engram = Nil Then
+		      Dim Temp As New Beacon.MutableEngram(ClassString)
+		      
+		      Dim GuessName As String = ClassString
+		      Dim Parts() As String = GuessName.Split("_")
+		      Parts.Remove(0)
+		      Parts.Remove(UBound(Parts))
+		      GuessName = Join(Parts, " ")
+		      GuessName = Regex.Replace(GuessName)
+		      GuessName = ReplaceAll(GuessName, "_", " ")
+		      While GuessName.InStr("  ") > 0
+		        GuessName = ReplaceAll(GuessName, "  ", " ")
+		      Wend
+		      GuessName = Trim(GuessName)
+		      
+		      Temp.Label = GuessName.ToText
+		      Engram = New Beacon.Engram(Temp)
+		    End If
+		    
+		    Engrams.Append(Engram)
+		  Next
+		  
+		  Return Engrams
 		End Function
 	#tag EndMethod
 

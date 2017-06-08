@@ -463,64 +463,19 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ImportText(Contents As String)
-		  Dim Regex As New Regex
-		  Regex.SearchPattern = "['""]/Game/Mods/[A-Za-z0-9_/]+/[A-Za-z0-9_]+\.([A-Za-z0-9_]+)['""]|^([A-Za-z0-9_]+_C)$|^.*[^A-Za-z0-9_]([A-Za-z0-9_]+_C)[^A-Za-z0-9_].*$"
-		  
-		  Dim Set As BeaconAPI.EngramSet = Self.EngramSet
-		  Dim Match As RegexMatch = Regex.Search(Contents)
-		  Dim Classes As New Dictionary
-		  Do
-		    If Match = Nil Then
-		      Continue
-		    End If
-		    
-		    Dim Found As String
-		    For I As Integer = 1 To Match.SubExpressionCount
-		      If Match.SubExpressionString(I) <> "" Then
-		        Found = Match.SubExpressionString(I)
-		        Exit For I
-		      End If
-		    Next
-		    If Found <> "" Then
-		      Classes.Value(Found) = True
-		    End If
-		    
-		    Match = Regex.Search
-		  Loop Until Match Is Nil
-		  
-		  If Classes.Count = 0 Then
+		  Dim Engrams() As Beacon.Engram = Beacon.PullEngramsFromText(Contents)
+		  If UBound(Engrams) = -1 Then
 		    Self.ShowAlert("Nothing to import", "Sorry, Beacon has tried to find classes to import, but nothing was found.")
 		    Return
 		  End If
 		  
-		  Regex = New Regex
-		  Regex.SearchPattern = "([A-Z])"
-		  Regex.ReplacementPattern = " \1"
-		  Regex.Options.ReplaceAllMatches = True
-		  Regex.Options.CaseSensitive = True
-		  
-		  Dim Keys() As Variant = Classes.Keys
-		  For Each Key As String In Keys
-		    Dim Engram As New BeaconAPI.Engram
-		    Engram.ClassString = Key.ToText
-		    
-		    Dim GuessName As String = Engram.ClassString
-		    Dim Parts() As String = GuessName.Split("_")
-		    Parts.Remove(0)
-		    Parts.Remove(UBound(Parts))
-		    GuessName = Join(Parts, " ")
-		    GuessName = Regex.Replace(GuessName)
-		    GuessName = ReplaceAll(GuessName, "_", " ")
-		    While GuessName.InStr("  ") > 0
-		      GuessName = ReplaceAll(GuessName, "  ", " ")
-		    Wend
-		    GuessName = Trim(GuessName)
-		    
-		    Engram.ModID = Self.mCurrentMod.ModID
-		    Engram.Label = GuessName.ToText
-		    Set.Add(Engram)
+		  Dim Set As BeaconAPI.EngramSet = Self.EngramSet
+		  For Each Engram As Beacon.Engram In Engrams
+		    Dim APIEngram As New BeaconAPI.Engram(Engram)
+		    APIEngram.ModID = Self.mCurrentMod.ModID
+		    Set.Add(APIEngram)
 		    EngramList.AddRow("")
-		    Self.ShowEngramInRow(EngramList.LastIndex, Engram)
+		    Self.ShowEngramInRow(EngramList.LastIndex, APIEngram)
 		  Next
 		  
 		  Footer.Button("PublishButton").Enabled = Set.Modified
