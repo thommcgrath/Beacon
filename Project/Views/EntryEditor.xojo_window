@@ -42,7 +42,7 @@ Begin Window EntryEditor
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
       Value           =   1
@@ -68,7 +68,7 @@ Begin Window EntryEditor
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -99,7 +99,7 @@ Begin Window EntryEditor
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   5
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -130,7 +130,7 @@ Begin Window EntryEditor
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   24
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -161,7 +161,7 @@ Begin Window EntryEditor
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   25
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -201,7 +201,7 @@ Begin Window EntryEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
@@ -251,7 +251,7 @@ Begin Window EntryEditor
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionType   =   0
-         TabIndex        =   3
+         TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -285,7 +285,7 @@ Begin Window EntryEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   2
+         TabIndex        =   1
          TabPanelIndex   =   2
          Text            =   "Untitled"
          TextAlign       =   0
@@ -353,7 +353,7 @@ Begin Window EntryEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   4
+         TabIndex        =   0
          TabPanelIndex   =   2
          Text            =   "Class:"
          TextAlign       =   2
@@ -387,7 +387,7 @@ Begin Window EntryEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   5
+         TabIndex        =   2
          TabPanelIndex   =   2
          Text            =   "Name:"
          TextAlign       =   2
@@ -430,7 +430,7 @@ Begin Window EntryEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   6
+         TabIndex        =   5
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "1"
@@ -473,7 +473,7 @@ Begin Window EntryEditor
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   7
+         TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "1"
@@ -507,7 +507,7 @@ Begin Window EntryEditor
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   8
+         TabIndex        =   11
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -538,7 +538,7 @@ Begin Window EntryEditor
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   11
+         TabIndex        =   14
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -569,7 +569,7 @@ Begin Window EntryEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   12
+         TabIndex        =   4
          TabPanelIndex   =   2
          Text            =   "Min Quantity:"
          TextAlign       =   2
@@ -603,7 +603,7 @@ Begin Window EntryEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   13
+         TabIndex        =   7
          TabPanelIndex   =   2
          Text            =   "Max Quantity:"
          TextAlign       =   2
@@ -637,7 +637,7 @@ Begin Window EntryEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   14
+         TabIndex        =   10
          TabPanelIndex   =   2
          Text            =   "Min Quality:"
          TextAlign       =   2
@@ -671,7 +671,7 @@ Begin Window EntryEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   15
+         TabIndex        =   13
          TabPanelIndex   =   2
          Text            =   "Max Quality:"
          TextAlign       =   2
@@ -800,7 +800,7 @@ Begin Window EntryEditor
          Minimum         =   0
          PageStep        =   25
          Scope           =   2
-         TabIndex        =   19
+         TabIndex        =   21
          TabPanelIndex   =   2
          TabStop         =   True
          TickStyle       =   "0"
@@ -829,7 +829,7 @@ Begin Window EntryEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   20
+         TabIndex        =   22
          TabPanelIndex   =   2
          Text            =   "25%"
          TextAlign       =   0
@@ -863,7 +863,7 @@ Begin Window EntryEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   21
+         TabIndex        =   20
          TabPanelIndex   =   2
          Text            =   "Chance To Be Blueprint:"
          TextAlign       =   2
@@ -897,7 +897,7 @@ Begin Window EntryEditor
          LockTop         =   True
          Scope           =   2
          State           =   1
-         TabIndex        =   22
+         TabIndex        =   23
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -929,7 +929,7 @@ Begin Window EntryEditor
          LockTop         =   True
          Scope           =   2
          State           =   1
-         TabIndex        =   23
+         TabIndex        =   19
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -961,7 +961,7 @@ Begin Window EntryEditor
          LockTop         =   True
          Scope           =   2
          State           =   1
-         TabIndex        =   24
+         TabIndex        =   15
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -993,7 +993,7 @@ Begin Window EntryEditor
          LockTop         =   True
          Scope           =   2
          State           =   1
-         TabIndex        =   25
+         TabIndex        =   12
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -1025,7 +1025,7 @@ Begin Window EntryEditor
          LockTop         =   True
          Scope           =   2
          State           =   1
-         TabIndex        =   26
+         TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -1057,7 +1057,7 @@ Begin Window EntryEditor
          LockTop         =   True
          Scope           =   2
          State           =   1
-         TabIndex        =   27
+         TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -1089,7 +1089,7 @@ Begin Window EntryEditor
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   4
+         TabIndex        =   3
          TabPanelIndex   =   1
          Text            =   "No items selected"
          TextAlign       =   0
@@ -1120,7 +1120,7 @@ Begin Window EntryEditor
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"

@@ -46,7 +46,7 @@ Begin Window ImporterWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -74,7 +74,6 @@ Begin Window ImporterWindow
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   52
       Value           =   0
       Visible         =   True
@@ -100,9 +99,8 @@ Begin Window ImporterWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Importing from """""
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -137,7 +135,6 @@ Begin Window ImporterWindow
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   &c00000000

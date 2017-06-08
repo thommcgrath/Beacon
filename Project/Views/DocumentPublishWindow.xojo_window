@@ -46,7 +46,7 @@ Begin Window DocumentPublishWindow
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -77,7 +77,7 @@ Begin Window DocumentPublishWindow
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -108,7 +108,7 @@ Begin Window DocumentPublishWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   0
       TabPanelIndex   =   0
       Text            =   "Publish Document"
       TextAlign       =   0
@@ -142,7 +142,7 @@ Begin Window DocumentPublishWindow
       Multiline       =   True
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   3
+      TabIndex        =   1
       TabPanelIndex   =   0
       Text            =   "Share Beacon documents online! Other Beacon users will be able to browse and load documents for deployment to other servers."
       TextAlign       =   0
@@ -184,7 +184,7 @@ Begin Window DocumentPublishWindow
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -218,7 +218,7 @@ Begin Window DocumentPublishWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   5
+      TabIndex        =   2
       TabPanelIndex   =   0
       Text            =   "Title:"
       TextAlign       =   2
@@ -265,7 +265,7 @@ Begin Window DocumentPublishWindow
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   True
-      TabIndex        =   6
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -299,7 +299,7 @@ Begin Window DocumentPublishWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   4
       TabPanelIndex   =   0
       Text            =   "Description:"
       TextAlign       =   2

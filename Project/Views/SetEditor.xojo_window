@@ -61,7 +61,7 @@ Begin ContainerControl SetEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   1
-      TabIndex        =   0
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -137,7 +137,7 @@ Begin ContainerControl SetEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   0
       TabPanelIndex   =   0
       Text            =   "Label:"
       TextAlign       =   2
@@ -179,7 +179,7 @@ Begin ContainerControl SetEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -221,7 +221,7 @@ Begin ContainerControl SetEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -254,7 +254,7 @@ Begin ContainerControl SetEditor
       Minimum         =   1
       PageStep        =   25
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       TickStyle       =   "0"
@@ -283,7 +283,7 @@ Begin ContainerControl SetEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   10
       TabPanelIndex   =   0
       Text            =   "100"
       TextAlign       =   0
@@ -317,7 +317,7 @@ Begin ContainerControl SetEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   10
+      TabIndex        =   2
       TabPanelIndex   =   0
       Text            =   "Min Items:"
       TextAlign       =   2
@@ -351,7 +351,7 @@ Begin ContainerControl SetEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   11
+      TabIndex        =   5
       TabPanelIndex   =   0
       Text            =   "Max Items:"
       TextAlign       =   2
@@ -385,7 +385,7 @@ Begin ContainerControl SetEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   12
+      TabIndex        =   8
       TabPanelIndex   =   0
       Text            =   "Weight:"
       TextAlign       =   2
@@ -419,7 +419,7 @@ Begin ContainerControl SetEditor
       LockTop         =   True
       Scope           =   2
       State           =   1
-      TabIndex        =   13
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -450,7 +450,7 @@ Begin ContainerControl SetEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   15
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   403
@@ -478,7 +478,7 @@ Begin ContainerControl SetEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   17
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   189
@@ -502,7 +502,7 @@ Begin ContainerControl SetEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   23
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   53
@@ -524,7 +524,7 @@ Begin ContainerControl SetEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   24
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   87

@@ -62,7 +62,7 @@ Begin BeaconWindow DocWindow
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   1
-      TabIndex        =   0
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -151,7 +151,7 @@ Begin BeaconWindow DocWindow
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   555
@@ -189,7 +189,7 @@ Begin BeaconWindow DocWindow
       LockTop         =   True
       Scope           =   2
       SegmentIndex    =   0
-      TabIndex        =   13
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       TintColor       =   &cEAEEF100

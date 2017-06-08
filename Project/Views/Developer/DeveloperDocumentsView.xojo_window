@@ -51,7 +51,7 @@ Begin DeveloperView DeveloperDocumentsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -98,7 +98,7 @@ Begin DeveloperView DeveloperDocumentsView
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   0
-      TabIndex        =   1
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -132,7 +132,7 @@ Begin DeveloperView DeveloperDocumentsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -163,7 +163,7 @@ Begin DeveloperView DeveloperDocumentsView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -194,7 +194,7 @@ Begin DeveloperView DeveloperDocumentsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -225,7 +225,7 @@ Begin DeveloperView DeveloperDocumentsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"

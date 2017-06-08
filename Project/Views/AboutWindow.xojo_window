@@ -45,7 +45,7 @@ Begin BeaconWindow AboutWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   20
@@ -74,9 +74,8 @@ Begin BeaconWindow AboutWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Beacon"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -109,9 +108,8 @@ Begin BeaconWindow AboutWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Version X"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -144,9 +142,8 @@ Begin BeaconWindow AboutWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   3
+      TabIndex        =   6
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "© 2016 Thom McGrath, All Rights Reserved."
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -179,9 +176,8 @@ Begin BeaconWindow AboutWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   7
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "https://thezaz.com/beacon"
       TextAlign       =   1
       TextColor       =   &c0000FF00
@@ -214,9 +210,8 @@ Begin BeaconWindow AboutWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Engrams Updated Y"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -249,7 +244,7 @@ Begin BeaconWindow AboutWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "SmallSystem"
@@ -274,7 +269,7 @@ Begin BeaconWindow AboutWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   -50
@@ -282,7 +277,6 @@ Begin BeaconWindow AboutWindow
       Width           =   16
    End
    Begin Xojo.Net.HTTPSocket UpdateEngramsSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

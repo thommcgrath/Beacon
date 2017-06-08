@@ -45,7 +45,7 @@ Begin BeaconWindow DeveloperWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -74,7 +74,7 @@ Begin BeaconWindow DeveloperWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   30
@@ -99,7 +99,7 @@ Begin BeaconWindow DeveloperWindow
       PanelCount      =   5
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   31
       Value           =   4

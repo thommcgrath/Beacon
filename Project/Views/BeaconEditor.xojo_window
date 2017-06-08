@@ -61,7 +61,7 @@ Begin ContainerControl BeaconEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   0
-      TabIndex        =   10
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -94,7 +94,7 @@ Begin ContainerControl BeaconEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -122,7 +122,7 @@ Begin ContainerControl BeaconEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -150,7 +150,7 @@ Begin ContainerControl BeaconEditor
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   16
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   439
@@ -179,7 +179,7 @@ Begin ContainerControl BeaconEditor
       LockTop         =   True
       Scope           =   2
       SegmentIndex    =   0
-      TabIndex        =   20
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       TintColor       =   &cEAEEF100

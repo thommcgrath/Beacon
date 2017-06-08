@@ -76,7 +76,7 @@ Begin ContainerControl DeveloperModView
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
@@ -110,7 +110,7 @@ Begin ContainerControl DeveloperModView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
@@ -141,7 +141,7 @@ Begin ContainerControl DeveloperModView
          Multiline       =   True
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   2
+         TabIndex        =   0
          TabPanelIndex   =   3
          Text            =   "You have not yet confirmed ownership of this mod. To so do, please copy the value below and insert it anywhere on the mod's Steam page. Then press the ""Confirm Ownership"" button below. Once confirmed, the text can be removed from your Steam page."
          TextAlign       =   1
@@ -311,7 +311,7 @@ Begin ContainerControl DeveloperModView
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   1
          TabPanelIndex   =   4
          TabStop         =   True
          Top             =   394

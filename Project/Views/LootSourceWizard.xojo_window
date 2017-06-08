@@ -341,7 +341,7 @@ Begin Window LootSourceWizard
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   9
+         TabIndex        =   10
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
@@ -372,7 +372,7 @@ Begin Window LootSourceWizard
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   8
+         TabIndex        =   9
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
@@ -1145,7 +1145,7 @@ Begin Window LootSourceWizard
          LockTop         =   False
          Scope           =   2
          State           =   0
-         TabIndex        =   10
+         TabIndex        =   8
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"

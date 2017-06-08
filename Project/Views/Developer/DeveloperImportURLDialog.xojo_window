@@ -156,7 +156,7 @@ Begin Window DeveloperImportURLDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -187,7 +187,7 @@ Begin Window DeveloperImportURLDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"

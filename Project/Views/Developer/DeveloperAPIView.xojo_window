@@ -87,7 +87,7 @@ Begin DeveloperView DeveloperAPIView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -131,7 +131,7 @@ Begin DeveloperView DeveloperAPIView
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   True
-      TabIndex        =   3
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -165,7 +165,7 @@ Begin DeveloperView DeveloperAPIView
       LockTop         =   True
       Scope           =   2
       State           =   0
-      TabIndex        =   4
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -197,7 +197,7 @@ Begin DeveloperView DeveloperAPIView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -241,7 +241,7 @@ Begin DeveloperView DeveloperAPIView
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   True
-      TabIndex        =   6
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -275,7 +275,7 @@ Begin DeveloperView DeveloperAPIView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   0
       TabPanelIndex   =   0
       Text            =   "Path:"
       TextAlign       =   2
@@ -309,7 +309,7 @@ Begin DeveloperView DeveloperAPIView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   8
+      TabIndex        =   2
       TabPanelIndex   =   0
       Text            =   "Method:"
       TextAlign       =   2
@@ -343,7 +343,7 @@ Begin DeveloperView DeveloperAPIView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   4
       TabPanelIndex   =   0
       Text            =   "Body:"
       TextAlign       =   2
@@ -377,7 +377,7 @@ Begin DeveloperView DeveloperAPIView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   10
+      TabIndex        =   9
       TabPanelIndex   =   0
       Text            =   "Language:"
       TextAlign       =   2
@@ -411,7 +411,7 @@ Begin DeveloperView DeveloperAPIView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   11
+      TabIndex        =   12
       TabPanelIndex   =   0
       Text            =   "Code:"
       TextAlign       =   2
@@ -445,7 +445,7 @@ Begin DeveloperView DeveloperAPIView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -484,7 +484,7 @@ Begin DeveloperView DeveloperAPIView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -518,7 +518,7 @@ Begin DeveloperView DeveloperAPIView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   14
+      TabIndex        =   6
       TabPanelIndex   =   0
       Text            =   "Content Type:"
       TextAlign       =   2

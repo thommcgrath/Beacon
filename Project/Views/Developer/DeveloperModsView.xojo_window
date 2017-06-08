@@ -98,7 +98,7 @@ Begin DeveloperView DeveloperModsView
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   1
-      TabIndex        =   1
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -131,7 +131,7 @@ Begin DeveloperView DeveloperModsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -187,7 +187,7 @@ Begin DeveloperView DeveloperModsView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0

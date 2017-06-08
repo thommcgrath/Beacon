@@ -124,7 +124,7 @@ Begin BeaconWindow UpdateWindow
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -212,7 +212,7 @@ Begin BeaconWindow UpdateWindow
          LockTop         =   True
          Renderer        =   1
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   4
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   53
@@ -239,7 +239,7 @@ Begin BeaconWindow UpdateWindow
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -270,7 +270,7 @@ Begin BeaconWindow UpdateWindow
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -300,7 +300,7 @@ Begin BeaconWindow UpdateWindow
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   2
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   52
@@ -356,7 +356,7 @@ Begin BeaconWindow UpdateWindow
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   7
+         TabIndex        =   5
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   52
@@ -418,7 +418,7 @@ Begin BeaconWindow UpdateWindow
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   8
+         TabIndex        =   3
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   53
@@ -442,7 +442,7 @@ Begin BeaconWindow UpdateWindow
          LockTop         =   True
          Maximum         =   0
          Scope           =   2
-         TabIndex        =   13
+         TabIndex        =   1
          TabPanelIndex   =   3
          Top             =   52
          Value           =   0
@@ -469,7 +469,7 @@ Begin BeaconWindow UpdateWindow
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"

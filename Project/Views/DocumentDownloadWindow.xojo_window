@@ -46,7 +46,7 @@ Begin Window DocumentDownloadWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -62,6 +62,7 @@ Begin Window DocumentDownloadWindow
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
    End
    Begin Label MessageLabel
       AutoDeactivate  =   True
@@ -83,7 +84,7 @@ Begin Window DocumentDownloadWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       Text            =   "Downloading…"
       TextAlign       =   0
@@ -117,7 +118,7 @@ Begin Window DocumentDownloadWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       Text            =   "???"
       TextAlign       =   0
@@ -146,7 +147,7 @@ Begin Window DocumentDownloadWindow
       LockTop         =   True
       Maximum         =   0
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   84
       Value           =   0
