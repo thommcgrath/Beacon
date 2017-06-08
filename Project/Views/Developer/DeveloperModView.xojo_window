@@ -381,6 +381,7 @@ End
 		  Self.EngramSet.ClearModifications(False)
 		  Footer.Button("PublishButton").Enabled = False
 		  Self.ShowAlert("Engrams published.", "Your changes are now live.")
+		  App.LocalData.CheckForEngramUpdates()
 		End Sub
 	#tag EndMethod
 
@@ -408,6 +409,7 @@ End
 		  Self.EngramSet.ClearModifications(False)
 		  Footer.Button("PublishButton").Enabled = False
 		  Self.ShowAlert("Engrams published.", "Your changes are now live.")
+		  App.LocalData.CheckForEngramUpdates()
 		End Sub
 	#tag EndMethod
 

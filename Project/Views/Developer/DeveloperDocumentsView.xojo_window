@@ -361,11 +361,8 @@ End
 #tag Events OpenButton
 	#tag Event
 		Sub Action()
-		  // This isn't good enough.
-		  Self.ShowAlert("Downloading", "The document is now downloading. It'll open in just a moment.")
-		  
 		  Dim Document As APIDocument = DocList.RowTag(DocList.ListIndex)
-		  App.DownloadDocument(Document.ResourceURL)
+		  DocumentDownloadWindow.Begin(Document.ResourceURL)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

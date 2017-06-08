@@ -287,6 +287,8 @@ End
 		  
 		  Dim Request As New APIRequest("user.php/" + App.Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
 		  Self.Socket.Start(Request)
+		  
+		  Self.DocsView.SwitchedTo()
 		End Sub
 	#tag EndEvent
 
