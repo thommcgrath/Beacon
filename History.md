@@ -3,7 +3,11 @@
 ## Build 15 (Beta 8)
 
 - Beacon documents now format their contents nicely, making them easier to version control.
-- Beacon now supports mods! See the new 'Developer Tools' window for more information.
+- Beacon now supports mods! Users can register their mods with Beacon and manage the items within the mod for Beacon users to easily use. Just give Beacon a file of spawn codes or a URL to the codes online, and it'll try its best to parse out all the items.
+- New document browser! Find documents shared by other users, see which documents you've shared, see stats like download count, and more.
+- Improved identity management. All Beacon users have an "identity" file which authenticates their online actions. Now this identity can be backed up and restored, as well as making it easy to view the identity key pair.
+- Public Beacon API! Anybody can manage documents, mods, and engrams however they please. The new 'Developer Tools' window has built-in an 'API Guide' section for learning about the API, and an 'API Builder' section for generating sample API code.
+- New admin spawn code list at https://thezaz.com/beacon/spawncodes.php - if Beacon knows about it, including mod items, you can find it and its spawn code here. Mod authors may even link to this from their Steam page using https://thezaz.com/beacon/spawncodes.php?mod_id=<mod_id> to show only items for that mod.
 
 ## Build 14 (Beta 7)
 
