@@ -94,17 +94,15 @@ case 'DELETE':
 		BeaconAPI::ReplyError('No mod specified');
 	}
 	
-	$results = $database->Query('SELECT user_id FROM mods WHERE workshop_id = $1;', $workshop_id);
-	if ($results->RecordCount() == 0) {
-		BeaconAPI::ReplyError('Mod is not registered.');
-	}
-	
-	if ($results->Field('user_id') !== $user_id) {
-		BeaconAPI::ReplyError('Mod is registered to a different user.');
+	$mods = BeaconMod::GetByWorkshopID($user_id, $workshop_id);
+	if (count($mods) == 0) {
+		BeaconAPI::ReplyError('No mods found.', null, 404);
 	}
 	
 	$database->BeginTransaction();
-	$database->Query('DELETE FROM mods WHERE workshop_id = $1;', $workshop_id);
+	foreach ($mods as $mod) {
+		$mods->Delete();
+	}
 	$database->Commit();
 	
 	BeaconAPI::ReplySuccess();

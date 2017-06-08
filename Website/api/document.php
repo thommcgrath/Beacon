@@ -45,7 +45,7 @@ case 'GET':
 			}
 		}
 		if (isset($_GET['direction'])) {
-			$sort_direction = ($_GET['direction'] === 'desc' ? 'DESC' : 'ASC');
+			$sort_direction = (strtolower($_GET['direction']) === 'desc' ? 'DESC' : 'ASC');
 		}
 		$sql .= ' ORDER BY ' . $sort_column . ' ' . $sort_direction;
 			
@@ -79,9 +79,11 @@ case 'GET':
 			BeaconAPI::ReplyError('No document found', null, 404);
 		}
 		
-		$database->BeginTransaction();
-		$database->Query('UPDATE documents SET download_count = download_count + 1 WHERE document_id = ANY($1);', '{' . $document_id . '}');
-		$database->Commit();
+		if (!$simple) {
+			$database->BeginTransaction();
+			$database->Query('UPDATE documents SET download_count = download_count + 1 WHERE document_id = ANY($1) AND user_id != $2;', '{' . $document_id . '}', BeaconAPI::UserID());
+			$database->Commit();
+		}
 		
 		if (BeaconAPI::ObjectCount() == 1) {
 			if ($simple) {

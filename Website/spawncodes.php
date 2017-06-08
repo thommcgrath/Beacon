@@ -5,6 +5,13 @@ ZirconTemplate::AddHeaderLine('<script src="assets/spawncodes.js"></script>');
 ZirconTemplate::AddHeaderLine('<link rel="stylesheet" href="assets/beacon.css" type="text/css">');
 $mod_id = BeaconAPI::ObjectID();
 $database = ConnectionManager::BeaconDatabase();
+
+$results = $database->Query("SELECT build_number FROM updates ORDER BY build_number DESC LIMIT 1;");
+$build   = $results->Field('build_number');
+
+$results = $database->Query("SELECT MAX(last_update) FROM updatable_objects WHERE min_version IS NULL OR min_version <= $1;", array($build));
+$last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
+
 if ($mod_id === null) {
 	$title = 'All Spawn Codes';
 	$engrams = BeaconEngram::GetAll();
@@ -33,6 +40,7 @@ if ($mod_id === null) {
 }
 ?><div class="articleheader">
 	<h1><?php echo htmlentities($title); ?></h1>
+	<p>Up to date as of <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?></p>
 </div>
 <div class="articlebody">
 	<p><input type="search" id="beacon-filter-field" placeholder="Filter Engrams" autocomplete="off"></p>
