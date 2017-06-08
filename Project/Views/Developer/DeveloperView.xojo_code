@@ -1,11 +1,27 @@
 #tag Class
 Protected Class DeveloperView
 Inherits ContainerControl
+	#tag Event
+		Sub Open()
+		  RaiseEvent Open
+		  
+		  Self.DoubleBuffer = TargetWin32
+		  Self.Transparent = Not Self.DoubleBuffer
+		  Self.EraseBackground = Not Self.DoubleBuffer
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub SwitchedTo()
 		  
 		End Sub
 	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Open()
+	#tag EndHook
 
 
 	#tag ViewBehavior
