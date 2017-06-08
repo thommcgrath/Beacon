@@ -231,6 +231,8 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h21
 		Private Sub APICallback_RegisterMod(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
 		  If Success Then
 		    Self.mRegistered = True
 		    Self.Hide

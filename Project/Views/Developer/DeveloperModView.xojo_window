@@ -371,6 +371,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_EngramsDelete(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
 		  If Not Success Then
 		    Panel.Value = PageEngrams
 		    Self.ShowAlert("Unable to delete engrams.", Message)
@@ -387,6 +389,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_EngramsLoad(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Success
+		  #Pragma Unused Message
+		  
 		  Self.mEngramSets.Value(Self.CurrentMod.ModID) = New BeaconAPI.EngramSet(Details)
 		  Self.ShowCurrentEngrams()
 		  Panel.Value = PageEngrams
@@ -395,6 +400,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_EngramsPost(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
 		  If Not Success Then
 		    Panel.Value = PageEngrams
 		    Self.ShowAlert("Unable to save engrams.", Message)

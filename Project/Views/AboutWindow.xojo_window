@@ -389,6 +389,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
+		  #Pragma Unused URL
+		  
 		  Dim Top As Integer = UpdateEngramsSpinner.Top
 		  UpdateEngramsSpinner.Top = -100
 		  UpdateEngramsButton.Top = Top + ((UpdateEngramsButton.Height - UpdateEngramsSpinner.Height) / 2)

@@ -44,11 +44,11 @@ Inherits ControlCanvas
 		    Dim TargetWindow As Window = Self.TrueWindow
 		    
 		    Declare Function NSSelectorFromString Lib "Foundation" (SelectorName As CFStringRef) As Ptr
-		    Declare Function RespondsToSelector Lib "Foundation" Selector "respondsToSelector:" (Target As WindowPtr, SelectorRef As Ptr) As Boolean
+		    Declare Function RespondsToSelector Lib "Foundation" Selector "respondsToSelector:" (Target As Integer, SelectorRef As Ptr) As Boolean
 		    
-		    If RespondsToSelector(TargetWindow, NSSelectorFromString("setTitlebarAppearsTransparent:")) Then
-		      Declare Sub SetTitlebarAppearsTransparent Lib "AppKit" Selector "setTitlebarAppearsTransparent:" (Target As WindowPtr, Value As Boolean)
-		      SetTitlebarAppearsTransparent(TargetWindow, True)
+		    If RespondsToSelector(TargetWindow.Handle, NSSelectorFromString("setTitlebarAppearsTransparent:")) Then
+		      Declare Sub SetTitlebarAppearsTransparent Lib "AppKit" Selector "setTitlebarAppearsTransparent:" (Target As Integer, Value As Boolean)
+		      SetTitlebarAppearsTransparent(TargetWindow.Handle, True)
 		      Self.mShaded = False
 		    End If
 		  #endif
@@ -202,11 +202,11 @@ Inherits ControlCanvas
 		Sub Inverted(Assigns Value As Boolean)
 		  #if TargetCocoa
 		    Declare Function NSClassFromString Lib "Foundation" (ClassName As CFStringRef) As Ptr
-		    Declare Sub SetAppearance Lib "AppKit" Selector "setAppearance:" (Target As WindowPtr, AppearanceRef As Ptr)
+		    Declare Sub SetAppearance Lib "AppKit" Selector "setAppearance:" (Target As Integer, AppearanceRef As Ptr)
 		    Declare Function GetAppearance Lib "AppKit" Selector "appearanceNamed:" (Target As Ptr, Name As CFStringRef) As Ptr
 		    
 		    Dim AppearanceRef As Ptr = GetAppearance(NSClassFromString("NSAppearance"), if(Value, "NSAppearanceNameVibrantDark", "NSAppearanceNameAqua"))
-		    SetAppearance(Self.TrueWindow, AppearanceRef)
+		    SetAppearance(Self.TrueWindow.Handle, AppearanceRef)
 		    Self.mInverted = Value
 		  #endif
 		End Sub

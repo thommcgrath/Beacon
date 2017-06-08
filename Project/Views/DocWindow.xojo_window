@@ -465,6 +465,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Message
+		  #Pragma Unused Details
+		  
 		  If Not Success Then
 		    Dim Dialog As New MessageDialog
 		    Dialog.Title = ""
@@ -486,6 +489,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DocumentStatus(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Message
+		  
 		  If Success Then
 		    Self.mIsPublished = True
 		    Dim Dict As Xojo.Core.Dictionary = Details

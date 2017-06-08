@@ -222,6 +222,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ReceiveProgress(BytesReceived as Int64, TotalBytes as Int64, NewData as xojo.Core.MemoryBlock)
+		  #Pragma Unused NewData
+		  
 		  If Self.Progress.Maximum <> 1000 Then
 		    Self.Progress.Maximum = 1000
 		  End If

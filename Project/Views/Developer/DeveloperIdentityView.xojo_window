@@ -419,6 +419,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_UserLookup(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Message
+		  #Pragma Unused Details
+		  
 		  If Success Then
 		    // Already exists
 		    Return
@@ -438,6 +441,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
 		  If Not Success Then
 		    Self.ShowAlert("User profile was not saved to the server. API access is limited.", Message)
 		  End If
@@ -482,9 +487,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI(Identity As Beacon.Identity)
-		  UserIDField.Text = App.Identity.Identifier
-		  PublicKeyArea.Text = Self.ExportPublicKey(App.Identity.PublicKey)
-		  PrivateKeyArea.Text = Self.ExportPrivateKey(App.Identity.PrivateKey)
+		  UserIDField.Text = Identity.Identifier
+		  PublicKeyArea.Text = Self.ExportPublicKey(Identity.PublicKey)
+		  PrivateKeyArea.Text = Self.ExportPrivateKey(Identity.PrivateKey)
 		End Sub
 	#tag EndMethod
 

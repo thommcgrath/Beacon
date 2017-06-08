@@ -356,6 +356,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DocumentPost(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
 		  If Not Success Then
 		    Self.ShowAlert("Unable to publish document", "The document was not saved. The server said """ + Message + """")
 		    Return
@@ -368,6 +370,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_UserLookup(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Message
+		  #Pragma Unused Details
+		  
 		  If Success Then
 		    // Already exists
 		    Return
@@ -387,6 +392,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
 		  If Not Success Then
 		    Self.ShowAlert("User profile was not saved to the server. API access is limited.", Message)
 		  End If

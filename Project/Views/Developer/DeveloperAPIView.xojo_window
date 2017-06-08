@@ -538,7 +538,9 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DoNothing(Success As Boolean, Message As Text, Details As Auto)
-		  
+		  #Pragma Unused Success
+		  #Pragma Unused Message
+		  #Pragma Unused Details
 		End Sub
 	#tag EndMethod
 

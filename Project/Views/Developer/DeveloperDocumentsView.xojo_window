@@ -255,6 +255,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
 		  If Success Then
 		    Self.RefreshDocuments()
 		    Return
@@ -266,6 +268,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DocumentsList(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Success
+		  #Pragma Unused Message
+		  
 		  Dim Dicts() As Auto = Details
 		  Dim Documents() As BeaconAPI.Document
 		  For Each Dict As Xojo.Core.Dictionary In Dicts
@@ -347,6 +352,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Function SortColumn(column As Integer) As Boolean
+		  #Pragma Unused column
+		  
 		  Return True
 		End Function
 	#tag EndEvent

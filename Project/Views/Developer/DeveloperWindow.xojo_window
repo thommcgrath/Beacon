@@ -301,6 +301,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_UserLookup(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Message
+		  #Pragma Unused Details
+		  
 		  If Success Then
 		    // Already exists
 		    Return
@@ -320,6 +323,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
 		  If Not Success Then
 		    Self.ShowAlert("User profile was not saved to the server. API access is limited.", Message)
 		  End If
@@ -347,6 +352,8 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowPage(PageNum As Integer, Params As String = "")
+		  #Pragma Unused Params
+		  
 		  TabHeader.Value = PageNum
 		  Self.Show()
 		End Sub

@@ -202,6 +202,8 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DeleteMod(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
 		  If Success Then
 		    Self.RefreshMods
 		    Return
