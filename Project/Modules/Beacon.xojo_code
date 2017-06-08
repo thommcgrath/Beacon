@@ -64,6 +64,53 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function EncodeBase64(Source As Text, Encoding As Xojo.Core.TextEncoding) As Text
+		  Dim Bytes As Xojo.Core.MemoryBlock = Encoding.ConvertTextToData(Source)
+		  Return Beacon.EncodeBase64(Bytes)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function EncodeBase64(Source As Xojo.Core.MemoryBlock) As Text
+		  Dim Chars As Text = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+		  
+		  Dim Remainder As Integer = (Source.Size Mod 3)
+		  Dim Padding As Integer
+		  If Remainder > 0 Then
+		    Padding = 3 - Remainder
+		    If Padding > 0 Then
+		      Dim Clone As New Xojo.Core.MutableMemoryBlock(Source)
+		      Clone.Append(New Xojo.Core.MemoryBlock(Padding))
+		      Source = New Xojo.Core.MemoryBlock(Clone)
+		    End If
+		  End If
+		  
+		  Dim Output() As Text
+		  
+		  For I As Integer = 0 To Source.Size - 3 Step 3
+		    Dim N As Integer = Beacon.ShiftLeft(Source.UInt8Value(I), 16) + Beacon.ShiftLeft(Source.UInt8Value(I + 1), 8) + Source.UInt8Value(I + 2)
+		    
+		    Dim Offsets(3) As UInt8
+		    Offsets(0) = Beacon.ShiftRight(N, 18) And 63
+		    Offsets(1) = Beacon.ShiftRight(N, 12) And 63
+		    Offsets(2) = Beacon.ShiftRight(N, 6) And 63
+		    Offsets(3) = N And 63
+		    
+		    Output.Append(Chars.Mid(Offsets(0), 1))
+		    Output.Append(Chars.Mid(Offsets(1), 1))
+		    Output.Append(Chars.Mid(Offsets(2), 1))
+		    Output.Append(Chars.Mid(Offsets(3), 1))
+		  Next
+		  
+		  For I As Integer = 0 To Padding - 1
+		    Output(UBound(Output) - I) = "="
+		  Next
+		  
+		  Return Text.Join(Output, "")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function EncodeHex(Value As Text, Encoding As Xojo.Core.TextEncoding) As Text
 		  Dim Bytes As Xojo.Core.MemoryBlock = Encoding.ConvertTextToData(Value)
 		  Return Beacon.EncodeHex(Bytes)
@@ -237,6 +284,22 @@ Protected Module Beacon
 		    ShowURL(URL)
 		  #endif
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ShiftLeft(Value As UInt64, NumBits As UInt64) As UInt64
+		  // It is insane that I need to implement this method manually.
+		  
+		  Return Value * (2 ^ NumBits)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ShiftRight(Value As UInt64, NumBits As UInt64) As UInt64
+		  // It is insane that I need to implement this method manually.
+		  
+		  Return Value / (2 ^ NumBits)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

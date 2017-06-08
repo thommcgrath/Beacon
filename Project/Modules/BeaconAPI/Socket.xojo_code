@@ -12,8 +12,12 @@ Protected Class Socket
 		  
 		  Self.ActiveRequest = Request
 		  
+		  Dim URL As Text = Request.URL
+		  If Request.Authenticated Then
+		    Self.Socket.RequestHeader("Authorization") = "Basic " + Beacon.EncodeBase64(Request.AuthUser + ":" + Request.AuthPassword, Xojo.Core.TextEncoding.UTF8)
+		  End If
+		  
 		  If Request.Method = "GET" Then
-		    Dim URL As Text = Request.URL
 		    Dim Query As Text = Request.Query
 		    If Query <> "" Then
 		      URL = URL + "?" + Query
@@ -21,7 +25,7 @@ Protected Class Socket
 		    Self.Socket.Send("GET", URL)
 		  Else
 		    Self.Socket.SetRequestContent(Request.Payload, Request.ContentType)
-		    Self.Socket.Send(Request.Method, Request.URL)
+		    Self.Socket.Send(Request.Method, URL)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -32,7 +36,6 @@ Protected Class Socket
 		  Self.Socket.ValidateCertificates = True
 		  AddHandler Self.Socket.Error, WeakAddressOf Socket_Error
 		  AddHandler Self.Socket.PageReceived, WeakAddressOf Socket_PageReceived
-		  AddHandler Self.Socket.AuthenticationRequired, WeakAddressOf Socket_AuthenticationRequired
 		End Sub
 	#tag EndMethod
 
@@ -43,22 +46,6 @@ Protected Class Socket
 		  Self.Socket.Disconnect
 		  Self.Socket = Nil
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function Socket_AuthenticationRequired(Sender As Xojo.Net.HTTPSocket, Realm As Text, ByRef Name As Text, ByRef Password As Text) As Boolean
-		  #Pragma Unused Sender
-		  #Pragma Unused Realm
-		  
-		  If Self.ActiveRequest.AuthCount = 0 Then
-		    Name = Self.ActiveRequest.AuthUser
-		    Password = Self.ActiveRequest.AuthPassword
-		    Self.ActiveRequest.AuthCount = Self.ActiveRequest.AuthCount + 1
-		    Return True
-		  Else
-		    Return False
-		  End If
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

@@ -141,10 +141,6 @@ Protected Class Request
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h0
-		AuthCount As Integer
-	#tag EndProperty
-
 	#tag Property, Flags = &h1
 		Protected mAuthPassword As Text
 	#tag EndProperty
