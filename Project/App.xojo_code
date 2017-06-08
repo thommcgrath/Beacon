@@ -233,6 +233,13 @@ Inherits Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function HelpAdminSpawnCodes() As Boolean Handles HelpAdminSpawnCodes.Action
+			ShowURL(Beacon.WebURL + "/spawncodes.php")
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function HelpCheckforUpdates() As Boolean Handles HelpCheckforUpdates.Action
 			UpdateWindow.Present()
 			Return True

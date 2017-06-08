@@ -341,6 +341,13 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin MenuItem HelpAdminSpawnCodes
+         SpecialMenu = 0
+         Text = "Admin Spawn Codes"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
       Begin MenuItem HelpReportAProblem
          SpecialMenu = 0
          Text = "Report a Problem…"
