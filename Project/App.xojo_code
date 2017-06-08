@@ -331,10 +331,37 @@ Inherits Application
 		    Return False
 		  End If
 		  
-		  URL = ReplaceAll(URL, "thezaz.com/beacon/documents.php/", "thezaz.com/beacon/api/document.php/")
-		  
-		  Dim FileURL As String = "https://" + Mid(URL, PrefixLength + 1)
-		  Self.DownloadDocument(FileURL.ToText)
+		  If Mid(URL, PrefixLength, 8) = "/action/" Then
+		    Dim Instructions As String = Mid(URL, PrefixLength + 8)
+		    Dim ParamsPos As Integer = InStr(Instructions, "?") - 1
+		    Dim Params As String
+		    If ParamsPos > -1 Then
+		      Params = Mid(Instructions, ParamsPos + 1)
+		      Instructions = Left(Instructions, ParamsPos)
+		    End If
+		    
+		    Select Case Instructions
+		    Case "showdocuments"
+		      DeveloperWindow.SharedWindow.ShowPage(0, Params)
+		    Case "showmods"
+		      DeveloperWindow.SharedWindow.ShowPage(1, Params)
+		    Case "showidentity"
+		      DeveloperWindow.SharedWindow.ShowPage(2, Params)
+		    Case "showguide"
+		      DeveloperWindow.SharedWindow.ShowPage(3, Params)
+		    Case "showapibuilder"
+		      DeveloperWindow.SharedWindow.ShowPage(4, Params)
+		    Case "showpresets"
+		      PresetManagerWindow.SharedWindow.Show()
+		    Else
+		      Break
+		    End Select
+		  Else
+		    URL = ReplaceAll(URL, "thezaz.com/beacon/documents.php/", "thezaz.com/beacon/api/document.php/")
+		    
+		    Dim FileURL As String = "https://" + Mid(URL, PrefixLength + 1)
+		    Self.DownloadDocument(FileURL.ToText)
+		  End If
 		  
 		  Return True
 		End Function

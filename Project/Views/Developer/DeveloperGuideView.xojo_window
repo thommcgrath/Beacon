@@ -57,7 +57,11 @@ End
 		  End If
 		  
 		  Self.mAlreadyStarted = True
-		  View.LoadURL(Beacon.WebURL + "/apidoc.php")
+		  #if DebugBuild
+		    View.LoadURL("http://127.0.0.1:8000")
+		  #else
+		    View.LoadURL(Beacon.WebURL + "/apidoc.php")
+		  #endif
 		End Sub
 	#tag EndMethod
 

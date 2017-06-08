@@ -102,7 +102,7 @@ Begin BeaconWindow DeveloperWindow
       TabIndex        =   3
       TabPanelIndex   =   0
       Top             =   31
-      Value           =   3
+      Value           =   4
       Visible         =   True
       Width           =   1100
       Begin DeveloperModsView ModsView
@@ -343,6 +343,13 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ShowPage(PageNum As Integer, Params As String = "")
+		  TabHeader.Value = PageNum
+		  Self.Show()
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private Shared mInstance As DeveloperWindow
@@ -354,7 +361,9 @@ End
 #tag Events TabHeader
 	#tag Event
 		Sub Change()
-		  Self.Panel.Value = Me.Value
+		  If Self.Panel.Value <> Me.Value Then
+		    Self.Panel.Value = Me.Value
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
