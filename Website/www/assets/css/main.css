@@ -50,8 +50,8 @@ i, em, .italic {
 }
 
 p, h1, h2, h3 {
-	margin-top: 20px;
-	margin-bottom: 20px;
+	margin-top: 15px;
+	margin-bottom: 15px;
 }
 
 h1, h2, h3 {
@@ -303,4 +303,21 @@ table.generic td {
 
 table.generic thead {
 	background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* !Footer */
+
+footer {
+	margin-top: 30px;
+	padding: 15px;
+	text-align: center;
+	font-size: 10pt;
+}
+
+#footer_github_logo {
+	text-decoration: none;
+}
+
+#footer_github_logo img {
+	border: none;
 }

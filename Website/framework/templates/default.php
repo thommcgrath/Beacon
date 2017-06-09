@@ -36,5 +36,10 @@ if (!BeaconTemplate::IsHTML()) {
 		<main>
 			<?php echo $buffer; ?>
 		</main>
+		<footer>
+			<p><a id="footer_github_logo" href="https://github.com/thommcgrath/Beacon"><img width="144" height="39" src="/assets/images/github.svg"></a></p>
+			<p>Beacon is an open source project by Thom McGrath. Copyright 2016-<?php echo date('Y'); ?>.</p>
+			<p>Get in touch using <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.</p>
+		</footer>
 	</body>
 </html>

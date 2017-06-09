@@ -16,5 +16,5 @@ BeaconTemplate::SetTitle('Troubleshooting');
 </div>
 <h3>Some more personal help</h3>
 <div class="indent">
-	<p>Get in touch. Bugs should be report on <a href="/reportaproblem.php">the GitHub page</a>. Anybody can create an account and this is more helpful than email when it comes to bugs. General help inquiries should be sent to <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.</p>
+	<p>Get in touch. Bugs should be reported on <a href="/reportaproblem.php">the GitHub page</a>. Anybody can create an account and this is more helpful than email when it comes to bugs. General help inquiries should be sent to <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.</p>
 </div>

@@ -1,4 +1,13 @@
 <?php
+	
+header('X-Frame-Options: SAMEORIGIN');
+header('X-Content-Type-Options: nosniff');
+header('X-XSS-Protection: 1; mode=block');
+header('Strict-Transport-Security: max-age=15638400; includeSubDomains; preload');
+header('Public-Key-Pins: pin-sha256=\"9U4eJjHBF6yuWAG5YdOrAhnaCQ4e/3LzOgwQkXIa2vo=\"; pin-sha256=\"86h29611cpitP0ZXL3WgeNhgTPDPgiS97NsbmPSg1BY=\"; pin-sha256=\"wPCukSJxPVVV60AInhJHvGt/sWYOa5rvk7oGiFK1pd4=\"; max-age=15638400; includeSubDomains;');
+header('Content-Security-Policy: default-src \'self\'; upgrade-insecure-requests; block-all-mixed-content; sandbox allow-forms allow-same-origin allow-scripts; referrer no-referrer-when-downgrade;');
+header('X-Content-Security-Policy: default-src \'self\'; upgrade-insecure-requests; block-all-mixed-content; sandbox allow-forms allow-same-origin allow-scripts; referrer no-referrer-when-downgrade;');
+header('X-WebKit-CSP: default-src \'self\'; upgrade-insecure-requests; block-all-mixed-content; sandbox allow-forms allow-same-origin allow-scripts; referrer no-referrer-when-downgrade;');
 
 $_SERVER['FRAMEWORK_DIR'] = dirname(__FILE__);
 if (!isset($_SERVER['SITE_ROOT'])) {
