@@ -502,9 +502,9 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function WebURL() As Text
 		  #if DebugBuild
-		    Return "https://workbench.thezaz.com/beacon"
+		    Return "https://workbench.beaconapp.cc"
 		  #else
-		    Return "https://thezaz.com/beacon"
+		    Return "https://beaconapp.cc"
 		  #endif
 		End Function
 	#tag EndMethod

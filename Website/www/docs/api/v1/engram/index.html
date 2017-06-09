@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Engram - Beacon API</title>
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+	
+	<script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="..">Beacon API</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Objects <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="../document/">Document</a>
+</li>
+                            
+<li class="active">
+    <a href="./">Engram</a>
+</li>
+                            
+<li >
+    <a href="../mod/">Mod</a>
+</li>
+                            
+<li >
+    <a href="../user/">User</a>
+</li>
+                        </ul>
+                    </li>
+                    <li >
+                        <a href="../authenticating/">Authenticating</a>
+                    </li>
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                    <li >
+                        <a rel="next" href="../document/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../mod/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#the-engram-object">The Engram Object</a></li>
+            <li><a href="#engram-class-strings">Engram Class Strings</a></li>
+            <li><a href="#engram-structure">Engram Structure</a></li>
+            <li><a href="#get">GET</a></li>
+            <li><a href="#post">POST</a></li>
+            <li><a href="#delete">DELETE</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="the-engram-object">The Engram Object</h1>
+<p>Every item that Beacon knows about can be queried. Engrams can be added to mods using the API.</p>
+<p>The endpoint is https://thezaz.com/beacon/api/engram.php</p>
+<h3 id="engram-class-strings">Engram Class Strings</h3>
+<p>In Ark, the term "engram" means pretty much anything in the game that can be picked up. They have a class string that always ends in _C. This class string can be determined from the blueprint path rather easily. Just take the final part after the "." and append _C. For example, the blueprint for the Assault Rifle is</p>
+<pre><code>/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRifle.PrimalItem_WeaponRifle
+</code></pre>
+
+<p>so the class string is <code>PrimalItem_WeaponRifle_C</code>.</p>
+<p>Class strings are not case sensitive and must be unique across all mods and built-in content.</p>
+<h3 id="engram-structure">Engram Structure</h3>
+<pre><code class="json">{
+  &quot;class&quot;: &quot;Prefix_MyEngram_C&quot;,
+  &quot;label&quot;: &quot;My Engram&quot;,
+  &quot;environments&quot;: [
+    &quot;Island&quot;,
+    &quot;Scorched&quot;
+  ],
+  &quot;can_blueprint&quot;: true,
+  &quot;spawn&quot;: &quot;cheat gfi myengram 1 0 false&quot;,
+  &quot;resource_url&quot;: &quot;https://thezaz.com/beaon/api/engram.php/Prefix_MyEngram_C&quot;,
+  &quot;mod_id&quot;: 123456,
+  &quot;mod_name&quot;: &quot;Example Mod&quot;
+}
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class</td>
+<td>The unique class string for the engram</td>
+</tr>
+<tr>
+<td>label</td>
+<td>Human-readable/in-game name of the engram</td>
+</tr>
+<tr>
+<td>environments</td>
+<td>Array of strings of the supported environments. Current allowed values are <code>Island</code> and <code>Scorched</code></td>
+</tr>
+<tr>
+<td>can_blueprint</td>
+<td>If this engram represents a resource, like wood or stone, that cannot be blueprinted, this value should be false. Craftable items, such as weapons and armor, should set this to true.</td>
+</tr>
+<tr>
+<td>spawn</td>
+<td>The admin code to summon the item</td>
+</tr>
+<tr>
+<td>resource_url</td>
+<td>API URL of this engram</td>
+</tr>
+<tr>
+<td>mod_id</td>
+<td>If this engram belongs to a mod, the id will be listed here. This value may be null</td>
+</tr>
+<tr>
+<td>mod_name</td>
+<td>If this engram belongs to a mod, the name will be listed here. This value may be null</td>
+</tr>
+</tbody>
+</table>
+<h2 id="get">GET</h2>
+<p>To list all engrams, perform a GET request directly to the endpoint:</p>
+<pre><code class="http">GET /beacon/api/engram.php HTTP/1.1
+Host: thezaz.com
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+  { engram structure },
+  { engram structure }
+]
+</code></pre>
+
+<p>This also supports a <code>mod_id</code> parameter to limit the engram list to only specific mods. The value of this parameter must be one or more comma-separated Steam mod ids.</p>
+<pre><code class="http">GET /beacon/api/engram.php?mod_id=123456,654321 HTTP/1.1
+Host: thezaz.com
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+[
+  { engram structure },
+  { engram structure }
+]
+</code></pre>
+
+<p>Perform a GET query against the <code>resource_url</code> value to get the structure for only that engram:</p>
+<pre><code class="http">GET /beacon/api/engram.php/Prefix_MyEngram_C HTTP/1.1
+Host: thezaz.com
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{ engram structure }
+</code></pre>
+
+<p>Or specify multiple engrams by using a comma-separated list:</p>
+<pre><code class="http">GET /beacon/api/engram.php/Prefix_MyEngram_C,Prefix_OtherEngram_C HTTP/1.1
+Host: thezaz.com
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+[
+  { engram structure },
+  { engram structure }
+]
+</code></pre>
+
+<h2 id="post">POST</h2>
+<p>Used for adding or updating engrams. Requires authentication. Allows partial structures. Required keys are <code>class</code>, <code>label</code>, <code>mod_id</code>, <code>availability</code> and <code>can_blueprint</code>. Other keys are allowed, but will be ignored. My post an array of structures or a single structure.</p>
+<p>A 200 status will be returned on success.</p>
+<pre><code class="http">POST /beacon/api/engram.php HTTP/1.1
+Host: thezaz.com
+Authorization: Basic QTcwRjNENjAtQTI4MS00QzQ1LTgwQTAtQUQ2OUI3MzhENTY4OjM0M0IzODYyRTY5M0RFNDRDNThCODA2NEVFMkVBOUZFMzA1QTY3QTk0MkMxRUNCQUQzMkQ0QzFFRDMwRjhCNTg3Mzg1NDM5QTZENzlFMkQwOEZGOEI3REJBQTA3MDI3MjM1RjEzQTE1NzA2ODUwMzEyMTA0MDRDM0RDM0M4QTY2NjJGQ0UwRkZCRjBENDM2QTMyMzU3Mjc5QzNBODBCQTQwOERGQTc4NzM3RTIwMTU0MjQ3MDMwNDI2QTIyNDI1RTY3MEU4RjZGQTA4MzFFRjM5RjY0NjczQTM2Nzg3RDgyNjc2OENEMkRBMDI0OTcxNUNFNDIxQjE1QkNGMjBFMEQ1QjI4M0E3MTZDRjIxNkY5MTM1QzEzMUUwRjM0QkQwNEQ5QkFFMTA5MDIzQzgzQkE2ODBERTQyMzA2MEFFMzc2RjQ0OEIxOUMyQkFDRTM4MDI0MEZBQzRBMzEzRTRDRDg3MTA2NjFGMUQyQUY4MTBDNjA2Q0IxMDBEQjhCRTk3REFFNDU3NERDMjNDNzYwQzFCREUwNDg1OEUzMUVEOUEwNzlDRjU4RkZFRjI2QjA4NkI3OEZEQjkzMzVDNzBBODM0RkUzQTk1RUUwNUQyNkUxNjY0MEFBODU5RDFBRkNDMTNBNDM3RDFBQ0Y0MDgxOERGQTZDQzM2RjdCMDVFNzFE
+Content-Type: application/json
+
+{&quot;class&quot;:&quot;Prefix_MyEngram_C&quot;,&quot;label&quot;:&quot;My Engram&quot;,&quot;environments&quot;:[&quot;Island&quot;,&quot;Scorched&quot;],&quot;can_blueprint&quot;: true,&quot;mod_id&quot;: 123456}
+
+HTTP/1.1 200 OK
+</code></pre>
+
+<h2 id="delete">DELETE</h2>
+<p>Deleting an engram completely removes it from the database. It is possible to the engram to be registered to a different mod after deletion.</p>
+<p>Normal usage of this method is to issue an authenticated <code>DELETE</code> request to the <code>resource_url</code> key of the engram structure. It is possible to delete multiple engrams by separating the class strings with commas.</p>
+<pre><code class="http">DELETE /beacon/api/engram.php/Prefix_MyEngram_C,Prefix_OtherEngram_C HTTP/1.1
+Host: thezaz.com
+Authorization: Basic QTcwRjNENjAtQTI4MS00QzQ1LTgwQTAtQUQ2OUI3MzhENTY4OjRCMjRBODIyQzAxQUZFRjlBNDY0MDg5RDI2MDU0NzZEQTMyOEM5QkMxMzk2QUU3QkFFQ0RBREQ3QjNGNkUwN0I2MTBEMzM3MUQ1RDRCN0QxMkNGRjgwMjUyNDI5RUZEREU0MTQ3OUFGMDMwQUE1MzVCQzZEMEQ1QzQ5OTY4RDc2Mzk2OTRDQzE3N0Q0MTYxNTk4QTk3MTI0OTgyRUE0RkI4MzVGRTg0MTQ2MjZDRDNBQzc2MkExQUIyNTU2MzVEM0JCNkJGQUIyRjY4MTVEQ0VCQjQxNUEwMDdCRUVGMTJCOTRCRjhGQzAyN0JBNERGQTVFQTNEODAzN0Q2MDY0RjlCQjZGNjk5MjcyQ0VFNjFCNzlGN0UyQUIwOEQwNDk5N0NBRjcxQjE2NEFBRjhDMjI4MjgyRjYxNTVENzdBMDE3QTE2NDc0MjAxOEY4MDkwNTRDNzQ3RTRENjJDODk4NDU0MUJCMUIxOTcwNzIxMTg0NDRDNEEzRjFDQjg0MzhEMjYxNDUxN0E0QTFDMzkyMjA3N0EwQzBDMUQ3Nzk3MUNGODI2RjdCMEU1REE5NDBCMUE0NEIzNUFDRDVDOUFCMDAxM0IzMTIyMjIyNzA1QzIyMjM5NjdCRUZFNUVFODI0NzdGMTNBRDExM0UzQUMzMjFBMTUyRDkwOTM2OUZFMUEw
+
+HTTP/1.1 200 OK
+</code></pre>
+
+<p>To delete lots of engrams at the same time, send the comma-separated list of classes as the body of the DELETE request with a text/plain Content-Type. This option is allowed even if deleting only a single engram.</p>
+<pre><code class="http">DELETE /beacon/api/engram.php HTTP/1.1
+Host: thezaz.com
+Authorization: Basic QTcwRjNENjAtQTI4MS00QzQ1LTgwQTAtQUQ2OUI3MzhENTY4OkNDQjg3OUNGN0UxRThERUU4QThBMjAzRjM2OUE0Nzk5QjU5Q0Q0MUNERUE1RTRCODJDQ0VBMzhBMENCOTM0QjcxNzE0ODZFNDgwODc1QTg1MjExMTExMDlFNDY5M0NCQTRCMTIwMTU5MkRFMDJGMzRBODBBOUE3ODc2QTkyOERCNDQ5RERCRDI5RkJENTM2ODdGQUE3RUQ1QkRCRkJBQUZFRUQzMkNFRTJBREQ0NEU1QzRBQTdERjIyNkY3RDk4QTEyQkMxNkYxNTQ1RjhEM0QyOUJCQkI2NEUwNkFFNTYxQjUyNTBCREIxNEE0N0E3RkY1OTA4RUM0OERCRDZBNjU2NDlFMjZFNTMxREIxRjdGMzY4RTIyRjdEQTIyNzYzOEMyNzRCNkFBNTNDM0UwMzkzNjRBRDc0NjUxNzYxMDhGNUJCMDU5QTZEQzlBMDc4Mzc4RkUxOTVENDEzNEU0NTQ4Rjg3NzEyNkMwN0EyNkQ1NTNGOTc3MzE0QzNENjQyMDUyQUJFMjhCNkREQTA0NjJFNkZEQ0EyOTc2MzM5NEI2Q0NBMTJCNTIzRTBGNkRDRTE0QzFGRkFBMDYxNjYyQzNCNjNERTQwMTA2OTk5NzgzMDUzNjI5ODIyMjk4MEZCM0VCRTc2REVBRUZGQTIzQjY1NDM2OUIwOTM0RUQ0RjlE
+Content-Type: text/plain
+
+Prefix_MyEngram_C,Prefix_OtherEngram_C
+
+HTTP/1.1 200 0K
+</code></pre></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script><div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

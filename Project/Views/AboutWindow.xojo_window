@@ -178,7 +178,7 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   7
       TabPanelIndex   =   0
-      Text            =   "https://thezaz.com/beacon"
+      Text            =   "https://beaconapp.cc/"
       TextAlign       =   1
       TextColor       =   &c0000FF00
       TextFont        =   "SmallSystem"
@@ -351,6 +351,11 @@ End
 		    ShowURL(Me.Text)
 		    Me.TextColor = &c0000FF
 		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Text = Beacon.WebURL + "/"
 		End Sub
 	#tag EndEvent
 #tag EndEvents

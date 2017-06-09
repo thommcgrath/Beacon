@@ -114,6 +114,7 @@ Begin ContainerControl BeaconEditor
       HasBackColor    =   False
       Height          =   464
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
