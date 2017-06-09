@@ -24,13 +24,13 @@ abstract class BeaconCommon {
 	}
 	
 	public static function Database() {
+		if (self::$database === null) {
+			trigger_error('Database has not been setup', E_USER_ERROR);
+		}
 		return self::$database;
 	}
 	
 	public static function SetupDatabase(string $databasename, string $username, string $password) {
-		if (self::$database === null) {
-			trigger_error('Database has not been setup', E_USER_ERROR);
-		}
 		self::$database = new BeaconPostgreSQLDatabase('127.0.0.1', 5432, $databasename, $username, $password);
 	}
 	
