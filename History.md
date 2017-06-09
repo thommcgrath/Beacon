@@ -7,7 +7,7 @@
 - New document browser! Find documents shared by other users, see which documents you've shared, see stats like download count, and more.
 - Improved identity management. All Beacon users have an "identity" file which authenticates their online actions. Now this identity can be backed up and restored, as well as making it easy to view the identity key pair.
 - Public Beacon API! Anybody can manage documents, mods, and engrams however they please. The new 'Developer Tools' window has built-in an 'API Guide' section for learning about the API, and an 'API Builder' section for generating sample API code.
-- New admin spawn code list at https://thezaz.com/beacon/spawncodes.php - if Beacon knows about it, including mod items, you can find it and its spawn code here. Mod authors may even link to this from their Steam page using https://thezaz.com/beacon/spawncodes.php?mod_id=<mod_id> to show only items for that mod.
+- New admin spawn code list at https://beaconapp.cc/spawn/ - if Beacon knows about it, including mod items, you can find it and its spawn code here. Mod authors may even link to this from their Steam page using https://beaconapp.cc/spawn/<mod_id> to show only items for that mod.
 - Custom engrams are now better supported. Now you can simply paste spawn commands directly into the field at the top of the item editor. And a bug has been fixed preventing custom items from appearing in the list during editing.
 
 ## Build 14 (Beta 7)
@@ -40,7 +40,7 @@
 ## Build 10 (Beta 3)
 
 - About window now shows when the engram database was last updated.
-- Now possible to import engram definitions. If for some reason your copy of Beacon cannot update definitions automatically, they can be downloaded from the Beacon website and imported using the Import menu item. See https://thezaz.com/beacon to download definitions.
+- Now possible to import engram definitions. If for some reason your copy of Beacon cannot update definitions automatically, they can be downloaded from the Beacon website and imported using the Import menu item. See https://beaconapp.cc/ to download definitions.
 - Deleting a loot source or item set now has a confirmation dialog.
 - Adding custom loot icons for the boss sources.
 

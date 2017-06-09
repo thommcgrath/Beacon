@@ -2,6 +2,7 @@
 
 abstract class BeaconCommon {
 	protected static $database = null;
+	protected static $globals = array();
 	
 	public static function GenerateUUID() {
 		$data = random_bytes(16);
@@ -27,6 +28,9 @@ abstract class BeaconCommon {
 	}
 	
 	public static function SetupDatabase(string $databasename, string $username, string $password) {
+		if (self::$database === null) {
+			trigger_error('Database has not been setup.', E_USER_ERROR);
+		}
 		self::$database = new BeaconPostgreSQLDatabase('127.0.0.1', 5432, $databasename, $username, $password);
 	}
 	
@@ -82,6 +86,34 @@ abstract class BeaconCommon {
 			}
 		}
 		return true;
+	}
+	
+	public static function SetGlobal(string $key, $value) {
+		self::$globals[$key] = $value;
+	}
+	
+	public static function GetGlobal(string $key, $default = null) {
+		if (array_key_exists($key, self::$globals)) {
+			return self::$globals[$default];
+		} else {
+			return $default;
+		}
+	}
+	
+	public static function PostSlackMessage($message) {
+		$url = self::GetGlobal('Slack_WebHook_URL');
+		if ($url === null) {
+			trigger_error('Config file did not specify Slack_WebHook_URL.', E_USER_ERROR);
+		}
+		$json = json_encode(array('text' => $message));
+	
+		$ch = curl_init($url);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+		curl_exec($ch);
+		curl_close($ch);
 	}
 }
 
