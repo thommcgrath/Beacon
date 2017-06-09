@@ -74,7 +74,7 @@ abstract class BeaconCommon {
 		if (self::InProduction()) {
 			$url = 'https://beaconapp.cc' . $path;
 		} else {
-			$url = 'https://' . $_SERVER['HTTP_HOST'] . $path;
+			$url = 'https://workbench.beaconapp.cc' . $path;
 		}
 		return $url;
 	}
