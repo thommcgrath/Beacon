@@ -126,6 +126,10 @@ a:active {
 	color: #ffffff;
 }
 
+.indent {
+	margin-left: 30px;
+}
+
 /* !Buttons */
 
 @keyframes default_button {
