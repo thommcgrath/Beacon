@@ -26,7 +26,7 @@ abstract class MailChimp {
 	private static function MakeRequest(string $path, array $payload) {
 		$api_key = BeaconCommon::GetGlobal('MailChimp_API_Key');
 		if ($api_key === null) {
-			trigger_error('Config file did not specify MailChimp_API_Key.', E_USER_ERROR);
+			trigger_error('Config file did not specify MailChimp_API_Key', E_USER_ERROR);
 		}
 		
 		$body = json_encode($payload);
