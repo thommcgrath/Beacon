@@ -31,4 +31,6 @@ spl_autoload_register(function($class_name) {
 
 require($_SERVER['FRAMEWORK_DIR'] . '/config.php');
 
+BeaconTemplate::Start();
+
 ?>

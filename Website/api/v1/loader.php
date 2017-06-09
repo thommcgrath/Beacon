@@ -1,4 +1,6 @@
 <?php
+	
+header('Content-Type: application/json');
 
 // classes local to this API will get loaded first
 spl_autoload_register(function($class_name) {

@@ -1,0 +1,302 @@
+@charset 'UTF-8';
+@import '/assets/css/normalize.css';
+
+@font-face {
+	font-family: 'Raleway';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Raleway'), local('Raleway-Regular'), url(/assets/fonts/raleway.ttf) format('truetype');
+}
+
+@font-face {
+	font-family: 'Raleway';
+	font-style: normal;
+	font-weight: 600;
+	src: local('Raleway SemiBold'), local('Raleway-SemiBold'), url(/assets/fonts/raleway-semibold.ttf) format('truetype');
+}
+
+@font-face {
+	font-family: 'Raleway';
+	font-style: normal;
+	font-weight: 700;
+	src: local('Raleway Bold'), local('Raleway-Bold'), url(/assets/fonts/raleway-bold.ttf) format('truetype');
+}
+
+body {
+	font-family: Raleway;
+	background-color: #713a9a;
+	color: #ffffff;
+	max-width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* !Common Elements */
+
+*:first-child {
+	margin-top: 0px;
+}
+
+*:last-child {
+	margin-bottom: 0px;
+}
+
+b, strong, .bold {
+	font-weight: bold;
+}
+
+i, em, .italic {
+	font-style: italic;
+}
+
+p, h1, h2, h3 {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+h1, h2, h3 {
+	font-weight: bold;
+	font-style: normal;
+}
+
+h1 {
+	font-size: 18pt;
+}
+
+h2 {
+	font-size: 16pt;
+}
+
+h3 {
+	font-size: 14pt;
+}
+
+.text-left {
+	text-align: left;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.text-right {
+	text-align: right;
+}
+
+.larger {
+	font-size: larger;
+}
+
+.smaller {
+	font-size: smaller;
+}
+
+.redacted {
+	text-decoration: line-through;
+}
+
+.push {
+	clear: both;
+	height: 0px;
+	max-height: 0px;
+	overflow: hidden;
+}
+
+h1 .subtitle,
+h2 .subtitle,
+h3 .subtitle {
+	font-size: 10pt;
+	font-weight: normal;
+}
+
+a {
+	color: #ffffff;
+	text-decoration: underline;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+a:visited {
+	color: rgba(255, 255, 255, 0.9);
+}
+
+a:active {
+	color: #ffffff;
+}
+
+/* !Buttons */
+
+@keyframes default_button {
+	50% { background-color: rgba(0, 0, 0, 0.05); }
+}
+
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+a.button {
+	-webkit-appearance: none;
+	display: inline-block;
+	box-sizing: border-box;
+	background-color: rgba(0, 0, 0, 0.2);
+	border-radius: 4px;
+	padding: 8px;
+	border: none;
+	color: #ffffff;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8);
+	transition-property: background-color, color, border-color, opacity;
+	transition-duration: 0.15s;
+	transition-timing-function: ease-out;
+	font-size: 11pt;
+	cursor: pointer;
+	margin: 0px;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	font-weight: 500;
+	line-height: 18px;
+	border: 1px solid rgba(0, 0, 0, 0.7);
+	box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
+	font-family: inherit;
+}
+
+button:enabled:active,
+input[type="button"]:enabled:active,
+input[type="submit"]:enabled:active,
+input[type="reset"]:enabled:active,
+a.button:active {
+	background-color: rgba(0, 0, 0, 0.4);
+	color: rgba(255, 255, 255, 0.5);
+}
+
+a.button:hover {
+	text-decoration: none;
+}
+
+button:disabled,
+input[type="button"]:disabled,
+input[type="submit"]:disabled,
+input[type="reset"]:disabled,
+a.button:disabled {
+	opacity: 0.25;
+	cursor: default;
+}
+
+input[type="submit"] {
+	animation: default_button 2s infinite;
+}
+
+input[type="submit"]:enabled:active {
+	animation: none;
+}
+
+/* !Fields */
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+input[type="tel"],
+input[type="search"],
+textarea {
+	background-color: rgba(255, 255, 255, 0.8);
+	box-sizing: border-box;
+	padding: 8px;
+	border: 1px solid rgba(0, 0, 0, 0.7);
+	box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
+	font-size: 11pt;
+	width: 100%;
+	-webkit-appearance: none;
+	border-radius: 4px;
+	margin: 0px;
+	font-family: inherit;
+	transition-property: background-color, color, border-color;
+	transition-duration: 0.15s;
+	transition-timing-function: ease-out;
+	text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="tel"]:focus,
+input[type="search"]:focus,
+textarea:focus {
+	background-color: rgba(255, 255, 255, 1.0);
+}
+
+input[type="text"]::placeholder,
+input[type="password"]::placeholder,
+input[type="email"]::placeholder,
+input[type="url"]::placeholder,
+input[type="tel"]::placeholder,
+input[type="search"]::placeholder,
+textarea::placeholder {
+	color: rgba(0, 0, 0, 0.5);
+}
+
+/* !Header */
+
+header {
+	height: 30px;
+	padding: 15px;
+}
+
+#top-menu {
+	float: right;
+	height: 100%;
+}
+
+#top-menu a {
+	min-height: 30px;
+	color: #ffffff;
+	text-decoration: none;
+	font-weight: 600;
+	transition-property: background-color, color, border-color;
+	transition-duration: 0.15s;
+	transition-timing-function: ease-out;
+	background-color: rgba(255, 255, 255, 0.0);
+	border-radius: 4px;
+	padding: 2px 6px;
+}
+
+#top-menu a+a {
+	margin-left: 15px;
+}
+
+#top-menu a:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+
+#top-menu a:hover {
+	background-color: #ffffff;
+	color: #713a9a;
+}
+
+/* !Main */
+
+main {
+	padding: 15px;
+}
+
+/* !Generic Table */
+
+table.generic {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+table.generic td {
+	padding: 6px;
+}
+
+table.generic thead {
+	background-color: rgba(0, 0, 0, 0.2);
+}
