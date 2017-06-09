@@ -2,28 +2,28 @@
 @import '/assets/css/normalize.css';
 
 @font-face {
-	font-family: 'Raleway';
+	font-family: 'Muli';
 	font-style: normal;
 	font-weight: 400;
-	src: local('Raleway'), local('Raleway-Regular'), url(/assets/fonts/raleway.ttf) format('truetype');
+	src: local('Muli Regular'), local('Muli-Regular'), url(/assets/fonts/muli-regular.ttf) format('truetype');
 }
 
 @font-face {
-	font-family: 'Raleway';
+	font-family: 'Muli';
 	font-style: normal;
 	font-weight: 600;
-	src: local('Raleway SemiBold'), local('Raleway-SemiBold'), url(/assets/fonts/raleway-semibold.ttf) format('truetype');
+	src: local('Muli SemiBold'), local('Muli-SemiBold'), url(/assets/fonts/muli-semibold.ttf) format('truetype');
 }
 
 @font-face {
-	font-family: 'Raleway';
+	font-family: 'Muli';
 	font-style: normal;
 	font-weight: 700;
-	src: local('Raleway Bold'), local('Raleway-Bold'), url(/assets/fonts/raleway-bold.ttf) format('truetype');
+	src: local('Muli Bold'), local('Muli-Bold'), url(/assets/fonts/muli-bold.ttf) format('truetype');
 }
 
 body {
-	font-family: Raleway;
+	font-family: Muli;
 	background-color: #713a9a;
 	color: #ffffff;
 	max-width: 1000px;
