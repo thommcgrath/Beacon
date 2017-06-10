@@ -11,6 +11,14 @@ if (!BeaconTemplate::IsHTML()) {
 		<meta charset="UTF-8">
 		<title><?php echo htmlentities(BeaconTemplate::Title()); ?></title>
 		<link href="/assets/css/main.css" rel="stylesheet" media="all" type="text/css">
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+		<link rel="manifest" href="/manifest.json">
+		<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#713a9a">
+		<meta name="apple-mobile-web-app-title" content="Beacon">
+		<meta name="application-name" content="Beacon">
+		<meta name="theme-color" content="#713a9a">
 		<?php
 		$header_lines = BeaconTemplate::ExtraHeaderLines();
 		for ($i = 0; $i < count($header_lines); $i++) {
