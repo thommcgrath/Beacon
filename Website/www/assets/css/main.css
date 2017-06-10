@@ -26,6 +26,7 @@ body {
 	font-family: Muli;
 	background-color: #713a9a;
 	color: #ffffff;
+	min-width: 320px;
 }
 
 /* !Common Elements */
@@ -133,7 +134,7 @@ a:active {
 	max-width: 900px;
 	margin-left: auto;
 	margin-right: auto;
-	padding: 15px;
+	padding: 10px;
 }
 
 /* !Buttons */
@@ -252,24 +253,25 @@ textarea::placeholder {
 /* !Header */
 
 header {
-	height: 70px;
+	height: 60px;
 	background-color: rgba(0, 0, 0, 0.1);
 }
 
 header div.inner {
-	height: 70px;
+	height: 60px;
 }
 
 #top-menu {
 	float: right;
 	height: 100%;
+	font-weight: 600;
+	font-size: 10pt;
 }
 
 #top-menu a {
 	min-height: 30px;
 	color: #ffffff;
 	text-decoration: none;
-	font-weight: 600;
 	transition-property: background-color, color, border-color;
 	transition-duration: 0.15s;
 	transition-timing-function: ease-out;
@@ -279,7 +281,7 @@ header div.inner {
 }
 
 #top-menu a+a {
-	margin-left: 15px;
+	margin-left: 0px;
 }
 
 #top-menu a:before {
@@ -292,6 +294,14 @@ header div.inner {
 #top-menu a:hover {
 	background-color: #ffffff;
 	color: #713a9a;
+}
+
+#header_logo_small {
+	display: inline-block;
+}
+
+#header_logo_full {
+	display: none;
 }
 
 /* !Generic Table */
@@ -323,4 +333,40 @@ footer {
 
 #footer_github_logo img {
 	border: none;
+}
+
+/* !Medium Screens */
+
+@media (min-width: 413px) {
+	#top-menu {
+		font-size: 12pt;
+	}
+	
+	#top-menu a+a {
+		margin-left: 15px;
+	}
+}
+
+/* !Large Screens */
+
+@media (min-width: 642px) {
+	.inner {
+		padding: 15px;
+	}
+	
+	#header_logo_small {
+		display: none;
+	}
+	
+	#header_logo_full {
+		display: inline-block;
+	}
+	
+	header {
+		height: 70px;
+	}
+	
+	header div.inner {
+		height: 70px;
+	}
 }
