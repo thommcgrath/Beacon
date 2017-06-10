@@ -26,9 +26,6 @@ body {
 	font-family: Muli;
 	background-color: #713a9a;
 	color: #ffffff;
-	max-width: 1000px;
-	margin-left: auto;
-	margin-right: auto;
 }
 
 /* !Common Elements */
@@ -128,6 +125,15 @@ a:active {
 
 .indent {
 	margin-left: 30px;
+}
+
+.inner {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 900px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 15px;
 }
 
 /* !Buttons */
@@ -246,8 +252,12 @@ textarea::placeholder {
 /* !Header */
 
 header {
-	height: 30px;
-	padding: 15px;
+	height: 70px;
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+header div.inner {
+	height: 70px;
 }
 
 #top-menu {
@@ -284,12 +294,6 @@ header {
 	color: #713a9a;
 }
 
-/* !Main */
-
-main {
-	padding: 15px;
-}
-
 /* !Generic Table */
 
 table.generic {
@@ -309,7 +313,6 @@ table.generic thead {
 
 footer {
 	margin-top: 30px;
-	padding: 15px;
 	text-align: center;
 	font-size: 10pt;
 }
