@@ -115,6 +115,30 @@ abstract class BeaconCommon {
 		curl_exec($ch);
 		curl_close($ch);
 	}
+	
+	public static function IsMacOS() {
+		return stristr($_SERVER['HTTP_USER_AGENT'], 'Macintosh') !== false;
+	}
+	
+	public static function IsWindows() {
+		return stristr($_SERVER['HTTP_USER_AGENT'], 'Windows NT') !== false;
+	}
+	
+	public static function IsLinux() {
+		return (stristr($_SERVER['HTTP_USER_AGENT'], 'Linux') !== false) && (stristr($_SERVER['HTTP_USER_AGENT'], 'Android') === false);
+	}
+	
+	public static function IsiOS() {
+		return stristr($_SERVER['HTTP_USER_AGENT'], 'iPhone') !== false;
+	}
+	
+	public static function IsAndroid() {
+		return stristr($_SERVER['HTTP_USER_AGENT'], 'Android') !== false;
+	}
+	
+	public static function IsWindowsPhone() {
+		return stristr($_SERVER['HTTP_USER_AGENT'], 'Windows Phone OS') !== false;
+	}
 }
 
 ?>
