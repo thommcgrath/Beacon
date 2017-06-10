@@ -37,15 +37,13 @@ if (BeaconCommon::IsMacOS()) {
 }
 ?>
 <h1>Current Version</h1>
-<div class="indent">
-	<p>Version <?php echo $version; ?></p>
+<p class="text-center">Version <?php echo $version; ?></p>
 <?php if ($mode == MODE_NA) { ?>
-	<p class="text-center"><a class="button" href="<?php echo $mac_url; ?>"><?php echo htmlentities($mac_label); ?></a><a class="button" href="<?php echo $win_url; ?>"><?php echo htmlentities($win_label); ?></a></p>
+<p class="text-center"><a class="button" href="<?php echo $mac_url; ?>"><?php echo htmlentities($mac_label); ?></a><a class="button" href="<?php echo $win_url; ?>"><?php echo htmlentities($win_label); ?></a></p>
 <?php } else { ?>
-	<p class="text-center"><a class="button" href="<?php echo $primary_url; ?>"><?php echo htmlentities($primary_label); ?></a><br><span class="mini">Or <a href="<?php echo $alternate_url; ?>"><?php echo htmlentities($alternate_label); ?></a></span></p>
+<p class="text-center"><a class="button" href="<?php echo $primary_url; ?>"><?php echo htmlentities($primary_label); ?></a><br><span class="mini">Or <a href="<?php echo $alternate_url; ?>"><?php echo htmlentities($alternate_label); ?></a></span></p>
 <?php } ?>
-	<div class="patreon_box"><p><a href="https://www.patreon.com/thommcgrath"><img src="/assets/images/patreon-white.svg" height="40"></a></p><p>Beacon may be free, but developing it isn't. Consider helping out with a couple bucks towards things like server rentals.</p></div>
-</div>
+<div class="patreon_box"><p><a href="https://www.patreon.com/thommcgrath"><img src="/assets/images/patreon-white.svg" height="40"></a></p><p>Beacon may be free, but developing it isn't. Consider helping out with a couple bucks towards things like server rentals.</p></div>
 <h3>Engrams Database</h3>
 <div class="indent">
 	<p><a href="classes.php?version=<?php echo $build; ?>">Download Engrams Database</a><br>Last updated <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?>.</p>

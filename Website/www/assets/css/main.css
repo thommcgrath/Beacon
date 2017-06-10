@@ -333,14 +333,16 @@ footer {
 }
 
 #footer_github_logo,
-#footer_patreon_logo {
+#footer_patreon_logo,
+#footer_discord_logo {
 	text-decoration: none;
 	margin-left: 6px;
 	margin-right: 6px;
 }
 
 #footer_github_logo img,
-#footer_patreon_logo img {
+#footer_patreon_logo img,
+#footer_discord_logo img {
 	border: none;
 }
 

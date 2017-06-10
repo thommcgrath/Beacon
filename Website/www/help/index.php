@@ -22,5 +22,7 @@ BeaconTemplate::SetTitle('Troubleshooting');
 	<h3>Some more personal help</h3>
 	<div class="indent">
 		<p>Get in touch. Bugs should be reported on the <a href="/reportaproblem.php">GitHub page</a>. Anybody can create an account and this is more helpful than email when it comes to bugs. General help inquiries should be sent to <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.</p>
+		<p class="text-center"><a href="https://discord.gg/2vbT7fV"><img height="40" src="/assets/images/discord-full-white.svg"></a></p>
+		<p>Beacon now has a <a href="https://discord.gg/2vbT7fV">Discord server</a>. Come ask questions, but realize that people need to sleep.</p>
 	</div>
 </div>
