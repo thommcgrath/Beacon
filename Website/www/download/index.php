@@ -44,6 +44,7 @@ if (BeaconCommon::IsMacOS()) {
 <?php } else { ?>
 	<p class="text-center"><a class="button" href="<?php echo $primary_url; ?>"><?php echo htmlentities($primary_label); ?></a><br><span class="mini">Or <a href="<?php echo $alternate_url; ?>"><?php echo htmlentities($alternate_label); ?></a></span></p>
 <?php } ?>
+	<div class="patreon_box"><p><a href="https://www.patreon.com/thommcgrath"><img src="/assets/images/patreon-white.svg" height="40"></a></p><p>Beacon may be free, but developing it isn't. Consider helping out with a couple bucks towards things like server rentals.</p></div>
 </div>
 <h3>Engrams Database</h3>
 <div class="indent">

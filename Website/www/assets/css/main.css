@@ -332,12 +332,27 @@ footer {
 	font-size: 10pt;
 }
 
-#footer_github_logo {
+#footer_github_logo,
+#footer_patreon_logo {
 	text-decoration: none;
+	margin-left: 6px;
+	margin-right: 6px;
 }
 
-#footer_github_logo img {
+#footer_github_logo img,
+#footer_patreon_logo img {
 	border: none;
+}
+
+/* !Patreon Box */
+
+div.patreon_box {
+	width: 300px;
+	text-align: center;
+	padding: 15px;
+	margin: 30px auto;
+	border: 1px solid rgba(255, 255, 255, 0.5);
+	border-radius: 8px;
 }
 
 /* !Medium Screens */
