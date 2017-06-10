@@ -1,6 +1,6 @@
 <?php
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
-BeaconTemplate::SetTitle('Beacon Privacy Policy');
+BeaconTemplate::SetTitle('Privacy Policy');
 ?><h1>Beacon Privacy Policy</h1>
 <div class="indent">
 	<p><strong>Here it is in simple non-lawyer terms</strong>: I have zero interest in your personal data. My users are not a commodity. My website doesn't even run Google Analytics.</p>

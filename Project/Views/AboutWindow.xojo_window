@@ -76,6 +76,7 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Beacon"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -110,6 +111,7 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Version X"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -144,6 +146,7 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "© 2016 Thom McGrath, All Rights Reserved."
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -178,6 +181,7 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   7
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "https://beaconapp.cc/"
       TextAlign       =   1
       TextColor       =   &c0000FF00
@@ -212,6 +216,7 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Engrams Updated Y"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -277,6 +282,7 @@ Begin BeaconWindow AboutWindow
       Width           =   16
    End
    Begin Xojo.Net.HTTPSocket UpdateEngramsSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -355,7 +361,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.Text = Beacon.WebURL + "/"
+		  Me.Text = Beacon.WebURL()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

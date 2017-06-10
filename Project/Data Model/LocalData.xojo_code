@@ -31,7 +31,7 @@ Implements Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function ClassesURL() As Text
 		  Dim LastSync As String = Self.Variable("last_sync")
-		  Dim CheckURL As Text = Beacon.WebURL + "/classes.php?version=" + App.NonReleaseVersion.ToText
+		  Dim CheckURL As Text = Beacon.WebURL("/download/classes.php?version=" + App.NonReleaseVersion.ToText)
 		  If LastSync <> "" Then
 		    CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync).ToText
 		  End If

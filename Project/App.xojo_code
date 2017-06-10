@@ -234,7 +234,7 @@ Inherits Application
 
 	#tag MenuHandler
 		Function HelpAdminSpawnCodes() As Boolean Handles HelpAdminSpawnCodes.Action
-			ShowURL(Beacon.WebURL + "/spawncodes.php")
+			ShowURL(Beacon.WebURL("/spawn/"))
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -248,7 +248,7 @@ Inherits Application
 
 	#tag MenuHandler
 		Function HelpMakeADonation() As Boolean Handles HelpMakeADonation.Action
-			ShowURL(Beacon.WebURL + "/donate.php")
+			ShowURL(Beacon.WebURL("/donate.php"))
 			Return True
 		End Function
 	#tag EndMenuHandler
