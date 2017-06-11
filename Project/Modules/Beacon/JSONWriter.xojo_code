@@ -3,7 +3,17 @@ Protected Class JSONWriter
 Inherits Beacon.Thread
 	#tag Event
 		Sub Run()
-		  Self.Write
+		  Self.mSuccess = False
+		  Self.mFinished = False
+		  Self.mRunning = True
+		  Try
+		    Self.Write
+		  Catch Err As RuntimeException
+		    
+		  End Try
+		  Self.mFinished = True
+		  Self.mRunning = False
+		  RaiseEvent Finished
 		End Sub
 	#tag EndEvent
 
@@ -13,6 +23,7 @@ Inherits Beacon.Thread
 		  Super.Constructor
 		  Self.Source = Source
 		  Self.Destination = Destination
+		  Self.Lock = New Mutex(EncodeHex(Crypto.MD5(Lowercase(Destination.NativePath))))
 		End Sub
 	#tag EndMethod
 
@@ -105,12 +116,28 @@ Inherits Beacon.Thread
 		  Stream.Close
 		  
 		  // Delete the existing one
+		  Self.Lock.Enter
 		  If Destination.Exists Then
 		    Destination.Delete
+		    Dim Err As Integer = Destination.LastErrorCode
+		    If Err <> 0 Then
+		      Self.Lock.Leave
+		      Return
+		    End If
 		  End If
 		  
 		  // Move the temporary
 		  Temp.MoveFileTo(Destination)
+		  If Temp.LastErrorCode <> 0 Then
+		    Dim Err As Integer = Temp.LastErrorCode
+		    If Err <> 0 Then
+		      Self.Lock.Leave
+		      Return
+		    End If
+		  End If
+		  
+		  Self.mSuccess = True
+		  Self.Lock.Leave
 		End Sub
 	#tag EndMethod
 
@@ -141,6 +168,11 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 
+	#tag Hook, Flags = &h0
+		Event Finished()
+	#tag EndHook
+
+
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Private Destination As Global.FolderItem
 	#tag EndProperty
@@ -149,12 +181,60 @@ Inherits Beacon.Thread
 		Private Destination As Xojo.IO.FolderItem
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mFinished
+			End Get
+		#tag EndGetter
+		Finished As Boolean
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Private Lock As Mutex
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFinished As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mRunning As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSuccess As Boolean
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mRunning
+			End Get
+		#tag EndGetter
+		Running As Boolean
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private Source As Xojo.Core.Dictionary
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mSuccess
+			End Get
+		#tag EndGetter
+		Success As Boolean
+	#tag EndComputedProperty
+
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Finished"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -181,6 +261,11 @@ Inherits Beacon.Thread
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Running"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="StackSize"
 			Group="Behavior"
 			Type="UInteger"
@@ -197,6 +282,11 @@ Inherits Beacon.Thread
 				"3 - Sleeping"
 				"4 - NotRunning"
 			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Success"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

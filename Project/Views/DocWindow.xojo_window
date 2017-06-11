@@ -635,9 +635,12 @@ End
 	#tag Method, Flags = &h0
 		Sub SaveAs(File As FolderItem)
 		  Self.File = File
-		  Self.Doc.Write(File)
 		  Self.Title = File.Name
 		  Self.ContentsChanged = False
+		  
+		  Dim Writer As New Beacon.JSONWriter(Self.Doc.Export, File)
+		  AddHandler Writer.Finished, AddressOf WriterFinished
+		  Writer.Run
 		End Sub
 	#tag EndMethod
 
@@ -711,6 +714,17 @@ End
 		  Self.mBlockSelectionChanged = False
 		  Editor.Sources = Selection
 		  Editor.Enabled = UBound(Selection) > -1
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub WriterFinished(Sender As Beacon.JSONWriter)
+		  If Sender.Success Then
+		    Return
+		  End If
+		  
+		  Self.ContentsChanged = True
+		  Self.ShowAlert("File did not save", "It may be locked or in use.")
 		End Sub
 	#tag EndMethod
 

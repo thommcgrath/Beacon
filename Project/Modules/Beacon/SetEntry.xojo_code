@@ -159,7 +159,8 @@ Implements Beacon.Countable
 		  // If bForceBlueprint is not included or explicitly true, then force is true. This
 		  // mirrors how Ark works. If bForceBlueprint is false, then look to one of the
 		  // chance keys. If neither key is specified, chance default to 0.
-		  Dim ForceBlueprint As Boolean = if(Dict.HasKey("bForceBlueprint"), Dict.Value("bForceBlueprint"), True) // Default is true in-game
+		  Dim HasExplicitChance As Boolean = Dict.HasKey("ChanceToActuallyGiveItem") Or Dict.HasKey("ChanceToBeBlueprintOverride")
+		  Dim ForceBlueprint As Boolean = if(Dict.HasKey("bForceBlueprint"), Dict.Value("bForceBlueprint"), Not HasExplicitChance) // Default is true in-game
 		  Dim Chance As Double
 		  If ForceBlueprint Then
 		    Chance = 1
