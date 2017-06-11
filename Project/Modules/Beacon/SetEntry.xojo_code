@@ -307,6 +307,47 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Simulate() As Beacon.SimulatedSelection()
+		  Dim Quantity As Integer = Xojo.Math.RandomInt(Self.mMinQuantity, Self.mMaxQuantity)
+		  Dim MinQuality As Double = Beacon.ValueForQuality(Self.mMinQuality, 1)
+		  Dim MaxQuality As Double = Beacon.ValueForQuality(Self.mMaxQuality, 1)
+		  Dim Selections() As Beacon.SimulatedSelection
+		  Dim RequiredChance As Integer = (1 - Self.mChanceToBeBlueprint) * 100
+		  
+		  Dim WeightLookup As New Xojo.Core.Dictionary
+		  Dim Sum, Weights() As Double
+		  For Each Entry As Beacon.SetEntryOption In Self.mItems
+		    Sum = Sum + Entry.Weight
+		    Weights.Append(Sum * 100000)
+		    WeightLookup.Value(Sum * 100000) = Entry
+		  Next
+		  Weights.Sort
+		  
+		  For I As Integer = 1 To Quantity
+		    Dim QualityValue As Double = (Xojo.Math.RandomInt(MinQuality * 100000, MaxQuality * 100000) / 100000)
+		    Dim BlueprintDecision As Integer = Xojo.Math.RandomInt(0, 100)
+		    Dim ClassDecision As Double = Xojo.Math.RandomInt(100000, Sum * 100000)
+		    Dim Selection As New Beacon.SimulatedSelection
+		    
+		    For X As Integer = 0 To UBound(Weights)
+		      If Weights(X) >= ClassDecision Then
+		        Dim SelectedWeight As Double = Weights(X)
+		        Dim SelectedEntry As Beacon.SetEntryOption = WeightLookup.Value(SelectedWeight)
+		        Selection.ClassString = SelectedEntry.Engram.ClassString
+		        Exit For X
+		      End If
+		    Next
+		    
+		    Selection.IsBlueprint = BlueprintDecision >= RequiredChance
+		    Selection.Quality = Beacon.QualityForValue(QualityValue, 1)
+		    Selections.Append(Selection)
+		  Next
+		  
+		  Return Selections
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function TextValue(Multipliers As Beacon.Range) As Text
 		  Dim Classes(), Weights() As Text
 		  Redim Classes(UBound(Self.mItems))

@@ -129,6 +129,7 @@ Class=Engram;Modules/BeaconAPI/Engram.xojo_code;&h68F827FF;&h783217FF;false
 Class=WorkshopMod;Modules/BeaconAPI/WorkshopMod.xojo_code;&h1F8AB7FF;&h783217FF;false
 Class=Request;Modules/BeaconAPI/Request.xojo_code;&h73A54FFF;&h783217FF;false
 Class=Socket;Modules/BeaconAPI/Socket.xojo_code;&h418F07FF;&h783217FF;false
+Class=SimulatedSelection;Modules/Beacon/SimulatedSelection.xojo_code;&h44E7BFFF;&h55ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0
