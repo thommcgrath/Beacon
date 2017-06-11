@@ -54,7 +54,7 @@ Implements Beacon.Countable
 		  Dim Keys As New Xojo.Core.Dictionary
 		  Keys.Value("ItemEntries") = Children
 		  Keys.Value("bItemsRandomWithoutReplacement") = Self.ItemsRandomWithoutReplacement
-		  Keys.Value("Label") = Self.Label
+		  Keys.Value("Label") = Self.Label // Write "Label" so older versions of Beacon can read it
 		  Keys.Value("MaxNumItems") = Self.MaxNumItems
 		  Keys.Value("MinNumItems") = Self.MinNumItems
 		  Keys.Value("NumItemsPower") = Self.NumItemsPower
@@ -147,7 +147,9 @@ Implements Beacon.Countable
 		  Else
 		    Set.ItemsRandomWithoutReplacement = Dict.Lookup("ItemsRandomWithoutReplacement", Set.ItemsRandomWithoutReplacement)
 		  End If
-		  If Dict.HasKey("Label") Then
+		  If Dict.HasKey("SetName") Then
+		    Set.Label = Dict.Value("SetName")
+		  ElseIf Dict.HasKey("Label") Then
 		    Set.Label = Dict.Value("Label")
 		  End If
 		  

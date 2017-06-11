@@ -155,41 +155,58 @@ Implements Beacon.Countable
 		  
 		  Entry.MinQuantity = Dict.Lookup("MinQuantity", Entry.MinQuantity)
 		  Entry.MaxQuantity = Dict.Lookup("MaxQuantity", Entry.MaxQuantity)
-		  If Dict.HasKey("ChanceToBeBlueprintOverride") Then
+		  If Dict.HasKey("bForceBlueprint") And Dict.Value("bForceBlueprint") = True Then
+		    Entry.ChanceToBeBlueprint = 1
+		  ElseIf Dict.HasKey("ChanceToActuallyGiveItem") Then
+		    Entry.ChanceToBeBlueprint = 1.0 - Dict.Value("ChanceToActuallyGiveItem")
+		  ElseIf Dict.HasKey("ChanceToBeBlueprintOverride") Then
 		    Entry.ChanceToBeBlueprint = Dict.Value("ChanceToBeBlueprintOverride")
 		  Else
 		    Entry.ChanceToBeBlueprint = Dict.Lookup("ChanceToBeBlueprint", Entry.ChanceToBeBlueprint)
 		  End If
 		  
-		  If Dict.HasKey("ItemClassStrings") And Dict.HasKey("ItemsWeights") Then
-		    Dim ClassStrings() As Auto = Dict.Value("ItemClassStrings")
-		    Dim ClassWeights() As Auto = Dict.Value("ItemsWeights")
-		    
-		    If UBound(ClassWeights) < UBound(ClassStrings) Then
-		      // Add more values
-		      While UBound(ClassWeights) < UBound(ClassStrings)
-		        ClassWeights.Append(1)
-		      Wend
-		    ElseIf UBound(ClassWeights) > UBound(ClassStrings) Then
-		      // Just truncate
-		      Redim ClassWeights(UBound(ClassStrings))
-		    End If
-		    
-		    For I As Integer = 0 To UBound(ClassStrings)
-		      Try
-		        Dim ClassString As Text = ClassStrings(I)
-		        Dim ClassWeight As Double = ClassWeights(I)
-		        Entry.Append(New Beacon.SetEntryOption(Beacon.Engram.Lookup(ClassString), ClassWeight))
-		      Catch Err As TypeMismatchException
-		        Continue
-		      End Try
-		    Next
+		  Dim ClassWeights() As Auto
+		  If Dict.HasKey("ItemsWeights") Then
+		    ClassWeights = Dict.Value("ItemsWeights")
+		  End If
+		  
+		  Dim ClassStrings() As Auto
+		  If Dict.HasKey("ItemClassStrings") Then
+		    ClassStrings = Dict.Value("ItemClassStrings")
 		  ElseIf Dict.HasKey("Items") Then
+		    // Could be array of blueprints or from a Beacon file
 		    Dim Children() As Auto = Dict.Value("Items")
-		    For Each Child As Xojo.Core.Dictionary In Children
-		      Entry.Append(Beacon.SetEntryOption.Import(Child))
+		    For Each Child As Auto In Children
+		      Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Child)
+		      Select Case Info.FullName
+		      Case "Xojo.Core.Dictionary"
+		        Entry.Append(Beacon.SetEntryOption.Import(Child))
+		      Case "Text"
+		        Dim ClassString As Text = Beacon.CleanupClassString(Child)
+		        ClassStrings.Append(ClassString)
+		      End Select
 		    Next
 		  End If
+		  
+		  If UBound(ClassWeights) < UBound(ClassStrings) Then
+		    // Add more values
+		    While UBound(ClassWeights) < UBound(ClassStrings)
+		      ClassWeights.Append(1)
+		    Wend
+		  ElseIf UBound(ClassWeights) > UBound(ClassStrings) Then
+		    // Just truncate
+		    Redim ClassWeights(UBound(ClassStrings))
+		  End If
+		  
+		  For I As Integer = 0 To UBound(ClassStrings)
+		    Try
+		      Dim ClassString As Text = ClassStrings(I)
+		      Dim ClassWeight As Double = ClassWeights(I)
+		      Entry.Append(New Beacon.SetEntryOption(Beacon.Engram.Lookup(ClassString), ClassWeight))
+		    Catch Err As TypeMismatchException
+		      Continue
+		    End Try
+		  Next
 		  
 		  Return Entry
 		End Function
@@ -293,41 +310,23 @@ Implements Beacon.Countable
 		  Dim MaxQuality As Double = Beacon.ValueForQuality(Self.mMaxQuality, Multipliers.Max)
 		  Dim Chance As Double = if(Self.CanBeBlueprint, Self.mChanceToBeBlueprint, 0)
 		  Dim InverseChance As Double = 1 - Chance
-		  Dim Entries() As Text
 		  
-		  If InverseChance > 0 Then
-		    // Usable item code
-		    Dim EntryWeight As Double = Self.mWeight * InverseChance
-		    Dim Values() As Text
-		    Values.Append("EntryWeight=" + EntryWeight.ToText)
-		    Values.Append("ItemClassStrings=(""" + Text.Join(Classes, """,""") + """)")
-		    Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
-		    Values.Append("MinQuantity=" + Self.mMinQuantity.ToText)
-		    Values.Append("MaxQuantity=" + Self.mMaxQuantity.ToText)
-		    Values.Append("MinQuality=" + MinQuality.ToText)
-		    Values.Append("MaxQuality=" + MaxQuality.ToText)
+		  Dim Values() As Text
+		  Values.Append("EntryWeight=" + Self.mWeight.ToText)
+		  Values.Append("ItemClassStrings=(""" + Text.Join(Classes, """,""") + """)")
+		  Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
+		  Values.Append("MinQuantity=" + Self.mMinQuantity.ToText)
+		  Values.Append("MaxQuantity=" + Self.mMaxQuantity.ToText)
+		  Values.Append("MinQuality=" + MinQuality.ToText)
+		  Values.Append("MaxQuality=" + MaxQuality.ToText)
+		  If Chance < 1 Then
 		    Values.Append("bForceBlueprint=false")
-		    Values.Append("ChanceToBeBlueprintOverride=0.0")
-		    Entries.Append("(" + Text.Join(Values, ",") + ")")
-		  End If
-		  
-		  If Chance > 0 Then
-		    // Blueprint code
-		    Dim EntryWeight As Double = Self.mWeight * Chance
-		    Dim Values() As Text
-		    Values.Append("EntryWeight=" + EntryWeight.ToText)
-		    Values.Append("ItemClassStrings=(""" + Text.Join(Classes, """,""") + """)")
-		    Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
-		    Values.Append("MinQuantity=1")
-		    Values.Append("MaxQuantity=1")
-		    Values.Append("MinQuality=" + MinQuality.ToText)
-		    Values.Append("MaxQuality=" + MaxQuality.ToText)
+		  Else
 		    Values.Append("bForceBlueprint=true")
-		    Values.Append("ChanceToBeBlueprintOverride=1.0")
-		    Entries.Append("(" + Text.Join(Values, ",") + ")")
 		  End If
-		  
-		  Return Text.Join(Entries, ",")
+		  Values.Append("ChanceToActuallyGiveItem=" + InverseChance.ToText)
+		  Values.Append("ChanceToBeBlueprintOverride=" + Chance.ToText)
+		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod
 

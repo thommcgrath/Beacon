@@ -191,6 +191,15 @@ Begin ContainerControl BeaconEditor
       Visible         =   True
       Width           =   190
    End
+   Begin Beacon.ImportThread Importer
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   0
+      Scope           =   0
+      StackSize       =   ""
+      State           =   ""
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -287,6 +296,17 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub CancelImport()
+		  Importer.Stop
+		  
+		  If Self.ImportProgress <> Nil Then
+		    Self.ImportProgress.Close
+		    Self.ImportProgress = Nil
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub EnableMenuItems()
 		  Self.BuildPresetMenu(DocumentAddItemSet)
@@ -338,6 +358,16 @@ End
 		  End If
 		  Return True
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Import(Content As String, Source As String)
+		  Self.ImportProgress = New ImporterWindow
+		  Self.ImportProgress.Source = Source
+		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
+		  Self.ImportProgress.ShowWithin(Self.TrueWindow)
+		  Self.Importer.Run(Content.ToText)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -466,6 +496,10 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private ImportProgress As ImporterWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSorting As Boolean
 	#tag EndProperty
 
@@ -509,7 +543,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType)
+		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Left(Board.Text, 1) = "(")
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -529,21 +563,34 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Or UBound(Self.mSources) = -1 Then
+		  If UBound(Self.mSources) = -1 Then
 		    Return
 		  End If
 		  
-		  Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		  Dim Dict As Xojo.Core.Dictionary
-		  Try
-		    Dict = Xojo.Data.ParseJSON(Contents.ToText)
-		  Catch Err As RuntimeException
-		    Beep
-		    Return
-		  End Try
-		  
-		  Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Dict, Self.mSources(0))
-		  Self.AddSet(Set)
+		  If Board.RawDataAvailable(Self.kClipboardType) Then
+		    Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
+		    Dim Dict As Xojo.Core.Dictionary
+		    Try
+		      Dict = Xojo.Data.ParseJSON(Contents.ToText)
+		    Catch Err As RuntimeException
+		      Beep
+		      Return
+		    End Try
+		    
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Dict, Self.mSources(0))
+		    Self.AddSet(Set)
+		  ElseIf Board.TextAvailable And Left(Board.Text, 1) = "(" Then
+		    Dim Contents As String = Board.Text
+		    If Left(Contents, 2) = "((" Then
+		      // This may be multiple item sets from the dev kit, so wrap it up like a full loot source
+		      Contents = "ConfigOverrideSupplyCrateItems=(SupplyCrateClassString=""SupplyCrate_Level03_C"",MinItemSets=1,MaxItemSets=3,NumItemSetsPower=1.000000,bSetsRandomWithoutReplacement=true,ItemSets=" + Contents + ")"
+		      Self.Import(Contents, "Clipboard")
+		    ElseIf Left(Contents, 1) = "(" Then
+		      // This may be a single item set from the dev kit, so wrap it up like a full loot source
+		      Contents = "ConfigOverrideSupplyCrateItems=(SupplyCrateClassString=""SupplyCrate_Level03_C"",MinItemSets=1,MaxItemSets=3,NumItemSetsPower=1.000000,bSetsRandomWithoutReplacement=true,ItemSets=(" + Contents + "))"
+		      Self.Import(Contents, "Clipboard")
+		    End If
+		  End
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -724,6 +771,33 @@ End
 		  SetList.Top = NewSize
 		  SetList.Height = Separators(2).Top - NewSize
 		  Self.Refresh(False)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Importer
+	#tag Event
+		Sub UpdateUI()
+		  If Me.LootSourcesProcessed = Me.BeaconCount Then
+		    If Self.ImportProgress <> Nil Then
+		      Self.ImportProgress.Close
+		      Self.ImportProgress = Nil
+		    End If
+		    
+		    Dim LootSources() As Beacon.LootSource = Me.LootSources
+		    Me.Reset
+		    
+		    For Each LootSource As Beacon.LootSource In LootSources
+		      For Each Set As Beacon.ItemSet In LootSource
+		        Self.AddSet(Set)
+		      Next
+		    Next
+		    Return
+		  End If
+		  
+		  If Self.ImportProgress <> Nil Then
+		    Self.ImportProgress.BeaconCount = Me.BeaconCount
+		    Self.ImportProgress.LootSourcesProcessed = Me.LootSourcesProcessed
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

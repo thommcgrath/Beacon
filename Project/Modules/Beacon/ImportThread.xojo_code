@@ -105,6 +105,12 @@ Inherits Beacon.Thread
 		    Else
 		      Return Children
 		    End If
+		  ElseIf Content.Mid(Offset, 1) = """" Then
+		    // Text
+		    Dim ClosingPos As Integer = Content.IndexOf(Offset + 1, """")
+		    Dim TextValue As Text = Content.Mid(Offset + 1, ClosingPos - (Offset + 1))
+		    Offset = ClosingPos + 1
+		    Return TextValue
 		  End If
 		  
 		  Dim Pos As Integer = Self.PositionOfNextDelimeter(Offset, Content)
@@ -141,14 +147,37 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  If Content.Left(1) = """" And Content.Right(1) = """" Then
-		    // Text
+		    // Text in quotes
 		    Return Content.Mid(1, Content.Length - 2)
 		  ElseIf Content = "true" Or Content = "false" Then
 		    // Boolean
 		    Return Content = "true"
 		  Else
-		    // Number
-		    Return Double.FromText(Content)
+		    Dim IsNumeric As Boolean = True
+		    Dim DecimalPoints As Integer
+		    For Each Char As Text In Content.Characters
+		      Select Case Char
+		      Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
+		        // Still a Number
+		      Case "."
+		        If DecimalPoints = 1 Then
+		          IsNumeric = False
+		          Exit
+		        Else
+		          DecimalPoints = 1
+		        End If
+		      Else
+		        IsNumeric = False
+		        Exit
+		      End Select
+		    Next
+		    If IsNumeric Then
+		      // Number
+		      Return Double.FromText(Content)
+		    Else
+		      // Probably Text
+		      Return Content
+		    End If
 		  End If
 		End Function
 	#tag EndMethod
