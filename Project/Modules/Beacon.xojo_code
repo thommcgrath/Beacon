@@ -9,6 +9,9 @@ Protected Module Beacon
 		    If Value.Length > 9 And Value.Left(9) = "Blueprint" Then
 		      Value = Value.Mid(9)
 		    End If
+		    If Value.Length > 23 ANd Value.Left(23) = "BlueprintGeneratedClass" Then
+		      Value = Value.Mid(23)
+		    End If
 		    
 		    If Value.Left(1) = "." Then
 		      Value = Value.Mid(1)
