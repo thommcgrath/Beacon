@@ -43,7 +43,7 @@ Implements Beacon.Countable
 		  Self.mMaxQuantity = 1
 		  Self.mMinQuality = Beacon.Qualities.Primitive
 		  Self.mMaxQuality = Beacon.Qualities.Ascendant
-		  Self.mChanceToBeBlueprint = 0.1
+		  Self.mChanceToBeBlueprint = 1.0
 		  Self.mWeight = 1
 		  Self.mUniqueID = ""
 		End Sub
@@ -155,15 +155,25 @@ Implements Beacon.Countable
 		  
 		  Entry.MinQuantity = Dict.Lookup("MinQuantity", Entry.MinQuantity)
 		  Entry.MaxQuantity = Dict.Lookup("MaxQuantity", Entry.MaxQuantity)
-		  If Dict.HasKey("bForceBlueprint") And Dict.Value("bForceBlueprint") = True Then
-		    Entry.ChanceToBeBlueprint = 1
-		  ElseIf Dict.HasKey("ChanceToActuallyGiveItem") Then
-		    Entry.ChanceToBeBlueprint = 1.0 - Dict.Value("ChanceToActuallyGiveItem")
-		  ElseIf Dict.HasKey("ChanceToBeBlueprintOverride") Then
-		    Entry.ChanceToBeBlueprint = Dict.Value("ChanceToBeBlueprintOverride")
+		  
+		  // If bForceBlueprint is not included or explicitly true, then force is true. This
+		  // mirrors how Ark works. If bForceBlueprint is false, then look to one of the
+		  // chance keys. If neither key is specified, chance default to 0.
+		  Dim HasExplicitChance As Boolean = Dict.HasKey("ChanceToActuallyGiveItem") Or Dict.HasKey("ChanceToBeBlueprintOverride")
+		  Dim ForceBlueprint As Boolean = if(Dict.HasKey("bForceBlueprint"), Dict.Value("bForceBlueprint"), Not HasExplicitChance) // Default is true in-game
+		  Dim Chance As Double
+		  If ForceBlueprint Then
+		    Chance = 1
 		  Else
-		    Entry.ChanceToBeBlueprint = Dict.Lookup("ChanceToBeBlueprint", Entry.ChanceToBeBlueprint)
+		    If Dict.HasKey("ChanceToActuallyGiveItem") Then
+		      Chance = 1.0 - Dict.Value("ChanceToActuallyGiveItem")
+		    ElseIf Dict.HasKey("ChanceToBeBlueprintOverride") Then
+		      Chance = Dict.Value("ChanceToBeBlueprintOverride")
+		    Else
+		      Chance = 0
+		    End If
 		  End If
+		  Entry.ChanceToBeBlueprint = Chance
 		  
 		  Dim ClassWeights() As Auto
 		  If Dict.HasKey("ItemsWeights") Then
@@ -319,6 +329,13 @@ Implements Beacon.Countable
 		  Values.Append("MaxQuantity=" + Self.mMaxQuantity.ToText)
 		  Values.Append("MinQuality=" + MinQuality.ToText)
 		  Values.Append("MaxQuality=" + MaxQuality.ToText)
+		  
+		  // ChanceToActuallyGiveItem and ChanceToBeBlueprintOverride appear to be inverse of each
+		  // other. I'm not sure why both exist, but I've got a theory. Some of the loot source
+		  // definitions are based on PrimalSupplyCrateItemSets and others on PrimalSupplyCrateItemSet.
+		  // There's no common parent between them. Seems like Wildcard messed this up. I think
+		  // PrimalSupplyCrateItemSets uses ChanceToActuallyGiveItem, and PrimalSupplyCrateItemSet
+		  // uses ChanceToBeBlueprintOverride. Safest option right now is to include both.
 		  If Chance < 1 Then
 		    Values.Append("bForceBlueprint=false")
 		  Else
@@ -326,6 +343,7 @@ Implements Beacon.Countable
 		  End If
 		  Values.Append("ChanceToActuallyGiveItem=" + InverseChance.ToText)
 		  Values.Append("ChanceToBeBlueprintOverride=" + Chance.ToText)
+		  
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod
@@ -349,7 +367,7 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mChanceToBeBlueprint = Max(Min(Value, 1), 0)
+			  Self.mChanceToBeBlueprint = Max(Min(Value, 1.0), 0.0)
 			End Set
 		#tag EndSetter
 		ChanceToBeBlueprint As Double
@@ -393,7 +411,7 @@ Implements Beacon.Countable
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mChanceToBeBlueprint As Double = 0.1
+		Private mChanceToBeBlueprint As Double = 1.0
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -460,7 +478,7 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mWeight = Max(Min(Value, 1), 0.01)
+			  Self.mWeight = Min(Max(Value, 0.0), 1.0)
 			End Set
 		#tag EndSetter
 		Weight As Double

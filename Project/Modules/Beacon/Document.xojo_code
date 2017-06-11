@@ -231,20 +231,6 @@ Protected Class Document
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub Write(File As Global.FolderItem)
-		  Dim Writer As New JSONWriter(Self.Export, File)
-		  Writer.Run
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Sub Write(File As Xojo.IO.FolderItem)
-		  Dim Writer As New JSONWriter(Self.Export, File)
-		  Writer.Run
-		End Sub
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h0
 		Description As Text

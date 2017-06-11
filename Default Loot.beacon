@@ -1,0 +1,2448 @@
+{
+	"Description" : "",
+	"Identifier" : "6B5E3917-039C-4F35-99A6-58BE28BB9760",
+	"LootSources" : [
+		{
+			"Availability" : 1,
+			"bSetsRandomWithoutReplacement" : true,
+			"ItemSets" : [
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_Campfire_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 2,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Sparkpowder_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 6,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 2
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemConsumable_WaterskinCraftable_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 3,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_SleepingBag_Hide_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 3,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemConsumable_RawMeat_C",
+									"Weight" : 0.5
+								},
+								{
+									"Class" : "PrimalItemConsumable_Berry_Amarberry_C",
+									"Weight" : 0.16700000000000000955
+								},
+								{
+									"Class" : "PrimalItemConsumable_Berry_Azulberry_C",
+									"Weight" : 0.16700000000000000955
+								},
+								{
+									"Class" : "PrimalItemConsumable_Berry_Tintoberry_C",
+									"Weight" : 0.16600000000000000866
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 30,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 10
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_Campfire_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemResource_Sparkpowder_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_SleepingBag_Hide_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemConsumable_WaterskinCraftable_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_Note_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Campsite",
+					"MaxNumItems" : 6,
+					"MinNumItems" : 6,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_ClothPants_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_ClothShirt_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_ClothGloves_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_ClothBoots_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_ClothHelmet_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_ClothPants_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_ClothShirt_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_ClothHelmet_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_ClothGloves_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_ClothBoots_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier2",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier2",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Clothing",
+					"MaxNumItems" : 6,
+					"MinNumItems" : 6,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_WeaponStoneHatchet_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_WeaponSlingshot_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_WeaponSpear_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 3,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_WeaponTorch_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_WeaponFlareGun_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 2,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_WeaponStoneHatchet_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponSlingshot_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponSpear_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponFlareGun_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponTorch_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier2",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier2",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Weapons",
+					"MaxNumItems" : 6,
+					"MinNumItems" : 6,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Stone_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 15,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 7
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Flint_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 15,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 7
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Thatch_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 90,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 30
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Wood_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 30,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 15
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Fibers_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 80,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 30
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Hide_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 50,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 25
+						}
+					],
+					"Label" : "Resources",
+					"MaxNumItems" : 6,
+					"MinNumItems" : 6,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_ThatchFloor_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_ThatchWallWithDoor_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_ThatchDoor_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_ThatchWall_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 3,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 3
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_ThatchCeiling_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_ThatchFloor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_ThatchWall_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_ThatchWallWithDoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_ThatchDoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_ThatchCeiling_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Small Shanty Shack",
+					"MaxNumItems" : 6,
+					"MinNumItems" : 6,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodSign_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 2,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_StorageBox_Small_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 3,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_Bed_Simple_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_StandingTorch_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 4,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Sparkpowder_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 20,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 10
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodSign_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_StorageBox_Small_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_Bed_Simple_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_StandingTorch_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemResource_Sparkpowder_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Furniture",
+					"MaxNumItems" : 6,
+					"MinNumItems" : 6,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_PhiomiaSaddle_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_PhiomiaSaddle_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier2",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier2",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Saddles",
+					"MaxNumItems" : 2,
+					"MinNumItems" : 2,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				}
+			],
+			"Kind" : "Standard",
+			"Label" : "Island White (Level 3)",
+			"MaxItemSets" : 3,
+			"MinItemSets" : 1,
+			"Multiplier_Max" : 1.0,
+			"Multiplier_Min" : 1.0,
+			"NumItemSetsPower" : 1.0,
+			"SortValue" : 0,
+			"SupplyCrateClassString" : "SupplyCrate_Level03_C",
+			"UIColor" : "FFFFFF00"
+		},
+		{
+			"Availability" : 1,
+			"bSetsRandomWithoutReplacement" : true,
+			"ItemSets" : [
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodFloor_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodWallWithDoor_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodDoor_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodWall_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 3,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 3
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodCeiling_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodFloor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodWall_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodWallWithDoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodDoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodCeiling_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Wood Shack",
+					"MaxNumItems" : 6,
+					"MinNumItems" : 6,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_HidePants_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_HideShirt_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_HideGloves_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_HideBoots_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_HideHelmet_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_HidePants_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_HideShirt_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_HideHelmet_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_HideGloves_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_HideBoots_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier2",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier2",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Cold-weather gear",
+					"MaxNumItems" : 6,
+					"MinNumItems" : 6,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_WeaponBow_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemAmmo_ArrowStone_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 50,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 20
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemAmmo_ArrowTranq_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 20,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 10
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemConsumableBuff_Parachute_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 3,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_BloodExtractor_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_WeaponSpyglass_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_WeaponBow_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemAmmo_ArrowStone_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemAmmo_ArrowTranq_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemConsumableBuff_Parachute_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_BloodExtractor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponSpyglass_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier2",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier2",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Raider",
+					"MaxNumItems" : 6,
+					"MinNumItems" : 6,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Stone_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 40,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 20
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Flint_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 40,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 20
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Thatch_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 90,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 30
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Wood_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 100,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 40
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Fibers_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 100,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 50
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemResource_Hide_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 80,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 40
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemConsumable_Narcotic_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 10,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 5
+						}
+					],
+					"Label" : "Resources",
+					"MaxNumItems" : 7,
+					"MinNumItems" : 7,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_CropPlot_Small_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 3,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_CompostBin_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_StonePipeIntake_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_StonePipeTap_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_StonePipeStraight_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 4,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_StonePipeIncline_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_StonePipeIntersection_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_StonePipeVertical_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 6,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_CropPlot_Small_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_CompostBin_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_StonePipeIntake_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_StonePipeTap_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_StonePipeStraight_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_StonePipeIncline_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_StonePipeIntersection_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_StonePipeVertical_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Farming",
+					"MaxNumItems" : 7,
+					"MinNumItems" : 7,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_MortarAndPestle_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_CookingPot_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_WeaponPaintbrush_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_StorageBox_Large_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 2,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_MortarAndPestle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_CookingPot_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_StorageBox_Large_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_Forge_C",
+									"Weight" : 0.5
+								},
+								{
+									"Class" : "PrimalItemConsumable_Narcotic_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemConsumable_Stimulant_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponPaintbrush_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Furniture",
+					"MaxNumItems" : 5,
+					"MinNumItems" : 5,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_ParaSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_RaptorSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_TrikeSaddle_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier2",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier2",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Saddles",
+					"MaxNumItems" : 2,
+					"MinNumItems" : 2,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.5
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodRamp_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 2,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodFenceFoundation_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 7,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 2
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodPillar_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 2,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodSign_Large_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodRamp_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodFenceFoundation_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodPillar_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodTrapdoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodLadder_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodWallWithWindow_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodWindow_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodCatwalk_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodSign_Large_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodSign_Wall_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Advanced Wood Housing: Flooring",
+					"MaxNumItems" : 5,
+					"MinNumItems" : 5,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.33300000000000001821
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodTrapdoor_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodLadder_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 2,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodRamp_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodFenceFoundation_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodPillar_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodTrapdoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodLadder_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodWallWithWindow_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodWindow_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodCatwalk_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodSign_Large_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodSign_Wall_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Advanced Wood Housing: Second Story",
+					"MaxNumItems" : 4,
+					"MinNumItems" : 4,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.33300000000000001821
+				},
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodWallWithWindow_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 2,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 2
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodWindow_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 2,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 2
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodCatwalk_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 3,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodSign_Wall_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 2,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_WoodRamp_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodFenceFoundation_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodPillar_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodTrapdoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodLadder_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodWallWithWindow_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodWindow_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodCatwalk_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodSign_Large_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodSign_Wall_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Advanced Wood Housing: Other",
+					"MaxNumItems" : 5,
+					"MinNumItems" : 5,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 0.33300000000000001821
+				}
+			],
+			"Kind" : "Standard",
+			"Label" : "Island Green (Level 15)",
+			"MaxItemSets" : 3,
+			"MinItemSets" : 1,
+			"Multiplier_Max" : 1.0,
+			"Multiplier_Min" : 1.0,
+			"NumItemSetsPower" : 1.0,
+			"SortValue" : 2,
+			"SupplyCrateClassString" : "SupplyCrate_Level15_C",
+			"UIColor" : "00FF0000"
+		},
+		{
+			"Availability" : 1,
+			"bSetsRandomWithoutReplacement" : true,
+			"ItemSets" : [
+				{
+					"bItemsRandomWithoutReplacement" : false,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_MetalFloor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalWall_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalDoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalWallWithDoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalCeiling_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodGateframe_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_WoodGate_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalSign_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_Forge_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_AnvilBench_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_CropPlot_Medium_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemConsumable_WaterJarCraftable_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponCompass_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_CropPlot_Medium_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.5,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_ChitinBoots_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_ChitinGloves_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_ChitinHelmet_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_ChitinPants_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_ChitinShirt_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponMetalPick_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponMetalHatchet_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponPike_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_ScorpionSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_TurtleSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_StegoSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_DolphinSaddle_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier2",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier2",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Lvl 25 drops",
+					"MaxNumItems" : 1,
+					"MinNumItems" : 1,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 1.0
+				}
+			],
+			"Kind" : "Standard",
+			"Label" : "Island Blue (Level 25)",
+			"MaxItemSets" : 3,
+			"MinItemSets" : 1,
+			"Multiplier_Max" : 1.0,
+			"Multiplier_Min" : 1.0,
+			"NumItemSetsPower" : 1.0,
+			"SortValue" : 4,
+			"SupplyCrateClassString" : "SupplyCrate_Level25_C",
+			"UIColor" : "88C8FF00"
+		},
+		{
+			"Availability" : 1,
+			"bSetsRandomWithoutReplacement" : true,
+			"ItemSets" : [
+				{
+					"bItemsRandomWithoutReplacement" : false,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemAmmo_SimpleBullet_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemAmmo_SimpleRifleBullet_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemAmmo_SimpleShotgunBullet_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_CropPlot_Large_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalPipeIncline_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalPipeIntake_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalPipeIntersection_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalPipeStraight_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalPipeTap_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalPipeVertical_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_Fabricator_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalRamp_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalFenceFoundation_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalPillar_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalCeilingWithTrapdoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalTrapdoor_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalLadder_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.5,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemWeaponAttachment_Silencer_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemWeaponAttachment_Scope_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemWeaponAttachment_Flashlight_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponGrenade_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.5,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_WeaponGun_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponOneShotRifle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponShotgun_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_PteroSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_SarcoSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_AnkyloSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_MammothSaddle_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier2",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier2",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Lvl 35 drops",
+					"MaxNumItems" : 1,
+					"MinNumItems" : 1,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 1.0
+				}
+			],
+			"Kind" : "Standard",
+			"Label" : "Island Purple (Level 35)",
+			"MaxItemSets" : 3,
+			"MinItemSets" : 1,
+			"Multiplier_Max" : 1.0,
+			"Multiplier_Min" : 1.0,
+			"NumItemSetsPower" : 1.0,
+			"SortValue" : 6,
+			"SupplyCrateClassString" : "SupplyCrate_Level35_C",
+			"UIColor" : "E6BAFF00"
+		},
+		{
+			"Availability" : 1,
+			"bSetsRandomWithoutReplacement" : true,
+			"ItemSets" : [
+				{
+					"bItemsRandomWithoutReplacement" : false,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_MetalGateframe_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalGate_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalSign_Large_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemAmmo_AdvancedBullet_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponTripwireC4_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_PowerGenerator_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_PowerOutlet_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_Lamppost_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_PowerCableIncline_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_PowerCableIntersection_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_PowerCableStraight_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_PowerCableVertical_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalWallWithWindow_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalWindow_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalCatwalk_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalSign_Wall_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.5,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_WeaponGPS_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemWeaponAttachment_Laser_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.5,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemArmor_MetalBoots_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_MetalGloves_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_MetalHelmet_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_MetalPants_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_MetalShirt_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponMachinedPistol_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_MegalodonSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_SaberSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_CarnoSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponFishingRod_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier2",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier2",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Lvl 45 drops",
+					"MaxNumItems" : 1,
+					"MinNumItems" : 1,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 1.0
+				}
+			],
+			"Kind" : "Standard",
+			"Label" : "Island Yellow (Level 45)",
+			"MaxItemSets" : 3,
+			"MinItemSets" : 1,
+			"Multiplier_Max" : 1.0,
+			"Multiplier_Min" : 1.0,
+			"NumItemSetsPower" : 1.0,
+			"SortValue" : 8,
+			"SupplyCrateClassString" : "SupplyCrate_Level45_C",
+			"UIColor" : "FFF02A00"
+		},
+		{
+			"Availability" : 1,
+			"bSetsRandomWithoutReplacement" : true,
+			"ItemSets" : [
+				{
+					"bItemsRandomWithoutReplacement" : true,
+					"ItemEntries" : [
+						{
+							"ChanceToBeBlueprintOverride" : 1.0,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemStructure_MetalGateframe_Large_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_MetalGate_Large_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemAmmo_AdvancedRifleBullet_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemAmmo_Rocket_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_IceBox_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_AirConditioner_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_Turret_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemStructure_Keypad_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.5,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItemWeaponAttachment_HoloScope_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponC4_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemC4Ammo_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier1",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier1",
+							"MinQuantity" : 1
+						},
+						{
+							"ChanceToBeBlueprintOverride" : 0.5,
+							"EntryWeight" : 1.0,
+							"Items" : [
+								{
+									"Class" : "PrimalItem_WeaponRifle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponRocketLauncher_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_ArgentavisSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_SauroSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_RexSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_SpinoSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_MinersHelmet_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItemArmor_PlesiaSaddle_C",
+									"Weight" : 1.0
+								},
+								{
+									"Class" : "PrimalItem_WeaponFishingRod_C",
+									"Weight" : 1.0
+								}
+							],
+							"MaxQuality" : "Tier2",
+							"MaxQuantity" : 1,
+							"MinQuality" : "Tier2",
+							"MinQuantity" : 1
+						}
+					],
+					"Label" : "Lvl 60 drops",
+					"MaxNumItems" : 1,
+					"MinNumItems" : 1,
+					"NumItemsPower" : 1.0,
+					"SetWeight" : 1.0
+				}
+			],
+			"Kind" : "Standard",
+			"Label" : "Island Red (Level 60)",
+			"MaxItemSets" : 3,
+			"MinItemSets" : 1,
+			"Multiplier_Max" : 1.0,
+			"Multiplier_Min" : 1.0,
+			"NumItemSetsPower" : 1.0,
+			"SortValue" : 10,
+			"SupplyCrateClassString" : "SupplyCrate_Level60_C",
+			"UIColor" : "FFBABA00"
+		}
+	],
+	"Title" : "",
+	"Version" : 2
+}

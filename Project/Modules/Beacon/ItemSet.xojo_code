@@ -261,6 +261,7 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function TextValue(Multipliers As Beacon.Range) As Text
 		  Dim Values() As Text
+		  Values.Append("SetName=""" + Self.mLabel + """")
 		  Values.Append("MinNumItems=" + Self.mMinNumItems.ToText)
 		  Values.Append("MaxNumItems=" + Self.mMaxNumItems.ToText)
 		  Values.Append("NumItemsPower=" + Self.mNumItemsPower.ToText)
@@ -392,7 +393,7 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mSetWeight = Min(Max(Value, 0.01), 1)
+			  Self.mSetWeight = Min(Max(Value, 0.0), 1.0)
 			End Set
 		#tag EndSetter
 		Weight As Double
