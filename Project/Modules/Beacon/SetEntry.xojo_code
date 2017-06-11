@@ -319,6 +319,13 @@ Implements Beacon.Countable
 		  Values.Append("MaxQuantity=" + Self.mMaxQuantity.ToText)
 		  Values.Append("MinQuality=" + MinQuality.ToText)
 		  Values.Append("MaxQuality=" + MaxQuality.ToText)
+		  
+		  // ChanceToActuallyGiveItem and ChanceToBeBlueprintOverride appear to be inverse of each
+		  // other. I'm not sure why both exist, but I've got a theory. Some of the loot source
+		  // definitions are based on PrimalSupplyCrateItemSets and others on PrimalSupplyCrateItemSet.
+		  // There's no common parent between them. Seems like Wildcard messed this up. I think
+		  // PrimalSupplyCrateItemSets uses ChanceToActuallyGiveItem, and PrimalSupplyCrateItemSet
+		  // uses ChanceToBeBlueprintOverride. Safest option right now is to include both.
 		  If Chance < 1 Then
 		    Values.Append("bForceBlueprint=false")
 		  Else
@@ -326,6 +333,7 @@ Implements Beacon.Countable
 		  End If
 		  Values.Append("ChanceToActuallyGiveItem=" + InverseChance.ToText)
 		  Values.Append("ChanceToBeBlueprintOverride=" + Chance.ToText)
+		  
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod
@@ -393,7 +401,7 @@ Implements Beacon.Countable
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mChanceToBeBlueprint As Double = 0.1
+		Private mChanceToBeBlueprint As Double = 1.0
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
