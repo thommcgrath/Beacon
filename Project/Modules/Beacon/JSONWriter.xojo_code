@@ -28,7 +28,7 @@ Inherits Beacon.Thread
 		Private Function JSONPrettyPrint(json As Text) As Text
 		  // From https://forum.xojo.com/conversation/post/332504
 		  
-		  const kBuffer as text = "  "
+		  const kBuffer as text = &u09
 		  const kEOL as text = &u0A
 		  
 		  dim outArr() as text

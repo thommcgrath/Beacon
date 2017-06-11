@@ -43,7 +43,7 @@ Implements Beacon.Countable
 		  Self.mMaxQuantity = 1
 		  Self.mMinQuality = Beacon.Qualities.Primitive
 		  Self.mMaxQuality = Beacon.Qualities.Ascendant
-		  Self.mChanceToBeBlueprint = 0.1
+		  Self.mChanceToBeBlueprint = 1.0
 		  Self.mWeight = 1
 		  Self.mUniqueID = ""
 		End Sub
@@ -155,15 +155,24 @@ Implements Beacon.Countable
 		  
 		  Entry.MinQuantity = Dict.Lookup("MinQuantity", Entry.MinQuantity)
 		  Entry.MaxQuantity = Dict.Lookup("MaxQuantity", Entry.MaxQuantity)
-		  If Dict.HasKey("bForceBlueprint") And Dict.Value("bForceBlueprint") = True Then
-		    Entry.ChanceToBeBlueprint = 1
-		  ElseIf Dict.HasKey("ChanceToActuallyGiveItem") Then
-		    Entry.ChanceToBeBlueprint = 1.0 - Dict.Value("ChanceToActuallyGiveItem")
-		  ElseIf Dict.HasKey("ChanceToBeBlueprintOverride") Then
-		    Entry.ChanceToBeBlueprint = Dict.Value("ChanceToBeBlueprintOverride")
+		  
+		  // If bForceBlueprint is not included or explicitly true, then force is true. This
+		  // mirrors how Ark works. If bForceBlueprint is false, then look to one of the
+		  // chance keys. If neither key is specified, chance default to 0.
+		  Dim ForceBlueprint As Boolean = if(Dict.HasKey("bForceBlueprint"), Dict.Value("bForceBlueprint"), True) // Default is true in-game
+		  Dim Chance As Double
+		  If ForceBlueprint Then
+		    Chance = 1
 		  Else
-		    Entry.ChanceToBeBlueprint = Dict.Lookup("ChanceToBeBlueprint", Entry.ChanceToBeBlueprint)
+		    If Dict.HasKey("ChanceToActuallyGiveItem") Then
+		      Chance = 1.0 - Dict.Value("ChanceToActuallyGiveItem")
+		    ElseIf Dict.HasKey("ChanceToBeBlueprintOverride") Then
+		      Chance = Dict.Value("ChanceToBeBlueprintOverride")
+		    Else
+		      Chance = 0
+		    End If
 		  End If
+		  Entry.ChanceToBeBlueprint = Chance
 		  
 		  Dim ClassWeights() As Auto
 		  If Dict.HasKey("ItemsWeights") Then
@@ -357,7 +366,7 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mChanceToBeBlueprint = Max(Min(Value, 1), 0)
+			  Self.mChanceToBeBlueprint = Max(Min(Value, 1.0), 0.0)
 			End Set
 		#tag EndSetter
 		ChanceToBeBlueprint As Double
@@ -468,7 +477,7 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mWeight = Max(Min(Value, 1), 0.01)
+			  Self.mWeight = Min(Max(Value, 0.0), 1.0)
 			End Set
 		#tag EndSetter
 		Weight As Double
