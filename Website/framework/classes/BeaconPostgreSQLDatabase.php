@@ -124,6 +124,12 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 			$params = $params[0];
 		}
 		
+		for ($i = 0; $i < count($params); $i++) {
+			if (is_bool($params[$i])) {
+				$params[$i] = $params[$i] ? 't' : 'f';
+			}
+		}
+		
 		if (count($params) > 0) {
 			$success = pg_send_query_params($this->connection, $sql, $params);
 		} else {

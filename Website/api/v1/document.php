@@ -140,7 +140,7 @@ case 'POST':
 		$document_id = $document['Identifier'];
 		$description = $document['Description'];
 		$title = $document['Title'];
-		$public = array_key_exists('Public', $document) ? $document['Public'] === true : false;
+		$public = array_key_exists('Public', $document) ? ($document['Public'] === true) : false;
 		
 		// make sure this document is either new or owner by the server
 		$results = $database->Query('SELECT user_id FROM documents WHERE document_id = $1;', $document_id);
