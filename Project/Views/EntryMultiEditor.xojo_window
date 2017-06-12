@@ -74,7 +74,7 @@ Begin Window EntryMultiEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -105,7 +105,7 @@ Begin Window EntryMultiEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
