@@ -72,7 +72,7 @@ abstract class BeaconAPI {
 		return strtolower($_SERVER['CONTENT_TYPE']);
 	}
 	
-	public static function Authorize() {
+	public static function Authorize(bool $optional = false) {
 		$authorized = false;
 		$content = '';
 		
@@ -98,9 +98,9 @@ abstract class BeaconAPI {
 			}
 		}
 		
-		if (!$authorized) {
-		    header('WWW-Authenticate: Basic realm="Beacon API"');
-		    self::ReplyError('Unauthorized', $content, 401);
+		if ((!$authorized) && (!$optional)) {
+			header('WWW-Authenticate: Basic realm="Beacon API"');
+			self::ReplyError('Unauthorized', $content, 401);
 		}
 	}
 	

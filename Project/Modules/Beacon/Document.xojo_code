@@ -60,6 +60,7 @@ Protected Class Document
 		  Document.Value("LootSources") = LootSources
 		  Document.Value("Title") = Self.Title
 		  Document.Value("Description") = Self.Description
+		  Document.Value("Public") = Self.IsPublic
 		  
 		  Return Document
 		End Function
@@ -148,6 +149,9 @@ Protected Class Document
 		      If Dict.HasKey("Description") Then
 		        Doc.Description = Dict.Value("Description")
 		      End If
+		      If Dict.HasKey("Public") Then
+		        Doc.IsPublic = Dict.Value("Public")
+		      End If
 		    Catch Err As RuntimeException
 		      // Likely a KeyNotFoundException or TypeMismatchException, either way, we can't handle it
 		      Return Nil
@@ -234,6 +238,10 @@ Protected Class Document
 
 	#tag Property, Flags = &h0
 		Description As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		IsPublic As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

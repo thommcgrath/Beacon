@@ -8,6 +8,7 @@ class BeaconDocumentMetadata implements JsonSerializable {
 	protected $download_count = 0;
 	protected $last_updated = null;
 	protected $user_id = '';
+	protected $is_public = false;
 	
 	public function DocumentID() {
 		return $this->document_id;
@@ -70,6 +71,7 @@ class BeaconDocumentMetadata implements JsonSerializable {
 		$document->download_count = $results->Field('download_count');
 		$document->last_updated = new DateTime($results->Field('last_update'));
 		$document->user_id = $results->Field('user_id');
+		$document->is_public = $results->Field('is_public');
 		return $document;
 	}
 	
@@ -92,7 +94,7 @@ class BeaconDocumentMetadata implements JsonSerializable {
 	}
 	
 	public static function DatabaseColumns() {
-		return array('document_id', 'title', 'description', 'revision', 'download_count', 'last_update', 'user_id');
+		return array('document_id', 'title', 'description', 'revision', 'download_count', 'last_update', 'user_id', 'is_public');
 	}
 	
 	public function jsonSerialize() {

@@ -1,5 +1,5 @@
 {
-	"Description" : "",
+	"Description" : "This is the default loot definitions pulled from the Ark dev kit.",
 	"Identifier" : "6B5E3917-039C-4F35-99A6-58BE28BB9760",
 	"LootSources" : [
 		{
@@ -2443,6 +2443,7 @@
 			"UIColor" : "FFBABA00"
 		}
 	],
-	"Title" : "",
+	"Public" : true,
+	"Title" : "Default Loot",
 	"Version" : 2
 }
