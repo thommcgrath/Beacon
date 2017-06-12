@@ -43,7 +43,7 @@ Begin Window EntryEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -166,7 +166,7 @@ Begin Window EntryEditor
          LockTop         =   False
          Scope           =   2
          State           =   0
-         TabIndex        =   4
+         TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
          TextFont        =   "System"
@@ -196,7 +196,7 @@ Begin Window EntryEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   22
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -206,588 +206,33 @@ Begin Window EntryEditor
       Underline       =   False
       Visible         =   True
       Width           =   518
-      Begin Label MinQuantityLabel
+      Begin EntryPropertiesEditor EntryPropertiesEditor1
+         AcceptFocus     =   False
+         AcceptTabs      =   True
          AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
          Enabled         =   True
-         Height          =   22
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   175
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   382
-         LockBottom      =   False
+         Left            =   372
+         LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
-         Multiline       =   False
          Scope           =   2
-         Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
-         Text            =   "Min Quantity:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   56
+         TabStop         =   True
+         Top             =   46
          Transparent     =   True
-         Underline       =   False
+         UseFocusRing    =   False
          Visible         =   True
-         Width           =   152
-      End
-      Begin UITweaks.ResizedTextField MinQuantityField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   546
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Mask            =   "###"
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "1"
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   56
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   80
-      End
-      Begin Label MaxQuantityLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   382
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   2
-         TabPanelIndex   =   0
-         Text            =   "Max Quantity:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   90
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   152
-      End
-      Begin UITweaks.ResizedTextField MaxQuantityField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   546
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Mask            =   "###"
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "1"
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   90
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   80
-      End
-      Begin Label MinQualityLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   382
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   4
-         TabPanelIndex   =   0
-         Text            =   "Min Quality:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   124
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   152
-      End
-      Begin UITweaks.ResizedPopupMenu QualityMenus
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   0
-         InitialParent   =   "SettingsGroup"
-         InitialValue    =   ""
-         Italic          =   False
-         Left            =   546
-         ListIndex       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   5
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   124
-         Underline       =   False
-         Visible         =   True
-         Width           =   139
-      End
-      Begin Label MaxQualityLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   382
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   6
-         TabPanelIndex   =   0
-         Text            =   "Max Quality:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   156
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   152
-      End
-      Begin UITweaks.ResizedPopupMenu QualityMenus
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   1
-         InitialParent   =   "SettingsGroup"
-         InitialValue    =   ""
-         Italic          =   False
-         Left            =   546
-         ListIndex       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   7
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   156
-         Underline       =   False
-         Visible         =   True
-         Width           =   139
-      End
-      Begin Label ChanceLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   23
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   382
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   8
-         TabPanelIndex   =   0
-         Text            =   "Chance To Be Blueprint:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   188
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   152
-      End
-      Begin Slider ChanceSlider
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   23
-         HelpTag         =   "Items with a higher weight will be selected more frequently than items with a smaller weight. Two items with the same weight will be selected at the same frequency."
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Left            =   546
-         LineStep        =   5
-         LiveScroll      =   True
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Maximum         =   100
-         Minimum         =   0
-         PageStep        =   25
-         Scope           =   2
-         TabIndex        =   9
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TickStyle       =   "0"
-         Top             =   188
-         Value           =   25
-         Visible         =   True
-         Width           =   139
-      End
-      Begin UITweaks.ResizedTextField ChanceField
-         AcceptTabs      =   False
-         Alignment       =   3
-         AutoDeactivate  =   False
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   697
-         LimitText       =   3
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   "99#"
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   10
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "25"
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   188
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   53
-      End
-      Begin UITweaks.ResizedLabel PercentLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   753
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   11
-         TabPanelIndex   =   0
-         Text            =   "%"
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   188
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   37
-      End
-      Begin CheckBox EditMinQuantityCheck
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Edit"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   802
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         State           =   1
-         TabIndex        =   12
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   56
-         Underline       =   False
-         Value           =   True
-         Visible         =   False
-         Width           =   58
-      End
-      Begin CheckBox EditMaxQuantityCheck
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Edit"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   802
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         State           =   1
-         TabIndex        =   13
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   90
-         Underline       =   False
-         Value           =   True
-         Visible         =   False
-         Width           =   58
-      End
-      Begin CheckBox EditMinQualityCheck
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Edit"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   802
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         State           =   1
-         TabIndex        =   14
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   124
-         Underline       =   False
-         Value           =   True
-         Visible         =   False
-         Width           =   58
-      End
-      Begin CheckBox EditMaxQualityCheck
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Edit"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   802
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         State           =   1
-         TabIndex        =   15
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   156
-         Underline       =   False
-         Value           =   True
-         Visible         =   False
-         Width           =   58
-      End
-      Begin CheckBox EditChanceCheck
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Edit"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   23
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "SettingsGroup"
-         Italic          =   False
-         Left            =   802
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         State           =   1
-         TabIndex        =   16
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   188
-         Underline       =   False
-         Value           =   True
-         Visible         =   False
-         Width           =   58
+         Width           =   498
       End
    End
    Begin GroupBox SimulationGroup
@@ -807,7 +252,7 @@ Begin Window EntryEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   23
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -919,7 +364,7 @@ Begin Window EntryEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   24
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -950,7 +395,7 @@ Begin Window EntryEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   25
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -991,48 +436,34 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function MaxQualityMenu() As PopupMenu
-		  Return Self.QualityMenus(1)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function MinQualityMenu() As PopupMenu
-		  Return Self.QualityMenus(0)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Sources() As Beacon.SetEntry = Nil) As Beacon.SetEntry()
-		  Dim Win As New EntryEditor
-		  
-		  If Sources <> Nil Then
-		    Redim Win.mEntries(UBound(Sources))
-		    For I As Integer = 0 To UBound(Sources)
-		      Win.mEntries(I) = New Beacon.SetEntry(Sources(I))
-		    Next
+		  If Sources <> Nil And UBound(Sources) > 0 Then
+		    // Need to use the multi-edit window
+		    Return EntryMultiEditor.Present(Parent, Sources)
 		  End If
 		  
-		  Select Case UBound(Win.mEntries)
-		  Case -1
-		    Win.mMode = EntryEditor.Modes.NewEntry
-		  Case 0
-		    Win.mMode = EntryEditor.Modes.SingleEdit
-		  Else
-		    Win.mMode = EntryEditor.Modes.MultiEdit
-		  End Select
+		  Dim Win As New EntryEditor
+		  Dim Entry As Beacon.SetEntry
 		  
+		  If Sources <> Nil And UBound(Sources) = 0 Then
+		    Entry = Sources(0)
+		    Win.mAllowMultipleEntries = False
+		  Else
+		    Win.mAllowMultipleEntries = True
+		  End If
+		  
+		  Win.EntryPropertiesEditor1.Setup(Entry)
+		  Win.SetupUI(Entry)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
-		  If Win.mCancelled Then
-		    Win.Close
-		    Return Nil
-		  End If
-		  
-		  Dim Entries() As Beacon.SetEntry = Win.mEntries
+		  Dim Entries() As Beacon.SetEntry = Win.mCreatedEntries
 		  Win.Close
-		  Return Entries
+		  If UBound(Entries) = -1 Then
+		    Return Nil
+		  Else
+		    Return Entries
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -1100,93 +531,39 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetupUI()
-		  Select Case Self.mMode
-		  Case EntryEditor.Modes.NewEntry
-		    Self.Search("")
-		  Case EntryEditor.Modes.SingleEdit
-		    For Each Option As Beacon.SetEntryOption In Self.mEntries(0)
+		Private Sub SetupUI(Entry As Beacon.SetEntry)
+		  If Entry <> Nil Then
+		    For Each Option As Beacon.SetEntryOption In Entry
 		      Self.mSelectedEngrams.Value(Option.Engram.ClassString) = Option
 		    Next
-		    
-		    Self.Search("")
-		    SingleEntryCheck.Value = Self.mSelectedEngrams.Count > 1
-		    
-		    For I As Integer = 0 To EngramList.ListCount - 1
-		      If EngramList.CellCheck(I, 0) Then
-		        EngramList.ScrollPosition = I
-		        Exit For I
-		      End If
-		    Next
-		  Case EntryEditor.Modes.MultiEdit
-		    EditChanceCheck.Visible = True
-		    EditMaxQualityCheck.Visible = True
-		    EditMaxQuantityCheck.Visible = True
-		    EditMinQualityCheck.Visible = True
-		    EditMinQuantityCheck.Visible = True
-		    
-		    EditChanceCheck.Value = False
-		    EditMaxQualityCheck.Value = False
-		    EditMaxQuantityCheck.Value = False
-		    EditMinQualityCheck.Value = False
-		    EditMinQuantityCheck.Value = False
-		  End Select
-		  
-		  Dim RightEdge As Integer
-		  If EditMinQualityCheck.Visible Or EditMaxQualityCheck.Visible Or EditChanceCheck.Visible Then
-		    RightEdge = Min(EditMinQualityCheck.Left, EditMaxQualityCheck.Left, EditChanceCheck.Left) - 12
-		  Else
-		    RightEdge = (SettingsGroup.Left + SettingsGroup.Width) - 20
 		  End If
 		  
-		  MinQualityMenu.Width = (RightEdge - MinQualityMenu.Left)
-		  MaxQualityMenu.Width = (RightEdge - MaxQualityMenu.Left)
-		  PercentLabel.Left = RightEdge - (PercentLabel.Width + 3)
-		  ChanceField.Left = PercentLabel.Left - (ChanceField.Width + 12)
-		  ChanceSlider.Width = ChanceField.Left - (12 + ChanceSlider.Left)
+		  Self.Search("")
+		  SingleEntryCheck.Value = Self.mSelectedEngrams.Count > 1
+		  
+		  For I As Integer = 0 To EngramList.ListCount - 1
+		    If EngramList.CellCheck(I, 0) Then
+		      EngramList.ScrollPosition = I
+		      Exit For I
+		    End If
+		  Next
 		  
 		  Self.UpdateSelectionUI()
 		  Self.UpdateSimulation()
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Show()
-		  Self.SetupUI()
-		  Super.Show
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ShowModal()
-		  Self.SetupUI()
-		  Super.ShowModal()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ShowModalWithin(ParentWindow As Window)
-		  Self.SetupUI()
-		  Super.ShowModalWithin(ParentWindow)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ShowWithin(ParentWindow As Window, Facing As Integer = - 1)
-		  Self.SetupUI()
-		  Super.ShowWithin(ParentWindow, Facing)
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub UpdateSelectionUI()
-		  If Self.mSelectedEngrams.Count > 1 Then
+		  If Self.mSelectedEngrams.Count > 1 And Self.mAllowMultipleEntries Then
 		    Self.SingleEntryCheck.Visible = True
 		    Self.EngramList.Height = Self.SingleEntryCheck.Top - (12 + Self.EngramList.Top)
 		  Else
 		    Self.SingleEntryCheck.Visible = False
 		    Self.EngramList.Height = (Self.SingleEntryCheck.Top + Self.SingleEntryCheck.Height) - Self.EngramList.Top
 		  End If
+		  
+		  Self.ActionButton.Enabled = Self.mSelectedEngrams.Count >= 1
 		End Sub
 	#tag EndMethod
 
@@ -1210,11 +587,7 @@ End
 		    End If
 		  Next
 		  
-		  Entry.MinQuantity = Val(Self.MinQuantityField.Text)
-		  Entry.MaxQuantity = Val(Self.MaxQuantityField.Text)
-		  Entry.MinQuality = MinQualityMenu.Tag
-		  Entry.MaxQuality = MaxQualityMenu.Tag
-		  Entry.ChanceToBeBlueprint = ChanceSlider.Value / 100
+		  EntryPropertiesEditor1.ApplyTo(Entry)
 		  
 		  Dim Selections() As Beacon.SimulatedSelection = Entry.Simulate
 		  Dim GroupedItems As New Xojo.Core.Dictionary
@@ -1237,27 +610,16 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mCancelled As Boolean
+		Private mAllowMultipleEntries As Boolean = True
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEntries() As Beacon.SetEntry
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMode As EntryEditor.Modes
+		Private mCreatedEntries() As Beacon.SetEntry
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSelectedEngrams As Xojo.Core.Dictionary
 	#tag EndProperty
-
-
-	#tag Enum, Name = Modes, Type = Integer, Flags = &h21
-		NewEntry
-		  SingleEdit
-		MultiEdit
-	#tag EndEnum
 
 
 #tag EndWindowCode
@@ -1354,85 +716,10 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events MinQuantityField
+#tag Events EntryPropertiesEditor1
 	#tag Event
-		Sub TextChange()
-		  EditMinQuantityCheck.Value = True
+		Sub Changed()
 		  Self.UpdateSimulation()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MaxQuantityField
-	#tag Event
-		Sub TextChange()
-		  EditMaxQuantityCheck.Value = True
-		  Self.UpdateSimulation()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events QualityMenus
-	#tag Event
-		Sub Open(index as Integer)
-		  Me.DeleteAllRows()
-		  
-		  Dim Value As Integer
-		  Do
-		    Dim Quality As Beacon.Qualities = CType(Value, Beacon.Qualities)
-		    Value = Value + 1
-		    
-		    Dim Label As String = Language.LabelForQuality(Quality)
-		    If Label = "" Then
-		      Exit
-		    End If
-		    
-		    Me.AddRow(Label, Quality)
-		  Loop
-		  
-		  Me.ListIndex = 0
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Change(index as Integer)
-		  Select Case Index
-		  Case 0 // Min
-		    EditMinQualityCheck.Value = True
-		  Case 1 // Max
-		    EditMaxQualityCheck.Value = True
-		  End Select
-		  
-		  Self.UpdateSimulation()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ChanceSlider
-	#tag Event
-		Sub ValueChanged()
-		  If Self.Focus <> ChanceField Then
-		    ChanceField.Text = Str(Me.Value, "-0")
-		  End If
-		  
-		  EditChanceCheck.Value = True
-		  Self.UpdateSimulation()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ChanceField
-	#tag Event
-		Sub TextChange()
-		  If Self.Focus = Me Then
-		    ChanceSlider.Value = Max(Min(Val(Me.Text), ChanceSlider.Maximum), ChanceSlider.Minimum)
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub LostFocus()
-		  Me.Text = Str(ChanceSlider.Value, "-0")
-		  ChanceSlider.Enabled = True
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub GotFocus()
-		  ChanceSlider.Enabled = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1446,25 +733,40 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  For Each Entry As Beacon.SetEntry In Self.mEntries
-		    If EditMaxQuantityCheck.Value Then
-		      Entry.MaxQuantity = Val(MaxQuantityField.Text)
-		    End If
-		    If EditMinQuantityCheck.Value Then
-		      Entry.MinQuantity = Val(MinQuantityField.Text)
-		    End If
-		    If EditChanceCheck.Value Then
-		      Entry.ChanceToBeBlueprint = ChanceSlider.Value / 100
-		    End If
-		    If EditMaxQualityCheck.Value Then
-		      Entry.MaxQuality = MaxQualityMenu.Tag
-		    End If
-		    If EditMinQualityCheck.Value Then
-		      Entry.MinQuality = MinQualityMenu.Tag
-		    End If
+		  If Self.mSelectedEngrams.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Dim Options() As Beacon.SetEntryOption
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedEngrams
+		    Options.Append(Entry.Value)
 		  Next
 		  
-		  Self.mCancelled = False
+		  Dim Entries() As Beacon.SetEntry
+		  If UBound(Options) > 0 Then
+		    If SingleEntryCheck.Value Or Self.mAllowMultipleEntries = False Then
+		      // Merge all into one
+		      Dim Entry As New Beacon.SetEntry
+		      For Each Option As Beacon.SetEntryOption In Options
+		        Entry.Append(Option)
+		      Next
+		      Entries.Append(Entry)
+		    Else
+		      // Multiple entries
+		      For Each Option As Beacon.SetEntryOption In Options
+		        Dim Entry As New Beacon.SetEntry
+		        Entry.Append(Option)    
+		        Entries.Append(Entry)
+		      Next
+		    End If
+		  Else
+		    Dim Entry As New Beacon.SetEntry
+		    Entry.Append(Options(0))
+		    Entries.Append(Entry)
+		  End If
+		  
+		  EntryPropertiesEditor1.ApplyTo(Entries)
+		  Self.mCreatedEntries = Entries
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -1472,7 +774,6 @@ End
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.mCancelled = True
 		  Self.Hide
 		End Sub
 	#tag EndEvent
