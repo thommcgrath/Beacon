@@ -1,0 +1,13 @@
+#spawntable tr td:nth-of-type(1) {
+	width: auto;
+	max-width: 150px;
+}
+
+#spawntable tr td:nth-of-type(2) {
+	width: auto;
+}
+
+#spawntable tr td:nth-of-type(3) {
+	width: 100px;
+	text-align: center;
+}

@@ -234,7 +234,7 @@ Inherits Application
 
 	#tag MenuHandler
 		Function HelpAdminSpawnCodes() As Boolean Handles HelpAdminSpawnCodes.Action
-			ShowURL(Beacon.WebURL + "/spawncodes.php")
+			ShowURL(Beacon.WebURL("/spawn/"))
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -248,7 +248,7 @@ Inherits Application
 
 	#tag MenuHandler
 		Function HelpMakeADonation() As Boolean Handles HelpMakeADonation.Action
-			ShowURL(Beacon.WebURL + "/donate.php")
+			ShowURL(Beacon.WebURL("/donate.php"))
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -335,9 +335,15 @@ Inherits Application
 		      Break
 		    End Select
 		  Else
-		    URL = ReplaceAll(URL, "thezaz.com/beacon/documents.php/", "thezaz.com/beacon/api/document.php/")
+		    Dim LegacyURL As Text = "thezaz.com/beacon/documents.php/"
+		    Dim TextURL As Text = URL.ToText
+		    Dim Idx As Integer = TextURL.IndexOf(LegacyURL)
+		    If Idx > -1 Then
+		      Dim DocID As Text = TextURL.Mid(Idx + LegacyURL.Length)
+		      URL = BeaconAPI.URL("/document.php/" + DocID)
+		    End If
 		    
-		    Dim FileURL As String = "https://" + Mid(URL, PrefixLength + 1)
+		    Dim FileURL As String = "https://" + Mid(URL, PrefixLength)
 		    DocumentDownloadWindow.Begin(FileURL.ToText)
 		  End If
 		  

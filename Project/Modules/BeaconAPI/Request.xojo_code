@@ -27,7 +27,7 @@ Protected Class Request
 	#tag Method, Flags = &h0
 		Sub Constructor(Path As Text, Method As Text, Payload As Text, ContentType As Text, Callback As BeaconAPI.Request.ReplyCallback)
 		  If Path.IndexOf("://") = -1 Then
-		    Path = Beacon.WebURL + "/api/" + Path
+		    Path = BeaconAPI.URL(Path)
 		  End If
 		  If Path.Length >= 8 And Path.Left(8) <> "https://" Then
 		    Dim Err As New UnsupportedOperationException
@@ -171,11 +171,6 @@ Protected Class Request
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="AuthCount"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true

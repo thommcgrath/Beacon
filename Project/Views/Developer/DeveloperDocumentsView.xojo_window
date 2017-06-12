@@ -296,6 +296,7 @@ End
 		  End Select
 		  
 		  Dim Request As New BeaconAPI.Request("document.php", "GET", Params, AddressOf APICallback_DocumentsList)
+		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndMethod

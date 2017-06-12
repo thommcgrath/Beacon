@@ -417,7 +417,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Sub ReportAProblem()
-		  Dim URL As Text = Beacon.WebURL + "/reportaproblem.php"
+		  Dim URL As Text = Beacon.WebURL("/reportaproblem.php")
 		  
 		  #if TargetiOS
 		    Declare Function NSClassFromString Lib "Foundation" (Name As CFStringRef) As Ptr
@@ -527,12 +527,16 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function WebURL() As Text
+		Protected Function WebURL(Path As Text = "/") As Text
 		  #if DebugBuild
-		    Return "https://workbench.thezaz.com/beacon"
+		    Dim Domain As Text = "https://workbench.beaconapp.cc"
 		  #else
-		    Return "https://thezaz.com/beacon"
+		    Dim Domain As Text = "https://beaconapp.cc"
 		  #endif
+		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
+		    Path = "/" + Path
+		  End If
+		  Return Domain + Path
 		End Function
 	#tag EndMethod
 

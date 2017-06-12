@@ -15,7 +15,7 @@ Protected Class UpdateChecker
 		  
 		  Self.mSilent = Silent
 		  Self.mChecking = True
-		  Self.mSocket.Send("GET", Beacon.WebURL + "/updates.php")
+		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php"))
 		End Sub
 	#tag EndMethod
 

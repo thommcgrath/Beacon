@@ -9,7 +9,7 @@ Begin Window DocumentPublishWindow
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   308
+   Height          =   340
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -52,7 +52,7 @@ Begin Window DocumentPublishWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   268
+      Top             =   300
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -83,7 +83,7 @@ Begin Window DocumentPublishWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   268
+      Top             =   300
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -330,7 +330,7 @@ Begin Window DocumentPublishWindow
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   272
+      Top             =   304
       Visible         =   False
       Width           =   16
    End
@@ -339,6 +339,38 @@ Begin Window DocumentPublishWindow
       LockedInPosition=   False
       Scope           =   0
       TabPanelIndex   =   0
+   End
+   Begin CheckBox PublicCheck
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "List this document publicly in the document browser"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   110
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      State           =   0
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   268
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   370
    End
 End
 #tag EndWindow
@@ -413,6 +445,7 @@ End
 		  Win.mDocument = Document
 		  Win.TitleField.Text = Document.Title
 		  Win.DescriptionField.Text = Document.Description
+		  Win.PublicCheck.Value = Document.IsPublic
 		  Win.CheckEnabled()
 		  Win.ShowModalWithin(Parent)
 		  Dim Cancelled As Boolean = Win.mCancelled
@@ -438,6 +471,7 @@ End
 		Sub Action()
 		  Self.mDocument.Title = Self.TitleField.Text.ToText
 		  Self.mDocument.Description = Self.DescriptionField.Text.ToText
+		  Self.mDocument.IsPublic = Self.PublicCheck.Value
 		  
 		  Dim Body As Text = Xojo.Data.GenerateJSON(Self.mDocument.Export)
 		  

@@ -48,6 +48,7 @@ Begin Window SubscribeDialog
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Stay up to date with Beacon!"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -82,6 +83,7 @@ Begin Window SubscribeDialog
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Subscribe to the Beacon Announce list to stay up to date with Beacon releases and announcements. Message frequency will be kept to a minimum."
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -242,6 +244,7 @@ Begin Window SubscribeDialog
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Email Address:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -276,6 +279,7 @@ Begin Window SubscribeDialog
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "First Name:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -310,6 +314,7 @@ Begin Window SubscribeDialog
       Selectable      =   False
       TabIndex        =   7
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Last Name:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -344,6 +349,7 @@ Begin Window SubscribeDialog
       Selectable      =   False
       TabIndex        =   9
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "(Optional)"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -378,6 +384,7 @@ Begin Window SubscribeDialog
       Selectable      =   False
       TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "(Optional)"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -484,6 +491,7 @@ Begin Window SubscribeDialog
       Width           =   110
    End
    Begin Xojo.Net.HTTPSocket SubscribeSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -535,7 +543,7 @@ End
 		  
 		  SubscribeSocket.ValidateCertificates = True
 		  SubscribeSocket.SetRequestContent(Content, "application/x-www-form-urlencoded")
-		  SubscribeSocket.Send("POST", Beacon.WebURL + "/subscribe.php")
+		  SubscribeSocket.Send("POST", Beacon.WebURL("/subscribe.php"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -549,7 +557,7 @@ End
 #tag Events PrivacyPolicyButton
 	#tag Event
 		Sub Action()
-		  ShowURL(Beacon.WebURL + "/privacy.php")
+		  ShowURL(Beacon.WebURL("/privacy.php"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
