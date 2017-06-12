@@ -4,7 +4,7 @@ Protected Class SimulatedSelection
 		Function Description() As Text
 		  Dim Engram As Beacon.Engram = Beacon.Data.GetEngram(Self.ClassString)
 		  Dim Label As Text = if(Engram <> Nil, Engram.Label, Engram.ClassString)
-		  Return Beacon.QualityToText(Self.Quality) + " " + Label + if(Self.IsBlueprint, " Blueprint", "")
+		  Return Label + if(Self.IsBlueprint And Engram.CanBeBlueprint, " Blueprint", "")
 		End Function
 	#tag EndMethod
 
@@ -26,7 +26,7 @@ Protected Class SimulatedSelection
 		#tag ViewProperty
 			Name="ClassString"
 			Group="Behavior"
-			Type="Integer"
+			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -34,6 +34,11 @@ Protected Class SimulatedSelection
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsBlueprint"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -47,6 +52,11 @@ Protected Class SimulatedSelection
 			Visible=true
 			Group="ID"
 			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Quality"
+			Group="Behavior"
+			Type="Beacon.Qualities"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

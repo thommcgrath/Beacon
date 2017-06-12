@@ -251,6 +251,30 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function PrettyText(Extends Value As Double) As Text
+		  Dim Multiplier As UInteger = 1
+		  Dim Places As Integer = 0
+		  Dim Format As Text = "0"
+		  
+		  While Places < 6
+		    Dim TestValue As Double = Value * Multiplier
+		    If Xojo.Math.Floor(TestValue) = TestValue Then
+		      Exit
+		    End If
+		    Multiplier = Multiplier * 10
+		    Format = Format + "0"
+		  Wend
+		  
+		  If Format.Length > 1 Then
+		    Format = Format.Left(1) + "." + Format.Mid(2)
+		  End If
+		  
+		  Dim RoundedValue As Double = Round(Value * Multiplier) / Multiplier
+		  Return RoundedValue.ToText(Xojo.Core.Locale.Raw, Format)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Function PrimaryExtension(Extends Type As FileType) As String
 		  Dim Extensions() As String = Split(Type.Extensions, ";")
