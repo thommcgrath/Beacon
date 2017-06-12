@@ -357,6 +357,14 @@ div.patreon_box {
 	border-radius: 8px;
 }
 
+/* !Hero */
+
+#hero {
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 /* !Medium Screens */
 
 @media (min-width: 413px) {
