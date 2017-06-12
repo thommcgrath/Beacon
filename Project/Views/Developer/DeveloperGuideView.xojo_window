@@ -57,11 +57,7 @@ End
 		  End If
 		  
 		  Self.mAlreadyStarted = True
-		  ' #if DebugBuild
-		  ' View.LoadURL("http://127.0.0.1:8000")
-		  ' #else
 		  View.LoadURL(BeaconAPI.URL)
-		  ' #endif
 		End Sub
 	#tag EndMethod
 
