@@ -1105,40 +1105,48 @@ End
 		  Case EntryEditor.Modes.NewEntry
 		    Self.Search("")
 		  Case EntryEditor.Modes.SingleEdit
-		    ' BehaviorGroup.Visible = False
-		    ' BehaviorSingleEntryRadio.Value = True
-		    ' EngramList.Height = (BehaviorGroup.Top + BehaviorGroup.Height) - EngramList.Top
-		    ' DoneButton.Caption = "Save"
-		    ' 
-		    ' For Each Option As Beacon.SetEntryOption In Self.mEntries(0)
-		    ' Self.mSelectedEngrams.Append(Option.Engram)
-		    ' Next
-		    ' 
-		    ' Self.Search("")
-		    ' Self.UpdateSelectionUI()
-		    ' 
-		    ' For I As Integer = 0 To EngramList.ListCount - 1
-		    ' If EngramList.CellCheck(I, 0) Then
-		    ' EngramList.ScrollPosition = I
-		    ' Exit For I
-		    ' End If
-		    ' Next
+		    For Each Option As Beacon.SetEntryOption In Self.mEntries(0)
+		      Self.mSelectedEngrams.Value(Option.Engram.ClassString) = Option
+		    Next
+		    
+		    Self.Search("")
+		    SingleEntryCheck.Value = Self.mSelectedEngrams.Count > 1
+		    
+		    For I As Integer = 0 To EngramList.ListCount - 1
+		      If EngramList.CellCheck(I, 0) Then
+		        EngramList.ScrollPosition = I
+		        Exit For I
+		      End If
+		    Next
 		  Case EntryEditor.Modes.MultiEdit
-		    ' BackButton.Caption = "Cancel"
-		    ' DoneButton.Caption = "Save"
-		    ' 
-		    ' EditChanceCheck.Visible = True
-		    ' EditMaxQualityCheck.Visible = True
-		    ' EditMaxQuantityCheck.Visible = True
-		    ' EditMinQualityCheck.Visible = True
-		    ' EditMinQuantityCheck.Visible = True
-		    ' 
-		    ' EditChanceCheck.Value = False
-		    ' EditMaxQualityCheck.Value = False
-		    ' EditMaxQuantityCheck.Value = False
-		    ' EditMinQualityCheck.Value = False
-		    ' EditMinQuantityCheck.Value = False
+		    EditChanceCheck.Visible = True
+		    EditMaxQualityCheck.Visible = True
+		    EditMaxQuantityCheck.Visible = True
+		    EditMinQualityCheck.Visible = True
+		    EditMinQuantityCheck.Visible = True
+		    
+		    EditChanceCheck.Value = False
+		    EditMaxQualityCheck.Value = False
+		    EditMaxQuantityCheck.Value = False
+		    EditMinQualityCheck.Value = False
+		    EditMinQuantityCheck.Value = False
 		  End Select
+		  
+		  Dim RightEdge As Integer
+		  If EditMinQualityCheck.Visible Or EditMaxQualityCheck.Visible Or EditChanceCheck.Visible Then
+		    RightEdge = Min(EditMinQualityCheck.Left, EditMaxQualityCheck.Left, EditChanceCheck.Left) - 12
+		  Else
+		    RightEdge = (SettingsGroup.Left + SettingsGroup.Width) - 20
+		  End If
+		  
+		  MinQualityMenu.Width = (RightEdge - MinQualityMenu.Left)
+		  MaxQualityMenu.Width = (RightEdge - MaxQualityMenu.Left)
+		  PercentLabel.Left = RightEdge - (PercentLabel.Width + 3)
+		  ChanceField.Left = PercentLabel.Left - (ChanceField.Width + 12)
+		  ChanceSlider.Width = ChanceField.Left - (12 + ChanceSlider.Left)
+		  
+		  Self.UpdateSelectionUI()
+		  Self.UpdateSimulation()
 		End Sub
 	#tag EndMethod
 
@@ -1184,16 +1192,20 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSimulation()
+		  SimulationGroup.Caption = "Simulation"
 		  SimulatedResultsList.DeleteAllRows
 		  If Self.mSelectedEngrams.Count = 0 Then
 		    Return
 		  End If
 		  
+		  Dim FullSimulation As Boolean = Self.mSelectedEngrams.Count = 1 Or (Self.SingleEntryCheck.Value And Self.SingleEntryCheck.Visible)
+		  
 		  Dim Entry As New Beacon.SetEntry
 		  For Each Item As Xojo.Core.DictionaryEntry In Self.mSelectedEngrams
 		    Dim Option As Beacon.SetEntryOption = Item.Value
 		    Entry.Append(Option)
-		    If Not (Self.SingleEntryCheck.Value And Self.SingleEntryCheck.Visible) Then
+		    If Not FullSimulation Then
+		      SimulationGroup.Caption = "Simulation of " + Option.Engram.Label
 		      Exit
 		    End If
 		  Next
@@ -1270,7 +1282,12 @@ End
 		  Case 0
 		    Dim Checked As Boolean = Me.CellCheck(Row, Column)
 		    If Checked And Not Self.mSelectedEngrams.HasKey(Engram.ClassString) Then
-		      Dim Weight As Double = Max(Min(Val(Me.Cell(Row, Column)) / 100, 1), 0)
+		      Dim WeightString As String = Me.Cell(Row, 2)
+		      If WeightString = "" Then
+		        WeightString = "50"
+		        Me.Cell(Row, 2) = WeightString
+		      End
+		      Dim Weight As Double = Max(Min(Val(WeightString) / 100, 1), 0)
 		      Self.mSelectedEngrams.Value(Engram.ClassString) = New Beacon.SetEntryOption(Engram, Weight)
 		    ElseIf Not Checked And Self.mSelectedEngrams.HasKey(Engram.ClassString) Then
 		      Self.mSelectedEngrams.Remove(Engram.ClassString)
@@ -1295,6 +1312,7 @@ End
 		Sub Open()
 		  Me.ColumnType(0) = Listbox.TypeCheckbox
 		  Me.ColumnType(2) = Listbox.TypeEditable
+		  Me.ColumnAlignment(2) = Listbox.AlignRight
 		End Sub
 	#tag EndEvent
 	#tag Event

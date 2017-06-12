@@ -339,7 +339,7 @@ Implements Beacon.Countable
 		  
 		  For I As Integer = 1 To Quantity
 		    Dim QualityValue As Double = (Xojo.Math.RandomInt(MinQuality * 100000, MaxQuality * 100000) / 100000)
-		    Dim BlueprintDecision As Integer = Xojo.Math.RandomInt(0, 100)
+		    Dim BlueprintDecision As Integer = Xojo.Math.RandomInt(1, 100)
 		    Dim ClassDecision As Double = Xojo.Math.RandomInt(100000, 100000 + (Sum * 100000)) - 100000
 		    Dim Selection As New Beacon.SimulatedSelection
 		    
@@ -355,7 +355,7 @@ Implements Beacon.Countable
 		      Continue
 		    End If
 		    
-		    Selection.IsBlueprint = BlueprintDecision >= RequiredChance
+		    Selection.IsBlueprint = BlueprintDecision > RequiredChance
 		    Selection.Quality = Beacon.QualityForValue(QualityValue, 1)
 		    Selections.Append(Selection)
 		  Next
