@@ -2,6 +2,10 @@
 
 ## Build 15 (Beta 8)
 
+**_Important_** This build has a significant amount of refinements to its config generation code. Most notably, it no longer generates two config entries for every item set entry. This was done previously to counteract Ark's odd selection system. This caused other problems, such as preventing the "Prevent Duplicates" option from working correctly.
+
+It is **very strongly recommended** that users not only rebuild their configs, but also inspect some of their item set entries. There is a new "Simulation" section in the entry editor that will give you an idea of how Ark will pick its loot. There is a very good chance this will not be what you expect, so adjustments to your file are likely necessary.
+
 - Beacon documents now format their contents nicely, making them easier to version control.
 - Beacon now supports mods! Users can register their mods with Beacon and manage the items within the mod for Beacon users to easily use. Just give Beacon a file of spawn codes or a URL to the codes online, and it'll try its best to parse out all the items.
 - New document browser! Find documents shared by other users, see which documents you've shared, see stats like download count, and more.
@@ -9,6 +13,7 @@
 - Public Beacon API! Anybody can manage documents, mods, and engrams however they please. The new 'Developer Tools' window has built-in an 'API Guide' section for learning about the API, and an 'API Builder' section for generating sample API code.
 - New admin spawn code list at https://thezaz.com/beacon/spawncodes.php - if Beacon knows about it, including mod items, you can find it and its spawn code here. Mod authors may even link to this from their Steam page using https://thezaz.com/beacon/spawncodes.php?mod_id=<mod_id> to show only items for that mod.
 - Custom engrams are now better supported. Now you can simply paste spawn commands directly into the field at the top of the item editor. And a bug has been fixed preventing custom items from appearing in the list during editing.
+- Entry editing has a new UI! Per-engram weights are now supported, and there is a new "Simulation" section. This will give you a live idea of how Ark will choose items based on your settings.
 
 ## Build 14 (Beta 7)
 
