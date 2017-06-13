@@ -491,7 +491,6 @@ End
 		    Set.Add(APIEngram)
 		    EngramList.AddRow("")
 		    Self.ShowEngramInRow(EngramList.LastIndex, APIEngram)
-		    EngramDict.Value(Engram.ClassString) = True
 		  Next
 		  
 		  Footer.Button("PublishButton").Enabled = Set.Modified
