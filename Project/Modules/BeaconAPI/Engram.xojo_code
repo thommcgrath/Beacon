@@ -44,6 +44,8 @@ Protected Class Engram
 		Sub Constructor(Source As Beacon.Engram)
 		  Self.mClassString = Source.ClassString
 		  Self.Label = Source.Label
+		  Self.mAvailability = Source.Availability
+		  Self.mID = Beacon.CreateUUID
 		End Sub
 	#tag EndMethod
 
