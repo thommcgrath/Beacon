@@ -1,0 +1,23 @@
+#hero {
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.frontpage-left,
+.frontpage-right {
+	margin-top: 30px;
+	margin-bottom: 30px;
+	padding-bottom: 30px;
+	border-bottom: 1px solid #ffffff;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+.frontpage-left {
+	text-align: left;
+}
+
+.frontpage-right {
+	text-align: right;
+}

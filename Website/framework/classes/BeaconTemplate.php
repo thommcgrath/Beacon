@@ -51,6 +51,10 @@ abstract class BeaconTemplate {
 		return implode($separator, self::$header_lines);
 	}
 	
+	public static function AddStylesheet(string $url) {
+		self::$header_lines[] = '<link href="' . htmlentities($url) . '" type="text/css" rel="stylesheet">';
+	}
+	
 	public static function IsHTML() {
 		if (php_sapi_name() == "cli") {
 			return false;
