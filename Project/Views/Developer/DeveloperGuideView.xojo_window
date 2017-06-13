@@ -50,8 +50,8 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Method, Flags = &h0
-		Sub SwitchedTo()
+	#tag Event
+		Sub Shown(UserData As Auto = Nil)
 		  If Self.mAlreadyStarted = True Then
 		    Return
 		  End If
@@ -59,7 +59,7 @@ End
 		  Self.mAlreadyStarted = True
 		  View.LoadURL(BeaconAPI.URL)
 		End Sub
-	#tag EndMethod
+	#tag EndEvent
 
 
 	#tag Property, Flags = &h21

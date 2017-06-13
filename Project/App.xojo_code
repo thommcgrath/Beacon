@@ -179,7 +179,7 @@ Inherits Application
 			Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
 			If Preset <> Nil Then
 			Beacon.Data.SavePreset(Preset)
-			PresetManagerWindow.ShowPreset(Preset)
+			LibraryWindow.ShowPreset(Preset)
 			Else
 			Dim Alert As New MessageDialog
 			Alert.Title = ""
@@ -275,13 +275,6 @@ Inherits Application
 		End Function
 	#tag EndMenuHandler
 
-	#tag MenuHandler
-		Function WindowPresetLibrary() As Boolean Handles WindowPresetLibrary.Action
-			PresetManagerWindow.SharedWindow.Show
-			Return True
-		End Function
-	#tag EndMenuHandler
-
 
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
@@ -327,19 +320,19 @@ Inherits Application
 		    
 		    Select Case Instructions
 		    Case "showdocuments"
-		      LibraryWindow.SharedWindow.ShowPage(0, Params)
+		      LibraryWindow.SharedWindow.ShowPage(0)
 		    Case "showmods"
-		      DeveloperWindow.SharedWindow.ShowPage(1, Params)
+		      DeveloperWindow.SharedWindow.ShowPage(1)
 		    Case "showidentity"
-		      DeveloperWindow.SharedWindow.ShowPage(2, Params)
+		      DeveloperWindow.SharedWindow.ShowPage(2)
 		    Case "showguide"
-		      DeveloperWindow.SharedWindow.ShowPage(3, Params)
+		      DeveloperWindow.SharedWindow.ShowPage(3)
 		    Case "showapibuilder"
-		      DeveloperWindow.SharedWindow.ShowPage(4, Params)
+		      DeveloperWindow.SharedWindow.ShowPage(4)
 		    Case "showpresets"
-		      LibraryWindow.SharedWindow.ShowPage(1, Params)
+		      LibraryWindow.SharedWindow.ShowPage(1)
 		    Case "showengrams"
-		      LibraryWindow.SharedWindow.ShowPage(2, Params)
+		      LibraryWindow.SharedWindow.ShowPage(2)
 		    Else
 		      Break
 		    End Select

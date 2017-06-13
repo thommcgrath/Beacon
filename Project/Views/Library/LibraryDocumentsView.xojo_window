@@ -252,6 +252,12 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Auto = Nil)
+		  Self.RefreshDocuments()
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto)
@@ -324,12 +330,6 @@ End
 		      DocList.ListIndex = DocList.LastIndex
 		    End If
 		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SwitchedTo()
-		  Self.RefreshDocuments()
 		End Sub
 	#tag EndMethod
 

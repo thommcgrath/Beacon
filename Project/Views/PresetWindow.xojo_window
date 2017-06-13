@@ -222,7 +222,7 @@ End
 		      Dim Preset As Beacon.Preset = Editor.Preset
 		      
 		      Beacon.Data.SavePreset(Preset)
-		      PresetManagerWindow.UpdateIfVisible(Preset)
+		      NotificationKit.Post("Preset Saved", Preset)
 		      
 		      Editor.Preset = Preset // So the UUID stays
 		      
@@ -246,7 +246,7 @@ End
 		    Dim Preset As Beacon.Preset = Editor.Preset
 		    
 		    Beacon.Data.SavePreset(Preset)
-		    PresetManagerWindow.UpdateIfVisible(Preset)
+		    NotificationKit.Post("Preset Saved", Preset)
 		    Self.ContentsChanged = False
 		    
 		    Return True

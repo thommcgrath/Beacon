@@ -46,7 +46,7 @@ Begin Window DeveloperModSettingsDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -77,7 +77,7 @@ Begin Window DeveloperModSettingsDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -108,7 +108,7 @@ Begin Window DeveloperModSettingsDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   0
       TabPanelIndex   =   0
       Text            =   "Mod Settings"
       TextAlign       =   0
@@ -150,7 +150,7 @@ Begin Window DeveloperModSettingsDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -184,7 +184,7 @@ Begin Window DeveloperModSettingsDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   1
       TabPanelIndex   =   0
       Text            =   "Engrams URL:"
       TextAlign       =   2
@@ -218,7 +218,7 @@ Begin Window DeveloperModSettingsDialog
       Multiline       =   True
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   5
+      TabIndex        =   3
       TabPanelIndex   =   0
       Text            =   "A list of engrams can be posted online and the Beacon server will use it to automatically maintain the engrams list. See the API Guide for more details."
       TextAlign       =   0

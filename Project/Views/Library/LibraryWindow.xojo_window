@@ -1,5 +1,5 @@
 #tag Window
-Begin Window LibraryWindow
+Begin BeaconMultiview LibraryWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -103,7 +103,7 @@ Begin Window LibraryWindow
       TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   31
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   800
       Begin LibraryDocumentsView DocsView
@@ -134,11 +134,56 @@ Begin Window LibraryWindow
          Visible         =   True
          Width           =   800
       End
+      Begin LibraryPresetsView PresetsView
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   419
+         HelpTag         =   ""
+         InitialParent   =   "Panel"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Top             =   31
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   800
+      End
    End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Close()
+		  Self.mInstance = Nil
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Function GetPageAtIndex(Index As Integer) As BeaconSubview
+		  Select Case Index
+		  Case 0
+		    Return Self.DocsView
+		  Case 1
+		    Return Self.PresetsView
+		  End Select
+		End Function
+	#tag EndEvent
+
 	#tag Event
 		Sub Moved()
 		  Self.SavePosition("Library Window Position")
@@ -155,14 +200,23 @@ End
 		    Self.Width = InitialWidth + 1
 		    Self.Width = InitialWidth
 		  End If
-		  
-		  Self.DocsView.SwitchedTo
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Resized()
 		  Self.SavePosition("Library Window Position")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub SetCurrentPage(Index As Integer)
+		  If Self.TabHeader.Value <> Index Then
+		    Self.TabHeader.Value = Index
+		  End If
+		  If Self.Panel.Value <> Index Then
+		    Self.Panel.Value = Index
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -177,11 +231,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowPage(PageNum As Integer, Params As String = "")
-		  #Pragma Unused Params
-		  
-		  TabHeader.Value = PageNum
-		  Self.Show()
+		Shared Sub ShowPreset(Preset As Beacon.Preset)
+		  Dim Win As LibraryWindow = LibraryWindow.SharedWindow(False)
+		  If Win = Nil Then
+		    // Not visible, show it
+		    Win = LibraryWindow.SharedWindow(True)
+		    Win.Show
+		  End If
+		  Win.ShowPage(1, Preset)
 		End Sub
 	#tag EndMethod
 
@@ -196,8 +253,8 @@ End
 #tag Events TabHeader
 	#tag Event
 		Sub Change()
-		  If Self.Panel.Value <> Me.Value Then
-		    Self.Panel.Value = Me.Value
+		  If Self.CurrentPage <> Me.Value Then
+		    Self.ShowPage(Me.Value)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -220,14 +277,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events Panel
-	#tag Event
-		Sub Change()
-		  Select Case Me.Value
-		  Case 0
-		    Self.DocsView.SwitchedTo()
-		  End Select
-		End Sub
-	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

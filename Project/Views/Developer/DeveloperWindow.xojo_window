@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconWindow DeveloperWindow
+Begin BeaconMultiview DeveloperWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -236,6 +236,21 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Function GetPageAtIndex(Index As Integer) As BeaconSubview
+		  Select Case Index
+		  Case 0
+		    Return Self.ModsView
+		  Case 1
+		    Return Self.IdentityView
+		  Case 2
+		    Return Self.APIGuideView
+		  Case 3
+		    Return Self.APIBuilderView
+		  End Select
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub Moved()
 		  Self.SavePosition("Developer Window Position")
 		End Sub
@@ -262,6 +277,17 @@ End
 	#tag Event
 		Sub Resized()
 		  Self.SavePosition("Developer Window Position")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub SetCurrentPage(Index As Integer)
+		  If Self.TabHeader.Value <> Index Then
+		    Self.TabHeader.Value = Index
+		  End If
+		  If Self.Panel.Value <> Index Then
+		    Self.Panel.Value = Index
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -307,25 +333,6 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub ShowAPIKey(Username As String, Password As String)
-		  Dim Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Here is your API key"
-		  Dialog.Explanation = "Username: " + Username + EndOfLine + "Password: " + Password
-		  Call Dialog.ShowModal()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ShowPage(PageNum As Integer, Params As String = "")
-		  #Pragma Unused Params
-		  
-		  TabHeader.Value = PageNum
-		  Self.Show()
-		End Sub
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
 		Private Shared mInstance As DeveloperWindow
@@ -337,8 +344,8 @@ End
 #tag Events TabHeader
 	#tag Event
 		Sub Change()
-		  If Self.Panel.Value <> Me.Value Then
-		    Self.Panel.Value = Me.Value
+		  If Self.CurrentPage <> Me.Value Then
+		    Self.ShowPage(Me.Value)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -362,20 +369,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events Panel
-	#tag Event
-		Sub Change()
-		  Select Case Me.Value
-		  Case 0
-		    ModsView.SwitchedTo()
-		  Case 1
-		    IdentityView.SwitchedTo()
-		  Case 2
-		    APIGuideView.SwitchedTo()
-		  Case 3
-		    APIBuilderView.SwitchedTo()
-		  End Select
-		End Sub
-	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

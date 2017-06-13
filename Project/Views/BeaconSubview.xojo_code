@@ -13,14 +13,28 @@ Inherits ContainerControl
 
 
 	#tag Method, Flags = &h0
-		Sub SwitchedTo()
-		  
+		Sub SwitchedFrom()
+		  RaiseEvent Hidden
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SwitchedTo(UserData As Auto = Nil)
+		  RaiseEvent Shown(UserData)
 		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
+		Event Hidden()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Shown(UserData As Auto = Nil)
 	#tag EndHook
 
 

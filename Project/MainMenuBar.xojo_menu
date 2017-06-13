@@ -299,13 +299,6 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem WindowPresetLibrary
-         SpecialMenu = 0
-         Text = "Preset Library"
-         Index = -2147483648
-         AutoEnable = True
-         Visible = True
-      End
       Begin MenuItem WindowLibrary
          SpecialMenu = 0
          Text = "Library"

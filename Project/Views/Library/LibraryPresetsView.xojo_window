@@ -1,81 +1,30 @@
 #tag Window
-Begin BeaconWindow PresetManagerWindow
+Begin BeaconSubview LibraryPresetsView Implements NotificationKit.Receiver
+   AcceptFocus     =   False
+   AcceptTabs      =   True
+   AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   CloseButton     =   True
    Compatibility   =   ""
-   Composite       =   False
-   Frame           =   0
-   FullScreen      =   False
-   FullScreenButton=   False
+   Enabled         =   True
+   EraseBackground =   True
    HasBackColor    =   False
-   Height          =   400
-   ImplicitInstance=   False
-   LiveResize      =   True
-   MacProcID       =   0
-   MaxHeight       =   32000
-   MaximizeButton  =   True
-   MaxWidth        =   32000
-   MenuBar         =   0
-   MenuBarVisible  =   True
-   MinHeight       =   400
-   MinimizeButton  =   True
-   MinWidth        =   600
-   Placement       =   2
-   Resizeable      =   True
-   Title           =   "Preset Library"
+   Height          =   419
+   HelpTag         =   ""
+   InitialParent   =   ""
+   Left            =   0
+   LockBottom      =   True
+   LockLeft        =   True
+   LockRight       =   True
+   LockTop         =   True
+   TabIndex        =   0
+   TabPanelIndex   =   0
+   TabStop         =   True
+   Top             =   0
+   Transparent     =   True
+   UseFocusRing    =   False
    Visible         =   True
-   Width           =   600
-   Begin BeaconListbox List
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
-      Bold            =   False
-      Border          =   True
-      ColumnCount     =   2
-      ColumnsResizable=   False
-      ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      DefaultRowHeight=   -1
-      Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
-      HeadingIndex    =   0
-      Height          =   328
-      HelpTag         =   ""
-      Hierarchical    =   False
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   "Name	Type"
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RequiresSelection=   False
-      Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   0
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Underline       =   False
-      UseFocusRing    =   False
-      Visible         =   True
-      Width           =   560
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
-   End
+   Width           =   800
    Begin UITweaks.ResizedPushButton AddButton
       AutoDeactivate  =   True
       Bold            =   False
@@ -90,81 +39,19 @@ Begin BeaconWindow PresetManagerWindow
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   False
+      LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   360
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedPushButton EditButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "Edit"
-      Default         =   False
-      Enabled         =   False
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   112
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   360
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedPushButton DeleteButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "Delete"
-      Default         =   False
-      Enabled         =   False
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   296
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   360
+      Top             =   20
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -183,11 +70,73 @@ Begin BeaconWindow PresetManagerWindow
       InitialParent   =   ""
       Italic          =   False
       Left            =   204
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton DeleteButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Delete"
+      Default         =   False
+      Enabled         =   False
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   296
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton EditButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Edit"
+      Default         =   False
+      Enabled         =   False
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   112
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -195,23 +144,65 @@ Begin BeaconWindow PresetManagerWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   360
+      Top             =   20
       Underline       =   False
       Visible         =   True
       Width           =   80
+   End
+   Begin BeaconListbox List
+      AutoDeactivate  =   True
+      AutoHideScrollbars=   True
+      Bold            =   False
+      Border          =   True
+      ColumnCount     =   2
+      ColumnsResizable=   False
+      ColumnWidths    =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      DefaultRowHeight=   -1
+      Enabled         =   True
+      EnableDrag      =   False
+      EnableDragReorder=   False
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
+      HasHeading      =   True
+      HeadingIndex    =   0
+      Height          =   339
+      HelpTag         =   ""
+      Hierarchical    =   False
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   "Name	Type"
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RequiresSelection=   False
+      Scope           =   2
+      ScrollbarHorizontal=   False
+      ScrollBarVertical=   True
+      SelectionType   =   0
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   60
+      Underline       =   False
+      UseFocusRing    =   False
+      Visible         =   True
+      Width           =   760
+      _ScrollOffset   =   0
+      _ScrollWidth    =   -1
    End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Close()
-		  If Self = mInstance Then
-		    mInstance = Nil
-		  End If
-		End Sub
-	#tag EndEvent
-
 	#tag Event
 		Sub DropObject(obj As DragItem, action As Integer)
 		  #Pragma Unused action
@@ -237,9 +228,23 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub Hidden()
+		  NotificationKit.Ignore(Self, "Preset Saved")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
-		  Self.UpdatePresets()
 		  Self.AcceptFileDrop(BeaconFileTypes.BeaconPreset)
+		  RaiseEvent Open
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Auto = Nil)
+		  NotificationKit.Watch(Self, "Preset Saved")
+		  
+		  Self.UpdatePresets(UserData)
 		End Sub
 	#tag EndEvent
 
@@ -264,31 +269,12 @@ End
 
 
 	#tag Method, Flags = &h0
-		Shared Function SharedWindow(Create As Boolean = True) As PresetManagerWindow
-		  If mInstance = Nil And Create = True Then
-		    mInstance = New PresetManagerWindow
-		  End If
-		  Return mInstance
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Sub ShowPreset(Preset As Beacon.Preset)
-		  Dim Win As PresetManagerWindow = PresetManagerWindow.SharedWindow(False)
-		  If Win = Nil Then
-		    // Not visible, show it
-		    Win = PresetManagerWindow.SharedWindow(True)
-		    Win.Show
-		  End If
-		  Win.UpdatePresets(Preset)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Sub UpdateIfVisible(SelectPreset As Beacon.Preset = Nil)
-		  Dim Win As PresetManagerWindow = SharedWindow(False)
-		  If Win <> Nil Then
-		    Win.UpdatePresets(SelectPreset)
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  If Notification.Name = "Preset Saved" Then
+		    Dim Preset As Beacon.Preset = Notification.UserData
+		    Self.UpdatePresets(Preset)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -342,13 +328,62 @@ End
 	#tag EndMethod
 
 
-	#tag Property, Flags = &h21
-		Private Shared mInstance As PresetManagerWindow
-	#tag EndProperty
+	#tag Hook, Flags = &h0
+		Event Open()
+	#tag EndHook
 
 
 #tag EndWindowCode
 
+#tag Events AddButton
+	#tag Event
+		Sub Action()
+		  PresetWindow.Present()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CloneButton
+	#tag Event
+		Sub Action()
+		  Dim Source As Beacon.Preset = List.RowTag(List.ListIndex)
+		  Dim Clone As New Beacon.MutablePreset
+		  Clone.Label = Source.Label
+		  Clone.Grouping = Source.Grouping
+		  Clone.MaxItems = Source.MaxItems
+		  Clone.MinItems = Source.MinItems
+		  Clone.QualityModifier(Beacon.LootSource.Kinds.Standard) = Source.QualityModifier(Beacon.LootSource.Kinds.Standard)
+		  Clone.QualityModifier(Beacon.LootSource.Kinds.Bonus) = Source.QualityModifier(Beacon.LootSource.Kinds.Bonus)
+		  Clone.QualityModifier(Beacon.LootSource.Kinds.Cave) = Source.QualityModifier(Beacon.LootSource.Kinds.Cave)
+		  Clone.QualityModifier(Beacon.LootSource.Kinds.Sea) = Source.QualityModifier(Beacon.LootSource.Kinds.Sea)
+		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Standard) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Standard)
+		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus)
+		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Cave) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Cave)
+		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Sea) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Sea)
+		  For Each Entry As Beacon.PresetEntry In Source
+		    Clone.Append(New Beacon.PresetEntry(Entry))
+		  Next
+		  
+		  PresetWindow.Present(Clone)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DeleteButton
+	#tag Event
+		Sub Action()
+		  Dim Preset As Beacon.Preset = List.RowTag(List.ListIndex)
+		  Beacon.Data.RemovePreset(Preset)
+		  Self.UpdatePresets()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EditButton
+	#tag Event
+		Sub Action()
+		  Dim Preset As Beacon.Preset = List.RowTag(List.ListIndex)
+		  PresetWindow.Present(Preset)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events List
 	#tag Event
 		Sub Change()
@@ -378,56 +413,30 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AddButton
-	#tag Event
-		Sub Action()
-		  PresetWindow.Present()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events EditButton
-	#tag Event
-		Sub Action()
-		  Dim Preset As Beacon.Preset = List.RowTag(List.ListIndex)
-		  PresetWindow.Present(Preset)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DeleteButton
-	#tag Event
-		Sub Action()
-		  Dim Preset As Beacon.Preset = List.RowTag(List.ListIndex)
-		  Beacon.Data.RemovePreset(Preset)
-		  Self.UpdatePresets()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CloneButton
-	#tag Event
-		Sub Action()
-		  Dim Source As Beacon.Preset = List.RowTag(List.ListIndex)
-		  Dim Clone As New Beacon.MutablePreset
-		  Clone.Label = Source.Label
-		  Clone.Grouping = Source.Grouping
-		  Clone.MaxItems = Source.MaxItems
-		  Clone.MinItems = Source.MinItems
-		  Clone.QualityModifier(Beacon.LootSource.Kinds.Standard) = Source.QualityModifier(Beacon.LootSource.Kinds.Standard)
-		  Clone.QualityModifier(Beacon.LootSource.Kinds.Bonus) = Source.QualityModifier(Beacon.LootSource.Kinds.Bonus)
-		  Clone.QualityModifier(Beacon.LootSource.Kinds.Cave) = Source.QualityModifier(Beacon.LootSource.Kinds.Cave)
-		  Clone.QualityModifier(Beacon.LootSource.Kinds.Sea) = Source.QualityModifier(Beacon.LootSource.Kinds.Sea)
-		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Standard) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Standard)
-		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus)
-		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Cave) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Cave)
-		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Sea) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Sea)
-		  For Each Entry As Beacon.PresetEntry In Source
-		    Clone.Append(New Beacon.PresetEntry(Entry))
-		  Next
-		  
-		  PresetWindow.Present(Clone)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="AcceptFocus"
+		Visible=true
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AcceptTabs"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="AutoDeactivate"
+		Visible=true
+		Group="Appearance"
+		InitialValue="True"
+		Type="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="BackColor"
 		Visible=true
@@ -443,52 +452,18 @@ End
 		EditorType="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="CloseButton"
+		Name="Enabled"
 		Visible=true
-		Group="Frame"
+		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composite"
-		Group="OS X (Carbon)"
-		InitialValue="False"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Frame"
+		Name="EraseBackground"
 		Visible=true
-		Group="Frame"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Document"
-			"1 - Movable Modal"
-			"2 - Modal Dialog"
-			"3 - Floating Window"
-			"4 - Plain Box"
-			"5 - Shadowed Box"
-			"6 - Rounded Window"
-			"7 - Global Floating Window"
-			"8 - Sheet Window"
-			"9 - Metal Window"
-			"11 - Modeless Dialog"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="FullScreen"
 		Group="Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="FullScreenButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="False"
+		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
@@ -503,95 +478,49 @@ End
 		Name="Height"
 		Visible=true
 		Group="Size"
-		InitialValue="400"
+		InitialValue="300"
 		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="ImplicitInstance"
+		Name="HelpTag"
 		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Interfaces"
-		Visible=true
-		Group="ID"
+		Group="Appearance"
 		Type="String"
-		EditorType="String"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="LiveResize"
+		Name="InitialParent"
+		Group="Position"
+		Type="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Left"
 		Visible=true
-		Group="Behavior"
-		InitialValue="True"
+		Group="Position"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="LockBottom"
+		Visible=true
+		Group="Position"
 		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MacProcID"
-		Group="OS X (Carbon)"
-		InitialValue="0"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
+		Name="LockLeft"
 		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
+		Group="Position"
 		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MaxWidth"
+		Name="LockRight"
 		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBar"
-		Visible=true
-		Group="Menus"
-		Type="MenuBar"
-		EditorType="MenuBar"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Group="Behavior"
-		InitialValue="True"
+		Group="Position"
 		Type="Boolean"
-		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MinHeight"
+		Name="LockTop"
 		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
+		Group="Position"
 		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
@@ -601,29 +530,6 @@ End
 		EditorType="String"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Placement"
-		Visible=true
-		Group="Behavior"
-		InitialValue="0"
-		Type="Integer"
-		EditorType="Enum"
-		#tag EnumValues
-			"0 - Default"
-			"1 - Parent Window"
-			"2 - Main Screen"
-			"3 - Parent Window Screen"
-			"4 - Stagger"
-		#tag EndEnumValues
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Resizeable"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Super"
 		Visible=true
 		Group="ID"
@@ -631,16 +537,52 @@ End
 		EditorType="String"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Title"
+		Name="TabIndex"
 		Visible=true
-		Group="Frame"
-		InitialValue="Untitled"
-		Type="String"
+		Group="Position"
+		InitialValue="0"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="TabPanelIndex"
+		Group="Position"
+		InitialValue="0"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="TabStop"
+		Visible=true
+		Group="Position"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Top"
+		Visible=true
+		Group="Position"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Transparent"
+		Visible=true
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="UseFocusRing"
+		Visible=true
+		Group="Appearance"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"
 		Visible=true
-		Group="Behavior"
+		Group="Appearance"
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
@@ -649,7 +591,7 @@ End
 		Name="Width"
 		Visible=true
 		Group="Size"
-		InitialValue="600"
+		InitialValue="300"
 		Type="Integer"
 	#tag EndViewProperty
 #tag EndViewBehavior
