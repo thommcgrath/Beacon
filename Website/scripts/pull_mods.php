@@ -66,6 +66,7 @@ function PullMod(BeaconMod $mod) {
 			$engram = array_filter($engram);
 			$engrams[] = $engram;
 		}
+		break;
 	default:
 		SendAlert($mod, 'Unexpected content type: ' . $content_type . '.');
 		return;
