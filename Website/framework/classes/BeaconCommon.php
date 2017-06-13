@@ -94,7 +94,7 @@ abstract class BeaconCommon {
 	
 	public static function GetGlobal(string $key, $default = null) {
 		if (array_key_exists($key, self::$globals)) {
-			return self::$globals[$default];
+			return self::$globals[$key];
 		} else {
 			return $default;
 		}

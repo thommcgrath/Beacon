@@ -64,7 +64,13 @@ case 'POST':
 		$workshop_id = $item['mod_id'];
 		$pull_url = null;
 		if (isset($item['pull_url'])) {
-			$pull_url = $item['pull_url'];
+			$pull_url = filter_var($item['pull_url'], FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED | FILTER_FLAG_HOST_REQUIRED);
+			if ($pull_url === false) {
+				BeaconAPI::ReplyError('Pull URL is not valid.', $item['pull_url']);
+			}
+			if (substr($pull_url, 0, 4) !== 'http') {
+				BeaconAPI::ReplyError('Must use http or https urls.', $item['pull_url']);
+			}
 		}
 	
 		$results = $database->Query('SELECT user_id FROM mods WHERE workshop_id = $1 AND user_id = $2;', $workshop_id, $user_id);

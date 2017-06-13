@@ -2,7 +2,7 @@
 
 (function() {
 	$policy = 'default-src \'self\';';
-	if (preg_match('/Edge\/\d+/', $_SERVER['HTTP_USER_AGENT']) === 1) {
+	if (isset($_SERVER['HTTP_USER_AGENT']) && (preg_match('/Edge\/\d+/', $_SERVER['HTTP_USER_AGENT']) === 1)) {
 		// Edge treats SVG style info in the page context incorrect, so we need unsafe-inline
 		$policy .= ' style-src \'self\' \'unsafe-inline\';';
 	}
