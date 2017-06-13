@@ -62,6 +62,10 @@ case 'POST':
 			BeaconAPI::ReplyError('Not all keys are present.', $item);
 		}
 		$workshop_id = $item['mod_id'];
+		$pull_url = null;
+		if (isset($item['pull_url'])) {
+			$pull_url = $item['pull_url'];
+		}
 	
 		$results = $database->Query('SELECT user_id FROM mods WHERE workshop_id = $1 AND user_id = $2;', $workshop_id, $user_id);
 		if ($results->RecordCount() == 1) {
@@ -76,7 +80,7 @@ case 'POST':
 		}
 		
 		try {
-			$database->Query('INSERT INTO mods (workshop_id, name, user_id) VALUES ($1, $2, $3);', $workshop_id, $workshop_item->Name(), $user_id);
+			$database->Query('INSERT INTO mods (workshop_id, name, user_id, pull_url) VALUES ($1, $2, $3, $4);', $workshop_id, $workshop_item->Name(), $user_id, $pull_url);
 		} catch (\BeaconQueryException $e) {
 			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMessage());
 		}

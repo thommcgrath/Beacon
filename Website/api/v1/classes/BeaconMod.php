@@ -6,6 +6,7 @@ class BeaconMod implements JsonSerializable {
 	protected $name = '';
 	protected $confirmed = false;
 	protected $confirmation_code = '';
+	protected $pull_url = null;
 	
 	public function ModID() {
 		return $this->mod_id;
@@ -25,6 +26,10 @@ class BeaconMod implements JsonSerializable {
 	
 	public function ConfirmationCode() {
 		return $this->confirmation_code;
+	}
+	
+	public function PullURL() {
+		return $this->pull_url;
 	}
 	
 	public function AttemptConfirmation() {
@@ -74,6 +79,7 @@ class BeaconMod implements JsonSerializable {
 		$mod->name = $results->Field('name');
 		$mod->confirmed = $results->Field('confirmed');
 		$mod->confirmation_code = $results->Field('confirmation_code');
+		$mod->pull_url = $results->Field('pull_url');
 		return $mod;
 	}
 	
@@ -89,8 +95,14 @@ class BeaconMod implements JsonSerializable {
 		return self::GetFromResults($results);
 	}
 	
+	public static function GetPullMods() {
+		$database = BeaconCommon::Database();
+		$results = $database->Query(self::BuildSQL('confirmed = TRUE AND pull_url IS NOT NULL'));
+		return self::GetFromResults($results);
+	}
+	
 	protected static function BuildSQL(string $clause = '') {
-		$sql = 'SELECT mod_id, workshop_id, name, confirmed, confirmation_code FROM mods';
+		$sql = 'SELECT mod_id, workshop_id, name, confirmed, confirmation_code, pull_url FROM mods';
 		if ($clause !== '') {
 			$sql .= ' WHERE ' . $clause;
 		}
@@ -107,7 +119,8 @@ class BeaconMod implements JsonSerializable {
 			'confirmation_code' => $this->confirmation_code,
 			'resource_url' => BeaconAPI::URL('/mod.php/' . $this->workshop_id),
 			'confirm_url' => BeaconAPI::URL('/mod.php/' . $this->workshop_id . '?action=confirm'),
-			'engrams_url' => BeaconAPI::URL('/engram.php?mod_id=' . $this->workshop_id)
+			'engrams_url' => BeaconAPI::URL('/engram.php?mod_id=' . $this->workshop_id),
+			'pull_url' => $this->pull_url
 		);
 	}
 }

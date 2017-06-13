@@ -18,7 +18,7 @@ case 'POST':
 	}
 	
 	$payload = BeaconAPI::JSONPayload();
-	if (ZirconCommon::IsAssoc($payload)) {
+	if (BeaconCommon::IsAssoc($payload)) {
 		// single
 		$items = array($payload);
 	} else {
@@ -28,7 +28,7 @@ case 'POST':
 	
 	$database->BeginTransaction();
 	foreach ($items as $item) {
-		if (!ZirconCommon::HasAllKeys($item, 'user_id', 'public_key')) {
+		if (!BeaconCommon::HasAllKeys($item, 'user_id', 'public_key')) {
 			$database->Rollback();
 			BeaconAPI::ReplyError('Not all keys are present.', $item);
 		}
