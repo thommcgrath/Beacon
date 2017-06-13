@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DeveloperImportURLDialog
+Begin Window DeveloperModSettingsDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -9,7 +9,7 @@ Begin Window DeveloperImportURLDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   192
+   Height          =   193
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -23,119 +23,9 @@ Begin Window DeveloperImportURLDialog
    MinWidth        =   64
    Placement       =   1
    Resizeable      =   True
-   Title           =   "Import From URL"
+   Title           =   "Mod Settings"
    Visible         =   True
    Width           =   520
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
-      Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      Text            =   "Import Engrams From URL"
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   480
-   End
-   Begin Label ExplanationLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   54
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   True
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      Text            =   "If you've posted a list of spawn commands for the items in your mod, paste the url here. Beacon will scan the page and extract whatever it can. It may not be perfect, but it's a nice starting point."
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   52
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   480
-   End
-   Begin UITweaks.ResizedTextField URLField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   "URL"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   20
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   118
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   480
-   End
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
@@ -143,7 +33,7 @@ Begin Window DeveloperImportURLDialog
       Cancel          =   False
       Caption         =   "OK"
       Default         =   True
-      Enabled         =   False
+      Enabled         =   True
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -156,13 +46,13 @@ Begin Window DeveloperImportURLDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   152
+      Top             =   153
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -187,16 +77,160 @@ Begin Window DeveloperImportURLDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   152
+      Top             =   153
       Underline       =   False
       Visible         =   True
       Width           =   80
+   End
+   Begin Label MessageLabel
+      AutoDeactivate  =   True
+      Bold            =   True
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      Text            =   "Mod Settings"
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   480
+   End
+   Begin UITweaks.ResizedTextField PullURLField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   122
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   52
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   378
+   End
+   Begin UITweaks.ResizedLabel PullURLLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      Text            =   "Engrams URL:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   53
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   90
+   End
+   Begin Label PullURLExplanationLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   55
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   122
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   True
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      Text            =   "A list of engrams can be posted online and the Beacon server will use it to automatically maintain the engrams list. See the API Guide for more details."
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   86
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   378
    End
    Begin ProgressWheel Spinner
       AutoDeactivate  =   True
@@ -212,103 +246,91 @@ Begin Window DeveloperImportURLDialog
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   156
+      Top             =   157
       Visible         =   False
       Width           =   16
    End
-   Begin Xojo.Net.HTTPSocket Socket
+   Begin BeaconAPI.Socket Socket
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
-      ValidateCertificates=   False
    End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window) As Text
-		  Dim Win As New DeveloperImportURLDialog
-		  Dim C As New Clipboard
-		  If C.TextAvailable And C.Text.Left(4) = "http" Then
-		    Win.URLField.Text = C.Text
+	#tag Method, Flags = &h21
+		Private Sub APICallback_SaveMod(Success As Boolean, Message As Text, Details As Auto)
+		  If Success Then
+		    Self.Close
+		    Return
 		  End If
-		  Win.SwapButtons()
+		  
+		  Self.ShowAlert("Unable to save mod", Message)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Sub Present(Parent As Window, WorkshopMod As BeaconAPI.WorkshopMod)
+		  Dim Win As New DeveloperModSettingsDialog
+		  Win.WorkshopMod = WorkshopMod
+		  Win.PullURLField.Text = WorkshopMod.PullURL
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Dim Content As Text = Win.mContent
-		  Win.Close
-		  Return Content
-		End Function
+		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mContent As Text
+		Private WorkshopMod As BeaconAPI.WorkshopMod
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events URLField
-	#tag Event
-		Sub TextChange()
-		  Self.ActionButton.Enabled = Trim(Me.Text).Left(4) = "http"
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim URL As Text = Trim(URLField.Text).ToText
-		  If URL.IndexOf("pasted.co/") > -1 Then
-		    Self.ShowAlert("Can't import from this url", "TinyPaste/pasted.co prevent pulling content from their pages. Instead, copy and paste the spawn codes into a text file and import that.")
-		    Return
-		  End If
+		  Self.WorkshopMod.PullURL = Self.PullURLField.Text.ToText
+		  Dim Payload As Text = Xojo.Data.GenerateJSON(Self.WorkshopMod.AsDictionary)
 		  
-		  Self.Socket.Send("GET", Trim(URLField.Text).ToText)
-		  Spinner.Visible = True
-		  ActionButton.Enabled = False
-		  URLField.Enabled = False
+		  Dim Request As New BeaconAPI.Request("mod.php", "POST", Payload, "application/json", AddressOf APICallback_SaveMod)
+		  Request.Sign(App.Identity)
+		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.Socket.Disconnect
-		  Self.Hide
+		  Self.Close
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PullURLField
+	#tag Event
+		Sub TextChange()
+		  Dim URL As String = Trim(Me.Text)
+		  ActionButton.Enabled = URL = "" Or Left(URL, 8) = "https://" Or Left(URL, 7) = "http://"
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Socket
 	#tag Event
-		Sub Error(err as RuntimeException)
+		Sub WorkCompleted()
 		  Spinner.Visible = False
+		  PullURLField.Enabled = True
 		  ActionButton.Enabled = True
-		  URLField.Enabled = True
-		  
-		  MsgBox("Error: " + Err.Reason)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
-		  URLField.Text = URL
-		  
-		  Spinner.Visible = False
-		  ActionButton.Enabled = True
-		  URLField.Enabled = True
-		  
-		  If HTTPStatus <> 200 Then
-		    MsgBox("The content was not loaded correctly. HTTP status " + HTTPStatus.ToText)
-		    Return
-		  End If
-		  
-		  Self.mContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
-		  Self.Hide
+		Sub WorkStarted()
+		  Spinner.Visible = True
+		  PullURLField.Enabled = False
+		  ActionButton.Enabled = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents

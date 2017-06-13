@@ -285,7 +285,7 @@ End
 	#tag Event
 		Sub Change()
 		  Footer.Button("RemoveButton").Enabled = Me.ListIndex > -1
-		  Footer.Invalidate()
+		  Footer.Button("SettingsButton").Enabled = Me.ListIndex > -1
 		  ModView.CurrentMod = Self.SelectedMod()
 		End Sub
 	#tag EndEvent
@@ -322,6 +322,11 @@ End
 		      Request.Sign(App.Identity)
 		      Self.Socket.Start(Request)
 		    End If
+		  Case "SettingsButton"
+		    Dim WorkshopMod As BeaconAPI.WorkshopMod = Self.SelectedMod()
+		    If WorkshopMod <> Nil Then
+		      DeveloperModSettingsDialog.Present(Self, WorkshopMod)
+		    End If
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -329,6 +334,10 @@ End
 		Sub Open()
 		  Dim AddButton As New FooterBarButton("AddButton", IconAdd)
 		  Me.Append(AddButton)
+		  
+		  Dim SettingsButton As New FooterBarButton("SettingsButton", IconSettings)
+		  SettingsButton.Enabled = False
+		  Me.Append(SettingsButton)
 		  
 		  Dim RemoveButton As New FooterBarButton("RemoveButton", IconRemove)
 		  RemoveButton.Enabled = False

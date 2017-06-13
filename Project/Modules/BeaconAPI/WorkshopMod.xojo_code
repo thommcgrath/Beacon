@@ -1,6 +1,17 @@
 #tag Class
 Protected Class WorkshopMod
 	#tag Method, Flags = &h0
+		Function AsDictionary() As Xojo.Core.Dictionary
+		  Dim Dict As New Xojo.Core.Dictionary
+		  Dict.Value("mod_id") = Self.mModID
+		  If Self.mPullURL <> "" Then
+		    Dict.Value("pull_url") = Self.mPullURL
+		  End If
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ConfirmationCode() As Text
 		  Return Self.mConfirmationCode
 		End Function
@@ -28,6 +39,9 @@ Protected Class WorkshopMod
 		  Self.mName = Source.Value("name")
 		  Self.mResourceURL = Source.Value("resource_url")
 		  Self.mWorkshopURL = Source.Value("workshop_url")
+		  If Source.Value("pull_url") <> Nil Then
+		    Self.mPullURL = Source.Value("pull_url")
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -97,12 +111,33 @@ Protected Class WorkshopMod
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPullURL As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mResourceURL As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mWorkshopURL As Text
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mPullURL
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Value = Value.Trim
+			  If (Value.Length > 7 And Value.Left(7) = "http://") Or (Value.Length > 8 And Value.Left(8) = "https://") Or Value.Length = 0 Then
+			    Self.mPullURL = Value
+			  End If
+			End Set
+		#tag EndSetter
+		PullURL As Text
+	#tag EndComputedProperty
 
 
 	#tag ViewBehavior
