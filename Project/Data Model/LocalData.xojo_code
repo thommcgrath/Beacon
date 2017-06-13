@@ -6,10 +6,12 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("PRAGMA foreign_keys = ON;")
 		  Self.SQLExecute("PRAGMA journal_mode = WAL;")
 		  
-		  Self.SQLExecute("CREATE TABLE ""loot_sources"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""kind"" TEXT NOT NULL, ""engram_mask"" INTEGER NOT NULL, ""multiplier_min"" REAL NOT NULL, ""multiplier_max"" REAL NOT NULL, ""uicolor"" TEXT NOT NULL, ""sort"" INTEGER NOT NULL UNIQUE);")
-		  Self.SQLExecute("CREATE TABLE ""engrams"" (""classstring"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""availability"" INTEGER NOT NULL, ""can_blueprint"" INTEGER NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE ""vars"" (""key"" TEXT NOT NULL PRIMARY KEY, ""value"" TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE ""presets"" (""preset_id"" TEXT NOT NULL PRIMARY KEY, ""label"" TEXT NOT NULL, ""contents"" TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE loot_sources (classstring TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, kind TEXT NOT NULL, engram_mask INTEGER NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort INTEGER NOT NULL UNIQUE);")
+		  Self.SQLExecute("CREATE TABLE engrams (classstring TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, availability INTEGER NOT NULL, can_blueprint INTEGER NOT NULL, built_in INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE presets (preset_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
+		  
+		  Self.mBase.UserVersion = Self.SchemaVersion
 		End Sub
 	#tag EndMethod
 
@@ -64,25 +66,19 @@ Implements Beacon.DataSource
 		    FirstBuild = True
 		  End If
 		  
-		  Dim LastBuildNumber As Integer = Val(Self.Variable("app_version"))
-		  If LastBuildNumber <> App.NonReleaseVersion Then
-		    If Not FirstBuild Then
-		      Dim Replacement As New SQLiteDatabase
-		      Replacement.DatabaseFile = Self.mBase.DatabaseFile
-		      
-		      Self.mBase.Close
-		      Self.mBase.DatabaseFile.Delete
-		      Self.mBase = Replacement
-		      
-		      If Not Self.mBase.CreateDatabaseFile Then
-		        Return
-		      End If
-		    End If
+		  Dim CurrentSchemaVersion As Integer = Self.mBase.UserVersion
+		  If CurrentSchemaVersion <> Self.SchemaVersion Then
+		    Self.mBase.Close
+		    Self.mBase.DatabaseFile.MoveFileTo(App.ApplicationSupport.Child("LocalData " + Str(CurrentSchemaVersion, "-0") + ".sqlite"))
 		    
+		    Self.mBase = New SQLiteDatabase
+		    Self.mBase.DatabaseFile = App.ApplicationSupport.Child("LocalData.sqlite")
+		    Call Self.mBase.CreateDatabaseFile
 		    Self.BuildSchema()
-		    Self.Variable("app_version") = Str(App.NonReleaseVersion, "-0")
-		    
-		    Xojo.Core.Timer.CallLater(1, AddressOf Self.ImportLocalClasses)
+		  End If
+		  
+		  If CurrentSchemaVersion < Self.SchemaVersion Then
+		    Self.MigrateData(App.ApplicationSupport.Child("LocalData " + Str(CurrentSchemaVersion, "-0") + ".sqlite"), CurrentSchemaVersion)
 		  End If
 		  
 		  Self.CheckForEngramUpdates()
@@ -119,7 +115,7 @@ Implements Beacon.DataSource
 		    Return Self.mEngramCache.Value(ClassString)
 		  End If
 		  
-		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""availability"", ""can_blueprint"" FROM ""engrams"" WHERE LOWER(""classstring"") = ?;")
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT classstring, label, availability, can_blueprint FROM engrams WHERE LOWER(classstring) = ?;")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  
 		  Dim StringValue As String = Lowercase(ClassString)
@@ -146,7 +142,7 @@ Implements Beacon.DataSource
 		Function GetLootSource(ClassString As Text) As Beacon.LootSource
 		  // Part of the Beacon.DataSource interface.
 		  
-		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"", ""sort"" FROM ""loot_sources"" WHERE LOWER(""classstring"") = ?;")
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort FROM loot_sources WHERE LOWER(classstring) = ?;")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  
 		  Dim StringValue As String = Lowercase(ClassString)
@@ -265,9 +261,9 @@ Implements Beacon.DataSource
 		    
 		    Dim ShouldTruncate As Boolean = ChangeDict.Value("is_full") = 1
 		    If ShouldTruncate Then
-		      Self.SQLExecute("DELETE FROM ""loot_sources"";")
-		      Self.SQLExecute("DELETE FROM ""engrams"";")
-		      Self.SQLExecute("DELETE FROM ""presets"";")
+		      Self.SQLExecute("DELETE FROM loot_sources;")
+		      Self.SQLExecute("DELETE FROM engrams;")
+		      Self.SQLExecute("DELETE FROM presets;")
 		    End If
 		    
 		    Dim SourcesDict As Xojo.Core.Dictionary = ChangeDict.Value("loot_sources")
@@ -279,7 +275,7 @@ Implements Beacon.DataSource
 		    Dim SourceRemovals() As Auto = SourcesDict.Value("removals")
 		    If UBound(SourceAdditions) > -1 Or UBound(SourceRemovals) > -1 Then
 		      If UBound(SourceRemovals) > -1 Then
-		        Dim SourceDeleteStatement As SQLitePreparedStatement = Self.Prepare("DELETE FROM ""loot_sources"" WHERE LOWER(""classstring"") = ?;")
+		        Dim SourceDeleteStatement As SQLitePreparedStatement = Self.Prepare("DELETE FROM loot_sources WHERE LOWER(classstring) = ?;")
 		        SourceDeleteStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		        For Each ClassString As Text In SourceRemovals
 		          Self.SQLExecute(SourceDeleteStatement, ClassString.Lowercase)
@@ -287,7 +283,7 @@ Implements Beacon.DataSource
 		      End If
 		      
 		      If UBound(SourceAdditions) > -1 Then
-		        Dim SourceInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""loot_sources"" (""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"", ""sort"") VALUES (?, ?, ?, ?, ?, ?, ?, ?);")
+		        Dim SourceInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO loot_sources (classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort) VALUES (?, ?, ?, ?, ?, ?, ?, ?);")
 		        SourceInsertStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		        SourceInsertStatement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
 		        SourceInsertStatement.BindType(2, SQLitePreparedStatement.SQLITE_TEXT)
@@ -318,7 +314,7 @@ Implements Beacon.DataSource
 		    Dim EngramRemovals() As Auto = EngramsDict.Value("removals")
 		    If UBound(EngramAdditions) > -1 Or UBound(EngramRemovals) > -1 Then
 		      If UBound(EngramRemovals) > -1 Then
-		        Dim EngramDeleteStatement As SQLitePreparedStatement = Self.Prepare("DELETE FROM ""engrams"" WHERE LOWER(""classstring"") = ?;")
+		        Dim EngramDeleteStatement As SQLitePreparedStatement = Self.Prepare("DELETE FROM engrams WHERE LOWER(classstring) = ?;")
 		        EngramDeleteStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		        For Each ClassString As Text In EngramRemovals
 		          Self.SQLExecute(EngramDeleteStatement, ClassString.Lowercase)
@@ -326,7 +322,7 @@ Implements Beacon.DataSource
 		      End If
 		      
 		      If UBound(EngramAdditions) > -1 Then
-		        Dim EngramInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""engrams"" (""classstring"", ""label"", ""availability"", ""can_blueprint"") VALUES (?, ?, ?, ?);")
+		        Dim EngramInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO engrams (classstring, label, availability, can_blueprint, built_in) VALUES (?, ?, ?, ?, ?);")
 		        EngramInsertStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		        EngramInsertStatement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
 		        EngramInsertStatement.BindType(2, SQLitePreparedStatement.SQLITE_INTEGER)
@@ -350,7 +346,7 @@ Implements Beacon.DataSource
 		    Dim ReloadPresets As Boolean = False
 		    If UBound(PresetAdditions) > -1 Or UBound(PresetRemovals) > -1 Then
 		      If UBound(PresetRemovals) > -1 Then
-		        Dim PresetDeleteStatement As SQLitePreparedStatement = Self.Prepare("DELETE FROM ""presets"" WHERE LOWER(""preset_id"") = ?;")
+		        Dim PresetDeleteStatement As SQLitePreparedStatement = Self.Prepare("DELETE FROM presets WHERE LOWER(preset_id) = ?;")
 		        PresetDeleteStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		        For Each PresetID As Text In PresetRemovals
 		          Self.SQLExecute(PresetDeleteStatement, PresetID.Lowercase)
@@ -358,7 +354,7 @@ Implements Beacon.DataSource
 		      End If
 		      
 		      If UBound(PresetAdditions) > -1 Then
-		        Dim PresetInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""presets"" (""preset_id"", ""label"", ""contents"") VALUES (?, ?, ?);")
+		        Dim PresetInsertStatement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO presets (preset_id, label, contents) VALUES (?, ?, ?);")
 		        PresetInsertStatement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		        PresetInsertStatement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
 		        PresetInsertStatement.BindType(2, SQLitePreparedStatement.SQLITE_TEXT)
@@ -474,11 +470,46 @@ Implements Beacon.DataSource
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub MigrateData(Source As FolderItem, FromSchemaVersion As Integer)
+		  If Not Self.mBase.AttachDatabase(Source, "legacy") Then
+		    App.Log("Unable to attach database " + Source.NativePath)
+		    Return
+		  End If
+		  
+		  Dim Commands() As String
+		  If FromSchemaVersion = 0 Then
+		    Commands.Append("INSERT INTO engrams (classstring, label, availability, can_blueprint, built_in) SELECT legacy.engrams.classstring, legacy.engrams.label, legacy.engrams.availability, legacy.engrams.can_blueprint, '1' FROM legacy.engrams;")
+		    Commands.Append("INSERT INTO loot_sources (classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort) SELECT legacy.loot_sources.classstring, legacy.loot_sources.label, legacy.loot_sources.kind, legacy.loot_sources.engram_mask, legacy.loot_sources.multiplier_min, legacy.loot_sources.multiplier_max, legacy.loot_sources.uicolor, legacy.loot_sources.sort FROM legacy.loot_sources;")
+		    Commands.Append("INSERT INTO variables (key, value) SELECT legacy.vars.key, legacy.vars.value FROM legacy.vars WHERE legacy.vars.key = 'last_sync';")
+		    Commands.Append("INSERT INTO presets (preset_id, label, contents) SELECT legacy.presets.preset_id, legacy.presets.label, legacy.presets.contents FROM legacy.presets;")
+		  End If
+		  
+		  If UBound(Commands) > -1 Then
+		    Self.mBase.SQLExecute("BEGIN TRANSACTION;")
+		    For Each Command As String In Commands
+		      Self.mBase.SQLExecute(Command)
+		      If Self.mBase.Error Then
+		        App.Log("Unable to migrate data: " + Self.mBase.ErrorMessage)
+		        Self.mBase.SQLExecute("ROLLBACK TRANSACTION;")
+		        Self.mBase.DetachDatabase("legacy")
+		        Return
+		      End If
+		    Next
+		    Self.mBase.SQLExecute("COMMIT TRANSACTION;")
+		  End If
+		  
+		  Self.mBase.DetachDatabase("legacy")
+		  Source.Delete
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub mUpdater_Error(Sender As Xojo.Net.HTTPSocket, Error As RuntimeException)
 		  #Pragma Unused Sender
 		  
 		  App.Log("Engram check error: " + Error.Reason)
+		  Self.ImportLocalClasses()
 		End Sub
 	#tag EndMethod
 
@@ -489,6 +520,7 @@ Implements Beacon.DataSource
 		  
 		  If HTTPStatus <> 200 Then
 		    App.Log("Engram update returned HTTP " + Str(HTTPStatus, "-0"))
+		    Self.ImportLocalClasses()
 		    Return
 		  End If
 		  
@@ -616,9 +648,9 @@ Implements Beacon.DataSource
 		  Dim RS As RecordSet
 		  Try
 		    If SearchText = "" Then
-		      RS = Self.SQLSelect("SELECT ""classstring"", ""label"", ""availability"", ""can_blueprint"" FROM ""engrams"" ORDER BY ""label"";")
+		      RS = Self.SQLSelect("SELECT classstring, label, availability, can_blueprint FROM engrams ORDER BY label;")
 		    Else
-		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""availability"", ""can_blueprint"" FROM ""engrams"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
+		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT classstring, label, availability, can_blueprint FROM engrams WHERE LOWER(label) LIKE LOWER(?1) OR LOWER(classstring) LIKE LOWER(?1) ORDER BY label;")
 		      Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		      
 		      Dim StringValue As String = SearchText
@@ -648,9 +680,9 @@ Implements Beacon.DataSource
 		  Dim RS As RecordSet
 		  Try
 		    If SearchText = "" Then
-		      RS = Self.SQLSelect("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"", ""sort"" FROM ""loot_sources"" ORDER BY ""label"";")
+		      RS = Self.SQLSelect("SELECT classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort FROM loot_sources ORDER BY label;")
 		    Else
-		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""classstring"", ""label"", ""kind"", ""engram_mask"", ""multiplier_min"", ""multiplier_max"", ""uicolor"", ""sort"" FROM ""loot_sources"" WHERE LOWER(""label"") LIKE LOWER(?1) OR LOWER(""classstring"") LIKE LOWER(?1) ORDER BY ""label"";")
+		      Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort FROM loot_sources WHERE LOWER(label) LIKE LOWER(?1) OR LOWER(classstring) LIKE LOWER(?1) ORDER BY label;")
 		      Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		      
 		      Dim StringValue As String = SearchText
@@ -718,7 +750,7 @@ Implements Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function Variable(Key As String) As String
 		  Try
-		    Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT ""value"" FROM ""vars"" WHERE ""key"" = ?;")
+		    Dim Statement As SQLitePreparedStatement = Self.Prepare("SELECT value FROM variables WHERE key = ?;")
 		    Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		    
 		    Dim Results As RecordSet = Self.SQLSelect(Statement, Lowercase(Key))
@@ -733,7 +765,7 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Sub Variable(Key As String, Assigns Value As String)
-		  Dim Statement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO ""vars"" (""key"", ""value"") VALUES (?, ?);")
+		  Dim Statement As SQLitePreparedStatement = Self.Prepare("INSERT OR REPLACE INTO variables (key, value) VALUES (?, ?);")
 		  Statement.BindType(0, SQLitePreparedStatement.SQLITE_TEXT)
 		  Statement.BindType(1, SQLitePreparedStatement.SQLITE_TEXT)
 		  
@@ -759,6 +791,10 @@ Implements Beacon.DataSource
 	#tag Property, Flags = &h21
 		Private mUpdater As Xojo.Net.HTTPSocket
 	#tag EndProperty
+
+
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
 
 
 	#tag ViewBehavior

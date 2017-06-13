@@ -3,6 +3,10 @@ Protected Class App
 Inherits Application
 	#tag Event
 		Sub Close()
+		  If Self.mMutex <> Nil Then
+		    Self.mMutex.Leave
+		  End If
+		  
 		  If Self.LaunchOnQuit <> Nil And Self.LaunchOnQuit.Exists Then
 		    Self.Log("Launching " + Self.LaunchOnQuit.NativePath)
 		    Self.LaunchOnQuit.Launch
@@ -55,6 +59,14 @@ Inherits Application
 		  #elseif TargetWin32
 		    Self.Log("Beacon " + Str(Self.NonReleaseVersion, "-0") + " for Windows.")
 		  #endif
+		  
+		  Dim Lock As New Mutex("com.thezaz.beacon")
+		  If Not Lock.TryEnter Then
+		    Quit
+		    Return
+		  Else
+		    Self.mMutex = Lock
+		  End If
 		  
 		  Self.mLocalData = New LocalData
 		  Beacon.Data = Self.mLocalData
@@ -451,6 +463,10 @@ Inherits Application
 
 	#tag Property, Flags = &h21
 		Private mLogLock As CriticalSection
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMutex As Mutex
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

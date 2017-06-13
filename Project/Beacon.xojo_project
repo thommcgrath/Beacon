@@ -141,6 +141,7 @@ Window=LibraryPresetsView;Views/Library/LibraryPresetsView.xojo_window;&h63FCBFF
 Class=Notification;Modules/NotificationKit/Notification.xojo_code;&h505C0FFF;&h11B95FFF;false
 Interface=Receiver;Modules/NotificationKit/Receiver.xojo_code;&hD8CC7FF;&h11B95FFF;false
 Class=Invocation;Modules/NotificationKit/Invocation.xojo_code;&h34E99FFF;&h11B95FFF;false
+Module=SQLiteExtensions;Modules/SQLiteExtensions.xojo_code;&h3BE6BFFF;&h1444B7FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

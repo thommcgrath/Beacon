@@ -63,6 +63,16 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub ShowAlert(Message As String, Explanation As String)
+		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
+		  Dialog.Message = Message
+		  Dialog.Explanation = Explanation
+		  Call Dialog.ShowModal()
+		End Sub
+	#tag EndMethod
+
 
 	#tag ViewBehavior
 		#tag ViewProperty
