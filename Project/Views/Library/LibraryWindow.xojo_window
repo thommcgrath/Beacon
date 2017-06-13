@@ -97,7 +97,7 @@ Begin BeaconMultiview LibraryWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   3
+      PanelCount      =   2
       Panels          =   ""
       Scope           =   2
       TabIndex        =   2
@@ -262,7 +262,6 @@ End
 		Sub Open()
 		  Me.Append("Documents")
 		  Me.Append("Presets")
-		  Me.Append("Engrams")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
