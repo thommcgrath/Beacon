@@ -7,6 +7,7 @@ class BeaconMod implements JsonSerializable {
 	protected $confirmed = false;
 	protected $confirmation_code = '';
 	protected $pull_url = null;
+	protected $last_pull_hash = null;
 	
 	public function ModID() {
 		return $this->mod_id;
@@ -30,6 +31,10 @@ class BeaconMod implements JsonSerializable {
 	
 	public function PullURL() {
 		return $this->pull_url;
+	}
+	
+	public function LastPullHash() {
+		return $this->last_pull_hash;
 	}
 	
 	public function AttemptConfirmation() {
@@ -80,6 +85,7 @@ class BeaconMod implements JsonSerializable {
 		$mod->confirmed = $results->Field('confirmed');
 		$mod->confirmation_code = $results->Field('confirmation_code');
 		$mod->pull_url = $results->Field('pull_url');
+		$mod->last_pull_hash = $results->Field('last_pull_hash');
 		return $mod;
 	}
 	
@@ -102,7 +108,7 @@ class BeaconMod implements JsonSerializable {
 	}
 	
 	protected static function BuildSQL(string $clause = '') {
-		$sql = 'SELECT mod_id, workshop_id, name, confirmed, confirmation_code, pull_url FROM mods';
+		$sql = 'SELECT mod_id, workshop_id, name, confirmed, confirmation_code, pull_url, last_pull_hash FROM mods';
 		if ($clause !== '') {
 			$sql .= ' WHERE ' . $clause;
 		}

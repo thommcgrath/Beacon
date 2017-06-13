@@ -34,6 +34,15 @@ function PullMod(BeaconMod $mod) {
 		return;
 	}
 	
+	$hash = md5($body);
+	if ($mod->LastPullHash() !== null) {
+		$last_hash = $mod->LastPullHash();
+		if (strtolower($hash) === strtolower($last_hash)) {
+			// no changes
+			return;
+		}
+	}
+	
 	switch ($content_type) {
 	case 'application/json':
 		$engrams = json_decode($body, true);
@@ -98,6 +107,7 @@ function PullMod(BeaconMod $mod) {
 			$database->Query('INSERT INTO engrams (classstring, label, availability, can_blueprint, mod_id) VALUES ($1, $2, $3, $4, $5);', $class, $label, $availability, $can_blueprint, $mod_id);
 		}
 	}
+	$database->Query('UPDATE mods SET last_pull_hash = $2 WHERE mod_id = $1;', $mod_id, $hash);
 	$database->Commit();
 }
 

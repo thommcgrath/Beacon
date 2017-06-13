@@ -67,7 +67,8 @@ CREATE TABLE mods (
 	name TEXT NOT NULL DEFAULT 'Unknown Mod',
 	confirmed BOOLEAN NOT NULL DEFAULT FALSE,
 	confirmation_code UUID NOT NULL DEFAULT gen_random_uuid(),
-	pull_url TEXT
+	pull_url TEXT,
+	last_pull_hash TEXT
 );
 CREATE UNIQUE INDEX mods_workshop_id_user_id_uidx ON mods(workshop_id, user_id);
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE mods TO thezaz_website;
