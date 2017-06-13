@@ -92,6 +92,9 @@ function PullMod(BeaconMod $mod) {
 		$can_blueprint = $engram['can_blueprint'];
 		
 		$availability = 0;
+		if (is_string($availability_keys)) {
+			$availability_keys = explode(',', $availability_keys);
+		}
 		if (is_array($availability_keys)) {
 			foreach ($availability_keys as $key) {
 				$key = strtolower(trim($key));
