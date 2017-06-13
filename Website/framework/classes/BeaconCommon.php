@@ -12,7 +12,7 @@ abstract class BeaconCommon {
 	}
 	
 	public static function EnvironmentName() {
-		return basename(dirname(__FILE__, 3));
+		return basename(dirname(__FILE__, 4));
 	}
 	
 	public static function InProduction() {

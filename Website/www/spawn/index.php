@@ -23,7 +23,7 @@ if ($mod_id === null) {
 			$mod_names[] = $engram->ModName();
 		}
 	}
-	$mod_names = asort($mod_names);
+	asort($mod_names);
 	
 	if (count($mod_names) == 0) {
 		echo 'Mod is not registered with Beacon.';

@@ -44,7 +44,7 @@ case 'POST':
 	}
 	
 	$payload = BeaconAPI::JSONPayload();
-	if (ZirconCommon::IsAssoc($payload)) {
+	if (BeaconCommon::IsAssoc($payload)) {
 		// single
 		$items = array($payload);
 	} else {
@@ -55,7 +55,7 @@ case 'POST':
 	// get the distinct workshop ids for each item
 	$workshop_ids = array();
 	foreach ($items as $item) {
-		if (!ZirconCommon::HasAllKeys($item, 'class', 'label', 'mod_id', 'availability', 'can_blueprint')) {
+		if (!BeaconCommon::HasAllKeys($item, 'class', 'label', 'mod_id', 'availability', 'can_blueprint')) {
 			BeaconAPI::ReplyError('Not all keys are present.', $item);
 		}
 		

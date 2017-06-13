@@ -47,7 +47,7 @@ case 'POST':
 	}
 	
 	$payload = BeaconAPI::JSONPayload();
-	if (ZirconCommon::IsAssoc($payload)) {
+	if (BeaconCommon::IsAssoc($payload)) {
 		// single
 		$items = array($payload);
 	} else {
@@ -57,7 +57,7 @@ case 'POST':
 	
 	$database->BeginTransaction();
 	foreach ($items as $item) {
-		if (!ZirconCommon::HasAllKeys($item, 'mod_id')) {
+		if (!BeaconCommon::HasAllKeys($item, 'mod_id')) {
 			$database->Rollback();
 			BeaconAPI::ReplyError('Not all keys are present.', $item);
 		}
@@ -69,7 +69,7 @@ case 'POST':
 			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' is already registered.');
 		}
 		
-		$workshop_item = ZirconWorkshopItem::Load($workshop_id);
+		$workshop_item = BeaconWorkshopItem::Load($workshop_id);
 		if ($workshop_item === null) {
 			$database->Rollback();
 			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not found on Ark Workshop.');
@@ -77,7 +77,7 @@ case 'POST':
 		
 		try {
 			$database->Query('INSERT INTO mods (workshop_id, name, user_id) VALUES ($1, $2, $3);', $workshop_id, $workshop_item->Name(), $user_id);
-		} catch (\ZirconQueryException $e) {
+		} catch (\BeaconQueryException $e) {
 			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMessage());
 		}
 	}
@@ -101,7 +101,7 @@ case 'DELETE':
 	
 	$database->BeginTransaction();
 	foreach ($mods as $mod) {
-		$mods->Delete();
+		$mod->Delete();
 	}
 	$database->Commit();
 	
