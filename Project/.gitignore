@@ -8,5 +8,6 @@ Debug*/Debug*.exe
 Debug*/Debug*\ Libs
 *.rbuistate
 *.xojo_uistate
-*.obsolete
+*.obsolete*
 Debug*.tar.gz
+TempSaveFile*
