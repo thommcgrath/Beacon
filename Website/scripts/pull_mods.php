@@ -9,7 +9,11 @@ if (count($mods) == 0) {
 }
 
 foreach ($mods as $mod) {
-	PullMod($mod);
+	try {
+		PullMod($mod);
+	} catch (Exception $e) {
+		SendAlert($mod, 'Exception: ' . $e->getMessage());
+	}
 }
 
 function PullMod(BeaconMod $mod) {
