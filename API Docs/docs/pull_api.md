@@ -45,3 +45,7 @@ The CSV file must contain a header row. The columns must match the [engram struc
 "class","label","availability","can_blueprint"
 "Prefix_MyEngram_C","My Engram","Island,Scorched","true"
 ```
+
+## Errors
+
+If there are any errors, Beacon will send back a POST to the url with the form values `mod_id` and `message`. All processing will halt at the first error.

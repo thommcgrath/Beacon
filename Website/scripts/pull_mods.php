@@ -20,9 +20,8 @@ function PullMod(BeaconMod $mod) {
 	$mod_description = $mod->Name() . ' (' . $mod->ModID() . ')';
 	$mod_id = $mod->ModID();
 	
-	$http = curl_init();
-	curl_setopt($http, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($http, CURLOPT_URL, $mod->PullURL());
+	$http = curl_init($mod->PullURL());
+	curl_setopt($http, CURLOPT_RETURNTRANSFER, true);
 	$body = curl_exec($http);
 	$status = curl_getinfo($http, CURLINFO_HTTP_CODE);
 	$content_type = curl_getinfo($http, CURLINFO_CONTENT_TYPE);
@@ -81,7 +80,7 @@ function PullMod(BeaconMod $mod) {
 	$database = BeaconCommon::Database();
 	$database->BeginTransaction();
 	foreach ($engrams as $engram) {
-		if (!BeaconCommon::HasAllKeys($engram, 'class', 'label', 'mod_id', 'availability', 'can_blueprint')) {
+		if (!BeaconCommon::HasAllKeys($engram, 'class', 'label', 'availability', 'can_blueprint')) {
 			$database->Rollback();
 			SendAlert($mod, 'An engram is missing keys.');
 			return;
@@ -129,12 +128,22 @@ function PullMod(BeaconMod $mod) {
 }
 
 function SendAlert(BeaconMod $mod, string $message) {
-	$message = $mod->Name() . ' (' . $mod->WorkshopID() . '): ' . $message;
-	$cron = !isset($_ENV['SSH_CLIENT']);
-	if ($cron) {
-		echo "$message\n";
+	$message_with_name = $mod->Name() . ' (' . $mod->WorkshopID() . '): ' . $message;
+	if (getenv('SSH_CLIENT')) {
+		echo "$message_with_name\n";
 	} else {
-		BeaconCommon::PostSlackMessage($message);
+		BeaconCommon::PostSlackMessage($message_with_name);
+		
+		$fields = array(
+			'mod_id' => $mod->WorkshopID(),
+			'message' => $message
+		);
+		
+		$http = curl_init($mod->PullURL());
+		curl_setopt($http, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($http, CURLOPT_POSTFIELDS, $fields);
+		curl_exec($http);
+		curl_close($http);
 	}
 }
 
