@@ -54,6 +54,18 @@ function PullMod(BeaconMod $mod) {
 			SendAlert($mod, 'Could not parse JSON content.');
 		}
 		break;
+	case 'text/csv':
+		$lines = explode("\n", $body);
+		$headers = str_getcsv(array_shift($lines));
+		$engrams = array();
+		foreach ($lines as $line) {
+			$engram = array();
+			foreach (str_getcsv($line) as $key => $field) {
+				$engram[$headers[$key]] = $field;
+			}
+			$engram = array_filter($engram);
+			$engrams[] = $engram;
+		}
 	default:
 		SendAlert($mod, 'Unexpected content type: ' . $content_type . '.');
 		return;
