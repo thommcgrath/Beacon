@@ -69,20 +69,23 @@ case 'POST':
 	
 		$results = $database->Query('SELECT user_id FROM mods WHERE workshop_id = $1 AND user_id = $2;', $workshop_id, $user_id);
 		if ($results->RecordCount() == 1) {
-			$database->Rollback();
-			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' is already registered.');
-		}
-		
-		$workshop_item = BeaconWorkshopItem::Load($workshop_id);
-		if ($workshop_item === null) {
-			$database->Rollback();
-			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not found on Ark Workshop.');
-		}
-		
-		try {
-			$database->Query('INSERT INTO mods (workshop_id, name, user_id, pull_url) VALUES ($1, $2, $3, $4);', $workshop_id, $workshop_item->Name(), $user_id, $pull_url);
-		} catch (\BeaconQueryException $e) {
-			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMessage());
+			try {
+				$database->Query('UPDATE mods SET pull_url = $3 WHERE workshop_id = $1 AND user_id = $2;', $workshop_id, $user_id, $pull_url);
+			} catch (\BeaconQueryException $e) {
+				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not updated: ' . $e->getMessage());
+			}
+		} else {
+			$workshop_item = BeaconWorkshopItem::Load($workshop_id);
+			if ($workshop_item === null) {
+				$database->Rollback();
+				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not found on Ark Workshop.');
+			}
+			
+			try {
+				$database->Query('INSERT INTO mods (workshop_id, name, user_id, pull_url) VALUES ($1, $2, $3, $4);', $workshop_id, $workshop_item->Name(), $user_id, $pull_url);
+			} catch (\BeaconQueryException $e) {
+				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMessage());
+			}
 		}
 	}
 	$database->Commit();
