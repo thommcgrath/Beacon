@@ -1,5 +1,5 @@
 #tag Window
-Begin DeveloperView DeveloperModsView
+Begin BeaconSubview DeveloperModsView
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True

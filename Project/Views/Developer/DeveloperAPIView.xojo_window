@@ -1,5 +1,5 @@
 #tag Window
-Begin DeveloperView DeveloperAPIView
+Begin BeaconSubview DeveloperAPIView
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True

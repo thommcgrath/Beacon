@@ -1,5 +1,5 @@
 #tag Window
-Begin DeveloperView DeveloperDocumentsView
+Begin BeaconSubview LibraryDocumentsView
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -24,7 +24,7 @@ Begin DeveloperView DeveloperDocumentsView
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   1100
+   Width           =   800
    Begin BeaconAPI.Socket Socket
       Index           =   -2147483648
       LockedInPosition=   False
@@ -43,7 +43,7 @@ Begin DeveloperView DeveloperDocumentsView
       InitialParent   =   ""
       InitialValue    =   "Recently Updated\nMost Downloaded\nMy Documents"
       Italic          =   False
-      Left            =   464
+      Left            =   314
       ListIndex       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -108,7 +108,7 @@ Begin DeveloperView DeveloperDocumentsView
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   1060
+      Width           =   760
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -156,7 +156,7 @@ Begin DeveloperView DeveloperDocumentsView
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   1000
+      Left            =   700
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False

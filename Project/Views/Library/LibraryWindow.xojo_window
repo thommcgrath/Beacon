@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconWindow DeveloperWindow
+Begin Window LibraryWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -20,12 +20,12 @@ Begin BeaconWindow DeveloperWindow
    MenuBarVisible  =   True
    MinHeight       =   450
    MinimizeButton  =   True
-   MinWidth        =   1100
+   MinWidth        =   800
    Placement       =   2
    Resizeable      =   True
-   Title           =   "Developer Tools"
+   Title           =   "Library"
    Visible         =   True
-   Width           =   1100
+   Width           =   800
    Begin TabHeader TabHeader
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -54,7 +54,7 @@ Begin BeaconWindow DeveloperWindow
       UseFocusRing    =   True
       Value           =   0
       Visible         =   True
-      Width           =   1100
+      Width           =   800
    End
    Begin ControlCanvas TabSeparator
       AcceptFocus     =   False
@@ -82,7 +82,7 @@ Begin BeaconWindow DeveloperWindow
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   1100
+      Width           =   800
    End
    Begin PagePanel Panel
       AutoDeactivate  =   True
@@ -97,7 +97,7 @@ Begin BeaconWindow DeveloperWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   4
+      PanelCount      =   3
       Panels          =   ""
       Scope           =   2
       TabIndex        =   2
@@ -105,8 +105,8 @@ Begin BeaconWindow DeveloperWindow
       Top             =   31
       Value           =   0
       Visible         =   True
-      Width           =   1100
-      Begin DeveloperModsView ModsView
+      Width           =   800
+      Begin LibraryDocumentsView DocsView
          AcceptFocus     =   False
          AcceptTabs      =   True
          AutoDeactivate  =   True
@@ -132,119 +132,23 @@ Begin BeaconWindow DeveloperWindow
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   1100
+         Width           =   800
       End
-      Begin DeveloperIdentityView IdentityView
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
-         Backdrop        =   0
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   419
-         HelpTag         =   ""
-         InitialParent   =   "Panel"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Top             =   31
-         Transparent     =   True
-         UseFocusRing    =   False
-         Visible         =   True
-         Width           =   1100
-      End
-      Begin DeveloperAPIView APIBuilderView
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
-         Backdrop        =   0
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   419
-         HelpTag         =   ""
-         InitialParent   =   "Panel"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Top             =   31
-         Transparent     =   True
-         UseFocusRing    =   False
-         Visible         =   True
-         Width           =   1100
-      End
-      Begin DeveloperGuideView APIGuideView
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
-         Backdrop        =   0
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   419
-         HelpTag         =   ""
-         InitialParent   =   "Panel"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Top             =   31
-         Transparent     =   True
-         UseFocusRing    =   False
-         Visible         =   True
-         Width           =   1100
-      End
-   End
-   Begin BeaconAPI.Socket Socket
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
    End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
-		  Self.mInstance = Nil
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Moved()
-		  Self.SavePosition("Developer Window Position")
+		  Self.SavePosition("Library Window Position")
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
 		  Dim InitialWidth As Integer = Self.Width
-		  Self.RecallPosition("Developer Window Position")
+		  Self.RecallPosition("Library Window Position")
 		  If Self.Width = InitialWidth Then
 		    // Dumb workaround because contents are sizing 1 pixels too short.
 		    // A resize causes them to find their correct positions.
@@ -252,69 +156,24 @@ End
 		    Self.Width = InitialWidth
 		  End If
 		  
-		  Dim Request As New BeaconAPI.Request("user.php/" + App.Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
-		  Self.Socket.Start(Request)
-		  
-		  Self.ModsView.SwitchedTo()
+		  Self.DocsView.SwitchedTo
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Resized()
-		  Self.SavePosition("Developer Window Position")
+		  Self.SavePosition("Library Window Position")
 		End Sub
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Sub APICallback_UserLookup(Success As Boolean, Message As Text, Details As Auto)
-		  #Pragma Unused Message
-		  #Pragma Unused Details
-		  
-		  If Success Then
-		    // Already exists
-		    Return
-		  End If
-		  
-		  // Create the user
-		  
-		  Dim Params As New Xojo.Core.Dictionary
-		  Params.Value("user_id") = App.Identity.Identifier
-		  Params.Value("public_key") = App.Identity.PublicKey
-		  
-		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
-		  Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
-		  Self.Socket.Start(Request)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
-		  #Pragma Unused Details
-		  
-		  If Not Success Then
-		    Self.ShowAlert("User profile was not saved to the server. API access is limited.", Message)
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
-		Shared Function SharedWindow(Create As Boolean = True) As DeveloperWindow
+		Shared Function SharedWindow(Create As Boolean = True) As LibraryWindow
 		  If mInstance = Nil And Create = True Then
-		    mInstance = New DeveloperWindow
+		    mInstance = New LibraryWindow
 		  End If
 		  Return mInstance
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ShowAPIKey(Username As String, Password As String)
-		  Dim Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Here is your API key"
-		  Dialog.Explanation = "Username: " + Username + EndOfLine + "Password: " + Password
-		  Call Dialog.ShowModal()
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -328,7 +187,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private Shared mInstance As DeveloperWindow
+		Private Shared mInstance As LibraryWindow
 	#tag EndProperty
 
 
@@ -344,10 +203,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Self.TabHeader.Append("Mods")
-		  Self.TabHeader.Append("Identity")
-		  Self.TabHeader.APpend("API Guide")
-		  Self.TabHeader.Append("API Builder")
+		  Me.Append("Documents")
+		  Me.Append("Presets")
+		  Me.Append("Engrams")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -366,13 +224,7 @@ End
 		Sub Change()
 		  Select Case Me.Value
 		  Case 0
-		    ModsView.SwitchedTo()
-		  Case 1
-		    IdentityView.SwitchedTo()
-		  Case 2
-		    APIGuideView.SwitchedTo()
-		  Case 3
-		    APIBuilderView.SwitchedTo()
+		    Self.DocsView.SwitchedTo()
 		  End Select
 		End Sub
 	#tag EndEvent

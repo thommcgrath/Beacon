@@ -1,5 +1,5 @@
 #tag Class
-Protected Class DeveloperView
+Protected Class BeaconSubview
 Inherits ContainerControl
 	#tag Event
 		Sub Open()

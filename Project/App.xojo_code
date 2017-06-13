@@ -269,6 +269,13 @@ Inherits Application
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function WindowLibrary() As Boolean Handles WindowLibrary.Action
+			LibraryWindow.SharedWindow.Show()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function WindowPresetLibrary() As Boolean Handles WindowPresetLibrary.Action
 			PresetManagerWindow.SharedWindow.Show
 			Return True
@@ -320,7 +327,7 @@ Inherits Application
 		    
 		    Select Case Instructions
 		    Case "showdocuments"
-		      DeveloperWindow.SharedWindow.ShowPage(0, Params)
+		      LibraryWindow.SharedWindow.ShowPage(0, Params)
 		    Case "showmods"
 		      DeveloperWindow.SharedWindow.ShowPage(1, Params)
 		    Case "showidentity"
@@ -330,7 +337,9 @@ Inherits Application
 		    Case "showapibuilder"
 		      DeveloperWindow.SharedWindow.ShowPage(4, Params)
 		    Case "showpresets"
-		      PresetManagerWindow.SharedWindow.Show()
+		      LibraryWindow.SharedWindow.ShowPage(1, Params)
+		    Case "showengrams"
+		      LibraryWindow.SharedWindow.ShowPage(2, Params)
 		    Else
 		      Break
 		    End Select

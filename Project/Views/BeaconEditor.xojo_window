@@ -192,6 +192,7 @@ Begin ContainerControl BeaconEditor
       Width           =   190
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0

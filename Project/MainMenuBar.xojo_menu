@@ -306,6 +306,13 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin MenuItem WindowLibrary
+         SpecialMenu = 0
+         Text = "Library"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
       Begin MenuItem WindowDeveloperTools
          SpecialMenu = 0
          Text = "Developer Tools"

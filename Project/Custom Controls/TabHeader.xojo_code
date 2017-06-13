@@ -38,7 +38,6 @@ Inherits ControlCanvas
 	#tag Event
 		Sub Open()
 		  Self.mShaded = True
-		  Self.mInverted = False
 		  
 		  #if TargetCocoa
 		    Dim TargetWindow As Window = Self.TrueWindow
@@ -52,8 +51,6 @@ Inherits ControlCanvas
 		      Self.mShaded = False
 		    End If
 		  #endif
-		  
-		  Self.Inverted = False
 		  
 		  RaiseEvent Open
 		End Sub
@@ -193,26 +190,6 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Inverted() As Boolean
-		  Return Self.mInverted
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Inverted(Assigns Value As Boolean)
-		  #if TargetCocoa
-		    Declare Function NSClassFromString Lib "Foundation" (ClassName As CFStringRef) As Ptr
-		    Declare Sub SetAppearance Lib "AppKit" Selector "setAppearance:" (Target As Integer, AppearanceRef As Ptr)
-		    Declare Function GetAppearance Lib "AppKit" Selector "appearanceNamed:" (Target As Ptr, Name As CFStringRef) As Ptr
-		    
-		    Dim AppearanceRef As Ptr = GetAppearance(NSClassFromString("NSAppearance"), if(Value, "NSAppearanceNameVibrantDark", "NSAppearanceNameAqua"))
-		    SetAppearance(Self.TrueWindow.Handle, AppearanceRef)
-		    Self.mInverted = Value
-		  #endif
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Self.mChoices.Remove(Index)
 		  If Self.mSelectedIndex >= Index Then
@@ -239,6 +216,29 @@ Inherits ControlCanvas
 		Event Open()
 	#tag EndHook
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mInverted
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  #if TargetCocoa
+			    Declare Function NSClassFromString Lib "Foundation" (ClassName As CFStringRef) As Ptr
+			    Declare Sub SetAppearance Lib "AppKit" Selector "setAppearance:" (Target As Integer, AppearanceRef As Ptr)
+			    Declare Function GetAppearance Lib "AppKit" Selector "appearanceNamed:" (Target As Ptr, Name As CFStringRef) As Ptr
+			    
+			    Dim AppearanceRef As Ptr = GetAppearance(NSClassFromString("NSAppearance"), if(Value, "NSAppearanceNameVibrantDark", "NSAppearanceNameAqua"))
+			    SetAppearance(Self.TrueWindow.Handle, AppearanceRef)
+			    
+			    Self.mInverted = Value
+			  #endif
+			End Set
+		#tag EndSetter
+		Inverted As Boolean
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mChoices() As String
@@ -317,9 +317,7 @@ Inherits ControlCanvas
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"
-			Visible=true
 			Group="Behavior"
-			InitialValue="False"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -331,16 +329,14 @@ Inherits ControlCanvas
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="EraseBackground"
-			Visible=true
 			Group="Behavior"
-			InitialValue="True"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
 			Visible=true
 			Group="Position"
-			InitialValue="100"
+			InitialValue="30"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -361,6 +357,13 @@ Inherits ControlCanvas
 			Name="InitialParent"
 			Group="Position"
 			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Inverted"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -434,9 +437,7 @@ Inherits ControlCanvas
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Transparent"
-			Visible=true
 			Group="Behavior"
-			InitialValue="True"
 			Type="Boolean"
 			EditorType="Boolean"
 		#tag EndViewProperty
