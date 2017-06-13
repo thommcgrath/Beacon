@@ -303,6 +303,9 @@ Begin Menu MainMenuBar
          SpecialMenu = 0
          Text = "Library"
          Index = -2147483648
+         ShortcutKey = "1"
+         Shortcut = "Cmd+1"
+         MenuModifier = True
          AutoEnable = True
          Visible = True
       End
@@ -310,6 +313,9 @@ Begin Menu MainMenuBar
          SpecialMenu = 0
          Text = "Developer Tools"
          Index = -2147483648
+         ShortcutKey = "2"
+         Shortcut = "Cmd+2"
+         MenuModifier = True
          AutoEnable = True
          Visible = True
       End
