@@ -263,7 +263,7 @@ Implements Beacon.Countable
 		  Dim Values() As Text
 		  Values.Append("SetName=""" + Self.mLabel + """")
 		  Values.Append("MinNumItems=" + Self.mMinNumItems.ToText)
-		  Values.Append("MaxNumItems=" + Self.mMaxNumItems.ToText)
+		  Values.Append("MaxNumItems=" + Xojo.Math.Min(Self.mMaxNumItems, Self.Count).ToText)
 		  Values.Append("NumItemsPower=" + Self.mNumItemsPower.ToText)
 		  Values.Append("SetWeight=" + Self.mSetWeight.ToText)
 		  Values.Append("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "true", "false"))

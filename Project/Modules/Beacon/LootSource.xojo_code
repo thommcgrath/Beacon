@@ -320,7 +320,7 @@ Implements Beacon.Countable
 		  End If
 		  
 		  Values.Append("MinItemSets=" + Self.mMinItemSets.ToText)
-		  Values.Append("MaxItemSets=" + Self.mMaxItemSets.ToText)
+		  Values.Append("MaxItemSets=" + Xojo.Math.Min(Self.mMaxItemSets, Self.Count).ToText)
 		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.ToText)
 		  Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
 		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mItems, ",", Self.Multipliers) + ")")
