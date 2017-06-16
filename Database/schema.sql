@@ -95,6 +95,7 @@ CREATE TRIGGER enforce_mod_owner BEFORE INSERT OR UPDATE ON mods FOR EACH ROW EX
 
 CREATE TABLE engrams (
 	path CITEXT NOT NULL PRIMARY KEY,
+	class_string CITEXT NOT NULL,
 	label CITEXT NOT NULL,
 	availability INTEGER NOT NULL DEFAULT 0,
 	can_blueprint BOOLEAN NOT NULL DEFAULT TRUE,
@@ -125,6 +126,8 @@ CREATE TABLE deletions (
 );
 CREATE UNIQUE INDEX deletions_table_unique_id_idx ON deletions(from_table, unique_id);
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE deletions TO thezaz_website;
+
+DROP TRIGGER IF EXISTS engrams_compute_class_trigger ON engrams;
 
 DROP TRIGGER IF EXISTS engrams_before_insert_trigger ON engrams;
 DROP TRIGGER IF EXISTS engrams_before_update_trigger ON engrams;
@@ -195,6 +198,15 @@ BEGIN
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION compute_class_trigger () RETURNS TRIGGER AS $$
+BEGIN
+	NEW.class_string = SUBSTRING(NEW.path, '\.([a-zA-Z0-0\-\_]+)$') || '_C';
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER engrams_compute_class_trigger BEFORE INSERT OR UPDATE ON engrams_test FOR EACH ROW EXECUTE PROCEDURE compute_class_trigger('');
 
 CREATE TRIGGER engrams_before_insert_trigger BEFORE INSERT ON engrams FOR EACH ROW EXECUTE PROCEDURE cache_insert_trigger('path');
 CREATE TRIGGER engrams_before_update_trigger BEFORE UPDATE ON engrams FOR EACH ROW EXECUTE PROCEDURE cache_update_trigger('path');
