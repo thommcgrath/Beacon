@@ -176,6 +176,17 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsValid() As Boolean
+		  For Each Set As Beacon.ItemSet In Self.mItems
+		    If Not Set.IsValid Then
+		      Return False
+		    End If
+		  Next
+		  Return UBound(Self.mItems) > -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Kind() As Beacon.LootSource.Kinds
 		  Return Self.mKind
 		End Function

@@ -43,6 +43,7 @@ Begin ContainerControl DeveloperModView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   3
       Visible         =   True
@@ -143,6 +144,7 @@ Begin ContainerControl DeveloperModView
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "You have not yet confirmed ownership of this mod. To so do, please copy the value below and insert it anywhere on the mod's Steam page. Then press the ""Confirm Ownership"" button below. Once confirmed, the text can be removed from your Steam page."
          TextAlign       =   1
          TextColor       =   &c00000000
@@ -208,6 +210,7 @@ Begin ContainerControl DeveloperModView
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "No Mod Selected"
          TextAlign       =   1
          TextColor       =   &c00000000
@@ -237,6 +240,7 @@ Begin ContainerControl DeveloperModView
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
+         TabStop         =   True
          Top             =   199
          Value           =   0
          Visible         =   True
@@ -322,6 +326,7 @@ Begin ContainerControl DeveloperModView
       End
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

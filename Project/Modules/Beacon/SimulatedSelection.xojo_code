@@ -2,19 +2,19 @@
 Protected Class SimulatedSelection
 	#tag Method, Flags = &h0
 		Function Description() As Text
-		  Dim Engram As Beacon.Engram = Beacon.Data.GetEngram(Self.ClassString)
-		  Dim Label As Text = if(Engram <> Nil, Engram.Label, Engram.ClassString)
+		  Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Self.Path)
+		  Dim Label As Text = if(Engram <> Nil, Engram.Label, Self.Path)
 		  Return Label + if(Self.IsBlueprint And Engram.CanBeBlueprint, " Blueprint", "")
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h0
-		ClassString As Text
+		IsBlueprint As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		IsBlueprint As Boolean
+		Path As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -23,11 +23,6 @@ Protected Class SimulatedSelection
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="ClassString"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -54,9 +49,26 @@ Protected Class SimulatedSelection
 			Type="String"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Path"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Quality"
 			Group="Behavior"
 			Type="Beacon.Qualities"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Primitive"
+				"1 - Ramshackle"
+				"2 - Apprentice"
+				"3 - Journeyman"
+				"4 - Mastercraft"
+				"5 - Ascendant"
+				"6 - AscendantPlus"
+				"7 - AscendantPlusPlus"
+				"8 - AscendantPlusPlusPlus"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

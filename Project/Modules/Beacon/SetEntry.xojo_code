@@ -240,6 +240,17 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsValid() As Boolean
+		  For Each Option As Beacon.SetEntryOption In Self.mItems
+		    If Not Option.IsValid Then
+		      Return False
+		    End If
+		  Next
+		  Return UBound(Self.mItems) > -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Join(Entries() As Beacon.SetEntry, Separator As Text, Multipliers As Beacon.Range) As Text
 		  Dim Values() As Text
 		  For Each Entry As Beacon.SetEntry In Entries
@@ -347,11 +358,11 @@ Implements Beacon.Countable
 		      If Weights(X) >= ClassDecision Then
 		        Dim SelectedWeight As Double = Weights(X)
 		        Dim SelectedEntry As Beacon.SetEntryOption = WeightLookup.Value(SelectedWeight)
-		        Selection.ClassString = SelectedEntry.Engram.ClassString
+		        Selection.Path = SelectedEntry.Engram.Path
 		        Exit For X
 		      End If
 		    Next
-		    If Selection.ClassString = "" Then
+		    If Selection.Path = "" Then
 		      Continue
 		    End If
 		    
@@ -366,11 +377,11 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function TextValue(Multipliers As Beacon.Range) As Text
-		  Dim Classes(), Weights() As Text
-		  Redim Classes(UBound(Self.mItems))
+		  Dim Paths(), Weights() As Text
+		  Redim Paths(UBound(Self.mItems))
 		  Redim Weights(UBound(Self.mItems))
 		  For I As Integer = 0 To UBound(Self.mItems)
-		    Classes(I) = Self.mItems(I).Engram.ClassString
+		    Paths(I) = Self.mItems(I).Engram.GeneratedBlueprintPath()
 		    Weights(I) = Self.mItems(I).Weight.ToText
 		  Next
 		  
@@ -381,7 +392,7 @@ Implements Beacon.Countable
 		  
 		  Dim Values() As Text
 		  Values.Append("EntryWeight=" + Self.mWeight.ToText)
-		  Values.Append("ItemClassStrings=(""" + Text.Join(Classes, """,""") + """)")
+		  Values.Append("Items=(" + Text.Join(Paths, ",") + ")")
 		  Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
 		  Values.Append("MinQuantity=" + Self.mMinQuantity.ToText)
 		  Values.Append("MaxQuantity=" + Self.mMaxQuantity.ToText)

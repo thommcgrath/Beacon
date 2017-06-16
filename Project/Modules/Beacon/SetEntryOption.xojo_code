@@ -23,7 +23,7 @@ Protected Class SetEntryOption
 	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Keys As New Xojo.Core.Dictionary
-		  Keys.Value("Class") = Self.Engram.ClassString
+		  Keys.Value("Path") = Self.Engram.Path
 		  Keys.Value("Weight") = Self.Weight
 		  Return Keys
 		End Function
@@ -37,9 +37,29 @@ Protected Class SetEntryOption
 
 	#tag Method, Flags = &h0
 		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.SetEntryOption
-		  Dim ClassString As Text = Dict.Value("Class")
 		  Dim Weight As Double = Dict.Value("Weight")
-		  Return New Beacon.SetEntryOption(Beacon.Engram.Lookup(ClassString), Weight)
+		  Dim Engram As Beacon.Engram
+		  
+		  If Dict.HasKey("Path") Then
+		    Dim Path As Text = Dict.Value("Path")
+		    Engram = Beacon.Data.GetEngramByPath(Path)
+		  ElseIf Dict.HasKey("Class") Then
+		    Dim ClassString As Text = Dict.Value("Class")
+		    Engram = Beacon.Data.GetEngramByClass(ClassString)
+		    If Engram = Nil Then
+		      Engram = New Beacon.Engram(New Beacon.MutableEngram(ClassString))
+		    End If
+		  Else
+		    Return Nil
+		  End If
+		  
+		  Return New Beacon.SetEntryOption(Engram, Weight)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsValid() As Boolean
+		  Return Self.mEngram <> Nil And Self.mEngram.IsValid
 		End Function
 	#tag EndMethod
 

@@ -480,15 +480,15 @@ End
 		  Dim Indexes As New Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
 		    Dim Weight As String = ""
-		    If Self.mSelectedEngrams.HasKey(Engram.ClassString) Then
-		      Dim WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.ClassString)).Weight * 100
+		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
+		      Dim WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.Path)).Weight * 100
 		      Weight = WeightValue.PrettyText
 		    End If
 		    
 		    EngramList.AddRow("", Engram.Label, Weight)
 		    EngramList.RowTag(EngramList.LastIndex) = Engram
-		    Indexes.Value(Engram.ClassString) = EngramList.LastIndex
-		    If Engram.ClassString = SearchText Or Engram.Label = SearchText Then
+		    Indexes.Value(Engram.Path) = EngramList.LastIndex
+		    If Engram.Path = SearchText Or Engram.Label = SearchText Then
 		      PerfectMatch = True
 		    End If
 		  Next
@@ -497,14 +497,14 @@ End
 		    Dim ParsedEngrams() As Beacon.Engram = Beacon.PullEngramsFromText(SearchText)
 		    For Each Engram As Beacon.Engram In ParsedEngrams
 		      Dim Weight As String = ""
-		      If Self.mSelectedEngrams.HasKey(Engram.ClassString) Then
-		        Dim WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.ClassString)).Weight * 100
+		      If Self.mSelectedEngrams.HasKey(Engram.Path) Then
+		        Dim WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.Path)).Weight * 100
 		        Weight = WeightValue.PrettyText
 		      End If
 		      
 		      EngramList.AddRow("", Engram.Label, Weight)
 		      EngramList.RowTag(EngramList.LastIndex) = Engram
-		      Indexes.Value(Engram.ClassString) = EngramList.LastIndex
+		      Indexes.Value(Engram.Path) = EngramList.LastIndex
 		    Next
 		  End If
 		  
@@ -534,7 +534,7 @@ End
 		Private Sub SetupUI(Entry As Beacon.SetEntry)
 		  If Entry <> Nil Then
 		    For Each Option As Beacon.SetEntryOption In Entry
-		      Self.mSelectedEngrams.Value(Option.Engram.ClassString) = Option
+		      Self.mSelectedEngrams.Value(Option.Engram.Path) = Option
 		    Next
 		  End If
 		  
@@ -643,25 +643,25 @@ End
 		  Select Case Column
 		  Case 0
 		    Dim Checked As Boolean = Me.CellCheck(Row, Column)
-		    If Checked And Not Self.mSelectedEngrams.HasKey(Engram.ClassString) Then
+		    If Checked And Not Self.mSelectedEngrams.HasKey(Engram.Path) Then
 		      Dim WeightString As String = Me.Cell(Row, 2)
 		      If WeightString = "" Then
 		        WeightString = "50"
 		        Me.Cell(Row, 2) = WeightString
 		      End
 		      Dim Weight As Double = Max(Min(Val(WeightString) / 100, 1), 0)
-		      Self.mSelectedEngrams.Value(Engram.ClassString) = New Beacon.SetEntryOption(Engram, Weight)
-		    ElseIf Not Checked And Self.mSelectedEngrams.HasKey(Engram.ClassString) Then
-		      Self.mSelectedEngrams.Remove(Engram.ClassString)
+		      Self.mSelectedEngrams.Value(Engram.Path) = New Beacon.SetEntryOption(Engram, Weight)
+		    ElseIf Not Checked And Self.mSelectedEngrams.HasKey(Engram.Path) Then
+		      Self.mSelectedEngrams.Remove(Engram.Path)
 		    Else
 		      Return
 		    End If
 		    Self.UpdateSelectionUI()
 		    Self.UpdateSimulation()
 		  Case 2
-		    If Self.mSelectedEngrams.HasKey(Engram.ClassString) Then
+		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
 		      Dim Weight As Double = Max(Min(Val(Me.Cell(Row, Column)) / 100, 1), 0)
-		      Self.mSelectedEngrams.Value(Engram.ClassString) = New Beacon.SetEntryOption(Engram, Weight)
+		      Self.mSelectedEngrams.Value(Engram.Path) = New Beacon.SetEntryOption(Engram, Weight)
 		      Self.UpdateSelectionUI()
 		      Self.UpdateSimulation()
 		    End If

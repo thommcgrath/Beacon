@@ -17,23 +17,23 @@ $values = array();
 
 if ($since === null) {
 	if ($min_version === null) {
-		$results = $database->Query("SELECT classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE min_version IS NULL;");
+		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE min_version IS NULL;");
 	} else {
-		$results = $database->Query("SELECT classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE min_version IS NULL OR min_version <= $1;", array($min_version));
+		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE min_version IS NULL OR min_version <= $1;", array($min_version));
 	}
 	$delete_results = null;
 } else {
 	if ($min_version === null) {
-		$results = $database->Query("SELECT classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE last_update > $1 AND min_version IS NULL;", array($since));
+		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE last_update > $1 AND min_version IS NULL;", array($since));
 	} else {
-		$results = $database->Query("SELECT classstring, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE last_update > $1 AND (min_version IS NULL OR min_version <= $2);", array($since, $min_version));
+		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE last_update > $1 AND (min_version IS NULL OR min_version <= $2);", array($since, $min_version));
 	}
-	$delete_results = $database->Query("SELECT classstring FROM deletions WHERE \"table\" = 'loot_sources' AND time > $1;", array($since));
+	$delete_results = $database->Query("SELECT unique_id FROM deletions WHERE from_table = 'loot_sources' AND action_time > $1;", array($since));
 }
 $sources = array();
 while (!$results->EOF()) {
 	$sources[] = array(
-		'class' => $results->Field('classstring'),
+		'class' => $results->Field('class_string'),
 		'label' => $results->Field('label'),
 		'kind' => $results->Field('kind'),
 		'mask' => intval($results->Field('engram_mask')),
@@ -48,7 +48,7 @@ while (!$results->EOF()) {
 $sources_deleted = array();
 if ($delete_results !== null) {
 	while (!$delete_results->EOF()) {
-		$sources_deleted[] = $delete_results->Field('classstring');
+		$sources_deleted[] = $delete_results->Field('unique_id');
 		$delete_results->MoveNext();
 	}
 } 
@@ -61,23 +61,24 @@ $values['loot_sources'] = array(
 
 if ($since === null) {
 	if ($min_version === null) {
-		$results = $database->Query("SELECT classstring, label, availability, can_blueprint, min_version FROM engrams WHERE min_version IS NULL;");
+		$results = $database->Query("SELECT path, class_string, label, availability, can_blueprint, min_version FROM engrams WHERE min_version IS NULL;");
 	} else {
-		$results = $database->Query("SELECT classstring, label, availability, can_blueprint, min_version FROM engrams WHERE min_version IS NULL OR min_version <= $1;", array($min_version));
+		$results = $database->Query("SELECT path, class_string, label, availability, can_blueprint, min_version FROM engrams WHERE min_version IS NULL OR min_version <= $1;", array($min_version));
 	}
 	$delete_results = null;
 } else {
 	if ($min_version === null) {
-		$results = $database->Query("SELECT classstring, label, availability, can_blueprint, min_version FROM engrams WHERE last_update > $1 AND min_version IS NULL;", array($since));
+		$results = $database->Query("SELECT path, class_string, label, availability, can_blueprint, min_version FROM engrams WHERE last_update > $1 AND min_version IS NULL;", array($since));
 	} else {
-		$results = $database->Query("SELECT classstring, label, availability, can_blueprint, min_version FROM engrams WHERE last_update > $1 AND (min_version IS NULL OR min_version <= $2);", array($since, $min_version));
+		$results = $database->Query("SELECT path, class_string, label, availability, can_blueprint, min_version FROM engrams WHERE last_update > $1 AND (min_version IS NULL OR min_version <= $2);", array($since, $min_version));
 	}
-	$delete_results = $database->Query("SELECT classstring FROM deletions WHERE \"table\" = 'engrams' AND time > $1;", array($since));
+	$delete_results = $database->Query("SELECT unique_id FROM deletions WHERE from_table = 'engrams' AND action_time > $1;", array($since));
 }
 $engrams = array();
 while (!$results->EOF()) {
 	$engrams[] = array(
-		'class' => $results->Field('classstring'),
+		'class' => $results->Field('class_string'),
+		'path' => $results->Field('path'),
 		'label' => $results->Field('label'),
 		'availability' => intval($results->Field('availability')),
 		'blueprint' => ($results->Field('can_blueprint') == 't') ? 1 : 0,
@@ -86,30 +87,35 @@ while (!$results->EOF()) {
 	$results->MoveNext();
 }
 $engrams_deleted = array();
+$engrams_deleted_classic = array();
 if ($delete_results !== null) {
 	while (!$delete_results->EOF()) {
-		$engrams_deleted[] = $delete_results->Field('classstring');
+		$path = $results->Field('unique_id');
+		$class = BeaconEngram::ClassFromPath($path);
+		$engrams_deleted[] = $path;
+		$engrams_deleted_classic[] = $class;
 		$delete_results->MoveNext();
 	}
 } 
 $values['engrams'] = array(
 	'additions' => $engrams,
-	'removals' => $engrams_deleted
+	'removals' => $engrams_deleted_classic,
+	'removed_paths' => $engrams_deleted
 );
 
 # Presets
 
 if ($since === null) {
-	$results = $database->Query("SELECT classstring, label, contents FROM presets;");
+	$results = $database->Query("SELECT preset_id, label, contents FROM presets;");
 	$delete_results = null;
 } else {
-	$results = $database->Query("SELECT classstring, label, contents FROM presets WHERE last_update > $1;", array($since));
-	$delete_results = $database->Query("SELECT classstring FROM deletions WHERE \"table\" = 'presets' AND time > $1;", array($since));
+	$results = $database->Query("SELECT preset_id, label, contents FROM presets WHERE last_update > $1;", array($since));
+	$delete_results = $database->Query("SELECT unique_id FROM deletions WHERE from_table = 'presets' AND action_time > $1;", array($since));
 }
 $presets = array();
 while (!$results->EOF()) {
 	$presets[] = array(
-		'id' => $results->Field('classstring'),
+		'id' => $results->Field('unique_id'),
 		'label' => $results->Field('label'),
 		'contents' => $results->Field('contents')
 	);
@@ -118,7 +124,7 @@ while (!$results->EOF()) {
 $presets_deleted = array();
 if ($delete_results !== null) {
 	while (!$delete_results->EOF()) {
-		$presets_deleted[] = $delete_results->Field('classstring');
+		$presets_deleted[] = $delete_results->Field('unique_id');
 		$delete_results->MoveNext();
 	}
 } 
@@ -135,7 +141,7 @@ if ($min_version === null) {
 $last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
 
 $values['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
-$values['beacon_version'] = 1;
+$values['beacon_version'] = 2;
 $values['is_full'] = ($since === null) ? 1 : 0;
 if ($min_version === null) {
 	$values['min_version'] = 0;

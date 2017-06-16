@@ -147,10 +147,10 @@ Implements Beacon.Countable
 		  Else
 		    Set.ItemsRandomWithoutReplacement = Dict.Lookup("ItemsRandomWithoutReplacement", Set.ItemsRandomWithoutReplacement)
 		  End If
-		  If Dict.HasKey("SetName") Then
-		    Set.Label = Dict.Value("SetName")
-		  ElseIf Dict.HasKey("Label") Then
+		  If Dict.HasKey("Label") Then
 		    Set.Label = Dict.Value("Label")
+		  ElseIf Dict.HasKey("SetName") Then
+		    Set.Label = Dict.Value("SetName")
 		  End If
 		  
 		  Dim Children() As Auto
@@ -189,6 +189,17 @@ Implements Beacon.Countable
 		Sub Insert(Index As Integer, Entry As Beacon.SetEntry)
 		  Self.mEntries.Insert(Index, Entry)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsValid() As Boolean
+		  For Each Entry As Beacon.SetEntry In Self.mEntries
+		    If Not Entry.IsValid Then
+		      Return False
+		    End If
+		  Next
+		  Return UBound(Self.mEntries) > -1
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

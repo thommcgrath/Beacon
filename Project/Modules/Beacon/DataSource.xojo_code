@@ -1,7 +1,13 @@
 #tag Interface
 Protected Interface DataSource
 	#tag Method, Flags = &h0
-		Function GetEngram(ClassString As Text) As Beacon.Engram
+		Function GetEngramByClass(ClassString As Text) As Beacon.Engram
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetEngramByPath(Path As Text) As Beacon.Engram
 		  
 		End Function
 	#tag EndMethod

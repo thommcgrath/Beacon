@@ -4,15 +4,20 @@ class BeaconEngram implements JsonSerializable {
 	const ENVIRONMENT_ISLAND = 1;
 	const ENVIRONMENT_SCORCHED = 2;
 	
-	protected $classstring = '';
+	protected $path = '';
+	protected $class_string = '';
 	protected $label = '';
 	protected $availability = 0;
 	protected $can_blueprint = false;
 	protected $mod_id = null;
 	protected $mod_name = null;
 	
-	public function ClassString() {
-		return $this->classstring;
+	public function ClassString () {
+		return $this->class_string;
+	}
+	
+	public function Path() {
+		return $this->path;
 	}
 	
 	public function Label() {
@@ -44,10 +49,7 @@ class BeaconEngram implements JsonSerializable {
 	}
 	
 	public function SpawnCode() {
-		$class_parts = explode('_', $this->classstring);
-		array_shift($class_parts);
-		array_pop($class_parts);
-		return 'cheat gfi ' . strtolower(implode('_', $class_parts)) . ' 1 0 false';
+		return 'cheat giveitem "Blueprint\'' . $path . '\'" 1 0 false';
 	}
 	
 	protected static function GetFromResults(BeaconRecordSet $results) {
@@ -68,7 +70,8 @@ class BeaconEngram implements JsonSerializable {
 	
 	protected static function GetFromResult(BeaconRecordSet $results) {
 		$engram = new static();
-		$engram->classstring = $results->Field('classstring');
+		$engram->path = $results->Field('path');
+		$engram->class_string = $results->Field('class_string');
 		$engram->label = $results->Field('label');
 		$engram->availability = $results->Field('availability');
 		$engram->can_blueprint = $results->Field('can_blueprint');
@@ -85,7 +88,7 @@ class BeaconEngram implements JsonSerializable {
 	
 	public static function GetByClass(string $class) {
 		$database = BeaconCommon::Database();
-		$results = $database->Query(self::BuildSQL('engrams.classstring = ANY($1)'), '{' . $class . '}');
+		$results = $database->Query(self::BuildSQL('engrams.class_string = ANY($1)'), '{' . $class . '}');
 		return self::GetFromResults($results);
 	}
 	
@@ -100,7 +103,7 @@ class BeaconEngram implements JsonSerializable {
 	}
 	
 	protected static function BuildSQL(string $clause = '') {
-		$sql = 'SELECT engrams.classstring, engrams.label, engrams.availability, engrams.can_blueprint, mods.workshop_id AS mod_workshop_id, mods.name AS mod_name FROM engrams LEFT JOIN mods ON (engrams.mod_id = mods.mod_id) WHERE (engrams.min_version IS NULL OR engrams.min_version <= (SELECT build_number FROM updates ORDER BY build_number DESC LIMIT 1))';
+		$sql = 'SELECT engrams.path, engrams.class_string, engrams.label, engrams.availability, engrams.can_blueprint, mods.workshop_id AS mod_workshop_id, mods.name AS mod_name FROM engrams LEFT JOIN mods ON (engrams.mod_id = mods.mod_id) WHERE (engrams.min_version IS NULL OR engrams.min_version <= (SELECT build_number FROM updates ORDER BY build_number DESC LIMIT 1))';
 		if ($clause !== '') {
 			$sql .= ' AND ' . $clause;
 		}
@@ -122,15 +125,24 @@ class BeaconEngram implements JsonSerializable {
 		array_pop($class_parts);
 		
 		return array(
-			'class' => $this->classstring,
+			'path' => $this->path,
+			'class' => $this->class_string,
 			'label' => $this->label,
 			'environments' => $environments,
 			'can_blueprint' => $this->can_blueprint,
 			'spawn' => $this->SpawnCode(),
-			'resource_url' => BeaconAPI::URL('/engram.php/' . strtolower($this->classstring)),
+			'resource_url' => BeaconAPI::URL('/engram.php/' . strtolower(md5($this->path)),
 			'mod_id' => $this->mod_id,
 			'mod_name' => $this->mod_name
 		);
+	}
+	
+	public static function ClassFromPath(string $path) {
+		$components = explode('/', $path);
+		$tail = array_pop($components);
+		$components = explode('.', $tail);
+		$class = array_pop($components);
+		return $class . '_C';
 	}
 }
 

@@ -14,6 +14,12 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BlueprintPath() As Text
+		  Return "Blueprint'" + Self.mPath + "'"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CanBeBlueprint() As Boolean
 		  Return Self.mCanBeBlueprint
 		End Function
@@ -21,7 +27,10 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Function ClassString() As Text
-		  Return Self.mClassString
+		  Dim Components() As Text = Self.mPath.Split("/")
+		  Dim Tail As Text = Components(UBound(Components))
+		  Components = Tail.Split(".")
+		  Return Components(UBound(Components)) + "_C"
 		End Function
 	#tag EndMethod
 
@@ -38,9 +47,21 @@ Protected Class Engram
 		  
 		  Self.mAvailability = Source.mAvailability
 		  Self.mCanBeBlueprint = Source.mCanBeBlueprint
-		  Self.mClassString = Source.mClassString
+		  Self.mPath = Source.mPath
 		  Self.mLabel = Source.mLabel
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GeneratedBlueprintPath() As Text
+		  Return "BlueprintGeneratedClass'" + Self.mPath + "_C'"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsValid() As Boolean
+		  Return Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -48,19 +69,25 @@ Protected Class Engram
 		  If Self.mLabel <> "" Then
 		    Return Self.mLabel
 		  Else
-		    Return Self.mClassString
+		    Return Self.mPath
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function Lookup(ClassString As Text) As Beacon.Engram
-		  Dim Engram As Beacon.Engram = Beacon.Data.GetEngram(ClassString)
+		  Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		  If Engram = Nil Then
 		    Engram = New Beacon.Engram
-		    Engram.mClassString = ClassString
+		    Engram.mPath = ClassString
 		  End If
 		  Return Engram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Path() As Text
+		  Return Self.mPath
 		End Function
 	#tag EndMethod
 
@@ -74,11 +101,11 @@ Protected Class Engram
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mClassString As Text
+		Protected mLabel As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mLabel As Text
+		Protected mPath As Text
 	#tag EndProperty
 
 

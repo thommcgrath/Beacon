@@ -298,30 +298,30 @@ Protected Module Beacon
 		  Dim Engrams() As Beacon.Engram
 		  
 		  Dim Regex As New Regex
-		  Regex.SearchPattern = "['""]/Game/[A-Za-z0-9_/]+/[A-Za-z0-9_]+\.([A-Za-z0-9_]+)['""]|^([A-Za-z0-9_]+_C)$|^.*[^A-Za-z0-9_]([A-Za-z0-9_]+_C)[^A-Za-z0-9_].*$"
+		  Regex.SearchPattern = "(Blueprint['""](/Game/[A-Za-z0-9_/\.]+)['""])|(BlueprintGeneratedClass['""](/Game/[A-Za-z0-9_/\.]+)_C['""])"
 		  
 		  Dim Match As RegexMatch = Regex.Search(Contents)
-		  Dim Classes As New Dictionary
+		  Dim Paths As New Dictionary
 		  Do
 		    If Match = Nil Then
 		      Continue
 		    End If
 		    
-		    Dim Found As String
-		    For I As Integer = 1 To Match.SubExpressionCount
-		      If Match.SubExpressionString(I) <> "" Then
-		        Found = Match.SubExpressionString(I)
-		        Exit For I
-		      End If
-		    Next
-		    If Found <> "" Then
-		      Classes.Value(Found) = True
+		    Dim Path As String
+		    If Match.SubExpressionString(2) <> "" Then
+		      Path = Match.SubExpressionString(2)
+		    ElseIf Match.SubExpressionString(4) <> "" Then
+		      Path = Match.SubExpressionString(4)
+		    Else
+		      Continue
 		    End If
+		    
+		    Paths.Value(Path) = True
 		    
 		    Match = Regex.Search
 		  Loop Until Match Is Nil
 		  
-		  If Classes.Count = 0 Then
+		  If Paths.Count = 0 Then
 		    Return Engrams
 		  End If
 		  
@@ -331,14 +331,14 @@ Protected Module Beacon
 		  Regex.Options.ReplaceAllMatches = True
 		  Regex.Options.CaseSensitive = True
 		  
-		  Dim Keys() As Variant = Classes.Keys
+		  Dim Keys() As Variant = Paths.Keys
 		  For Each Key As String In Keys
-		    Dim ClassString As Text = Beacon.CleanupClassString(Key.ToText)
-		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngram(ClassString)
+		    Dim Path As Text = Key.ToText
+		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
 		    If Engram = Nil Then
-		      Dim Temp As New Beacon.MutableEngram(ClassString)
+		      Dim Temp As New Beacon.MutableEngram(Path)
 		      
-		      Dim GuessName As String = ClassString
+		      Dim GuessName As String = Temp.ClassString
 		      Dim Parts() As String = GuessName.Split("_")
 		      Parts.Remove(0)
 		      Parts.Remove(UBound(Parts))

@@ -25,22 +25,22 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ClassString(Assigns Value As Text)
-		  Self.mClassString = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(ClassString As Text)
+		Sub Constructor(Path As Text)
 		  Super.Constructor()
 		  
-		  Self.mClassString = ClassString
+		  Self.mPath = Path
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As Text)
 		  Self.mLabel = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Path(Assigns Value As Text)
+		  Self.mPath = Value
 		End Sub
 	#tag EndMethod
 
