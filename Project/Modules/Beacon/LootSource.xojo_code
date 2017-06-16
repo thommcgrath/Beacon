@@ -319,8 +319,8 @@ Implements Beacon.Countable
 		    Values.Append("SupplyCrateClassString=""" + Self.mClassString + """")
 		  End If
 		  
-		  Values.Append("MinItemSets=" + Self.mMinItemSets.ToText)
-		  Values.Append("MaxItemSets=" + Xojo.Math.Min(Self.mMaxItemSets, Self.Count).ToText)
+		  Values.Append("MinItemSets=" + Xojo.Math.Max(Xojo.Math.Min(Self.mMinItemSets, Self.Count), 0).ToText)
+		  Values.Append("MaxItemSets=" + Xojo.Math.Max(Xojo.Math.Min(Self.mMaxItemSets, Self.Count), 0).ToText)
 		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.ToText)
 		  Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
 		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mItems, ",", Self.Multipliers) + ")")

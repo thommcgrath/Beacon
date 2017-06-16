@@ -262,8 +262,8 @@ Implements Beacon.Countable
 		Function TextValue(Multipliers As Beacon.Range) As Text
 		  Dim Values() As Text
 		  Values.Append("SetName=""" + Self.mLabel + """")
-		  Values.Append("MinNumItems=" + Self.mMinNumItems.ToText)
-		  Values.Append("MaxNumItems=" + Xojo.Math.Min(Self.mMaxNumItems, Self.Count).ToText)
+		  Values.Append("MinNumItems=" + Xojo.Math.Max(Xojo.Math.Min(Self.mMinNumItems, Self.Count), 0).ToText)
+		  Values.Append("MaxNumItems=" + Xojo.Math.Max(Xojo.Math.Min(Self.mMaxNumItems, Self.Count), 0).ToText)
 		  Values.Append("NumItemsPower=" + Self.mNumItemsPower.ToText)
 		  Values.Append("SetWeight=" + Self.mSetWeight.ToText)
 		  Values.Append("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "true", "false"))
