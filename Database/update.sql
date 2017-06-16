@@ -20,6 +20,7 @@ ALTER TABLE loot_sources RENAME COLUMN classstring TO class_string;
 DROP TABLE engrams;
 CREATE TABLE engrams (
 	path CITEXT NOT NULL PRIMARY KEY,
+	class_string CITEXT NOT NULL,
 	label CITEXT NOT NULL,
 	availability INTEGER NOT NULL DEFAULT 0,
 	can_blueprint BOOLEAN NOT NULL DEFAULT TRUE,
@@ -929,7 +930,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER engrams_compute_class_trigger BEFORE INSERT OR UPDATE ON engrams_test FOR EACH ROW EXECUTE PROCEDURE compute_class_trigger('');
+CREATE TRIGGER engrams_compute_class_trigger BEFORE INSERT OR UPDATE ON engrams FOR EACH ROW EXECUTE PROCEDURE compute_class_trigger('');
 
 CREATE TRIGGER engrams_before_insert_trigger BEFORE INSERT ON engrams FOR EACH ROW EXECUTE PROCEDURE cache_insert_trigger('path');
 CREATE TRIGGER engrams_before_update_trigger BEFORE UPDATE ON engrams FOR EACH ROW EXECUTE PROCEDURE cache_update_trigger('path');
