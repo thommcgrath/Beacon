@@ -46,7 +46,7 @@ CREATE TYPE loot_source_kind AS ENUM (
 );
 
 CREATE TABLE loot_sources (
-	classstring CITEXT NOT NULL PRIMARY KEY,
+	class_string CITEXT NOT NULL PRIMARY KEY,
 	label CITEXT NOT NULL,
 	kind loot_source_kind NOT NULL,
 	engram_mask INTEGER NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE loot_sources (
 	min_version INTEGER,
 	uicolor TEXT NOT NULL CHECK (uicolor ~* '^[0-9a-fA-F]{8}$'),
 	sort INTEGER NOT NULL UNIQUE,
-	CHECK (classstring LIKE '%_C')
+	CHECK (class_string LIKE '%_C')
 );
 GRANT SELECT ON TABLE loot_sources TO thezaz_website;
 
@@ -94,36 +94,35 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER enforce_mod_owner BEFORE INSERT OR UPDATE ON mods FOR EACH ROW EXECUTE PROCEDURE enforce_mod_owner();
 
 CREATE TABLE engrams (
-	classstring CITEXT NOT NULL PRIMARY KEY,
+	path CITEXT NOT NULL PRIMARY KEY,
 	label CITEXT NOT NULL,
 	availability INTEGER NOT NULL DEFAULT 0,
 	can_blueprint BOOLEAN NOT NULL DEFAULT TRUE,
 	last_update TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0),
 	min_version INTEGER,
-	mod_id UUID REFERENCES mods(mod_id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CHECK (classstring LIKE '%_C')
+	mod_id UUID REFERENCES mods(mod_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE engrams TO thezaz_website;
+CREATE UNIQUE INDEX engrams_classstring_mod_id_uidx ON engrams(class_string, mod_id);
 
--- the primary key really should be preset_id UUID but this needs to match engrams and loot_sources for the triggers to work
 CREATE TABLE presets (
-	classstring CITEXT NOT NULL PRIMARY KEY,
+	preset_id UUID NOT NULL PRIMARY KEY,
 	label CITEXT NOT NULL,
 	contents JSON NOT NULL,
 	last_update TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0)
 );
 GRANT SELECT ON TABLE presets TO thezaz_website;
 
-CREATE OR REPLACE VIEW updatable_objects AS (SELECT classstring, label, last_update, min_version FROM loot_sources) UNION (SELECT classstring, label, last_update, NULL FROM presets) UNION (SELECT classstring, label, last_update, min_version FROM engrams);
+CREATE OR REPLACE VIEW updatable_objects AS (SELECT class_string AS unique_id, label, last_update, min_version FROM loot_sources) UNION (SELECT preset_id::text AS unique_id, label, last_update, NULL FROM presets) UNION (SELECT path AS unique_id, label, last_update, min_version FROM engrams);
 GRANT SELECT ON updatable_objects TO thezaz_website;
 
 CREATE TABLE deletions (
 	deletion_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-	table CITEXT NOT NULL,
-	classstring CITEXT NOT NULL,
-	time TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0)
+	from_table CITEXT NOT NULL,
+	unique_id CITEXT NOT NULL,
+	action_time TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0)
 );
-CREATE UNIQUE INDEX deletions_table_classstring_idx ON deletions(table, classstring);
+CREATE UNIQUE INDEX deletions_table_unique_id_idx ON deletions(from_table, unique_id);
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE deletions TO thezaz_website;
 
 DROP TRIGGER IF EXISTS engrams_before_insert_trigger ON engrams;
@@ -140,18 +139,34 @@ DROP TRIGGER IF EXISTS presets_after_delete_trigger ON presets;
 DROP TRIGGER IF EXISTS presets_json_sync_trigger ON presets;
 
 CREATE OR REPLACE FUNCTION cache_insert_trigger () RETURNS TRIGGER AS $$
+DECLARE
+	column_name TEXT;
+	unique_id TEXT;
 BEGIN
-	DELETE FROM deletions WHERE table = TG_TABLE_NAME AND classstring = NEW.classstring;
+	column_name := TG_ARGV[0];
+	
+	EXECUTE format('SELECT $1.%I;', column_name) USING NEW INTO unique_id;
+	
+	EXECUTE 'DELETE FROM deletions WHERE from_table = $1 AND unique_id = $2;' USING TG_TABLE_NAME, unique_id;
 	NEW.last_update = CURRENT_TIMESTAMP(0);
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION cache_update_trigger () RETURNS TRIGGER AS $$
+DECLARE
+	column_name TEXT;
+	old_unique_id TEXT;
+	new_unique_id TEXT;
 BEGIN
-	IF OLD.classstring != NEW.classstring THEN
-		DELETE FROM deletions WHERE table = TG_TABLE_NAME AND classstring = NEW.classstring;
-		INSERT INTO deletions (table, classstring) VALUES (TG_TABLE_NAME, OLD.classstring);
+	column_name := TG_ARGV[0];
+	
+	EXECUTE format('SELECT $1.%I;', column_name) USING OLD INTO old_unique_id;
+	EXECUTE format('SELECT $1.%I;', column_name) USING NEW INTO new_unique_id;
+	
+	IF old_unique_id != new_unique_id THEN
+		EXECUTE 'DELETE FROM deletions WHERE from_table = $1 AND unique_id = $2;' USING TG_TABLE_NAME, new_unique_id;
+		EXECUTE 'INSERT INTO deletions (from_table, unique_id) VALUES ($1, $2);' USING TG_TABLE_NAME, old_unique_id;
 	END IF;
 	NEW.last_update = CURRENT_TIMESTAMP(0);
 	RETURN NEW;
@@ -159,8 +174,15 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION cache_delete_trigger () RETURNS TRIGGER AS $$
+DECLARE
+	column_name TEXT;
+	unique_id TEXT;
 BEGIN
-	INSERT INTO deletions (table, classstring) VALUES (TG_TABLE_NAME, OLD.classstring);
+	column_name := TG_ARGV[0];
+	
+	EXECUTE format('SELECT $1.%I;', column_name) USING OLD INTO unique_id;
+	
+	EXECUTE 'INSERT INTO deletions (from_table, unique_id) VALUES ($1, $2);' USING TG_TABLE_NAME, unique_id;
 	RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
@@ -168,20 +190,21 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION presets_json_sync_function () RETURNS TRIGGER AS $$
 BEGIN
 	NEW.label = NEW.contents->>'Label';
-	NEW.classstring = NEW.contents->>'ID';
+	NEW.classstring = NEW.contents->>'ID'::UUID;
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER engrams_before_insert_trigger BEFORE INSERT ON engrams FOR EACH ROW EXECUTE PROCEDURE cache_insert_trigger();
-CREATE TRIGGER engrams_before_update_trigger BEFORE UPDATE ON engrams FOR EACH ROW EXECUTE PROCEDURE cache_update_trigger();
-CREATE TRIGGER engrams_after_delete_trigger AFTER DELETE ON engrams FOR EACH ROW EXECUTE PROCEDURE cache_delete_trigger();
+CREATE TRIGGER engrams_before_insert_trigger BEFORE INSERT ON engrams FOR EACH ROW EXECUTE PROCEDURE cache_insert_trigger('path');
+CREATE TRIGGER engrams_before_update_trigger BEFORE UPDATE ON engrams FOR EACH ROW EXECUTE PROCEDURE cache_update_trigger('path');
+CREATE TRIGGER engrams_after_delete_trigger AFTER DELETE ON engrams FOR EACH ROW EXECUTE PROCEDURE cache_delete_trigger('path');
 
-CREATE TRIGGER loot_sources_before_insert_trigger BEFORE INSERT ON loot_sources FOR EACH ROW EXECUTE PROCEDURE cache_insert_trigger();
-CREATE TRIGGER loot_sources_before_update_trigger BEFORE UPDATE ON loot_sources FOR EACH ROW EXECUTE PROCEDURE cache_update_trigger();
-CREATE TRIGGER loot_sources_after_delete_trigger AFTER DELETE ON loot_sources FOR EACH ROW EXECUTE PROCEDURE cache_delete_trigger();
+CREATE TRIGGER loot_sources_before_insert_trigger BEFORE INSERT ON loot_sources FOR EACH ROW EXECUTE PROCEDURE cache_insert_trigger('class_string');
+CREATE TRIGGER loot_sources_before_update_trigger BEFORE UPDATE ON loot_sources FOR EACH ROW EXECUTE PROCEDURE cache_update_trigger('class_string');
+CREATE TRIGGER loot_sources_after_delete_trigger AFTER DELETE ON loot_sources FOR EACH ROW EXECUTE PROCEDURE cache_delete_trigger('class_string');
 
-CREATE TRIGGER presets_before_insert_trigger BEFORE INSERT ON presets FOR EACH ROW EXECUTE PROCEDURE cache_insert_trigger();
-CREATE TRIGGER presets_before_update_trigger BEFORE UPDATE ON presets FOR EACH ROW EXECUTE PROCEDURE cache_update_trigger();
-CREATE TRIGGER presets_after_delete_trigger AFTER DELETE ON presets FOR EACH ROW EXECUTE PROCEDURE cache_delete_trigger();
+CREATE TRIGGER presets_before_insert_trigger BEFORE INSERT ON presets FOR EACH ROW EXECUTE PROCEDURE cache_insert_trigger('preset_id');
+CREATE TRIGGER presets_before_update_trigger BEFORE UPDATE ON presets FOR EACH ROW EXECUTE PROCEDURE cache_update_trigger('preset_id');
+CREATE TRIGGER presets_after_delete_trigger AFTER DELETE ON presets FOR EACH ROW EXECUTE PROCEDURE cache_delete_trigger('preset_id');
+
 CREATE TRIGGER presets_json_sync_trigger BEFORE INSERT OR UPDATE ON presets FOR EACH ROW EXECUTE PROCEDURE presets_json_sync_function();
