@@ -100,7 +100,8 @@ CREATE TABLE engrams (
 	can_blueprint BOOLEAN NOT NULL DEFAULT TRUE,
 	last_update TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0),
 	min_version INTEGER,
-	mod_id UUID REFERENCES mods(mod_id) ON DELETE CASCADE ON UPDATE CASCADE
+	mod_id UUID REFERENCES mods(mod_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CHECK (path LIKE '/%')
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE engrams TO thezaz_website;
 CREATE UNIQUE INDEX engrams_classstring_mod_id_uidx ON engrams(class_string, mod_id);
