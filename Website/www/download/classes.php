@@ -115,7 +115,7 @@ if ($since === null) {
 $presets = array();
 while (!$results->EOF()) {
 	$presets[] = array(
-		'id' => $results->Field('unique_id'),
+		'id' => $results->Field('preset_id'),
 		'label' => $results->Field('label'),
 		'contents' => $results->Field('contents')
 	);
