@@ -10,6 +10,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE engrams (path TEXT NOT NULL PRIMARY KEY, class_string TEXT NOT NULL, label TEXT NOT NULL, availability INTEGER NOT NULL, can_blueprint INTEGER NOT NULL, built_in INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE presets (preset_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		  
 		  Self.mBase.UserVersion = Self.SchemaVersion
 		End Sub
@@ -295,7 +296,7 @@ Implements Beacon.DataSource
 		    Dim ShouldTruncate As Boolean = ChangeDict.Value("is_full") = 1
 		    If ShouldTruncate Then
 		      Self.SQLExecute("DELETE FROM loot_sources;")
-		      Self.SQLExecute("DELETE FROM engrams;")
+		      Self.SQLExecute("DELETE FROM engrams WHERE builtin = 1;")
 		      Self.SQLExecute("DELETE FROM presets;")
 		    End If
 		    

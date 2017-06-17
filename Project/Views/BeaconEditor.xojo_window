@@ -114,7 +114,6 @@ Begin ContainerControl BeaconEditor
       HasBackColor    =   False
       Height          =   464
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -192,7 +191,6 @@ Begin ContainerControl BeaconEditor
       Width           =   190
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -234,20 +232,6 @@ End
 		    Self.mSorting = False
 		    RaiseEvent Updated
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub AddTemplate(Set As Beacon.ItemSet, ClassString As String, MinQuantity As Integer, MaxQuantity As Integer, Weight As Double = 1, MinQuality As Beacon.Qualities = Beacon.Qualities.Primitive, MaxQuality As Beacon.Qualities = Beacon.Qualities.Primitive)
-		  Dim Entry As New Beacon.SetEntry
-		  Entry.Append(New Beacon.SetEntryOption(Beacon.Engram.Lookup(ClassString.ToText), 1))
-		  Entry.MinQuantity = MinQuantity
-		  Entry.MaxQuantity = MaxQuantity
-		  Entry.MinQuality = MinQuality
-		  Entry.MaxQuality = MaxQuality
-		  Entry.Weight = Weight
-		  Entry.ChanceToBeBlueprint = 0.1
-		  Set.Append(Entry)
 		End Sub
 	#tag EndMethod
 

@@ -29,6 +29,7 @@ Inherits Beacon.Engram
 		  Super.Constructor()
 		  
 		  Self.mPath = Path
+		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
 		End Sub
 	#tag EndMethod
 
@@ -41,6 +42,7 @@ Inherits Beacon.Engram
 	#tag Method, Flags = &h0
 		Sub Path(Assigns Value As Text)
 		  Self.mPath = Value
+		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
 		End Sub
 	#tag EndMethod
 

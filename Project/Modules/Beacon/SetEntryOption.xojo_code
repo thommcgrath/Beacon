@@ -22,8 +22,13 @@ Protected Class SetEntryOption
 
 	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
+		  Dim Path As String = Self.Engram.Path
+		  
 		  Dim Keys As New Xojo.Core.Dictionary
-		  Keys.Value("Path") = Self.Engram.Path
+		  If Path <> "" Then
+		    Keys.Value("Path") = Path
+		  End If
+		  Keys.Value("Class") = Self.Engram.ClassString
 		  Keys.Value("Weight") = Self.Weight
 		  Return Keys
 		End Function

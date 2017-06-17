@@ -180,9 +180,19 @@ Implements Beacon.Countable
 		    ClassWeights = Dict.Value("ItemsWeights")
 		  End If
 		  
-		  Dim ClassStrings() As Auto
+		  Dim Engrams() As Beacon.Engram
+		  
 		  If Dict.HasKey("ItemClassStrings") Then
-		    ClassStrings = Dict.Value("ItemClassStrings")
+		    Dim ClassStrings() As Auto = Dict.Value("ItemClassStrings")
+		    For Each ClassString As Text In ClassStrings
+		      Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
+		      If Engram <> Nil Then
+		        Engrams.Append(Engram)
+		      Else
+		        Break
+		        Engrams.Append(Beacon.Engram.CreateTransientEngram(ClassString))
+		      End If
+		    Next
 		  ElseIf Dict.HasKey("Items") Then
 		    // Could be array of blueprints or from a Beacon file
 		    Dim Children() As Auto = Dict.Value("Items")
@@ -192,27 +202,43 @@ Implements Beacon.Countable
 		      Case "Xojo.Core.Dictionary"
 		        Entry.Append(Beacon.SetEntryOption.Import(Child))
 		      Case "Text"
-		        Dim ClassString As Text = Beacon.CleanupClassString(Child)
-		        ClassStrings.Append(ClassString)
+		        Dim Value As Text = Child
+		        If Value.Length > 23 And Value.Left(23) = "BlueprintGeneratedClass" Then
+		          Value = Value.Mid(24, Value.Length - 27)
+		        ElseIf Value.Length > 9 And Value.Left(9) = "Blueprint" Then
+		          // This technically does not work, but we'll support it
+		          Value = Value.Mid(10, Value.Length - 11)
+		        Else
+		          // No idea what this says
+		          Continue
+		        End If
+		        
+		        Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Value)
+		        If Engram <> Nil Then
+		          Engrams.Append(Engram)
+		        Else
+		          Break
+		          Engrams.Append(Beacon.Engram.CreateUnknownEngram(Value))
+		        End If
 		      End Select
 		    Next
 		  End If
 		  
-		  If UBound(ClassWeights) < UBound(ClassStrings) Then
+		  If UBound(ClassWeights) < UBound(Engrams) Then
 		    // Add more values
-		    While UBound(ClassWeights) < UBound(ClassStrings)
+		    While UBound(ClassWeights) < UBound(Engrams)
 		      ClassWeights.Append(1)
 		    Wend
-		  ElseIf UBound(ClassWeights) > UBound(ClassStrings) Then
+		  ElseIf UBound(ClassWeights) > UBound(Engrams) Then
 		    // Just truncate
-		    Redim ClassWeights(UBound(ClassStrings))
+		    Redim ClassWeights(UBound(Engrams))
 		  End If
 		  
-		  For I As Integer = 0 To UBound(ClassStrings)
+		  For I As Integer = 0 To UBound(Engrams)
 		    Try
-		      Dim ClassString As Text = ClassStrings(I)
+		      Dim Engram As Beacon.Engram = Engrams(I)
 		      Dim ClassWeight As Double = ClassWeights(I)
-		      Entry.Append(New Beacon.SetEntryOption(Beacon.Engram.Lookup(ClassString), ClassWeight))
+		      Entry.Append(New Beacon.SetEntryOption(Engram, ClassWeight))
 		    Catch Err As TypeMismatchException
 		      Continue
 		    End Try
@@ -377,12 +403,21 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function TextValue(Multipliers As Beacon.Range) As Text
+		  Dim AllWeightsEqual As Boolean = True
+		  Dim CommonWeight As Double
 		  Dim Paths(), Weights() As Text
 		  Redim Paths(UBound(Self.mItems))
 		  Redim Weights(UBound(Self.mItems))
 		  For I As Integer = 0 To UBound(Self.mItems)
-		    Paths(I) = Self.mItems(I).Engram.GeneratedBlueprintPath()
+		    Paths(I) = Self.mItems(I).Engram.GeneratedClassBlueprintPath()
 		    Weights(I) = Self.mItems(I).Weight.ToText
+		    If I = 0 Then
+		      CommonWeight = Self.mItems(I).Weight
+		    Else
+		      If Self.mItems(I).Weight <> CommonWeight Then
+		        AllWeightsEqual = False
+		      End If
+		    End If
 		  Next
 		  
 		  Dim MinQuality As Double = Beacon.ValueForQuality(Self.mMinQuality, Multipliers.Min)
@@ -393,7 +428,9 @@ Implements Beacon.Countable
 		  Dim Values() As Text
 		  Values.Append("EntryWeight=" + Self.mWeight.ToText)
 		  Values.Append("Items=(" + Text.Join(Paths, ",") + ")")
-		  Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
+		  If Self.Count > 1 And AllWeightsEqual = False Then
+		    Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
+		  End If
 		  Values.Append("MinQuantity=" + Self.mMinQuantity.ToText)
 		  Values.Append("MaxQuantity=" + Self.mMaxQuantity.ToText)
 		  Values.Append("MinQuality=" + MinQuality.ToText)

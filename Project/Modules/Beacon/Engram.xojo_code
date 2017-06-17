@@ -27,10 +27,14 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Function ClassString() As Text
-		  Dim Components() As Text = Self.mPath.Split("/")
-		  Dim Tail As Text = Components(UBound(Components))
-		  Components = Tail.Split(".")
-		  Return Components(UBound(Components)) + "_C"
+		  If Self.IsValid Then
+		    Dim Components() As Text = Self.mPath.Split("/")
+		    Dim Tail As Text = Components(UBound(Components))
+		    Components = Tail.Split(".")
+		    Return Components(UBound(Components)) + "_C"
+		  Else
+		    Return Self.mPath
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -49,17 +53,39 @@ Protected Class Engram
 		  Self.mCanBeBlueprint = Source.mCanBeBlueprint
 		  Self.mPath = Source.mPath
 		  Self.mLabel = Source.mLabel
+		  Self.mIsValid = Source.mIsValid
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GeneratedBlueprintPath() As Text
+		Shared Function CreateTransientEngram(ClassString As Text) As Beacon.Engram
+		  Dim Engram As New Beacon.Engram
+		  Engram.mIsValid = False
+		  Engram.mPath = ClassString
+		  Engram.mLabel = ClassString
+		  Return Engram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function CreateUnknownEngram(Path As Text) As Beacon.Engram
+		  Dim Engram As New Beacon.Engram
+		  Engram.mIsValid = Path.Length > 6 And Path.Left(6) = "/Game/"
+		  Engram.mPath = Path
+		  Engram.mLabel = ""
+		  Return Engram
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GeneratedClassBlueprintPath() As Text
 		  Return "BlueprintGeneratedClass'" + Self.mPath + "_C'"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsValid() As Boolean
+		  Return Self.mIsValid
 		  Return Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
 		End Function
 	#tag EndMethod
@@ -75,19 +101,12 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Lookup(ClassString As Text) As Beacon.Engram
-		  Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
-		  If Engram = Nil Then
-		    Engram = New Beacon.Engram
-		    Engram.mPath = ClassString
-		  End If
-		  Return Engram
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Path() As Text
-		  Return Self.mPath
+		  If Self.IsValid Then
+		    Return Self.mPath
+		  Else
+		    Return ""
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -98,6 +117,10 @@ Protected Class Engram
 
 	#tag Property, Flags = &h1
 		Protected mCanBeBlueprint As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mIsValid As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
