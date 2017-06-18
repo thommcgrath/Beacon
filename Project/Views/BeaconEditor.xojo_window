@@ -669,6 +669,41 @@ End
 		  Return True
 		End Function
 	#tag EndEvent
+	#tag Event
+		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, ByRef TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		  Dim Set As Beacon.ItemSet = Me.RowTag(Row)
+		  If IsHighlighted And Not Set.IsValid Then
+		    If Me.Selected(Row) Then
+		      TextColor = &cFFFFFF
+		    Else
+		      TextColor = &c800000
+		    End If
+		  End If
+		  G.Bold = Not Set.IsValid
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean) As Boolean
+		  If Column <> 0 Or Row >= Me.ListCount Then
+		    Return False
+		  End If
+		  
+		  Dim Set As Beacon.ItemSet = Me.RowTag(Row)
+		  If Not Set.IsValid Then
+		    If Me.Selected(Row) Then
+		      If IsHighlighted Then
+		        G.ForeColor = &c800000
+		      Else
+		        G.ForeColor = &cD4BEBE
+		      End If
+		      G.FillRect(0, 0, G.Width, G.Height)
+		      Return True
+		    Else
+		      Return False
+		    End If
+		  End If
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events Separators
 	#tag Event

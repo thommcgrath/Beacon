@@ -115,7 +115,6 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -162,7 +161,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -203,7 +201,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -879,25 +876,42 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color) As Boolean
+		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean) As Boolean
 		  #Pragma Unused BackgroundColor
 		  
-		  If Column <> 0 Or Row >= Me.ListCount Then
+		  If Row >= Me.ListCount Then
 		    Return False
 		  End If
 		  
+		  Dim ReturnValue As Boolean
 		  Dim Source As Beacon.LootSource = Me.RowTag(Row)
-		  Dim Icon As Picture = LocalData.IconForLootSource(Source, RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 150))
-		  Dim SpaceWidth As Integer = Me.Column(Column).WidthActual
-		  Dim SpaceHeight As Integer = Me.DefaultRowHeight
+		  If Not Source.IsValid Then
+		    If Me.Selected(Row) Then
+		      If IsHighlighted Then
+		        G.ForeColor = &c800000
+		      Else
+		        G.ForeColor = &cD4BEBE
+		      End If
+		      G.FillRect(0, 0, G.Width, G.Height)
+		      ReturnValue = True
+		    End If
+		  End If
 		  
-		  G.DrawPicture(Icon, (SpaceWidth - Icon.Width) / 2, (SpaceHeight - Icon.Height) / 2)
+		  If Column = 0 Then
+		    Dim Icon As Picture = LocalData.IconForLootSource(Source, RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 150))
+		    Dim SpaceWidth As Integer = Me.Column(Column).WidthActual
+		    Dim SpaceHeight As Integer = Me.DefaultRowHeight
+		    
+		    G.DrawPicture(Icon, (SpaceWidth - Icon.Width) / 2, (SpaceHeight - Icon.Height) / 2)
+		    
+		    ReturnValue = True
+		  End If
 		  
-		  Return True
+		  Return ReturnValue
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer) As Boolean
+		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, ByRef TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
 		  #Pragma Unused G
 		  #Pragma Unused Row
 		  #Pragma Unused TextColor
@@ -906,6 +920,18 @@ End
 		  
 		  If Column = 0 Then
 		    Return True
+		  End If
+		  
+		  If Column = 1 Then
+		    Dim Source As Beacon.LootSource = Me.RowTag(Row)
+		    If IsHighlighted And Not Source.IsValid Then
+		      If Me.Selected(Row) Then
+		        TextColor = &cFFFFFF
+		      Else
+		        TextColor = &c800000
+		      End If
+		    End If
+		    G.Bold = Not Source.IsValid
 		  End If
 		End Function
 	#tag EndEvent

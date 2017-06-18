@@ -6,9 +6,10 @@ Inherits Listbox
 		  #Pragma Unused Column
 		  
 		  Dim TextColor As Color
+		  Dim IsHighlighted As Boolean = Self.Highlighted
 		  If Row < Self.ListCount And Self.Selected(Row) Then
-		    G.ForeColor = if(Self.Highlighted, Self.SelectedRowColor, Self.SelectedRowColorInactive)
-		    TextColor = if(Self.Highlighted, Self.SelectedTextColor, Self.SelectedTextColorInactive)
+		    G.ForeColor = if(IsHighlighted, Self.SelectedRowColor, Self.SelectedRowColorInactive)
+		    TextColor = if(IsHighlighted, Self.SelectedTextColor, Self.SelectedTextColorInactive)
 		  Else
 		    G.ForeColor = if(Row Mod 2 = 0, Self.PrimaryRowColor, Self.AlternateRowColor)
 		    TextColor = Self.TextColor
@@ -16,7 +17,8 @@ Inherits Listbox
 		  
 		  G.FillRect(0, 0, G.Width, G.Height)
 		  
-		  Call CellBackgroundPaint(G, Row, Column, G.ForeColor, TextColor)
+		  Dim RefTextColor As Color = TextColor
+		  Call CellBackgroundPaint(G, Row, Column, G.ForeColor, TextColor, IsHighlighted)
 		  
 		  Return True
 		End Function
@@ -26,20 +28,23 @@ Inherits Listbox
 		Function CellTextPaint(g As Graphics, row As Integer, column As Integer, x as Integer, y as Integer) As Boolean
 		  #Pragma Unused X
 		  
+		  Dim IsHighlighted As Boolean = Self.Highlighted
+		  Dim RefTextColor As Color
 		  If Self.Selected(Row) Then
-		    G.ForeColor = if(Self.Highlighted, Self.SelectedTextColor, Self.SelectedTextColorInactive)
+		    RefTextColor = if(IsHighlighted, Self.SelectedTextColor, Self.SelectedTextColorInactive)
 		  Else
-		    G.ForeColor = Self.TextColor
+		    RefTextColor = Self.TextColor
 		  End If
 		  
 		  Dim LeftEdge As Integer = 0
 		  Dim DrawWidth As Integer = Self.Column(Column).WidthActual - 8
 		  Dim RightEdge As Integer = LeftEdge + DrawWidth
 		  
-		  If CellTextPaint(G, Row, Column, G.ForeColor, New Xojo.Core.Rect(LeftEdge, 0, DrawWidth, Self.DefaultRowHeight), Y) Then
+		  If CellTextPaint(G, Row, Column, RefTextColor, New Xojo.Core.Rect(LeftEdge, 0, DrawWidth, Self.DefaultRowHeight), Y, IsHighlighted) Then
 		    Return True
 		  End If
 		  
+		  G.ForeColor = RefTextColor
 		  G.TextFont = "System"
 		  
 		  Dim Contents As String = Self.Cell(Row, Column)
@@ -185,11 +190,11 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color) As Boolean
+		Event CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event CellTextPaint(G As Graphics, Row As Integer, Column As Integer, TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer) As Boolean
+		Event CellTextPaint(G As Graphics, Row As Integer, Column As Integer, ByRef TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
