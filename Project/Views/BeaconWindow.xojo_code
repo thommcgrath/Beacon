@@ -43,7 +43,21 @@ Inherits Window
 	#tag EndEvent
 
 	#tag Event
+		Sub Moved()
+		  If Self.mOpened Then
+		    RaiseEvent Moved
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
+		  Dim InitialWidth As Integer = Self.Width
+		  // Dumb workaround because contents are sizing 1 pixels too short.
+		  // A resize causes them to find their correct positions.
+		  Self.Width = InitialWidth + 1
+		  Self.Width = InitialWidth
+		  
 		  Dim MenuItem As New MenuItem(Self.Title)
 		  AddHandler MenuItem.Action, WeakAddressOf Self.mWindowMenuItem_Action
 		  
@@ -55,6 +69,17 @@ Inherits Window
 		  End If
 		  
 		  RaiseEvent Open
+		  
+		  Self.mOpened = True
+		  Self.Invalidate
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  If Self.mOpened Then
+		    RaiseEvent Resized
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -91,6 +116,12 @@ Inherits Window
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Opened() As Boolean
+		  Return Self.mOpened
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub UpdateWindowMenu()
 		  If Self.mWindowMenuItem <> Nil Then
 		    Self.mWindowMenuItem.Text = Self.Title
@@ -109,9 +140,21 @@ Inherits Window
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event Moved()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event Resized()
+	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mOpened As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mWindowMenuItem As MenuItem

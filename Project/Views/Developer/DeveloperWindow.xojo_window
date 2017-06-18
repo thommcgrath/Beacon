@@ -258,14 +258,7 @@ End
 
 	#tag Event
 		Sub Open()
-		  Dim InitialWidth As Integer = Self.Width
 		  Self.RecallPosition("Developer Window Position")
-		  If Self.Width = InitialWidth Then
-		    // Dumb workaround because contents are sizing 1 pixels too short.
-		    // A resize causes them to find their correct positions.
-		    Self.Width = InitialWidth + 1
-		    Self.Width = InitialWidth
-		  End If
 		  
 		  Dim Request As New BeaconAPI.Request("user.php/" + App.Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
 		  Self.Socket.Start(Request)
@@ -367,8 +360,6 @@ End
 		  G.FillRect(-1, -1, G.Width + 2, G.Height + 2)
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events Panel
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

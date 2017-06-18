@@ -244,6 +244,13 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub ContentsChanged()
+		  Self.ScanForErrors()
+		  Self.BeaconList.Invalidate()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub EnableMenuItems()
 		  FileSave.Enable
 		  FileSaveAs.Enable
@@ -298,6 +305,9 @@ End
 		    Self.mIsPublished = False
 		    Self.mPublishedByUser = True
 		  End If
+		  
+		  Self.ScanForErrors()
+		  ResolveIssuesDialog.Present(Self, Self.Doc)
 		End Sub
 	#tag EndEvent
 
@@ -371,6 +381,12 @@ End
 
 	#tag MenuHandler
 		Function FileExport() As Boolean Handles FileExport.Action
+			If Not Self.Doc.IsValid Then
+			Beep
+			ResolveIssuesDialog.Present(Self, Self.Doc)
+			Return True
+			End If
+			
 			Dim LootSources() As Beacon.LootSource = Self.Doc.LootSources
 			
 			If UBound(LootSources) = -1 Then
@@ -434,7 +450,7 @@ End
 		  
 		  Dim Packages As New Dictionary
 		  For Each Source As Beacon.LootSource In Sources
-		    If Self.Doc.HasBeacon(Source) Then
+		    If Self.Doc.HasLootSource(Source) Then
 		      Self.Doc.Remove(Source)
 		    End If
 		    Self.Doc.Add(Source)
@@ -645,6 +661,24 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ScanForErrors()
+		  If Self.Doc.IsValid Then
+		    Dim Button As FooterBarButton = Self.Footer.Button("ErrorsButton")
+		    If Button <> Nil Then
+		      Self.Footer.Remove(Button)
+		    End If
+		  Else
+		    Dim Button As FooterBarButton = Self.Footer.Button("ErrorsButton")
+		    If Button = Nil Then
+		      Button = New FooterBarButton("ErrorsButton", IconAlert, FooterBarButton.AlignRight)
+		      Button.Caption = "Issues"
+		      Self.Footer.Append(Button)
+		    End If
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ShowAddBeacon()
 		  //Dim LootSource As Beacon.LootSource = LootSourceAddSheet.Present(Self, Self.Doc)
 		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self, Self.Doc)
@@ -811,7 +845,9 @@ End
 		    If Me.Selected(I) Then
 		      Dim Source As Beacon.LootSource = Me.RowTag(I)
 		      Dicts.Append(Source.Export)
-		      Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue())
+		      If Source.IsValid Then
+		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue())
+		      End If
 		    End If
 		  Next
 		  
@@ -886,15 +922,9 @@ End
 		  Dim ReturnValue As Boolean
 		  Dim Source As Beacon.LootSource = Me.RowTag(Row)
 		  If Not Source.IsValid Then
-		    If Me.Selected(Row) Then
-		      If IsHighlighted Then
-		        G.ForeColor = &c800000
-		      Else
-		        G.ForeColor = &cD4BEBE
-		      End If
-		      G.FillRect(0, 0, G.Width, G.Height)
-		      ReturnValue = True
-		    End If
+		    G.ForeColor = BeaconUI.BackgroundColorForInvalidRow(G.ForeColor, IsHighlighted, Me.Selected(Row))
+		    G.FillRect(0, 0, G.Width, G.Height)
+		    ReturnValue = True
 		  End If
 		  
 		  If Column = 0 Then
@@ -924,14 +954,10 @@ End
 		  
 		  If Column = 1 Then
 		    Dim Source As Beacon.LootSource = Me.RowTag(Row)
-		    If IsHighlighted And Not Source.IsValid Then
-		      If Me.Selected(Row) Then
-		        TextColor = &cFFFFFF
-		      Else
-		        TextColor = &c800000
-		      End If
+		    If Not Source.IsValid Then
+		      TextColor = BeaconUI.TextColorForInvalidRow(IsHighlighted, Me.Selected(Row))
+		      G.Bold = True
 		    End If
-		    G.Bold = Not Source.IsValid
 		  End If
 		End Function
 	#tag EndEvent
@@ -949,13 +975,13 @@ End
 #tag Events Editor
 	#tag Event
 		Sub Updated()
-		  Self.ContentsChanged = True
-		  
 		  For I As Integer = 0 To BeaconList.ListCount - 1
 		    If BeaconList.Selected(I) Then
 		      BeaconList.Cell(I, 0) = Beacon.LootSource(BeaconList.RowTag(I)).Label
 		    End If
 		  Next
+		  
+		  Self.ContentsChanged = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -976,6 +1002,8 @@ End
 		    End If
 		  Case "DeleteButton"
 		    Self.RemoveSelectedBeacons()
+		  Case "ErrorsButton"
+		    ResolveIssuesDialog.Present(Self, Self.Doc)
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -986,7 +1014,7 @@ End
 		    Dim Base As New MenuItem
 		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("")
 		    For I As Integer = UBound(LootSources) DownTo 0
-		      If Self.Doc.HasBeacon(LootSources(I)) Then
+		      If Self.Doc.HasLootSource(LootSources(I)) Then
 		        LootSources.Remove(I)
 		        Continue For I
 		      End If

@@ -1,270 +1,258 @@
 #tag Window
-Begin BeaconMultiview LibraryWindow
+Begin Window ResolveIssuesDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   CloseButton     =   True
+   CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   0
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   450
+   Height          =   400
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
    MaxHeight       =   32000
-   MaximizeButton  =   True
+   MaximizeButton  =   False
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   450
-   MinimizeButton  =   True
-   MinWidth        =   800
-   Placement       =   2
+   MinHeight       =   64
+   MinimizeButton  =   False
+   MinWidth        =   64
+   Placement       =   1
    Resizeable      =   True
-   Title           =   "Library"
+   Title           =   "Document Issues"
    Visible         =   True
-   Width           =   800
-   Begin TabHeader TabHeader
-      AcceptFocus     =   False
-      AcceptTabs      =   False
+   Width           =   600
+   Begin Label MessageLabel
       AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
+      Bold            =   True
+      DataField       =   ""
+      DataSource      =   ""
       Enabled         =   True
-      EraseBackground =   True
-      Height          =   30
+      Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Inverted        =   False
-      Left            =   0
+      Italic          =   False
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
+      Multiline       =   False
       Scope           =   2
+      Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
+      Text            =   "This document has problems that must be resolved"
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
       Transparent     =   True
-      UseFocusRing    =   True
-      Value           =   0
+      Underline       =   False
       Visible         =   True
-      Width           =   800
+      Width           =   560
    End
-   Begin ControlCanvas TabSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
+   Begin PushButton ActionButton
       AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "OK"
+      Default         =   False
       Enabled         =   True
-      EraseBackground =   True
-      Height          =   1
+      Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
+      Italic          =   False
+      Left            =   500
+      LockBottom      =   True
       LockedInPosition=   False
-      LockLeft        =   True
+      LockLeft        =   False
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   30
-      Transparent     =   True
-      UseFocusRing    =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   360
+      Underline       =   False
       Visible         =   True
-      Width           =   800
+      Width           =   80
    End
-   Begin PagePanel Panel
+   Begin BeaconListbox IssuesList
       AutoDeactivate  =   True
+      AutoHideScrollbars=   True
+      Bold            =   False
+      Border          =   True
+      ColumnCount     =   1
+      ColumnsResizable=   False
+      ColumnWidths    =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      DefaultRowHeight=   22
       Enabled         =   True
-      Height          =   419
+      EnableDrag      =   False
+      EnableDragReorder=   False
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
+      HasHeading      =   False
+      HeadingIndex    =   -1
+      Height          =   296
       HelpTag         =   ""
+      Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   0
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   20
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
-      Panels          =   ""
+      RequiresSelection=   False
       Scope           =   2
+      ScrollbarHorizontal=   False
+      ScrollBarVertical=   True
+      SelectionType   =   0
       TabIndex        =   2
       TabPanelIndex   =   0
-      Top             =   31
-      Value           =   1
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   52
+      Underline       =   False
+      UseFocusRing    =   True
       Visible         =   True
-      Width           =   800
-      Begin LibraryDocumentsView DocsView
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
-         Backdrop        =   0
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   419
-         HelpTag         =   ""
-         InitialParent   =   "Panel"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   31
-         Transparent     =   True
-         UseFocusRing    =   False
-         Visible         =   True
-         Width           =   800
-      End
-      Begin LibraryPresetsView PresetsView
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
-         Backdrop        =   0
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   419
-         HelpTag         =   ""
-         InitialParent   =   "Panel"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Top             =   31
-         Transparent     =   True
-         UseFocusRing    =   False
-         Visible         =   True
-         Width           =   800
-      End
+      Width           =   560
+      _ScrollOffset   =   0
+      _ScrollWidth    =   -1
    End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
-		  Self.mInstance = Nil
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Function GetPageAtIndex(Index As Integer) As BeaconSubview
-		  Select Case Index
-		  Case 0
-		    Return Self.DocsView
-		  Case 1
-		    Return Self.PresetsView
-		  End Select
-		End Function
-	#tag EndEvent
-
-	#tag Event
-		Sub Moved()
-		  Self.SavePosition("Library Window Position")
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
-		  Self.RecallPosition("Library Window Position")
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resized()
-		  Self.SavePosition("Library Window Position")
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub SetCurrentPage(Index As Integer)
-		  If Self.TabHeader.Value <> Index Then
-		    Self.TabHeader.Value = Index
-		  End If
-		  If Self.Panel.Value <> Index Then
-		    Self.Panel.Value = Index
-		  End If
+		  For Each Issue As String In Self.Issues
+		    IssuesList.AddRow(Issue)
+		  Next
 		End Sub
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h0
-		Shared Function SharedWindow(Create As Boolean = True) As LibraryWindow
-		  If mInstance = Nil And Create = True Then
-		    mInstance = New LibraryWindow
+	#tag Method, Flags = &h21
+		Private Sub Constructor(Document As Beacon.Document, Issues() As String)
+		  Self.Issues = Issues
+		  Self.Document = Document
+		  SUper.Constructor()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function DescribeIssues(Document As Beacon.Document) As String()
+		  Dim Issues As New Dictionary
+		  
+		  Dim EmptyOptionsCount As Integer
+		  For Each Source As Beacon.LootSource In Document.LootSources
+		    If Source.IsValid Then
+		      Continue
+		    End If
+		    
+		    If Source.Count = 0 Then
+		      Issues.Value("Loot source " + Source.Label + " is empty.") = True
+		    Else
+		      For Each Set As Beacon.ItemSet In Source
+		        If Set.IsValid Then
+		          Continue
+		        End If
+		        
+		        If Set.Count = 0 Then
+		          Issues.Value("Item set " + Set.Label + " of loot source " + Source.Label + " is empty.") = True
+		        Else
+		          For Each Entry As Beacon.SetEntry In Set
+		            If Entry.IsValid Then
+		              Continue
+		            End If
+		            
+		            If Entry.Count = 0 Then
+		              EmptyOptionsCount = EmptyOptionsCount + 1
+		            Else
+		              For Each Option As Beacon.SetEntryOption In Entry
+		                If Option.IsValid Then
+		                  Continue
+		                End If
+		                
+		                If Option.Engram = Nil Then
+		                  EmptyOptionsCount = EmptyOptionsCount + 1
+		                Else
+		                  Issues.Value("Beacon does not know the blueprint for " + Option.Engram.ClassString + ".") = True
+		                End If
+		              Next
+		            End If
+		          Next
+		        End If
+		      Next
+		    End If
+		  Next
+		  
+		  If EmptyOptionsCount = 1 Then
+		    Issues.Value("A set entry has no engrams selected.") = True
+		  ElseIf EmptyOptionsCount > 1 Then
+		    Issues.Value(Str(EmptyOptionsCount, "-0") + " set entries have no engrams selected.") = True
 		  End If
-		  Return mInstance
+		  
+		  Dim Keys() As Variant = Issues.Keys
+		  Dim List() As String
+		  For Each Key As String In Keys
+		    List.Append(Key)
+		  Next
+		  List.Sort
+		  Return List
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub ShowPreset(Preset As Beacon.Preset)
-		  Dim Win As LibraryWindow = LibraryWindow.SharedWindow(False)
-		  If Win = Nil Then
-		    // Not visible, show it
-		    Win = LibraryWindow.SharedWindow(True)
-		    Win.Show
+		Shared Sub Present(Parent As Window, Document As Beacon.Document)
+		  Dim Issues() As String = ResolveIssuesDialog.DescribeIssues(Document)
+		  If UBound(Issues) = -1 Then
+		    Return
 		  End If
-		  Win.ShowPage(1, Preset)
+		  
+		  Dim Win As New ResolveIssuesDialog(Document, Issues)
+		  Win.ShowModalWithin(Parent.TrueWindow)
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private Shared mInstance As LibraryWindow
+		Private Document As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Issues() As String
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events TabHeader
+#tag Events ActionButton
 	#tag Event
-		Sub Change()
-		  If Self.CurrentPage <> Me.Value Then
-		    Self.ShowPage(Me.Value)
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.Append("Documents")
-		  Me.Append("Presets")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events TabSeparator
-	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused areas
-		  
-		  G.ForeColor = if(TabHeader.Inverted, &c000000, &cBBBBBB)
-		  G.FillRect(-1, -1, G.Width + 2, G.Height + 2)
+		Sub Action()
+		  Self.Close
 		End Sub
 	#tag EndEvent
 #tag EndEvents

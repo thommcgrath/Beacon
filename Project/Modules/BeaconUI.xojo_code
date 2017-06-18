@@ -1,5 +1,19 @@
 #tag Module
 Protected Module BeaconUI
+	#tag Method, Flags = &h1
+		Protected Function BackgroundColorForInvalidRow(InitialColor As Color, Highlighted As Boolean, Selected As Boolean) As Color
+		  If Selected Then
+		    If Highlighted Then
+		      Return &c800000
+		    Else
+		      Return &cD4BEBE
+		    End If
+		  Else
+		    Return InitialColor
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub RecallPosition(Extends Win As Window, Key As Text)
 		  Dim Rect As Xojo.Core.Rect = App.Preferences.RectValue(Key, Nil)
@@ -71,6 +85,20 @@ Protected Module BeaconUI
 		  Dialog.Explanation = Explanation
 		  Call Dialog.ShowModal()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function TextColorForInvalidRow(Highlighted As Boolean, Selected As Boolean) As Color
+		  If Selected Then
+		    If Highlighted Then
+		      Return &cFFFFFF
+		    Else
+		      Return &c000000
+		    End If
+		  Else
+		    Return &c800000
+		  End If
+		End Function
 	#tag EndMethod
 
 

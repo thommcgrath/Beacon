@@ -863,31 +863,19 @@ End
 		  
 		  Dim Entry As Beacon.SetEntry = Me.RowTag(Row)
 		  If Not Entry.IsValid Then
-		    If Me.Selected(Row) Then
-		      If IsHighlighted Then
-		        G.ForeColor = &c800000
-		      Else
-		        G.ForeColor = &cD4BEBE
-		      End If
-		      G.FillRect(0, 0, G.Width, G.Height)
-		      Return True
-		    Else
-		      Return False
-		    End If
+		    G.ForeColor = BeaconUI.BackgroundColorForInvalidRow(G.ForeColor, IsHighlighted, Me.Selected(Row))
+		    G.FillRect(0, 0, G.Width, G.Height)
+		    Return True
 		  End If
 		End Function
 	#tag EndEvent
 	#tag Event
 		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, ByRef TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
 		  Dim Entry As Beacon.SetEntry = Me.RowTag(Row)
-		  If IsHighlighted And Not Entry.IsValid Then
-		    If Me.Selected(Row) Then
-		      TextColor = &cFFFFFF
-		    Else
-		      TextColor = &c800000
-		    End If
+		  If Not Entry.IsValid Then
+		    TextColor = BeaconUI.TextColorForInvalidRow(IsHighlighted, Me.Selected(Row))
+		    G.Bold = Not Entry.IsValid
 		  End If
-		  G.Bold = Not Entry.IsValid
 		End Function
 	#tag EndEvent
 #tag EndEvents

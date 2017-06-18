@@ -67,7 +67,7 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasBeacon(LootSource As Beacon.LootSource) As Boolean
+		Function HasLootSource(LootSource As Beacon.LootSource) As Boolean
 		  For I As Integer = 0 To UBound(Self.mLootSources)
 		    If Self.mLootSources(I) = LootSource Then
 		      Return True
@@ -79,6 +79,17 @@ Protected Class Document
 	#tag Method, Flags = &h0
 		Function Identifier() As Text
 		  Return Self.mIdentifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsValid() As Boolean
+		  For Each Source As Beacon.LootSource In Self.mLootSources
+		    If Not Source.IsValid Then
+		      Return False
+		    End If
+		  Next
+		  Return True
 		End Function
 	#tag EndMethod
 
@@ -277,6 +288,11 @@ Protected Class Document
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsPublic"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
