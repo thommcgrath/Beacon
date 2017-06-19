@@ -90,7 +90,7 @@ $engrams_deleted = array();
 $engrams_deleted_classic = array();
 if ($delete_results !== null) {
 	while (!$delete_results->EOF()) {
-		$path = $results->Field('unique_id');
+		$path = $delete_results->Field('unique_id');
 		$class = BeaconEngram::ClassFromPath($path);
 		$engrams_deleted[] = $path;
 		$engrams_deleted_classic[] = $class;
