@@ -6,14 +6,42 @@
 
 It is **very strongly recommended** that users not only rebuild their configs, but also inspect some of their item set entries. There is a new "Simulation" section in the entry editor that will give you an idea of how Ark will pick its loot. There is a very good chance this will not be what you expect, so adjustments to your file are likely necessary.
 
-- Beacon documents now format their contents nicely, making them easier to version control.
-- Beacon now supports mods! Users can register their mods with Beacon and manage the items within the mod for Beacon users to easily use. Just give Beacon a file of spawn codes or a URL to the codes online, and it'll try its best to parse out all the items.
-- New document browser! Find documents shared by other users, see which documents you've shared, see stats like download count, and more.
+### Custom Items
+
+Beacon has changed from using class strings (such as PrimalItemResource_Wood_C) to blueprint paths. For most documents, this will be an inconsequential change. For documents using custom/mod engrams, there are two side effects:
+
+1. Most importantly, since blueprint paths are unique, there is no possibility of conflict. There are some mods will share the same class strings which confuses Ark's loot generation. Using blueprint paths solves this issue.
+2. Beacon *must* have a blueprint path for each item. Since custom items were only supplied with class strings in the past, this means Beacon cannot generate a proper config for documents which have custom items. So Beacon has a new "problem resolution" dialog which will alert authors for problems such as this. The solution is to simply paste in cheat/spawn codes. Beacon will extract what it needs automatically.
+
+Despite these changes, the Beacon document format remains backwards compatible.
+
+### Library
+
+The "Preset Library" has been moved into a new "Library" window. In addition to the presets previously available, the Library now contains a document browser and engram manager.
+
+The document browser allows users to discover popular configurations, publish their own, or unpublish previously published documents.
+
+The engram manager allows users to import lists of spawn/cheat codes to maintain a persistent list of custom items. The import process will attempt to guess at item names, but users can adjust the name and other settings.
+
+### Other New Features & Changes
+
+- Beacon documents and presets now format their contents nicely, making them easier to version control.
+- Beacon now supports mods! Mod authors can register their mods with Beacon and manage the items within the mod for Beacon users to easily use. Just give Beacon a file of spawn codes or a URL to the codes online, and it'll try its best to parse out all the items. Mod authors may also publish their engram lists to their own servers in JSON or CSV format, and Beacon will maintain its database accordingly.
 - Improved identity management. All Beacon users have an "identity" file which authenticates their online actions. Now this identity can be backed up and restored, as well as making it easy to view the identity key pair.
 - Public Beacon API! Anybody can manage documents, mods, and engrams however they please. The new 'Developer Tools' window has built-in an 'API Guide' section for learning about the API, and an 'API Builder' section for generating sample API code.
-- New admin spawn code list at https://beaconapp.cc/spawn/ - if Beacon knows about it, including mod items, you can find it and its spawn code here. Mod authors may even link to this from their Steam page using https://beaconapp.cc/spawn/<mod_id> to show only items for that mod.
-- Custom engrams are now better supported. Now you can simply paste spawn commands directly into the field at the top of the item editor. And a bug has been fixed preventing custom items from appearing in the list during editing.
+- New admin spawn code list at https://beaconapp.cc/spawn/ - if Beacon knows about it, including mod items, you can find it and its spawn code here. Mod authors may even link to this from their Steam page using https://beaconapp.cc/spawn/?mod_id=<mod_id> to show only items for that mod.
+- It is now possible to paste a spawn/cheat code or blueprint path into the entry editor's filter field.
 - Entry editing has a new UI! Per-engram weights are now supported, and there is a new "Simulation" section. This will give you a live idea of how Ark will choose items based on your settings.
+
+### Bug Fixes
+
+- Fixed an issue with engrams not automatically updating.
+- Improved tab order in most, if not all, views.
+- Fixed some UI elements being too short on Windows.
+- Default and Cancel buttons have been swapped on Windows to better match system standards.
+- Beacon will swap min/max values when the maximum is less than the minimum.
+- Weight values from imported configurations will be respected down to 0.0001 instead of 0.01.
+- Fixed an issue with custom items appearing in the entry editor when editing an existing entry.
 
 ## Build 14 (Beta 7)
 
