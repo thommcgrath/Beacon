@@ -177,6 +177,10 @@ Implements Beacon.DataSource
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Try
+		    If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
+		      ClassString = ClassString + "_C"
+		    End If
+		    
 		    Dim RS As RecordSet = Self.SQLSelect("SELECT path, label, availability, can_blueprint FROM engrams WHERE LOWER(class_string) = LOWER(?1);", ClassString)
 		    If RS.RecordCount = 0 Then
 		      Return Nil
