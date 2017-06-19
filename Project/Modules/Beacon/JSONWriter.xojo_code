@@ -6,11 +6,13 @@ Inherits Beacon.Thread
 		  Self.mSuccess = False
 		  Self.mFinished = False
 		  Self.mRunning = True
+		  Self.mLock.Enter
 		  Try
-		    Self.Write
+		    Self.mSuccess = Self.WriteSynchronous(Self.mSource, Self.mDestination)
 		  Catch Err As RuntimeException
 		    
 		  End Try
+		  Self.mLock.Leave
 		  Self.mFinished = True
 		  Self.mRunning = False
 		  RaiseEvent Finished
@@ -21,22 +23,22 @@ Inherits Beacon.Thread
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub Constructor(Source As Xojo.Core.Dictionary, Destination As Global.FolderItem)
 		  Super.Constructor
-		  Self.Source = Source
-		  Self.Destination = Destination
-		  Self.Lock = New Mutex(EncodeHex(Crypto.MD5(Lowercase(Destination.NativePath))))
+		  Self.mSource = Source
+		  Self.mDestination = Destination
+		  Self.mLock = New Mutex(EncodeHex(Crypto.MD5(Lowercase(Destination.NativePath))))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
 		Sub Constructor(Source As Xojo.Core.Dictionary, Destination As Xojo.IO.FolderItem)
 		  Super.Constructor
-		  Self.Source = Source
-		  Self.Destination = Destination
+		  Self.mSource = Source
+		  Self.mDestination = Destination
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function JSONPrettyPrint(json As Text) As Text
+		Private Shared Function JSONPrettyPrint(json As Text) As Text
 		  // From https://forum.xojo.com/conversation/post/332504
 		  
 		  const kBuffer as text = &u09
@@ -81,7 +83,7 @@ Inherits Beacon.Thread
 		      outArr.Append indents( indents.Ubound )
 		      
 		    elseif char = ":" then
-		      outArr.Append " : "
+		      outArr.Append ": "
 		      
 		    elseif char = &u0A or char = &u0D or char = " " or char = &u09 then
 		      //
@@ -99,13 +101,13 @@ Inherits Beacon.Thread
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Private Sub Write()
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Shared Function WriteSynchronous(Source As Xojo.Core.Dictionary, File As Global.FolderItem) As Boolean
 		  // Prepare
-		  Dim Content As Text = Xojo.Data.GenerateJSON(Self.Source)
+		  Dim Content As Text = Xojo.Data.GenerateJSON(Source)
 		  
 		  // Pretty
-		  Content = Self.JSONPrettyPrint(Content)
+		  Content = JSONPrettyPrint(Content)
 		  
 		  // Temporary
 		  Dim Temp As FolderItem = SpecialFolder.Temporary.Child(Beacon.CreateUUID + ".beacon")
@@ -116,35 +118,31 @@ Inherits Beacon.Thread
 		  Stream.Close
 		  
 		  // Delete the existing one
-		  Self.Lock.Enter
-		  If Destination.Exists Then
-		    Destination.Delete
-		    Dim Err As Integer = Destination.LastErrorCode
+		  If File.Exists Then
+		    File.Delete
+		    Dim Err As Integer = File.LastErrorCode
 		    If Err <> 0 Then
-		      Self.Lock.Leave
-		      Return
+		      Return False
 		    End If
 		  End If
 		  
 		  // Move the temporary
-		  Temp.MoveFileTo(Destination)
+		  Temp.MoveFileTo(File)
 		  If Temp.LastErrorCode <> 0 Then
 		    Dim Err As Integer = Temp.LastErrorCode
 		    If Err <> 0 Then
-		      Self.Lock.Leave
-		      Return
+		      Return False
 		    End If
 		  End If
 		  
-		  Self.mSuccess = True
-		  Self.Lock.Leave
-		End Sub
+		  Return True
+		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Private Sub Write()
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
+		Shared Function WriteSynchronous(Source As Xojo.Core.Dictionary, File As Xojo.IO.FolderItem) As Boolean
 		  // Prepare
-		  Dim Content As Text = Xojo.Data.GenerateJSON(Self.Source)
+		  Dim Content As Text = Xojo.Data.GenerateJSON(Source)
 		  
 		  // Pretty
 		  Content = Self.JSONPrettyPrint(Content)
@@ -158,13 +156,13 @@ Inherits Beacon.Thread
 		  Stream.Close
 		  
 		  // Delete the existing one
-		  If Destination.Exists Then
-		    Destination.Delete
+		  If File.Exists Then
+		    File.Delete
 		  End If
 		  
 		  // Move the temporary
-		  Temp.MoveTo(Destination)
-		End Sub
+		  Temp.MoveTo(File)
+		End Function
 	#tag EndMethod
 
 
@@ -173,12 +171,8 @@ Inherits Beacon.Thread
 	#tag EndHook
 
 
-	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Private Destination As Global.FolderItem
-	#tag EndProperty
-
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Private Destination As Xojo.IO.FolderItem
+		Private mDestination As Xojo.IO.FolderItem
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -191,15 +185,23 @@ Inherits Beacon.Thread
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Private Lock As Mutex
+		Private mDestination As Global.FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mFinished As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Private mLock As Mutex
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mRunning As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSource As Xojo.Core.Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -214,10 +216,6 @@ Inherits Beacon.Thread
 		#tag EndGetter
 		Running As Boolean
 	#tag EndComputedProperty
-
-	#tag Property, Flags = &h21
-		Private Source As Xojo.Core.Dictionary
-	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter

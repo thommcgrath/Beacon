@@ -309,20 +309,13 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub ToFile(File As Global.FolderItem)
-		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.ToDictionary)
-		  Dim Stream As TextOutputStream = TextOutputStream.Create(File)
-		  Stream.Write(Contents)
-		  Stream.Close
+		  Call Beacon.JSONWriter.WriteSynchronous(Self.ToDictionary, File)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
 		Sub ToFile(File As Xojo.IO.FolderItem)
-		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.ToDictionary)
-		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Contents)
-		  Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(File, Xojo.IO.BinaryStream.LockModes.Write)
-		  Stream.Write(Bytes)
-		  Stream.Close
+		  Call Beacon.JSONWriter.WriteSynchronous(Self.ToDictionary, File)
 		End Sub
 	#tag EndMethod
 
