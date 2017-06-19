@@ -24,6 +24,7 @@ Once one user confirms ownership of the mod, no other user may register it. The 
   "resource_url": "https://thezaz.com/beacon/api/mod.php/123456",
   "confirm_url": "https://thezaz.com/beacon/api/mod.php/123456?action=confirm",
   "engrams_url": "https://thezaz.com/beacon/api/engram.php?mod_id=123456",
+  "spawncodes_url": "https://beaconapp.cc/spawn/?mod_id=123456",
   "pull_api": null
 }
 ```
@@ -38,6 +39,7 @@ Once one user confirms ownership of the mod, no other user may register it. The 
 | resource_url | API URL of this mod |
 | confirm_url | To attempt confirmation of this mod, perform an authenticated `GET` to this url. |
 | engrams_url | Query the list of engrams for this mod using this url. |
+| spawncodes_url | URL that can be published for users to look up spawn commands for this mod. |
 | pull_url | The url that Beacon will automatically pull engrams from. See [Engrams Pull API](pull_api.md). May be null. |
 
 ## GET

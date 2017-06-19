@@ -8,9 +8,6 @@ $win_url = $results->Field('win_url');
 $version = $results->Field('build_display');
 $build   = $results->Field('build_number');
 
-$results = $database->Query("SELECT COUNT(classstring) AS preset_count FROM presets;");
-$preset_count = $results->Field("preset_count");
-
 $results = $database->Query("SELECT MAX(last_update) FROM updatable_objects WHERE min_version IS NULL OR min_version <= $1;", array($build));
 $last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
 

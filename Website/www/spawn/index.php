@@ -3,7 +3,7 @@ require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
 BeaconTemplate::SetTitle('Item Spawn Codes');
 BeaconTemplate::AddHeaderLine('<script src="spawncodes.js"></script>');
 BeaconTemplate::AddHeaderLine('<link href="spawncodes.css" rel="stylesheet" media="all" type="text/css">');
-$mod_id = BeaconAPI::ObjectID();
+$mod_id = array_key_exists('mod_id', $_GET) ? $_GET['mod_id'] : null;
 $database = BeaconCommon::Database();
 
 $results = $database->Query("SELECT build_number FROM updates ORDER BY build_number DESC LIMIT 1;");

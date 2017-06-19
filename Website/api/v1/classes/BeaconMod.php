@@ -126,6 +126,7 @@ class BeaconMod implements JsonSerializable {
 			'resource_url' => BeaconAPI::URL('/mod.php/' . $this->workshop_id),
 			'confirm_url' => BeaconAPI::URL('/mod.php/' . $this->workshop_id . '?action=confirm'),
 			'engrams_url' => BeaconAPI::URL('/engram.php?mod_id=' . $this->workshop_id),
+			'spawncodes_url' => BeaconCommon::AbsoluteURL('/spawn/?mod_id=' . $this->workshop_id),
 			'pull_url' => $this->pull_url
 		);
 	}
