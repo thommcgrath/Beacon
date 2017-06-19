@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>User - Beacon API</title>
+        <title>Pull API - Beacon API</title>
         <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
         <link href="../css/base.css" rel="stylesheet">
@@ -48,7 +48,7 @@
                     <li >
                         <a href="..">Home</a>
                     </li>
-                    <li class="dropdown active">
+                    <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Objects <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             
@@ -64,16 +64,16 @@
     <a href="../mod/">Mod</a>
 </li>
                             
-<li class="active">
-    <a href="./">User</a>
+<li >
+    <a href="../user/">User</a>
 </li>
                         </ul>
                     </li>
                     <li >
                         <a href="../authenticating/">Authenticating</a>
                     </li>
-                    <li >
-                        <a href="../pull_api/">Pull API</a>
+                    <li class="active">
+                        <a href="./">Pull API</a>
                     </li>
                 </ul>
 
@@ -84,12 +84,12 @@
                     </a>
                 </li>
                     <li >
-                        <a rel="next" href="../mod/">
+                        <a rel="next" href="../authenticating/">
                             <i class="fa fa-arrow-left"></i> Previous
                         </a>
                     </li>
-                    <li >
-                        <a rel="prev" href="../authenticating/">
+                    <li class="disabled">
+                        <a rel="prev" >
                             Next <i class="fa fa-arrow-right"></i>
                         </a>
                     </li>
@@ -101,57 +101,50 @@
         <div class="container">
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
-        <li class="main active"><a href="#the-user-object">The User Object</a></li>
-            <li><a href="#user-structure">User Structure</a></li>
-            <li><a href="#get">GET</a></li>
-            <li><a href="#post">POST</a></li>
-            <li><a href="#delete">DELETE</a></li>
+        <li class="main active"><a href="#engrams-pull-api">Engrams Pull API</a></li>
+            <li><a href="#getting-started">Getting Started</a></li>
+            <li><a href="#file-format">File Format</a></li>
+            <li><a href="#errors">Errors</a></li>
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="the-user-object">The User Object</h1>
-<p>The User object represents the extremely minimal data available about a user. Users can be created, queried, and deleted.</p>
-<p>The endpoint is https://api.beaconapp.cc/v1/user.php</p>
-<h3 id="user-structure">User Structure</h3>
-<pre><code class="json">{
-  &quot;user_id&quot;: &quot;f08d5f69-214b-4e1c-910b-9ea57406f8c5&quot;,
-  &quot;public_key&quot;: &quot;-----BEGIN PUBLIC KEY-----\nMIIBIDAN...\n-----END PUBLIC KEY-----&quot;
-}
+<h1 id="engrams-pull-api">Engrams Pull API</h1>
+<p>Rather than using Beacon's UI or API, there is a third way to maintain a list of engrams for a mod: pull.</p>
+<p>This option allows developers to host a file on any server of their choosing and updated it whenever and however they choose. The Beacon server will pull the file daily and synchronize its engrams database using the content of the file. The engrams for the mod in question will be updated to exactly match the file's contents, meaning missing engrams will be removed.</p>
+<h2 id="getting-started">Getting Started</h2>
+<p>To begin, developers have two options:</p>
+<ol>
+<li>Either set the <code>pull_url</code> key of the mod structure to the url.</li>
+<li>Use Beacon's Developer Tools to set the url. Go to the <a href="beacon://action/showmods">mods section</a> and select the mod. Use the settings icon at the bottom of the list and set the url there.</li>
+</ol>
+<h2 id="file-format">File Format</h2>
+<p>Developers can choose to provide the data one of the following formats. The server must reply with a 200 status and provide the correct Content-Type header.</p>
+<h3 id="json">JSON</h3>
+<p>Content-Type: application/json</p>
+<p>This file content is identical to the <a href="../engram/#post">engram.php POST</a> method content. The <code>mod_id</code> key is optional, but will be ignored if provided.</p>
+<pre><code class="json">[
+  {
+    &quot;class&quot;: &quot;Prefix_MyEngram_C&quot;,
+    &quot;label&quot;: &quot;My Engram&quot;,
+    &quot;availability&quot;: [
+      &quot;Island&quot;,
+      &quot;Scorched&quot;
+    ],
+    &quot;can_blueprint&quot;: true
+  }
+]
 </code></pre>
 
-<h2 id="get">GET</h2>
-<p>Authentication is not required. Must supply one or more user UUIDs as the final path component. Listing users is not allowed and will result in a 405 result code. UUIDs are not case sensitive.</p>
-<pre><code class="http">GET /beacon/api/user.php/f08d5f69-214b-4e1c-910b-9ea57406f8c5 HTTP/1.1
-Host: beaconapp.cc
-
-HTTP/1.1 200 OK
-Content-Type: text/plain
-
-{ user structure }
+<h3 id="csv">CSV</h3>
+<p>Content-Type: text/csv</p>
+<p>The CSV file must contain a header row. The columns must match the <a href="../engram.php#engram-structure">engram structure</a>. The <code>mod_id</code> key is optional, but will be ignored if provided. The <code>availability</code> column may be a comma-separated string.</p>
+<pre><code class="csv">&quot;class&quot;,&quot;label&quot;,&quot;availability&quot;,&quot;can_blueprint&quot;
+&quot;Prefix_MyEngram_C&quot;,&quot;My Engram&quot;,&quot;Island,Scorched&quot;,&quot;true&quot;
 </code></pre>
 
-<p>If none of the users were found, a 404 result code will be returned. If a single user is found, the result will be a JSON struct. If multiple users are found, the result will be an JSON array of structs.</p>
-<h2 id="post">POST</h2>
-<p>Authentication is not required to create a user. POST body must contain one or more complete user structures. Content-Type header must be application/json. A 400 error will be returned if these rules are violated or the user already exists.</p>
-<pre><code class="http">POST /beacon/api/user.php/f08d5f69-214b-4e1c-910b-9ea57406f8c5 HTTP/1.1
-Host: beaconapp.cc
-Authorization: Basic QTcwRjNENjAtQTI4MS00QzQ1LTgwQTAtQUQ2OUI3MzhENTY4OjRCQzQ3NTY2RjZDQjlBNjdBMTA5QTMzMThCMEVFQ0FGMUE0MTZCQkM0NkQwQTNCMzVEMkYzRjEzRTFFNDRERjMxREUwRDU0QTIwNUFCRjgxODlGMTEyRUE5MkQzOUI1REE5NTVDMjI3MkY2MDZCRTdBMjJENTAxNEFGNkY3NERGNEY4NkQ1RDZFNTI2MjJERDNBODZBMzNDOTNFNEZGOUU3NTcwOEUzNUYwMTkwQjY2OTc0RDkwRDk0RTZEODgzN0M5ODQzRTRDRDMxMjU5MUY3NTc1QjVEMDczQjRFMUJBRTYwMjIwRDZGOEVDQTBFNkRBNjMxRkQ5NkM1QjI5MTY5NUFFMzFCRkU0RTFFNjI3QTc2Nzk2MDQzRDg0MUUwQ0U4OUVBNDlCQTc0ODI2N0Q0MjYwNjcxNTM2NzU4MURCMjZFRkY1OTVGQUVDRjQyMDU1MjAxMzJCQzdERjUxNTEwOTVERjUyNjk0NUY1MTQ1NjBDRDIyQ0ZCODhGQTRBQzFBNzRENUZGMzhDQzE5QTEwNkQxMDc5MkZFQjA2QTFEM0E5RDQ1NTRGMTBEMkE1QTFDQkQ1MjhDQUU2QkIwMzc2QzVFRjBFOURGMEIzQUVGMjRDQTUwN0NEOEE1MzNERjFFODhCRkExQUEwMzBEM0JCN0QzOTNBMUYxQTUzNTAx
-Content-Type: application/json
-
-{&quot;user_id&quot;:&quot;f08d5f69-214b-4e1c-910b-9ea57406f8c5&quot;,&quot;public_key&quot;:&quot;30820120300D06092A864886F70D01010105000382010D00308201080282010100DD03A7736A369F47DC484E95F929A69D1417AC22629FBAC445C218166772B1E88D7B9CA4830F12E625C70767D33BEF2673450106D3EC04AE164391C0C5D1555F7764A2A34798C172F05EE313C55FE6A4D69B0CC1593E49E751059E275303E99113FC91B0CD2825D203830D92C84D4625F0A5D026E886B244B5197A90AE6F2B354670951F1D0FE68C37DF5B25FDF131A2E58591B288CA60B4967BDC4B4E8056DBB923774360EFCAAD4548716A758F3EB574E21A66ED37B885FE3E5A5E0531DEF99600C474775E15ADF903511AC097CDCCD294670CAB1E980B9317CBC920B7FD59C365C9AEF9EE40C3F192A83DEAB357839DECE395994665181C351208F0110057020111&quot;}
-
-HTTP/1.1 200 OK
-</code></pre>
-
-<h2 id="delete">DELETE</h2>
-<p>Authentication is required. Final path component must be the authenticated user's UUID. Deleting other users is not possible. Deleting a user will remove all documents, mods, and engrams.</p>
-<pre><code class="http">DELETE /beacon/api/user.php/f08d5f69-214b-4e1c-910b-9ea57406f8c5 HTTP/1.1
-Host: beaconapp.cc
-Authorization: Basic QTcwRjNENjAtQTI4MS00QzQ1LTgwQTAtQUQ2OUI3MzhENTY4Ojg0QzIyMjJCMEJCRjFGMzlBMUMyNkM3OTNDQTc4NzFFM0NFM0I4Mjc1REIwNUEyRjBCQjY5NEU0QUVBQ0Y4ODcwOTQ2QzQ1RjdDOTE2RDU4QkFEODY5QUUyMzUzQTc1MjM0Q0I0NTM0ODM0QkQ0OEExMzMzRTdGMjdFOEM3OEYzNjJEMUZFM0IyNjczRDc1ODQ5NDkxQTEwRTNFNjQzMzNGRTFGRDhGM0E4Nzc1OUYzQ0UxMzJCODkzNTc4NkQyNDdGOTNENTE4REIzQ0ExNEIwRkI5OEFGMTg2NDE3OURCMTcxODQ3NjRFMzhCOTI3Q0RENjUwRjZGMEM4NzE2Q0UxNUE3NTcyMkUxMTFDOThDRUU5Mjg5ODQzRTJFRjJDQjBGOEQ0MURGNTA4ODk4QTYzQjdDRjJERjYyNkM3RUE5MThDMzhGQkY4QzMxMEQ2QTNCNjg2N0E2QTAzQTY5NzJDOTNEMEI1RERDODk2MjNFQUI2MEU2QzlDREUwM0VCN0Y0RDc5ODZCQTVCMEJDNDM4NkQxM0EzMEFGN0VENDhBQUM1QUE3OTE0MDg1QTJCQzE2MTE0QjBEQzZBMzhENDNENjBBQjUzOTE2QTk0MzU3RkE5ODAxQjEzMjNGNTg3MEYzM0M1MzdCNUFGQjdDODI2MEZDMTVDNzBBOTM4Q0FD
-
-HTTP/1.1 200 OK
-</code></pre></div>
+<h2 id="errors">Errors</h2>
+<p>If there are any errors, Beacon will send back a POST to the url with the form values <code>mod_id</code> and <code>message</code>. All processing will halt at the first error.</p></div>
         </div>
 
         <footer class="col-md-12">

@@ -4,7 +4,7 @@
     
     <url>
      <loc>/</loc>
-     <lastmod>2017-06-07</lastmod>
+     <lastmod>2017-06-19</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -13,25 +13,25 @@
         
     <url>
      <loc>/document/</loc>
-     <lastmod>2017-06-07</lastmod>
+     <lastmod>2017-06-19</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/engram/</loc>
-     <lastmod>2017-06-07</lastmod>
+     <lastmod>2017-06-19</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/mod/</loc>
-     <lastmod>2017-06-07</lastmod>
+     <lastmod>2017-06-19</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>/user/</loc>
-     <lastmod>2017-06-07</lastmod>
+     <lastmod>2017-06-19</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -40,7 +40,15 @@
     
     <url>
      <loc>/authenticating/</loc>
-     <lastmod>2017-06-07</lastmod>
+     <lastmod>2017-06-19</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
+     <loc>/pull_api/</loc>
+     <lastmod>2017-06-19</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
