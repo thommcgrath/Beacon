@@ -76,7 +76,7 @@ Begin BeaconSubview LibraryPresetsView Implements NotificationKit.Receiver
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -107,7 +107,7 @@ Begin BeaconSubview LibraryPresetsView Implements NotificationKit.Receiver
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -138,7 +138,7 @@ Begin BeaconSubview LibraryPresetsView Implements NotificationKit.Receiver
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"

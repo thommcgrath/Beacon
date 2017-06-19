@@ -46,7 +46,7 @@ Begin Window LibraryEngramsURLDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -77,7 +77,7 @@ Begin Window LibraryEngramsURLDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -108,7 +108,7 @@ Begin Window LibraryEngramsURLDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   0
       TabPanelIndex   =   0
       Text            =   "Import Engrams From URL"
       TextAlign       =   0
@@ -150,7 +150,7 @@ Begin Window LibraryEngramsURLDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -190,6 +190,7 @@ Begin Window LibraryEngramsURLDialog
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
    End
 End
 #tag EndWindow

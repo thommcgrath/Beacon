@@ -25,7 +25,7 @@ Begin BeaconSubview LibraryEngramsView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   800
-   Begin PushButton ImportFileButton
+   Begin UITweaks.ResizedPushButton ImportFileButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -56,7 +56,7 @@ Begin BeaconSubview LibraryEngramsView
       Visible         =   True
       Width           =   130
    End
-   Begin PushButton ImportURLButton
+   Begin UITweaks.ResizedPushButton ImportURLButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -87,7 +87,7 @@ Begin BeaconSubview LibraryEngramsView
       Visible         =   True
       Width           =   130
    End
-   Begin PushButton ImportClipboardButton
+   Begin UITweaks.ResizedPushButton ImportClipboardButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -126,7 +126,7 @@ Begin BeaconSubview LibraryEngramsView
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin PushButton RemoveButton
+   Begin UITweaks.ResizedPushButton RemoveButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -146,7 +146,7 @@ Begin BeaconSubview LibraryEngramsView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -193,7 +193,7 @@ Begin BeaconSubview LibraryEngramsView
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   1
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
