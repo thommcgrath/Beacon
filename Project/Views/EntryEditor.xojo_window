@@ -217,7 +217,6 @@ Begin Window EntryEditor
          HasBackColor    =   False
          Height          =   175
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   372
          LockBottom      =   True
@@ -489,6 +488,7 @@ End
 		    EngramList.AddRow("", Engram.Label, Weight)
 		    EngramList.RowTag(EngramList.LastIndex) = Engram
 		    Indexes.Value(Engram.Path) = EngramList.LastIndex
+		    EngramList.CellCheck(EngramList.LastIndex, 0) = Self.mSelectedEngrams.HasKey(Engram.Path)
 		    If Engram.Path = SearchText Or Engram.Label = SearchText Then
 		      PerfectMatch = True
 		    End If
@@ -506,27 +506,25 @@ End
 		      EngramList.AddRow("", Engram.Label, Weight)
 		      EngramList.RowTag(EngramList.LastIndex) = Engram
 		      Indexes.Value(Engram.Path) = EngramList.LastIndex
+		      EngramList.CellCheck(EngramList.LastIndex, 0) = Self.mSelectedEngrams.HasKey(Engram.Path)
 		    Next
 		  End If
 		  
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedEngrams
-		    Dim ClassString As Text = Entry.Key
+		    Dim Path As Text = Entry.Key
 		    Dim Option As Beacon.SetEntryOption = Entry.Value
 		    
-		    Dim Idx As Integer = Indexes.Lookup(ClassString, -1)
+		    Dim Idx As Integer = Indexes.Lookup(Path, -1)
 		    If Idx = -1 Then
-		      Dim Weight As String = ""
-		      If Self.mSelectedEngrams.HasKey(ClassString) Then
-		        Dim WeightValue As Double = Option.Weight * 100
-		        Weight = WeightValue.PrettyText
-		      End If
+		      Dim WeightValue As Double = Option.Weight * 100
+		      Dim Weight As String = WeightValue.PrettyText
 		      
 		      EngramList.AddRow("", Option.Engram.Label, Weight)
 		      EngramList.RowTag(EngramList.LastIndex) = Option.Engram
-		      Indexes.Value(ClassString) = EngramList.LastIndex
+		      Indexes.Value(Path) = EngramList.LastIndex
 		      Idx = EngramList.LastIndex
+		      EngramList.CellCheck(Idx, 0) = True
 		    End If
-		    EngramList.CellCheck(Idx, 0) = True
 		  Next
 		End Sub
 	#tag EndMethod
@@ -576,7 +574,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim FullSimulation As Boolean = Self.mSelectedEngrams.Count = 1 Or (Self.SingleEntryCheck.Value And Self.SingleEntryCheck.Visible)
+		  Dim FullSimulation As Boolean = Self.mSelectedEngrams.Count = 1 Or Self.mAllowMultipleEntries = False Or (Self.SingleEntryCheck.Value And Self.SingleEntryCheck.Visible)
 		  
 		  Dim Entry As New Beacon.SetEntry
 		  For Each Item As Xojo.Core.DictionaryEntry In Self.mSelectedEngrams
