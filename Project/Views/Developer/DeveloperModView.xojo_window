@@ -43,7 +43,6 @@ Begin ContainerControl DeveloperModView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   3
       Visible         =   True
@@ -144,7 +143,6 @@ Begin ContainerControl DeveloperModView
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "You have not yet confirmed ownership of this mod. To so do, please copy the value below and insert it anywhere on the mod's Steam page. Then press the ""Confirm Ownership"" button below. Once confirmed, the text can be removed from your Steam page."
          TextAlign       =   1
          TextColor       =   &c00000000
@@ -210,7 +208,6 @@ Begin ContainerControl DeveloperModView
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
-         TabStop         =   True
          Text            =   "No Mod Selected"
          TextAlign       =   1
          TextColor       =   &c00000000
@@ -240,7 +237,6 @@ Begin ContainerControl DeveloperModView
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
-         TabStop         =   True
          Top             =   199
          Value           =   0
          Visible         =   True
@@ -269,7 +265,7 @@ Begin ContainerControl DeveloperModView
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         InitialValue    =   "Class	Label	Blueprintable	Island	Scorched"
+         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched"
          Italic          =   False
          Left            =   0
          LockBottom      =   True
@@ -326,7 +322,6 @@ Begin ContainerControl DeveloperModView
       End
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -434,12 +429,12 @@ End
 		  
 		  Panel.Value = PageLoading
 		  
-		  Dim Classes() As Text
+		  Dim UIDs() As Text
 		  For Each Engram As BeaconAPI.Engram In DeletedEngrams
-		    Classes.Append(Engram.ClassString)
+		    UIDs.Append(Engram.UID)
 		  Next
 		  
-		  Dim Request As New BeaconAPI.Request("engram.php", "DELETE", Text.Join(Classes, ","), "text/plain", AddressOf APICallback_EngramsDelete)
+		  Dim Request As New BeaconAPI.Request("engram.php", "DELETE", Text.Join(UIDs, ","), "text/plain", AddressOf APICallback_EngramsDelete)
 		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		  
@@ -478,11 +473,11 @@ End
 		  Dim CurrentEngrams() As BeaconAPI.Engram = Set.ActiveEngrams
 		  Dim EngramDict As New Xojo.Core.Dictionary
 		  For Each Engram As BeaconAPI.Engram In CurrentEngrams
-		    EngramDict.Value(Engram.ClassString) = True
+		    EngramDict.Value(Engram.Path) = True
 		  Next
 		  
 		  For Each Engram As Beacon.Engram In Engrams
-		    If EngramDict.HasKey(Engram.ClassString) Then
+		    If EngramDict.HasKey(Engram.Path) Then
 		      Continue
 		    End If
 		    
@@ -491,7 +486,7 @@ End
 		    Set.Add(APIEngram)
 		    EngramList.AddRow("")
 		    Self.ShowEngramInRow(EngramList.LastIndex, APIEngram)
-		    EngramDict.Value(Engram.ClassString) = True
+		    EngramDict.Value(Engram.Path) = True
 		  Next
 		  
 		  Footer.Button("PublishButton").Enabled = Set.Modified
@@ -582,7 +577,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowEngramInRow(Index As Integer, Engram As BeaconAPI.Engram)
-		  EngramList.Cell(Index, 0) = Engram.ClassString
+		  EngramList.Cell(Index, 0) = Engram.Path
 		  EngramList.Cell(Index, 1) = Engram.Label
 		  EngramList.CellCheck(Index, 2) = Engram.CanBeBlueprint
 		  EngramList.CellCheck(Index, 3) = Engram.AvailableTo(Beacon.LootSource.Packages.Island)
@@ -729,8 +724,7 @@ End
 		  
 		  Select Case Column
 		  Case 0
-		    Engram.ClassString = Me.Cell(Row, Column).ToText
-		    Me.Cell(Row, Column) = Engram.ClassString
+		    Engram.Path = Me.Cell(Row, Column).ToText
 		  Case 1
 		    Engram.Label = Me.Cell(Row, Column).ToText
 		  Case 2
