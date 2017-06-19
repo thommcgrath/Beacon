@@ -21,7 +21,11 @@ case 'GET':
 		BeaconAPI::ReplySuccess($engrams);
 	} else {
 		// specific engram(s)
-		$engrams = BeaconEngram::GetByClass($engram_class);
+		if (strtoupper(substr($engram_class, -2)) === '_C') {
+			$engrams = BeaconEngram::GetByClass($engram_class);
+		} else {
+			$engrams = BeaconEngram::GetByUID($engram_class);
+		}
 		if (count($engrams) === 0) {
 			BeaconAPI::ReplyError('No engram found', null, 404);
 		}
@@ -55,7 +59,7 @@ case 'POST':
 	// get the distinct workshop ids for each item
 	$workshop_ids = array();
 	foreach ($items as $item) {
-		if (!BeaconCommon::HasAllKeys($item, 'class', 'label', 'mod_id', 'availability', 'can_blueprint')) {
+		if (!BeaconCommon::HasAllKeys($item, 'path', 'label', 'mod_id', 'availability', 'can_blueprint')) {
 			BeaconAPI::ReplyError('Not all keys are present.', $item);
 		}
 		
@@ -87,7 +91,7 @@ case 'POST':
 			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' does not exist.');
 		}
 		$mod_id = $mod_ids[$workshop_id];
-		$class = $item['class'];
+		$path = $item['path'];
 		$label = $item['label'];
 		$availability_keys = $item['availability'];
 		$can_blueprint = $item['can_blueprint'];
@@ -106,20 +110,20 @@ case 'POST':
 		}
 		if ($availability === 0) {
 			$database->Rollback();
-			BeaconAPI::ReplyError('Availability for class ' . $class . ' cannot be zero.');
+			BeaconAPI::ReplyError('Availability for class ' . $path . ' cannot be zero.');
 		}
 		
-		$results = $database->Query('SELECT mod_id FROM engrams WHERE classstring = $1;', $class);
+		$results = $database->Query('SELECT mod_id FROM engrams WHERE path = $1;', $path);
 		if ($results->RecordCount() == 1) {
 			// update
 			if ($results->Field('mod_id') !== $mod_id) {
 				$database->Rollback();
-				BeaconAPI::ReplyError('Class ' . $class . ' already belongs to another mod.');
+				BeaconAPI::ReplyError('Class ' . $path . ' already belongs to another mod.');
 			}
-			$database->Query('UPDATE engrams SET label = $2, availability = $3, can_blueprint = $4 WHERE classstring = $1;', $class, $label, $availability, $can_blueprint);
+			$database->Query('UPDATE engrams SET label = $2, availability = $3, can_blueprint = $4 WHERE path = $1;', $path, $label, $availability, $can_blueprint);
 		} else {
 			// new
-			$database->Query('INSERT INTO engrams (classstring, label, availability, can_blueprint, mod_id) VALUES ($1, $2, $3, $4, $5);', $class, $label, $availability, $can_blueprint, $mod_id);
+			$database->Query('INSERT INTO engrams (path, label, availability, can_blueprint, mod_id) VALUES ($1, $2, $3, $4, $5);', $path, $label, $availability, $can_blueprint, $mod_id);
 		}
 	}
 	$database->Commit();
@@ -136,16 +140,18 @@ case 'DELETE':
 		BeaconAPI::ReplyError('No engram specified');
 	}
 	
-	$results = $database->Query('SELECT mods.user_id, engrams.classstring FROM engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id) WHERE engrams.classstring = ANY($1);', '{' . $engram_class . '}');
+	$results = $database->Query('SELECT mods.user_id, engrams.path FROM engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id) WHERE MD5(LOWER(engrams.path)) = ANY($1);', '{' . $engram_class . '}');
+	$paths = array();
 	while (!$results->EOF()) {
 		if ($results->Field('user_id') !== BeaconAPI::UserID()) {
 			BeaconAPI::ReplyError('Engram does not belong to you.');
 		}
+		$paths[] = $results->Field('path');
 		$results->MoveNext();
 	}
 		
 	$database->BeginTransaction();
-	$database->Query('DELETE FROM engrams WHERE classstring = ANY($1);', '{' . $engram_class . '}');
+	$database->Query('DELETE FROM engrams WHERE path = ANY($1);', '{' . implode(',', $paths) . '}');
 	$database->Commit();
 	
 	BeaconAPI::ReplySuccess();

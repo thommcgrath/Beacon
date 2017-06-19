@@ -80,13 +80,13 @@ function PullMod(BeaconMod $mod) {
 	$database = BeaconCommon::Database();
 	$database->BeginTransaction();
 	foreach ($engrams as $engram) {
-		if (!BeaconCommon::HasAllKeys($engram, 'class', 'label', 'availability', 'can_blueprint')) {
+		if (!BeaconCommon::HasAllKeys($engram, 'path', 'label', 'availability', 'can_blueprint')) {
 			$database->Rollback();
 			SendAlert($mod, 'An engram is missing keys.');
 			return;
 		}
 		
-		$class = $engram['class'];
+		$path = $engram['path'];
 		$label = $engram['label'];
 		$availability_keys = $engram['availability'];
 		$can_blueprint = $engram['can_blueprint'];
@@ -108,22 +108,22 @@ function PullMod(BeaconMod $mod) {
 		}
 		if ($availability === 0) {
 			$database->Rollback();
-			SendAlert($mod, 'Engram ' . $class . ' does not have an availability.');
+			SendAlert($mod, 'Engram ' . $path . ' does not have an availability.');
 			return;
 		}
 		
-		$results = $database->Query('SELECT mod_id FROM engrams WHERE classstring = $1;', $class);
+		$results = $database->Query('SELECT mod_id FROM engrams WHERE path = $1;', $path);
 		if ($results->RecordCount() == 1) {
 			// update
 			if ($results->Field('mod_id') !== $mod_id) {
 				$database->Rollback();
-				SendAlert($mod, 'Engram ' . $class . ' belongs to another mod.');
+				SendAlert($mod, 'Engram ' . $path . ' belongs to another mod.');
 				return;
 			}
-			$database->Query('UPDATE engrams SET label = $2, availability = $3, can_blueprint = $4 WHERE classstring = $1;', $class, $label, $availability, $can_blueprint);
+			$database->Query('UPDATE engrams SET label = $2, availability = $3, can_blueprint = $4 WHERE path = $1;', $path, $label, $availability, $can_blueprint);
 		} else {
 			// new
-			$database->Query('INSERT INTO engrams (classstring, label, availability, can_blueprint, mod_id) VALUES ($1, $2, $3, $4, $5);', $class, $label, $availability, $can_blueprint, $mod_id);
+			$database->Query('INSERT INTO engrams (path, label, availability, can_blueprint, mod_id) VALUES ($1, $2, $3, $4, $5);', $path, $label, $availability, $can_blueprint, $mod_id);
 		}
 	}
 	$database->Query('UPDATE mods SET last_pull_hash = $2 WHERE mod_id = $1;', $mod_id, $hash);

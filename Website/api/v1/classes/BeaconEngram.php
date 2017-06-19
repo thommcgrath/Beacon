@@ -92,6 +92,12 @@ class BeaconEngram implements JsonSerializable {
 		return self::GetFromResults($results);
 	}
 	
+	public static function GetByUID(string $hash) {
+		$database = BeaconCommon::Database();
+		$results = $database->Query(self::BuildSQL('MD5(LOWER(engrams.path)) = ANY($1)'), '{' . $hash . '}');
+		return self::GetFromResults($results);
+	}
+	
 	public static function GetByModID(string $mod_id) {
 		$database = BeaconCommon::Database();
 		if ($mod_id === '') {
@@ -120,9 +126,7 @@ class BeaconEngram implements JsonSerializable {
 			$environments[] = 'Scorched';
 		}
 		
-		$class_parts = explode('_', $this->classstring);
-		array_shift($class_parts);
-		array_pop($class_parts);
+		$uid = md5(strtolower($this->path));
 		
 		return array(
 			'path' => $this->path,
@@ -131,7 +135,8 @@ class BeaconEngram implements JsonSerializable {
 			'environments' => $environments,
 			'can_blueprint' => $this->can_blueprint,
 			'spawn' => $this->SpawnCode(),
-			'resource_url' => BeaconAPI::URL('/engram.php/' . strtolower(md5($this->path))),
+			'uid' => $uid,
+			'resource_url' => BeaconAPI::URL('/engram.php/' . $uid),
 			'mod_id' => $this->mod_id,
 			'mod_name' => $this->mod_name
 		);
