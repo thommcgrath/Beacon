@@ -1,9 +1,10 @@
 #tag Class
 Protected Class ItemSet
-Implements Beacon.Countable
+Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Append(Entry As Beacon.SetEntry)
 		  Self.mEntries.Append(Entry)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
@@ -34,6 +35,14 @@ Implements Beacon.Countable
 		  
 		  For I As Integer = 0 To UBound(Source.mEntries)
 		    Self.mEntries(I) = New Beacon.SetEntry(Source.mEntries(I))
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
+		  For Each Entry As Beacon.SetEntry In Self.mEntries
+		    Entry.ConsumeMissingEngrams(Engrams)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -97,6 +106,7 @@ Implements Beacon.Countable
 		    Set.Append(New Beacon.SetEntry(Entry))
 		  Next
 		  
+		  Set.mModified = False
 		  Return Set
 		End Function
 	#tag EndMethod
@@ -170,6 +180,7 @@ Implements Beacon.Countable
 		    Set.mSourcePresetID = Dict.Value("SourcePresetID")
 		  End If
 		  
+		  Set.mModified = False
 		  Return Set
 		End Function
 	#tag EndMethod
@@ -188,6 +199,7 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Entry As Beacon.SetEntry)
 		  Self.mEntries.Insert(Index, Entry)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
@@ -213,6 +225,32 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Modified() As Boolean
+		  If Self.mModified Then
+		    Return True
+		  End If
+		  
+		  For Each Entry As Beacon.SetEntry In Self.mEntries
+		    If Entry.Modified Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Modified(Assigns Value As Boolean)
+		  Self.mModified = Value
+		  
+		  If Not Value Then
+		    For Each Entry As Beacon.SetEntry In Self.mEntries
+		      Entry.Modified = False
+		    Next
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.ItemSet) As Integer
 		  If Other = Nil Then
 		    Return 1
@@ -228,6 +266,7 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Sub Operator_Redim(Bound As Integer)
 		  Redim Self.mEntries(Bound)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
@@ -240,6 +279,7 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Sub Operator_Subscript(Index As Integer, Assigns Entry As Beacon.SetEntry)
 		  Self.mEntries(Index) = Entry
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
@@ -248,6 +288,7 @@ Implements Beacon.Countable
 		  Dim Clone As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, ForLootSource)
 		  Self.mEntries = Clone.mEntries
 		  Self.mSourcePresetID = Clone.mSourcePresetID
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
@@ -260,6 +301,7 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Self.mEntries.Remove(Index)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
@@ -302,7 +344,12 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mItemsRandomWithoutReplacement = Value Then
+			    Return
+			  End If
+			  
 			  Self.mItemsRandomWithoutReplacement = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		ItemsRandomWithoutReplacement As Boolean
@@ -316,7 +363,12 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mLabel.Compare(Value, Text.CompareCaseSensitive) = 0 Then
+			    Return
+			  End If
+			  
 			  Self.mLabel = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		Label As Text
@@ -330,7 +382,13 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mMaxNumItems = Max(Value, 1)
+			  Value = Max(Value, 1)
+			  If Self.mMaxNumItems = Value Then
+			    Return
+			  End If
+			  
+			  Self.mMaxNumItems = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		MaxNumItems As Integer
@@ -348,7 +406,13 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mMinNumItems = Max(Value, 1)
+			  Value = Max(Value, 1)
+			  If Self.mMinNumItems = Value Then
+			    Return
+			  End If
+			  
+			  Self.mMinNumItems = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		MinNumItems As Integer
@@ -371,6 +435,10 @@ Implements Beacon.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mModified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mNumItemsPower As Double
 	#tag EndProperty
 
@@ -390,7 +458,13 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mNumItemsPower = Max(Value, 0)
+			  Value = Max(Value, 0)
+			  If Self.mNumItemsPower = Value Then
+			    Return
+			  End If
+			  
+			  Self.mNumItemsPower = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		NumItemsPower As Double
@@ -404,7 +478,13 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mSetWeight = Min(Max(Value, 0.0001), 1.0)
+			  Value = Min(Max(Value, 0.0001), 1.0)
+			  If Self.mSetWeight = Value Then
+			    Return
+			  End If
+			  
+			  Self.mSetWeight = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		Weight As Double

@@ -1,15 +1,16 @@
 #tag Class
 Protected Class SetEntry
-Implements Beacon.Countable
+Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Append(Item As Beacon.SetEntryOption)
-		  Self.mItems.Append(Item)
+		  Self.mOptions.Append(Item)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CanBeBlueprint() As Boolean
-		  For Each Option As Beacon.SetEntryOption In Self.mItems
+		  For Each Option As Beacon.SetEntryOption In Self.mOptions
 		    If Option.Engram.CanBeBlueprint Then
 		      Return True
 		    End If
@@ -19,18 +20,18 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function ClassesLabel() As Text
-		  If UBound(Self.mItems) = -1 Then
+		  If UBound(Self.mOptions) = -1 Then
 		    Return "No Items"
-		  ElseIf UBound(Self.mItems) = 0 Then
-		    Return Self.mItems(0).Engram.ClassString
-		  ElseIf UBound(Self.mItems) = 1 Then
-		    Return Self.mItems(0).Engram.ClassString + " or " + Self.mItems(1).Engram.ClassString
+		  ElseIf UBound(Self.mOptions) = 0 Then
+		    Return Self.mOptions(0).Engram.ClassString
+		  ElseIf UBound(Self.mOptions) = 1 Then
+		    Return Self.mOptions(0).Engram.ClassString + " or " + Self.mOptions(1).Engram.ClassString
 		  Else
 		    Dim Labels() As Text
-		    For I As Integer = 0 To UBound(Self.mItems) - 1
-		      Labels.Append(Self.mItems(I).Engram.ClassString)
+		    For I As Integer = 0 To UBound(Self.mOptions) - 1
+		      Labels.Append(Self.mOptions(I).Engram.ClassString)
 		    Next
-		    Labels.Append("or " + Self.mItems(UBound(Self.mItems)).Engram.ClassString)
+		    Labels.Append("or " + Self.mOptions(UBound(Self.mOptions)).Engram.ClassString)
 		    
 		    Return Text.Join(Labels, ", ")
 		  End If
@@ -53,7 +54,7 @@ Implements Beacon.Countable
 		Sub Constructor(Source As Beacon.SetEntry)
 		  Self.Constructor()
 		  
-		  Redim Self.mItems(UBound(Source.mItems))
+		  Redim Self.mOptions(UBound(Source.mOptions))
 		  
 		  Self.mChanceToBeBlueprint = Source.mChanceToBeBlueprint
 		  Self.mMaxQuality = Source.mMaxQuality
@@ -63,22 +64,42 @@ Implements Beacon.Countable
 		  Self.mWeight = Source.mWeight
 		  Self.mUniqueID = Source.mUniqueID
 		  
-		  For I As Integer = 0 To UBound(Source.mItems)
-		    Self.mItems(I) = New Beacon.SetEntryOption(Source.mItems(I))
+		  For I As Integer = 0 To UBound(Source.mOptions)
+		    Self.mOptions(I) = New Beacon.SetEntryOption(Source.mOptions(I))
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
+		  For Each Option As Beacon.SetEntryOption In Self.mOptions
+		    Option.ConsumeMissingEngrams(Engrams)
+		  Next
+		  
+		  ' Dim Modified As Boolean
+		  ' For I As Integer = 0 To UBound(Self.mOptions)
+		  ' Dim Option As Beacon.SetEntryOption = Self.mOptions(I)
+		  ' For Each Engram As Beacon.Engram In Engrams
+		  ' If Option.Engram <> Nil And Option.Engram.IsValid = False And Option.Engram.ClassString = Engram.ClassString Then
+		  ' Self.mOptions(I) = New Beacon.SetEntryOption(Engram, Option.Weight)
+		  ' Modified = True
+		  ' End If
+		  ' Next
+		  ' Next
+		  ' Return Modified
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return UBound(Self.mItems) + 1
+		  Return UBound(Self.mOptions) + 1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Children() As Xojo.Core.Dictionary
-		  For Each Item As Beacon.SetEntryOption In Self.mItems
+		  For Each Item As Beacon.SetEntryOption In Self.mOptions
 		    Children.Append(Item.Export)
 		  Next
 		  
@@ -103,9 +124,9 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function Hash() As Text
 		  Dim Items() As Text
-		  Redim Items(UBound(Self.mItems))
+		  Redim Items(UBound(Self.mOptions))
 		  For I As Integer = 0 To UBound(Items)
-		    Items(I) = Self.mItems(I).Hash
+		    Items(I) = Self.mOptions(I).Hash
 		  Next
 		  Items.Sort
 		  
@@ -244,14 +265,15 @@ Implements Beacon.Countable
 		    End Try
 		  Next
 		  
+		  Entry.mModified = False
 		  Return Entry
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Item As Beacon.SetEntryOption) As Integer
-		  For I As Integer = 0 To UBound(Self.mItems)
-		    If Self.mItems(I) = Item Then
+		  For I As Integer = 0 To UBound(Self.mOptions)
+		    If Self.mOptions(I) = Item Then
 		      Return I
 		    End If
 		  Next
@@ -261,18 +283,19 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As Beacon.SetEntryOption)
-		  Self.mItems.Insert(Index, Item)
+		  Self.mOptions.Insert(Index, Item)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsValid() As Boolean
-		  For Each Option As Beacon.SetEntryOption In Self.mItems
+		  For Each Option As Beacon.SetEntryOption In Self.mOptions
 		    If Not Option.IsValid Then
 		      Return False
 		    End If
 		  Next
-		  Return UBound(Self.mItems) > -1
+		  Return UBound(Self.mOptions) > -1
 		End Function
 	#tag EndMethod
 
@@ -288,22 +311,48 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function Label() As Text
-		  If UBound(Self.mItems) = -1 Then
+		  If UBound(Self.mOptions) = -1 Then
 		    Return "No Items"
-		  ElseIf UBound(Self.mItems) = 0 Then
-		    Return Self.mItems(0).Engram.Label
-		  ElseIf UBound(Self.mItems) = 1 Then
-		    Return Self.mItems(0).Engram.Label + " or " + Self.mItems(1).Engram.Label
+		  ElseIf UBound(Self.mOptions) = 0 Then
+		    Return Self.mOptions(0).Engram.Label
+		  ElseIf UBound(Self.mOptions) = 1 Then
+		    Return Self.mOptions(0).Engram.Label + " or " + Self.mOptions(1).Engram.Label
 		  Else
 		    Dim Labels() As Text
-		    For I As Integer = 0 To UBound(Self.mItems) - 1
-		      Labels.Append(Self.mItems(I).Engram.Label)
+		    For I As Integer = 0 To UBound(Self.mOptions) - 1
+		      Labels.Append(Self.mOptions(I).Engram.Label)
 		    Next
-		    Labels.Append("or " + Self.mItems(UBound(Self.mItems)).Engram.Label)
+		    Labels.Append("or " + Self.mOptions(UBound(Self.mOptions)).Engram.Label)
 		    
 		    Return Text.Join(Labels, ", ")
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Modified() As Boolean
+		  If Self.mModified Then
+		    Return True
+		  End If
+		  
+		  For Each Option As Beacon.SetEntryOption In Self.mOptions
+		    If Option.Modified Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Modified(Assigns Value As Boolean)
+		  Self.mModified = Value
+		  
+		  If Not Value Then
+		    For Each Option As Beacon.SetEntryOption In Self.mOptions
+		      Option.Modified = False
+		    Next
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -321,25 +370,28 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Sub Operator_Redim(Bound As Integer)
-		  Redim Self.mItems(Bound)
+		  Redim Self.mOptions(Bound)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Subscript(Index As Integer) As Beacon.SetEntryOption
-		  Return Self.mItems(Index)
+		  Return Self.mOptions(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Operator_Subscript(Index As Integer, Assigns Item As Beacon.SetEntryOption)
-		  Self.mItems(Index) = Item
+		  Self.mOptions(Index) = Item
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mItems.Remove(Index)
+		  Self.mOptions.Remove(Index)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
@@ -364,7 +416,7 @@ Implements Beacon.Countable
 		  
 		  Dim WeightLookup As New Xojo.Core.Dictionary
 		  Dim Sum, Weights() As Double
-		  For Each Entry As Beacon.SetEntryOption In Self.mItems
+		  For Each Entry As Beacon.SetEntryOption In Self.mOptions
 		    If Entry.Weight = 0 Then
 		      Return Selections
 		    End If
@@ -406,15 +458,15 @@ Implements Beacon.Countable
 		  Dim AllWeightsEqual As Boolean = True
 		  Dim CommonWeight As Double
 		  Dim Paths(), Weights() As Text
-		  Redim Paths(UBound(Self.mItems))
-		  Redim Weights(UBound(Self.mItems))
-		  For I As Integer = 0 To UBound(Self.mItems)
-		    Paths(I) = Self.mItems(I).Engram.GeneratedClassBlueprintPath()
-		    Weights(I) = Self.mItems(I).Weight.ToText
+		  Redim Paths(UBound(Self.mOptions))
+		  Redim Weights(UBound(Self.mOptions))
+		  For I As Integer = 0 To UBound(Self.mOptions)
+		    Paths(I) = Self.mOptions(I).Engram.GeneratedClassBlueprintPath()
+		    Weights(I) = Self.mOptions(I).Weight.ToText
 		    If I = 0 Then
-		      CommonWeight = Self.mItems(I).Weight
+		      CommonWeight = Self.mOptions(I).Weight
 		    Else
-		      If Self.mItems(I).Weight <> CommonWeight Then
+		      If Self.mOptions(I).Weight <> CommonWeight Then
 		        AllWeightsEqual = False
 		      End If
 		    End If
@@ -473,7 +525,13 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mChanceToBeBlueprint = Max(Min(Value, 1.0), 0.0)
+			  Value = Max(Min(Value, 1.0), 0.0)
+			  If Self.mChanceToBeBlueprint = Value Then
+			    Return
+			  End If
+			  
+			  Self.mChanceToBeBlueprint = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		ChanceToBeBlueprint As Double
@@ -496,7 +554,12 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mMaxQuality = Value Then
+			    Return
+			  End If
+			  
 			  Self.mMaxQuality = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		MaxQuality As Beacon.Qualities
@@ -510,7 +573,13 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mMaxQuantity = Max(Value, 1)
+			  Value = Max(Value, 1)
+			  If Self.mMaxQuantity = Value Then
+			    Return
+			  End If
+			  
+			  Self.mMaxQuantity = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		MaxQuantity As Integer
@@ -528,7 +597,12 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mMinQuality = Value Then
+			    Return
+			  End If
+			  
 			  Self.mMinQuality = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		MinQuality As Beacon.Qualities
@@ -542,15 +616,17 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mMinQuantity = Max(Value, 1)
+			  Value = Max(Value, 1)
+			  If Self.mMinQuantity = Value Then
+			    Return
+			  End If
+			  
+			  Self.mMinQuantity = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		MinQuantity As Integer
 	#tag EndComputedProperty
-
-	#tag Property, Flags = &h21
-		Private mItems() As Beacon.SetEntryOption
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mMaxQuality As Beacon.Qualities
@@ -569,6 +645,14 @@ Implements Beacon.Countable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mModified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOptions() As Beacon.SetEntryOption
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mUniqueID As Text
 	#tag EndProperty
 
@@ -584,7 +668,13 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mWeight = Min(Max(Value, 0.0001), 1.0)
+			  Value = Min(Max(Value, 0.0001), 1.0)
+			  If Self.mWeight = Value Then
+			    Return
+			  End If
+			  
+			  Self.mWeight = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		Weight As Double

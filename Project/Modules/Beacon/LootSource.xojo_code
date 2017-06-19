@@ -1,9 +1,10 @@
 #tag Class
 Protected Class LootSource
-Implements Beacon.Countable
+Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Append(Item As Beacon.ItemSet)
-		  Self.mItems.Append(Item)
+		  Self.mSets.Append(Item)
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -29,7 +30,7 @@ Implements Beacon.Countable
 		Sub Constructor(Source As Beacon.LootSource)
 		  Self.Constructor()
 		  
-		  Redim Self.mItems(UBound(Source.mItems))
+		  Redim Self.mSets(UBound(Source.mSets))
 		  
 		  Self.mMaxItemSets = Source.mMaxItemSets
 		  Self.mMinItemSets = Source.mMinItemSets
@@ -44,22 +45,30 @@ Implements Beacon.Countable
 		  Self.mUIColor = Source.mUIColor
 		  Self.mSortValue = Source.mSortValue
 		  
-		  For I As Integer = 0 To UBound(Source.mItems)
-		    Self.mItems(I) = New Beacon.ItemSet(Source.mItems(I))
+		  For I As Integer = 0 To UBound(Source.mSets)
+		    Self.mSets(I) = New Beacon.ItemSet(Source.mSets(I))
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
+		  For Each Set As Beacon.ItemSet In Self.mSets
+		    Set.ConsumeMissingEngrams(Engrams)
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return UBound(Self.mItems) + 1
+		  Return UBound(Self.mSets) + 1
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Children() As Xojo.Core.Dictionary
-		  For Each Set As Beacon.ItemSet In Self.mItems
+		  For Each Set As Beacon.ItemSet In Self.mSets
 		    Children.Append(Set.Export)
 		  Next
 		  
@@ -141,6 +150,7 @@ Implements Beacon.Countable
 		    End If
 		  Next
 		  
+		  LootSource.mModified = False
 		  Return LootSource
 		  
 		End Function
@@ -148,8 +158,8 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function IndexOf(Item As Beacon.ItemSet) As Integer
-		  For I As Integer = 0 To UBound(Self.mItems)
-		    If Self.mItems(I) = Item Then
+		  For I As Integer = 0 To UBound(Self.mSets)
+		    If Self.mSets(I) = Item Then
 		      Return I
 		    End If
 		  Next
@@ -159,7 +169,8 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Item As Beacon.ItemSet)
-		  Self.mItems.Insert(Index, Item)
+		  Self.mSets.Insert(Index, Item)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
@@ -177,12 +188,12 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function IsValid() As Boolean
-		  For Each Set As Beacon.ItemSet In Self.mItems
+		  For Each Set As Beacon.ItemSet In Self.mSets
 		    If Not Set.IsValid Then
 		      Return False
 		    End If
 		  Next
-		  Return UBound(Self.mItems) > -1
+		  Return UBound(Self.mSets) > -1
 		End Function
 	#tag EndMethod
 
@@ -237,6 +248,32 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Modified() As Boolean
+		  If Self.mModified Then
+		    Return True
+		  End If
+		  
+		  For Each Set As Beacon.ItemSet In Self.mSets
+		    If Set.Modified Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Modified(Assigns Value As Boolean)
+		  Self.mModified = Value
+		  
+		  If Not Value Then
+		    For Each Set As Beacon.ItemSet In Self.mSets
+		      Set.Modified = False
+		    Next
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Multipliers() As Beacon.Range
 		  Return Self.mMultipliers
 		End Function
@@ -254,19 +291,21 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Sub Operator_Redim(Bound As Integer)
-		  Redim Self.mItems(Bound)
+		  Redim Self.mSets(Bound)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Operator_Subscript(Index As Integer) As Beacon.ItemSet
-		  Return Self.mItems(Index)
+		  Return Self.mSets(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Operator_Subscript(Index As Integer, Assigns Value As Beacon.ItemSet)
-		  Self.mItems(Index) = Value
+		  Self.mSets(Index) = Value
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
@@ -284,7 +323,8 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
-		  Self.mItems.Remove(Index)
+		  Self.mSets.Remove(Index)
+		  Self.mModified = True
 		End Sub
 	#tag EndMethod
 
@@ -334,7 +374,7 @@ Implements Beacon.Countable
 		  Values.Append("MaxItemSets=" + Xojo.Math.Max(Xojo.Math.Min(Self.mMaxItemSets, Self.Count), 0).ToText)
 		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.ToText)
 		  Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mItems, ",", Self.Multipliers) + ")")
+		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mSets, ",", Self.Multipliers) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod
@@ -354,7 +394,13 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mMaxItemSets = Max(Value, 1)
+			  Value = Max(Value, 1)
+			  If Self.mMaxItemSets = Value Then
+			    Return
+			  End If
+			  
+			  Self.mMaxItemSets = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		MaxItemSets As Integer
@@ -372,7 +418,13 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mMinItemSets = Max(Value, 1)
+			  Value = Max(Value, 1)
+			  If Self.mMinItemSets = Value Then
+			    Return
+			  End If
+			  
+			  Self.mMinItemSets = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		MinItemSets As Integer
@@ -380,10 +432,6 @@ Implements Beacon.Countable
 
 	#tag Property, Flags = &h1
 		Protected mIsOfficial As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mItems() As Beacon.ItemSet
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -402,6 +450,10 @@ Implements Beacon.Countable
 		Private mMinItemSets As Integer
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mModified As Boolean
+	#tag EndProperty
+
 	#tag Property, Flags = &h1
 		Protected mMultipliers As Beacon.Range
 	#tag EndProperty
@@ -412,6 +464,10 @@ Implements Beacon.Countable
 
 	#tag Property, Flags = &h1
 		Protected mPackage As Beacon.LootSource.Packages
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSets() As Beacon.ItemSet
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -434,7 +490,13 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mNumItemSetsPower = Max(Value, 0)
+			  Value = Max(Value, 0)
+			  If Self.mNumItemSetsPower = Value Then
+			    Return
+			  End If
+			  
+			  Self.mNumItemSetsPower = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		NumItemSetsPower As Double
@@ -448,7 +510,12 @@ Implements Beacon.Countable
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.mSetsRandomWithoutReplacement = Value Then
+			    Return
+			  End If
+			  
 			  Self.mSetsRandomWithoutReplacement = Value
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		SetsRandomWithoutReplacement As Boolean

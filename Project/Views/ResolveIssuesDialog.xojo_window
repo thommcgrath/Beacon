@@ -9,7 +9,7 @@ Begin Window ResolveIssuesDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   400
+   Height          =   547
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -41,13 +41,14 @@ Begin Window ResolveIssuesDialog
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "This document has problems that must be resolved"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -60,7 +61,7 @@ Begin Window ResolveIssuesDialog
       Visible         =   True
       Width           =   560
    End
-   Begin PushButton ActionButton
+   Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -80,13 +81,13 @@ Begin Window ResolveIssuesDialog
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   360
+      Top             =   507
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -109,7 +110,7 @@ Begin Window ResolveIssuesDialog
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   296
+      Height          =   160
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -117,7 +118,7 @@ Begin Window ResolveIssuesDialog
       InitialValue    =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
@@ -127,7 +128,7 @@ Begin Window ResolveIssuesDialog
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   0
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -140,6 +141,119 @@ Begin Window ResolveIssuesDialog
       Width           =   560
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin Label BlueprintsExplanation
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   39
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   True
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "To resolve unknown blueprint problems, paste their spawn codes below. It is ok to include more codes than necessary, Beacon will use only the ones it needs."
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   224
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   560
+   End
+   Begin TextArea BlueprintsField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   True
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   220
+      HelpTag         =   ""
+      HideSelection   =   True
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   20
+      LimitText       =   0
+      LineHeight      =   0.0
+      LineSpacing     =   1.0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   ""
+      Multiline       =   True
+      ReadOnly        =   False
+      Scope           =   2
+      ScrollbarHorizontal=   False
+      ScrollbarVertical=   True
+      Styled          =   True
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   275
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   560
+   End
+   Begin UITweaks.ResizedPushButton ExtractButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Extract Blueprints"
+      Default         =   False
+      Enabled         =   False
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   507
+      Underline       =   False
+      Visible         =   True
+      Width           =   131
    End
 End
 #tag EndWindow
@@ -253,6 +367,43 @@ End
 	#tag Event
 		Sub Action()
 		  Self.Close
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BlueprintsField
+	#tag Event
+		Sub TextChange()
+		  Self.ExtractButton.Enabled = Trim(Me.Text) <> ""
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ExtractButton
+	#tag Event
+		Sub Action()
+		  Dim Content As String = BlueprintsField.Text
+		  Dim Engrams() As Beacon.Engram = Beacon.PullEngramsFromText(Content)
+		  Self.Document.ConsumeMissingEngrams(Engrams)
+		  
+		  // Once extracted
+		  Dim OriginalIssueCount As Integer = UBound(Self.Issues)
+		  Self.Issues = Self.DescribeIssues(Self.Document)
+		  Dim NewIssueCount As Integer = UBound(Self.Issues)
+		  If UBound(Self.Issues) = -1 Then
+		    Self.ShowAlert("All blueprints found", "Great, all blueprints are now known and all problems are resolved.")
+		    Self.Close
+		    Return
+		  End If
+		  
+		  If OriginalIssueCount = NewIssueCount Then
+		    Self.ShowAlert("No blueprints found", "Sorry, the spawn codes provided did not resolve any of the blueprint problems.")
+		  Else
+		    Self.ShowAlert("Some blueprints found", "Some problems were resolved, but there are still others that will need attention.")
+		  End If
+		  
+		  IssuesList.DeleteAllRows
+		  For Each Issue As String In Self.Issues
+		    IssuesList.AddRow(Issue)
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

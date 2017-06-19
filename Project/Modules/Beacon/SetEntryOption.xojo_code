@@ -1,5 +1,6 @@
 #tag Class
 Protected Class SetEntryOption
+Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Constructor(Engram As Beacon.Engram, Weight As Double)
 		  Self.mEngram = Engram
@@ -11,6 +12,23 @@ Protected Class SetEntryOption
 		Sub Constructor(Source As Beacon.SetEntryOption)
 		  Self.mEngram = Source.mEngram
 		  Self.mWeight = Source.mWeight
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
+		  If Self.mEngram.IsValid Then
+		    Return
+		  End If
+		  
+		  Dim ClassString As Text = Self.mEngram.ClassString
+		  For Each Engram As Beacon.Engram In Engrams
+		    If Engram.ClassString = ClassString Then
+		      Self.mEngram = New Beacon.Engram(Engram)
+		      Self.mModified = True
+		      Return
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -69,6 +87,18 @@ Protected Class SetEntryOption
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Modified() As Boolean
+		  Return Self.mModified
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Modified(Assigns Value As Boolean)
+		  Self.mModified = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.SetEntryOption) As Integer
 		  If Other = Nil Then
 		    Return 1
@@ -90,6 +120,10 @@ Protected Class SetEntryOption
 
 	#tag Property, Flags = &h21
 		Private mEngram As Beacon.Engram
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mModified As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

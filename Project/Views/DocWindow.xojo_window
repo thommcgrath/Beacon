@@ -308,6 +308,8 @@ End
 		  
 		  Self.ScanForErrors()
 		  ResolveIssuesDialog.Present(Self, Self.Doc)
+		  Self.ScanForErrors() // In case the problems were resolved
+		  Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
 		End Sub
 	#tag EndEvent
 
@@ -384,7 +386,11 @@ End
 			If Not Self.Doc.IsValid Then
 			Beep
 			ResolveIssuesDialog.Present(Self, Self.Doc)
+			Self.ScanForErrors()
+			Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
+			If Self.Footer.Button("ErrorsButton") <> Nil Then
 			Return True
+			End If
 			End If
 			
 			Dim LootSources() As Beacon.LootSource = Self.Doc.LootSources
@@ -557,7 +563,7 @@ End
 		    Self.File = File
 		    Self.Doc = Beacon.Document.Read(Self.File)
 		    Self.Title = File.Name
-		    Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Upgraded
+		    Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
 		    Super.Constructor
 		    Return
 		  End If
@@ -653,6 +659,7 @@ End
 		  Self.File = File
 		  Self.Title = File.Name
 		  Self.ContentsChanged = False
+		  Self.Doc.Modified = False
 		  
 		  Dim Writer As New Beacon.JSONWriter(Self.Doc.Export, File)
 		  AddHandler Writer.Finished, AddressOf WriterFinished
@@ -1004,6 +1011,8 @@ End
 		    Self.RemoveSelectedBeacons()
 		  Case "ErrorsButton"
 		    ResolveIssuesDialog.Present(Self, Self.Doc)
+		    Self.ScanForErrors()
+		    Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
 		  End Select
 		End Sub
 	#tag EndEvent
