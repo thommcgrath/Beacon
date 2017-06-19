@@ -4,7 +4,7 @@ Entire configurations can be stored in Beacon's cloud storage. All documents are
 
 Documents are special to the API. Listing documents returns an array of document metadata, while requesting a specific document returns the document content. This is different from the other API methods which list and lookup the same structures.
 
-The endpoint is https://thezaz.com/beacon/api/document.php
+The endpoint is https://api.beaconapp.cc/v1/document.php
 
 ### Document Metadata Structure
 
@@ -17,7 +17,7 @@ The endpoint is https://thezaz.com/beacon/api/document.php
   "revision": 1,
   "download_count": 1,
   "last_updated": "2017-06-01 12:00:00+0000",
-  "resource_url": "https://thezaz.com/beacon/api/document.php/4e354678-a1b4-470f-8362-9e3446b5be3e"
+  "resource_url": "https://api.beaconapp.cc/v1/document.php/4e354678-a1b4-470f-8362-9e3446b5be3e"
 }
 ```
 
@@ -60,7 +60,7 @@ Use a comma-separated list of document uuids to request the metadata for two or 
 
 ```http
 GET /beacon/api/document.php/4e354678-a1b4-470f-8362-9e3446b5be3e,9aa9daf9-a3b4-4f3d-8e3c-3aa165603ae6 HTTP/1.1
-Host: thezaz.com
+Host: beaconapp.cc
 
 HTTP/1.1 200 OK
 Content-Type: application/json
@@ -77,7 +77,7 @@ Requesting a single document returns the full document content and increments th
 
 ```http
 GET /beacon/api/document.php/4e354678-a1b4-470f-8362-9e3446b5be3e HTTP/1.1
-Host: thezaz.com
+Host: beaconapp.cc
 
 HTTP/1.1 200 OK
 Content-Type: application/octet-stream
@@ -90,7 +90,7 @@ To request the metadata for the document, append the `?simple` suffix.
 
 ```http
 GET /beacon/api/document.php/4e354678-a1b4-470f-8362-9e3446b5be3e?simple HTTP/1.1
-Host: thezaz.com
+Host: beaconapp.cc
 
 HTTP/1.1 200 OK
 Content-Type: application/json
@@ -104,7 +104,7 @@ To save or update a document, make an authenticated POST to the endpoint whose b
 
 ```http
 POST /beacon/api/document.php HTTP/1.1
-Host: thezaz.com
+Host: beaconapp.cc
 Authorization: Basic QTcwRjNENjAtQTI4MS00QzQ1LTgwQTAtQUQ2OUI3MzhENTY4OjgzNUY1MDk0MDYyREVFQjc2NDU2Rjc1MUE5MUY2NzRERkNCQkM5OEQ0RUZFMUMxQjUxNjk0M0Y2MjcxNjFGQkY0QzBEMjc2ODE0Nzk5NzdCOEM0QTRGNUVGMUJFQzg3NjZFQUU3MjcyNzg3RDlENTFEQTIxRjczOTMxRjU4QTdFNDUxNDcxQjJCNTE5OENDRkYzMUZFOUQ2NDUwMUY5MjgwMjkzMkI2MEYyOUIwRkE0QUQwODU1MzQ5RTE1RDc4ODRFMzIxN0RCRUY3MEJGNjg4QjBDRDEwQUMyNDNGNzAyOEM1RjAxOEJGQTJBQkEwQzVBQ0M4NzUzRjVBMjAzMzQ2MkMzQTYwQ0IyRjlBNkIxM0VBQ0M2RDI2NENCNDkxOTFFQzVGQTM1QkZBQzZCNDQ4MDQwMzE2NUE4RDRCOThFRTM3RjA3Mzk3MjM4MTc1REYyOTA3Mzk4RjZENjNGRDA3Rjc4QzZGRTA0NTVFODAxMUM0REE5QTY2Mjk0QUEzMzIzQzIxRjY0QTU1MzMyQTQ0RTg0MTIxQ0JGNTdBRkQ3QzlDOTExMkU0NTMyQjFFMTUyMTRGQUI0M0Y1MDlCNTcwNzMyRjhDMEYwQUIzQTIyNkQ4QzBEODJFQzZDOUM5MThDNjQ0MTc5MERERTJBRUVGQjBDMDlCN0U4RUNDMjg1
 Content-Type: application/json
 
@@ -119,7 +119,7 @@ Removing documents will delete all statistics as well. To delete a document, mak
 
 ```http
 DELETE /beacon/api/document.php/4e354678-a1b4-470f-8362-9e3446b5be3e HTTP/1.1
-Host: thezaz.com
+Host: beaconapp.cc
 Authorization: Basic QTcwRjNENjAtQTI4MS00QzQ1LTgwQTAtQUQ2OUI3MzhENTY4OjNCMEJBREM5QTM1RTFFMDI5QzJGMzRBQTBDMDJBOUM1NzA2REE2MEY0QTc5Njg1RjkwQjdEODZCOTA5RjYzRkUyMzBEQjIyMTY4RTRGRTFCNUE5RUZCMzQ1QTNENUE0QkM0QkY0RjVGODI1MzI3MDE1RTkwRTVCMDNBMDhFOTRENkY3RkE4NjY2OEFDRTlFNkY4M0NFQTY1ODkyMEIwOTRFMjc1OTNGNzA5QjkwNEVEMEFERDQzNTEzQkU5Rjk1MTY0OThGRTU1NzcxNTQ5MzE5MEE2RDFCMzEwRUM5MTkzMEVEMDdCQTZCMzMzMEYyRUUzMDg1RjlGOUVCRjdFNUNCNTQxNzdGNjNBOEEyNTU0MUNDOUZGMDUzNEVEQkRGNzhBREVGOTJBN0E1Q0RBREU2MDM5Qzg1NkJGRjRDQzBBNUM4MDMxN0ZGRENBNDE1QzcxRjEwRUM2NjdBRUFCMTJGQjVFQjg2Njc2RUFDMEEzMDFFREMxRUEyQzkwQkVBNzdCREM3QTY4MzI1ODVCQkFCQkI2NTVBMTZEQzJFNDFFNTk5MUZDQTQxRTBFNzUxNDNFRDUyMTY2QUVEOTJGQTc0RjVCMUQ4MkU4MTAzRDFBNzlDRjUxQjMxOEUyMUQ1REYxREE0MDNDRjU3QjM4RUU2NTU5QTBBQTYwMTQwNzNE
 
 HTTP/1.1 200 OK
@@ -127,7 +127,7 @@ HTTP/1.1 200 OK
 Or
 ```http
 DELETE /beacon/api/document.php HTTP/1.1
-Host: thezaz.com
+Host: beaconapp.cc
 Authorization: Basic QTcwRjNENjAtQTI4MS00QzQ1LTgwQTAtQUQ2OUI3MzhENTY4OkFERDIzQjc0OEEzNjE0REJGMUI4NTZCRTg0MUI0RDdBQUI3N0I1RTMwNkFBNjU3RjRFOTI3Mzk5NDI4QkE2QzQ2MzQ0Mjc2RTIxRDk3MDQyQUFENEU2QTVFRjgxMjNDN0Y1MkY3NkU5Njk5MjIyMjMxN0VFNkFDOEIxOUIzMTA4QUUyREVDOEZFRDM4NDZFRTdERUJCNjg1RkI2MzI2N0NFNDNENkE2MDVCQjkwNzI0RjczQjVBMzA4MDdBNkY5MTkwODU3MTNERUZBRkUwQzMxNkEyQzQzQzAwOTMxRDc4MDE2NjM2RDRCNDc2NjE5QUZEMUNFMTQ0MjE4OTU4RTdDMUZCMjE2MTc5NTkwRDFDREM2NjE0OThCQzAzNzRCMDlFRTQ5OTU1NEFGRDZCNzg5QTczNURFRkQ2MEFBRUNFNEFDMjJCMDRBNzdGMTVBNzc0NEZCNDFDMTFDMDE4RTNFQzEzM0YyMTc5Q0QzNTI2NTA2QjMzNDM3QjlGN0Y2OTZFQkI2Qzg4MzNGNTQ2QjI3RUVGOTk1OEU2RTVCNTJCMDY0ODA1RUZCOEZCQzQ1Q0ExRTU3QkRFMkZBNzdGNzRCQTgzMURGMTJFRUYwQTA0MEYxNkY5NTc4QjE5NjNFQTNFMjAwMDlDNjk1MDFCRUUxOEI3QTYzNzBGNjk2RkEz
 Content-Type: text/plain
 
