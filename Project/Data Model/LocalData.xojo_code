@@ -364,7 +364,8 @@ Implements Beacon.DataSource
 		      Dim UIColor As Text = Dict.Value("uicolor")
 		      Dim SortValue As Integer = Dict.Value("sort")
 		      
-		      Self.SQLExecute("INSERT OR REPLACE INTO loot_sources (class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", ClassString, Label, Kind, Mask, MultMin, MultMax, UIColor, SortValue)
+		      Self.SQLExecute("DELETE FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
+		      Self.SQLExecute("INSERT INTO loot_sources (class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", ClassString, Label, Kind, Mask, MultMin, MultMax, UIColor, SortValue)
 		    Next
 		    
 		    Dim EngramAdditions() As Auto = EngramsDict.Value("additions")
@@ -383,7 +384,8 @@ Implements Beacon.DataSource
 		      Dim Availability As Integer = Dict.Value("availability")
 		      Dim CanBlueprint As Boolean = (Dict.Value("blueprint") = 1)
 		      
-		      Self.SQLExecute("INSERT OR REPLACE INTO engrams (path, class_string, label, availability, can_blueprint, built_in) VALUES (?1, ?2, ?3, ?4, ?5, 1);", Path, ClassString, Label, Availability, CanBlueprint)
+		      Self.SQLExecute("DELETE FROM engrams WHERE LOWER(path) = LOWER(?1);", Path)
+		      Self.SQLExecute("INSERT INTO engrams (path, class_string, label, availability, can_blueprint, built_in) VALUES (?1, ?2, ?3, ?4, ?5, 1);", Path, ClassString, Label, Availability, CanBlueprint)
 		    Next
 		    
 		    Dim PresetAdditions() As Auto = PresetsDict.Value("additions")
@@ -397,7 +399,8 @@ Implements Beacon.DataSource
 		      Dim PresetID As Text = Dict.Value("id")
 		      Dim Label As Text = Dict.Value("label")
 		      Dim Contents As Text = Dict.Value("contents")
-		      Self.SQLExecute("INSERT OR REPLACE INTO presets (preset_id, label, contents) VALUES (?1, ?2, ?3);", PresetID, Label, Contents)
+		      Self.SQLExecute("DELETE FROM presets WHERE LOWER(preset_id) = LOWER(?1);", PresetID)
+		      Self.SQLExecute("INSERT INTO presets (preset_id, label, contents) VALUES (?1, ?2, ?3);", PresetID, Label, Contents)
 		      ReloadPresets = True
 		    Next
 		    

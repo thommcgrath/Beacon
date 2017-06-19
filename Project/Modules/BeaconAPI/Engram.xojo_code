@@ -35,10 +35,12 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Function ClassString() As Text
-		  Dim Components() As Text = Self.mPath.Split("/")
-		  Dim Tail As Text = Components(UBound(Components))
-		  Components = Tail.Split(".")
-		  Return Components(UBound(Components)) + "_C"
+		  If Self.mPath.IndexOf("/") > -1 And Self.mPath.IndexOf(".") > -1 Then
+		    Dim Components() As Text = Self.mPath.Split("/")
+		    Dim Tail As Text = Components(UBound(Components))
+		    Components = Tail.Split(".")
+		    Return Components(UBound(Components)) + "_C"
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -105,7 +107,7 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Function Hash() As Text
-		  Dim Value As Text = Self.mPath.Lowercase + ":" + Self.mAvailability.ToText + ":" + if(Self.CanBeBlueprint, "true", "false")
+		  Dim Value As Text = Self.mPath.Lowercase + ":" + Self.Label.Lowercase + ":" + Self.mAvailability.ToText + ":" + if(Self.CanBeBlueprint, "true", "false")
 		  Dim Hash As Xojo.Core.MemoryBlock = Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Value))
 		  Return Beacon.EncodeHex(Hash)
 		End Function

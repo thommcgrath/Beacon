@@ -13,7 +13,7 @@ Protected Class EngramSet
 
 	#tag Method, Flags = &h0
 		Sub Add(Engram As BeaconAPI.Engram)
-		  If Engram.ClassString = "" Then
+		  If Engram.Path = "" Then
 		    Return
 		  End If
 		  
@@ -65,13 +65,13 @@ Protected Class EngramSet
 		Function EngramsToDelete() As BeaconAPI.Engram()
 		  Dim NewClasses() As Text
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mNewEngrams
-		    NewClasses.Append(BeaconAPI.Engram(Entry.Value).ClassString)
+		    NewClasses.Append(BeaconAPI.Engram(Entry.Value).Path)
 		  Next
 		  
 		  Dim DeleteEngrams() As BeaconAPI.Engram
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOriginalEngrams
 		    Dim Engram As BeaconAPI.Engram = Entry.Value
-		    If NewClasses.IndexOf(Engram.ClassString) = -1 Then
+		    If NewClasses.IndexOf(Engram.Path) = -1 Then
 		      DeleteEngrams.Append(New BeaconAPI.Engram(Engram))
 		    End If
 		  Next
@@ -84,15 +84,15 @@ Protected Class EngramSet
 		Function EngramsToSave() As BeaconAPI.Engram()
 		  Dim OriginalClasses As New Xojo.Core.Dictionary
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOriginalEngrams
-		    OriginalClasses.Value(BeaconAPI.Engram(Entry.Value).ClassString) = BeaconAPI.Engram(Entry.Value)
+		    OriginalClasses.Value(BeaconAPI.Engram(Entry.Value).Path) = BeaconAPI.Engram(Entry.Value)
 		  Next
 		  
 		  Dim NewEngrams() As BeaconAPI.Engram
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mNewEngrams
 		    Dim Engram As BeaconAPI.Engram = Entry.Value
-		    If OriginalClasses.HasKey(Engram.ClassString) Then
+		    If OriginalClasses.HasKey(Engram.Path) Then
 		      // Might be changed
-		      Dim OriginalEngram As BeaconAPI.Engram = OriginalClasses.Value(Engram.ClassString)
+		      Dim OriginalEngram As BeaconAPI.Engram = OriginalClasses.Value(Engram.Path)
 		      If Engram.Hash <> OriginalEngram.Hash Then
 		        NewEngrams.Append(New BeaconAPI.Engram(Engram))
 		      End If
@@ -114,7 +114,7 @@ Protected Class EngramSet
 
 	#tag Method, Flags = &h0
 		Sub Remove(Engram As BeaconAPI.Engram)
-		  If Engram.ClassString = "" Then
+		  If Engram.Path = "" Then
 		    Return
 		  End If
 		  
