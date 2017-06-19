@@ -154,6 +154,25 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetCustomEngrams() As Beacon.Engram()
+		  Try
+		    Dim RS As RecordSet = Self.SQLSelect("SELECT path, label, availability, can_blueprint FROM engrams WHERE built_in = 0;")
+		    If RS.RecordCount = 0 Then
+		      Return Nil
+		    End If
+		    
+		    Dim Engrams() As Beacon.Engram = Self.RecordSetToEngram(RS)
+		    For Each Engram As Beacon.Engram In Engrams
+		      Self.mEngramCache.Value(Engram.Path) = Engram
+		    Next
+		    Return Engrams
+		  Catch Err As UnsupportedOperationException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetEngramByClass(ClassString As Text) As Beacon.Engram
 		  // Part of the Beacon.DataSource interface.
 		  
@@ -639,7 +658,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveEngram(Engram As Beacon.Engram) As Boolean
+		Function SaveEngram(Engram As Beacon.Engram, Replace As Boolean = True) As Boolean
 		  If Not Engram.IsValid Then
 		    Return False
 		  End If
@@ -648,6 +667,10 @@ Implements Beacon.DataSource
 		  Try
 		    Dim Results As RecordSet = Self.SQLSelect("SELECT built_in FROM engrams WHERE LOWER(path) = LOWER(?1);", Engram.Path)
 		    If Results.RecordCount = 1 Then
+		      If Replace = False Then
+		        Return False
+		      End If
+		      
 		      Dim BuiltIn As Boolean = Results.Field("built_in").BooleanValue
 		      If BuiltIn Then
 		        Self.Rollback()

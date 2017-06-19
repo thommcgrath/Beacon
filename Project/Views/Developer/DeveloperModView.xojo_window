@@ -595,7 +595,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowFileImport()
 		  Dim Dialog As New OpenDialog
-		  Dialog.Filter = BeaconFileTypes.Any
+		  Dialog.Filter = BeaconFileTypes.Text
 		  
 		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File = Nil Then

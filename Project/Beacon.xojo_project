@@ -145,6 +145,7 @@ Class=Invocation;Modules/NotificationKit/Invocation.xojo_code;&h34E99FFF;&h11B95
 Module=SQLiteExtensions;Modules/SQLiteExtensions.xojo_code;&h3BE6BFFF;&h1444B7FF;false
 MultiImage=IconAlert;Icons/IconAlert.xojo_image;&h784A87FF;&h7F977FF;false
 Interface=DocumentItem;Modules/Beacon/DocumentItem.xojo_code;&h419E0FFF;&h55ADDFFF;false
+Window=LibraryEngramsView;Views/Library/LibraryEngramsView.xojo_window;&h1DF2BFFF;&h180417FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

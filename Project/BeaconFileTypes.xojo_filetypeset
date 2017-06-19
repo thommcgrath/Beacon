@@ -73,14 +73,14 @@
 	#tag EndFileType
 
 	#tag FileType
-		CodeName=Any
-		Extension=
-		Flags=&h2
+		CodeName=Text
+		Extension=.asc;.ascii;.bas;.c;.class;.cp;.cpp;.h;.hp;.hpp;.i3;.java;.m2;.m3;.mak;.text;.txt
+		Flags=&h0
 		MacCreator=????
-		MacType=????
-		Name=special/any
-		UTI=
-		UTIConformsTo=
+		MacType=TEXT
+		Name=text/plain
+		UTI=public.text
+		UTIConformsTo=public.data, public.content
 		Description=
 		MimeType=
 		Imported=True
