@@ -326,6 +326,14 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ImportURLButton
+	#tag Event
+		Sub Action()
+		  Dim Content As String = LibraryEngramsURLDialog.Present(Self)
+		  Self.Import(Content)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ImportClipboardButton
 	#tag Event
 		Sub Action()
@@ -341,6 +349,22 @@ End
 		Sub Action()
 		  Dim Board As New Clipboard
 		  Self.ImportClipboardButton.Enabled = Board.TextAvailable And InStr(Board.Text, "Blueprint") > 0
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RemoveButton
+	#tag Event
+		Sub Action()
+		  For I As Integer = List.ListCount - 1 DownTo 0
+		    If Not List.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim Engram As Beacon.Engram = List.RowTag(I)
+		    If App.LocalData.DeleteEngram(Engram) Then
+		      List.RemoveRow(I)
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

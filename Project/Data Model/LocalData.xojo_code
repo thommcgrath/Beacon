@@ -147,6 +147,25 @@ Implements Beacon.DataSource
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function DeleteEngram(Engram As Beacon.Engram) As Boolean
+		  Try
+		    Dim Results As RecordSet = Self.SQLSelect("SELECT built_in FROM engrams WHERE LOWER(path) = LOWER(?1);", Engram.Path)
+		    If Results.RecordCount = 1 And Results.Field("built_in").BooleanValue = True Then
+		      Return False
+		    End If
+		    
+		    Self.BeginTransaction()
+		    Self.SQLExecute("DELETE FROM engrams WHERE LOWER(path) = LOWER(?1) AND built_in = 0;", Engram.Path)
+		    Self.Commit()
+		    
+		    Return True
+		  Catch Err As UnsupportedOperationException
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function FileForCustomPreset(Preset As Beacon.Preset) As FolderItem
 		  Return Self.CustomPresetsFolder.Child(Preset.PresetID + BeaconFileTypes.BeaconPreset.PrimaryExtension)
