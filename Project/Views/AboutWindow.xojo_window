@@ -302,7 +302,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Update()
-		  Dim LastSync As Xojo.Core.Date = App.LocalData.LastSync
+		  Dim LastSync As Xojo.Core.Date = LocalData.SharedInstance.LastSync
 		  If LastSync = Nil Then
 		    SyncLabel.Text = "No engram data available"
 		  Else
@@ -372,7 +372,7 @@ End
 		  UpdateEngramsButton.Top = -100
 		  UpdateEngramsSpinner.Top = Top + ((UpdateEngramsButton.Height - UpdateEngramsSpinner.Height) / 2)
 		  
-		  Dim URL As Text = App.LocalData.ClassesURL
+		  Dim URL As Text = LocalData.SharedInstance.ClassesURL
 		  UpdateEngramsSocket.ValidateCertificates = True
 		  UpdateEngramsSocket.Send("GET", URL)
 		End Sub
@@ -422,10 +422,10 @@ End
 		    Return
 		  End If
 		  
-		  If App.LocalData.Import(TextContent) Then
+		  If LocalData.SharedInstance.Import(TextContent) Then
 		    Self.Update()
 		    
-		    Dim LastSync As Xojo.Core.Date = App.LocalData.LastSync
+		    Dim LastSync As Xojo.Core.Date = LocalData.SharedInstance.LastSync
 		    Dim Dialog As New MessageDialog
 		    Dialog.Title = ""
 		    Dialog.Message = "Engram database has been updated"

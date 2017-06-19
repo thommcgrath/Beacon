@@ -126,8 +126,6 @@ Implements Beacon.DataSource
 		  If CurrentSchemaVersion < Self.SchemaVersion Then
 		    Self.MigrateData(App.ApplicationSupport.Child("Library " + Str(CurrentSchemaVersion, "-0") + ".sqlite"), CurrentSchemaVersion)
 		  End If
-		  
-		  Self.CheckForEngramUpdates()
 		End Sub
 	#tag EndMethod
 
@@ -355,7 +353,7 @@ Implements Beacon.DataSource
 		    Dim ShouldTruncate As Boolean = ChangeDict.Value("is_full") = 1
 		    If ShouldTruncate Then
 		      Self.SQLExecute("DELETE FROM loot_sources;")
-		      Self.SQLExecute("DELETE FROM engrams WHERE builtin = 1;")
+		      Self.SQLExecute("DELETE FROM engrams WHERE built_in = 1;")
 		      Self.SQLExecute("DELETE FROM presets;")
 		    End If
 		    
@@ -560,7 +558,6 @@ Implements Beacon.DataSource
 		  #Pragma Unused Sender
 		  
 		  App.Log("Engram check error: " + Error.Reason)
-		  Self.ImportLocalClasses()
 		End Sub
 	#tag EndMethod
 
@@ -571,7 +568,6 @@ Implements Beacon.DataSource
 		  
 		  If HTTPStatus <> 200 Then
 		    App.Log("Engram update returned HTTP " + Str(HTTPStatus, "-0"))
-		    Self.ImportLocalClasses()
 		    Return
 		  End If
 		  
@@ -782,6 +778,21 @@ Implements Beacon.DataSource
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function SharedInstance(Create As Boolean = True) As LocalData
+		  If mInstance = Nil And Create = True Then
+		    mInstance = New LocalData
+		    Beacon.Data = mInstance
+		    Dim Results As RecordSet = mInstance.SQLSelect("SELECT COUNT(class_string) AS source_count FROM loot_sources;")
+		    If Results.Field("source_count").IntegerValue = 0 Then
+		      mInstance.ImportLocalClasses()
+		    End If
+		    mInstance.CheckForEngramUpdates()
+		  End If
+		  Return mInstance
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub SQLExecute(SQLString As String, ParamArray Values() As Variant)
 		  Self.mLock.Enter
@@ -894,6 +905,12 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Sub Start()
+		  Call SharedInstance(True)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Variable(Key As String) As String
 		  Try
 		    Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM variables WHERE LOWER(key) = LOWER(?1);", Key)
@@ -925,6 +942,10 @@ Implements Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private mEngramCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared mInstance As LocalData
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
