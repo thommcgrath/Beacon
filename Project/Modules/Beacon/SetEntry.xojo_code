@@ -211,7 +211,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        Engrams.Append(Engram)
 		      Else
 		        Break
-		        Engrams.Append(Beacon.Engram.CreateTransientEngram(ClassString))
+		        Engrams.Append(Beacon.Engram.CreateUnknownEngram(ClassString))
 		      End If
 		    Next
 		  ElseIf Dict.HasKey("Items") Then
@@ -231,6 +231,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		          Value = Value.Mid(10, Value.Length - 11)
 		        Else
 		          // No idea what this says
+		          Break
 		          Continue
 		        End If
 		        
@@ -436,11 +437,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      If Weights(X) >= ClassDecision Then
 		        Dim SelectedWeight As Double = Weights(X)
 		        Dim SelectedEntry As Beacon.SetEntryOption = WeightLookup.Value(SelectedWeight)
-		        Selection.Path = SelectedEntry.Engram.Path
+		        Selection.Engram = SelectedEntry.Engram
 		        Exit For X
 		      End If
 		    Next
-		    If Selection.Path = "" Then
+		    If Selection.Engram = Nil Then
 		      Continue
 		    End If
 		    

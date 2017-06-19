@@ -217,6 +217,7 @@ Begin Window EntryEditor
          HasBackColor    =   False
          Height          =   175
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   372
          LockBottom      =   True
@@ -477,7 +478,7 @@ End
 		  EngramList.DeleteAllRows
 		  
 		  Dim PerfectMatch As Boolean
-		  Dim Indexes As New Dictionary
+		  Dim Indexes As New Xojo.Core.Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
 		    Dim Weight As String = ""
 		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then

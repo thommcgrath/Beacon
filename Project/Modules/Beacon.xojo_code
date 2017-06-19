@@ -336,22 +336,7 @@ Protected Module Beacon
 		    Dim Path As Text = Key.ToText
 		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
 		    If Engram = Nil Then
-		      Dim Temp As New Beacon.MutableEngram(Path)
-		      
-		      Dim GuessName As String = Temp.ClassString
-		      Dim Parts() As String = GuessName.Split("_")
-		      Parts.Remove(0)
-		      Parts.Remove(UBound(Parts))
-		      GuessName = Join(Parts, " ")
-		      GuessName = Regex.Replace(GuessName)
-		      GuessName = ReplaceAll(GuessName, "_", " ")
-		      While GuessName.InStr("  ") > 0
-		        GuessName = ReplaceAll(GuessName, "  ", " ")
-		      Wend
-		      GuessName = Trim(GuessName)
-		      
-		      Temp.Label = GuessName.ToText
-		      Engram = New Beacon.Engram(Temp)
+		      Engram = Beacon.Engram.CreateUnknownEngram(Path)
 		    End If
 		    
 		    Engrams.Append(Engram)

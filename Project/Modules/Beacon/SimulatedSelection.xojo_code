@@ -2,19 +2,17 @@
 Protected Class SimulatedSelection
 	#tag Method, Flags = &h0
 		Function Description() As Text
-		  Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Self.Path)
-		  Dim Label As Text = if(Engram <> Nil, Engram.Label, Self.Path)
-		  Return Label + if(Self.IsBlueprint And Engram.CanBeBlueprint, " Blueprint", "")
+		  Return Engram.Label + if(Self.IsBlueprint And Engram.CanBeBlueprint, " Blueprint", "")
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h0
-		IsBlueprint As Boolean
+		Engram As Beacon.Engram
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Path As Text
+		IsBlueprint As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

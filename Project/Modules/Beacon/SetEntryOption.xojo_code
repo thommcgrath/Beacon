@@ -54,7 +54,12 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Hash() As Text
-		  Return Beacon.MD5(Self.mEngram.ClassString.Lowercase + "@" + Self.mWeight.ToText(Xojo.Core.Locale.Raw, "0.0000")).Lowercase
+		  Dim Path As Text = Self.mEngram.Path
+		  If Path = "" Then
+		    Path = Self.mEngram.ClassString
+		  End If
+		  
+		  Return Beacon.MD5(Path.Lowercase + "@" + Self.mWeight.ToText(Xojo.Core.Locale.Raw, "0.0000")).Lowercase
 		End Function
 	#tag EndMethod
 
@@ -66,11 +71,14 @@ Implements Beacon.DocumentItem
 		  If Dict.HasKey("Path") Then
 		    Dim Path As Text = Dict.Value("Path")
 		    Engram = Beacon.Data.GetEngramByPath(Path)
+		    If Engram = Nil Then
+		      Engram = Beacon.Engram.CreateUnknownEngram(Path)
+		    End If
 		  ElseIf Dict.HasKey("Class") Then
 		    Dim ClassString As Text = Dict.Value("Class")
 		    Engram = Beacon.Data.GetEngramByClass(ClassString)
 		    If Engram = Nil Then
-		      Engram = New Beacon.Engram(New Beacon.MutableEngram(ClassString))
+		      Engram = Beacon.Engram.CreateUnknownEngram(ClassString)
 		    End If
 		  Else
 		    Return Nil

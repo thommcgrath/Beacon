@@ -33,7 +33,11 @@ Protected Class Engram
 		    Components = Tail.Split(".")
 		    Return Components(UBound(Components)) + "_C"
 		  Else
-		    Return Self.mPath
+		    If Self.mPath.Length > 2 And Self.mPath.Right(2) = "_C" Then
+		      Return Self.mPath
+		    Else
+		      Return Self.mPath + "_C"
+		    End If
 		  End If
 		End Function
 	#tag EndMethod
@@ -58,21 +62,16 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function CreateTransientEngram(ClassString As Text) As Beacon.Engram
-		  Dim Engram As New Beacon.Engram
-		  Engram.mIsValid = False
-		  Engram.mPath = ClassString
-		  Engram.mLabel = ClassString
-		  Return Engram
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function CreateUnknownEngram(Path As Text) As Beacon.Engram
 		  Dim Engram As New Beacon.Engram
-		  Engram.mIsValid = Path.Length > 6 And Path.Left(6) = "/Game/"
+		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
+		    If Path.Right(2) = "_C" Then
+		      // Appears to be a BlueprintGeneratedClass Path
+		      Path = Path.Left(Path.Length - 2)
+		    End If
+		    Engram.mIsValid = True
+		  End If
 		  Engram.mPath = Path
-		  Engram.mLabel = ""
 		  Return Engram
 		End Function
 	#tag EndMethod
@@ -86,17 +85,43 @@ Protected Class Engram
 	#tag Method, Flags = &h0
 		Function IsValid() As Boolean
 		  Return Self.mIsValid
-		  Return Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Label() As Text
-		  If Self.mLabel <> "" Then
-		    Return Self.mLabel
-		  Else
-		    Return Self.mPath
+		  If Self.mLabel = "" Then
+		    // Create a label from the class String
+		    Dim ClassString As Text = Self.ClassString
+		    Dim Parts() As Text = ClassString.Split("_")
+		    If UBound(Parts) <= 1 Then
+		      Return ClassString
+		    End If
+		    Parts.Remove(0)
+		    Parts.Remove(UBound(Parts))
+		    
+		    Dim GuessLabel As Text = Text.Join(Parts, " ")
+		    Dim Chars() As Text
+		    For Each Codepoint As Integer In GuessLabel.Codepoints
+		      If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
+		        Chars.Append(Text.FromUnicodeCodepoint(Codepoint))
+		      ElseIf CodePoint >= 65 And Codepoint <= 90 Then
+		        Chars.Append(" ")
+		        Chars.Append(Text.FromUnicodeCodepoint(Codepoint))
+		      ElseIf CodePoint = 95 Then
+		        Chars.Append(" ")
+		      End If
+		    Next
+		    GuessLabel = Text.Join(Chars, "")
+		    
+		    While GuessLabel.IndexOf("  ") > -1
+		      GuessLabel = GuessLabel.ReplaceAll("  ", " ")
+		    Wend
+		    
+		    Self.mLabel = GuessLabel.Trim
 		  End If
+		  
+		  Return Self.mLabel
 		End Function
 	#tag EndMethod
 
