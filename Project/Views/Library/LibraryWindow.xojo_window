@@ -97,13 +97,13 @@ Begin BeaconMultiview LibraryWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
+      PanelCount      =   3
       Panels          =   ""
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   31
-      Value           =   1
+      Value           =   2
       Visible         =   True
       Width           =   800
       Begin LibraryDocumentsView DocsView
@@ -162,6 +162,34 @@ Begin BeaconMultiview LibraryWindow
          Visible         =   True
          Width           =   800
       End
+      Begin LibraryEngramsView EngramsView
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   419
+         HelpTag         =   ""
+         InitialParent   =   "Panel"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   31
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   800
+      End
    End
 End
 #tag EndWindow
@@ -180,6 +208,8 @@ End
 		    Return Self.DocsView
 		  Case 1
 		    Return Self.PresetsView
+		  Case 2
+		    Return Self.EngramsView
 		  End Select
 		End Function
 	#tag EndEvent
@@ -255,6 +285,7 @@ End
 		Sub Open()
 		  Me.Append("Documents")
 		  Me.Append("Presets")
+		  Me.Append("Engrams")
 		End Sub
 	#tag EndEvent
 #tag EndEvents

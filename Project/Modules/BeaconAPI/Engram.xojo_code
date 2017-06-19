@@ -17,7 +17,7 @@ Protected Class Engram
 		  End If
 		  
 		  Dim Dict As New Xojo.Core.Dictionary
-		  Dict.Value("class") = Self.ClassString
+		  Dict.Value("path") = Self.Path
 		  Dict.Value("label") = Self.Label
 		  Dict.Value("mod_id") = Self.ModID
 		  Dict.Value("availability") = Environments
@@ -34,6 +34,15 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ClassString() As Text
+		  Dim Components() As Text = Self.mPath.Split("/")
+		  Dim Tail As Text = Components(UBound(Components))
+		  Components = Tail.Split(".")
+		  Return Components(UBound(Components)) + "_C"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mAvailability = Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Island) Or Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Scorched)
 		  Self.mID = Beacon.CreateUUID
@@ -42,7 +51,7 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.Engram)
-		  Self.mClassString = Source.ClassString
+		  Self.mPath = Source.Path
 		  Self.Label = Source.Label
 		  Self.mAvailability = Source.Availability
 		  Self.mID = Beacon.CreateUUID
@@ -54,7 +63,7 @@ Protected Class Engram
 		  Self.CanBeBlueprint = Source.CanBeBlueprint
 		  Self.Label = Source.Label
 		  Self.mAvailability = Source.mAvailability
-		  Self.mClassString = Source.mClassString
+		  Self.mPath = Source.mPath
 		  Self.mID = Source.mID
 		  Self.mModName = Source.mModName
 		  Self.ModID = Source.ModID
@@ -68,7 +77,7 @@ Protected Class Engram
 		  Self.CanBeBlueprint = Source.Value("can_blueprint")
 		  Self.Label = Source.Value("label")
 		  Self.mAvailability = 0
-		  Self.mClassString = Source.Value("class")
+		  Self.mPath = Source.Value("path")
 		  Self.mID = Beacon.CreateUUID
 		  Self.mModName = ""
 		  Self.ModID = ""
@@ -96,7 +105,7 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Function Hash() As Text
-		  Dim Value As Text = Self.ClassString.Lowercase + ":" + Self.mAvailability.ToText + ":" + if(Self.CanBeBlueprint, "true", "false")
+		  Dim Value As Text = Self.mPath.Lowercase + ":" + Self.mAvailability.ToText + ":" + if(Self.CanBeBlueprint, "true", "false")
 		  Dim Hash As Xojo.Core.MemoryBlock = Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Value))
 		  Return Beacon.EncodeHex(Hash)
 		End Function
@@ -142,6 +151,12 @@ Protected Class Engram
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function UID() As Text
+		  Return Beacon.EncodeHex(Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Self.mPath.Lowercase))).Lowercase
+		End Function
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -162,30 +177,12 @@ Protected Class Engram
 		CanBeBlueprint As Boolean = True
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mClassString
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Self.mClassString = Beacon.CleanupClassString(Value)
-			End Set
-		#tag EndSetter
-		ClassString As Text
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h0
 		Label As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mAvailability As UInteger
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mClassString As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -201,12 +198,30 @@ Protected Class Engram
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPath As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mResourceURL As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSpawnCode As Text
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mPath
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mPath = Value
+			End Set
+		#tag EndSetter
+		Path As Text
+	#tag EndComputedProperty
 
 
 	#tag ViewBehavior

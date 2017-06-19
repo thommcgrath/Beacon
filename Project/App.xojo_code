@@ -333,6 +333,10 @@ Inherits Application
 		    Select Case Instructions
 		    Case "showdocuments"
 		      LibraryWindow.SharedWindow.ShowPage(0)
+		    Case "showpresets"
+		      LibraryWindow.SharedWindow.ShowPage(1)
+		    Case "showengrams"
+		      LibraryWindow.SharedWindow.ShowPage(2)
 		    Case "showmods"
 		      DeveloperWindow.SharedWindow.ShowPage(1)
 		    Case "showidentity"
@@ -341,10 +345,6 @@ Inherits Application
 		      DeveloperWindow.SharedWindow.ShowPage(3)
 		    Case "showapibuilder"
 		      DeveloperWindow.SharedWindow.ShowPage(4)
-		    Case "showpresets"
-		      LibraryWindow.SharedWindow.ShowPage(1)
-		    Case "showengrams"
-		      LibraryWindow.SharedWindow.ShowPage(2)
 		    Else
 		      Break
 		    End Select
