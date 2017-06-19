@@ -49,7 +49,7 @@ class BeaconEngram implements JsonSerializable {
 	}
 	
 	public function SpawnCode() {
-		return 'cheat giveitem "Blueprint\'' . $path . '\'" 1 0 false';
+		return 'cheat giveitem "Blueprint\'' . $this->path . '\'" 1 0 false';
 	}
 	
 	protected static function GetFromResults(BeaconRecordSet $results) {
@@ -131,7 +131,7 @@ class BeaconEngram implements JsonSerializable {
 			'environments' => $environments,
 			'can_blueprint' => $this->can_blueprint,
 			'spawn' => $this->SpawnCode(),
-			'resource_url' => BeaconAPI::URL('/engram.php/' . strtolower(md5($this->path)),
+			'resource_url' => BeaconAPI::URL('/engram.php/' . strtolower(md5($this->path))),
 			'mod_id' => $this->mod_id,
 			'mod_name' => $this->mod_name
 		);
