@@ -68,8 +68,7 @@ Inherits Application
 		    Self.mMutex = Lock
 		  End If
 		  
-		  Self.mLocalData = New LocalData
-		  Beacon.Data = Self.mLocalData
+		  LocalData.Start
 		  
 		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
 		  If IdentityFile.Exists Then
@@ -110,7 +109,7 @@ Inherits Application
 		      Dim Content As String = Stream.ReadAll(Encodings.UTF8)
 		      Stream.Close
 		      
-		      If Self.mLocalData.Import(Content.ToText) Then
+		      If LocalData.SharedInstance.Import(Content.ToText) Then
 		        // Imported
 		        For I As Integer = 0 To WindowCount - 1
 		          If Window(I) IsA AboutWindow Then
@@ -119,7 +118,7 @@ Inherits Application
 		          End If
 		        Next
 		        
-		        Dim LastSync As Xojo.Core.Date = Self.mLocalData.LastSync
+		        Dim LastSync As Xojo.Core.Date = LocalData.SharedInstance.LastSync
 		        
 		        Dim Dialog As New MessageDialog
 		        Dialog.Title = ""
@@ -382,12 +381,6 @@ Inherits Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LocalData() As LocalData
-		  Return Self.mLocalData
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Log(Message As String)
 		  If Self.mLogLock = Nil Then
 		    Self.mLogLock = New CriticalSection
@@ -455,10 +448,6 @@ Inherits Application
 
 	#tag Property, Flags = &h21
 		Private mIdentity As Beacon.Identity
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mLocalData As LocalData
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

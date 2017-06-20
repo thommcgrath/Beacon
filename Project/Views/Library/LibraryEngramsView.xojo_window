@@ -119,6 +119,7 @@ Begin BeaconSubview LibraryEngramsView
       Width           =   130
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -223,7 +224,7 @@ End
 		  Dim ImportedCount, SkippedCount As Integer
 		  Dim Engrams() As Beacon.Engram = Beacon.PullEngramsFromText(Contents)
 		  For Each Engram As Beacon.Engram In Engrams
-		    If App.LocalData.SaveEngram(Engram, False) Then
+		    If LocalData.SharedInstance.SaveEngram(Engram, False) Then
 		      ImportedCount = ImportedCount + 1
 		    Else
 		      SkippedCount = SkippedCount + 1
@@ -260,7 +261,7 @@ End
 		  
 		  List.DeleteAllRows
 		  
-		  Dim Engrams() As Beacon.Engram = App.LocalData.GetCustomEngrams()
+		  Dim Engrams() As Beacon.Engram = LocalData.SharedInstance.GetCustomEngrams()
 		  For Each Engram As Beacon.Engram In Engrams
 		    List.AddRow("")
 		    Self.ShowEngramInRow(Engram, List.LastIndex)
@@ -361,7 +362,7 @@ End
 		    End If
 		    
 		    Dim Engram As Beacon.Engram = List.RowTag(I)
-		    If App.LocalData.DeleteEngram(Engram) Then
+		    If LocalData.SharedInstance.DeleteEngram(Engram) Then
 		      List.RemoveRow(I)
 		    End If
 		  Next
@@ -403,7 +404,7 @@ End
 		    Return
 		  End Select
 		  
-		  If App.LocalData.SaveEngram(Editable) Then
+		  If LocalData.SharedInstance.SaveEngram(Editable) Then
 		    Self.ShowEngramInRow(New Beacon.Engram(Editable), Row)
 		  Else
 		    Beep
