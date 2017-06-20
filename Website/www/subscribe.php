@@ -1,22 +1,23 @@
 <?php
 
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
-//require_once($_SERVER['DOCUMENT_ROOT'] . '/php/mailchimp.php');
+header('Content-Type: application/json');
 
 $email_address = array_key_exists('email', $_POST) ? $_POST['email'] : '';
 $first_name = array_key_exists('first_name', $_POST) ? $_POST['first_name'] : '';
 $last_name = array_key_exists('last_name', $_POST) ? $_POST['last_name'] : '';
 
 if ($email_address == '') {
+	echo json_encode(array('success' => false, 'reason' => 'No email address'));
 	exit;
 }
 
 try {
 	MailChimp::SubscribeUser('b0da56885c', $email_address, $first_name, $last_name);
+	echo json_encode(array('success' => true));
 } catch (MailChimpException $e) {
+	echo json_encode(array('success' => false, 'reason' => $e->getMessage(), 'detail' => $e->getDetails()));
 }
-
-<?php
 
 abstract class MailChimp {
 	private static function URL() {
@@ -46,7 +47,7 @@ abstract class MailChimp {
 		curl_close($handle);
 		
 		if ($http_status == 200) {
-			return json_decode($return, true);
+			return true;
 		} else {
 			$error = json_decode($return, true);
 			throw new MailChimpException($error['title'], $error['detail']);
@@ -81,7 +82,5 @@ class MailChimpException extends \Exception {
 		return $this->detail;
 	}
 }
-
-?>
 
 ?>

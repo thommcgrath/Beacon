@@ -18,6 +18,6 @@ BeaconTemplate::AddStylesheet('index.css');
 	<p>Crafting an entire loot table can be daunting task. Beacon includes handy presets such as &quot;Dino Consumables&quot; and &quot;Thatch Housing&quot; to serve has a starting point. Users can create their own presets or edit the built-in ones and even share their creations with other users.</p>
 </div>
 <div class="frontpage-right">
-	<h1>Import config from Game.ini and Ark Dev Kit</h1>
+	<h1>Import from Game.ini and Ark Dev Kit</h1>
 	<p>Have some customized loot from another tool? Beacon can handle that. Item sets from the Ark Dev Kit can even be copied and pasted directly into Beacon. When its time update server configs, either export everything or copy one (or more) loot sources and paste them directly into the config file.</p>
 </div>
