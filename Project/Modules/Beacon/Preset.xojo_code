@@ -268,10 +268,13 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Xojo.Core.Dictionary
+		  Dim Hashes() As Text
 		  Dim Contents() As Xojo.Core.Dictionary
 		  For Each Entry As Beacon.PresetEntry In Self.mContents
+		    Hashes.Append(Entry.Hash)
 		    Contents.Append(Entry.Export)
 		  Next
+		  Hashes.SortWith(Contents)
 		  
 		  Dim StandardModifiers As New Xojo.Core.Dictionary
 		  StandardModifiers.Value("Quality") = Self.mQualityModifierStandard

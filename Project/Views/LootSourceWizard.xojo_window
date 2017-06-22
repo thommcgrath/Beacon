@@ -20,7 +20,7 @@ Begin Window LootSourceWizard
    MenuBarVisible  =   True
    MinHeight       =   294
    MinimizeButton  =   False
-   MinWidth        =   500
+   MinWidth        =   600
    Placement       =   1
    Resizeable      =   True
    Title           =   "Add Loot Source"
@@ -151,7 +151,7 @@ Begin Window LootSourceWizard
          Border          =   True
          ColumnCount     =   4
          ColumnsResizable=   False
-         ColumnWidths    =   "30,*,100,175"
+         ColumnWidths    =   "30,2*,100,*"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   30
@@ -1126,7 +1126,7 @@ Begin Window LootSourceWizard
          Visible         =   True
          Width           =   444
       End
-      Begin CheckBox AvailabilityChecks
+      Begin CheckBox DefineAvailabilityChecks
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "The Island"
@@ -1158,7 +1158,7 @@ Begin Window LootSourceWizard
          Visible         =   True
          Width           =   90
       End
-      Begin CheckBox AvailabilityChecks
+      Begin CheckBox DefineAvailabilityChecks
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "Scorched Earth"
@@ -1190,7 +1190,7 @@ Begin Window LootSourceWizard
          Visible         =   True
          Width           =   120
       End
-      Begin CheckBox AvailabilityChecks
+      Begin CheckBox DefineAvailabilityChecks
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "The Center"
@@ -1222,7 +1222,7 @@ Begin Window LootSourceWizard
          Visible         =   True
          Width           =   100
       End
-      Begin CheckBox AvailabilityChecks
+      Begin CheckBox DefineAvailabilityChecks
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "Ragnarok"
@@ -1293,13 +1293,13 @@ End
 		  Dim AvailabilityChecked As Boolean
 		  Dim Maps() As Beacon.Map = Beacon.Maps.All
 		  For Each Map As Beacon.Map In Maps
-		    If AvailabilityChecks(Map.Mask).Value Then
+		    If DefineAvailabilityChecks(Map.Mask).Value Then
 		      AvailabilityChecked = True
 		      Exit
 		    End If
 		  Next
 		  
-		  DefineActionButton.Enabled = DefineClassField.Text <> "" And DefineNameField.Text <> "" And DefineKindMenu.ListIndex > -1 And AvailabilityChecked And DefineMinMultiplierField.Text <> "" And DefineMaxMultiplierField.Text <> ""
+		  DefineActionButton.Enabled = DefineClassField.Text.Right(2) = "_C" And DefineNameField.Text <> "" And DefineKindMenu.ListIndex > -1 And AvailabilityChecked And DefineMinMultiplierField.Text <> "" And DefineMaxMultiplierField.Text <> ""
 		End Sub
 	#tag EndMethod
 
@@ -1393,7 +1393,7 @@ End
 		  Case Self.PaneDefine
 		    Dim Maps() As Beacon.Map = Beacon.Maps.All
 		    For Each Map As Beacon.Map In Maps
-		      AvailabilityChecks(Map.Mask).Value = Self.mEditing.ValidForMap(Map)
+		      DefineAvailabilityChecks(Map.Mask).Value = Self.mEditing.ValidForMap(Map)
 		    Next
 		    
 		    DefineClassField.Text = Self.mEditing.ClassString
@@ -1562,7 +1562,7 @@ End
 		    Dim Maps() As Beacon.Map = Beacon.Maps.All
 		    Dim Availability As UInteger
 		    For Each Map As Beacon.Map In Maps
-		      If AvailabilityChecks(Map.Mask).Value Then
+		      If DefineAvailabilityChecks(Map.Mask).Value Then
 		        Availability = Availability Or Map.Mask
 		      End If
 		    Next
@@ -1704,7 +1704,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AvailabilityChecks
+#tag Events DefineAvailabilityChecks
 	#tag Event
 		Sub Action(index as Integer)
 		  Self.CheckDefineReady()

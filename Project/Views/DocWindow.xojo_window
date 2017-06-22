@@ -1109,6 +1109,8 @@ End
 		  Me.AddSegment("All")
 		  Me.AddSegment("Island")
 		  Me.AddSegment("Scorched")
+		  Me.AddSegment("Center")
+		  Me.AddSegment("Ragnarok")
 		  
 		  Me.SegmentIndex = 0
 		End Sub

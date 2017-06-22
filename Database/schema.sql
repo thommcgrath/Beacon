@@ -201,7 +201,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION compute_class_trigger () RETURNS TRIGGER AS $$
 BEGIN
-	NEW.class_string = SUBSTRING(NEW.path, '\.([a-zA-Z0-0\-\_]+)$') || '_C';
+	NEW.class_string = SUBSTRING(NEW.path, '\.([a-zA-Z0-9\-\_]+)$') || '_C';
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

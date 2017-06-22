@@ -20,12 +20,12 @@ Begin BeaconWindow PresetWindow
    MenuBarVisible  =   True
    MinHeight       =   700
    MinimizeButton  =   True
-   MinWidth        =   748
+   MinWidth        =   888
    Placement       =   2
    Resizeable      =   True
    Title           =   "Preset"
    Visible         =   True
-   Width           =   788
+   Width           =   928
    Begin PresetEditor Editor
       AcceptFocus     =   False
       AcceptTabs      =   True
@@ -52,7 +52,7 @@ Begin BeaconWindow PresetWindow
       Transparent     =   True
       UseFocusRing    =   False
       Visible         =   True
-      Width           =   760
+      Width           =   900
    End
 End
 #tag EndWindow

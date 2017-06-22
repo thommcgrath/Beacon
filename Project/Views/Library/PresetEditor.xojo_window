@@ -24,7 +24,7 @@ Begin ContainerControl PresetEditor
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   720
+   Width           =   860
    Begin GroupBox ContentsGroup
       AutoDeactivate  =   True
       Bold            =   False
@@ -51,7 +51,7 @@ Begin ContainerControl PresetEditor
       Top             =   446
       Underline       =   False
       Visible         =   True
-      Width           =   708
+      Width           =   848
       Begin BeaconListbox ContentsList
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
@@ -98,7 +98,7 @@ Begin ContainerControl PresetEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   668
+         Width           =   808
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -222,7 +222,7 @@ Begin ContainerControl PresetEditor
       Top             =   6
       Underline       =   False
       Visible         =   True
-      Width           =   708
+      Width           =   848
       Begin UITweaks.ResizedTextField NameField
          AcceptTabs      =   False
          Alignment       =   0
@@ -264,7 +264,7 @@ Begin ContainerControl PresetEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   566
+         Width           =   706
       End
       Begin UITweaks.ResizedTextField GroupField
          AcceptTabs      =   False
@@ -307,7 +307,7 @@ Begin ContainerControl PresetEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   566
+         Width           =   706
       End
       Begin UITweaks.ResizedTextField MinItemsField
          AcceptTabs      =   False
@@ -558,7 +558,7 @@ Begin ContainerControl PresetEditor
       Top             =   198
       Underline       =   False
       Visible         =   True
-      Width           =   348
+      Width           =   418
       Begin UITweaks.ResizedTextField StandardQualityField
          AcceptTabs      =   False
          Alignment       =   2
@@ -758,7 +758,7 @@ Begin ContainerControl PresetEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   366
+      Left            =   436
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -774,7 +774,7 @@ Begin ContainerControl PresetEditor
       Top             =   198
       Underline       =   False
       Visible         =   True
-      Width           =   348
+      Width           =   418
       Begin UITweaks.ResizedTextField BonusQualityField
          AcceptTabs      =   False
          Alignment       =   2
@@ -793,7 +793,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "BonusGroup"
          Italic          =   False
-         Left            =   523
+         Left            =   593
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -829,7 +829,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "BonusGroup"
          Italic          =   False
-         Left            =   386
+         Left            =   456
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -863,7 +863,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "BonusGroup"
          Italic          =   False
-         Left            =   595
+         Left            =   665
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -904,7 +904,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "BonusGroup"
          Italic          =   False
-         Left            =   523
+         Left            =   593
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -940,7 +940,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "BonusGroup"
          Italic          =   False
-         Left            =   386
+         Left            =   456
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -990,7 +990,7 @@ Begin ContainerControl PresetEditor
       Top             =   322
       Underline       =   False
       Visible         =   True
-      Width           =   348
+      Width           =   418
       Begin UITweaks.ResizedTextField CaveQualityField
          AcceptTabs      =   False
          Alignment       =   2
@@ -1190,7 +1190,7 @@ Begin ContainerControl PresetEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   366
+      Left            =   436
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -1206,7 +1206,7 @@ Begin ContainerControl PresetEditor
       Top             =   322
       Underline       =   False
       Visible         =   True
-      Width           =   348
+      Width           =   418
       Begin UITweaks.ResizedTextField SeaQualityField
          AcceptTabs      =   False
          Alignment       =   2
@@ -1225,7 +1225,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "SeaGroup"
          Italic          =   False
-         Left            =   523
+         Left            =   593
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -1261,7 +1261,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "SeaGroup"
          Italic          =   False
-         Left            =   386
+         Left            =   456
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -1295,7 +1295,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "SeaGroup"
          Italic          =   False
-         Left            =   595
+         Left            =   665
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -1336,7 +1336,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "SeaGroup"
          Italic          =   False
-         Left            =   523
+         Left            =   593
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -1372,7 +1372,7 @@ Begin ContainerControl PresetEditor
          Index           =   -2147483648
          InitialParent   =   "SeaGroup"
          Italic          =   False
-         Left            =   386
+         Left            =   456
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -1494,6 +1494,8 @@ End
 		  ContentsList.Cell(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MinQuality).Left(4) + "-" + Language.LabelForQuality(Entry.MaxQuality).Left(4))
 		  ContentsList.CellCheck(Index, Self.ColumnIslandValid) = Entry.ValidForMap(Beacon.Maps.TheIsland)
 		  ContentsList.CellCheck(Index, Self.ColumnScorchedValid) = Entry.ValidForMap(Beacon.Maps.ScorchedEarth)
+		  ContentsList.CellCheck(Index, Self.ColumnCenterValid) = Entry.ValidForMap(Beacon.Maps.TheCenter)
+		  ContentsList.CellCheck(Index, Self.ColumnRagnarokValid) = Entry.ValidForMap(Beacon.Maps.Ragnarok)
 		  ContentsList.CellCheck(Index, Self.ColumnQualityLock) = Not Entry.RespectQualityModifier
 		  ContentsList.CellCheck(Index, Self.ColumnQuantityLock) = Not Entry.RespectQuantityMultiplier
 		  
@@ -1533,6 +1535,9 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = ColumnCenterValid, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = ColumnDescription, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
@@ -1542,13 +1547,16 @@ End
 	#tag Constant, Name = ColumnQuality, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnQualityLock, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag Constant, Name = ColumnQualityLock, Type = Double, Dynamic = False, Default = \"8", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnQuantity, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnQuantityLock, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag Constant, Name = ColumnQuantityLock, Type = Double, Dynamic = False, Default = \"7", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnRagnarokValid, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnScorchedValid, Type = Double, Dynamic = False, Default = \"4", Scope = Private
@@ -1560,16 +1568,22 @@ End
 #tag Events ContentsList
 	#tag Event
 		Sub Open()
+		  Me.ColumnCount = 9
+		  
 		  Me.ColumnType(Self.ColumnIslandValid) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnQualityLock) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnQuantityLock) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnScorchedValid) = Listbox.TypeCheckbox
+		  Me.ColumnType(Self.ColumnCenterValid) = Listbox.TypeCheckbox
+		  Me.ColumnType(Self.ColumnRagnarokValid) = Listbox.TypeCheckbox
 		  
 		  Me.Column(Self.ColumnDescription).WidthExpression = "*"
 		  Me.Column(Self.ColumnQuantity).WidthExpression = "70"
 		  Me.Column(Self.ColumnQuality).WidthExpression = "100"
 		  Me.Column(Self.ColumnIslandValid).WidthExpression = "70"
 		  Me.Column(Self.ColumnScorchedValid).WidthExpression = "70"
+		  Me.Column(Self.ColumnCenterValid).WidthExpression = "70"
+		  Me.Column(Self.ColumnRagnarokValid).WidthExpression = "70"
 		  Me.Column(Self.ColumnQuantityLock).WidthExpression = "70"
 		  Me.Column(Self.ColumnQualityLock).WidthExpression = "70"
 		  
@@ -1578,6 +1592,8 @@ End
 		  Me.Heading(Self.ColumnQuality) = "Quality"
 		  Me.Heading(Self.ColumnIslandValid) = "Island"
 		  Me.Heading(Self.ColumnScorchedValid) = "Scorched"
+		  Me.Heading(Self.ColumnCenterValid) = "Center"
+		  Me.Heading(Self.ColumnRagnarokValid) = "Ragnarok"
 		  Me.Heading(Self.ColumnQuantityLock) = "Lock Qty"
 		  Me.Heading(Self.ColumnQualityLock) = "Lock Qlty"
 		  
@@ -1597,6 +1613,12 @@ End
 		    Self.ContentsChanged = True
 		  Case Self.ColumnScorchedValid
 		    Entry.ValidForMap(Beacon.Maps.ScorchedEarth) = Me.CellCheck(Row, Column)
+		    Self.ContentsChanged = True
+		  Case Self.ColumnCenterValid
+		    Entry.ValidForMap(Beacon.Maps.TheCenter) = Me.CellCheck(Row, Column)
+		    Self.ContentsChanged = True
+		  Case Self.ColumnRagnarokValid
+		    Entry.ValidForMap(Beacon.Maps.Ragnarok) = Me.CellCheck(Row, Column)
 		    Self.ContentsChanged = True
 		  Case Self.ColumnQualityLock
 		    Entry.RespectQualityModifier = Not Me.CellCheck(Row, Column)
