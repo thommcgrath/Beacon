@@ -149,6 +149,7 @@ Window=LibraryEngramsView;Views/Library/LibraryEngramsView.xojo_window;&h1DF2BFF
 Window=LibraryEngramsURLDialog;Views/Library/LibraryEngramsURLDialog.xojo_window;&h206777FF;&h180417FF;false
 Module=Maps;Modules/Beacon/Maps.xojo_code;&h1013BFFF;&h55ADDFFF;false
 Class=Map;Modules/Beacon/Map.xojo_code;&h724EDFFF;&h55ADDFFF;false
+MultiImage=IconDropdown;Icons/IconDropdown.xojo_image;&h724DC7FF;&h7F977FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

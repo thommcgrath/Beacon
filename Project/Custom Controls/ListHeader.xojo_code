@@ -37,6 +37,27 @@ Inherits ControlCanvas
 		      Self.mActiveClickRegion = Key
 		      Self.mMouseDown = True
 		      Self.mMouseDownInRect = True
+		      
+		      If Self.mDisplayAsMenu And Key = "menu" Then
+		        Self.Refresh
+		        
+		        Dim Menu As New MenuItem
+		        For I As Integer = 0 To UBound(Self.mSegments)
+		          Dim Item As New MenuItem
+		          Item.Text = Self.mSegments(I)
+		          Item.Checked = Self.mSelectedSegmentIndex = I
+		          Menu.Append(Item)
+		        Next
+		        
+		        Dim Position As Xojo.Core.Point = Self.Window.GlobalPosition
+		        Dim Choice As MenuItem = Menu.PopUp(Position.X + Self.Left + Rect.Left, Position.Y + Self.Top + Rect.Top)
+		        If Choice <> Nil Then
+		          Self.SegmentIndex = Self.mSegments.IndexOf(Choice.Text.ToText)
+		          Self.Refresh
+		        End If
+		      End If
+		      
+		      Exit
 		    End If
 		  Next
 		  
@@ -201,7 +222,85 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub DrawMenu(G As Graphics, Rect As Xojo.Core.Rect, Scheme As ColorScheme)
+		  Dim MenuCapWidth As Integer = IconDropdown.Width + Self.SegmentBorderSize
+		  
+		  Dim CaptionWidth As Double
+		  For Each Segment As Text In Self.mSegments
+		    CaptionWidth = Max(G.StringWidth(Segment), CaptionWidth)
+		  Next
+		  CaptionWidth = Ceil(CaptionWidth)
+		  
+		  Dim ControlWidth As Integer = Min(Rect.Width, CaptionWidth + (Self.SegmentBorderSize * 2) + (Self.Padding * 2) + MenuCapWidth)
+		  Dim ControlLeft As Integer = Rect.Left + ((Rect.Width - ControlWidth) / 2)
+		  Dim ControlTop As Integer = Rect.Top
+		  Dim ControlHeight As Integer = Rect.Height
+		  
+		  Dim Pressed As Boolean
+		  Dim TextColor, ShadowColor, FrameColor As Color
+		  If Self.mMouseDown And Self.mMouseDownInRect And Self.mActiveClickRegion = "menu" Then
+		    TextColor = Scheme.SegmentSelectedTextColor
+		    ShadowColor = Scheme.SegmentPressedColor
+		    FrameColor = Scheme.SegmentPressedColor
+		    Pressed = True
+		  Else
+		    TextColor = Scheme.SegmentTextColor
+		    ShadowColor = Scheme.SegmentShadowColor
+		    FrameColor = Scheme.SegmentFrameColor
+		  End If
+		  
+		  G.ForeColor = Scheme.SegmentShadowColor
+		  #if TargetWin32
+		    G.FillRect(ControlLeft, ControlTop + 1, ControlWidth, ControlHeight)
+		  #else
+		    G.FillRoundRect(ControlLeft, ControlTop + 1, ControlWidth, ControlHeight, Self.CornerRadius, Self.CornerRadius)
+		  #endif
+		  G.ForeColor = FrameColor
+		  #if TargetWin32
+		    G.FillRect(ControlLeft, ControlTop, ControlWidth, ControlHeight)
+		  #else
+		    G.FillRoundRect(ControlLeft, ControlTop, ControlWidth, ControlHeight, Self.CornerRadius, Self.CornerRadius)
+		  #endif
+		  
+		  Dim Space As Graphics = G.Clip(ControlLeft + Self.SegmentBorderSize, ControlTop + Self.SegmentBorderSize, ControlWidth - ((Self.SegmentBorderSize * 2) + MenuCapWidth), ControlHeight - (Self.SegmentBorderSize * 2))
+		  If Not Pressed Then
+		    Space.ForeColor = Scheme.BackgroundColor
+		    #if TargetWin32
+		      Space.FillRect(0, 0, Space.Width, Space.Height)
+		    #else
+		      Space.FillRoundRect(0, 0, Space.Width, Space.Height, Self.CornerRadius - Self.SegmentBorderSize, Self.CornerRadius - Self.SegmentBorderSize)
+		    #endif
+		  End If
+		  
+		  Dim IconForeground As Picture = IconDropdown.WithColor(Scheme.SegmentSelectedTextColor)
+		  Dim IconBackground As Picture = IconDropdown.WithColor(Scheme.SegmentPressedColor)
+		  Dim IconLeft As Integer = (ControlLeft + ControlWidth) - (Self.SegmentBorderSize + IconDropdown.Width)
+		  Dim IconTop As Integer = ControlTop + ((ControlHeight - IconDropdown.Height) / 2)
+		  G.DrawPicture(IconBackground, IconLeft, IconTop + 1, IconDropdown.Width, IconDropdown.Height)
+		  G.DrawPicture(IconForeground, IconLeft, IconTop, IconDropdown.Width, IconDropdown.Height)
+		  
+		  Dim CurrentCaption As Text = Self.mSegments(Self.mSelectedSegmentIndex)
+		  Dim TextLeft As Integer = Self.Padding
+		  Dim TextBottom As Integer = (Space.Height / 2) + ((Space.TextAscent * 0.9) / 2)
+		  #if TargetWin32
+		    TextBottom = TextBottom - 1
+		  #endif
+		  Space.ForeColor = ShadowColor
+		  Space.DrawString(CurrentCaption, TextLeft, TextBottom + 1, Space.Width - (Self.Padding * 2), True)
+		  Space.ForeColor = TextColor
+		  Space.DrawString(CurrentCaption, TextLeft, TextBottom, Space.Width - (Self.Padding * 2), True)
+		  
+		  Self.RegisterClickRegion("menu", New Xojo.Core.Rect(ControlLeft, ControlTop, ControlWidth, ControlHeight))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub DrawSegments(G As Graphics, Rect As Xojo.Core.Rect, Scheme As ColorScheme)
+		  If Self.mDisplayAsMenu Then
+		    Self.DrawMenu(G, Rect, Scheme)
+		    Return
+		  End If
+		  
 		  Dim SegmentCount As Integer = UBound(Self.mSegments) + 1
 		  Dim BorderCount As Integer = SegmentCount + 1
 		  Dim CellWidth As Integer = Min(Self.SegmentCellWidth, Floor((Rect.Width - (Self.SegmentBorderSize * BorderCount)) / SegmentCount))
@@ -373,6 +472,23 @@ Inherits ControlCanvas
 	#tag EndHook
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mDisplayAsMenu
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mDisplayAsMenu <> Value Then
+			    Self.mDisplayAsMenu = Value
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		DisplayAsMenu As Boolean
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mActiveClickRegion As Text
 	#tag EndProperty
@@ -383,6 +499,10 @@ Inherits ControlCanvas
 
 	#tag Property, Flags = &h21
 		Private mClickRects As Xojo.Core.Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDisplayAsMenu As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -545,6 +665,13 @@ Inherits ControlCanvas
 			Group="Appearance"
 			Type="Picture"
 			EditorType="Picture"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DisplayAsMenu"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"

@@ -14,6 +14,28 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function IconWithColor(Icon As Picture, FillColor As Color) As Picture
+		  Dim Width As Integer = Icon.Width
+		  Dim Height As Integer = Icon.Height
+		  
+		  Dim Bitmaps() As Picture
+		  For Factor As Integer = 1 To 3
+		    Dim Mask As Picture = Icon.BestRepresentation(Width, Height, Factor)
+		    
+		    Dim Pic As New Picture(Width * Factor, Width * Factor, 32)
+		    Pic.VerticalResolution = 72 * Factor
+		    Pic.HorizontalResolution = 72 * Factor
+		    Pic.Graphics.ForeColor = FillColor
+		    Pic.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)
+		    Pic.Mask.Graphics.DrawPicture(Mask, 0, 0, Mask.Width, Mask.Height, 0, 0, Mask.Width, Mask.Height)
+		    
+		    Bitmaps.Append(Pic)
+		  Next
+		  Return New Picture(Width, Height, Bitmaps)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub RecallPosition(Extends Win As Window, Key As Text)
 		  Dim Rect As Xojo.Core.Rect = App.Preferences.RectValue(Key, Nil)
@@ -98,6 +120,12 @@ Protected Module BeaconUI
 		  Else
 		    Return &c800000
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function WithColor(Extends Icon As Picture, FillColor As Color) As Picture
+		  Return BeaconUI.IconWithColor(Icon, FillColor)
 		End Function
 	#tag EndMethod
 
