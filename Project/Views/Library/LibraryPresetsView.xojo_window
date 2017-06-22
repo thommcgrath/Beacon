@@ -412,6 +412,14 @@ End
 		  End Select
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  If Me.ListIndex > -1 Then
+		    Dim Preset As Beacon.Preset = Me.RowTag(Me.ListIndex)
+		    PresetWindow.Present(Preset)
+		  End If
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
