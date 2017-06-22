@@ -164,9 +164,12 @@ Inherits ControlCanvas
 
 
 	#tag Method, Flags = &h0
-		Sub AddSegment(Caption As Text)
+		Sub AddSegment(Caption As Text, ChangeSelection As Boolean = False)
 		  If Self.mSegments.IndexOf(Caption) = -1 Then
 		    Self.mSegments.Append(Caption)
+		    If ChangeSelection Then
+		      Self.mSelectedSegmentIndex = UBound(Self.mSegments)
+		    End If
 		    Self.Invalidate
 		  End If
 		End Sub
@@ -219,6 +222,16 @@ Inherits ControlCanvas
 		  Self.TintColor = Self.DefaultColor
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function CurrentSegment() As Text
+		  If Self.mSelectedSegmentIndex = -1 Then
+		    Return ""
+		  End If
+		  
+		  Return Self.mSegments(Self.mSelectedSegmentIndex)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

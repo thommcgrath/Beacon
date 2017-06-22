@@ -102,12 +102,6 @@ Inherits Beacon.SetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ValidForLootSource(Source As Beacon.LootSource) As Boolean
-		  Return (Self.mAvailability And Source.Availability) > 0
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Beacon.Map) As Boolean
 		  Return Map.Matches(Self.mAvailability)
 		End Function

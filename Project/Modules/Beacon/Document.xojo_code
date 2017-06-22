@@ -71,6 +71,7 @@ Implements Beacon.DocumentItem
 		  Document.Value("Title") = Self.Title
 		  Document.Value("Description") = Self.Description
 		  Document.Value("Public") = Self.IsPublic
+		  Document.Value("MapPreference") = Self.MapPreference
 		  
 		  Return Document
 		End Function
@@ -199,6 +200,9 @@ Implements Beacon.DocumentItem
 		      If Dict.HasKey("Public") Then
 		        Doc.mIsPublic = Dict.Value("Public")
 		      End If
+		      If Dict.HasKey("MapPreference") Then
+		        Doc.MapPreference = Dict.Value("MapPreference")
+		      End If
 		    Catch Err As RuntimeException
 		      // Likely a KeyNotFoundException or TypeMismatchException, either way, we can't handle it
 		      Return Nil
@@ -231,7 +235,7 @@ Implements Beacon.DocumentItem
 		              Next
 		              
 		              // Reconfigure
-		              Set.ReconfigureWithPreset(Preset, Source)
+		              Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland)
 		              
 		              // Now "deconfigure" it
 		              Redim Set(UBound(Entries))
@@ -246,6 +250,26 @@ Implements Beacon.DocumentItem
 		      Doc.mLootSources.Append(Source)
 		    End If
 		  Next
+		  
+		  If Doc.MapPreference = 0 Then
+		    // Let's try to figure out the map preference, it can only be island or scorched
+		    Dim Island As Beacon.Map = Beacon.Maps.TheIsland
+		    Dim Scorched As Beacon.Map = Beacon.Maps.ScorchedEarth
+		    Dim IslandScore, ScorchedScore As UInteger
+		    For Each Source As Beacon.LootSource In Doc.LootSources
+		      If Source.ValidForMap(Island) Then
+		        IslandScore = IslandScore + 1
+		      End If
+		      If Source.ValidForMap(Scorched) Then
+		        ScorchedScore = ScorchedScore + 1
+		      End If
+		    Next
+		    If ScorchedScore > IslandScore Then
+		      Doc.MapPreference = Scorched.Mask
+		    Else
+		      Doc.MapPreference = Island.Mask
+		    End If
+		  End If
 		  
 		  Doc.mModified = Version < Beacon.Document.DocumentVersion
 		  
@@ -316,6 +340,10 @@ Implements Beacon.DocumentItem
 		IsPublic As Boolean
 	#tag EndComputedProperty
 
+	#tag Property, Flags = &h0
+		MapPreference As UInteger
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mDescription As Text
 	#tag EndProperty
@@ -366,6 +394,11 @@ Implements Beacon.DocumentItem
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Description"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -373,26 +406,16 @@ Implements Beacon.DocumentItem
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="IsPublic"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Left"
 			Visible=true
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mDescription"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mIsPublic"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mTitle"
-			Group="Behavior"
-			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -405,6 +428,11 @@ Implements Beacon.DocumentItem
 			Visible=true
 			Group="ID"
 			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Title"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

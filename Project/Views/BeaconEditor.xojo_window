@@ -164,6 +164,7 @@ Begin ContainerControl BeaconEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      DisplayAsMenu   =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
@@ -271,7 +272,7 @@ End
 		    
 		    Dim Arr() As Beacon.Preset = Groups.Value(Group)
 		    For Each Preset As Beacon.Preset In Arr
-		      If Preset.ValidForLootSource(Self.mSources(0)) Then
+		      If Preset.ValidForMap(Self.CurrentMap) Then
 		        Dim PresetItem As New MenuItem(Preset.Label, Preset)
 		        AddHandler PresetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		        Parent.Append(PresetItem)
@@ -340,36 +341,9 @@ End
 		    Return True
 		  End If
 		  
-		  #if false
-		    Dim PossibleMaps As New Xojo.Core.Dictionary
-		    For Each Source As Beacon.LootSource In Self.mSources
-		      Dim Maps() As Beacon.Map = Source.Maps
-		      For Each Map As Beacon.Map In Maps
-		        If SelectedPreset.ValidForMap(Map) And Not PossibleMaps.HasKey(Map.Mask) Then
-		          PossibleMaps.Value(Map.Mask) = Map
-		        End If
-		      Next
-		    Next
-		    
-		    Dim Maps() As Beacon.Map
-		    For Each Entry As Xojo.Core.DictionaryEntry In PossibleMaps
-		      Maps.Append(Entry.Value)
-		    Next
-		    
-		    Dim Map As Beacon.Map
-		    If UBound(Maps) = 0 Then
-		      Map = Maps(0)
-		    ElseIf UBound(Maps) = -1 Then
-		      Return True
-		    Else
-		      // Too many
-		      Break
-		    End If
-		  #endif
-		  
 		  Dim Added As Boolean
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Source)
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Source, Self.CurrentMap)
 		    If Source.IndexOf(Set) = -1 Then
 		      Source.Append(Set)
 		      Added = True
@@ -531,6 +505,10 @@ End
 	#tag EndHook
 
 
+	#tag Property, Flags = &h0
+		CurrentMap As Beacon.Map
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private ImportProgress As ImporterWindow
 	#tag EndProperty
@@ -691,7 +669,7 @@ End
 		      If Set.SourcePresetID = Preset.PresetID Then
 		        Dim OriginalHash As Text = Set.Hash
 		        Dim NewSet As Beacon.ItemSet = New Beacon.ItemSet(Set)
-		        NewSet.ReconfigureWithPreset(Preset, Self.mSources(0))
+		        NewSet.ReconfigureWithPreset(Preset, Self.mSources(0), Self.CurrentMap)
 		        If NewSet.Hash = OriginalHash Then
 		          // No changes
 		          Dim Dialog As New MessageDialog

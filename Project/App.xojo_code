@@ -94,6 +94,11 @@ Inherits Application
 		  End If
 		  Self.Log("Identity is " + Self.mIdentity.Identifier)
 		  
+		  If Self.Preferences.BooleanValue("Existing User") = True And Self.Preferences.BooleanValue("Has Seen Map Warning") = False Then
+		    BeaconUI.ShowAlert("Welcome back!", "Beacon has seen some major changes since the last version. Most importantly is the way maps are handled. The map choice above the Loot Sources list now directs how presets are built, so make sure it is set to the current map you are building for. For example, the 'Dino Consumables' preset will include different kibbles when set to The Island than when set to Ragnarok.")
+		  End If
+		  Self.Preferences.BooleanValue("Has Seen Map Warning") = True
+		  
 		  Self.mUpdateChecker = New UpdateChecker
 		  AddHandler Self.mUpdateChecker.UpdateAvailable, WeakAddressOf Self.mUpdateChecker_UpdateAvailable
 		  AddHandler Self.mUpdateChecker.NoUpdate, WeakAddressOf Self.mUpdateChecker_NoUpdate

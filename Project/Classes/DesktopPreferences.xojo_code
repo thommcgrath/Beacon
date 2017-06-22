@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DesktopPreferences
 Inherits Preferences
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub Constructor(File As Global.FolderItem)
 		  Super.Constructor()
@@ -18,8 +18,10 @@ Inherits Preferences
 		    Catch Err As RuntimeException
 		      Self.mValues = New Xojo.Core.Dictionary
 		    End Try
+		    Self.mValues.Value("Existing User") = True
 		  Else
 		    Self.mValues = New Xojo.Core.Dictionary
+		    Self.mValues.Value("Existing User") = False
 		  End If
 		End Sub
 	#tag EndMethod

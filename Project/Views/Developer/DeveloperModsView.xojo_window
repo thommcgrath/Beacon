@@ -30,6 +30,7 @@ Begin BeaconSubview DeveloperModsView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      DisplayAsMenu   =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True

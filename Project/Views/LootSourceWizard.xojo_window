@@ -45,7 +45,7 @@ Begin Window LootSourceWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -1269,8 +1269,14 @@ End
 	#tag Method, Flags = &h21
 		Private Sub BuildSourceList(CurrentSources() As Beacon.LootSource)
 		  Dim AllowedLootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("")
+		  For X As Integer = UBound(AllowedLootSources) DownTo 0
+		    If Not AllowedLootSources(X).ValidForMap(Self.mCurrentMap) Then
+		      AllowedLootSources.Remove(X)
+		    End If
+		  Next
+		  
 		  For X As Integer = 0 To UBound(CurrentSources)
-		    For Y As Integer = 0 To UBound(AllowedLootSources)
+		    For Y As Integer = UBound(AllowedLootSources) DownTo 0
 		      If AllowedLootSources(Y).ClassString = CurrentSources(X).ClassString Then
 		        AllowedLootSources.Remove(Y)
 		        Exit For Y
@@ -1304,8 +1310,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function PresentAdd(Parent As Window, Document As Beacon.Document) As Beacon.LootSource
+		Shared Function PresentAdd(Parent As Window, Document As Beacon.Document, Map As Beacon.Map) As Beacon.LootSource
 		  Dim Win As New LootSourceWizard
+		  Win.mCurrentMap = Map
 		  Win.BuildSourceList(Document.LootSources)
 		  Win.mOriginal = Nil
 		  Win.ShowModalWithin(Parent)
@@ -1319,8 +1326,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function PresentDuplicate(Parent As Window, Document As Beacon.Document, Source As Beacon.LootSource) As Beacon.LootSource
+		Shared Function PresentDuplicate(Parent As Window, Document As Beacon.Document, Source As Beacon.LootSource, Map As Beacon.Map) As Beacon.LootSource
 		  Dim Win As New LootSourceWizard
+		  Win.mCurrentMap = Map
 		  Win.BuildSourceList(Document.LootSources)
 		  Win.mOriginal = New Beacon.LootSource(Source)
 		  Win.ShowModalWithin(Parent)
@@ -1334,8 +1342,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function PresentEdit(Parent As Window, Document As Beacon.Document, Source As Beacon.LootSource) As Beacon.LootSource
+		Shared Function PresentEdit(Parent As Window, Document As Beacon.Document, Source As Beacon.LootSource, Map As Beacon.Map) As Beacon.LootSource
 		  Dim Win As New LootSourceWizard
+		  Win.mCurrentMap = Map
 		  Win.BuildSourceList(Document.LootSources)
 		  Win.mOriginal = New Beacon.LootSource(Source)
 		  Win.mEditing = New Beacon.MutableLootSource(Source)
@@ -1361,6 +1370,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCurrentMap As Beacon.Map
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1411,7 +1424,7 @@ End
 		    
 		    CustomizePresetsList.DeleteAllRows()
 		    For Each Preset As Beacon.Preset In Presets
-		      If Preset.ValidForLootSource(Self.mEditing) Then
+		      If Preset.ValidForMap(Self.mCurrentMap) Then
 		        CustomizePresetsList.AddRow("", Preset.Label)
 		        CustomizePresetsList.RowTag(CustomizePresetsList.LastIndex) = Preset
 		      End If
@@ -1607,13 +1620,13 @@ End
 		        If Set.SourcePresetID = Preset.PresetID Then
 		          If CustomizeReconfigureCheckbox.Value Then
 		            // Wants to rebuild it
-		            Self.mEditing(X).ReconfigureWithPreset(Preset, Self.mEditing)
+		            Self.mEditing(X).ReconfigureWithPreset(Preset, Self.mEditing, Self.mCurrentMap)
 		          End If
 		          Continue For I
 		        End If
 		      Next
 		      
-		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Self.mEditing)
+		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Self.mEditing, Self.mCurrentMap)
 		      Self.mEditing.Append(Set)
 		    Else
 		      For X As Integer = 0 To UBound(Self.mEditing)

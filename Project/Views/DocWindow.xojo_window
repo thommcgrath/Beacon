@@ -174,6 +174,7 @@ Begin BeaconWindow DocWindow
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      DisplayAsMenu   =   True
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
@@ -327,7 +328,7 @@ End
 			Return True
 			End If
 			
-			Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentDuplicate(Self, Self.Doc, BeaconList.RowTag(BeaconList.ListIndex))
+			Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentDuplicate(Self, Self.Doc, BeaconList.RowTag(BeaconList.ListIndex), Self.CurrentMap)
 			If LootSource <> Nil Then
 			Self.AddLootSource(LootSource)
 			End If
@@ -571,16 +572,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function CurrentMap() As Beacon.Map
-		  Select Case Self.LootSourceHeader.SegmentIndex
-		  Case 1
-		    Return Beacon.Maps.TheIsland
-		  Case 2
-		    Return Beacon.Maps.ScorchedEarth
-		  Case 3
-		    Return Beacon.Maps.TheCenter
-		  Case 4
-		    Return Beacon.Maps.Ragnarok
-		  End Select
+		  Dim MapName As Text = Self.LootSourceHeader.CurrentSegment
+		  Dim Maps() As Beacon.Map = Beacon.Maps.All
+		  For Each Map As Beacon.Map In Maps
+		    If Map.Name = MapName Then
+		      Return Map
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
@@ -694,8 +692,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddBeacon()
-		  //Dim LootSource As Beacon.LootSource = LootSourceAddSheet.Present(Self, Self.Doc)
-		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self, Self.Doc)
+		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self, Self.Doc, Self.CurrentMap)
 		  If LootSource <> Nil Then
 		    Self.AddLootSource(LootSource)
 		  End If
@@ -703,22 +700,16 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function SourceValidForCurrentView(Source As Beacon.LootSource) As Boolean
-		  Dim CurrentMap As Beacon.Map = Self.CurrentMap
-		  If CurrentMap = Nil Then
-		    Return True
-		  End If
-		  Return Source.ValidForMap(CurrentMap)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
+		  Dim CurrentMap As Beacon.Map = Self.CurrentMap
+		  Editor.CurrentMap = CurrentMap
+		  Self.Doc.MapPreference = CurrentMap.Mask
+		  
 		  Dim Sources() As Beacon.LootSource = Self.Doc.LootSources
 		  Dim Filter As Integer = LootSourceHeader.SegmentIndex
 		  Dim VisibleSources() As Beacon.LootSource
 		  For Each Source As Beacon.LootSource In Sources
-		    If Self.SourceValidForCurrentView(Source) Then
+		    If Source.ValidForMap(CurrentMap) Then
 		      VisibleSources.Append(Source)
 		    End If
 		  Next
@@ -1008,7 +999,7 @@ End
 		      Return
 		    End If
 		    
-		    Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self, Self.Doc, BeaconList.RowTag(BeaconList.ListIndex))
+		    Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self, Self.Doc, BeaconList.RowTag(BeaconList.ListIndex), Self.CurrentMap)
 		    If LootSource <> Nil Then
 		      Self.AddLootSource(LootSource)
 		    End If
@@ -1027,12 +1018,13 @@ End
 		  Case "AddButton"
 		    Dim Base As New MenuItem
 		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("")
+		    Dim CurrentMap As Beacon.Map = Self.CurrentMap
 		    For I As Integer = UBound(LootSources) DownTo 0
 		      If Self.Doc.HasLootSource(LootSources(I)) Then
 		        LootSources.Remove(I)
 		        Continue For I
 		      End If
-		      If Not Self.SourceValidForCurrentView(LootSources(I)) Then
+		      If Not LootSources(I).ValidForMap(CurrentMap) Then
 		        LootSources.Remove(I)
 		      End If
 		    Next
@@ -1106,13 +1098,14 @@ End
 #tag Events LootSourceHeader
 	#tag Event
 		Sub Open()
-		  Me.AddSegment("All")
-		  Me.AddSegment("Island")
-		  Me.AddSegment("Scorched")
-		  Me.AddSegment("Center")
-		  Me.AddSegment("Ragnarok")
+		  Dim Maps() As Beacon.Map = Beacon.Maps.All
+		  For Each Map As Beacon.Map In Maps
+		    Me.AddSegment(Map.Name, Map.Mask = Self.Doc.MapPreference)
+		  Next
 		  
-		  Me.SegmentIndex = 0
+		  If Me.SegmentIndex = -1 Then
+		    Me.SegmentIndex = 0
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event

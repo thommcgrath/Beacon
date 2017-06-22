@@ -323,16 +323,6 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ValidForLootSource(Source As Beacon.LootSource) As Boolean
-		  For Each Entry As Beacon.PresetEntry In Self.mContents
-		    If Entry.ValidForLootSource(Source) Then
-		      Return True
-		    End If
-		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Beacon.Map) As Boolean
 		  For Each Entry As Beacon.PresetEntry In Self.mContents
 		    If Entry.ValidForMap(Map) Then
