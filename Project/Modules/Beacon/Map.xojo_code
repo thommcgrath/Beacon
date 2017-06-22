@@ -25,6 +25,22 @@ Protected Class Map
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.Map) As Integer
+		  If Other = Nil Then
+		    Return 1
+		  End If
+		  
+		  If Self.mMask > Other.mMask Then
+		    Return 1
+		  ElseIf Self.mMask < Other.mMask Then
+		    Return -1
+		  Else
+		    Return 0
+		  End If
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mMask As UInteger
@@ -48,11 +64,6 @@ Protected Class Map
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mName"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty

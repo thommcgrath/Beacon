@@ -337,9 +337,60 @@ End
 		  
 		  If SelectedPreset = Nil Then
 		    Self.AddSet(New Beacon.ItemSet)
-		  Else
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Self.mSources(0))
-		    Self.AddSet(Set)
+		    Return True
+		  End If
+		  
+		  #if false
+		    Dim PossibleMaps As New Xojo.Core.Dictionary
+		    For Each Source As Beacon.LootSource In Self.mSources
+		      Dim Maps() As Beacon.Map = Source.Maps
+		      For Each Map As Beacon.Map In Maps
+		        If SelectedPreset.ValidForMap(Map) And Not PossibleMaps.HasKey(Map.Mask) Then
+		          PossibleMaps.Value(Map.Mask) = Map
+		        End If
+		      Next
+		    Next
+		    
+		    Dim Maps() As Beacon.Map
+		    For Each Entry As Xojo.Core.DictionaryEntry In PossibleMaps
+		      Maps.Append(Entry.Value)
+		    Next
+		    
+		    Dim Map As Beacon.Map
+		    If UBound(Maps) = 0 Then
+		      Map = Maps(0)
+		    ElseIf UBound(Maps) = -1 Then
+		      Return True
+		    Else
+		      // Too many
+		      Break
+		    End If
+		  #endif
+		  
+		  Dim Added As Boolean
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Source)
+		    If Source.IndexOf(Set) = -1 Then
+		      Source.Append(Set)
+		      Added = True
+		    End If
+		  Next
+		  
+		  If Added Then
+		    Self.Sources = Self.mSources // To update the UI, since the sets will be different for each selected source
+		    Dim Found As Boolean
+		    For I As Integer = 0 To SetList.ListCount - 1
+		      Dim Set As Beacon.ItemSet = SetList.RowTag(I)
+		      If Set.SourcePresetID = SelectedPreset.PresetID Then
+		        Found = True
+		        SetList.ListIndex = I
+		        Exit
+		      End If
+		    Next
+		    If Not Found Then
+		      Self.ShowAlert("Preset added but not shown", "Because you have multiple loot sources selected, the preset was added to each source, but was configured differently for each. It is not common to all your selected sources, so it isn't currently listed.")
+		    End If
+		    RaiseEvent Updated
 		  End If
 		  Return True
 		End Function

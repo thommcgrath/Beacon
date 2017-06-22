@@ -76,7 +76,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource) As Beacon.ItemSet
+		Shared Function FromPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Map As Beacon.Map = Nil) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
 		  Set.Label = Preset.Label
 		  Set.MinNumItems = Preset.MinItems
@@ -88,8 +88,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim QualityModifier As Integer = Preset.QualityModifier(ForLootSource.Kind)
 		  
 		  For Each Entry As Beacon.PresetEntry In Preset
-		    If Not Entry.ValidForLootSource(ForLootSource) Then
-		      Continue
+		    If Map <> Nil Then
+		      If Entry.ValidForMap(Map) Then
+		        Continue
+		      End If
+		    Else
+		      If Not Entry.ValidForLootSource(ForLootSource) Then
+		        Continue
+		      End If
 		    End If
 		    
 		    Dim EntryQuantityMultiplier As Double = If(Entry.RespectQuantityMultiplier, QuantityMultiplier, 1)
