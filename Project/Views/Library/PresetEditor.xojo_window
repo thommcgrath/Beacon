@@ -1606,27 +1606,41 @@ End
 		    Return
 		  End If
 		  
-		  Dim Entry As Beacon.PresetEntry = Me.RowTag(Row)
-		  Select Case Column
-		  Case Self.ColumnIslandValid
-		    Entry.ValidForMap(Beacon.Maps.TheIsland) = Me.CellCheck(Row, Column)
-		    Self.ContentsChanged = True
-		  Case Self.ColumnScorchedValid
-		    Entry.ValidForMap(Beacon.Maps.ScorchedEarth) = Me.CellCheck(Row, Column)
-		    Self.ContentsChanged = True
-		  Case Self.ColumnCenterValid
-		    Entry.ValidForMap(Beacon.Maps.TheCenter) = Me.CellCheck(Row, Column)
-		    Self.ContentsChanged = True
-		  Case Self.ColumnRagnarokValid
-		    Entry.ValidForMap(Beacon.Maps.Ragnarok) = Me.CellCheck(Row, Column)
-		    Self.ContentsChanged = True
-		  Case Self.ColumnQualityLock
-		    Entry.RespectQualityModifier = Not Me.CellCheck(Row, Column)
-		    Self.ContentsChanged = True
-		  Case Self.ColumnQuantityLock
-		    Entry.RespectQuantityMultiplier = Not Me.CellCheck(Row, Column)
-		    Self.ContentsChanged = True
-		  End Select
+		  Dim Value As Boolean = Me.CellCheck(Row, Column)
+		  Dim Entries() As Beacon.PresetEntry
+		  If (Keyboard.CommandKey And TargetMacOS) Or (Keyboard.ControlKey And TargetWindows) Then
+		    // All
+		    For I As Integer = 0 To Me.ListCount - 1
+		      Entries.Append(Me.RowTag(I))
+		      Me.CellCheck(I, Column) = Value
+		    Next
+		  Else
+		    // Just the row checked
+		    Entries.Append(Me.RowTag(Row))
+		  End If
+		  
+		  For Each Entry As Beacon.PresetEntry In Entries
+		    Select Case Column
+		    Case Self.ColumnIslandValid
+		      Entry.ValidForMap(Beacon.Maps.TheIsland) = Value
+		      Self.ContentsChanged = True
+		    Case Self.ColumnScorchedValid
+		      Entry.ValidForMap(Beacon.Maps.ScorchedEarth) = Value
+		      Self.ContentsChanged = True
+		    Case Self.ColumnCenterValid
+		      Entry.ValidForMap(Beacon.Maps.TheCenter) = Value
+		      Self.ContentsChanged = True
+		    Case Self.ColumnRagnarokValid
+		      Entry.ValidForMap(Beacon.Maps.Ragnarok) = Value
+		      Self.ContentsChanged = True
+		    Case Self.ColumnQualityLock
+		      Entry.RespectQualityModifier = Not Value
+		      Self.ContentsChanged = True
+		    Case Self.ColumnQuantityLock
+		      Entry.RespectQuantityMultiplier = Not Value
+		      Self.ContentsChanged = True
+		    End Select
+		  Next
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1652,66 +1666,52 @@ End
 		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
 		  Select Case hitItem.Tag
 		  Case "createblueprintentry"
-		    Dim IslandEntries(), ScorchedEntries() As Beacon.SetEntry
-		    For I As Integer = 0 To Me.ListCount - 1
-		      If Me.Selected(I) Then
+		    Dim Maps() As Beacon.Map = Beacon.Maps.All
+		    Dim NewEntries As New Xojo.Core.Dictionary
+		    For Each Map As Beacon.Map In Maps
+		      Dim Entries() As Beacon.PresetEntry
+		      For I As Integer = 0 To Me.ListCount - 1
 		        Dim Entry As Beacon.PresetEntry = Me.RowTag(I)
-		        If Entry.ValidForMap(Beacon.Maps.TheIsland) Then
-		          IslandEntries.Append(Entry)
+		        If Entry.ValidForMap(Map) Then
+		          Entries.Append(Entry)
 		        End If
-		        If Entry.ValidForMap(Beacon.Maps.ScorchedEarth) Then
-		          ScorchedEntries.Append(Entry)
+		      Next
+		      
+		      Dim BlueprintEntry As Beacon.SetEntry = Beacon.SetEntry.CreateBlueprintEntry(Entries)
+		      If BlueprintEntry <> Nil Then
+		        Dim Hash As Text = BlueprintEntry.Hash
+		        If NewEntries.HasKey(Hash) Then
+		          Dim Entry As Beacon.PresetEntry = NewEntries.Value(Hash)
+		          Entry.ValidForMap(Map) = True
+		          NewEntries.Value(Hash) = Entry
+		        Else
+		          Dim Entry As New Beacon.PresetEntry(BlueprintEntry)
+		          Entry.Availability = 0
+		          Entry.ValidForMap(Map) = True
+		          NewEntries.Value(Hash) = Entry
 		        End If
 		      End If
 		    Next
 		    
-		    Dim IslandBlueprintEntry As Beacon.SetEntry = Beacon.SetEntry.CreateBlueprintEntry(IslandEntries)
-		    Dim ScorchedBlueprintEntry As Beacon.SetEntry = Beacon.SetEntry.CreateBlueprintEntry(ScorchedEntries)
-		    If IslandBlueprintEntry = Nil And ScorchedBlueprintEntry = Nil Then
+		    If NewEntries.Count = 0 Then
 		      Beep
 		      Return True
 		    End If
 		    
-		    Self.ContentsList.ListIndex = -1
-		    For I As Integer = 0 To Self.ContentsList.ListCount - 1
-		      Beacon.PresetEntry(Self.ContentsList.RowTag(I)).ChanceToBeBlueprint = 0.0
+		    For I As Integer = 0 To Me.ListCount - 1
+		      If Me.Selected(I) Then
+		        Beacon.PresetEntry(Me.RowTag(I)).ChanceToBeBlueprint = 0.0
+		      End If
 		    Next
+		    Me.ListIndex = -1
 		    
-		    If IslandBlueprintEntry <> Nil And ScorchedBlueprintEntry <> Nil And IslandBlueprintEntry.Hash = ScorchedBlueprintEntry.Hash Then
-		      // They are identical, only need one
-		      Dim Item As New Beacon.PresetEntry(IslandBlueprintEntry)
-		      Item.ValidForMap(Beacon.Maps.TheIsland) = True
-		      Item.ValidForMap(Beacon.Maps.ScorchedEarth) = True
+		    For Each Entry As Xojo.Core.DictionaryEntry In NewEntries
+		      Dim Item As Beacon.PresetEntry = Entry.Value
 		      Item.RespectQualityModifier = False
 		      Item.RespectQuantityMultiplier = False
 		      Self.PutEntryInRow(Item, -1, True)
 		      Self.mPreset.Append(Item)
-		    ElseIf IslandBlueprintEntry <> Nil Or ScorchedBlueprintEntry <> Nil Then
-		      // One or two different entries
-		      If IslandBlueprintEntry <> Nil Then
-		        Dim Item As New Beacon.PresetEntry(IslandBlueprintEntry)
-		        Item.ValidForMap(Beacon.Maps.TheIsland) = True
-		        Item.ValidForMap(Beacon.Maps.ScorchedEarth) = False
-		        Item.RespectQualityModifier = False
-		        Item.RespectQuantityMultiplier = False
-		        Self.PutEntryInRow(Item, -1, True)
-		        Self.mPreset.Append(Item)
-		      End If
-		      If ScorchedBlueprintEntry <> Nil Then
-		        Dim Item As New Beacon.PresetEntry(ScorchedBlueprintEntry)
-		        Item.ValidForMap(Beacon.Maps.TheIsland) = False
-		        Item.ValidForMap(Beacon.Maps.ScorchedEarth) = True
-		        Item.RespectQualityModifier = False
-		        Item.RespectQuantityMultiplier = False
-		        
-		        Self.PutEntryInRow(Item, -1, True)
-		        Self.mPreset.Append(Item)
-		      End If
-		    Else
-		      // No valid entries
-		      Beep
-		      Return True
-		    End If
+		    Next
 		    
 		    Self.ContentsList.Sort
 		    For I As Integer = 0 To Self.ContentsList.ListCount - 1

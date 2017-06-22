@@ -852,6 +852,7 @@ INSERT INTO engrams (path, class_string, label, availability, can_blueprint) VAL
 INSERT INTO engrams (path, class_string, label, availability, can_blueprint) VALUES ('/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_TranqSpearBolt.PrimalItemAmmo_TranqSpearBolt', 'PrimalItemAmmo_TranqSpearBolt_C', 'Tranq Spear Bolt', 3, true);
 INSERT INTO engrams (path, class_string, label, availability, can_blueprint) VALUES ('/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Kibble_PegomastaxEgg.PrimalItemConsumable_Kibble_PegomastaxEgg', 'PrimalItemConsumable_Kibble_PegomastaxEgg_C', 'Kibble (Pegomastax Egg)', 3, false);
 UPDATE engrams SET availability = availability | 12 WHERE availability & 1 = 1; -- Because I'm lazy and don't want to update each of these lines
+UPDATE engrams SET availability = availability | 8 WHERE availability & 2 = 2;
 
 CREATE UNIQUE INDEX engrams_classstring_mod_id_uidx ON engrams(class_string, mod_id);
 
