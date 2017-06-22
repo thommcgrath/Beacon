@@ -808,8 +808,8 @@ End
 #tag Events BeaconList
 	#tag Event
 		Sub Change()
-		  Footer.Button("EditButton").Enabled = Me.SelCount > 0
-		  Footer.Button("DeleteButton").Enabled = Me.SelCount = 1
+		  Footer.Button("EditButton").Enabled = Me.SelCount = 1
+		  Footer.Button("DeleteButton").Enabled = Me.SelCount > 0
 		  
 		  If Self.mBlockSelectionChanged Then
 		    Return
