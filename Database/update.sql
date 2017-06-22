@@ -14,6 +14,7 @@ DROP TABLE deletions;
 
 ALTER TABLE presets RENAME COLUMN classstring TO preset_id;
 ALTER TABLE presets ALTER COLUMN preset_id SET DATA TYPE uuid USING preset_id::UUID;
+ALTER TABLE presets ALTER COLUMN contents SET DATA TYPE jsonb;
 
 ALTER TABLE loot_sources RENAME COLUMN classstring TO class_string;
 
@@ -920,7 +921,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION presets_json_sync_function () RETURNS TRIGGER AS $$
 BEGIN
 	NEW.label = NEW.contents->>'Label';
-	NEW.classstring = NEW.contents->>'ID'::UUID;
+	NEW.preset_id = (NEW.contents->>'ID')::UUID;
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

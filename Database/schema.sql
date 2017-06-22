@@ -194,7 +194,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION presets_json_sync_function () RETURNS TRIGGER AS $$
 BEGIN
 	NEW.label = NEW.contents->>'Label';
-	NEW.classstring = NEW.contents->>'ID'::UUID;
+	NEW.preset_id = (NEW.contents->>'ID')::UUID;
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
