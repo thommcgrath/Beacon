@@ -1,0 +1,831 @@
+{
+	"Entries": [
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_DoedSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_DoedSaddle.PrimalItemArmor_DoedSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_CarnoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_CarnoSaddle.PrimalItemArmor_CarnoSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_Gallimimus_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_Gallimimus.PrimalItemArmor_Gallimimus",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_AnkyloSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_AnkyloSaddle.PrimalItemArmor_AnkyloSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_ArgentavisSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ArgentavisSaddle.PrimalItemArmor_ArgentavisSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_TapejaraSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TapejaraSaddle.PrimalItemArmor_TapejaraSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_TrikeSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TrikeSaddle.PrimalItemArmor_TrikeSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_MammothSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MammothSaddle.PrimalItemArmor_MammothSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_RhinoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_RhinoSaddle.PrimalItemArmor_RhinoSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_SarcoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SarcoSaddle.PrimalItemArmor_SarcoSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_StegoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_StegoSaddle.PrimalItemArmor_StegoSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_ParaSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ParaSaddle.PrimalItemArmor_ParaSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_DireBearSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_DireBearSaddle.PrimalItemArmor_DireBearSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_TurtleSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TurtleSaddle.PrimalItemArmor_TurtleSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_MegalodonSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MegalodonSaddle.PrimalItemArmor_MegalodonSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_PelaSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PelaSaddle.PrimalItemArmor_PelaSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_KaprosuchusSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_KaprosuchusSaddle.PrimalItemArmor_KaprosuchusSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_ChalicoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ChalicoSaddle.PrimalItemArmor_ChalicoSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_CamelsaurusSaddle_C",
+					"Path": "/Game/ScorchedEarth/Dinos/Camelsaurus/PrimalItemArmor_CamelsaurusSaddle.PrimalItemArmor_CamelsaurusSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_MantisSaddle_C",
+					"Path": "/Game/ScorchedEarth/Dinos/Mantis/PrimalItemArmor_MantisSaddle.PrimalItemArmor_MantisSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_SpineyLizardSaddle_C",
+					"Path": "/Game/ScorchedEarth/Dinos/SpineyLizard/PrimalItemArmor_SpineyLizardSaddle.PrimalItemArmor_SpineyLizardSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_MegalosaurusSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MegalosaurusSaddle.PrimalItemArmor_MegalosaurusSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_PachyrhinoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PachyrhinoSaddle.PrimalItemArmor_PachyrhinoSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_TherizinosaurusSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TherizinosaurusSaddle.PrimalItemArmor_TherizinosaurusSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_BaryonyxSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_BaryonyxSaddle.PrimalItemArmor_BaryonyxSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_ThylacoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ThylacoSaddle.PrimalItemArmor_ThylacoSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_EquusSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_EquusSaddle.PrimalItemArmor_EquusSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_IguanodonSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_IguanodonSaddle.PrimalItemArmor_IguanodonSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_DaeodonSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_DaeodonSaddle.PrimalItemArmor_DaeodonSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_MegalaniaSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MegalaniaSaddle.PrimalItemArmor_MegalaniaSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_MegatheriumSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MegatheriumSaddle.PrimalItemArmor_MegatheriumSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 1.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_AnkyloSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_AnkyloSaddle.PrimalItemArmor_AnkyloSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_ArgentavisSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ArgentavisSaddle.PrimalItemArmor_ArgentavisSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_BaryonyxSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_BaryonyxSaddle.PrimalItemArmor_BaryonyxSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_CarnoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_CarnoSaddle.PrimalItemArmor_CarnoSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_ChalicoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ChalicoSaddle.PrimalItemArmor_ChalicoSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_DaeodonSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_DaeodonSaddle.PrimalItemArmor_DaeodonSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_DireBearSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_DireBearSaddle.PrimalItemArmor_DireBearSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_DoedSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_DoedSaddle.PrimalItemArmor_DoedSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_EquusSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_EquusSaddle.PrimalItemArmor_EquusSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_Gallimimus_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_Gallimimus.PrimalItemArmor_Gallimimus",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_IguanodonSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_IguanodonSaddle.PrimalItemArmor_IguanodonSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_KaprosuchusSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_KaprosuchusSaddle.PrimalItemArmor_KaprosuchusSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_MammothSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MammothSaddle.PrimalItemArmor_MammothSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_MegalaniaSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MegalaniaSaddle.PrimalItemArmor_MegalaniaSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_MegalodonSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MegalodonSaddle.PrimalItemArmor_MegalodonSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_MegalosaurusSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MegalosaurusSaddle.PrimalItemArmor_MegalosaurusSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_MegatheriumSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MegatheriumSaddle.PrimalItemArmor_MegatheriumSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_PachyrhinoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PachyrhinoSaddle.PrimalItemArmor_PachyrhinoSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_ParaSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ParaSaddle.PrimalItemArmor_ParaSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_PelaSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PelaSaddle.PrimalItemArmor_PelaSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_RhinoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_RhinoSaddle.PrimalItemArmor_RhinoSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_SarcoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SarcoSaddle.PrimalItemArmor_SarcoSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_StegoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_StegoSaddle.PrimalItemArmor_StegoSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_TapejaraSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TapejaraSaddle.PrimalItemArmor_TapejaraSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_TherizinosaurusSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TherizinosaurusSaddle.PrimalItemArmor_TherizinosaurusSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_ThylacoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ThylacoSaddle.PrimalItemArmor_ThylacoSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_TrikeSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TrikeSaddle.PrimalItemArmor_TrikeSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_TurtleSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TurtleSaddle.PrimalItemArmor_TurtleSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 1.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_AnkyloSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_AnkyloSaddle.PrimalItemArmor_AnkyloSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_ArgentavisSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ArgentavisSaddle.PrimalItemArmor_ArgentavisSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_CarnoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_CarnoSaddle.PrimalItemArmor_CarnoSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_DaeodonSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_DaeodonSaddle.PrimalItemArmor_DaeodonSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_DoedSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_DoedSaddle.PrimalItemArmor_DoedSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_EquusSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_EquusSaddle.PrimalItemArmor_EquusSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_Gallimimus_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_Gallimimus.PrimalItemArmor_Gallimimus",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_IguanodonSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_IguanodonSaddle.PrimalItemArmor_IguanodonSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_MegalaniaSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MegalaniaSaddle.PrimalItemArmor_MegalaniaSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_MegalosaurusSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MegalosaurusSaddle.PrimalItemArmor_MegalosaurusSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_MegatheriumSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MegatheriumSaddle.PrimalItemArmor_MegatheriumSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_TapejaraSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TapejaraSaddle.PrimalItemArmor_TapejaraSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_ThylacoSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ThylacoSaddle.PrimalItemArmor_ThylacoSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_CamelsaurusSaddle_C",
+					"Path": "/Game/ScorchedEarth/Dinos/Camelsaurus/PrimalItemArmor_CamelsaurusSaddle.PrimalItemArmor_CamelsaurusSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_MantisSaddle_C",
+					"Path": "/Game/ScorchedEarth/Dinos/Mantis/PrimalItemArmor_MantisSaddle.PrimalItemArmor_MantisSaddle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_SpineyLizardSaddle_C",
+					"Path": "/Game/ScorchedEarth/Dinos/SpineyLizard/PrimalItemArmor_SpineyLizardSaddle.PrimalItemArmor_SpineyLizardSaddle",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": false
+		}
+	],
+	"Grouping": "Saddles",
+	"ID": "5ee9ae01-7002-4b01-a350-aa4bce3a71b0",
+	"Label": "Medium Saddles",
+	"Max": 2,
+	"Min": 1,
+	"Modifiers": {
+		"Bonus": {
+			"Quality": 3,
+			"Quantity": 2.0
+		},
+		"Cave": {
+			"Quality": 6,
+			"Quantity": 1.0
+		},
+		"Sea": {
+			"Quality": 6,
+			"Quantity": 1.0
+		},
+		"Standard": {
+			"Quality": 0,
+			"Quantity": 1.0
+		}
+	}
+}

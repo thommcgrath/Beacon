@@ -1,0 +1,155 @@
+{
+	"Entries": [
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_TekBoots_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekBoots.PrimalItemArmor_TekBoots",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_TekShirt_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekShirt.PrimalItemArmor_TekShirt",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_TekGloves_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekGloves.PrimalItemArmor_TekGloves",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_TekHelmet_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekHelmet.PrimalItemArmor_TekHelmet",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_TekPants_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekPants.PrimalItemArmor_TekPants",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 1.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_TekBoots_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekBoots.PrimalItemArmor_TekBoots",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_TekGloves_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekGloves.PrimalItemArmor_TekGloves",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_TekHelmet_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekHelmet.PrimalItemArmor_TekHelmet",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_TekPants_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekPants.PrimalItemArmor_TekPants",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_TekShirt_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/TEK/PrimalItemArmor_TekShirt.PrimalItemArmor_TekShirt",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": false
+		}
+	],
+	"Grouping": "Wearables",
+	"ID": "802E2917-5E00-4956-9450-C121814A6711",
+	"Label": "Tek Armor",
+	"Max": 5,
+	"Min": 1,
+	"Modifiers": {
+		"Bonus": {
+			"Quality": 3,
+			"Quantity": 1.0
+		},
+		"Cave": {
+			"Quality": 6,
+			"Quantity": 1.0
+		},
+		"Sea": {
+			"Quality": 6,
+			"Quantity": 1.0
+		},
+		"Standard": {
+			"Quality": 0,
+			"Quantity": 1.0
+		}
+	}
+}

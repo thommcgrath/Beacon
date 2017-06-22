@@ -430,6 +430,12 @@ End
 
 
 	#tag Method, Flags = &h0
+		Function AllowMultipleEntries() As Boolean
+		  Return Self.mOriginalEntry = Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mSelectedEngrams = New Xojo.Core.Dictionary
 		  Super.Constructor
@@ -447,14 +453,11 @@ End
 		  Dim Entry As Beacon.SetEntry
 		  
 		  If Sources <> Nil And UBound(Sources) = 0 Then
-		    Entry = Sources(0)
-		    Win.mAllowMultipleEntries = False
-		  Else
-		    Win.mAllowMultipleEntries = True
+		    Win.mOriginalEntry = New Beacon.SetEntry(Sources(0))
 		  End If
 		  
-		  Win.EntryPropertiesEditor1.Setup(Entry)
-		  Win.SetupUI(Entry)
+		  Win.EntryPropertiesEditor1.Setup(Win.mOriginalEntry) // This is ok to be nil
+		  Win.SetupUI()
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  Dim Entries() As Beacon.SetEntry = Win.mCreatedEntries
@@ -530,9 +533,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetupUI(Entry As Beacon.SetEntry)
-		  If Entry <> Nil Then
-		    For Each Option As Beacon.SetEntryOption In Entry
+		Private Sub SetupUI()
+		  If Self.mOriginalEntry <> Nil Then
+		    For Each Option As Beacon.SetEntryOption In Self.mOriginalEntry
 		      Self.mSelectedEngrams.Value(Option.Engram.Path) = Option
 		    Next
 		  End If
@@ -554,7 +557,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSelectionUI()
-		  If Self.mSelectedEngrams.Count > 1 And Self.mAllowMultipleEntries Then
+		  If Self.mSelectedEngrams.Count > 1 And Self.AllowMultipleEntries Then
 		    Self.SingleEntryCheck.Visible = True
 		    Self.EngramList.Height = Self.SingleEntryCheck.Top - (12 + Self.EngramList.Top)
 		  Else
@@ -574,7 +577,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim FullSimulation As Boolean = Self.mSelectedEngrams.Count = 1 Or Self.mAllowMultipleEntries = False Or (Self.SingleEntryCheck.Value And Self.SingleEntryCheck.Visible)
+		  Dim FullSimulation As Boolean = Self.mSelectedEngrams.Count = 1 Or Self.AllowMultipleEntries = False Or (Self.SingleEntryCheck.Value And Self.SingleEntryCheck.Visible)
 		  
 		  Dim Entry As New Beacon.SetEntry
 		  For Each Item As Xojo.Core.DictionaryEntry In Self.mSelectedEngrams
@@ -609,11 +612,11 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mAllowMultipleEntries As Boolean = True
+		Private mCreatedEntries() As Beacon.SetEntry
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCreatedEntries() As Beacon.SetEntry
+		Private mOriginalEntry As Beacon.SetEntry
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -742,8 +745,15 @@ End
 		  Next
 		  
 		  Dim Entries() As Beacon.SetEntry
-		  If UBound(Options) > 0 Then
-		    If SingleEntryCheck.Value Or Self.mAllowMultipleEntries = False Then
+		  If Self.mOriginalEntry <> Nil Then
+		    Dim Entry As New Beacon.SetEntry(Self.mOriginalEntry)
+		    Redim Entry(-1)
+		    For Each Option As Beacon.SetEntryOption In Options
+		      Entry.Append(Option)
+		    Next
+		    Entries.Append(Entry)
+		  ElseIf UBound(Options) > 0 Then
+		    If SingleEntryCheck.Value Then
 		      // Merge all into one
 		      Dim Entry As New Beacon.SetEntry
 		      For Each Option As Beacon.SetEntryOption In Options
@@ -758,10 +768,13 @@ End
 		        Entries.Append(Entry)
 		      Next
 		    End If
-		  Else
+		  ElseIf UBound(Options) = 0 Then
 		    Dim Entry As New Beacon.SetEntry
 		    Entry.Append(Options(0))
 		    Entries.Append(Entry)
+		  Else
+		    Beep
+		    Return
 		  End If
 		  
 		  EntryPropertiesEditor1.ApplyTo(Entries)

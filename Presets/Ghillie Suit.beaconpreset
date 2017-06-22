@@ -1,0 +1,155 @@
+{
+	"Entries": [
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_GhilliePants_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Ghillie/PrimalItemArmor_GhilliePants.PrimalItemArmor_GhilliePants",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_GhillieShirt_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Ghillie/PrimalItemArmor_GhillieShirt.PrimalItemArmor_GhillieShirt",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_GhillieHelmet_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Ghillie/PrimalItemArmor_GhillieHelmet.PrimalItemArmor_GhillieHelmet",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_GhillieBoots_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Ghillie/PrimalItemArmor_GhillieBoots.PrimalItemArmor_GhillieBoots",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_GhillieGloves_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Ghillie/PrimalItemArmor_GhillieGloves.PrimalItemArmor_GhillieGloves",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 1.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_GhillieBoots_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Ghillie/PrimalItemArmor_GhillieBoots.PrimalItemArmor_GhillieBoots",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_GhillieGloves_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Ghillie/PrimalItemArmor_GhillieGloves.PrimalItemArmor_GhillieGloves",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_GhillieHelmet_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Ghillie/PrimalItemArmor_GhillieHelmet.PrimalItemArmor_GhillieHelmet",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_GhilliePants_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Ghillie/PrimalItemArmor_GhilliePants.PrimalItemArmor_GhilliePants",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_GhillieShirt_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Ghillie/PrimalItemArmor_GhillieShirt.PrimalItemArmor_GhillieShirt",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": false
+		}
+	],
+	"Grouping": "Wearables",
+	"ID": "ad50de84-a257-41c1-8fc9-44dd072e9402",
+	"Label": "Ghillie Suit",
+	"Max": 5,
+	"Min": 1,
+	"Modifiers": {
+		"Bonus": {
+			"Quality": 3,
+			"Quantity": 2.0
+		},
+		"Cave": {
+			"Quality": 6,
+			"Quantity": 1.0
+		},
+		"Sea": {
+			"Quality": 6,
+			"Quantity": 1.0
+		},
+		"Standard": {
+			"Quality": 0,
+			"Quantity": 1.0
+		}
+	}
+}

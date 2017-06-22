@@ -1,0 +1,155 @@
+{
+	"Entries": [
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_DesertClothPants_C",
+					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothPants.PrimalItemArmor_DesertClothPants",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_DesertClothShirt_C",
+					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothShirt.PrimalItemArmor_DesertClothShirt",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_DesertClothGogglesHelmet_C",
+					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGogglesHelmet.PrimalItemArmor_DesertClothGogglesHelmet",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_DesertClothBoots_C",
+					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothBoots.PrimalItemArmor_DesertClothBoots",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_DesertClothGloves_C",
+					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGloves.PrimalItemArmor_DesertClothGloves",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 1.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_DesertClothBoots_C",
+					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothBoots.PrimalItemArmor_DesertClothBoots",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_DesertClothGloves_C",
+					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGloves.PrimalItemArmor_DesertClothGloves",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_DesertClothGogglesHelmet_C",
+					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothGogglesHelmet.PrimalItemArmor_DesertClothGogglesHelmet",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_DesertClothPants_C",
+					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothPants.PrimalItemArmor_DesertClothPants",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemArmor_DesertClothShirt_C",
+					"Path": "/Game/ScorchedEarth/Outfits/PrimalItemArmor_DesertClothShirt.PrimalItemArmor_DesertClothShirt",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": false
+		}
+	],
+	"Grouping": "Wearables",
+	"ID": "0b0be285-2211-4e6e-9426-cf6f457e7af5",
+	"Label": "Desert Cloth Clothing",
+	"Max": 5,
+	"Min": 1,
+	"Modifiers": {
+		"Bonus": {
+			"Quality": 3,
+			"Quantity": 2.0
+		},
+		"Cave": {
+			"Quality": 6,
+			"Quantity": 1.0
+		},
+		"Sea": {
+			"Quality": 6,
+			"Quantity": 1.0
+		},
+		"Standard": {
+			"Quality": 0,
+			"Quantity": 1.0
+		}
+	}
+}

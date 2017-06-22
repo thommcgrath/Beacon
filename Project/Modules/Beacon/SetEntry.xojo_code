@@ -97,6 +97,65 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function CreateBlueprintEntry(Entries() As Beacon.SetEntry) As Beacon.SetEntry
+		  If UBound(Entries) = -1 Then
+		    Return Nil
+		  End If
+		  
+		  Dim MinQualitySum, MaxQualitySum As Double
+		  Dim Options As New Xojo.Core.Dictionary
+		  For Each Entry As Beacon.SetEntry In Entries
+		    For Each Option As Beacon.SetEntryOption In Entry
+		      If Option.Engram = Nil Or Option.Engram.IsValid = False Or Option.Engram.CanBeBlueprint = False Then
+		        Continue
+		      End If
+		      
+		      Dim Key As Text = Option.Engram.Path
+		      If Key = "" Then
+		        Continue
+		      End If
+		      
+		      MinQualitySum = MinQualitySum + Beacon.ValueForQuality(Entry.MinQuality, 1)
+		      MaxQualitySum = MaxQualitySum + Beacon.ValueForQuality(Entry.MaxQuality, 1)
+		      
+		      Dim Arr() As Beacon.SetEntryOption
+		      If Options.HasKey(Key) Then
+		        Arr = Options.Value(Key)
+		      End If
+		      Arr.Append(Option)
+		      Options.Value(Key) = Arr
+		    Next
+		  Next
+		  
+		  If Options.Count = 0 Then
+		    Return Nil
+		  End If
+		  
+		  Dim BlueprintEntry As New Beacon.SetEntry
+		  For Each Entry As Xojo.Core.DictionaryEntry In Options
+		    Dim Path As Text = Entry.Key
+		    Dim Arr() As Beacon.SetEntryOption = Entry.Value
+		    Dim Count As Integer = UBound(Arr) + 1
+		    Dim WeightSum As Double
+		    For Each Option As Beacon.SetEntryOption In Arr
+		      WeightSum = WeightSum + Option.Weight
+		    Next
+		    Dim AverageWeight As Double = WeightSum / Count
+		    
+		    BlueprintEntry.Append(New Beacon.SetEntryOption(Beacon.Data.GetEngramByPath(Path), AverageWeight))
+		  Next
+		  
+		  BlueprintEntry.ChanceToBeBlueprint = 1.0
+		  BlueprintEntry.MaxQuantity = 1
+		  BlueprintEntry.MinQuantity = 1
+		  BlueprintEntry.MinQuality = Beacon.QualityForValue(MinQualitySum / Options.Count, 1)
+		  BlueprintEntry.MaxQuality = Beacon.QualityForValue(MaxQualitySum / Options.Count, 1)
+		  
+		  Return BlueprintEntry
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Children() As Xojo.Core.Dictionary
 		  For Each Item As Beacon.SetEntryOption In Self.mOptions

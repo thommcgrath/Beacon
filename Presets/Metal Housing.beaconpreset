@@ -1,0 +1,592 @@
+{
+	"Entries": [
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalGate_Large_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGate_Large.PrimalItemStructure_MetalGate_Large",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalGateframe_Large_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGateframe_Large.PrimalItemStructure_MetalGateframe_Large",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalCeilingWithTrapdoorGiant_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeilingWithTrapdoorGiant.PrimalItemStructure_MetalCeilingWithTrapdoorGiant",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalTrapdoorGiant_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalTrapdoorGiant.PrimalItemStructure_MetalTrapdoorGiant",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalCeiling_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeiling.PrimalItemStructure_MetalCeiling",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalGate_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGate.PrimalItemStructure_MetalGate",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalGateframe_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGateframe.PrimalItemStructure_MetalGateframe",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalDoor_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalDoor.PrimalItemStructure_MetalDoor",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 2,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalWallWithDoor_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWallWithDoor.PrimalItemStructure_MetalWallWithDoor",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 2,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalFenceFoundation_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalFenceFoundation.PrimalItemStructure_MetalFenceFoundation",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalFloor_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalFloor.PrimalItemStructure_MetalFloor",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalCeilingWithTrapdoor_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeilingWithTrapdoor.PrimalItemStructure_MetalCeilingWithTrapdoor",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalLadder_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalLadder.PrimalItemStructure_MetalLadder",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 6,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalPillar_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalPillar.PrimalItemStructure_MetalPillar",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalRailing_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalRailing.PrimalItemStructure_MetalRailing",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 20,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalRamp_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalRamp.PrimalItemStructure_MetalRamp",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 4,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalStairs_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalStairs.PrimalItemStructure_MetalStairs",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 2,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalTrapdoor_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalTrapdoor.PrimalItemStructure_MetalTrapdoor",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalWall_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWall.PrimalItemStructure_MetalWall",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 32,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalWindow_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWindow.PrimalItemStructure_MetalWindow",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 4,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalWallWithWindow_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWallWithWindow.PrimalItemStructure_MetalWallWithWindow",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 4,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalRoof_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Metal/PrimalItemStructure_MetalRoof.PrimalItemStructure_MetalRoof",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalWall_Sloped_Left_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Metal/PrimalItemStructure_MetalWall_Sloped_Left.PrimalItemStructure_MetalWall_Sloped_Left",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 4,
+			"MinQuality": "Tier1",
+			"MinQuantity": 2,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalWall_Sloped_Right_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Metal/PrimalItemStructure_MetalWall_Sloped_Right.PrimalItemStructure_MetalWall_Sloped_Right",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 4,
+			"MinQuality": "Tier1",
+			"MinQuantity": 2,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 1.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_MetalCeiling_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeiling.PrimalItemStructure_MetalCeiling",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalCeilingWithTrapdoor_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeilingWithTrapdoor.PrimalItemStructure_MetalCeilingWithTrapdoor",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalCeilingWithTrapdoorGiant_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeilingWithTrapdoorGiant.PrimalItemStructure_MetalCeilingWithTrapdoorGiant",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalDoor_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalDoor.PrimalItemStructure_MetalDoor",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalFenceFoundation_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalFenceFoundation.PrimalItemStructure_MetalFenceFoundation",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalFloor_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalFloor.PrimalItemStructure_MetalFloor",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalGate_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGate.PrimalItemStructure_MetalGate",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalGate_Large_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGate_Large.PrimalItemStructure_MetalGate_Large",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalGateframe_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGateframe.PrimalItemStructure_MetalGateframe",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalGateframe_Large_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGateframe_Large.PrimalItemStructure_MetalGateframe_Large",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalLadder_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalLadder.PrimalItemStructure_MetalLadder",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalPillar_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalPillar.PrimalItemStructure_MetalPillar",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalRailing_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalRailing.PrimalItemStructure_MetalRailing",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalRamp_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalRamp.PrimalItemStructure_MetalRamp",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalStairs_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalStairs.PrimalItemStructure_MetalStairs",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalTrapdoor_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalTrapdoor.PrimalItemStructure_MetalTrapdoor",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalTrapdoorGiant_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalTrapdoorGiant.PrimalItemStructure_MetalTrapdoorGiant",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalWall_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWall.PrimalItemStructure_MetalWall",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalWallWithDoor_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWallWithDoor.PrimalItemStructure_MetalWallWithDoor",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalWallWithWindow_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWallWithWindow.PrimalItemStructure_MetalWallWithWindow",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalWindow_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWindow.PrimalItemStructure_MetalWindow",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalRoof_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Metal/PrimalItemStructure_MetalRoof.PrimalItemStructure_MetalRoof",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalWall_Sloped_Left_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Metal/PrimalItemStructure_MetalWall_Sloped_Left.PrimalItemStructure_MetalWall_Sloped_Left",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MetalWall_Sloped_Right_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Roofs/Metal/PrimalItemStructure_MetalWall_Sloped_Right.PrimalItemStructure_MetalWall_Sloped_Right",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": false
+		}
+	],
+	"Grouping": "Housing",
+	"ID": "72f5d82a-743e-48f7-9b75-cde603eb2f93",
+	"Label": "Metal Housing",
+	"Max": 6,
+	"Min": 2,
+	"Modifiers": {
+		"Bonus": {
+			"Quality": 0,
+			"Quantity": 2.0
+		},
+		"Cave": {
+			"Quality": 0,
+			"Quantity": 3.0
+		},
+		"Sea": {
+			"Quality": 0,
+			"Quantity": 4.0
+		},
+		"Standard": {
+			"Quality": 0,
+			"Quantity": 1.0
+		}
+	}
+}

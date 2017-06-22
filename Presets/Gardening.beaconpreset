@@ -1,0 +1,325 @@
+{
+	"Entries": [
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_Amarberry_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/Seeds/PrimalItemConsumable_Seed_Amarberry.PrimalItemConsumable_Seed_Amarberry",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 20,
+			"MinQuality": "Tier1",
+			"MinQuantity": 10,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_Citronal_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/Seeds/PrimalItemConsumable_Seed_Citronal.PrimalItemConsumable_Seed_Citronal",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 20,
+			"MinQuality": "Tier1",
+			"MinQuantity": 10,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_Azulberry_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/Seeds/PrimalItemConsumable_Seed_Azulberry.PrimalItemConsumable_Seed_Azulberry",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 20,
+			"MinQuality": "Tier1",
+			"MinQuantity": 10,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_Tintoberry_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/Seeds/PrimalItemConsumable_Seed_Tintoberry.PrimalItemConsumable_Seed_Tintoberry",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 20,
+			"MinQuality": "Tier1",
+			"MinQuantity": 10,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_Mejoberry_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/Seeds/PrimalItemConsumable_Seed_Mejoberry.PrimalItemConsumable_Seed_Mejoberry",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 20,
+			"MinQuality": "Tier1",
+			"MinQuantity": 10,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_Narcoberry_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/Seeds/PrimalItemConsumable_Seed_Narcoberry.PrimalItemConsumable_Seed_Narcoberry",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 20,
+			"MinQuality": "Tier1",
+			"MinQuantity": 10,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_Stimberry_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/Seeds/PrimalItemConsumable_Seed_Stimberry.PrimalItemConsumable_Seed_Stimberry",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 20,
+			"MinQuality": "Tier1",
+			"MinQuantity": 10,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_Savoroot_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/Seeds/PrimalItemConsumable_Seed_Savoroot.PrimalItemConsumable_Seed_Savoroot",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 20,
+			"MinQuality": "Tier1",
+			"MinQuantity": 10,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_Longrass_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/Seeds/PrimalItemConsumable_Seed_Longrass.PrimalItemConsumable_Seed_Longrass",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 20,
+			"MinQuality": "Tier1",
+			"MinQuantity": 10,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_Rockarrot_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/Seeds/PrimalItemConsumable_Seed_Rockarrot.PrimalItemConsumable_Seed_Rockarrot",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 20,
+			"MinQuality": "Tier1",
+			"MinQuantity": 10,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_CropPlot_Small_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Small.PrimalItemStructure_CropPlot_Small",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 10,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_CropPlot_Medium_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Medium.PrimalItemStructure_CropPlot_Medium",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 10,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_CropPlot_Large_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Large.PrimalItemStructure_CropPlot_Large",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 10,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 1,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_DefensePlant_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/Seeds/PrimalItemConsumable_Seed_DefensePlant.PrimalItemConsumable_Seed_DefensePlant",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 100,
+			"MinQuality": "Tier1",
+			"MinQuantity": 100,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_PlantSpeciesY_C",
+					"Path": "/Game/ScorchedEarth/WeaponPlantSpeciesY/PrimalItemConsumable_Seed_PlantSpeciesY.PrimalItemConsumable_Seed_PlantSpeciesY",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 3,
+			"ChanceToBeBlueprintOverride": 1.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_CropPlot_Large_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Large.PrimalItemStructure_CropPlot_Large",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_CropPlot_Medium_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Medium.PrimalItemStructure_CropPlot_Medium",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_CropPlot_Small_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Small.PrimalItemStructure_CropPlot_Small",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": false
+		}
+	],
+	"Grouping": "Miscellaneous",
+	"ID": "5ab5fefb-bda2-47ce-a232-22c768003190",
+	"Label": "Gardening",
+	"Max": 4,
+	"Min": 1,
+	"Modifiers": {
+		"Bonus": {
+			"Quality": 3,
+			"Quantity": 2.0
+		},
+		"Cave": {
+			"Quality": 6,
+			"Quantity": 1.0
+		},
+		"Sea": {
+			"Quality": 6,
+			"Quantity": 1.0
+		},
+		"Standard": {
+			"Quality": 0,
+			"Quantity": 1.0
+		}
+	}
+}

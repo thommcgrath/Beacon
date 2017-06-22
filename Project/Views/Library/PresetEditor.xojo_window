@@ -1482,7 +1482,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PutEntryInRow(Entry As Beacon.PresetEntry, Index As Integer)
+		Private Sub PutEntryInRow(Entry As Beacon.PresetEntry, Index As Integer, SelectIt As Boolean = False)
 		  If Index = -1 Then
 		    ContentsList.AddRow("")
 		    Index = ContentsList.LastIndex
@@ -1496,6 +1496,10 @@ End
 		  ContentsList.CellCheck(Index, Self.ColumnScorchedValid) = Entry.ValidForPackage(Beacon.LootSource.Packages.Scorched)
 		  ContentsList.CellCheck(Index, Self.ColumnQualityLock) = Not Entry.RespectQualityModifier
 		  ContentsList.CellCheck(Index, Self.ColumnQuantityLock) = Not Entry.RespectQuantityMultiplier
+		  
+		  If SelectIt Then
+		    ContentsList.Selected(Index) = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1609,6 +1613,95 @@ End
 		  DeleteButton.Enabled = Me.ListIndex > -1
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		  Dim Item As MenuItem
+		  
+		  Item = New MenuItem
+		  Item.Text = "Create Blueprint Entry"
+		  Item.Enabled = Me.SelCount > 0
+		  Item.Tag = "createblueprintentry"
+		  
+		  Base.Append(Item)
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
+		  Select Case hitItem.Tag
+		  Case "createblueprintentry"
+		    Dim IslandEntries(), ScorchedEntries() As Beacon.SetEntry
+		    For I As Integer = 0 To Me.ListCount - 1
+		      If Me.Selected(I) Then
+		        Dim Entry As Beacon.PresetEntry = Me.RowTag(I)
+		        If Entry.ValidForPackage(Beacon.LootSource.Packages.Island) Then
+		          IslandEntries.Append(Entry)
+		        End If
+		        If Entry.ValidForPackage(Beacon.LootSource.Packages.Scorched) Then
+		          ScorchedEntries.Append(Entry)
+		        End If
+		      End If
+		    Next
+		    
+		    Dim IslandBlueprintEntry As Beacon.SetEntry = Beacon.SetEntry.CreateBlueprintEntry(IslandEntries)
+		    Dim ScorchedBlueprintEntry As Beacon.SetEntry = Beacon.SetEntry.CreateBlueprintEntry(ScorchedEntries)
+		    If IslandBlueprintEntry = Nil And ScorchedBlueprintEntry = Nil Then
+		      Beep
+		      Return True
+		    End If
+		    
+		    Self.ContentsList.ListIndex = -1
+		    For I As Integer = 0 To Self.ContentsList.ListCount - 1
+		      Beacon.PresetEntry(Self.ContentsList.RowTag(I)).ChanceToBeBlueprint = 0.0
+		    Next
+		    
+		    If IslandBlueprintEntry <> Nil And ScorchedBlueprintEntry <> Nil And IslandBlueprintEntry.Hash = ScorchedBlueprintEntry.Hash Then
+		      // They are identical, only need one
+		      Dim Item As New Beacon.PresetEntry(IslandBlueprintEntry)
+		      Item.ValidForPackage(Beacon.LootSource.Packages.Island) = True
+		      Item.ValidForPackage(Beacon.LootSource.Packages.Scorched) = True
+		      Item.RespectQualityModifier = False
+		      Item.RespectQuantityMultiplier = False
+		      Self.PutEntryInRow(Item, -1, True)
+		      Self.mPreset.Append(Item)
+		    ElseIf IslandBlueprintEntry <> Nil Or ScorchedBlueprintEntry <> Nil Then
+		      // One or two different entries
+		      If IslandBlueprintEntry <> Nil Then
+		        Dim Item As New Beacon.PresetEntry(IslandBlueprintEntry)
+		        Item.ValidForPackage(Beacon.LootSource.Packages.Island) = True
+		        Item.ValidForPackage(Beacon.LootSource.Packages.Scorched) = False
+		        Item.RespectQualityModifier = False
+		        Item.RespectQuantityMultiplier = False
+		        Self.PutEntryInRow(Item, -1, True)
+		        Self.mPreset.Append(Item)
+		      End If
+		      If ScorchedBlueprintEntry <> Nil Then
+		        Dim Item As New Beacon.PresetEntry(ScorchedBlueprintEntry)
+		        Item.ValidForPackage(Beacon.LootSource.Packages.Island) = False
+		        Item.ValidForPackage(Beacon.LootSource.Packages.Scorched) = True
+		        Item.RespectQualityModifier = False
+		        Item.RespectQuantityMultiplier = False
+		        
+		        Self.PutEntryInRow(Item, -1, True)
+		        Self.mPreset.Append(Item)
+		      End If
+		    Else
+		      // No valid entries
+		      Beep
+		      Return True
+		    End If
+		    
+		    Self.ContentsList.Sort
+		    For I As Integer = 0 To Self.ContentsList.ListCount - 1
+		      If Self.ContentsList.Selected(I) Then
+		        Self.ContentsList.ScrollPosition = I
+		        Exit For I
+		      End If
+		    Next
+		    Self.ContentsChanged = True
+		  End Select
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events AddButton
 	#tag Event
@@ -1618,6 +1711,7 @@ End
 		    Dim Item As New Beacon.PresetEntry(Entry)
 		    Self.PutEntryInRow(Item, -1)
 		    Self.mPreset.Append(Item)
+		    Self.ContentsChanged = True
 		  Next
 		  ContentsList.Sort
 		End Sub
@@ -1655,6 +1749,7 @@ End
 		    If OriginalIndex = -1 Then
 		      System.DebugLog("Unable to find original entry " + NewEntry.UniqueID)
 		      Break
+		      Return
 		    End If
 		    
 		    Dim Item As New Beacon.PresetEntry(NewEntry)
@@ -1689,6 +1784,7 @@ End
 		      Self.mPreset.Remove(Idx)
 		    End If
 		    ContentsList.RemoveRow(I)
+		    Self.ContentsChanged = True
 		  Next
 		End Sub
 	#tag EndEvent

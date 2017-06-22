@@ -1,0 +1,592 @@
+{
+	"Entries": [
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeFloor_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFloor.PrimalItemStructure_AdobeFloor",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeWall_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall.PrimalItemStructure_AdobeWall",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 32,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeCeiling_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeiling.PrimalItemStructure_AdobeCeiling",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeWallWithDoor_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithDoor.PrimalItemStructure_AdobeWallWithDoor",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 2,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeDoor_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeDoor.PrimalItemStructure_AdobeDoor",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 2,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeWall_Sloped_Right_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Right.PrimalItemStructure_AdobeWall_Sloped_Right",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 4,
+			"MinQuality": "Tier1",
+			"MinQuantity": 2,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeWall_Sloped_Left_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Left.PrimalItemStructure_AdobeWall_Sloped_Left",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 4,
+			"MinQuality": "Tier1",
+			"MinQuantity": 2,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeRoof_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRoof.PrimalItemStructure_AdobeRoof",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeRamp_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRamp.PrimalItemStructure_AdobeRamp",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 4,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeWallWithWindow_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithWindow.PrimalItemStructure_AdobeWallWithWindow",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 4,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeWindow_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWindow.PrimalItemStructure_AdobeWindow",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 4,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobePillar_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobePillar.PrimalItemStructure_AdobePillar",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeGateDoor_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor.PrimalItemStructure_AdobeGateDoor",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeFrameGate_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFrameGate.PrimalItemStructure_AdobeFrameGate",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeFenceFoundation_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFenceFoundation.PrimalItemStructure_AdobeFenceFoundation",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeCeilingWithTrapdoor_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithTrapdoor.PrimalItemStructure_AdobeCeilingWithTrapdoor",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeLader_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeLader.PrimalItemStructure_AdobeLader",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 6,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeRailing_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRailing.PrimalItemStructure_AdobeRailing",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 20,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeStaircase_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeStaircase.PrimalItemStructure_AdobeStaircase",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 2,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeTrapdoor_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeTrapdoor.PrimalItemStructure_AdobeTrapdoor",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 16,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeGateDoor_Large_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor_Large.PrimalItemStructure_AdobeGateDoor_Large",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeGateframe_Large_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateframe_Large.PrimalItemStructure_AdobeGateframe_Large",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeCeilingWithDoorWay_Giant_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithDoorWay_Giant.PrimalItemStructure_AdobeCeilingWithDoorWay_Giant",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeCeilingDoorGiant_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingDoorGiant.PrimalItemStructure_AdobeCeilingDoorGiant",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 2,
+			"ChanceToBeBlueprintOverride": 1.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_AdobeCeiling_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeiling.PrimalItemStructure_AdobeCeiling",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeCeilingDoorGiant_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingDoorGiant.PrimalItemStructure_AdobeCeilingDoorGiant",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeCeilingWithDoorWay_Giant_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithDoorWay_Giant.PrimalItemStructure_AdobeCeilingWithDoorWay_Giant",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeCeilingWithTrapdoor_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeCeilingWithTrapdoor.PrimalItemStructure_AdobeCeilingWithTrapdoor",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeDoor_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeDoor.PrimalItemStructure_AdobeDoor",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeFenceFoundation_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFenceFoundation.PrimalItemStructure_AdobeFenceFoundation",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeFloor_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFloor.PrimalItemStructure_AdobeFloor",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeFrameGate_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeFrameGate.PrimalItemStructure_AdobeFrameGate",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeGateDoor_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor.PrimalItemStructure_AdobeGateDoor",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeGateDoor_Large_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateDoor_Large.PrimalItemStructure_AdobeGateDoor_Large",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeGateframe_Large_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeGateframe_Large.PrimalItemStructure_AdobeGateframe_Large",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeLader_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeLader.PrimalItemStructure_AdobeLader",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobePillar_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobePillar.PrimalItemStructure_AdobePillar",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeRailing_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRailing.PrimalItemStructure_AdobeRailing",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeRamp_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRamp.PrimalItemStructure_AdobeRamp",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeRoof_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeRoof.PrimalItemStructure_AdobeRoof",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeStaircase_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeStaircase.PrimalItemStructure_AdobeStaircase",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeTrapdoor_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeTrapdoor.PrimalItemStructure_AdobeTrapdoor",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeWall_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall.PrimalItemStructure_AdobeWall",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeWall_Sloped_Left_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Left.PrimalItemStructure_AdobeWall_Sloped_Left",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeWall_Sloped_Right_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWall_Sloped_Right.PrimalItemStructure_AdobeWall_Sloped_Right",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeWallWithDoor_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithDoor.PrimalItemStructure_AdobeWallWithDoor",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeWallWithWindow_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWallWithWindow.PrimalItemStructure_AdobeWallWithWindow",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_AdobeWindow_C",
+					"Path": "/Game/ScorchedEarth/Structures/Adobe/Blueprints/PrimalItemStructure_AdobeWindow.PrimalItemStructure_AdobeWindow",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": false
+		}
+	],
+	"Grouping": "Housing",
+	"ID": "6b86cfd0-6794-4da2-bc59-222b11ce0bcd",
+	"Label": "Adobe Housing",
+	"Max": 6,
+	"Min": 2,
+	"Modifiers": {
+		"Bonus": {
+			"Quality": 0,
+			"Quantity": 2.0
+		},
+		"Cave": {
+			"Quality": 0,
+			"Quantity": 3.0
+		},
+		"Sea": {
+			"Quality": 0,
+			"Quantity": 4.0
+		},
+		"Standard": {
+			"Quality": 0,
+			"Quantity": 1.0
+		}
+	}
+}

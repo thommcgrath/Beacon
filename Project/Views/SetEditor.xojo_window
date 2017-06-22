@@ -139,6 +139,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Label:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -285,6 +286,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   10
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "100"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -319,6 +321,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Min Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -353,6 +356,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Max Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -387,6 +391,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   8
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Weight:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -591,7 +596,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateEntryList(SelectEntries() As Beacon.SetEntry = Nil)
+		Private Sub UpdateEntryList(SelectEntries() As Beacon.SetEntry)
 		  If Self.mSet = Nil Then
 		    EntryList.DeleteAllRows
 		    Return
@@ -654,6 +659,12 @@ End
 		      End If
 		    Next
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateEntryList(ParamArray SelectEntries() As Beacon.SetEntry)
+		  Self.UpdateEntryList(SelectEntries)
 		End Sub
 	#tag EndMethod
 
@@ -876,6 +887,44 @@ End
 		    TextColor = BeaconUI.TextColorForInvalidRow(IsHighlighted, Me.Selected(Row))
 		    G.Bold = Not Entry.IsValid
 		  End If
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		  Dim Item As MenuItem
+		  
+		  Item = New MenuItem
+		  Item.Text = "Create Blueprint Entry"
+		  Item.Enabled = Me.SelCount > 0
+		  Item.Tag = "createblueprintentry"
+		  
+		  Base.Append(Item)
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
+		  Select Case hitItem.Tag
+		  Case "createblueprintentry"
+		    Dim Entries() As Beacon.SetEntry
+		    For I As Integer = 0 To Me.ListCount - 1
+		      If Me.Selected(I) Then
+		        Entries.Append(Me.RowTag(I))
+		      End If
+		    Next
+		    
+		    Dim BlueprintEntry As Beacon.SetEntry = Beacon.SetEntry.CreateBlueprintEntry(Entries)
+		    If BlueprintEntry = Nil Then
+		      Return True
+		    End If
+		    
+		    For Each Entry As Beacon.SetEntry In Entries
+		      Entry.ChanceToBeBlueprint = 0.0
+		    Next
+		    
+		    Self.mSet.Append(BlueprintEntry)
+		    Self.UpdateEntryList(BlueprintEntry)
+		  End Select
 		End Function
 	#tag EndEvent
 #tag EndEvents
