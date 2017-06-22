@@ -1,19 +1,19 @@
 #tag Class
 Protected Class Engram
 	#tag Method, Flags = &h0
-		Sub AddEnvironment(Package As Beacon.LootSource.Packages)
-		  Self.mAvailability = Self.mAvailability Or Beacon.LootSource.PackageToInteger(Package)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function AsDictionary() As Xojo.Core.Dictionary
 		  Dim Environments() As Text
-		  If Self.AvailableTo(Beacon.LootSource.Packages.Island) Then
+		  If Self.ValidForMap(Beacon.Maps.TheIsland) Then
 		    Environments.Append("Island")
 		  End If
-		  If Self.AvailableTo(Beacon.LootSource.Packages.Scorched) Then
+		  If Self.ValidForMap(Beacon.Maps.ScorchedEarth) Then
 		    Environments.Append("Scorched")
+		  End If
+		  If Self.ValidForMap(Beacon.Maps.TheCenter) Then
+		    Environments.Append("Center")
+		  End If
+		  If Self.ValidForMap(Beacon.Maps.Ragnarok) Then
+		    Environments.Append("Ragnarok")
 		  End If
 		  
 		  Dim Dict As New Xojo.Core.Dictionary
@@ -23,13 +23,6 @@ Protected Class Engram
 		  Dict.Value("availability") = Environments
 		  Dict.Value("can_blueprint") = Self.CanBeBlueprint
 		  Return Dict
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function AvailableTo(Package As Beacon.LootSource.Packages) As Boolean
-		  Dim PackageValue As UInteger = Beacon.LootSource.PackageToInteger(Package)
-		  Return (PackageValue And Self.mAvailability) = PackageValue
 		End Function
 	#tag EndMethod
 
@@ -46,7 +39,7 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mAvailability = Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Island) Or Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Scorched)
+		  Self.mAvailability = Beacon.Maps.All.Mask
 		  Self.mID = Beacon.CreateUUID
 		End Sub
 	#tag EndMethod
@@ -93,14 +86,20 @@ Protected Class Engram
 		  
 		  Dim Environments() As Auto = Source.Value("environments")
 		  For Each Environment As Text In Environments
-		    Dim Package As Beacon.LootSource.Packages
+		    Dim Map As Beacon.Map
 		    Select Case Environment
 		    Case "island"
-		      Package = Beacon.LootSource.Packages.Island
+		      Map = Beacon.Maps.TheIsland
 		    Case "scorched"
-		      Package = Beacon.LootSource.Packages.Scorched
+		      Map = Beacon.Maps.ScorchedEarth
+		    Case "center"
+		      Map = Beacon.Maps.TheCenter
+		    Case "ragnarok"
+		      Map = Beacon.Maps.Ragnarok
 		    End Select
-		    Self.mAvailability = Self.mAvailability Or Beacon.LootSource.PackageToInteger(Package)
+		    If Map <> Nil Then
+		      Self.ValidForMap(Map) = True
+		    End If
 		  Next
 		End Sub
 	#tag EndMethod
@@ -136,12 +135,6 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveEnvironment(Package As Beacon.LootSource.Packages)
-		  Self.mAvailability = Self.mAvailability And (Not Beacon.LootSource.PackageToInteger(Package))
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ResourceURL() As Text
 		  Return Self.mResourceURL
 		End Function
@@ -159,6 +152,22 @@ Protected Class Engram
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ValidForMap(Map As Beacon.Map) As Boolean
+		  Return Map.Matches(Self.mAvailability)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ValidForMap(Map As Beacon.Map, Assigns Value As Boolean)
+		  If Value Then
+		    Self.mAvailability = Self.mAvailability Or Map.Mask
+		  Else
+		    Self.mAvailability = Self.mAvailability And Not Map.Mask
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -168,7 +177,7 @@ Protected Class Engram
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Mask As UInteger = Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Island) Or Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Scorched)
+			  Dim Mask As UInteger = Beacon.Maps.All.Mask
 			  Self.mAvailability = Value And Mask
 			End Set
 		#tag EndSetter
@@ -239,11 +248,6 @@ Protected Class Engram
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ClassString"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -272,6 +276,11 @@ Protected Class Engram
 			Visible=true
 			Group="ID"
 			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Path"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

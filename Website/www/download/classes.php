@@ -32,11 +32,15 @@ if ($since === null) {
 }
 $sources = array();
 while (!$results->EOF()) {
+	$availability = intval($results->Field('engram_mask'));
+	$mask = $availability & 3;
+	
 	$sources[] = array(
 		'class' => $results->Field('class_string'),
 		'label' => $results->Field('label'),
 		'kind' => $results->Field('kind'),
-		'mask' => intval($results->Field('engram_mask')),
+		'mask' => $mask,
+		'availability' => $availability,
 		'mult_min' => floatval($results->Field('multiplier_min')),
 		'mult_max' => floatval($results->Field('multiplier_max')),
 		'uicolor' => $results->Field('uicolor'),

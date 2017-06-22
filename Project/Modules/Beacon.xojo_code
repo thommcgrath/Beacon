@@ -150,6 +150,36 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Label(Extends Maps() As Beacon.Map) As Text
+		  Dim Names() As Text
+		  For Each Map As Beacon.Map In Maps
+		    Names.Append(Map.Name)
+		  Next
+		  
+		  
+		  If UBound(Names) = 0 Then
+		    Return Names(0)
+		  ElseIf UBound(Names) = 1 Then
+		    Return Names(0) + " & " + Names(1)
+		  Else
+		    Dim Tail As Text = Names(UBound(Names))
+		    Names.Remove(UBound(Names))
+		    Return Text.Join(Names, ", ") + ", & " + Tail
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Mask(Extends Maps() As Beacon.Map) As UInteger
+		  Dim Bits As UInteger
+		  For Each Map As Beacon.Map In Maps
+		    Bits = Bits Or Map.Mask
+		  Next
+		  Return Bits
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function MD5(Value As Text) As Text
 		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Value)

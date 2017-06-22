@@ -1492,8 +1492,8 @@ End
 		  ContentsList.Cell(Index, Self.ColumnDescription) = Entry.Label
 		  ContentsList.Cell(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Format(Entry.MinQuantity, "0"), Format(Entry.MinQuantity, "0") + "-" + Format(Entry.MaxQuantity, "0"))
 		  ContentsList.Cell(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MinQuality).Left(4) + "-" + Language.LabelForQuality(Entry.MaxQuality).Left(4))
-		  ContentsList.CellCheck(Index, Self.ColumnIslandValid) = Entry.ValidForPackage(Beacon.LootSource.Packages.Island)
-		  ContentsList.CellCheck(Index, Self.ColumnScorchedValid) = Entry.ValidForPackage(Beacon.LootSource.Packages.Scorched)
+		  ContentsList.CellCheck(Index, Self.ColumnIslandValid) = Entry.ValidForMap(Beacon.Maps.TheIsland)
+		  ContentsList.CellCheck(Index, Self.ColumnScorchedValid) = Entry.ValidForMap(Beacon.Maps.ScorchedEarth)
 		  ContentsList.CellCheck(Index, Self.ColumnQualityLock) = Not Entry.RespectQualityModifier
 		  ContentsList.CellCheck(Index, Self.ColumnQuantityLock) = Not Entry.RespectQuantityMultiplier
 		  
@@ -1593,10 +1593,10 @@ End
 		  Dim Entry As Beacon.PresetEntry = Me.RowTag(Row)
 		  Select Case Column
 		  Case Self.ColumnIslandValid
-		    Entry.ValidForPackage(Beacon.LootSource.Packages.Island) = Me.CellCheck(Row, Column)
+		    Entry.ValidForMap(Beacon.Maps.TheIsland) = Me.CellCheck(Row, Column)
 		    Self.ContentsChanged = True
 		  Case Self.ColumnScorchedValid
-		    Entry.ValidForPackage(Beacon.LootSource.Packages.Scorched) = Me.CellCheck(Row, Column)
+		    Entry.ValidForMap(Beacon.Maps.ScorchedEarth) = Me.CellCheck(Row, Column)
 		    Self.ContentsChanged = True
 		  Case Self.ColumnQualityLock
 		    Entry.RespectQualityModifier = Not Me.CellCheck(Row, Column)
@@ -1634,10 +1634,10 @@ End
 		    For I As Integer = 0 To Me.ListCount - 1
 		      If Me.Selected(I) Then
 		        Dim Entry As Beacon.PresetEntry = Me.RowTag(I)
-		        If Entry.ValidForPackage(Beacon.LootSource.Packages.Island) Then
+		        If Entry.ValidForMap(Beacon.Maps.TheIsland) Then
 		          IslandEntries.Append(Entry)
 		        End If
-		        If Entry.ValidForPackage(Beacon.LootSource.Packages.Scorched) Then
+		        If Entry.ValidForMap(Beacon.Maps.ScorchedEarth) Then
 		          ScorchedEntries.Append(Entry)
 		        End If
 		      End If
@@ -1658,8 +1658,8 @@ End
 		    If IslandBlueprintEntry <> Nil And ScorchedBlueprintEntry <> Nil And IslandBlueprintEntry.Hash = ScorchedBlueprintEntry.Hash Then
 		      // They are identical, only need one
 		      Dim Item As New Beacon.PresetEntry(IslandBlueprintEntry)
-		      Item.ValidForPackage(Beacon.LootSource.Packages.Island) = True
-		      Item.ValidForPackage(Beacon.LootSource.Packages.Scorched) = True
+		      Item.ValidForMap(Beacon.Maps.TheIsland) = True
+		      Item.ValidForMap(Beacon.Maps.ScorchedEarth) = True
 		      Item.RespectQualityModifier = False
 		      Item.RespectQuantityMultiplier = False
 		      Self.PutEntryInRow(Item, -1, True)
@@ -1668,8 +1668,8 @@ End
 		      // One or two different entries
 		      If IslandBlueprintEntry <> Nil Then
 		        Dim Item As New Beacon.PresetEntry(IslandBlueprintEntry)
-		        Item.ValidForPackage(Beacon.LootSource.Packages.Island) = True
-		        Item.ValidForPackage(Beacon.LootSource.Packages.Scorched) = False
+		        Item.ValidForMap(Beacon.Maps.TheIsland) = True
+		        Item.ValidForMap(Beacon.Maps.ScorchedEarth) = False
 		        Item.RespectQualityModifier = False
 		        Item.RespectQuantityMultiplier = False
 		        Self.PutEntryInRow(Item, -1, True)
@@ -1677,8 +1677,8 @@ End
 		      End If
 		      If ScorchedBlueprintEntry <> Nil Then
 		        Dim Item As New Beacon.PresetEntry(ScorchedBlueprintEntry)
-		        Item.ValidForPackage(Beacon.LootSource.Packages.Island) = False
-		        Item.ValidForPackage(Beacon.LootSource.Packages.Scorched) = True
+		        Item.ValidForMap(Beacon.Maps.TheIsland) = False
+		        Item.ValidForMap(Beacon.Maps.ScorchedEarth) = True
 		        Item.RespectQualityModifier = False
 		        Item.RespectQuantityMultiplier = False
 		        

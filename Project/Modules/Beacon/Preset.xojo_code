@@ -91,8 +91,8 @@ Implements Beacon.Countable
 		          Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Item, Multipliers)
 		          If Entry <> Nil Then
 		            Dim Child As New Beacon.PresetEntry(Entry)
-		            Child.ValidForPackage(Beacon.LootSource.Packages.Island) = ValidForIsland
-		            Child.ValidForPackage(Beacon.LootSource.Packages.Scorched) = ValidForScorched
+		            Child.ValidForMap(Beacon.Maps.TheIsland) = ValidForIsland
+		            Child.ValidForMap(Beacon.Maps.ScorchedEarth) = ValidForScorched
 		            Preset.mContents.Append(Child)
 		          End If
 		        Next
@@ -320,9 +320,19 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ValidForPackage(Package As Beacon.LootSource.Packages) As Boolean
+		Function ValidForLootSource(Source As Beacon.LootSource) As Boolean
 		  For Each Entry As Beacon.PresetEntry In Self.mContents
-		    If Entry.ValidForPackage(Package) Then
+		    If Entry.ValidForLootSource(Source) Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValidForMap(Map As Beacon.Map) As Boolean
+		  For Each Entry As Beacon.PresetEntry In Self.mContents
+		    If Entry.ValidForMap(Map) Then
 		      Return True
 		    End If
 		  Next

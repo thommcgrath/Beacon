@@ -15,13 +15,8 @@ Inherits Beacon.SetEntry
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  // Calling the overridden superclass constructor.
-		  // Note that this may need modifications if there are multiple constructor choices.
-		  // Possible constructor calls:
-		  // Constructor() -- From SetEntry
-		  // Constructor(Source As Beacon.SetEntry) -- From SetEntry
 		  Super.Constructor
-		  Self.mAvailability = Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Island) Or Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Scorched)
+		  Self.mAvailability = Beacon.Maps.All.Mask
 		  Self.mRespectQualityModifier = True
 		  Self.mRespectQuantityMultiplier = True
 		End Sub
@@ -107,18 +102,23 @@ Inherits Beacon.SetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ValidForPackage(Package As Beacon.LootSource.Packages) As Boolean
-		  Dim Value As Integer = Beacon.LootSource.PackageToInteger(Package)
-		  Return (Self.mAvailability And Value) = Value
+		Function ValidForLootSource(Source As Beacon.LootSource) As Boolean
+		  Return (Self.mAvailability And Source.Availability) > 0
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ValidForPackage(Package As Beacon.LootSource.Packages, Assigns Value As Boolean)
+		Function ValidForMap(Map As Beacon.Map) As Boolean
+		  Return Map.Matches(Self.mAvailability)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ValidForMap(Map As Beacon.Map, Assigns Value As Boolean)
 		  If Value Then
-		    Self.mAvailability = Self.mAvailability Or Beacon.LootSource.PackageToInteger(Package)
+		    Self.mAvailability = Self.mAvailability Or Map.Mask
 		  Else
-		    Self.mAvailability = Self.mAvailability And Not Beacon.LootSource.PackageToInteger(Package)
+		    Self.mAvailability = Self.mAvailability And Not Map.Mask
 		  End If
 		End Sub
 	#tag EndMethod

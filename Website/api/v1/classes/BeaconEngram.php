@@ -3,6 +3,8 @@
 class BeaconEngram implements JsonSerializable {
 	const ENVIRONMENT_ISLAND = 1;
 	const ENVIRONMENT_SCORCHED = 2;
+	const ENVIRONMENT_CENTER = 4;
+	const ENVIRONMENT_RAGNAROK = 8;
 	
 	protected $path = '';
 	protected $class_string = '';
@@ -34,6 +36,14 @@ class BeaconEngram implements JsonSerializable {
 	
 	public function AvailableToScorched() {
 		return ($this->availability & self::ENVIRONMENT_SCORCHED) == self::ENVIRONMENT_SCORCHED;
+	}
+	
+	public function AvailableToCenter() {
+		return ($this->availability & self::ENVIRONMENT_CENTER) == self::ENVIRONMENT_CENTER;
+	}
+	
+	public function AvailableToRagnarok() {
+		return ($this->availability & self::ENVIRONMENT_RAGNAROK) = self::ENVIRONMENT_RAGNAROK;
 	}
 	
 	public function CanBlueprint() {
@@ -124,6 +134,12 @@ class BeaconEngram implements JsonSerializable {
 		}
 		if ($this->AvailableToScorched()) {
 			$environments[] = 'Scorched';
+		}
+		if ($this->AvailableToCenter()) {
+			$environments[] = 'Center';
+		}
+		if ($this->AvailableToRagnarok()) {
+			$environments[] = 'Ragnarok';
 		}
 		
 		$uid = md5(strtolower($this->path));

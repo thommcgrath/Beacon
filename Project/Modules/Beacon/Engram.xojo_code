@@ -7,9 +7,8 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AvailableTo(Package As Beacon.LootSource.Packages) As Boolean
-		  Dim PackageValue As UInteger = Beacon.LootSource.PackageToInteger(Package)
-		  Return (PackageValue And Self.mAvailability) = PackageValue
+		Function AvailableTo(Map As Beacon.Map) As Boolean
+		  Return Map.Matches(Self.mAvailability)
 		End Function
 	#tag EndMethod
 
@@ -45,7 +44,7 @@ Protected Class Engram
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mCanBeBlueprint = True
-		  Self.mAvailability = Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Island) Or Beacon.LootSource.PackageToInteger(Beacon.LootSource.Packages.Scorched)
+		  Self.mAvailability = Beacon.Maps.All.Mask
 		End Sub
 	#tag EndMethod
 

@@ -271,7 +271,7 @@ End
 		    
 		    Dim Arr() As Beacon.Preset = Groups.Value(Group)
 		    For Each Preset As Beacon.Preset In Arr
-		      If Preset.ValidForPackage(Self.mSources(0).Package) Then
+		      If Preset.ValidForLootSource(Self.mSources(0)) Then
 		        Dim PresetItem As New MenuItem(Preset.Label, Preset)
 		        AddHandler PresetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		        Parent.Append(PresetItem)

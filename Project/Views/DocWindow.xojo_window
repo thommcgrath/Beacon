@@ -454,32 +454,24 @@ End
 		    Return
 		  End If
 		  
-		  Dim Packages As New Dictionary
+		  Dim CurrentMap As Beacon.Map = Self.CurrentMap
+		  
+		  Dim ChangeView As Boolean
 		  For Each Source As Beacon.LootSource In Sources
 		    If Self.Doc.HasLootSource(Source) Then
 		      Self.Doc.Remove(Source)
 		    End If
 		    Self.Doc.Add(Source)
-		    Packages.Value(Source.Package) = Packages.Lookup(Source.Package, 0).IntegerValue + 1
+		    
+		    If CurrentMap <> Nil And Not Source.ValidForMap(CurrentMap) Then
+		      ChangeView = True
+		    End If
 		    Self.ContentsChanged = True
 		  Next
+		  ChangeView = ChangeView And Self.LootSourceHeader.SegmentIndex <> 0
 		  
-		  Dim TargetIndex As Integer = 0
-		  If LootSourceHeader.SegmentIndex <> 0 Then
-		    If Packages.Count = 1 Then
-		      Dim Package As Beacon.LootSource.Packages = Packages.Key(0)
-		      If Package = Beacon.LootSource.Packages.Island Then
-		        TargetIndex = 1
-		      Else
-		        TargetIndex = 2
-		      End If
-		    Else
-		      TargetIndex = 0
-		    End If
-		  End If
-		  
-		  If LootSourceHeader.SegmentIndex <> TargetIndex Then
-		    LootSourceHeader.SegmentIndex = TargetIndex
+		  If ChangeView Then
+		    Self.LootSourceHeader.SegmentIndex = 0
 		  End If
 		  Self.UpdateSourceList(Sources)
 		End Sub
@@ -575,6 +567,21 @@ End
 		    Self.Import(File)
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CurrentMap() As Beacon.Map
+		  Select Case Self.LootSourceHeader.SegmentIndex
+		  Case 1
+		    Return Beacon.Maps.TheIsland
+		  Case 2
+		    Return Beacon.Maps.ScorchedEarth
+		  Case 3
+		    Return Beacon.Maps.TheCenter
+		  Case 4
+		    Return Beacon.Maps.Ragnarok
+		  End Select
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -696,27 +703,25 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function SourceValidForCurrentView(Source As Beacon.LootSource) As Boolean
+		  Dim CurrentMap As Beacon.Map = Self.CurrentMap
+		  If CurrentMap = Nil Then
+		    Return True
+		  End If
+		  Return Source.ValidForMap(CurrentMap)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
 		  Dim Sources() As Beacon.LootSource = Self.Doc.LootSources
 		  Dim Filter As Integer = LootSourceHeader.SegmentIndex
 		  Dim VisibleSources() As Beacon.LootSource
-		  Select Case Filter
-		  Case 0
-		    VisibleSources = Sources
-		  Case 1
-		    For Each Source As Beacon.LootSource In Sources
-		      If Source.Package = Beacon.LootSource.Packages.Island Then
-		        VisibleSources.Append(Source)
-		      End If
-		    Next
-		  Case 2
-		    For Each Source As Beacon.LootSource In Sources
-		      If Source.Package = Beacon.LootSource.Packages.Scorched Then
-		        VisibleSources.Append(Source)
-		      End If
-		    Next
-		  End Select
-		  
+		  For Each Source As Beacon.LootSource In Sources
+		    If Self.SourceValidForCurrentView(Source) Then
+		      VisibleSources.Append(Source)
+		    End If
+		  Next
 		  VisibleSources.Sort
 		  
 		  Dim SelectedClasses() As Text
@@ -1027,7 +1032,7 @@ End
 		        LootSources.Remove(I)
 		        Continue For I
 		      End If
-		      If (LootSourceHeader.SegmentIndex = 1 And LootSources(I).Package <> Beacon.LootSource.Packages.Island) Or (LootSourceHeader.SegmentIndex = 2 And LootSources(I).Package <> Beacon.LootSource.Packages.Scorched) Then
+		      If Not Self.SourceValidForCurrentView(LootSources(I)) Then
 		        LootSources.Remove(I)
 		      End If
 		    Next

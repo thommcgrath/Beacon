@@ -8,12 +8,11 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AvailableTo(Package As Beacon.LootSource.Packages, Assigns Value As Boolean)
-		  Dim PackageValue As UInteger = Beacon.LootSource.PackageToInteger(Package)
+		Sub AvailableTo(Map As Beacon.Map, Assigns Value As Boolean)
 		  If Value Then
-		    Self.mAvailability = Self.mAvailability Or PackageValue
+		    Self.mAvailability = Self.mAvailability Or Map.Mask
 		  Else
-		    Self.mAvailability = Self.mAvailability And Not PackageValue
+		    Self.mAvailability = Self.mAvailability And Not Map.Mask
 		  End If
 		End Sub
 	#tag EndMethod

@@ -106,6 +106,12 @@ case 'POST':
 				if ($key === 'scorched') {
 					$availability = $availability | BeaconEngram::ENVIRONMENT_SCORCHED;
 				}
+				if ($key === 'center') {
+					$availability = $availability | BeaconEngram::ENVIRONMENT_CENTER;
+				}
+				if ($key === 'ragnarok') {
+					$availability = $availability | BeaconEngram::ENVIRONMENT_RAGNAROK;
+				}
 			}
 		}
 		if ($availability === 0) {

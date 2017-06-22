@@ -88,7 +88,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim QualityModifier As Integer = Preset.QualityModifier(ForLootSource.Kind)
 		  
 		  For Each Entry As Beacon.PresetEntry In Preset
-		    If Not Entry.ValidForPackage(ForLootSource.Package) Then
+		    If Not Entry.ValidForLootSource(ForLootSource) Then
 		      Continue
 		    End If
 		    

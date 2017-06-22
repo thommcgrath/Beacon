@@ -585,8 +585,8 @@ End
 		  EngramList.Cell(Index, 0) = Engram.Path
 		  EngramList.Cell(Index, 1) = Engram.Label
 		  EngramList.CellCheck(Index, 2) = Engram.CanBeBlueprint
-		  EngramList.CellCheck(Index, 3) = Engram.AvailableTo(Beacon.LootSource.Packages.Island)
-		  EngramList.CellCheck(Index, 4) = Engram.AvailableTo(Beacon.LootSource.Packages.Scorched)
+		  EngramList.CellCheck(Index, 3) = Engram.ValidForMap(Beacon.Maps.TheIsland)
+		  EngramList.CellCheck(Index, 4) = Engram.ValidForMap(Beacon.Maps.ScorchedEarth)
 		  
 		  EngramList.RowTag(Index) = Engram
 		End Sub
@@ -735,17 +735,9 @@ End
 		  Case 2
 		    Engram.CanBeBlueprint = Me.CellCheck(Row, Column)
 		  Case 3
-		    If Me.CellCheck(Row, Column) Then
-		      Engram.AddEnvironment(Beacon.LootSource.Packages.Island)
-		    Else
-		      Engram.RemoveEnvironment(Beacon.LootSource.Packages.Island)
-		    End If
+		    Engram.ValidForMap(Beacon.Maps.TheIsland) = Me.CellCheck(Row, Column)
 		  Case 4
-		    If Me.CellCheck(Row, Column) Then
-		      Engram.AddEnvironment(Beacon.LootSource.Packages.Scorched)
-		    Else
-		      Engram.RemoveEnvironment(Beacon.LootSource.Packages.Scorched)
-		    End If
+		    Engram.ValidForMap(Beacon.Maps.ScorchedEarth) = Me.CellCheck(Row, Column)
 		  End Select
 		  
 		  Self.EngramSet.Add(Engram)

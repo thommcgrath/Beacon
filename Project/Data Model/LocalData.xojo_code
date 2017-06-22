@@ -368,6 +368,15 @@ Implements Beacon.DataSource
 		      Self.SQLExecute("DELETE FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
 		    Next
 		    For Each Dict As Xojo.Core.Dictionary In SourceAdditions
+		      // Yes, really delete all the "new" sources to make sure sort values are handled correctly
+		      If Dict.HasKey("version") And Dict.Value("version") > App.NonReleaseVersion Then
+		        Continue
+		      End If
+		      
+		      Dim ClassString As Text = Dict.Value("class")
+		      Self.SQLExecute("DELETE FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
+		    Next
+		    For Each Dict As Xojo.Core.Dictionary In SourceAdditions
 		      If Dict.HasKey("version") And Dict.Value("version") > App.NonReleaseVersion Then
 		        Continue
 		      End If
@@ -375,14 +384,14 @@ Implements Beacon.DataSource
 		      Dim ClassString As Text = Dict.Value("class")
 		      Dim Label As Text = Dict.Value("label")
 		      Dim Kind As Text = Dict.Value("kind")
-		      Dim Mask As Integer = Dict.Value("mask")
+		      Dim Availability As Integer = Dict.Value("availability")
 		      Dim MultMin As Double = Dict.Value("mult_min")
 		      Dim MultMax As Double = Dict.Value("mult_max")
 		      Dim UIColor As Text = Dict.Value("uicolor")
 		      Dim SortValue As Integer = Dict.Value("sort")
 		      
 		      Self.SQLExecute("DELETE FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
-		      Self.SQLExecute("INSERT INTO loot_sources (class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", ClassString, Label, Kind, Mask, MultMin, MultMax, UIColor, SortValue)
+		      Self.SQLExecute("INSERT INTO loot_sources (class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", ClassString, Label, Kind, Availability, MultMin, MultMax, UIColor, SortValue)
 		    Next
 		    
 		    Dim EngramAdditions() As Auto = EngramsDict.Value("additions")
@@ -638,7 +647,7 @@ Implements Beacon.DataSource
 		    Dim Source As New Beacon.MutableLootSource(Results.Field("class_string").StringValue.ToText, True)
 		    Source.Label = Results.Field("label").StringValue.ToText
 		    Source.Kind = Beacon.LootSource.TextToKind(Results.Field("kind").StringValue.ToText)
-		    Source.Package = Beacon.LootSource.IntegerToPackage(Results.Field("engram_mask").IntegerValue)
+		    Source.Availability = Results.Field("engram_mask").IntegerValue
 		    Source.Multipliers = New Beacon.Range(Results.Field("multiplier_min").DoubleValue, Results.Field("multiplier_max").DoubleValue)
 		    Source.UIColor = RGB(Integer.FromHex(RedHex.ToText), Integer.FromHex(GreenHex.ToText), Integer.FromHex(BlueHex.ToText), Integer.FromHex(AlphaHex.ToText))
 		    Source.SortValue = Results.Field("sort").IntegerValue

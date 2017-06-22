@@ -9,6 +9,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Availability() As UInteger
+		  Return Self.mAvailability
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ClassString() As Text
 		  Return Self.mClassString
 		End Function
@@ -40,7 +46,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mLabel = Source.mLabel
 		  Self.mMultipliers = New Beacon.Range(Source.mMultipliers.Min, Source.mMultipliers.Max)
 		  Self.mKind = Source.mKind
-		  Self.mPackage = Source.mPackage
+		  Self.mAvailability = Source.mAvailability
 		  Self.mIsOfficial = Source.mIsOfficial
 		  Self.mUIColor = Source.mUIColor
 		  Self.mSortValue = Source.mSortValue
@@ -79,7 +85,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("NumItemSetsPower") = Self.NumItemSetsPower
 		  Keys.Value("bSetsRandomWithoutReplacement") = Self.SetsRandomWithoutReplacement
 		  Keys.Value("SupplyCrateClassString") = Self.ClassString
-		  Keys.Value("Availability") = Self.PackageToInteger(Self.mPackage)
+		  Keys.Value("Availability") = Self.mAvailability
 		  Keys.Value("Kind") = Self.KindToText(Self.mKind)
 		  Keys.Value("Multiplier_Min") = Self.Multipliers.Min
 		  Keys.Value("Multiplier_Max") = Self.Multipliers.Max
@@ -115,7 +121,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim UIColor As Text = Dict.Lookup("UIColor", "FFFFFF00")
 		    Dim MutableSource As New Beacon.MutableLootSource(ClassString, False)
 		    MutableSource.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
-		    MutableSource.Package = Beacon.LootSource.IntegerToPackage(Dict.Lookup("Availability", 1))
+		    MutableSource.Availability = Dict.Lookup("Availability", 1)
 		    MutableSource.Kind = Beacon.LootSource.TextToKind(Dict.Lookup("Kind", "Standard"))
 		    MutableSource.UIColor = Color.RGBA(Integer.FromHex(UIColor.Mid(0, 2)), Integer.FromHex(UIColor.Mid(2, 2)), Integer.FromHex(UIColor.Mid(4, 2)), Integer.FromHex(UIColor.Mid(6, 2)))
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
@@ -172,12 +178,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mSets.Insert(Index, Item)
 		  Self.mModified = True
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function IntegerToPackage(Value As UInteger) As Beacon.LootSource.Packages
-		  Return CType(Value, Beacon.LootSource.Packages)
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -248,6 +248,19 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Maps() As Beacon.Map()
+		  Dim AllMaps() As Beacon.Map = Beacon.Maps.All
+		  Dim AllowedMaps() As Beacon.Map
+		  For Each Map As Beacon.Map In AllMaps
+		    If Self.ValidForMap(Map) Then
+		      AllowedMaps.Append(Map)
+		    End If
+		  Next
+		  Return AllowedMaps
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  If Self.mModified Then
 		    Return True
@@ -307,18 +320,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mSets(Index) = Value
 		  Self.mModified = True
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Package() As Beacon.LootSource.Packages
-		  Return Self.mPackage
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function PackageToInteger(Package As Beacon.LootSource.Packages) As UInteger
-		  Return CType(Package, UInteger)
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -385,6 +386,16 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ValidForMap(Map As Beacon.Map) As Boolean
+		  Return (Self.mAvailability And Map.Mask) = Map.Mask
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h1
+		Protected mAvailability As UInteger
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -462,10 +473,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Private mNumItemSetsPower As Double
 	#tag EndProperty
 
-	#tag Property, Flags = &h1
-		Protected mPackage As Beacon.LootSource.Packages
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private mSets() As Beacon.ItemSet
 	#tag EndProperty
@@ -531,11 +538,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  BossGorilla
 		  BossDragon
 		BossManticore
-	#tag EndEnum
-
-	#tag Enum, Name = Packages, Type = Integer, Flags = &h0
-		Island = 1
-		Scorched = 2
 	#tag EndEnum
 
 

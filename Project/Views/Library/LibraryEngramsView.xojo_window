@@ -286,8 +286,8 @@ End
 		Private Sub ShowEngramInRow(Engram As Beacon.Engram, Index As Integer)
 		  List.Cell(Index, Self.ColumnLabel) = Engram.Label
 		  List.CellCheck(Index, Self.ColumnBlueprintable) = Engram.CanBeBlueprint
-		  List.CellCheck(Index, Self.ColumnIsland) = Engram.AvailableTo(Beacon.LootSource.Packages.Island)
-		  List.CellCheck(Index, Self.ColumnScorched) = Engram.AvailableTo(Beacon.LootSource.Packages.Scorched)
+		  List.CellCheck(Index, Self.ColumnIsland) = Engram.AvailableTo(Beacon.Maps.TheIsland)
+		  List.CellCheck(Index, Self.ColumnScorched) = Engram.AvailableTo(Beacon.Maps.ScorchedEarth)
 		  List.RowTag(Index) = Engram
 		End Sub
 	#tag EndMethod
@@ -397,9 +397,9 @@ End
 		  Case Self.ColumnBlueprintable
 		    Editable.CanBeBlueprint = Me.CellCheck(Row, Column)
 		  Case Self.ColumnIsland
-		    Editable.AvailableTo(Beacon.LootSource.Packages.Island) = Me.CellCheck(Row, Column)
+		    Editable.AvailableTo(Beacon.Maps.TheIsland) = Me.CellCheck(Row, Column)
 		  Case Self.ColumnScorched
-		    Editable.AvailableTo(Beacon.LootSource.Packages.Scorched) = Me.CellCheck(Row, Column)
+		    Editable.AvailableTo(Beacon.Maps.ScorchedEarth) = Me.CellCheck(Row, Column)
 		  Else
 		    Return
 		  End Select

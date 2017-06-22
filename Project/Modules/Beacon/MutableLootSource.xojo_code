@@ -2,6 +2,12 @@
 Protected Class MutableLootSource
 Inherits Beacon.LootSource
 	#tag Method, Flags = &h0
+		Sub Availability(Assigns Value As UInteger)
+		  Self.mAvailability = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ClassString(Assigns Value As Text)
 		  Self.mClassString = Value
 		End Sub
@@ -40,12 +46,6 @@ Inherits Beacon.LootSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Package(Assigns Value As Beacon.LootSource.Packages)
-		  Self.mPackage = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub SortValue(Assigns Value As Integer)
 		  Self.mSortValue = Value
 		End Sub
@@ -54,6 +54,16 @@ Inherits Beacon.LootSource
 	#tag Method, Flags = &h0
 		Sub UIColor(Assigns Value As Color)
 		  Self.mUIColor = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ValidForMap(Map As Beacon.Map, Assigns Value As Boolean)
+		  If Value Then
+		    Self.mAvailability = Self.mAvailability Or Map.Mask
+		  Else
+		    Self.mAvailability = Self.mAvailability And Not Map.Mask
+		  End If
 		End Sub
 	#tag EndMethod
 
