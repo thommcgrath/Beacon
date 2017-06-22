@@ -15,7 +15,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -33,7 +33,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -51,7 +51,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -69,7 +69,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -87,7 +87,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -105,7 +105,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -123,7 +123,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -141,7 +141,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -159,7 +159,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -177,7 +177,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -195,7 +195,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -213,7 +213,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -231,7 +231,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -249,7 +249,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -267,7 +267,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -285,7 +285,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -303,7 +303,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -321,7 +321,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -339,7 +339,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -357,7 +357,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -375,7 +375,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -393,7 +393,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -411,7 +411,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -429,7 +429,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -447,7 +447,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -465,7 +465,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -483,7 +483,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -501,7 +501,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -519,7 +519,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -537,7 +537,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -555,7 +555,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -573,7 +573,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -591,7 +591,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -609,7 +609,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -627,7 +627,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -645,7 +645,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -663,7 +663,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -681,7 +681,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -699,7 +699,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -717,7 +717,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -735,7 +735,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -753,7 +753,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -771,7 +771,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -789,7 +789,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -807,7 +807,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -825,7 +825,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -843,7 +843,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -861,7 +861,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -879,7 +879,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -897,7 +897,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -915,7 +915,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -933,7 +933,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -951,7 +951,7 @@
 			"MaxQuantity": 20,
 			"MinQuality": "Tier1",
 			"MinQuantity": 5,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		}
 	],
