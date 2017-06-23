@@ -55,6 +55,7 @@ CREATE TABLE loot_sources (
 	last_update TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0),
 	min_version INTEGER,
 	uicolor TEXT NOT NULL CHECK (uicolor ~* '^[0-9a-fA-F]{8}$'),
+	icon BYTEA NOT NULL,
 	sort INTEGER NOT NULL UNIQUE,
 	CHECK (class_string LIKE '%_C')
 );

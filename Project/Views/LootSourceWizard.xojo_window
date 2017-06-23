@@ -44,6 +44,7 @@ Begin Window LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   1
       Visible         =   True
@@ -132,6 +133,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "Add Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -247,6 +249,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Define Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -405,6 +408,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "Customize Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -439,6 +443,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   11
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Max Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -473,6 +478,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   9
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Min Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -507,6 +513,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Class String:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -541,6 +548,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Label:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -575,6 +583,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Kind:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -609,6 +618,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   7
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Availability:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -889,6 +899,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "Min Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -966,6 +977,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "Max Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1082,6 +1094,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   6
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "Presets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1519,7 +1532,7 @@ End
 		  End If
 		  
 		  Dim Source As Beacon.LootSource = Me.RowTag(Row)
-		  Dim Icon As Picture = LocalData.IconForLootSource(Source, RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 150))
+		  Dim Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 150))
 		  Dim SpaceWidth As Integer = Me.Column(Column).WidthActual
 		  Dim SpaceHeight As Integer = Me.DefaultRowHeight
 		  

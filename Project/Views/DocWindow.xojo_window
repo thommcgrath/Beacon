@@ -931,7 +931,7 @@ End
 		  End If
 		  
 		  If Column = 0 Then
-		    Dim Icon As Picture = LocalData.IconForLootSource(Source, RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 150))
+		    Dim Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 150))
 		    Dim SpaceWidth As Integer = Me.Column(Column).WidthActual
 		    Dim SpaceHeight As Integer = Me.DefaultRowHeight
 		    

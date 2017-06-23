@@ -21,7 +21,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("PRAGMA foreign_keys = ON;")
 		  Self.SQLExecute("PRAGMA journal_mode = WAL;")
 		  
-		  Self.SQLExecute("CREATE TABLE loot_sources (class_string TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, kind TEXT NOT NULL, engram_mask INTEGER NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort INTEGER NOT NULL UNIQUE);")
+		  Self.SQLExecute("CREATE TABLE loot_sources (class_string TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, kind TEXT NOT NULL, engram_mask INTEGER NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, icon BLOB NOT NULL, sort INTEGER NOT NULL UNIQUE);")
 		  Self.SQLExecute("CREATE TABLE engrams (path TEXT NOT NULL PRIMARY KEY, class_string TEXT NOT NULL, label TEXT NOT NULL, availability INTEGER NOT NULL, can_blueprint INTEGER NOT NULL, built_in INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE presets (preset_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
@@ -244,7 +244,7 @@ Implements Beacon.DataSource
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Try
-		    Dim Results As RecordSet = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
+		    Dim Results As RecordSet = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
 		    If Results.RecordCount = 0 Then
 		      Return Nil
 		    End If
@@ -258,74 +258,62 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function IconForLootSource(Source As Beacon.LootSource, HighlightColor As Color) As Picture
-		  Const Size = 24
-		  
-		  Dim HighlightMask As Picture
-		  Dim ColorMask As Picture
-		  
-		  Select Case Source.Kind
-		  Case Beacon.LootSource.Kinds.Bonus
-		    HighlightMask = IconLootBonus
-		    ColorMask = IconLootBonusColorMask
-		  Case Beacon.LootSource.Kinds.Cave
-		    HighlightMask = IconLootCave
-		    ColorMask = IconLootCaveColorMask
-		  Case Beacon.LootSource.Kinds.Sea
-		    HighlightMask = IconLootSea
-		    ColorMask = IconLootSeaColorMask
-		  Case Beacon.LootSource.Kinds.BossSpider
-		    HighlightMask = IconLootSpider
-		    ColorMask = IconLootSpiderColorMask
-		  Case Beacon.LootSource.Kinds.BossGorilla
-		    HighlightMask = IconLootGorilla
-		    ColorMask = IconLootGorillaColorMask
-		  Case Beacon.LootSource.Kinds.BossDragon
-		    HighlightMask = IconLootDragon
-		    ColorMask = IconLootDragonColorMask
-		  Case Beacon.LootSource.Kinds.BossManticore
-		    HighlightMask = IconLootManticore
-		    ColorMask = IconLootManticoreColorMask
+		Function IconForLootSource(Source As Beacon.LootSource, HighlightColor As Color) As Picture
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT icon FROM loot_sources WHERE class_string = ?1;", Source.ClassString)
+		  Dim SpriteSheet As Picture
+		  If Results.RecordCount = 1 Then
+		    SpriteSheet = Results.Field("icon").PictureValue
 		  Else
-		    HighlightMask = IconLootStandard
-		    ColorMask = IconLootStandardColorMask
-		  End Select
+		    Select Case Source.Kind
+		    Case Beacon.LootSource.Kinds.Bonus
+		      SpriteSheet = IconLootBonus
+		    Case Beacon.LootSource.Kinds.BossDragon
+		      SpriteSheet = IconLootDragon
+		    Case Beacon.LootSource.Kinds.BossGorilla
+		      SpriteSheet = IconLootGorilla
+		    Case Beacon.LootSource.Kinds.BossManticore
+		      SpriteSheet = IconLootManticore
+		    Case Beacon.LootSource.Kinds.BossSpider
+		      SpriteSheet = IconLootSpider
+		    Case Beacon.LootSource.Kinds.Cave
+		      SpriteSheet = IconLootCave
+		    Case Beacon.LootSource.Kinds.Sea
+		      SpriteSheet = IconLootSea
+		    Else
+		      SpriteSheet = IconLootStandard
+		    End Select
+		  End If
 		  
-		  Dim HighlightOpacity As Integer = HighlightColor.Alpha
-		  Dim FillOpacity As Integer = Source.UIColor.Alpha
+		  Dim Height As Integer = (SpriteSheet.Height / 2) / 3
+		  Dim Width As Integer = (SpriteSheet.Width / 2) / 3
+		  
+		  Dim Highlight1x As Picture = SpriteSheet.Piece(0, 0, Width, Height)
+		  Dim Highlight2x As Picture = SpriteSheet.Piece(Width, 0, Width * 2, Height * 2)
+		  Dim Highlight3x As Picture = SpriteSheet.Piece(Width * 3, 0, Width * 3, Height * 3)
+		  Dim HighlightMask As New Picture(Width, Height, Array(Highlight1x, Highlight2x, Highlight3x))
+		  
+		  Dim Color1x As Picture = SpriteSheet.Piece(0, Height, Width, Height)
+		  Dim Color2x As Picture = SpriteSheet.Piece(Width, Height * 2, Width * 2, Height * 2)
+		  Dim Color3x As Picture = SpriteSheet.Piece(Width * 3, Height * 3, Width * 3, Height * 3)
+		  Dim ColorMask As New Picture(Width, Height, Array(Color1x, Color2x, Color3x))
+		  
+		  Dim Highlight As Picture = HighlightMask.WithColor(HighlightColor)
+		  Dim Fill As Picture = ColorMask.WithColor(Source.UIColor)
 		  
 		  Dim Bitmaps() As Picture
 		  For Factor As Integer = 1 To 3
-		    Dim HighlightRep As Picture = HighlightMask.BestRepresentation(Size, Size, Factor)
-		    Dim ColorRep As Picture = ColorMask.BestRepresentation(Size, Size, Factor)
+		    Dim HighlightRep As Picture = Highlight.BestRepresentation(Width, Height, Factor)
+		    Dim ColorRep As Picture = Fill.BestRepresentation(Width, Height, Factor)
 		    
-		    Dim Highlight As New Picture(Size * Factor, Size * Factor, 32)
-		    Highlight.VerticalResolution = 72 * Factor
-		    Highlight.HorizontalResolution = 72 * Factor
-		    Highlight.Graphics.ForeColor = RGB(HighlightColor.Red, HighlightColor.Green, HighlightColor.Blue)
-		    Highlight.Graphics.FillRect(0, 0, Highlight.Width, Highlight.Height)
-		    Highlight.Mask.Graphics.DrawPicture(HighlightRep, 0, 0, Highlight.Width, Highlight.Height, 0, 0, HighlightRep.Width, HighlightRep.Height)
-		    Highlight.Mask.Graphics.ForeColor = RGB(255, 255, 255, 255 - HighlightOpacity)
-		    Highlight.Mask.Graphics.FillRect(0, 0, Highlight.Width, Highlight.Height)
-		    
-		    Dim Fill As New Picture(Size * Factor, Size * Factor, 32)
-		    Fill.VerticalResolution = 72 * Factor
-		    Fill.HorizontalResolution = 72 * Factor
-		    Fill.Graphics.ForeColor = Source.UIColor
-		    Fill.Graphics.FillRect(0, 0, Fill.Width, Fill.Height)
-		    Fill.Mask.Graphics.DrawPicture(ColorRep, 0, 0, Fill.Width, Fill.Height, 0, 0, ColorRep.Width, ColorRep.Height)
-		    Fill.Mask.Graphics.ForeColor = RGB(255, 255, 255, 255 - FillOpacity)
-		    Fill.Mask.Graphics.FillRect(0, 0, Fill.Width, Fill.Height)
-		    
-		    Dim Combined As New Picture(Size * Factor, Size * Factor)
+		    Dim Combined As New Picture(Width * Factor, Width * Factor)
 		    Combined.VerticalResolution = 72 * Factor
 		    Combined.HorizontalResolution = 72 * Factor
-		    Combined.Graphics.DrawPicture(Highlight, 0, 0, Combined.Width, Combined.Height, 0, 0, Highlight.Width, Highlight.Height)
-		    Combined.Graphics.DrawPicture(Fill, 0, 0, Combined.Width, Combined.Height, 0, 0, Fill.Width, Fill.Height)
+		    Combined.Graphics.DrawPicture(HighlightRep, 0, 0, Combined.Width, Combined.Height, 0, 0, HighlightRep.Width, HighlightRep.Height)
+		    Combined.Graphics.DrawPicture(ColorRep, 0, 0, Combined.Width, Combined.Height, 0, 0, ColorRep.Width, ColorRep.Height)
 		    
 		    Bitmaps.Append(Combined)
 		  Next
-		  Return New Picture(Size, Size, Bitmaps)
+		  Return New Picture(Width, Height, Bitmaps)
 		End Function
 	#tag EndMethod
 
@@ -388,10 +376,11 @@ Implements Beacon.DataSource
 		      Dim MultMin As Double = Dict.Value("mult_min")
 		      Dim MultMax As Double = Dict.Value("mult_max")
 		      Dim UIColor As Text = Dict.Value("uicolor")
+		      Dim IconHex As Text = Dict.Value("icon_hex")
 		      Dim SortValue As Integer = Dict.Value("sort")
 		      
 		      Self.SQLExecute("DELETE FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
-		      Self.SQLExecute("INSERT INTO loot_sources (class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", ClassString, Label, Kind, Availability, MultMin, MultMax, UIColor, SortValue)
+		      Self.SQLExecute("INSERT INTO loot_sources (class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, icon, sort) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", ClassString, Label, Kind, Availability, MultMin, MultMax, UIColor, DecodeHex(IconHex), SortValue)
 		    Next
 		    
 		    Dim EngramAdditions() As Auto = EngramsDict.Value("additions")
@@ -773,9 +762,9 @@ Implements Beacon.DataSource
 		  Try
 		    Dim Results As RecordSet
 		    If SearchText = "" Then
-		      Results = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort FROM loot_sources ORDER BY label;")
+		      Results = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort FROM loot_sources ORDER BY label;")
 		    Else
-		      Results = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort FROM loot_sources WHERE LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1) ORDER BY label;", "%" + SearchText + "%")
+		      Results = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort FROM loot_sources WHERE LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1) ORDER BY label;", "%" + SearchText + "%")
 		    End If
 		    
 		    Sources = Self.RecordSetToLootSource(Results)

@@ -17,16 +17,16 @@ $values = array();
 
 if ($since === null) {
 	if ($min_version === null) {
-		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE min_version IS NULL;");
+		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version, encode(icon, 'hex') AS icon_hex FROM loot_sources WHERE min_version IS NULL;");
 	} else {
-		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE min_version IS NULL OR min_version <= $1;", array($min_version));
+		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version, encode(icon, 'hex') AS icon_hex FROM loot_sources WHERE min_version IS NULL OR min_version <= $1;", array($min_version));
 	}
 	$delete_results = null;
 } else {
 	if ($min_version === null) {
-		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE last_update > $1 AND min_version IS NULL;", array($since));
+		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version, encode(icon, 'hex') AS icon_hex FROM loot_sources WHERE last_update > $1 AND min_version IS NULL;", array($since));
 	} else {
-		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version FROM loot_sources WHERE last_update > $1 AND (min_version IS NULL OR min_version <= $2);", array($since, $min_version));
+		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version, encode(icon, 'hex') AS icon_hex FROM loot_sources WHERE last_update > $1 AND (min_version IS NULL OR min_version <= $2);", array($since, $min_version));
 	}
 	$delete_results = $database->Query("SELECT unique_id FROM deletions WHERE from_table = 'loot_sources' AND action_time > $1;", array($since));
 }
@@ -44,6 +44,7 @@ while (!$results->EOF()) {
 		'mult_min' => floatval($results->Field('multiplier_min')),
 		'mult_max' => floatval($results->Field('multiplier_max')),
 		'uicolor' => $results->Field('uicolor'),
+		'icon_hex' => $results->Field('icon_hex'),
 		'sort' => intval($results->Field('sort')),
 		'version' => intval($results->Field('min_version'))
 	);

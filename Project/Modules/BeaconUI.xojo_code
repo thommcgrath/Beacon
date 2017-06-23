@@ -23,16 +23,26 @@ Protected Module BeaconUI
 		  For Factor As Integer = 1 To 3
 		    Dim Mask As Picture = Icon.BestRepresentation(Width, Height, Factor)
 		    
-		    Dim Pic As New Picture(Width * Factor, Width * Factor, 32)
+		    Dim Pic As New Picture(Width * Factor, Height * Factor, 32)
 		    Pic.VerticalResolution = 72 * Factor
 		    Pic.HorizontalResolution = 72 * Factor
-		    Pic.Graphics.ForeColor = FillColor
+		    Pic.Graphics.ForeColor = RGB(FillColor.Red, FillColor.Green, FillColor.Blue)
 		    Pic.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)
 		    Pic.Mask.Graphics.DrawPicture(Mask, 0, 0, Mask.Width, Mask.Height, 0, 0, Mask.Width, Mask.Height)
+		    Pic.Mask.Graphics.ForeColor = RGB(255, 255, 255, 255 - FillColor.Alpha)
+		    Pic.Mask.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)
 		    
 		    Bitmaps.Append(Pic)
 		  Next
 		  Return New Picture(Width, Height, Bitmaps)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Piece(Extends Source As Picture, Left As Integer, Top As Integer, Width As Integer, Height As Integer) As Picture
+		  Dim Pic As New Picture(Width, Height)
+		  Pic.Graphics.DrawPicture(Source, 0, 0, Width, Height, Left, Top, Width, Height)
+		  Return Pic
 		End Function
 	#tag EndMethod
 
