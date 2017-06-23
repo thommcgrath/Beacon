@@ -928,6 +928,7 @@ End
 		    G.ForeColor = BeaconUI.BackgroundColorForInvalidRow(G.ForeColor, IsHighlighted, Me.Selected(Row))
 		    G.FillRect(0, 0, G.Width, G.Height)
 		    ReturnValue = True
+		    TextColor = BeaconUI.TextColorForInvalidRow(IsHighlighted, Me.Selected(Row))
 		  End If
 		  
 		  If Column = 0 Then
