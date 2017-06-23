@@ -967,7 +967,7 @@ Begin ContainerControl PresetEditor
    Begin GroupBox CaveGroup
       AutoDeactivate  =   True
       Bold            =   False
-      Caption         =   "Cave && Desert Loot Crates"
+      Caption         =   "Cave Loot Crates"
       Enabled         =   True
       Height          =   112
       HelpTag         =   ""
@@ -1183,7 +1183,7 @@ Begin ContainerControl PresetEditor
    Begin GroupBox SeaGroup
       AutoDeactivate  =   True
       Bold            =   False
-      Caption         =   "Deep Sea Loot Crates"
+      Caption         =   "Deep Sea && Desert Loot Crates"
       Enabled         =   True
       Height          =   112
       HelpTag         =   ""
