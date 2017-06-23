@@ -8,10 +8,20 @@
 .frontpage-right {
 	margin-top: 30px;
 	margin-bottom: 30px;
-	padding-bottom: 30px;
-	border-bottom: 1px solid #ffffff;
 	padding-left: 30px;
 	padding-right: 30px;
+	min-height: 60px;
+}
+
+.frontpage-left h1,
+.frontpage-right h1 {
+	margin-top: 0px;
+}
+
+.frontpage-left+.frontpage-right,
+.frontpage-right+.frontpage-left {
+	border-top: 1px solid #ffffff;
+	padding-top: 30px;
 }
 
 .frontpage-left {
@@ -20,4 +30,39 @@
 
 .frontpage-right {
 	text-align: right;
+}
+
+.frontpage-left img.landing-icon {
+	float: left;
+	margin-right: 10px;
+}
+
+.frontpage-right img.landing-icon {
+	float: right;
+	margin-left: 10px;
+}
+
+img.landing-icon {
+	height: 60px;
+	margin-bottom: 5px;
+}
+
+@media (min-width: 642px) {
+	.frontpage-left,
+	.frontpage-right {
+		min-height: 100px;
+	}
+	
+	.frontpage-left img.landing-icon {
+		margin-right: 20px;
+	}
+	
+	.frontpage-right img.landing-icon {
+		margin-left: 20px;
+	}
+	
+	img.landing-icon {
+		height: 100px;
+		margin-bottom: 10px;
+	}
 }
