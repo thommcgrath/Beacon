@@ -262,8 +262,6 @@ End
 		  
 		  Dim Request As New BeaconAPI.Request("user.php/" + App.Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
 		  Self.Socket.Start(Request)
-		  
-		  Self.ModsView.SwitchedTo()
 		End Sub
 	#tag EndEvent
 
@@ -292,6 +290,7 @@ End
 		  
 		  If Success Then
 		    // Already exists
+		    Self.ModsView.SetReady()
 		    Return
 		  End If
 		  
@@ -311,7 +310,9 @@ End
 		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
 		  #Pragma Unused Details
 		  
-		  If Not Success Then
+		  If Success Then
+		    Self.ModsView.SetReady()
+		  Else
 		    Self.ShowAlert("User profile was not saved to the server. API access is limited.", Message)
 		  End If
 		End Sub
