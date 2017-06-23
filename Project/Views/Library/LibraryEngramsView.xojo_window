@@ -119,7 +119,6 @@ Begin BeaconSubview LibraryEngramsView
       Width           =   130
    End
    Begin Timer ClipboardWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -163,9 +162,9 @@ Begin BeaconSubview LibraryEngramsView
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   True
-      ColumnCount     =   4
+      ColumnCount     =   6
       ColumnsResizable=   False
-      ColumnWidths    =   "*,100,75,75"
+      ColumnWidths    =   "*,100,75,75,75,75"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
@@ -181,7 +180,7 @@ Begin BeaconSubview LibraryEngramsView
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Label	Blueprintable	Island	Scorched"
+      InitialValue    =   "Label	Blueprintable	Island	Scorched	Center	Ragnarok"
       Italic          =   False
       Left            =   20
       LockBottom      =   True
@@ -286,8 +285,10 @@ End
 		Private Sub ShowEngramInRow(Engram As Beacon.Engram, Index As Integer)
 		  List.Cell(Index, Self.ColumnLabel) = Engram.Label
 		  List.CellCheck(Index, Self.ColumnBlueprintable) = Engram.CanBeBlueprint
-		  List.CellCheck(Index, Self.ColumnIsland) = Engram.AvailableTo(Beacon.Maps.TheIsland)
-		  List.CellCheck(Index, Self.ColumnScorched) = Engram.AvailableTo(Beacon.Maps.ScorchedEarth)
+		  List.CellCheck(Index, Self.ColumnIsland) = Engram.ValidForMap(Beacon.Maps.TheIsland)
+		  List.CellCheck(Index, Self.ColumnScorched) = Engram.ValidForMap(Beacon.Maps.ScorchedEarth)
+		  List.CellCheck(Index, Self.ColumnCenter) = Engram.ValidForMap(Beacon.Maps.TheCenter)
+		  List.CellCheck(Index, Self.ColumnRagnarok) = Engram.ValidForMap(Beacon.Maps.Ragnarok)
 		  List.RowTag(Index) = Engram
 		End Sub
 	#tag EndMethod
@@ -296,10 +297,16 @@ End
 	#tag Constant, Name = ColumnBlueprintable, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = ColumnCenter, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = ColumnIsland, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnLabel, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnRagnarok, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnScorched, Type = Double, Dynamic = False, Default = \"3", Scope = Private
@@ -331,7 +338,9 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Content As String = LibraryEngramsURLDialog.Present(Self)
-		  Self.Import(Content)
+		  If Content <> "" Then
+		    Self.Import(Content)
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -381,10 +390,14 @@ End
 		  Me.ColumnType(Self.ColumnBlueprintable) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnIsland) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnScorched) = Listbox.TypeCheckbox
+		  Me.ColumnType(Self.ColumnCenter) = Listbox.TypeCheckbox
+		  Me.ColumnType(Self.ColumnRagnarok) = Listbox.TypeCheckbox
 		  
 		  Me.ColumnAlignment(Self.ColumnBlueprintable) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnIsland) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnScorched) = Listbox.AlignCenter
+		  Me.ColumnAlignment(Self.ColumnCenter) = Listbox.AlignCenter
+		  Me.ColumnAlignment(Self.ColumnRagnarok) = Listbox.AlignCenter
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -397,9 +410,13 @@ End
 		  Case Self.ColumnBlueprintable
 		    Editable.CanBeBlueprint = Me.CellCheck(Row, Column)
 		  Case Self.ColumnIsland
-		    Editable.AvailableTo(Beacon.Maps.TheIsland) = Me.CellCheck(Row, Column)
+		    Editable.ValidForMap(Beacon.Maps.TheIsland) = Me.CellCheck(Row, Column)
 		  Case Self.ColumnScorched
-		    Editable.AvailableTo(Beacon.Maps.ScorchedEarth) = Me.CellCheck(Row, Column)
+		    Editable.ValidForMap(Beacon.Maps.ScorchedEarth) = Me.CellCheck(Row, Column)
+		  Case Self.ColumnCenter
+		    Editable.ValidForMap(Beacon.Maps.TheCenter) = Me.CellCheck(Row, Column)
+		  Case Self.ColumnRagnarok
+		    Editable.ValidForMap(Beacon.Maps.Ragnarok) = Me.CellCheck(Row, Column)
 		  Else
 		    Return
 		  End Select

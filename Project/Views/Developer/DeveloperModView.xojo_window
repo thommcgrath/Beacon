@@ -43,7 +43,6 @@ Begin ContainerControl DeveloperModView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   3
       Visible         =   True
@@ -144,7 +143,6 @@ Begin ContainerControl DeveloperModView
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "You have not yet confirmed ownership of this mod. To so do, please copy the value below and insert it anywhere on the mod's Steam page. Then press the ""Confirm Ownership"" button below. Once confirmed, the text can be removed from your Steam page."
          TextAlign       =   1
          TextColor       =   &c00000000
@@ -210,7 +208,6 @@ Begin ContainerControl DeveloperModView
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
-         TabStop         =   True
          Text            =   "No Mod Selected"
          TextAlign       =   1
          TextColor       =   &c00000000
@@ -240,7 +237,6 @@ Begin ContainerControl DeveloperModView
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
-         TabStop         =   True
          Top             =   199
          Value           =   0
          Visible         =   True
@@ -251,9 +247,9 @@ Begin ContainerControl DeveloperModView
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   False
-         ColumnCount     =   5
+         ColumnCount     =   7
          ColumnsResizable=   False
-         ColumnWidths    =   "*,*,100,75,75"
+         ColumnWidths    =   "*,*,100,75,75,75,75"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
@@ -269,7 +265,7 @@ Begin ContainerControl DeveloperModView
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched"
+         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Center	Ragnarok"
          Italic          =   False
          Left            =   0
          LockBottom      =   True
@@ -326,7 +322,6 @@ Begin ContainerControl DeveloperModView
       End
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -587,6 +582,8 @@ End
 		  EngramList.CellCheck(Index, 2) = Engram.CanBeBlueprint
 		  EngramList.CellCheck(Index, 3) = Engram.ValidForMap(Beacon.Maps.TheIsland)
 		  EngramList.CellCheck(Index, 4) = Engram.ValidForMap(Beacon.Maps.ScorchedEarth)
+		  EngramList.CellCheck(Index, 5) = Engram.ValidForMap(Beacon.Maps.TheCenter)
+		  EngramList.CellCheck(Index, 6) = Engram.ValidForMap(Beacon.Maps.Ragnarok)
 		  
 		  EngramList.RowTag(Index) = Engram
 		End Sub
@@ -717,10 +714,14 @@ End
 		  Me.ColumnType(2) = Listbox.TypeCheckbox
 		  Me.ColumnType(3) = Listbox.TypeCheckbox
 		  Me.ColumnType(4) = Listbox.TypeCheckbox
+		  Me.ColumnType(5) = Listbox.TypeCheckbox
+		  Me.ColumnType(6) = Listbox.TypeCheckbox
 		  
 		  Me.ColumnAlignment(2) = Listbox.AlignCenter
 		  Me.ColumnAlignment(3) = Listbox.AlignCenter
 		  Me.ColumnAlignment(4) = Listbox.AlignCenter
+		  Me.ColumnAlignment(5) = Listbox.AlignCenter
+		  Me.ColumnAlignment(6) = Listbox.AlignCenter
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -738,6 +739,10 @@ End
 		    Engram.ValidForMap(Beacon.Maps.TheIsland) = Me.CellCheck(Row, Column)
 		  Case 4
 		    Engram.ValidForMap(Beacon.Maps.ScorchedEarth) = Me.CellCheck(Row, Column)
+		  Case 5
+		    Engram.ValidForMap(Beacon.Maps.TheCenter) = Me.CellCheck(Row, Column)
+		  Case 6
+		    Engram.ValidForMap(Beacon.Maps.Ragnarok) = Me.CellCheck(Row, Column)
 		  End Select
 		  
 		  Self.EngramSet.Add(Engram)

@@ -7,12 +7,6 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AvailableTo(Map As Beacon.Map) As Boolean
-		  Return Map.Matches(Self.mAvailability)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function BlueprintPath() As Text
 		  Return "Blueprint'" + Self.mPath + "'"
 		End Function
@@ -131,6 +125,12 @@ Protected Class Engram
 		  Else
 		    Return ""
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValidForMap(Map As Beacon.Map) As Boolean
+		  Return Map.Matches(Self.mAvailability)
 		End Function
 	#tag EndMethod
 
