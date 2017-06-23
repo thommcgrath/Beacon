@@ -23,6 +23,18 @@ The document browser allows users to discover popular configurations, publish th
 
 The engram manager allows users to import lists of spawn/cheat codes to maintain a persistent list of custom items. The import process will attempt to guess at item names, but users can adjust the name and other settings.
 
+### Preset Updates
+
+Presets can now specify The Center and Ragnarok as targets. Right-clicking one or more entries in the preset editor will bring up a menu option "Create Blueprint Entry" which will set all the selected blueprint chances to 0% and create a new entry with all the blueprintable engrams at 100% chance. The purpose of this is to act closer to Ark's default loot system. This feature may introduce multiple blueprint entries to keep the items properly contained within their selected maps.
+
+### The Center & Ragnarok
+
+Because these maps use the same loot sources as The Island (with some exceptions) the switcher at the top of the Loot Sources list now directs how presets will build their contents.
+
+Here's an example of what this means. The Mantis is available on Scorched Earth and Ragnarok, so its kibble should only be available on those two maps. However, Ragnarok uses The Island's loot sources. So, if adding the "Dino Consumables" preset to the "Island White (Level 3)" loot source with "The Island" selected, "Kibble (Mantis Egg)" will not be included. Doing the same thing with "Ragnarok" selected will include the Mantis Egg Kibble.
+
+Users are advised to keep this menu set to the intended map for best results.
+
 ### Other New Features & Changes
 
 - Beacon documents and presets now format their contents nicely, making them easier to version control.
