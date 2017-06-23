@@ -43,7 +43,7 @@ class BeaconEngram implements JsonSerializable {
 	}
 	
 	public function AvailableToRagnarok() {
-		return ($this->availability & self::ENVIRONMENT_RAGNAROK) = self::ENVIRONMENT_RAGNAROK;
+		return ($this->availability & self::ENVIRONMENT_RAGNAROK) == self::ENVIRONMENT_RAGNAROK;
 	}
 	
 	public function CanBlueprint() {
