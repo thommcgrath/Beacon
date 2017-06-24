@@ -18,6 +18,17 @@
 	margin-top: 0px;
 }
 
+.frontpage-left h1,
+.frontpage-left p {
+	margin-left: 70px;
+}
+
+
+.frontpage-right h1,
+.frontpage-right p {
+	margin-right: 70px;
+}
+
 .frontpage-left+.frontpage-right,
 .frontpage-right+.frontpage-left {
 	border-top: 1px solid #ffffff;
@@ -51,6 +62,17 @@ img.landing-icon {
 	.frontpage-left,
 	.frontpage-right {
 		min-height: 100px;
+	}
+	
+	.frontpage-left h1,
+	.frontpage-left p {
+		margin-left: 120px;
+	}
+	
+	
+	.frontpage-right h1,
+	.frontpage-right p {
+		margin-right: 120px;
 	}
 	
 	.frontpage-left img.landing-icon {

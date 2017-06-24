@@ -1,1 +1,19 @@
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 578 610.67"><defs><style>.cls-1{fill:#fff;}</style></defs><title>landing-beacon</title><polygon class="cls-1" points="307 24.67 298.67 86.33 298.33 16.33 292.67 72 292 16 284.67 88 281.33 0 278 62 275.67 31.83 274 74 271.33 4 268 98 264 21.33 261.33 102 258.33 34.67 255.33 104 250.67 59.67 256.25 319.04 279 291.72 299.6 316.52 307 24.67"/><polygon class="cls-1" points="578 548.67 318 511 573.33 484 312 501 500.67 468 298.11 493.01 288.56 524.26 286.44 531.19 502 607 310.67 523.33 578 548.67"/><polygon class="cls-1" points="272.55 534.46 269.44 524.26 259.76 492.59 22.67 459.33 246 504 0 500.67 243 517 1.33 569.33 253 527 142 610.67 272.55 534.46"/><polygon class="cls-1" points="335.33 390.33 358.33 461.67 328.17 413.17 335.33 390.33"/><polygon class="cls-1" points="222.75 390.08 199.75 461.42 229.92 412.92 222.75 390.08"/><polygon class="cls-1" points="279 521.33 323 377.33 279 310 235 377.33 279 521.33"/></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 21.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 610.7 610.7" style="enable-background:new 0 0 610.7 610.7;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;}
+</style>
+<title>landing-beacon</title>
+<polygon class="st0" points="323.3,24.7 315,86.3 314.7,16.3 309,72 308.3,16 301,88 297.7,0 294.3,62 292,31.8 290.3,74 287.7,4 
+	284.3,98 280.3,21.3 277.7,102 274.7,34.7 271.7,104 267,59.7 272.6,319 295.3,291.7 315.9,316.5 "/>
+<polygon class="st0" points="594.3,548.7 334.3,511 589.7,484 328.3,501 517,468 314.4,493 304.9,524.3 302.8,531.2 518.3,607 
+	327,523.3 "/>
+<polygon class="st0" points="288.9,534.5 285.8,524.3 276.1,492.6 39,459.3 262.3,504 16.3,500.7 259.3,517 17.7,569.3 269.3,527 
+	158.3,610.7 "/>
+<polygon class="st0" points="351.7,390.3 374.7,461.7 344.5,413.2 "/>
+<polygon class="st0" points="239.1,390.1 216.1,461.4 246.3,412.9 "/>
+<polygon class="st0" points="295.3,521.3 339.3,377.3 295.3,310 251.3,377.3 "/>
+</svg>
