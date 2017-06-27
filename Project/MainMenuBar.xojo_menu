@@ -340,9 +340,30 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin ApplicationMenuItem UntitledSeparator5
+         SpecialMenu = 0
+         Text = "-"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
       Begin ApplicationMenuItem HelpCheckforUpdates
          SpecialMenu = 0
          Text = "Check for Updates…"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
+      Begin ApplicationMenuItem HelpReleaseNotes
+         SpecialMenu = 0
+         Text = "Release Notes…"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem UntitledSeparator6
+         SpecialMenu = 0
+         Text = "-"
          Index = -2147483648
          AutoEnable = True
          Visible = True

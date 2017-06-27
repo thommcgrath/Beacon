@@ -68,6 +68,10 @@ Inherits Application
 		    Self.mMutex = Lock
 		  End If
 		  
+		  #if TargetMacOS
+		    UntitledSeparator6.Visible = False
+		  #endif
+		  
 		  LocalData.Start
 		  
 		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
@@ -261,6 +265,14 @@ Inherits Application
 		Function HelpMakeADonation() As Boolean Handles HelpMakeADonation.Action
 			ShowURL(Beacon.WebURL("/donate.php"))
 			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function HelpReleaseNotes() As Boolean Handles HelpReleaseNotes.Action
+			ShowURL(Beacon.WebURL("/history.php#build" + Self.NonReleaseVersion.ToText(Xojo.Core.Locale.Raw, "0")))
+			Return True
+			
 		End Function
 	#tag EndMenuHandler
 
