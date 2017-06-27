@@ -4,7 +4,7 @@
 #define MyAppName "Beacon"
 #define MyAppVersion "1.0.0b8"
 #define MyAppPublisher "The ZAZ Studios"
-#define MyAppURL "https://thezaz.com/beacon"
+#define MyAppURL "https://beaconapp.cc/"
 #define MyAppExeName "Beacon.exe"
 
 [Setup]
