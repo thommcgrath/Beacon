@@ -115,6 +115,7 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -161,6 +162,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -202,6 +204,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -350,7 +353,7 @@ End
 
 	#tag MenuHandler
 		Function DocumentRemoveBeacon() As Boolean Handles DocumentRemoveBeacon.Action
-			Self.RemoveSelectedBeacons()
+			Self.RemoveSelectedBeacons(True)
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -603,25 +606,27 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub RemoveSelectedBeacons()
+		Private Sub RemoveSelectedBeacons(RequireConfirmation As Boolean)
 		  If BeaconList.SelCount = 0 Then
 		    Return
 		  End If
 		  
-		  Dim Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  If BeaconList.SelCount = 1 Then
-		    Dialog.Message = "Are you sure you want to delete the selected loot source?"
-		  Else
-		    Dialog.Message = "Are you sure you want to delete these " + Str(BeaconList.SelCount, "-0") + " loot sources?"
-		  End If
-		  Dialog.Explanation = "This action cannot be undone."
-		  Dialog.ActionButton.Caption = "Delete"
-		  Dialog.CancelButton.Visible = True
-		  
-		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
-		  If Choice = Dialog.CancelButton Then
-		    Return
+		  If RequireConfirmation Then
+		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    If BeaconList.SelCount = 1 Then
+		      Dialog.Message = "Are you sure you want to delete the selected loot source?"
+		    Else
+		      Dialog.Message = "Are you sure you want to delete these " + Str(BeaconList.SelCount, "-0") + " loot sources?"
+		    End If
+		    Dialog.Explanation = "This action cannot be undone."
+		    Dialog.ActionButton.Caption = "Delete"
+		    Dialog.CancelButton.Visible = True
+		    
+		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
+		    If Choice = Dialog.CancelButton Then
+		      Return
+		    End If
 		  End If
 		  
 		  For I As Integer = BeaconList.ListCount - 1 DownTo 0
@@ -866,8 +871,8 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub PerformClear()
-		  Self.RemoveSelectedBeacons()
+		Sub PerformClear(Warn As Boolean)
+		  Self.RemoveSelectedBeacons(Warn)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1005,7 +1010,7 @@ End
 		      Self.AddLootSource(LootSource)
 		    End If
 		  Case "DeleteButton"
-		    Self.RemoveSelectedBeacons()
+		    Self.RemoveSelectedBeacons(True)
 		  Case "ErrorsButton"
 		    ResolveIssuesDialog.Present(Self, Self.Doc)
 		    Self.ScanForErrors()

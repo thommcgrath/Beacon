@@ -98,7 +98,7 @@ Inherits Listbox
 	#tag Event
 		Function KeyDown(Key As String) As Boolean
 		  If (Key = Chr(8) Or Key = Chr(127)) And CanDelete() Then
-		    RaiseEvent PerformClear()
+		    RaiseEvent PerformClear(True)
 		    Return True
 		  Else
 		    Return RaiseEvent KeyDown(Key)
@@ -118,7 +118,7 @@ Inherits Listbox
 
 	#tag MenuHandler
 		Function EditClear() As Boolean Handles EditClear.Action
-			RaiseEvent PerformClear
+			RaiseEvent PerformClear(True)
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -135,7 +135,7 @@ Inherits Listbox
 		Function EditCut() As Boolean Handles EditCut.Action
 			Dim Board As New Clipboard
 			RaiseEvent PerformCopy(Board)
-			RaiseEvent PerformClear()
+			RaiseEvent PerformClear(False)
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -210,7 +210,7 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event PerformClear()
+		Event PerformClear(Warn As Boolean)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

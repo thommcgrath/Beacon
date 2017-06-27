@@ -44,6 +44,7 @@ Users are advised to keep this menu set to the intended map for best results.
 - New admin spawn code list at https://beaconapp.cc/spawn/ - if Beacon knows about it, including mod items, you can find it and its spawn code here. Mod authors may even link to this from their Steam page using https://beaconapp.cc/spawn/?mod_id=<mod_id> to show only items for that mod.
 - It is now possible to paste a spawn/cheat code or blueprint path into the entry editor's filter field.
 - Entry editing has a new UI! Per-engram weights are now supported, and there is a new "Simulation" section. This will give you a live idea of how Ark will choose items based on your settings.
+- Item Set list now allows multiple selection.
 
 ### Bug Fixes
 
@@ -54,6 +55,7 @@ Users are advised to keep this menu set to the intended map for best results.
 - Beacon will swap min/max values when the maximum is less than the minimum.
 - Weight values from imported configurations will be respected down to 0.0001 instead of 0.01.
 - Fixed an issue with custom items appearing in the entry editor when editing an existing entry.
+- Fixed bug which caused the delete confirmation to appear when cutting an item.
 
 ## Build 14 (Beta 7)
 

@@ -733,7 +733,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub PerformClear()
+		Sub PerformClear(Warn As Boolean)
 		  Self.RemoveSelectedEntries()
 		End Sub
 	#tag EndEvent
