@@ -3,6 +3,10 @@ require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
 BeaconTemplate::SetTitle('Version History');
 ?><h1>Version History</h1>
 <div class="indent">
+	<h2 id="build17">Beta 9 (Build 17)</h2>
+	<div class="indent">
+		<p>Emergency build. Had to remove the &quot;pretty&quot; JSON on Windows as it was proving to be much too slow.</p>
+	</div>
 	<h2 id="build16">Beta 8 (Build 16)</h2>
 	<div class="indent">
 		<p>This build has a significant number of refinements to its config generation code. Most notably, it no longer generates two config entries for every item set entry. This was done previously to counteract Ark's odd selection system. This caused other problems, such as preventing the "Prevent Duplicates" option from working correctly.</p>

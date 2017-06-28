@@ -39,7 +39,12 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h21
 		Private Shared Function JSONPrettyPrint(json As Text) As Text
+		  // Glacially slow on Windows
 		  // From https://forum.xojo.com/conversation/post/332504
+		  
+		  #if TargetWin32
+		    Return json
+		  #endif
 		  
 		  const kBuffer as text = &u09
 		  const kEOL as text = &u0A
@@ -171,10 +176,6 @@ Inherits Beacon.Thread
 	#tag EndHook
 
 
-	#tag Property, Flags = &h21, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Private mDestination As Xojo.IO.FolderItem
-	#tag EndProperty
-
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -186,6 +187,10 @@ Inherits Beacon.Thread
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Private mDestination As Global.FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
+		Private mDestination As Xojo.IO.FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
