@@ -361,7 +361,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue() As Text
+		Function TextValue(UseBlueprints As Boolean = True) As Text
 		  Dim Values() As Text
 		  
 		  // This is terrible, but Ark uses the same code for both Scorched Desert Crates and Island Sea Crates
@@ -375,7 +375,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Values.Append("MaxItemSets=" + Xojo.Math.Max(Xojo.Math.Min(Self.mMaxItemSets, Self.Count), 0).ToText)
 		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.ToText)
 		  Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mSets, ",", Self.Multipliers) + ")")
+		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mSets, ",", Self.Multipliers, UseBlueprints) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod

@@ -360,10 +360,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Entries() As Beacon.SetEntry, Separator As Text, Multipliers As Beacon.Range) As Text
+		Shared Function Join(Entries() As Beacon.SetEntry, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean = True) As Text
 		  Dim Values() As Text
 		  For Each Entry As Beacon.SetEntry In Entries
-		    Values.Append(Entry.TextValue(Multipliers))
+		    Values.Append(Entry.TextValue(Multipliers, UseBlueprints))
 		  Next
 		  Return Text.Join(Values, Separator)
 		End Function
@@ -514,14 +514,16 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range) As Text
+		Function TextValue(Multipliers As Beacon.Range, UseBlueprints As Boolean = True) As Text
 		  Dim AllWeightsEqual As Boolean = True
 		  Dim CommonWeight As Double
-		  Dim Paths(), Weights() As Text
+		  Dim Paths(), Weights(), Classes() As Text
 		  Redim Paths(UBound(Self.mOptions))
 		  Redim Weights(UBound(Self.mOptions))
+		  Redim Classes(UBound(Self.mOptions))
 		  For I As Integer = 0 To UBound(Self.mOptions)
 		    Paths(I) = Self.mOptions(I).Engram.GeneratedClassBlueprintPath()
+		    Classes(I) = Self.mOptions(I).Engram.ClassString
 		    Weights(I) = Self.mOptions(I).Weight.ToText
 		    If I = 0 Then
 		      CommonWeight = Self.mOptions(I).Weight
@@ -539,7 +541,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  Dim Values() As Text
 		  Values.Append("EntryWeight=" + Self.mWeight.ToText)
-		  Values.Append("Items=(" + Text.Join(Paths, ",") + ")")
+		  If UseBlueprints Then
+		    Values.Append("Items=(" + Text.Join(Paths, ",") + ")")
+		  Else
+		    Values.Append("ItemClassStrings=(" + Text.Join(Classes, ",") + ")")
+		  End If
 		  If Self.Count > 1 And AllWeightsEqual = False Then
 		    Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
 		  End If
