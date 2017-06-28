@@ -62,10 +62,34 @@ Inherits Application
 		  
 		  Dim Lock As New Mutex("com.thezaz.beacon")
 		  If Not Lock.TryEnter Then
+		    #if TargetWin32
+		      Dim StartTime As Double = Microseconds
+		      Dim PushSocket As New IPCSocket
+		      PushSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
+		      PushSocket.Connect
+		      Do Until PushSocket.IsConnected Or Microseconds - StartTime > 5000000
+		        PushSocket.Poll
+		      Loop
+		      If PushSocket.IsConnected Then
+		        PushSocket.Write(System.CommandLine + Chr(0))
+		        Do Until PushSocket.BytesLeftToSend = 0 Or Microseconds - StartTime > 5000000
+		          PushSocket.Poll
+		        Loop
+		        PushSocket.Close
+		      End If
+		    #endif
+		    
 		    Quit
 		    Return
 		  Else
 		    Self.mMutex = Lock
+		    #if TargetWin32
+		      Self.mHandoffSocket = New IPCSocket
+		      Self.mHandoffSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
+		      AddHandler Self.mHandoffSocket.DataAvailable, WeakAddressOf Self.mHandoffSocket_DataAvailable
+		      AddHandler Self.mHandoffSocket.Error, WeakAddressOf Self.mHandoffSocket_Error
+		      Self.mHandoffSocket.Listen
+		    #endif
 		  End If
 		  
 		  #if TargetMacOS
@@ -102,11 +126,19 @@ Inherits Application
 		  AddHandler Self.mUpdateChecker.UpdateAvailable, WeakAddressOf Self.mUpdateChecker_UpdateAvailable
 		  AddHandler Self.mUpdateChecker.NoUpdate, WeakAddressOf Self.mUpdateChecker_NoUpdate
 		  Self.mUpdateChecker.Check(False)
+		  
+		  #if TargetWin32
+		    Self.HandleCommandLineData(System.CommandLine, True)
+		  #endif
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub OpenDocument(item As FolderItem)
+		  If Not Item.Exists Then
+		    Return
+		  End If
+		  
 		  If Item.IsType(BeaconFileTypes.JsonFile) Then
 		    Try
 		      Dim Stream As TextInputStream = TextInputStream.Open(Item)
@@ -150,6 +182,13 @@ Inherits Application
 		  End If
 		  
 		  If Item.IsType(BeaconFileTypes.BeaconDocument) Or Item.IsType(BeaconFileTypes.IniFile) Then
+		    For I As Integer = 0 To WindowCount - 1
+		      If Window(I) IsA DocWindow And DocWindow(Window(I)).MatchesFile(Item) Then
+		        Window(I).Show
+		        Return
+		      End If
+		    Next
+		    
 		    Dim Win As New DocWindow(Item)
 		    Win.Show
 		    Return
@@ -323,17 +362,62 @@ Inherits Application
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub HandleCommandLineData(Data As String, URLOnly As Boolean)
+		  Dim Char, BreakChar, Arg as string
+		  Dim Args() As String
+		  
+		  BreakChar = " "
+		  For I As Integer = 1 To Data.Len
+		    Char = Data.Mid(I, 1)
+		    If Char = """" Then
+		      If BreakChar = " " Then
+		        BreakChar = """"
+		      Else
+		        BreakChar = " "
+		      End If
+		      Continue
+		    End If
+		    
+		    If Char = BreakChar Then
+		      Args.Append(Arg)
+		      Arg = ""
+		    Else
+		      Arg = Arg + Char
+		    End If
+		  Next
+		  
+		  If Arg <> "" Then
+		    Args.Append(Arg)
+		  End If
+		  
+		  If Args.Ubound > 0 Then
+		    Dim Path As String = DefineEncoding(Args(1), Encodings.UTF8)
+		    If Path.IsBeaconURL Then
+		      // Given a url
+		      Call Self.HandleURL(Path)
+		    ElseIf URLOnly = False Then
+		      // Given a file
+		      Dim File As FolderItem = GetFolderItem(Path, FolderItem.PathTypeNative)
+		      If File <> Nil And File.Exists Then
+		        Self.OpenDocument(File)
+		      End If
+		    End If
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function HandleURL(URL As String) As Boolean
-		  Dim Prefix As String = Beacon.URLScheme + "://"
-		  Dim PrefixLength As Integer = Len(Prefix)
-		  
-		  If Left(URL, PrefixLength) <> Prefix Then
+		  If Not URL.IsBeaconURL Then
 		    Return False
 		  End If
 		  
-		  If Mid(URL, PrefixLength, 8) = "/action/" Then
-		    Dim Instructions As String = Mid(URL, PrefixLength + 8)
+		  Dim PrefixLength As Integer = Len(Beacon.URLScheme + "://")
+		  URL = URL.Mid(PrefixLength + 1)
+		  
+		  If URL.Left(7) = "action/" Then
+		    Dim Instructions As String = Mid(URL, 8)
 		    Dim ParamsPos As Integer = InStr(Instructions, "?") - 1
 		    Dim Params As String
 		    If ParamsPos > -1 Then
@@ -349,13 +433,13 @@ Inherits Application
 		    Case "showengrams"
 		      LibraryWindow.SharedWindow.ShowPage(2)
 		    Case "showmods"
-		      DeveloperWindow.SharedWindow.ShowPage(1)
+		      DeveloperWindow.SharedWindow.ShowPage(0)
 		    Case "showidentity"
-		      DeveloperWindow.SharedWindow.ShowPage(2)
+		      DeveloperWindow.SharedWindow.ShowPage(1)
 		    Case "showguide"
-		      DeveloperWindow.SharedWindow.ShowPage(3)
+		      DeveloperWindow.SharedWindow.ShowPage(2)
 		    Case "showapibuilder"
-		      DeveloperWindow.SharedWindow.ShowPage(4)
+		      DeveloperWindow.SharedWindow.ShowPage(3)
 		    Else
 		      Break
 		    End Select
@@ -368,7 +452,7 @@ Inherits Application
 		      URL = BeaconAPI.URL("/document.php/" + DocID)
 		    End If
 		    
-		    Dim FileURL As String = "https://" + Mid(URL, PrefixLength)
+		    Dim FileURL As String = "https://" + URL
 		    DocumentDownloadWindow.Begin(FileURL.ToText)
 		  End If
 		  
@@ -407,6 +491,34 @@ Inherits Application
 		  Stream.Close
 		  
 		  Self.mLogLock.Leave
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mHandoffSocket_DataAvailable(Sender As IPCSocket)
+		  Do
+		    Dim Buffer As String = DefineEncoding(Sender.Lookahead, Encodings.UTF8)
+		    Dim Pos As Integer = Buffer.InStr(Chr(0))
+		    If Pos = 0 Then
+		      Exit
+		    End If
+		    
+		    Dim Command As String = DefineEncoding(Sender.Read(Pos), Encodings.UTF8)
+		    Command = Command.Left(Command.Len - 1) // Drop the null byte
+		    Self.Log("Received command line data: " + Command)
+		    Self.HandleCommandLineData(Command, False)
+		  Loop
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mHandoffSocket_Error(Sender As IPCSocket)
+		  Dim Code As Integer = Sender.LastErrorCode
+		  If Code = 102 Then
+		    Xojo.Core.Timer.CallLater(100, AddressOf Sender.Listen)
+		  Else
+		    App.Log("IPC error " + Str(Code, "-0"))
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -456,6 +568,10 @@ Inherits Application
 
 	#tag Property, Flags = &h0
 		LaunchOnQuit As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHandoffSocket As IPCSocket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

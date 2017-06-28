@@ -115,7 +115,6 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -162,7 +161,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -204,7 +202,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -603,6 +600,12 @@ End
 		  Self.ImportProgress.ShowWithin(Self)
 		  Self.Importer.Run(Content.ToText)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MatchesFile(File As Global.FolderItem) As Boolean
+		  Return Self.File <> Nil And File <> Nil And Self.File.NativePath = File.NativePath
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
