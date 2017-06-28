@@ -361,7 +361,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(UseBlueprints As Boolean = True) As Text
+		Function TextValue(UseBlueprints As Boolean) As Text
 		  Dim Values() As Text
 		  
 		  // This is terrible, but Ark uses the same code for both Scorched Desert Crates and Island Sea Crates

@@ -215,7 +215,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Sets() As Beacon.ItemSet, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean = True) As Text
+		Shared Function Join(Sets() As Beacon.ItemSet, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean) As Text
 		  Dim Values() As Text
 		  For Each Set As Beacon.ItemSet In Sets
 		    Values.Append(Set.TextValue(Multipliers, UseBlueprints))
@@ -312,7 +312,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range, UseBlueprints As Boolean = True) As Text
+		Function TextValue(Multipliers As Beacon.Range, UseBlueprints As Boolean) As Text
 		  Dim Values() As Text
 		  Values.Append("SetName=""" + Self.mLabel + """")
 		  Values.Append("MinNumItems=" + Xojo.Math.Max(Xojo.Math.Min(Self.mMinNumItems, Self.Count), 0).ToText)

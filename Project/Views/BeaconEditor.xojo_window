@@ -610,7 +610,7 @@ End
 		      Dicts.Append(Dict)
 		    End If
 		    If UBound(Self.mSources) = 0 Then
-		      Configs.Append(Set.TextValue(Self.mSources(0).Multipliers))
+		      Configs.Append(Set.TextValue(Self.mSources(0).Multipliers, App.Preferences.BooleanValue("Use Blueprints", True)))
 		    End If
 		  Next
 		  If UBound(Dicts) = -1 Then
