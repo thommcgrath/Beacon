@@ -26,6 +26,7 @@ OutputBaseFilename=Install {#MyAppName}
 Compression=lzma
 SolidCompression=yes
 MinVersion=6.1.7601
+ChangesAssociations=yes
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -35,6 +36,9 @@ Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\Beacon.exe"; 
 Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\Beacon Libs\*"; DestDir: "{app}\Libs"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\Beacon Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\Project\Builds - Beacon.xojo_project\OS X 64 bit\Beacon.app\Contents\Resources\Classes.json"; DestDir: "{app}\Resources"; Flags: ignoreversion
+Source: "..\..\Artwork\BeaconDocument.ico"; DestDir: "{app}\Resources"; Flags: ignoreversion
+Source: "..\..\Artwork\BeaconIdentity.ico"; DestDir: "{app}\Resources"; Flags: ignoreversion
+Source: "..\..\Artwork\BeaconPreset.ico"; DestDir: "{app}\Resources"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -44,6 +48,21 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; Flags: createvalueifdoesntexist; OnlyBelowVersion: 6.3
 Root: HKLM; Subkey: "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; Flags: createvalueifdoesntexist; Check: IsWin64; OnlyBelowVersion: 6.3
+
+Root: HKCR; Subkey: ".beacon"; ValueData: "BeaconDocument"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconDocument"; ValueData: "{#MyAppName} Document"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconDocument\DefaultIcon"; ValueData: "{app}\Resources\BeaconDocument.ico,0"; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconDocument\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+
+Root: HKCR; Subkey: ".beaconidentity"; ValueData: "BeaconIdentity"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconIdentity"; ValueData: "{#MyAppName} Identity"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconIdentity\DefaultIcon"; ValueData: "{app}\Resources\BeaconIdentity.ico,0"; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconIdentity\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
+
+Root: HKCR; Subkey: ".beaconpreset"; ValueData: "BeaconPreset"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconPreset"; ValueData: "{#MyAppName} Preset"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconPreset\DefaultIcon"; ValueData: "{app}\Resources\BeaconPreset.ico,0"; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconPreset\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
