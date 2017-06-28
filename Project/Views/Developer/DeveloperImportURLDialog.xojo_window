@@ -313,9 +313,9 @@ End
 		  Self.mContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
 		  
 		  // This could be a lot better.
-		  Self.mContent = ReplaceAll(Self.mContent, "&apos;", "'")
-		  Self.mContent = ReplaceAll(Self.mContent, "&quot;", """")
-		  Self.mContent = ReplaceAll(Self.mContent, "&amp;", "&")
+		  Self.mContent = Self.mContent.ReplaceAll("&apos;", "'")
+		  Self.mContent = Self.mContent.ReplaceAll("&quot;", """")
+		  Self.mContent = Self.mContent.ReplaceAll("&amp;", "&")
 		  
 		  Self.Hide
 		End Sub
