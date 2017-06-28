@@ -94,6 +94,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("UIColor") = Self.mUIColor.Red.ToHex(2) + Self.mUIColor.Green.ToHex(2) + Self.mUIColor.Blue.ToHex(2) + Self.mUIColor.Alpha.ToHex(2)
 		  Keys.Value("SortValue") = Self.mSortValue
 		  Keys.Value("Label") = Self.mLabel
+		  Keys.Value("UseBlueprints") = Self.mUseBlueprints
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -128,6 +129,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    MutableSource.UIColor = Color.RGBA(Integer.FromHex(UIColor.Mid(0, 2)), Integer.FromHex(UIColor.Mid(2, 2)), Integer.FromHex(UIColor.Mid(4, 2)), Integer.FromHex(UIColor.Mid(6, 2)))
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
 		    MutableSource.Label = Dict.Lookup("Label", "Unnamed Custom Loot Source")
+		    MutableSource.UseBlueprints = Dict.Lookup("UseBlueprints", True)
 		    LootSource = New Beacon.LootSource(MutableSource)
 		  End If
 		  
