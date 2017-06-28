@@ -23,5 +23,5 @@ BeaconTemplate::AddStylesheet('index.css');
 <div class="frontpage-right">
 	<img src="/assets/images/landing-import.svg" class="landing-icon" height="60">
 	<h1>Import from Game.ini and Ark Dev Kit</h1>
-	<p>Have some customized loot from another tool? Beacon can handle that. Item sets from the Ark Dev Kit can even be copied and pasted directly into Beacon. When its time update server configs, either export everything or copy one (or more) loot sources and paste them directly into the config file.</p>
+	<p>Have some customized loot from another tool? Beacon can handle that. Item sets from the Ark Dev Kit can even be copied and pasted directly into Beacon. When its time to update server configs, either export everything or copy one (or more) loot sources and paste them directly into the config file.</p>
 </div>
