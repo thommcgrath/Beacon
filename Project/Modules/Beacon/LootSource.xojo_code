@@ -29,6 +29,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mUIColor = &cFFFFFF00
 		  Self.mSortValue = 99
 		  Self.mNumItemSetsPower = 1
+		  Self.mUseBlueprints = True
 		End Sub
 	#tag EndMethod
 
@@ -50,6 +51,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mIsOfficial = Source.mIsOfficial
 		  Self.mUIColor = Source.mUIColor
 		  Self.mSortValue = Source.mSortValue
+		  Self.mUseBlueprints = Source.mUseBlueprints
 		  
 		  For I As Integer = 0 To UBound(Source.mSets)
 		    Self.mSets(I) = New Beacon.ItemSet(Source.mSets(I))
@@ -361,7 +363,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(UseBlueprints As Boolean) As Text
+		Function TextValue() As Text
 		  Dim Values() As Text
 		  
 		  // This is terrible, but Ark uses the same code for both Scorched Desert Crates and Island Sea Crates
@@ -375,7 +377,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Values.Append("MaxItemSets=" + Xojo.Math.Max(Xojo.Math.Min(Self.mMaxItemSets, Self.Count), 0).ToText)
 		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.ToText)
 		  Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mSets, ",", Self.Multipliers, UseBlueprints) + ")")
+		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mSets, ",", Self.mMultipliers, Self.mUseBlueprints) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod
@@ -383,6 +385,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function UIColor() As Color
 		  Return Self.mUIColor
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UseBlueprints() As Boolean
+		  Return Self.mUseBlueprints
 		End Function
 	#tag EndMethod
 
@@ -487,6 +495,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Property, Flags = &h1
 		Protected mUIColor As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mUseBlueprints As Boolean
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

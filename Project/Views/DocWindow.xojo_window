@@ -115,6 +115,7 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -161,6 +162,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -202,6 +204,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -415,7 +418,7 @@ End
 			Lines.Append("[/script/shootergame.shootergamemode]")
 			
 			For Each LootSource As Beacon.LootSource In LootSources
-			Lines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(App.Preferences.BooleanValue("Use Blueprints", True)))
+			Lines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue())
 			Next
 			
 			Dim Stream As TextOutputStream = TextOutputStream.Create(File)
@@ -857,7 +860,7 @@ End
 		      Dim Source As Beacon.LootSource = Me.RowTag(I)
 		      Dicts.Append(Source.Export)
 		      If Source.IsValid Then
-		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue(App.Preferences.BooleanValue("Use Blueprints", True)))
+		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue())
 		      End If
 		    End If
 		  Next

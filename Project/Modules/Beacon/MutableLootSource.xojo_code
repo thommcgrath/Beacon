@@ -58,6 +58,12 @@ Inherits Beacon.LootSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub UseBlueprints(Assigns Value As Boolean)
+		  Self.mUseBlueprints = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ValidForMap(Map As Beacon.Map, Assigns Value As Boolean)
 		  If Value Then
 		    Self.mAvailability = Self.mAvailability Or Map.Mask
