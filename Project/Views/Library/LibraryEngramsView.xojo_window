@@ -244,6 +244,11 @@ End
 		  If ImportedCount = 0 And SkippedCount = 0 Then
 		    Messages.Append("No engrams were found to import.")
 		  End If
+		  
+		  If ImportedCount > 0 Then
+		    Self.RebuildList()
+		  End If
+		  
 		  Self.ShowAlert("Import complete", Join(Messages, " "))
 		End Sub
 	#tag EndMethod
