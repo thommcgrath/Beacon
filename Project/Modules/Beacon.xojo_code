@@ -274,7 +274,7 @@ Protected Module Beacon
 		  Dim Engrams() As Beacon.Engram
 		  
 		  Dim Regex As New Regex
-		  Regex.SearchPattern = "(Blueprint['""](/Game/[A-Za-z0-9_/\.]+)['""])|(BlueprintGeneratedClass['""](/Game/[A-Za-z0-9_/\.]+)_C['""])"
+		  Regex.SearchPattern = "(Blueprint['""](/Game/[^\<\>\:""\\\|\?\*]+)['""])|(BlueprintGeneratedClass['""](/Game/[^\<\>\:""\\\|\?\*]+)_C['""])|(cheat giveitem ['""](/Game/[^\<\>\:""\\\|\?\*]+)['""])"
 		  
 		  Dim Match As RegexMatch = Regex.Search(Contents)
 		  Dim Paths As New Dictionary
@@ -288,6 +288,8 @@ Protected Module Beacon
 		      Path = Match.SubExpressionString(2)
 		    ElseIf Match.SubExpressionString(4) <> "" Then
 		      Path = Match.SubExpressionString(4)
+		    ElseIf Match.SubExpressionString(6) <> "" Then
+		      Path = Match.SubExpressionString(6)
 		    Else
 		      Continue
 		    End If

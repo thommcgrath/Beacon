@@ -363,7 +363,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Board As New Clipboard
-		  Self.ImportClipboardButton.Enabled = Board.TextAvailable And InStr(Board.Text, "Blueprint") > 0
+		  Self.ImportClipboardButton.Enabled = Board.TextAvailable And (InStr(Board.Text, "Blueprint") > 0 Or InStr(Board.Text, "cheat giveitem") > 0)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

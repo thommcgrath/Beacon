@@ -110,6 +110,7 @@ Begin Window LibraryEngramsURLDialog
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Import Engrams From URL"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -186,6 +187,7 @@ Begin Window LibraryEngramsURLDialog
       Width           =   16
    End
    Begin Xojo.Net.HTTPSocket Downloader
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -280,6 +282,12 @@ End
 		  End If
 		  
 		  Self.mContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
+		  
+		  // This could be a lot better.
+		  Self.mContent = ReplaceAll(Self.mContent, "&apos;", "'")
+		  Self.mContent = ReplaceAll(Self.mContent, "&quot;", """")
+		  Self.mContent = ReplaceAll(Self.mContent, "&amp;", "&")
+		  
 		  Self.Hide
 		End Sub
 	#tag EndEvent
