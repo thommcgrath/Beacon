@@ -115,6 +115,7 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -161,6 +162,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -202,6 +204,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -342,7 +345,7 @@ End
 			Dim OriginalDescription As Text = Self.Doc.Description
 			If DocumentPublishWindow.Present(Self, Self.Doc) Then
 			Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Title.Compare(OriginalTitle, 0) <> 0 Or Self.Doc.Description.Compare(OriginalDescription, 0) <> 0
-			Self.ShowAlert("Your document has been published.", "You can view more about your document in the Developer Tools window.")
+			Self.ShowAlert("Your document has been published.", "You can view more about your document in the Library window.")
 			End If
 			Return True
 		End Function
