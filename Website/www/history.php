@@ -9,6 +9,7 @@ BeaconTemplate::SetTitle('Version History');
 		<li>Engrams view in the Library will refresh after importing.</li>
 		<li>Recognizing more cheat/spawn codes as valid.</li>
 		<li>Added support for the beacon:// url scheme to Windows.</li>
+		<li>Added an option when defining custom loot sources to increase compatibility with mods that do not support blueprints in loot definitions.</li>
 	</ul>
 	<h2 id="build17">Beta 9 (Build 17)</h2>
 	<div class="indent">

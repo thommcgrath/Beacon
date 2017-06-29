@@ -18,7 +18,7 @@ Begin Window LootSourceWizard
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   294
+   MinHeight       =   358
    MinimizeButton  =   False
    MinWidth        =   600
    Placement       =   1
@@ -44,7 +44,6 @@ Begin Window LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   1
       Visible         =   True
@@ -133,7 +132,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
-         TabStop         =   True
          Text            =   "Add Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -249,7 +247,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Define Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -408,7 +405,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Customize Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -443,7 +439,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   11
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Max Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -478,7 +473,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   9
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Min Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -513,7 +507,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Class String:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -548,7 +541,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Label:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -583,7 +575,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Kind:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -618,7 +609,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   7
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Availability:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -899,7 +889,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Min Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -977,7 +966,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Max Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1094,7 +1082,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   6
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Presets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1267,6 +1254,98 @@ Begin Window LootSourceWizard
          Visible         =   True
          Width           =   90
       End
+      Begin RadioButton DefineUseBlueprintsRadio
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "More Reliable (Recommended)"
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Italic          =   False
+         Left            =   136
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   19
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   254
+         Underline       =   False
+         Value           =   True
+         Visible         =   True
+         Width           =   444
+      End
+      Begin RadioButton DefineUseClassesRadio
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "More Compatible"
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Italic          =   False
+         Left            =   136
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   20
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   286
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   444
+      End
+      Begin Label DefineFormatLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   21
+         TabPanelIndex   =   2
+         Text            =   "Export Format:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   254
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   104
+      End
    End
 End
 #tag EndWindow
@@ -1427,6 +1506,8 @@ End
 		    DefineMinMultiplierField.Text = Format(Self.mEditing.Multipliers.Min, "0.0000")
 		    DefineMaxMultiplierField.Text = Format(Self.mEditing.Multipliers.Max, "0.0000")
 		    DefineKindMenu.SelectByTag(Self.mEditing.Kind)
+		    DefineUseBlueprintsRadio.Value = Self.mEditing.UseBlueprints
+		    DefineUseClassesRadio.Value = Not Self.mEditing.UseBlueprints
 		    Self.CheckDefineReady()
 		  Case Self.PaneCustomize
 		    CustomizeMinSetsField.Text = Format(Self.mEditing.MinItemSets, "-0")
@@ -1584,6 +1665,7 @@ End
 		    Self.mEditing.Availability = Source.Availability
 		    Self.mEditing.Multipliers = New Beacon.Range(Source.Multipliers.Min, Source.Multipliers.Max)
 		    Self.mEditing.IsOfficial = True
+		    Self.mEditing.UseBlueprints = Source.UseBlueprints
 		  Else
 		    Dim Maps() As Beacon.Map = Beacon.Maps.All
 		    Dim Availability As UInteger
@@ -1599,6 +1681,7 @@ End
 		    Self.mEditing.Availability = Availability
 		    Self.mEditing.Multipliers = New Beacon.Range(CDbl(DefineMinMultiplierField.Text), CDbl(DefineMaxMultiplierField.Text))
 		    Self.mEditing.IsOfficial = False
+		    Self.mEditing.UseBlueprints = DefineUseBlueprintsRadio.Value
 		  End If
 		  
 		  Panel.Value = Self.PaneCustomize
