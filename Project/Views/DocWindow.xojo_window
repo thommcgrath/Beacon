@@ -115,7 +115,6 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -162,7 +161,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -204,7 +202,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -345,7 +342,7 @@ End
 			Dim OriginalDescription As Text = Self.Doc.Description
 			If DocumentPublishWindow.Present(Self, Self.Doc) Then
 			Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Title.Compare(OriginalTitle, 0) <> 0 Or Self.Doc.Description.Compare(OriginalDescription, 0) <> 0
-			Self.ShowAlert("Your document has been published.", "You can view more about your document in the Developer Tools window.")
+			Self.ShowAlert("Your document has been published.", "You can view more about your document in the Library window.")
 			End If
 			Return True
 		End Function
@@ -605,6 +602,12 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function MatchesFile(File As Global.FolderItem) As Boolean
+		  Return Self.File <> Nil And File <> Nil And Self.File.NativePath = File.NativePath
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub RemoveSelectedBeacons(RequireConfirmation As Boolean)
 		  If BeaconList.SelCount = 0 Then
@@ -745,6 +748,7 @@ End
 		  Dim Selection() As Beacon.LootSource
 		  For I As Integer = 0 To UBound(VisibleSources)
 		    BeaconList.RowTag(I) = VisibleSources(I)
+		    BeaconList.Cell(I, 0) = "" // Causes a redraw of the cell
 		    BeaconList.Cell(I, 1) = VisibleSources(I).Label
 		    If SelectedClasses.IndexOf(VisibleSources(I).ClassString) > -1 Then
 		      BeaconList.Selected(I) = True

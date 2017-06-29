@@ -76,7 +76,6 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Beacon"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -111,7 +110,6 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Version X"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -146,7 +144,6 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   6
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "© 2016 Thom McGrath, All Rights Reserved."
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -159,7 +156,7 @@ Begin BeaconWindow AboutWindow
       Visible         =   True
       Width           =   320
    End
-   Begin Label LinkLabel
+   Begin LinkLabel WebsiteLink
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
@@ -181,7 +178,6 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   7
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "https://beaconapp.cc/"
       TextAlign       =   1
       TextColor       =   &c0000FF00
@@ -216,7 +212,6 @@ Begin BeaconWindow AboutWindow
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Engrams Updated Y"
       TextAlign       =   1
       TextColor       =   &c00000000
@@ -282,7 +277,6 @@ Begin BeaconWindow AboutWindow
       Width           =   16
    End
    Begin Xojo.Net.HTTPSocket UpdateEngramsSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -325,43 +319,15 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events LinkLabel
-	#tag Event
-		Sub MouseEnter()
-		  Me.MouseCursor = System.Cursors.FingerPointer
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  #Pragma Unused X
-		  #Pragma Unused Y
-		  
-		  Me.TextColor = &cFF0000
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub MouseDrag(X As Integer, Y As Integer)
-		  If X >= 0 And X <= Me.Width And Y >= 0 And Y <= Me.Height Then
-		    Me.TextColor = &cFF0000
-		    Me.MouseCursor = System.Cursors.FingerPointer
-		  Else
-		    Me.TextColor = &c0000FF
-		    Me.MouseCursor = System.Cursors.StandardPointer
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub MouseUp(X As Integer, Y As Integer)
-		  If X >= 0 And X <= Me.Width And Y >= 0 And Y <= Me.Height Then
-		    ShowURL(Me.Text)
-		    Me.TextColor = &c0000FF
-		  End If
-		End Sub
-	#tag EndEvent
+#tag Events WebsiteLink
 	#tag Event
 		Sub Open()
 		  Me.Text = Beacon.WebURL()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  ShowURL(Me.Text)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

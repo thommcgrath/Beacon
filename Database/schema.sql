@@ -57,6 +57,7 @@ CREATE TABLE loot_sources (
 	uicolor TEXT NOT NULL CHECK (uicolor ~* '^[0-9a-fA-F]{8}$'),
 	icon BYTEA NOT NULL,
 	sort INTEGER NOT NULL UNIQUE,
+	use_blueprints BOOLEAN NOT NULL DEFAULT TRUE,
 	CHECK (class_string LIKE '%_C')
 );
 GRANT SELECT ON TABLE loot_sources TO thezaz_website;

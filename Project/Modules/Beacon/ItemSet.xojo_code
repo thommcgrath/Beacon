@@ -215,10 +215,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Sets() As Beacon.ItemSet, Separator As Text, Multipliers As Beacon.Range) As Text
+		Shared Function Join(Sets() As Beacon.ItemSet, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean) As Text
 		  Dim Values() As Text
 		  For Each Set As Beacon.ItemSet In Sets
-		    Values.Append(Set.TextValue(Multipliers))
+		    Values.Append(Set.TextValue(Multipliers, UseBlueprints))
 		  Next
 		  Return Text.Join(Values, Separator)
 		End Function
@@ -312,7 +312,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range) As Text
+		Function TextValue(Multipliers As Beacon.Range, UseBlueprints As Boolean) As Text
 		  Dim Values() As Text
 		  Values.Append("SetName=""" + Self.mLabel + """")
 		  Values.Append("MinNumItems=" + Xojo.Math.Max(Xojo.Math.Min(Self.mMinNumItems, Self.Count), 0).ToText)
@@ -320,7 +320,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Values.Append("NumItemsPower=" + Self.mNumItemsPower.ToText)
 		  Values.Append("SetWeight=" + Self.mSetWeight.ToText)
 		  Values.Append("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("ItemEntries=(" + Beacon.SetEntry.Join(Self.mEntries, ",", Multipliers) + ")")
+		  Values.Append("ItemEntries=(" + Beacon.SetEntry.Join(Self.mEntries, ",", Multipliers, UseBlueprints) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod

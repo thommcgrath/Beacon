@@ -15,18 +15,19 @@ $values = array();
 
 # Loot Soruces
 
+$source_columns = "class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version, encode(icon, 'hex') AS icon_hex, use_blueprints";
 if ($since === null) {
 	if ($min_version === null) {
-		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version, encode(icon, 'hex') AS icon_hex FROM loot_sources WHERE min_version IS NULL;");
+		$results = $database->Query("SELECT $source_columns FROM loot_sources WHERE min_version IS NULL;");
 	} else {
-		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version, encode(icon, 'hex') AS icon_hex FROM loot_sources WHERE min_version IS NULL OR min_version <= $1;", array($min_version));
+		$results = $database->Query("SELECT $source_columns FROM loot_sources WHERE min_version IS NULL OR min_version <= $1;", array($min_version));
 	}
 	$delete_results = null;
 } else {
 	if ($min_version === null) {
-		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version, encode(icon, 'hex') AS icon_hex FROM loot_sources WHERE last_update > $1 AND min_version IS NULL;", array($since));
+		$results = $database->Query("SELECT $source_columns FROM loot_sources WHERE last_update > $1 AND min_version IS NULL;", array($since));
 	} else {
-		$results = $database->Query("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version, encode(icon, 'hex') AS icon_hex FROM loot_sources WHERE last_update > $1 AND (min_version IS NULL OR min_version <= $2);", array($since, $min_version));
+		$results = $database->Query("SELECT $source_columns FROM loot_sources WHERE last_update > $1 AND (min_version IS NULL OR min_version <= $2);", array($since, $min_version));
 	}
 	$delete_results = $database->Query("SELECT unique_id FROM deletions WHERE from_table = 'loot_sources' AND action_time > $1;", array($since));
 }
@@ -46,7 +47,8 @@ while (!$results->EOF()) {
 		'uicolor' => $results->Field('uicolor'),
 		'icon_hex' => $results->Field('icon_hex'),
 		'sort' => intval($results->Field('sort')),
-		'version' => intval($results->Field('min_version'))
+		'version' => intval($results->Field('min_version')),
+		'use_blueprints' => $results->Field('use_blueprints')
 	);
 	$results->MoveNext();
 }

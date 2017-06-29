@@ -48,6 +48,7 @@ Begin Window DeveloperImportURLDialog
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Import Engrams From URL"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -82,6 +83,7 @@ Begin Window DeveloperImportURLDialog
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "If you've posted a list of spawn commands for the items in your mod, paste the url here. Beacon will scan the page and extract whatever it can. It may not be perfect, but it's a nice starting point."
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -220,6 +222,7 @@ Begin Window DeveloperImportURLDialog
       Width           =   16
    End
    Begin Xojo.Net.HTTPSocket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -308,6 +311,12 @@ End
 		  End If
 		  
 		  Self.mContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
+		  
+		  // This could be a lot better.
+		  Self.mContent = Self.mContent.ReplaceAll("&apos;", "'")
+		  Self.mContent = Self.mContent.ReplaceAll("&quot;", """")
+		  Self.mContent = Self.mContent.ReplaceAll("&amp;", "&")
+		  
 		  Self.Hide
 		End Sub
 	#tag EndEvent
