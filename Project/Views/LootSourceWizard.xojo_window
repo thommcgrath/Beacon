@@ -9,7 +9,7 @@ Begin Window LootSourceWizard
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   400
+   Height          =   446
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -18,7 +18,7 @@ Begin Window LootSourceWizard
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   358
+   MinHeight       =   446
    MinimizeButton  =   False
    MinWidth        =   600
    Placement       =   1
@@ -29,7 +29,7 @@ Begin Window LootSourceWizard
    Begin PagePanel Panel
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   400
+      Height          =   446
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -74,7 +74,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   360
+         Top             =   406
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -105,7 +105,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   360
+         Top             =   406
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -162,7 +162,7 @@ Begin Window LootSourceWizard
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   0
-         Height          =   294
+         Height          =   340
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -220,7 +220,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   360
+         Top             =   406
          Underline       =   False
          Visible         =   True
          Width           =   160
@@ -285,7 +285,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   360
+         Top             =   406
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -316,7 +316,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   360
+         Top             =   406
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -347,7 +347,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   360
+         Top             =   406
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -378,7 +378,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   360
+         Top             =   406
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -1028,7 +1028,7 @@ Begin Window LootSourceWizard
          GridLinesVertical=   0
          HasHeading      =   False
          HeadingIndex    =   1
-         Height          =   162
+         Height          =   208
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -1120,7 +1120,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   328
+         Top             =   374
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -1254,12 +1254,12 @@ Begin Window LootSourceWizard
          Visible         =   True
          Width           =   90
       End
-      Begin RadioButton DefineUseBlueprintsRadio
+      Begin GroupBox DefineFormatGroup
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "More Reliable (Recommended)"
+         Caption         =   "Export Format"
          Enabled         =   True
-         Height          =   20
+         Height          =   140
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
@@ -1271,7 +1271,7 @@ Begin Window LootSourceWizard
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   19
+         TabIndex        =   22
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -1279,72 +1279,100 @@ Begin Window LootSourceWizard
          TextUnit        =   0
          Top             =   254
          Underline       =   False
-         Value           =   True
          Visible         =   True
          Width           =   444
-      End
-      Begin RadioButton DefineUseClassesRadio
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "More Compatible"
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   136
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   20
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   286
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   444
-      End
-      Begin Label DefineFormatLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   21
-         TabPanelIndex   =   2
-         Text            =   "Export Format:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   254
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   104
+         Begin RadioButton DefineUseClassesRadio
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "More Compatible"
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "DefineFormatGroup"
+            Italic          =   False
+            Left            =   156
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            Scope           =   2
+            TabIndex        =   0
+            TabPanelIndex   =   2
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   322
+            Underline       =   False
+            Value           =   False
+            Visible         =   True
+            Width           =   404
+         End
+         Begin RadioButton DefineUseBlueprintsRadio
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "More Reliable (Recommended)"
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "DefineFormatGroup"
+            Italic          =   False
+            Left            =   156
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            Scope           =   2
+            TabIndex        =   1
+            TabPanelIndex   =   2
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   290
+            Underline       =   False
+            Value           =   True
+            Visible         =   True
+            Width           =   404
+         End
+         Begin LinkLabel DefineExplainLink
+            AutoDeactivate  =   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "DefineFormatGroup"
+            Italic          =   False
+            Left            =   420
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   False
+            LockRight       =   True
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   2
+            TabPanelIndex   =   2
+            Text            =   "Which should I choose?"
+            TextAlign       =   2
+            TextColor       =   &c0000FF00
+            TextFont        =   "SmallSystem"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   354
+            Transparent     =   False
+            Underline       =   True
+            Visible         =   True
+            Width           =   140
+         End
       End
    End
 End
@@ -1817,6 +1845,13 @@ End
 	#tag Event
 		Sub Action(index as Integer)
 		  Self.CheckDefineReady()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DefineExplainLink
+	#tag Event
+		Sub Action()
+		  ShowURL(Beacon.WebURL("/help/#exportformat"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

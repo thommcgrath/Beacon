@@ -19,6 +19,11 @@ BeaconTemplate::SetTitle('Troubleshooting');
 	<div class="indent">
 		<p>This is such a detailed subject that there is <a href="math.php">an entire separate page</a> just explaining how Beacon does its math. Though the short version of the story is that Beacon produces ini files intended for Ark to read them, not humans. The code it creates attempts to tell Ark about the author's intentions. This means sometimes doing weird things to make that a reality.</p>
 	</div>
+	<h3 id="exportformat">How do I choose an export format?</h3>
+	<div class="indent">
+		<p>It is possible for multiple mods to define the same class string, which confuses Ark's loot generator, so Beacon uses blueprints to solve the issue. This is the &quot;More Reliable&quot; option.</p>
+		<p>However, the option to use blueprints was never explained in the original forum post describing the <em>ConfigOverrideSupplyCrateItems</em> config option. Some mods define their own loot sources and may not be able to understand blueprints. When this happens, Ark tends to crash at launch. Switching to &quot;More Compatible&quot; in this scenario will export using classes, but may produce unexpected results if there are conflicts.</p>
+	</div>
 	<h3>Some more personal help</h3>
 	<div class="indent">
 		<p>Get in touch. Bugs should be reported on the <a href="/reportaproblem.php">GitHub page</a>. Anybody can create an account and this is more helpful than email when it comes to bugs. General help inquiries should be sent to <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.</p>
