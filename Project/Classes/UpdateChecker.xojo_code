@@ -15,7 +15,7 @@ Protected Class UpdateChecker
 		  
 		  Self.mSilent = Silent
 		  Self.mChecking = True
-		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?build=" + App.NonReleaseVersion.ToText))
+		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php"))
 		End Sub
 	#tag EndMethod
 
@@ -73,14 +73,6 @@ Protected Class UpdateChecker
 		    End If
 		    Return
 		  End Try
-		  
-		  If Dict.Count = 0 Then
-		    // No update
-		    If Not Self.mSilent Then
-		      RaiseEvent NoUpdate()
-		    End If
-		    Return
-		  End If
 		  
 		  Try
 		    Dim LatestBuild As Integer = Dict.Value("build")
