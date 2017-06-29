@@ -48,7 +48,7 @@ while (!$results->EOF()) {
 		'icon_hex' => $results->Field('icon_hex'),
 		'sort' => intval($results->Field('sort')),
 		'version' => intval($results->Field('min_version')),
-		'use_blueprints' => $results->Field('use_blueprints')
+		'use_blueprints' => ($results->Field('use_blueprints') == 't') ? 1 : 0
 	);
 	$results->MoveNext();
 }
