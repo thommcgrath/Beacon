@@ -9,7 +9,7 @@ Protected Module SQLiteExtensions
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
 		Sub UserVersion(Extends Source As iOSSQLiteDatabase, Assigns Value As Integer)
-		  Source.SQLExecute("PRAGMA user_version = ?1;", Value)
+		  Source.SQLExecute("PRAGMA user_version = " + Value.ToText + ";")
 		End Sub
 	#tag EndMethod
 

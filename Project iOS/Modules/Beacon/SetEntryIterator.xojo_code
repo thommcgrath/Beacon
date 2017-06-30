@@ -1,28 +1,41 @@
-#tag Interface
-Protected Interface DocumentItem
+#tag Class
+Protected Class SetEntryIterator
+Implements xojo.Core.Iterator
 	#tag Method, Flags = &h0
-		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  
+		Sub Constructor(Source As Beacon.SetEntry)
+		  Redim Self.mItems(UBound(Source))
+		  For I As Integer = 0 To UBound(Self.mItems)
+		    Self.mItems(I) = Source(I)
+		  Next
+		  Self.mIndex = -1
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsValid() As Boolean
+		Function MoveNext() As Boolean
+		  // Part of the xojo.Core.Iterator interface.
 		  
+		  Self.mIndex = Self.mIndex + 1
+		  Return Self.mIndex <= UBound(Self.mItems)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Modified() As Boolean
+		Function Value() As Auto
+		  // Part of the xojo.Core.Iterator interface.
 		  
+		  Return Self.mItems(Self.mIndex)
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Modified(Assigns Value As Boolean)
-		  
-		End Sub
-	#tag EndMethod
+
+	#tag Property, Flags = &h21
+		Private mIndex As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mItems() As Beacon.SetEntryOption
+	#tag EndProperty
 
 
 	#tag ViewBehavior
@@ -60,5 +73,5 @@ Protected Interface DocumentItem
 			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior
-End Interface
-#tag EndInterface
+End Class
+#tag EndClass

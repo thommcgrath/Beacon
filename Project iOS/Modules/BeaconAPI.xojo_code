@@ -1,27 +1,14 @@
-#tag Interface
-Protected Interface DocumentItem
-	#tag Method, Flags = &h0
-		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsValid() As Boolean
-		  
+#tag Module
+Protected Module BeaconAPI
+	#tag Method, Flags = &h1
+		Protected Function URL(Path As Text = "/") As Text
+		  Dim URL As Text = Beacon.WebURL()
+		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
+		    Path = "/" + Path
+		  End If
+		  URL = URL.Left(8) + "api." + URL.Mid(8) + "v1" + Path
+		  Return URL
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Modified() As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Modified(Assigns Value As Boolean)
-		  
-		End Sub
 	#tag EndMethod
 
 
@@ -60,5 +47,5 @@ Protected Interface DocumentItem
 			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior
-End Interface
-#tag EndInterface
+End Module
+#tag EndModule

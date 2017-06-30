@@ -1,28 +1,32 @@
-#tag Interface
-Protected Interface DocumentItem
+#tag Class
+Private Class Pair
 	#tag Method, Flags = &h0
-		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  
+		Sub Constructor(Key As Text, Value As Auto)
+		  Self.mKey = Key
+		  Self.mValue = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsValid() As Boolean
-		  
+		Function Key() As Text
+		  Return Self.mKey
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Modified() As Boolean
-		  
+		Function Value() As Auto
+		  Return Self.mValue
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Modified(Assigns Value As Boolean)
-		  
-		End Sub
-	#tag EndMethod
+
+	#tag Property, Flags = &h21
+		Private mKey As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mValue As Auto
+	#tag EndProperty
 
 
 	#tag ViewBehavior
@@ -60,5 +64,5 @@ Protected Interface DocumentItem
 			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior
-End Interface
-#tag EndInterface
+End Class
+#tag EndClass

@@ -521,8 +521,8 @@ Implements Beacon.DataSource
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub MigrateData(Source As FolderItem, FromSchemaVersion As Integer)
+	#tag Method, Flags = &h21
+		Private Sub MigrateData(Source As FolderItem, FromSchemaVersion As Integer)
 		  If Not Self.mBase.AttachDatabase(Source, "legacy") Then
 		    App.Log("Unable to attach database " + Source.NativePath)
 		    Return

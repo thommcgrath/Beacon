@@ -1,49 +1,55 @@
 #tag Class
-Protected Class MutableEngram
-Inherits Beacon.Engram
+Protected Class Range
 	#tag Method, Flags = &h0
-		Sub Availability(Assigns Value As UInteger)
-		  Self.mAvailability = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub CanBeBlueprint(Assigns Value As Boolean)
-		  Self.mCanBeBlueprint = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Path As Text)
-		  Super.Constructor()
-		  
-		  Self.mPath = Path
-		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Label(Assigns Value As Text)
-		  Self.mLabel = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Path(Assigns Value As Text)
-		  Self.mPath = Value
-		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ValidForMap(Map As Beacon.Map, Assigns Value As Boolean)
-		  If Value Then
-		    Self.mAvailability = Self.mAvailability Or Map.Mask
+		Sub Constructor(Min As Double, Max As Double)
+		  If Min > Max Then
+		    Self.mMin = Max
+		    Self.mMax = Min
 		  Else
-		    Self.mAvailability = Self.mAvailability And Not Map.Mask
+		    Self.mMin = Min
+		    Self.mMax = Max
 		  End If
 		End Sub
 	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Contains(Value As Double) As Boolean
+		  Return Value >= Self.mMin And Value <= Self.mMax
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Difference() As Double
+		  Return Self.mMax - Self.mMin
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Max() As Double
+		  Return Self.mMax
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Min() As Double
+		  Return Self.mMin
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Percent(Value As Double) As Double
+		  Return (Value - Self.mMin) / (Self.mMax - Self.mMin)
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mMax As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMin As Double
+	#tag EndProperty
 
 
 	#tag ViewBehavior

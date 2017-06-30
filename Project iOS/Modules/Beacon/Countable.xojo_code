@@ -1,27 +1,10 @@
 #tag Interface
-Protected Interface DocumentItem
+Private Interface Countable
+Implements xojo.Core.Iterable
 	#tag Method, Flags = &h0
-		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsValid() As Boolean
+		Function Count() As Integer
 		  
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Modified() As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Modified(Assigns Value As Boolean)
-		  
-		End Sub
 	#tag EndMethod
 
 
