@@ -61,7 +61,7 @@ Protected Class Request
 		Sub Constructor(Path As Text, Method As Text, Payload As Xojo.Core.Dictionary, Callback As BeaconAPI.Request.ReplyCallback)
 		  Dim Parts() As Text
 		  For Each Entry As Xojo.Core.DictionaryEntry In Payload
-		    Parts.Append(Self.URLEncode(Entry.Key) + "=" + Self.URLEncode(Entry.Value))
+		    Parts.Append(Beacon.EncodeURLComponent(Entry.Key) + "=" + Beacon.EncodeURLComponent(Entry.Value))
 		  Next
 		  
 		  Self.Constructor(Path, Method, Text.Join(Parts, "&"), "application/x-www-form-urlencoded", Callback)
@@ -123,20 +123,6 @@ Protected Class Request
 	#tag Method, Flags = &h0
 		Function URL() As Text
 		  Return Self.mURL
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function URLEncode(Value As Text) As Text
-		  Dim Encoded() As Text
-		  For Each CodePoint As UInt32 In Value.Codepoints
-		    If (CodePoint >= 48 And CodePoint <= 57) Or (CodePoint >= 65 And CodePoint <= 90) Or (CodePoint >= 97 And CodePoint <= 122) Then
-		      Encoded.Append(Text.FromUnicodeCodepoint(CodePoint))
-		    Else
-		      Encoded.Append("%" + CodePoint.ToHex(2))
-		    End If
-		  Next
-		  Return Text.Join(Encoded, "")
 		End Function
 	#tag EndMethod
 

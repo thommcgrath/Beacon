@@ -128,6 +128,20 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function EncodeURLComponent(Value As Text) As Text
+		  Dim Encoded() As Text
+		  For Each CodePoint As UInt32 In Value.Codepoints
+		    If (CodePoint >= 48 And CodePoint <= 57) Or (CodePoint >= 65 And CodePoint <= 90) Or (CodePoint >= 97 And CodePoint <= 122) Then
+		      Encoded.Append(Text.FromUnicodeCodepoint(CodePoint))
+		    Else
+		      Encoded.Append("%" + CodePoint.ToHex(2))
+		    End If
+		  Next
+		  Return Text.Join(Encoded, "")
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
 		Function GlobalPosition(Extends Target As Window) As Xojo.Core.Point
 		  Dim Left As Integer = Target.Left

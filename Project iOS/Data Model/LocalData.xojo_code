@@ -29,6 +29,32 @@ Implements Beacon.DataSource
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub CheckForEngramUpdates()
+		  Dim CheckURL As Text = Self.ClassesURL()
+		  App.Log("Checking for engram updates from " + CheckURL)
+		  
+		  If Self.mUpdater = Nil Then
+		    Self.mUpdater = New Xojo.Net.HTTPSocket
+		    Self.mUpdater.ValidateCertificates = True
+		    AddHandler Self.mUpdater.PageReceived, WeakAddressOf Self.mUpdater_PageReceived
+		    AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
+		  End If
+		  Self.mUpdater.Send("GET", CheckURL)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ClassesURL() As Text
+		  Dim LastSync As Text = Self.Variable("last_sync")
+		  Dim CheckURL As Text = Beacon.WebURL("/download/classes.php?version=" + App.BuildNumber.ToText)
+		  If LastSync <> "" Then
+		    CheckURL = CheckURL + "&changes_since=" + Beacon.EncodeURLComponent(LastSync)
+		  End If
+		  Return CheckURL
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Commit()
 		  If UBound(Self.mTransactions) = -1 Then
@@ -104,7 +130,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function FileForCustomPreset(Preset As Beacon.Preset) As FolderItem
+		Private Function FileForCustomPreset(Preset As Beacon.Preset) As Xojo.IO.FolderItem
 		  Return Self.CustomPresetsFolder.Child(Preset.PresetID + App.PresetExtension)
 		End Function
 	#tag EndMethod
@@ -177,6 +203,138 @@ Implements Beacon.DataSource
 		    Return Nil
 		  End Try
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Import(Content As Text) As Boolean
+		  Dim ChangeDict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content)
+		  
+		  Dim RequiredKeys() As Text = Array("loot_sources", "engrams", "presets", "timestamp", "is_full", "beacon_version")
+		  For Each RequiredKey As Text In RequiredKeys
+		    If Not ChangeDict.HasKey(RequiredKey) Then
+		      App.Log("Cannot import classes because key '" + RequiredKey + "' is missing.")
+		      Return False
+		    End If
+		  Next
+		  
+		  Dim FileVersion As Integer = ChangeDict.Value("beacon_version")
+		  If FileVersion < 2 Then
+		    App.Log("Cannot import classes because file format is too old.")
+		    return False
+		  End If
+		  
+		  Try
+		    Self.BeginTransaction()
+		    
+		    Dim ShouldTruncate As Boolean = ChangeDict.Value("is_full") = 1
+		    If ShouldTruncate Then
+		      Self.mBase.SQLExecute("DELETE FROM loot_sources;")
+		      Self.mBase.SQLExecute("DELETE FROM engrams WHERE built_in = 1;")
+		      Self.mBase.SQLExecute("DELETE FROM presets;")
+		    End If
+		    
+		    Dim SourcesDict As Xojo.Core.Dictionary = ChangeDict.Value("loot_sources")
+		    Dim EngramsDict As Xojo.Core.Dictionary = ChangeDict.Value("engrams")
+		    Dim PresetsDict As Xojo.Core.Dictionary = ChangeDict.Value("presets")
+		    Dim LastSync As Text = ChangeDict.Value("timestamp")
+		    
+		    Dim SourceAdditions() As Auto = SourcesDict.Value("additions")
+		    Dim SourceRemovals() As Auto = SourcesDict.Value("removals")
+		    For Each ClassString As Text In SourceRemovals
+		      Self.mBase.SQLExecute("DELETE FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
+		    Next
+		    For Each Dict As Xojo.Core.Dictionary In SourceAdditions
+		      // Yes, really delete all the "new" sources to make sure sort values are handled correctly
+		      If Dict.HasKey("version") And Dict.Value("version") > App.BuildNumber Then
+		        Continue
+		      End If
+		      
+		      Dim ClassString As Text = Dict.Value("class")
+		      Self.mBase.SQLExecute("DELETE FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
+		    Next
+		    For Each Dict As Xojo.Core.Dictionary In SourceAdditions
+		      If Dict.HasKey("version") And Dict.Value("version") > App.BuildNumber Then
+		        Continue
+		      End If
+		      
+		      Dim ClassString As Text = Dict.Value("class")
+		      Dim Label As Text = Dict.Value("label")
+		      Dim Kind As Text = Dict.Value("kind")
+		      Dim Availability As Integer = Dict.Value("availability")
+		      Dim MultMin As Double = Dict.Value("mult_min")
+		      Dim MultMax As Double = Dict.Value("mult_max")
+		      Dim UIColor As Text = Dict.Value("uicolor")
+		      Dim IconHex As Text = Dict.Value("icon_hex")
+		      Dim SortValue As Integer = Dict.Value("sort")
+		      Dim UseBlueprints As Boolean = (Dict.Value("use_blueprints") = 1)
+		      
+		      Self.mBase.SQLExecute("DELETE FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
+		      Self.mBase.SQLExecute("INSERT INTO loot_sources (class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, icon, sort, use_blueprints) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);", ClassString, Label, Kind, Availability, MultMin, MultMax, UIColor, Beacon.DecodeHex(IconHex), SortValue, UseBlueprints)
+		    Next
+		    
+		    Dim EngramAdditions() As Auto = EngramsDict.Value("additions")
+		    Dim EngramRemovals() As Auto = EngramsDict.Value("removed_paths")
+		    For Each ClassString As Text In EngramRemovals
+		      Self.mBase.SQLExecute("DELETE FROM engrams WHERE LOWER(path) = LOWER(?1) AND built_in = 1;", ClassString)
+		    Next
+		    For Each Dict As Xojo.Core.Dictionary In EngramAdditions
+		      If Dict.HasKey("version") And Dict.Value("version") > App.BuildNumber Then
+		        Continue
+		      End If
+		      
+		      Dim Path As Text = Dict.Value("path")
+		      Dim ClassString As Text = Dict.Value("class")
+		      Dim Label As Text = Dict.Value("label")
+		      Dim Availability As Integer = Dict.Value("availability")
+		      Dim CanBlueprint As Boolean = (Dict.Value("blueprint") = 1)
+		      
+		      Self.mBase.SQLExecute("DELETE FROM engrams WHERE LOWER(path) = LOWER(?1);", Path)
+		      Self.mBase.SQLExecute("INSERT INTO engrams (path, class_string, label, availability, can_blueprint, built_in) VALUES (?1, ?2, ?3, ?4, ?5, 1);", Path, ClassString, Label, Availability, CanBlueprint)
+		    Next
+		    
+		    Dim PresetAdditions() As Auto = PresetsDict.Value("additions")
+		    Dim PresetRemovals() As Auto = PresetsDict.Value("removals")
+		    Dim ReloadPresets As Boolean = False
+		    For Each PresetID As Text In PresetRemovals
+		      Self.mBase.SQLExecute("DELETE FROM presets WHERE LOWER(preset_id) = LOWER(?1);", PresetID)
+		      ReloadPresets = True
+		    Next
+		    For Each Dict As Xojo.Core.Dictionary In PresetAdditions
+		      Dim PresetID As Text = Dict.Value("id")
+		      Dim Label As Text = Dict.Value("label")
+		      Dim Contents As Text = Dict.Value("contents")
+		      Self.mBase.SQLExecute("DELETE FROM presets WHERE LOWER(preset_id) = LOWER(?1);", PresetID)
+		      Self.mBase.SQLExecute("INSERT INTO presets (preset_id, label, contents) VALUES (?1, ?2, ?3);", PresetID, Label, Contents)
+		      ReloadPresets = True
+		    Next
+		    
+		    Self.Variable("last_sync") = LastSync
+		    Self.Commit()
+		    If ReloadPresets Then
+		      Self.LoadPresets()
+		    End If
+		    
+		    App.Log("Imported classes. Engrams date is " + LastSync)
+		    
+		    Return True
+		  Catch Err As RuntimeException
+		    Self.Rollback()
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ImportLocalClasses()
+		  Dim File As Xojo.IO.FolderItem = Xojo.IO.SpecialFolder.GetResource("Classes.json")
+		  If File.Exists Then
+		    Dim Stream As Xojo.IO.TextInputStream = Xojo.IO.TextInputStream.Open(File, Xojo.Core.TextEncoding.UTF8)
+		    Dim Content As Text = Stream.ReadAll
+		    Stream.Close
+		    
+		    Call Self.Import(Content)
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -256,7 +414,7 @@ Implements Beacon.DataSource
 	#tag Method, Flags = &h21
 		Private Sub MigrateData(Source As Xojo.IO.FolderItem, FromSchemaVersion As Integer)
 		  If Not Self.mBase.AttachDatabase(Source, "legacy") Then
-		    //App.Log("Unable to attach database " + Source.NativePath)
+		    App.Log("Unable to attach database " + Source.Path)
 		    Return
 		  End If
 		  
@@ -275,10 +433,10 @@ Implements Beacon.DataSource
 		      For Each Command As Text In Commands
 		        Self.mBase.SQLExecute(Command)
 		      Next
-		    Catch Err As UnsupportedOperationException
+		    Catch Err As iOSSQLiteException
 		      Self.Rollback()
 		      Self.mBase.DetachDatabase("legacy")
-		      //App.Log("Unable to migrate data: " + Err.Message)
+		      App.Log("Unable to migrate data: " + Err.Reason)
 		      Return
 		    End Try
 		    Self.Commit()
@@ -286,6 +444,37 @@ Implements Beacon.DataSource
 		  
 		  Self.mBase.DetachDatabase("legacy")
 		  Source.Delete
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mUpdater_Error(Sender As Xojo.Net.HTTPSocket, Error As RuntimeException)
+		  #Pragma Unused Sender
+		  
+		  App.Log("Engram check error: " + Error.Reason)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mUpdater_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
+		  #Pragma Unused Sender
+		  #Pragma Unused URL
+		  
+		  If HTTPStatus <> 200 Then
+		    App.Log("Engram update returned HTTP " + HTTPStatus.ToText)
+		    Return
+		  End If
+		  
+		  Dim ExpectedHash As Text = Sender.ResponseHeader("Content-MD5")
+		  Dim ComputedHash As Text = Beacon.EncodeHex(Xojo.Crypto.MD5(Content))
+		  
+		  If ComputedHash <> ExpectedHash Then
+		    App.Log("Engram update hash mismatch. Expected " + ExpectedHash + ", computed " + ComputedHash + ".")
+		    Return
+		  End If
+		  
+		  Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
+		  Call Self.Import(TextContent)
 		End Sub
 	#tag EndMethod
 
@@ -459,13 +648,11 @@ Implements Beacon.DataSource
 		  If mInstance = Nil And Create = True Then
 		    mInstance = New LocalData
 		    Beacon.Data = mInstance
-		    #if false
-		      Dim Results As RecordSet = mInstance.SQLSelect("SELECT COUNT(class_string) AS source_count FROM loot_sources;")
-		      If Results.Field("source_count").IntegerValue = 0 Then
-		        mInstance.ImportLocalClasses()
-		      End If
-		      mInstance.CheckForEngramUpdates()
-		    #endif
+		    Dim Results As iOSSQLiteRecordSet = mInstance.mBase.SQLSelect("SELECT COUNT(class_string) AS source_count FROM loot_sources;")
+		    If Results.Field("source_count").IntegerValue = 0 Then
+		      mInstance.ImportLocalClasses()
+		    End If
+		    mInstance.CheckForEngramUpdates()
 		  End If
 		  Return mInstance
 		End Function
@@ -521,6 +708,10 @@ Implements Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private mTransactions() As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpdater As Xojo.Net.HTTPSocket
 	#tag EndProperty
 
 
