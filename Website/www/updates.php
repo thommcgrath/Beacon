@@ -83,7 +83,17 @@ $html = <<<HTML
 		}
 		
 		h1 {
+			font-size: 16pt;
+			font-weight: bold;
+		}
+		
+		h2 {
 			font-size: 14pt;
+			font-weight: bold;
+		}
+		
+		h3 {
+			font-size: 12pt;
 			font-weight: bold;
 		}
 		
