@@ -24,6 +24,10 @@ BeaconTemplate::SetTitle('Troubleshooting');
 		<p>It is possible for multiple mods to define the same class string, which confuses Ark's loot generator, so Beacon uses blueprints to solve the issue. This is the &quot;More Reliable&quot; option.</p>
 		<p>However, the option to use blueprints was never explained in the original forum post describing the <em>ConfigOverrideSupplyCrateItems</em> config option. Some mods define their own loot sources and may not be able to understand blueprints. When this happens, Ark tends to crash at launch. Switching to &quot;More Compatible&quot; in this scenario will export using classes, but may produce unexpected results if there are conflicts.</p>
 	</div>
+	<h3>Loot sources not updating on official maps.</h3>
+	<div class="indent">
+		<p>The most common cause for this appears to be the use of Ark Server Manager. ASM has a strict set of rules it expects for its ConfigOverrideSupplyCrateItems config that don't line up with what is supported by Ark. Beacon produces output which violates ASM's rules. Unfortunately, at this time, there is no solution. The author of ASM has refused to recognize the expanded format.</p>
+	</div>
 	<h3>Some more personal help</h3>
 	<div class="indent">
 		<p>Get in touch. Bugs should be reported on the <a href="/reportaproblem.php">GitHub page</a>. Anybody can create an account and this is more helpful than email when it comes to bugs. General help inquiries should be sent to <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.</p>
