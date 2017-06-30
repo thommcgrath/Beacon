@@ -418,6 +418,11 @@ Implements Beacon.DocumentItem
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="MapPreference"
+			Group="Behavior"
+			Type="UInteger"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"

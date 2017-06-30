@@ -133,16 +133,6 @@ Inherits Beacon.SetEntry
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="ChanceToBeBlueprint"
-			Group="Behavior"
-			Type="Double"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ForceBlueprint"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -154,50 +144,6 @@ Inherits Beacon.SetEntry
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MaxQuality"
-			Group="Behavior"
-			Type="Beacon.Qualities"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Primitive"
-				"1 - Ramshackle"
-				"2 - Apprentice"
-				"3 - Journeyman"
-				"4 - Mastercraft"
-				"5 - Ascendant"
-				"6 - AscendantPlus"
-				"7 - AscendantPlusPlus"
-				"8 - AscendantPlusPlusPlus"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MaxQuantity"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MinQuality"
-			Group="Behavior"
-			Type="Beacon.Qualities"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Primitive"
-				"1 - Ramshackle"
-				"2 - Apprentice"
-				"3 - Journeyman"
-				"4 - Mastercraft"
-				"5 - Ascendant"
-				"6 - AscendantPlus"
-				"7 - AscendantPlusPlus"
-				"8 - AscendantPlusPlusPlus"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MinQuantity"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -218,11 +164,6 @@ Inherits Beacon.SetEntry
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Weight"
-			Group="Behavior"
-			Type="Double"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -250,19 +250,6 @@ Protected Class Thread
 			Type="UInteger"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="State"
-			Group="Behavior"
-			Type="Ark.Thread.States"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Running"
-				"1 - Waiting"
-				"2 - Suspended"
-				"3 - Sleeping"
-				"4 - NotRunning"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"

@@ -40,7 +40,7 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
-		  Dim Path As String = Self.Engram.Path
+		  Dim Path As Text = Self.Engram.Path
 		  
 		  Dim Keys As New Xojo.Core.Dictionary
 		  If Path <> "" Then

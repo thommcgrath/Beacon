@@ -138,17 +138,6 @@ Inherits Beacon.Preset
 			InitialValue="0"
 			Type="Integer"
 		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Type"
-			Group="Behavior"
-			Type="Beacon.Preset.Types"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - BuiltIn"
-				"1 - Custom"
-				"2 - CustomizedBuiltIn"
-			#tag EndEnumValues
-		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

@@ -90,30 +90,10 @@ Inherits Beacon.LootSource
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="MaxItemSets"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MinItemSets"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="NumItemSetsPower"
-			Group="Behavior"
-			Type="Double"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="SetsRandomWithoutReplacement"
-			Group="Behavior"
-			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

@@ -6,13 +6,17 @@ Inherits Beacon.Thread
 		  Self.mSuccess = False
 		  Self.mFinished = False
 		  Self.mRunning = True
-		  Self.mLock.Enter
+		  #if Not TargetiOS
+		    Self.mLock.Enter
+		  #endif
 		  Try
 		    Self.mSuccess = Self.WriteSynchronous(Self.mSource, Self.mDestination)
 		  Catch Err As RuntimeException
 		    
 		  End Try
-		  Self.mLock.Leave
+		  #if Not TargetiOS
+		    Self.mLock.Leave
+		  #endif
 		  Self.mFinished = True
 		  Self.mRunning = False
 		  RaiseEvent Finished
@@ -150,7 +154,7 @@ Inherits Beacon.Thread
 		  Dim Content As Text = Xojo.Data.GenerateJSON(Source)
 		  
 		  // Pretty
-		  Content = Self.JSONPrettyPrint(Content)
+		  Content = JSONPrettyPrint(Content)
 		  
 		  // Temporary
 		  Dim Temp As Xojo.IO.FolderItem = Xojo.IO.SpecialFolder.Temporary.Child(Beacon.CreateUUID + ".beacon")
@@ -259,32 +263,9 @@ Inherits Beacon.Thread
 			Type="String"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Priority"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Running"
 			Group="Behavior"
 			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="StackSize"
-			Group="Behavior"
-			Type="UInteger"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="State"
-			Group="Behavior"
-			Type="Beacon.Thread.States"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Running"
-				"1 - Waiting"
-				"2 - Suspended"
-				"3 - Sleeping"
-				"4 - NotRunning"
-			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Success"

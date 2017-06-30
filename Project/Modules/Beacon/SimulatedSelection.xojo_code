@@ -47,28 +47,6 @@ Protected Class SimulatedSelection
 			Type="String"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Path"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Quality"
-			Group="Behavior"
-			Type="Beacon.Qualities"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Primitive"
-				"1 - Ramshackle"
-				"2 - Apprentice"
-				"3 - Journeyman"
-				"4 - Mastercraft"
-				"5 - Ascendant"
-				"6 - AscendantPlus"
-				"7 - AscendantPlusPlus"
-				"8 - AscendantPlusPlusPlus"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"

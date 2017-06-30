@@ -343,29 +343,6 @@ Inherits Beacon.Thread
 			Type="String"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Priority"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="StackSize"
-			Group="Behavior"
-			Type="UInteger"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="State"
-			Group="Behavior"
-			Type="Beacon.Thread.States"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Running"
-				"1 - Waiting"
-				"2 - Suspended"
-				"3 - Sleeping"
-				"4 - NotRunning"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"

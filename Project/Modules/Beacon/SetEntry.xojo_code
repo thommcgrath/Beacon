@@ -773,43 +773,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="MaxQuality"
-			Group="Behavior"
-			Type="Beacon.Qualities"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Primitive"
-				"1 - Ramshackle"
-				"2 - Apprentice"
-				"3 - Journeyman"
-				"4 - Mastercraft"
-				"5 - Ascendant"
-				"6 - AscendantPlus"
-				"7 - AscendantPlusPlus"
-				"8 - AscendantPlusPlusPlus"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="MaxQuantity"
 			Group="Behavior"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MinQuality"
-			Group="Behavior"
-			Type="Beacon.Qualities"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Primitive"
-				"1 - Ramshackle"
-				"2 - Apprentice"
-				"3 - Journeyman"
-				"4 - Mastercraft"
-				"5 - Ascendant"
-				"6 - AscendantPlus"
-				"7 - AscendantPlusPlus"
-				"8 - AscendantPlusPlusPlus"
-			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinQuantity"

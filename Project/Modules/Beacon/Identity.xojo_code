@@ -48,7 +48,7 @@ Protected Class Identity
 		  
 		  Dim PublicKey, PrivateKey As Xojo.Core.MemoryBlock
 		  If Source.HasKey("Version") Then
-		     Select Case Source.Value("Version")
+		    Select Case Source.Value("Version")
 		    Case 2
 		      PublicKey = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source.Value("Public"))
 		      PrivateKey = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source.Value("Private"))
