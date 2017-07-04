@@ -66,22 +66,27 @@ Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.SetEntryOption
 		  Dim Weight As Double = Dict.Value("Weight")
-		  Dim Engram As Beacon.Engram
+		  Dim Engram, BackupEngram As Beacon.Engram
 		  
 		  If Dict.HasKey("Path") Then
-		    Dim Path As Text = Dict.Value("Path")
-		    Engram = Beacon.Data.GetEngramByPath(Path)
+		    Engram = Beacon.Data.GetEngramByPath(Dict.Value("Path"))
 		    If Engram = Nil Then
-		      Engram = Beacon.Engram.CreateUnknownEngram(Path)
+		      BackupEngram = Beacon.Engram.CreateUnknownEngram(Dict.Value("Path"))
 		    End If
-		  ElseIf Dict.HasKey("Class") Then
-		    Dim ClassString As Text = Dict.Value("Class")
-		    Engram = Beacon.Data.GetEngramByClass(ClassString)
-		    If Engram = Nil Then
-		      Engram = Beacon.Engram.CreateUnknownEngram(ClassString)
+		  End If
+		  
+		  If Engram = Nil And Dict.HasKey("Class") Then
+		    Engram = Beacon.Data.GetEngramByClass(Dict.Value("Class"))
+		    If Engram = Nil And BackupEngram = Nil Then
+		      BackupEngram = Beacon.Engram.CreateUnknownEngram(Dict.Value("Class"))
 		    End If
-		  Else
-		    Return Nil
+		  End If
+		  
+		  If Engram = Nil Then
+		    If BackupEngram = Nil Then
+		      Return Nil
+		    End If
+		    Engram = BackupEngram
 		  End If
 		  
 		  Return New Beacon.SetEntryOption(Engram, Weight)

@@ -295,12 +295,16 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        End If
 		        
 		        Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Value)
-		        If Engram <> Nil Then
-		          Engrams.Append(Engram)
-		        Else
-		          Break
-		          Engrams.Append(Beacon.Engram.CreateUnknownEngram(Value))
+		        If Engram = Nil Then
+		          // Path was not found
+		          Dim TempEngram As Beacon.Engram = Beacon.Engram.CreateUnknownEngram(Value)
+		          Engram = Beacon.Data.GetEngramByClass(TempEngram.ClassString)
+		          If Engram = Nil Then
+		            // Didn't find it by class either
+		            Engram = TempEngram
+		          End If
 		        End If
+		        Engrams.Append(Engram)
 		      End Select
 		    Next
 		  End If
@@ -515,8 +519,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function TextValue(Multipliers As Beacon.Range, UseBlueprints As Boolean) As Text
-		  Dim AllWeightsEqual As Boolean = True
-		  Dim CommonWeight As Double
 		  Dim Paths(), Weights(), Classes() As Text
 		  Redim Paths(UBound(Self.mOptions))
 		  Redim Weights(UBound(Self.mOptions))
@@ -525,13 +527,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Paths(I) = Self.mOptions(I).Engram.GeneratedClassBlueprintPath()
 		    Classes(I) = """" + Self.mOptions(I).Engram.ClassString + """"
 		    Weights(I) = Self.mOptions(I).Weight.ToText
-		    If I = 0 Then
-		      CommonWeight = Self.mOptions(I).Weight
-		    Else
-		      If Self.mOptions(I).Weight <> CommonWeight Then
-		        AllWeightsEqual = False
-		      End If
-		    End If
 		  Next
 		  
 		  Dim MinQuality As Double = Beacon.ValueForQuality(Self.mMinQuality, Multipliers.Min)
@@ -546,9 +541,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Else
 		    Values.Append("ItemClassStrings=(" + Text.Join(Classes, ",") + ")")
 		  End If
-		  If Self.Count > 1 And AllWeightsEqual = False Then
-		    Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
-		  End If
+		  Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
 		  Values.Append("MinQuantity=" + Self.mMinQuantity.ToText)
 		  Values.Append("MaxQuantity=" + Self.mMaxQuantity.ToText)
 		  Values.Append("MinQuality=" + MinQuality.ToText)
@@ -773,9 +766,43 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="MaxQuality"
+			Group="Behavior"
+			Type="Beacon.Qualities"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Primitive"
+				"1 - Ramshackle"
+				"2 - Apprentice"
+				"3 - Journeyman"
+				"4 - Mastercraft"
+				"5 - Ascendant"
+				"6 - AscendantPlus"
+				"7 - AscendantPlusPlus"
+				"8 - AscendantPlusPlusPlus"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="MaxQuantity"
 			Group="Behavior"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MinQuality"
+			Group="Behavior"
+			Type="Beacon.Qualities"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Primitive"
+				"1 - Ramshackle"
+				"2 - Apprentice"
+				"3 - Journeyman"
+				"4 - Mastercraft"
+				"5 - Ascendant"
+				"6 - AscendantPlus"
+				"7 - AscendantPlusPlus"
+				"8 - AscendantPlusPlusPlus"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinQuantity"
