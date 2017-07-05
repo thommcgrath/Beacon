@@ -366,8 +366,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Shared Function Join(Entries() As Beacon.SetEntry, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean) As Text
 		  Dim Values() As Text
+		  Dim SumEntryWeights As Double
 		  For Each Entry As Beacon.SetEntry In Entries
-		    Values.Append(Entry.TextValue(Multipliers, UseBlueprints))
+		    SumEntryWeights = SumEntryWeights + Entry.Weight
+		  Next
+		  For Each Entry As Beacon.SetEntry In Entries
+		    Values.Append(Entry.TextValue(Multipliers, SumEntryWeights, UseBlueprints))
 		  Next
 		  Return Text.Join(Values, Separator)
 		End Function
@@ -518,24 +522,30 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range, UseBlueprints As Boolean) As Text
+		Function TextValue(Multipliers As Beacon.Range, SumEntryWeights As Double, UseBlueprints As Boolean) As Text
 		  Dim Paths(), Weights(), Classes() As Text
 		  Redim Paths(UBound(Self.mOptions))
 		  Redim Weights(UBound(Self.mOptions))
 		  Redim Classes(UBound(Self.mOptions))
+		  Dim SumOptionWeights As Double
 		  For I As Integer = 0 To UBound(Self.mOptions)
+		    SumOptionWeights = SumOptionWeights + Self.mOptions(I).Weight
+		  Next
+		  For I As Integer = 0 To UBound(Self.mOptions)
+		    Dim RelativeWeight As Double = Self.mOptions(I).Weight / SumOptionWeights
 		    Paths(I) = Self.mOptions(I).Engram.GeneratedClassBlueprintPath()
 		    Classes(I) = """" + Self.mOptions(I).Engram.ClassString + """"
-		    Weights(I) = Self.mOptions(I).Weight.ToText
+		    Weights(I) = RelativeWeight.ToText
 		  Next
 		  
 		  Dim MinQuality As Double = Beacon.ValueForQuality(Self.mMinQuality, Multipliers.Min)
 		  Dim MaxQuality As Double = Beacon.ValueForQuality(Self.mMaxQuality, Multipliers.Max)
 		  Dim Chance As Double = if(Self.CanBeBlueprint, Self.mChanceToBeBlueprint, 0)
 		  Dim InverseChance As Double = 1 - Chance
+		  Dim EntryWeight As Double = Self.mWeight / SumEntryWeights
 		  
 		  Dim Values() As Text
-		  Values.Append("EntryWeight=" + Self.mWeight.ToText)
+		  Values.Append("EntryWeight=" + EntryWeight.ToText)
 		  If UseBlueprints Then
 		    Values.Append("Items=(" + Text.Join(Paths, ",") + ")")
 		  Else

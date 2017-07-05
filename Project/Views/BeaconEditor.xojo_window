@@ -599,6 +599,11 @@ End
 		Sub PerformCopy(Board As Clipboard)
 		  Dim Dicts() As Xojo.Core.Dictionary
 		  Dim Configs() As Text
+		  Dim SumSetWeights As Double
+		  For I As Integer = 0 To Me.ListCount - 1
+		    Dim Set As Beacon.ItemSet = Me.RowTag(I)
+		    SumSetWeights = SumSetWeights + Set.Weight
+		  Next
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
@@ -610,7 +615,7 @@ End
 		      Dicts.Append(Dict)
 		    End If
 		    If UBound(Self.mSources) = 0 Then
-		      Configs.Append(Set.TextValue(Self.mSources(0).Multipliers, Self.mSources(0).UseBlueprints))
+		      Configs.Append(Set.TextValue(Self.mSources(0).Multipliers, SumSetWeights, Self.mSources(0).UseBlueprints))
 		    End If
 		  Next
 		  If UBound(Dicts) = -1 Then
