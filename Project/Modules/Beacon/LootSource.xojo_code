@@ -380,7 +380,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  Values.Append("MinItemSets=" + MinItemSets.ToText)
 		  Values.Append("MaxItemSets=" + MaxItemSets.ToText)
-		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.ToText)
+		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.PrettyText)
 		  Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
 		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mSets, ",", Self.mMultipliers, Self.mUseBlueprints) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"

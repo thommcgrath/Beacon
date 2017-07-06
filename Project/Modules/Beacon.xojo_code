@@ -353,10 +353,8 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function QualityForValue(Quality As Double, CrateQualityMultiplier As Double, DifficultyOffset As Double = 1.0) As Beacon.Qualities
-		  Dim BaseArbitraryQuality As Double = 0.75 + (Max(Min(DifficultyOffset, 1.0), 0.0001) * 1.75)
-		  Dim CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
-		  Dim Multiplier As Double = BaseArbitraryQuality * CrateArbitraryQuality
+		Protected Function QualityForValue(Quality As Double, CrateQualityMultiplier As Double, DifficultyMultiplier As Double = 1.0) As Beacon.Qualities
+		  Dim Multiplier As Double = CrateQualityMultiplier * DifficultyMultiplier
 		  
 		  Quality = Quality * Multiplier
 		  
@@ -495,10 +493,8 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ValueForQuality(Quality As Beacon.Qualities, CrateQualityMultiplier As Double, DifficultyOffset As Double = 1.0) As Double
-		  Dim BaseArbitraryQuality As Double = 0.75 + (Max(Min(DifficultyOffset, 1.0), 0.0001) * 1.75)
-		  Dim CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
-		  Dim Multiplier As Double = BaseArbitraryQuality * CrateArbitraryQuality
+		Protected Function ValueForQuality(Quality As Beacon.Qualities, CrateQualityMultiplier As Double, DifficultyMultiplier As Double = 1.0) As Double
+		  Dim Multiplier As Double = CrateQualityMultiplier * DifficultyMultiplier
 		  
 		  Select Case Quality
 		  Case Beacon.Qualities.Primitive
