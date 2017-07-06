@@ -42,8 +42,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Sub Constructor()
 		  Self.mMinQuantity = 1
 		  Self.mMaxQuantity = 1
-		  Self.mMinQuality = Beacon.Qualities.Primitive
-		  Self.mMaxQuality = Beacon.Qualities.Ascendant
+		  Self.mMinQuality = Beacon.Qualities.Tier1
+		  Self.mMaxQuality = Beacon.Qualities.Tier3
 		  Self.mChanceToBeBlueprint = 1.0
 		  Self.mWeight = 1
 		  Self.mUniqueID = ""
@@ -115,8 +115,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        Continue
 		      End If
 		      
-		      MinQualitySum = MinQualitySum + Beacon.ValueForQuality(Entry.MinQuality, 1)
-		      MaxQualitySum = MaxQualitySum + Beacon.ValueForQuality(Entry.MaxQuality, 1)
+		      MinQualitySum = MinQualitySum + Entry.MinQuality.BaseValue
+		      MaxQualitySum = MaxQualitySum + Entry.MaxQuality.BaseValue
 		      
 		      Dim Arr() As Beacon.SetEntryOption
 		      If Options.HasKey(Key) Then
@@ -148,8 +148,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  BlueprintEntry.ChanceToBeBlueprint = 1.0
 		  BlueprintEntry.MaxQuantity = 1
 		  BlueprintEntry.MinQuantity = 1
-		  BlueprintEntry.MinQuality = Beacon.QualityForValue(MinQualitySum / Options.Count, 1)
-		  BlueprintEntry.MaxQuality = Beacon.QualityForValue(MaxQualitySum / Options.Count, 1)
+		  BlueprintEntry.MinQuality = Beacon.Qualities.ForBaseValue(MinQualitySum / Options.Count)
+		  BlueprintEntry.MaxQuality = Beacon.Qualities.ForBaseValue(MaxQualitySum / Options.Count)
 		  
 		  Return BlueprintEntry
 		End Function
@@ -165,10 +165,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim Keys As New Xojo.Core.Dictionary
 		  Keys.Value("ChanceToBeBlueprintOverride") = Self.ChanceToBeBlueprint
 		  Keys.Value("Items") = Children
-		  Keys.Value("MaxQuality") = Beacon.QualityToText(Self.MaxQuality)
-		  Keys.Value("MaxQuantity") = Self.MaxQuantity
-		  Keys.Value("MinQuality") = Beacon.QualityToText(Self.MinQuality)
+		  Keys.Value("MinQuality") = Self.MinQuality.Key
+		  Keys.Value("MaxQuality") = Self.MaxQuality.Key
 		  Keys.Value("MinQuantity") = Self.MinQuantity
+		  Keys.Value("MaxQuantity") = Self.MaxQuantity
 		  Keys.Value("EntryWeight") = Self.Weight
 		  Return Keys
 		End Function
@@ -195,9 +195,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim Parts(6) As Text
 		  Parts(0) = Beacon.MD5(Text.Join(Items, ",")).Lowercase
 		  Parts(1) = Self.ChanceToBeBlueprint.ToText(Locale, Format)
-		  Parts(2) = Beacon.QualityToText(Self.MaxQuality).Lowercase
+		  Parts(2) = Self.MaxQuality.Key.Lowercase
 		  Parts(3) = Self.MaxQuantity.ToText(Locale, Format)
-		  Parts(4) = Beacon.QualityToText(Self.MinQuality).Lowercase
+		  Parts(4) = Self.MinQuality.Key.Lowercase
 		  Parts(5) = Self.MinQuantity.ToText(Locale, Format)
 		  Parts(6) = Self.Weight.ToText(Locale, Format)
 		  
@@ -218,18 +218,18 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim Value As Auto = Dict.Value("MinQuality")
 		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
 		    If Info.FullName = "Text" Then
-		      Entry.MinQuality = Beacon.TextToQuality(Value)
+		      Entry.MinQuality = Beacon.Qualities.ForKey(Value)
 		    Else
-		      Entry.MinQuality = Beacon.QualityForValue(Value, Multipliers.Min)
+		      Entry.MinQuality = Beacon.Qualities.ForValue(Value, Multipliers.Min, 1.0)
 		    End If
 		  End If
 		  If Dict.HasKey("MaxQuality") Then
 		    Dim Value As Auto = Dict.Value("MaxQuality")
 		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
 		    If Info.FullName = "Text" Then
-		      Entry.MaxQuality = Beacon.TextToQuality(Value)
+		      Entry.MaxQuality = Beacon.Qualities.ForKey(Value)
 		    Else
-		      Entry.MaxQuality = Beacon.QualityForValue(Value, Multipliers.Max)
+		      Entry.MaxQuality = Beacon.Qualities.ForValue(Value, Multipliers.Max, 1.0)
 		    End If
 		  End If
 		  
@@ -471,8 +471,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Else
 		    Quantity = Xojo.Math.RandomInt(Self.mMinQuantity, Self.mMaxQuantity)
 		  End If
-		  Dim MinQuality As Double = Beacon.ValueForQuality(Self.mMinQuality, 1)
-		  Dim MaxQuality As Double = Beacon.ValueForQuality(Self.mMaxQuality, 1)
+		  Dim MinQuality As Double = Self.mMinQuality.BaseValue
+		  Dim MaxQuality As Double = Self.mMaxQuality.BaseValue
 		  Dim Selections() As Beacon.SimulatedSelection
 		  Dim RequiredChance As Integer = (1 - Self.mChanceToBeBlueprint) * 100
 		  
@@ -513,7 +513,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    End If
 		    
 		    Selection.IsBlueprint = BlueprintDecision > RequiredChance
-		    Selection.Quality = Beacon.QualityForValue(QualityValue, 1)
+		    Selection.Quality = Beacon.Qualities.ForBaseValue(QualityValue)
 		    Selections.Append(Selection)
 		  Next
 		  
@@ -538,8 +538,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Weights(I) = RelativeWeight.PrettyText
 		  Next
 		  
-		  Dim MinQuality As Double = Beacon.ValueForQuality(Self.mMinQuality, Multipliers.Min)
-		  Dim MaxQuality As Double = Beacon.ValueForQuality(Self.mMaxQuality, Multipliers.Max)
+		  Dim MinQuality As Double = Self.mMinQuality.Value(Multipliers.Min, 1.0)
+		  Dim MaxQuality As Double = Self.mMaxQuality.Value(Multipliers.Max, 1.0)
 		  Dim Chance As Double = if(Self.CanBeBlueprint, Self.mChanceToBeBlueprint, 0)
 		  Dim InverseChance As Double = 1 - Chance
 		  Dim EntryWeight As Double = Self.mWeight / SumEntryWeights
@@ -631,7 +631,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			  Self.mModified = True
 			End Set
 		#tag EndSetter
-		MaxQuality As Beacon.Qualities
+		MaxQuality As Beacon.Quality
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -674,7 +674,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			  Self.mModified = True
 			End Set
 		#tag EndSetter
-		MinQuality As Beacon.Qualities
+		MinQuality As Beacon.Quality
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -698,7 +698,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mMaxQuality As Beacon.Qualities
+		Private mMaxQuality As Beacon.Quality
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -706,7 +706,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMinQuality As Beacon.Qualities
+		Private mMinQuality As Beacon.Quality
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -776,43 +776,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="MaxQuality"
-			Group="Behavior"
-			Type="Beacon.Qualities"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Primitive"
-				"1 - Ramshackle"
-				"2 - Apprentice"
-				"3 - Journeyman"
-				"4 - Mastercraft"
-				"5 - Ascendant"
-				"6 - AscendantPlus"
-				"7 - AscendantPlusPlus"
-				"8 - AscendantPlusPlusPlus"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="MaxQuantity"
 			Group="Behavior"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MinQuality"
-			Group="Behavior"
-			Type="Beacon.Qualities"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Primitive"
-				"1 - Ramshackle"
-				"2 - Apprentice"
-				"3 - Journeyman"
-				"4 - Mastercraft"
-				"5 - Ascendant"
-				"6 - AscendantPlus"
-				"7 - AscendantPlusPlus"
-				"8 - AscendantPlusPlusPlus"
-			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinQuantity"

@@ -86,6 +86,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  Dim QuantityMultiplier As Double = Preset.QuantityMultiplier(ForLootSource.Kind)
 		  Dim QualityModifier As Integer = Preset.QualityModifier(ForLootSource.Kind)
+		  Dim Qualities() As Beacon.Quality = Beacon.Qualities.All
 		  
 		  For Each Entry As Beacon.PresetEntry In Preset
 		    If Not Entry.ValidForMap(Map) Then
@@ -95,13 +96,22 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim EntryQuantityMultiplier As Double = If(Entry.RespectQuantityMultiplier, QuantityMultiplier, 1)
 		    Dim EntryQualityModifier As Integer = If(Entry.RespectQualityModifier, QualityModifier, 0)
 		    
-		    Dim MinQuality As Integer = Max(Min(CType(Entry.MinQuality, Integer) + EntryQualityModifier, 8), 0)
-		    Dim MaxQuality As Integer = Max(Min(CType(Entry.MaxQuality, Integer) + EntryQualityModifier, 8), 0)
+		    Dim MinQualityIndex, MaxQualityIndex As Integer
+		    For I As Integer = 0 To UBound(Qualities)
+		      If Qualities(I) = Entry.MinQuality Then
+		        MinQualityIndex = I
+		      End If
+		      If Qualities(I) = Entry.MaxQuality Then
+		        MaxQualityIndex = I
+		      End If
+		    Next
+		    MinQualityIndex = Max(Min(MinQualityIndex + EntryQualityModifier, UBound(Qualities)), 0)
+		    MaxQualityIndex = Max(Min(MaxQualityIndex + EntryQualityModifier, UBound(Qualities)), 0)
 		    
 		    Entry.MinQuantity = Round(Entry.MinQuantity * EntryQuantityMultiplier)
 		    Entry.MaxQuantity = Round(Entry.MaxQuantity * EntryQuantityMultiplier)
-		    Entry.MinQuality = CType(MinQuality, Beacon.Qualities)
-		    Entry.MaxQuality = CType(MaxQuality, Beacon.Qualities)
+		    Entry.MinQuality = Qualities(MinQualityIndex)
+		    Entry.MaxQuality = Qualities(MaxQualityIndex)
 		    
 		    Set.Append(New Beacon.SetEntry(Entry))
 		  Next

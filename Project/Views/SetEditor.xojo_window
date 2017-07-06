@@ -139,6 +139,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Label:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -285,6 +286,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   10
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "100"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -319,6 +321,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Min Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -353,6 +356,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Max Items:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -387,6 +391,7 @@ Begin ContainerControl SetEditor
       Selectable      =   False
       TabIndex        =   8
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Weight:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -828,11 +833,11 @@ End
 		    Value1 = Entry1.MaxQuantity
 		    Value2 = Entry2.MaxQuantity
 		  Case 3 // Min quality
-		    Value1 = Beacon.ValueForQuality(Entry1.MinQuality, 1)
-		    Value2 = Beacon.ValueForQuality(Entry2.MinQuality, 1)
+		    Value1 = Entry1.MinQuality.BaseValue
+		    Value2 = Entry2.MinQuality.BaseValue
 		  Case 4 // Max quality
-		    Value1 = Beacon.ValueForQuality(Entry1.MaxQuality, 1)
-		    Value2 = Beacon.ValueForQuality(Entry2.MaxQuality, 1)
+		    Value1 = Entry1.MaxQuality.BaseValue
+		    Value2 = Entry2.MaxQuality.BaseValue
 		  Case 5 // Chance
 		    Value1 = Entry1.Weight
 		    Value2 = Entry2.Weight

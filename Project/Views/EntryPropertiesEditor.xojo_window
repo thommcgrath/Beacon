@@ -207,6 +207,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   15
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "%"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -312,6 +313,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   12
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Chance To Be Blueprint:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -377,6 +379,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   9
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Max Quality:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -442,6 +445,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Min Quality:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -519,6 +523,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Max Quantity:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -596,6 +601,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Min Quantity:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -622,15 +628,15 @@ End
 		    MinQuantity = Temp
 		  End If
 		  
-		  Dim MinQuality As Beacon.Qualities = MinQualityMenu.Tag
-		  Dim MaxQuality As Beacon.Qualities = MaxQualityMenu.Tag
-		  Dim MinQualityValue As Double = Beacon.ValueForQuality(MinQuality, 1)
-		  Dim MaxQualityValue As Double = Beacon.ValueForQuality(MaxQuality, 1)
+		  Dim MinQualityValue As Double = MinQualityMenu.Tag
+		  Dim MaxQualityValue As Double = MaxQualityMenu.Tag
 		  If MinQualityValue > MaxQualityValue Then
-		    Dim Temp As Beacon.Qualities = MaxQuality
-		    MaxQuality = MinQuality
-		    MinQuality = Temp
+		    Dim Temp As Double = MaxQualityValue
+		    MaxQualityValue = MinQualityValue
+		    MinQualityValue = Temp
 		  End If
+		  Dim MinQuality As Beacon.Quality = Beacon.Qualities.ForBaseValue(MinQualityValue)
+		  Dim MaxQuality As Beacon.Quality = Beacon.Qualities.ForBaseValue(MaxQualityValue)
 		  
 		  For Each Entry As Beacon.SetEntry In Entries
 		    If EditMaxQuantityCheck.Value Then
@@ -703,7 +709,7 @@ End
 		  End If
 		  
 		  Dim MinQuantities(), MaxQuantities() As Integer
-		  Dim MinQualities(), MaxQualities() As Beacon.Qualities
+		  Dim MinQualities(), MaxQualities() As Double
 		  Dim TotalWeight, TotalChance As Double
 		  Dim CanBeBlueprint As Boolean
 		  For Each Entry As Beacon.SetEntry In Entries
@@ -711,8 +717,8 @@ End
 		    MaxQuantities.Append(Entry.MaxQuantity)
 		    TotalWeight = TotalWeight + Entry.Weight
 		    TotalChance = TotalChance + Entry.ChanceToBeBlueprint
-		    MinQualities.Append(Entry.MinQuality)
-		    MaxQualities.Append(Entry.MaxQuality)
+		    MinQualities.Append(Entry.MinQuality.BaseValue)
+		    MaxQualities.Append(Entry.MaxQuality.BaseValue)
 		    CanBeBlueprint = CanBeBlueprint Or Entry.CanBeBlueprint
 		  Next
 		  
@@ -817,18 +823,10 @@ End
 		Sub Open(index as Integer)
 		  Me.DeleteAllRows()
 		  
-		  Dim Value As Integer
-		  Do
-		    Dim Quality As Beacon.Qualities = CType(Value, Beacon.Qualities)
-		    Value = Value + 1
-		    
-		    Dim Label As String = Language.LabelForQuality(Quality)
-		    If Label = "" Then
-		      Exit
-		    End If
-		    
-		    Me.AddRow(Label, Quality)
-		  Loop
+		  Dim Qualities() As Beacon.Quality = Beacon.Qualities.All
+		  For Each Quality As Beacon.Quality In Qualities
+		    Me.AddRow(Language.LabelForQuality(Quality), Quality.BaseValue)
+		  Next
 		  
 		  Me.ListIndex = 0
 		End Sub
