@@ -535,7 +535,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim RelativeWeight As Double = Self.mOptions(I).Weight / SumOptionWeights
 		    Paths(I) = Self.mOptions(I).Engram.GeneratedClassBlueprintPath()
 		    Classes(I) = """" + Self.mOptions(I).Engram.ClassString + """"
-		    Weights(I) = RelativeWeight.ToText
+		    Weights(I) = RelativeWeight.PrettyText
 		  Next
 		  
 		  Dim MinQuality As Double = Beacon.ValueForQuality(Self.mMinQuality, Multipliers.Min)
@@ -545,7 +545,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim EntryWeight As Double = Self.mWeight / SumEntryWeights
 		  
 		  Dim Values() As Text
-		  Values.Append("EntryWeight=" + EntryWeight.ToText)
+		  Values.Append("EntryWeight=" + EntryWeight.PrettyText)
 		  If UseBlueprints Then
 		    Values.Append("Items=(" + Text.Join(Paths, ",") + ")")
 		  Else
@@ -554,8 +554,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
 		  Values.Append("MinQuantity=" + Self.mMinQuantity.ToText)
 		  Values.Append("MaxQuantity=" + Self.mMaxQuantity.ToText)
-		  Values.Append("MinQuality=" + MinQuality.ToText)
-		  Values.Append("MaxQuality=" + MaxQuality.ToText)
+		  Values.Append("MinQuality=" + MinQuality.PrettyText)
+		  Values.Append("MaxQuality=" + MaxQuality.PrettyText)
 		  
 		  // ChanceToActuallyGiveItem and ChanceToBeBlueprintOverride appear to be inverse of each
 		  // other. I'm not sure why both exist, but I've got a theory. Some of the loot source
@@ -568,8 +568,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Else
 		    Values.Append("bForceBlueprint=true")
 		  End If
-		  Values.Append("ChanceToActuallyGiveItem=" + InverseChance.ToText)
-		  Values.Append("ChanceToBeBlueprintOverride=" + Chance.ToText)
+		  Values.Append("ChanceToActuallyGiveItem=" + InverseChance.PrettyText)
+		  Values.Append("ChanceToBeBlueprintOverride=" + Chance.PrettyText)
 		  
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function

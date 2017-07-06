@@ -268,10 +268,11 @@ Protected Module Beacon
 		    End If
 		    Multiplier = Multiplier * 10
 		    Format = Format + "0"
+		    Places = Places + 1
 		  Wend
 		  
 		  If Format.Length > 1 Then
-		    Format = Format.Left(1) + "." + Format.Mid(2)
+		    Format = Format.Left(1) + "." + Format.Mid(1)
 		  End If
 		  
 		  Dim RoundedValue As Double = Round(Value * Multiplier) / Multiplier
