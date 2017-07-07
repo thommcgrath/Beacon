@@ -576,12 +576,15 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  // There's no common parent between them. Seems like Wildcard messed this up. I think
 		  // PrimalSupplyCrateItemSets uses ChanceToActuallyGiveItem, and PrimalSupplyCrateItemSet
 		  // uses ChanceToBeBlueprintOverride. Safest option right now is to include both.
+		  
+		  // 2017-07-07: As of 261.0, it appears ChanceToActuallyGiveItem does something else. It will
+		  // now be left off.
 		  If Chance < 1 Then
 		    Values.Append("bForceBlueprint=false")
 		  Else
 		    Values.Append("bForceBlueprint=true")
 		  End If
-		  Values.Append("ChanceToActuallyGiveItem=" + InverseChance.PrettyText)
+		  //Values.Append("ChanceToActuallyGiveItem=" + InverseChance.PrettyText)
 		  Values.Append("ChanceToBeBlueprintOverride=" + Chance.PrettyText)
 		  
 		  Return "(" + Text.Join(Values, ",") + ")"
