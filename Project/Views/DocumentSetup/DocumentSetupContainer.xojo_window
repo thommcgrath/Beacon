@@ -10,6 +10,7 @@ Begin ContainerControl DocumentSetupContainer
    EraseBackground =   True
    HasBackColor    =   False
    Height          =   330
+   HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
    LockBottom      =   False
