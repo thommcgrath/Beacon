@@ -519,6 +519,8 @@ Begin Window DocumentSetupWindow
       LockedInPosition=   False
       Priority        =   0
       Scope           =   2
+      StackSize       =   ""
+      State           =   ""
       TabPanelIndex   =   0
    End
 End
@@ -549,13 +551,23 @@ End
 	#tag Method, Flags = &h0
 		Shared Sub ShowCreate()
 		  Dim Win As New DocumentSetupWindow
-		  Win.Show()
+		  Win.ShowModal()
+		  Win.Close
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub ShowEdit(Parent As Window, Doc As Beacon.Document)
+		Shared Function ShowEdit(Doc As Beacon.Document) As Boolean
 		  Dim Win As New DocumentSetupWindow
+		  
+		  If Doc.Map = Nil Then
+		    Doc.Map = Beacon.Maps.GuessMap(Doc.LootSources)
+		  Else
+		    Win.MapMenu.Enabled = False
+		  End If
+		  If Doc.DifficultyValue = -1 Then
+		    Doc.DifficultyValue = Doc.Map.DifficultyValue(1.0)
+		  End If
 		  
 		  For I As Integer = 0 To Win.MapMenu.ListCount - 1
 		    Dim MenuMap As Beacon.Map = Win.MapMenu.RowTag(I)
@@ -564,7 +576,6 @@ End
 		      Exit For I
 		    End If
 		  Next
-		  Win.MapMenu.Enabled = False
 		  
 		  Dim DifficultyValue As Double = Doc.DifficultyValue
 		  Dim DifficultyOffset As Double = Doc.Map.DifficultyOffset(DifficultyValue)
@@ -578,8 +589,11 @@ End
 		  Win.ActionButton.Caption = "Edit"
 		  Win.Title = "Edit Document Settings"
 		  
-		  Win.ShowModalWithin(Parent.TrueWindow)
-		End Sub
+		  Win.ShowModal()
+		  Dim Cancelled As Boolean = Win.mCancelled
+		  Win.Close
+		  Return Not Cancelled
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -593,13 +607,18 @@ End
 		  Win.mImportContent = Stream.ReadAll(Encodings.UTF8).ToText
 		  Stream.Close
 		  
-		  Win.Show()
+		  Win.ShowModal()
+		  Win.Close
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
 		Private ImportProgress As ImporterWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCancelled As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -695,10 +714,34 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
+		  Self.mCancelled = False
+		  
 		  If Self.mDoc <> Nil Then
 		    Self.mDoc.DifficultyValue = Val(DifficultyValueField.Text)
 		    
-		    Self.Close
+		    If MapMenu.Enabled Then
+		      Self.mDoc.Map = Self.SelectedMap
+		      Dim Sources() As Beacon.LootSource = Self.mDoc.LootSources
+		      Dim ValidCount As Integer
+		      For Each Source As Beacon.LootSource In Sources
+		        If Source.ValidForMap(Self.mDoc.Map) Then
+		          ValidCount = ValidCount + 1
+		        End If
+		      Next
+		      
+		      If ValidCount = 0 Then
+		        Self.ShowAlert("No valid loot sources", "There would no loot sources loaded into the selected map.")
+		        Return
+		      End If
+		      
+		      For Each Source As Beacon.LootSource In Sources
+		        If Not Source.ValidForMap(Self.mDoc.Map) Then
+		          Self.mDoc.Remove(Source)
+		        End If
+		      Next
+		    End
+		    
+		    Self.Hide
 		    Return
 		  End If
 		  
@@ -720,7 +763,7 @@ End
 		    Dim Win As New DocWindow(Doc)
 		    Win.Show
 		    
-		    Self.Close
+		    Self.Hide
 		    Return
 		  End If
 		  
@@ -732,7 +775,7 @@ End
 		    Dim Win As New DocWindow(Doc)
 		    Win.Show
 		    
-		    Self.Close
+		    Self.Hide
 		    Return
 		  End If
 		  
@@ -747,7 +790,8 @@ End
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.Close
+		  Self.mCancelled = True
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -806,7 +850,7 @@ End
 		    Dim Win As New DocWindow(Doc)
 		    Win.Show
 		    
-		    Self.Close
+		    Self.Hide
 		    Return
 		  End If
 		  
@@ -961,11 +1005,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="mImportContent"
-		Group="Behavior"
-		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinHeight"

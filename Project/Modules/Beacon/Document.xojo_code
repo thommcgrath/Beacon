@@ -187,6 +187,8 @@ Implements Beacon.DocumentItem
 		      End If
 		      If Dict.HasKey("DifficultyValue") Then
 		        Doc.DifficultyValue = Dict.Value("DifficultyValue")
+		      Else
+		        Doc.mDifficultyValue = -1
 		      End If
 		    Catch Err As RuntimeException
 		      // Likely a KeyNotFoundException or TypeMismatchException, either way, we can't handle it
@@ -235,11 +237,6 @@ Implements Beacon.DocumentItem
 		      Doc.mLootSources.Append(Source)
 		    End If
 		  Next
-		  
-		  If Doc.Map = Nil Then
-		    // Let's try to figure out the map preference, it can only be island or scorched
-		    Doc.Map = Beacon.Maps.GuessMap(Doc.LootSources)
-		  End If
 		  
 		  Doc.mModified = Version < Beacon.Document.DocumentVersion
 		  

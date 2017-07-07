@@ -46,6 +46,7 @@ Protected Module Maps
 		    
 		    If Count > MaxCount Then
 		      BestMask = Mask
+		      MaxCount = Count
 		    End If
 		  Next
 		  

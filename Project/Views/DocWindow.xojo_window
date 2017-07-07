@@ -115,6 +115,7 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -161,6 +162,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -202,6 +204,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -526,15 +529,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Self.Doc = New Beacon.Document
-		  Super.Constructor
-		  Self.DocumentCounter = Self.DocumentCounter + 1
-		  Self.Title = "Untitled " + Str(Self.DocumentCounter, "-0")
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor(Doc As Beacon.Document)
 		  Self.Doc = Doc
 		  Super.Constructor
@@ -547,22 +541,24 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor(File As FolderItem)
-		  If File.IsType(BeaconFileTypes.BeaconDocument) Then
-		    // Beacon document
-		    Self.File = File
-		    Self.Doc = Beacon.Document.Read(Self.File)
-		    Self.Title = File.Name
-		    Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
-		    Super.Constructor
-		    Return
+		  If Not File.IsType(BeaconFileTypes.BeaconDocument) Then
+		    Raise New UnsupportedFormatException
 		  End If
 		  
-		  Self.Constructor
+		  Self.File = File
+		  Self.Doc = Beacon.Document.Read(Self.File)
+		  Self.Title = File.Name
+		  Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
 		  
-		  If File.IsType(BeaconFileTypes.IniFile) Then
-		    // Config file
-		    Self.Import(File)
+		  If Doc.Map = Nil Or Doc.DifficultyValue = -1 Then
+		    // We need the document settings
+		    If Not DocumentSetupWindow.ShowEdit(Self.Doc) Then
+		      Self.Close
+		      Return
+		    End If
 		  End If
+		  
+		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
@@ -1005,7 +1001,7 @@ End
 		  Case "DeleteButton"
 		    Self.RemoveSelectedBeacons(True)
 		  Case "SettingsButton"
-		    DocumentSetupWindow.ShowEdit(Self, Self.Doc)
+		    Call DocumentSetupWindow.ShowEdit(Self.Doc)
 		    Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
 		  Case "ErrorsButton"
 		    ResolveIssuesDialog.Present(Self, Self.Doc)
