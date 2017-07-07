@@ -554,6 +554,35 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Sub ShowEdit(Parent As Window, Doc As Beacon.Document)
+		  Dim Win As New DocumentSetupWindow
+		  
+		  For I As Integer = 0 To Win.MapMenu.ListCount - 1
+		    Dim MenuMap As Beacon.Map = Win.MapMenu.RowTag(I)
+		    If MenuMap = Doc.Map Then
+		      Win.MapMenu.ListIndex = I
+		      Exit For I
+		    End If
+		  Next
+		  Win.MapMenu.Enabled = False
+		  
+		  Dim DifficultyValue As Double = Doc.DifficultyValue
+		  Dim DifficultyOffset As Double = Doc.Map.DifficultyOffset(DifficultyValue)
+		  Dim MaxDinoLevel As Integer = DifficultyValue * 30
+		  
+		  Win.DifficultyValueField.Text = DifficultyValue.PrettyText
+		  Win.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
+		  Win.MaxDinoLevelField.Text = MaxDinoLevel.ToText
+		  
+		  Win.mDoc = Doc
+		  Win.ActionButton.Caption = "Edit"
+		  Win.Title = "Edit Document Settings"
+		  
+		  Win.ShowModalWithin(Parent.TrueWindow)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Sub ShowImport(File As Global.FolderItem)
 		  Dim Win As New DocumentSetupWindow
 		  Win.ActionButton.Caption = "Import"
@@ -574,7 +603,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDoc As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mImportContent As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mImportedSources() As Beacon.LootSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -658,6 +695,35 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
+		  If Self.mDoc <> Nil Then
+		    Self.mDoc.DifficultyValue = Val(DifficultyValueField.Text)
+		    
+		    Self.Close
+		    Return
+		  End If
+		  
+		  If UBound(Self.mImportedSources) > -1 Then
+		    Dim Doc As New Beacon.Document
+		    Doc.Map = Self.SelectedMap
+		    Doc.DifficultyValue = Val(DifficultyValueField.Text)
+		    
+		    For Each Source As Beacon.LootSource In Self.mImportedSources
+		      If Source.ValidForMap(Doc.Map) Then
+		        Doc.Add(Source)
+		      End If
+		    Next
+		    If Doc.BeaconCount = 0 Then
+		      Self.ShowAlert("Nothing imported", "No loot sources were imported for the selected map.")
+		      Return
+		    End If
+		    
+		    Dim Win As New DocWindow(Doc)
+		    Win.Show
+		    
+		    Self.Close
+		    Return
+		  End If
+		  
 		  If Self.mImportContent = "" Then
 		    Dim Doc As New Beacon.Document
 		    Doc.Map = Self.SelectedMap
@@ -674,7 +740,7 @@ End
 		  Self.ImportProgress.Source = Self.mImportSource
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
 		  Self.ImportProgress.ShowWithin(Self.TrueWindow)
-		  Self.Importer.Run(Self.mImportContent, Val(DifficultyValueField.Text))
+		  Self.Importer.Run(Self.mImportContent)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -695,12 +761,47 @@ End
 		    End If
 		    
 		    Dim Sources() As Beacon.LootSource = Me.LootSources
+		    If UBound(Sources) = -1 Then
+		      Self.ShowAlert("No loot sources imported.", "The file contained no loot sources.")
+		      Return
+		    End If
+		    
+		    Dim GuessedMap As Beacon.Map = Beacon.Maps.GuessMap(Sources)
+		    If GuessedMap <> Self.SelectedMap Then
+		      Dim Dialog As New MessageDialog
+		      Dialog.Title = ""
+		      Dialog.Message = GuessedMap.Name + " may be a better map selection. Would you like to change your settings?"
+		      Dialog.Explanation = "Beacon will only import loot sources which are valid for the selected map."
+		      Dialog.ActionButton.Caption = "Change Settings"
+		      Dialog.CancelButton.Caption = "Keep Importing"
+		      Dialog.CancelButton.Visible = True
+		      
+		      Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
+		      If Choice = Dialog.ActionButton Then
+		        For I As Integer = 0 To MapMenu.ListCount - 1
+		          Dim Tag As Beacon.Map = MapMenu.RowTag(I)
+		          If Tag = GuessedMap Then
+		            MapMenu.ListIndex = I
+		          End If
+		        Next
+		        Self.mImportContent = ""
+		        Self.mImportedSources = Sources
+		        Return
+		      End If
+		    End If
+		    
 		    Dim Doc As New Beacon.Document
 		    Doc.Map = Self.SelectedMap
 		    Doc.DifficultyValue = Val(DifficultyValueField.Text)
 		    For Each Source As Beacon.LootSource In Sources
-		      Doc.Add(Source)
+		      If Source.ValidForMap(Doc.Map) Then
+		        Doc.Add(Source)
+		      End If
 		    Next
+		    If Doc.BeaconCount = 0 Then
+		      Self.ShowAlert("Nothing imported", "No loot sources were imported for the selected map.")
+		      Return
+		    End If
 		    
 		    Dim Win As New DocWindow(Doc)
 		    Win.Show

@@ -578,7 +578,7 @@ End
 		  Self.ImportProgress.Source = File.Name
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
 		  Self.ImportProgress.ShowWithin(Self)
-		  Self.Importer.Run(File, Self.Doc.DifficultyValue)
+		  Self.Importer.Run(File)
 		End Sub
 	#tag EndMethod
 
@@ -588,7 +588,7 @@ End
 		  Self.ImportProgress.Source = Source
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
 		  Self.ImportProgress.ShowWithin(Self)
-		  Self.Importer.Run(Content.ToText, Self.Doc.DifficultyValue)
+		  Self.Importer.Run(Content.ToText)
 		End Sub
 	#tag EndMethod
 
@@ -1004,6 +1004,9 @@ End
 		    End If
 		  Case "DeleteButton"
 		    Self.RemoveSelectedBeacons(True)
+		  Case "SettingsButton"
+		    DocumentSetupWindow.ShowEdit(Self, Self.Doc)
+		    Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
 		  Case "ErrorsButton"
 		    ResolveIssuesDialog.Present(Self, Self.Doc)
 		    Self.ScanForErrors()
@@ -1059,6 +1062,7 @@ End
 		  Dim AddButton As New FooterBarButton("AddButton", IconAddWithMenu)
 		  Dim EditButton As New FooterBarButton("EditButton", IconEdit)
 		  Dim DeleteButton As New FooterBarButton("DeleteButton", IconRemove)
+		  Dim SettingsButton As New FooterBarButton("SettingsButton", IconSettings, FooterBarButton.AlignRight)
 		  
 		  EditButton.Enabled = False
 		  DeleteButton.Enabled = False
@@ -1066,6 +1070,7 @@ End
 		  Me.Append(AddButton)
 		  Me.Append(EditButton)
 		  Me.Append(DeleteButton)
+		  Me.Append(SettingsButton)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

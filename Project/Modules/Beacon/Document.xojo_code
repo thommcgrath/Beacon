@@ -238,22 +238,7 @@ Implements Beacon.DocumentItem
 		  
 		  If Doc.Map = Nil Then
 		    // Let's try to figure out the map preference, it can only be island or scorched
-		    Dim Island As Beacon.Map = Beacon.Maps.TheIsland
-		    Dim Scorched As Beacon.Map = Beacon.Maps.ScorchedEarth
-		    Dim IslandScore, ScorchedScore As UInteger
-		    For Each Source As Beacon.LootSource In Doc.LootSources
-		      If Source.ValidForMap(Island) Then
-		        IslandScore = IslandScore + 1
-		      End If
-		      If Source.ValidForMap(Scorched) Then
-		        ScorchedScore = ScorchedScore + 1
-		      End If
-		    Next
-		    If ScorchedScore > IslandScore Then
-		      Doc.Map = Scorched
-		    Else
-		      Doc.Map = Island
-		    End If
+		    Doc.Map = Beacon.Maps.GuessMap(Doc.LootSources)
 		  End If
 		  
 		  Doc.mModified = Version < Beacon.Document.DocumentVersion

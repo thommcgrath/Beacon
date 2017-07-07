@@ -24,6 +24,40 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function GuessMap(Sources() As Beacon.LootSource) As Beacon.Map
+		  Dim List() As Beacon.Map = All
+		  Dim Counts As New Xojo.Core.Dictionary
+		  
+		  For Each Map As Beacon.Map In List
+		    For Each Source As Beacon.LootSource In Sources
+		      If Source.Availability = Map.Mask Then
+		        // Source is exclusive to this map, so give it a very high score
+		        Counts.Value(Map.Mask) = Counts.Lookup(Map.Mask, 0) + 100
+		      ElseIf Source.ValidForMap(Map) Then
+		        Counts.Value(Map.Mask) = Counts.Lookup(Map.Mask, 0) + 1
+		      End If
+		    Next
+		  Next
+		  
+		  Dim BestMask, MaxCount As UInteger
+		  For Each Entry As Xojo.Core.DictionaryEntry In Counts
+		    Dim Mask As UInteger = Entry.Key
+		    Dim Count As UInteger = Entry.Value
+		    
+		    If Count > MaxCount Then
+		      BestMask = Mask
+		    End If
+		  Next
+		  
+		  If BestMask = 0 Then
+		    BestMask = TheIsland.Mask
+		  End If
+		  
+		  Return ForMask(BestMask)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function Ragnarok() As Beacon.Map
 		  Return New Beacon.Map("Ragnarok", 8, 5.0)
 		End Function

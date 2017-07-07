@@ -380,7 +380,7 @@ End
 		  Self.ImportProgress.Source = Source
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
 		  Self.ImportProgress.ShowWithin(Self.TrueWindow)
-		  Self.Importer.Run(Content.ToText, 4.0)
+		  Self.Importer.Run(Content.ToText)
 		End Sub
 	#tag EndMethod
 
