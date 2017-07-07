@@ -418,7 +418,7 @@ End
 			Lines.Append("[/script/shootergame.shootergamemode]")
 			
 			For Each LootSource As Beacon.LootSource In LootSources
-			Lines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue())
+			Lines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Self.Doc.DifficultyValue))
 			Next
 			
 			Dim Stream As TextOutputStream = TextOutputStream.Create(File)
@@ -591,7 +591,7 @@ End
 		  Self.ImportProgress.Source = File.Name
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
 		  Self.ImportProgress.ShowWithin(Self)
-		  Self.Importer.Run(File)
+		  Self.Importer.Run(File, Self.Doc.DifficultyValue)
 		End Sub
 	#tag EndMethod
 
@@ -601,7 +601,7 @@ End
 		  Self.ImportProgress.Source = Source
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
 		  Self.ImportProgress.ShowWithin(Self)
-		  Self.Importer.Run(Content.ToText)
+		  Self.Importer.Run(Content.ToText, Self.Doc.DifficultyValue)
 		End Sub
 	#tag EndMethod
 
@@ -714,7 +714,7 @@ End
 		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
 		  Dim CurrentMap As Beacon.Map = Self.CurrentMap
 		  Editor.CurrentMap = CurrentMap
-		  Self.Doc.MapPreference = CurrentMap.Mask
+		  Self.Doc.Map = CurrentMap
 		  
 		  Dim Sources() As Beacon.LootSource = Self.Doc.LootSources
 		  Dim Filter As Integer = LootSourceHeader.SegmentIndex
@@ -861,7 +861,7 @@ End
 		      Dim Source As Beacon.LootSource = Me.RowTag(I)
 		      Dicts.Append(Source.Export)
 		      If Source.IsValid Then
-		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue())
+		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue(Self.Doc.DifficultyValue))
 		      End If
 		    End If
 		  Next
@@ -910,7 +910,7 @@ End
 		    
 		    Dim Sources() As Beacon.LootSource
 		    For Each Dict As Xojo.Core.Dictionary In Dicts
-		      Sources.Append(Beacon.LootSource.Import(Dict))
+		      Sources.Append(Beacon.LootSource.ImportFromBeacon(Dict))
 		    Next
 		    Self.AddLootSources(Sources)
 		  ElseIf Board.TextAvailable Then
@@ -1113,7 +1113,7 @@ End
 		Sub Open()
 		  Dim Maps() As Beacon.Map = Beacon.Maps.All
 		  For Each Map As Beacon.Map In Maps
-		    Me.AddSegment(Map.Name, Map.Mask = Self.Doc.MapPreference)
+		    Me.AddSegment(Map.Name, Map = Self.Doc.Map)
 		  Next
 		  
 		  If Me.SegmentIndex = -1 Then

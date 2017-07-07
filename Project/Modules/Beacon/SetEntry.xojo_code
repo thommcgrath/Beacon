@@ -206,35 +206,58 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range) As Beacon.SetEntry
+		Shared Function ImportFromBeacon(Dict As Xojo.Core.Dictionary) As Beacon.SetEntry
 		  Dim Entry As New Beacon.SetEntry
 		  If Dict.HasKey("EntryWeight") Then
 		    Entry.Weight = Dict.Value("EntryWeight")
-		  Else
-		    Entry.Weight = Dict.Lookup("Weight", Entry.Weight)
+		  ElseIf Dict.HasKey("Weight") Then
+		    Entry.Weight = Dict.Value("Weight")
+		  End If
+		  If Dict.HasKey("MinQuality") Then
+		    Entry.MinQuality = Beacon.Qualities.ForKey(Dict.Value("MinQuality"))
+		  End If
+		  If Dict.HasKey("MaxQuality") Then
+		    Entry.MaxQuality = Beacon.Qualities.ForKey(Dict.Value("MaxQuality"))
+		  End If
+		  If Dict.HasKey("MinQuantity") Then
+		    Entry.MinQuantity = Dict.Value("MinQuantity")
+		  End If
+		  If Dict.HasKey("MaxQuantity") Then
+		    Entry.MaxQuantity = Dict.Value("MaxQuantity")
+		  End If
+		  If Dict.HasKey("ChanceToBeBlueprintOverride") Then
+		    Entry.ChanceToBeBlueprint = Dict.Value("ChanceToBeBlueprintOverride")
+		  End If
+		  If Dict.HasKey("Items") Then
+		    Dim Children() As Auto = Dict.Value("Items")
+		    For Each Child As Xojo.Core.Dictionary In Children
+		      Entry.Append(Beacon.SetEntryOption.ImportFromBeacon(Child))
+		    Next
+		  End If
+		  Entry.mModified = False
+		  Return Entry
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range, DifficultyValue As Double) As Beacon.SetEntry
+		  Dim Entry As New Beacon.SetEntry
+		  If Dict.HasKey("EntryWeight") Then
+		    Entry.Weight = Dict.Value("EntryWeight")
 		  End If
 		  
 		  If Dict.HasKey("MinQuality") Then
-		    Dim Value As Auto = Dict.Value("MinQuality")
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		    If Info.FullName = "Text" Then
-		      Entry.MinQuality = Beacon.Qualities.ForKey(Value)
-		    Else
-		      Entry.MinQuality = Beacon.Qualities.ForValue(Value, Multipliers.Min, 1.0)
-		    End If
+		    Entry.MinQuality = Beacon.Qualities.ForValue(Dict.Value("MinQuality"), Multipliers.Min, DifficultyValue)
 		  End If
 		  If Dict.HasKey("MaxQuality") Then
-		    Dim Value As Auto = Dict.Value("MaxQuality")
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		    If Info.FullName = "Text" Then
-		      Entry.MaxQuality = Beacon.Qualities.ForKey(Value)
-		    Else
-		      Entry.MaxQuality = Beacon.Qualities.ForValue(Value, Multipliers.Max, 1.0)
-		    End If
+		    Entry.MaxQuality = Beacon.Qualities.ForValue(Dict.Value("MaxQuality"), Multipliers.Max, DifficultyValue)
 		  End If
-		  
-		  Entry.MinQuantity = Dict.Lookup("MinQuantity", Entry.MinQuantity)
-		  Entry.MaxQuantity = Dict.Lookup("MaxQuantity", Entry.MaxQuantity)
+		  If Dict.HasKey("MinQuantity") Then
+		    Entry.MinQuantity = Dict.Value("MinQuantity")
+		  End If
+		  If Dict.HasKey("MaxQuantity") Then
+		    Entry.MaxQuantity = Dict.Value("MaxQuantity")
+		  End If
 		  
 		  // If bForceBlueprint is not included or explicitly true, then force is true. This
 		  // mirrors how Ark works. If bForceBlueprint is false, then look to one of the
@@ -261,7 +284,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  
 		  Dim Engrams() As Beacon.Engram
-		  
 		  If Dict.HasKey("ItemClassStrings") Then
 		    Dim ClassStrings() As Auto = Dict.Value("ItemClassStrings")
 		    For Each ClassString As Text In ClassStrings
@@ -269,43 +291,34 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      If Engram <> Nil Then
 		        Engrams.Append(Engram)
 		      Else
-		        Break
 		        Engrams.Append(Beacon.Engram.CreateUnknownEngram(ClassString))
 		      End If
 		    Next
 		  ElseIf Dict.HasKey("Items") Then
-		    // Could be array of blueprints or from a Beacon file
-		    Dim Children() As Auto = Dict.Value("Items")
-		    For Each Child As Auto In Children
-		      Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Child)
-		      Select Case Info.FullName
-		      Case "Xojo.Core.Dictionary"
-		        Entry.Append(Beacon.SetEntryOption.Import(Child))
-		      Case "Text"
-		        Dim Value As Text = Child
-		        If Value.Length > 23 And Value.Left(23) = "BlueprintGeneratedClass" Then
-		          Value = Value.Mid(24, Value.Length - 27)
-		        ElseIf Value.Length > 9 And Value.Left(9) = "Blueprint" Then
-		          // This technically does not work, but we'll support it
-		          Value = Value.Mid(10, Value.Length - 11)
-		        Else
-		          // No idea what this says
-		          Break
-		          Continue
-		        End If
-		        
-		        Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Value)
+		    Dim Paths() As Auto = Dict.Value("Items")
+		    For Each Path As Text In Paths
+		      If Path.Length > 23 And Path.Left(23) = "BlueprintGeneratedClass" Then
+		        Path = Path.Mid(24, Path.Length - 27)
+		      ElseIf Path.Length > 9 And Path.Left(9) = "Blueprint" Then
+		        // This technically does not work, but we'll support it
+		        Path = Path.Mid(10, Path.Length - 11)
+		      Else
+		        // No idea what this says
+		        Break
+		        Continue
+		      End If
+		      
+		      Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
+		      If Engram = Nil Then
+		        // Path was not found
+		        Dim TempEngram As Beacon.Engram = Beacon.Engram.CreateUnknownEngram(Path)
+		        Engram = Beacon.Data.GetEngramByClass(TempEngram.ClassString)
 		        If Engram = Nil Then
-		          // Path was not found
-		          Dim TempEngram As Beacon.Engram = Beacon.Engram.CreateUnknownEngram(Value)
-		          Engram = Beacon.Data.GetEngramByClass(TempEngram.ClassString)
-		          If Engram = Nil Then
-		            // Didn't find it by class either
-		            Engram = TempEngram
-		          End If
+		          // Didn't find it by class either
+		          Engram = TempEngram
 		        End If
-		        Engrams.Append(Engram)
-		      End Select
+		      End If
+		      Engrams.Append(Engram)
 		    Next
 		  End If
 		  
@@ -364,14 +377,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Entries() As Beacon.SetEntry, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean) As Text
+		Shared Function Join(Entries() As Beacon.SetEntry, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean, DifficultyValue As Double) As Text
 		  Dim Values() As Text
 		  Dim SumEntryWeights As Double
 		  For Each Entry As Beacon.SetEntry In Entries
 		    SumEntryWeights = SumEntryWeights + Entry.Weight
 		  Next
 		  For Each Entry As Beacon.SetEntry In Entries
-		    Values.Append(Entry.TextValue(Multipliers, SumEntryWeights, UseBlueprints))
+		    Values.Append(Entry.TextValue(Multipliers, SumEntryWeights, UseBlueprints, DifficultyValue))
 		  Next
 		  Return Text.Join(Values, Separator)
 		End Function
@@ -522,7 +535,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range, SumEntryWeights As Double, UseBlueprints As Boolean) As Text
+		Function TextValue(Multipliers As Beacon.Range, SumEntryWeights As Double, UseBlueprints As Boolean, DifficultyValue As Double) As Text
 		  Dim Paths(), Weights(), Classes() As Text
 		  Redim Paths(UBound(Self.mOptions))
 		  Redim Weights(UBound(Self.mOptions))
@@ -538,8 +551,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Weights(I) = RelativeWeight.PrettyText
 		  Next
 		  
-		  Dim MinQuality As Double = Self.mMinQuality.Value(Multipliers.Min, 1.0)
-		  Dim MaxQuality As Double = Self.mMaxQuality.Value(Multipliers.Max, 1.0)
+		  Dim MinQuality As Double = Self.mMinQuality.Value(Multipliers.Min, DifficultyValue)
+		  Dim MaxQuality As Double = Self.mMaxQuality.Value(Multipliers.Max, DifficultyValue)
 		  Dim Chance As Double = if(Self.CanBeBlueprint, Self.mChanceToBeBlueprint, 0)
 		  Dim InverseChance As Double = 1 - Chance
 		  Dim EntryWeight As Double = Self.mWeight / SumEntryWeights

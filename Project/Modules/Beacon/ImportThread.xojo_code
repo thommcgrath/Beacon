@@ -29,7 +29,7 @@ Inherits Beacon.Thread
 		      Dim Value As Auto = Self.Import(Line)
 		      If Value IsA Beacon.Pair And Beacon.Pair(Value).Key = "ConfigOverrideSupplyCrateItems" Then
 		        Dim Dict As Xojo.Core.Dictionary = Beacon.Pair(Value).Value
-		        Dim LootSource As Beacon.LootSource = Beacon.LootSource.Import(Dict)
+		        Dim LootSource As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(Dict, Self.mDifficultyValue)
 		        If LootSource <> Nil Then
 		          LootSource.NumItemSetsPower = 1.0
 		          Self.mLootSources.Append(LootSource)
@@ -250,7 +250,7 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub Run(File As Global.FolderItem)
+		Sub Run(File As Global.FolderItem, DifficultyValue As Double)
 		  If Self.State <> Beacon.Thread.States.NotRunning Then
 		    Dim Err As New RuntimeException
 		    Err.Reason = "Importer is already running"
@@ -259,6 +259,7 @@ Inherits Beacon.Thread
 		  
 		  Dim Stream As Global.TextInputStream = Global.TextInputStream.Open(File)
 		  Self.mContent = Stream.ReadAll(Encodings.UTF8).ToText
+		  Self.mDifficultyValue = DifficultyValue
 		  Stream.Close
 		  
 		  Self.Run()
@@ -266,7 +267,7 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Run(Content As Text)
+		Sub Run(Content As Text, DifficultyValue As Double)
 		  If Self.State <> Beacon.Thread.States.NotRunning Then
 		    Dim Err As New RuntimeException
 		    Err.Reason = "Importer is already running"
@@ -274,12 +275,13 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  Self.mContent = Content
+		  Self.mDifficultyValue = DifficultyValue
 		  Self.Run()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Sub Run(File As Xojo.IO.FolderItem)
+		Sub Run(File As Xojo.IO.FolderItem, DifficultyValue As Double)
 		  If Self.State <> Beacon.Thread.States.NotRunning Then
 		    Dim Err As New RuntimeException
 		    Err.Reason = "Importer is already running"
@@ -288,6 +290,7 @@ Inherits Beacon.Thread
 		  
 		  Dim Stream As Xojo.IO.TextInputStream = Xojo.IO.TextInputStream.Open(File, Xojo.Core.TextEncoding.UTF8)
 		  Self.mContent = Stream.ReadAll
+		  Self.mDifficultyValue = DifficultyValue
 		  Stream.Close
 		  
 		  Self.Run()
@@ -306,6 +309,10 @@ Inherits Beacon.Thread
 
 	#tag Property, Flags = &h21
 		Private mContent As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDifficultyValue As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -341,6 +348,21 @@ Inherits Beacon.Thread
 			Visible=true
 			Group="ID"
 			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Priority"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="StackSize"
+			Group="Behavior"
+			Type="UInteger"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="State"
+			Group="Behavior"
+			Type="Beacon.Thread.States"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

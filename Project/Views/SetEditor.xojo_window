@@ -780,16 +780,11 @@ End
 		    Return
 		  End Try
 		  
-		  // The multipliers parameter here is 100% useless as a copied set entry will always use text
-		  // quality values and not numeric ones. But this is what the signature is, so something must
-		  // be supplied.
-		  Dim Range As New Beacon.Range(1, 1)
-		  
 		  Dim Modified As Boolean
 		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
 		  If Info.FullName = "Xojo.Core.Dictionary" Then
 		    // Single item
-		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Parsed, Range)
+		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Parsed)
 		    If Entry <> Nil Then
 		      Self.mSet.Append(Entry)
 		      Modified = True
@@ -798,7 +793,7 @@ End
 		    // Multiple items
 		    Dim Dicts() As Auto = Parsed
 		    For Each Dict As Xojo.Core.Dictionary In Dicts
-		      Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Dict, Range)
+		      Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
 		      If Entry <> Nil Then
 		        Self.mSet.Append(Entry)
 		        Modified = True

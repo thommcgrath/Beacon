@@ -21,31 +21,9 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)
-		  Dim Id As New Xojo.Core.MutableMemoryBlock(Bytes)
-		  Dim Value As UInt8
-		  
-		  Value = Id.UInt8Value(6)
-		  Value = Value And CType(&b00001111, UInt8)
-		  Value = Value Or CType(&b01000000, UInt8)
-		  Id.UInt8Value(6) = Value
-		  
-		  Value = Id.UInt8Value(8)
-		  Value = Value And CType(&b00111111, UInt8)
-		  Value = Value Or CType(&b10000000, UInt8)
-		  Id.UInt8Value(8) = Value
-		  
-		  Dim Chars() As Text
-		  For I As Integer = 0 To Id.Size - 1
-		    Chars.Append(Id.UInt8Value(I).ToHex(2))
-		  Next
-		  
-		  Chars.Insert(10, "-")
-		  Chars.Insert( 8, "-")
-		  Chars.Insert( 6, "-")
-		  Chars.Insert( 4, "-")
-		  
 		  Self.mIdentifier = Beacon.CreateUUID
+		  Self.mDifficultyValue = 4.0
+		  Self.mMap = Beacon.Maps.TheIsland
 		End Sub
 	#tag EndMethod
 
@@ -66,13 +44,13 @@ Implements Beacon.DocumentItem
 		  
 		  Dim Document As New Xojo.Core.Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
-		  Document.Value("Identifier") = Self.mIdentifier
+		  Document.Value("Identifier") = Self.Identifier
 		  Document.Value("LootSources") = LootSources
 		  Document.Value("Title") = Self.Title
 		  Document.Value("Description") = Self.Description
 		  Document.Value("Public") = Self.IsPublic
-		  Document.Value("MapPreference") = Self.MapPreference
-		  
+		  Document.Value("Map") = Self.Map.Mask
+		  Document.Value("DifficultyValue") = Self.DifficultyValue
 		  Return Document
 		End Function
 	#tag EndMethod
@@ -200,8 +178,15 @@ Implements Beacon.DocumentItem
 		      If Dict.HasKey("Public") Then
 		        Doc.mIsPublic = Dict.Value("Public")
 		      End If
-		      If Dict.HasKey("MapPreference") Then
-		        Doc.MapPreference = Dict.Value("MapPreference")
+		      If Dict.HasKey("Map") Then
+		        Doc.Map = Beacon.Maps.ForMask(Dict.Value("Map"))
+		      ElseIf Dict.HasKey("MapPreference") Then
+		        Doc.Map = Beacon.Maps.ForMask(Dict.Value("MapPreference"))
+		      Else
+		        Doc.mMap = Nil
+		      End If
+		      If Dict.HasKey("DifficultyValue") Then
+		        Doc.DifficultyValue = Dict.Value("DifficultyValue")
 		      End If
 		    Catch Err As RuntimeException
 		      // Likely a KeyNotFoundException or TypeMismatchException, either way, we can't handle it
@@ -221,7 +206,7 @@ Implements Beacon.DocumentItem
 		    Presets = Beacon.Data.Presets
 		  End If
 		  For Each LootSource As Xojo.Core.Dictionary In LootSources
-		    Dim Source As Beacon.LootSource = Beacon.LootSource.Import(LootSource)
+		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(LootSource)
 		    If Source <> Nil Then
 		      If Version < 2 Then
 		        // Match item set names to presets
@@ -251,7 +236,7 @@ Implements Beacon.DocumentItem
 		    End If
 		  Next
 		  
-		  If Doc.MapPreference = 0 Then
+		  If Doc.Map = Nil Then
 		    // Let's try to figure out the map preference, it can only be island or scorched
 		    Dim Island As Beacon.Map = Beacon.Maps.TheIsland
 		    Dim Scorched As Beacon.Map = Beacon.Maps.ScorchedEarth
@@ -265,9 +250,9 @@ Implements Beacon.DocumentItem
 		      End If
 		    Next
 		    If ScorchedScore > IslandScore Then
-		      Doc.MapPreference = Scorched.Mask
+		      Doc.Map = Scorched
 		    Else
-		      Doc.MapPreference = Island.Mask
+		      Doc.Map = Island
 		    End If
 		  End If
 		  
@@ -324,6 +309,26 @@ Implements Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mDifficultyValue
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Value = Max(Value, 0.5)
+			  If Self.mDifficultyValue = Value Then
+			    Return
+			  End If
+			  
+			  Self.mModified = True
+			  Self.mDifficultyValue = Value
+			End Set
+		#tag EndSetter
+		DifficultyValue As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mIsPublic
 			End Get
 		#tag EndGetter
@@ -340,12 +345,35 @@ Implements Beacon.DocumentItem
 		IsPublic As Boolean
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h0
-		MapPreference As UInteger
-	#tag EndProperty
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mMap
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value = Nil Then
+			    Return
+			  End If
+			  
+			  If Self.mMap = Value Then
+			    Return
+			  End If
+			  
+			  Self.mModified = True
+			  Self.mMap = Value
+			End Set
+		#tag EndSetter
+		Map As Beacon.Map
+	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mDescription As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDifficultyValue As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -358,6 +386,10 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mLootSources() As Beacon.LootSource
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMap As Beacon.Map
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

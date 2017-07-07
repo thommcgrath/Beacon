@@ -64,7 +64,7 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.SetEntryOption
+		Shared Function ImportFromBeacon(Dict As Xojo.Core.Dictionary) As Beacon.SetEntryOption
 		  Dim Weight As Double = Dict.Value("Weight")
 		  Dim Engram, BackupEngram As Beacon.Engram
 		  

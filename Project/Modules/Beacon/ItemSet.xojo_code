@@ -152,20 +152,26 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Xojo.Core.Dictionary, Source As Beacon.LootSource) As Beacon.ItemSet
+		Shared Function ImportFromBeacon(Dict As Xojo.Core.Dictionary) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
-		  Set.MinNumItems = Dict.Lookup("MinNumItems", Set.MinNumItems)
-		  Set.MaxNumItems = Dict.Lookup("MaxNumItems", Set.MaxNumItems)
-		  Set.NumItemsPower = Dict.Lookup("NumItemsPower", Set.NumItemsPower)
+		  If Dict.HasKey("MinNumItems") Then
+		    Set.MinNumItems = Dict.Value("MinNumItems")
+		  End If
+		  If Dict.HasKey("MaxNumItems") Then
+		    Set.MaxNumItems = Dict.Value("MaxNumItems")
+		  End If
+		  If Dict.HasKey("NumItemsPower") Then
+		    Set.NumItemsPower = Dict.Value("NumItemsPower")
+		  End If
 		  If Dict.HasKey("SetWeight") Then
 		    Set.Weight = Dict.Value("SetWeight")
-		  Else
-		    Set.Weight = Dict.Lookup("Weight", Set.Weight)
+		  ElseIf Dict.HasKey("Weight") Then
+		    Set.Weight = Dict.Value("Weight")
 		  End If
 		  If Dict.HasKey("bItemsRandomWithoutReplacement") Then
 		    Set.ItemsRandomWithoutReplacement = Dict.Value("bItemsRandomWithoutReplacement")
-		  Else
-		    Set.ItemsRandomWithoutReplacement = Dict.Lookup("ItemsRandomWithoutReplacement", Set.ItemsRandomWithoutReplacement)
+		  ElseIf Dict.HasKey("ItemsRandomWithoutReplacement") Then
+		    Set.ItemsRandomWithoutReplacement = Dict.Value("ItemsRandomWithoutReplacement")
 		  End If
 		  If Dict.HasKey("Label") Then
 		    Set.Label = Dict.Value("Label")
@@ -176,11 +182,53 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim Children() As Auto
 		  If Dict.HasKey("ItemEntries") Then
 		    Children = Dict.Value("ItemEntries")
-		  Else
+		  ElseIf Dict.HasKey("Items") Then
 		    Children = Dict.Value("Items")
 		  End If
 		  For Each Child As Xojo.Core.Dictionary In Children
-		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Child, Source.Multipliers)
+		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Child)
+		    If Entry <> Nil Then
+		      Set.Append(Entry)
+		    End If
+		  Next
+		  
+		  If Dict.HasKey("SourcePresetID") Then
+		    Set.mSourcePresetID = Dict.Value("SourcePresetID")
+		  End If
+		  
+		  Set.mModified = False
+		  Return Set
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range, DifficultyValue As Double) As Beacon.ItemSet
+		  Dim Set As New Beacon.ItemSet
+		  If Dict.HasKey("MinNumItems") Then
+		    Set.MinNumItems = Dict.Value("MinNumItems")
+		  End If
+		  If Dict.HasKey("MaxNumItems") Then
+		    Set.MaxNumItems = Dict.Value("MaxNumItems")
+		  End If
+		  If Dict.HasKey("NumItemsPower") Then
+		    Set.NumItemsPower = Dict.Value("NumItemsPower")
+		  End If
+		  If Dict.HasKey("SetWeight") Then
+		    Set.Weight = Dict.Value("SetWeight")
+		  End If
+		  If Dict.HasKey("bItemsRandomWithoutReplacement") Then
+		    Set.ItemsRandomWithoutReplacement = Dict.Value("bItemsRandomWithoutReplacement")
+		  End If
+		  If Dict.HasKey("SetName") Then
+		    Set.Label = Dict.Value("SetName")
+		  End If
+		  
+		  Dim Children() As Auto
+		  If Dict.HasKey("ItemEntries") Then
+		    Children = Dict.Value("ItemEntries")
+		  End If
+		  For Each Child As Xojo.Core.Dictionary In Children
+		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromConfig(Child, Multipliers, DifficultyValue)
 		    If Entry <> Nil Then
 		      Set.Append(Entry)
 		    End If
@@ -225,7 +273,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Sets() As Beacon.ItemSet, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean) As Text
+		Shared Function Join(Sets() As Beacon.ItemSet, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean, DifficultyValue As Double) As Text
 		  Dim SumSetWeights As Double
 		  For Each Set As Beacon.ItemSet In Sets
 		    SumSetWeights = SumSetWeights + Set.Weight
@@ -233,7 +281,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  Dim Values() As Text
 		  For Each Set As Beacon.ItemSet In Sets
-		    Values.Append(Set.TextValue(Multipliers, SumSetWeights, UseBlueprints))
+		    Values.Append(Set.TextValue(Multipliers, SumSetWeights, UseBlueprints, DifficultyValue))
 		  Next
 		  
 		  Return Text.Join(Values, Separator)
@@ -328,19 +376,18 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range, SumSetWeights As Double, UseBlueprints As Boolean) As Text
+		Function TextValue(Multipliers As Beacon.Range, SumSetWeights As Double, UseBlueprints As Boolean, DifficultyValue As Double) As Text
 		  Dim SetWeight As Double = Self.mSetWeight / SumSetWeights
 		  Dim MinItems As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMinNumItems, Self.Count), 0)
 		  Dim MaxItems As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMaxNumItems, Self.Count), 0)
 		  
 		  Dim Values() As Text
-		  Values.Append("SetName=""" + Self.mLabel + """")
 		  Values.Append("MinNumItems=" + MinItems.ToText)
 		  Values.Append("MaxNumItems=" + MaxItems.ToText)
 		  Values.Append("NumItemsPower=" + Self.mNumItemsPower.PrettyText)
 		  Values.Append("SetWeight=" + SetWeight.PrettyText)
 		  Values.Append("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("ItemEntries=(" + Beacon.SetEntry.Join(Self.mEntries, ",", Multipliers, UseBlueprints) + ")")
+		  Values.Append("ItemEntries=(" + Beacon.SetEntry.Join(Self.mEntries, ",", Multipliers, UseBlueprints, DifficultyValue) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod

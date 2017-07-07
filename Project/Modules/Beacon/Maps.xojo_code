@@ -13,6 +13,17 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ForMask(Mask As UInteger) As Beacon.Map
+		  Dim List() As Beacon.Map = All
+		  For Each Map As Beacon.Map In List
+		    If Map.Mask = Mask Then
+		      Return Map
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function Ragnarok() As Beacon.Map
 		  Return New Beacon.Map("Ragnarok", 8)
 		End Function
