@@ -21,7 +21,7 @@ Begin BeaconWindow DocWindow
    MinHeight       =   580
    MinimizeButton  =   True
    MinWidth        =   1100
-   Placement       =   0
+   Placement       =   2
    Resizeable      =   True
    Title           =   "Untitled Document"
    Visible         =   True
@@ -531,7 +531,7 @@ End
 		  Super.Constructor
 		  Self.DocumentCounter = Self.DocumentCounter + 1
 		  Self.Title = "Untitled " + Str(Self.DocumentCounter, "-0")
-		  Self.ContentsChanged = True
+		  Self.ContentsChanged = False
 		  
 		End Sub
 	#tag EndMethod
@@ -990,7 +990,7 @@ End
 		  Case "DeleteButton"
 		    Self.RemoveSelectedBeacons(True)
 		  Case "SettingsButton"
-		    Call DocumentSetupWindow.ShowEdit(Self.Doc)
+		    DocumentSetupSheet.ShowEdit(Self, Self.Doc)
 		    Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
 		  Case "ErrorsButton"
 		    ResolveIssuesDialog.Present(Self, Self.Doc)

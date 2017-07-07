@@ -47,7 +47,7 @@ Inherits Application
 
 	#tag Event
 		Sub NewDocument()
-		  DocumentSetupWindow.ShowCreate()
+		  DocumentSetupDialog.ShowCreate()
 		End Sub
 	#tag EndEvent
 
@@ -181,7 +181,7 @@ Inherits Application
 		  End If
 		  
 		  If Item.IsType(BeaconFileTypes.IniFile) Then
-		    DocumentSetupWindow.ShowImport(Item)
+		    DocumentSetupDialog.ShowImport(Item)
 		    Return
 		  End If
 		  
