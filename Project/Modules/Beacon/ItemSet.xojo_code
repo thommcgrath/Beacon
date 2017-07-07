@@ -382,6 +382,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim MaxItems As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMaxNumItems, Self.Count), 0)
 		  
 		  Dim Values() As Text
+		  Values.Append("SetName=""" + Self.Label + """")
 		  Values.Append("MinNumItems=" + MinItems.ToText)
 		  Values.Append("MaxNumItems=" + MaxItems.ToText)
 		  Values.Append("NumItemsPower=" + Self.mNumItemsPower.PrettyText)
