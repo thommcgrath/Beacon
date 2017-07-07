@@ -717,7 +717,6 @@ End
 		  Self.Doc.Map = CurrentMap
 		  
 		  Dim Sources() As Beacon.LootSource = Self.Doc.LootSources
-		  Dim Filter As Integer = LootSourceHeader.SegmentIndex
 		  Dim VisibleSources() As Beacon.LootSource
 		  For Each Source As Beacon.LootSource In Sources
 		    If Source.ValidForMap(CurrentMap) Then

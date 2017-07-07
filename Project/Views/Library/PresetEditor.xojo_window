@@ -417,6 +417,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Preset Name:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -451,6 +452,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Group:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -485,6 +487,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   4
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Min Items:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -519,6 +522,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   6
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Max Items:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -624,6 +628,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Adjust Quality By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -658,6 +663,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Tiers"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -735,6 +741,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -840,6 +847,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Adjust Quality By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -874,6 +882,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Tiers"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -951,6 +960,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1056,6 +1066,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Adjust Quality By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1090,6 +1101,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Tiers"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -1167,6 +1179,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1272,6 +1285,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Adjust Quality By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1306,6 +1320,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Tiers"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -1383,6 +1398,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1651,6 +1667,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
 		  Dim Item As MenuItem
 		  
 		  Item = New MenuItem

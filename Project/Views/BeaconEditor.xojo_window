@@ -832,6 +832,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, ByRef TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		  #Pragma Unused Column
+		  #Pragma Unused DrawSpace
+		  #Pragma Unused VerticalPosition
+		  
 		  Dim Set As Beacon.ItemSet = Me.RowTag(Row)
 		  If Not Set.IsValid Then
 		    TextColor = BeaconUI.TextColorForInvalidRow(IsHighlighted, Me.Selected(Row))
@@ -841,6 +845,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean) As Boolean
+		  #Pragma Unused BackgroundColor
+		  #Pragma Unused TextColor
+		  
 		  If Column <> 0 Or Row >= Me.ListCount Then
 		    Return False
 		  End If

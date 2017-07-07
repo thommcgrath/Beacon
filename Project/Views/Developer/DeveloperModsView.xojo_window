@@ -205,6 +205,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Shown(UserData As Auto = Nil)
+		  #Pragma Unused UserData
+		  
 		  If Self.mReady Then
 		    Self.RefreshMods()
 		  End If

@@ -217,6 +217,7 @@ Begin Window EntryEditor
          HasBackColor    =   False
          Height          =   175
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   372
          LockBottom      =   True
@@ -450,7 +451,6 @@ End
 		  End If
 		  
 		  Dim Win As New EntryEditor
-		  Dim Entry As Beacon.SetEntry
 		  
 		  If Sources <> Nil And UBound(Sources) = 0 Then
 		    Win.mOriginalEntry = New Beacon.SetEntry(Sources(0))

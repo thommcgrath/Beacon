@@ -119,6 +119,7 @@ Begin BeaconSubview LibraryEngramsView
       Width           =   130
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -213,6 +214,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Shown(UserData As Auto = Nil)
+		  #Pragma Unused UserData
+		  
 		  Self.RebuildList()
 		End Sub
 	#tag EndEvent
