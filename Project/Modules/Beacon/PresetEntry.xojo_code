@@ -103,7 +103,7 @@ Inherits Beacon.SetEntry
 
 	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Beacon.Map) As Boolean
-		  Return Map.Matches(Self.mAvailability)
+		  Return Map = Nil Or Map.Matches(Self.mAvailability)
 		End Function
 	#tag EndMethod
 

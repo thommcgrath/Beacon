@@ -73,6 +73,12 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function IsValid() As Boolean
+		  If Self.Map = Nil Then
+		    Return False
+		  End If
+		  If Self.DifficultyValue = -1 Then
+		    Return False
+		  End If
 		  For Each Source As Beacon.LootSource In Self.mLootSources
 		    If Not Source.IsValid Then
 		      Return False
@@ -413,6 +419,11 @@ Implements Beacon.DocumentItem
 			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="DifficultyValue"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -430,11 +441,6 @@ Implements Beacon.DocumentItem
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="MapPreference"
-			Group="Behavior"
-			Type="UInteger"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"

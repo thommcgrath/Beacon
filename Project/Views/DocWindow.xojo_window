@@ -115,7 +115,6 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -162,7 +161,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -204,7 +202,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -550,14 +547,6 @@ End
 		  Self.Title = File.Name
 		  Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
 		  
-		  If Doc.Map = Nil Or Doc.DifficultyValue = -1 Then
-		    // We need the document settings
-		    If Not DocumentSetupWindow.ShowEdit(Self.Doc) Then
-		      Self.Close
-		      Return
-		    End If
-		  End If
-		  
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -702,7 +691,7 @@ End
 		  Dim Sources() As Beacon.LootSource = Self.Doc.LootSources
 		  Dim VisibleSources() As Beacon.LootSource
 		  For Each Source As Beacon.LootSource In Sources
-		    If Source.ValidForMap(CurrentMap) Then
+		    If CurrentMap = Nil Or Source.ValidForMap(CurrentMap) Then
 		      VisibleSources.Append(Source)
 		    End If
 		  Next
