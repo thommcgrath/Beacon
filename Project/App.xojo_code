@@ -47,8 +47,7 @@ Inherits Application
 
 	#tag Event
 		Sub NewDocument()
-		  Dim Win As New DocWindow
-		  Win.Show
+		  DocumentSetupWindow.ShowCreate()
 		End Sub
 	#tag EndEvent
 
@@ -181,7 +180,12 @@ Inherits Application
 		    Return
 		  End If
 		  
-		  If Item.IsType(BeaconFileTypes.BeaconDocument) Or Item.IsType(BeaconFileTypes.IniFile) Then
+		  If Item.IsType(BeaconFileTypes.IniFile) Then
+		    DocumentSetupWindow.ShowImport(Item)
+		    Return
+		  End If
+		  
+		  If Item.IsType(BeaconFileTypes.BeaconDocument) Then
 		    For I As Integer = 0 To WindowCount - 1
 		      If Window(I) IsA DocWindow And DocWindow(Window(I)).MatchesFile(Item) Then
 		        Window(I).Show

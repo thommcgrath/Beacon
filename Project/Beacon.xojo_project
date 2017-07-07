@@ -145,6 +145,7 @@ MultiImage=IconLootStandard;Icons/IconLootStandard.xojo_image;&h40C5E7FF;&h7F977
 Class=LinkLabel;Custom Controls/LinkLabel.xojo_code;&h381447FF;&h30DCFFFF;false
 Class=Quality;Modules/Beacon/Quality.xojo_code;&h3D5447FF;&h55ADDFFF;false
 Module=Qualities;Modules/Beacon/Qualities.xojo_code;&h36B37FF;&h55ADDFFF;false
+Window=DocumentSetupWindow;Views/DocumentSetupWindow.xojo_window;&h64807FF;&h8A387FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

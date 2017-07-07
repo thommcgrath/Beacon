@@ -25,25 +25,25 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function Ragnarok() As Beacon.Map
-		  Return New Beacon.Map("Ragnarok", 8)
+		  Return New Beacon.Map("Ragnarok", 8, 5.0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function ScorchedEarth() As Beacon.Map
-		  Return New Beacon.Map("Scorched Earth", 2)
+		  Return New Beacon.Map("Scorched Earth", 2, 5.0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function TheCenter() As Beacon.Map
-		  Return New Beacon.Map("The Center", 4)
+		  Return New Beacon.Map("The Center", 4, 5.0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function TheIsland() As Beacon.Map
-		  Return New Beacon.Map("The Island", 1)
+		  Return New Beacon.Map("The Island", 1, 4.0)
 		End Function
 	#tag EndMethod
 

@@ -115,7 +115,6 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -162,7 +161,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -204,7 +202,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -472,11 +469,7 @@ End
 		    End If
 		    Self.ContentsChanged = True
 		  Next
-		  ChangeView = ChangeView And Self.LootSourceHeader.SegmentIndex <> 0
 		  
-		  If ChangeView Then
-		    Self.LootSourceHeader.SegmentIndex = 0
-		  End If
 		  Self.UpdateSourceList(Sources)
 		End Sub
 	#tag EndMethod
@@ -575,13 +568,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function CurrentMap() As Beacon.Map
-		  Dim MapName As Text = Self.LootSourceHeader.CurrentSegment
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
-		  For Each Map As Beacon.Map In Maps
-		    If Map.Name = MapName Then
-		      Return Map
-		    End If
-		  Next
+		  Return Self.Doc.Map
 		End Function
 	#tag EndMethod
 
@@ -1109,27 +1096,10 @@ End
 #tag EndEvents
 #tag Events LootSourceHeader
 	#tag Event
-		Sub Open()
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
-		  For Each Map As Beacon.Map In Maps
-		    Me.AddSegment(Map.Name, Map = Self.Doc.Map)
-		  Next
-		  
-		  If Me.SegmentIndex = -1 Then
-		    Me.SegmentIndex = 0
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub Resize(NewSize As Integer)
 		  Me.Height = NewSize
 		  BeaconList.Top = NewSize
 		  BeaconList.Height = Footer.Top - NewSize
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub SegmentChange()
-		  Self.UpdateSourceList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
