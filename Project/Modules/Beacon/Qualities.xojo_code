@@ -59,55 +59,55 @@ Protected Module Qualities
 
 	#tag Method, Flags = &h1
 		Protected Function Tier1() As Beacon.Quality
-		  Return New Beacon.Quality(0, "Tier1")
+		  Return New Beacon.Quality(0.0, "Tier1")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Tier2() As Beacon.Quality
-		  Return New Beacon.Quality(5, "Tier2")
+		  Return New Beacon.Quality(4.0, "Tier2")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Tier3() As Beacon.Quality
-		  Return New Beacon.Quality(8, "Tier3")
+		  Return New Beacon.Quality(6.4, "Tier3")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Tier4() As Beacon.Quality
-		  Return New Beacon.Quality(15, "Tier4")
+		  Return New Beacon.Quality(12.0, "Tier4")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Tier5() As Beacon.Quality
-		  Return New Beacon.Quality(22, "Tier5")
+		  Return New Beacon.Quality(17.6, "Tier5")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Tier6() As Beacon.Quality
-		  Return New Beacon.Quality(28, "Tier6")
+		  Return New Beacon.Quality(22.4, "Tier6")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Tier7() As Beacon.Quality
-		  Return New Beacon.Quality(36, "Tier7")
+		  Return New Beacon.Quality(28.8, "Tier7")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Tier8() As Beacon.Quality
-		  Return New Beacon.Quality(44, "Tier8")
+		  Return New Beacon.Quality(35.2, "Tier8")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Tier9() As Beacon.Quality
-		  Return New Beacon.Quality(56, "Tier9")
+		  Return New Beacon.Quality(44.8, "Tier9")
 		End Function
 	#tag EndMethod
 
