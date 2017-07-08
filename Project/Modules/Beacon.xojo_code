@@ -47,11 +47,18 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function DecodeHex(Source As Text) As Xojo.Core.MemoryBlock
+		  Dim Mem As MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source)
+		  Dim Size As UInt64 = Mem.Size\2-1
+		  Static Lookup() As Integer = Array(0,1,2,3,4,5,6,7,8,9,_
+		  0,0,0,0,0,0,0,10,11,12,13,14,15,0,0,0,0,0,0,0,0,0,0,_
+		  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,12,13,14,15)
 		  Dim Bytes() As UInt8
-		  For I As Integer = 0 To Source.Length - 2 Step 2
-		    Dim Value As UInt8 = UInt8.FromHex(Source.Mid(I, 2))
-		    Bytes.Append(Value)
+		  Redim Bytes(Size)
+		  For I As UInt64 = 0 To Size
+		    Dim Index As UInt64 = I + I
+		    Bytes(I) = (Lookup(Mem.UInt8Value(Index) - 48) * 16) + Lookup(Mem.UInt8Value(Index + 1) - 48)
 		  Next
+		  
 		  Return New Xojo.Core.MemoryBlock(Bytes)
 		End Function
 	#tag EndMethod
