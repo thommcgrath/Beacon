@@ -53,8 +53,9 @@ Inherits Beacon.Thread
 		  
 		  Dim Mem As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(JSON)
 		  Dim Bound As UInteger = Mem.Size - 1
+		  Dim Pointer As Ptr = Mem.Data
 		  For Offset As UInteger = 0 To Bound
-		    Dim Char As UInt8 = Mem.UInt8Value(Offset)
+		    Dim Char As UInt8 = Pointer.UInt8(Offset)
 		    
 		    If AddAsIs Then
 		      Bytes.Append(Char)
