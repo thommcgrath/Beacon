@@ -719,14 +719,12 @@ End
 	#tag Event
 		Sub Action()
 		  If Self.mDoc <> Nil Then
-		    Self.mDoc.DifficultyValue = Val(DifficultyValueField.Text)
-		    
 		    If MapMenu.Enabled Then
-		      Self.mDoc.Map = Self.SelectedMap
+		      Dim Map As Beacon.Map = Self.SelectedMap
 		      Dim Sources() As Beacon.LootSource = Self.mDoc.LootSources
 		      Dim ValidCount As Integer
 		      For Each Source As Beacon.LootSource In Sources
-		        If Source.ValidForMap(Self.mDoc.Map) Then
+		        If Source.ValidForMap(Map) Then
 		          ValidCount = ValidCount + 1
 		        End If
 		      Next
@@ -736,12 +734,22 @@ End
 		        Return
 		      End If
 		      
+		      If ValidCount <> Self.mDoc.BeaconCount Then
+		        Dim DropCount As Integer = Self.mDoc.BeaconCount - ValidCount
+		        If Not Self.ShowConfirm(DropCount.ToText + " " + if(DropCount = 1, "loot source", "loot sources") + " are not compatible and will be removed.", "The loot sources are not valid for the selected map. If you want to keep these loot sources, cancel now and copy them into a new document.", "Remove", "Cancel") Then
+		          Return
+		        End If
+		      End If
+		      
+		      Self.mDoc.Map = Map
 		      For Each Source As Beacon.LootSource In Sources
-		        If Not Source.ValidForMap(Self.mDoc.Map) Then
+		        If Not Source.ValidForMap(Map) Then
 		          Self.mDoc.Remove(Source)
 		        End If
 		      Next
 		    End
+		    
+		    Self.mDoc.DifficultyValue = Val(DifficultyValueField.Text)
 		    
 		    RaiseEvent ShouldClose
 		    Return

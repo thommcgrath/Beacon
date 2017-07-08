@@ -450,27 +450,38 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub AddLootSources(Sources() As Beacon.LootSource)
-		  If UBound(Sources) = -1 Then
+		Private Sub AddLootSources(Sources() As Beacon.LootSource, Silent As Boolean = False)
+		  If Sources.Ubound = -1 Then
 		    Return
 		  End If
 		  
 		  Dim CurrentMap As Beacon.Map = Self.CurrentMap
+		  Dim IgnoredSources() As Beacon.LootSource
 		  
-		  Dim ChangeView As Boolean
 		  For Each Source As Beacon.LootSource In Sources
 		    If Self.Doc.HasLootSource(Source) Then
 		      Self.Doc.Remove(Source)
 		    End If
-		    Self.Doc.Add(Source)
 		    
-		    If CurrentMap <> Nil And Not Source.ValidForMap(CurrentMap) Then
-		      ChangeView = True
+		    If CurrentMap = Nil Or Source.ValidForMap(CurrentMap) Then
+		      Self.Doc.Add(Source)
+		    Else
+		      IgnoredSources.Append(Source)
 		    End If
 		    Self.ContentsChanged = True
 		  Next
 		  
 		  Self.UpdateSourceList(Sources)
+		  
+		  If IgnoredSources.Ubound > -1 And Not Silent Then
+		    Dim SourcesList() As Text
+		    For Each IgnoredSource As Beacon.LootSource In IgnoredSources
+		      SourcesList.Append(IgnoredSource.Label)
+		    Next
+		    
+		    Dim IgnoredCount As Integer = IgnoredSources.Ubound + 1
+		    Self.ShowAlert(IgnoredCount.ToText + if(IgnoredCount = 1, " loot source was", " loot sources were") + " not added because " + if(IgnoredCount = 1, "it is", "they are") + " not compatible with " + if(CurrentMap <> Nil, CurrentMap.Name, "the current map") + ".", "The following " + if(IgnoredCount = 1, "loot source was", "loot sources were") + " skipped: " + Text.Join(SourcesList, ", "))
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1071,9 +1082,7 @@ End
 		    Dim LootSources() As Beacon.LootSource = Me.LootSources
 		    Me.Reset
 		    
-		    For Each LootSource As Beacon.LootSource In LootSources
-		      Self.AddLootSource(LootSource)
-		    Next
+		    Self.AddLootSources(LootSources)
 		    Return
 		  End If
 		  
