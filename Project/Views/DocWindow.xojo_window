@@ -749,13 +749,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub WarnFailedWrite()
+		  Self.ContentsChanged = True
+		  Self.ShowAlert("File did not save", "It may be locked or in use.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub WriterFinished(Sender As Beacon.JSONWriter)
 		  If Sender.Success Then
 		    Return
 		  End If
 		  
-		  Self.ContentsChanged = True
-		  Self.ShowAlert("File did not save", "It may be locked or in use.")
+		  Xojo.Core.Timer.CallLater(1, AddressOf WarnFailedWrite)
 		End Sub
 	#tag EndMethod
 
