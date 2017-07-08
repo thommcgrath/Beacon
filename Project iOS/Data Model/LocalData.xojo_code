@@ -735,11 +735,6 @@ Implements Beacon.DataSource
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mBase"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
