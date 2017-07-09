@@ -405,23 +405,92 @@ End
 			Return True
 			End If
 			
+			Dim UpdateOrCreateDialog As New MessageDialog
+			UpdateOrCreateDialog.Title = ""
+			UpdateOrCreateDialog.Message = "Would you like to update an existing config file or create a new one?"
+			UpdateOrCreateDialog.Explanation = "Pressing ""Update"" will allow ask you to select an ini file, and Beacon will add or replace the ConfigOverrideSupplyCrateItems as necessary. Press ""Create"" to create a new ini file."
+			UpdateOrCreateDialog.ActionButton.Caption = "Create"
+			UpdateOrCreateDialog.AlternateActionButton.Caption = "Update"
+			UpdateOrCreateDialog.CancelButton.Visible = True
+			UpdateOrCreateDialog.AlternateActionButton.Visible = True
+			
+			Dim File As FolderItem
+			Dim OriginalContent As String
+			Dim EOL As String = EndOfLine
+			Select Case UpdateOrCreateDialog.ShowModalWithin(Self)
+			Case UpdateOrCreateDialog.ActionButton
 			Dim Dialog As New SaveAsDialog
 			Dialog.SuggestedFileName = "Game.ini"
 			Dialog.Filter = BeaconFileTypes.IniFile
 			
-			Dim File As FolderItem = Dialog.ShowModalWithin(Self)
-			If File <> Nil Then
-			Dim Lines() As String
-			Lines.Append("[/script/shootergame.shootergamemode]")
+			File = Dialog.ShowModalWithin(Self)
+			If File = Nil Then
+			Return True
+			End If
+			Case UpdateOrCreateDialog.AlternateActionButton
+			Dim Dialog As New OpenDialog
+			Dialog.SuggestedFileName = "Game.ini"
+			Dialog.Filter = BeaconFileTypes.IniFile
 			
-			For Each LootSource As Beacon.LootSource In LootSources
-			Lines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Self.Doc.DifficultyValue))
+			File = Dialog.ShowModalWithin(Self)
+			If File = Nil Then
+			Return True
+			End If
+			
+			Dim InStream As TextInputStream = TextInputStream.Open(File)
+			OriginalContent = ReplaceLineEndings(InStream.ReadAll(Encodings.UTF8), EOL)
+			InStream.Close
+			End Select
+			
+			Dim Lines() As String = OriginalContent.Split(EOL)
+			For I As Integer = Lines.Ubound DownTo 0
+			If Lines(I).Left(31) = "ConfigOverrideSupplyCrateItems=" Then
+			Lines.Remove(I)
+			End If
 			Next
 			
-			Dim Stream As TextOutputStream = TextOutputStream.Create(File)
-			Stream.Write(Join(Lines, EndOfLine))
-			Stream.Close
+			Dim PrefixLines(), SectionLines(), SuffixLines() As String
+			Dim PrefixMode As Boolean = True
+			Dim SectionMode As Boolean = False
+			Dim SuffixMode As Boolean = False
+			For I As Integer = 0 To Lines.Ubound
+			If Lines(I) = "[/script/shootergame.shootergamemode]" Then
+			PrefixMode = False
+			SectionMode = True
+			SuffixMode = False
+			PrefixLines.Append(Lines(I))
+			ElseIf Lines(I).Left(1) = "[" And Lines(I).Right(1) = "]" And SectionMode = True Then
+			PrefixMode = False
+			SectionMode = False
+			SuffixMode = True
+			SuffixLines.Append(Lines(I))
+			Else
+			If PrefixMode Then
+			PrefixLines.Append(Lines(I))
+			ElseIf SectionMode Then
+			SectionLines.Append(Lines(I))
+			ElseIf SuffixMode Then
+			SuffixLines.Append(Lines(I))
 			End If
+			End If
+			Next
+			
+			If PrefixMode Then
+			// Section is not included in the file
+			PrefixLines.Append("")
+			PrefixLines.Append("[/script/shootergame.shootergamemode]")
+			End If
+			
+			For Each LootSource As Beacon.LootSource In LootSources
+			SectionLines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Self.Doc.DifficultyValue))
+			Next
+			
+			Dim UpdatedContent As String = Join(PrefixLines, EOL).Trim + EOL + Join(SectionLines, EOL).Trim + if(SuffixLines.Ubound > -1, EOL + EOL, "") + Join(SuffixLines, EOL).Trim
+			
+			Dim OutStream As TextOutputStream = TextOutputStream.Create(File)
+			OutStream.Write(UpdatedContent)
+			OutStream.Close
+			
 			Return True
 		End Function
 	#tag EndMenuHandler

@@ -42,7 +42,7 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function JSONPrettyPrint(json As Text) As Text
+		Private Shared Function JSONPrettyPrint(JSON As Text) As Text
 		  Const Indent = &h09
 		  Const EndOfLine = &h0A
 		  
