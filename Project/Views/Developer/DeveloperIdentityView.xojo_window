@@ -351,7 +351,7 @@ Begin BeaconSubview DeveloperIdentityView
          Width           =   330
       End
    End
-   Begin TextField UserIDField
+   Begin UITweaks.ResizedTextField UserIDField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
@@ -418,6 +418,8 @@ End
 
 	#tag Event
 		Sub Shown(UserData As Auto = Nil)
+		  #Pragma Unused UserData
+		  
 		  Self.UpdateUI(App.Identity)
 		End Sub
 	#tag EndEvent

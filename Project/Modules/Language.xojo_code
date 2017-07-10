@@ -1,26 +1,26 @@
 #tag Module
 Protected Module Language
 	#tag Method, Flags = &h1
-		Protected Function LabelForQuality(Quality As Beacon.Qualities) As String
-		  Select Case Quality
-		  Case Beacon.Qualities.Primitive
-		    Return QualityPrimitive
-		  Case Beacon.Qualities.Ramshackle
-		    Return QualityRamshackle
-		  Case Beacon.Qualities.Apprentice
-		    Return QualityApprentice
-		  Case Beacon.Qualities.Journeyman
-		    Return QualityJourneyman
-		  Case Beacon.Qualities.Mastercraft
-		    Return QualityMastercraft
-		  Case Beacon.Qualities.Ascendant
-		    Return QualityAscendant
-		  Case Beacon.Qualities.AscendantPlus
-		    Return QualityAscendantPlus
-		  Case Beacon.Qualities.AscendantPlusPlus
-		    Return QualityAscendantPlusPlus
-		  Case Beacon.Qualities.AscendantPlusPlusPlus
-		    Return QualityAscendantPlusPlusPlus
+		Protected Function LabelForQuality(Quality As Beacon.Quality) As String
+		  Select Case Quality.Key
+		  Case Beacon.Qualities.Tier1.Key
+		    Return QualityTier1
+		  Case Beacon.Qualities.Tier2.Key
+		    Return QualityTier2
+		  Case Beacon.Qualities.Tier3.Key
+		    Return QualityTier3
+		  Case Beacon.Qualities.Tier4.Key
+		    Return QualityTier4
+		  Case Beacon.Qualities.Tier5.Key
+		    Return QualityTier5
+		  Case Beacon.Qualities.Tier6.Key
+		    Return QualityTier6
+		  Case Beacon.Qualities.Tier7.Key
+		    Return QualityTier7
+		  Case Beacon.Qualities.Tier8.Key
+		    Return QualityTier8
+		  Case Beacon.Qualities.Tier9.Key
+		    Return QualityTier9
 		  Else
 		    Return ""
 		  End Select
@@ -28,31 +28,31 @@ Protected Module Language
 	#tag EndMethod
 
 
-	#tag Constant, Name = QualityApprentice, Type = String, Dynamic = False, Default = \"Apprentice", Scope = Protected
+	#tag Constant, Name = QualityTier1, Type = String, Dynamic = False, Default = \"Primitive", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityAscendant, Type = String, Dynamic = False, Default = \"Ascendant", Scope = Protected
+	#tag Constant, Name = QualityTier2, Type = String, Dynamic = False, Default = \"Ramshackle", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityAscendantPlus, Type = String, Dynamic = False, Default = \"Epic", Scope = Protected
+	#tag Constant, Name = QualityTier3, Type = String, Dynamic = False, Default = \"Apprentice", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityAscendantPlusPlus, Type = String, Dynamic = False, Default = \"Legendary", Scope = Protected
+	#tag Constant, Name = QualityTier4, Type = String, Dynamic = False, Default = \"Journeyman", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityAscendantPlusPlusPlus, Type = String, Dynamic = False, Default = \"Pearlescent", Scope = Protected
+	#tag Constant, Name = QualityTier5, Type = String, Dynamic = False, Default = \"Mastercraft", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityJourneyman, Type = String, Dynamic = False, Default = \"Journeyman", Scope = Protected
+	#tag Constant, Name = QualityTier6, Type = String, Dynamic = False, Default = \"Ascendant", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityMastercraft, Type = String, Dynamic = False, Default = \"Mastercraft", Scope = Protected
+	#tag Constant, Name = QualityTier7, Type = String, Dynamic = False, Default = \"Epic", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityPrimitive, Type = String, Dynamic = False, Default = \"Primitive", Scope = Protected
+	#tag Constant, Name = QualityTier8, Type = String, Dynamic = False, Default = \"Legendary", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = QualityRamshackle, Type = String, Dynamic = False, Default = \"Ramshackle", Scope = Protected
+	#tag Constant, Name = QualityTier9, Type = String, Dynamic = False, Default = \"Pearlescent", Scope = Protected
 	#tag EndConstant
 
 

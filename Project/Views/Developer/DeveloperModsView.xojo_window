@@ -58,6 +58,7 @@ Begin BeaconSubview DeveloperModsView
       Width           =   235
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -180,6 +181,7 @@ Begin BeaconSubview DeveloperModsView
       HasBackColor    =   False
       Height          =   419
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   236
       LockBottom      =   True
@@ -203,6 +205,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Shown(UserData As Auto = Nil)
+		  #Pragma Unused UserData
+		  
 		  If Self.mReady Then
 		    Self.RefreshMods()
 		  End If

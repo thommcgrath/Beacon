@@ -9,7 +9,7 @@ Begin ContainerControl EntryPropertiesEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   175
+   Height          =   209
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -185,7 +185,7 @@ Begin ContainerControl EntryPropertiesEditor
       Visible         =   False
       Width           =   58
    End
-   Begin UITweaks.ResizedLabel PercentLabel
+   Begin UITweaks.ResizedLabel ChancePercentLabel
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
@@ -353,7 +353,7 @@ Begin ContainerControl EntryPropertiesEditor
       Top             =   110
       Underline       =   False
       Visible         =   True
-      Width           =   139
+      Width           =   244
    End
    Begin Label MaxQualityLabel
       AutoDeactivate  =   True
@@ -418,7 +418,7 @@ Begin ContainerControl EntryPropertiesEditor
       Top             =   78
       Underline       =   False
       Visible         =   True
-      Width           =   139
+      Width           =   244
    End
    Begin Label MinQualityLabel
       AutoDeactivate  =   True
@@ -608,6 +608,176 @@ Begin ContainerControl EntryPropertiesEditor
       Visible         =   True
       Width           =   152
    End
+   Begin Label WeightLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   23
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   10
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      Text            =   "Weight:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   176
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   152
+   End
+   Begin Slider WeightSlider
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   23
+      HelpTag         =   "Items with a higher weight will be selected more frequently than items with a smaller weight. Two items with the same weight will be selected at the same frequency."
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   174
+      LineStep        =   5
+      LiveScroll      =   True
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Maximum         =   100
+      Minimum         =   0
+      PageStep        =   25
+      Scope           =   2
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TickStyle       =   "0"
+      Top             =   176
+      Value           =   25
+      Visible         =   True
+      Width           =   139
+   End
+   Begin UITweaks.ResizedTextField WeightField
+      AcceptTabs      =   False
+      Alignment       =   3
+      AutoDeactivate  =   False
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   325
+      LimitText       =   3
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   "99#"
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "25"
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   176
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   53
+   End
+   Begin UITweaks.ResizedLabel WeightPercentLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   381
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   20
+      TabPanelIndex   =   0
+      Text            =   ""
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   176
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   37
+   End
+   Begin CheckBox EditWeightCheck
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Edit"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   23
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   430
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      State           =   1
+      TabIndex        =   21
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   176
+      Underline       =   False
+      Value           =   True
+      Visible         =   False
+      Width           =   58
+   End
 End
 #tag EndWindow
 
@@ -622,15 +792,15 @@ End
 		    MinQuantity = Temp
 		  End If
 		  
-		  Dim MinQuality As Beacon.Qualities = MinQualityMenu.Tag
-		  Dim MaxQuality As Beacon.Qualities = MaxQualityMenu.Tag
-		  Dim MinQualityValue As Double = Beacon.ValueForQuality(MinQuality, 1)
-		  Dim MaxQualityValue As Double = Beacon.ValueForQuality(MaxQuality, 1)
+		  Dim MinQualityValue As Double = MinQualityMenu.Tag
+		  Dim MaxQualityValue As Double = MaxQualityMenu.Tag
 		  If MinQualityValue > MaxQualityValue Then
-		    Dim Temp As Beacon.Qualities = MaxQuality
-		    MaxQuality = MinQuality
-		    MinQuality = Temp
+		    Dim Temp As Double = MaxQualityValue
+		    MaxQualityValue = MinQualityValue
+		    MinQualityValue = Temp
 		  End If
+		  Dim MinQuality As Beacon.Quality = Beacon.Qualities.ForBaseValue(MinQualityValue)
+		  Dim MaxQuality As Beacon.Quality = Beacon.Qualities.ForBaseValue(MaxQualityValue)
 		  
 		  For Each Entry As Beacon.SetEntry In Entries
 		    If EditMaxQuantityCheck.Value Then
@@ -641,6 +811,9 @@ End
 		    End If
 		    If EditChanceCheck.Value Then
 		      Entry.ChanceToBeBlueprint = ChanceSlider.Value / 100
+		    End If
+		    If EditWeightCheck.Value Then
+		      Entry.Weight = WeightSlider.Value / 100
 		    End If
 		    If EditMaxQualityCheck.Value Then
 		      Entry.MaxQuality = MaxQuality
@@ -675,23 +848,27 @@ End
 	#tag Method, Flags = &h0
 		Sub Setup()
 		  EditChanceCheck.Value = Not EditChanceCheck.Visible
+		  EditWeightCheck.Value = Not EditWeightCheck.Visible
 		  EditMaxQualityCheck.Value = Not EditMaxQualityCheck.Visible
 		  EditMaxQuantityCheck.Value = Not EditMaxQuantityCheck.Visible
 		  EditMinQualityCheck.Value = Not EditMinQualityCheck.Visible
 		  EditMinQuantityCheck.Value = Not EditMaxQualityCheck.Visible
 		  
 		  Dim RightEdge As Integer
-		  If EditMinQualityCheck.Visible Or EditMaxQualityCheck.Visible Or EditChanceCheck.Visible Then
-		    RightEdge = Min(EditMinQualityCheck.Left, EditMaxQualityCheck.Left, EditChanceCheck.Left) - 12
+		  If EditMinQualityCheck.Visible Or EditMaxQualityCheck.Visible Or EditChanceCheck.Visible Or EditWeightCheck.Visible Then
+		    RightEdge = Min(EditMinQualityCheck.Left, EditMaxQualityCheck.Left, EditChanceCheck.Left, EditWeightCheck.Left) - 12
 		  Else
 		    RightEdge = Self.Width - 20
 		  End If
 		  
 		  MinQualityMenu.Width = (RightEdge - MinQualityMenu.Left)
 		  MaxQualityMenu.Width = (RightEdge - MaxQualityMenu.Left)
-		  PercentLabel.Left = RightEdge - (PercentLabel.Width + 3)
-		  ChanceField.Left = PercentLabel.Left - (ChanceField.Width + 12)
+		  ChancePercentLabel.Left = RightEdge - (ChancePercentLabel.Width + 3)
+		  ChanceField.Left = ChancePercentLabel.Left - (ChanceField.Width + 12)
 		  ChanceSlider.Width = ChanceField.Left - (12 + ChanceSlider.Left)
+		  WeightPercentLabel.Left = ChancePercentLabel.Left
+		  WeightField.Left = ChanceField.Left
+		  WeightSlider.Width = ChanceSlider.Width
 		End Sub
 	#tag EndMethod
 
@@ -703,7 +880,7 @@ End
 		  End If
 		  
 		  Dim MinQuantities(), MaxQuantities() As Integer
-		  Dim MinQualities(), MaxQualities() As Beacon.Qualities
+		  Dim MinQualities(), MaxQualities() As Double
 		  Dim TotalWeight, TotalChance As Double
 		  Dim CanBeBlueprint As Boolean
 		  For Each Entry As Beacon.SetEntry In Entries
@@ -711,8 +888,8 @@ End
 		    MaxQuantities.Append(Entry.MaxQuantity)
 		    TotalWeight = TotalWeight + Entry.Weight
 		    TotalChance = TotalChance + Entry.ChanceToBeBlueprint
-		    MinQualities.Append(Entry.MinQuality)
-		    MaxQualities.Append(Entry.MaxQuality)
+		    MinQualities.Append(Entry.MinQuality.BaseValue)
+		    MaxQualities.Append(Entry.MaxQuality.BaseValue)
 		    CanBeBlueprint = CanBeBlueprint Or Entry.CanBeBlueprint
 		  Next
 		  
@@ -739,6 +916,7 @@ End
 		  End If
 		  MinQualityMenu.SelectByTag(MinQualities(0))
 		  MaxQualityMenu.SelectByTag(MaxQualities(UBound(MaxQualities)))
+		  WeightSlider.Value = 100 * (TotalWeight / (UBound(Entries) + 1))
 		  Self.mIgnoreChanges = False
 		  
 		  If UBound(Entries) > 0 Then
@@ -817,18 +995,10 @@ End
 		Sub Open(index as Integer)
 		  Me.DeleteAllRows()
 		  
-		  Dim Value As Integer
-		  Do
-		    Dim Quality As Beacon.Qualities = CType(Value, Beacon.Qualities)
-		    Value = Value + 1
-		    
-		    Dim Label As String = Language.LabelForQuality(Quality)
-		    If Label = "" Then
-		      Exit
-		    End If
-		    
-		    Me.AddRow(Label, Quality)
-		  Loop
+		  Dim Qualities() As Beacon.Quality = Beacon.Qualities.All
+		  For Each Quality As Beacon.Quality In Qualities
+		    Me.AddRow(Language.LabelForQuality(Quality), Quality.BaseValue)
+		  Next
 		  
 		  Me.ListIndex = 0
 		End Sub
@@ -864,6 +1034,40 @@ End
 		    EditMinQuantityCheck.Value = True
 		    RaiseEvent Changed
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events WeightSlider
+	#tag Event
+		Sub ValueChanged()
+		  If Self.Focus <> WeightField Then
+		    WeightField.Text = Str(Me.Value, "-0")
+		  End If
+		  
+		  If Not Self.mIgnoreChanges Then
+		    EditWeightCheck.Value = True
+		    RaiseEvent Changed
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events WeightField
+	#tag Event
+		Sub TextChange()
+		  If Self.Focus = Me Then
+		    WeightSlider.Value = Max(Min(Val(Me.Text), WeightSlider.Maximum), WeightSlider.Minimum)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub LostFocus()
+		  Me.Text = Str(WeightSlider.Value, "-0")
+		  WeightSlider.Enabled = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub GotFocus()
+		  WeightSlider.Enabled = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -21,7 +21,7 @@ Begin BeaconWindow DocWindow
    MinHeight       =   580
    MinimizeButton  =   True
    MinWidth        =   1100
-   Placement       =   0
+   Placement       =   2
    Resizeable      =   True
    Title           =   "Untitled Document"
    Visible         =   True
@@ -405,23 +405,92 @@ End
 			Return True
 			End If
 			
+			Dim UpdateOrCreateDialog As New MessageDialog
+			UpdateOrCreateDialog.Title = ""
+			UpdateOrCreateDialog.Message = "Would you like to update an existing config file or create a new one?"
+			UpdateOrCreateDialog.Explanation = "Pressing ""Update"" will allow ask you to select an ini file, and Beacon will add or replace the ConfigOverrideSupplyCrateItems as necessary. Press ""Create"" to create a new ini file."
+			UpdateOrCreateDialog.ActionButton.Caption = "Create"
+			UpdateOrCreateDialog.AlternateActionButton.Caption = "Update"
+			UpdateOrCreateDialog.CancelButton.Visible = True
+			UpdateOrCreateDialog.AlternateActionButton.Visible = True
+			
+			Dim File As FolderItem
+			Dim OriginalContent As String
+			Dim EOL As String = EndOfLine
+			Select Case UpdateOrCreateDialog.ShowModalWithin(Self)
+			Case UpdateOrCreateDialog.ActionButton
 			Dim Dialog As New SaveAsDialog
 			Dialog.SuggestedFileName = "Game.ini"
 			Dialog.Filter = BeaconFileTypes.IniFile
 			
-			Dim File As FolderItem = Dialog.ShowModalWithin(Self)
-			If File <> Nil Then
-			Dim Lines() As String
-			Lines.Append("[/script/shootergame.shootergamemode]")
+			File = Dialog.ShowModalWithin(Self)
+			If File = Nil Then
+			Return True
+			End If
+			Case UpdateOrCreateDialog.AlternateActionButton
+			Dim Dialog As New OpenDialog
+			Dialog.SuggestedFileName = "Game.ini"
+			Dialog.Filter = BeaconFileTypes.IniFile
 			
-			For Each LootSource As Beacon.LootSource In LootSources
-			Lines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue())
+			File = Dialog.ShowModalWithin(Self)
+			If File = Nil Then
+			Return True
+			End If
+			
+			Dim InStream As TextInputStream = TextInputStream.Open(File)
+			OriginalContent = ReplaceLineEndings(InStream.ReadAll(Encodings.UTF8), EOL)
+			InStream.Close
+			End Select
+			
+			Dim Lines() As String = OriginalContent.Split(EOL)
+			For I As Integer = Lines.Ubound DownTo 0
+			If Lines(I).Left(31) = "ConfigOverrideSupplyCrateItems=" Then
+			Lines.Remove(I)
+			End If
 			Next
 			
-			Dim Stream As TextOutputStream = TextOutputStream.Create(File)
-			Stream.Write(Join(Lines, EndOfLine))
-			Stream.Close
+			Dim PrefixLines(), SectionLines(), SuffixLines() As String
+			Dim PrefixMode As Boolean = True
+			Dim SectionMode As Boolean = False
+			Dim SuffixMode As Boolean = False
+			For I As Integer = 0 To Lines.Ubound
+			If Lines(I) = "[/script/shootergame.shootergamemode]" Then
+			PrefixMode = False
+			SectionMode = True
+			SuffixMode = False
+			PrefixLines.Append(Lines(I))
+			ElseIf Lines(I).Left(1) = "[" And Lines(I).Right(1) = "]" And SectionMode = True Then
+			PrefixMode = False
+			SectionMode = False
+			SuffixMode = True
+			SuffixLines.Append(Lines(I))
+			Else
+			If PrefixMode Then
+			PrefixLines.Append(Lines(I))
+			ElseIf SectionMode Then
+			SectionLines.Append(Lines(I))
+			ElseIf SuffixMode Then
+			SuffixLines.Append(Lines(I))
 			End If
+			End If
+			Next
+			
+			If PrefixMode Then
+			// Section is not included in the file
+			PrefixLines.Append("")
+			PrefixLines.Append("[/script/shootergame.shootergamemode]")
+			End If
+			
+			For Each LootSource As Beacon.LootSource In LootSources
+			SectionLines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Self.Doc.DifficultyValue))
+			Next
+			
+			Dim UpdatedContent As String = Join(PrefixLines, EOL).Trim + EOL + Join(SectionLines, EOL).Trim + if(SuffixLines.Ubound > -1, EOL + EOL, "") + Join(SuffixLines, EOL).Trim
+			
+			Dim OutStream As TextOutputStream = TextOutputStream.Create(File)
+			OutStream.Write(UpdatedContent)
+			OutStream.Close
+			
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -450,31 +519,38 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub AddLootSources(Sources() As Beacon.LootSource)
-		  If UBound(Sources) = -1 Then
+		Private Sub AddLootSources(Sources() As Beacon.LootSource, Silent As Boolean = False)
+		  If Sources.Ubound = -1 Then
 		    Return
 		  End If
 		  
 		  Dim CurrentMap As Beacon.Map = Self.CurrentMap
+		  Dim IgnoredSources() As Beacon.LootSource
 		  
-		  Dim ChangeView As Boolean
 		  For Each Source As Beacon.LootSource In Sources
 		    If Self.Doc.HasLootSource(Source) Then
 		      Self.Doc.Remove(Source)
 		    End If
-		    Self.Doc.Add(Source)
 		    
-		    If CurrentMap <> Nil And Not Source.ValidForMap(CurrentMap) Then
-		      ChangeView = True
+		    If CurrentMap = Nil Or Source.ValidForMap(CurrentMap) Then
+		      Self.Doc.Add(Source)
+		    Else
+		      IgnoredSources.Append(Source)
 		    End If
 		    Self.ContentsChanged = True
 		  Next
-		  ChangeView = ChangeView And Self.LootSourceHeader.SegmentIndex <> 0
 		  
-		  If ChangeView Then
-		    Self.LootSourceHeader.SegmentIndex = 0
-		  End If
 		  Self.UpdateSourceList(Sources)
+		  
+		  If IgnoredSources.Ubound > -1 And Not Silent Then
+		    Dim SourcesList() As Text
+		    For Each IgnoredSource As Beacon.LootSource In IgnoredSources
+		      SourcesList.Append(IgnoredSource.Label)
+		    Next
+		    
+		    Dim IgnoredCount As Integer = IgnoredSources.Ubound + 1
+		    Self.ShowAlert(IgnoredCount.ToText + if(IgnoredCount = 1, " loot source was", " loot sources were") + " not added because " + if(IgnoredCount = 1, "it is", "they are") + " not compatible with " + if(CurrentMap <> Nil, CurrentMap.Name, "the current map") + ".", "The following " + if(IgnoredCount = 1, "loot source was", "loot sources were") + " skipped: " + Text.Join(SourcesList, ", "))
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -530,55 +606,34 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Self.Doc = New Beacon.Document
-		  Super.Constructor
-		  Self.DocumentCounter = Self.DocumentCounter + 1
-		  Self.Title = "Untitled " + Str(Self.DocumentCounter, "-0")
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor(Doc As Beacon.Document)
 		  Self.Doc = Doc
 		  Super.Constructor
 		  Self.DocumentCounter = Self.DocumentCounter + 1
 		  Self.Title = "Untitled " + Str(Self.DocumentCounter, "-0")
-		  Self.ContentsChanged = True
+		  Self.ContentsChanged = False
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(File As FolderItem)
-		  If File.IsType(BeaconFileTypes.BeaconDocument) Then
-		    // Beacon document
-		    Self.File = File
-		    Self.Doc = Beacon.Document.Read(Self.File)
-		    Self.Title = File.Name
-		    Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
-		    Super.Constructor
-		    Return
+		  If Not File.IsType(BeaconFileTypes.BeaconDocument) Then
+		    Raise New UnsupportedFormatException
 		  End If
 		  
-		  Self.Constructor
+		  Self.File = File
+		  Self.Doc = Beacon.Document.Read(Self.File)
+		  Self.Title = File.Name
+		  Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
 		  
-		  If File.IsType(BeaconFileTypes.IniFile) Then
-		    // Config file
-		    Self.Import(File)
-		  End If
+		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function CurrentMap() As Beacon.Map
-		  Dim MapName As Text = Self.LootSourceHeader.CurrentSegment
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
-		  For Each Map As Beacon.Map In Maps
-		    If Map.Name = MapName Then
-		      Return Map
-		    End If
-		  Next
+		  Return Self.Doc.Map
 		End Function
 	#tag EndMethod
 
@@ -711,13 +766,12 @@ End
 		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
 		  Dim CurrentMap As Beacon.Map = Self.CurrentMap
 		  Editor.CurrentMap = CurrentMap
-		  Self.Doc.MapPreference = CurrentMap.Mask
+		  Self.Doc.Map = CurrentMap
 		  
 		  Dim Sources() As Beacon.LootSource = Self.Doc.LootSources
-		  Dim Filter As Integer = LootSourceHeader.SegmentIndex
 		  Dim VisibleSources() As Beacon.LootSource
 		  For Each Source As Beacon.LootSource In Sources
-		    If Source.ValidForMap(CurrentMap) Then
+		    If CurrentMap = Nil Or Source.ValidForMap(CurrentMap) Then
 		      VisibleSources.Append(Source)
 		    End If
 		  Next
@@ -764,13 +818,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub WarnFailedWrite()
+		  Self.ContentsChanged = True
+		  Self.ShowAlert("File did not save", "It may be locked or in use.")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub WriterFinished(Sender As Beacon.JSONWriter)
 		  If Sender.Success Then
 		    Return
 		  End If
 		  
-		  Self.ContentsChanged = True
-		  Self.ShowAlert("File did not save", "It may be locked or in use.")
+		  Xojo.Core.Timer.CallLater(1, AddressOf WarnFailedWrite)
 		End Sub
 	#tag EndMethod
 
@@ -858,7 +918,7 @@ End
 		      Dim Source As Beacon.LootSource = Me.RowTag(I)
 		      Dicts.Append(Source.Export)
 		      If Source.IsValid Then
-		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue())
+		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue(Self.Doc.DifficultyValue))
 		      End If
 		    End If
 		  Next
@@ -907,7 +967,7 @@ End
 		    
 		    Dim Sources() As Beacon.LootSource
 		    For Each Dict As Xojo.Core.Dictionary In Dicts
-		      Sources.Append(Beacon.LootSource.Import(Dict))
+		      Sources.Append(Beacon.LootSource.ImportFromBeacon(Dict))
 		    Next
 		    Self.AddLootSources(Sources)
 		  ElseIf Board.TextAvailable Then
@@ -1015,6 +1075,9 @@ End
 		    End If
 		  Case "DeleteButton"
 		    Self.RemoveSelectedBeacons(True)
+		  Case "SettingsButton"
+		    DocumentSetupSheet.ShowEdit(Self, Self.Doc)
+		    Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
 		  Case "ErrorsButton"
 		    ResolveIssuesDialog.Present(Self, Self.Doc)
 		    Self.ScanForErrors()
@@ -1070,6 +1133,7 @@ End
 		  Dim AddButton As New FooterBarButton("AddButton", IconAddWithMenu)
 		  Dim EditButton As New FooterBarButton("EditButton", IconEdit)
 		  Dim DeleteButton As New FooterBarButton("DeleteButton", IconRemove)
+		  Dim SettingsButton As New FooterBarButton("SettingsButton", IconSettings, FooterBarButton.AlignRight)
 		  
 		  EditButton.Enabled = False
 		  DeleteButton.Enabled = False
@@ -1077,6 +1141,7 @@ End
 		  Me.Append(AddButton)
 		  Me.Append(EditButton)
 		  Me.Append(DeleteButton)
+		  Me.Append(SettingsButton)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1092,9 +1157,7 @@ End
 		    Dim LootSources() As Beacon.LootSource = Me.LootSources
 		    Me.Reset
 		    
-		    For Each LootSource As Beacon.LootSource In LootSources
-		      Self.AddLootSource(LootSource)
-		    Next
+		    Self.AddLootSources(LootSources)
 		    Return
 		  End If
 		  
@@ -1107,27 +1170,10 @@ End
 #tag EndEvents
 #tag Events LootSourceHeader
 	#tag Event
-		Sub Open()
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
-		  For Each Map As Beacon.Map In Maps
-		    Me.AddSegment(Map.Name, Map.Mask = Self.Doc.MapPreference)
-		  Next
-		  
-		  If Me.SegmentIndex = -1 Then
-		    Me.SegmentIndex = 0
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub Resize(NewSize As Integer)
 		  Me.Height = NewSize
 		  BeaconList.Top = NewSize
 		  BeaconList.Height = Footer.Top - NewSize
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub SegmentChange()
-		  Self.UpdateSourceList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

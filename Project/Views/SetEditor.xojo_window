@@ -734,6 +734,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
+		  #Pragma Unused Warn
+		  
 		  Self.RemoveSelectedEntries()
 		End Sub
 	#tag EndEvent
@@ -775,16 +777,11 @@ End
 		    Return
 		  End Try
 		  
-		  // The multipliers parameter here is 100% useless as a copied set entry will always use text
-		  // quality values and not numeric ones. But this is what the signature is, so something must
-		  // be supplied.
-		  Dim Range As New Beacon.Range(1, 1)
-		  
 		  Dim Modified As Boolean
 		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
 		  If Info.FullName = "Xojo.Core.Dictionary" Then
 		    // Single item
-		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Parsed, Range)
+		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Parsed)
 		    If Entry <> Nil Then
 		      Self.mSet.Append(Entry)
 		      Modified = True
@@ -793,7 +790,7 @@ End
 		    // Multiple items
 		    Dim Dicts() As Auto = Parsed
 		    For Each Dict As Xojo.Core.Dictionary In Dicts
-		      Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Dict, Range)
+		      Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
 		      If Entry <> Nil Then
 		        Self.mSet.Append(Entry)
 		        Modified = True
@@ -828,11 +825,11 @@ End
 		    Value1 = Entry1.MaxQuantity
 		    Value2 = Entry2.MaxQuantity
 		  Case 3 // Min quality
-		    Value1 = Beacon.ValueForQuality(Entry1.MinQuality, 1)
-		    Value2 = Beacon.ValueForQuality(Entry2.MinQuality, 1)
+		    Value1 = Entry1.MinQuality.BaseValue
+		    Value2 = Entry2.MinQuality.BaseValue
 		  Case 4 // Max quality
-		    Value1 = Beacon.ValueForQuality(Entry1.MaxQuality, 1)
-		    Value2 = Beacon.ValueForQuality(Entry2.MaxQuality, 1)
+		    Value1 = Entry1.MaxQuality.BaseValue
+		    Value2 = Entry2.MaxQuality.BaseValue
 		  Case 5 // Chance
 		    Value1 = Entry1.Weight
 		    Value2 = Entry2.Weight
@@ -863,6 +860,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean) As Boolean
+		  #Pragma Unused Column
+		  #Pragma Unused BackgroundColor
+		  #Pragma Unused TextColor
+		  
 		  If Row >= Me.ListCount Then
 		    Return False
 		  End If
@@ -877,6 +878,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, ByRef TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		  #Pragma Unused Column
+		  #Pragma Unused DrawSpace
+		  #Pragma Unused VerticalPosition
+		  
 		  Dim Entry As Beacon.SetEntry = Me.RowTag(Row)
 		  If Not Entry.IsValid Then
 		    TextColor = BeaconUI.TextColorForInvalidRow(IsHighlighted, Me.Selected(Row))
@@ -886,6 +891,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
 		  Dim Item As MenuItem
 		  
 		  Item = New MenuItem

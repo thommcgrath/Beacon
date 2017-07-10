@@ -26,6 +26,7 @@ Begin BeaconSubview LibraryDocumentsView
    Visible         =   True
    Width           =   800
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -254,6 +255,8 @@ End
 
 	#tag Event
 		Sub Shown(UserData As Auto = Nil)
+		  #Pragma Unused UserData
+		  
 		  Self.RefreshDocuments()
 		End Sub
 	#tag EndEvent

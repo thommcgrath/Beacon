@@ -1,39 +1,50 @@
 #tag IOSView
-Begin iosView View1
+Begin iosView LootSourcesView
    BackButtonTitle =   ""
    Compatibility   =   ""
    Left            =   0
-   NavigationBarVisible=   False
+   NavigationBarVisible=   True
    TabIcon         =   ""
    TabTitle        =   ""
-   Title           =   ""
+   Title           =   "Loot Sources"
    Top             =   0
-   Begin iOSLabel Label1
+   Begin iOSTable Table1
       AccessibilityHint=   ""
       AccessibilityLabel=   ""
-      AutoLayout      =   Label1, 9, <Parent>, 9, False, +1.00, 1, 1, 0, 
-      AutoLayout      =   Label1, 7, , 0, False, +1.00, 1, 1, 100, 
-      AutoLayout      =   Label1, 10, <Parent>, 10, False, +1.00, 1, 1, 0, 
-      AutoLayout      =   Label1, 8, , 0, False, +1.00, 1, 1, 30, 
-      Enabled         =   True
-      Height          =   30.0
-      Left            =   110
-      LineBreakMode   =   "0"
+      AutoLayout      =   Table1, 1, <Parent>, 1, False, +1.00, 1, 1, 0, 
+      AutoLayout      =   Table1, 2, <Parent>, 2, False, +1.00, 1, 1, -0, 
+      AutoLayout      =   Table1, 3, TopLayoutGuide, 3, False, +1.00, 1, 1, 0, 
+      AutoLayout      =   Table1, 4, BottomLayoutGuide, 4, False, +1.00, 1, 1, 0, 
+      EditingEnabled  =   False
+      EstimatedRowHeight=   -1
+      Format          =   "0"
+      Height          =   415.0
+      Left            =   0
       LockedInPosition=   False
       Scope           =   0
-      Text            =   "Wrong"
-      TextAlignment   =   "1"
-      TextColor       =   &c007AFF00
-      TextFont        =   ""
-      TextSize        =   0
-      Top             =   225
+      SectionCount    =   0
+      Top             =   65
       Visible         =   True
-      Width           =   100.0
+      Width           =   320.0
    End
 End
 #tag EndIOSView
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.RightNavigationToolbar.Add(iOSToolButton.NewSystemItem(iOSToolButton.Types.SystemAdd))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub ToolbarPressed(button As iOSToolButton)
+		  Dim View As New AvailableLootSourcesView
+		  View.ShowModalWithin(Self)
+		End Sub
+	#tag EndEvent
+
+
 #tag EndWindowCode
 
 #tag ViewBehavior

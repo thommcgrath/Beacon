@@ -18,9 +18,9 @@ Begin Window ResolveIssuesDialog
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
+   MinHeight       =   500
    MinimizeButton  =   False
-   MinWidth        =   64
+   MinWidth        =   600
    Placement       =   1
    Resizeable      =   True
    Title           =   "Document Issues"
@@ -48,7 +48,6 @@ Begin Window ResolveIssuesDialog
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "This document has problems that must be resolved"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -164,7 +163,6 @@ Begin Window ResolveIssuesDialog
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "To resolve unknown blueprint problems, paste their spawn codes below. It is ok to include more codes than necessary, Beacon will use only the ones it needs."
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -279,6 +277,13 @@ End
 	#tag Method, Flags = &h21
 		Private Shared Function DescribeIssues(Document As Beacon.Document) As String()
 		  Dim Issues As New Dictionary
+		  
+		  If Document.Map = Nil Then
+		    Issues.Value("No map is selected. Press the gear icon below the loot sources list to pick a map.") = True
+		  End If
+		  If Document.DifficultyValue = -1 Then
+		    Issues.Value("Difficulty is not set. Press the gear icon below the loot sources list to set difficulty.") = True
+		  End If
 		  
 		  Dim EmptyOptionsCount As Integer
 		  For Each Source As Beacon.LootSource In Document.LootSources

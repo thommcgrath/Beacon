@@ -1,2449 +1,2733 @@
 {
-	"Description" : "This is the default loot definitions pulled from the Ark dev kit.",
-	"Identifier" : "6B5E3917-039C-4F35-99A6-58BE28BB9760",
-	"LootSources" : [
+	"Description": "This is the default loot definitions pulled from the Ark dev kit.",
+	"DifficultyValue": 4.0,
+	"Identifier": "6B5E3917-039C-4F35-99A6-58BE28BB9760",
+	"LootSources": [
 		{
-			"Availability" : 1,
-			"bSetsRandomWithoutReplacement" : true,
-			"ItemSets" : [
+			"Availability": 13,
+			"bSetsRandomWithoutReplacement": true,
+			"ItemSets": [
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_Campfire_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_Campfire_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Campfire.PrimalItemStructure_Campfire",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 2,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 2,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Sparkpowder_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Sparkpowder_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Sparkpowder.PrimalItemResource_Sparkpowder",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 6,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 2
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 6,
+							"MinQuality": "Tier1",
+							"MinQuantity": 2
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemConsumable_WaterskinCraftable_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemConsumable_WaterskinCraftable_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_WaterskinCraftable.PrimalItemConsumable_WaterskinCraftable",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 3,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 3,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_SleepingBag_Hide_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_SleepingBag_Hide_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_SleepingBag_Hide.PrimalItemStructure_SleepingBag_Hide",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 3,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 3,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemConsumable_RawMeat_C",
-									"Weight" : 0.5
+									"Class": "PrimalItemConsumable_RawMeat_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_RawMeat.PrimalItemConsumable_RawMeat",
+									"Weight": 0.5
 								},
 								{
-									"Class" : "PrimalItemConsumable_Berry_Amarberry_C",
-									"Weight" : 0.16700000000000000955
+									"Class": "PrimalItemConsumable_Berry_Amarberry_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Berry_Amarberry.PrimalItemConsumable_Berry_Amarberry",
+									"Weight": 0.16700000000000000955
 								},
 								{
-									"Class" : "PrimalItemConsumable_Berry_Azulberry_C",
-									"Weight" : 0.16700000000000000955
+									"Class": "PrimalItemConsumable_Berry_Azulberry_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Berry_Azulberry.PrimalItemConsumable_Berry_Azulberry",
+									"Weight": 0.16700000000000000955
 								},
 								{
-									"Class" : "PrimalItemConsumable_Berry_Tintoberry_C",
-									"Weight" : 0.16600000000000000866
+									"Class": "PrimalItemConsumable_Berry_Tintoberry_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Berry_Tintoberry.PrimalItemConsumable_Berry_Tintoberry",
+									"Weight": 0.16600000000000000866
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 30,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 10
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 30,
+							"MinQuality": "Tier1",
+							"MinQuantity": 10
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_Campfire_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_Campfire_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Campfire.PrimalItemStructure_Campfire",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemResource_Sparkpowder_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Sparkpowder_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Sparkpowder.PrimalItemResource_Sparkpowder",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_SleepingBag_Hide_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_SleepingBag_Hide_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_SleepingBag_Hide.PrimalItemStructure_SleepingBag_Hide",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemConsumable_WaterskinCraftable_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemConsumable_WaterskinCraftable_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_WaterskinCraftable.PrimalItemConsumable_WaterskinCraftable",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_Note_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_Note_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Notes/PrimalItem_Note.PrimalItem_Note",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Campsite",
-					"MaxNumItems" : 6,
-					"MinNumItems" : 6,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Campsite",
+					"MaxNumItems": 6,
+					"MinNumItems": 6,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_ClothPants_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ClothPants_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Cloth/PrimalItemArmor_ClothPants.PrimalItemArmor_ClothPants",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_ClothShirt_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ClothShirt_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Cloth/PrimalItemArmor_ClothShirt.PrimalItemArmor_ClothShirt",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_ClothGloves_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ClothGloves_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Cloth/PrimalItemArmor_ClothGloves.PrimalItemArmor_ClothGloves",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_ClothBoots_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ClothBoots_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Cloth/PrimalItemArmor_ClothBoots.PrimalItemArmor_ClothBoots",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_ClothHelmet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ClothHelmet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Cloth/PrimalItemArmor_ClothHelmet.PrimalItemArmor_ClothHelmet",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_ClothPants_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ClothPants_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Cloth/PrimalItemArmor_ClothPants.PrimalItemArmor_ClothPants",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_ClothShirt_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ClothShirt_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Cloth/PrimalItemArmor_ClothShirt.PrimalItemArmor_ClothShirt",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_ClothHelmet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ClothHelmet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Cloth/PrimalItemArmor_ClothHelmet.PrimalItemArmor_ClothHelmet",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_ClothGloves_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ClothGloves_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Cloth/PrimalItemArmor_ClothGloves.PrimalItemArmor_ClothGloves",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_ClothBoots_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ClothBoots_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Cloth/PrimalItemArmor_ClothBoots.PrimalItemArmor_ClothBoots",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier2",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier2",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier2",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier2",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Clothing",
-					"MaxNumItems" : 6,
-					"MinNumItems" : 6,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Clothing",
+					"MaxNumItems": 6,
+					"MinNumItems": 6,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_WeaponStoneHatchet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponStoneHatchet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStoneHatchet.PrimalItem_WeaponStoneHatchet",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_WeaponSlingshot_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponSlingshot_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponSlingshot.PrimalItem_WeaponSlingshot",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_WeaponSpear_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponSpear_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponSpear.PrimalItem_WeaponSpear",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 3,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 3,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_WeaponTorch_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponTorch_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponTorch.PrimalItem_WeaponTorch",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_WeaponFlareGun_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponFlareGun_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponFlareGun.PrimalItem_WeaponFlareGun",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 2,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 2,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_WeaponStoneHatchet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponStoneHatchet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStoneHatchet.PrimalItem_WeaponStoneHatchet",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponSlingshot_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponSlingshot_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponSlingshot.PrimalItem_WeaponSlingshot",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponSpear_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponSpear_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponSpear.PrimalItem_WeaponSpear",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponFlareGun_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponFlareGun_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponFlareGun.PrimalItem_WeaponFlareGun",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponTorch_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponTorch_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponTorch.PrimalItem_WeaponTorch",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier2",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier2",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier2",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier2",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Weapons",
-					"MaxNumItems" : 6,
-					"MinNumItems" : 6,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Weapons",
+					"MaxNumItems": 6,
+					"MinNumItems": 6,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Stone_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Stone_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Stone.PrimalItemResource_Stone",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 15,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 7
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 15,
+							"MinQuality": "Tier1",
+							"MinQuantity": 7
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Flint_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Flint_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Flint.PrimalItemResource_Flint",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 15,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 7
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 15,
+							"MinQuality": "Tier1",
+							"MinQuantity": 7
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Thatch_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Thatch_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Thatch.PrimalItemResource_Thatch",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 90,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 30
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 90,
+							"MinQuality": "Tier1",
+							"MinQuantity": 30
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Wood_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Wood_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Wood.PrimalItemResource_Wood",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 30,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 15
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 30,
+							"MinQuality": "Tier1",
+							"MinQuantity": 15
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Fibers_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Fibers_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Fibers.PrimalItemResource_Fibers",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 80,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 30
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 80,
+							"MinQuality": "Tier1",
+							"MinQuantity": 30
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Hide_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Hide_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Hide.PrimalItemResource_Hide",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 50,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 25
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 50,
+							"MinQuality": "Tier1",
+							"MinQuantity": 25
 						}
 					],
-					"Label" : "Resources",
-					"MaxNumItems" : 6,
-					"MinNumItems" : 6,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Resources",
+					"MaxNumItems": 6,
+					"MinNumItems": 6,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_ThatchFloor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_ThatchFloor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchFloor.PrimalItemStructure_ThatchFloor",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_ThatchWallWithDoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_ThatchWallWithDoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchWallWithDoor.PrimalItemStructure_ThatchWallWithDoor",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_ThatchDoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_ThatchDoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchDoor.PrimalItemStructure_ThatchDoor",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_ThatchWall_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_ThatchWall_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchWall.PrimalItemStructure_ThatchWall",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 3,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 3
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 3,
+							"MinQuality": "Tier1",
+							"MinQuantity": 3
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_ThatchCeiling_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_ThatchCeiling_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchCeiling.PrimalItemStructure_ThatchCeiling",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_ThatchFloor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_ThatchFloor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchFloor.PrimalItemStructure_ThatchFloor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_ThatchWall_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_ThatchWall_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchWall.PrimalItemStructure_ThatchWall",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_ThatchWallWithDoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_ThatchWallWithDoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchWallWithDoor.PrimalItemStructure_ThatchWallWithDoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_ThatchDoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_ThatchDoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchDoor.PrimalItemStructure_ThatchDoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_ThatchCeiling_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_ThatchCeiling_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Thatch/PrimalItemStructure_ThatchCeiling.PrimalItemStructure_ThatchCeiling",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Small Shanty Shack",
-					"MaxNumItems" : 6,
-					"MinNumItems" : 6,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Small Shanty Shack",
+					"MaxNumItems": 6,
+					"MinNumItems": 6,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodSign_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodSign_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodSign.PrimalItemStructure_WoodSign",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 2,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 2,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_StorageBox_Small_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StorageBox_Small_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Small.PrimalItemStructure_StorageBox_Small",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 3,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 3,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_Bed_Simple_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_Bed_Simple_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bed_Simple.PrimalItemStructure_Bed_Simple",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_StandingTorch_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StandingTorch_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StandingTorch.PrimalItemStructure_StandingTorch",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 4,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 4,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Sparkpowder_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Sparkpowder_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Sparkpowder.PrimalItemResource_Sparkpowder",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 20,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 10
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 20,
+							"MinQuality": "Tier1",
+							"MinQuantity": 10
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodSign_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodSign_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodSign.PrimalItemStructure_WoodSign",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_StorageBox_Small_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StorageBox_Small_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Small.PrimalItemStructure_StorageBox_Small",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_Bed_Simple_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_Bed_Simple_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bed_Simple.PrimalItemStructure_Bed_Simple",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_StandingTorch_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StandingTorch_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StandingTorch.PrimalItemStructure_StandingTorch",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemResource_Sparkpowder_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Sparkpowder_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Sparkpowder.PrimalItemResource_Sparkpowder",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Furniture",
-					"MaxNumItems" : 6,
-					"MinNumItems" : 6,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Furniture",
+					"MaxNumItems": 6,
+					"MinNumItems": 6,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_PhiomiaSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_PhiomiaSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PhiomiaSaddle.PrimalItemArmor_PhiomiaSaddle",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_PhiomiaSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_PhiomiaSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PhiomiaSaddle.PrimalItemArmor_PhiomiaSaddle",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier2",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier2",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier2",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier2",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Saddles",
-					"MaxNumItems" : 2,
-					"MinNumItems" : 2,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Saddles",
+					"MaxNumItems": 2,
+					"MinNumItems": 2,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				}
 			],
-			"Kind" : "Standard",
-			"Label" : "Island White (Level 3)",
-			"MaxItemSets" : 3,
-			"MinItemSets" : 1,
-			"Multiplier_Max" : 1.0,
-			"Multiplier_Min" : 1.0,
-			"NumItemSetsPower" : 1.0,
-			"SortValue" : 0,
-			"SupplyCrateClassString" : "SupplyCrate_Level03_C",
-			"UIColor" : "FFFFFF00"
+			"Kind": "Standard",
+			"Label": "Island White (Level 3)",
+			"MaxItemSets": 3,
+			"MinItemSets": 1,
+			"Multiplier_Max": 1.0,
+			"Multiplier_Min": 1.0,
+			"NumItemSetsPower": 1.0,
+			"SortValue": 0,
+			"SupplyCrateClassString": "SupplyCrate_Level03_C",
+			"UIColor": "FFFFFF00",
+			"UseBlueprints": false
 		},
 		{
-			"Availability" : 1,
-			"bSetsRandomWithoutReplacement" : true,
-			"ItemSets" : [
+			"Availability": 13,
+			"bSetsRandomWithoutReplacement": true,
+			"ItemSets": [
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodFloor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodFloor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodFloor.PrimalItemStructure_WoodFloor",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodWallWithDoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodWallWithDoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWallWithDoor.PrimalItemStructure_WoodWallWithDoor",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodDoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodDoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodDoor.PrimalItemStructure_WoodDoor",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodWall_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodWall_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWall.PrimalItemStructure_WoodWall",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 3,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 3
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 3,
+							"MinQuality": "Tier1",
+							"MinQuantity": 3
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodCeiling_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodCeiling_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCeiling.PrimalItemStructure_WoodCeiling",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodFloor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodFloor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodFloor.PrimalItemStructure_WoodFloor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodWall_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodWall_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWall.PrimalItemStructure_WoodWall",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodWallWithDoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodWallWithDoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWallWithDoor.PrimalItemStructure_WoodWallWithDoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodDoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodDoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodDoor.PrimalItemStructure_WoodDoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodCeiling_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodCeiling_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCeiling.PrimalItemStructure_WoodCeiling",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Wood Shack",
-					"MaxNumItems" : 6,
-					"MinNumItems" : 6,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Wood Shack",
+					"MaxNumItems": 6,
+					"MinNumItems": 6,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_HidePants_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_HidePants_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Leather/PrimalItemArmor_HidePants.PrimalItemArmor_HidePants",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_HideShirt_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_HideShirt_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Leather/PrimalItemArmor_HideShirt.PrimalItemArmor_HideShirt",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_HideGloves_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_HideGloves_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Leather/PrimalItemArmor_HideGloves.PrimalItemArmor_HideGloves",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_HideBoots_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_HideBoots_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Leather/PrimalItemArmor_HideBoots.PrimalItemArmor_HideBoots",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_HideHelmet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_HideHelmet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Leather/PrimalItemArmor_HideHelmet.PrimalItemArmor_HideHelmet",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_HidePants_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_HidePants_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Leather/PrimalItemArmor_HidePants.PrimalItemArmor_HidePants",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_HideShirt_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_HideShirt_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Leather/PrimalItemArmor_HideShirt.PrimalItemArmor_HideShirt",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_HideHelmet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_HideHelmet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Leather/PrimalItemArmor_HideHelmet.PrimalItemArmor_HideHelmet",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_HideGloves_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_HideGloves_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Leather/PrimalItemArmor_HideGloves.PrimalItemArmor_HideGloves",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_HideBoots_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_HideBoots_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Leather/PrimalItemArmor_HideBoots.PrimalItemArmor_HideBoots",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier2",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier2",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier2",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier2",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Cold-weather gear",
-					"MaxNumItems" : 6,
-					"MinNumItems" : 6,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Cold-weather gear",
+					"MaxNumItems": 6,
+					"MinNumItems": 6,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_WeaponBow_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponBow_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponBow.PrimalItem_WeaponBow",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemAmmo_ArrowStone_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemAmmo_ArrowStone_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_ArrowStone.PrimalItemAmmo_ArrowStone",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 50,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 20
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 50,
+							"MinQuality": "Tier1",
+							"MinQuantity": 20
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemAmmo_ArrowTranq_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemAmmo_ArrowTranq_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_ArrowTranq.PrimalItemAmmo_ArrowTranq",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 20,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 10
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 20,
+							"MinQuality": "Tier1",
+							"MinQuantity": 10
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemConsumableBuff_Parachute_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemConsumableBuff_Parachute_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumableBuff_Parachute.PrimalItemConsumableBuff_Parachute",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 3,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 3,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_BloodExtractor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_BloodExtractor_C",
+									"Path": "/Game/PrimalEarth/Test/PrimalItem_BloodExtractor.PrimalItem_BloodExtractor",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_WeaponSpyglass_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponSpyglass_C",
+									"Path": "/Game/PrimalEarth/Test/PrimalItem_WeaponSpyglass.PrimalItem_WeaponSpyglass",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_WeaponBow_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponBow_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponBow.PrimalItem_WeaponBow",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemAmmo_ArrowStone_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemAmmo_ArrowStone_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_ArrowStone.PrimalItemAmmo_ArrowStone",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemAmmo_ArrowTranq_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemAmmo_ArrowTranq_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_ArrowTranq.PrimalItemAmmo_ArrowTranq",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemConsumableBuff_Parachute_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemConsumableBuff_Parachute_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumableBuff_Parachute.PrimalItemConsumableBuff_Parachute",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_BloodExtractor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_BloodExtractor_C",
+									"Path": "/Game/PrimalEarth/Test/PrimalItem_BloodExtractor.PrimalItem_BloodExtractor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponSpyglass_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponSpyglass_C",
+									"Path": "/Game/PrimalEarth/Test/PrimalItem_WeaponSpyglass.PrimalItem_WeaponSpyglass",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier2",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier2",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier2",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier2",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Raider",
-					"MaxNumItems" : 6,
-					"MinNumItems" : 6,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Raider",
+					"MaxNumItems": 6,
+					"MinNumItems": 6,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Stone_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Stone_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Stone.PrimalItemResource_Stone",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 40,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 20
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 40,
+							"MinQuality": "Tier1",
+							"MinQuantity": 20
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Flint_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Flint_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Flint.PrimalItemResource_Flint",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 40,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 20
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 40,
+							"MinQuality": "Tier1",
+							"MinQuantity": 20
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Thatch_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Thatch_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Thatch.PrimalItemResource_Thatch",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 90,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 30
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 90,
+							"MinQuality": "Tier1",
+							"MinQuantity": 30
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Wood_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Wood_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Wood.PrimalItemResource_Wood",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 100,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 40
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 100,
+							"MinQuality": "Tier1",
+							"MinQuantity": 40
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Fibers_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Fibers_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Fibers.PrimalItemResource_Fibers",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 100,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 50
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 100,
+							"MinQuality": "Tier1",
+							"MinQuantity": 50
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemResource_Hide_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemResource_Hide_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Hide.PrimalItemResource_Hide",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 80,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 40
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 80,
+							"MinQuality": "Tier1",
+							"MinQuantity": 40
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemConsumable_Narcotic_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemConsumable_Narcotic_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Narcotic.PrimalItemConsumable_Narcotic",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 10,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 5
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 10,
+							"MinQuality": "Tier1",
+							"MinQuantity": 5
 						}
 					],
-					"Label" : "Resources",
-					"MaxNumItems" : 7,
-					"MinNumItems" : 7,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Resources",
+					"MaxNumItems": 7,
+					"MinNumItems": 7,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_CropPlot_Small_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_CropPlot_Small_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Small.PrimalItemStructure_CropPlot_Small",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 3,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 3,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_CompostBin_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_CompostBin_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CompostBin.PrimalItemStructure_CompostBin",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_StonePipeIntake_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StonePipeIntake_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_StonePipeIntake.PrimalItemStructure_StonePipeIntake",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_StonePipeTap_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StonePipeTap_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_StonePipeTap.PrimalItemStructure_StonePipeTap",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_StonePipeStraight_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StonePipeStraight_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_StonePipeStraight.PrimalItemStructure_StonePipeStraight",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 4,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 4,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_StonePipeIncline_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StonePipeIncline_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_StonePipeIncline.PrimalItemStructure_StonePipeIncline",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_StonePipeIntersection_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StonePipeIntersection_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_StonePipeIntersection.PrimalItemStructure_StonePipeIntersection",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_StonePipeVertical_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StonePipeVertical_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_StonePipeVertical.PrimalItemStructure_StonePipeVertical",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 6,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 6,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_CropPlot_Small_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_CropPlot_Small_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Small.PrimalItemStructure_CropPlot_Small",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_CompostBin_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_CompostBin_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CompostBin.PrimalItemStructure_CompostBin",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_StonePipeIntake_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StonePipeIntake_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_StonePipeIntake.PrimalItemStructure_StonePipeIntake",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_StonePipeTap_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StonePipeTap_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_StonePipeTap.PrimalItemStructure_StonePipeTap",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_StonePipeStraight_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StonePipeStraight_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_StonePipeStraight.PrimalItemStructure_StonePipeStraight",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_StonePipeIncline_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StonePipeIncline_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_StonePipeIncline.PrimalItemStructure_StonePipeIncline",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_StonePipeIntersection_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StonePipeIntersection_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_StonePipeIntersection.PrimalItemStructure_StonePipeIntersection",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_StonePipeVertical_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StonePipeVertical_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_StonePipeVertical.PrimalItemStructure_StonePipeVertical",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Farming",
-					"MaxNumItems" : 7,
-					"MinNumItems" : 7,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Farming",
+					"MaxNumItems": 7,
+					"MinNumItems": 7,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_MortarAndPestle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MortarAndPestle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_MortarAndPestle.PrimalItemStructure_MortarAndPestle",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_CookingPot_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_CookingPot_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CookingPot.PrimalItemStructure_CookingPot",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_WeaponPaintbrush_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponPaintbrush_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponPaintbrush.PrimalItem_WeaponPaintbrush",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_StorageBox_Large_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StorageBox_Large_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Large.PrimalItemStructure_StorageBox_Large",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 2,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 2,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_MortarAndPestle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MortarAndPestle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_MortarAndPestle.PrimalItemStructure_MortarAndPestle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_CookingPot_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_CookingPot_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CookingPot.PrimalItemStructure_CookingPot",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_StorageBox_Large_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_StorageBox_Large_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Large.PrimalItemStructure_StorageBox_Large",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_Forge_C",
-									"Weight" : 0.5
+									"Class": "PrimalItemStructure_Forge_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Forge.PrimalItemStructure_Forge",
+									"Weight": 0.5
 								},
 								{
-									"Class" : "PrimalItemConsumable_Narcotic_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemConsumable_Narcotic_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Narcotic.PrimalItemConsumable_Narcotic",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemConsumable_Stimulant_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemConsumable_Stimulant_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Stimulant.PrimalItemConsumable_Stimulant",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponPaintbrush_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponPaintbrush_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponPaintbrush.PrimalItem_WeaponPaintbrush",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Furniture",
-					"MaxNumItems" : 5,
-					"MinNumItems" : 5,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Furniture",
+					"MaxNumItems": 5,
+					"MinNumItems": 5,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_ParaSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ParaSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ParaSaddle.PrimalItemArmor_ParaSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_RaptorSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_RaptorSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_RaptorSaddle.PrimalItemArmor_RaptorSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_TrikeSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_TrikeSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TrikeSaddle.PrimalItemArmor_TrikeSaddle",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier2",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier2",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier2",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier2",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Saddles",
-					"MaxNumItems" : 2,
-					"MinNumItems" : 2,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.5
+					"Label": "Saddles",
+					"MaxNumItems": 2,
+					"MinNumItems": 2,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.5
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodRamp_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodRamp_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodRamp.PrimalItemStructure_WoodRamp",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 2,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 2,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodFenceFoundation_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodFenceFoundation_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodFenceFoundation.PrimalItemStructure_WoodFenceFoundation",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 7,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 2
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 7,
+							"MinQuality": "Tier1",
+							"MinQuantity": 2
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodPillar_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodPillar_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodPillar.PrimalItemStructure_WoodPillar",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 2,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 2,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodSign_Large_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodSign_Large_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodSign_Large.PrimalItemStructure_WoodSign_Large",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodRamp_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodRamp_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodRamp.PrimalItemStructure_WoodRamp",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodFenceFoundation_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodFenceFoundation_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodFenceFoundation.PrimalItemStructure_WoodFenceFoundation",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodPillar_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodPillar_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodPillar.PrimalItemStructure_WoodPillar",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCeilingWithTrapdoor.PrimalItemStructure_WoodCeilingWithTrapdoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodTrapdoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodTrapdoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodTrapdoor.PrimalItemStructure_WoodTrapdoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodLadder_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodLadder_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodLadder.PrimalItemStructure_WoodLadder",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodWallWithWindow_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodWallWithWindow_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWallWithWindow.PrimalItemStructure_WoodWallWithWindow",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodWindow_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodWindow_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWindow.PrimalItemStructure_WoodWindow",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodCatwalk_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodCatwalk_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCatwalk.PrimalItemStructure_WoodCatwalk",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodSign_Large_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodSign_Large_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodSign_Large.PrimalItemStructure_WoodSign_Large",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodSign_Wall_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodSign_Wall_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodSign_Wall.PrimalItemStructure_WoodSign_Wall",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Advanced Wood Housing: Flooring",
-					"MaxNumItems" : 5,
-					"MinNumItems" : 5,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.33300000000000001821
+					"Label": "Advanced Wood Housing: Flooring",
+					"MaxNumItems": 5,
+					"MinNumItems": 5,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.33300000000000001821
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCeilingWithTrapdoor.PrimalItemStructure_WoodCeilingWithTrapdoor",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodTrapdoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodTrapdoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodTrapdoor.PrimalItemStructure_WoodTrapdoor",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodLadder_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodLadder_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodLadder.PrimalItemStructure_WoodLadder",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 2,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 2,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodRamp_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodRamp_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodRamp.PrimalItemStructure_WoodRamp",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodFenceFoundation_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodFenceFoundation_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodFenceFoundation.PrimalItemStructure_WoodFenceFoundation",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodPillar_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodPillar_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodPillar.PrimalItemStructure_WoodPillar",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCeilingWithTrapdoor.PrimalItemStructure_WoodCeilingWithTrapdoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodTrapdoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodTrapdoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodTrapdoor.PrimalItemStructure_WoodTrapdoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodLadder_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodLadder_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodLadder.PrimalItemStructure_WoodLadder",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodWallWithWindow_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodWallWithWindow_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWallWithWindow.PrimalItemStructure_WoodWallWithWindow",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodWindow_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodWindow_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWindow.PrimalItemStructure_WoodWindow",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodCatwalk_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodCatwalk_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCatwalk.PrimalItemStructure_WoodCatwalk",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodSign_Large_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodSign_Large_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodSign_Large.PrimalItemStructure_WoodSign_Large",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodSign_Wall_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodSign_Wall_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodSign_Wall.PrimalItemStructure_WoodSign_Wall",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Advanced Wood Housing: Second Story",
-					"MaxNumItems" : 4,
-					"MinNumItems" : 4,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.33300000000000001821
+					"Label": "Advanced Wood Housing: Second Story",
+					"MaxNumItems": 4,
+					"MinNumItems": 4,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.33300000000000001821
 				},
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodWallWithWindow_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodWallWithWindow_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWallWithWindow.PrimalItemStructure_WoodWallWithWindow",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 2,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 2
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 2,
+							"MinQuality": "Tier1",
+							"MinQuantity": 2
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodWindow_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodWindow_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWindow.PrimalItemStructure_WoodWindow",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 2,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 2
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 2,
+							"MinQuality": "Tier1",
+							"MinQuantity": 2
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodCatwalk_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodCatwalk_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCatwalk.PrimalItemStructure_WoodCatwalk",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 3,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 3,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodSign_Wall_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodSign_Wall_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodSign_Wall.PrimalItemStructure_WoodSign_Wall",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 2,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 2,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_WoodRamp_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodRamp_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodRamp.PrimalItemStructure_WoodRamp",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodFenceFoundation_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodFenceFoundation_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodFenceFoundation.PrimalItemStructure_WoodFenceFoundation",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodPillar_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodPillar_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodPillar.PrimalItemStructure_WoodPillar",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodCeilingWithTrapdoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCeilingWithTrapdoor.PrimalItemStructure_WoodCeilingWithTrapdoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodTrapdoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodTrapdoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodTrapdoor.PrimalItemStructure_WoodTrapdoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodLadder_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodLadder_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodLadder.PrimalItemStructure_WoodLadder",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodWallWithWindow_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodWallWithWindow_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWallWithWindow.PrimalItemStructure_WoodWallWithWindow",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodWindow_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodWindow_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodWindow.PrimalItemStructure_WoodWindow",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodCatwalk_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodCatwalk_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodCatwalk.PrimalItemStructure_WoodCatwalk",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodSign_Large_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodSign_Large_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodSign_Large.PrimalItemStructure_WoodSign_Large",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodSign_Wall_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodSign_Wall_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodSign_Wall.PrimalItemStructure_WoodSign_Wall",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Advanced Wood Housing: Other",
-					"MaxNumItems" : 5,
-					"MinNumItems" : 5,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 0.33300000000000001821
+					"Label": "Advanced Wood Housing: Other",
+					"MaxNumItems": 5,
+					"MinNumItems": 5,
+					"NumItemsPower": 1.0,
+					"SetWeight": 0.33300000000000001821
 				}
 			],
-			"Kind" : "Standard",
-			"Label" : "Island Green (Level 15)",
-			"MaxItemSets" : 3,
-			"MinItemSets" : 1,
-			"Multiplier_Max" : 1.0,
-			"Multiplier_Min" : 1.0,
-			"NumItemSetsPower" : 1.0,
-			"SortValue" : 2,
-			"SupplyCrateClassString" : "SupplyCrate_Level15_C",
-			"UIColor" : "00FF0000"
+			"Kind": "Standard",
+			"Label": "Island Green (Level 15)",
+			"MaxItemSets": 3,
+			"MinItemSets": 1,
+			"Multiplier_Max": 1.0,
+			"Multiplier_Min": 1.0,
+			"NumItemSetsPower": 1.0,
+			"SortValue": 2,
+			"SupplyCrateClassString": "SupplyCrate_Level15_C",
+			"UIColor": "00FF0000",
+			"UseBlueprints": false
 		},
 		{
-			"Availability" : 1,
-			"bSetsRandomWithoutReplacement" : true,
-			"ItemSets" : [
+			"Availability": 13,
+			"bSetsRandomWithoutReplacement": true,
+			"ItemSets": [
 				{
-					"bItemsRandomWithoutReplacement" : false,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": false,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_MetalFloor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalFloor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalFloor.PrimalItemStructure_MetalFloor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalWall_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalWall_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWall.PrimalItemStructure_MetalWall",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalDoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalDoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalDoor.PrimalItemStructure_MetalDoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalWallWithDoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalWallWithDoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWallWithDoor.PrimalItemStructure_MetalWallWithDoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalCeiling_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalCeiling_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeiling.PrimalItemStructure_MetalCeiling",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodGateframe_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodGateframe_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodGateframe.PrimalItemStructure_WoodGateframe",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_WoodGate_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_WoodGate_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_WoodGate.PrimalItemStructure_WoodGate",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalSign_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalSign_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalSign.PrimalItemStructure_MetalSign",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_Forge_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_Forge_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Forge.PrimalItemStructure_Forge",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_AnvilBench_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_AnvilBench_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_AnvilBench.PrimalItemStructure_AnvilBench",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_CropPlot_Medium_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_CropPlot_Medium_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Medium.PrimalItemStructure_CropPlot_Medium",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemConsumable_WaterJarCraftable_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemConsumable_WaterJarCraftable_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_WaterJarCraftable.PrimalItemConsumable_WaterJarCraftable",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponCompass_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponCompass_C",
+									"Path": "/Game/PrimalEarth/Test/PrimalItem_WeaponCompass.PrimalItem_WeaponCompass",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_CropPlot_Medium_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_CropPlot_Medium_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Medium.PrimalItemStructure_CropPlot_Medium",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.5,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.5,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_ChitinBoots_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ChitinBoots_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinBoots.PrimalItemArmor_ChitinBoots",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_ChitinGloves_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ChitinGloves_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinGloves.PrimalItemArmor_ChitinGloves",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_ChitinHelmet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ChitinHelmet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinHelmet.PrimalItemArmor_ChitinHelmet",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_ChitinPants_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ChitinPants_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinPants.PrimalItemArmor_ChitinPants",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_ChitinShirt_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ChitinShirt_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Chitin/PrimalItemArmor_ChitinShirt.PrimalItemArmor_ChitinShirt",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponMetalPick_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponMetalPick_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMetalPick.PrimalItem_WeaponMetalPick",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponMetalHatchet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponMetalHatchet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMetalHatchet.PrimalItem_WeaponMetalHatchet",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponPike_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponPike_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponPike.PrimalItem_WeaponPike",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_ScorpionSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ScorpionSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ScorpionSaddle.PrimalItemArmor_ScorpionSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_TurtleSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_TurtleSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_TurtleSaddle.PrimalItemArmor_TurtleSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_StegoSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_StegoSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_StegoSaddle.PrimalItemArmor_StegoSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_DolphinSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_DolphinSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_DolphinSaddle.PrimalItemArmor_DolphinSaddle",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier2",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier2",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier2",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier2",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Lvl 25 drops",
-					"MaxNumItems" : 1,
-					"MinNumItems" : 1,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 1.0
+					"Label": "Lvl 25 drops",
+					"MaxNumItems": 1,
+					"MinNumItems": 1,
+					"NumItemsPower": 1.0,
+					"SetWeight": 1.0
 				}
 			],
-			"Kind" : "Standard",
-			"Label" : "Island Blue (Level 25)",
-			"MaxItemSets" : 3,
-			"MinItemSets" : 1,
-			"Multiplier_Max" : 1.0,
-			"Multiplier_Min" : 1.0,
-			"NumItemSetsPower" : 1.0,
-			"SortValue" : 4,
-			"SupplyCrateClassString" : "SupplyCrate_Level25_C",
-			"UIColor" : "88C8FF00"
+			"Kind": "Standard",
+			"Label": "Island Blue (Level 25)",
+			"MaxItemSets": 3,
+			"MinItemSets": 1,
+			"Multiplier_Max": 1.0,
+			"Multiplier_Min": 1.0,
+			"NumItemSetsPower": 1.0,
+			"SortValue": 4,
+			"SupplyCrateClassString": "SupplyCrate_Level25_C",
+			"UIColor": "88C8FF00",
+			"UseBlueprints": false
 		},
 		{
-			"Availability" : 1,
-			"bSetsRandomWithoutReplacement" : true,
-			"ItemSets" : [
+			"Availability": 13,
+			"bSetsRandomWithoutReplacement": true,
+			"ItemSets": [
 				{
-					"bItemsRandomWithoutReplacement" : false,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": false,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemAmmo_SimpleBullet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemAmmo_SimpleBullet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_SimpleBullet.PrimalItemAmmo_SimpleBullet",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemAmmo_SimpleRifleBullet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemAmmo_SimpleRifleBullet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_SimpleRifleBullet.PrimalItemAmmo_SimpleRifleBullet",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemAmmo_SimpleShotgunBullet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemAmmo_SimpleShotgunBullet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_SimpleShotgunBullet.PrimalItemAmmo_SimpleShotgunBullet",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_CropPlot_Large_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_CropPlot_Large_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Large.PrimalItemStructure_CropPlot_Large",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalPipeIncline_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalPipeIncline_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_MetalPipeIncline.PrimalItemStructure_MetalPipeIncline",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalPipeIntake_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalPipeIntake_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_MetalPipeIntake.PrimalItemStructure_MetalPipeIntake",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalPipeIntersection_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalPipeIntersection_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_MetalPipeIntersection.PrimalItemStructure_MetalPipeIntersection",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalPipeStraight_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalPipeStraight_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_MetalPipeStraight.PrimalItemStructure_MetalPipeStraight",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalPipeTap_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalPipeTap_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_MetalPipeTap.PrimalItemStructure_MetalPipeTap",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalPipeVertical_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalPipeVertical_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_MetalPipeVertical.PrimalItemStructure_MetalPipeVertical",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_Fabricator_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_Fabricator_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Fabricator.PrimalItemStructure_Fabricator",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalRamp_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalRamp_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalRamp.PrimalItemStructure_MetalRamp",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalFenceFoundation_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalFenceFoundation_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalFenceFoundation.PrimalItemStructure_MetalFenceFoundation",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalPillar_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalPillar_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalPillar.PrimalItemStructure_MetalPillar",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalCeilingWithTrapdoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalCeilingWithTrapdoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCeilingWithTrapdoor.PrimalItemStructure_MetalCeilingWithTrapdoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalTrapdoor_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalTrapdoor_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalTrapdoor.PrimalItemStructure_MetalTrapdoor",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalLadder_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalLadder_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalLadder.PrimalItemStructure_MetalLadder",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.5,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.5,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemWeaponAttachment_Silencer_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemWeaponAttachment_Silencer_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/WeaponAttachments/PrimalItemWeaponAttachment_Silencer.PrimalItemWeaponAttachment_Silencer",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemWeaponAttachment_Scope_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemWeaponAttachment_Scope_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/WeaponAttachments/PrimalItemWeaponAttachment_Scope.PrimalItemWeaponAttachment_Scope",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemWeaponAttachment_Flashlight_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemWeaponAttachment_Flashlight_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/WeaponAttachments/PrimalItemWeaponAttachment_Flashlight.PrimalItemWeaponAttachment_Flashlight",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponGrenade_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponGrenade_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponGrenade.PrimalItem_WeaponGrenade",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.5,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.5,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_WeaponGun_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponGun_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponGun.PrimalItem_WeaponGun",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponOneShotRifle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponOneShotRifle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponOneShotRifle.PrimalItem_WeaponOneShotRifle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponShotgun_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponShotgun_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponShotgun.PrimalItem_WeaponShotgun",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_PteroSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_PteroSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PteroSaddle.PrimalItemArmor_PteroSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_SarcoSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_SarcoSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SarcoSaddle.PrimalItemArmor_SarcoSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_AnkyloSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_AnkyloSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_AnkyloSaddle.PrimalItemArmor_AnkyloSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_MammothSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_MammothSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MammothSaddle.PrimalItemArmor_MammothSaddle",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier2",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier2",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier2",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier2",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Lvl 35 drops",
-					"MaxNumItems" : 1,
-					"MinNumItems" : 1,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 1.0
+					"Label": "Lvl 35 drops",
+					"MaxNumItems": 1,
+					"MinNumItems": 1,
+					"NumItemsPower": 1.0,
+					"SetWeight": 1.0
 				}
 			],
-			"Kind" : "Standard",
-			"Label" : "Island Purple (Level 35)",
-			"MaxItemSets" : 3,
-			"MinItemSets" : 1,
-			"Multiplier_Max" : 1.0,
-			"Multiplier_Min" : 1.0,
-			"NumItemSetsPower" : 1.0,
-			"SortValue" : 6,
-			"SupplyCrateClassString" : "SupplyCrate_Level35_C",
-			"UIColor" : "E6BAFF00"
+			"Kind": "Standard",
+			"Label": "Island Purple (Level 35)",
+			"MaxItemSets": 3,
+			"MinItemSets": 1,
+			"Multiplier_Max": 1.0,
+			"Multiplier_Min": 1.0,
+			"NumItemSetsPower": 1.0,
+			"SortValue": 6,
+			"SupplyCrateClassString": "SupplyCrate_Level35_C",
+			"UIColor": "E6BAFF00",
+			"UseBlueprints": false
 		},
 		{
-			"Availability" : 1,
-			"bSetsRandomWithoutReplacement" : true,
-			"ItemSets" : [
+			"Availability": 13,
+			"bSetsRandomWithoutReplacement": true,
+			"ItemSets": [
 				{
-					"bItemsRandomWithoutReplacement" : false,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": false,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_MetalGateframe_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalGateframe_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGateframe.PrimalItemStructure_MetalGateframe",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalGate_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalGate_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGate.PrimalItemStructure_MetalGate",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalSign_Large_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalSign_Large_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalSign_Large.PrimalItemStructure_MetalSign_Large",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemAmmo_AdvancedBullet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemAmmo_AdvancedBullet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedBullet.PrimalItemAmmo_AdvancedBullet",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponTripwireC4_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponTripwireC4_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponTripwireC4.PrimalItem_WeaponTripwireC4",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_PowerGenerator_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_PowerGenerator_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_PowerGenerator.PrimalItemStructure_PowerGenerator",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_PowerOutlet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_PowerOutlet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_PowerOutlet.PrimalItemStructure_PowerOutlet",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_Lamppost_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_Lamppost_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Lamppost.PrimalItemStructure_Lamppost",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_PowerCableIncline_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_PowerCableIncline_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_PowerCableIncline.PrimalItemStructure_PowerCableIncline",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_PowerCableIntersection_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_PowerCableIntersection_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_PowerCableIntersection.PrimalItemStructure_PowerCableIntersection",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_PowerCableStraight_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_PowerCableStraight_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_PowerCableStraight.PrimalItemStructure_PowerCableStraight",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_PowerCableVertical_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_PowerCableVertical_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_PowerCableVertical.PrimalItemStructure_PowerCableVertical",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalWallWithWindow_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalWallWithWindow_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWallWithWindow.PrimalItemStructure_MetalWallWithWindow",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalWindow_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalWindow_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalWindow.PrimalItemStructure_MetalWindow",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalCatwalk_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalCatwalk_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalCatwalk.PrimalItemStructure_MetalCatwalk",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalSign_Wall_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalSign_Wall_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalSign_Wall.PrimalItemStructure_MetalSign_Wall",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.5,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.5,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_WeaponGPS_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponGPS_C",
+									"Path": "/Game/PrimalEarth/Test/PrimalItem_WeaponGPS.PrimalItem_WeaponGPS",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemWeaponAttachment_Laser_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemWeaponAttachment_Laser_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/WeaponAttachments/PrimalItemWeaponAttachment_Laser.PrimalItemWeaponAttachment_Laser",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.5,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.5,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemArmor_MetalBoots_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_MetalBoots_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalBoots.PrimalItemArmor_MetalBoots",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_MetalGloves_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_MetalGloves_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalGloves.PrimalItemArmor_MetalGloves",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_MetalHelmet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_MetalHelmet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalHelmet.PrimalItemArmor_MetalHelmet",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_MetalPants_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_MetalPants_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalPants.PrimalItemArmor_MetalPants",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_MetalShirt_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_MetalShirt_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MetalShirt.PrimalItemArmor_MetalShirt",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponMachinedPistol_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponMachinedPistol_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMachinedPistol.PrimalItem_WeaponMachinedPistol",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_MegalodonSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_MegalodonSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_MegalodonSaddle.PrimalItemArmor_MegalodonSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_SaberSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_SaberSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SaberSaddle.PrimalItemArmor_SaberSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_CarnoSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_CarnoSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_CarnoSaddle.PrimalItemArmor_CarnoSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponFishingRod_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponFishingRod_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponFishingRod.PrimalItem_WeaponFishingRod",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier2",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier2",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier2",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier2",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Lvl 45 drops",
-					"MaxNumItems" : 1,
-					"MinNumItems" : 1,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 1.0
+					"Label": "Lvl 45 drops",
+					"MaxNumItems": 1,
+					"MinNumItems": 1,
+					"NumItemsPower": 1.0,
+					"SetWeight": 1.0
 				}
 			],
-			"Kind" : "Standard",
-			"Label" : "Island Yellow (Level 45)",
-			"MaxItemSets" : 3,
-			"MinItemSets" : 1,
-			"Multiplier_Max" : 1.0,
-			"Multiplier_Min" : 1.0,
-			"NumItemSetsPower" : 1.0,
-			"SortValue" : 8,
-			"SupplyCrateClassString" : "SupplyCrate_Level45_C",
-			"UIColor" : "FFF02A00"
+			"Kind": "Standard",
+			"Label": "Island Yellow (Level 45)",
+			"MaxItemSets": 3,
+			"MinItemSets": 1,
+			"Multiplier_Max": 1.0,
+			"Multiplier_Min": 1.0,
+			"NumItemSetsPower": 1.0,
+			"SortValue": 8,
+			"SupplyCrateClassString": "SupplyCrate_Level45_C",
+			"UIColor": "FFF02A00",
+			"UseBlueprints": false
 		},
 		{
-			"Availability" : 1,
-			"bSetsRandomWithoutReplacement" : true,
-			"ItemSets" : [
+			"Availability": 13,
+			"bSetsRandomWithoutReplacement": true,
+			"ItemSets": [
 				{
-					"bItemsRandomWithoutReplacement" : true,
-					"ItemEntries" : [
+					"bItemsRandomWithoutReplacement": true,
+					"ItemEntries": [
 						{
-							"ChanceToBeBlueprintOverride" : 1.0,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 1.0,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemStructure_MetalGateframe_Large_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalGateframe_Large_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGateframe_Large.PrimalItemStructure_MetalGateframe_Large",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_MetalGate_Large_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_MetalGate_Large_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Metal/PrimalItemStructure_MetalGate_Large.PrimalItemStructure_MetalGate_Large",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemAmmo_AdvancedRifleBullet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemAmmo_AdvancedRifleBullet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_AdvancedRifleBullet.PrimalItemAmmo_AdvancedRifleBullet",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemAmmo_Rocket_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemAmmo_Rocket_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_Rocket.PrimalItemAmmo_Rocket",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_IceBox_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_IceBox_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_IceBox.PrimalItemStructure_IceBox",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_AirConditioner_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_AirConditioner_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_AirConditioner.PrimalItemStructure_AirConditioner",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_Turret_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_Turret_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Turret.PrimalItemStructure_Turret",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemStructure_Keypad_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemStructure_Keypad_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Keypad.PrimalItemStructure_Keypad",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.5,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.5,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItemWeaponAttachment_HoloScope_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemWeaponAttachment_HoloScope_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/WeaponAttachments/PrimalItemWeaponAttachment_HoloScope.PrimalItemWeaponAttachment_HoloScope",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponC4_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponC4_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponC4.PrimalItem_WeaponC4",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemC4Ammo_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemC4Ammo_C",
+									"Path": "/Game/PrimalEarth/Test/PrimalItemC4Ammo.PrimalItemC4Ammo",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier1",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier1",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier1",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier1",
+							"MinQuantity": 1
 						},
 						{
-							"ChanceToBeBlueprintOverride" : 0.5,
-							"EntryWeight" : 1.0,
-							"Items" : [
+							"ChanceToBeBlueprintOverride": 0.5,
+							"EntryWeight": 1.0,
+							"Items": [
 								{
-									"Class" : "PrimalItem_WeaponRifle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponRifle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRifle.PrimalItem_WeaponRifle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponRocketLauncher_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponRocketLauncher_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponRocketLauncher.PrimalItem_WeaponRocketLauncher",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_ArgentavisSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_ArgentavisSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_ArgentavisSaddle.PrimalItemArmor_ArgentavisSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_SauroSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_SauroSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SauroSaddle.PrimalItemArmor_SauroSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_RexSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_RexSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_RexSaddle.PrimalItemArmor_RexSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_SpinoSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_SpinoSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SpinoSaddle.PrimalItemArmor_SpinoSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_MinersHelmet_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_MinersHelmet_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Metal/PrimalItemArmor_MinersHelmet.PrimalItemArmor_MinersHelmet",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItemArmor_PlesiaSaddle_C",
-									"Weight" : 1.0
+									"Class": "PrimalItemArmor_PlesiaSaddle_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PlesiaSaddle.PrimalItemArmor_PlesiaSaddle",
+									"Weight": 1.0
 								},
 								{
-									"Class" : "PrimalItem_WeaponFishingRod_C",
-									"Weight" : 1.0
+									"Class": "PrimalItem_WeaponFishingRod_C",
+									"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponFishingRod.PrimalItem_WeaponFishingRod",
+									"Weight": 1.0
 								}
 							],
-							"MaxQuality" : "Tier2",
-							"MaxQuantity" : 1,
-							"MinQuality" : "Tier2",
-							"MinQuantity" : 1
+							"MaxQuality": "Tier2",
+							"MaxQuantity": 1,
+							"MinQuality": "Tier2",
+							"MinQuantity": 1
 						}
 					],
-					"Label" : "Lvl 60 drops",
-					"MaxNumItems" : 1,
-					"MinNumItems" : 1,
-					"NumItemsPower" : 1.0,
-					"SetWeight" : 1.0
+					"Label": "Lvl 60 drops",
+					"MaxNumItems": 1,
+					"MinNumItems": 1,
+					"NumItemsPower": 1.0,
+					"SetWeight": 1.0
 				}
 			],
-			"Kind" : "Standard",
-			"Label" : "Island Red (Level 60)",
-			"MaxItemSets" : 3,
-			"MinItemSets" : 1,
-			"Multiplier_Max" : 1.0,
-			"Multiplier_Min" : 1.0,
-			"NumItemSetsPower" : 1.0,
-			"SortValue" : 10,
-			"SupplyCrateClassString" : "SupplyCrate_Level60_C",
-			"UIColor" : "FFBABA00"
+			"Kind": "Standard",
+			"Label": "Island Red (Level 60)",
+			"MaxItemSets": 3,
+			"MinItemSets": 1,
+			"Multiplier_Max": 1.0,
+			"Multiplier_Min": 1.0,
+			"NumItemSetsPower": 1.0,
+			"SortValue": 10,
+			"SupplyCrateClassString": "SupplyCrate_Level60_C",
+			"UIColor": "FFBABA00",
+			"UseBlueprints": false
 		}
 	],
-	"Public" : true,
-	"Title" : "Default Loot",
-	"Version" : 2
+	"Map": 1,
+	"Public": true,
+	"Title": "Default Loot",
+	"Version": 2
 }

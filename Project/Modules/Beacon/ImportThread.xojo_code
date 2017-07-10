@@ -29,7 +29,7 @@ Inherits Beacon.Thread
 		      Dim Value As Auto = Self.Import(Line)
 		      If Value IsA Beacon.Pair And Beacon.Pair(Value).Key = "ConfigOverrideSupplyCrateItems" Then
 		        Dim Dict As Xojo.Core.Dictionary = Beacon.Pair(Value).Value
-		        Dim LootSource As Beacon.LootSource = Beacon.LootSource.Import(Dict)
+		        Dim LootSource As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(Dict, 1.0)
 		        If LootSource <> Nil Then
 		          LootSource.NumItemSetsPower = 1.0
 		          Self.mLootSources.Append(LootSource)
@@ -341,6 +341,21 @@ Inherits Beacon.Thread
 			Visible=true
 			Group="ID"
 			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Priority"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="StackSize"
+			Group="Behavior"
+			Type="UInteger"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="State"
+			Group="Behavior"
+			Type="Beacon.Thread.States"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

@@ -29,7 +29,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mUIColor = &cFFFFFF00
 		  Self.mSortValue = 99
 		  Self.mNumItemSetsPower = 1
-		  Self.mUseBlueprints = True
+		  Self.mUseBlueprints = False
 		End Sub
 	#tag EndMethod
 
@@ -106,41 +106,50 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.LootSource
-		  // This could be a beacon save or a config line
-		  
+		Shared Function ImportFromBeacon(Dict As Xojo.Core.DIctionary) As Beacon.LootSource
 		  Dim ClassString As Text
 		  If Dict.HasKey("SupplyCrateClassString") Then
 		    ClassString = Dict.Value("SupplyCrateClassString")
-		  Else
+		  ElseIf Dict.HasKey("Type") Then
 		    ClassString = Dict.Value("Type")
 		  End If
 		  If ClassString = "Beacon:ScorchedEarthDesertCrate_C" Then
 		    ClassString = "SupplyCreate_OceanInstant_High_C"
 		  End If
+		  If ClassString = "" Then
+		    Return Nil
+		  End If
 		  
-		  Dim LootSource As Beacon.LootSource = Beacon.Data.GetLootSource(ClassString)
+		  Dim LootSource As Beacon.LootSource
+		  If Beacon.Data <> Nil Then
+		    LootSource = Beacon.Data.GetLootSource(ClassString)
+		  End If
 		  If LootSource = Nil Then
 		    Dim UIColor As Text = Dict.Lookup("UIColor", "FFFFFF00")
 		    Dim MutableSource As New Beacon.MutableLootSource(ClassString, False)
 		    MutableSource.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
-		    MutableSource.Availability = Dict.Lookup("Availability", 1)
+		    MutableSource.Availability = Dict.Lookup("Availability", Beacon.Maps.All.Mask)
 		    MutableSource.Kind = Beacon.LootSource.TextToKind(Dict.Lookup("Kind", "Standard"))
 		    MutableSource.UIColor = Color.RGBA(Integer.FromHex(UIColor.Mid(0, 2)), Integer.FromHex(UIColor.Mid(2, 2)), Integer.FromHex(UIColor.Mid(4, 2)), Integer.FromHex(UIColor.Mid(6, 2)))
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
-		    MutableSource.Label = Dict.Lookup("Label", "Unnamed Custom Loot Source")
-		    MutableSource.UseBlueprints = Dict.Lookup("UseBlueprints", True)
+		    MutableSource.Label = Dict.Lookup("Label", ClassString)
+		    MutableSource.UseBlueprints = Dict.Lookup("UseBlueprints", False)
 		    LootSource = New Beacon.LootSource(MutableSource)
 		  End If
 		  
-		  LootSource.MaxItemSets = Dict.Lookup("MaxItemSets", LootSource.MaxItemSets)
-		  LootSource.MinItemSets = Dict.Lookup("MinItemSets", LootSource.MinItemSets)
-		  LootSource.NumItemSetsPower = Dict.Lookup("NumItemSetsPower", LootSource.NumItemSetsPower)
-		  
+		  If Dict.HasKey("MaxItemSets") Then
+		    LootSource.MaxItemSets = Dict.Value("MaxItemSets")
+		  End If
+		  If Dict.HasKey("MinItemSets") Then
+		    LootSource.MinItemSets = Dict.Value("MinItemSets")
+		  End If
+		  If Dict.HasKey("NumItemSetsPower") Then
+		    LootSource.NumItemSetsPower = Dict.Value("NumItemSetsPower")
+		  End If
 		  If Dict.HasKey("bSetsRandomWithoutReplacement") Then
 		    LootSource.SetsRandomWithoutReplacement = Dict.Value("bSetsRandomWithoutReplacement")
-		  Else
-		    LootSource.SetsRandomWithoutReplacement = Dict.Lookup("SetsRandomWithoutReplacement", LootSource.SetsRandomWithoutReplacement)
+		  ElseIf Dict.HasKey("SetsRandomWithoutReplacement") Then
+		    LootSource.SetsRandomWithoutReplacement = Dict.Value("SetsRandomWithoutReplacement")
 		  End If
 		  
 		  Dim Children() As Auto
@@ -152,7 +161,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  Dim AddedHashes As New Xojo.Core.Dictionary
 		  For Each Child As Xojo.Core.Dictionary In Children
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Child, LootSource)
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Child)
 		    Dim Hash As Text = Set.Hash
 		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
 		      LootSource.Append(Set)
@@ -163,6 +172,63 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  LootSource.mModified = False
 		  Return LootSource
 		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary, DifficultyValue As Double) As Beacon.LootSource
+		  Dim ClassString As Text
+		  If Dict.HasKey("SupplyCrateClassString") Then
+		    ClassString = Dict.Value("SupplyCrateClassString")
+		  End If
+		  
+		  Dim LootSource As Beacon.LootSource
+		  If Beacon.Data <> Nil Then
+		    LootSource = Beacon.Data.GetLootSource(ClassString)
+		  End If
+		  If LootSource = Nil Then
+		    Dim UIColor As Text = Dict.Lookup("UIColor", "FFFFFF00")
+		    Dim MutableSource As New Beacon.MutableLootSource(ClassString, False)
+		    MutableSource.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
+		    MutableSource.Availability = Dict.Lookup("Availability", Beacon.Maps.All.Mask)
+		    MutableSource.Kind = Beacon.LootSource.TextToKind(Dict.Lookup("Kind", "Standard"))
+		    MutableSource.UIColor = Color.RGBA(Integer.FromHex(UIColor.Mid(0, 2)), Integer.FromHex(UIColor.Mid(2, 2)), Integer.FromHex(UIColor.Mid(4, 2)), Integer.FromHex(UIColor.Mid(6, 2)))
+		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
+		    MutableSource.Label = Dict.Lookup("Label", ClassString)
+		    MutableSource.UseBlueprints = Dict.Lookup("UseBlueprints", False)
+		    LootSource = New Beacon.LootSource(MutableSource)
+		  End If
+		  
+		  If Dict.HasKey("MaxItemSets") Then
+		    LootSource.MaxItemSets = Dict.Value("MaxItemSets")
+		  End If
+		  If Dict.HasKey("MinItemSets") Then
+		    LootSource.MinItemSets = Dict.Value("MinItemSets")
+		  End If
+		  If Dict.HasKey("NumItemSetsPower") Then
+		    LootSource.NumItemSetsPower = Dict.Value("NumItemSetsPower")
+		  End If
+		  If Dict.HasKey("bSetsRandomWithoutReplacement") Then
+		    LootSource.SetsRandomWithoutReplacement = Dict.Value("bSetsRandomWithoutReplacement")
+		  End If
+		  
+		  Dim Children() As Auto
+		  If Dict.HasKey("ItemSets") Then
+		    Children = Dict.Value("ItemSets")
+		  End If
+		  
+		  Dim AddedHashes As New Xojo.Core.Dictionary
+		  For Each Child As Xojo.Core.Dictionary In Children
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromConfig(Child, LootSource.Multipliers, DifficultyValue)
+		    Dim Hash As Text = Set.Hash
+		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
+		      LootSource.Append(Set)
+		      AddedHashes.Value(Hash) = True
+		    End If
+		  Next
+		  
+		  LootSource.mModified = False
+		  Return LootSource
 		End Function
 	#tag EndMethod
 
@@ -365,7 +431,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue() As Text
+		Function TextValue(DifficultyValue As Double) As Text
 		  Dim Values() As Text
 		  
 		  // This is terrible, but Ark uses the same code for both Scorched Desert Crates and Island Sea Crates
@@ -375,11 +441,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Values.Append("SupplyCrateClassString=""" + Self.mClassString + """")
 		  End If
 		  
-		  Values.Append("MinItemSets=" + Xojo.Math.Max(Xojo.Math.Min(Self.mMinItemSets, Self.Count), 0).ToText)
-		  Values.Append("MaxItemSets=" + Xojo.Math.Max(Xojo.Math.Min(Self.mMaxItemSets, Self.Count), 0).ToText)
-		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.ToText)
+		  Dim MinItemSets As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMinItemSets, Self.Count), 0)
+		  Dim MaxItemSets As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMaxItemSets, Self.Count), 0)
+		  
+		  Values.Append("MinItemSets=" + MinItemSets.ToText)
+		  Values.Append("MaxItemSets=" + MaxItemSets.ToText)
+		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.PrettyText)
 		  Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mSets, ",", Self.mMultipliers, Self.mUseBlueprints) + ")")
+		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mSets, ",", Self.mMultipliers, Self.mUseBlueprints, DifficultyValue) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod
@@ -398,7 +467,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Beacon.Map) As Boolean
-		  Return (Self.mAvailability And Map.Mask) = Map.Mask
+		  Return Map = Nil Or (Self.mAvailability And Map.Mask) = Map.Mask
 		End Function
 	#tag EndMethod
 

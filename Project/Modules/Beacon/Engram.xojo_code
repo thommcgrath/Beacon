@@ -93,28 +93,56 @@ Protected Class Engram
 		    Parts.Remove(0)
 		    Parts.Remove(UBound(Parts))
 		    
-		    Dim GuessLabel As Text = Text.Join(Parts, " ")
-		    Dim Chars() As Text
-		    For Each Codepoint As Integer In GuessLabel.Codepoints
-		      If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
-		        Chars.Append(Text.FromUnicodeCodepoint(Codepoint))
-		      ElseIf CodePoint >= 65 And Codepoint <= 90 Then
-		        Chars.Append(" ")
-		        Chars.Append(Text.FromUnicodeCodepoint(Codepoint))
-		      ElseIf CodePoint = 95 Then
-		        Chars.Append(" ")
-		      End If
-		    Next
-		    GuessLabel = Text.Join(Chars, "")
-		    
-		    While GuessLabel.IndexOf("  ") > -1
-		      GuessLabel = GuessLabel.ReplaceAll("  ", " ")
-		    Wend
-		    
-		    Self.mLabel = GuessLabel.Trim
+		    Self.mLabel = Self.MakeHumanReadableText(Text.Join(Parts, " "))
 		  End If
 		  
 		  Return Self.mLabel
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function MakeHumanReadableText(Value As Text) As Text
+		  Dim Chars() As Text
+		  For Each Codepoint As Integer In Value.Codepoints
+		    If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
+		      Chars.Append(Text.FromUnicodeCodepoint(Codepoint))
+		    ElseIf CodePoint >= 65 And Codepoint <= 90 Then
+		      Chars.Append(" ")
+		      Chars.Append(Text.FromUnicodeCodepoint(Codepoint))
+		    ElseIf CodePoint = 95 Then
+		      Chars.Append(" ")
+		    End If
+		  Next
+		  Value = Text.Join(Chars, "")
+		  
+		  While Value.IndexOf("  ") > -1
+		    Value = Value.ReplaceAll("  ", " ")
+		  Wend
+		  
+		  Return Value.Trim
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ModName() As Text
+		  If Not Self.IsValid Or Self.mPath.Length < 6 Or Self.mPath.Left(6) <> "/Game/" Then
+		    Return ""
+		  End If
+		  
+		  Dim Idx As Integer = Self.mPath.IndexOf(6, "/")
+		  Dim Name As Text = Self.mPath.Mid(6, Idx - 6)
+		  Select Case Name
+		  Case "PrimalEarth"
+		    Return "Ark Prime"
+		  Case "ScorchedEarth"
+		    Return "Scorched Earth"
+		  Case "Mods"
+		    Dim StartAt As Integer = Idx + 1
+		    Dim EndAt As Integer = Self.mPath.IndexOf(StartAt, "/")
+		    Return Self.MakeHumanReadableText(Self.mPath.Mid(StartAt, EndAt - StartAt))
+		  Else
+		    Return Self.MakeHumanReadableText(Name)
+		  End Select
 		End Function
 	#tag EndMethod
 
@@ -130,7 +158,7 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Beacon.Map) As Boolean
-		  Return Map.Matches(Self.mAvailability)
+		  Return Map = Nil Or Map.Matches(Self.mAvailability)
 		End Function
 	#tag EndMethod
 

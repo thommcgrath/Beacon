@@ -52,6 +52,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Shown(UserData As Auto = Nil)
+		  #Pragma Unused UserData
+		  
 		  If Self.mAlreadyStarted = True Then
 		    Return
 		  End If

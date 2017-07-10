@@ -42,71 +42,63 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function JSONPrettyPrint(json As Text) As Text
-		  // Glacially slow on Windows
-		  // From https://forum.xojo.com/conversation/post/332504
+		Private Shared Function JSONPrettyPrint(JSON As Text) As Text
+		  Const Indent = &h09
+		  Const EndOfLine = &h0A
 		  
-		  #if TargetWin32
-		    Return json
-		  #endif
+		  Dim Bytes() As UInt8
+		  Dim Indents As UInteger
 		  
-		  const kBuffer as text = &u09
-		  const kEOL as text = &u0A
+		  Dim AddAsIs, InQuote As Boolean
 		  
-		  dim outArr() as text
-		  dim indents( 0 ) as text
-		  
-		  dim addAsIs as boolean
-		  dim inQuote as boolean
-		  
-		  for each char as text in json.Characters
-		    if addAsIs then
-		      outArr.Append char
-		      addAsIs = false
-		      
-		    elseif char = """" then
-		      outArr.Append char
-		      inQuote = not inQuote
-		      
-		    elseif inQuote then
-		      outArr.Append char
-		      if char = "\" then
-		        addAsIs = true
-		      end if
-		      
-		    elseif char = "{" or char = "[" then
-		      indents.Append indents( indents.Ubound ) + kBuffer
-		      outArr.Append char
-		      outArr.Append kEOL
-		      outArr.Append indents( indents.Ubound )
-		      
-		    elseif char = "}" or char = "]" then
-		      call indents.Pop
-		      outArr.Append kEOL
-		      outArr.Append indents( indents.Ubound )
-		      outArr.Append char
-		      
-		    elseif char = "," then
-		      outArr.Append char
-		      outArr.Append kEOL
-		      outArr.Append indents( indents.Ubound )
-		      
-		    elseif char = ":" then
-		      outArr.Append ": "
-		      
-		    elseif char = &u0A or char = &u0D or char = " " or char = &u09 then
-		      //
+		  Dim Mem As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(JSON)
+		  Dim Bound As UInteger = Mem.Size - 1
+		  Dim Pointer As Ptr = Mem.Data
+		  For Offset As UInteger = 0 To Bound
+		    Dim Char As UInt8 = Pointer.UInt8(Offset)
+		    
+		    If AddAsIs Then
+		      Bytes.Append(Char)
+		      AddAsIs = False
+		    ElseIf Char = &h22 Then
+		      Bytes.Append(Char)
+		      InQuote = Not InQuote
+		    ElseIf InQuote Then
+		      Bytes.Append(Char)
+		      If Char = &h5C Then
+		        AddAsIs = True
+		      End If
+		    ElseIf Char = &h7B Or Char = &h5B Then
+		      Indents = Indents + 1
+		      Bytes.Append(Char)
+		      Bytes.Append(EndOfLine)
+		      For I As UInteger = 1 To Indents
+		        Bytes.Append(Indent)
+		      Next
+		    ElseIf Char = &h7D Or Char = &h5D Then
+		      Indents = Indents - 1
+		      Bytes.Append(EndOfLine)
+		      For I As UInteger = 1 To Indents
+		        Bytes.Append(Indent)
+		      Next
+		      Bytes.Append(Char)
+		    ElseIf Char = &h2C Then
+		      Bytes.Append(Char)
+		      Bytes.Append(EndOfLine)
+		      For I As UInteger = 1 To Indents
+		        Bytes.Append(Indent)
+		      Next
+		    ElseIf Char = &h3A Then
+		      Bytes.Append(Char)
+		      Bytes.Append(&h20)
+		    ElseIf Char = &h0A Or Char = &h0D Or Char = &h20 Or Char = &h09 Then
 		      // Skip it
-		      //
-		      
-		    else
-		      outArr.Append char
-		      
-		    end if
-		  next
+		    Else
+		      Bytes.Append(Char)
+		    End If
+		  Next
 		  
-		  dim result as text = Text.Join( outArr, "" )
-		  return result
+		  Return Xojo.Core.TextEncoding.UTF8.ConvertDataToText(New Xojo.Core.MemoryBlock(Bytes))
 		End Function
 	#tag EndMethod
 
@@ -263,9 +255,24 @@ Inherits Beacon.Thread
 			Type="String"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Priority"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Running"
 			Group="Behavior"
 			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="StackSize"
+			Group="Behavior"
+			Type="UInteger"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="State"
+			Group="Behavior"
+			Type="Beacon.Thread.States"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Success"
