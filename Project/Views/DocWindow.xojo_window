@@ -115,6 +115,7 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -161,6 +162,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -202,6 +204,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -440,6 +443,8 @@ End
 			Dim InStream As TextInputStream = TextInputStream.Open(File)
 			OriginalContent = ReplaceLineEndings(InStream.ReadAll(Encodings.UTF8), EOL)
 			InStream.Close
+			Else
+			Return True
 			End Select
 			
 			Dim Lines() As String = OriginalContent.Split(EOL)
