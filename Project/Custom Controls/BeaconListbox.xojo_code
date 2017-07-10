@@ -309,7 +309,7 @@ Inherits Listbox
 			Name="DefaultRowHeight"
 			Visible=true
 			Group="Appearance"
-			InitialValue="-1"
+			InitialValue="22"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -406,6 +406,7 @@ Inherits Listbox
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="InitialParent"
+			Group="Position"
 			Type="String"
 		#tag EndViewProperty
 		#tag ViewProperty
