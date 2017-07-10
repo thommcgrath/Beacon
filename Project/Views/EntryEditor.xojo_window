@@ -9,7 +9,7 @@ Begin Window EntryEditor
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   500
+   Height          =   534
    ImplicitInstance=   False
    LiveResize      =   False
    MacProcID       =   0
@@ -18,7 +18,7 @@ Begin Window EntryEditor
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   500
+   MinHeight       =   534
    MinimizeButton  =   False
    MinWidth        =   850
    Placement       =   1
@@ -31,7 +31,7 @@ Begin Window EntryEditor
       Bold            =   False
       Caption         =   "Possible Items"
       Enabled         =   True
-      Height          =   428
+      Height          =   462
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -114,7 +114,7 @@ Begin Window EntryEditor
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   1
-         Height          =   306
+         Height          =   340
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -172,7 +172,7 @@ Begin Window EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   408
+         Top             =   442
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -184,7 +184,7 @@ Begin Window EntryEditor
       Bold            =   False
       Caption         =   "Quantities And Qualities"
       Enabled         =   True
-      Height          =   211
+      Height          =   245
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -215,7 +215,7 @@ Begin Window EntryEditor
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   175
+         Height          =   209
          HelpTag         =   ""
          InitialParent   =   "SettingsGroup"
          Left            =   372
@@ -258,7 +258,7 @@ Begin Window EntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   243
+      Top             =   277
       Underline       =   False
       Visible         =   True
       Width           =   518
@@ -304,7 +304,7 @@ Begin Window EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   279
+         Top             =   313
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -338,7 +338,7 @@ Begin Window EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   408
+         Top             =   442
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -370,7 +370,7 @@ Begin Window EntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   460
+      Top             =   494
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -401,7 +401,7 @@ Begin Window EntryEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   460
+      Top             =   494
       Underline       =   False
       Visible         =   True
       Width           =   80
