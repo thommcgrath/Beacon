@@ -490,7 +490,7 @@ End
 		    EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
 		    EngramList.RowTag(EngramList.LastIndex) = Engram
 		    Indexes.Value(Engram.Path) = EngramList.LastIndex
-		    EngramList.CellCheck(EngramList.LastIndex, 0) = Self.mSelectedEngrams.HasKey(Engram.Path)
+		    EngramList.CellCheck(EngramList.LastIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
 		    If Engram.Path = SearchText Or Engram.Label = SearchText Then
 		      PerfectMatch = True
 		    End If
@@ -508,7 +508,7 @@ End
 		      EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
 		      EngramList.RowTag(EngramList.LastIndex) = Engram
 		      Indexes.Value(Engram.Path) = EngramList.LastIndex
-		      EngramList.CellCheck(EngramList.LastIndex, 0) = Self.mSelectedEngrams.HasKey(Engram.Path)
+		      EngramList.CellCheck(EngramList.LastIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
 		    Next
 		  End If
 		  
@@ -525,7 +525,7 @@ End
 		      EngramList.RowTag(EngramList.LastIndex) = Option.Engram
 		      Indexes.Value(Path) = EngramList.LastIndex
 		      Idx = EngramList.LastIndex
-		      EngramList.CellCheck(Idx, 0) = True
+		      EngramList.CellCheck(Idx, Self.ColumnIncluded) = True
 		    End If
 		  Next
 		End Sub
@@ -623,6 +623,19 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = ColumnIncluded, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnLabel, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnMod, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnWeight, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
 #tag Events FilterField
@@ -635,20 +648,16 @@ End
 #tag Events EngramList
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
-		  If Column = 1 Then
-		    Return
-		  End If
-		  
 		  Dim Engram As Beacon.Engram = Me.RowTag(Row)
 		  
 		  Select Case Column
-		  Case 0
+		  Case Self.ColumnIncluded
 		    Dim Checked As Boolean = Me.CellCheck(Row, Column)
 		    If Checked And Not Self.mSelectedEngrams.HasKey(Engram.Path) Then
-		      Dim WeightString As String = Me.Cell(Row, 2)
+		      Dim WeightString As String = Me.Cell(Row, Self.ColumnWeight)
 		      If WeightString = "" Then
 		        WeightString = "50"
-		        Me.Cell(Row, 2) = WeightString
+		        Me.Cell(Row, Self.ColumnWeight) = WeightString
 		      End
 		      Dim Weight As Double = Max(Min(Val(WeightString) / 100, 1), 0)
 		      Self.mSelectedEngrams.Value(Engram.Path) = New Beacon.SetEntryOption(Engram, Weight)
@@ -659,7 +668,7 @@ End
 		    End If
 		    Self.UpdateSelectionUI()
 		    Self.UpdateSimulation()
-		  Case 2
+		  Case Self.ColumnWeight
 		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
 		      Dim Weight As Double = Max(Min(Val(Me.Cell(Row, Column)) / 100, 1), 0)
 		      Self.mSelectedEngrams.Value(Engram.Path) = New Beacon.SetEntryOption(Engram, Weight)
@@ -673,18 +682,18 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.ColumnType(0) = Listbox.TypeCheckbox
-		  Me.ColumnType(2) = Listbox.TypeEditable
-		  Me.ColumnAlignment(2) = Listbox.AlignRight
+		  Me.ColumnType(Self.ColumnIncluded) = Listbox.TypeCheckbox
+		  Me.ColumnType(Self.ColumnWeight) = Listbox.TypeEditable
+		  Me.ColumnAlignment(Self.ColumnWeight) = Listbox.AlignRight
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
-		  Case 0
-		    If Me.CellCheck(Row1, 0) = True And Me.CellCheck(Row2, 0) = False Then
+		  Case Self.ColumnIncluded
+		    If Me.CellCheck(Row1, Column) = True And Me.CellCheck(Row2, Column) = False Then
 		      Result = -1
-		    ElseIf Me.CellCheck(Row1, 0) = False And Me.CellCheck(Row2, 0) = True Then
+		    ElseIf Me.CellCheck(Row1, Column) = False And Me.CellCheck(Row2, Column) = True Then
 		      Result = 1
 		    Else
 		      Dim Engram1 As Beacon.Engram = Me.RowTag(Row1)
@@ -692,7 +701,7 @@ End
 		      
 		      Result = StrComp(Engram1.Label, Engram2.Label, 0)
 		    End If
-		  Case 2
+		  Case Self.ColumnWeight
 		    Dim Weight1 As Double = Val(Me.Cell(Row1, Column))
 		    Dim Weight2 As Double = Val(Me.Cell(Row2, Column))
 		    If Weight1 > Weight2 Then
