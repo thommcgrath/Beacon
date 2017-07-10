@@ -353,7 +353,7 @@ Begin ContainerControl EntryPropertiesEditor
       Top             =   110
       Underline       =   False
       Visible         =   True
-      Width           =   139
+      Width           =   244
    End
    Begin Label MaxQualityLabel
       AutoDeactivate  =   True
@@ -418,7 +418,7 @@ Begin ContainerControl EntryPropertiesEditor
       Top             =   78
       Underline       =   False
       Visible         =   True
-      Width           =   139
+      Width           =   244
    End
    Begin Label MinQualityLabel
       AutoDeactivate  =   True

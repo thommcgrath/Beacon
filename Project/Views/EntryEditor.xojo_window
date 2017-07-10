@@ -20,7 +20,7 @@ Begin Window EntryEditor
    MenuBarVisible  =   True
    MinHeight       =   534
    MinimizeButton  =   False
-   MinWidth        =   850
+   MinWidth        =   900
    Placement       =   1
    Resizeable      =   True
    Title           =   "Set Entry"
@@ -52,7 +52,7 @@ Begin Window EntryEditor
       Top             =   20
       Underline       =   False
       Visible         =   True
-      Width           =   330
+      Width           =   380
       Begin UITweaks.ResizedTextField FilterField
          AcceptTabs      =   False
          Alignment       =   0
@@ -94,16 +94,16 @@ Begin Window EntryEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   290
+         Width           =   340
       End
       Begin BeaconListbox EngramList
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   True
-         ColumnCount     =   3
+         ColumnCount     =   4
          ColumnsResizable=   False
-         ColumnWidths    =   "22,*,70"
+         ColumnWidths    =   "22,*,100,70"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
@@ -119,7 +119,7 @@ Begin Window EntryEditor
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "EngramsGroup"
-         InitialValue    =   " 	Name	Weight"
+         InitialValue    =   " 	Name	Mod	Weight"
          Italic          =   False
          Left            =   40
          LockBottom      =   True
@@ -142,7 +142,7 @@ Begin Window EntryEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   290
+         Width           =   340
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -176,7 +176,7 @@ Begin Window EntryEditor
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   290
+         Width           =   340
       End
    End
    Begin GroupBox SettingsGroup
@@ -189,7 +189,7 @@ Begin Window EntryEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   362
+      Left            =   412
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
@@ -205,7 +205,7 @@ Begin Window EntryEditor
       Top             =   20
       Underline       =   False
       Visible         =   True
-      Width           =   518
+      Width           =   468
       Begin EntryPropertiesEditor EntryPropertiesEditor1
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -218,7 +218,7 @@ Begin Window EntryEditor
          Height          =   209
          HelpTag         =   ""
          InitialParent   =   "SettingsGroup"
-         Left            =   372
+         Left            =   422
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -232,7 +232,7 @@ Begin Window EntryEditor
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   498
+         Width           =   448
       End
    End
    Begin GroupBox SimulationGroup
@@ -245,7 +245,7 @@ Begin Window EntryEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   362
+      Left            =   412
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -261,7 +261,7 @@ Begin Window EntryEditor
       Top             =   277
       Underline       =   False
       Visible         =   True
-      Width           =   518
+      Width           =   468
       Begin BeaconListbox SimulatedResultsList
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
@@ -287,7 +287,7 @@ Begin Window EntryEditor
          InitialParent   =   "SimulationGroup"
          InitialValue    =   ""
          Italic          =   False
-         Left            =   382
+         Left            =   432
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -308,7 +308,7 @@ Begin Window EntryEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   478
+         Width           =   428
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -487,7 +487,7 @@ End
 		      Weight = WeightValue.PrettyText
 		    End If
 		    
-		    EngramList.AddRow("", Engram.Label, Weight)
+		    EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
 		    EngramList.RowTag(EngramList.LastIndex) = Engram
 		    Indexes.Value(Engram.Path) = EngramList.LastIndex
 		    EngramList.CellCheck(EngramList.LastIndex, 0) = Self.mSelectedEngrams.HasKey(Engram.Path)
@@ -505,7 +505,7 @@ End
 		        Weight = WeightValue.PrettyText
 		      End If
 		      
-		      EngramList.AddRow("", Engram.Label, Weight)
+		      EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
 		      EngramList.RowTag(EngramList.LastIndex) = Engram
 		      Indexes.Value(Engram.Path) = EngramList.LastIndex
 		      EngramList.CellCheck(EngramList.LastIndex, 0) = Self.mSelectedEngrams.HasKey(Engram.Path)
@@ -521,7 +521,7 @@ End
 		      Dim WeightValue As Double = Option.Weight * 100
 		      Dim Weight As String = WeightValue.PrettyText
 		      
-		      EngramList.AddRow("", Option.Engram.Label, Weight)
+		      EngramList.AddRow("", Option.Engram.Label, Option.Engram.ModName, Weight)
 		      EngramList.RowTag(EngramList.LastIndex) = Option.Engram
 		      Indexes.Value(Path) = EngramList.LastIndex
 		      Idx = EngramList.LastIndex
