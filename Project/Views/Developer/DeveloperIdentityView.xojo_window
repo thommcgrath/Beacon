@@ -47,7 +47,6 @@ Begin BeaconSubview DeveloperIdentityView
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "User ID:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -176,7 +175,6 @@ Begin BeaconSubview DeveloperIdentityView
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Public Key:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -211,7 +209,6 @@ Begin BeaconSubview DeveloperIdentityView
       Selectable      =   False
       TabIndex        =   7
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Private Key:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -287,7 +284,6 @@ Begin BeaconSubview DeveloperIdentityView
       Width           =   120
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -342,7 +338,6 @@ Begin BeaconSubview DeveloperIdentityView
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "This is how you are identified to the Beacon server. Your documents and registered mods are bound to this key pair and cannot be replaced if lost. So if you use these features, you are strongly recommended to backup this identity. You can also use the backup and restore buttons to move this identity to another computer. But keep it private like a password.\n\nThese keys are also used for API authentication. See the API Guide for more information about the Beacon API."
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -356,7 +351,7 @@ Begin BeaconSubview DeveloperIdentityView
          Width           =   330
       End
    End
-   Begin TextField UserIDField
+   Begin UITweaks.ResizedTextField UserIDField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True

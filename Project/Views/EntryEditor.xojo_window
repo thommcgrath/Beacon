@@ -53,7 +53,7 @@ Begin Window EntryEditor
       Underline       =   False
       Visible         =   True
       Width           =   330
-      Begin TextField FilterField
+      Begin UITweaks.ResizedTextField FilterField
          AcceptTabs      =   False
          Alignment       =   0
          AutoDeactivate  =   True
@@ -217,7 +217,6 @@ Begin Window EntryEditor
          HasBackColor    =   False
          Height          =   175
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   372
          LockBottom      =   True
