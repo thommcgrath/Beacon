@@ -78,6 +78,7 @@ Begin ContainerControl DocumentSetupContainer
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Map:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -139,6 +140,7 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "You only need to enter one of these values, the rest will be calculated automatically."
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -173,6 +175,7 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Difficulty Offset:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -336,6 +339,7 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Difficulty Value:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -370,6 +374,7 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Max Dino Level:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -404,6 +409,7 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   8
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "http://ark.gamepedia.com/Difficulty"
          TextAlign       =   0
          TextColor       =   &c0000FF00
@@ -438,6 +444,7 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   7
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Learn More:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -514,6 +521,7 @@ Begin ContainerControl DocumentSetupContainer
       Width           =   80
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -736,7 +744,7 @@ End
 		      
 		      If ValidCount <> Self.mDoc.BeaconCount Then
 		        Dim DropCount As Integer = Self.mDoc.BeaconCount - ValidCount
-		        If Not Self.ShowConfirm(DropCount.ToText + " " + if(DropCount = 1, "loot source", "loot sources") + " are not compatible and will be removed.", "The loot sources are not valid for the selected map. If you want to keep these loot sources, cancel now and copy them into a new document.", "Remove", "Cancel") Then
+		        If Not Self.ShowConfirm(DropCount.ToText + " " + if(DropCount = 1, "loot source is", "loot sources are") + " not compatible and will be removed.", "The " + if(DropCount = 1, "loot source is", "loot sources are") + " not valid for the selected map. If you want to keep " + if(DropCount = 1, "this loot source", "these loot sources") + ", cancel now and copy " + if(DropCount = 1, "it", "them") + " into a new document.", "Remove", "Cancel") Then
 		          Return
 		        End If
 		      End If
