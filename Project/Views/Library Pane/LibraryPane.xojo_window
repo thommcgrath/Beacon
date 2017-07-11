@@ -28,7 +28,7 @@ Begin ContainerControl LibraryPane
    Begin PagePanel Views
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   382
+      Height          =   380
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -44,7 +44,7 @@ Begin ContainerControl LibraryPane
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   36
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   300
       Begin LibraryPaneDocuments DocumentsView
@@ -56,7 +56,7 @@ Begin ContainerControl LibraryPane
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   382
+         Height          =   380
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   0
@@ -84,7 +84,7 @@ Begin ContainerControl LibraryPane
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   382
+         Height          =   380
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   0
@@ -112,7 +112,7 @@ Begin ContainerControl LibraryPane
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   382
+         Height          =   380
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   0
@@ -140,7 +140,7 @@ Begin ContainerControl LibraryPane
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   382
+         Height          =   380
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   0
@@ -192,6 +192,32 @@ Begin ContainerControl LibraryPane
       Visible         =   True
       Width           =   300
    End
+   Begin Shelf Switcher
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      BorderStyle     =   1
+      Enabled         =   True
+      Height          =   52
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   416
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   300
+   End
 End
 #tag EndWindow
 
@@ -199,7 +225,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.CurrentView.SwitchedTo()
-		  Self.Header.Title = Self.CurrentView.Title
+		  Self.Header.Title = Self.Switcher.SelectedItem.Caption
 		  RaiseEvent Open
 		End Sub
 	#tag EndEvent
@@ -232,7 +258,7 @@ End
 		  If NewPage <> Nil Then
 		    NewPage.SwitchedTo(UserData)
 		    Self.Views.Value = Index
-		    Self.Title = NewPage.Title
+		    Self.Header.Title = Self.Switcher.SelectedItem.Caption
 		  End If
 		End Sub
 	#tag EndMethod
@@ -274,6 +300,26 @@ End
 #tag EndWindowCode
 
 #tag Events Views
+	#tag Event
+		Sub Change()
+		  Self.Switcher.SelectedIndex = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Switcher
+	#tag Event
+		Sub Open()
+		  Me.Add(IconLibraryDocuments, "Documents", "documents")
+		  Me.Add(IconLibraryPresets, "Presets", "presets")
+		  Me.Add(IconLibraryEngrams, "Engrams", "engrams")
+		  Me.Add(IconLibraryTools, "Tools", "tools")
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Self.ShowPage(Me.SelectedIndex)
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

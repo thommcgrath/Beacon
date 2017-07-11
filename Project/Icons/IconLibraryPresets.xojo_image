@@ -1,0 +1,46 @@
+#tag MultiImage
+Image IconLibraryPresets
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAHuAAAAAAHuAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMLyIWSWNvbkxpYnJhcnlQcmVzZXRzLnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAifm6NWJiltQTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANWJwpsAAAABABgBTC8iAUH14gAR9isAEI6eABB50QAQeOAAAgBiTWFjaW50b3NoIEhEOlVzZXJzOgB0aG9tbWNncmF0aDoARG9jdW1lbnRzOgBUaGUgWkFaIFNvdXJjZXM6AEJlYWNvbjoASWNvbnM6AEljb25MaWJyYXJ5UHJlc2V0cy5wbmcADgAuABYASQBjAG8AbgBMAGkAYgByAGEAcgB5AFAAcgBlAHMAZQB0AHMALgBwAG4AZwAPABoADABNAGEAYwBpAG4AdABvAHMAaAAgAEgARAASAE9Vc2Vycy90aG9tbWNncmF0aC9Eb2N1bWVudHMvVGhlIFpBWiBTb3VyY2VzL0JlYWNvbi9JY29ucy9JY29uTGlicmFyeVByZXNldHMucG5nAAATAAEvAAAVAAIAEv//AAAAAAAAAAA=
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconLibraryPresets.png
+		PartialPath = ..\Icons\IconLibraryPresets.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 72
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAH6AAAAAAH6AAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMLyIZSWNvbkxpYnJhcnlQcmVzZXRzQDJ4LnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAifnHNWJiqxQTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANWJwuwAAAABABgBTC8iAUH14gAR9isAEI6eABB50QAQeOAAAgBlTWFjaW50b3NoIEhEOlVzZXJzOgB0aG9tbWNncmF0aDoARG9jdW1lbnRzOgBUaGUgWkFaIFNvdXJjZXM6AEJlYWNvbjoASWNvbnM6AEljb25MaWJyYXJ5UHJlc2V0c0AyeC5wbmcAAA4ANAAZAEkAYwBvAG4ATABpAGIAcgBhAHIAeQBQAHIAZQBzAGUAdABzAEAAMgB4AC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBSVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvSWNvbkxpYnJhcnlQcmVzZXRzQDJ4LnBuZwATAAEvAAAVAAIAEv//AAAAAAAAAAA=
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconLibraryPresets@2x.png
+		PartialPath = ..\Icons\IconLibraryPresets@2x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 144
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAH6AAAAAAH6AAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMLyIZSWNvbkxpYnJhcnlQcmVzZXRzQDN4LnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAifnNNWJivFQTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANWJwzEAAAABABgBTC8iAUH14gAR9isAEI6eABB50QAQeOAAAgBlTWFjaW50b3NoIEhEOlVzZXJzOgB0aG9tbWNncmF0aDoARG9jdW1lbnRzOgBUaGUgWkFaIFNvdXJjZXM6AEJlYWNvbjoASWNvbnM6AEljb25MaWJyYXJ5UHJlc2V0c0AzeC5wbmcAAA4ANAAZAEkAYwBvAG4ATABpAGIAcgBhAHIAeQBQAHIAZQBzAGUAdABzAEAAMwB4AC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBSVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvSWNvbkxpYnJhcnlQcmVzZXRzQDN4LnBuZwATAAEvAAAVAAIAEv//AAAAAAAAAAA=
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconLibraryPresets@3x.png
+		PartialPath = ..\Icons\IconLibraryPresets@3x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 216
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+End Image
+#tag EndMultiImage

@@ -129,6 +129,10 @@ Inherits Application
 		  #if TargetWin32
 		    Self.HandleCommandLineData(System.CommandLine, True)
 		  #endif
+		  
+		  #if DebugBuild
+		    MainWindow.Show
+		  #endif
 		End Sub
 	#tag EndEvent
 
