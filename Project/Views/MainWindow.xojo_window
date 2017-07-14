@@ -23,7 +23,7 @@ Begin Window MainWindow
    MinWidth        =   64
    Placement       =   0
    Resizeable      =   True
-   Title           =   "Untitled"
+   Title           =   "Beacon"
    Visible         =   True
    Width           =   600
    Begin LibraryPane LibraryPane1
@@ -58,6 +58,21 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  #if TargetCocoa
+		    Declare Function NSSelectorFromString Lib "Foundation" (SelectorName As CFStringRef) As Ptr
+		    Declare Function RespondsToSelector Lib "Foundation" Selector "respondsToSelector:" (Target As Integer, SelectorRef As Ptr) As Boolean
+		    
+		    If RespondsToSelector(Self.Handle, NSSelectorFromString("setTitlebarAppearsTransparent:")) Then
+		      Declare Sub SetTitlebarAppearsTransparent Lib "AppKit" Selector "setTitlebarAppearsTransparent:" (Target As Integer, Value As Boolean)
+		      SetTitlebarAppearsTransparent(Self.Handle, True)
+		    End If
+		  #endif
+		End Sub
+	#tag EndEvent
+
+
 #tag EndWindowCode
 
 #tag ViewBehavior
