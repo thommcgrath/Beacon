@@ -39,7 +39,9 @@ Implements Beacon.DocumentItem
 		Function Export() As Xojo.Core.Dictionary
 		  Dim LootSources() As Xojo.Core.Dictionary
 		  For Each LootSource As Beacon.LootSource In Self.mLootSources
-		    LootSources.Append(LootSource.Export)
+		    If LootSource.ValidForMap(Self.Map) Then
+		      LootSources.Append(LootSource.Export)
+		    End If
 		  Next
 		  
 		  Dim Document As New Xojo.Core.Dictionary
@@ -49,8 +51,15 @@ Implements Beacon.DocumentItem
 		  Document.Value("Title") = Self.Title
 		  Document.Value("Description") = Self.Description
 		  Document.Value("Public") = Self.IsPublic
-		  Document.Value("Map") = Self.Map.Mask
-		  Document.Value("DifficultyValue") = Self.DifficultyValue
+		  
+		  If Self.Map <> Nil Then
+		    Document.Value("Map") = Self.Map.Mask
+		  End If
+		  
+		  If Self.DifficultyValue > -1 Then
+		    Document.Value("DifficultyValue") = Self.DifficultyValue
+		  End If
+		  
 		  Return Document
 		End Function
 	#tag EndMethod
