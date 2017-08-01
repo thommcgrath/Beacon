@@ -110,6 +110,7 @@ Begin Window DeveloperModSettingsDialog
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Mod Settings"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -186,6 +187,7 @@ Begin Window DeveloperModSettingsDialog
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Engrams URL:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -220,6 +222,7 @@ Begin Window DeveloperModSettingsDialog
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "A list of engrams can be posted online and the Beacon server will use it to automatically maintain the engrams list. See the API Guide for more details."
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -254,6 +257,7 @@ Begin Window DeveloperModSettingsDialog
       Width           =   16
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -265,6 +269,8 @@ End
 #tag WindowCode
 	#tag Method, Flags = &h21
 		Private Sub APICallback_SaveMod(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
 		  If Success Then
 		    Self.Close
 		    Return

@@ -63,8 +63,8 @@ Inherits Beacon.SetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.PresetEntry
-		  Dim SetEntry As Beacon.SetEntry = Beacon.SetEntry.Import(Dict, New Beacon.Range(1, 1))
+		Shared Function ImportFromBeacon(Dict As Xojo.Core.Dictionary) As Beacon.PresetEntry
+		  Dim SetEntry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
 		  If SetEntry = Nil Then
 		    Return Nil
 		  End If
@@ -103,7 +103,7 @@ Inherits Beacon.SetEntry
 
 	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Beacon.Map) As Boolean
-		  Return Map.Matches(Self.mAvailability)
+		  Return Map = Nil Or Map.Matches(Self.mAvailability)
 		End Function
 	#tag EndMethod
 
@@ -133,6 +133,16 @@ Inherits Beacon.SetEntry
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="ChanceToBeBlueprint"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ForceBlueprint"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -144,6 +154,16 @@ Inherits Beacon.SetEntry
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MaxQuantity"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MinQuantity"
+			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -164,6 +184,11 @@ Inherits Beacon.SetEntry
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Weight"
+			Group="Behavior"
+			Type="Double"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

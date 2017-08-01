@@ -12,7 +12,13 @@ Inherits IOSApplication
 
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As Xojo.IO.FolderItem
-		  Return Xojo.IO.SpecialFolder.Documents
+		  Dim Folder As Xojo.IO.FolderItem = Xojo.IO.SpecialFolder.ApplicationSupport
+		  Self.CheckFolder(Folder)
+		  Folder = Folder.Child("The ZAZ")
+		  Self.CheckFolder(Folder)
+		  Folder = Folder.Child("Beacon")
+		  Self.CheckFolder(Folder)
+		  Return Folder
 		End Function
 	#tag EndMethod
 
@@ -106,5 +112,7 @@ Inherits IOSApplication
 	#tag EndConstant
 
 
+	#tag ViewBehavior
+	#tag EndViewBehavior
 End Class
 #tag EndClass

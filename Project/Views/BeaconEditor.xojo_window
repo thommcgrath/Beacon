@@ -374,6 +374,8 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Import(Content As String, Source As String)
+		  #Pragma Warning "This does not respect the document difficulty"
+		  
 		  Self.ImportProgress = New ImporterWindow
 		  Self.ImportProgress.Source = Source
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
@@ -598,7 +600,11 @@ End
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
 		  Dim Dicts() As Xojo.Core.Dictionary
-		  Dim Configs() As Text
+		  Dim SumSetWeights As Double
+		  For I As Integer = 0 To Me.ListCount - 1
+		    Dim Set As Beacon.ItemSet = Me.RowTag(I)
+		    SumSetWeights = SumSetWeights + Set.Weight
+		  Next
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
@@ -608,9 +614,6 @@ End
 		    Dim Dict As Xojo.Core.Dictionary = Set.Export
 		    If Dict <> Nil Then
 		      Dicts.Append(Dict)
-		    End If
-		    If UBound(Self.mSources) = 0 Then
-		      Configs.Append(Set.TextValue(Self.mSources(0).Multipliers, Self.mSources(0).UseBlueprints))
 		    End If
 		  Next
 		  If UBound(Dicts) = -1 Then
@@ -625,9 +628,6 @@ End
 		  End If
 		  
 		  Board.AddRawData(Contents, Self.kClipboardType)
-		  If UBound(Configs) > -1 Then
-		    Board.Text = Text.Join(Configs, Text.FromUnicodeCodepoint(10))
-		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -664,7 +664,7 @@ End
 		    Dim SetNames() As String
 		    For Each Source As Beacon.LootSource In Self.mSources
 		      For Each Dict As Xojo.Core.Dictionary In Dicts
-		        Dim Set As Beacon.ItemSet = Beacon.ItemSet.Import(Dict, Source)
+		        Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
 		        If Set <> Nil Then
 		          Source.Append(Set)
 		          Updated = True
@@ -830,6 +830,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, ByRef TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		  #Pragma Unused Column
+		  #Pragma Unused DrawSpace
+		  #Pragma Unused VerticalPosition
+		  
 		  Dim Set As Beacon.ItemSet = Me.RowTag(Row)
 		  If Not Set.IsValid Then
 		    TextColor = BeaconUI.TextColorForInvalidRow(IsHighlighted, Me.Selected(Row))
@@ -839,6 +843,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean) As Boolean
+		  #Pragma Unused BackgroundColor
+		  #Pragma Unused TextColor
+		  
 		  If Column <> 0 Or Row >= Me.ListCount Then
 		    Return False
 		  End If

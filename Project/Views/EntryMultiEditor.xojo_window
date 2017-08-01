@@ -9,16 +9,16 @@ Begin Window EntryMultiEditor
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   227
+   Height          =   261
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
-   MaxHeight       =   227
+   MaxHeight       =   261
    MaximizeButton  =   False
    MaxWidth        =   550
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   227
+   MinHeight       =   261
    MinimizeButton  =   False
    MinWidth        =   550
    Placement       =   1
@@ -35,11 +35,11 @@ Begin Window EntryMultiEditor
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      Height          =   175
+      Height          =   209
       HelpTag         =   ""
       InitialParent   =   ""
       Left            =   10
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
@@ -54,7 +54,7 @@ Begin Window EntryMultiEditor
       Visible         =   True
       Width           =   530
    End
-   Begin PushButton ActionButton
+   Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -68,11 +68,11 @@ Begin Window EntryMultiEditor
       InitialParent   =   ""
       Italic          =   False
       Left            =   450
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -80,12 +80,12 @@ Begin Window EntryMultiEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   187
+      Top             =   221
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton CancelButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -99,11 +99,11 @@ Begin Window EntryMultiEditor
       InitialParent   =   ""
       Italic          =   False
       Left            =   358
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -111,7 +111,7 @@ Begin Window EntryMultiEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   187
+      Top             =   221
       Underline       =   False
       Visible         =   True
       Width           =   80

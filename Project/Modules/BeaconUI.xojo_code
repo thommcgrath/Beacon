@@ -119,6 +119,39 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ShowConfirm(Extends Win As Window, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
+		  Win = Win.TrueWindow
+		  
+		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
+		  Dialog.Message = Message
+		  Dialog.Explanation = Explanation
+		  Dialog.ActionButton.Caption = ActionCaption
+		  Dialog.CancelButton.Caption = CancelCaption
+		  Dialog.CancelButton.Visible = True
+		  
+		  If Win.Frame = Window.FrameTypeSheet Then
+		    Return Dialog.ShowModal() = Dialog.ActionButton
+		  Else
+		    Return Dialog.ShowModalWithin(Win.TrueWindow) = Dialog.ActionButton
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ShowConfirm(Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
+		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
+		  Dialog.Message = Message
+		  Dialog.Explanation = Explanation
+		  Dialog.ActionButton.Caption = ActionCaption
+		  Dialog.CancelButton.Caption = CancelCaption
+		  Dialog.CancelButton.Visible = True
+		  Return Dialog.ShowModal() = Dialog.ActionButton
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function TextColorForInvalidRow(Highlighted As Boolean, Selected As Boolean) As Color
 		  If Selected Then

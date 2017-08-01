@@ -74,13 +74,12 @@ Implements Beacon.Countable
 		  If Dict.HasKey("Entries") Then
 		    Dim Contents() As Auto = Dict.Value("Entries")
 		    For Each EntryDict As Xojo.Core.Dictionary In Contents
-		      Dim Entry As Beacon.PresetEntry = Beacon.PresetEntry.Import(EntryDict)
+		      Dim Entry As Beacon.PresetEntry = Beacon.PresetEntry.ImportFromBeacon(EntryDict)
 		      If Entry <> Nil Then
 		        Preset.mContents.Append(Entry)
 		      End If
 		    Next
 		  ElseIf Dict.HasKey("Contents") Then
-		    Dim Multipliers As New Beacon.Range(1, 1)
 		    Dim Contents As Xojo.Core.Dictionary = Dict.Value("Contents")
 		    If Contents <> Nil Then
 		      For Each Set As Xojo.Core.DictionaryEntry In Contents
@@ -88,7 +87,7 @@ Implements Beacon.Countable
 		        Dim ValidForScorched As Boolean = (Set.Key = "Common" Or Set.Key = "Scorched")
 		        Dim Items() As Auto = Set.Value
 		        For Each Item As Xojo.Core.Dictionary In Items
-		          Dim Entry As Beacon.SetEntry = Beacon.SetEntry.Import(Item, Multipliers)
+		          Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Item)
 		          If Entry <> Nil Then
 		            Dim Child As New Beacon.PresetEntry(Entry)
 		            Child.ValidForMap(Beacon.Maps.TheIsland) = ValidForIsland
@@ -324,6 +323,10 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Beacon.Map) As Boolean
+		  If Map = Nil Then
+		    Return True
+		  End If
+		  
 		  For Each Entry As Beacon.PresetEntry In Self.mContents
 		    If Entry.ValidForMap(Map) Then
 		      Return True
@@ -434,6 +437,17 @@ Implements Beacon.Countable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Type"
+			Group="Behavior"
+			Type="Beacon.Preset.Types"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - BuiltIn"
+				"1 - Custom"
+				"2 - CustomizedBuiltIn"
+			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

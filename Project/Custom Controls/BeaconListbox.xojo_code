@@ -17,7 +17,6 @@ Inherits Listbox
 		  
 		  G.FillRect(0, 0, G.Width, G.Height)
 		  
-		  Dim RefTextColor As Color = TextColor
 		  Call CellBackgroundPaint(G, Row, Column, G.ForeColor, TextColor, IsHighlighted)
 		  
 		  Return True

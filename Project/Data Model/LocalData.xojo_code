@@ -695,6 +695,7 @@ Implements Beacon.DataSource
 		    Dim Results As RecordSet = Self.SQLSelect("SELECT built_in FROM engrams WHERE LOWER(path) = LOWER(?1);", Engram.Path)
 		    If Results.RecordCount = 1 Then
 		      If Replace = False Then
+		        Self.Rollback()
 		        Return False
 		      End If
 		      

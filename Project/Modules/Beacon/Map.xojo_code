@@ -1,10 +1,30 @@
 #tag Class
 Protected Class Map
 	#tag Method, Flags = &h0
-		Sub Constructor(Name As Text, Mask As UInteger)
+		Sub Constructor(Name As Text, Mask As UInteger, DifficultyScale As Double)
 		  Self.mName = Name
 		  Self.mMask = Mask
+		  Self.mDifficultyScale = DifficultyScale
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DifficultyOffset(DifficultyValue As Double) As Double
+		  Return Min((DifficultyValue - 0.5) / (Self.mDifficultyScale - 0.5), 1.0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DifficultyScale() As Double
+		  Return Self.mDifficultyScale
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DifficultyValue(DifficultyOffset As Double) As Double
+		  DifficultyOffset = Min(DifficultyOffset, 1.0)
+		  Return (DifficultyOffset * (Self.mDifficultyScale - 0.5)) + 0.5
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -41,6 +61,10 @@ Protected Class Map
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mDifficultyScale As Double
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mMask As UInteger

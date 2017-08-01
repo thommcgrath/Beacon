@@ -16,7 +16,7 @@ Protected Class SimulatedSelection
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Quality As Beacon.Qualities
+		Quality As Beacon.Quality
 	#tag EndProperty
 
 
@@ -45,6 +45,11 @@ Protected Class SimulatedSelection
 			Visible=true
 			Group="ID"
 			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Quality"
+			Group="Behavior"
+			Type="Beacon.Qualities"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
