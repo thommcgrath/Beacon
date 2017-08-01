@@ -75,6 +75,7 @@ abstract class BeaconAPI {
 	public static function Authorize(bool $optional = false) {
 		$authorized = false;
 		$content = '';
+		self::$user_id = BeaconCommon::GenerateUUID(); // To return a "new" UUID even if authorization fails.
 		
 		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && BeaconCommon::IsUUID($_SERVER['PHP_AUTH_USER'])) {
 			$user_id = strtolower($_SERVER['PHP_AUTH_USER']);
