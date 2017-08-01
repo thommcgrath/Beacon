@@ -155,6 +155,26 @@ class BeaconPostgreSQLDatabase extends BeaconDatabase {
 		throw new BeaconQueryException($error, $sql);
 	}
 	
+	public function ExamineQuery(string $sql, ...$params) {
+		if (!is_array($params)) {
+			$params = array();
+		}
+		
+		if ((count($params) == 1) && (is_array($params[0]))) {
+			$params = $params[0];
+		}
+		
+		for ($i = 0; $i < count($params); $i++) {
+			if (is_bool($params[$i])) {
+				$params[$i] = $params[$i] ? 't' : 'f';
+			}
+			
+			$sql = str_replace('$' . ($i + 1), $this->EscapeLiteral($params[$i]), $sql);
+		}
+		
+		return $sql;
+	}
+	
 	public function Insert(string $table, array $data) {
 		$i = 1;
 		$columns = array();
