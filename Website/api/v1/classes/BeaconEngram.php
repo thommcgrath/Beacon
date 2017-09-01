@@ -48,7 +48,7 @@ class BeaconEngram implements JsonSerializable {
 	}
 	
 	public function AvailableToAbberation() {
-		return ($this->availability & self::ENVIRONMENT_ABERATION) == self::ENVIRONMENT_ABBERATION;
+		return ($this->availability & self::ENVIRONMENT_ABBERATION) == self::ENVIRONMENT_ABBERATION;
 	}
 	
 	public function CanBlueprint() {
