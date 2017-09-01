@@ -5,6 +5,7 @@ class BeaconEngram implements JsonSerializable {
 	const ENVIRONMENT_SCORCHED = 2;
 	const ENVIRONMENT_CENTER = 4;
 	const ENVIRONMENT_RAGNAROK = 8;
+	const ENVIRONMENT_ABBERATION = 16;
 	
 	protected $path = '';
 	protected $class_string = '';
@@ -44,6 +45,10 @@ class BeaconEngram implements JsonSerializable {
 	
 	public function AvailableToRagnarok() {
 		return ($this->availability & self::ENVIRONMENT_RAGNAROK) == self::ENVIRONMENT_RAGNAROK;
+	}
+	
+	public function AvailableToAbberation() {
+		return ($this->availability & self::ENVIRONMENT_ABERATION) == self::ENVIRONMENT_ABBERATION;
 	}
 	
 	public function CanBlueprint() {
@@ -140,6 +145,9 @@ class BeaconEngram implements JsonSerializable {
 		}
 		if ($this->AvailableToRagnarok()) {
 			$environments[] = 'Ragnarok';
+		}
+		if ($this->AvailableToAbberation()) {
+			$environments[] = 'Abberation';
 		}
 		
 		$uid = md5(strtolower($this->path));

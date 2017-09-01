@@ -112,6 +112,9 @@ case 'POST':
 				if ($key === 'ragnarok') {
 					$availability = $availability | BeaconEngram::ENVIRONMENT_RAGNAROK;
 				}
+				if ($key === 'abberation') {
+					$availability = $availability | BeaconEngram::ENVIRONMENT_ABBERATION;
+				}
 			}
 		}
 		if ($availability === 0) {

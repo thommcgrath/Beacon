@@ -162,9 +162,9 @@ Begin BeaconSubview LibraryEngramsView
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   True
-      ColumnCount     =   6
+      ColumnCount     =   7
       ColumnsResizable=   False
-      ColumnWidths    =   "*,100,75,75,75,75"
+      ColumnWidths    =   "*,100,75,75,75,75,75"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
@@ -180,7 +180,7 @@ Begin BeaconSubview LibraryEngramsView
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Label	Blueprintable	Island	Scorched	Center	Ragnarok"
+      InitialValue    =   "Label	Blueprintable	Island	Scorched	Center	Ragnarok	Abberation"
       Italic          =   False
       Left            =   20
       LockBottom      =   True
@@ -193,6 +193,7 @@ Begin BeaconSubview LibraryEngramsView
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   1
+      ShowDropIndicator=   False
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -296,10 +297,14 @@ End
 		  List.CellCheck(Index, Self.ColumnScorched) = Engram.ValidForMap(Beacon.Maps.ScorchedEarth)
 		  List.CellCheck(Index, Self.ColumnCenter) = Engram.ValidForMap(Beacon.Maps.TheCenter)
 		  List.CellCheck(Index, Self.ColumnRagnarok) = Engram.ValidForMap(Beacon.Maps.Ragnarok)
+		  List.CellCheck(Index, Self.ColumnAbberation) = Engram.ValidForMap(Beacon.Maps.Abberation)
 		  List.RowTag(Index) = Engram
 		End Sub
 	#tag EndMethod
 
+
+	#tag Constant, Name = ColumnAbberation, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = ColumnBlueprintable, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
@@ -399,12 +404,14 @@ End
 		  Me.ColumnType(Self.ColumnScorched) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnCenter) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnRagnarok) = Listbox.TypeCheckbox
+		  Me.ColumnType(Self.ColumnAbberation) = Listbox.TypeCheckbox
 		  
 		  Me.ColumnAlignment(Self.ColumnBlueprintable) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnIsland) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnScorched) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnCenter) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnRagnarok) = Listbox.AlignCenter
+		  Me.ColumnAlignment(Self.ColumnAbberation) = Listbox.AlignCenter
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -424,6 +431,8 @@ End
 		    Editable.ValidForMap(Beacon.Maps.TheCenter) = Me.CellCheck(Row, Column)
 		  Case Self.ColumnRagnarok
 		    Editable.ValidForMap(Beacon.Maps.Ragnarok) = Me.CellCheck(Row, Column)
+		  Case Self.ColumnAbberation
+		    Editable.ValidForMap(Beacon.Maps.Abberation) = Me.CellCheck(Row, Column)
 		  Else
 		    Return
 		  End Select

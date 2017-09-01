@@ -15,6 +15,9 @@ Protected Class Engram
 		  If Self.ValidForMap(Beacon.Maps.Ragnarok) Then
 		    Environments.Append("Ragnarok")
 		  End If
+		  If Self.ValidForMap(Beacon.Maps.Abberation) Then
+		    Environments.Append("Abberation")
+		  End If
 		  
 		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("path") = Self.Path
@@ -96,6 +99,8 @@ Protected Class Engram
 		      Map = Beacon.Maps.TheCenter
 		    Case "ragnarok"
 		      Map = Beacon.Maps.Ragnarok
+		    Case "abberation"
+		      Map = Beacon.Maps.Abberation
 		    End Select
 		    If Map <> Nil Then
 		      Self.ValidForMap(Map) = True

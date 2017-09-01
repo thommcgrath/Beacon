@@ -247,9 +247,9 @@ Begin ContainerControl DeveloperModView
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   False
-         ColumnCount     =   7
+         ColumnCount     =   8
          ColumnsResizable=   False
-         ColumnWidths    =   "*,*,100,75,75,75,75"
+         ColumnWidths    =   "*,*,100,75,75,75,75,75"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
@@ -265,7 +265,7 @@ Begin ContainerControl DeveloperModView
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Center	Ragnarok"
+         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Center	Ragnarok	Abberation"
          Italic          =   False
          Left            =   0
          LockBottom      =   True
@@ -278,6 +278,7 @@ Begin ContainerControl DeveloperModView
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionType   =   1
+         ShowDropIndicator=   False
          TabIndex        =   0
          TabPanelIndex   =   4
          TabStop         =   True
@@ -584,6 +585,7 @@ End
 		  EngramList.CellCheck(Index, 4) = Engram.ValidForMap(Beacon.Maps.ScorchedEarth)
 		  EngramList.CellCheck(Index, 5) = Engram.ValidForMap(Beacon.Maps.TheCenter)
 		  EngramList.CellCheck(Index, 6) = Engram.ValidForMap(Beacon.Maps.Ragnarok)
+		  EngramList.CellCheck(Index, 7) = Engram.ValidForMap(Beacon.Maps.Abberation)
 		  
 		  EngramList.RowTag(Index) = Engram
 		End Sub
@@ -716,12 +718,14 @@ End
 		  Me.ColumnType(4) = Listbox.TypeCheckbox
 		  Me.ColumnType(5) = Listbox.TypeCheckbox
 		  Me.ColumnType(6) = Listbox.TypeCheckbox
+		  Me.ColumnType(7) = Listbox.TypeCheckbox
 		  
 		  Me.ColumnAlignment(2) = Listbox.AlignCenter
 		  Me.ColumnAlignment(3) = Listbox.AlignCenter
 		  Me.ColumnAlignment(4) = Listbox.AlignCenter
 		  Me.ColumnAlignment(5) = Listbox.AlignCenter
 		  Me.ColumnAlignment(6) = Listbox.AlignCenter
+		  Me.ColumnAlignment(7) = Listbox.AlignCenter
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -743,6 +747,8 @@ End
 		    Engram.ValidForMap(Beacon.Maps.TheCenter) = Me.CellCheck(Row, Column)
 		  Case 6
 		    Engram.ValidForMap(Beacon.Maps.Ragnarok) = Me.CellCheck(Row, Column)
+		  Case 7
+		    Engram.ValidForMap(Beacon.Maps.Abberation) = Me.CellCheck(Row, Column)
 		  End Select
 		  
 		  Self.EngramSet.Add(Engram)
