@@ -61,6 +61,7 @@ Begin ContainerControl BeaconEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   1
+      ShowDropIndicator=   False
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
@@ -751,14 +752,14 @@ End
 		  End If
 		  Base.Append(CreateItem)
 		  
-		  Dim ReconfigureItem As New MenuItem("Reconfigure From Preset", Targets)
+		  Dim ReconfigureItem As New MenuItem("Rebuild From Preset", Targets)
 		  ReconfigureItem.Name = "reconfigure"
 		  ReconfigureItem.Enabled = PresetFound
 		  If ReconfigureItem.Enabled Then
 		    If UBound(Targets) = 0 Then
-		      ReconfigureItem.Text = "Reconfigure From """ + Preset.Label + """ Preset"
+		      ReconfigureItem.Text = "Rebuild From """ + Preset.Label + """ Preset"
 		    Else
-		      ReconfigureItem.Text = "Reconfigure From Presets"
+		      ReconfigureItem.Text = "Rebuild From Presets"
 		    End If
 		  End If
 		  Base.Append(ReconfigureItem)
@@ -821,7 +822,7 @@ End
 		    
 		    If UBound(Targets) > 0 Then
 		      // Editor will be disabled, so it won't be obvious something happened.
-		      Self.ShowAlert("Reconfigure complete", "All selected item sets have been reconfigured according to their preset.")
+		      Self.ShowAlert("Rebuild complete", "All selected item sets have been rebuilt according to their preset.")
 		    End If
 		  End Select
 		  

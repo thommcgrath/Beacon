@@ -273,6 +273,10 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub ReconfigurePresets()
+		  If Self.mMap = Nil Then
+		    Return
+		  End If
+		  
 		  For Each Source As Beacon.LootSource In Self.mLootSources
 		    Source.ReconfigurePresets(Self.mMap)
 		  Next

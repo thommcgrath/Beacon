@@ -62,6 +62,7 @@ Begin BeaconWindow DocWindow
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   1
+      ShowDropIndicator=   False
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1082,6 +1083,7 @@ End
 		  Case "SettingsButton"
 		    DocumentSetupSheet.ShowEdit(Self, Self.Doc)
 		    Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
+		    Self.UpdateSourceList()
 		  Case "ErrorsButton"
 		    ResolveIssuesDialog.Present(Self, Self.Doc)
 		    Self.ScanForErrors()
