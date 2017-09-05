@@ -283,6 +283,7 @@ End
 		  End Select
 		  
 		  If Self.Doc.BeaconCount > 0 Then
+		    DocumentRebuildPresets.Enable
 		    FileExport.Enable
 		    If Self.mIsPublished = False Or (Self.mIsPublished = True And Self.mPublishedByUser) Then
 		      DocumentPublishDocument.Enable
@@ -345,6 +346,15 @@ End
 			Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Title.Compare(OriginalTitle, 0) <> 0 Or Self.Doc.Description.Compare(OriginalDescription, 0) <> 0
 			Self.ShowAlert("Your document has been published.", "You can view more about your document in the Library window.")
 			End If
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function DocumentRebuildPresets() As Boolean Handles DocumentRebuildPresets.Action
+			Self.Doc.ReconfigurePresets()
+			Self.UpdateSourceList()
+			Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
 			Return True
 		End Function
 	#tag EndMenuHandler
