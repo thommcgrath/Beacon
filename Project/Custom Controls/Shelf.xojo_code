@@ -57,6 +57,8 @@ Inherits ControlCanvas
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused areas
+		  
 		  G.ForeColor = Self.BorderColor
 		  G.FillRect(0, 0, G.Width, G.Height)
 		  
