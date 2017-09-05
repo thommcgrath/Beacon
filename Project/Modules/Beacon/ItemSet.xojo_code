@@ -350,6 +350,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub ReconfigureWithPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Map As Beacon.Map)
 		  Dim Clone As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, ForLootSource, Map)
+		  If Self.SourcePresetID = Preset.PresetID And Self.Hash = Clone.Hash Then
+		    Return
+		  End If
 		  Self.mEntries = Clone.mEntries
 		  Self.mSourcePresetID = Clone.mSourcePresetID
 		  Self.mModified = True

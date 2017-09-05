@@ -272,6 +272,14 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ReconfigurePresets()
+		  For Each Source As Beacon.LootSource In Self.mLootSources
+		    Source.ReconfigurePresets(Self.mMap)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(LootSource As Beacon.LootSource)
 		  For I As Integer = 0 To UBound(Self.mLootSources)
 		    If Self.mLootSources(I) = LootSource Then

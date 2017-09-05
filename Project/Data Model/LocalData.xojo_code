@@ -258,6 +258,16 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetPreset(PresetID As Text) As Beacon.Preset
+		  For Each Preset As Beacon.Preset In Self.mPresets
+		    If Preset.PresetID = PresetID Then
+		      Return Preset
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IconForLootSource(Source As Beacon.LootSource, HighlightColor As Color) As Picture
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT icon FROM loot_sources WHERE class_string = ?1;", Source.ClassString)
 		  Dim SpriteSheet As Picture
