@@ -347,7 +347,7 @@ Inherits Application
 		  Dim AppSupport As FolderItem = SpecialFolder.ApplicationData
 		  Dim CompanyFolder As FolderItem = AppSupport.Child("The ZAZ")
 		  Self.CheckFolder(CompanyFolder)
-		  Dim AppFolder As FolderItem = CompanyFolder.Child("Beacon")
+		  Dim AppFolder As FolderItem = CompanyFolder.Child(if(DebugBuild, "Beacon Debug", "Beacon"))
 		  Self.CheckFolder(AppFolder)
 		  Return AppFolder
 		End Function
