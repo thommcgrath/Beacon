@@ -44,9 +44,8 @@ Begin Window LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
-      Value           =   1
+      Value           =   2
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -133,7 +132,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
-         TabStop         =   True
          Text            =   "Add Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -182,6 +180,7 @@ Begin Window LootSourceWizard
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionType   =   0
+         ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
@@ -249,7 +248,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Define Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -408,7 +406,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Customize Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -443,7 +440,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   11
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Max Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -478,7 +474,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   9
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Min Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -513,7 +508,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Class String:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -548,7 +542,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Label:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -583,7 +576,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Kind:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -618,7 +610,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   7
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Availability:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -899,7 +890,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Min Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -977,7 +967,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Max Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1058,6 +1047,7 @@ Begin Window LootSourceWizard
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionType   =   0
+         ShowDropIndicator=   False
          TabIndex        =   7
          TabPanelIndex   =   3
          TabStop         =   True
@@ -1094,7 +1084,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   6
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Presets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1110,12 +1099,12 @@ Begin Window LootSourceWizard
       Begin CheckBox CustomizeReconfigureCheckbox
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "Reconfigure Exiting Presets"
+         Caption         =   "Rebuild Exiting Presets"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
          Height          =   20
-         HelpTag         =   "This option will basically delete the existing presets and build new item sets with using the adjustments for the selected loot source."
+         HelpTag         =   "When enabled, the existing item sets will be emptied and refilled according to their original preset."
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
@@ -1374,7 +1363,6 @@ Begin Window LootSourceWizard
             Selectable      =   False
             TabIndex        =   2
             TabPanelIndex   =   2
-            TabStop         =   True
             Text            =   "Which should I choose?"
             TextAlign       =   2
             TextColor       =   &c0000FF00

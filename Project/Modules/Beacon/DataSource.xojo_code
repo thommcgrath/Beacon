@@ -19,6 +19,12 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetPreset(PresetID As Text) As Beacon.Preset
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsPresetCustom(Preset As Beacon.Preset) As Boolean
 		  
 		End Function

@@ -78,7 +78,6 @@ Begin ContainerControl DocumentSetupContainer
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Map:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -140,7 +139,6 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "You only need to enter one of these values, the rest will be calculated automatically."
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -175,7 +173,6 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Difficulty Offset:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -339,7 +336,6 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Difficulty Value:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -374,7 +370,6 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Max Dino Level:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -409,7 +404,6 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   8
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "http://ark.gamepedia.com/Difficulty"
          TextAlign       =   0
          TextColor       =   &c0000FF00
@@ -444,7 +438,6 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   7
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "Learn More:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -521,7 +514,6 @@ Begin ContainerControl DocumentSetupContainer
       Width           =   80
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -592,7 +584,6 @@ End
 		  Dim Map As Beacon.Map
 		  If Doc.Map <> Nil Then
 		    Map = Doc.Map
-		    Self.MapMenu.Enabled = False
 		  Else
 		    Map = Beacon.Maps.GuessMap(Doc.LootSources)
 		  End If
@@ -727,37 +718,41 @@ End
 	#tag Event
 		Sub Action()
 		  If Self.mDoc <> Nil Then
-		    If MapMenu.Enabled Then
-		      Dim Map As Beacon.Map = Self.SelectedMap
-		      Dim Sources() As Beacon.LootSource = Self.mDoc.LootSources
-		      Dim ValidCount As Integer
-		      For Each Source As Beacon.LootSource In Sources
-		        If Source.ValidForMap(Map) Then
-		          ValidCount = ValidCount + 1
-		        End If
-		      Next
-		      
-		      If ValidCount = 0 Then
-		        Self.ShowAlert("No valid loot sources", "There would no loot sources loaded into the selected map.")
+		    Dim Map As Beacon.Map = Self.SelectedMap
+		    Dim Sources() As Beacon.LootSource = Self.mDoc.LootSources
+		    Dim HasInvalidSources As Boolean
+		    Dim ValidSourceCount, ValidPresetCount As Integer
+		    For Each Source As Beacon.LootSource In Sources
+		      If Source.ValidForMap(Map) Then
+		        ValidSourceCount = ValidSourceCount + 1
+		        ValidPresetCount = ValidPresetCount + Source.ImplementedPresetCount()
+		      Else
+		        HasInvalidSources = True
+		      End If
+		    Next
+		    
+		    If HasInvalidSources Then
+		      Dim DropCount As Integer = Self.mDoc.BeaconCount - ValidSourceCount
+		      If Not Self.ShowConfirm(DropCount.ToText + " " + if(DropCount = 1, "loot source is", "loot sources are") + " not compatible and will be removed.", "The " + if(DropCount = 1, "loot source is", "loot sources are") + " not valid for the selected map. If you want to keep " + if(DropCount = 1, "this loot source", "these loot sources") + ", cancel now and copy " + if(DropCount = 1, "it", "them") + " into a new document.", "Remove", "Cancel") Then
 		        Return
 		      End If
-		      
-		      If ValidCount <> Self.mDoc.BeaconCount Then
-		        Dim DropCount As Integer = Self.mDoc.BeaconCount - ValidCount
-		        If Not Self.ShowConfirm(DropCount.ToText + " " + if(DropCount = 1, "loot source is", "loot sources are") + " not compatible and will be removed.", "The " + if(DropCount = 1, "loot source is", "loot sources are") + " not valid for the selected map. If you want to keep " + if(DropCount = 1, "this loot source", "these loot sources") + ", cancel now and copy " + if(DropCount = 1, "it", "them") + " into a new document.", "Remove", "Cancel") Then
-		          Return
-		        End If
-		      End If
-		      
-		      Self.mDoc.Map = Map
+		    End If
+		    
+		    Dim MapChanged As Boolean = Self.mDoc.Map <> Nil And Self.mDoc.Map.Mask <> Map.Mask
+		    Self.mDoc.Map = Map
+		    Self.mDoc.DifficultyValue = Val(DifficultyValueField.Text)
+		    
+		    If MapChanged Then
 		      For Each Source As Beacon.LootSource In Sources
 		        If Not Source.ValidForMap(Map) Then
 		          Self.mDoc.Remove(Source)
 		        End If
 		      Next
-		    End
-		    
-		    Self.mDoc.DifficultyValue = Val(DifficultyValueField.Text)
+		      
+		      If ValidPresetCount > 0 And Self.ShowConfirm("Would you like to rebuild your item sets based on their presets?", "Presets fill item sets based on the current map. When changing maps, it is recommended to rebuild the item sets from their original presets to get the most correct loot for the new map.", "Rebuild", "Do Not Rebuild") Then
+		        Self.mDoc.ReconfigurePresets()
+		      End If
+		    End If
 		    
 		    RaiseEvent ShouldClose
 		    Return

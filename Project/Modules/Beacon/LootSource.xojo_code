@@ -106,6 +106,18 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ImplementedPresetCount() As UInteger
+		  Dim Total As UInteger
+		  For Each Set As Beacon.ItemSet In Self.mSets
+		    If Set.SourcePresetID <> "" Then
+		      Total = Total + 1
+		    End If
+		  Next
+		  Return Total
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Xojo.Core.DIctionary) As Beacon.LootSource
 		  Dim ClassString As Text
 		  If Dict.HasKey("SupplyCrateClassString") Then
@@ -389,6 +401,23 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Sub Operator_Subscript(Index As Integer, Assigns Value As Beacon.ItemSet)
 		  Self.mSets(Index) = Value
 		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ReconfigurePresets(Map As Beacon.Map)
+		  For Each Set As Beacon.ItemSet In Self.mSets
+		    If Set.SourcePresetID = "" Then
+		      Continue
+		    End If
+		    
+		    Dim Preset As Beacon.Preset = Beacon.Data.GetPreset(Set.SourcePresetID)
+		    If Preset = Nil Then
+		      Continue
+		    End If
+		    
+		    Set.ReconfigureWithPreset(Preset, Self, Map)
+		  Next
 		End Sub
 	#tag EndMethod
 

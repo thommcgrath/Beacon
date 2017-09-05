@@ -29,7 +29,7 @@ The endpoint is https://api.beaconapp.cc/v1/engram.php
 | path | The blueprint path for the engram. |
 | class | The class string. Warning: this value may not be unique. |
 | label | Human-readable/in-game name of the engram |
-| environments | Array of strings of the supported environments. Current allowed values are `Island` and `Scorched` |
+| environments | Array of strings of the supported environments. Current allowed values are `Island`, `Scorched`, `Center`, `Ragnarok`, and `Abberation`. |
 | can_blueprint | If this engram represents a resource, like wood or stone, that cannot be blueprinted, this value should be false. Craftable items, such as weapons and armor, should set this to true. |
 | spawn | The admin code to summon the item |
 | uid | Unique ID of this engram. This is the MD5 of the lowercase version of the path. |

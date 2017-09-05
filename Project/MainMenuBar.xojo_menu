@@ -247,6 +247,21 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
+      Begin MenuItem UntitledSeparator7
+         SpecialMenu = 0
+         Text = "-"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem DocumentRebuildPresets
+         SpecialMenu = 0
+         Text = "Rebuild Item Sets from Presets"
+         Index = -2147483648
+         PCAltKey = True
+         AutoEnable = False
+         Visible = True
+      End
       Begin MenuItem UntitledSeparator2
          SpecialMenu = 0
          Text = "-"

@@ -554,7 +554,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim MinQuality As Double = Self.mMinQuality.Value(Multipliers.Min, DifficultyValue)
 		  Dim MaxQuality As Double = Self.mMaxQuality.Value(Multipliers.Max, DifficultyValue)
 		  Dim Chance As Double = if(Self.CanBeBlueprint, Self.mChanceToBeBlueprint, 0)
-		  Dim InverseChance As Double = 1 - Chance
 		  Dim EntryWeight As Double = Self.mWeight / SumEntryWeights
 		  
 		  Dim Values() As Text

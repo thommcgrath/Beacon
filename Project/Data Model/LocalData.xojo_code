@@ -24,7 +24,8 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE loot_sources (class_string TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, kind TEXT NOT NULL, engram_mask INTEGER NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, icon BLOB NOT NULL, sort INTEGER NOT NULL UNIQUE, use_blueprints INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE engrams (path TEXT NOT NULL PRIMARY KEY, class_string TEXT NOT NULL, label TEXT NOT NULL, availability INTEGER NOT NULL, can_blueprint INTEGER NOT NULL, built_in INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE presets (preset_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE official_presets (preset_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE custom_presets (preset_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		  
 		  Self.mBase.UserVersion = Self.SchemaVersion
@@ -129,22 +130,6 @@ Implements Beacon.DataSource
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function CustomPresetsFolder() As FolderItem
-		  Dim SupportFolder As FolderItem = App.ApplicationSupport
-		  Dim PresetsFolder As FolderItem = SupportFolder.Child("Presets")
-		  If PresetsFolder.Exists Then
-		    If Not PresetsFolder.Directory Then
-		      PresetsFolder.Delete
-		      PresetsFolder.CreateAsFolder
-		    End If
-		  Else
-		    PresetsFolder.CreateAsFolder
-		  End If
-		  Return PresetsFolder
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function DeleteEngram(Engram As Beacon.Engram) As Boolean
 		  Try
@@ -161,12 +146,6 @@ Implements Beacon.DataSource
 		  Catch Err As UnsupportedOperationException
 		    Return False
 		  End Try
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function FileForCustomPreset(Preset As Beacon.Preset) As FolderItem
-		  Return Self.CustomPresetsFolder.Child(Preset.PresetID + BeaconFileTypes.BeaconPreset.PrimaryExtension)
 		End Function
 	#tag EndMethod
 
@@ -258,6 +237,16 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetPreset(PresetID As Text) As Beacon.Preset
+		  For Each Preset As Beacon.Preset In Self.mPresets
+		    If Preset.PresetID = PresetID Then
+		      Return Preset
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IconForLootSource(Source As Beacon.LootSource, HighlightColor As Color) As Picture
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT icon FROM loot_sources WHERE class_string = ?1;", Source.ClassString)
 		  Dim SpriteSheet As Picture
@@ -342,7 +331,7 @@ Implements Beacon.DataSource
 		    If ShouldTruncate Then
 		      Self.SQLExecute("DELETE FROM loot_sources;")
 		      Self.SQLExecute("DELETE FROM engrams WHERE built_in = 1;")
-		      Self.SQLExecute("DELETE FROM presets;")
+		      Self.SQLExecute("DELETE FROM official_presets;")
 		    End If
 		    
 		    Dim SourcesDict As Xojo.Core.Dictionary = ChangeDict.Value("loot_sources")
@@ -408,15 +397,15 @@ Implements Beacon.DataSource
 		    Dim PresetRemovals() As Auto = PresetsDict.Value("removals")
 		    Dim ReloadPresets As Boolean = False
 		    For Each PresetID As Text In PresetRemovals
-		      Self.SQLExecute("DELETE FROM presets WHERE LOWER(preset_id) = LOWER(?1);", PresetID)
+		      Self.SQLExecute("DELETE FROM official_presets WHERE LOWER(preset_id) = LOWER(?1);", PresetID)
 		      ReloadPresets = True
 		    Next
 		    For Each Dict As Xojo.Core.Dictionary In PresetAdditions
 		      Dim PresetID As Text = Dict.Value("id")
 		      Dim Label As Text = Dict.Value("label")
 		      Dim Contents As Text = Dict.Value("contents")
-		      Self.SQLExecute("DELETE FROM presets WHERE LOWER(preset_id) = LOWER(?1);", PresetID)
-		      Self.SQLExecute("INSERT INTO presets (preset_id, label, contents) VALUES (?1, ?2, ?3);", PresetID, Label, Contents)
+		      Self.SQLExecute("DELETE FROM official_presets WHERE LOWER(preset_id) = LOWER(?1);", PresetID)
+		      Self.SQLExecute("INSERT INTO official_presets (preset_id, label, contents) VALUES (LOWER(?1), ?2, ?3);", PresetID, Label, Contents)
 		      ReloadPresets = True
 		    Next
 		    
@@ -451,8 +440,8 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function IsPresetCustom(Preset As Beacon.Preset) As Boolean
-		  Dim File As FolderItem = Self.FileForCustomPreset(Preset)
-		  Return File.Exists
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT preset_id FROM custom_presets WHERE preset_id = ?1;", Preset.PresetID)
+		  Return Results.RecordCount = 1
 		End Function
 	#tag EndMethod
 
@@ -471,53 +460,24 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Sub LoadPresets()
-		  Dim Presets As New Dictionary
-		  
-		  Dim BuiltInIDs() As Text
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT contents FROM presets")
+		  Redim Self.mPresets(-1)
+		  Self.LoadPresets(Self.SQLSelect("SELECT contents FROM official_presets WHERE LOWER(preset_id) NOT IN (SELECT LOWER(preset_id) FROM custom_presets)"), Beacon.Preset.Types.BuiltIn)
+		  Self.LoadPresets(Self.SQLSelect("SELECT contents FROM custom_presets WHERE LOWER(preset_id) IN (SELECT LOWER(preset_id) FROM official_presets)"), Beacon.Preset.Types.CustomizedBuiltIn)
+		  Self.LoadPresets(Self.SQLSelect("SELECT contents FROM custom_presets WHERE LOWER(preset_id) NOT IN (SELECT LOWER(preset_id) FROM official_presets)"), Beacon.Preset.Types.Custom)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LoadPresets(Results As RecordSet, Type As Beacon.Preset.Types)
 		  While Not Results.EOF
 		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Results.Field("contents").StringValue.ToText)
 		    Dim Preset As Beacon.Preset = Beacon.Preset.FromDictionary(Dict)
 		    If Preset <> Nil Then
-		      Preset.Type = Beacon.Preset.Types.BuiltIn
-		      Presets.Value(Preset.PresetID) = Preset
-		      BuiltInIDs.Append(Preset.PresetID)
+		      Preset.Type = Type
+		      Self.mPresets.Append(Preset)
 		    End If
 		    Results.MoveNext
 		  Wend
-		  
-		  Dim Folder As FolderItem = Self.CustomPresetsFolder
-		  If Folder <> Nil Then
-		    Dim Extension As String = BeaconFileTypes.BeaconPreset.PrimaryExtension
-		    Dim ExtensionLength As Integer = Len(Extension)
-		    
-		    For I As Integer = 1 To Folder.Count
-		      Dim File As FolderItem = Folder.Item(I)
-		      If Right(File.Name, ExtensionLength) <> Extension Then
-		        Continue For I
-		      End If
-		      
-		      Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
-		      If Preset <> Nil Then
-		        Dim CorrectFile As FolderItem = Self.FileForCustomPreset(Preset)
-		        If File.NativePath <> CorrectFile.NativePath Then
-		          If Not CorrectFile.Exists Then
-		            Self.SavePreset(Preset, False)
-		          End If
-		          File.Delete
-		        End If
-		        
-		        Preset.Type = if(BuiltInIDs.IndexOf(Preset.PresetID) > -1, Beacon.Preset.Types.CustomizedBuiltIn, Beacon.Preset.Types.Custom)
-		        Presets.Value(Preset.PresetID) = Preset
-		      End If
-		    Next
-		  End If
-		  
-		  Redim Self.mPresets(Presets.Count - 1)
-		  Dim Keys() As Variant = Presets.Keys
-		  For I As Integer = 0 To UBound(Keys)
-		    Self.mPresets(I) = Presets.Value(Keys(I))
-		  Next
 		End Sub
 	#tag EndMethod
 
@@ -529,13 +489,22 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Dim Commands() As String
-		  Select Case FromSchemaVersion
-		  Case 1
+		  If FromSchemaVersion <= 1 Then
 		    Commands.Append("INSERT INTO loot_sources SELECT *, 1 AS use_blueprints FROM legacy.loot_sources;")
-		    Commands.Append("INSERT INTO engrams SELECT * FROM legacy.engrams;")
-		    Commands.Append("INSERT INTO variables SELECT * FROM legacy.variables;")
-		    Commands.Append("INSERT INTO presets SELECT * FROM legacy.presets;")
-		  End Select
+		  Else
+		    Commands.Append("INSERT INTO loot_sources SELECT * FROM legacy.loot_sources;")
+		  End If
+		  
+		  Commands.Append("INSERT INTO engrams SELECT * FROM legacy.engrams;")
+		  
+		  Commands.Append("INSERT INTO variables SELECT * FROM legacy.variables;")
+		  
+		  If FromSchemaVersion <= 2 Then  
+		    Commands.Append("INSERT INTO official_presets SELECT * FROM legacy.presets;")
+		  Else
+		    Commands.Append("INSERT INTO official_presets SELECT * FROM legacy.official_presets;")
+		    Commands.Append("INSERT INTO custom_presets SELECT * FROM legacy.custom_presets;")
+		  End If
 		  
 		  If UBound(Commands) > -1 Then
 		    Self.BeginTransaction()
@@ -554,6 +523,43 @@ Implements Beacon.DataSource
 		  
 		  Self.mBase.DetachDatabase("legacy")
 		  Source.Delete
+		  
+		  If FromSchemaVersion <= 2 Then
+		    Dim SupportFolder As FolderItem = App.ApplicationSupport
+		    Dim PresetsFolder As FolderItem = SupportFolder.Child("Presets")
+		    If PresetsFolder.Exists Then
+		      For I As Integer = PresetsFolder.Count DownTo 1
+		        Dim File As FolderItem = PresetsFolder.Item(I)
+		        If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
+		          File.Delete
+		          Continue
+		        End If
+		        
+		        Dim Stream As TextInputStream = TextInputStream.Open(File)
+		        Dim Content As String = Stream.ReadAll(Encodings.UTF8)
+		        Stream.Close
+		        
+		        Try
+		          Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content.ToText)
+		          Dim PresetID As Text = Dict.Value("ID")
+		          Dim Label As Text = Dict.Value("Label")
+		          
+		          Self.BeginTransaction()
+		          Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (preset_id, label, contents) VALUES (LOWER(?1), ?2, ?3);", PresetID, Label, Content)
+		          Self.Commit()      
+		          
+		          File.Delete
+		        Catch Err As RuntimeException
+		          While Self.mTransactions.Ubound > -1
+		            Self.Rollback()
+		          Wend
+		          Continue
+		        End Try
+		      Next
+		      
+		      PresetsFolder.Delete
+		    End If
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -656,11 +662,14 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Sub RemovePreset(Preset As Beacon.Preset)
-		  Dim File As FolderItem = Self.FileForCustomPreset(Preset)
-		  If File.Exists Then
-		    File.Delete
-		    Self.LoadPresets
+		  If Not Self.IsPresetCustom(Preset) Then
+		    Return
 		  End If
+		  
+		  Self.BeginTransaction()
+		  Self.SQLExecute("DELETE FROM custom_presets WHERE preset_id = ?1;", Preset.PresetID)
+		  Self.Commit()
+		  Self.LoadPresets()
 		End Sub
 	#tag EndMethod
 
@@ -727,8 +736,12 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h21
 		Private Sub SavePreset(Preset As Beacon.Preset, Reload As Boolean)
-		  Dim File As FolderItem = Self.FileForCustomPreset(Preset)
-		  Preset.ToFile(File)
+		  Dim Content As Text = Xojo.Data.GenerateJSON(Preset.ToDictionary)
+		  
+		  Self.BeginTransaction()
+		  Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (preset_id, label, contents) VALUES (LOWER(?1), ?2, ?3);", Preset.PresetID, Preset.Label, Content)
+		  Self.Commit()
+		  
 		  If Reload Then
 		    Self.LoadPresets()
 		  End If
@@ -971,7 +984,7 @@ Implements Beacon.DataSource
 	#tag EndProperty
 
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 
