@@ -1,6 +1,24 @@
 #tag Class
 Protected Class Preferences
 	#tag Method, Flags = &h0
+		Function AutoValue(Key As Text, Default As Auto = Nil) As Auto
+		  If Not Self.mValues.HasKey(Key) Then
+		    Return Default
+		  End If
+		  
+		  Return Self.mValues.Value(Key)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AutoValue(Key As Text, Assigns Value As Auto)
+		  Self.BeginTransaction()
+		  Self.mValues.Value(Key) = Value
+		  Self.Commit()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub BeginTransaction()
 		  If Self.mTransactionLevel = 0 Then
 		    Self.mSavedValues = Self.CloneDictionary(Self.mValues)
