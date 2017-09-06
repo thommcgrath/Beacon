@@ -37,6 +37,14 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
+      Begin MenuItem FileOpenRecent
+         SpecialMenu = 0
+         Text = "Open Recent"
+         Index = -2147483648
+         AutoEnable = True
+         SubMenu = True
+         Visible = True
+      End
       Begin MenuItem FileClose
          SpecialMenu = 0
          Text = "Close"
