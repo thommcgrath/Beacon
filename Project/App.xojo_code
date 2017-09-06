@@ -94,6 +94,7 @@ Inherits Application
 		  #if TargetMacOS
 		    UntitledSeparator6.Visible = False
 		  #endif
+		  Self.RebuildRecentMenu()
 		  
 		  LocalData.Start
 		  
@@ -180,6 +181,7 @@ Inherits Application
 		  End If
 		  
 		  If Item.IsType(BeaconFileTypes.BeaconPreset) Then
+		    Self.AddToRecentDocuments(Item)
 		    PresetWindow.Present(Item)
 		    Return
 		  End If
@@ -197,6 +199,7 @@ Inherits Application
 		      End If
 		    Next
 		    
+		    Self.AddToRecentDocuments(Item)
 		    Dim Win As New DocWindow(Item)
 		    Win.Show
 		    Return
@@ -347,11 +350,28 @@ Inherits Application
 
 
 	#tag Method, Flags = &h0
+		Sub AddToRecentDocuments(File As FolderItem)
+		  Dim Hash As String = EncodeHex(Crypto.MD5(File.NativePath))
+		  Dim Documents() As FolderItem = Self.RecentDocuments
+		  For I As Integer = Documents.Ubound DownTo 0
+		    If EncodeHex(Crypto.MD5(Documents(I).NativePath)) = Hash Then
+		      Documents.Remove(I)
+		    End If
+		  Next
+		  Documents.Insert(0, File)
+		  While Documents.Ubound > 9
+		    Documents.Remove(Documents.Ubound)
+		  Wend
+		  Self.RecentDocuments = Documents
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
 		  Dim AppSupport As FolderItem = SpecialFolder.ApplicationData
 		  Dim CompanyFolder As FolderItem = AppSupport.Child("The ZAZ")
 		  Self.CheckFolder(CompanyFolder)
-		  Dim AppFolder As FolderItem = CompanyFolder.Child("Beacon")
+		  Dim AppFolder As FolderItem = CompanyFolder.Child(if(DebugBuild, "Beacon Debug", "Beacon"))
 		  Self.CheckFolder(AppFolder)
 		  Return AppFolder
 		End Function
@@ -531,6 +551,28 @@ Inherits Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function mOpenRecent_ClearMenu(Sender As MenuItem) As Boolean
+		  #Pragma Unused Sender
+		  
+		  Dim Documents() As FolderItem
+		  Self.RecentDocuments = Documents
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function mOpenRecent_OpenFile(Sender As MenuItem) As Boolean
+		  Dim File As FolderItem = Sender.Tag
+		  If File <> Nil And File.Exists Then
+		    Self.OpenDocument(File)
+		  Else
+		    BeaconUI.ShowAlert("File not found.", "Sorry, the file may have been deleted.")
+		  End If
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mUpdateChecker_NoUpdate(Sender As UpdateChecker)
 		  #Pragma Unused Sender
 		  
@@ -555,6 +597,66 @@ Inherits Application
 		  End If
 		  Return Self.mPreferences
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RebuildRecentMenu()
+		  While FileOpenRecent.Count > 0
+		    FileOpenRecent.Remove(0)
+		  Wend
+		  
+		  Dim Documents() As FolderItem = Self.RecentDocuments()
+		  For Each Document As FolderItem In Documents
+		    Dim Item As New MenuItem(Document.DisplayName)
+		    Item.Tag = Document
+		    Item.Enable
+		    AddHandler Item.Action, WeakAddressOf mOpenRecent_OpenFile
+		    FileOpenRecent.Append(Item)
+		  Next
+		  If Documents.Ubound > -1 Then
+		    FileOpenRecent.Append(New MenuItem(MenuItem.TextSeparator))
+		    
+		    Dim Item As New MenuItem("Clear Menu")
+		    Item.Enable
+		    AddHandler Item.Action, WeakAddressOf mOpenRecent_ClearMenu
+		    FileOpenRecent.Append(Item)
+		  Else
+		    Dim Item As New MenuItem("No Items")
+		    Item.Enabled = False
+		    FileOpenRecent.Append(Item)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RecentDocuments() As FolderItem()
+		  Dim SaveData() As Auto
+		  SaveData = Self.Preferences.AutoValue("Documents", SaveData)
+		  
+		  Dim Documents() As FolderItem
+		  For Each Data As Text In SaveData
+		    Dim File As FolderItem = GetFolderItem(DecodeBase64(Data), FolderItem.PathTypeNative)
+		    If File <> Nil Then
+		      Documents.Append(File)
+		    End If
+		  Next
+		  
+		  Return Documents
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RecentDocuments(Assigns Documents() As FolderItem)
+		  Dim SaveData() As Auto
+		  For Each Document As FolderItem In Documents
+		    If Document <> Nil And Document.Exists Then
+		      Dim Data As String = Document.GetSaveInfo(Nil)
+		      SaveData.Append(EncodeBase64(Data, 0).ToText)
+		    End If
+		  Next
+		  Self.Preferences.AutoValue("Documents") = SaveData
+		  Self.RebuildRecentMenu()
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

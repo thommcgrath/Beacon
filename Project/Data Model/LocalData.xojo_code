@@ -100,17 +100,16 @@ Implements Beacon.DataSource
 		  Self.mBase = New SQLiteDatabase
 		  Self.mBase.DatabaseFile = App.ApplicationSupport.Child("Library.sqlite")
 		  
-		  Dim FirstBuild As Boolean
 		  If Self.mBase.DatabaseFile.Exists Then
 		    If Not Self.mBase.Connect Then
 		      Return
 		    End If
-		    FirstBuild = False
 		  Else
 		    If Not Self.mBase.CreateDatabaseFile Then
 		      Return
 		    End If
-		    FirstBuild = True
+		    
+		    Self.BuildSchema()
 		  End If
 		  
 		  Dim CurrentSchemaVersion As Integer = Self.mBase.UserVersion

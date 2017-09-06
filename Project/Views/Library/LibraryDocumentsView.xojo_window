@@ -99,6 +99,7 @@ Begin BeaconSubview LibraryDocumentsView
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   0
+      ShowDropIndicator=   False
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
@@ -277,8 +278,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DocumentsList(Success As Boolean, Message As Text, Details As Auto)
-		  #Pragma Unused Success
 		  #Pragma Unused Message
+		  
+		  If Not Success Then
+		    Self.ShowAlert("Unable to list documents.", Message)
+		    Return
+		  End If
 		  
 		  Dim Dicts() As Auto = Details
 		  Dim Documents() As BeaconAPI.Document
