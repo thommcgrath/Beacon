@@ -1,0 +1,46 @@
+#tag MultiImage
+Image ImgToolbarButtonNormalRight
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAISAAAAAAISAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMLyIfSW1nVG9vbGJhckJ1dHRvbk5vcm1hbFJpZ2h0LnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkDVP9XXA6ZQTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANXXO+YAAAABABgBTC8iAUH14gAR9isAEI6eABB50QAQeOAAAgBrTWFjaW50b3NoIEhEOlVzZXJzOgB0aG9tbWNncmF0aDoARG9jdW1lbnRzOgBUaGUgWkFaIFNvdXJjZXM6AEJlYWNvbjoASWNvbnM6AEltZ1Rvb2xiYXJCdXR0b25Ob3JtYWxSaWdodC5wbmcAAA4AQAAfAEkAbQBnAFQAbwBvAGwAYgBhAHIAQgB1AHQAdABvAG4ATgBvAHIAbQBhAGwAUgBpAGcAaAB0AC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBYVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvSW1nVG9vbGJhckJ1dHRvbk5vcm1hbFJpZ2h0LnBuZwATAAEvAAAVAAIAEv//AAAAAAAAAAA=
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/ImgToolbarButtonNormalRight.png
+		PartialPath = ..\Icons\ImgToolbarButtonNormalRight.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 72
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAIcAAAAAAIcAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMLyIfSW1nVG9vbGJhckJ1dHRvbk5vciMyNDBENTZCLnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkDVa9XXA81QTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANXXPA0AAAABABgBTC8iAUH14gAR9isAEI6eABB50QAQeOAAAgBrTWFjaW50b3NoIEhEOlVzZXJzOgB0aG9tbWNncmF0aDoARG9jdW1lbnRzOgBUaGUgWkFaIFNvdXJjZXM6AEJlYWNvbjoASWNvbnM6AEltZ1Rvb2xiYXJCdXR0b25Ob3IjMjQwRDU2Qi5wbmcAAA4ARgAiAEkAbQBnAFQAbwBvAGwAYgBhAHIAQgB1AHQAdABvAG4ATgBvAHIAbQBhAGwAUgBpAGcAaAB0AEAAMgB4AC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBbVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvSW1nVG9vbGJhckJ1dHRvbk5vcm1hbFJpZ2h0QDJ4LnBuZwAAEwABLwAAFQACABL//wAAAAAAAAAA
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/ImgToolbarButtonNormalRight@2x.png
+		PartialPath = ..\Icons\ImgToolbarButtonNormalRight@2x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 144
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAIcAAAAAAIcAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAADMy9JESCsAAAFMLyIfSW1nVG9vbGJhckJ1dHRvbk5vciMyNDBENThGLnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkDVj9XXA/NQTkdmOEJJTf////8AAAkgAAAAAAAAAAAAAAAAAAAABUljb25zAAAQAAgAAMzMGJQAAAARAAgAANXXPDMAAAABABgBTC8iAUH14gAR9isAEI6eABB50QAQeOAAAgBrTWFjaW50b3NoIEhEOlVzZXJzOgB0aG9tbWNncmF0aDoARG9jdW1lbnRzOgBUaGUgWkFaIFNvdXJjZXM6AEJlYWNvbjoASWNvbnM6AEltZ1Rvb2xiYXJCdXR0b25Ob3IjMjQwRDU4Ri5wbmcAAA4ARgAiAEkAbQBnAFQAbwBvAGwAYgBhAHIAQgB1AHQAdABvAG4ATgBvAHIAbQBhAGwAUgBpAGcAaAB0AEAAMwB4AC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBbVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvSW1nVG9vbGJhckJ1dHRvbk5vcm1hbFJpZ2h0QDN4LnBuZwAAEwABLwAAFQACABL//wAAAAAAAAAA
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/ImgToolbarButtonNormalRight@3x.png
+		PartialPath = ..\Icons\ImgToolbarButtonNormalRight@3x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 216
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+End Image
+#tag EndMultiImage
