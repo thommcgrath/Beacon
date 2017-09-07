@@ -31,6 +31,8 @@ abstract class BeaconTemplate {
 		$title = 'Beacon';
 		if (self::$title !== '') {
 			$title .= ': ' . self::$title;
+		} else {
+			$title .= ' - A Loot Editor for Ark: Survival Evolved';
 		}
 		return $title;
 	}

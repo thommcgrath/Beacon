@@ -39,7 +39,7 @@ if (!BeaconTemplate::IsHTML()) {
 	<body>
 		<header>
 			<div class="inner">
-				<a href="/" id="header_link"><img id="header_logo_small" width="40" height="40" src="/assets/images/beacon-color.svg"><img id="header_logo_full" width="256" height="40" src="/assets/images/header.svg"></a>
+				<a href="/" id="header_link"><img id="header_logo_small" width="40" height="40" src="/assets/images/beacon-color.svg" alt="Beacon - A Loot Editor for Ark: Survival Evolved"><img id="header_logo_full" width="256" height="40" src="/assets/images/header.svg" alt="Beacon - A Loot Editor for Ark: Survival Evolved"></a>
 				<div id="top-menu">
 					<a href="/spawn/">Spawn Codes</a>
 					<a href="/help/">Help</a>
