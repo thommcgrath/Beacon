@@ -1450,8 +1450,6 @@ End
 		    DefineMinMultiplierField.Text = Format(Self.mEditing.Multipliers.Min, "0.0000")
 		    DefineMaxMultiplierField.Text = Format(Self.mEditing.Multipliers.Max, "0.0000")
 		    DefineKindMenu.SelectByTag(Self.mEditing.Kind)
-		    DefineUseBlueprintsRadio.Value = Self.mEditing.UseBlueprints
-		    DefineUseClassesRadio.Value = Not Self.mEditing.UseBlueprints
 		    Self.CheckDefineReady()
 		  Case Self.PaneCustomize
 		    CustomizeMinSetsField.Text = Format(Self.mEditing.MinItemSets, "-0")
@@ -1627,7 +1625,7 @@ End
 		    Self.mEditing.Availability = Availability
 		    Self.mEditing.Multipliers = New Beacon.Range(CDbl(DefineMinMultiplierField.Text), CDbl(DefineMaxMultiplierField.Text))
 		    Self.mEditing.IsOfficial = False
-		    Self.mEditing.UseBlueprints = DefineUseBlueprintsRadio.Value
+		    Self.mEditing.UseBlueprints = False
 		  End If
 		  
 		  Panel.Value = Self.PaneCustomize
