@@ -17,6 +17,9 @@ Implements Beacon.Countable
 		  Self.mQuantityMultiplierBonus = 2
 		  Self.mQuantityMultiplierCave = 1
 		  Self.mQuantityMultiplierSea = 1
+		  
+		  Self.mPresetID = Beacon.CreateUUID
+		  Self.Type = Types.Custom
 		End Sub
 	#tag EndMethod
 
@@ -65,6 +68,9 @@ Implements Beacon.Countable
 		  If Dict.HasKey("ID") Then
 		    // Don't use lookup here to prevent creating the UUID unless necessary
 		    Preset.mPresetID = Dict.Value("ID")
+		  End If
+		  If Preset.mPresetID = "" Then
+		    Preset.mPresetID = Beacon.CreateUUID
 		  End If
 		  Preset.mLabel = Dict.Lookup("Label", Preset.Label)
 		  Preset.mGrouping = Dict.Lookup("Grouping", Preset.Grouping)
