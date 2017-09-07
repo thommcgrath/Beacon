@@ -439,7 +439,7 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function IsPresetCustom(Preset As Beacon.Preset) As Boolean
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT preset_id FROM custom_presets WHERE preset_id = ?1;", Preset.PresetID)
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT preset_id FROM custom_presets WHERE LOWER(preset_id) = LOWER(?1);", Preset.PresetID)
 		  Return Results.RecordCount = 1
 		End Function
 	#tag EndMethod
@@ -460,9 +460,9 @@ Implements Beacon.DataSource
 	#tag Method, Flags = &h0
 		Sub LoadPresets()
 		  Redim Self.mPresets(-1)
-		  Self.LoadPresets(Self.SQLSelect("SELECT contents FROM official_presets WHERE LOWER(preset_id) NOT IN (SELECT LOWER(preset_id) FROM custom_presets)"), Beacon.Preset.Types.BuiltIn)
-		  Self.LoadPresets(Self.SQLSelect("SELECT contents FROM custom_presets WHERE LOWER(preset_id) IN (SELECT LOWER(preset_id) FROM official_presets)"), Beacon.Preset.Types.CustomizedBuiltIn)
-		  Self.LoadPresets(Self.SQLSelect("SELECT contents FROM custom_presets WHERE LOWER(preset_id) NOT IN (SELECT LOWER(preset_id) FROM official_presets)"), Beacon.Preset.Types.Custom)
+		  Self.LoadPresets(Self.SQLSelect("SELECT preset_id, contents FROM official_presets WHERE LOWER(preset_id) NOT IN (SELECT LOWER(preset_id) FROM custom_presets)"), Beacon.Preset.Types.BuiltIn)
+		  Self.LoadPresets(Self.SQLSelect("SELECT preset_id, contents FROM custom_presets WHERE LOWER(preset_id) IN (SELECT LOWER(preset_id) FROM official_presets)"), Beacon.Preset.Types.CustomizedBuiltIn)
+		  Self.LoadPresets(Self.SQLSelect("SELECT preset_id, contents FROM custom_presets WHERE LOWER(preset_id) NOT IN (SELECT LOWER(preset_id) FROM official_presets)"), Beacon.Preset.Types.Custom)
 		End Sub
 	#tag EndMethod
 
@@ -472,6 +472,14 @@ Implements Beacon.DataSource
 		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Results.Field("contents").StringValue.ToText)
 		    Dim Preset As Beacon.Preset = Beacon.Preset.FromDictionary(Dict)
 		    If Preset <> Nil Then
+		      If Type <> Beacon.Preset.Types.BuiltIn And Preset.PresetID <> Results.Field("preset_id").StringValue Then
+		        // To work around https://github.com/thommcgrath/Beacon/issues/64
+		        Dim Contents As Text = Xojo.Data.GenerateJSON(Preset.ToDictionary)
+		        Self.BeginTransaction()
+		        Self.SQLExecute("UPDATE custom_presets SET preset_id = LOWER(?2), contents = ?3 WHERE preset_id = ?1;", Results.Field("preset_id").StringValue, Preset.PresetID, Contents)
+		        Self.Commit()
+		      End If
+		      
 		      Preset.Type = Type
 		      Self.mPresets.Append(Preset)
 		    End If
@@ -666,7 +674,7 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM custom_presets WHERE preset_id = ?1;", Preset.PresetID)
+		  Self.SQLExecute("DELETE FROM custom_presets WHERE LOWER(preset_id) = LOWER(?1);", Preset.PresetID)
 		  Self.Commit()
 		  Self.LoadPresets()
 		End Sub
