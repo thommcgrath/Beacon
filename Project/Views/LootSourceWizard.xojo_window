@@ -45,7 +45,7 @@ Begin Window LootSourceWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -1421,7 +1421,7 @@ End
 		  Dim AvailabilityChecked As Boolean
 		  Dim Maps() As Beacon.Map = Beacon.Maps.All
 		  For Each Map As Beacon.Map In Maps
-		    If DefineAvailabilityChecks(Map.Mask).Value Then
+		    If DefineAvailabilityChecks(Map.Mask) <> Nil And DefineAvailabilityChecks(Map.Mask).Value Then
 		      AvailabilityChecked = True
 		      Exit
 		    End If
@@ -1528,7 +1528,9 @@ End
 		  Case Self.PaneDefine
 		    Dim Maps() As Beacon.Map = Beacon.Maps.All
 		    For Each Map As Beacon.Map In Maps
-		      DefineAvailabilityChecks(Map.Mask).Value = Self.mEditing.ValidForMap(Map)
+		      If DefineAvailabilityChecks(Map.Mask) <> Nil Then
+		        DefineAvailabilityChecks(Map.Mask).Value = Self.mEditing.ValidForMap(Map)
+		      End If
 		    Next
 		    
 		    DefineClassField.Text = Self.mEditing.ClassString
@@ -1702,7 +1704,7 @@ End
 		    Dim Maps() As Beacon.Map = Beacon.Maps.All
 		    Dim Availability As UInteger
 		    For Each Map As Beacon.Map In Maps
-		      If DefineAvailabilityChecks(Map.Mask).Value Then
+		      If DefineAvailabilityChecks(Map.Mask) <> Nil And DefineAvailabilityChecks(Map.Mask).Value Then
 		        Availability = Availability Or Map.Mask
 		      End If
 		    Next
