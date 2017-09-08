@@ -37,7 +37,6 @@ Begin Window MainWindow
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -68,12 +67,11 @@ Begin Window MainWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
+      PanelCount      =   1
       Panels          =   ""
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True
@@ -83,7 +81,7 @@ Begin Window MainWindow
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         Caption         =   ""
+         Caption         =   "Welcome to Beacon"
          CaptionIsButton =   False
          DoubleBuffer    =   False
          Enabled         =   True
@@ -131,7 +129,6 @@ Begin Window MainWindow
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
          Text            =   "Select Something"
          TextAlign       =   1
          TextColor       =   &c00000000
@@ -192,6 +189,56 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mViews = New Xojo.Core.Dictionary
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowView(View As BeaconSubview)
+		  If View = Nil Then
+		    Self.ContentsChanged = False
+		    Views.Value = 0
+		    Return
+		  End If
+		  
+		  Dim ViewIndex As Integer = 0
+		  If Not Self.mViews.HasKey(View) Then
+		    Views.Append
+		    ViewIndex = Views.PanelCount - 1
+		    View.EmbedWithinPanel(Views, ViewIndex, 0, 0, Views.Width, Views.Height)
+		    Self.mViews.Value(View) = ViewIndex
+		    
+		    AddHandler View.ContentsChanged, WeakAddressOf Subview_ContentsChanged
+		  Else
+		    ViewIndex = Self.mViews.Value(View)
+		  End If
+		  Views.Value = ViewIndex
+		  
+		  Self.ContentsChanged = View.ContentsChanged
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Subview_ContentsChanged(Sender As ContainerControl)
+		  Dim ViewIndex As Integer = -1
+		  If Self.mViews.HasKey(Sender) Then
+		    ViewIndex = Self.mViews.Value(Sender)
+		  End If
+		  If Views.Value = ViewIndex Then
+		    Self.ContentsChanged = Sender.ContentsChanged
+		  End If
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mViews As Xojo.Core.Dictionary
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
 #tag Events LibraryPane1
@@ -203,6 +250,34 @@ End
 		  Divider.Left = NewSize
 		  Views.Left = Divider.Left + Divider.Width
 		  Views.Width = Self.Width - Views.Left
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldShowView(View As BeaconSubview)
+		  Self.ShowView(View)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldDiscardView(View As BeaconSubview)
+		  If Not Self.mViews.HasKey(View) Then
+		    Return
+		  End If
+		  
+		  Dim ViewIndex As Integer = Self.mViews.Value(View)
+		  
+		  If Views.Value = ViewIndex Then
+		    Self.ShowView(Nil)
+		  End If
+		  
+		  Self.mViews.Remove(View)
+		  View.Close
+		  Views.Remove(ViewIndex) // Now all saved indexes are wrong
+		  
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mViews
+		    If Entry.Value > ViewIndex Then
+		      Self.mViews.Value(Entry.Key) = Entry.Value - 1
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

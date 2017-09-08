@@ -277,6 +277,7 @@ Begin BeaconSubview DeveloperAPIView
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Path:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -311,6 +312,7 @@ Begin BeaconSubview DeveloperAPIView
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Method:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -345,6 +347,7 @@ Begin BeaconSubview DeveloperAPIView
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Body:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -379,6 +382,7 @@ Begin BeaconSubview DeveloperAPIView
       Selectable      =   False
       TabIndex        =   9
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Language:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -413,6 +417,7 @@ Begin BeaconSubview DeveloperAPIView
       Selectable      =   False
       TabIndex        =   12
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Code:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -520,6 +525,7 @@ Begin BeaconSubview DeveloperAPIView
       Selectable      =   False
       TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Content Type:"
       TextAlign       =   2
       TextColor       =   &c00000000

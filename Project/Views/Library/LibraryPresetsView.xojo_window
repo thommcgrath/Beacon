@@ -185,6 +185,7 @@ Begin BeaconSubview LibraryPresetsView Implements NotificationKit.Receiver
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   0
+      ShowDropIndicator=   False
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True

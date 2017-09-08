@@ -1,5 +1,5 @@
 #tag Window
-Begin LibrarySubview LibraryPaneDocuments
+Begin BeaconSubview PresetEditorView
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -9,7 +9,7 @@ Begin LibrarySubview LibraryPaneDocuments
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   300
+   Height          =   372
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -24,18 +24,16 @@ Begin LibrarySubview LibraryPaneDocuments
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   300
+   Width           =   546
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   "Documents"
+      Caption         =   "Preset"
       CaptionIsButton =   False
-      DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   False
-      HasResizer      =   True
+      HasResizer      =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -51,36 +49,61 @@ Begin LibrarySubview LibraryPaneDocuments
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
-      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   300
+      Width           =   546
+   End
+   Begin CheckBox CheckBox1
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Modified"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      State           =   0
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   53
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   100
    End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Hook, Flags = &h0
-		Event ShouldResize(ByRef NewSize As Integer)
-	#tag EndHook
+	#tag Method, Flags = &h0
+		Shared Function Create(Preset As Beacon.Preset) As PresetEditorView
+		  Dim View As New PresetEditorView
+		  View.Header.Caption = Preset.Label
+		  Return View
+		End Function
+	#tag EndMethod
 
 
 #tag EndWindowCode
 
-#tag Events Header
+#tag Events CheckBox1
 	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconAdd))
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(ByRef NewSize As Integer)
-		  RaiseEvent ShouldResize(NewSize)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  
+		Sub Action()
+		  Self.ContentsChanged = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents

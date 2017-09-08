@@ -1,5 +1,5 @@
 #tag Window
-Begin LibrarySubview LibraryPanePresets
+Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -25,12 +25,447 @@ Begin LibrarySubview LibraryPanePresets
    UseFocusRing    =   False
    Visible         =   True
    Width           =   300
+   Begin BeaconToolbar Header
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Caption         =   "Presets"
+      CaptionIsButton =   False
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   False
+      HasResizer      =   True
+      Height          =   41
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   300
+   End
+   Begin BeaconListbox List
+      AutoDeactivate  =   True
+      AutoHideScrollbars=   True
+      Bold            =   False
+      Border          =   False
+      ColumnCount     =   2
+      ColumnsResizable=   False
+      ColumnWidths    =   "50%,50%"
+      DataField       =   ""
+      DataSource      =   ""
+      DefaultRowHeight=   22
+      Enabled         =   True
+      EnableDrag      =   False
+      EnableDragReorder=   False
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
+      HasHeading      =   False
+      HeadingIndex    =   0
+      Height          =   259
+      HelpTag         =   ""
+      Hierarchical    =   False
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RequiresSelection=   False
+      Scope           =   2
+      ScrollbarHorizontal=   False
+      ScrollBarVertical=   True
+      SelectionType   =   1
+      ShowDropIndicator=   False
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   41
+      Underline       =   False
+      UseFocusRing    =   False
+      Visible         =   True
+      Width           =   300
+      _ScrollOffset   =   0
+      _ScrollWidth    =   -1
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub DropObject(obj As DragItem, action As Integer)
+		  #Pragma Unused action
+		  
+		  Do
+		    If Obj.FolderItemAvailable And Obj.FolderItem.IsType(BeaconFileTypes.BeaconPreset) Then
+		      Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(Obj.FolderItem)
+		      If Preset <> Nil Then
+		        Beacon.Data.SavePreset(Preset)
+		        Self.UpdatePresets(Preset)
+		      End If
+		    End If
+		  Loop Until Obj.NextItem = False
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Hidden()
+		  NotificationKit.Ignore(Self, "Preset Saved")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
+		  Self.AcceptFileDrop(BeaconFileTypes.BeaconPreset)
+		  RaiseEvent Open
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Auto = Nil)
+		  NotificationKit.Watch(Self, "Preset Saved")
+		  
+		  If UserData <> Nil Then
+		    Self.UpdatePresets(Beacon.Preset(UserData))
+		  Else
+		    Self.UpdatePresets()
+		  End If
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Function ClonePreset(Source As Beacon.Preset) As Beacon.Preset
+		  Dim Clone As New Beacon.MutablePreset
+		  Clone.Label = Source.Label + " Copy"
+		  Clone.Grouping = Source.Grouping
+		  Clone.MaxItems = Source.MaxItems
+		  Clone.MinItems = Source.MinItems
+		  Clone.QualityModifier(Beacon.LootSource.Kinds.Standard) = Source.QualityModifier(Beacon.LootSource.Kinds.Standard)
+		  Clone.QualityModifier(Beacon.LootSource.Kinds.Bonus) = Source.QualityModifier(Beacon.LootSource.Kinds.Bonus)
+		  Clone.QualityModifier(Beacon.LootSource.Kinds.Cave) = Source.QualityModifier(Beacon.LootSource.Kinds.Cave)
+		  Clone.QualityModifier(Beacon.LootSource.Kinds.Sea) = Source.QualityModifier(Beacon.LootSource.Kinds.Sea)
+		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Standard) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Standard)
+		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus)
+		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Cave) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Cave)
+		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Sea) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Sea)
+		  For Each Entry As Beacon.PresetEntry In Source
+		    Clone.Append(New Beacon.PresetEntry(Entry))
+		  Next
+		  Return Clone
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CloneSelected()
+		  If List.SelCount = 0 Then
+		    Return
+		  End If
+		  
+		  Dim Clones() As Beacon.Preset
+		  For I As Integer = 0 To List.ListCount - 1
+		    If List.Selected(I) Then
+		      Clones.Append(Self.ClonePreset(List.RowTag(I)))
+		    End If
+		  Next
+		  
+		  If Clones.Ubound = -1 Then
+		    Return
+		  End If
+		  
+		  For Each Clone As Beacon.Preset In Clones
+		    Beacon.Data.SavePreset(Clone)
+		  Next
+		  
+		  Self.UpdatePresets(Clones)
+		  
+		  If Clones.Ubound = 0 Then
+		    Self.OpenPreset(Clones(0))
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ClosePreset(Preset As Beacon.Preset)
+		  If Preset = Nil Then
+		    Return
+		  End If
+		  
+		  If Not Self.mViews.HasKey(Preset.PresetID) Then
+		    Return
+		  End If
+		  
+		  Dim View As BeaconSubview = Self.mViews.Value(Preset.PresetID)
+		  RaiseEvent ShouldDiscardView(View)
+		  Self.mViews.Remove(Preset.PresetID)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mViews = New Xojo.Core.Dictionary
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DeleteSelected()
+		  If List.SelCount = 0 Then
+		    Return
+		  End If
+		  
+		  For I As Integer = 0 To List.ListCount - 1
+		    If List.Selected(I) Then
+		      Dim Preset As Beacon.Preset = List.RowTag(I)
+		      Self.ClosePreset(Preset)
+		      Beacon.Data.RemovePreset(Preset)
+		    End If
+		  Next    
+		  Self.UpdatePresets()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ExportSelected()
+		  If List.SelCount = 0 Then
+		    Return
+		  End If
+		  
+		  If List.SelCount = 1 Then
+		    Dim Preset As Beacon.Preset = List.RowTag(List.ListIndex)
+		    Dim Dialog As New SaveAsDialog
+		    Dialog.Filter = BeaconFileTypes.BeaconPreset
+		    Dialog.SuggestedFileName = Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
+		    
+		    Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    If File <> Nil Then
+		      Preset.ToFile(File)
+		    End If
+		    
+		    Return
+		  End If
+		  
+		  Dim Dialog As New SelectFolderDialog
+		  Dialog.PromptText = "Select Folder For Bulk Export"
+		  
+		  Dim Folder As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If Folder = Nil Then
+		    Return
+		  End If
+		  
+		  For I As Integer = 0 To List.ListCount - 1
+		    If Not List.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim Preset As Beacon.Preset = List.RowTag(I)
+		    Preset.ToFile(Folder.Child(Preset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension))
+		  Next
+		  
+		  Folder.Launch
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub NewPreset()
+		  Dim Preset As New Beacon.MutablePreset
+		  Beacon.Data.SavePreset(Preset)
+		  Self.UpdatePresets(Preset)
+		  Self.OpenPreset(Preset)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  If Notification.Name = "Preset Saved" Then
+		    Dim Preset As Beacon.Preset = Notification.UserData
+		    Self.UpdatePresets(Preset)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub OpenPreset(Preset As Beacon.Preset)
+		  If Preset = Nil Then
+		    Return
+		  End If
+		  
+		  If Not Self.mViews.HasKey(Preset.PresetID) Then
+		    Self.mViews.Value(Preset.PresetID) = PresetEditorView.Create(Preset)
+		  End If
+		  
+		  RaiseEvent ShouldShowView(Self.mViews.Value(Preset.PresetID))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdatePresets(SelectPresets() As Beacon.Preset)
+		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets
+		  Dim PresetCount As Integer = UBound(Presets) + 1
+		  
+		  If SelectPresets.Ubound = -1 Then
+		    For I As Integer = 0 To List.ListCount - 1
+		      If List.Selected(I) Then
+		        SelectPresets.Append(List.RowTag(I))
+		      End If
+		    Next
+		  End If
+		  
+		  Dim SelectIDs() As Text
+		  For Each Preset As Beacon.Preset In SelectPresets
+		    SelectIDs.Append(Preset.PresetID)
+		  Next
+		  
+		  While List.ListCount > PresetCount
+		    List.RemoveRow(0)
+		  Wend
+		  While List.ListCount < PresetCount
+		    List.AddRow("")
+		  Wend
+		  
+		  For I As Integer = 0 To List.ListCount - 1
+		    List.Cell(I, 0) = Presets(I).Label
+		    Select Case Presets(I).Type
+		    Case Beacon.Preset.Types.BuiltIn
+		      List.Cell(I, 1) = "Built-In"
+		    Case Beacon.Preset.Types.Custom
+		      List.Cell(I, 1) = "Custom"
+		    Case Beacon.Preset.Types.CustomizedBuiltIn
+		      List.Cell(I, 1) = "Customized Built-In"
+		    End Select
+		    List.RowTag(I) = Presets(I)
+		  Next
+		  
+		  List.Sort
+		  
+		  Dim VisibleStart As Integer = List.ScrollPosition
+		  Dim VisibleEnd As Integer = VisibleStart + Ceil(List.Height / List.DefaultRowHeight)
+		  Dim AtLeastOneVisible As Boolean
+		  
+		  For I As Integer = 0 To List.ListCount - 1
+		    If SelectIDs.IndexOf(Beacon.Preset(List.RowTag(I)).PresetID) > -1 Then
+		      AtLeastOneVisible = AtLeastOneVisible Or (I >= VisibleStart And I <= VisibleEnd)
+		      List.Selected(I) = True
+		    Else
+		      List.Selected(I) = False
+		    End If
+		  Next
+		  If AtLeastOneVisible = False And List.SelCount > 0 Then
+		    List.ScrollPosition = List.ListIndex
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdatePresets(ParamArray SelectPresets() As Beacon.Preset)
+		  Self.UpdatePresets(SelectPresets)
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShouldDiscardView(View As BeaconSubview)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShouldResize(ByRef NewSize As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShouldShowView(View As BeaconSubview)
+	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mViews As Xojo.Core.Dictionary
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
+#tag Events Header
+	#tag Event
+		Sub Open()
+		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconAdd))
+		  Me.LeftItems.Append(New BeaconToolbarItem("Duplicate", Nil, False))
+		  Me.RightItems.Append(New BeaconToolbarItem("Export", Nil, False))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  RaiseEvent ShouldResize(NewSize)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "Export"
+		    Self.ExportSelected()
+		  Case "Duplicate"
+		    Self.CloneSelected()
+		  Case "Add"
+		    Self.NewPreset()
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events List
+	#tag Event
+		Sub Change()
+		  Header.Duplicate.Enabled = Me.SelCount > 0
+		  Header.Export.Enabled = Me.SelCount > 0
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  If Me.ListIndex > -1 Then
+		    Dim Preset As Beacon.Preset = Me.RowTag(Me.ListIndex)
+		    Self.OpenPreset(Preset)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function KeyDown(Key As String) As Boolean
+		  Select Case Key
+		  Case Chr(8)
+		    Self.DeleteSelected()
+		  Else
+		    Return False
+		  End Select
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.ColumnAlignment(1) = Listbox.AlignRight
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="AcceptFocus"

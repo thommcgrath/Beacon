@@ -102,6 +102,7 @@ Begin BeaconMultiview DeveloperWindow
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   31
       Value           =   0
       Visible         =   True
@@ -117,6 +118,7 @@ Begin BeaconMultiview DeveloperWindow
          HasBackColor    =   False
          Height          =   419
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   0
          LockBottom      =   True
@@ -145,6 +147,7 @@ Begin BeaconMultiview DeveloperWindow
          HasBackColor    =   False
          Height          =   419
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   0
          LockBottom      =   True
@@ -173,6 +176,7 @@ Begin BeaconMultiview DeveloperWindow
          HasBackColor    =   False
          Height          =   419
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   0
          LockBottom      =   True
@@ -201,6 +205,7 @@ Begin BeaconMultiview DeveloperWindow
          HasBackColor    =   False
          Height          =   419
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   0
          LockBottom      =   True
@@ -220,6 +225,7 @@ Begin BeaconMultiview DeveloperWindow
       End
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

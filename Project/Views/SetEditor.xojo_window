@@ -61,6 +61,7 @@ Begin ContainerControl SetEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   1
+      ShowDropIndicator=   False
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True

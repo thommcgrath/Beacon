@@ -86,9 +86,10 @@ Implements ObservationKit.Observable,BeaconUI.ColorAnimator
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Name As String, Icon As Picture)
+		Sub Constructor(Name As String, Icon As Picture, Enabled As Boolean = True)
 		  Self.Constructor(Name)
 		  Self.mIcon = Icon
+		  Self.mEnabled = Enabled
 		End Sub
 	#tag EndMethod
 

@@ -119,6 +119,7 @@ Begin BeaconSubview LibraryEngramsView
       Width           =   130
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
