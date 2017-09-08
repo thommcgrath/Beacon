@@ -6,7 +6,7 @@ Inherits Listbox
 		  #Pragma Unused Column
 		  
 		  Dim TextColor As Color
-		  Dim IsHighlighted As Boolean = Self.Highlighted
+		  Dim IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
 		  If Row < Self.ListCount And Self.Selected(Row) Then
 		    G.ForeColor = if(IsHighlighted, Self.SelectedRowColor, Self.SelectedRowColorInactive)
 		    TextColor = if(IsHighlighted, Self.SelectedTextColor, Self.SelectedTextColorInactive)
@@ -27,7 +27,7 @@ Inherits Listbox
 		Function CellTextPaint(g As Graphics, row As Integer, column As Integer, x as Integer, y as Integer) As Boolean
 		  #Pragma Unused X
 		  
-		  Dim IsHighlighted As Boolean = Self.Highlighted
+		  Dim IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
 		  Dim RefTextColor As Color
 		  If Self.Selected(Row) Then
 		    RefTextColor = if(IsHighlighted, Self.SelectedTextColor, Self.SelectedTextColorInactive)
@@ -490,6 +490,13 @@ Inherits Listbox
 				"0 - Single"
 				"1 - Multiple"
 			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ShowDropIndicator"
+			Visible=true
+			Group="Appearance"
+			InitialValue="False"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

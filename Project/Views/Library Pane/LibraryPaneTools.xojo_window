@@ -43,7 +43,7 @@ Begin LibrarySubview LibraryPaneTools
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   300
+      Height          =   259
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -61,13 +61,14 @@ Begin LibrarySubview LibraryPaneTools
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   0
+      ShowDropIndicator=   False
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   0
+      Top             =   41
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -75,12 +76,52 @@ Begin LibrarySubview LibraryPaneTools
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
+   Begin BeaconToolbar Header
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Caption         =   "Tools"
+      CaptionIsButton =   False
+      Enabled         =   True
+      HasResizer      =   True
+      Height          =   41
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   300
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Hook, Flags = &h0
+		Event ShouldResize(ByRef NewSize As Integer)
+	#tag EndHook
+
+
 #tag EndWindowCode
 
+#tag Events Header
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  RaiseEvent ShouldResize(NewSize)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="AcceptFocus"

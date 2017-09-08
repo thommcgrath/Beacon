@@ -44,7 +44,7 @@ Begin ContainerControl LibraryPane
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   1
+      Value           =   3
       Visible         =   True
       Width           =   300
       Begin LibraryPaneDocuments DocumentsView
@@ -308,6 +308,20 @@ End
 	#tag Event
 		Sub ShouldDiscardView(View As BeaconSubview)
 		  RaiseEvent ShouldDiscardView(View)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramsView
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  RaiseEvent ShouldResize(NewSize)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ToolsView
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  RaiseEvent ShouldResize(NewSize)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

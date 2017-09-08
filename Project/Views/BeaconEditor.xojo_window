@@ -115,7 +115,6 @@ Begin ContainerControl BeaconEditor
       HasBackColor    =   False
       Height          =   464
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   191
       LockBottom      =   True
@@ -194,7 +193,6 @@ Begin ContainerControl BeaconEditor
       Width           =   190
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0

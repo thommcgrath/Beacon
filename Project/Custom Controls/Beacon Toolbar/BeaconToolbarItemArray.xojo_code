@@ -1,6 +1,6 @@
 #tag Class
 Protected Class BeaconToolbarItemArray
-Implements Xojo.Core.Iterable, ObservationKit.Observable, ObservationKit.Observer
+Implements Xojo.Core.Iterable,ObservationKit.Observable,ObservationKit.Observer
 	#tag Method, Flags = &h0
 		Sub AddObserver(Observer As ObservationKit.Observer, Key As Text)
 		  // Part of the ObservationKit.Observable interface.

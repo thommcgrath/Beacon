@@ -47,7 +47,7 @@ Inherits Application
 
 	#tag Event
 		Sub NewDocument()
-		  DocumentSetupDialog.ShowCreate()
+		  MainWindow.Show
 		End Sub
 	#tag EndEvent
 
@@ -129,10 +129,6 @@ Inherits Application
 		  
 		  #if TargetWin32
 		    Self.HandleCommandLineData(System.CommandLine, True)
-		  #endif
-		  
-		  #if DebugBuild
-		    MainWindow.Show
 		  #endif
 		End Sub
 	#tag EndEvent

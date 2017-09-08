@@ -175,6 +175,14 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Moved()
+		  If Self.mOpened Then
+		    App.Preferences.RectValue("Main Window Size") = New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  #if TargetCocoa
 		    Declare Function NSSelectorFromString Lib "Foundation" (SelectorName As CFStringRef) As Ptr
@@ -185,6 +193,55 @@ End
 		      SetTitlebarAppearsTransparent(Self.Handle, True)
 		    End If
 		  #endif
+		  
+		  Dim Bounds As Xojo.Core.Rect = App.Preferences.RectValue("Main Window Size")
+		  If Bounds <> Nil Then
+		    // Find the best screen
+		    Dim IdealScreen As Screen = Screen(0)
+		    If ScreenCount > 1 Then
+		      Dim MaxArea As Integer
+		      For I As Integer = 0 To ScreenCount - 1
+		        Dim ScreenBounds As New Xojo.Core.Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
+		        Dim Intersection As Xojo.Core.Rect = ScreenBounds.Intersection(Bounds)
+		        If Intersection = Nil Then
+		          Continue
+		        End If
+		        Dim Area As Integer = Intersection.Width * Intersection.Height
+		        If Area <= 0 Then
+		          Continue
+		        End If
+		        If Area > MaxArea Then
+		          MaxArea = Area
+		          IdealScreen = Screen(I)
+		        End If
+		      Next
+		    End If
+		    
+		    Dim AvailableBounds As New Xojo.Core.Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
+		    
+		    Dim Width As Integer = Min(Max(Bounds.Width, Self.MinWidth), Self.MaxWidth, AvailableBounds.Width)
+		    Dim Height As Integer = Min(Max(Bounds.Height, Self.MinHeight), Self.MaxHeight, AvailableBounds.Height)
+		    Dim Left As Integer = Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width)
+		    Dim Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
+		    
+		    Self.Width = Width
+		    Self.Height = Height
+		    Self.Left = Left
+		    Self.Top = Top
+		  End If
+		  
+		  Dim SplitterPosition As Integer = App.Preferences.IntegerValue("Main Splitter Position", 300)
+		  Self.ResizeSplitter(SplitterPosition)
+		  
+		  Self.mOpened = True
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  If Self.mOpened Then
+		    App.Preferences.RectValue("Main Window Size") = New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -193,6 +250,21 @@ End
 		Sub Constructor()
 		  Self.mViews = New Xojo.Core.Dictionary
 		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ResizeSplitter(ByRef NewSize As Integer)
+		  NewSize = Max(NewSize, Self.MinSplitterPosition)
+		  
+		  LibraryPane1.Width = NewSize
+		  Divider.Left = NewSize
+		  Views.Left = Divider.Left + Divider.Width
+		  Views.Width = Self.Width - Views.Left
+		  
+		  If Self.mOpened Then
+		    App.Preferences.IntegerValue("Main Splitter Position") = NewSize
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -235,8 +307,16 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mOpened As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mViews As Xojo.Core.Dictionary
 	#tag EndProperty
+
+
+	#tag Constant, Name = MinSplitterPosition, Type = Double, Dynamic = False, Default = \"300", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -244,12 +324,7 @@ End
 #tag Events LibraryPane1
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
-		  NewSize = Max(NewSize, 300)
-		  
-		  Me.Width = NewSize
-		  Divider.Left = NewSize
-		  Views.Left = Divider.Left + Divider.Width
-		  Views.Width = Self.Width - Views.Left
+		  Self.ResizeSplitter(NewSize)
 		End Sub
 	#tag EndEvent
 	#tag Event

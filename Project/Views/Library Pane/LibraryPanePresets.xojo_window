@@ -115,15 +115,21 @@ End
 		Sub DropObject(obj As DragItem, action As Integer)
 		  #Pragma Unused action
 		  
+		  Dim AddedPresets() As Beacon.Preset
+		  
 		  Do
 		    If Obj.FolderItemAvailable And Obj.FolderItem.IsType(BeaconFileTypes.BeaconPreset) Then
 		      Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(Obj.FolderItem)
 		      If Preset <> Nil Then
 		        Beacon.Data.SavePreset(Preset)
-		        Self.UpdatePresets(Preset)
+		        AddedPresets.Append(Preset)
 		      End If
 		    End If
 		  Loop Until Obj.NextItem = False
+		  
+		  If AddedPresets.Ubound > -1 Then
+		    Self.UpdatePresets(AddedPresets)
+		  End If
 		End Sub
 	#tag EndEvent
 

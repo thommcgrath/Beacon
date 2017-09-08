@@ -53,7 +53,7 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   61
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -85,7 +85,7 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   160
+      Top             =   201
       Underline       =   False
       Visible         =   True
       Width           =   173
@@ -116,7 +116,7 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   192
+      Top             =   233
       Underline       =   False
       Visible         =   True
       Width           =   173
@@ -147,7 +147,7 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   224
+      Top             =   265
       Underline       =   False
       Visible         =   True
       Width           =   173
@@ -178,17 +178,57 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   256
+      Top             =   297
       Underline       =   False
       Visible         =   True
       Width           =   173
+   End
+   Begin BeaconToolbar Header
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Caption         =   "Engrams"
+      CaptionIsButton =   False
+      Enabled         =   True
+      HasResizer      =   True
+      Height          =   41
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   300
    End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Hook, Flags = &h0
+		Event ShouldResize(ByRef NewSize As Integer)
+	#tag EndHook
+
+
 #tag EndWindowCode
 
+#tag Events Header
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  RaiseEvent ShouldResize(NewSize)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="AcceptFocus"
