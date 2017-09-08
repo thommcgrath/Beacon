@@ -37,6 +37,7 @@ Begin Window MainWindow
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -72,6 +73,7 @@ Begin Window MainWindow
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True
@@ -83,7 +85,9 @@ Begin Window MainWindow
          Backdrop        =   0
          Caption         =   ""
          CaptionIsButton =   False
+         DoubleBuffer    =   False
          Enabled         =   True
+         EraseBackground =   False
          HasResizer      =   False
          Height          =   41
          HelpTag         =   ""
@@ -100,6 +104,7 @@ Begin Window MainWindow
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   0
+         Transparent     =   False
          UseFocusRing    =   True
          Visible         =   True
          Width           =   499
@@ -126,6 +131,7 @@ Begin Window MainWindow
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "Select Something"
          TextAlign       =   1
          TextColor       =   &c00000000

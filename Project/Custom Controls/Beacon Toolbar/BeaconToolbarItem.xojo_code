@@ -1,6 +1,6 @@
 #tag Class
 Protected Class BeaconToolbarItem
-Implements ObservationKit.Observable,  BeaconUI.ColorAnimator
+Implements ObservationKit.Observable,BeaconUI.ColorAnimator
 	#tag Method, Flags = &h0
 		Sub AddObserver(Observer As ObservationKit.Observer, Key As Text)
 		  // Part of the ObservationKit.Observable interface.
@@ -201,7 +201,7 @@ Implements ObservationKit.Observable,  BeaconUI.ColorAnimator
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mButtonColor As Color = &cA64DCF
+		Private mButtonColor As Color = DefaultColor
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -241,6 +241,9 @@ Implements ObservationKit.Observable,  BeaconUI.ColorAnimator
 		Rect As REALbasic.Rect
 	#tag EndProperty
 
+
+	#tag Constant, Name = DefaultColor, Type = Color, Dynamic = False, Default = \"&cA64DCF", Scope = Public
+	#tag EndConstant
 
 	#tag Constant, Name = KeyChanged, Type = Text, Dynamic = False, Default = \"", Scope = Public
 	#tag EndConstant

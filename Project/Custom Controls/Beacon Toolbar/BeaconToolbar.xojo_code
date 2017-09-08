@@ -33,6 +33,13 @@ Implements ObservationKit.Observer
 		    Return True
 		  End If
 		  
+		  If Self.mCaptionRect <> Nil And Self.mCaptionRect.Contains(Point) And Self.mCaptionEnabled Then
+		    Self.mMouseDownName = Self.CaptionButtonName
+		    Self.mPressedName = Self.CaptionButtonName
+		    Self.Refresh
+		    Return True
+		  End If
+		  
 		  For I As Integer = 0 To Self.mLeftItems.UBound
 		    If Self.mLeftItems(I).Enabled And Self.mLeftItems(I).Rect.Contains(Point) Then
 		      Self.mMouseDownName = Self.mLeftItems(I).Name
@@ -73,6 +80,22 @@ Implements ObservationKit.Observer
 		    RaiseEvent ShouldResize(NewSize)
 		    Self.mResizeOffset = Self.mResizeOffset + (Self.Width - Self.mStartingWidth)
 		    Self.mStartingWidth = Self.Width
+		    Return
+		  End If
+		  
+		  If Self.mMouseDownName = Self.CaptionButtonName Then
+		    Dim Rect As REALbasic.Rect = Self.mCaptionRect
+		    If Rect.Contains(New REALbasic.Point(X, Y)) Then
+		      If Self.mPressedName <> Self.CaptionButtonName Then
+		        Self.mPressedName = Self.CaptionButtonName
+		        Self.Invalidate
+		      End If
+		    Else
+		      If Self.mPressedName <> "" Then
+		        Self.mPressedName = ""
+		        Self.Invalidate
+		      End If
+		    End If
 		    Return
 		  End If
 		  
@@ -134,6 +157,17 @@ Implements ObservationKit.Observer
 		  
 		  If Self.mResizing Then
 		    Self.mResizing = False
+		    Return
+		  End If
+		  
+		  If Self.mMouseDownName = Self.CaptionButtonName Then
+		    Dim Rect As REALbasic.Rect = Self.mCaptionRect
+		    If Rect.Contains(New REALbasic.Point(X, Y)) Then
+		      RaiseEvent CaptionClicked()
+		    End If
+		    Self.mPressedName = ""
+		    Self.mMouseDownName = ""
+		    Self.Invalidate
 		    Return
 		  End If
 		  
@@ -215,6 +249,55 @@ Implements ObservationKit.Observer
 		    NextRight = Item.Rect.Left - CellPadding
 		  Next
 		  
+		  If Self.Caption <> "" Then
+		    Dim CaptionWidth As Integer = Ceil(G.StringWidth(Self.Caption))
+		    
+		    If Self.CaptionIsButton Then
+		      Const CaptionPadding = 8
+		      
+		      Dim ButtonWidth As Integer = Min(CaptionWidth + (CaptionPadding * 2), ContentRect.Width)
+		      Dim ButtonRect As New REALbasic.Rect(ContentRect.Left + ((ContentRect.Width - ButtonWidth) / 2), ContentRect.Top, ButtonWidth, ContentRect.Height)
+		      
+		      Dim ColorValue As Integer = 255
+		      Dim AlphaValue As Integer = 0
+		      Dim Mode As ButtonModes = ButtonModes.Normal
+		      If Self.mPressedName = Self.CaptionButtonName Then
+		        Mode = ButtonModes.Pressed
+		        ColorValue = 128
+		      End If
+		      If Not Self.mCaptionEnabled Then
+		        Mode = ButtonModes.Disabled
+		        AlphaValue = 128
+		      End If
+		      If Not Highlighted Then
+		        ColorValue = 51
+		      End If
+		      
+		      Self.DrawButtonFrame(G, ButtonRect, Mode, BeaconToolbarItem.DefaultColor, Highlighted)
+		      
+		      Dim CaptionLeft As Integer = ButtonRect.Left + CaptionPadding
+		      Dim CaptionBottom As Integer = ButtonRect.Top + (ButtonRect.Height / 2) + ((G.TextAscent * 0.8) / 2)
+		      
+		      G.ForeColor = RGB(ColorValue, ColorValue, ColorValue, AlphaValue)
+		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, CaptionWidth, True)
+		      
+		      Self.mCaptionRect = ButtonRect
+		    Else
+		      CaptionWidth = Min(CaptionWidth, ContentRect.Width)
+		      Dim CaptionLeft As Integer = ContentRect.Left + ((ContentRect.Width - CaptionWidth) / 2)
+		      Dim CaptionBottom As Integer = ContentRect.Top + (ContentRect.Height / 2) + ((G.TextAscent * 0.8) / 2)
+		      
+		      G.ForeColor = &cFFFFFF
+		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom + 1, CaptionWidth, True)
+		      G.ForeColor = &c333333
+		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, CaptionWidth, True)
+		      
+		      Self.mCaptionRect = Nil
+		    End If
+		  Else
+		    Self.mCaptionRect = Nil
+		  End If
+		  
 		  G.ForeColor = Self.BorderColor
 		  G.DrawLine(-1, G.Height - 1, G.Width + 1, G.Height - 1)
 		End Sub
@@ -250,6 +333,9 @@ Implements ObservationKit.Observer
 		  Case ButtonModes.Disabled
 		    IconColor = &cFFFFFF80
 		  End Select
+		  If Not Highlighted Then
+		    IconColor = RGB(51, 51, 51, IconColor.Alpha)
+		  End If
 		  
 		  Dim Pic As Picture = BeaconUI.IconWithColor(Button.Icon, IconColor)
 		  G.DrawPicture(Pic, Rect.Left + ((Rect.Width - Pic.Width) / 2), Rect.Top + ((Rect.Height - Pic.Height) / 2))
@@ -258,12 +344,6 @@ Implements ObservationKit.Observer
 		    Pic = BeaconUI.IconWithColor(ImgToolbarButtonMenu, IconColor)
 		    G.DrawPicture(Pic, Rect.Left, Rect.Top + ((Rect.Height - Pic.Height) / 2))
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub DrawButton(G As Graphics, Caption As String, Rect As REALbasic.Rect, Mode As ButtonModes)
-		  Self.DrawButtonFrame(G, Rect, Mode, &cFFFFFF, True)
 		End Sub
 	#tag EndMethod
 
@@ -373,6 +453,10 @@ Implements ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event CaptionClicked()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Deactivate()
 	#tag EndHook
 
@@ -400,6 +484,23 @@ Implements ObservationKit.Observer
 			End Set
 		#tag EndSetter
 		Caption As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mCaptionEnabled
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mCaptionEnabled <> Value Then
+			    Self.mCaptionEnabled = Value
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		CaptionEnabled As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -450,7 +551,15 @@ Implements ObservationKit.Observer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCaptionEnabled As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCaptionIsButton As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCaptionRect As REALbasic.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -526,6 +635,9 @@ Implements ObservationKit.Observer
 	#tag Constant, Name = BorderColor, Type = Color, Dynamic = False, Default = \"&ca6a6a6", Scope = Public
 	#tag EndConstant
 
+	#tag Constant, Name = CaptionButtonName, Type = String, Dynamic = False, Default = \"CaptionButton", Scope = Private
+	#tag EndConstant
+
 
 	#tag Enum, Name = ButtonModes, Type = Integer, Flags = &h21
 		Normal
@@ -567,6 +679,11 @@ Implements ObservationKit.Observer
 			InitialValue="Untitled"
 			Type="String"
 			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="CaptionEnabled"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="CaptionIsButton"

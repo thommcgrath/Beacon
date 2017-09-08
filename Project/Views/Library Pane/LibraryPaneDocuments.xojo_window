@@ -152,6 +152,38 @@ Begin LibrarySubview LibraryPaneDocuments
       Visible         =   True
       Width           =   260
    End
+   Begin CheckBox CheckBox4
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Caption Is Button"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      State           =   0
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   157
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   260
+   End
 End
 #tag EndWindow
 
@@ -198,6 +230,13 @@ End
 	#tag Event
 		Sub Action()
 		  Header.Add.ButtonColor = if(Me.Value, &c0000FF, &cA64DCF)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBox4
+	#tag Event
+		Sub Action()
+		  Header.CaptionIsButton = Me.Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents
