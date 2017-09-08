@@ -28,7 +28,7 @@ Begin ContainerControl LibraryPane
    Begin PagePanel Views
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   380
+      Height          =   416
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -43,8 +43,8 @@ Begin ContainerControl LibraryPane
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      Top             =   36
-      Value           =   1
+      Top             =   0
+      Value           =   0
       Visible         =   True
       Width           =   300
       Begin LibraryPaneDocuments DocumentsView
@@ -56,7 +56,7 @@ Begin ContainerControl LibraryPane
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   380
+         Height          =   416
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   0
@@ -69,7 +69,7 @@ Begin ContainerControl LibraryPane
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         Top             =   36
+         Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
@@ -84,7 +84,7 @@ Begin ContainerControl LibraryPane
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   380
+         Height          =   416
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   0
@@ -97,7 +97,7 @@ Begin ContainerControl LibraryPane
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
-         Top             =   36
+         Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
@@ -112,7 +112,7 @@ Begin ContainerControl LibraryPane
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   380
+         Height          =   416
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   0
@@ -125,7 +125,7 @@ Begin ContainerControl LibraryPane
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
-         Top             =   36
+         Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
@@ -140,7 +140,7 @@ Begin ContainerControl LibraryPane
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   380
+         Height          =   416
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   0
@@ -153,44 +153,12 @@ Begin ContainerControl LibraryPane
          TabIndex        =   0
          TabPanelIndex   =   4
          TabStop         =   True
-         Top             =   36
+         Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
          Width           =   300
       End
-   End
-   Begin ListHeader Header
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DisplayAsMenu   =   False
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   36
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      SegmentIndex    =   0
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TintColor       =   &cEAEEF100
-      Title           =   ""
-      Top             =   0
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   300
    End
    Begin Shelf Switcher
       AcceptFocus     =   False
@@ -198,7 +166,9 @@ Begin ContainerControl LibraryPane
       AutoDeactivate  =   True
       Backdrop        =   0
       BorderStyle     =   1
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       Height          =   52
       HelpTag         =   ""
       Index           =   -2147483648
@@ -214,6 +184,7 @@ Begin ContainerControl LibraryPane
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   416
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   300
@@ -225,7 +196,6 @@ End
 	#tag Event
 		Sub Open()
 		  Self.CurrentView.SwitchedTo()
-		  Self.Header.Title = Self.Switcher.SelectedItem.Caption
 		  RaiseEvent Open
 		End Sub
 	#tag EndEvent
@@ -258,7 +228,6 @@ End
 		  If NewPage <> Nil Then
 		    NewPage.SwitchedTo(UserData)
 		    Self.Views.Value = Index
-		    Self.Header.Title = Self.Switcher.SelectedItem.Caption
 		  End If
 		End Sub
 	#tag EndMethod
@@ -283,6 +252,10 @@ End
 		Event Open()
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event ShouldResize(ByRef NewSize As Integer)
+	#tag EndHook
+
 
 	#tag Constant, Name = PaneDocuments, Type = Double, Dynamic = False, Default = \"0", Scope = Public
 	#tag EndConstant
@@ -303,6 +276,13 @@ End
 	#tag Event
 		Sub Change()
 		  Self.Switcher.SelectedIndex = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DocumentsView
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  RaiseEvent ShouldResize(NewSize)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

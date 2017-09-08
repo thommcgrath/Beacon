@@ -28,6 +28,7 @@ Protected Module BeaconUI
 		    Pic.HorizontalResolution = 72 * Factor
 		    Pic.Graphics.ForeColor = RGB(FillColor.Red, FillColor.Green, FillColor.Blue)
 		    Pic.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)
+		    Pic.Mask.Graphics.ClearRect(0, 0, Pic.Width, Pic.Height)
 		    Pic.Mask.Graphics.DrawPicture(Mask, 0, 0, Mask.Width, Mask.Height, 0, 0, Mask.Width, Mask.Height)
 		    Pic.Mask.Graphics.ForeColor = RGB(255, 255, 255, 255 - FillColor.Alpha)
 		    Pic.Mask.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)

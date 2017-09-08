@@ -25,12 +25,182 @@ Begin LibrarySubview LibraryPaneDocuments
    UseFocusRing    =   False
    Visible         =   True
    Width           =   300
+   Begin BeaconToolbar Header
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Caption         =   "Untitled"
+      CaptionIsButton =   False
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   False
+      HasResizer      =   True
+      Height          =   41
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   300
+   End
+   Begin CheckBox CheckBox1
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Enabled"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      State           =   1
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   61
+      Underline       =   False
+      Value           =   True
+      Visible         =   True
+      Width           =   260
+   End
+   Begin CheckBox CheckBox2
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Menu"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      State           =   0
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   93
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   260
+   End
+   Begin CheckBox CheckBox3
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Blue"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      State           =   0
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   125
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   260
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Hook, Flags = &h0
+		Event ShouldResize(ByRef NewSize As Integer)
+	#tag EndHook
+
+
 #tag EndWindowCode
 
+#tag Events Header
+	#tag Event
+		Sub Open()
+		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconAdd))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  RaiseEvent ShouldResize(NewSize)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBox1
+	#tag Event
+		Sub Action()
+		  Header.Add.Enabled = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBox2
+	#tag Event
+		Sub Action()
+		  Header.Add.HasMenu = Me.Value
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CheckBox3
+	#tag Event
+		Sub Action()
+		  Header.Add.ButtonColor = if(Me.Value, &c0000FF, &cA64DCF)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="AcceptFocus"

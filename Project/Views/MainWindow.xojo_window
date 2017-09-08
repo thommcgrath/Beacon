@@ -18,14 +18,14 @@ Begin Window MainWindow
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
+   MinHeight       =   400
    MinimizeButton  =   True
-   MinWidth        =   64
-   Placement       =   0
+   MinWidth        =   800
+   Placement       =   2
    Resizeable      =   True
    Title           =   "Beacon"
    Visible         =   True
-   Width           =   600
+   Width           =   800
    Begin LibraryPane LibraryPane1
       AcceptFocus     =   False
       AcceptTabs      =   True
@@ -44,7 +44,7 @@ Begin Window MainWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Scope           =   0
+      Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -53,6 +53,119 @@ Begin Window MainWindow
       UseFocusRing    =   False
       Visible         =   True
       Width           =   300
+   End
+   Begin PagePanel Views
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   400
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   301
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      PanelCount      =   2
+      Panels          =   ""
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      Top             =   0
+      Value           =   0
+      Visible         =   True
+      Width           =   499
+      Begin BeaconToolbar EmptyToolbar
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   ""
+         CaptionIsButton =   False
+         Enabled         =   True
+         HasResizer      =   False
+         Height          =   41
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Left            =   301
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   0
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   499
+      End
+      Begin Label Label1
+         AutoDeactivate  =   True
+         Bold            =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   319
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Italic          =   False
+         Left            =   321
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         Text            =   "Select Something"
+         TextAlign       =   1
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   61
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   459
+      End
+   End
+   Begin FadedSeparator Divider
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   400
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   300
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
    End
 End
 #tag EndWindow
@@ -75,6 +188,18 @@ End
 
 #tag EndWindowCode
 
+#tag Events LibraryPane1
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  NewSize = Max(NewSize, 300)
+		  
+		  Me.Width = NewSize
+		  Divider.Left = NewSize
+		  Views.Left = Divider.Left + Divider.Width
+		  Views.Width = Self.Width - Views.Left
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="BackColor"

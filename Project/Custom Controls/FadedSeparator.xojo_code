@@ -1,74 +1,15 @@
 #tag Class
-Protected Class ControlCanvas
-Inherits Canvas
-	#tag Event
-		Sub Open()
-		  RaiseEvent Open
-		  
-		  Self.DoubleBuffer = TargetWin32
-		  Self.Transparent = Not Self.DoubleBuffer
-		  Self.EraseBackground = Not Self.DoubleBuffer
-		End Sub
-	#tag EndEvent
-
+Protected Class FadedSeparator
+Inherits ControlCanvas
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  If Not Self.Transparent Then
-		    Dim TempColor As Color = G.ForeColor
-		    If Self.Window.HasBackColor Then
-		      G.ForeColor = Self.Window.BackColor
-		    Else
-		      G.ForeColor = FillColor
-		    End If
-		    G.FillRect(0, 0, G.Width, G.Height)
-		    G.ForeColor = TempColor
-		  End If
+		  #Pragma Unused Areas
 		  
-		  RaiseEvent Paint(g, areas)
+		  G.DrawPicture(ImgToolbarDivider, 0, 0)
+		  G.ForeColor = BeaconToolbar.BorderColor
+		  G.FillRect(0, ImgToolbarDivider.Height, G.Width, G.Height - ImgToolbarDivider.Height)
 		End Sub
 	#tag EndEvent
-
-
-	#tag Method, Flags = &h0
-		Sub Invalidate(eraseBackground As Boolean = True)
-		  #Pragma Unused eraseBackground
-		  
-		  Super.Invalidate(Self.EraseBackground)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Invalidate(x As Integer, y As Integer, width As Integer, height As Integer, eraseBackground As Boolean = True)
-		  #Pragma Unused eraseBackground
-		  
-		  Super.Invalidate(X, Y, Width, Height, Self.EraseBackground)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Refresh(eraseBackground As Boolean = True)
-		  #Pragma Unused eraseBackground
-		  
-		  Super.Refresh(Self.EraseBackground)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RefreshRect(x As Integer, y As Integer, width As Integer, height As Integer, eraseBackground As Boolean = True)
-		  #Pragma Unused eraseBackground
-		  
-		  Super.RefreshRect(X, Y, Width, Height, Self.EraseBackground)
-		End Sub
-	#tag EndMethod
-
-
-	#tag Hook, Flags = &h0
-		Event Open()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Paint(g As Graphics, areas() As REALbasic.Rect)
-	#tag EndHook
 
 
 	#tag ViewBehavior
