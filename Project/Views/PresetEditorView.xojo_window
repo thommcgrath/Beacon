@@ -554,8 +554,8 @@ End
 		  
 		  Dim Entries() As Beacon.PresetEntry = Self.SelectedEntries()
 		  
-		  LockQualityCheck.State = if(Entries(0).RespectQualityModifier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
-		  LockQuantityCheck.State = if(Entries(0).RespectQuantityMultiplier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
+		  LockQualityCheck.State = if(Not Entries(0).RespectQualityModifier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
+		  LockQuantityCheck.State = if(Not Entries(0).RespectQuantityMultiplier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
 		  For Each Map As Beacon.Map In Maps
 		    If AvailabilityChecks(Map.Mask) <> Nil Then
 		      AvailabilityChecks(Map.Mask).State = if(Entries(0).ValidForMap(Map), Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
@@ -563,8 +563,8 @@ End
 		  Next
 		  
 		  For I As Integer = Entries.Ubound DownTo 1
-		    LockQualityCheck.State = if(if(Entries(I).RespectQualityModifier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) = LockQualityCheck.State, LockQualityCheck.State, Checkbox.CheckedStates.Indeterminate)
-		    LockQuantityCheck.State = if(if(Entries(I).RespectQuantityMultiplier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) = LockQuantityCheck.State, LockQuantityCheck.State, Checkbox.CheckedStates.Indeterminate)
+		    LockQualityCheck.State = if(if(Not Entries(I).RespectQualityModifier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) = LockQualityCheck.State, LockQualityCheck.State, Checkbox.CheckedStates.Indeterminate)
+		    LockQuantityCheck.State = if(if(Not Entries(I).RespectQuantityMultiplier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) = LockQuantityCheck.State, LockQuantityCheck.State, Checkbox.CheckedStates.Indeterminate)
 		    For Each Map As Beacon.Map In Maps
 		      If AvailabilityChecks(Map.Mask) <> Nil Then
 		        AvailabilityChecks(Map.Mask).State = if(if(Entries(I).ValidForMap(Map), Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) = AvailabilityChecks(Map.Mask).State, AvailabilityChecks(Map.Mask).State, Checkbox.CheckedStates.Indeterminate)
