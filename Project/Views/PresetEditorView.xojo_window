@@ -31,8 +31,11 @@ Begin BeaconSubview PresetEditorView
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Preset"
+      CaptionEnabled  =   False
       CaptionIsButton =   False
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       HasResizer      =   False
       Height          =   41
       HelpTag         =   ""
@@ -49,687 +52,551 @@ Begin BeaconSubview PresetEditorView
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   766
    End
-   Begin UITweaks.ResizedTextField NameField
-      AcceptTabs      =   False
-      Alignment       =   0
+   Begin TabPanel Panel
       AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
-      Format          =   ""
-      Height          =   22
+      Height          =   483
       HelpTag         =   ""
       Index           =   -2147483648
+      InitialParent   =   ""
       Italic          =   False
-      Left            =   112
-      LimitText       =   0
-      LockBottom      =   False
+      Left            =   20
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
+      Panels          =   ""
       Scope           =   2
+      SmallTabs       =   False
+      TabDefinition   =   "Contents\rSettings"
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   61
+      Top             =   53
       Underline       =   False
-      UseFocusRing    =   True
+      Value           =   0
       Visible         =   True
-      Width           =   414
-   End
-   Begin UITweaks.ResizedTextField GroupField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   112
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   95
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   414
-   End
-   Begin UITweaks.ResizedLabel Label1
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      Text            =   "Name:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   61
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedLabel Label2
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      Text            =   "Group:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   95
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedLabel Label3
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      Text            =   "Choose:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   129
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedTextField GroupField1
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   112
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   129
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   43
-   End
-   Begin UITweaks.ResizedLabel Label4
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   167
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      Text            =   "To"
-      TextAlign       =   1
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   129
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   33
-   End
-   Begin UITweaks.ResizedTextField GroupField2
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   212
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   129
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   43
-   End
-   Begin UITweaks.ResizedLabel Label5
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   267
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      Text            =   "Items"
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   129
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin BeaconListbox Listbox1
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
-      Bold            =   False
-      Border          =   True
-      ColumnCount     =   3
-      ColumnsResizable=   False
-      ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      DefaultRowHeight=   22
-      Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   True
-      HeadingIndex    =   -1
-      Height          =   373
-      HelpTag         =   ""
-      Hierarchical    =   False
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   "Item	Quantity	Quality"
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RequiresSelection=   False
-      Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   0
-      ShowDropIndicator=   False
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   163
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   506
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
-   End
-   Begin GroupBox GroupBox1
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Selected Item"
-      Enabled         =   True
-      Height          =   373
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   538
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   11
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   163
-      Underline       =   False
-      Visible         =   True
-      Width           =   208
-      Begin CheckBox CheckBox1
+      Width           =   726
+      Begin BeaconListbox ContentsList
          AutoDeactivate  =   True
+         AutoHideScrollbars=   True
          Bold            =   False
-         Caption         =   "The Island"
+         Border          =   True
+         ColumnCount     =   3
+         ColumnsResizable=   False
+         ColumnWidths    =   "*,100,100"
          DataField       =   ""
          DataSource      =   ""
+         DefaultRowHeight=   22
          Enabled         =   True
-         Height          =   20
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   -1
+         Height          =   425
          HelpTag         =   ""
+         Hierarchical    =   False
          Index           =   -2147483648
-         InitialParent   =   "GroupBox1"
+         InitialParent   =   "Panel"
+         InitialValue    =   "Engram	Quantity	Quality"
          Italic          =   False
-         Left            =   558
-         LockBottom      =   False
+         Left            =   40
+         LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         RequiresSelection=   False
          Scope           =   2
-         State           =   0
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionType   =   1
+         ShowDropIndicator=   False
          TabIndex        =   0
-         TabPanelIndex   =   0
+         TabPanelIndex   =   1
          TabStop         =   True
-         TextFont        =   "System"
+         TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   199
+         Top             =   91
          Underline       =   False
-         Value           =   False
+         UseFocusRing    =   True
          Visible         =   True
-         Width           =   168
+         Width           =   462
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
       End
-      Begin CheckBox CheckBox2
+      Begin GroupBox AvailabilityGroup
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "Scorched Earth"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
+         Caption         =   "Map Availability"
+         Enabled         =   False
+         Height          =   204
          HelpTag         =   ""
          Index           =   -2147483648
-         InitialParent   =   "GroupBox1"
+         InitialParent   =   "Panel"
          Italic          =   False
-         Left            =   558
+         Left            =   514
          LockBottom      =   False
          LockedInPosition=   False
-         LockLeft        =   True
+         LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         State           =   0
          TabIndex        =   1
-         TabPanelIndex   =   0
+         TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   231
+         Top             =   91
          Underline       =   False
-         Value           =   False
          Visible         =   True
-         Width           =   168
+         Width           =   212
+         Begin CheckBox AvailabilityChecks
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "The Island"
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   1
+            InitialParent   =   "AvailabilityGroup"
+            Italic          =   False
+            Left            =   534
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            State           =   0
+            TabIndex        =   0
+            TabPanelIndex   =   1
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   127
+            Underline       =   False
+            Value           =   False
+            Visible         =   True
+            Width           =   172
+         End
+         Begin CheckBox AvailabilityChecks
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "Scorched Earth"
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   2
+            InitialParent   =   "AvailabilityGroup"
+            Italic          =   False
+            Left            =   534
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            State           =   0
+            TabIndex        =   1
+            TabPanelIndex   =   1
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   159
+            Underline       =   False
+            Value           =   False
+            Visible         =   True
+            Width           =   172
+         End
+         Begin CheckBox AvailabilityChecks
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "Abberation"
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   16
+            InitialParent   =   "AvailabilityGroup"
+            Italic          =   False
+            Left            =   534
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            State           =   0
+            TabIndex        =   2
+            TabPanelIndex   =   1
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   191
+            Underline       =   False
+            Value           =   False
+            Visible         =   True
+            Width           =   172
+         End
+         Begin CheckBox AvailabilityChecks
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "The Center"
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   4
+            InitialParent   =   "AvailabilityGroup"
+            Italic          =   False
+            Left            =   534
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            State           =   0
+            TabIndex        =   3
+            TabPanelIndex   =   1
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   223
+            Underline       =   False
+            Value           =   False
+            Visible         =   True
+            Width           =   172
+         End
+         Begin CheckBox AvailabilityChecks
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "Ragnarok"
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   8
+            InitialParent   =   "AvailabilityGroup"
+            Italic          =   False
+            Left            =   534
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            State           =   0
+            TabIndex        =   4
+            TabPanelIndex   =   1
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   255
+            Underline       =   False
+            Value           =   False
+            Visible         =   True
+            Width           =   172
+         End
       End
-      Begin CheckBox CheckBox3
+      Begin GroupBox OverridesGroup
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "Abberation"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
+         Caption         =   "Overrides"
+         Enabled         =   False
+         Height          =   108
          HelpTag         =   ""
          Index           =   -2147483648
-         InitialParent   =   "GroupBox1"
+         InitialParent   =   "Panel"
          Italic          =   False
-         Left            =   558
+         Left            =   514
          LockBottom      =   False
          LockedInPosition=   False
-         LockLeft        =   True
+         LockLeft        =   False
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         State           =   0
          TabIndex        =   2
-         TabPanelIndex   =   0
+         TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   263
+         Top             =   307
          Underline       =   False
-         Value           =   False
          Visible         =   True
-         Width           =   168
-      End
-      Begin CheckBox CheckBox4
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "The Center"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "GroupBox1"
-         Italic          =   False
-         Left            =   558
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         State           =   0
-         TabIndex        =   3
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   295
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   168
-      End
-      Begin CheckBox CheckBox5
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Ragnarok"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "GroupBox1"
-         Italic          =   False
-         Left            =   558
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         State           =   0
-         TabIndex        =   4
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   327
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   168
-      End
-      Begin CheckBox CheckBox6
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Do Not Adjust Quantity"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "GroupBox1"
-         Italic          =   False
-         Left            =   558
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         State           =   0
-         TabIndex        =   5
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   375
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   168
-      End
-      Begin CheckBox CheckBox7
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Do Not Adjust Quality"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "GroupBox1"
-         Italic          =   False
-         Left            =   558
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         State           =   0
-         TabIndex        =   6
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   407
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   168
-      End
-      Begin Separator Separator1
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   4
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "GroupBox1"
-         Left            =   558
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   7
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Top             =   359
-         Visible         =   True
-         Width           =   168
+         Width           =   212
+         Begin CheckBox LockQualityCheck
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "Do Not Adjust Quality"
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "OverridesGroup"
+            Italic          =   False
+            Left            =   534
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            Scope           =   2
+            State           =   0
+            TabIndex        =   0
+            TabPanelIndex   =   1
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   343
+            Underline       =   False
+            Value           =   False
+            Visible         =   True
+            Width           =   172
+         End
+         Begin CheckBox LockQuantityCheck
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "Do Not Adjust Quantity"
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "OverridesGroup"
+            Italic          =   False
+            Left            =   534
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            Scope           =   2
+            State           =   0
+            TabIndex        =   1
+            TabPanelIndex   =   1
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   375
+            Underline       =   False
+            Value           =   False
+            Visible         =   True
+            Width           =   172
+         End
       End
    End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.UpdateUI()
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Sub AddEntriesToList(Entries() As Beacon.PresetEntry)
+		  For Each Entry As Beacon.PresetEntry In Entries
+		    Self.ContentsList.AddRow("")
+		    Self.PutEntryInRow(Entry, Self.ContentsList.LastIndex)
+		  Next
+		  Self.ContentsList.Sort
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Function Create(Preset As Beacon.Preset) As PresetEditorView
 		  Dim View As New PresetEditorView
-		  View.Header.Caption = Preset.Label
+		  View.mPreset = New Beacon.MutablePreset(Preset)
 		  Return View
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub PutEntryInRow(Entry As Beacon.PresetEntry, Index As Integer, SelectIt As Boolean = False)
+		  If Index = -1 Then
+		    Self.ContentsList.AddRow("")
+		    Index = Self.ContentsList.LastIndex
+		  End If
+		  
+		  Self.ContentsList.RowTag(Index) = Entry
+		  Self.ContentsList.Cell(Index, Self.ColumnDescription) = Entry.Label
+		  Self.ContentsList.Cell(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Format(Entry.MinQuantity, "0"), Format(Entry.MinQuantity, "0") + "-" + Format(Entry.MaxQuantity, "0"))
+		  Self.ContentsList.Cell(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MinQuality).Left(4) + "-" + Language.LabelForQuality(Entry.MaxQuality).Left(4))
+		  
+		  If SelectIt Then
+		    Self.ContentsList.Selected(Index) = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SelectedEntries() As Beacon.PresetEntry()
+		  Dim Entries() As Beacon.PresetEntry
+		  For I As Integer = Self.ContentsList.ListCount - 1 DownTo 0
+		    If Self.ContentsList.Selected(I) Then
+		      Entries.Append(Self.ContentsList.RowTag(I))
+		    End If
+		  Next
+		  Return Entries
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateUI()
+		  Self.Header.Caption = Self.mPreset.Label
+		  Self.mUpdating = True
+		  Self.ContentsChanged = False
+		  
+		  For Each Entry As Beacon.PresetEntry In Self.mPreset
+		    Self.PutEntryInRow(Entry, -1)
+		  Next
+		  Self.ContentsList.Sort
+		  
+		  Self.mUpdating = False
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mPreset As Beacon.MutablePreset
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpdating As Boolean
+	#tag EndProperty
+
+
+	#tag Constant, Name = ColumnDescription, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnQuality, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnQuantity, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageContents, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageSettings, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
 
 #tag EndWindowCode
 
+#tag Events Panel
+	#tag Event
+		Sub Open()
+		  Me.FixTabFont
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ContentsList
+	#tag Event
+		Sub Change()
+		  Dim Maps() As Beacon.Map = Beacon.Maps.All
+		  
+		  If Me.SelCount = 0 Then
+		    Self.mUpdating = True
+		    AvailabilityGroup.Enabled = False
+		    OverridesGroup.Enabled = False
+		    LockQualityCheck.State = Checkbox.CheckedStates.Unchecked
+		    LockQuantityCheck.State = Checkbox.CheckedStates.Unchecked
+		    For Each Map As Beacon.Map In Maps
+		      If AvailabilityChecks(Map.Mask) <> Nil Then
+		        AvailabilityChecks(Map.Mask).State = Checkbox.CheckedStates.Unchecked
+		      End If
+		    Next
+		    Self.mUpdating = False
+		    Return
+		  End If
+		  
+		  Self.mUpdating = True
+		  AvailabilityGroup.Enabled = True
+		  OverridesGroup.Enabled = True
+		  
+		  Dim Entries() As Beacon.PresetEntry = Self.SelectedEntries()
+		  
+		  LockQualityCheck.State = if(Entries(0).RespectQualityModifier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
+		  LockQuantityCheck.State = if(Entries(0).RespectQuantityMultiplier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
+		  For Each Map As Beacon.Map In Maps
+		    If AvailabilityChecks(Map.Mask) <> Nil Then
+		      AvailabilityChecks(Map.Mask).State = if(Entries(0).ValidForMap(Map), Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
+		    End If
+		  Next
+		  
+		  For I As Integer = Entries.Ubound DownTo 1
+		    LockQualityCheck.State = if(if(Entries(I).RespectQualityModifier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) = LockQualityCheck.State, LockQualityCheck.State, Checkbox.CheckedStates.Indeterminate)
+		    LockQuantityCheck.State = if(if(Entries(I).RespectQuantityMultiplier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) = LockQuantityCheck.State, LockQuantityCheck.State, Checkbox.CheckedStates.Indeterminate)
+		    For Each Map As Beacon.Map In Maps
+		      If AvailabilityChecks(Map.Mask) <> Nil Then
+		        AvailabilityChecks(Map.Mask).State = if(if(Entries(I).ValidForMap(Map), Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) = AvailabilityChecks(Map.Mask).State, AvailabilityChecks(Map.Mask).State, Checkbox.CheckedStates.Indeterminate)
+		      End If
+		    Next
+		  Next
+		  Self.mUpdating = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AvailabilityChecks
+	#tag Event
+		Sub Action(index as Integer)
+		  If Self.mUpdating = True Or Me.State = Checkbox.CheckedStates.Indeterminate Then
+		    Return
+		  End If
+		  
+		  Dim Entries() As Beacon.PresetEntry = Self.SelectedEntries()
+		  If Entries.Ubound = -1 Then
+		    Return
+		  End If
+		  
+		  Dim Map As Beacon.Map = Beacon.Maps.ForMask(Index)
+		  For Each Entry As Beacon.PresetEntry In Entries
+		    If Entry.ValidForMap(Map) <> Me.Value Then
+		      Entry.ValidForMap(Map) = Me.Value
+		      Self.ContentsChanged = True
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="AcceptFocus"

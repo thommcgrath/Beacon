@@ -4,10 +4,23 @@ Inherits ContainerControl
 	#tag Event
 		Sub Open()
 		  RaiseEvent Open
+		  RaiseEvent Resize
 		  
 		  Self.DoubleBuffer = TargetWin32
 		  Self.Transparent = Not Self.DoubleBuffer
 		  Self.EraseBackground = Not Self.DoubleBuffer
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  RaiseEvent Resize
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resizing()
+		  RaiseEvent Resize
 		End Sub
 	#tag EndEvent
 
@@ -37,6 +50,10 @@ Inherits ContainerControl
 
 	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Resize()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

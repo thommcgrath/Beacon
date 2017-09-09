@@ -26,7 +26,6 @@ Begin BeaconSubview LibraryDocumentsView
    Visible         =   True
    Width           =   800
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -243,14 +242,8 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Resized()
-		  Self.Resize
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resizing()
-		  Self.Resize
+		Sub Resize()
+		  ViewMenu.Left = (Self.Width - ViewMenu.Width) / 2
 		End Sub
 	#tag EndEvent
 
@@ -312,12 +305,6 @@ End
 		  Dim Request As New BeaconAPI.Request("document.php", "GET", Params, AddressOf APICallback_DocumentsList)
 		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Resize()
-		  ViewMenu.Left = (Self.Width - ViewMenu.Width) / 2
 		End Sub
 	#tag EndMethod
 

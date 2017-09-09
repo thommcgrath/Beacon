@@ -1705,10 +1705,10 @@ End
 #tag Events DefineKindMenu
 	#tag Event
 		Sub Open()
-		  Me.AddRow("Standard Beacon")
-		  Me.AddRow("Bonus Beacon")
-		  Me.AddRow("Cave")
-		  Me.AddRow("Deep Sea")
+		  Me.AddRow(Language.LootSourceKindStandard)
+		  Me.AddRow(Language.LootSourceKindBonus)
+		  Me.AddRow(Language.LootSourceKindCave)
+		  Me.AddRow(Language.LootSourceKindSea)
 		  
 		  Me.RowTag(0) = Beacon.LootSource.Kinds.Standard
 		  Me.RowTag(1) = Beacon.LootSource.Kinds.Bonus

@@ -47,7 +47,6 @@ Begin BeaconSubview DeveloperIdentityView
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "User ID:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -176,7 +175,6 @@ Begin BeaconSubview DeveloperIdentityView
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Public Key:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -211,7 +209,6 @@ Begin BeaconSubview DeveloperIdentityView
       Selectable      =   False
       TabIndex        =   7
       TabPanelIndex   =   0
-      TabStop         =   True
       Text            =   "Private Key:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -287,7 +284,6 @@ Begin BeaconSubview DeveloperIdentityView
       Width           =   120
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -342,7 +338,6 @@ Begin BeaconSubview DeveloperIdentityView
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
-         TabStop         =   True
          Text            =   "This is how you are identified to the Beacon server. Your documents and registered mods are bound to this key pair and cannot be replaced if lost. So if you use these features, you are strongly recommended to backup this identity. You can also use the backup and restore buttons to move this identity to another computer. But keep it private like a password.\n\nThese keys are also used for API authentication. See the API Guide for more information about the Beacon API."
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -405,19 +400,6 @@ End
 	#tag Event
 		Sub Open()
 		  Self.UpdateUI(App.Identity)
-		  Self.Resize()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resized()
-		  Self.Resize()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resizing()
-		  Self.Resize()
 		End Sub
 	#tag EndEvent
 
@@ -474,22 +456,6 @@ End
 		  Dim Contents As String = "-----BEGIN PUBLIC KEY-----" + EndOfLine + EncodeBase64(DecodeHex(Key), 64) + EndOfLine + "-----END PUBLIC KEY-----"
 		  Return ReplaceLineEndings(Contents, EndOfLine.UNIX)
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Resize()
-		  ' Dim Space As Integer = Self.Width - 52
-		  ' Dim LeftHalf As Integer = Floor(Space / 2)
-		  ' Dim RightHalf As Integer = Space - LeftHalf
-		  ' 
-		  ' PublicKeyArea.Width = LeftHalf
-		  ' PublicKeyLabel.Width = PublicKeyArea.Width
-		  ' 
-		  ' PrivateKeyArea.Left = PublicKeyArea.Left + PublicKeyArea.Width + 12
-		  ' PrivateKeyArea.Width = RightHalf
-		  ' PrivateKeyLabel.Left = PrivateKeyArea.Left
-		  ' PrivateKeyLabel.Width = PrivateKeyArea.Width
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
