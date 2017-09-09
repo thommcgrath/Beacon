@@ -448,6 +448,18 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function MinHeight() As UInteger
+		  Return 455
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinWidth() As UInteger
+		  Return 700
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub PutEntryInRow(Entry As Beacon.PresetEntry, Index As Integer, SelectIt As Boolean = False)
 		  If Index = -1 Then

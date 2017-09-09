@@ -26,6 +26,18 @@ Inherits ContainerControl
 
 
 	#tag Method, Flags = &h0
+		Function MinHeight() As UInteger
+		  Return 400
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinWidth() As UInteger
+		  Return 400
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SwitchedFrom()
 		  RaiseEvent Hidden
 		End Sub

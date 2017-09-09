@@ -82,6 +82,7 @@ Begin Window MainWindow
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Welcome to Beacon"
+         CaptionEnabled  =   False
          CaptionIsButton =   False
          DoubleBuffer    =   False
          Enabled         =   True
@@ -287,9 +288,17 @@ End
 		  Else
 		    ViewIndex = Self.mViews.Value(View)
 		  End If
-		  Views.Value = ViewIndex
 		  
+		  Views.Value = ViewIndex
 		  Self.ContentsChanged = View.ContentsChanged
+		  Self.MinWidth = Max(Self.MinSplitterPosition + View.MinWidth, Self.AbsoluteMinWidth)
+		  Self.MinHeight = Max(View.MinHeight, Self.AbsoluteMinHeight)
+		  If Self.Width < Self.MinWidth Then
+		    Self.Width = Self.MinWidth
+		  End If
+		  If Self.Height < Self.MinHeight Then
+		    Self.Height = Self.MinHeight
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -314,6 +323,12 @@ End
 		Private mViews As Xojo.Core.Dictionary
 	#tag EndProperty
 
+
+	#tag Constant, Name = AbsoluteMinHeight, Type = Double, Dynamic = False, Default = \"400", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = AbsoluteMinWidth, Type = Double, Dynamic = False, Default = \"800", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = MinSplitterPosition, Type = Double, Dynamic = False, Default = \"300", Scope = Private
 	#tag EndConstant

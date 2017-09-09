@@ -82,8 +82,11 @@ Begin LibrarySubview LibraryPaneTools
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Tools"
+      CaptionEnabled  =   False
       CaptionIsButton =   False
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       HasResizer      =   True
       Height          =   41
       HelpTag         =   ""
@@ -100,6 +103,7 @@ Begin LibrarySubview LibraryPaneTools
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   300
