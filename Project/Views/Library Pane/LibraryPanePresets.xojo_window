@@ -31,6 +31,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Presets"
+      CaptionEnabled  =   False
       CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
@@ -416,7 +417,7 @@ End
 #tag Events Header
 	#tag Event
 		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconAdd))
+		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconToolbarNew))
 		  Me.LeftItems.Append(New BeaconToolbarItem("Duplicate", IconToolbarClone, False))
 		  Me.RightItems.Append(New BeaconToolbarItem("Export", IconToolbarExport, False))
 		End Sub

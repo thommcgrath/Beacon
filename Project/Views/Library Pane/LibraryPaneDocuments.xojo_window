@@ -31,6 +31,7 @@ Begin LibrarySubview LibraryPaneDocuments
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Documents"
+      CaptionEnabled  =   False
       CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
@@ -70,7 +71,7 @@ End
 #tag Events Header
 	#tag Event
 		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconAdd))
+		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconToolbarNew))
 		End Sub
 	#tag EndEvent
 	#tag Event
