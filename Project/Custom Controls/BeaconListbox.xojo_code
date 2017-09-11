@@ -72,23 +72,19 @@ Inherits Listbox
 
 	#tag Event
 		Sub EnableMenuItems()
+		  If Self.Window = Nil Or Self.Window.Focus <> Self Then
+		    Return
+		  End If
+		  
 		  Dim Board As New Clipboard
 		  Dim CanCopy As Boolean = RaiseEvent CanCopy()
 		  Dim CanDelete As Boolean = RaiseEvent CanDelete()
 		  Dim CanPaste As Boolean = RaiseEvent CanPaste(Board)
 		  
-		  If CanCopy Then
-		    EditCopy.Enable
-		  End If
-		  If CanCopy And CanDelete Then
-		    EditCut.Enable
-		  End If
-		  If CanDelete Then
-		    EditClear.Enable
-		  End If
-		  If CanPaste Then
-		    EditPaste.Enable
-		  End If
+		  EditCopy.Enabled = CanCopy
+		  EditCut.Enabled = CanCopy And CanDelete
+		  EditClear.Enabled = CanDelete
+		  EditPaste.Enabled = CanPaste
 		  
 		  RaiseEvent EnableMenuItems()
 		End Sub
@@ -159,6 +155,30 @@ Inherits Listbox
 		  Dim Board As New Clipboard
 		  Return RaiseEvent CanPaste(Board)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub EnsureSelectionIsVisible()
+		  Dim ViewportHeight As Integer = Self.Height
+		  If Self.HasHeading Then
+		    ViewportHeight = ViewportHeight - Self.HeaderHeight
+		  End If
+		  If Self.Border Then
+		    ViewportHeight = ViewportHeight - 2
+		  End If
+		  Dim VisibleStart As Integer = Self.ScrollPosition
+		  Dim VisibleEnd As Integer = VisibleStart + Floor(ViewportHeight / Self.DefaultRowHeight)
+		  Dim AtLeastOneVisible As Boolean
+		  
+		  For I As Integer = 0 To Self.ListCount - 1
+		    If Self.Selected(I) Then
+		      AtLeastOneVisible = AtLeastOneVisible Or (I >= VisibleStart And I <= VisibleEnd)
+		    End If
+		  Next
+		  If AtLeastOneVisible = False And Self.SelCount > 0 Then
+		    Self.ScrollPosition = Self.ListIndex
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

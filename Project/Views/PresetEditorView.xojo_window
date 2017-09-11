@@ -24,7 +24,7 @@ Begin BeaconSubview PresetEditorView
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   766
+   Width           =   700
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -55,7 +55,7 @@ Begin BeaconSubview PresetEditorView
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   766
+      Width           =   700
    End
    Begin TabPanel Panel
       AutoDeactivate  =   True
@@ -86,15 +86,15 @@ Begin BeaconSubview PresetEditorView
       Underline       =   False
       Value           =   0
       Visible         =   True
-      Width           =   726
+      Width           =   660
       Begin BeaconListbox ContentsList
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   True
-         ColumnCount     =   3
+         ColumnCount     =   4
          ColumnsResizable=   False
-         ColumnWidths    =   "*,100,100"
+         ColumnWidths    =   "30,*,100,120"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
@@ -104,13 +104,13 @@ Begin BeaconSubview PresetEditorView
          GridLinesHorizontal=   0
          GridLinesVertical=   0
          HasHeading      =   True
-         HeadingIndex    =   -1
-         Height          =   425
+         HeadingIndex    =   "#ColumnDescription"
+         Height          =   351
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         InitialValue    =   "Engram	Quantity	Quality"
+         InitialValue    =   " 	Engram	Quantity	Quality"
          Italic          =   False
          Left            =   40
          LockBottom      =   True
@@ -130,293 +130,112 @@ Begin BeaconSubview PresetEditorView
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   91
+         Top             =   123
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   462
+         Width           =   620
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
-      Begin GroupBox AvailabilityGroup
+      Begin UITweaks.ResizedPopupMenu MapFilterMenu
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "Map Availability"
-         Enabled         =   False
-         Height          =   204
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
+         InitialValue    =   "All\nThe Island\nScorched Earth\nAbberation\nThe Center\nRagnarok"
          Italic          =   False
-         Left            =   514
+         Left            =   126
+         ListIndex       =   0
          LockBottom      =   False
          LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
+         LockLeft        =   True
+         LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   91
+         Top             =   92
          Underline       =   False
          Visible         =   True
-         Width           =   212
-         Begin CheckBox AvailabilityChecks
-            AutoDeactivate  =   True
-            Bold            =   False
-            Caption         =   "The Island"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   1
-            InitialParent   =   "AvailabilityGroup"
-            Italic          =   False
-            Left            =   534
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            State           =   0
-            TabIndex        =   0
-            TabPanelIndex   =   1
-            TabStop         =   True
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   127
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            Width           =   172
-         End
-         Begin CheckBox AvailabilityChecks
-            AutoDeactivate  =   True
-            Bold            =   False
-            Caption         =   "Scorched Earth"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   2
-            InitialParent   =   "AvailabilityGroup"
-            Italic          =   False
-            Left            =   534
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            State           =   0
-            TabIndex        =   1
-            TabPanelIndex   =   1
-            TabStop         =   True
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   159
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            Width           =   172
-         End
-         Begin CheckBox AvailabilityChecks
-            AutoDeactivate  =   True
-            Bold            =   False
-            Caption         =   "Abberation"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   16
-            InitialParent   =   "AvailabilityGroup"
-            Italic          =   False
-            Left            =   534
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            State           =   0
-            TabIndex        =   2
-            TabPanelIndex   =   1
-            TabStop         =   True
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   191
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            Width           =   172
-         End
-         Begin CheckBox AvailabilityChecks
-            AutoDeactivate  =   True
-            Bold            =   False
-            Caption         =   "The Center"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   4
-            InitialParent   =   "AvailabilityGroup"
-            Italic          =   False
-            Left            =   534
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            State           =   0
-            TabIndex        =   3
-            TabPanelIndex   =   1
-            TabStop         =   True
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   223
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            Width           =   172
-         End
-         Begin CheckBox AvailabilityChecks
-            AutoDeactivate  =   True
-            Bold            =   False
-            Caption         =   "Ragnarok"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   8
-            InitialParent   =   "AvailabilityGroup"
-            Italic          =   False
-            Left            =   534
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            State           =   0
-            TabIndex        =   4
-            TabPanelIndex   =   1
-            TabStop         =   True
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   255
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            Width           =   172
-         End
+         Width           =   139
       End
-      Begin GroupBox OverridesGroup
+      Begin UITweaks.ResizedLabel MapFilterLabel
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "Overrides"
-         Enabled         =   False
-         Height          =   108
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
-         Left            =   514
+         Left            =   40
          LockBottom      =   False
          LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
+         LockLeft        =   True
+         LockRight       =   False
          LockTop         =   True
+         Multiline       =   False
          Scope           =   2
-         TabIndex        =   2
+         Selectable      =   False
+         TabIndex        =   4
          TabPanelIndex   =   1
-         TabStop         =   True
+         Text            =   "Map Filter:"
+         TextAlign       =   0
+         TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   307
+         Top             =   92
+         Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   212
-         Begin CheckBox LockQualityCheck
-            AutoDeactivate  =   True
-            Bold            =   False
-            Caption         =   "Do Not Adjust Quality"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "OverridesGroup"
-            Italic          =   False
-            Left            =   534
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   True
-            LockTop         =   True
-            Scope           =   2
-            State           =   0
-            TabIndex        =   0
-            TabPanelIndex   =   1
-            TabStop         =   True
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   343
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            Width           =   172
-         End
-         Begin CheckBox LockQuantityCheck
-            AutoDeactivate  =   True
-            Bold            =   False
-            Caption         =   "Do Not Adjust Quantity"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "OverridesGroup"
-            Italic          =   False
-            Left            =   534
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   True
-            LockTop         =   True
-            Scope           =   2
-            State           =   0
-            TabIndex        =   1
-            TabPanelIndex   =   1
-            TabStop         =   True
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   375
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            Width           =   172
-         End
+         Width           =   74
+      End
+      Begin Label LockExplanationLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   30
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Italic          =   False
+         Left            =   277
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Multiline       =   True
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   5
+         TabPanelIndex   =   1
+         Text            =   "Checking the box next to a quantity or quality will allow the values to be adjusted by the multipliers on the settings tab."
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   486
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   383
       End
    End
 End
@@ -448,6 +267,98 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub DeleteSelectedEntries(Warn As Boolean)
+		  If Self.ContentsList.SelCount = 0 Then
+		    Return
+		  End If
+		  
+		  If Warn And Not Self.ShowConfirm(if(Self.ContentsList.SelCount = 1, "Are you sure you want to delete this entry?", "Are you sure you want to delete these " + Str(Self.ContentsList.SelCount, "-0") + " entries?"), "This action cannot be undone.", "Delete", "Cancel") Then
+		    Return
+		  End If
+		  
+		  For I As Integer = Self.ContentsList.ListCount - 1 DownTo 0
+		    If Not Self.ContentsList.Selected(I) Then
+		      Continue
+		    End If
+		    Dim Entry As Beacon.PresetEntry = Self.ContentsList.RowTag(I)
+		    Dim Idx As Integer = Self.mPreset.IndexOf(Entry)
+		    If Idx > -1 Then
+		      Self.mPreset.Remove(Idx)  
+		      Self.ContentsChanged = True
+		    End If
+		    Self.ContentsList.RemoveRow(I)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub EditSelectedEntries()
+		  Dim Entries() As Beacon.PresetEntry
+		  For I As Integer = 0 To ContentsList.ListCount - 1
+		    If Not ContentsList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim Entry As Beacon.PresetEntry = ContentsList.RowTag(I)
+		    Call Entry.UniqueID // Triggers generation if necessary so we can compare when done
+		    Entries.Append(Entry)
+		  Next
+		  
+		  If Entries.Ubound = -1 Then
+		    Return
+		  End If
+		  
+		  Dim NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, Entries)
+		  If NewEntries = Nil Then
+		    Return
+		  End If
+		  
+		  For Each NewEntry As Beacon.SetEntry In NewEntries
+		    Dim OriginalEntry As Beacon.PresetEntry
+		    Dim OriginalIndex As Integer = -1
+		    For I As Integer = 0 To UBound(Self.mPreset)
+		      If Self.mPreset(I).UniqueID = NewEntry.UniqueID Then
+		        OriginalEntry = Self.mPreset(I)
+		        OriginalIndex = I
+		        Exit For I
+		      End If
+		    Next
+		    If OriginalIndex = -1 Then
+		      System.DebugLog("Unable to find original entry " + NewEntry.UniqueID)
+		      Break
+		      Return
+		    End If
+		    
+		    Dim Item As New Beacon.PresetEntry(NewEntry)
+		    Item.Availability = OriginalEntry.Availability
+		    Item.RespectQualityModifier = OriginalEntry.RespectQualityModifier
+		    Item.RespectQuantityMultiplier = OriginalEntry.RespectQuantityMultiplier
+		    Self.mPreset(OriginalIndex) = Item
+		    
+		    For I As Integer = 0 To ContentsList.ListCount - 1
+		      If Beacon.PresetEntry(ContentsList.RowTag(I)).UniqueID = OriginalEntry.UniqueID Then
+		        Self.PutEntryInRow(Item, I)
+		        Exit For I
+		      End If
+		    Next
+		  Next
+		  
+		  ContentsList.Sort
+		  Self.ContentsChanged = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function FilteredMaps() As Beacon.Map()
+		  Dim Maps() As Beacon.Map
+		  If MapFilterMenu.ListIndex > -1 Then
+		    Maps = MapFilterMenu.RowTag(MapFilterMenu.ListIndex)
+		  End If
+		  Return Maps
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function MinHeight() As UInteger
 		  Return 455
@@ -467,10 +378,30 @@ End
 		    Index = Self.ContentsList.LastIndex
 		  End If
 		  
+		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
+		  Dim MapsValid, MapsInvalid As Integer
+		  For Each Map As Beacon.Map In Maps
+		    If Entry.ValidForMap(Map) Then
+		      MapsValid = MapsValid + 1
+		    Else
+		      MapsInvalid = MapsInvalid + 1
+		    End If
+		  Next
+		  
+		  If MapsValid = 0 Then
+		    Self.ContentsList.CellState(Index, Self.ColumnIncluded) = Checkbox.CheckedStates.Unchecked
+		  ElseIf MapsInvalid = 0 Then
+		    Self.ContentsList.CellState(Index, Self.ColumnIncluded) = Checkbox.CheckedStates.Checked
+		  Else
+		    Self.ContentsList.CellState(Index, Self.ColumnIncluded) = Checkbox.CheckedStates.Indeterminate
+		  End If
+		  
 		  Self.ContentsList.RowTag(Index) = Entry
 		  Self.ContentsList.Cell(Index, Self.ColumnDescription) = Entry.Label
 		  Self.ContentsList.Cell(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Format(Entry.MinQuantity, "0"), Format(Entry.MinQuantity, "0") + "-" + Format(Entry.MaxQuantity, "0"))
 		  Self.ContentsList.Cell(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MinQuality).Left(4) + "-" + Language.LabelForQuality(Entry.MaxQuality).Left(4))
+		  Self.ContentsList.CellCheck(Index, Self.ColumnQuantity) = Entry.RespectQuantityMultiplier
+		  Self.ContentsList.CellCheck(Index, Self.ColumnQuality) = Entry.RespectQualityModifier
 		  
 		  If SelectIt Then
 		    Self.ContentsList.Selected(Index) = True
@@ -491,10 +422,29 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ShowAddDialog()
+		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow)
+		  If Entries = Nil Or Entries.Ubound = -1 Then
+		    Return
+		  End If
+		  Self.ContentsList.ListIndex = -1
+		  For Each Entry As Beacon.SetEntry In Entries
+		    Dim Item As New Beacon.PresetEntry(Entry)
+		    Self.PutEntryInRow(Item, -1, True)
+		    Self.mPreset.Append(Item)
+		    Self.ContentsChanged = True
+		  Next
+		  Self.ContentsList.Sort
+		  Self.ContentsList.EnsureSelectionIsVisible
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  Self.Header.Caption = Self.mPreset.Label
 		  Self.mUpdating = True
 		  Self.ContentsChanged = False
+		  Self.MapFilterMenu.ListIndex = 0
 		  
 		  For Each Entry As Beacon.PresetEntry In Self.mPreset
 		    Self.PutEntryInRow(Entry, -1)
@@ -515,13 +465,16 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = ColumnDescription, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag Constant, Name = ColumnDescription, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnQuality, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = ColumnIncluded, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnQuantity, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = ColumnQuality, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnQuantity, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageContents, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -533,6 +486,27 @@ End
 
 #tag EndWindowCode
 
+#tag Events Header
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "AddEntries"
+		    Self.ShowAddDialog()
+		  Case "EditEntries"
+		    Self.EditSelectedEntries()
+		  Case "DeleteEntries"
+		    Self.DeleteSelectedEntries(True)
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.LeftItems.Append(New BeaconToolbarItem("AddEntries", Nil))
+		  Me.LeftItems.Append(New BeaconToolbarItem("EditEntries", Nil, False))
+		  Me.LeftItems.Append(New BeaconToolbarItem("DeleteEntries", Nil, False))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events Panel
 	#tag Event
 		Sub Open()
@@ -542,70 +516,217 @@ End
 #tag EndEvents
 #tag Events ContentsList
 	#tag Event
-		Sub Change()
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
+		Sub Open()
+		  Me.ColumnType(Self.ColumnIncluded) = Listbox.TypeCheckbox
+		  Me.ColumnType(Self.ColumnQuantity) = Listbox.TypeCheckbox
+		  Me.ColumnType(Self.ColumnQuality) = Listbox.TypeCheckbox
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  If Self.mUpdating Then
+		    Return
+		  End If
 		  
-		  If Me.SelCount = 0 Then
-		    Self.mUpdating = True
-		    AvailabilityGroup.Enabled = False
-		    OverridesGroup.Enabled = False
-		    LockQualityCheck.State = Checkbox.CheckedStates.Unchecked
-		    LockQuantityCheck.State = Checkbox.CheckedStates.Unchecked
+		  Dim ChangeAll As Boolean = (Keyboard.CommandKey And TargetMacOS) Or (Keyboard.ControlKey And TargetWindows)
+		  
+		  Select Case Column
+		  Case Self.ColumnIncluded
+		    Dim State As CheckBox.CheckedStates = Me.CellState(Row, Column)
+		    If State = Checkbox.CheckedStates.Indeterminate Then
+		      Return
+		    End If
+		    
+		    Dim Maps() As Beacon.Map = Self.FilteredMaps
+		    If ChangeAll Then
+		      For I As Integer = Me.ListCount - 1 DownTo 0
+		        Dim Entry As Beacon.PresetEntry = Me.RowTag(I)
+		        For Each Map As Beacon.Map In Maps
+		          If Entry.ValidForMap(Map) <> (State = Checkbox.CheckedStates.Checked) Then
+		            Entry.ValidForMap(Map) = (State = Checkbox.CheckedStates.Checked)
+		            Me.CellState(I, Column) = State
+		            Self.ContentsChanged = True
+		          End If
+		        Next
+		      Next
+		    Else
+		      Dim Entry As Beacon.PresetEntry = Me.RowTag(Row)
+		      For Each Map As Beacon.Map In Maps
+		        If Entry.ValidForMap(Map) <> (State = Checkbox.CheckedStates.Checked) Then
+		          Entry.ValidForMap(Map) = (State = Checkbox.CheckedStates.Checked)
+		          Self.ContentsChanged = True
+		        End If
+		      Next
+		    End If
+		    Return
+		  Case Self.ColumnQuantity
+		    Dim Checked As Boolean = Me.CellCheck(Row, Column)
+		    
+		    If ChangeAll Then
+		      For I As Integer = Me.ListCount - 1 DownTo 0
+		        Dim Entry As Beacon.PresetEntry = Me.RowTag(I)
+		        If Entry.RespectQuantityMultiplier <> Checked Then
+		          Entry.RespectQuantityMultiplier = Checked
+		          Me.CellCheck(I, Column) = Checked
+		          Self.ContentsChanged = True
+		        End If
+		      Next
+		    Else
+		      Dim Entry As Beacon.PresetEntry = Me.RowTag(Row)
+		      If Entry.RespectQuantityMultiplier <> Checked Then
+		        Entry.RespectQuantityMultiplier = Checked
+		        Self.ContentsChanged = True
+		      End If
+		    End If
+		  Case Self.ColumnQuality
+		    Dim Checked As Boolean = Me.CellCheck(Row, Column)
+		    
+		    If ChangeAll Then
+		      For I As Integer = Me.ListCount - 1 DownTo 0
+		        Dim Entry As Beacon.PresetEntry = Me.RowTag(I)
+		        If Entry.RespectQualityModifier <> Checked Then
+		          Entry.RespectQualityModifier = Checked
+		          Me.CellCheck(I, Column) = Checked
+		          Self.ContentsChanged = True
+		        End If
+		      Next
+		    Else
+		      Dim Entry As Beacon.PresetEntry = Me.RowTag(Row)
+		      If Entry.RespectQualityModifier <> Checked Then
+		        Entry.RespectQualityModifier = Checked
+		        Self.ContentsChanged = True
+		      End If
+		    End If
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
+		  Dim Item As MenuItem
+		  
+		  Item = New MenuItem
+		  Item.Text = "Create Blueprint Entry"
+		  Item.Enabled = Me.SelCount > 0
+		  Item.Tag = "createblueprintentry"
+		  
+		  Base.Append(Item)
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
+		  Select Case hitItem.Tag
+		  Case "createblueprintentry"
+		    Dim Maps() As Beacon.Map = Beacon.Maps.All
+		    Dim NewEntries As New Xojo.Core.Dictionary
 		    For Each Map As Beacon.Map In Maps
-		      If AvailabilityChecks(Map.Mask) <> Nil Then
-		        AvailabilityChecks(Map.Mask).State = Checkbox.CheckedStates.Unchecked
+		      Dim Entries() As Beacon.PresetEntry
+		      For I As Integer = 0 To Me.ListCount - 1
+		        Dim Entry As Beacon.PresetEntry = Me.RowTag(I)
+		        If Entry.ValidForMap(Map) Then
+		          Entries.Append(Entry)
+		        End If
+		      Next
+		      
+		      Dim BlueprintEntry As Beacon.SetEntry = Beacon.SetEntry.CreateBlueprintEntry(Entries)
+		      If BlueprintEntry <> Nil Then
+		        Dim Hash As Text = BlueprintEntry.Hash
+		        If NewEntries.HasKey(Hash) Then
+		          Dim Entry As Beacon.PresetEntry = NewEntries.Value(Hash)
+		          Entry.ValidForMap(Map) = True
+		          NewEntries.Value(Hash) = Entry
+		        Else
+		          Dim Entry As New Beacon.PresetEntry(BlueprintEntry)
+		          Entry.Availability = 0
+		          Entry.ValidForMap(Map) = True
+		          NewEntries.Value(Hash) = Entry
+		        End If
 		      End If
 		    Next
-		    Self.mUpdating = False
+		    
+		    If NewEntries.Count = 0 Then
+		      Beep
+		      Return True
+		    End If
+		    
+		    For I As Integer = 0 To Me.ListCount - 1
+		      If Me.Selected(I) Then
+		        Beacon.PresetEntry(Me.RowTag(I)).ChanceToBeBlueprint = 0.0
+		      End If
+		    Next
+		    Me.ListIndex = -1
+		    
+		    For Each Entry As Xojo.Core.DictionaryEntry In NewEntries
+		      Dim Item As Beacon.PresetEntry = Entry.Value
+		      Item.RespectQualityModifier = False
+		      Item.RespectQuantityMultiplier = False
+		      Self.PutEntryInRow(Item, -1, True)
+		      Self.mPreset.Append(Item)
+		    Next
+		    
+		    Me.Sort
+		    Me.EnsureSelectionIsVisible()
+		    Self.ContentsChanged = True
+		  End Select
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelCount > -1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  Self.DeleteSelectedEntries(Warn)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  Self.EditSelectedEntries()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return False
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Header.EditEntries.Enabled = Me.SelCount > 0
+		  Header.DeleteEntries.Enabled = Me.SelCount > 0
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MapFilterMenu
+	#tag Event
+		Sub Open()
+		  Me.DeleteAllRows()
+		  
+		  Dim Maps() As Beacon.Map = Beacon.Maps.All
+		  Me.AddRow("All", Maps)
+		  For Each Map As Beacon.Map In Maps
+		    Dim Arr(0) As Beacon.Map = Array(Map)
+		    Me.AddRow(Map.Name, Arr)
+		  Next
+		  
+		  Me.ListIndex = -1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  If Self.mUpdating = True Then
 		    Return
 		  End If
 		  
 		  Self.mUpdating = True
-		  AvailabilityGroup.Enabled = True
-		  OverridesGroup.Enabled = True
-		  
-		  Dim Entries() As Beacon.PresetEntry = Self.SelectedEntries()
-		  
-		  LockQualityCheck.State = if(Not Entries(0).RespectQualityModifier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
-		  LockQuantityCheck.State = if(Not Entries(0).RespectQuantityMultiplier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
-		  For Each Map As Beacon.Map In Maps
-		    If AvailabilityChecks(Map.Mask) <> Nil Then
-		      AvailabilityChecks(Map.Mask).State = if(Entries(0).ValidForMap(Map), Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
-		    End If
-		  Next
-		  
-		  For I As Integer = Entries.Ubound DownTo 1
-		    LockQualityCheck.State = if(if(Not Entries(I).RespectQualityModifier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) = LockQualityCheck.State, LockQualityCheck.State, Checkbox.CheckedStates.Indeterminate)
-		    LockQuantityCheck.State = if(if(Not Entries(I).RespectQuantityMultiplier, Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) = LockQuantityCheck.State, LockQuantityCheck.State, Checkbox.CheckedStates.Indeterminate)
-		    For Each Map As Beacon.Map In Maps
-		      If AvailabilityChecks(Map.Mask) <> Nil Then
-		        AvailabilityChecks(Map.Mask).State = if(if(Entries(I).ValidForMap(Map), Checkbox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) = AvailabilityChecks(Map.Mask).State, AvailabilityChecks(Map.Mask).State, Checkbox.CheckedStates.Indeterminate)
-		      End If
-		    Next
+		  For I As Integer = ContentsList.ListCount - 1 DownTo 0
+		    Dim Entry As Beacon.PresetEntry = ContentsList.RowTag(I)
+		    Self.PutEntryInRow(Entry, I, ContentsList.Selected(I))
 		  Next
 		  Self.mUpdating = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events AvailabilityChecks
-	#tag Event
-		Sub Action(index as Integer)
-		  If Self.mUpdating = True Or Me.State = Checkbox.CheckedStates.Indeterminate Then
-		    Return
-		  End If
-		  
-		  Dim Entries() As Beacon.PresetEntry = Self.SelectedEntries()
-		  If Entries.Ubound = -1 Then
-		    Return
-		  End If
-		  
-		  Dim Map As Beacon.Map = Beacon.Maps.ForMask(Index)
-		  For Each Entry As Beacon.PresetEntry In Entries
-		    If Entry.ValidForMap(Map) <> Me.Value Then
-		      Entry.ValidForMap(Map) = Me.Value
-		      Self.ContentsChanged = True
-		    End If
-		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

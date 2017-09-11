@@ -365,21 +365,10 @@ End
 		  
 		  List.Sort
 		  
-		  Dim VisibleStart As Integer = List.ScrollPosition
-		  Dim VisibleEnd As Integer = VisibleStart + Ceil(List.Height / List.DefaultRowHeight)
-		  Dim AtLeastOneVisible As Boolean
-		  
 		  For I As Integer = 0 To List.ListCount - 1
-		    If SelectIDs.IndexOf(Beacon.Preset(List.RowTag(I)).PresetID) > -1 Then
-		      AtLeastOneVisible = AtLeastOneVisible Or (I >= VisibleStart And I <= VisibleEnd)
-		      List.Selected(I) = True
-		    Else
-		      List.Selected(I) = False
-		    End If
+		    List.Selected(I) = (SelectIDs.IndexOf(Beacon.Preset(List.RowTag(I)).PresetID) > -1)
 		  Next
-		  If AtLeastOneVisible = False And List.SelCount > 0 Then
-		    List.ScrollPosition = List.ListIndex
-		  End If
+		  List.EnsureSelectionIsVisible()
 		End Sub
 	#tag EndMethod
 
@@ -456,20 +445,77 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function KeyDown(Key As String) As Boolean
-		  Select Case Key
-		  Case Chr(8)
-		    Self.DeleteSelected()
-		  Else
-		    Return False
-		  End Select
+		Sub Open()
+		  Me.ColumnAlignment(1) = Listbox.AlignRight
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  For I As Integer = Me.ListCount - 1 DownTo 0
+		    If Not Me.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim Preset As Beacon.Preset = Me.RowTag(I)
+		    If Preset.Type = Beacon.Preset.Types.BuiltIn Then
+		      Continue
+		    End If
+		    
+		    Return True
+		  Next
 		  
-		  Return True
+		  Return False
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub Open()
-		  Me.ColumnAlignment(1) = Listbox.AlignRight
+		Sub PerformClear(Warn As Boolean)
+		  Dim DeleteCount, RevertCount, DisallowCount As Integer
+		  For I As Integer = Me.ListCount - 1 DownTo 0
+		    If Not Me.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim Preset As Beacon.Preset = Me.RowTag(I)
+		    Select Case Preset.Type
+		    Case Beacon.Preset.Types.BuiltIn
+		      DisallowCount = DisallowCount + 1
+		    Case Beacon.Preset.Types.Custom
+		      DeleteCount = DeleteCount + 1
+		    Case Beacon.Preset.Types.CustomizedBuiltIn
+		      RevertCount = RevertCount + 1
+		    End Select
+		  Next
+		  
+		  Dim Message, Action As String
+		  If DeleteCount > 0 And RevertCount > 0 Then
+		    Message = "Are you sure you want to delete or revert these " + Str(DeleteCount + RevertCount, "-0") + " presets?"
+		    Action = "Delete"
+		  ElseIf DeleteCount = 1 Then
+		    Message = "Are you sure you want to delete this preset?"
+		    Action = "Delete"
+		  ElseIf DeleteCount > 1 Then
+		    Message = "Are you sure you want to delete these " + Str(DeleteCount, "-0") + " presets?"
+		    Action = "Delete"
+		  ElseIf RevertCount = 1 Then
+		    Message = "Are you sure you want to revert this preset?"
+		    Action = "Revert"
+		  ElseIf RevertCount > 1 Then
+		    Message = "Are you sure you want to revert these " + Str(RevertCount, "-0") + " presets?"
+		    Action = "Revert"
+		  Else
+		    Return
+		  End If
+		  
+		  Dim Explanation As String = "This action cannot be undone."
+		  If DisallowCount > 0 Then
+		    Explanation = "Built-in presets will not be deleted. " + Explanation
+		  End If
+		  
+		  If Warn And Not Self.ShowConfirm(Message, Explanation, Action, "Cancel") Then
+		    Return
+		  End If
+		  
+		  Self.DeleteSelected()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
