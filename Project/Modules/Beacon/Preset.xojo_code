@@ -216,13 +216,13 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function MaxItems() As Integer
-		  Return Self.mMaxItems
+		  Return Max(Min(Self.mMaxItems, Self.mContents.Ubound + 1), Self.mMinItems, 1)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MinItems() As Integer
-		  Return Self.mMinItems
+		  Return Min(Max(Self.mMinItems, 1), Self.mMaxItems, Self.mContents.Ubound + 1)
 		End Function
 	#tag EndMethod
 
