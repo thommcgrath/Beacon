@@ -623,7 +623,7 @@ Begin BeaconSubview PresetEditorView
          Visible         =   True
          Width           =   13
       End
-      Begin GroupBox GroupBox1
+      Begin GroupBox AdjustmentsGroup
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   "Adjustments"
@@ -659,7 +659,7 @@ Begin BeaconSubview PresetEditorView
             Height          =   22
             HelpTag         =   ""
             Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   60
             LockBottom      =   False
@@ -684,7 +684,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   267
          End
-         Begin TextField StandardQualityField
+         Begin TextField AdjustQualityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -699,8 +699,8 @@ Begin BeaconSubview PresetEditorView
             Format          =   ""
             Height          =   22
             HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            Index           =   0
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   339
             LimitText       =   0
@@ -736,7 +736,7 @@ Begin BeaconSubview PresetEditorView
             Height          =   22
             HelpTag         =   ""
             Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   411
             LockBottom      =   False
@@ -761,7 +761,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   197
          End
-         Begin TextField StandardQuantityField
+         Begin TextField AdjustQuantityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -776,8 +776,8 @@ Begin BeaconSubview PresetEditorView
             Format          =   ""
             Height          =   22
             HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            Index           =   0
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   620
             LimitText       =   0
@@ -813,7 +813,7 @@ Begin BeaconSubview PresetEditorView
             Height          =   22
             HelpTag         =   ""
             Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   60
             LockBottom      =   False
@@ -847,7 +847,7 @@ Begin BeaconSubview PresetEditorView
             Height          =   22
             HelpTag         =   ""
             Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   60
             LockBottom      =   False
@@ -881,7 +881,7 @@ Begin BeaconSubview PresetEditorView
             Height          =   22
             HelpTag         =   ""
             Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   60
             LockBottom      =   False
@@ -906,7 +906,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   267
          End
-         Begin TextField BonusQualityField
+         Begin TextField AdjustQualityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -921,8 +921,8 @@ Begin BeaconSubview PresetEditorView
             Format          =   ""
             Height          =   22
             HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            Index           =   1
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   339
             LimitText       =   0
@@ -958,7 +958,7 @@ Begin BeaconSubview PresetEditorView
             Height          =   22
             HelpTag         =   ""
             Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   411
             LockBottom      =   False
@@ -983,7 +983,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   197
          End
-         Begin TextField BonusQuantityField
+         Begin TextField AdjustQuantityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -998,8 +998,8 @@ Begin BeaconSubview PresetEditorView
             Format          =   ""
             Height          =   22
             HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            Index           =   1
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   620
             LimitText       =   0
@@ -1026,7 +1026,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   60
          End
-         Begin TextField CaveQualityField
+         Begin TextField AdjustQualityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -1041,8 +1041,8 @@ Begin BeaconSubview PresetEditorView
             Format          =   ""
             Height          =   22
             HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            Index           =   2
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   339
             LimitText       =   0
@@ -1078,7 +1078,7 @@ Begin BeaconSubview PresetEditorView
             Height          =   22
             HelpTag         =   ""
             Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   411
             LockBottom      =   False
@@ -1103,7 +1103,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   197
          End
-         Begin TextField CaveQuantityField
+         Begin TextField AdjustQuantityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -1118,8 +1118,8 @@ Begin BeaconSubview PresetEditorView
             Format          =   ""
             Height          =   22
             HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            Index           =   2
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   620
             LimitText       =   0
@@ -1146,7 +1146,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   60
          End
-         Begin TextField SeaQualityField
+         Begin TextField AdjustQualityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -1161,8 +1161,8 @@ Begin BeaconSubview PresetEditorView
             Format          =   ""
             Height          =   22
             HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            Index           =   3
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   339
             LimitText       =   0
@@ -1198,7 +1198,7 @@ Begin BeaconSubview PresetEditorView
             Height          =   22
             HelpTag         =   ""
             Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   411
             LockBottom      =   False
@@ -1223,7 +1223,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   197
          End
-         Begin TextField SeaQuantityField
+         Begin TextField AdjustQuantityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -1238,8 +1238,8 @@ Begin BeaconSubview PresetEditorView
             Format          =   ""
             Height          =   22
             HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            Index           =   3
+            InitialParent   =   "AdjustmentsGroup"
             Italic          =   False
             Left            =   620
             LimitText       =   0
@@ -1441,6 +1441,12 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Save()
+		  Break
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function SelectedEntries() As Beacon.PresetEntry()
 		  Dim Entries() As Beacon.PresetEntry
@@ -1500,14 +1506,22 @@ End
 		  Self.NameField.Text = Self.mPreset.Label
 		  Self.GroupingField.Text = Self.mPreset.Grouping
 		  Self.UpdateMinAndMaxFields
-		  Self.BonusQualityField.Text = Str(Self.mPreset.QualityModifier(Beacon.LootSource.Kinds.Bonus), "-0")
-		  Self.BonusQuantityField.Text = Str(Self.mPreset.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus), "-0")
-		  Self.CaveQualityField.Text = Str(Self.mPreset.QualityModifier(Beacon.LootSource.Kinds.Cave), "-0")
-		  Self.CaveQuantityField.Text = Str(Self.mPreset.QuantityMultiplier(Beacon.LootSource.Kinds.Cave), "-0")
-		  Self.SeaQualityField.Text = Str(Self.mPreset.QualityModifier(Beacon.LootSource.Kinds.Sea), "-0")
-		  Self.SeaQuantityField.Text = Str(Self.mPreset.QuantityMultiplier(Beacon.LootSource.Kinds.Sea), "-0")
-		  Self.StandardQualityField.Text = Str(Self.mPreset.QualityModifier(Beacon.LootSource.Kinds.Standard), "-0")
-		  Self.StandardQuantityField.Text = Str(Self.mPreset.QuantityMultiplier(Beacon.LootSource.Kinds.Standard), "-0")
+		  
+		  Dim Kinds() As Beacon.LootSource.Kinds
+		  Kinds.Append(Beacon.LootSource.Kinds.Standard)
+		  Kinds.Append(Beacon.LootSource.Kinds.Bonus)
+		  Kinds.Append(Beacon.LootSource.Kinds.Cave)
+		  Kinds.Append(Beacon.LootSource.Kinds.Sea)
+		  
+		  For Each Kind As Beacon.LootSource.Kinds In Kinds
+		    Dim Index As Integer = CType(Kind, Integer)
+		    If Self.AdjustQualityField(Index) <> Nil Then
+		      Self.AdjustQualityField(Index).Text = Str(Self.mPreset.QualityModifier(Kind), "-0")
+		    End If
+		    If Self.AdjustQuantityField(Index) <> Nil Then
+		      Self.AdjustQuantityField(Index).Text = Str(Self.mPreset.QuantityMultiplier(Kind), "-0")
+		    End If
+		  Next
 		  
 		  Self.mUpdating = False
 		End Sub
@@ -1788,6 +1802,36 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events NameField
+	#tag Event
+		Sub TextChange()
+		  If Self.mUpdating Then
+		    Return
+		  End If
+		  
+		  Dim Value As String = Trim(Me.Text)
+		  If Value <> "" And StrComp(Self.mPreset.Label, Value, 0) <> 0 Then
+		    Self.mPreset.Label = Value.ToText
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GroupingField
+	#tag Event
+		Sub TextChange()
+		  If Self.mUpdating Then
+		    Return
+		  End If
+		  
+		  Dim Value As String = Trim(Me.Text)
+		  If Value <> "" And StrComp(Self.mPreset.Grouping, Value, 0) <> 0 Then
+		    Self.mPreset.Grouping = Value.ToText
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events MinItemsField
 	#tag Event
 		Sub TextChange()
@@ -1795,8 +1839,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = CDbl(Me.Text)
-		  Self.mPreset.MinItems = Min(Max(Value, 1), Self.mPreset.MaxItems, Self.mPreset.Count)
+		  Dim Value As Integer = Min(Max(CDbl(Me.Text), 1), Self.mPreset.MaxItems, Self.mPreset.Count)
+		  If Self.mPreset.MinItems <> Value Then
+		    Self.mPreset.MinItems = Value
+		    Self.ContentsChanged = True
+		  End If
 		  
 		  If Self.Window.Focus <> Me Then
 		    Me.Text = Str(Self.mPreset.MinItems, "-0")
@@ -1816,8 +1863,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = CDbl(Me.Text)
-		  Self.mPreset.MaxItems = Min(Max(Value, 1, Self.mPreset.MinItems), Self.mPreset.Count)
+		  Dim Value As Integer = Min(Max(CDbl(Me.Text), 1, Self.mPreset.MinItems), Self.mPreset.Count)
+		  If Self.mPreset.MaxItems <> Value Then
+		    Self.mPreset.MaxItems = Value
+		    Self.ContentsChanged = True
+		  End If
 		  
 		  If Self.Window.Focus <> Me Then
 		    Me.Text = Str(Self.mPreset.MaxItems, "-0")
@@ -1851,6 +1901,40 @@ End
 	#tag Event
 		Sub Up()
 		  Self.MaxItemsField.Text = Str(CDbl(Self.MaxItemsField.Text) + 1, "-0")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AdjustQualityField
+	#tag Event
+		Sub TextChange(index as Integer)
+		  If Self.mUpdating Then
+		    Return
+		  End If
+		  
+		  Dim Kind As Beacon.LootSource.Kinds = CType(Index, Beacon.LootSource.Kinds)
+		  Dim Value As Integer = CDbl(Me.Text)
+		  
+		  If Self.mPreset.QualityModifier(Kind) <> Value Then
+		    Self.mPreset.QualityModifier(Kind) = Value
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AdjustQuantityField
+	#tag Event
+		Sub TextChange(index as Integer)
+		  If Self.mUpdating Then
+		    Return
+		  End If
+		  
+		  Dim Kind As Beacon.LootSource.Kinds = CType(Index, Beacon.LootSource.Kinds)
+		  Dim Value As Integer = CDbl(Me.Text)
+		  
+		  If Self.mPreset.QuantityMultiplier(Kind) <> Value Then
+		    Self.mPreset.QuantityMultiplier(Kind) = Value
+		    Self.ContentsChanged = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

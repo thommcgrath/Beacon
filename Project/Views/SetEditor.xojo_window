@@ -648,12 +648,7 @@ End
 		  EntryList.Sort
 		  
 		  If ScrollToSelection Then
-		    For I As Integer = 0 To EntryList.ListCount - 1
-		      If EntryList.Selected(I) Then
-		        EntryList.ScrollPosition = I
-		        Exit For I
-		      End If
-		    Next
+		    EntryList.EnsureSelectionIsVisible()
 		  End If
 		End Sub
 	#tag EndMethod

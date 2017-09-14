@@ -176,6 +176,15 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub EnableMenuItems()
+		  If Self.ContentsChanged Then
+		    FileSave.Enable
+		    FileSaveAs.Enable
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Moved()
 		  If Self.mOpened Then
 		    App.Preferences.RectValue("Main Window Size") = New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
@@ -243,8 +252,39 @@ End
 		  If Self.mOpened Then
 		    App.Preferences.RectValue("Main Window Size") = New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
 		  End If
+		  
+		  Dim Value As Integer = Self.LibraryPane1.Width
+		  Self.ResizeSplitter(Value)
 		End Sub
 	#tag EndEvent
+
+	#tag Event
+		Sub Resizing()
+		  Dim Value As Integer = Self.LibraryPane1.Width
+		  Self.ResizeSplitter(Value)
+		End Sub
+	#tag EndEvent
+
+
+	#tag MenuHandler
+		Function FileSave() As Boolean Handles FileSave.Action
+			Dim View As BeaconSubview = Self.CurrentView()
+			If View <> Nil Then
+			View.Save()
+			End If
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
+			Dim View As BeaconSubview = Self.CurrentView()
+			If View <> Nil Then
+			View.SaveAs()
+			End If
+			Return True
+		End Function
+	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h0
@@ -255,8 +295,33 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function CurrentView() As BeaconSubview
+		  If Self.Views.Value = 0 Then
+		    Return Nil
+		  End If
+		  
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mViews
+		    If Entry.Value = Self.Views.Value Then
+		      Return Entry.Key
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ResizeSplitter(ByRef NewSize As Integer)
 		  NewSize = Max(NewSize, Self.MinSplitterPosition)
+		  
+		  Dim View As BeaconSubview = Self.CurrentView
+		  If View <> Nil Then
+		    NewSize = Min(NewSize, Self.Width - View.MinWidth)
+		  Else
+		    NewSize = Min(NewSize, Self.Width - 200)
+		  End If
+		  
+		  If LibraryPane1.Width = NewSize Then
+		    Return
+		  End If
 		  
 		  LibraryPane1.Width = NewSize
 		  Divider.Left = NewSize

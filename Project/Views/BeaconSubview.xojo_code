@@ -38,6 +38,18 @@ Inherits ContainerControl
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Save()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SaveAs()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SwitchedFrom()
 		  RaiseEvent Hidden
 		End Sub
