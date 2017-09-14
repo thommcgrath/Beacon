@@ -61,6 +61,7 @@ Begin ContainerControl SetEditor
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   1
+      ShowDropIndicator=   False
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
@@ -927,6 +928,7 @@ End
 		    
 		    Self.mSet.Append(BlueprintEntry)
 		    Self.UpdateEntryList(BlueprintEntry)
+		    RaiseEvent Updated
 		  End Select
 		End Function
 	#tag EndEvent
