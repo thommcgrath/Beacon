@@ -67,7 +67,7 @@ Begin Window MainWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   1
+      PanelCount      =   2
       Panels          =   ""
       Scope           =   2
       TabIndex        =   1
@@ -176,15 +176,6 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub EnableMenuItems()
-		  If Self.ContentsChanged Then
-		    FileSave.Enable
-		    FileSaveAs.Enable
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Moved()
 		  If Self.mOpened Then
 		    App.Preferences.RectValue("Main Window Size") = New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
@@ -266,53 +257,11 @@ End
 	#tag EndEvent
 
 
-	#tag MenuHandler
-		Function FileSave() As Boolean Handles FileSave.Action
-			Dim View As BeaconSubview = Self.CurrentView()
-			If View <> Nil Then
-			View.Save()
-			End If
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
-		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
-			Dim View As BeaconSubview = Self.CurrentView()
-			If View <> Nil Then
-			View.SaveAs()
-			End If
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-
-	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Self.mViews = New Xojo.Core.Dictionary
-		  Super.Constructor
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function CurrentView() As BeaconSubview
-		  If Self.Views.Value = 0 Then
-		    Return Nil
-		  End If
-		  
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mViews
-		    If Entry.Value = Self.Views.Value Then
-		      Return Entry.Key
-		    End If
-		  Next
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub ResizeSplitter(ByRef NewSize As Integer)
 		  NewSize = Max(NewSize, Self.MinSplitterPosition)
 		  
-		  Dim View As BeaconSubview = Self.CurrentView
+		  Dim View As BeaconSubview = Self.mCurrentView
 		  If View <> Nil Then
 		    NewSize = Min(NewSize, Self.Width - View.MinWidth)
 		  Else
@@ -336,25 +285,31 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowView(View As BeaconSubview)
-		  If View = Nil Then
-		    Self.ContentsChanged = False
-		    Views.Value = 0
+		  If Self.mCurrentView = View Then
 		    Return
 		  End If
 		  
-		  Dim ViewIndex As Integer = 0
-		  If Not Self.mViews.HasKey(View) Then
-		    Views.Append
-		    ViewIndex = Views.PanelCount - 1
-		    View.EmbedWithinPanel(Views, ViewIndex, 0, 0, Views.Width, Views.Height)
-		    Self.mViews.Value(View) = ViewIndex
-		    
-		    AddHandler View.ContentsChanged, WeakAddressOf Subview_ContentsChanged
-		  Else
-		    ViewIndex = Self.mViews.Value(View)
+		  If Self.mCurrentView <> Nil Then
+		    Self.mCurrentView.Visible = False
 		  End If
 		  
-		  Views.Value = ViewIndex
+		  If View = Nil Then
+		    Self.ContentsChanged = False
+		    Self.mCurrentView = Nil
+		    Self.Views.Value = 0
+		    Return
+		  End If
+		  
+		  View.Visible = True
+		  Self.mCurrentView = View
+		  
+		  If Self.mSubviews.IndexOf(View) = -1 Then
+		    Self.mSubviews.Append(View)
+		    View.EmbedWithinPanel(Self.Views, 1, 0, 0, Self.Views.Width, Self.Views.Height)
+		    
+		    AddHandler View.ContentsChanged, WeakAddressOf Subview_ContentsChanged
+		  End If
+		  
 		  Self.ContentsChanged = View.ContentsChanged
 		  Self.MinWidth = Max(Self.MinSplitterPosition + View.MinWidth, Self.AbsoluteMinWidth)
 		  Self.MinHeight = Max(View.MinHeight, Self.AbsoluteMinHeight)
@@ -364,16 +319,14 @@ End
 		  If Self.Height < Self.MinHeight Then
 		    Self.Height = Self.MinHeight
 		  End If
+		  
+		  Self.Views.Value = 1
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Subview_ContentsChanged(Sender As ContainerControl)
-		  Dim ViewIndex As Integer = -1
-		  If Self.mViews.HasKey(Sender) Then
-		    ViewIndex = Self.mViews.Value(Sender)
-		  End If
-		  If Views.Value = ViewIndex Then
+		  If Self.mCurrentView = Sender Then
 		    Self.ContentsChanged = Sender.ContentsChanged
 		  End If
 		End Sub
@@ -381,11 +334,15 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mCurrentView As BeaconSubview
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mOpened As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mViews As Xojo.Core.Dictionary
+		Private mSubviews(-1) As BeaconSubview
 	#tag EndProperty
 
 
@@ -414,25 +371,17 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ShouldDiscardView(View As BeaconSubview)
-		  If Not Self.mViews.HasKey(View) Then
+		  Dim ViewIndex As Integer = Self.mSubviews.IndexOf(View)
+		  If ViewIndex = -1 Then
 		    Return
 		  End If
 		  
-		  Dim ViewIndex As Integer = Self.mViews.Value(View)
-		  
-		  If Views.Value = ViewIndex Then
+		  If View = Self.mCurrentView Then
 		    Self.ShowView(Nil)
 		  End If
 		  
-		  Self.mViews.Remove(View)
+		  Self.mSubviews.Remove(ViewIndex)
 		  View.Close
-		  Views.Remove(ViewIndex) // Now all saved indexes are wrong
-		  
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mViews
-		    If Entry.Value > ViewIndex Then
-		      Self.mViews.Value(Entry.Key) = Entry.Value - 1
-		    End If
-		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

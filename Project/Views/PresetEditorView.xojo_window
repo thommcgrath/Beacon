@@ -84,7 +84,7 @@ Begin BeaconSubview PresetEditorView
       TextUnit        =   0
       Top             =   53
       Underline       =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   700
       Begin BeaconListbox ContentsList
@@ -1273,10 +1273,62 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub EnableMenuItems()
+		  If Self.ContentsChanged Then
+		    FileSave.Enable
+		    If Self.mSaveFile <> Nil Then
+		      FileSaveAs.Enable
+		    End If
+		  End If
+		  If Self.mSaveFile = Nil Then
+		    FileExport.Enable
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.UpdateUI()
 		End Sub
 	#tag EndEvent
+
+
+	#tag MenuHandler
+		Function FileExport() As Boolean Handles FileExport.Action
+			Dim Dialog As New SaveAsDialog
+			Dialog.Filter = BeaconFileTypes.BeaconPreset
+			Dialog.SuggestedFileName = Self.mPreset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
+			
+			Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+			If File <> Nil Then
+			Dim Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary, File)
+			Writer.Run
+			End If
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function FileSave() As Boolean Handles FileSave.Action
+			Self.Save()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
+			Dim Dialog As New SaveAsDialog
+			Dialog.Filter = BeaconFileTypes.BeaconPreset
+			Dialog.SuggestedFileName = Self.mPreset.Label + BeaconFileTypes.BeaconPreset.PrimaryExtension
+			
+			Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+			If File <> Nil Then
+			Self.mSaveFile = File
+			Self.Save()
+			End If
+			Return True
+		End Function
+	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h21
@@ -1441,9 +1493,17 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Save()
-		  Break
+	#tag Method, Flags = &h21
+		Private Sub Save()
+		  If Self.mSaveFile = Nil Then
+		    Beacon.Data.SavePreset(Self.mPreset)
+		  Else
+		    Dim Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary, Self.mSaveFile)
+		    Writer.Run
+		  End If
+		  Self.ContentsChanged = False
+		  Self.Header.Caption = Self.mPreset.Label
+		  NotificationKit.Post("Preset Saved", Self.mPreset)
 		End Sub
 	#tag EndMethod
 
@@ -1530,6 +1590,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mPreset As Beacon.MutablePreset
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSaveFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
