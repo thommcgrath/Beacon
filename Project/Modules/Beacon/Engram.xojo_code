@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Engram
 	#tag Method, Flags = &h0
-		Function Availability() As UInteger
+		Function Availability() As UInt64
 		  Return Self.mAvailability
 		End Function
 	#tag EndMethod
@@ -164,7 +164,7 @@ Protected Class Engram
 
 
 	#tag Property, Flags = &h1
-		Protected mAvailability As UInteger
+		Protected mAvailability As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

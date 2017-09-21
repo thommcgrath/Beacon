@@ -20,7 +20,7 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ForMask(Mask As UInteger) As Beacon.Map
+		Protected Function ForMask(Mask As UInt64) As Beacon.Map
 		  Dim List() As Beacon.Map = All
 		  For Each Map As Beacon.Map In List
 		    If Map.Mask = Mask Then
@@ -46,9 +46,10 @@ Protected Module Maps
 		    Next
 		  Next
 		  
-		  Dim BestMask, MaxCount As UInteger
+		  Dim BestMask As UInt64
+		  Dim MaxCount As UInteger
 		  For Each Entry As Xojo.Core.DictionaryEntry In Counts
-		    Dim Mask As UInteger = Entry.Key
+		    Dim Mask As UInt64 = Entry.Key
 		    Dim Count As UInteger = Entry.Value
 		    
 		    If Count > MaxCount Then
