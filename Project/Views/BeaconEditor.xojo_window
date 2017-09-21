@@ -883,10 +883,6 @@ End
 		  Dim OriginalSet As Beacon.ItemSet = SetList.RowTag(SelIndex)
 		  Dim NewSet As Beacon.ItemSet = Editor.Set
 		  
-		  SetList.Cell(SelIndex, 0) = NewSet.Label
-		  Self.mSorting = True
-		  SetList.Sort
-		  Self.mSorting = False
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    Dim Idx As Integer = Source.IndexOf(OriginalSet)
 		    If Idx > -1 Then
@@ -894,7 +890,13 @@ End
 		    End If
 		  Next
 		  
+		  SetList.Cell(SelIndex, 0) = NewSet.Label
 		  SetList.RowTag(SelIndex) = New Beacon.ItemSet(NewSet)
+		  
+		  Self.mSorting = True
+		  SetList.Sort
+		  Self.mSorting = False
+		  
 		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
