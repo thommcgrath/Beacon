@@ -9,7 +9,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Availability() As UInteger
+		Function Availability() As UInt64
 		  Return Self.mAvailability
 		End Function
 	#tag EndMethod
@@ -502,7 +502,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 
 	#tag Property, Flags = &h1
-		Protected mAvailability As UInteger
+		Protected mAvailability As UInt64
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

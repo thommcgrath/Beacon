@@ -182,11 +182,10 @@ Protected Class Engram
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Mask As UInteger = Beacon.Maps.All.Mask
-			  Self.mAvailability = Value And Mask
+			  Self.mAvailability = Value
 			End Set
 		#tag EndSetter
-		Availability As UInteger
+		Availability As UInt64
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
@@ -198,7 +197,7 @@ Protected Class Engram
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mAvailability As UInteger
+		Private mAvailability As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

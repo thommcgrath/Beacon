@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Map
 	#tag Method, Flags = &h0
-		Sub Constructor(Name As Text, Mask As UInteger, DifficultyScale As Double)
+		Sub Constructor(Name As Text, Mask As UInt64, DifficultyScale As Double)
 		  Self.mName = Name
 		  Self.mMask = Mask
 		  Self.mDifficultyScale = DifficultyScale
@@ -28,13 +28,13 @@ Protected Class Map
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Mask() As UInteger
+		Function Mask() As UInt64
 		  Return Self.mMask
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Matches(Value As UInteger) As Boolean
+		Function Matches(Value As UInt64) As Boolean
 		  Return (Value And Self.mMask) = Self.mMask
 		End Function
 	#tag EndMethod
@@ -67,7 +67,7 @@ Protected Class Map
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMask As UInteger
+		Private mMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

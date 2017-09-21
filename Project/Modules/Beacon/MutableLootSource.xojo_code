@@ -2,7 +2,7 @@
 Protected Class MutableLootSource
 Inherits Beacon.LootSource
 	#tag Method, Flags = &h0
-		Sub Availability(Assigns Value As UInteger)
+		Sub Availability(Assigns Value As UInt64)
 		  Self.mAvailability = Value
 		End Sub
 	#tag EndMethod
@@ -90,10 +90,30 @@ Inherits Beacon.LootSource
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="MaxItemSets"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MinItemSets"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="NumItemSetsPower"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SetsRandomWithoutReplacement"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

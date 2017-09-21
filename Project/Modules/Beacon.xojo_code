@@ -206,8 +206,8 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Mask(Extends Maps() As Beacon.Map) As UInteger
-		  Dim Bits As UInteger
+		Function Mask(Extends Maps() As Beacon.Map) As UInt64
+		  Dim Bits As UInt64
 		  For Each Map As Beacon.Map In Maps
 		    Bits = Bits Or Map.Mask
 		  Next
