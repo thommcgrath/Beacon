@@ -26,6 +26,9 @@ Implements ObservationKit.Observer
 		  Self.mMouseX = X
 		  Self.mMouseY = Y
 		  
+		  Tooltip.Hide
+		  Xojo.Core.Timer.CancelCall(AddressOf ShowHoverTooltip)
+		  
 		  If Self.mResizerRect <> Nil And Self.mResizerRect.Contains(Point) Then
 		    Self.mResizing = True
 		    Self.mStartingWidth = Self.Width
@@ -40,29 +43,16 @@ Implements ObservationKit.Observer
 		    Return True
 		  End If
 		  
-		  For I As Integer = 0 To Self.mLeftItems.UBound
-		    If Self.mLeftItems(I).Enabled And Self.mLeftItems(I).Rect.Contains(Point) Then
-		      Self.mMouseDownName = Self.mLeftItems(I).Name
-		      Self.mPressedName = Self.mMouseDownName
-		      Self.Refresh
-		      If Self.mLeftItems(I).HasMenu Then
-		        Self.mHoldTimer.Mode = Timer.ModeSingle
-		      End If
-		      Return True
+		  Dim HitItem As BeaconToolbarItem = Self.ItemAtPoint(Point)
+		  If HitItem <> Nil And HitItem.Enabled Then
+		    Self.mMouseDownName = HitItem.Name
+		    Self.mPressedName = Self.mMouseDownName
+		    Self.Refresh
+		    If HitItem.HasMenu Then
+		      Self.mHoldTimer.Mode = Timer.ModeSingle
 		    End If
-		  Next
-		  
-		  For I As Integer = 0 To Self.mRightItems.UBound
-		    If Self.mRightItems(I).Enabled And Self.mRightItems(I).Rect.Contains(Point) Then
-		      Self.mMouseDownName = Self.mRightItems(I).Name
-		      Self.mPressedName = Self.mMouseDownName
-		      Self.Refresh
-		      If Self.mRightItems(I).HasMenu Then
-		        Self.mHoldTimer.Mode = Timer.ModeSingle
-		      End If
-		      Return True
-		    End If
-		  Next
+		    Return True
+		  End If
 		End Function
 	#tag EndEvent
 
@@ -129,6 +119,7 @@ Implements ObservationKit.Observer
 	#tag Event
 		Sub MouseExit()
 		  Self.MouseCursor = Nil
+		  Self.HoverItem = Nil
 		End Sub
 	#tag EndEvent
 
@@ -144,6 +135,8 @@ Implements ObservationKit.Observer
 		  Else
 		    Self.MouseCursor = Nil
 		  End If
+		  
+		  Self.HoverItem = Self.ItemAtPoint(Point)
 		End Sub
 	#tag EndEvent
 
@@ -382,6 +375,51 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HoverItem() As BeaconToolbarItem
+		  Return Self.mHoverItem
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub HoverItem(Assigns Item As BeaconToolbarItem)
+		  If Self.mHoverItem = Item Then
+		    Return
+		  End If
+		  
+		  Self.mHoverItem = Item
+		  
+		  Tooltip.Hide
+		  Xojo.Core.Timer.CancelCall(AddressOf ShowHoverTooltip)
+		  
+		  If Item <> Nil And Item.HelpTag <> "" Then
+		    Xojo.Core.Timer.CallLater(2000, AddressOf ShowHoverTooltip)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ItemAtPoint(X As Integer, Y As Integer) As BeaconToolbarItem
+		  Return Self.ItemAtPoint(New REALbasic.Point(X, Y))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ItemAtPoint(Point As REALbasic.Point) As BeaconToolbarItem
+		  For I As Integer = 0 To Self.mLeftItems.UBound
+		    If Self.mLeftItems(I).Rect.Contains(Point) Then
+		      Return Self.mLeftItems(I)
+		    End If
+		  Next
+		  
+		  For I As Integer = 0 To Self.mRightItems.UBound
+		    If Self.mRightItems(I).Rect.Contains(Point) Then
+		      Return Self.mRightItems(I)
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ItemWithName(Name As String) As BeaconToolbarItem
 		  For I As Integer = 0 To Self.mLeftItems.UBound
 		    If Self.mLeftItems(I).Name = Name Then
@@ -437,6 +475,16 @@ Implements ObservationKit.Observer
 		Function Operator_Lookup(Name As String) As BeaconToolbarItem
 		  Return Self.ItemWithName(Name)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowHoverTooltip()
+		  If Self.mHoverItem = Nil Then
+		    Return
+		  End If
+		  
+		  Tooltip.Show(Self.mHoverItem.HelpTag, System.MouseX, System.MouseY + 16)
+		End Sub
 	#tag EndMethod
 
 
@@ -568,6 +616,10 @@ Implements ObservationKit.Observer
 
 	#tag Property, Flags = &h21
 		Private mHoldTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHoverItem As BeaconToolbarItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

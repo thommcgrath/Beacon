@@ -409,6 +409,10 @@ End
 		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconToolbarNew))
 		  Me.LeftItems.Append(New BeaconToolbarItem("Duplicate", IconToolbarClone, False))
 		  Me.RightItems.Append(New BeaconToolbarItem("Export", IconToolbarExport, False))
+		  
+		  Me.ItemWithName("Add").HelpTag = "Create a new preset from scratch."
+		  Me.ItemWithName("Duplicate").HelpTag = "Duplicate the selected preset or presets."
+		  Me.ItemWithName("Export").HelpTag = "Export the selected preset or presets to disk for sharing."
 		End Sub
 	#tag EndEvent
 	#tag Event

@@ -187,6 +187,20 @@ Implements ObservationKit.Observable,BeaconUI.ColorAnimator
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mHelpTag
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mHelpTag = Value
+			End Set
+		#tag EndSetter
+		HelpTag As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mIcon
 			End Get
 		#tag EndGetter
@@ -215,6 +229,10 @@ Implements ObservationKit.Observable,BeaconUI.ColorAnimator
 
 	#tag Property, Flags = &h21
 		Private mHasMenu As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHelpTag As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
