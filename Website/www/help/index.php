@@ -1,13 +1,28 @@
 <?php
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
-BeaconTemplate::SetTitle('Troubleshooting');
+BeaconTemplate::SetTitle('Help');
 ?><h1>Getting Started</h1>
 <div class="indent">
 	<p>New users who have no idea how to start customizing loot should <a href="gettingstarted.php">read this</a>.</p>
 </div>
-<h1>Troubleshooting</h1>
+<h1>Common Issues</h1>
 <div class="indent">
 	<p>As much as Beacon attempts to be self-explaining, sometimes there are problems that require human interaction.</p>
+	<h3>Modifying the default loot</h3>
+	<div class="indent">
+		<p>This is something that is not currently possible. The default loot tables are only available inside the Ark Dev Kit, which does not get updated often and actually getting the data from the dev kit is a long and tedious process. At the moment, the effort has not been spent to do so.</p>
+	</div>
+	<h3>Finding a starting point</h3>
+	<div class="indent">
+		<p>Not every admin wants to build an entire loot table from scratch. Beacon has a library of documents shared by the community that are ready to use and customize. In the Window menu, go to Library. The initial view is the Documents tab, which hosts the community documents.</p>
+	</div>
+	<h3>Adding mod items</h3>
+	<div class="indent">
+		<p>To start, find the cheat or spawn code for the item or items that need to be added. These will typically look like &quot;cheat giveitem Blueprint'/path/to/item' 1 1 false&quot; and copy one or more to the clipboard. Do not worry about extra formatting, Beacon can extract the data it needs from as little as a single command or an entire web page full of commands.</p>
+		<p>For a temporary solution, when adding an engram to an item set the field up top labelled &quot;Search or Enter Spawn Command&quot; will accept the copied command or commands. The mod items will then show up in the list below.</p>
+		<p>For a more permanent solution, go to the Window menu and select Library. In that window, press Engrams to see the engrams manager. The engrams manager can import engrams from a website or file, but the easiest way is with the &quot;Import from Clipboard&quot; button. If the button is not enabled, that means Beacon did not find any copied spawn commands. Go back, copy one or more commands, and the button should enable.</p>
+		<p>When importing engrams from spawn commands, Beacon will guess at names. The engrams manager can be used to rename items or change map availability.</p>
+	</div>
 	<h3>Engrams are not updating</h3>
 	<div class="indent">
 		<p>Beacon automatically updates its engram database every launch. However, there are scenarios that could prevent this from happening.</p>
@@ -15,14 +30,27 @@ BeaconTemplate::SetTitle('Troubleshooting');
 		<p>Now on to actually solving the problem. Users on Windows 7 and Windows 8.0 (but not Windows 8.1 and newer) often have this issue because these versions do not have support for TLS 1.1 and 1.2 enabled, which Beacon requires. Normally, the Beacon installer will attempt to enable this support automatically, but this doesn't always work.</p>
 		<p>See <a href="https://support.microsoft.com/en-gb/help/3140245/update-to-enable-tls-1.1-and-tls-1.2-as-a-default-secure-protocols-in-winhttp-in-windows">https://support.microsoft.com/en-gb/help/3140245/update-to-enable-tls-1.1-and-tls-1.2-as-a-default-secure-protocols-in-winhttp-in-windows</a> for more details and a solution.</p>
 	</div>
+	<h3>Item quality does not match</h3>
+	<div class="indent">
+		<p>Most importantly, Beacon must know the server difficulty in order to compute correct quality values. Below the Loot Sources list is a small gear icon used to adjust settings. Use any one of the three fields to input difficulty. There is a link to the wiki explaining more about difficulty if more help is needed.</p>
+		<p>If difficulty is set correctly, next make sure the server's Game.ini does not contain a SupplyCrateLootQualityMultiplier setting, or the value is set to 1.0. This setting will alter Beacon's values dramatically.</p>
+		<p>If both difficulty and quality multiplier are correct, the issue is likely just Ark itself. Best we as a community can determine, quality works in a number of steps:</p>
+		<ol>
+			<li>The item template is loaded. It has the following (made up) base stats: 100 durability, 100 defense, 100 hypothermal, and 100 hyperthermal.</li>
+			<li>Each item has a pool of additional stat points to be allocated. For this example, the pool will be 10 points.</li>
+			<li>Assuming a quality multiplier of 2.0, the additional point pool would be 20 points. These 20 points are then randomly distributed to the 4 stats. In this example, we'll give 10 points to durability, 5 to defense, 3 to hypothermal, and 2 to hyperthermal.</li>
+			<li>Lastly, <em>a single stat is measured to determine the label to give the item</em>. Most items measure durability. Let's assume the range is 100-105 = Primitive, 106-110 = Ramshackle, and 111-120 = Apprentice. In this case, the item would be prefixed Ramshackle because the item's durability is 110.</li>
+		</ol>
+		<p>Now, let's generate the same item with the same quality multiplier again:</p>
+		<ol>
+			<li>This time 3 points were given to durability, 10 points to defense, 5 points to hypothermal, and 2 points to hyperthermal. This item has exactly the same quality and total stats, but the stats are distributed differently. This is how loot generation works to ensure each item is unique.</li>
+			<li>Because Ark is only measuring durability and this item's durability is only 103, it is given the Primitive prefix.</li>
+		</ol>
+		<p>Beacon will produce the intended loot, but due to how Ark measures stats and assigns prefixes, it is impossible to guarantee a specific prefix.</p>
+	</div>
 	<h3>The ini file produced isn't what was expected</h3>
 	<div class="indent">
 		<p>This is such a detailed subject that there is <a href="math.php">an entire separate page</a> just explaining how Beacon does its math. Though the short version of the story is that Beacon produces ini files intended for Ark to read them, not humans. The code it creates attempts to tell Ark about the author's intentions. This means sometimes doing weird things to make that a reality.</p>
-	</div>
-	<h3 id="exportformat">How do I choose an export format?</h3>
-	<div class="indent">
-		<p>It is possible for multiple mods to define the same class string, which confuses Ark's loot generator, so Beacon uses blueprints to solve the issue. This is the &quot;More Reliable&quot; option.</p>
-		<p>However, the option to use blueprints was never explained in the original forum post describing the <em>ConfigOverrideSupplyCrateItems</em> config option. Some mods define their own loot sources and may not be able to understand blueprints. When this happens, Ark tends to crash at launch. Switching to &quot;More Compatible&quot; in this scenario will export using classes, but may produce unexpected results if there are conflicts.</p>
 	</div>
 	<h3>Learning more about ConfigOverrideSupplyCrateItems</h3>
 	<div class="indent">
