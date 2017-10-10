@@ -1,6 +1,12 @@
 <?php
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
 BeaconTemplate::SetTitle('Help');
+
+$default_island_document = BeaconDocumentMetadata::GetByDocumentID('eab656ca-20c6-4bec-bd15-6066f0fb16d3');
+$default_scorched_document = BeaconDocumentMetadata::GetByDocumentID('08bccb22-3c06-4982-b267-c2abd81e959a');
+$default_island_updated = (count($default_island_document) == 1) ? $default_island_document[0]->LastUpdated() : null;
+$default_scorched_updated = (count($default_scorched_document) == 1) ? $default_scorched_document[0]->LastUpdated() : null;
+
 ?><h1>Getting Started</h1>
 <div class="indent">
 	<p>New users who have no idea how to start customizing loot should <a href="gettingstarted.php">read this</a>.</p>
@@ -10,7 +16,11 @@ BeaconTemplate::SetTitle('Help');
 	<p>As much as Beacon attempts to be self-explaining, sometimes there are problems that require human interaction.</p>
 	<h3>Modifying the default loot</h3>
 	<div class="indent">
-		<p>This is something that is not currently possible. The default loot tables are only available inside the Ark Dev Kit, which does not get updated often and actually getting the data from the dev kit is a long and tedious process. At the moment, the effort has not been spent to do so.</p>
+		<p>Beacon does not have official support for editing the default loot, however community member Vyvin has extracted the default loot for The Island and Scorched Earth and shared the results.</p>
+		<ol>
+			<li><a href="https://api.beaconapp.cc/v1/document.php/eab656ca-20c6-4bec-bd15-6066f0fb16d3">The Island</a><?php if ($default_island_updated !== null) { echo ', updated <time datetime="' . $default_island_updated->format('c') . '">' . $default_island_updated->format('F jS, Y') . ' at ' . $default_island_updated->format('g:i A') . ' UTC</time>'; } ?></li>
+			<li><a href="https://api.beaconapp.cc/v1/document.php/08bccb22-3c06-4982-b267-c2abd81e959a">Scorched Earth</a><?php if ($default_scorched_updated !== null) { echo ', updated <time datetime="' . $default_scorched_updated->format('c') . '">' . $default_scorched_updated->format('F jS, Y') . ' at ' . $default_scorched_updated->format('g:i A') . ' UTC</time>'; } ?></li>
+		</ol>
 	</div>
 	<h3>Finding a starting point</h3>
 	<div class="indent">
