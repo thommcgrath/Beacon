@@ -26,6 +26,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE official_presets (preset_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (preset_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE local_documents (document_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, saveinfo TEXT NOT NULL, last_used TIMESTAMP);")
 		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		  
 		  Self.mBase.UserVersion = Self.SchemaVersion
@@ -488,6 +489,19 @@ Implements Beacon.DataSource
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function LocalDocuments() As LocalDocumentRef()
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT document_id, name, saveinfo FROM local_documents ORDER BY last_used DESC;")
+		  Dim Documents() As LocalDocumentRef
+		  While Not Results.EOF
+		    Dim File As FolderItem = GetFolderItem(DecodeHex(Results.Field("saveinfo").StringValue), FolderItem.PathTypeNative)
+		    Documents.Append(New LocalDocumentRef(File, Results.Field("document_id").StringValue.ToText, Results.Field("name").StringValue.ToText))
+		    Results.MoveNext
+		  Wend
+		  Return Documents
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub MigrateData(Source As FolderItem, FromSchemaVersion As Integer)
 		  If Not Self.mBase.AttachDatabase(Source, "legacy") Then
@@ -511,6 +525,10 @@ Implements Beacon.DataSource
 		  Else
 		    Commands.Append("INSERT INTO official_presets SELECT * FROM legacy.official_presets;")
 		    Commands.Append("INSERT INTO custom_presets SELECT * FROM legacy.custom_presets;")
+		  End If
+		  
+		  If FromSchemaVersion >= 4 Then
+		    Commands.Append("INSERT INTO local_documents SELECT * FROM local_documents;")
 		  End If
 		  
 		  If UBound(Commands) > -1 Then
@@ -665,6 +683,15 @@ Implements Beacon.DataSource
 		  Wend
 		  Return Sources
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RememberDocument(Document As LocalDocumentRef)
+		  Dim SaveInfo As String = EncodeHex(Document.File.GetSaveInfo(Nil))
+		  Self.BeginTransaction()
+		  Self.SQLExecute("INSERT OR REPLACE INTO local_documents (document_id, name, saveinfo, last_used) VALUES (?1, ?2, ?3, CURRENT_TIMESTAMP);", Document.DocumentID, Document.Name, SaveInfo)
+		  Self.Commit()
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -991,7 +1018,7 @@ Implements Beacon.DataSource
 	#tag EndProperty
 
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 

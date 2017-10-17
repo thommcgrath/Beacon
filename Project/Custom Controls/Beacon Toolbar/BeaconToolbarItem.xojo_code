@@ -280,6 +280,11 @@ Implements ObservationKit.Observable,BeaconUI.ColorAnimator
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="HelpTag"
+			Group="Behavior"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Icon"
 			Group="Behavior"
 			Type="Picture"

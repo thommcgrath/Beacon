@@ -44,7 +44,7 @@ Begin ContainerControl LibraryPane
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   3
+      Value           =   0
       Visible         =   True
       Width           =   300
       Begin LibraryPaneDocuments DocumentsView
@@ -214,6 +214,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DocumentsPane() As LibraryPaneDocuments
+		  Return Self.DocumentsView
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ShowPage(Index As Integer, UserData As Auto = Nil)
 		  If Self.Views.Value = Index Or Index = -1 Then
 		    Return
@@ -291,6 +297,16 @@ End
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
 		  RaiseEvent ShouldResize(NewSize)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldDiscardView(View As BeaconSubview)
+		  RaiseEvent ShouldDiscardView(View)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldShowView(View As BeaconSubview)
+		  RaiseEvent ShouldShowView(View)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -47,6 +47,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Beacon supports mod content! Find the list of admin spawn codes for the mod. Then press ""Import from URL"" to pull them from a web page, ""Import from Clipboard"" if you've copied them, or ""Import from File"" if you have them in a file on your computer."
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -189,8 +190,11 @@ Begin LibrarySubview LibraryPaneEngrams
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Engrams"
+      CaptionEnabled  =   True
       CaptionIsButton =   False
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       HasResizer      =   True
       Height          =   41
       HelpTag         =   ""
@@ -207,6 +211,7 @@ Begin LibrarySubview LibraryPaneEngrams
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   300

@@ -257,6 +257,12 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Function Documents() As LibraryPaneDocuments
+		  Return Self.LibraryPane1.DocumentsPane
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub ResizeSplitter(ByRef NewSize As Integer)
 		  NewSize = Max(NewSize, Self.MinSplitterPosition)

@@ -272,7 +272,7 @@ Implements ObservationKit.Observer
 		      Dim CaptionBottom As Integer = ButtonRect.Top + (ButtonRect.Height / 2) + ((G.TextAscent * 0.8) / 2)
 		      
 		      G.ForeColor = RGB(ColorValue, ColorValue, ColorValue, AlphaValue)
-		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, CaptionWidth, True)
+		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, ButtonRect.Width - (CaptionPadding * 2), True)
 		      
 		      Self.mCaptionRect = ButtonRect
 		    Else
@@ -734,7 +734,9 @@ Implements ObservationKit.Observer
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="CaptionEnabled"
+			Visible=true
 			Group="Behavior"
+			InitialValue="True"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty

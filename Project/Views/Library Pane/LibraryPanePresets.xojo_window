@@ -222,7 +222,7 @@ End
 		  End If
 		  
 		  Dim View As BeaconSubview = Self.mViews.Value(Preset.PresetID)
-		  RaiseEvent ShouldDiscardView(View)
+		  Self.DiscardView(View)
 		  Self.mViews.Remove(Preset.PresetID)
 		End Sub
 	#tag EndMethod
@@ -321,7 +321,7 @@ End
 		    Self.mViews.Value(Preset.PresetID) = PresetEditorView.Create(Preset)
 		  End If
 		  
-		  RaiseEvent ShouldShowView(Self.mViews.Value(Preset.PresetID))
+		  Self.ShowView(Self.mViews.Value(Preset.PresetID))
 		End Sub
 	#tag EndMethod
 
@@ -384,15 +384,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ShouldDiscardView(View As BeaconSubview)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event ShouldResize(ByRef NewSize As Integer)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event ShouldShowView(View As BeaconSubview)
 	#tag EndHook
 
 

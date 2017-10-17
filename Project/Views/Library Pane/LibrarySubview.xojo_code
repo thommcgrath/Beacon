@@ -12,6 +12,18 @@ Inherits ContainerControl
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h1
+		Protected Sub DiscardView(View As BeaconSubview)
+		  RaiseEvent ShouldDiscardView(View)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ShowView(View As BeaconSubview)
+		  RaiseEvent ShouldShowView(View)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub SwitchedFrom()
 		  RaiseEvent Hidden
@@ -31,6 +43,14 @@ Inherits ContainerControl
 
 	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShouldDiscardView(View As BeaconSubview)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShouldShowView(View As BeaconSubview)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

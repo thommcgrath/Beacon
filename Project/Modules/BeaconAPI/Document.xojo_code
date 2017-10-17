@@ -1,5 +1,6 @@
 #tag Class
 Protected Class Document
+Implements Beacon.DocumentRef
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Xojo.Core.Dictionary)
 		  Self.mDescription = Source.Value("description")
