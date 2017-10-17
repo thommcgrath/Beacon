@@ -234,6 +234,11 @@ End
 		  Dim SplitterPosition As Integer = App.Preferences.IntegerValue("Main Splitter Position", 300)
 		  Self.ResizeSplitter(SplitterPosition)
 		  
+		  #if TargetCocoa
+		    Self.mMacDelegate = New NSWindowDelegateMBS(Self)
+		    AddHandler Self.mMacDelegate.willPositionSheet, WeakAddressOf PositionSheet
+		  #endif
+		  
 		  Self.mOpened = True
 		End Sub
 	#tag EndEvent
@@ -260,6 +265,17 @@ End
 	#tag Method, Flags = &h0
 		Function Documents() As LibraryPaneDocuments
 		  Return Self.LibraryPane1.DocumentsPane
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function PositionSheet(Sender As NSWindowDelegateMBS, Win As NSWindowMBS, Sheet As NSWindowMBS, Rect As NSRectMBS) As NSRectMBS
+		  Dim Frame As REALbasic.Rect = Self.Bounds
+		  Dim TitlebarHeight As Integer = Self.Top - Frame.Top
+		  
+		  Dim Dest As New NSRectMBS(Rect)
+		  Dest.Y = Dest.Y - (41 + TitlebarHeight)
+		  Return Dest
 		End Function
 	#tag EndMethod
 
@@ -341,6 +357,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mCurrentView As BeaconSubview
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMacDelegate As NSWindowDelegateMBS
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
