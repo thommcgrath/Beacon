@@ -30,9 +30,9 @@ Begin BeaconSubview DocumentEditorView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   "Document"
+      Caption         =   "Sources"
       CaptionEnabled  =   True
-      CaptionIsButton =   True
+      CaptionIsButton =   False
       Enabled         =   True
       HasResizer      =   True
       Height          =   41
@@ -86,14 +86,6 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Open()
-		  Dim DinoLevel As Integer = Xojo.Math.Round(Self.mDocument.DifficultyValue * 30)
-		  Header.Caption = Self.mDocument.Map.Name + ", lvl " + DinoLevel.ToText
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h0
 		Sub Constructor(Ref As Beacon.DocumentRef, Document As Beacon.Document)
 		  Self.mDocument = Document
@@ -133,16 +125,8 @@ End
 
 #tag Events Header
 	#tag Event
-		Sub CaptionClicked()
-		  DocumentSetupSheet.ShowEdit(Self.TrueWindow, Self.mDocument)
-		  Dim DinoLevel As Integer = Xojo.Math.Round(Self.mDocument.DifficultyValue * 30)
-		  Me.Caption = Self.mDocument.Map.Name + ", lvl " + DinoLevel.ToText
-		  Self.ContentsChanged = True
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub Open()
-		  Dim AddButton As New BeaconToolbarItem("AddSource", Nil)
+		  Dim AddButton As New BeaconToolbarItem("AddSource", IconAdd)
 		  AddButton.HasMenu = True
 		  
 		  Me.LeftItems.Append(AddButton)

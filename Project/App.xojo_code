@@ -188,16 +188,7 @@ Inherits Application
 		  End If
 		  
 		  If Item.IsType(BeaconFileTypes.BeaconDocument) Then
-		    For I As Integer = 0 To WindowCount - 1
-		      If Window(I) IsA DocWindow And DocWindow(Window(I)).MatchesFile(Item) Then
-		        Window(I).Show
-		        Return
-		      End If
-		    Next
-		    
-		    Self.AddToRecentDocuments(Item)
-		    Dim Win As New DocWindow(Item)
-		    Win.Show
+		    MainWindow.Documents.OpenFile(Item)
 		    Return
 		  End If
 		  
@@ -259,14 +250,14 @@ Inherits Application
 
 	#tag MenuHandler
 		Function FileNew() As Boolean Handles FileNew.Action
-			Self.NewDocument()
+			MainWindow.Documents.NewDocument
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileNewPreset() As Boolean Handles FileNewPreset.Action
-			PresetWindow.Present()
+			MainWindow.Presets.NewPreset
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -276,7 +267,7 @@ Inherits Application
 			Dim Dialog As New OpenDialog
 			Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset
 			
-			Dim File As FolderItem = Dialog.ShowModal()
+			Dim File As FolderItem = Dialog.ShowModalWithin(MainWindow)
 			If File <> Nil Then
 			Self.OpenDocument(File)
 			End If
@@ -477,7 +468,7 @@ Inherits Application
 		    End If
 		    
 		    Dim FileURL As String = "https://" + URL
-		    DocumentDownloadWindow.Begin(FileURL.ToText)
+		    MainWindow.Documents.OpenURL(FileURL.ToText)
 		  End If
 		  
 		  Return True

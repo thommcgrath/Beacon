@@ -9,6 +9,12 @@ Implements Beacon.DocumentRef
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Document As Beacon.Document)
+		  Self.mDocument = Document
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Document() As Beacon.Document
 		  Return Self.mDocument
 		End Function

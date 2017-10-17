@@ -5,7 +5,7 @@ Begin Window DocumentDownloadWindow
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   0
+   Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -56,13 +56,6 @@ Begin Window DocumentDownloadWindow
       Underline       =   False
       Visible         =   True
       Width           =   80
-   End
-   Begin Xojo.Net.HTTPSocket Socket
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-      ValidateCertificates=   False
    End
    Begin Label MessageLabel
       AutoDeactivate  =   True
@@ -132,7 +125,7 @@ Begin Window DocumentDownloadWindow
       Visible         =   True
       Width           =   560
    End
-   Begin ProgressBar Progress
+   Begin ProgressBar Bar
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   20
@@ -158,22 +151,63 @@ End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Open()
-		  Self.SwapButtons()
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h0
-		Shared Sub Begin(URL As Text)
-		  Dim Win As New DocumentDownloadWindow
-		  Win.Socket.ValidateCertificates = True
-		  Win.URLLabel.Text = URL
-		  Win.Show()
-		  Win.Socket.Send("GET", URL)
-		End Sub
+		Function Cancelled() As Boolean
+		  Return Self.mCancelled
+		End Function
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mCancelled As Boolean
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.Bar.Maximum = 0 Then
+			    Return -1
+			  Else
+			    Return Self.Bar.Value / Self.Bar.Maximum
+			  End If
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Dim Amount, Maximum As Integer
+			  
+			  If Value < 0 Then  
+			    Maximum = 0
+			    Amount = 0
+			  Else
+			    Maximum = 1000
+			    Amount = Value * Maximum
+			  End If
+			  
+			  If Self.Bar.Value <> Amount Then
+			    Self.Bar.Value = Amount
+			  End If
+			  If Self.Bar.Maximum <> Maximum Then
+			    Self.Bar.Maximum = Maximum
+			  End If
+			End Set
+		#tag EndSetter
+		Progress As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.URLLabel.Text.ToText
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.URLLabel.Text = Value
+			End Set
+		#tag EndSetter
+		URL As Text
+	#tag EndComputedProperty
 
 
 #tag EndWindowCode
@@ -181,58 +215,7 @@ End
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.Socket.Disconnect
-		  Self.Close
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Socket
-	#tag Event
-		Sub Error(err as RuntimeException)
-		  Self.ShowAlert("Document was not downloaded", Err.Reason)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
-		  #Pragma Unused URL
-		  #Pragma Unused HTTPStatus
-		  
-		  Dim TextValue As Text
-		  Try
-		    TextValue = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
-		  Catch Err As RuntimeException
-		    // Cannot be converted
-		    Self.ShowAlert("Cannot open document", "Sorry, not sure what was downloaded, but it isn't a UTF8 data.")
-		    Self.Close
-		    Return
-		  End Try
-		  
-		  Dim Document As Beacon.Document = Beacon.Document.Read(TextValue)
-		  If Document = Nil Then
-		    // Cannot be parsed correctly
-		    Self.ShowAlert("Cannot open document", "Sorry, not sure what was downloaded, but it isn't a Beacon document.")
-		    Self.Close
-		    Return
-		  End If
-		  
-		  Dim Win As New DocWindow(Document)
-		  Win.Show
-		  
-		  Self.Close
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ReceiveProgress(BytesReceived as Int64, TotalBytes as Int64, NewData as xojo.Core.MemoryBlock)
-		  #Pragma Unused NewData
-		  
-		  If Self.Progress.Maximum <> 1000 Then
-		    Self.Progress.Maximum = 1000
-		  End If
-		  
-		  Dim Value As Integer = Xojo.Math.Round((BytesReceived / TotalBytes) * Self.Progress.Maximum)
-		  If Self.Progress.Value <> Value Then
-		    Self.Progress.Value = Value
-		  End If
+		  Self.mCancelled = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents

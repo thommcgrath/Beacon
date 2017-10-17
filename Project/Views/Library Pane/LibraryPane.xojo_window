@@ -220,6 +220,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function PresetsPane() As LibraryPanePresets
+		  Return Self.PresetsView
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ShowPage(Index As Integer, UserData As Auto = Nil)
 		  If Self.Views.Value = Index Or Index = -1 Then
 		    Return

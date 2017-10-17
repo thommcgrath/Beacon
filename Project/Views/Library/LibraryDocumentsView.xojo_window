@@ -365,7 +365,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Document As BeaconAPI.Document = DocList.RowTag(DocList.ListIndex)
-		  DocumentDownloadWindow.Begin(Document.ResourceURL)
+		  MainWindow.Documents.OpenURL(Document.ResourceURL)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

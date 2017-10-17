@@ -495,7 +495,9 @@ Implements Beacon.DataSource
 		  Dim Documents() As LocalDocumentRef
 		  While Not Results.EOF
 		    Dim File As FolderItem = GetFolderItem(DecodeHex(Results.Field("saveinfo").StringValue), FolderItem.PathTypeNative)
-		    Documents.Append(New LocalDocumentRef(File, Results.Field("document_id").StringValue.ToText, Results.Field("name").StringValue.ToText))
+		    If File <> Nil And File.Exists Then
+		      Documents.Append(New LocalDocumentRef(File, Results.Field("document_id").StringValue.ToText, Results.Field("name").StringValue.ToText))
+		    End If
 		    Results.MoveNext
 		  Wend
 		  Return Documents

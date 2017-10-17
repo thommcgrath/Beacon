@@ -187,6 +187,10 @@ End
 		  Self.mDownloadQueueRunning = True
 		  Self.Downloader.ValidateCertificates = True
 		  Self.Downloader.Send("GET", URL)
+		  
+		  Self.mDownloadProgress = New DocumentDownloadWindow
+		  Self.mDownloadProgress.URL = URL
+		  Self.mDownloadProgress.ShowWithin(Self.TrueWindow)
 		End Sub
 	#tag EndMethod
 
@@ -230,12 +234,6 @@ End
 		Sub Constructor()
 		  Self.mViews = New Xojo.Core.Dictionary
 		  Self.mDocumentURLs = New Xojo.Core.Dictionary
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub DocumentOpenCallback(Ref As Beacon.DocumentRef, Document As Beacon.Document)
-		  Break
 		End Sub
 	#tag EndMethod
 
@@ -318,6 +316,9 @@ End
 		  End If
 		  
 		  Dim Ref As New LocalDocumentRef(File, Document.Identifier, Document.Title)
+		  LocalData.SharedInstance.RememberDocument(Ref)
+		  Self.UpdateLocalDocuments()
+		  
 		  Dim View As New DocumentEditorView(Ref, Document)
 		  Self.mViews.Value(Document.Identifier) = View
 		  Self.ShowView(View)
@@ -441,6 +442,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDownloadProgress As DocumentDownloadWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDownloadQueue() As Text
 	#tag EndProperty
 
@@ -455,10 +460,10 @@ End
 
 	#tag Enum, Name = DocumentTypes, Type = Integer, Flags = &h21
 		Unknown
+		  Temporary
 		  Local
 		  UserCloud
-		  CommunityCloud
-		Temporary
+		CommunityCloud
 	#tag EndEnum
 
 
@@ -541,6 +546,11 @@ End
 		  #Pragma Unused URL
 		  #Pragma Unused HTTPStatus
 		  
+		  If Self.mDownloadProgress <> Nil Then
+		    Self.mDownloadProgress.Close
+		    Self.mDownloadProgress = Nil
+		  End If
+		  
 		  Self.mDownloadQueueRunning = False
 		  Self.AdvanceDownloadQueue()
 		  
@@ -571,13 +581,24 @@ End
 		    End If
 		  Next
 		  
-		  Dim Win As New DocWindow(Document)
-		  Win.Show
+		  If DocumentRef = Nil Then
+		    DocumentRef = New TemporaryDocumentRef(Document)
+		    
+		    Dim Arr(0) As Beacon.DocumentRef
+		    Arr(0) = DocumentRef
+		    Self.AddDocuments(Arr, DocumentTypes.Unknown)
+		  End If
+		  
+		  Dim View As New DocumentEditorView(DocumentRef, Document)
+		  Self.mViews.Value(Document.Identifier) = View
+		  Self.ShowView(View)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub ReceiveProgress(BytesReceived as Int64, TotalBytes as Int64, NewData as xojo.Core.MemoryBlock)
-		  
+		  If Self.mDownloadProgress <> Nil Then
+		    Self.mDownloadProgress.Progress = BytesReceived / TotalBytes
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

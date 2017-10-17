@@ -279,6 +279,12 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Presets() As LibraryPanePresets
+		  Return Self.LibraryPane1.PresetsPane
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub ResizeSplitter(ByRef NewSize As Integer)
 		  NewSize = Max(NewSize, Self.MinSplitterPosition)

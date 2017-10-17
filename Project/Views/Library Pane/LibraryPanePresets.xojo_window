@@ -291,8 +291,8 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub NewPreset()
+	#tag Method, Flags = &h0
+		Sub NewPreset()
 		  Dim Preset As New Beacon.MutablePreset
 		  Beacon.Data.SavePreset(Preset)
 		  Self.UpdatePresets(Preset)
