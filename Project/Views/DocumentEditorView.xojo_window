@@ -32,7 +32,7 @@ Begin BeaconSubview DocumentEditorView
       Backdrop        =   0
       Caption         =   "Sources"
       CaptionEnabled  =   True
-      CaptionIsButton =   False
+      CaptionIsButton =   True
       Enabled         =   True
       HasResizer      =   True
       Height          =   41
@@ -52,7 +52,7 @@ Begin BeaconSubview DocumentEditorView
       Top             =   0
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   200
+      Width           =   250
    End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
@@ -66,7 +66,7 @@ Begin BeaconSubview DocumentEditorView
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   200
+      Left            =   250
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -82,10 +82,68 @@ Begin BeaconSubview DocumentEditorView
       Visible         =   True
       Width           =   1
    End
+   Begin BeaconListbox List
+      AutoDeactivate  =   True
+      AutoHideScrollbars=   True
+      Bold            =   False
+      Border          =   False
+      ColumnCount     =   1
+      ColumnsResizable=   False
+      ColumnWidths    =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      DefaultRowHeight=   22
+      Enabled         =   True
+      EnableDrag      =   False
+      EnableDragReorder=   False
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
+      HasHeading      =   False
+      HeadingIndex    =   -1
+      Height          =   395
+      HelpTag         =   ""
+      Hierarchical    =   False
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      RequiresSelection=   False
+      Scope           =   2
+      ScrollbarHorizontal=   False
+      ScrollBarVertical=   True
+      SelectionType   =   0
+      ShowDropIndicator=   False
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   41
+      Underline       =   False
+      UseFocusRing    =   False
+      Visible         =   True
+      Width           =   250
+      _ScrollOffset   =   0
+      _ScrollWidth    =   -1
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.UpdateCaptionButton()
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Ref As Beacon.DocumentRef, Document As Beacon.Document)
 		  Self.mDocument = Document
@@ -111,6 +169,23 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateCaptionButton()
+		  Dim Map As Beacon.Map = Self.mDocument.Map
+		  Dim DocTitle As Text = Self.mDocument.Title.Trim
+		  Dim MaxDinoLevel As Integer
+		  If Self.mDocument.DifficultyValue > 0 Then
+		    MaxDinoLevel = Round(Self.mDocument.DifficultyValue * 30)
+		  End If
+		  
+		  If DocTitle = "" Then
+		    DocTitle = Self.mRef.Name
+		  End If
+		  
+		  Header.Caption = DocTitle + EndOfLine + If(Map <> Nil, Map.Name, "Undefined Map") + If(MaxDinoLevel > 0, " Level " + MaxDinoLevel.ToText, "")
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
@@ -128,9 +203,36 @@ End
 		Sub Open()
 		  Dim AddButton As New BeaconToolbarItem("AddSource", IconAdd)
 		  AddButton.HasMenu = True
+		  AddButton.HelpTag = "Define an additional loot source. Hold to quickly add a source from a menu."
+		  
+		  Dim ShareButton As New BeaconToolbarItem("Export", IconToolbarExport, Self.mDocument.IsValid)
+		  ShareButton.HelpTag = "Export this document."
+		  
+		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
+		  DuplicateButton.HelpTag = "Duplicate the selected loot source."
+		  
+		  Dim RebuildButton As New BeaconToolbarItem("Rebuild", Nil, Self.mDocument.BeaconCount > 0)
+		  RebuildButton.HelpTag = "Rebuild all item sets using their presets."
 		  
 		  Me.LeftItems.Append(AddButton)
-		  Me.RightItems.Append(New BeaconToolbarItem("Rebuild", Nil, Self.mDocument.BeaconCount > 0))
+		  Me.LeftItems.Append(DuplicateButton)
+		  Me.RightItems.Append(RebuildButton)
+		  Me.RightItems.Append(ShareButton)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  NewSize = Max(NewSize, 250)
+		  
+		  Me.Width = NewSize
+		  FadedSeparator1.Left = NewSize
+		  List.Width = NewSize
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CaptionClicked()
+		  DocumentSetupSheet.ShowEdit(Self.TrueWindow, Self.mDocument)
+		  Self.UpdateCaptionButton()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

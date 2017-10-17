@@ -5,9 +5,13 @@ Inherits ControlCanvas
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.DrawPicture(ImgToolbarDivider, 0, 0)
 		  G.ForeColor = BeaconToolbar.BorderColor
-		  G.FillRect(0, ImgToolbarDivider.Height, G.Width, G.Height - ImgToolbarDivider.Height)
+		  If G.Width = 1 Then
+		    G.DrawPicture(ImgToolbarDivider, 0, 0)
+		    G.FillRect(0, ImgToolbarDivider.Height, G.Width, G.Height - ImgToolbarDivider.Height)
+		  Else
+		    G.FillRect(0, 0, G.Width, G.Height)
+		  End If
 		End Sub
 	#tag EndEvent
 

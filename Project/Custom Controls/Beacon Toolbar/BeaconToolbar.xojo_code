@@ -243,12 +243,24 @@ Implements ObservationKit.Observer
 		  Next
 		  
 		  If Self.Caption <> "" Then
-		    Dim CaptionWidth As Integer = Ceil(G.StringWidth(Self.Caption))
+		    Dim Caption As String = Self.Caption.NthField(EndOfLine, 1)
+		    Dim Subcaption As String = Self.Caption.NthField(EndOfLine, 2)
+		    
+		    Dim CaptionSize, SubcaptionSize As Double = 0
+		    If Subcaption <> "" Then
+		      CaptionSize = 11
+		      SubcaptionSize = 8
+		    End If
+		    
+		    G.TextSize = CaptionSize
+		    Dim CaptionWidth As Integer = Ceil(G.StringWidth(Caption))
+		    G.TextSize = SubcaptionSize
+		    Dim SubcaptionWidth As Integer = Ceil(G.StringWidth(Subcaption))
 		    
 		    If Self.CaptionIsButton Then
 		      Const CaptionPadding = 8
 		      
-		      Dim ButtonWidth As Integer = Min(CaptionWidth + (CaptionPadding * 2), ContentRect.Width)
+		      Dim ButtonWidth As Integer = Min(Max(CaptionWidth, SubcaptionWidth) + (CaptionPadding * 2), ContentRect.Width)
 		      Dim ButtonRect As New REALbasic.Rect(ContentRect.Left + ((ContentRect.Width - ButtonWidth) / 2), ContentRect.Top, ButtonWidth, ContentRect.Height)
 		      
 		      Dim ColorValue As Integer = 255
@@ -268,11 +280,30 @@ Implements ObservationKit.Observer
 		      
 		      Self.DrawButtonFrame(G, ButtonRect, Mode, BeaconToolbarItem.DefaultColor, Highlighted)
 		      
-		      Dim CaptionLeft As Integer = ButtonRect.Left + CaptionPadding
-		      Dim CaptionBottom As Integer = ButtonRect.Top + (ButtonRect.Height / 2) + ((G.TextAscent * 0.8) / 2)
+		      Dim CaptionLeft As Integer = Max(ButtonRect.HorizontalCenter - (CaptionWidth / 2), ButtonRect.Left + CaptionPadding)   
+		      Dim SubcaptionLeft As Integer = Max(ButtonRect.HorizontalCenter - (SubcaptionWidth / 2), ButtonRect.Left + CaptionPadding)
+		      
+		      G.TextSize = CaptionSize
+		      Dim CaptionHeight As Integer = G.CapHeight
+		      G.TextSize = SubcaptionSize
+		      Dim SubcaptionHeight As Integer = G.CapHeight
+		      
+		      Dim TextHeight As Integer = CaptionHeight
+		      If Subcaption <> "" Then
+		        TextHeight = TextHeight + 3 + SubcaptionHeight
+		      End If
+		      
+		      Dim TextTop As Integer = Ceil(ButtonRect.VerticalCenter - (TextHeight / 2))
+		      Dim CaptionBottom As Integer = TextTop + CaptionHeight
+		      Dim SubcaptionBottom As Integer = TextTop + TextHeight
 		      
 		      G.ForeColor = RGB(ColorValue, ColorValue, ColorValue, AlphaValue)
-		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, ButtonRect.Width - (CaptionPadding * 2), True)
+		      G.TextSize = CaptionSize
+		      G.DrawString(Caption, CaptionLeft, CaptionBottom, ButtonRect.Width - (CaptionPadding * 2), True)
+		      If Subcaption <> "" Then
+		        G.TextSize = SubcaptionSize
+		        G.DrawString(Subcaption, SubcaptionLeft, SubcaptionBottom, ButtonRect.Width - (CaptionPadding * 2), True)
+		      End If
 		      
 		      Self.mCaptionRect = ButtonRect
 		    Else
