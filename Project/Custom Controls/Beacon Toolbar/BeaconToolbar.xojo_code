@@ -278,7 +278,7 @@ Implements ObservationKit.Observer
 		        ColorValue = 51
 		      End If
 		      
-		      Self.DrawButtonFrame(G, ButtonRect, Mode, BeaconToolbarItem.DefaultColor, Highlighted)
+		      Self.DrawButtonFrame(G, ButtonRect, Mode, BeaconToolbarItem.DefaultColor, Highlighted, False)
 		      
 		      Dim CaptionLeft As Integer = Max(ButtonRect.HorizontalCenter - (CaptionWidth / 2), ButtonRect.Left + CaptionPadding)   
 		      Dim SubcaptionLeft As Integer = Max(ButtonRect.HorizontalCenter - (SubcaptionWidth / 2), ButtonRect.Left + CaptionPadding)
@@ -344,8 +344,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h21
 		Private Sub DrawButton(G As Graphics, Button As BeaconToolbarItem, Rect As REALbasic.Rect, Mode As ButtonModes, Highlighted As Boolean)
-		  Self.DrawButtonFrame(G, Rect, Mode, Button.ButtonColor, Highlighted)
-		  
+		  Self.DrawButtonFrame(G, Rect, Mode, Button.ButtonColor, Highlighted, Button.HasMenu)
 		  If Button.Icon = Nil Then
 		    Return
 		  End If
@@ -363,24 +362,19 @@ Implements ObservationKit.Observer
 		  
 		  Dim Pic As Picture = BeaconUI.IconWithColor(Button.Icon, IconColor)
 		  G.DrawPicture(Pic, Rect.Left + ((Rect.Width - Pic.Width) / 2), Rect.Top + ((Rect.Height - Pic.Height) / 2))
-		  
-		  If Button.HasMenu Then
-		    Pic = BeaconUI.IconWithColor(ImgToolbarButtonMenu, IconColor)
-		    G.DrawPicture(Pic, Rect.Left, Rect.Top + ((Rect.Height - Pic.Height) / 2))
-		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawButtonFrame(G As Graphics, Rect As REALbasic.Rect, Mode As ButtonModes, BackgroundColor As Color, Highlighted As Boolean)
+		Private Sub DrawButtonFrame(G As Graphics, Rect As REALbasic.Rect, Mode As ButtonModes, BackgroundColor As Color, Highlighted As Boolean, WithMenu As Boolean)
 		  Dim Source As Picture
 		  Select Case Mode
 		  Case ButtonModes.Normal
-		    Source = ImgToolbarButtonNormal
+		    Source = If(WithMenu, ImgToolbarMenuNormal, ImgToolbarButtonNormal)
 		  Case ButtonModes.Disabled
-		    Source = ImgToolbarButtonDisabled
+		    Source = If(WithMenu, ImgToolbarMenuDisabled, ImgToolbarButtonDisabled)
 		  Case ButtonModes.Pressed
-		    Source = ImgToolbarButtonPressed
+		    Source = If(WithMenu, ImgToolbarMenuPressed, ImgToolbarButtonPressed)
 		  End Select
 		  If Not Highlighted Then
 		    BackgroundColor = &cFFFFFF
@@ -389,19 +383,40 @@ Implements ObservationKit.Observer
 		    BackgroundColor = RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue, 128)
 		  End If
 		  
-		  Dim LeftRect As New REALbasic.Rect(0, 0, 4, Source.Height)
-		  Dim FillRect As New REALbasic.Rect(4, 0, 1, Source.Height)
-		  Dim RightRect As New REALbasic.Rect(Source.Width - 4, 0, 4, Source.Height)
+		  Dim LeftRect As New REALbasic.Rect(0, 0, 12, Source.Height)
+		  Dim FillRect As New REALbasic.Rect(12, 0, 1, Source.Height)
+		  Dim RightRect As New REALbasic.Rect(Source.Width - 12, 0, 12, Source.Height)
+		  Dim CenterRect As New REALbasic.Rect(16, 0, 8, Source.Height)
 		  Dim Top As Integer = Rect.Top + ((Rect.Height - Source.Height) / 2)
 		  
-		  Dim Mask As Picture = BeaconUI.IconWithColor(ImgToolbarButtonMask, BackgroundColor)
+		  Rect = New REALbasic.Rect(Rect.Left - 8, Rect.Top - 8, Rect.Width + 16, Rect.Height + 16)
+		  
+		  Dim Mask As Picture = BeaconUI.IconWithColor(If(WithMenu, ImgToolbarMenuMask, ImgToolbarButtonMask), BackgroundColor)
 		  G.DrawPicture(Mask, Rect.Left, Top, LeftRect.Width, LeftRect.Height, LeftRect.Left, LeftRect.Top, LeftRect.Width, LeftRect.Height)
 		  G.DrawPicture(Mask, Rect.Right - RightRect.Width, Top, RightRect.Width, RightRect.Height, RightRect.Left, RightRect.Top, RightRect.Width, RightRect.Height)
 		  G.DrawPicture(Mask, Rect.Left + LeftRect.Width, Top, Rect.Width - (LeftRect.Width + RightRect.Width), FillRect.Height, FillRect.Left, FillRect.Top, FillRect.Width, FillRect.Height)
+		  If WithMenu Then
+		    G.DrawPicture(Mask, Rect.HorizontalCenter - (CenterRect.Width / 2), Top, CenterRect.Width, CenterRect.Height, CenterRect.Left, CenterRect.Top, CenterRect.Width, CenterRect.Height)
+		  End If
 		  
 		  G.DrawPicture(Source, Rect.Left, Top, LeftRect.Width, LeftRect.Height, LeftRect.Left, LeftRect.Top, LeftRect.Width, LeftRect.Height)
 		  G.DrawPicture(Source, Rect.Right - RightRect.Width, Top, RightRect.Width, RightRect.Height, RightRect.Left, RightRect.Top, RightRect.Width, RightRect.Height)
-		  G.DrawPicture(Source, Rect.Left + LeftRect.Width, Top, Rect.Width - (LeftRect.Width + RightRect.Width), FillRect.Height, FillRect.Left, FillRect.Top, FillRect.Width, FillRect.Height)
+		  If WithMenu Then
+		    Dim TailLeft As Integer = Rect.HorizontalCenter - (CenterRect.Width / 2)
+		    Dim TailRight As Integer = TailLeft + CenterRect.Width
+		    
+		    Dim LeftSectionLeft As Integer = Rect.Left + LeftRect.Width
+		    Dim LeftSectionRight As Integer = TailLeft
+		    
+		    Dim RightSectionLeft As Integer = TailRight
+		    Dim RightSectionRight As Integer = Rect.Right - RightRect.Width
+		    
+		    G.DrawPicture(Source, TailLeft, Top, CenterRect.Width, CenterRect.Height, CenterRect.Left, CenterRect.Top, CenterRect.Width, CenterRect.Height)
+		    G.DrawPicture(Source, LeftSectionLeft, Top, LeftSectionRight - LeftSectionLeft, FillRect.Height, FillRect.Left, FillRect.Top, FillRect.Width, FillRect.Height)
+		    G.DrawPicture(Source, RightSectionLeft, Top, RightSectionRight - RightSectionLeft, FillRect.Height, FillRect.Left, FillRect.Top, FillRect.Width, FillRect.Height)
+		  Else
+		    G.DrawPicture(Source, Rect.Left + LeftRect.Width, Top, Rect.Width - (LeftRect.Width + RightRect.Width), FillRect.Height, FillRect.Left, FillRect.Top, FillRect.Width, FillRect.Height)
+		  End If
 		End Sub
 	#tag EndMethod
 

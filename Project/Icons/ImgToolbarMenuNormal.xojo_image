@@ -1,0 +1,46 @@
+#tag MultiImage
+Image ImgToolbarMenuNormal
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAGyAAAAAAGyAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8YSW1nVG9vbGJhck1lbnVOb3JtYWwucG5nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFMvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkltZ1Rvb2xiYXJNZW51Tm9ybWFsLnBuZwAADgAyABgASQBtAGcAVABvAG8AbABiAGEAcgBNAGUAbgB1AE4AbwByAG0AYQBsAC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBRVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvSW1nVG9vbGJhck1lbnVOb3JtYWwucG5nAAATAAEvAAAVAAIAEv//AAAAAAAAAAA=
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/ImgToolbarMenuNormal.png
+		PartialPath = ..\Icons\ImgToolbarMenuNormal.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 72
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAG8AAAAAAG8AAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8bSW1nVG9vbGJhck1lbnVOb3JtYWxAMngucG5nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFYvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkltZ1Rvb2xiYXJNZW51Tm9ybWFsQDJ4LnBuZwAOADgAGwBJAG0AZwBUAG8AbwBsAGIAYQByAE0AZQBuAHUATgBvAHIAbQBhAGwAQAAyAHgALgBwAG4AZwAPABoADABNAGEAYwBpAG4AdABvAHMAaAAgAEgARAASAFRVc2Vycy90aG9tbWNncmF0aC9Eb2N1bWVudHMvVGhlIFpBWiBTb3VyY2VzL0JlYWNvbi9JY29ucy9JbWdUb29sYmFyTWVudU5vcm1hbEAyeC5wbmcAEwABLwAAFQACABL//wAAAAAAAAAA
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/ImgToolbarMenuNormal@2x.png
+		PartialPath = ..\Icons\ImgToolbarMenuNormal@2x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 144
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAG8AAAAAAG8AAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8bSW1nVG9vbGJhck1lbnVOb3JtYWxAM3gucG5nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFYvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkltZ1Rvb2xiYXJNZW51Tm9ybWFsQDN4LnBuZwAOADgAGwBJAG0AZwBUAG8AbwBsAGIAYQByAE0AZQBuAHUATgBvAHIAbQBhAGwAQAAzAHgALgBwAG4AZwAPABoADABNAGEAYwBpAG4AdABvAHMAaAAgAEgARAASAFRVc2Vycy90aG9tbWNncmF0aC9Eb2N1bWVudHMvVGhlIFpBWiBTb3VyY2VzL0JlYWNvbi9JY29ucy9JbWdUb29sYmFyTWVudU5vcm1hbEAzeC5wbmcAEwABLwAAFQACABL//wAAAAAAAAAA
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/ImgToolbarMenuNormal@3x.png
+		PartialPath = ..\Icons\ImgToolbarMenuNormal@3x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 216
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+End Image
+#tag EndMultiImage
