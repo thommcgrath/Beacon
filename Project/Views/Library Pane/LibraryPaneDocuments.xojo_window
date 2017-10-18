@@ -119,6 +119,14 @@ Begin LibrarySubview LibraryPaneDocuments
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
+   End
+   Begin Beacon.ImportThread Importer
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   0
+      Scope           =   2
+      TabPanelIndex   =   0
    End
 End
 #tag EndWindow
@@ -230,6 +238,12 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub CancelImport()
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mViews = New Xojo.Core.Dictionary
@@ -259,15 +273,73 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub NewDocument()
-		  //DocumentSetupSheet.ShowCreate(Self.TrueWindow)
+	#tag Method, Flags = &h21
+		Private Sub FinishImport(Sources() As Beacon.LootSource)
+		  If UBound(Sources) = -1 Then
+		    Self.ShowAlert("No loot sources imported.", "The file contained no loot sources.")
+		    Return
+		  End If
+		  
+		  Dim Document As Beacon.Document = Self.mImportedRef.Document
+		  Dim GuessedMap As Beacon.Map = Beacon.Maps.GuessMap(Sources)
+		  If GuessedMap <> Document.Map Then
+		    If Self.ShowConfirm(GuessedMap.Name + " may be a better map selection. Would you like to change your settings?", "Beacon will only import loot sources which are valid for the selected map.", "Change Settings", "Keep Importing") Then
+		      Dim OriginalMap As Beacon.Map = Document.Map
+		      Document.Map = GuessedMap
+		      If Not DocumentSetupSheet.Present(Self, Document, DocumentSetupSheet.Modes.Edit) Then
+		        Document.Map = OriginalMap
+		      End If
+		    End If
+		  End If
+		  
+		  For Each Source As Beacon.LootSource In Sources
+		    If Source.ValidForMap(Document.Map) Then
+		      Document.Add(Source)
+		    End If
+		  Next
+		  If Document.BeaconCount = 0 Then
+		    Self.ShowAlert("Nothing imported", "No loot sources were imported for the selected map.")
+		    Return
+		  End If
 		  
 		  Dim Arr(0) As Beacon.DocumentRef
-		  Arr(0) = New TemporaryDocumentRef
+		  Arr(0) = Self.mImportedRef
 		  Self.AddDocuments(Arr, DocumentTypes.Unknown)
-		  Self.OpenDocument(Arr(0))
+		  
+		  Dim View As New DocumentEditorView(Self.mImportedRef, Document)
+		  View.ContentsChanged = True
+		  Self.mViews.Value(Document.Identifier) = View
 		  Self.SelectedDocuments = Arr
+		  Self.ShowView(View)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ImportFile(File As FolderItem)
+		  Dim Ref As New TemporaryDocumentRef
+		  If DocumentSetupSheet.Present(Self, Ref.Document, DocumentSetupSheet.Modes.Import) Then
+		    Self.mImportedRef = Ref
+		    
+		    Self.mImportProgress = New ImporterWindow
+		    Self.mImportProgress.Source = File.DisplayName
+		    Self.mImportProgress.CancelAction = WeakAddressOf Self.CancelImport
+		    Self.mImportProgress.ShowWithin(Self.TrueWindow)
+		    
+		    Self.Importer.Run(File)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NewDocument()
+		  Dim Ref As New TemporaryDocumentRef
+		  If DocumentSetupSheet.Present(Self, Ref.Document, DocumentSetupSheet.Modes.Create) Then
+		    Dim Arr(0) As Beacon.DocumentRef
+		    Arr(0) = Ref
+		    Self.AddDocuments(Arr, DocumentTypes.Unknown)
+		    Self.OpenDocument(Ref)
+		    Self.SelectedDocuments = Arr
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -454,6 +526,14 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mImportedRef As TemporaryDocumentRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mImportProgress As ImporterWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mViews As Xojo.Core.Dictionary
 	#tag EndProperty
 
@@ -598,6 +678,24 @@ End
 		Sub ReceiveProgress(BytesReceived as Int64, TotalBytes as Int64, NewData as xojo.Core.MemoryBlock)
 		  If Self.mDownloadProgress <> Nil Then
 		    Self.mDownloadProgress.Progress = BytesReceived / TotalBytes
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Importer
+	#tag Event
+		Sub UpdateUI()
+		  If Me.LootSourcesProcessed = Me.BeaconCount Then
+		    If Self.mImportProgress <> Nil Then
+		      Self.mImportProgress.Close
+		      Self.mImportProgress = Nil
+		    End If
+		    
+		    Self.FinishImport(Me.LootSources)
+		    Return
+		  ElseIf Self.mImportProgress <> Nil Then
+		    Self.mImportProgress.BeaconCount = Me.BeaconCount
+		    Self.mImportProgress.LootSourcesProcessed = Me.LootSourcesProcessed
 		  End If
 		End Sub
 	#tag EndEvent

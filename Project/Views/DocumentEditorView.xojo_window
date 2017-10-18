@@ -33,7 +33,9 @@ Begin BeaconSubview DocumentEditorView
       Caption         =   "Sources"
       CaptionEnabled  =   True
       CaptionIsButton =   True
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       HasResizer      =   True
       Height          =   41
       HelpTag         =   ""
@@ -50,6 +52,7 @@ Begin BeaconSubview DocumentEditorView
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   250
@@ -231,8 +234,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CaptionClicked()
-		  DocumentSetupSheet.ShowEdit(Self.TrueWindow, Self.mDocument)
-		  Self.UpdateCaptionButton()
+		  If DocumentSetupSheet.Present(Self, Self.mDocument, DocumentSetupSheet.Modes.Edit) Then
+		    Self.UpdateCaptionButton()
+		    Self.ContentsChanged = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

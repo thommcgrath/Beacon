@@ -183,7 +183,7 @@ Inherits Application
 		  End If
 		  
 		  If Item.IsType(BeaconFileTypes.IniFile) Then
-		    DocumentSetupDialog.ShowImport(Item)
+		    MainWindow.Documents.ImportFile(Item)
 		    Return
 		  End If
 		  

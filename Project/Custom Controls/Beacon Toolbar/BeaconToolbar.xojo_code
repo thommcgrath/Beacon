@@ -261,7 +261,7 @@ Implements ObservationKit.Observer
 		      Const CaptionPadding = 8
 		      
 		      Dim ButtonWidth As Integer = Min(Max(CaptionWidth, SubcaptionWidth) + (CaptionPadding * 2), ContentRect.Width)
-		      Dim ButtonRect As New REALbasic.Rect(ContentRect.Left + ((ContentRect.Width - ButtonWidth) / 2), ContentRect.Top, ButtonWidth, ContentRect.Height)
+		      Dim ButtonRect As New REALbasic.Rect(ContentRect.Left + ((ContentRect.Width - ButtonWidth) / 2), CellPadding, ButtonWidth, ButtonSize)
 		      
 		      Dim ColorValue As Integer = 255
 		      Dim AlphaValue As Integer = 0
