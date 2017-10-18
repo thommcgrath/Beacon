@@ -150,6 +150,14 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ForgetDocument(Document As LocalDocumentRef)
+		  Self.BeginTransaction()
+		  Self.SQLExecute("DELETE FROM local_documents WHERE LOWER(document_id) = LOWER(?1);", Document.DocumentID)
+		  Self.Commit()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetCustomEngrams() As Beacon.Engram()
 		  Try
 		    Dim RS As RecordSet = Self.SQLSelect("SELECT path, label, availability, can_blueprint FROM engrams WHERE built_in = 0;")

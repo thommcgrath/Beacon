@@ -30,9 +30,9 @@ Begin LibrarySubview LibraryPaneDocuments
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   False
-      ColumnCount     =   1
+      ColumnCount     =   2
       ColumnsResizable=   False
-      ColumnWidths    =   ""
+      ColumnWidths    =   "*,22"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
@@ -60,7 +60,7 @@ Begin LibrarySubview LibraryPaneDocuments
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionType   =   0
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -126,6 +126,8 @@ Begin LibrarySubview LibraryPaneDocuments
       LockedInPosition=   False
       Priority        =   0
       Scope           =   2
+      StackSize       =   ""
+      State           =   ""
       TabPanelIndex   =   0
    End
 End
@@ -221,6 +223,18 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
+		  If Success Then
+		    Return
+		  End If
+		  
+		  Self.ShowAlert("Cloud document was not deleted", Message)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub APICallback_UserDocumentsList(Success As Boolean, Message As Text, Details As Auto)
 		  #Pragma Unused Message
 		  
@@ -302,14 +316,13 @@ End
 		    Return
 		  End If
 		  
-		  Dim Arr(0) As Beacon.DocumentRef
-		  Arr(0) = Self.mImportedRef
-		  Self.AddDocuments(Arr, DocumentTypes.Unknown)
+		  Self.mTempDocuments.Append(Self.mImportedRef)
+		  Self.AddDocuments(Self.mTempDocuments, DocumentTypes.Temporary)
+		  Self.SelectDocument(Self.mImportedRef)
 		  
 		  Dim View As New DocumentEditorView(Self.mImportedRef, Document)
 		  View.ContentsChanged = True
 		  Self.mViews.Value(Document.Identifier) = View
-		  Self.SelectedDocuments = Arr
 		  Self.ShowView(View)
 		End Sub
 	#tag EndMethod
@@ -334,11 +347,11 @@ End
 		Sub NewDocument()
 		  Dim Ref As New TemporaryDocumentRef
 		  If DocumentSetupSheet.Present(Self, Ref.Document, DocumentSetupSheet.Modes.Create) Then
-		    Dim Arr(0) As Beacon.DocumentRef
-		    Arr(0) = Ref
-		    Self.AddDocuments(Arr, DocumentTypes.Unknown)
+		    Self.mTempDocuments.Append(Ref)
+		    
+		    Self.AddDocuments(Self.mTempDocuments, DocumentTypes.Temporary)
+		    Self.SelectDocument(Ref)
 		    Self.OpenDocument(Ref)
-		    Self.SelectedDocuments = Arr
 		  End If
 		End Sub
 	#tag EndMethod
@@ -436,6 +449,14 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SelectDocument(Document As Beacon.DocumentRef)
+		  For I As Integer = Self.List.ListCount - 1 DownTo 0
+		    Self.List.Selected(I) = Beacon.DocumentRef(Self.List.RowTag(I)).DocumentID = Document.DocumentID
+		  Next
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function SelectedDocuments() As Beacon.DocumentRef()
 		  Dim Refs() As Beacon.DocumentRef
@@ -493,6 +514,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateTempDocuments()
+		  Self.AddDocuments(Self.mTempDocuments, DocumentTypes.Temporary)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateUserDocuments()
 		  Dim Params As New Xojo.Core.Dictionary
 		  Params.Value("user_id") = App.Identity.Identifier
@@ -531,6 +558,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mImportProgress As ImporterWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTempDocuments() As TemporaryDocumentRef
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -583,6 +614,142 @@ End
 		    Return True
 		  End Select
 		End Function
+	#tag EndEvent
+	#tag Event
+		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean) As Boolean
+		  If Column <> 1 Then
+		    Return False
+		  End If
+		  
+		  If Row >= Me.ListCount Then
+		    Return False
+		  End If
+		  
+		  Dim Ref As Beacon.DocumentRef = Me.RowTag(Row)
+		  Dim Type As DocumentTypes = Self.DocumentType(Ref)
+		  Dim Icon As Picture
+		  
+		  Select Case Type
+		  Case DocumentTypes.CommunityCloud
+		    Icon = IconDocumentCommunity
+		  Case DocumentTypes.UserCloud
+		    Icon = IconDocumentCloud
+		  End Select
+		  
+		  If Icon = Nil Then
+		    Return False
+		  End If
+		  
+		  Icon = BeaconUI.IconWithColor(Icon, RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 64))
+		  G.DrawPicture(Icon, (G.Width - Icon.Width) / 2, (Me.DefaultRowHeight - Icon.Height) / 2)
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  If Me.SelCount = 0 Then
+		    Return False
+		  End If
+		  
+		  For I As Integer = Me.ListCount - 1 DownTo 0
+		    If Not Me.Selected(I) Then
+		      Continue For I
+		    End If
+		    
+		    Dim Ref As Beacon.DocumentRef = Me.RowTag(I)
+		    Dim Type As DocumentTypes = Self.DocumentType(Ref)
+		    
+		    Select Case Type
+		    Case DocumentTypes.Unknown, DocumentTypes.CommunityCloud
+		      Return False
+		    End Select
+		  Next
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  // Temporary and local can be deleted directly
+		  // User cloud can be deleted via api
+		  // Community cloud cannot be deleted
+		  
+		  Dim Documents() As Beacon.DocumentRef
+		  
+		  For I As Integer = Me.ListCount - 1 DownTo 0
+		    If Not Me.Selected(I) Then
+		      Continue For I
+		    End If
+		    
+		    Dim Ref As Beacon.DocumentRef = Me.RowTag(I)
+		    Dim Type As DocumentTypes = Self.DocumentType(Ref)
+		    
+		    Select Case Type
+		    Case DocumentTypes.Local, DocumentTypes.Temporary, DocumentTypes.UserCloud
+		      Documents.Append(Ref)
+		    End Select
+		  Next
+		  
+		  If Warn Then
+		    Dim Message, Explanation As String
+		    If Documents.Ubound = 0 Then
+		      Message = "Are you sure you want to delete this document?"
+		    Else
+		      Message = "Are you sure you want to delete these " + Str(Documents.Ubound + 1, "-0") + " documents?"
+		    End If
+		    Explanation = "Files will be deleted immediately and cannot be recovered."
+		    
+		    If Not Self.ShowConfirm(Message, Explanation, "Delete", "Cancel") Then
+		      Return
+		    End If
+		  End If
+		  
+		  Dim UpdateLocal, UpdateCloud, UpdateTemps As Boolean
+		  For Each Ref As Beacon.DocumentRef In Documents
+		    Dim DocumentID As Text = Ref.DocumentID
+		    Dim View As DocumentEditorView
+		    If Self.mViews.HasKey(DocumentID) Then
+		      View = Self.mViews.Value(DocumentID)
+		    End If
+		    
+		    If View <> Nil Then
+		      If View.ContentsChanged Then
+		        Break
+		      End If
+		      
+		      Self.DiscardView(View)
+		    End If
+		    
+		    If Ref IsA LocalDocumentRef Then
+		      LocalDocumentRef(Ref).File.Delete
+		      LocalData.SharedInstance.ForgetDocument(LocalDocumentRef(Ref))
+		      UpdateLocal = True
+		    ElseIf Ref IsA BeaconAPI.Document Then
+		      Dim Request As New BeaconAPI.Request(BeaconAPI.Document(Ref).ResourceURL, "DELETE", AddressOf APICallback_DocumentDelete)
+		      Request.Sign(App.Identity)
+		      Self.APISocket.Start(Request)
+		      
+		      UpdateCloud = True
+		    ElseIf Ref IsA TemporaryDocumentRef Then
+		      For I As Integer = Self.mTempDocuments.Ubound DownTo 0
+		        If Self.mTempDocuments(I).DocumentID = Ref.DocumentID Then
+		          Self.mTempDocuments.Remove(I)
+		          UpdateTemps = True
+		        End If
+		      Next
+		    End If
+		  Next
+		  
+		  If UpdateCloud Then
+		    Self.UpdateUserDocuments()
+		  End If
+		  If UpdateLocal Then
+		    Self.UpdateLocalDocuments()
+		  End If
+		  If UpdateTemps Then
+		    Self.UpdateTempDocuments()
+		  End If
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Header
@@ -663,10 +830,10 @@ End
 		  
 		  If DocumentRef = Nil Then
 		    DocumentRef = New TemporaryDocumentRef(Document)
+		    Self.mTempDocuments.Append(TemporaryDocumentRef(DocumentRef))
 		    
-		    Dim Arr(0) As Beacon.DocumentRef
-		    Arr(0) = DocumentRef
-		    Self.AddDocuments(Arr, DocumentTypes.Unknown)
+		    Self.AddDocuments(Self.mTempDocuments, DocumentTypes.Temporary)
+		    Self.SelectDocument(DocumentRef)
 		  End If
 		  
 		  Dim View As New DocumentEditorView(DocumentRef, Document)
