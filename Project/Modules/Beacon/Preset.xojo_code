@@ -187,7 +187,11 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function Grouping() As Text
-		  Return Self.mGrouping
+		  If Self.mGrouping.Trim = "" Then
+		    Return "Miscellaneous"
+		  Else
+		    Return Self.mGrouping.Trim
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -304,11 +308,11 @@ Implements Beacon.Countable
 		  Modifiers.Value("Sea") = SeaModifiers
 		  
 		  Dim Dict As New Xojo.Core.Dictionary
-		  Dict.Value("ID") = Self.mPresetID
-		  Dict.Value("Label") = Self.mLabel
-		  Dict.Value("Grouping") = Self.mGrouping
-		  Dict.Value("Min") = Self.mMinItems
-		  Dict.Value("Max") = Self.mMaxItems
+		  Dict.Value("ID") = Self.PresetID
+		  Dict.Value("Label") = Self.Label
+		  Dict.Value("Grouping") = Self.Grouping
+		  Dict.Value("Min") = Self.MinItems
+		  Dict.Value("Max") = Self.MaxItems
 		  Dict.Value("Entries") = Contents
 		  Dict.Value("Modifiers") = Modifiers
 		  Return Dict
