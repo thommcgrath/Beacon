@@ -1272,7 +1272,7 @@ Begin Window LootSourceWizard
       Begin CheckBox DefineAvailabilityChecks
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "Abberation"
+         Caption         =   "Aberration"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True

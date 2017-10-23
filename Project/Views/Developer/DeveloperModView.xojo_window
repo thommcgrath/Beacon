@@ -43,6 +43,7 @@ Begin ContainerControl DeveloperModView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   3
       Visible         =   True
@@ -143,6 +144,7 @@ Begin ContainerControl DeveloperModView
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "You have not yet confirmed ownership of this mod. To so do, please copy the value below and insert it anywhere on the mod's Steam page. Then press the ""Confirm Ownership"" button below. Once confirmed, the text can be removed from your Steam page."
          TextAlign       =   1
          TextColor       =   &c00000000
@@ -208,6 +210,7 @@ Begin ContainerControl DeveloperModView
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "No Mod Selected"
          TextAlign       =   1
          TextColor       =   &c00000000
@@ -237,6 +240,7 @@ Begin ContainerControl DeveloperModView
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
+         TabStop         =   True
          Top             =   199
          Value           =   0
          Visible         =   True
@@ -265,7 +269,7 @@ Begin ContainerControl DeveloperModView
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Center	Ragnarok	Abberation"
+         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Center	Ragnarok	Aberration"
          Italic          =   False
          Left            =   0
          LockBottom      =   True
@@ -323,6 +327,7 @@ Begin ContainerControl DeveloperModView
       End
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -585,7 +590,7 @@ End
 		  EngramList.CellCheck(Index, 4) = Engram.ValidForMap(Beacon.Maps.ScorchedEarth)
 		  EngramList.CellCheck(Index, 5) = Engram.ValidForMap(Beacon.Maps.TheCenter)
 		  EngramList.CellCheck(Index, 6) = Engram.ValidForMap(Beacon.Maps.Ragnarok)
-		  EngramList.CellCheck(Index, 7) = Engram.ValidForMap(Beacon.Maps.Abberation)
+		  EngramList.CellCheck(Index, 7) = Engram.ValidForMap(Beacon.Maps.Aberration)
 		  
 		  EngramList.RowTag(Index) = Engram
 		End Sub
@@ -748,7 +753,7 @@ End
 		  Case 6
 		    Engram.ValidForMap(Beacon.Maps.Ragnarok) = Me.CellCheck(Row, Column)
 		  Case 7
-		    Engram.ValidForMap(Beacon.Maps.Abberation) = Me.CellCheck(Row, Column)
+		    Engram.ValidForMap(Beacon.Maps.Aberration) = Me.CellCheck(Row, Column)
 		  End Select
 		  
 		  Self.EngramSet.Add(Engram)

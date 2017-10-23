@@ -418,6 +418,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Preset Name:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -452,6 +453,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Group:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -486,6 +488,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   4
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Min Items:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -520,6 +523,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   6
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Max Items:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -625,6 +629,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Adjust Quality By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -659,6 +664,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Tiers"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -736,6 +742,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -841,6 +848,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Adjust Quality By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -875,6 +883,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Tiers"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -952,6 +961,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1057,6 +1067,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Adjust Quality By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1091,6 +1102,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Tiers"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -1168,6 +1180,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1273,6 +1286,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Adjust Quality By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1307,6 +1321,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Tiers"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -1384,6 +1399,7 @@ Begin ContainerControl PresetEditor
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Multiply Quantity By"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1497,7 +1513,7 @@ End
 		  ContentsList.CellCheck(Index, Self.ColumnScorchedValid) = Entry.ValidForMap(Beacon.Maps.ScorchedEarth)
 		  ContentsList.CellCheck(Index, Self.ColumnCenterValid) = Entry.ValidForMap(Beacon.Maps.TheCenter)
 		  ContentsList.CellCheck(Index, Self.ColumnRagnarokValid) = Entry.ValidForMap(Beacon.Maps.Ragnarok)
-		  ContentsList.CellCheck(Index, Self.ColumnAbberationValid) = Entry.ValidForMap(Beacon.Maps.Abberation)
+		  ContentsList.CellCheck(Index, Self.ColumnAberrationValid) = Entry.ValidForMap(Beacon.Maps.Aberration)
 		  ContentsList.CellCheck(Index, Self.ColumnQualityLock) = Not Entry.RespectQualityModifier
 		  ContentsList.CellCheck(Index, Self.ColumnQuantityLock) = Not Entry.RespectQuantityMultiplier
 		  
@@ -1537,7 +1553,7 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = ColumnAbberationValid, Type = Double, Dynamic = False, Default = \"7", Scope = Private
+	#tag Constant, Name = ColumnAberrationValid, Type = Double, Dynamic = False, Default = \"7", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnCenterValid, Type = Double, Dynamic = False, Default = \"5", Scope = Private
@@ -1581,7 +1597,7 @@ End
 		  Me.ColumnType(Self.ColumnScorchedValid) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnCenterValid) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnRagnarokValid) = Listbox.TypeCheckbox
-		  Me.ColumnType(Self.ColumnAbberationValid) = Listbox.TypeCheckbox
+		  Me.ColumnType(Self.ColumnAberrationValid) = Listbox.TypeCheckbox
 		  
 		  Me.Column(Self.ColumnDescription).WidthExpression = "*"
 		  Me.Column(Self.ColumnQuantity).WidthExpression = "70"
@@ -1590,7 +1606,7 @@ End
 		  Me.Column(Self.ColumnScorchedValid).WidthExpression = "70"
 		  Me.Column(Self.ColumnCenterValid).WidthExpression = "70"
 		  Me.Column(Self.ColumnRagnarokValid).WidthExpression = "70"
-		  Me.Column(Self.ColumnAbberationValid).WidthExpression = "70"
+		  Me.Column(Self.ColumnAberrationValid).WidthExpression = "70"
 		  Me.Column(Self.ColumnQuantityLock).WidthExpression = "70"
 		  Me.Column(Self.ColumnQualityLock).WidthExpression = "70"
 		  
@@ -1601,7 +1617,7 @@ End
 		  Me.Heading(Self.ColumnScorchedValid) = "Scorched"
 		  Me.Heading(Self.ColumnCenterValid) = "Center"
 		  Me.Heading(Self.ColumnRagnarokValid) = "Ragnarok"
-		  Me.Heading(Self.ColumnAbberationValid) = "Abberation"
+		  Me.Heading(Self.ColumnAberrationValid) = "Aberration"
 		  Me.Heading(Self.ColumnQuantityLock) = "Lock Qty"
 		  Me.Heading(Self.ColumnQualityLock) = "Lock Qlty"
 		  
@@ -1641,8 +1657,8 @@ End
 		    Case Self.ColumnRagnarokValid
 		      Entry.ValidForMap(Beacon.Maps.Ragnarok) = Value
 		      Self.ContentsChanged = True
-		    Case Self.ColumnAbberationValid
-		      Entry.ValidForMap(Beacon.Maps.Abberation) = Value
+		    Case Self.ColumnAberrationValid
+		      Entry.ValidForMap(Beacon.Maps.Aberration) = Value
 		      Self.ContentsChanged = True
 		    Case Self.ColumnQualityLock
 		      Entry.RespectQualityModifier = Not Value

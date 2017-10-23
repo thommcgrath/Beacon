@@ -15,8 +15,8 @@ Protected Class Engram
 		  If Self.ValidForMap(Beacon.Maps.Ragnarok) Then
 		    Environments.Append("Ragnarok")
 		  End If
-		  If Self.ValidForMap(Beacon.Maps.Abberation) Then
-		    Environments.Append("Abberation")
+		  If Self.ValidForMap(Beacon.Maps.Aberration) Then
+		    Environments.Append("Aberration")
 		  End If
 		  
 		  Dim Dict As New Xojo.Core.Dictionary
@@ -99,8 +99,8 @@ Protected Class Engram
 		      Map = Beacon.Maps.TheCenter
 		    Case "ragnarok"
 		      Map = Beacon.Maps.Ragnarok
-		    Case "abberation"
-		      Map = Beacon.Maps.Abberation
+		    Case "abberation", "aberration"
+		      Map = Beacon.Maps.Aberration
 		    End Select
 		    If Map <> Nil Then
 		      Self.ValidForMap(Map) = True
@@ -243,7 +243,7 @@ Protected Class Engram
 		#tag ViewProperty
 			Name="Availability"
 			Group="Behavior"
-			Type="UInteger"
+			Type="UInt64"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="CanBeBlueprint"
