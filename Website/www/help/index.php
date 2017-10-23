@@ -16,7 +16,7 @@ $default_scorched_updated = (count($default_scorched_document) == 1) ? $default_
 	<p>As much as Beacon attempts to be self-explaining, sometimes there are problems that require human interaction.</p>
 	<h3>Modifying the default loot</h3>
 	<div class="indent">
-		<p>Beacon does not have official support for editing the default loot, however community member Vyvin has extracted the default loot for The Island and Scorched Earth and shared the results.</p>
+		<p>Beacon does not have official support for editing the default loot, however community member <a href="https://steamcommunity.com/id/vyvin">Vyvin</a> has extracted the default loot for The Island and Scorched Earth and shared the results.</p>
 		<ol>
 			<li><a href="https://api.beaconapp.cc/v1/document.php/eab656ca-20c6-4bec-bd15-6066f0fb16d3">The Island</a><?php if ($default_island_updated !== null) { echo ', updated <time datetime="' . $default_island_updated->format('c') . '">' . $default_island_updated->format('F jS, Y') . ' at ' . $default_island_updated->format('g:i A') . ' UTC</time>'; } ?></li>
 			<li><a href="https://api.beaconapp.cc/v1/document.php/08bccb22-3c06-4982-b267-c2abd81e959a">Scorched Earth</a><?php if ($default_scorched_updated !== null) { echo ', updated <time datetime="' . $default_scorched_updated->format('c') . '">' . $default_scorched_updated->format('F jS, Y') . ' at ' . $default_scorched_updated->format('g:i A') . ' UTC</time>'; } ?></li>

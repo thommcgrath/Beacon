@@ -1,8 +1,8 @@
 #tag Module
 Protected Module Maps
 	#tag Method, Flags = &h1
-		Protected Function Abberation() As Beacon.Map
-		  Return New Beacon.Map("Abberation", 16, 5.0)
+		Protected Function Aberration() As Beacon.Map
+		  Return New Beacon.Map("Aberration", 16, 5.0)
 		End Function
 	#tag EndMethod
 
@@ -13,7 +13,7 @@ Protected Module Maps
 		  Maps(1) = Beacon.Maps.ScorchedEarth
 		  Maps(2) = Beacon.Maps.TheCenter
 		  Maps(3) = Beacon.Maps.Ragnarok
-		  Maps(4) = Beacon.Maps.Abberation
+		  Maps(4) = Beacon.Maps.Aberration
 		  Return Maps
 		  
 		End Function
