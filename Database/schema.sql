@@ -58,6 +58,7 @@ CREATE TABLE loot_sources (
 	icon BYTEA NOT NULL,
 	sort INTEGER NOT NULL UNIQUE,
 	use_blueprints BOOLEAN NOT NULL DEFAULT TRUE,
+	required_item_sets INTEGER NOT NULL DEFAULT 1,
 	CHECK (class_string LIKE '%_C')
 );
 GRANT SELECT ON TABLE loot_sources TO thezaz_website;

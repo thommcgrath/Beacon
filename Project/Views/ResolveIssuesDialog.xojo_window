@@ -48,6 +48,7 @@ Begin Window ResolveIssuesDialog
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "This document has problems that must be resolved"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -127,6 +128,7 @@ Begin Window ResolveIssuesDialog
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   0
+      ShowDropIndicator=   False
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -163,6 +165,7 @@ Begin Window ResolveIssuesDialog
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "To resolve unknown blueprint problems, paste their spawn codes below. It is ok to include more codes than necessary, Beacon will use only the ones it needs."
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -270,7 +273,7 @@ End
 		Private Sub Constructor(Document As Beacon.Document, Issues() As String)
 		  Self.Issues = Issues
 		  Self.Document = Document
-		  SUper.Constructor()
+		  Super.Constructor()
 		End Sub
 	#tag EndMethod
 
@@ -291,8 +294,8 @@ End
 		      Continue
 		    End If
 		    
-		    If Source.Count = 0 Then
-		      Issues.Value("Loot source " + Source.Label + " is empty.") = True
+		    If Source.Count < Source.RequiredItemSets Then
+		      Issues.Value("Loot source " + Source.Label + " is needs at least " + Str(Source.RequiredItemSets, "-0") + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.") = True
 		    Else
 		      For Each Set As Beacon.ItemSet In Source
 		        If Set.IsValid Then

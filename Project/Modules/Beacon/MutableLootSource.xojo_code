@@ -46,6 +46,12 @@ Inherits Beacon.LootSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub RequiredItemSets(Assigns Value As Integer)
+		  Self.mRequiredItemSets = Max(Value, 1)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SortValue(Assigns Value As Integer)
 		  Self.mSortValue = Value
 		End Sub

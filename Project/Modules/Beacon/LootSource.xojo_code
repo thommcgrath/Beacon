@@ -95,6 +95,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("SortValue") = Self.mSortValue
 		  Keys.Value("Label") = Self.mLabel
 		  Keys.Value("UseBlueprints") = Self.mUseBlueprints
+		  Keys.Value("RequiredItemSets") = Self.RequiredItemSets
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -146,6 +147,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
 		    MutableSource.Label = Dict.Lookup("Label", ClassString)
 		    MutableSource.UseBlueprints = Dict.Lookup("UseBlueprints", False)
+		    MutableSource.RequiredItemSets = Dict.Lookup("RequiredItemSets", 1)
 		    LootSource = New Beacon.LootSource(MutableSource)
 		  End If
 		  
@@ -208,6 +210,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
 		    MutableSource.Label = Dict.Lookup("Label", ClassString)
 		    MutableSource.UseBlueprints = Dict.Lookup("UseBlueprints", False)
+		    MutableSource.RequiredItemSets = Dict.Lookup("RequiredItemSets", 1)
 		    LootSource = New Beacon.LootSource(MutableSource)
 		  End If
 		  
@@ -429,6 +432,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function RequiredItemSets() As Integer
+		  Return Self.mRequiredItemSets
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SortValue() As Integer
 		  Return Self.mSortValue
 		End Function
@@ -579,6 +588,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mNumItemSetsPower As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mRequiredItemSets As Integer = 1
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

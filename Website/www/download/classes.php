@@ -13,9 +13,9 @@ $min_version = array_key_exists('version', $_GET) ? intval($_GET['version']) : n
 $database = BeaconCommon::Database();
 $values = array();
 
-# Loot Soruces
+# Loot Sources
 
-$source_columns = "class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version, encode(icon, 'hex') AS icon_hex, use_blueprints";
+$source_columns = "class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, sort, min_version, encode(icon, 'hex') AS icon_hex, use_blueprints, required_item_sets";
 if ($since === null) {
 	if ($min_version === null) {
 		$results = $database->Query("SELECT $source_columns FROM loot_sources WHERE min_version IS NULL;");
@@ -48,7 +48,8 @@ while (!$results->EOF()) {
 		'icon_hex' => $results->Field('icon_hex'),
 		'sort' => intval($results->Field('sort')),
 		'version' => intval($results->Field('min_version')),
-		'use_blueprints' => ($results->Field('use_blueprints') == 't') ? 1 : 0
+		'use_blueprints' => ($results->Field('use_blueprints') == 't') ? 1 : 0,
+		'required_item_sets' => $results->Field('required_item_sets')
 	);
 	$results->MoveNext();
 }
