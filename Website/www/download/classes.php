@@ -49,7 +49,7 @@ while (!$results->EOF()) {
 		'sort' => intval($results->Field('sort')),
 		'version' => intval($results->Field('min_version')),
 		'use_blueprints' => ($results->Field('use_blueprints') == 't') ? 1 : 0,
-		'required_item_sets' => $results->Field('required_item_sets')
+		'required_item_sets' => intval($results->Field('required_item_sets'))
 	);
 	$results->MoveNext();
 }
