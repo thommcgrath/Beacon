@@ -21,7 +21,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("PRAGMA foreign_keys = ON;")
 		  Self.SQLExecute("PRAGMA journal_mode = WAL;")
 		  
-		  Self.SQLExecute("CREATE TABLE loot_sources (class_string TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, kind TEXT NOT NULL, engram_mask INTEGER NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, icon BLOB NOT NULL, sort INTEGER NOT NULL UNIQUE, use_blueprints INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE loot_sources (class_string TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, kind TEXT NOT NULL, engram_mask INTEGER NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, icon BLOB NOT NULL, sort INTEGER NOT NULL UNIQUE, use_blueprints INTEGER NOT NULL, required_item_sets INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE engrams (path TEXT NOT NULL PRIMARY KEY, class_string TEXT NOT NULL, label TEXT NOT NULL, availability INTEGER NOT NULL, can_blueprint INTEGER NOT NULL, built_in INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE official_presets (preset_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
@@ -231,7 +231,7 @@ Implements Beacon.DataSource
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Try
-		    Dim Results As RecordSet = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort, use_blueprints FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
+		    Dim Results As RecordSet = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort, use_blueprints, required_item_sets FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
 		    If Results.RecordCount = 0 Then
 		      Return Nil
 		    End If
@@ -376,9 +376,10 @@ Implements Beacon.DataSource
 		      Dim IconHex As Text = Dict.Value("icon_hex")
 		      Dim SortValue As Integer = Dict.Value("sort")
 		      Dim UseBlueprints As Boolean = (Dict.Value("use_blueprints") = 1)
+		      Dim RequiredItemSets As Integer = Dict.Lookup("required_item_sets", 1)
 		      
 		      Self.SQLExecute("DELETE FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
-		      Self.SQLExecute("INSERT INTO loot_sources (class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, icon, sort, use_blueprints) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10);", ClassString, Label, Kind, Availability, MultMin, MultMax, UIColor, DecodeHex(IconHex), SortValue, UseBlueprints)
+		      Self.SQLExecute("INSERT INTO loot_sources (class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, icon, sort, use_blueprints, required_item_sets) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);", ClassString, Label, Kind, Availability, MultMin, MultMax, UIColor, DecodeHex(IconHex), SortValue, UseBlueprints, RequiredItemSets)
 		    Next
 		    
 		    Dim EngramAdditions() As Auto = EngramsDict.Value("additions")
@@ -521,7 +522,9 @@ Implements Beacon.DataSource
 		  
 		  Dim Commands() As String
 		  If FromSchemaVersion <= 1 Then
-		    Commands.Append("INSERT INTO loot_sources SELECT *, 1 AS use_blueprints FROM legacy.loot_sources;")
+		    Commands.Append("INSERT INTO loot_sources SELECT *, 1 AS use_blueprints, 1 AS required_item_sets FROM legacy.loot_sources;")
+		  ElseIf FromSchemaVersion <= 3 Then
+		    Commands.Append("INSERT INTO loot_sources SELECT *, 1 AS required_item_sets FROM legacy.loot_sources;")
 		  Else
 		    Commands.Append("INSERT INTO loot_sources SELECT * FROM legacy.loot_sources;")
 		  End If
@@ -688,6 +691,7 @@ Implements Beacon.DataSource
 		    Source.UIColor = RGB(Integer.FromHex(RedHex.ToText), Integer.FromHex(GreenHex.ToText), Integer.FromHex(BlueHex.ToText), Integer.FromHex(AlphaHex.ToText))
 		    Source.SortValue = Results.Field("sort").IntegerValue
 		    Source.UseBlueprints = Results.Field("use_blueprints").BooleanValue
+		    Source.RequiredItemSets = Results.Field("required_item_sets").IntegerValue
 		    Sources.Append(New Beacon.LootSource(Source))
 		    Results.MoveNext
 		  Wend
@@ -827,9 +831,9 @@ Implements Beacon.DataSource
 		  Try
 		    Dim Results As RecordSet
 		    If SearchText = "" Then
-		      Results = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort, use_blueprints FROM loot_sources ORDER BY label;")
+		      Results = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort, use_blueprints, required_item_sets FROM loot_sources ORDER BY label;")
 		    Else
-		      Results = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort, use_blueprints FROM loot_sources WHERE LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1) ORDER BY label;", "%" + SearchText + "%")
+		      Results = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort, use_blueprints, required_item_sets FROM loot_sources WHERE LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1) ORDER BY label;", "%" + SearchText + "%")
 		    End If
 		    
 		    Sources = Self.RecordSetToLootSource(Results)
