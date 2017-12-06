@@ -2,6 +2,7 @@
 	
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
 define('PATREON_ID', 'fe103da2582ffa3a0ceafa7b66d3f0d5b04c02216f40384a9e6552dd94d51b52');
+define('CAMPAIGN_ID', '982252');
 
 if (isset($_GET['code']) && isset($_GET['state'])) {
 	// request is being returned to us
@@ -70,12 +71,48 @@ function UpdateUserProfile(string $user_id, string $access_token) {
 	}
 	
 	$userdata = json_decode($raw, true);
+	if ($userdata === null) {
+		echo json_last_error_msg();
+		return false;
+	}
 	$patreon_user_id = $userdata['data']['id'];
 	$pledges = $userdata['data']['relationships']['pledges']['data'];
 	
+	$supporter = false;
+	$objects = array();
+	if (isset($userdata['included'])) {
+		foreach ($userdata['included'] as $object) {
+			$id = $object['id'];
+			$type = $object['type'];
+			if (array_key_exists($type, $objects)) {
+				$siblings = $objects[$type];
+			} else {
+				$siblings = array();
+			}
+			$siblings[$id] = $object;
+			$objects[$type] = $siblings;
+		}
+		
+		foreach ($pledges as $pledge) {
+			$id = $pledge['id'];
+			
+			$pledge_detail = $objects['pledge'][$id];
+			$declined_since = $pledge_detail['attributes']['declined_since'];
+			if ($declined_since !== null) {
+				// invalid
+				continue;
+			}
+			
+			$creator = $pledge_detail['relationships']['creator'];
+			$creator_id = $creator['data']['id'];
+			
+			$supporter = $supporter || ($creator_id == 6473583);
+		}
+	}
+	
 	$database = BeaconCommon::Database();
 	$database->BeginTransaction();
-	$database->Query("UPDATE users SET patreon_id = $2 WHERE user_id = $1;", $user_id, $patreon_user_id);
+	$database->Query("UPDATE users SET patreon_id = $2, is_patreon_supporter = $3 WHERE user_id = $1;", $user_id, $patreon_user_id, $supporter);
 	$database->Commit();
 	
 	return true;
