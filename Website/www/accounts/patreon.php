@@ -2,13 +2,14 @@
 	
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
 define('PATREON_ID', 'fe103da2582ffa3a0ceafa7b66d3f0d5b04c02216f40384a9e6552dd94d51b52');
-define('CAMPAIGN_ID', '982252');
+BeaconTemplate::SetTitle('Help');
+
+$session = BeaconSession::GetFromCookie();
 
 if (isset($_GET['code']) && isset($_GET['state'])) {
 	// request is being returned to us
 	$code = $_GET['code'];
 	$session_id_from_patreon = $_GET['state'];
-	$session = BeaconSession::GetFromCookie();
 	if (($session === null) || ($session->SessionID() != $session_id_from_patreon)) {
 		echo "Session mismatch";
 		exit;
@@ -24,15 +25,25 @@ if (isset($_GET['code']) && isset($_GET['state'])) {
 	BeaconCommon::Redirect(BeaconCommon::AbsoluteURL('/accounts/patreon.php'));
 	
 	exit;
+} elseif ((isset($_GET['action'])) && ($_GET['action'] === 'begin')) {
+	$return_uri = BeaconCommon::AbsoluteURL('/accounts/patreon.php');
+	if ($session === null) {
+		BeaconCommon::Redirect($return_uri, true);
+	}
+	
+	BeaconCommon::Redirect('https://www.patreon.com/oauth2/authorize?response_type=code&client_id=' . urlencode(PATREON_ID) . '&redirect_uri=' . urlencode($return_uri) . '&state=' . urlencode($session->SessionID()), true);
 }
 
-$session = BeaconSession::GetFromCookie();
+echo "<h1>Beacon + Patreon</h1>\n";
+echo "<div class=\"indent\">\n";
+
+$linked = false;
+$supporter = false;
+
 if ($session !== null) {
 	$database = BeaconCommon::Database();
 	$results = $database->Query("SELECT access_token, valid_until, refresh_token FROM patreon_tokens WHERE user_id = $1 ORDER BY valid_until DESC LIMIT 1;", $session->UserID());
 	if ($results->RecordCount() === 1) {
-		// refresh profile
-		
 		$access_token = $results->Field('access_token');
 		$expiration = new DateTime($results->Field('valid_until'));
 		$now = new DateTime('now');
@@ -41,23 +52,33 @@ if ($session !== null) {
 			$access_token = RequestAccessToken($results->Field('refresh_token'), $session->UserID(), true);
 		}
 		
-		$saved = UpdateUserProfile($session->UserID(), $access_token);
-		if ($saved) {
-			echo "linked";
-		} else {
-			echo "some kind of error";
-		}
-	} else {
-		// starting a patreon link
-		$redirect_uri = BeaconCommon::AbsoluteURL('/accounts/patreon.php');
-		BeaconCommon::Redirect('https://www.patreon.com/oauth2/authorize?response_type=code&client_id=' . urlencode(PATREON_ID) . '&redirect_uri=' . urlencode($redirect_uri) . '&state=' . urlencode($session->SessionID()), true);
+		UpdateUserProfile($session->UserID(), $access_token);
+		$user = $session->User();
+		$linked = $user->IsPatreonLinked();
+		$supporter = $user->IsPatreonSupporter();
 	}
-	exit;
 }
 
-BeaconCommon::Redirect(BeaconCommon::AbsoluteURL('/'), true);
+if ($linked) {
+	if ($supporter) {
+		echo "\t<p>Hey thanks for supporting Beacon! Sorry there isn't much to offer now, but that may change in the future.</p>\n";
+	} else {
+		echo "\t<p>Your Patreon account is linked.</p>\n";
+	}
+} else {
+	echo "\t<p>You can now link your Patreon account with Beacon. At the moment, there's no reason to do so, but in the future there may be Patreon rewards.</p>\n";
+	if ($session === null) {
+		echo "\t<p>To link your account now, choose &quot;Link Patreon Account&ellipsis;&quot; from Beacon's &quot;Help&quot; menu.</p>\n";
+	} else {
+		echo "\t<p class=\"text-center\"><a href=\"?action=begin\" class=\"button\">Link Now</a></p>\n";
+	}
+}
+
+echo "</div>";
 
 function UpdateUserProfile(string $user_id, string $access_token) {
+	$database = BeaconCommon::Database();
+	
 	$curl = curl_init();
 	curl_setopt($curl, CURLOPT_URL, 'https://www.patreon.com/api/oauth2/api/current_user');
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -67,12 +88,14 @@ function UpdateUserProfile(string $user_id, string $access_token) {
 	curl_close($curl);
 	
 	if ($status !== 200) {
+		$database->BeginTransaction();
+		$database->Query("UPDATE users SET patreon_id = NULL, is_patreon_supporter = FALSE WHERE user_id = $1;", $user_id);
+		$database->Commit();
 		return false;
 	}
 	
 	$userdata = json_decode($raw, true);
 	if ($userdata === null) {
-		echo json_last_error_msg();
 		return false;
 	}
 	$patreon_user_id = $userdata['data']['id'];
@@ -110,7 +133,6 @@ function UpdateUserProfile(string $user_id, string $access_token) {
 		}
 	}
 	
-	$database = BeaconCommon::Database();
 	$database->BeginTransaction();
 	$database->Query("UPDATE users SET patreon_id = $2, is_patreon_supporter = $3 WHERE user_id = $1;", $user_id, $patreon_user_id, $supporter);
 	$database->Commit();

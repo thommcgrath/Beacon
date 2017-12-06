@@ -15,6 +15,10 @@ class BeaconSession implements JsonSerializable {
 		return $this->user_id;
 	}
 	
+	public function User() {
+		return BeaconUser::GetByID($this->user_id);
+	}
+	
 	public function Expiration() {
 		return new DateTime($this->valid_until);
 	}
@@ -49,7 +53,7 @@ class BeaconSession implements JsonSerializable {
 	
 	public function jsonSerialize() {
 		return array(
-			'id' => $this->session_id,
+			'session_id' => $this->session_id,
 			'user_id' => $this->user_id,
 			'valid_until' => $this->valid_until
 		);
