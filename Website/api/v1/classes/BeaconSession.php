@@ -16,7 +16,10 @@ class BeaconSession implements JsonSerializable {
 	}
 	
 	public function User() {
-		return BeaconUser::GetByID($this->user_id);
+		$users = BeaconUser::GetByUserID($this->user_id);
+		if (count($users) === 1) {
+			return $users[0];
+		}
 	}
 	
 	public function Expiration() {
@@ -41,7 +44,7 @@ class BeaconSession implements JsonSerializable {
 		return static::GetByID($session_id);
 	}
 	
-	public static function GetByID(string $session_id) {
+	public static function GetBySessionID(string $session_id) {
 		$database = BeaconCommon::Database();
 		$results = $database->Query("SELECT $1::text AS session_id, user_id, valid_until FROM sessions WHERE session_id = encode(digest($1, 'sha512'), 'hex') AND valid_until >= CURRENT_TIMESTAMP(0);", $session_id);
 		if ($results->RecordCount() === 1) {

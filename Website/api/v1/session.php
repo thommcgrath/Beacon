@@ -14,7 +14,7 @@ switch ($method) {
 case 'GET':
 	// retrieve session object
 	$session_id = BeaconAPI::ObjectID();
-	$session = BeaconSession::GetByID($session_id);
+	$session = BeaconSession::GetBySessionID($session_id);
 	if (($session === null) || ($session->UserID() !== $user_id)) {
 		BeaconAPI::ReplyError('Session not found', null, 404);
 	}
@@ -33,7 +33,7 @@ case 'DELETE':
 	// delete a session
 	
 	$session_id = BeaconAPI::ObjectID();
-	$session = BeaconSession::GetByID($session_id);
+	$session = BeaconSession::GetBySessionID($session_id);
 	if (($session === null) || ($session->UserID() !== $user_id)) {
 		BeaconAPI::ReplyError('Session not found', null, 404);
 	}

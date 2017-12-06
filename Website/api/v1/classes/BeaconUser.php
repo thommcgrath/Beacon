@@ -22,23 +22,29 @@ class BeaconUser implements JsonSerializable {
 		return $this->is_patreon_supporter;
 	}
 	
+	public function Validation() {
+		$time = floor(time() / 604800);
+		$key = strtolower($this->user_id) . ' ' . $time . ' ' . ($this->patreon_user_id !== null ? $this->patreon_user_id : '' ) . ' ' . ($this->is_patreon_supporter ? 1 : 0);
+		$signature = '';
+		if (openssl_sign($key, $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
+			return bin2hex($signature);
+		}
+	}
+	
 	public function jsonSerialize() {
 		return array(
 			'user_id' => $this->user_id,
 			'public_key' => $this->public_key,
 			'patreon_user_id' => $this->patreon_user_id,
-			'is_patreon_supporter' => $this->is_patreon_supporter
+			'is_patreon_supporter' => $this->is_patreon_supporter,
+			'validation' => $this->Validation()
 		);
 	}
 	
-	public static function GetByID(string $user_id) {
+	public static function GetByUserID(string $user_id) {
 		$database = BeaconCommon::Database();
-		$results = $database->Query("SELECT user_id, public_key, patreon_id, is_patreon_supporter FROM users WHERE user_id = $1;", $user_id);
-		if ($results->RecordCount() === 1) {
-			return self::GetFromResult($results);
-		} else {
-			return null;
-		}
+		$results = $database->Query("SELECT user_id, public_key, patreon_id, is_patreon_supporter FROM users WHERE user_id = ANY($1);", '{' . $user_id . '}');
+		return self::GetFromResults($results);
 	}
 	
 	protected static function GetFromResult(BeaconRecordSet $results) {

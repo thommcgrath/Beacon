@@ -9,7 +9,7 @@ if (stripos($return_uri, '://') === false) {
 
 if (isset($_GET['session'])) {
 	$session_id = $_GET['session'];
-	$session = BeaconSession::GetByID($session_id);
+	$session = BeaconSession::GetBySessionID($session_id);
 	if ($session !== null) {
 		$session->SendCookie();
 	}

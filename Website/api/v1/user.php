@@ -64,22 +64,12 @@ case 'GET':
 		BeaconAPI::ReplyError('Listing users is not allowed', null, 405);
 	}
 	
-	$results = $database->Query('SELECT user_id, public_key FROM users WHERE user_id = ANY($1);', '{' . $user_id . '}');
-	if ($results->RecordCount() == 0) {
-		BeaconAPI::ReplyError('User does not exist.', null, 404);
-	}
-	
-	$users = array();
-	while (!$results->EOF()) {
-		$users[] = array(
-			'user_id' => $results->Field('user_id'),
-			'public_key' => $results->Field('public_key')
-		);
-		$results->MoveNext();
-	}
+	$users = BeaconUser::GetByUserID($user_id);
 	
 	if (count($users) == 1) {
 		BeaconAPI::ReplySuccess($users[0]);
+	} elseif (count($users) == 0) {
+		BeaconAPI::ReplyError('User not found', null, 404);
 	} else {
 		BeaconAPI::ReplySuccess($users);
 	}
