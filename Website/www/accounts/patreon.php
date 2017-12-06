@@ -2,6 +2,7 @@
 	
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
 define('PATREON_ID', 'fe103da2582ffa3a0ceafa7b66d3f0d5b04c02216f40384a9e6552dd94d51b52');
+define('CREATOR_ID', 6473583);
 BeaconTemplate::SetTitle('Help');
 
 $session = BeaconSession::GetFromCookie();
@@ -32,6 +33,37 @@ if (isset($_GET['code']) && isset($_GET['state'])) {
 	}
 	
 	BeaconCommon::Redirect('https://www.patreon.com/oauth2/authorize?response_type=code&client_id=' . urlencode(PATREON_ID) . '&redirect_uri=' . urlencode($return_uri) . '&state=' . urlencode($session->SessionID()), true);
+} elseif (strtoupper($_SERVER['REQUEST_METHOD']) === 'POST') {
+	// webhook
+	http_response_code(401);
+	
+	$event = $_SERVER['HTTP_X_PATREON_EVENT'];
+	$expected_signature = strtolower($_SERVER['HTTP_X_PATREON_SIGNATURE']);
+	$body = file_get_contents('php://input');
+	
+	$computed_signature = strtolower(hash_hmac('md5', $body, BeaconCommon::GetGlobal('Patreon_Webhook_Secret')));
+	if ($computed_signature !== $expected_signature) {
+		exit;
+	}
+	
+	$data = json_decode($body, true);
+	if ($data === null) {
+		exit;
+	}
+	
+	$pledge_details = $data['data'];
+	$declined_since = $pledge_details['attributes']['declined_since'];
+	$patreon_id = $pledge_details['relationships']['patron']['data']['id'];
+	$creator_id = $pledge_details['relationships']['creator']['data']['id'];
+	
+	$supporter = ($declined_since !== null) && ($creator_id == 6473583);
+	$database = BeaconCommon::Database();
+	$database->BeginTransaction();
+	$database->Query("UPDATE users SET is_patreon_supporter = $2 WHERE patreon_id = $1;", $patreon_id, $supporter);
+	$database->Commit();
+	
+	http_response_code(200);
+	exit;
 }
 
 echo "<h1>Beacon + Patreon</h1>\n";
@@ -129,7 +161,7 @@ function UpdateUserProfile(string $user_id, string $access_token) {
 			$creator = $pledge_detail['relationships']['creator'];
 			$creator_id = $creator['data']['id'];
 			
-			$supporter = $supporter || ($creator_id == 6473583);
+			$supporter = $supporter || ($creator_id == CREATOR_ID);
 		}
 	}
 	
