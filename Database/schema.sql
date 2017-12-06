@@ -130,6 +130,13 @@ CREATE TABLE deletions (
 CREATE UNIQUE INDEX deletions_table_unique_id_idx ON deletions(from_table, unique_id);
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE deletions TO thezaz_website;
 
+CREATE TABLE sessions (
+	session_id CITEXT NOT NULL PRIMARY KEY,
+	user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	valid_until TIMESTAMP WITH TIME ZONE
+);
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE sessions TO thezaz_website;
+
 DROP TRIGGER IF EXISTS engrams_compute_class_trigger ON engrams;
 
 DROP TRIGGER IF EXISTS engrams_before_insert_trigger ON engrams;
