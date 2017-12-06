@@ -1,6 +1,8 @@
 <?php
 
 class BeaconSession implements JsonSerializable {
+	const COOKIE_NAME = 'BeaconAuth';
+	
 	protected $session_id = '';
 	protected $user_id = '';
 	protected $valid_until = '';
@@ -11,6 +13,10 @@ class BeaconSession implements JsonSerializable {
 	
 	public function UserID() {
 		return $this->user_id;
+	}
+	
+	public function Expiration() {
+		return new DateTime($this->valid_until);
 	}
 	
 	public function Delete() {
@@ -47,6 +53,16 @@ class BeaconSession implements JsonSerializable {
 			'user_id' => $this->user_id,
 			'valid_until' => $this->valid_until
 		);
+	}
+	
+	public function SendCookie() {
+		setcookie(self::COOKIE_NAME, $this->session_id, $this->Expiration()->getTimestamp(), '/', 'beaconapp.cc', true, true);
+	}
+	
+	public static function GetFromCookie() {
+		if (isset($_COOKIE[self::COOKIE_NAME])) {
+			return self::GetByID($_COOKIE[self::COOKIE_NAME]);
+		}
 	}
 	
 	protected static function GetFromResult(BeaconRecordSet $results) {
