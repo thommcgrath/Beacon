@@ -222,7 +222,7 @@ Implements Beacon.DataSource
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Try
-		    Dim Results As RecordSet = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort, use_blueprints FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
+		    Dim Results As RecordSet = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort, use_blueprints, required_item_sets FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
 		    If Results.RecordCount = 0 Then
 		      Return Nil
 		    End If
@@ -794,9 +794,9 @@ Implements Beacon.DataSource
 		  Try
 		    Dim Results As RecordSet
 		    If SearchText = "" Then
-		      Results = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort, use_blueprints FROM loot_sources ORDER BY label;")
+		      Results = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort, use_blueprints, required_item_sets FROM loot_sources ORDER BY label;")
 		    Else
-		      Results = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort, use_blueprints FROM loot_sources WHERE LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1) ORDER BY label;", "%" + SearchText + "%")
+		      Results = Self.SQLSelect("SELECT class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort, use_blueprints, required_item_sets FROM loot_sources WHERE LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1) ORDER BY label;", "%" + SearchText + "%")
 		    End If
 		    
 		    Sources = Self.RecordSetToLootSource(Results)
