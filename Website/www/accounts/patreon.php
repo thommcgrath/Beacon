@@ -3,7 +3,7 @@
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
 define('PATREON_ID', 'fe103da2582ffa3a0ceafa7b66d3f0d5b04c02216f40384a9e6552dd94d51b52');
 define('CREATOR_ID', 6473583);
-BeaconTemplate::SetTitle('Help');
+BeaconTemplate::SetTitle('Patreon Support');
 
 $session = BeaconSession::GetFromCookie();
 
