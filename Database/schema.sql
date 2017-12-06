@@ -16,7 +16,9 @@ GRANT SELECT ON TABLE updates TO thezaz_website;
 
 CREATE TABLE users (
 	user_id UUID NOT NULL PRIMARY KEY,
-	public_key TEXT NOT NULL
+	public_key TEXT NOT NULL,
+	patreon_id INTEGER,
+	is_patreon_supporter BOOLEAN NOT NULL DEFAULT FALSE
 );
 GRANT SELECT, INSERT ON TABLE users TO thezaz_website;
 
@@ -129,6 +131,21 @@ CREATE TABLE deletions (
 );
 CREATE UNIQUE INDEX deletions_table_unique_id_idx ON deletions(from_table, unique_id);
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE deletions TO thezaz_website;
+
+CREATE TABLE sessions (
+	session_id CITEXT NOT NULL PRIMARY KEY,
+	user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	valid_until TIMESTAMP WITH TIME ZONE
+);
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE sessions TO thezaz_website;
+
+CREATE TABLE patreon_tokens (
+	access_token TEXT NOT NULL PRIMARY KEY,
+	user_id UUID NOT NULL UNIQUE REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	valid_until TIMESTAMP WITH TIME ZONE,
+	refresh_token TEXT NOT NULL
+);
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE patreon_tokens TO thezaz_website;
 
 DROP TRIGGER IF EXISTS engrams_compute_class_trigger ON engrams;
 

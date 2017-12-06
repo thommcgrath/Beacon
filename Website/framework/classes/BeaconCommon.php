@@ -62,10 +62,15 @@ abstract class BeaconCommon {
 	    return array_keys($arr) !== range(0, count($arr) - 1);
 	}
 	
-	public static function Redirect(string $destination) {
+	public static function Redirect(string $destination, bool $temp = false) {
 		header('Location: ' . $destination);
-		http_response_code(301);
-		echo '<p>This page has moved to <a href="' . $destination . '">' . htmlentities($destination, ENT_COMPAT, 'UTF-8') . '</a>.</p>';
+		if ($temp === true) {
+			http_response_code(302);
+			echo '<p>Please relocate to <a href="' . $destination . '">' . htmlentities($destination, ENT_COMPAT, 'UTF-8') . '</a>.</p>';
+		} else {
+			http_response_code(301);
+			echo '<p>This page has moved to <a href="' . $destination . '">' . htmlentities($destination, ENT_COMPAT, 'UTF-8') . '</a>.</p>';
+		}
 		exit;
 	}
 	
