@@ -68,7 +68,7 @@ class BeaconSession implements JsonSerializable {
 	
 	public static function GetFromCookie() {
 		if (isset($_COOKIE[self::COOKIE_NAME])) {
-			return self::GetByID($_COOKIE[self::COOKIE_NAME]);
+			return self::GetBySessionID($_COOKIE[self::COOKIE_NAME]);
 		}
 	}
 	
