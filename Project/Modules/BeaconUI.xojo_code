@@ -92,6 +92,29 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ContrastWith(Extends Color1 As Color, Color2 As Color) As Double
+		  Dim C1R As Double = (Color1.Red / 255) ^ 2.2
+		  Dim C1G As Double = (Color1.Green / 255) ^ 2.2
+		  Dim C1B As Double = (Color1.Blue / 255) ^ 2.2
+		  
+		  Dim C2R As Double = (Color2.Red / 255) ^ 2.2
+		  Dim C2G As Double = (Color2.Green / 255) ^ 2.2
+		  Dim C2B As Double = (Color2.Blue / 255) ^ 2.2
+		  
+		  Dim C1Y As Double = (0.2126 * C1R) + (0.7151 * C1G) + (0.0721 * C1B)
+		  Dim C2Y As Double = (0.2126 * C2R) + (0.7151 * C2G) + (0.0721 * C2B)
+		  
+		  If C1Y > C2Y Then
+		    Return (C1Y + 0.05) / (C2Y + 0.05)
+		  ElseIf C2Y > C1Y Then
+		    Return (C2Y + 0.05) / (C1Y + 0.05)
+		  Else
+		    Return 1
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub FixTabFont(Extends Panel As TabPanel)
 		  #if TargetCocoa
 		    Declare Function objc_getClass Lib "Cocoa.framework" (ClassName As CString) As Ptr
@@ -138,11 +161,51 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsBright(Extends Source As Color) As Boolean
+		  Return Source.Luminosity > 128
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Luminosity(Extends Source As Color) As Integer
+		  If Source.Red = Source.Green And Source.Green = Source.Blue Then
+		    Return Source.Red
+		  End If
+		  
+		  Dim RedValue As Double = 0.299 * (Source.Red ^ 2)
+		  Dim GreenValue As Double = 0.587 * (Source.Green ^ 2)
+		  Dim BlueValue As Double = 0.114 * (Source.Blue ^ 2)
+		  
+		  Return Xojo.Math.Sqrt(RedValue + GreenValue + BlueValue)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Piece(Extends Source As Picture, Left As Integer, Top As Integer, Width As Integer, Height As Integer) As Picture
 		  Dim Pic As New Picture(Width, Height)
 		  Pic.Graphics.DrawPicture(Source, 0, 0, Width, Height, Left, Top, Width, Height)
 		  Return Pic
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function PrimaryColor() As Color
+		  If App.Identity <> Nil And App.Identity.IsPatreonSupporter Then
+		    Return App.Preferences.ColorValue("UI Color", DefaultPrimaryColor)
+		  Else
+		    Return DefaultPrimaryColor
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub PrimaryColor(Assigns Value As Color)
+		  Dim CurrentColor As Color = PrimaryColor()
+		  App.Preferences.ColorValue("UI Color") = Value
+		  If CurrentColor <> Value Then
+		    NotificationKit.Post(PrimaryColorNotification, Value)
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -189,6 +252,16 @@ Protected Module BeaconUI
 		  
 		  App.Preferences.RectValue(Key) = New Xojo.Core.Rect(Rect.Left, Rect.Top, Rect.Width, Rect.Height)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ShadowColor(Extends Source As Color) As Color
+		  If Source.IsBright Then
+		    Return &c00000080
+		  Else
+		    Return &cFFFFFF
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -270,6 +343,19 @@ Protected Module BeaconUI
 		  Return BeaconUI.IconWithColor(Icon, FillColor)
 		End Function
 	#tag EndMethod
+
+
+	#tag Constant, Name = BorderColor, Type = Color, Dynamic = False, Default = \"&cA6A6A6", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ColorChangeDuration, Type = Double, Dynamic = False, Default = \"2.0", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = DefaultPrimaryColor, Type = Color, Dynamic = False, Default = \"&cA64DCF", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = PrimaryColorNotification, Type = Text, Dynamic = False, Default = \"UI Color Changed", Scope = Protected
+	#tag EndConstant
 
 
 	#tag ViewBehavior

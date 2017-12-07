@@ -82,7 +82,7 @@ Implements ObservationKit.Observable,BeaconUI.ColorAnimator, NotificationKit.Rec
 	#tag Method, Flags = &h0
 		Sub Constructor(Name As String)
 		  Self.mName = Name
-		  Self.mButtonColor = App.UIColor()
+		  Self.mButtonColor = BeaconUI.PrimaryColor()
 		  NotificationKit.Watch(Self, "UI Color Changed")
 		End Sub
 	#tag EndMethod

@@ -1,6 +1,14 @@
 #tag Class
 Protected Class Shelf
 Inherits ControlCanvas
+Implements  NotificationKit.Receiver,  BeaconUI.ColorAnimator
+	#tag Event
+		Sub Close()
+		  RaiseEvent Close
+		  NotificationKit.Ignore(Self, BeaconUI.PrimaryColorNotification)
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  Dim Point As New Xojo.Core.Point(X,Y)
@@ -56,6 +64,18 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
+		Sub Open()
+		  Dim CellColor, ShadowColor As Color
+		  Self.mSelectedFillColor = BeaconUI.PrimaryColor
+		  Self.ComputeColors(Self.mSelectedFillColor, CellColor, ShadowColor)
+		  Self.mSelectedCellColor = CellColor
+		  Self.mSelectedShadowColor = ShadowColor
+		  NotificationKit.Watch(Self, BeaconUI.PrimaryColorNotification)
+		  RaiseEvent Open
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
@@ -96,27 +116,31 @@ Inherits ControlCanvas
 		    Dim CellContent As Graphics = Content.Clip(NextLeft, 0, CellWidth, Content.Height)
 		    Dim IconLeft As Integer = (CellContent.Width - Self.IconSize) / 2
 		    Dim IconTop As Integer = (CellContent.Height - ItemHeight) / 2
+		    Dim Caption As String = Self.mItems(I).Caption
 		    Dim CaptionY As Integer = IconTop + Self.IconSize + Self.CellPadding + Self.TextHeight
-		    Dim CaptionWidth As Integer = Ceil(CellContent.StringWidth(Self.mItems(I).Caption))
+		    Dim CaptionWidth As Integer = Ceil(CellContent.StringWidth(Caption))
 		    CaptionWidth = Min(CaptionWidth, CellContent.Width - (Self.CellPadding / 2))
 		    Dim CaptionX As Integer = (CellContent.Width - CaptionWidth) / 2
 		    Dim FillColor As Color = Self.FillColor
+		    Dim ShadowColor As Color = &cFFFFFF
 		    
 		    If Self.mSelectedIndex = I Then
-		      FillColor = Self.SelectedFillColor
+		      FillColor = Self.mSelectedFillColor
+		      ShadowColor = Self.mSelectedShadowColor
+		      Dim CellColor As Color = Self.mSelectedCellColor
 		      
-		      CellContent.ForeColor = Self.SelectedEdgeColor
+		      CellContent.ForeColor = HSV(CellColor.Hue, CellColor.Saturation, CellColor.Value / 1.2, CellColor.Alpha)
 		      CellContent.FillRect(0, 0, CellContent.Width, CellContent.Height)
-		      CellContent.ForeColor = Self.SelectedBackgroundColor
+		      CellContent.ForeColor = CellColor
 		      CellContent.FillRect(1, 0, CellContent.Width - 2, CellContent.Height)
 		    End If
 		    
-		    CellContent.ForeColor = Self.ShadowColor
-		    CellContent.DrawString(Self.mItems(I).Caption, CaptionX, CaptionY + 1, CaptionWidth, True)
+		    CellContent.ForeColor = ShadowColor
+		    CellContent.DrawString(Caption, CaptionX, CaptionY + 1, CaptionWidth, True)
 		    CellContent.ForeColor = FillColor
-		    CellContent.DrawString(Self.mItems(I).Caption, CaptionX, CaptionY, CaptionWidth, True)
+		    CellContent.DrawString(Caption, CaptionX, CaptionY, CaptionWidth, True)
 		    
-		    Dim ShadowIcon As Picture = BeaconUI.IconWithColor(Self.mItems(I).Icon, Self.ShadowColor)
+		    Dim ShadowIcon As Picture = BeaconUI.IconWithColor(Self.mItems(I).Icon, ShadowColor)
 		    Dim FillIcon As Picture = BeaconUI.IconWithColor(Self.mItems(I).Icon, FillColor)
 		    CellContent.DrawPicture(ShadowIcon, IconLeft, IconTop + 1, Self.IconSize, Self.IconSize, 0, 0, Self.mItems(I).Icon.Width, Self.mItems(I).Icon.Height)
 		    CellContent.DrawPicture(FillIcon, IconLeft, IconTop, Self.IconSize, Self.IconSize, 0, 0, Self.mItems(I).Icon.Width, Self.mItems(I).Icon.Height)
@@ -149,9 +173,94 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AnimationStep(Identifier As Text, Value As Color)
+		  // Part of the BeaconUI.ColorAnimator interface.
+		  
+		  Select Case Identifier
+		  Case "FillColor"
+		    Self.mSelectedFillColor = Value
+		    Self.Invalidate
+		  Case "CellColor"
+		    Self.mSelectedCellColor = Value
+		    Self.Invalidate
+		  Case "ShadowColor"
+		    Self.mSelectedShadowColor = Value
+		    Self.Invalidate
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Sub ComputeColors(FillColor As Color, ByRef CellColor As Color, ByRef ShadowColor As Color)
+		  Dim Contrast As Double = FillColor.ContrastWith(SelectedBackgroundColor)
+		  If Contrast < 1.8 Then
+		    CellColor = HSV(0, 0, 0.6)
+		    ShadowColor = &c00000080
+		    Contrast = FillColor.ContrastWith(CellColor)
+		    If Contrast < 1.8 Then
+		      // Still needs more
+		      CellColor = HSV(0, 0, 0.4)
+		    End If
+		  Else
+		    CellColor = SelectedBackgroundColor
+		    ShadowColor = &cFFFFFF
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Count() As UInteger
 		  Return Self.mItems.Ubound + 1
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case BeaconUI.PrimaryColorNotification
+		    If Self.mFillAnimator <> Nil Then
+		      Self.mFillAnimator.Cancel
+		      Self.mFillAnimator = Nil
+		    End If
+		    
+		    If Self.mCellAnimator <> Nil Then
+		      Self.mCellAnimator.Cancel
+		      Self.mCellAnimator = Nil
+		    End If
+		    
+		    If Self.mShadowAnimator <> Nil Then
+		      Self.mShadowAnimator.Cancel
+		      Self.mShadowAnimator = Nil
+		    End If
+		    
+		    Dim PrimaryColor As Color = Notification.UserData
+		    Dim CellColor, ShadowColor As Color
+		    Self.ComputeColors(PrimaryColor, CellColor, ShadowColor)
+		    
+		    If Self.mSelectedFillColor <> PrimaryColor Then
+		      Self.mFillAnimator = New BeaconUI.ColorTask(Self, "FillColor", Self.mSelectedFillColor, PrimaryColor)
+		      Self.mFillAnimator.Curve = AnimationKit.Curve.CreateEaseOut
+		      Self.mFillAnimator.DurationInSeconds = BeaconUI.ColorChangeDuration
+		      Self.mFillAnimator.Run
+		    End If
+		    
+		    If Self.mSelectedCellColor <> CellColor Then
+		      Self.mCellAnimator = New BeaconUI.ColorTask(Self, "CellColor", Self.mSelectedCellColor, CellColor)
+		      Self.mCellAnimator.Curve = AnimationKit.Curve.CreateEaseOut
+		      Self.mCellAnimator.DurationInSeconds = BeaconUI.ColorChangeDuration
+		      Self.mCellAnimator.Run
+		    End If
+		    
+		    If Self.mSelectedShadowColor <> ShadowColor Then
+		      Self.mShadowAnimator = New BeaconUI.ColorTask(Self, "ShadowColor", Self.mSelectedShadowColor, ShadowColor)
+		      Self.mShadowAnimator.Curve = AnimationKit.Curve.CreateEaseOut
+		      Self.mShadowAnimator.DurationInSeconds = BeaconUI.ColorChangeDuration
+		      Self.mShadowAnimator.Run
+		    End If
+		  End Select
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -200,6 +309,14 @@ Inherits ControlCanvas
 		Event Change()
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event Close()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Open()
+	#tag EndHook
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -227,6 +344,14 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCellAnimator As BeaconUI.ColorTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFillAnimator As BeaconUI.ColorTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mHitRects() As Xojo.Core.Rect
 	#tag EndProperty
 
@@ -243,11 +368,27 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mSelectedCellColor As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSelectedFillColor As Color = BeaconUI.DefaultPrimaryColor
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSelectedIndex As Integer
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSelectedShadowColor As Color
+	#tag EndProperty
 
-	#tag Constant, Name = BackgroundColor, Type = Color, Dynamic = False, Default = \"&cf7f7f7", Scope = Private
+	#tag Property, Flags = &h21
+		Private mShadowAnimator As BeaconUI.ColorTask
+	#tag EndProperty
+
+
+	#tag Constant, Name = BackgroundColor, Type = Color, Dynamic = False, Default = \"&cf7f7f7", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = BorderBottom, Type = Double, Dynamic = False, Default = \"2", Scope = Public
@@ -268,22 +409,16 @@ Inherits ControlCanvas
 	#tag Constant, Name = EdgePadding, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = FillColor, Type = Color, Dynamic = False, Default = \"&c4c4c4c", Scope = Private
+	#tag Constant, Name = FillColor, Type = Color, Dynamic = False, Default = \"&c4c4c4c", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = IconSize, Type = Double, Dynamic = False, Default = \"24", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = SelectedBackgroundColor, Type = Color, Dynamic = False, Default = \"&cdedede", Scope = Private
+	#tag Constant, Name = SelectedBackgroundColor, Type = Color, Dynamic = False, Default = \"&cdedede", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = SelectedEdgeColor, Type = Color, Dynamic = False, Default = \"&cc6c6c6", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = SelectedFillColor, Type = Color, Dynamic = False, Default = \"&c713a9a", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = ShadowColor, Type = Color, Dynamic = False, Default = \"&cFFFFFF", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = TextHeight, Type = Double, Dynamic = False, Default = \"7", Scope = Private

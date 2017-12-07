@@ -43,7 +43,7 @@ Begin LibrarySubview LibraryPaneDocuments
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   259
+      Height          =   229
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -68,7 +68,7 @@ Begin LibrarySubview LibraryPaneDocuments
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   41
+      Top             =   71
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -129,6 +129,35 @@ Begin LibrarySubview LibraryPaneDocuments
       StackSize       =   ""
       State           =   ""
       TabPanelIndex   =   0
+   End
+   Begin ViewSwitcher Switcher
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   30
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   41
+      Transparent     =   True
+      UseFocusRing    =   True
+      Value           =   0
+      Visible         =   True
+      Width           =   300
    End
 End
 #tag EndWindow
@@ -864,6 +893,14 @@ End
 		    Self.mImportProgress.BeaconCount = Me.BeaconCount
 		    Self.mImportProgress.LootSourcesProcessed = Me.LootSourcesProcessed
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Switcher
+	#tag Event
+		Sub Open()
+		  Me.Append("Recent", "Cloud", "Community")
+		  Me.Borders = ViewSwitcher.BorderBottom
 		End Sub
 	#tag EndEvent
 #tag EndEvents

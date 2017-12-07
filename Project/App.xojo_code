@@ -215,6 +215,14 @@ Inherits Application
 
 
 	#tag MenuHandler
+		Function EditPreferences() As Boolean Handles EditPreferences.Action
+			PreferencesWindow.Show
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
 			Dim Dialog As New OpenDialog
 			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.JsonFile
@@ -473,7 +481,7 @@ Inherits Application
 		Private Sub HandleUserLookupReply(Success As Boolean, Message As Text, Details As Auto)
 		  #Pragma Unused Message
 		  
-		  Dim OriginalUIColor As Color = Self.UIColor()
+		  Dim OriginalUIColor As Color = BeaconUI.PrimaryColor()
 		  
 		  If Success Then
 		    Try
@@ -487,7 +495,7 @@ Inherits Application
 		  
 		  Self.mIdentity.Validate()
 		  
-		  Dim NewUIColor As Color = Self.UIColor()
+		  Dim NewUIColor As Color = BeaconUI.PrimaryColor()
 		  If OriginalUIColor <> NewUIColor Then
 		    NotificationKit.Post("UI Color Changed", NewUIColor)
 		  End If
@@ -714,28 +722,6 @@ Inherits Application
 	#tag Property, Flags = &h21
 		Private mUpdateChecker As UpdateChecker
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If Self.mIdentity <> Nil And Self.mIdentity.IsPatreonSupporter Then
-			    Return Self.Preferences.ColorValue("UI Color", BeaconToolbarItem.DefaultColor)
-			  Else
-			    Return BeaconToolbarItem.DefaultColor
-			  End If
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Dim CurrentColor As Color = Self.UIColor()
-			  Self.Preferences.ColorValue("UI Color") = Value
-			  If CurrentColor <> Value Then
-			    NotificationKit.Post("UI Color Changed", Value)
-			  End If
-			End Set
-		#tag EndSetter
-		UIColor As Color
-	#tag EndComputedProperty
 
 
 	#tag Constant, Name = kEditClear, Type = String, Dynamic = False, Default = \"&Delete", Scope = Public
