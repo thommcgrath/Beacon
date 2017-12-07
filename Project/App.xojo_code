@@ -596,7 +596,7 @@ Inherits Application
 	#tag Method, Flags = &h0
 		Function Preferences() As Preferences
 		  If Self.mPreferences = Nil Then
-		    Self.mPreferences = New DesktopPreferences(Self.ApplicationSupport.Child("Preferences.json"))
+		    Self.mPreferences = New Preferences(Self.ApplicationSupport.Child("Preferences.json"))
 		  End If
 		  Return Self.mPreferences
 		End Function

@@ -166,9 +166,51 @@ Protected Class Preferences
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub Constructor()
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Sub Constructor(File As Global.FolderItem)
+		  Self.mFile = File
 		  
+		  If Self.mFile.Exists Then
+		    Dim Stream As TextInputStream = TextInputStream.Open(Self.mFile)
+		    Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
+		    Stream.Close
+		    
+		    Self.Constructor(Contents.ToText)
+		  Else
+		    Self.Constructor("")
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Constructor(Contents As Text)
+		  If Contents <> "" Then
+		    Try
+		      Self.mValues = Xojo.Data.ParseJSON(Contents)
+		    Catch Err As RuntimeException
+		      Self.mValues = New Xojo.Core.Dictionary
+		    End Try
+		    Self.mValues.Value("Existing User") = True
+		  Else
+		    Self.mValues = New Xojo.Core.Dictionary
+		    Self.mValues.Value("Existing User") = False
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
+		Sub Constructor(File As Xojo.IO.FolderItem)
+		  Self.mFile = File
+		  
+		  If Self.mFile.Exists Then
+		    Dim Stream As Xojo.IO.TextInputStream = Xojo.IO.TextInputStream.Open(Self.mFile, Xojo.Core.TextEncoding.UTF8)
+		    Dim Contents As Text = Stream.ReadAll
+		    Stream.Close
+		    
+		    Self.Constructor(Contents)
+		  Else
+		    Self.Constructor("")
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -392,10 +434,19 @@ Protected Class Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub Write()
-		  Raise New UnsupportedOperationException
+		  Dim Writer As New Beacon.JSONWriter(Self.mValues, Self.mFile)
+		  Writer.Run
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Private mFile As Global.FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
+		Private mFile As Xojo.IO.FolderItem
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSavedValues As Xojo.Core.Dictionary
