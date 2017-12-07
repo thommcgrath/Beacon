@@ -24,12 +24,50 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ConsumeUserDictionary(Dict As Xojo.Core.Dictionary) As Boolean
+		  Dim UserID As Text = Dict.Value("user_id")
+		  If Self.mIdentifier <> UserID Then
+		    Return False
+		  End If
+		  
+		  Dim Signature As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Dict.Value("validation"))
+		  Dim IsPatreonSupporter As Boolean = Dict.Lookup("is_patreon_supporter", False)
+		  Dim PatreonUserID As Integer = If(Dict.Lookup("patreon_user_id", Nil) <> Nil, Dict.Value("patreon_user_id"), 0)
+		  Dim Changed As Boolean
+		  
+		  If Self.mSignature <> Signature Then
+		    Self.mSignature = Signature
+		    Changed = True
+		  End If
+		  
+		  If Self.mIsPatreonSupporter <> IsPatreonSupporter Then
+		    Self.mIsPatreonSupporter = IsPatreonSupporter
+		    Changed = True
+		  End If
+		  
+		  If Self.mPatreonUserID <> PatreonUserID Then
+		    Self.mPatreonUserID = PatreonUserID
+		    Changed = True
+		  End If
+		  
+		  Return Changed
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("Identifier") = Self.mIdentifier
 		  Dict.Value("Public") = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mPublicKey)
 		  Dict.Value("Private") = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mPrivateKey)
 		  Dict.Value("Version") = 2
+		  If Self.mPatreonUserID > 0 Then
+		    Dict.Value("PatreonUserID") = Self.mPatreonUserID
+		  End If
+		  Dict.Value("IsPatreonSupporter") = Self.mIsPatreonSupporter
+		  If Self.mSignature <> Nil Then
+		    Dict.Value("Signature") = Beacon.EncodeHex(Self.mSignature)
+		  End If
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -68,7 +106,27 @@ Protected Class Identity
 		    Return Nil
 		  End If
 		  
-		  Return New Beacon.Identity(Source.Value("Identifier"), PublicKey, PrivateKey)
+		  Dim Identity As New Beacon.Identity(Source.Value("Identifier"), PublicKey, PrivateKey)
+		  
+		  If Source.HasKey("IsPatreonSupporter") Then
+		    Identity.mIsPatreonSupporter = Source.Value("IsPatreonSupporter")
+		  End If
+		  
+		  If Source.HasKey("PatreonUserID") Then
+		    Identity.mPatreonUserID = Source.Value("PatreonUserID")
+		  End If
+		  
+		  If Source.HasKey("Signature") Then
+		    Identity.mSignature = Beacon.DecodeHex(Source.Value("Signature"))
+		  End If
+		  
+		  Return Identity
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsPatreonSupporter() As Boolean
+		  Return Self.mIsPatreonSupporter
 		End Function
 	#tag EndMethod
 
@@ -90,9 +148,36 @@ Protected Class Identity
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Validate()
+		  If Self.mSignature = Nil Then
+		    Self.mIsPatreonSupporter = False
+		    Return
+		  End If
+		  
+		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
+		  Dim Time As Integer = Xojo.Math.Floor(Now.SecondsFrom1970 / 604800)
+		  Dim PatreonUserID As Text = If(Self.mPatreonUserID > 0, Self.mPatreonUserID.ToText(Xojo.Core.Locale.Raw), "")
+		  
+		  Dim PublicKey As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(BeaconAPI.PublicKey)
+		  Dim CheckData As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Self.mIdentifier.Lowercase + " " + Time.ToText(Xojo.Core.Locale.Raw) + " " + PatreonUserID + " " + If(Self.mIsPatreonSupporter, "1", "0"))
+		  If Not Xojo.Crypto.RSAVerifySignature(CheckData, Self.mSignature, PublicKey) Then
+		    Self.mIsPatreonSupporter = False
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mIdentifier As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIsPatreonSupporter As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPatreonUserID As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -101,6 +186,10 @@ Protected Class Identity
 
 	#tag Property, Flags = &h21
 		Private mPublicKey As Xojo.Core.MemoryBlock
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSignature As Xojo.Core.MemoryBlock
 	#tag EndProperty
 
 

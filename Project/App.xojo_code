@@ -110,17 +110,11 @@ Inherits Application
 		  End If
 		  If Self.mIdentity = Nil Then
 		    Self.Log("Creating new identity")
-		    Dim Identity As New Beacon.Identity
-		    Dim Dict As Xojo.Core.Dictionary = Identity.Export
-		    
-		    Dim Contents As Text = Xojo.Data.GenerateJSON(Dict)
-		    
-		    Dim Stream As TextOutputStream = TextOutputStream.Create(IdentityFile)
-		    Stream.Write(Contents)
-		    Stream.Close
-		    Self.mIdentity = Identity
+		    Self.Identity = New Beacon.Identity
 		  End If
 		  Self.Log("Identity is " + Self.mIdentity.Identifier)
+		  
+		  BeaconAPI.Send(New BeaconAPI.Request("user.php/" + Self.mIdentity.Identifier, "GET", AddressOf HandleUserLookupReply))
 		  
 		  Self.mUpdateChecker = New UpdateChecker
 		  AddHandler Self.mUpdateChecker.UpdateAvailable, WeakAddressOf Self.mUpdateChecker_UpdateAvailable
@@ -475,6 +469,31 @@ Inherits Application
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub HandleUserLookupReply(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Message
+		  
+		  Dim OriginalUIColor As Color = Self.UIColor()
+		  
+		  If Success Then
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Details
+		      If Self.mIdentity.ConsumeUserDictionary(Dict) Then
+		        Self.WriteIdentity()
+		      End If
+		    Catch Err As TypeMismatchException
+		    End Try
+		  End If
+		  
+		  Self.mIdentity.Validate()
+		  
+		  Dim NewUIColor As Color = Self.UIColor()
+		  If OriginalUIColor <> NewUIColor Then
+		    NotificationKit.Post("UI Color Changed", NewUIColor)
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Identity() As Beacon.Identity
 		  Return Self.mIdentity
@@ -484,10 +503,7 @@ Inherits Application
 	#tag Method, Flags = &h0
 		Sub Identity(Assigns Value As Beacon.Identity)
 		  Self.mIdentity = Value
-		  
-		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
-		  Dim Writer As New Beacon.JSONWriter(Value.Export, IdentityFile)
-		  Writer.Run
+		  Self.WriteIdentity()
 		End Sub
 	#tag EndMethod
 
@@ -662,6 +678,14 @@ Inherits Application
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub WriteIdentity()
+		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
+		  Dim Writer As New Beacon.JSONWriter(Self.mIdentity.Export, IdentityFile)
+		  Writer.Run
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h0
 		LaunchOnQuit As FolderItem
@@ -690,6 +714,28 @@ Inherits Application
 	#tag Property, Flags = &h21
 		Private mUpdateChecker As UpdateChecker
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mIdentity <> Nil And Self.mIdentity.IsPatreonSupporter Then
+			    Return Self.Preferences.ColorValue("UI Color", BeaconToolbarItem.DefaultColor)
+			  Else
+			    Return BeaconToolbarItem.DefaultColor
+			  End If
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Dim CurrentColor As Color = Self.UIColor()
+			  Self.Preferences.ColorValue("UI Color") = Value
+			  If CurrentColor <> Value Then
+			    NotificationKit.Post("UI Color Changed", Value)
+			  End If
+			End Set
+		#tag EndSetter
+		UIColor As Color
+	#tag EndComputedProperty
 
 
 	#tag Constant, Name = kEditClear, Type = String, Dynamic = False, Default = \"&Delete", Scope = Public

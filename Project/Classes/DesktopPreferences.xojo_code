@@ -28,10 +28,8 @@ Inherits Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub Write()
-		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.mValues)
-		  Dim Stream As TextOutputStream = TextOutputStream.Create(Self.mFile)
-		  Stream.Write(Contents)
-		  Stream.Close
+		  Dim Writer As New Beacon.JSONWriter(Self.mValues, Self.mFile)
+		  Writer.Run
 		End Sub
 	#tag EndMethod
 

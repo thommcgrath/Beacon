@@ -1,7 +1,7 @@
 #tag Class
 Protected Class MobilePreferences
 Inherits Preferences
-	#tag CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetIOS and ( Target32Bit or Target64Bit ) )
 	#tag Method, Flags = &h0
 		Sub Constructor(File As Xojo.IO.FolderItem)
 		  Super.Constructor()
@@ -26,10 +26,8 @@ Inherits Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub Write()
-		  Dim Contents As Text = Xojo.Data.GenerateJSON(Self.mValues)
-		  Dim Stream As Xojo.IO.TextOutputStream = Xojo.IO.TextOutputStream.Create(Self.mFile, Xojo.Core.TextEncoding.UTF8)
-		  Stream.Write(Contents)
-		  Stream.Close
+		  Dim Writer As New Beacon.JSONWriter(Self.mValues, Self.mFile)
+		  Writer.Run
 		End Sub
 	#tag EndMethod
 
@@ -52,11 +50,6 @@ Inherits Preferences
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mFile"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty

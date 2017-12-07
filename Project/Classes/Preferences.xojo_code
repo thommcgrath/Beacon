@@ -117,6 +117,45 @@ Protected Class Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ColorValue(Key As Text, Assigns Value As Color)
+		  Dim RedHex As Text = Value.Red.ToHex(2)
+		  Dim GreenHex As Text = Value.Green.ToHex(2)
+		  Dim BlueHex As Text = Value.Blue.ToHex(2)
+		  Dim AlphaHex As Text = Value.Alpha.ToHex(2)
+		  
+		  Self.BeginTransaction()
+		  Self.mValues.Value(Key) = RedHex + GreenHex + BlueHex + AlphaHex
+		  Self.Commit()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ColorValue(Key As Text, Default As Color) As Color
+		  If Not Self.mValues.HasKey(Key) Then
+		    Return Default
+		  End If
+		  
+		  Dim Value As Auto = Self.mValues.Value(Key)
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		  If Info.FullName <> "Text" Then
+		    Return Default
+		  End If
+		  
+		  Dim TextValue As Text = Value
+		  If TextValue.Length < 8 Then
+		    Return Default
+		  End If
+		  
+		  Dim RedHex As Text = TextValue.Mid(0, 2)
+		  Dim GreenHex As Text = TextValue.Mid(2, 2)
+		  Dim BlueHex As Text = TextValue.Mid(4, 2)
+		  Dim AlphaHex As Text = TextValue.Mid(6, 2)
+		  
+		  Return Color.RGBA(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Commit()
 		  Self.mTransactionLevel = Self.mTransactionLevel - 1
 		  

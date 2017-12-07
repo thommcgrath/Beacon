@@ -1,6 +1,6 @@
 #tag Class
 Protected Class BeaconToolbarItem
-Implements ObservationKit.Observable,BeaconUI.ColorAnimator
+Implements ObservationKit.Observable,BeaconUI.ColorAnimator, NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub AddObserver(Observer As ObservationKit.Observer, Key As Text)
 		  // Part of the ObservationKit.Observable interface.
@@ -82,6 +82,8 @@ Implements ObservationKit.Observable,BeaconUI.ColorAnimator
 	#tag Method, Flags = &h0
 		Sub Constructor(Name As String)
 		  Self.mName = Name
+		  Self.mButtonColor = App.UIColor()
+		  NotificationKit.Watch(Self, "UI Color Changed")
 		End Sub
 	#tag EndMethod
 
@@ -93,10 +95,27 @@ Implements ObservationKit.Observable,BeaconUI.ColorAnimator
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  NotificationKit.Ignore(Self, "UI Color Changed")
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Shared Function DoubleAsColor(Source As Double) As Color
 		  
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case "UI Color Changed"
+		    Self.ButtonColor = Notification.UserData
+		  End Select
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -283,6 +302,7 @@ Implements ObservationKit.Observable,BeaconUI.ColorAnimator
 			Name="HelpTag"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Icon"
