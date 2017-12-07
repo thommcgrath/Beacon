@@ -51,7 +51,7 @@ class BeaconUser implements JsonSerializable {
 		$user = new static();
 		$user->user_id = $results->Field('user_id');
 		$user->public_key = $results->Field('public_key');
-		$user->patreon_user_id = $results->Field('patreon_id');
+		$user->patreon_user_id = $results->Field('patreon_id') !== null ? intval($results->Field('patreon_id')) : null;
 		$user->is_patreon_supporter = $results->Field('is_patreon_supporter');
 		return $user;
 	}
