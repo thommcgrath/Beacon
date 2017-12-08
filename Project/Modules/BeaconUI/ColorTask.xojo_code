@@ -36,8 +36,8 @@ Inherits AnimationKit.Task
 
 	#tag Method, Flags = &h1021
 		Private Sub Constructor()
-		  Self.Curve = AnimationKit.Curve.CreateFromPreset(AnimationKit.Curve.Presets.Linear)
-		  Self.DurationInSeconds = 1
+		  Self.Curve = AnimationKit.Curve.CreateEaseOut
+		  Self.DurationInSeconds = BeaconUI.ColorChangeDuration
 		End Sub
 	#tag EndMethod
 
@@ -88,7 +88,8 @@ Inherits AnimationKit.Task
 		#tag ViewProperty
 			Name="EndValue"
 			Group="Behavior"
-			Type="Double"
+			InitialValue="&c000000"
+			Type="Color"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Identifier"
@@ -129,7 +130,8 @@ Inherits AnimationKit.Task
 		#tag ViewProperty
 			Name="StartValue"
 			Group="Behavior"
-			Type="Double"
+			InitialValue="&c000000"
+			Type="Color"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

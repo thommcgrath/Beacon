@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Shelf
 Inherits ControlCanvas
-Implements  NotificationKit.Receiver,  BeaconUI.ColorAnimator
+Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 	#tag Event
 		Sub Close()
 		  RaiseEvent Close
@@ -65,9 +65,10 @@ Implements  NotificationKit.Receiver,  BeaconUI.ColorAnimator
 
 	#tag Event
 		Sub Open()
-		  Dim CellColor, ShadowColor As Color
+		  Dim CellColor As Color = Self.SelectedBackgroundColor
+		  Dim ShadowColor As Color
 		  Self.mSelectedFillColor = BeaconUI.PrimaryColor
-		  Self.ComputeColors(Self.mSelectedFillColor, CellColor, ShadowColor)
+		  BeaconUI.ComputeColors(Self.mSelectedFillColor, ShadowColor, CellColor)
 		  Self.mSelectedCellColor = CellColor
 		  Self.mSelectedShadowColor = ShadowColor
 		  NotificationKit.Watch(Self, BeaconUI.PrimaryColorNotification)
@@ -190,24 +191,6 @@ Implements  NotificationKit.Receiver,  BeaconUI.ColorAnimator
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Sub ComputeColors(FillColor As Color, ByRef CellColor As Color, ByRef ShadowColor As Color)
-		  Dim Contrast As Double = FillColor.ContrastWith(SelectedBackgroundColor)
-		  If Contrast < 1.8 Then
-		    CellColor = HSV(0, 0, 0.6)
-		    ShadowColor = &c00000080
-		    Contrast = FillColor.ContrastWith(CellColor)
-		    If Contrast < 1.8 Then
-		      // Still needs more
-		      CellColor = HSV(0, 0, 0.4)
-		    End If
-		  Else
-		    CellColor = SelectedBackgroundColor
-		    ShadowColor = &cFFFFFF
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Count() As UInteger
 		  Return Self.mItems.Ubound + 1
@@ -236,27 +219,22 @@ Implements  NotificationKit.Receiver,  BeaconUI.ColorAnimator
 		    End If
 		    
 		    Dim PrimaryColor As Color = Notification.UserData
-		    Dim CellColor, ShadowColor As Color
-		    Self.ComputeColors(PrimaryColor, CellColor, ShadowColor)
+		    Dim CellColor As Color = Self.SelectedBackgroundColor
+		    Dim ShadowColor As Color
+		    BeaconUI.ComputeColors(PrimaryColor, ShadowColor, CellColor)
 		    
 		    If Self.mSelectedFillColor <> PrimaryColor Then
 		      Self.mFillAnimator = New BeaconUI.ColorTask(Self, "FillColor", Self.mSelectedFillColor, PrimaryColor)
-		      Self.mFillAnimator.Curve = AnimationKit.Curve.CreateEaseOut
-		      Self.mFillAnimator.DurationInSeconds = BeaconUI.ColorChangeDuration
 		      Self.mFillAnimator.Run
 		    End If
 		    
 		    If Self.mSelectedCellColor <> CellColor Then
 		      Self.mCellAnimator = New BeaconUI.ColorTask(Self, "CellColor", Self.mSelectedCellColor, CellColor)
-		      Self.mCellAnimator.Curve = AnimationKit.Curve.CreateEaseOut
-		      Self.mCellAnimator.DurationInSeconds = BeaconUI.ColorChangeDuration
 		      Self.mCellAnimator.Run
 		    End If
 		    
 		    If Self.mSelectedShadowColor <> ShadowColor Then
 		      Self.mShadowAnimator = New BeaconUI.ColorTask(Self, "ShadowColor", Self.mSelectedShadowColor, ShadowColor)
-		      Self.mShadowAnimator.Curve = AnimationKit.Curve.CreateEaseOut
-		      Self.mShadowAnimator.DurationInSeconds = BeaconUI.ColorChangeDuration
 		      Self.mShadowAnimator.Run
 		    End If
 		  End Select
