@@ -1,14 +1,6 @@
 #tag Class
 Protected Class Shelf
 Inherits ControlCanvas
-Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
-	#tag Event
-		Sub Close()
-		  RaiseEvent Close
-		  NotificationKit.Ignore(Self, BeaconUI.PrimaryColorNotification)
-		End Sub
-	#tag EndEvent
-
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  Dim Point As New Xojo.Core.Point(X,Y)
@@ -64,23 +56,10 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 	#tag EndEvent
 
 	#tag Event
-		Sub Open()
-		  Dim Profile As BeaconUI.ColorProfile = BeaconUI.ColorProfile
-		  Self.mSelectedFillColor = Profile.SelectedForegroundColor
-		  Self.mSelectedCellColor = Profile.SelectedBackgroundColor
-		  Self.mSelectedShadowColor = Profile.SelectedShadowColor
-		  NotificationKit.Watch(Self, BeaconUI.PrimaryColorNotification)
-		  RaiseEvent Open
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
-		  Dim Profile As BeaconUI.ColorProfile = BeaconUI.ColorProfile
-		  
-		  G.ForeColor = Profile.BorderColor
+		  G.ForeColor = Self.ColorProfile.BorderColor
 		  G.FillRect(0, 0, G.Width, G.Height)
 		  
 		  G.TextSize = 10
@@ -98,7 +77,7 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 		  End If
 		  
 		  Dim Content As Graphics = G.Clip(0, ContentTop, G.Width, ContentHeight)
-		  Content.ForeColor = Profile.BackgroundColor
+		  Content.ForeColor = Self.ColorProfile.BackgroundColor
 		  Content.FillRect(0, 0, Content.Width, Content.Height)
 		  
 		  Dim AvailableWidth As Integer = G.Width - (Self.EdgePadding * 2)
@@ -122,13 +101,13 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 		    Dim CaptionWidth As Integer = Ceil(CellContent.StringWidth(Caption))
 		    CaptionWidth = Min(CaptionWidth, CellContent.Width - (Self.CellPadding / 2))
 		    Dim CaptionX As Integer = (CellContent.Width - CaptionWidth) / 2
-		    Dim FillColor As Color = Profile.ForegroundColor
-		    Dim ShadowColor As Color = &cFFFFFF
+		    Dim FillColor As Color = Self.ColorProfile.ForegroundColor
+		    Dim ShadowColor As Color = Self.ColorProfile.ShadowColor
 		    
 		    If Self.mSelectedIndex = I Then
-		      FillColor = Self.mSelectedFillColor
-		      ShadowColor = Self.mSelectedShadowColor
-		      Dim CellColor As Color = Self.mSelectedCellColor
+		      FillColor = Self.ColorProfile.SelectedForegroundColor
+		      ShadowColor = Self.ColorProfile.SelectedShadowColor
+		      Dim CellColor As Color = Self.ColorProfile.SelectedBackgroundColor
 		      
 		      CellContent.ForeColor = HSV(CellColor.Hue, CellColor.Saturation, CellColor.Value / 1.2, CellColor.Alpha)
 		      CellContent.FillRect(0, 0, CellContent.Width, CellContent.Height)
@@ -174,71 +153,9 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AnimationStep(Identifier As Text, Value As Color)
-		  // Part of the BeaconUI.ColorAnimator interface.
-		  
-		  Select Case Identifier
-		  Case "FillColor"
-		    Self.mSelectedFillColor = Value
-		    Self.Invalidate
-		  Case "CellColor"
-		    Self.mSelectedCellColor = Value
-		    Self.Invalidate
-		  Case "ShadowColor"
-		    Self.mSelectedShadowColor = Value
-		    Self.Invalidate
-		  End Select
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Count() As UInteger
 		  Return Self.mItems.Ubound + 1
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
-		  // Part of the NotificationKit.Receiver interface.
-		  
-		  Select Case Notification.Name
-		  Case BeaconUI.PrimaryColorNotification
-		    If Self.mFillAnimator <> Nil Then
-		      Self.mFillAnimator.Cancel
-		      Self.mFillAnimator = Nil
-		    End If
-		    
-		    If Self.mCellAnimator <> Nil Then
-		      Self.mCellAnimator.Cancel
-		      Self.mCellAnimator = Nil
-		    End If
-		    
-		    If Self.mShadowAnimator <> Nil Then
-		      Self.mShadowAnimator.Cancel
-		      Self.mShadowAnimator = Nil
-		    End If
-		    
-		    Dim Profile As BeaconUI.ColorProfile = BeaconUI.ColorProfile
-		    Dim PrimaryColor As Color = Profile.SelectedForegroundColor
-		    Dim CellColor As Color = Profile.SelectedBackgroundColor
-		    Dim ShadowColor As Color = Profile.SelectedShadowColor
-		    
-		    If Self.mSelectedFillColor <> PrimaryColor Then
-		      Self.mFillAnimator = New BeaconUI.ColorTask(Self, "FillColor", Self.mSelectedFillColor, PrimaryColor)
-		      Self.mFillAnimator.Run
-		    End If
-		    
-		    If Self.mSelectedCellColor <> CellColor Then
-		      Self.mCellAnimator = New BeaconUI.ColorTask(Self, "CellColor", Self.mSelectedCellColor, CellColor)
-		      Self.mCellAnimator.Run
-		    End If
-		    
-		    If Self.mSelectedShadowColor <> ShadowColor Then
-		      Self.mShadowAnimator = New BeaconUI.ColorTask(Self, "ShadowColor", Self.mSelectedShadowColor, ShadowColor)
-		      Self.mShadowAnimator.Run
-		    End If
-		  End Select
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -287,14 +204,6 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 		Event Change()
 	#tag EndHook
 
-	#tag Hook, Flags = &h0
-		Event Close()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Open()
-	#tag EndHook
-
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -322,14 +231,6 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCellAnimator As BeaconUI.ColorTask
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mFillAnimator As BeaconUI.ColorTask
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mHitRects() As Xojo.Core.Rect
 	#tag EndProperty
 
@@ -346,23 +247,7 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedCellColor As Color
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSelectedFillColor As Color = BeaconUI.DefaultPrimaryColor
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mSelectedIndex As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSelectedShadowColor As Color
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mShadowAnimator As BeaconUI.ColorTask
 	#tag EndProperty
 
 

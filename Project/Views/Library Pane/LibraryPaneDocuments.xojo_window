@@ -135,6 +135,7 @@ Begin LibrarySubview LibraryPaneDocuments
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Borders         =   0
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
@@ -901,6 +902,7 @@ End
 		Sub Open()
 		  Me.Append("Recent", "Cloud", "Community")
 		  Me.Borders = ViewSwitcher.BorderBottom
+		  Me.Value = 0
 		End Sub
 	#tag EndEvent
 #tag EndEvents

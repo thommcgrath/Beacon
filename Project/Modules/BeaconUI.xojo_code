@@ -189,7 +189,7 @@ Protected Module BeaconUI
 		  App.Preferences.ColorValue("UI Color") = Value
 		  If CurrentColor <> Value Then
 		    mColorProfile = New BeaconUI.ColorProfile(Value)
-		    NotificationKit.Post(PrimaryColorNotification, Value)
+		    NotificationKit.Post(PrimaryColorNotification, mColorProfile)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -325,9 +325,6 @@ Protected Module BeaconUI
 		Private mColorProfile As BeaconUI.ColorProfile
 	#tag EndProperty
 
-
-	#tag Constant, Name = ColorChangeDuration, Type = Double, Dynamic = False, Default = \"0.5", Scope = Protected
-	#tag EndConstant
 
 	#tag Constant, Name = DefaultPrimaryColor, Type = Color, Dynamic = False, Default = \"&cA64DCF", Scope = Protected
 	#tag EndConstant

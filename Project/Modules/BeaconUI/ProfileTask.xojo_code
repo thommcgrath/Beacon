@@ -1,10 +1,12 @@
 #tag Class
-Protected Class ColorTask
+Protected Class ProfileTask
 Inherits AnimationKit.Task
 	#tag Event
 		Sub Perform(Final As Boolean, Time As Double)
+		  Dim Animator As BeaconUI.ProfileAnimator = BeaconUI.ProfileAnimator(Self.Item)
+		  
 		  If Final Then
-		    BeaconUI.ColorAnimator(Self.Item).AnimationStep(Self.Identifier, Self.EndValue)
+		    Animator.AnimationStep(Self.Identifier, Self.EndProfile)
 		    Return
 		  End If
 		  
@@ -12,18 +14,10 @@ Inherits AnimationKit.Task
 		  Dim Duration As Double = Self.DurationInSeconds * 1000000
 		  Dim Percent As Double = Elapsed / Duration
 		  
-		  Dim RedValue As Double = Self.Curve.Evaluate(Percent, Self.StartValue.Red, Self.EndValue.Red)
-		  Dim GreenValue As Double = Self.Curve.Evaluate(Percent, Self.StartValue.Green, Self.EndValue.Green)
-		  Dim BlueValue As Double = Self.Curve.Evaluate(Percent, Self.StartValue.Blue, Self.EndValue.Blue)
-		  Dim AlphaValue As Double = Self.Curve.Evaluate(Percent, Self.StartValue.Alpha, Self.EndValue.Alpha)
+		  Dim BlendPercent As Double = Self.Curve.Evaluate(Percent, 0.0, 1.0)
+		  Dim Profile As BeaconUI.ColorProfile = Self.StartProfile.BlendWithProfile(Self.EndProfile, BlendPercent)
 		  
-		  BeaconUI.ColorAnimator(Self.Item).AnimationStep(Self.Identifier, RGB(RedValue, GreenValue, BlueValue, AlphaValue))
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Started()
-		  //
+		  Animator.AnimationStep(Self.Identifier, Profile)
 		End Sub
 	#tag EndEvent
 
@@ -37,15 +31,15 @@ Inherits AnimationKit.Task
 	#tag Method, Flags = &h1021
 		Private Sub Constructor()
 		  Self.Curve = AnimationKit.Curve.CreateEaseOut
-		  Self.DurationInSeconds = BeaconUI.ColorChangeDuration
+		  Self.DurationInSeconds = 0.5
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1000
-		Sub Constructor(Target As BeaconUI.ColorAnimator, Identifier As Text, StartValue As Color, EndValue As Color)
+		Sub Constructor(Target As BeaconUI.ProfileAnimator, Identifier As Text, StartProfile As BeaconUI.ColorProfile, EndProfile As BeaconUI.ColorProfile)
 		  Self.Constructor()
-		  Self.StartValue = StartValue
-		  Self.EndValue = EndValue
+		  Self.StartProfile = StartProfile
+		  Self.EndProfile = EndProfile
 		  Self.Item = Target
 		  Self.Identifier = Identifier
 		End Sub
@@ -61,7 +55,7 @@ Inherits AnimationKit.Task
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		EndValue As Color
+		EndProfile As BeaconUI.ColorProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -69,7 +63,7 @@ Inherits AnimationKit.Task
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		StartValue As Color
+		StartProfile As BeaconUI.ColorProfile
 	#tag EndProperty
 
 
@@ -86,7 +80,7 @@ Inherits AnimationKit.Task
 			Type="Double"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="EndValue"
+			Name="EndProfile"
 			Group="Behavior"
 			InitialValue="&c000000"
 			Type="Color"
@@ -95,7 +89,6 @@ Inherits AnimationKit.Task
 			Name="Identifier"
 			Group="Behavior"
 			Type="Text"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -128,7 +121,7 @@ Inherits AnimationKit.Task
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="StartValue"
+			Name="StartProfile"
 			Group="Behavior"
 			InitialValue="&c000000"
 			Type="Color"

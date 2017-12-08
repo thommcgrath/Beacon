@@ -1,8 +1,20 @@
 #tag Class
 Protected Class ControlCanvas
 Inherits Canvas
+Implements BeaconUI.ProfileAnimator, NotificationKit.Receiver
+	#tag Event
+		Sub Close()
+		  RaiseEvent Close
+		  
+		  NotificationKit.Ignore(Self, BeaconUI.PrimaryColorNotification)
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub Open()
+		  NotificationKit.Watch(Self, BeaconUI.PrimaryColorNotification)
+		  Self.mColorProfile = BeaconUI.ColorProfile
+		  
 		  RaiseEvent Open
 		  
 		  Self.DoubleBuffer = TargetWin32
@@ -30,6 +42,24 @@ Inherits Canvas
 
 
 	#tag Method, Flags = &h0
+		Sub AnimationStep(Identifier As Text, Profile As BeaconUI.ColorProfile)
+		  // Part of the BeaconUI.ProfileAnimator interface.
+		  
+		  Select Case Identifier
+		  Case "ColorProfile"
+		    Self.mColorProfile = Profile
+		    Self.Invalidate
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ColorProfile() As BeaconUI.ColorProfile
+		  Return Self.mColorProfile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Invalidate(eraseBackground As Boolean = True)
 		  #Pragma Unused eraseBackground
 		  
@@ -42,6 +72,26 @@ Inherits Canvas
 		  #Pragma Unused eraseBackground
 		  
 		  Super.Invalidate(X, Y, Width, Height, Self.EraseBackground)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case BeaconUI.PrimaryColorNotification
+		    If Self.mProfileAnimator <> Nil Then
+		      Self.mProfileAnimator.Cancel
+		      Self.mProfileAnimator = Nil
+		    End If
+		    
+		    Dim NewProfile As BeaconUI.ColorProfile = Notification.UserData
+		    If Self.mColorProfile <> NewProfile Then
+		      Self.mProfileAnimator = New BeaconUI.ProfileTask(Self, "ColorProfile", Self.mColorProfile, NewProfile)
+		      Self.mProfileAnimator.Run
+		    End If
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -63,12 +113,25 @@ Inherits Canvas
 
 
 	#tag Hook, Flags = &h0
+		Event Close()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Paint(g As Graphics, areas() As REALbasic.Rect)
 	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mColorProfile As BeaconUI.ColorProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mProfileAnimator As BeaconUI.ProfileTask
+	#tag EndProperty
 
 
 	#tag ViewBehavior

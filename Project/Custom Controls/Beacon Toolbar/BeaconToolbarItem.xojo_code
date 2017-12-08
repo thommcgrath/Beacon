@@ -175,10 +175,6 @@ Implements ObservationKit.Observable
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mColorTask As BeaconUI.ColorTask
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mEnabled As Boolean = True
 	#tag EndProperty
 
