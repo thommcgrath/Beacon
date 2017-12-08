@@ -282,16 +282,6 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ShadowColor(Extends Source As Color) As Color
-		  If Source.IsBright Then
-		    Return &c00000080
-		  Else
-		    Return &cFFFFFF
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub ShowAlert(Extends Win As Window, Message As String, Explanation As String)
 		  Win = Win.TrueWindow
 		  
@@ -376,6 +366,18 @@ Protected Module BeaconUI
 	#tag EndConstant
 
 	#tag Constant, Name = ColorChangeDuration, Type = Double, Dynamic = False, Default = \"2.0", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CommonBackgroundColor, Type = Color, Dynamic = False, Default = \"&cF7F7F7", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CommonForegroundColor, Type = Color, Dynamic = False, Default = \"&c4C4C4C", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CommonSelectionColor, Type = Color, Dynamic = False, Default = \"&cDEDEDE", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CommonShadowColor, Type = Color, Dynamic = False, Default = \"&cFFFFFF", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = DefaultPrimaryColor, Type = Color, Dynamic = False, Default = \"&cA64DCF", Scope = Protected

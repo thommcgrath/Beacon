@@ -1,6 +1,14 @@
 #tag Class
 Protected Class ViewSwitcher
 Inherits ControlCanvas
+Implements BeaconUI.ColorAnimator, NotificationKit.Receiver
+	#tag Event
+		Sub Close()
+		  RaiseEvent Close
+		  NotificationKit.Ignore(Self, BeaconUI.PrimaryColorNotification)
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  Self.mMouseDownPosition = New REALbasic.Point(X, Y)
@@ -32,6 +40,19 @@ Inherits ControlCanvas
 		  End If
 		  Self.mMouseDown = False
 		  Self.Invalidate
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
+		  Dim BackgroundColor As Color = BeaconUI.CommonSelectionColor
+		  Dim ShadowColor As Color
+		  Self.mSelectedTextColor = BeaconUI.PrimaryColor
+		  BeaconUI.ComputeColors(Self.mSelectedTextColor, ShadowColor, BackgroundColor)
+		  Self.mSelectedShadowColor = ShadowColor
+		  Self.mSelectedBackgroundColor = BackgroundColor
+		  NotificationKit.Watch(Self, BeaconUI.PrimaryColorNotification)
+		  RaiseEvent Open
 		End Sub
 	#tag EndEvent
 
@@ -83,6 +104,24 @@ Inherits ControlCanvas
 
 
 	#tag Method, Flags = &h0
+		Sub AnimationStep(Identifier As Text, Value As Color)
+		  // Part of the BeaconUI.ColorAnimator interface.
+		  
+		  Select Case Identifier
+		  Case "BackgroundColor"
+		    Self.mSelectedBackgroundColor = Value
+		    Self.Invalidate
+		  Case "ShadowColor"
+		    Self.mSelectedShadowColor = Value
+		    Self.Invalidate
+		  Case "TextColor"
+		    Self.mSelectedTextColor = Value
+		    Self.Invalidate
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Append(ParamArray Segments() As String)
 		  For Each Segment As String In Segments
 		    Self.mSegments.Append(Segment.Trim)
@@ -106,13 +145,14 @@ Inherits ControlCanvas
 		  
 		  Dim TextColor, ShadowColor, BackgroundColor As Color
 		  If Selected Then
-		    TextColor = BeaconUI.PrimaryColor
-		    BackgroundColor = Shelf.SelectedBackgroundColor
+		    TextColor = Self.mSelectedTextColor
+		    BackgroundColor = Self.mSelectedBackgroundColor
+		    ShadowColor = Self.mSelectedShadowColor
 		  Else
-		    TextColor = Shelf.FillColor
-		    BackgroundColor = Shelf.BackgroundColor
+		    TextColor = BeaconUI.CommonForegroundColor
+		    BackgroundColor = BeaconUI.CommonBackgroundColor
+		    ShadowColor = BeaconUI.CommonShadowColor
 		  End If
-		  ShadowColor = TextColor.ShadowColor
 		  
 		  If Pressed Then
 		    TextColor = HSV(TextColor.Hue, TextColor.Saturation, TextColor.Value / 2, TextColor.Alpha)
@@ -164,6 +204,50 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case BeaconUI.PrimaryColorNotification
+		    If Self.mBackgroundColorAnimator <> Nil Then
+		      Self.mBackgroundColorAnimator.Cancel
+		      Self.mBackgroundColorAnimator = Nil
+		    End If
+		    
+		    If Self.mShadowColorAnimator <> Nil Then
+		      Self.mShadowColorAnimator.Cancel
+		      Self.mShadowColorAnimator = Nil
+		    End If
+		    
+		    If Self.mTextColorAnimator <> Nil Then
+		      Self.mTextColorAnimator.Cancel
+		      Self.mTextColorAnimator = Nil
+		    End If
+		    
+		    Dim TextColor As Color = Notification.UserData
+		    Dim ShadowColor As Color
+		    Dim BackgroundColor As Color = BeaconUI.CommonSelectionColor
+		    BeaconUI.ComputeColors(TextColor, ShadowColor, BackgroundColor)
+		    
+		    If Self.mSelectedBackgroundColor <> BackgroundColor Then
+		      Self.mBackgroundColorAnimator = New BeaconUI.ColorTask(Self, "BackgroundColor", Self.mSelectedBackgroundColor, BackgroundColor)
+		      Self.mBackgroundColorAnimator.Run
+		    End If
+		    
+		    If Self.mSelectedShadowColor <> ShadowColor Then
+		      Self.mShadowColorAnimator = New BeaconUI.ColorTask(Self, "ShadowColor", Self.mSelectedShadowColor, ShadowColor)
+		      Self.mShadowColorAnimator.Run
+		    End If
+		    
+		    If Self.mSelectedTextColor <> TextColor Then
+		      Self.mTextColorAnimator = New BeaconUI.ColorTask(Self, "TextColor", Self.mSelectedTextColor, TextColor)
+		      Self.mTextColorAnimator.Run
+		    End If
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Self.mSegments.Remove(Index)
 		  If Index < Self.mSelectedIndex Then
@@ -211,6 +295,14 @@ Inherits ControlCanvas
 		Event Action(NewIndex As Integer)
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event Close()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Open()
+	#tag EndHook
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -230,6 +322,10 @@ Inherits ControlCanvas
 		#tag EndSetter
 		Borders As Integer
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mBackgroundColorAnimator As BeaconUI.ColorTask
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mBorders As Integer
@@ -256,7 +352,27 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mSelectedBackgroundColor As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSelectedIndex As Integer = -1
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSelectedShadowColor As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSelectedTextColor As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mShadowColorAnimator As BeaconUI.ColorTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTextColorAnimator As BeaconUI.ColorTask
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
