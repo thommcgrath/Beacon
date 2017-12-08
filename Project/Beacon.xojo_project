@@ -190,6 +190,7 @@ Class=TemporaryDocumentRef;Data Model/TemporaryDocumentRef.xojo_code;&h261F5FFF;
 Window=DocumentEditorView;Views/DocumentEditorView.xojo_window;&h6DC957FF;&h8A387FF;false
 Class=ViewSwitcher;Custom Controls/ViewSwitcher.xojo_code;&h6A3B5FFF;&h30DCFFFF;false
 Window=PreferencesWindow;Views/PreferencesWindow.xojo_window;&h2A20AFFF;&h8A387FF;false
+Class=ColorProfile;Modules/BeaconUI/ColorProfile.xojo_code;&h22CD67FF;&h12A7B7FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

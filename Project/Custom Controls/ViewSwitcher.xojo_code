@@ -45,12 +45,10 @@ Implements BeaconUI.ColorAnimator, NotificationKit.Receiver
 
 	#tag Event
 		Sub Open()
-		  Dim BackgroundColor As Color = BeaconUI.CommonSelectionColor
-		  Dim ShadowColor As Color
-		  Self.mSelectedTextColor = BeaconUI.PrimaryColor
-		  BeaconUI.ComputeColors(Self.mSelectedTextColor, ShadowColor, BackgroundColor)
-		  Self.mSelectedShadowColor = ShadowColor
-		  Self.mSelectedBackgroundColor = BackgroundColor
+		  Dim Profile As BeaconUI.ColorProfile = BeaconUI.ColorProfile
+		  Self.mSelectedTextColor = Profile.SelectedForegroundColor
+		  Self.mSelectedBackgroundColor = Profile.SelectedBackgroundColor
+		  Self.mSelectedShadowColor = Profile.SelectedShadowColor
 		  NotificationKit.Watch(Self, BeaconUI.PrimaryColorNotification)
 		  RaiseEvent Open
 		End Sub
@@ -91,7 +89,7 @@ Implements BeaconUI.ColorAnimator, NotificationKit.Receiver
 		    NextPos = NextPos + ThisWidth + 1
 		  Next
 		  
-		  G.ForeColor = BeaconToolbar.BorderColor
+		  G.ForeColor = BeaconUI.ColorProfile.BorderColor
 		  G.FillRect(0, 0, G.Width, G.Height)
 		  
 		  For I As Integer = 0 To Self.mSegmentRects.Ubound
@@ -142,6 +140,7 @@ Implements BeaconUI.ColorAnimator, NotificationKit.Receiver
 		  
 		  Dim Pressed As Boolean = Self.mMouseDown And Self.mMouseDownIndex = Index
 		  Dim Selected As Boolean = Self.mSelectedIndex = Index
+		  Dim Profile As BeaconUI.ColorProfile = BeaconUI.ColorProfile
 		  
 		  Dim TextColor, ShadowColor, BackgroundColor As Color
 		  If Selected Then
@@ -149,9 +148,9 @@ Implements BeaconUI.ColorAnimator, NotificationKit.Receiver
 		    BackgroundColor = Self.mSelectedBackgroundColor
 		    ShadowColor = Self.mSelectedShadowColor
 		  Else
-		    TextColor = BeaconUI.CommonForegroundColor
-		    BackgroundColor = BeaconUI.CommonBackgroundColor
-		    ShadowColor = BeaconUI.CommonShadowColor
+		    TextColor = Profile.ForegroundColor
+		    BackgroundColor = Profile.BackgroundColor
+		    ShadowColor = Profile.ShadowColor
 		  End If
 		  
 		  If Pressed Then
@@ -224,10 +223,10 @@ Implements BeaconUI.ColorAnimator, NotificationKit.Receiver
 		      Self.mTextColorAnimator = Nil
 		    End If
 		    
-		    Dim TextColor As Color = Notification.UserData
-		    Dim ShadowColor As Color
-		    Dim BackgroundColor As Color = BeaconUI.CommonSelectionColor
-		    BeaconUI.ComputeColors(TextColor, ShadowColor, BackgroundColor)
+		    Dim Profile As BeaconUI.ColorProfile = BeaconUI.ColorProfile
+		    Dim TextColor As Color = Profile.SelectedForegroundColor
+		    Dim ShadowColor As Color = Profile.SelectedShadowColor
+		    Dim BackgroundColor As Color = Profile.SelectedBackgroundColor
 		    
 		    If Self.mSelectedBackgroundColor <> BackgroundColor Then
 		      Self.mBackgroundColorAnimator = New BeaconUI.ColorTask(Self, "BackgroundColor", Self.mSelectedBackgroundColor, BackgroundColor)

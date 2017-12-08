@@ -91,55 +91,13 @@ Protected Module BeaconUI
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub ComputeColors(ForegroundColor As Color, ByRef ShadowColor As Color, ByRef BackgroundColor As Color)
-		  Const TargetContrast = 2.2
-		  
-		  Dim ForegroundLuminance As Double = ForegroundColor.Luminance
-		  Dim DesiredGray As Double = BackgroundColor.Luminance
-		  
-		  Dim Contrast As Double
-		  If ForegroundLuminance > DesiredGray Then
-		    Contrast = (ForegroundLuminance + 0.05) / (DesiredGray + 0.05)
-		  Else
-		    Contrast = (DesiredGray + 0.05) / (ForegroundLuminance + 0.05)
+	#tag Method, Flags = &h0
+		Function ColorProfile() As BeaconUI.ColorProfile
+		  If mColorProfile = Nil Then
+		    mColorProfile = New BeaconUI.ColorProfile(PrimaryColor)
 		  End If
-		  
-		  Dim SelectedGray As Double
-		  If Contrast >= TargetContrast Then
-		    SelectedGray = DesiredGray
-		  Else
-		    Dim Grays(), Differences() As Double
-		    For I As Integer = 0 To 100
-		      Dim TestGray As Double = I / 100
-		      If ForegroundLuminance > TestGray Then
-		        Contrast = (ForegroundLuminance + 0.05) / (TestGray + 0.05)
-		      Else
-		        Contrast = (TestGray + 0.05) / (ForegroundLuminance + 0.05)
-		      End If
-		      
-		      If Contrast < TargetContrast Then
-		        Continue
-		      End If
-		      
-		      Dim Difference As Double = Xojo.Math.Abs(TestGray - DesiredGray)
-		      Grays.Append(TestGray)
-		      Differences.Append(Difference)
-		    Next
-		    
-		    If Grays.Ubound = -1 Then
-		      // Give up
-		      SelectedGray = DesiredGray
-		    Else
-		      Differences.SortWith(Grays)
-		      SelectedGray = Grays(0)
-		    End If
-		  End If
-		  
-		  Dim LuminanceDifference As Double = ForegroundLuminance - SelectedGray
-		  BackgroundColor = HSV(0, 0, SelectedGray)
-		  ShadowColor = If(LuminanceDifference <= 0, &cFFFFFF, &C00000080)
-		End Sub
+		  Return mColorProfile
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -230,6 +188,7 @@ Protected Module BeaconUI
 		  Dim CurrentColor As Color = PrimaryColor()
 		  App.Preferences.ColorValue("UI Color") = Value
 		  If CurrentColor <> Value Then
+		    mColorProfile = New BeaconUI.ColorProfile(Value)
 		    NotificationKit.Post(PrimaryColorNotification, Value)
 		  End If
 		End Sub
@@ -362,22 +321,12 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 
-	#tag Constant, Name = BorderColor, Type = Color, Dynamic = False, Default = \"&cA6A6A6", Scope = Protected
-	#tag EndConstant
+	#tag Property, Flags = &h21
+		Private mColorProfile As BeaconUI.ColorProfile
+	#tag EndProperty
+
 
 	#tag Constant, Name = ColorChangeDuration, Type = Double, Dynamic = False, Default = \"2.0", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = CommonBackgroundColor, Type = Color, Dynamic = False, Default = \"&cF7F7F7", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = CommonForegroundColor, Type = Color, Dynamic = False, Default = \"&c4C4C4C", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = CommonSelectionColor, Type = Color, Dynamic = False, Default = \"&cDEDEDE", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = CommonShadowColor, Type = Color, Dynamic = False, Default = \"&cFFFFFF", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = DefaultPrimaryColor, Type = Color, Dynamic = False, Default = \"&cA64DCF", Scope = Protected

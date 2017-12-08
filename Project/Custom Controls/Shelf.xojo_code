@@ -65,12 +65,10 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 
 	#tag Event
 		Sub Open()
-		  Dim CellColor As Color = Self.SelectedBackgroundColor
-		  Dim ShadowColor As Color
-		  Self.mSelectedFillColor = BeaconUI.PrimaryColor
-		  BeaconUI.ComputeColors(Self.mSelectedFillColor, ShadowColor, CellColor)
-		  Self.mSelectedCellColor = CellColor
-		  Self.mSelectedShadowColor = ShadowColor
+		  Dim Profile As BeaconUI.ColorProfile = BeaconUI.ColorProfile
+		  Self.mSelectedFillColor = Profile.SelectedForegroundColor
+		  Self.mSelectedCellColor = Profile.SelectedBackgroundColor
+		  Self.mSelectedShadowColor = Profile.SelectedShadowColor
 		  NotificationKit.Watch(Self, BeaconUI.PrimaryColorNotification)
 		  RaiseEvent Open
 		End Sub
@@ -80,7 +78,9 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused areas
 		  
-		  G.ForeColor = Self.BorderColor
+		  Dim Profile As BeaconUI.ColorProfile = BeaconUI.ColorProfile
+		  
+		  G.ForeColor = Profile.BorderColor
 		  G.FillRect(0, 0, G.Width, G.Height)
 		  
 		  G.TextSize = 10
@@ -98,7 +98,7 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 		  End If
 		  
 		  Dim Content As Graphics = G.Clip(0, ContentTop, G.Width, ContentHeight)
-		  Content.ForeColor = Self.BackgroundColor
+		  Content.ForeColor = Profile.BackgroundColor
 		  Content.FillRect(0, 0, Content.Width, Content.Height)
 		  
 		  Dim AvailableWidth As Integer = G.Width - (Self.EdgePadding * 2)
@@ -122,7 +122,7 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 		    Dim CaptionWidth As Integer = Ceil(CellContent.StringWidth(Caption))
 		    CaptionWidth = Min(CaptionWidth, CellContent.Width - (Self.CellPadding / 2))
 		    Dim CaptionX As Integer = (CellContent.Width - CaptionWidth) / 2
-		    Dim FillColor As Color = Self.FillColor
+		    Dim FillColor As Color = Profile.ForegroundColor
 		    Dim ShadowColor As Color = &cFFFFFF
 		    
 		    If Self.mSelectedIndex = I Then
@@ -218,10 +218,10 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 		      Self.mShadowAnimator = Nil
 		    End If
 		    
-		    Dim PrimaryColor As Color = Notification.UserData
-		    Dim CellColor As Color = Self.SelectedBackgroundColor
-		    Dim ShadowColor As Color
-		    BeaconUI.ComputeColors(PrimaryColor, ShadowColor, CellColor)
+		    Dim Profile As BeaconUI.ColorProfile = BeaconUI.ColorProfile
+		    Dim PrimaryColor As Color = Profile.SelectedForegroundColor
+		    Dim CellColor As Color = Profile.SelectedBackgroundColor
+		    Dim ShadowColor As Color = Profile.SelectedShadowColor
 		    
 		    If Self.mSelectedFillColor <> PrimaryColor Then
 		      Self.mFillAnimator = New BeaconUI.ColorTask(Self, "FillColor", Self.mSelectedFillColor, PrimaryColor)
@@ -366,13 +366,7 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 	#tag EndProperty
 
 
-	#tag Constant, Name = BackgroundColor, Type = Color, Dynamic = False, Default = \"&cf7f7f7", Scope = Public
-	#tag EndConstant
-
 	#tag Constant, Name = BorderBottom, Type = Double, Dynamic = False, Default = \"2", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = BorderColor, Type = Color, Dynamic = False, Default = \"&ca6a6a6", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = BorderNone, Type = Double, Dynamic = False, Default = \"0", Scope = Public
@@ -387,16 +381,7 @@ Implements NotificationKit.Receiver,BeaconUI.ColorAnimator
 	#tag Constant, Name = EdgePadding, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = FillColor, Type = Color, Dynamic = False, Default = \"&c4c4c4c", Scope = Public
-	#tag EndConstant
-
 	#tag Constant, Name = IconSize, Type = Double, Dynamic = False, Default = \"24", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = SelectedBackgroundColor, Type = Color, Dynamic = False, Default = \"&cdedede", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = SelectedEdgeColor, Type = Color, Dynamic = False, Default = \"&cc6c6c6", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = TextHeight, Type = Double, Dynamic = False, Default = \"7", Scope = Private

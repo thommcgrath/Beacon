@@ -322,7 +322,7 @@ Implements ObservationKit.Observer
 		    Self.mCaptionRect = Nil
 		  End If
 		  
-		  G.ForeColor = Self.BorderColor
+		  G.ForeColor = BeaconUI.ColorProfile.BorderColor
 		  G.DrawLine(-1, G.Height - 1, G.Width + 1, G.Height - 1)
 		End Sub
 	#tag EndEvent
@@ -729,9 +729,6 @@ Implements ObservationKit.Observer
 		RightItems As BeaconToolbarItemArray
 	#tag EndComputedProperty
 
-
-	#tag Constant, Name = BorderColor, Type = Color, Dynamic = False, Default = \"&ca6a6a6", Scope = Public
-	#tag EndConstant
 
 	#tag Constant, Name = CaptionButtonName, Type = String, Dynamic = False, Default = \"CaptionButton", Scope = Private
 	#tag EndConstant
