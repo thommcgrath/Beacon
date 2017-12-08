@@ -1,6 +1,6 @@
 #tag Class
 Protected Class BeaconToolbarItem
-Implements ObservationKit.Observable,BeaconUI.ColorAnimator, NotificationKit.Receiver
+Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Sub AddObserver(Observer As ObservationKit.Observer, Key As Text)
 		  // Part of the ObservationKit.Observable interface.
@@ -32,47 +32,6 @@ Implements ObservationKit.Observable,BeaconUI.ColorAnimator, NotificationKit.Rec
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub AnimationStep(Identifier As Text, Value As Color)
-		  // Part of the BeaconUI.ColorAnimator interface.
-		  
-		  If Identifier = "ButtonColor" Then
-		    Self.mButtonColor = Value
-		    Self.NotifyObservers(Self.KeyChanged, Value)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ButtonColor() As Color
-		  Return Self.mButtonColor
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ButtonColor(Animated As Boolean = True, Assigns Value As Color)
-		  If Self.mButtonColor = Value Then
-		    Return
-		  End If
-		  
-		  If Not Animated Then
-		    Self.mButtonColor = Value
-		    Self.NotifyObservers(Self.KeyChanged, Value)
-		    Return
-		  End If
-		  
-		  If Self.mColorTask <> Nil Then
-		    Self.mColorTask.Cancel
-		    Self.mColorTask = Nil
-		  End If
-		  
-		  Self.mColorTask = New BeaconUI.ColorTask(Self, "ButtonColor", Self.mButtonColor, Value)
-		  Self.mColorTask.Curve = AnimationKit.Curve.CreateEaseOut
-		  Self.mColorTask.DurationInSeconds = 0.25
-		  Self.mColorTask.Run
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Shared Function ColorAsDouble(Source As Color) As Double
 		  Return (Source.Red * 100000000) + (Source.Green * 100000) + Source.Blue
@@ -82,8 +41,6 @@ Implements ObservationKit.Observable,BeaconUI.ColorAnimator, NotificationKit.Rec
 	#tag Method, Flags = &h0
 		Sub Constructor(Name As String)
 		  Self.mName = Name
-		  Self.mButtonColor = BeaconUI.PrimaryColor()
-		  NotificationKit.Watch(Self, "UI Color Changed")
 		End Sub
 	#tag EndMethod
 
@@ -95,27 +52,10 @@ Implements ObservationKit.Observable,BeaconUI.ColorAnimator, NotificationKit.Rec
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Destructor()
-		  NotificationKit.Ignore(Self, "UI Color Changed")
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Shared Function DoubleAsColor(Source As Double) As Color
 		  
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
-		  // Part of the NotificationKit.Receiver interface.
-		  
-		  Select Case Notification.Name
-		  Case "UI Color Changed"
-		    Self.ButtonColor = Notification.UserData
-		  End Select
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -235,10 +175,6 @@ Implements ObservationKit.Observable,BeaconUI.ColorAnimator, NotificationKit.Rec
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mButtonColor As Color = DefaultColor
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mColorTask As BeaconUI.ColorTask
 	#tag EndProperty
 
@@ -279,9 +215,6 @@ Implements ObservationKit.Observable,BeaconUI.ColorAnimator, NotificationKit.Rec
 		Rect As REALbasic.Rect
 	#tag EndProperty
 
-
-	#tag Constant, Name = DefaultColor, Type = Color, Dynamic = False, Default = \"&cA64DCF", Scope = Public
-	#tag EndConstant
 
 	#tag Constant, Name = KeyChanged, Type = Text, Dynamic = False, Default = \"", Scope = Public
 	#tag EndConstant

@@ -326,7 +326,7 @@ Protected Module BeaconUI
 	#tag EndProperty
 
 
-	#tag Constant, Name = ColorChangeDuration, Type = Double, Dynamic = False, Default = \"2.0", Scope = Protected
+	#tag Constant, Name = ColorChangeDuration, Type = Double, Dynamic = False, Default = \"0.5", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = DefaultPrimaryColor, Type = Color, Dynamic = False, Default = \"&cA64DCF", Scope = Protected

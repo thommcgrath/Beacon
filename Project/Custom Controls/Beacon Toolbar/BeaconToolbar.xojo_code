@@ -1,11 +1,18 @@
 #tag Class
 Protected Class BeaconToolbar
 Inherits ControlCanvas
-Implements ObservationKit.Observer
+Implements ObservationKit.Observer, BeaconUI.ColorAnimator, NotificationKit.Receiver
 	#tag Event
 		Sub Activate()
 		  RaiseEvent Activate
 		  Self.Invalidate
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Close()
+		  RaiseEvent Close()
+		  NotificationKit.Ignore(Self, BeaconUI.PrimaryColorNotification)
 		End Sub
 	#tag EndEvent
 
@@ -179,6 +186,15 @@ Implements ObservationKit.Observer
 	#tag EndEvent
 
 	#tag Event
+		Sub Open()
+		  Self.mButtonFillColor = BeaconUI.ColorProfile.PrimaryColor
+		  Self.mButtonIconColor = If(Self.mButtonFillColor.IsBright, HSV(FillColor.Hue, FillColor.Saturation, FillColor.Value / 3.5), &cFFFFFF)
+		  NotificationKit.Watch(Self, BeaconUI.PrimaryColorNotification)
+		  RaiseEvent Open()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
@@ -278,7 +294,7 @@ Implements ObservationKit.Observer
 		        ColorValue = 51
 		      End If
 		      
-		      Self.DrawButtonFrame(G, ButtonRect, Mode, BeaconToolbarItem.DefaultColor, Highlighted, False)
+		      Self.DrawButtonFrame(G, ButtonRect, Mode, Highlighted, False)
 		      
 		      Dim CaptionLeft As Integer = Max(ButtonRect.HorizontalCenter - (CaptionWidth / 2), ButtonRect.Left + CaptionPadding)   
 		      Dim SubcaptionLeft As Integer = Max(ButtonRect.HorizontalCenter - (SubcaptionWidth / 2), ButtonRect.Left + CaptionPadding)
@@ -329,6 +345,21 @@ Implements ObservationKit.Observer
 
 
 	#tag Method, Flags = &h0
+		Sub AnimationStep(Identifier As Text, Value As Color)
+		  // Part of the BeaconUI.ColorAnimator interface.
+		  
+		  Select Case Identifier
+		  Case "FillColor"
+		    Self.mButtonFillColor = Value
+		    Self.Invalidate
+		  Case "IconColor"
+		    Self.mButtonIconColor = Value
+		    Self.Invalidate
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Super.Constructor
 		  Self.mLeftItems = New BeaconToolbarItemArray
@@ -344,20 +375,20 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h21
 		Private Sub DrawButton(G As Graphics, Button As BeaconToolbarItem, Rect As REALbasic.Rect, Mode As ButtonModes, Highlighted As Boolean)
-		  Self.DrawButtonFrame(G, Rect, Mode, Button.ButtonColor, Highlighted, Button.HasMenu)
+		  Self.DrawButtonFrame(G, Rect, Mode, Highlighted, Button.HasMenu)
 		  If Button.Icon = Nil Then
 		    Return
 		  End If
 		  
-		  Dim IconColor As Color = &cFFFFFF
+		  Dim IconColor As Color = Self.mButtonIconColor
 		  Select Case Mode
 		  Case ButtonModes.Pressed
-		    IconColor = &c808080
+		    IconColor = HSV(IconColor.Hue, IconColor.Saturation, IconColor.Value / 2)
 		  Case ButtonModes.Disabled
-		    IconColor = &cFFFFFF80
+		    IconColor = RGB(IconColor.Red, IconColor.Green, IconColor.Blue, IconColor.Alpha + ((255 - IconColor.Alpha) / 2))
 		  End Select
 		  If Not Highlighted Then
-		    IconColor = RGB(51, 51, 51, IconColor.Alpha)
+		    IconColor = RGB(76, 76, 76, IconColor.Alpha)
 		  End If
 		  
 		  Dim Pic As Picture = BeaconUI.IconWithColor(Button.Icon, IconColor)
@@ -366,7 +397,9 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawButtonFrame(G As Graphics, Rect As REALbasic.Rect, Mode As ButtonModes, BackgroundColor As Color, Highlighted As Boolean, WithMenu As Boolean)
+		Private Sub DrawButtonFrame(G As Graphics, Rect As REALbasic.Rect, Mode As ButtonModes, Highlighted As Boolean, WithMenu As Boolean)
+		  Dim BackgroundColor As Color = Self.mButtonFillColor
+		  
 		  Dim Source As Picture
 		  Select Case Mode
 		  Case ButtonModes.Normal
@@ -506,6 +539,38 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case BeaconUI.PrimaryColorNotification
+		    If Self.mButtonFillColorAnimator <> Nil Then
+		      Self.mButtonFillColorAnimator.Cancel
+		      Self.mButtonFillColorAnimator = Nil
+		    End If
+		    
+		    If Self.mButtonIconColorAnimator <> Nil Then
+		      Self.mButtonIconColorAnimator.Cancel
+		      Self.mButtonIconColorAnimator = Nil
+		    End If
+		    
+		    Dim FillColor As Color = BeaconUI.ColorProfile.PrimaryColor
+		    Dim IconColor As Color = If(FillColor.IsBright, HSV(FillColor.Hue, FillColor.Saturation, FillColor.Value / 3.5), &cFFFFFF)
+		    
+		    If Self.mButtonFillColor <> FillColor Then
+		      Self.mButtonFillColorAnimator = New BeaconUI.ColorTask(Self, "FillColor", Self.mButtonFillColor, FillColor)
+		      Self.mButtonFillColorAnimator.Run
+		    End If
+		    
+		    If Self.mButtonIconColor <> IconColor Then
+		      Self.mButtonIconColorAnimator = New BeaconUI.ColorTask(Self, "IconColor", Self.mButtonIconColor, IconColor)
+		      Self.mButtonIconColorAnimator.Run
+		    End If
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
 		  // Part of the ObservationKit.Observer interface.
 		  
@@ -551,11 +616,19 @@ Implements ObservationKit.Observer
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event Close()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Deactivate()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event HandleMenuAction(Item As BeaconToolbarItem, ChosenItem As MenuItem)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Open()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -639,6 +712,22 @@ Implements ObservationKit.Observer
 		#tag EndGetter
 		LeftItems As BeaconToolbarItemArray
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mButtonFillColor As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mButtonFillColorAnimator As BeaconUI.ColorTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mButtonIconColor As Color
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mButtonIconColorAnimator As BeaconUI.ColorTask
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCaption As String
