@@ -53,9 +53,6 @@ Protected Class ColorProfile
 		Sub Constructor(PrimaryColor As Color)
 		  Self.Constructor()
 		  
-		  Self.mStandardBackgroundColor = &cF7F7F7
-		  Self.mStandardForegroundColor = &c4C4C4C
-		  Self.mStandardShadowColor = &cFFFFFF
 		  Self.mSelectedForegroundColor = PrimaryColor
 		  
 		  Dim ForegroundLuminance As Double = PrimaryColor.Luminance
@@ -104,6 +101,14 @@ Protected Class ColorProfile
 		  Self.mSelectedShadowColor = If(LuminanceDifference <= 0, &cFFFFFF, &C00000080)
 		  
 		  Self.mBorderColor = HSV(0, 0, Min(Max(SelectedGray * 0.80, 0.00), 0.65))
+		  Self.mStandardBackgroundColor = HSV(0, 0, Min(SelectedGray * 1.3, 0.968))
+		  If Self.mStandardBackgroundColor.Luminance > 0.55 Then
+		    Self.mStandardForegroundColor = &c4C4C4C
+		    Self.mStandardShadowColor = &cFFFFFF
+		  Else
+		    Self.mStandardForegroundColor = &cFFFFFF
+		    Self.mStandardShadowColor = &c00000080
+		  End If
 		End Sub
 	#tag EndMethod
 

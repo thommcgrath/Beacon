@@ -37,7 +37,6 @@ Begin Window MainWindow
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -73,7 +72,6 @@ Begin Window MainWindow
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True
@@ -132,7 +130,6 @@ Begin Window MainWindow
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
          Text            =   "Select Something"
          TextAlign       =   1
          TextColor       =   &c00000000
@@ -188,7 +185,7 @@ End
 
 	#tag Event
 		Sub Open()
-		  #if TargetCocoa
+		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
 		    Declare Function NSSelectorFromString Lib "Foundation" (SelectorName As CFStringRef) As Ptr
 		    Declare Function RespondsToSelector Lib "Foundation" Selector "respondsToSelector:" (Target As Integer, SelectorRef As Ptr) As Boolean
 		    
@@ -276,12 +273,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function PositionSheet(Sender As NSWindowDelegateMBS, Win As NSWindowMBS, Sheet As NSWindowMBS, Rect As NSRectMBS) As NSRectMBS
-		  Dim Frame As REALbasic.Rect = Self.Bounds
-		  Dim TitlebarHeight As Integer = Self.Top - Frame.Top
-		  
-		  Dim Dest As New NSRectMBS(Rect)
-		  Dest.Y = Dest.Y - (41 + TitlebarHeight)
-		  Return Dest
+		  #if BeaconUI.ToolbarHasBackground = False
+		    Dim Frame As REALbasic.Rect = Self.Bounds
+		    Dim TitlebarHeight As Integer = Self.Top - Frame.Top
+		    
+		    Dim Dest As New NSRectMBS(Rect)
+		    Dest.Y = Dest.Y - (41 + TitlebarHeight)
+		    Return Dest
+		  #endif
 		End Function
 	#tag EndMethod
 

@@ -332,6 +332,10 @@ Protected Module BeaconUI
 	#tag Constant, Name = PrimaryColorNotification, Type = Text, Dynamic = False, Default = \"UI Color Changed", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = ToolbarHasBackground, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected
+		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"True"
+	#tag EndConstant
+
 
 	#tag ViewBehavior
 		#tag ViewProperty

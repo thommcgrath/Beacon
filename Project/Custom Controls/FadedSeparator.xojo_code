@@ -6,7 +6,7 @@ Inherits ControlCanvas
 		  #Pragma Unused Areas
 		  
 		  G.ForeColor = Self.ColorProfile.BorderColor
-		  If G.Width = 1 Then
+		  If G.Width = 1 And BeaconUI.ToolbarHasBackground = False Then
 		    G.DrawPicture(BeaconUI.IconWithColor(ImgToolbarDivider, G.ForeColor), 0, 0)
 		    G.FillRect(0, ImgToolbarDivider.Height, G.Width, G.Height - ImgToolbarDivider.Height)
 		  Else

@@ -1,0 +1,46 @@
+#tag MultiImage
+Image ImgToolbarButtonFillMask
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAHCAAAAAAHCAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8cSW1nVG9vbGJhckJ1dHRvbkZpbGxNYXNrLnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFcvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkltZ1Rvb2xiYXJCdXR0b25GaWxsTWFzay5wbmcAAA4AOgAcAEkAbQBnAFQAbwBvAGwAYgBhAHIAQgB1AHQAdABvAG4ARgBpAGwAbABNAGEAcwBrAC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBVVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvSW1nVG9vbGJhckJ1dHRvbkZpbGxNYXNrLnBuZwAAEwABLwAAFQACABL//wAAAAAAAAAA
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/ImgToolbarButtonFillMask.png
+		PartialPath = ..\Icons\ImgToolbarButtonFillMask.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 72
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAHMAAAAAAHMAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8fSW1nVG9vbGJhckJ1dHRvbkZpbGxNYXNrQDJ4LnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFovOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkltZ1Rvb2xiYXJCdXR0b25GaWxsTWFza0AyeC5wbmcADgBAAB8ASQBtAGcAVABvAG8AbABiAGEAcgBCAHUAdAB0AG8AbgBGAGkAbABsAE0AYQBzAGsAQAAyAHgALgBwAG4AZwAPABoADABNAGEAYwBpAG4AdABvAHMAaAAgAEgARAASAFhVc2Vycy90aG9tbWNncmF0aC9Eb2N1bWVudHMvVGhlIFpBWiBTb3VyY2VzL0JlYWNvbi9JY29ucy9JbWdUb29sYmFyQnV0dG9uRmlsbE1hc2tAMngucG5nABMAAS8AABUAAgAS//8AAAAAAAAAAA==
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/ImgToolbarButtonFillMask@2x.png
+		PartialPath = ..\Icons\ImgToolbarButtonFillMask@2x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 144
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAHMAAAAAAHMAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8fSW1nVG9vbGJhckJ1dHRvbkZpbGxNYXNrQDN4LnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFovOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkltZ1Rvb2xiYXJCdXR0b25GaWxsTWFza0AzeC5wbmcADgBAAB8ASQBtAGcAVABvAG8AbABiAGEAcgBCAHUAdAB0AG8AbgBGAGkAbABsAE0AYQBzAGsAQAAzAHgALgBwAG4AZwAPABoADABNAGEAYwBpAG4AdABvAHMAaAAgAEgARAASAFhVc2Vycy90aG9tbWNncmF0aC9Eb2N1bWVudHMvVGhlIFpBWiBTb3VyY2VzL0JlYWNvbi9JY29ucy9JbWdUb29sYmFyQnV0dG9uRmlsbE1hc2tAM3gucG5nABMAAS8AABUAAgAS//8AAAAAAAAAAA==
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/ImgToolbarButtonFillMask@3x.png
+		PartialPath = ..\Icons\ImgToolbarButtonFillMask@3x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = -1.00
+			Orientation = Any
+			Platform = 15
+			PPI = 216
+			VSize = -1.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+End Image
+#tag EndMultiImage

@@ -182,8 +182,15 @@ Implements ObservationKit.Observer
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
+		  Const FillBackground = True
+		  
 		  Const CellPadding = 8
 		  Const ButtonSize = 24
+		  
+		  #if FillBackground
+		    G.ForeColor = Self.ColorProfile.BackgroundColor
+		    G.FillRect(0, 0, G.Width, G.Height)
+		  #endif
 		  
 		  Dim Highlighted As Boolean = True
 		  #if TargetCocoa
@@ -263,20 +270,14 @@ Implements ObservationKit.Observer
 		      Dim ButtonWidth As Integer = Min(Max(CaptionWidth, SubcaptionWidth) + (CaptionPadding * 2), ContentRect.Width)
 		      Dim ButtonRect As New REALbasic.Rect(ContentRect.Left + ((ContentRect.Width - ButtonWidth) / 2), CellPadding, ButtonWidth, ButtonSize)
 		      
-		      Dim ColorValue As Integer = 255
-		      Dim AlphaValue As Integer = 0
 		      Dim Mode As ButtonModes = ButtonModes.Normal
 		      If Self.mPressedName = Self.CaptionButtonName Then
 		        Mode = ButtonModes.Pressed
-		        ColorValue = 128
 		      End If
 		      If Not Self.mCaptionEnabled Then
 		        Mode = ButtonModes.Disabled
-		        AlphaValue = 128
 		      End If
-		      If Not Highlighted Then
-		        ColorValue = 51
-		      End If
+		      Dim CaptionColor As Color = Self.IconColor(Self.ColorProfile.SelectedForegroundColor, Mode, Highlighted)
 		      
 		      Self.DrawButtonFrame(G, ButtonRect, Mode, Highlighted, False)
 		      
@@ -297,7 +298,7 @@ Implements ObservationKit.Observer
 		      Dim CaptionBottom As Integer = TextTop + CaptionHeight
 		      Dim SubcaptionBottom As Integer = TextTop + TextHeight
 		      
-		      G.ForeColor = RGB(ColorValue, ColorValue, ColorValue, AlphaValue)
+		      G.ForeColor = CaptionColor
 		      G.TextSize = CaptionSize
 		      G.DrawString(Caption, CaptionLeft, CaptionBottom, ButtonRect.Width - (CaptionPadding * 2), True)
 		      If Subcaption <> "" Then
@@ -311,9 +312,9 @@ Implements ObservationKit.Observer
 		      Dim CaptionLeft As Integer = ContentRect.Left + ((ContentRect.Width - CaptionWidth) / 2)
 		      Dim CaptionBottom As Integer = ContentRect.Top + (ContentRect.Height / 2) + ((G.TextAscent * 0.8) / 2)
 		      
-		      G.ForeColor = &cFFFFFF
+		      G.ForeColor = If(FillBackground, Self.ColorProfile.ShadowColor, &cFFFFFF)
 		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom + 1, CaptionWidth, True)
-		      G.ForeColor = &c333333
+		      G.ForeColor = If(FillBackground, Self.ColorProfile.ForegroundColor, &c333333)
 		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, CaptionWidth, True)
 		      
 		      Self.mCaptionRect = Nil
@@ -350,16 +351,7 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  Dim FillColor As Color = Self.ColorProfile.SelectedForegroundColor
-		  Dim IconColor As Color = If(FillColor.IsBright, HSV(FillColor.Hue, FillColor.Saturation, FillColor.Value / 3.5, FillColor.Alpha), &cFFFFFF)
-		  Select Case Mode
-		  Case ButtonModes.Pressed
-		    IconColor = HSV(IconColor.Hue, IconColor.Saturation, IconColor.Value / 2)
-		  Case ButtonModes.Disabled
-		    IconColor = RGB(IconColor.Red, IconColor.Green, IconColor.Blue, IconColor.Alpha + ((255 - IconColor.Alpha) / 2))
-		  End Select
-		  If Not Highlighted Then
-		    IconColor = RGB(76, 76, 76, IconColor.Alpha)
-		  End If
+		  Dim IconColor As Color = Self.IconColor(FillColor, Mode, Highlighted)
 		  
 		  Dim Pic As Picture = BeaconUI.IconWithColor(Button.Icon, IconColor)
 		  G.DrawPicture(Pic, Rect.Left + ((Rect.Width - Pic.Width) / 2), Rect.Top + ((Rect.Height - Pic.Height) / 2))
@@ -444,6 +436,22 @@ Implements ObservationKit.Observer
 		    Xojo.Core.Timer.CallLater(2000, AddressOf ShowHoverTooltip)
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function IconColor(FillColor As Color, Mode As ButtonModes, Highlighted As Boolean) As Color
+		  Dim IconColor As Color = If(FillColor.IsBright, HSV(FillColor.Hue, FillColor.Saturation, FillColor.Value / 3.5, FillColor.Alpha), &cFFFFFF)
+		  Select Case Mode
+		  Case ButtonModes.Pressed
+		    IconColor = HSV(IconColor.Hue, IconColor.Saturation, IconColor.Value / 2)
+		  Case ButtonModes.Disabled
+		    IconColor = RGB(IconColor.Red, IconColor.Green, IconColor.Blue, IconColor.Alpha + ((255 - IconColor.Alpha) / 2))
+		  End Select
+		  If Not Highlighted Then
+		    IconColor = RGB(76, 76, 76, IconColor.Alpha)
+		  End If
+		  Return IconColor
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
