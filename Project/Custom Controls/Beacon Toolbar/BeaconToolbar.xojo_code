@@ -182,18 +182,18 @@ Implements ObservationKit.Observer
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  Const FillBackground = True
-		  
 		  Const CellPadding = 8
 		  Const ButtonSize = 24
 		  
-		  #if FillBackground
+		  Self.ComputeColors()
+		  
+		  #if BeaconUI.ToolbarHasBackground
 		    G.ForeColor = Self.ColorProfile.BackgroundColor
 		    G.FillRect(0, 0, G.Width, G.Height)
 		  #endif
 		  
 		  Dim Highlighted As Boolean = True
-		  #if TargetCocoa
+		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
 		    Declare Function IsMainWindow Lib "Cocoa.framework" Selector "isMainWindow" (Target As Integer) As Boolean
 		    Declare Function IsKeyWindow Lib "Cocoa.framework" Selector "isKeyWindow" (Target As Integer) As Boolean
 		    Highlighted = IsKeyWindow(Self.TrueWindow.Handle) Or IsMainWindow(Self.TrueWindow.Handle)
@@ -202,13 +202,35 @@ Implements ObservationKit.Observer
 		  Dim ContentRect As New REALbasic.Rect(CellPadding, CellPadding, Self.Width - (CellPadding * 2), Self.Height - (CellPadding * 2))
 		  
 		  If Self.HasResizer Then
-		    ContentRect.Right = ContentRect.Right - (CellPadding + ImgToolbarResizer.Width)
+		    Const ResizerStripes = 3
+		    Const ResizerHeight = 12
+		    
+		    Dim ResizerWidth As Integer = (ResizerStripes * 2) + (ResizerStripes - 1)
+		    ContentRect.Right = ContentRect.Right - (CellPadding + ResizerWidth)
 		    
 		    Dim ResizerLeft As Integer = ContentRect.Right + CellPadding
-		    Dim ResizerTop As Integer = (Self.Height - ImgToolbarResizer.Height) / 2
+		    Dim ResizerTop As Integer = (Self.Height - ResizerHeight) / 2
 		    
 		    Self.mResizerRect = New REALbasic.Rect(ResizerLeft, 0, Self.Width - ResizerLeft, Self.Height)
-		    G.DrawPicture(ImgToolbarResizer, ResizerLeft, ResizerTop)
+		    
+		    Dim LeftColor, RightColor As Color
+		    #if BeaconUI.ToolbarHasBackground
+		      LeftColor = Self.ColorProfile.ForegroundColor
+		      RightColor = Self.ColorProfile.ShadowColor
+		      LeftColor = RGB(LeftColor.Red, LeftColor.Green, LeftColor.Blue, 155)
+		      RightColor = RGB(RightColor.Red, RightColor.Green, RightColor.Blue, 155)
+		    #else
+		      LeftColor = &c0000009B
+		      RightColor = &cFFFFFF00
+		    #endif
+		    
+		    For I As Integer = 1 To ResizerStripes
+		      Dim X As Integer = ResizerLeft + ((I - 1) * 3)
+		      G.ForeColor = LeftColor
+		      G.DrawLine(X, ResizerTop, X, ResizerTop + ResizerHeight)
+		      G.ForeColor = RightColor
+		      G.DrawLine(X + 1, ResizerTop + 1, X + 1, ResizerTop + 1 + ResizerHeight)
+		    Next
 		  Else
 		    Self.mResizerRect = Nil
 		  End If
@@ -277,7 +299,20 @@ Implements ObservationKit.Observer
 		      If Not Self.mCaptionEnabled Then
 		        Mode = ButtonModes.Disabled
 		      End If
-		      Dim CaptionColor As Color = Self.IconColor(Self.ColorProfile.SelectedForegroundColor, Mode, Highlighted)
+		      
+		      Dim Set As ColorSet = If(Highlighted, Self.mColorSet, Self.mColorSetClear)
+		      Dim CaptionColor, ShadowColor As Color
+		      Select Case Mode
+		      Case ButtonModes.Pressed
+		        CaptionColor = Set.IconColorPressed
+		        ShadowColor = Set.ShadowColorPressed
+		      Case ButtonModes.Disabled
+		        CaptionColor = Set.IconColorDisabled
+		        ShadowColor = Set.ShadowColorDisabled
+		      Else
+		        CaptionColor = Set.IconColor
+		        ShadowColor = Set.ShadowColor
+		      End Select
 		      
 		      Self.DrawButtonFrame(G, ButtonRect, Mode, Highlighted, False)
 		      
@@ -298,11 +333,16 @@ Implements ObservationKit.Observer
 		      Dim CaptionBottom As Integer = TextTop + CaptionHeight
 		      Dim SubcaptionBottom As Integer = TextTop + TextHeight
 		      
-		      G.ForeColor = CaptionColor
 		      G.TextSize = CaptionSize
+		      G.ForeColor = ShadowColor
+		      G.DrawString(Caption, CaptionLeft, CaptionBottom + 1, ButtonRect.Width - (CaptionPadding * 2), True)
+		      G.ForeColor = CaptionColor
 		      G.DrawString(Caption, CaptionLeft, CaptionBottom, ButtonRect.Width - (CaptionPadding * 2), True)
 		      If Subcaption <> "" Then
 		        G.TextSize = SubcaptionSize
+		        G.ForeColor = ShadowColor
+		        G.DrawString(Subcaption, SubcaptionLeft, SubcaptionBottom + 1, ButtonRect.Width - (CaptionPadding * 2), True)
+		        G.ForeColor = CaptionColor
 		        G.DrawString(Subcaption, SubcaptionLeft, SubcaptionBottom, ButtonRect.Width - (CaptionPadding * 2), True)
 		      End If
 		      
@@ -312,9 +352,9 @@ Implements ObservationKit.Observer
 		      Dim CaptionLeft As Integer = ContentRect.Left + ((ContentRect.Width - CaptionWidth) / 2)
 		      Dim CaptionBottom As Integer = ContentRect.Top + (ContentRect.Height / 2) + ((G.TextAscent * 0.8) / 2)
 		      
-		      G.ForeColor = If(FillBackground, Self.ColorProfile.ShadowColor, &cFFFFFF)
+		      G.ForeColor = If(BeaconUI.ToolbarHasBackground, Self.ColorProfile.ShadowColor, &cFFFFFF)
 		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom + 1, CaptionWidth, True)
-		      G.ForeColor = If(FillBackground, Self.ColorProfile.ForegroundColor, &c333333)
+		      G.ForeColor = If(BeaconUI.ToolbarHasBackground, Self.ColorProfile.ForegroundColor, &c333333)
 		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, CaptionWidth, True)
 		      
 		      Self.mCaptionRect = Nil
@@ -328,6 +368,106 @@ Implements ObservationKit.Observer
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Sub ComputeColors()
+		  Self.mColorSet = Self.ComputeColorSet(Self.ColorProfile.SelectedForegroundColor)
+		  Self.mColorSetClear = Self.ComputeColorSet(&cFFFFFF)
+		  
+		  #if false
+		    Self.mFillColor = Self.ColorProfile.SelectedForegroundColor
+		    #if BeaconUI.ToolbarHasBackground
+		      Self.mFillColorDisabled = Self.mFillColor.BlendWith(Self.ColorProfile.BackgroundColor, 0.4)
+		      Self.mBorderShadowColor = Self.ColorProfile.BackgroundColor.BlendWith(&cFFFFFF, 0.35)
+		    #else
+		      Self.mFillColorDisabled = Self.mFillColor.Lighter(0.5)
+		      Self.mBorderShadowColor = &cFFFFFF40
+		    #endif
+		    
+		    If BeaconUI.ToolbarHasBackground = False Or Self.ColorProfile.BackgroundColor.Luminance >= 0.65 Then
+		      Self.mBorderColor = Self.mFillColor.Darker(0.5)
+		      Self.mBorderColorDisabled = Self.mFillColorDisabled.Darker(0.3)
+		    Else
+		      Self.mBorderColor = Self.ColorProfile.BorderColor 
+		      Self.mBorderColorDisabled = Self.mBorderColor 
+		    End If
+		    
+		    Self.mBorderColorPressed = Self.mBorderColor.Darker(0.5)
+		    Self.mFillColorPressed = Self.mFillColor.Darker(0.5)
+		    
+		    If Self.mFillColor.IsBright Then
+		      Self.mIconColor = Self.mFillColor.Darker(0.7)
+		      Self.mShadowColor = Self.mFillColor.Lighter(0.7)
+		    Else
+		      Self.mIconColor = &cFFFFFF
+		      Self.mShadowColor = Self.mFillColor.Darker(0.4)
+		    End If
+		    
+		    Self.mIconColorPressed = Self.mIconColor.Darker(0.5)
+		    Self.mIconColorDisabled = Self.mIconColor.BlendWith(Self.mFillColorDisabled, 0.7)
+		    
+		    Self.mShadowColorPressed = Self.mShadowColor.Darker(0.5)
+		    Self.mShadowColorDisabled = Self.mShadowColor.BlendWith(Self.mFillColorDisabled, 0.7)
+		    
+		    // Clear, when the window is not in the foreground on macOS
+		    
+		    Self.mFillColorClear = &cFFFFFF
+		    #if BeaconUI.ToolbarHasBackground
+		      Self.mFillColorClearDisabled = Self.mFillColorClear.BlendWith(Self.ColorProfile.BackgroundColor, 0.4)
+		    #else
+		      Self.mFillColorClearDisabled = Self.mFillColorClear.Lighter(0.5)
+		    #endif
+		    
+		    Self.mBorderColorClear = Self.mFillColorClear.Darker(0.5)
+		    Self.mBorderColorClearDisabled = Self.mFillColorClearDisabled.Darker(0.3)
+		    
+		    Self.mIconColorClear = Self.mFillColorClear.Darker(0.7)
+		    Self.mIconColorClearDisabled = Self.mIconColorClear.BlendWith(Self.mFillColorClearDisabled, 0.7)
+		    
+		    Self.mShadowColorClear = Self.mFillColorClear.Lighter(0.7)
+		    Self.mShadowColorClearDisabled = Self.mShadowColorClear.BlendWith(Self.mFillColorClearDisabled, 0.7)
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ComputeColorSet(FillColor As Color) As ColorSet
+		  #if BeaconUI.ToolbarHasBackground
+		    Dim HasDarkBackground As Boolean = Self.ColorProfile.BackgroundColor.Luminance < 0.65
+		  #else
+		    Dim HasDarkBackground As Boolean = False
+		  #endif
+		  
+		  Dim Set As ColorSet
+		  Set.FillColor = FillColor
+		  
+		  If HasDarkBackground Then
+		    Set.BorderColor = Self.ColorProfile.BorderColor
+		    Set.BorderShadowColor = Self.ColorProfile.BackgroundColor.BlendWith(&cFFFFFF, 0.35)
+		  Else
+		    Set.BorderColor = FillColor.Darker(0.5)
+		    Set.BorderShadowColor = &cFFFFFF40
+		  End If
+		  
+		  If FillColor.IsBright Then
+		    Set.IconColor = FillColor.Darker(0.7)
+		    Set.ShadowColor = FillColor.Lighter(0.35)
+		  Else
+		    Set.IconColor = &cFFFFFF
+		    Set.ShadowColor = FillColor.Darker(0.4)
+		  End If
+		  
+		  Set.FillColorPressed = FillColor.Darker(0.5)
+		  Set.BorderColorPressed = Set.BorderColor.Darker(0.5)
+		  Set.IconColorPressed = Set.IconColor.Darker(0.5)
+		  Set.ShadowColorPressed = Set.ShadowColor.Darker(0.5)
+		  
+		  Set.IconColorDisabled = Set.IconColor.BlendWith(FillColor, 0.7)
+		  Set.ShadowColorDisabled = Set.ShadowColor.BlendWith(FillColor, 0.7)
+		  
+		  Return Set
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
@@ -350,68 +490,81 @@ Implements ObservationKit.Observer
 		    Return
 		  End If
 		  
-		  Dim FillColor As Color = Self.ColorProfile.SelectedForegroundColor
-		  Dim IconColor As Color = Self.IconColor(FillColor, Mode, Highlighted)
+		  Dim Set As ColorSet = If(Highlighted, Self.mColorSet, Self.mColorSetClear)
+		  Dim IconColor, ShadowColor As Color
+		  Select Case Mode
+		  Case ButtonModes.Pressed
+		    IconColor = Set.IconColorPressed
+		    ShadowColor = Set.ShadowColorPressed
+		  Case ButtonModes.Disabled
+		    IconColor = Set.IconColorDisabled
+		    ShadowColor = Set.ShadowColorDisabled
+		  Else
+		    IconColor = Set.IconColor
+		    ShadowColor = Set.ShadowColor
+		  End Select
 		  
-		  Dim Pic As Picture = BeaconUI.IconWithColor(Button.Icon, IconColor)
-		  G.DrawPicture(Pic, Rect.Left + ((Rect.Width - Pic.Width) / 2), Rect.Top + ((Rect.Height - Pic.Height) / 2))
+		  Dim Shadow As Picture = BeaconUI.IconWithColor(Button.Icon, ShadowColor)
+		  G.DrawPicture(Shadow, Rect.Left + ((Rect.Width - Shadow.Width) / 2), Rect.Top + 1 + ((Rect.Height - Shadow.Height) / 2))
+		  Dim Icon As Picture = BeaconUI.IconWithColor(Button.Icon, IconColor)
+		  G.DrawPicture(Icon, Rect.Left + ((Rect.Width - Icon.Width) / 2), Rect.Top + ((Rect.Height - Icon.Height) / 2))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub DrawButtonFrame(G As Graphics, Rect As REALbasic.Rect, Mode As ButtonModes, Highlighted As Boolean, WithMenu As Boolean)
-		  Dim BackgroundColor As Color = Self.ColorProfile.SelectedForegroundColor
-		  
-		  Dim Source As Picture
+		  Dim Set As ColorSet = If(Highlighted, Self.mColorSet, Self.mColorSetClear)
+		  Dim FillColor, BorderColor, ShadowColor As Color
 		  Select Case Mode
-		  Case ButtonModes.Normal
-		    Source = If(WithMenu, ImgToolbarMenuNormal, ImgToolbarButtonNormal)
-		  Case ButtonModes.Disabled
-		    Source = If(WithMenu, ImgToolbarMenuDisabled, ImgToolbarButtonDisabled)
 		  Case ButtonModes.Pressed
-		    Source = If(WithMenu, ImgToolbarMenuPressed, ImgToolbarButtonPressed)
+		    FillColor = Set.FillColorPressed
+		    BorderColor = Set.BorderColorPressed
+		  Else
+		    FillColor = Set.FillColor
+		    BorderColor = Set.BorderColor
 		  End Select
-		  If Not Highlighted Then
-		    BackgroundColor = &cFFFFFF
-		  End If
-		  If Mode = ButtonModes.Disabled Then
-		    BackgroundColor = RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue, 128)
-		  End If
+		  ShadowColor = Set.BorderShadowColor
 		  
-		  Dim LeftRect As New REALbasic.Rect(0, 0, 12, Source.Height)
-		  Dim FillRect As New REALbasic.Rect(12, 0, 1, Source.Height)
-		  Dim RightRect As New REALbasic.Rect(Source.Width - 12, 0, 12, Source.Height)
-		  Dim CenterRect As New REALbasic.Rect(16, 0, 8, Source.Height)
-		  Dim Top As Integer = Rect.Top + ((Rect.Height - Source.Height) / 2)
+		  Const SourceWidth = 40
+		  Const SourceHeight = 42
+		  
+		  Dim LeftRect As New REALbasic.Rect(0, 0, 12, 42)
+		  Dim FillRect As New REALbasic.Rect(12, 0, 1, 42)
+		  Dim RightRect As New REALbasic.Rect(40 - 12, 0, 12, 42)
+		  Dim CenterRect As New REALbasic.Rect(16, 0, 8, 42)
+		  Dim Top As Integer = Rect.Top + ((Rect.Height - 42) / 2)
 		  
 		  Rect = New REALbasic.Rect(Rect.Left - 8, Rect.Top - 8, Rect.Width + 16, Rect.Height + 16)
 		  
-		  Dim Mask As Picture = BeaconUI.IconWithColor(If(WithMenu, ImgToolbarMenuMask, ImgToolbarButtonMask), BackgroundColor)
-		  G.DrawPicture(Mask, Rect.Left, Top, LeftRect.Width, LeftRect.Height, LeftRect.Left, LeftRect.Top, LeftRect.Width, LeftRect.Height)
-		  G.DrawPicture(Mask, Rect.Right - RightRect.Width, Top, RightRect.Width, RightRect.Height, RightRect.Left, RightRect.Top, RightRect.Width, RightRect.Height)
-		  G.DrawPicture(Mask, Rect.Left + LeftRect.Width, Top, Rect.Width - (LeftRect.Width + RightRect.Width), FillRect.Height, FillRect.Left, FillRect.Top, FillRect.Width, FillRect.Height)
-		  If WithMenu Then
-		    G.DrawPicture(Mask, Rect.HorizontalCenter - (CenterRect.Width / 2), Top, CenterRect.Width, CenterRect.Height, CenterRect.Left, CenterRect.Top, CenterRect.Width, CenterRect.Height)
-		  End If
+		  Dim BorderMask As Picture = BeaconUI.IconWithColor(If(WithMenu, ImgToolbarMenuBorderMask, ImgToolbarButtonBorderMask), BorderColor)
+		  Dim FillMask As Picture = BeaconUI.IconWithColor(If(WithMenu, ImgToolbarMenuFillMask, ImgToolbarButtonFillMask), FillColor)
+		  Dim ShadowMask As Picture = BeaconUI.IconWithColor(If(WithMenu, ImgToolbarMenuBorderMask, ImgToolbarButtonBorderMask), ShadowColor)
+		  
+		  Dim Temp As New Picture(SourceWidth * G.ScaleX, SourceHeight * G.ScaleY)
+		  Temp.HorizontalResolution = 72 * G.ScaleX
+		  Temp.VerticalResolution = 72 * G.ScaleY
+		  Temp.Graphics.ScaleX = G.ScaleX
+		  Temp.Graphics.ScaleY = G.ScaleY
+		  Temp.Graphics.DrawPicture(ShadowMask, 0, 1)
+		  Temp.Graphics.DrawPicture(BorderMask, 0, 0)
+		  Temp.Graphics.DrawPicture(FillMask, 0, 0)
+		  Dim Source As New Picture(SourceWidth, SourceHeight, Array(Temp))
 		  
 		  G.DrawPicture(Source, Rect.Left, Top, LeftRect.Width, LeftRect.Height, LeftRect.Left, LeftRect.Top, LeftRect.Width, LeftRect.Height)
 		  G.DrawPicture(Source, Rect.Right - RightRect.Width, Top, RightRect.Width, RightRect.Height, RightRect.Left, RightRect.Top, RightRect.Width, RightRect.Height)
-		  If WithMenu Then
-		    Dim TailLeft As Integer = Rect.HorizontalCenter - (CenterRect.Width / 2)
-		    Dim TailRight As Integer = TailLeft + CenterRect.Width
-		    
-		    Dim LeftSectionLeft As Integer = Rect.Left + LeftRect.Width
-		    Dim LeftSectionRight As Integer = TailLeft
-		    
-		    Dim RightSectionLeft As Integer = TailRight
-		    Dim RightSectionRight As Integer = Rect.Right - RightRect.Width
-		    
-		    G.DrawPicture(Source, TailLeft, Top, CenterRect.Width, CenterRect.Height, CenterRect.Left, CenterRect.Top, CenterRect.Width, CenterRect.Height)
-		    G.DrawPicture(Source, LeftSectionLeft, Top, LeftSectionRight - LeftSectionLeft, FillRect.Height, FillRect.Left, FillRect.Top, FillRect.Width, FillRect.Height)
-		    G.DrawPicture(Source, RightSectionLeft, Top, RightSectionRight - RightSectionLeft, FillRect.Height, FillRect.Left, FillRect.Top, FillRect.Width, FillRect.Height)
-		  Else
-		    G.DrawPicture(Source, Rect.Left + LeftRect.Width, Top, Rect.Width - (LeftRect.Width + RightRect.Width), FillRect.Height, FillRect.Left, FillRect.Top, FillRect.Width, FillRect.Height)
-		  End If
+		  
+		  Dim TailLeft As Integer = Rect.HorizontalCenter - (CenterRect.Width / 2)
+		  Dim TailRight As Integer = TailLeft + CenterRect.Width
+		  
+		  Dim LeftSectionLeft As Integer = Rect.Left + LeftRect.Width
+		  Dim LeftSectionRight As Integer = TailLeft
+		  
+		  Dim RightSectionLeft As Integer = TailRight
+		  Dim RightSectionRight As Integer = Rect.Right - RightRect.Width
+		  
+		  G.DrawPicture(Source, TailLeft, Top, CenterRect.Width, CenterRect.Height, CenterRect.Left, CenterRect.Top, CenterRect.Width, CenterRect.Height)
+		  G.DrawPicture(Source, LeftSectionLeft, Top, LeftSectionRight - LeftSectionLeft, FillRect.Height, FillRect.Left, FillRect.Top, FillRect.Width, FillRect.Height)
+		  G.DrawPicture(Source, RightSectionLeft, Top, RightSectionRight - RightSectionLeft, FillRect.Height, FillRect.Left, FillRect.Top, FillRect.Width, FillRect.Height)
 		End Sub
 	#tag EndMethod
 
@@ -436,22 +589,6 @@ Implements ObservationKit.Observer
 		    Xojo.Core.Timer.CallLater(2000, AddressOf ShowHoverTooltip)
 		  End If
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function IconColor(FillColor As Color, Mode As ButtonModes, Highlighted As Boolean) As Color
-		  Dim IconColor As Color = If(FillColor.IsBright, HSV(FillColor.Hue, FillColor.Saturation, FillColor.Value / 3.5, FillColor.Alpha), &cFFFFFF)
-		  Select Case Mode
-		  Case ButtonModes.Pressed
-		    IconColor = HSV(IconColor.Hue, IconColor.Saturation, IconColor.Value / 2)
-		  Case ButtonModes.Disabled
-		    IconColor = RGB(IconColor.Red, IconColor.Green, IconColor.Blue, IconColor.Alpha + ((255 - IconColor.Alpha) / 2))
-		  End Select
-		  If Not Highlighted Then
-		    IconColor = RGB(76, 76, 76, IconColor.Alpha)
-		  End If
-		  Return IconColor
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -668,6 +805,14 @@ Implements ObservationKit.Observer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mColorSet As ColorSet
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mColorSetClear As ColorSet
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mHasResizer As Boolean
 	#tag EndProperty
 
@@ -743,6 +888,21 @@ Implements ObservationKit.Observer
 
 	#tag Constant, Name = CaptionButtonName, Type = String, Dynamic = False, Default = \"CaptionButton", Scope = Private
 	#tag EndConstant
+
+
+	#tag Structure, Name = ColorSet, Flags = &h21
+		FillColor As Color
+		  FillColorPressed As Color
+		  BorderColor As Color
+		  BorderColorPressed As Color
+		  BorderShadowColor As Color
+		  IconColor As Color
+		  IconColorPressed As Color
+		  IconColorDisabled As Color
+		  ShadowColor As Color
+		  ShadowColorPressed As Color
+		ShadowColorDisabled As Color
+	#tag EndStructure
 
 
 	#tag Enum, Name = ButtonModes, Type = Integer, Flags = &h21

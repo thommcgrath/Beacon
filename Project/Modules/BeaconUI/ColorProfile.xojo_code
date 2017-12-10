@@ -6,33 +6,16 @@ Protected Class ColorProfile
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function BlendColors(Color1 As Color, Color2 As Color, Color2Percent As Double) As Color
-		  If Color1.Red = Color2.Red And Color1.Green = Color2.Green And Color1.Blue = Color2.Blue And Color1.Alpha = Color2.Alpha Then
-		    Return Color1
-		  End If
-		  
-		  Dim Color1Percent As Double = 1.0 - Color2Percent
-		  
-		  Dim Red As Integer = (Color1.Red * Color1Percent) + (Color2.Red * Color2Percent)
-		  Dim Green As Integer = (Color1.Green * Color1Percent) + (Color2.Green * Color2Percent)
-		  Dim Blue As Integer = (Color1.Blue * Color1Percent) + (Color2.Blue * Color2Percent)
-		  Dim Alpha As Integer = (Color1.Alpha * Color1Percent) + (Color2.Alpha * Color2Percent)
-		  
-		  Return RGB(Red, Green, Blue, Alpha)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function BlendWithProfile(OtherProfile As BeaconUI.ColorProfile, OtherPercent As Double) As BeaconUI.ColorProfile
 		  Dim Blended As New BeaconUI.ColorProfile
-		  Blended.mBorderColor = Self.BlendColors(Self.mBorderColor, OtherProfile.mBorderColor, OtherPercent)
-		  Blended.mSelectedBackgroundColor = Self.BlendColors(Self.mSelectedBackgroundColor, OtherProfile.mSelectedBackgroundColor, OtherPercent)
-		  Blended.mSelectedForegroundColor = Self.BlendColors(Self.mSelectedForegroundColor, OtherProfile.mSelectedForegroundColor, OtherPercent)
-		  Blended.mSelectedShadowColor = Self.BlendColors(Self.mSelectedShadowColor, OtherProfile.mSelectedShadowColor, OtherPercent)
-		  Blended.mStandardBackgroundColor = Self.BlendColors(Self.mStandardBackgroundColor, OtherProfile.mStandardBackgroundColor, OtherPercent)
-		  Blended.mStandardForegroundColor = Self.BlendColors(Self.mStandardForegroundColor, OtherProfile.mStandardForegroundColor, OtherPercent)
-		  Blended.mStandardShadowColor = Self.BlendColors(Self.mStandardShadowColor, OtherProfile.mStandardShadowColor, OtherPercent)
+		  Blended.mBorderColor = Self.mBorderColor.BlendWith(OtherProfile.mBorderColor, OtherPercent)
+		  Blended.mSelectedBackgroundColor = Self.mSelectedBackgroundColor.BlendWith(OtherProfile.mSelectedBackgroundColor, OtherPercent)
+		  Blended.mSelectedForegroundColor = Self.mSelectedForegroundColor.BlendWith(OtherProfile.mSelectedForegroundColor, OtherPercent)
+		  Blended.mSelectedShadowColor = Self.mSelectedShadowColor.BlendWith(OtherProfile.mSelectedShadowColor, OtherPercent)
+		  Blended.mStandardBackgroundColor = Self.mStandardBackgroundColor.BlendWith(OtherProfile.mStandardBackgroundColor, OtherPercent)
+		  Blended.mStandardForegroundColor = Self.mStandardForegroundColor.BlendWith(OtherProfile.mStandardForegroundColor, OtherPercent)
+		  Blended.mStandardShadowColor = Self.mStandardShadowColor.BlendWith(OtherProfile.mStandardShadowColor, OtherPercent)
 		  Return Blended
 		End Function
 	#tag EndMethod

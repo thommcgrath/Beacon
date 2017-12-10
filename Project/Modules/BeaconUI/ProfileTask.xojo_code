@@ -31,7 +31,7 @@ Inherits AnimationKit.Task
 	#tag Method, Flags = &h1021
 		Private Sub Constructor()
 		  Self.Curve = AnimationKit.Curve.CreateEaseOut
-		  Self.DurationInSeconds = 0.5
+		  Self.DurationInSeconds = 0.15
 		End Sub
 	#tag EndMethod
 
@@ -80,12 +80,6 @@ Inherits AnimationKit.Task
 			Type="Double"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="EndProfile"
-			Group="Behavior"
-			InitialValue="&c000000"
-			Type="Color"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Identifier"
 			Group="Behavior"
 			Type="Text"
@@ -119,12 +113,6 @@ Inherits AnimationKit.Task
 			Name="Started"
 			Group="Behavior"
 			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="StartProfile"
-			Group="Behavior"
-			InitialValue="&c000000"
-			Type="Color"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

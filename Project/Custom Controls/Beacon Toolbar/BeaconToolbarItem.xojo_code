@@ -32,12 +32,6 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function ColorAsDouble(Source As Color) As Double
-		  Return (Source.Red * 100000000) + (Source.Green * 100000) + Source.Blue
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub Constructor(Name As String)
 		  Self.mName = Name
@@ -50,12 +44,6 @@ Implements ObservationKit.Observable
 		  Self.mIcon = Icon
 		  Self.mEnabled = Enabled
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function DoubleAsColor(Source As Double) As Color
-		  
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -108,6 +96,23 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndMethod
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mCaption
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If StrComp(Self.mCaption, Value, 0) <> 0 Then
+			    Self.mCaption = Value
+			    Self.NotifyObservers(Self.KeyChanged, Value)
+			  End If
+			End Set
+		#tag EndSetter
+		Caption As String
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -175,6 +180,10 @@ Implements ObservationKit.Observable
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
+		Private mCaption As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mEnabled As Boolean = True
 	#tag EndProperty
 
@@ -198,6 +207,10 @@ Implements ObservationKit.Observable
 		Private mObservers As Xojo.Core.Dictionary
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSubcaption As String
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -210,6 +223,23 @@ Implements ObservationKit.Observable
 	#tag Property, Flags = &h0
 		Rect As REALbasic.Rect
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mSubcaption
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If StrComp(Self.mSubcaption, Value, 0) <> 0 Then
+			    Self.mSubcaption = Value
+			    Self.NotifyObservers(Self.KeyChanged, Value)
+			  End If
+			End Set
+		#tag EndSetter
+		Subcaption As String
+	#tag EndComputedProperty
 
 
 	#tag Constant, Name = KeyChanged, Type = Text, Dynamic = False, Default = \"", Scope = Public

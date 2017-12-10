@@ -15,6 +15,23 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BlendWith(Extends Color1 As Color, Color2 As Color, Color2Percent As Double) As Color
+		  If Color1.Red = Color2.Red And Color1.Green = Color2.Green And Color1.Blue = Color2.Blue And Color1.Alpha = Color2.Alpha Then
+		    Return Color1
+		  End If
+		  
+		  Dim Color1Percent As Double = 1.0 - Color2Percent
+		  
+		  Dim Red As Integer = (Color1.Red * Color1Percent) + (Color2.Red * Color2Percent)
+		  Dim Green As Integer = (Color1.Green * Color1Percent) + (Color2.Green * Color2Percent)
+		  Dim Blue As Integer = (Color1.Blue * Color1Percent) + (Color2.Blue * Color2Percent)
+		  Dim Alpha As Integer = (Color1.Alpha * Color1Percent) + (Color2.Alpha * Color2Percent)
+		  
+		  Return RGB(Red, Green, Blue, Alpha)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CapHeight(Extends G As Graphics) As Double
 		  #if TargetCocoa
 		    Declare Function objc_getClass Lib "Cocoa.framework" (ClassName As CString) As Ptr
@@ -101,6 +118,12 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Darker(Extends Source As Color, Percent As Double) As Color
+		  Return Color.HSV(Source.Hue, Source.Saturation, Source.Value * (1 - Percent))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub FixTabFont(Extends Panel As TabPanel)
 		  #if TargetCocoa
 		    Declare Function objc_getClass Lib "Cocoa.framework" (ClassName As CString) As Ptr
@@ -149,6 +172,12 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h0
 		Function IsBright(Extends Source As Color) As Boolean
 		  Return Source.Luminance > 0.5
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Lighter(Extends Source As Color, Percent As Double) As Color
+		  Return Color.HSV(Source.Hue, Source.Saturation, Source.Value + (Source.Value * Percent))
 		End Function
 	#tag EndMethod
 
@@ -333,7 +362,7 @@ Protected Module BeaconUI
 	#tag EndConstant
 
 	#tag Constant, Name = ToolbarHasBackground, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected
-		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"True"
+		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"False"
 	#tag EndConstant
 
 
