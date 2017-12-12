@@ -30,9 +30,9 @@ Begin LibrarySubview LibraryPaneDocuments
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   False
-      ColumnCount     =   2
+      ColumnCount     =   1
       ColumnsResizable=   False
-      ColumnWidths    =   "*,22"
+      ColumnWidths    =   "*"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
@@ -166,53 +166,57 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.UpdateLocalDocuments()
-		  Self.UpdateUserDocuments()
-		  Self.UpdateCommunityDocuments()
+		  #if false
+		    Self.UpdateLocalDocuments()
+		    Self.UpdateCloudDocuments()
+		    Self.UpdateCommunityDocuments()
+		  #endif
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
 		Private Sub AddDocuments(Documents() As Beacon.DocumentRef, ClearAllOfType As DocumentTypes)
-		  Dim Selected() As Beacon.DocumentRef = Self.SelectedDocuments
-		  
-		  For I As Integer = Self.List.ListCount - 1 DownTo 0
-		    Dim Ref As Beacon.DocumentRef = Self.List.RowTag(I)
-		    Dim Type As DocumentTypes = Self.DocumentType(Ref)
-		    If Type = ClearAllOfType Then
-		      Self.List.RemoveRow(I)
-		    End If
-		  Next
-		  
-		  For Each Ref As Beacon.DocumentRef In Documents
-		    Dim Index As Integer = -1
-		    Dim Priority As Integer = CType(Self.DocumentType(Ref), Integer)
+		  #if false
+		    Dim Selected() As Beacon.DocumentRef = Self.SelectedDocuments
 		    
 		    For I As Integer = Self.List.ListCount - 1 DownTo 0
-		      Dim OtherRef As Beacon.DocumentRef = Self.List.RowTag(I)
-		      If OtherRef.DocumentID = Ref.DocumentID Then
-		        Dim OtherPriority As Integer = CType(Self.DocumentType(OtherRef), Integer)
-		        If Priority < OtherPriority Then
-		          Index = I
-		          Exit For I
-		        Else
-		          Continue For Ref
-		        End If
+		      Dim Ref As Beacon.DocumentRef = Self.List.RowTag(I)
+		      Dim Type As DocumentTypes = Self.DocumentType(Ref)
+		      If Type = ClearAllOfType Then
+		        Self.List.RemoveRow(I)
 		      End If
 		    Next
 		    
-		    If Index = -1 Then
-		      Self.List.AddRow("")
-		      Index = Self.List.LastIndex
-		    End If
+		    For Each Ref As Beacon.DocumentRef In Documents
+		      Dim Index As Integer = -1
+		      Dim Priority As Integer = CType(Self.DocumentType(Ref), Integer)
+		      
+		      For I As Integer = Self.List.ListCount - 1 DownTo 0
+		        Dim OtherRef As Beacon.DocumentRef = Self.List.RowTag(I)
+		        If OtherRef.DocumentID = Ref.DocumentID Then
+		          Dim OtherPriority As Integer = CType(Self.DocumentType(OtherRef), Integer)
+		          If Priority < OtherPriority Then
+		            Index = I
+		            Exit For I
+		          Else
+		            Continue For Ref
+		          End If
+		        End If
+		      Next
+		      
+		      If Index = -1 Then
+		        Self.List.AddRow("")
+		        Index = Self.List.LastIndex
+		      End If
+		      
+		      Self.List.Cell(Index, 0) = Ref.Name
+		      Self.List.RowTag(Index) = Ref
+		    Next
 		    
-		    Self.List.Cell(Index, 0) = Ref.Name
-		    Self.List.RowTag(Index) = Ref
-		  Next
-		  
-		  Self.List.Sort
-		  Self.SelectedDocuments = Selected
+		    Self.List.Sort
+		    Self.SelectedDocuments = Selected
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -235,6 +239,27 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub APICallback_CloudDocumentsList(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Message
+		  
+		  If Not Success Then
+		    Return
+		  End If
+		  
+		  Dim Dicts() As Auto = Details
+		  Dim Documents() As BeaconAPI.Document
+		  For Each Dict As Xojo.Core.Dictionary In Dicts
+		    Documents.Append(New BeaconAPI.Document(Dict))
+		  Next
+		  
+		  Self.mCloudDocuments = Documents
+		  If Self.View = Self.ViewCloudDocuments Then
+		    Self.UpdateDocumentsList()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub APICallback_CommunityDocumentsList(Success As Boolean, Message As Text, Details As Auto)
 		  #Pragma Unused Message
 		  
@@ -248,7 +273,10 @@ End
 		    Documents.Append(New BeaconAPI.Document(Dict))
 		  Next
 		  
-		  Self.AddDocuments(Documents, DocumentTypes.CommunityCloud)
+		  Self.mCommunityDocuments = Documents
+		  If Self.View = Self.ViewCommunityDocuments Then
+		    Self.UpdateDocumentsList()
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -261,24 +289,6 @@ End
 		  End If
 		  
 		  Self.ShowAlert("Cloud document was not deleted", Message)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_UserDocumentsList(Success As Boolean, Message As Text, Details As Auto)
-		  #Pragma Unused Message
-		  
-		  If Not Success Then
-		    Return
-		  End If
-		  
-		  Dim Dicts() As Auto = Details
-		  Dim Documents() As BeaconAPI.Document
-		  For Each Dict As Xojo.Core.Dictionary In Dicts
-		    Documents.Append(New BeaconAPI.Document(Dict))
-		  Next
-		  
-		  Self.AddDocuments(Documents, DocumentTypes.UserCloud)
 		End Sub
 	#tag EndMethod
 
@@ -500,12 +510,73 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateCloudDocuments()
+		  Dim Params As New Xojo.Core.Dictionary
+		  Params.Value("user_id") = App.Identity.Identifier
+		  
+		  Dim Request As New BeaconAPI.Request("document.php", "GET", Params, AddressOf APICallback_CloudDocumentsList)
+		  Request.Sign(App.Identity)
+		  Self.APISocket.Start(Request)
+		  
+		  If Self.View = Self.ViewCloudDocuments Then
+		    Self.UpdateDocumentsList()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateCommunityDocuments()
 		  Dim Params As New Xojo.Core.Dictionary
 		  
 		  Dim Request As New BeaconAPI.Request("document.php", "GET", Params, AddressOf APICallback_CommunityDocumentsList)
 		  Request.Sign(App.Identity)
 		  Self.APISocket.Start(Request)
+		  
+		  If Self.View = Self.ViewCommunityDocuments Then
+		    Self.UpdateDocumentsList()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateDocumentsList()
+		  Dim View As Integer = Self.Switcher.Value
+		  Dim Documents() As Beacon.DocumentRef
+		  Select Case View
+		  Case Self.ViewRecentDocuments
+		    Documents = Self.mRecentDocuments
+		  Case Self.ViewCloudDocuments
+		    Documents = Self.mCloudDocuments
+		  Case Self.ViewCommunityDocuments
+		    Documents = Self.mCommunityDocuments
+		  Else
+		    Return
+		  End Select
+		  
+		  Dim RowBound As Integer = Self.List.ListCount - 1
+		  Dim SelectedIDs() As Text
+		  For I As Integer = 0 To RowBound
+		    If Self.List.Selected(I) Then
+		      Dim Ref As Beacon.DocumentRef = Self.List.RowTag(I)
+		      SelectedIDs.Append(Ref.DocumentID)
+		    End If
+		  Next
+		  
+		  While RowBound > Documents.Ubound
+		    Self.List.RemoveRow(RowBound)
+		    RowBound = RowBound - 1
+		  Wend
+		  While RowBound < Documents.Ubound
+		    Self.List.AddRow()
+		    RowBound = RowBound + 1
+		  Wend
+		  
+		  For I As Integer = 0 To RowBound
+		    Dim Ref As Beacon.DocumentRef = Documents(I)
+		    Self.List.Cell(I, 0) = Ref.Name
+		    Self.List.RowTag(I) = Ref
+		    Self.List.Selected(I) = SelectedIDs.IndexOf(Ref.DocumentID) > -1
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -525,24 +596,18 @@ End
 		    Documents = LocalData.SharedInstance.LocalDocuments
 		  End If
 		  
+		  Self.mRecentDocuments = Documents
+		  Self.UpdateDocumentsList()
+		  
 		  Self.AddDocuments(Documents, DocumentTypes.Local)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateTempDocuments()
-		  Self.AddDocuments(Self.mTempDocuments, DocumentTypes.Temporary)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateUserDocuments()
-		  Dim Params As New Xojo.Core.Dictionary
-		  Params.Value("user_id") = App.Identity.Identifier
 		  
-		  Dim Request As New BeaconAPI.Request("document.php", "GET", Params, AddressOf APICallback_UserDocumentsList)
-		  Request.Sign(App.Identity)
-		  Self.APISocket.Start(Request)
+		  
+		  Self.AddDocuments(Self.mTempDocuments, DocumentTypes.Temporary)
 		End Sub
 	#tag EndMethod
 
@@ -551,6 +616,14 @@ End
 		Event ShouldResize(ByRef NewSize As Integer)
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private mCloudDocuments() As Beacon.DocumentRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCommunityDocuments() As Beacon.DocumentRef
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDocumentURLs As Xojo.Core.Dictionary
@@ -577,12 +650,40 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRecentDocuments() As Beacon.DocumentRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTempDocuments() As TemporaryDocumentRef
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mViews As Xojo.Core.Dictionary
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.Switcher.Value
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.Switcher.Value = Value
+			End Set
+		#tag EndSetter
+		View As Integer
+	#tag EndComputedProperty
+
+
+	#tag Constant, Name = ViewCloudDocuments, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ViewCommunityDocuments, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ViewRecentDocuments, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
 
 
 	#tag Enum, Name = DocumentTypes, Type = Integer, Flags = &h21
@@ -629,36 +730,6 @@ End
 		    
 		    Return True
 		  End Select
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean) As Boolean
-		  If Column <> 1 Then
-		    Return False
-		  End If
-		  
-		  If Row >= Me.ListCount Then
-		    Return False
-		  End If
-		  
-		  Dim Ref As Beacon.DocumentRef = Me.RowTag(Row)
-		  Dim Type As DocumentTypes = Self.DocumentType(Ref)
-		  Dim Icon As Picture
-		  
-		  Select Case Type
-		  Case DocumentTypes.CommunityCloud
-		    Icon = IconDocumentCommunity
-		  Case DocumentTypes.UserCloud
-		    Icon = IconDocumentCloud
-		  End Select
-		  
-		  If Icon = Nil Then
-		    Return False
-		  End If
-		  
-		  Icon = BeaconUI.IconWithColor(Icon, RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 64))
-		  G.DrawPicture(Icon, (G.Width - Icon.Width) / 2, (Me.DefaultRowHeight - Icon.Height) / 2)
-		  Return True
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -757,7 +828,7 @@ End
 		  Next
 		  
 		  If UpdateCloud Then
-		    Self.UpdateUserDocuments()
+		    Self.UpdateCloudDocuments()
 		  End If
 		  If UpdateLocal Then
 		    Self.UpdateLocalDocuments()
@@ -888,7 +959,19 @@ End
 		Sub Open()
 		  Me.Append("Recent", "Cloud", "Community")
 		  Me.Borders = ViewSwitcher.BorderBottom
-		  Me.Value = 0
+		  Me.Value = Self.ViewRecentDocuments
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action(NewIndex As Integer)
+		  Select Case NewIndex
+		  Case Self.ViewRecentDocuments
+		    Self.UpdateLocalDocuments()
+		  Case Self.ViewCloudDocuments
+		    Self.UpdateCloudDocuments()
+		  Case Self.ViewCommunityDocuments
+		    Self.UpdateCommunityDocuments()
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1057,6 +1140,11 @@ End
 		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="View"
+		Group="Behavior"
+		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Visible"

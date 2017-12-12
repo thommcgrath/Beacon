@@ -147,6 +147,50 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Sub AddLootSource(LootSource As Beacon.LootSource)
+		  Dim Arr(0) As Beacon.LootSource
+		  Arr(0) = LootSource
+		  Self.AddLootSources(Arr)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AddLootSources(Sources() As Beacon.LootSource, Silent As Boolean = False)
+		  If Sources.Ubound = -1 Then
+		    Return
+		  End If
+		  
+		  Dim CurrentMask As UInt64 = Self.mDocument.MapCompatibility
+		  Dim IgnoredSources() As Beacon.LootSource
+		  
+		  For Each Source As Beacon.LootSource In Sources
+		    If Self.mDocument.HasLootSource(Source) Then
+		      Self.mDocument.Remove(Source)
+		    End If
+		    
+		    If Self.mDocument.SupportsLootSource(Source) Then
+		      Self.mDocument.Add(Source)
+		    Else
+		      IgnoredSources.Append(Source)
+		    End If
+		    Self.ContentsChanged = True
+		  Next
+		  
+		  //Self.UpdateSourceList(Sources)
+		  
+		  If IgnoredSources.Ubound > -1 And Not Silent Then
+		    Dim SourcesList() As Text
+		    For Each IgnoredSource As Beacon.LootSource In IgnoredSources
+		      SourcesList.Append(IgnoredSource.Label)
+		    Next
+		    
+		    Dim IgnoredCount As Integer = IgnoredSources.Ubound + 1
+		    Self.ShowAlert(IgnoredCount.ToText + if(IgnoredCount = 1, " loot source was", " loot sources were") + " not added because " + if(IgnoredCount = 1, "it is", "they are") + " not compatible with the selected maps.", "The following " + if(IgnoredCount = 1, "loot source was", "loot sources were") + " skipped: " + Text.Join(SourcesList, ", "))
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor(Ref As Beacon.DocumentRef, Document As Beacon.Document)
 		  Self.mDocument = Document
@@ -170,6 +214,15 @@ End
 		    Return LocalDocumentRef(Self.mRef).File
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowAddLootSource()
+		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self.TrueWindow, Self.mDocument)
+		  If LootSource <> Nil Then
+		    Self.AddLootSource(LootSource)
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -237,6 +290,14 @@ End
 		    Self.UpdateCaptionButton()
 		    Self.ContentsChanged = True
 		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "AddSource"
+		    Self.ShowAddLootSource()
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
