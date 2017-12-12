@@ -44,7 +44,6 @@ Begin Window LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   1
       Visible         =   True
@@ -133,7 +132,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
-         TabStop         =   True
          Text            =   "Add Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -250,7 +248,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Define Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -409,7 +406,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Customize Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -444,7 +440,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   11
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Max Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -479,7 +474,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   9
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Min Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -514,7 +508,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Class String:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -549,7 +542,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Label:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -584,7 +576,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Kind:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -619,7 +610,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   7
          TabPanelIndex   =   2
-         TabStop         =   True
          Text            =   "Availability:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -900,7 +890,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Min Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -978,7 +967,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Max Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1096,7 +1084,6 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   6
          TabPanelIndex   =   3
-         TabStop         =   True
          Text            =   "Presets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -1317,7 +1304,7 @@ End
 		Private Sub BuildSourceList(CurrentSources() As Beacon.LootSource)
 		  Dim AllowedLootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("")
 		  For X As Integer = UBound(AllowedLootSources) DownTo 0
-		    If Not AllowedLootSources(X).ValidForMap(Self.mCurrentMap) Then
+		    If Not AllowedLootSources(X).ValidForMask(Self.mCurrentMask) Then
 		      AllowedLootSources.Remove(X)
 		    End If
 		  Next
@@ -1357,9 +1344,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function PresentAdd(Parent As Window, Document As Beacon.Document, Map As Beacon.Map) As Beacon.LootSource
+		Shared Function PresentAdd(Parent As Window, Document As Beacon.Document) As Beacon.LootSource
 		  Dim Win As New LootSourceWizard
-		  Win.mCurrentMap = Map
+		  Win.mCurrentMask = Document.MapCompatibility
 		  Win.BuildSourceList(Document.LootSources)
 		  Win.mOriginal = Nil
 		  Win.ShowModalWithin(Parent)
@@ -1373,9 +1360,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function PresentDuplicate(Parent As Window, Document As Beacon.Document, Source As Beacon.LootSource, Map As Beacon.Map) As Beacon.LootSource
+		Shared Function PresentDuplicate(Parent As Window, Document As Beacon.Document, Source As Beacon.LootSource) As Beacon.LootSource
 		  Dim Win As New LootSourceWizard
-		  Win.mCurrentMap = Map
+		  Win.mCurrentMask = Document.MapCompatibility
 		  Win.BuildSourceList(Document.LootSources)
 		  Win.mOriginal = New Beacon.LootSource(Source)
 		  Win.ShowModalWithin(Parent)
@@ -1389,9 +1376,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function PresentEdit(Parent As Window, Document As Beacon.Document, Source As Beacon.LootSource, Map As Beacon.Map) As Beacon.LootSource
+		Shared Function PresentEdit(Parent As Window, Document As Beacon.Document, Source As Beacon.LootSource) As Beacon.LootSource
 		  Dim Win As New LootSourceWizard
-		  Win.mCurrentMap = Map
+		  Win.mCurrentMask = Document.MapCompatibility
 		  Win.BuildSourceList(Document.LootSources)
 		  Win.mOriginal = New Beacon.LootSource(Source)
 		  Win.mEditing = New Beacon.MutableLootSource(Source)
@@ -1420,7 +1407,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCurrentMap As Beacon.Map
+		Private mCurrentMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1473,7 +1460,7 @@ End
 		    
 		    CustomizePresetsList.DeleteAllRows()
 		    For Each Preset As Beacon.Preset In Presets
-		      If Preset.ValidForMap(Self.mCurrentMap) Then
+		      If Preset.ValidForMask(Self.mCurrentMask) Then
 		        CustomizePresetsList.AddRow("", Preset.Label)
 		        CustomizePresetsList.RowTag(CustomizePresetsList.LastIndex) = Preset
 		      End If
@@ -1673,13 +1660,13 @@ End
 		        If Set.SourcePresetID = Preset.PresetID Then
 		          If CustomizeReconfigureCheckbox.Value Then
 		            // Wants to rebuild it
-		            Self.mEditing(X).ReconfigureWithPreset(Preset, Self.mEditing, Self.mCurrentMap)
+		            Self.mEditing(X).ReconfigureWithPreset(Preset, Self.mEditing, Self.mCurrentMask)
 		          End If
 		          Continue For I
 		        End If
 		      Next
 		      
-		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Self.mEditing, Self.mCurrentMap)
+		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Self.mEditing, Self.mCurrentMask)
 		      Self.mEditing.Append(Set)
 		    Else
 		      For X As Integer = 0 To UBound(Self.mEditing)

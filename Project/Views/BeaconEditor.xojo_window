@@ -273,7 +273,7 @@ End
 		    
 		    Dim Arr() As Beacon.Preset = Groups.Value(Group)
 		    For Each Preset As Beacon.Preset In Arr
-		      If Preset.ValidForMap(Self.CurrentMap) Then
+		      If Preset.ValidForMask(Self.MapMask) Then
 		        Dim PresetItem As New MenuItem(Preset.Label, Preset)
 		        AddHandler PresetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		        Parent.Append(PresetItem)
@@ -346,7 +346,7 @@ End
 		  
 		  Dim Added As Boolean
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Source, Self.CurrentMap)
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Source, Self.MapMask)
 		    If Source.IndexOf(Set) = -1 Then
 		      Source.Append(Set)
 		      Added = True
@@ -538,12 +538,12 @@ End
 	#tag EndHook
 
 
-	#tag Property, Flags = &h0
-		CurrentMap As Beacon.Map
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private ImportProgress As ImporterWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		MapMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -792,7 +792,7 @@ End
 		        For Each Source As Beacon.LootSource In Self.mSources
 		          Dim OriginalHash As Text = Set.Hash
 		          Dim NewSet As Beacon.ItemSet = New Beacon.ItemSet(Set)
-		          NewSet.ReconfigureWithPreset(Preset, Source, Self.CurrentMap)
+		          NewSet.ReconfigureWithPreset(Preset, Source, Self.MapMask)
 		          If NewSet.Hash = OriginalHash Then
 		            Continue
 		          End If
@@ -1107,6 +1107,11 @@ End
 		Visible=true
 		Group="Position"
 		Type="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MapMask"
+		Group="Behavior"
+		Type="UInt64"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

@@ -540,7 +540,7 @@ Implements Beacon.DataSource
 		    Commands.Append("INSERT INTO custom_presets SELECT * FROM legacy.custom_presets;")
 		  End If
 		  
-		  If FromSchemaVersion >= 4 Then
+		  If FromSchemaVersion >= 5 Then
 		    Commands.Append("INSERT INTO local_documents SELECT * FROM local_documents;")
 		  End If
 		  
@@ -1032,7 +1032,7 @@ Implements Beacon.DataSource
 	#tag EndProperty
 
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
 

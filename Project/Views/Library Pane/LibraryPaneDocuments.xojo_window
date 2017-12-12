@@ -325,26 +325,15 @@ End
 		  End If
 		  
 		  Dim Document As Beacon.Document = Self.mImportedRef.Document
-		  Dim GuessedMap As Beacon.Map = Beacon.Maps.GuessMap(Sources)
-		  If GuessedMap <> Document.Map Then
-		    If Self.ShowConfirm(GuessedMap.Name + " may be a better map selection. Would you like to change your settings?", "Beacon will only import loot sources which are valid for the selected map.", "Change Settings", "Keep Importing") Then
-		      Dim OriginalMap As Beacon.Map = Document.Map
-		      Document.Map = GuessedMap
-		      If Not DocumentSetupSheet.Present(Self, Document, DocumentSetupSheet.Modes.Edit) Then
-		        Document.Map = OriginalMap
-		      End If
-		    End If
+		  Document.MapCompatibility = Beacon.Maps.GuessMap(Sources)
+		  Document.DifficultyValue = Beacon.DifficultyValue(1.0, Beacon.Maps.ForMask(Document.MapCompatibility).DifficultyScale)
+		  If Not DocumentSetupSheet.Present(Self.TrueWindow, Document, DocumentSetupSheet.Modes.Import) Then
+		    Return
 		  End If
 		  
 		  For Each Source As Beacon.LootSource In Sources
-		    If Source.ValidForMap(Document.Map) Then
-		      Document.Add(Source)
-		    End If
+		    Document.Add(Source)
 		  Next
-		  If Document.BeaconCount = 0 Then
-		    Self.ShowAlert("Nothing imported", "No loot sources were imported for the selected map.")
-		    Return
-		  End If
 		  
 		  Self.mTempDocuments.Append(Self.mImportedRef)
 		  Self.AddDocuments(Self.mTempDocuments, DocumentTypes.Temporary)
@@ -359,17 +348,14 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ImportFile(File As FolderItem)
-		  Dim Ref As New TemporaryDocumentRef
-		  If DocumentSetupSheet.Present(Self, Ref.Document, DocumentSetupSheet.Modes.Import) Then
-		    Self.mImportedRef = Ref
-		    
-		    Self.mImportProgress = New ImporterWindow
-		    Self.mImportProgress.Source = File.DisplayName
-		    Self.mImportProgress.CancelAction = WeakAddressOf Self.CancelImport
-		    Self.mImportProgress.ShowWithin(Self.TrueWindow)
-		    
-		    Self.Importer.Run(File)
-		  End If
+		  Self.mImportedRef = New TemporaryDocumentRef
+		  
+		  Self.mImportProgress = New ImporterWindow
+		  Self.mImportProgress.Source = File.DisplayName
+		  Self.mImportProgress.CancelAction = WeakAddressOf Self.CancelImport
+		  Self.mImportProgress.ShowWithin(Self.TrueWindow)
+		  
+		  Self.Importer.Run(File)
 		End Sub
 	#tag EndMethod
 

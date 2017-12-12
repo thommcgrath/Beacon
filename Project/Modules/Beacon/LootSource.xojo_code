@@ -408,7 +408,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReconfigurePresets(Map As Beacon.Map)
+		Sub ReconfigurePresets(Mask As UInt64)
 		  For Each Set As Beacon.ItemSet In Self.mSets
 		    If Set.SourcePresetID = "" Then
 		      Continue
@@ -419,7 +419,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Continue
 		    End If
 		    
-		    Set.ReconfigureWithPreset(Preset, Self, Map)
+		    Set.ReconfigureWithPreset(Preset, Self, Mask)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -506,6 +506,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Beacon.Map) As Boolean
 		  Return Map = Nil Or (Self.mAvailability And Map.Mask) = Map.Mask
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValidForMask(Mask As UInt64) As Boolean
+		  Return Mask = 0 Or (Self.mAvailability And Mask) > 0
 		End Function
 	#tag EndMethod
 

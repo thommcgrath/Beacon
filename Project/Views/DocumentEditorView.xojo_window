@@ -174,7 +174,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateCaptionButton()
-		  Dim Map As Beacon.Map = Self.mDocument.Map
 		  Dim DocTitle As Text = Self.mDocument.Title.Trim
 		  Dim MaxDinoLevel As Integer
 		  If Self.mDocument.DifficultyValue > 0 Then
@@ -185,7 +184,7 @@ End
 		    DocTitle = Self.mRef.Name
 		  End If
 		  
-		  Header.Caption = DocTitle + EndOfLine + If(Map <> Nil, Map.Name, "Undefined Map") + If(MaxDinoLevel > 0, " Level " + MaxDinoLevel.ToText, "")
+		  Header.Caption = DocTitle + EndOfLine + If(MaxDinoLevel > 0, " Level " + MaxDinoLevel.ToText, "")
 		End Sub
 	#tag EndMethod
 

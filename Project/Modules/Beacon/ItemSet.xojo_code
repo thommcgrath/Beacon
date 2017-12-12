@@ -76,7 +76,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Map As Beacon.Map) As Beacon.ItemSet
+		Shared Function FromPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Mask As UInt64) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
 		  Set.Label = Preset.Label
 		  Set.MinNumItems = Preset.MinItems
@@ -89,7 +89,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim Qualities() As Beacon.Quality = Beacon.Qualities.All
 		  
 		  For Each Entry As Beacon.PresetEntry In Preset
-		    If Not Entry.ValidForMap(Map) Then
+		    If Not Entry.ValidForMask(Mask) Then
 		      Continue
 		    End If
 		    
@@ -348,8 +348,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReconfigureWithPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Map As Beacon.Map)
-		  Dim Clone As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, ForLootSource, Map)
+		Sub ReconfigureWithPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Document As Beacon.Document)
+		  Self.ReconfigureWithPreset(Preset, ForLootSource, Document.MapCompatibility)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ReconfigureWithPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Mask As UInt64)
+		  Dim Clone As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, ForLootSource, Mask)
 		  If Self.SourcePresetID = Preset.PresetID And Self.Hash = Clone.Hash Then
 		    Return
 		  End If

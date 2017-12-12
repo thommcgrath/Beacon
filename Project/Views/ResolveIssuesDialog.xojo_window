@@ -281,8 +281,8 @@ End
 		Private Shared Function DescribeIssues(Document As Beacon.Document) As String()
 		  Dim Issues As New Dictionary
 		  
-		  If Document.Map = Nil Then
-		    Issues.Value("No map is selected. Press the gear icon below the loot sources list to pick a map.") = True
+		  If Document.Maps.Ubound = -1 Then
+		    Issues.Value("No map is selected. Press the gear icon below the loot sources list to select maps.") = True
 		  End If
 		  If Document.DifficultyValue = -1 Then
 		    Issues.Value("Difficulty is not set. Press the gear icon below the loot sources list to set difficulty.") = True
@@ -290,12 +290,16 @@ End
 		  
 		  Dim EmptyOptionsCount As Integer
 		  For Each Source As Beacon.LootSource In Document.LootSources
+		    If Document.SupportsLootSource(Source) Then
+		      Issues.Value("Loot source " + Source.Label + " is not supported by the selected maps.") = True
+		    End If
+		    
 		    If Source.IsValid Then
 		      Continue
 		    End If
 		    
 		    If Source.Count < Source.RequiredItemSets Then
-		      Issues.Value("Loot source " + Source.Label + " is needs at least " + Str(Source.RequiredItemSets, "-0") + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.") = True
+		      Issues.Value("Loot source " + Source.Label + " needs at least " + Str(Source.RequiredItemSets, "-0") + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.") = True
 		    Else
 		      For Each Set As Beacon.ItemSet In Source
 		        If Set.IsValid Then

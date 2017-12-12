@@ -23,7 +23,7 @@ Implements Beacon.DocumentItem
 		Sub Constructor()
 		  Self.mIdentifier = Beacon.CreateUUID
 		  Self.mDifficultyValue = 4.0
-		  Self.mMap = Beacon.Maps.TheIsland
+		  Self.mMapCompatibility = Beacon.Maps.TheIsland.Mask
 		End Sub
 	#tag EndMethod
 
@@ -37,23 +37,16 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
-		  Dim LootSources() As Xojo.Core.Dictionary
-		  For Each LootSource As Beacon.LootSource In Self.mLootSources
-		    If LootSource.ValidForMap(Self.Map) Then
-		      LootSources.Append(LootSource.Export)
-		    End If
-		  Next
-		  
 		  Dim Document As New Xojo.Core.Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
 		  Document.Value("Identifier") = Self.Identifier
-		  Document.Value("LootSources") = LootSources
+		  Document.Value("LootSources") = Self.mLootSources
 		  Document.Value("Title") = Self.Title
 		  Document.Value("Description") = Self.Description
 		  Document.Value("Public") = Self.IsPublic
 		  
-		  If Self.Map <> Nil Then
-		    Document.Value("Map") = Self.Map.Mask
+		  If Self.mMapCompatibility > 0 Then
+		    Document.Value("Map") = Self.mMapCompatibility
 		  End If
 		  
 		  If Self.DifficultyValue > -1 Then
@@ -82,13 +75,17 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function IsValid() As Boolean
-		  If Self.Map = Nil Then
+		  If Self.mMapCompatibility = 0 Then
 		    Return False
 		  End If
 		  If Self.DifficultyValue = -1 Then
 		    Return False
 		  End If
 		  For Each Source As Beacon.LootSource In Self.mLootSources
+		    If Not Self.SupportsLootSource(Source) Then
+		      Return False
+		    End If
+		    
 		    If Not Source.IsValid Then
 		      Return False
 		    End If
@@ -110,6 +107,19 @@ Implements Beacon.DocumentItem
 		    Results.Append(LootSource)
 		  Next
 		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Maps() As Beacon.Map()
+		  Dim Possibles() As Beacon.Map = Beacon.Maps.All
+		  Dim Matches() As Beacon.Map
+		  For Each Map As Beacon.Map In Possibles
+		    If Map.Matches(Self.mMapCompatibility) Then
+		      Matches.Append(Map)
+		    End If
+		  Next
+		  Return Matches
 		End Function
 	#tag EndMethod
 
@@ -194,11 +204,11 @@ Implements Beacon.DocumentItem
 		        Doc.mIsPublic = Dict.Value("Public")
 		      End If
 		      If Dict.HasKey("Map") Then
-		        Doc.Map = Beacon.Maps.ForMask(Dict.Value("Map"))
+		        Doc.mMapCompatibility = Dict.Value("Map")
 		      ElseIf Dict.HasKey("MapPreference") Then
-		        Doc.Map = Beacon.Maps.ForMask(Dict.Value("MapPreference"))
+		        Doc.mMapCompatibility = Dict.Value("MapPreference")
 		      Else
-		        Doc.mMap = Nil
+		        Doc.mMapCompatibility = 0
 		      End If
 		      If Dict.HasKey("DifficultyValue") Then
 		        Doc.DifficultyValue = Dict.Value("DifficultyValue")
@@ -237,7 +247,7 @@ Implements Beacon.DocumentItem
 		              Next
 		              
 		              // Reconfigure
-		              Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland)
+		              Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask)
 		              
 		              // Now "deconfigure" it
 		              Redim Set(UBound(Entries))
@@ -273,12 +283,12 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub ReconfigurePresets()
-		  If Self.mMap = Nil Then
+		  If Self.mMapCompatibility = 0 Then
 		    Return
 		  End If
 		  
 		  For Each Source As Beacon.LootSource In Self.mLootSources
-		    Source.ReconfigurePresets(Self.mMap)
+		    Source.ReconfigurePresets(Self.mMapCompatibility)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -292,6 +302,28 @@ Implements Beacon.DocumentItem
 		      Return
 		    End If
 		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsLootSource(Source As Beacon.LootSource) As Boolean
+		  Return (Source.Availability And Self.mMapCompatibility) > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsMap(Map As Beacon.Map) As Boolean
+		  Return Map.Matches(Self.mMapCompatibility)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SupportsMap(Map As Beacon.Map, Assigns Value As Boolean)
+		  If Value Then
+		    Self.mMapCompatibility = Self.mMapCompatibility Or Map.Mask
+		  Else
+		    Self.mMapCompatibility = Self.mMapCompatibility And Not Map.Mask
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -357,24 +389,16 @@ Implements Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mMap
+			  Return Self.mMapCompatibility
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Value = Nil Then
-			    Return
-			  End If
-			  
-			  If Self.mMap = Value Then
-			    Return
-			  End If
-			  
-			  Self.mModified = True
-			  Self.mMap = Value
+			  Dim Limit As UInt64 = Beacon.Maps.All.Mask
+			  Self.mMapCompatibility = Value And Limit
 			End Set
 		#tag EndSetter
-		Map As Beacon.Map
+		MapCompatibility As UInt64
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -398,7 +422,7 @@ Implements Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMap As Beacon.Map
+		Private mMapCompatibility As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

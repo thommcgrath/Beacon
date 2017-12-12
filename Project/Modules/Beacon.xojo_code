@@ -71,6 +71,29 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function DifficultyOffset(Value As Double, Scale As Double) As Double
+		  Return Xojo.Math.Min((Value - 0.5) / (Scale - 0.5), 1.0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DifficultyScale(Extends Maps() As Beacon.Map) As Double
+		  Dim Scale As Double
+		  For Each Map As Beacon.Map In Maps
+		    Scale = Xojo.Math.Max(Scale, Map.DifficultyScale)
+		  Next
+		  Return Scale
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function DifficultyValue(Offset As Double, Scale As Double) As Double
+		  Offset = Xojo.Math.Min(Offset, 1.0)
+		  Return (Offset * (Scale - 0.5)) + 0.5
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function EncodeBase64(Source As Text, Encoding As Xojo.Core.TextEncoding) As Text
 		  Dim Bytes As Xojo.Core.MemoryBlock = Encoding.ConvertTextToData(Source)
 		  Return Beacon.EncodeBase64(Bytes)
