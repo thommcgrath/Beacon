@@ -43,6 +43,10 @@ Inherits BeaconWindow
 		  End If
 		  
 		  Self.Show()
+		  
+		  If NewPage <> Nil Then
+		    NewPage.SetFocus()
+		  End If
 		End Sub
 	#tag EndMethod
 

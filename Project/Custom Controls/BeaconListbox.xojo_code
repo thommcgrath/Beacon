@@ -241,6 +241,33 @@ Inherits Listbox
 	#tag EndHook
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.ListCount
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.ListCount = Value Then
+			    Return
+			  End If
+			  
+			  Dim Count As Integer = Self.ListCount
+			  While Count < Value
+			    Self.AddRow("")
+			    Count = Count + 1
+			  Wend
+			  While Count > Value
+			    Self.RemoveRow(Count - 1)
+			    Count = Count - 1
+			  Wend
+			End Set
+		#tag EndSetter
+		RowCount As Integer
+	#tag EndComputedProperty
+
+
 	#tag Constant, Name = AlternateRowColor, Type = Color, Dynamic = False, Default = \"&cFAFAFA", Scope = Public
 	#tag EndConstant
 
@@ -485,6 +512,11 @@ Inherits Listbox
 			Visible=true
 			Group="Behavior"
 			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RowCount"
+			Group="Behavior"
+			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ScrollbarHorizontal"

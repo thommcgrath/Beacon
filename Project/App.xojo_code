@@ -503,6 +503,29 @@ Inherits Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HelpFile(Topic As String) As FolderItem
+		  Dim HelpFolder As FolderItem = Self.ApplicationSupport.Child("Help")
+		  Dim HelpFile As FolderItem = HelpFolder.Child(Topic)
+		  
+		  If HelpFile = Nil Or HelpFile.Exists = False Then
+		    Dim SourceFile As Folderitem = Self.ResourcesFolder.Child("Help").Child(Topic)
+		    If SourceFile = Nil Or SourceFile.Exists = False Then
+		      Return Nil
+		    End If
+		    
+		    If Not HelpFolder.Exists Then
+		      HelpFolder.CreateAsFolder()
+		      HelpFile = HelpFolder.Child(Topic)
+		    End If
+		    
+		    SourceFile.CopyFileTo(HelpFile)
+		  End If
+		  
+		  Return HelpFile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Identity() As Beacon.Identity
 		  Return Self.mIdentity
 		End Function

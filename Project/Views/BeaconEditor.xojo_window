@@ -57,6 +57,7 @@ Begin ContainerControl BeaconEditor
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
+      RowCount        =   0
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True

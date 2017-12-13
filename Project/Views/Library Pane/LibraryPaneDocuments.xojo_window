@@ -43,7 +43,7 @@ Begin LibrarySubview LibraryPaneDocuments
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   229
+      Height          =   228
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -57,6 +57,7 @@ Begin LibrarySubview LibraryPaneDocuments
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
+      RowCount        =   0
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -68,7 +69,7 @@ Begin LibrarySubview LibraryPaneDocuments
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   71
+      Top             =   72
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -139,7 +140,7 @@ Begin LibrarySubview LibraryPaneDocuments
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   30
+      Height          =   31
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -562,16 +563,9 @@ End
 		    End If
 		  Next
 		  
-		  While RowBound > Documents.Ubound
-		    Self.List.RemoveRow(RowBound)
-		    RowBound = RowBound - 1
-		  Wend
-		  While RowBound < Documents.Ubound
-		    Self.List.AddRow()
-		    RowBound = RowBound + 1
-		  Wend
+		  Self.List.RowCount = Documents.Ubound + 1
 		  
-		  For I As Integer = 0 To RowBound
+		  For I As Integer = 0 To Documents.Ubound
 		    Dim Ref As Beacon.DocumentRef = Documents(I)
 		    Self.List.Cell(I, 0) = Ref.Name
 		    Self.List.RowTag(I) = Ref

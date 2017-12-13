@@ -1,6 +1,12 @@
 #tag Class
 Protected Class ColorProfile
 	#tag Method, Flags = &h0
+		Function AlternateRowColor() As Color
+		  Return Self.mAlternateRowColor
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BackgroundColor() As Color
 		  Return Self.mStandardBackgroundColor
 		End Function
@@ -92,6 +98,8 @@ Protected Class ColorProfile
 		    Self.mStandardForegroundColor = &cFFFFFF
 		    Self.mStandardShadowColor = &c00000080
 		  End If
+		  
+		  Self.mAlternateRowColor = PrimaryColor.BlendWith(&cFFFFFF, 0.98)
 		End Sub
 	#tag EndMethod
 
@@ -153,6 +161,10 @@ Protected Class ColorProfile
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mAlternateRowColor As Color
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mBorderColor As Color

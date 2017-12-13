@@ -903,7 +903,23 @@ End
 #tag Events MapCheck
 	#tag Event
 		Sub Action(index as Integer)
+		  Dim Maps() As Beacon.Map = Self.SelectedMaps
+		  If Maps.Ubound = -1 Then
+		    Self.ActionButton.Enabled = False
+		    Return
+		  End If
 		  
+		  Dim Scale As Double = Maps.DifficultyScale
+		  
+		  Dim DifficultyOffset As Double = Val(Self.DifficultyOffsetField.Text)
+		  Dim DifficultyValue As Double = Beacon.DifficultyValue(DifficultyOffset, Scale)
+		  Dim MaxDinoLevel As Integer = DifficultyValue * 30
+		  
+		  Self.DifficultyValueField.Text = DifficultyValue.PrettyText
+		  Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
+		  Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
+		  
+		  Self.ActionButton.Enabled = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
