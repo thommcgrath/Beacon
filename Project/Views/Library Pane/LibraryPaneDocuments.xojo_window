@@ -177,51 +177,6 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub AddDocuments(Documents() As Beacon.DocumentRef, ClearAllOfType As DocumentTypes)
-		  #if false
-		    Dim Selected() As Beacon.DocumentRef = Self.SelectedDocuments
-		    
-		    For I As Integer = Self.List.ListCount - 1 DownTo 0
-		      Dim Ref As Beacon.DocumentRef = Self.List.RowTag(I)
-		      Dim Type As DocumentTypes = Self.DocumentType(Ref)
-		      If Type = ClearAllOfType Then
-		        Self.List.RemoveRow(I)
-		      End If
-		    Next
-		    
-		    For Each Ref As Beacon.DocumentRef In Documents
-		      Dim Index As Integer = -1
-		      Dim Priority As Integer = CType(Self.DocumentType(Ref), Integer)
-		      
-		      For I As Integer = Self.List.ListCount - 1 DownTo 0
-		        Dim OtherRef As Beacon.DocumentRef = Self.List.RowTag(I)
-		        If OtherRef.DocumentID = Ref.DocumentID Then
-		          Dim OtherPriority As Integer = CType(Self.DocumentType(OtherRef), Integer)
-		          If Priority < OtherPriority Then
-		            Index = I
-		            Exit For I
-		          Else
-		            Continue For Ref
-		          End If
-		        End If
-		      Next
-		      
-		      If Index = -1 Then
-		        Self.List.AddRow("")
-		        Index = Self.List.LastIndex
-		      End If
-		      
-		      Self.List.Cell(Index, 0) = Ref.Name
-		      Self.List.RowTag(Index) = Ref
-		    Next
-		    
-		    Self.List.Sort
-		    Self.SelectedDocuments = Selected
-		  #endif
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub AdvanceDownloadQueue()
 		  If Self.mDownloadQueue.Ubound = -1 Or Self.mDownloadQueueRunning Then
 		    Return
@@ -286,7 +241,14 @@ End
 		  #Pragma Unused Details
 		  
 		  If Success Then
+		    If Self.View = Self.ViewCloudDocuments Then
+		      Self.UpdateDocumentsList()
+		    End If
 		    Return
+		  End If
+		  
+		  If Self.View = Self.ViewCloudDocuments Then
+		    Self.UpdateCloudDocuments()
 		  End If
 		  
 		  Self.ShowAlert("Cloud document was not deleted", Message)
@@ -347,7 +309,7 @@ End
 		  Next
 		  
 		  Self.mTempDocuments.Append(Self.mImportedRef)
-		  Self.AddDocuments(Self.mTempDocuments, DocumentTypes.Temporary)
+		  Self.View = Self.ViewRecentDocuments
 		  Self.SelectDocument(Self.mImportedRef)
 		  
 		  Dim View As New DocumentEditorView(Self.mImportedRef, Document)
@@ -376,7 +338,7 @@ End
 		  If DocumentSetupSheet.Present(Self, Ref.Document, DocumentSetupSheet.Modes.Create) Then
 		    Self.mTempDocuments.Append(Ref)
 		    
-		    Self.AddDocuments(Self.mTempDocuments, DocumentTypes.Temporary)
+		    Self.View = Self.ViewRecentDocuments
 		    Self.SelectDocument(Ref)
 		    Self.OpenDocument(Ref)
 		  End If
@@ -545,7 +507,12 @@ End
 		  Dim Documents() As Beacon.DocumentRef
 		  Select Case View
 		  Case Self.ViewRecentDocuments
-		    Documents = Self.mRecentDocuments
+		    For I As Integer = 0 To Self.mRecentDocuments.Ubound
+		      Documents.Append(Self.mRecentDocuments(I))
+		    Next
+		    For I As Integer = 0 To Self.mTempDocuments.Ubound
+		      Documents.Append(Self.mTempDocuments(I))
+		    Next
 		  Case Self.ViewCloudDocuments
 		    Documents = Self.mCloudDocuments
 		  Case Self.ViewCommunityDocuments
@@ -591,17 +558,10 @@ End
 		  End If
 		  
 		  Self.mRecentDocuments = Documents
-		  Self.UpdateDocumentsList()
 		  
-		  Self.AddDocuments(Documents, DocumentTypes.Local)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateTempDocuments()
-		  
-		  
-		  Self.AddDocuments(Self.mTempDocuments, DocumentTypes.Temporary)
+		  If Self.View = Self.ViewRecentDocuments Then
+		    Self.UpdateDocumentsList()
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -663,7 +623,18 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.Switcher.Value = Value
+			  If Self.Switcher.Value <> Value Then
+			    Self.Switcher.Value = Value
+			  End If
+			  
+			  Select Case Value
+			  Case Self.ViewRecentDocuments
+			    Self.UpdateLocalDocuments()
+			  Case Self.ViewCloudDocuments
+			    Self.UpdateCloudDocuments()
+			  Case Self.ViewCommunityDocuments
+			    Self.UpdateCommunityDocuments()
+			  End Select
 			End Set
 		#tag EndSetter
 		View As Integer
@@ -756,7 +727,6 @@ End
 		  // Community cloud cannot be deleted
 		  
 		  Dim Documents() As Beacon.DocumentRef
-		  
 		  For I As Integer = Me.ListCount - 1 DownTo 0
 		    If Not Me.Selected(I) Then
 		      Continue For I
@@ -774,7 +744,7 @@ End
 		  If Warn Then
 		    Dim Message, Explanation As String
 		    If Documents.Ubound = 0 Then
-		      Message = "Are you sure you want to delete this document?"
+		      Message = "Are you sure you want to delete the document """ + Documents(0).Name + """?"
 		    Else
 		      Message = "Are you sure you want to delete these " + Str(Documents.Ubound + 1, "-0") + " documents?"
 		    End If
@@ -785,7 +755,8 @@ End
 		    End If
 		  End If
 		  
-		  Dim UpdateLocal, UpdateCloud, UpdateTemps As Boolean
+		  Dim ViewIndex As Integer = Self.View
+		  Dim RefreshDocumentsList As Boolean
 		  For Each Ref As Beacon.DocumentRef In Documents
 		    Dim DocumentID As Text = Ref.DocumentID
 		    Dim View As DocumentEditorView
@@ -795,40 +766,48 @@ End
 		    
 		    If View <> Nil Then
 		      If View.ContentsChanged Then
+		        #Pragma Warning "Prompt to save changes."
 		        Break
 		      End If
 		      
 		      Self.DiscardView(View)
 		    End If
 		    
+		    For I As Integer = Me.ListCount - 1 DownTo 0
+		      If Me.RowTag(I) = Ref Then
+		        Me.RemoveRow(I)
+		        Exit For I
+		      End If
+		    Next
+		    
 		    If Ref IsA LocalDocumentRef Then
+		      Dim Idx As Integer = Self.mRecentDocuments.IndexOfRef(Ref)
+		      If Idx > -1 Then
+		        Self.mRecentDocuments.Remove(Idx)
+		        RefreshDocumentsList = RefreshDocumentsList Or ViewIndex = Self.ViewRecentDocuments
+		      End If
 		      LocalDocumentRef(Ref).File.Delete
 		      LocalData.SharedInstance.ForgetDocument(LocalDocumentRef(Ref))
-		      UpdateLocal = True
 		    ElseIf Ref IsA BeaconAPI.Document Then
+		      Dim Idx As Integer = Self.mCloudDocuments.IndexOfRef(Ref)
+		      If Idx > -1 Then
+		        Self.mCloudDocuments.Remove(Idx)
+		        RefreshDocumentsList = RefreshDocumentsList Or ViewIndex = Self.ViewCloudDocuments
+		      End If
 		      Dim Request As New BeaconAPI.Request(BeaconAPI.Document(Ref).ResourceURL, "DELETE", AddressOf APICallback_DocumentDelete)
 		      Request.Sign(App.Identity)
 		      Self.APISocket.Start(Request)
-		      
-		      UpdateCloud = True
 		    ElseIf Ref IsA TemporaryDocumentRef Then
-		      For I As Integer = Self.mTempDocuments.Ubound DownTo 0
-		        If Self.mTempDocuments(I).DocumentID = Ref.DocumentID Then
-		          Self.mTempDocuments.Remove(I)
-		          UpdateTemps = True
-		        End If
-		      Next
+		      Dim Idx As Integer = Self.mTempDocuments.IndexOfRef(Ref)
+		      If Idx > -1 Then
+		        Self.mTempDocuments.Remove(Idx)
+		        RefreshDocumentsList = RefreshDocumentsList Or ViewIndex = Self.ViewRecentDocuments
+		      End If
 		    End If
 		  Next
 		  
-		  If UpdateCloud Then
-		    Self.UpdateCloudDocuments()
-		  End If
-		  If UpdateLocal Then
-		    Self.UpdateLocalDocuments()
-		  End If
-		  If UpdateTemps Then
-		    Self.UpdateTempDocuments()
+		  If RefreshDocumentsList Then
+		    Self.UpdateDocumentsList()
 		  End If
 		End Sub
 	#tag EndEvent
@@ -912,8 +891,7 @@ End
 		  If DocumentRef = Nil Then
 		    DocumentRef = New TemporaryDocumentRef(Document)
 		    Self.mTempDocuments.Append(TemporaryDocumentRef(DocumentRef))
-		    
-		    Self.AddDocuments(Self.mTempDocuments, DocumentTypes.Temporary)
+		    Self.View = Self.ViewRecentDocuments
 		    Self.SelectDocument(DocumentRef)
 		  End If
 		  
@@ -958,14 +936,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action(NewIndex As Integer)
-		  Select Case NewIndex
-		  Case Self.ViewRecentDocuments
-		    Self.UpdateLocalDocuments()
-		  Case Self.ViewCloudDocuments
-		    Self.UpdateCloudDocuments()
-		  Case Self.ViewCommunityDocuments
-		    Self.UpdateCommunityDocuments()
-		  End Select
+		  Self.View = NewIndex
 		End Sub
 	#tag EndEvent
 #tag EndEvents
