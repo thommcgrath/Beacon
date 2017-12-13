@@ -156,7 +156,7 @@ Begin BeaconSubview DocumentEditorView
       TabIndex        =   5
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   451
       Begin BeaconToolbar HelpHeader
@@ -207,6 +207,34 @@ Begin BeaconSubview DocumentEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   41
+         Visible         =   True
+         Width           =   451
+      End
+      Begin BeaconEditor Editor
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   436
+         HelpTag         =   ""
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   False
          Visible         =   True
          Width           =   451
       End
@@ -397,8 +425,14 @@ End
 		    End If
 		  Next
 		  Self.mBlockSelectionChanged = False
-		  //Editor.Sources = Selection
-		  //Editor.Enabled = UBound(Selection) > -1
+		  
+		  Editor.MapMask = Self.mDocument.MapCompatibility
+		  Editor.Sources = Selection
+		  If Selection.Ubound = -1 Then
+		    Panel.Value = 0
+		  Else
+		    Panel.Value = 1
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -491,6 +525,8 @@ End
 		    If LootSources.Ubound = -1 Then
 		      Return
 		    End If
+		    
+		    LootSources.Sort
 		    
 		    For Each LootSource As Beacon.LootSource In LootSources
 		      Menu.Append(New MenuItem(LootSource.Label, LootSource))
@@ -661,6 +697,20 @@ End
 		  
 		  If Self.mBlockSelectionChanged Then
 		    Return
+		  End If
+		  
+		  Dim Sources() As Beacon.LootSource
+		  For I As Integer = 0 To Me.ListCount - 1
+		    If Me.Selected(I) Then
+		      Sources.Append(Me.RowTag(I))
+		    End If
+		  Next
+		  
+		  Editor.Sources = Sources
+		  If Sources.Ubound = -1 Then
+		    Panel.Value = 0
+		  Else
+		    Panel.Value = 1
 		  End If
 		End Sub
 	#tag EndEvent

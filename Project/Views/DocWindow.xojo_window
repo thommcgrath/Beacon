@@ -58,6 +58,7 @@ Begin BeaconWindow DocWindow
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
+      RowCount        =   0
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -123,6 +124,7 @@ Begin BeaconWindow DocWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      MapMask         =   ""
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -780,9 +782,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
-		  Dim CurrentMask As UInt64 = Self.CurrentMask
-		  Editor.MapMask = CurrentMask
-		  
 		  Dim VisibleSources() As Beacon.LootSource = Self.Doc.LootSources // Show them all
 		  VisibleSources.Sort
 		  
@@ -821,6 +820,8 @@ End
 		    End If
 		  Next
 		  Self.mBlockSelectionChanged = False
+		  
+		  Editor.MapMask = Self.CurrentMask()
 		  Editor.Sources = Selection
 		  Editor.Enabled = UBound(Selection) > -1
 		End Sub

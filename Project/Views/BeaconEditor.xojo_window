@@ -43,7 +43,7 @@ Begin ContainerControl BeaconEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   408
+      Height          =   423
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -69,7 +69,7 @@ Begin ContainerControl BeaconEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   31
+      Top             =   41
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -77,100 +77,26 @@ Begin ContainerControl BeaconEditor
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   464
-      HelpTag         =   ""
-      Index           =   0
-      InitialParent   =   ""
-      Left            =   190
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
-   End
-   Begin SetEditor Editor
-      AcceptFocus     =   False
-      AcceptTabs      =   True
-      AutoDeactivate  =   True
-      BackColor       =   &cFFFFFF00
-      Backdrop        =   0
-      Enabled         =   False
-      EraseBackground =   True
-      HasBackColor    =   False
-      Height          =   464
-      HelpTag         =   ""
-      InitialParent   =   ""
-      Left            =   191
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   True
-      UseFocusRing    =   False
-      Visible         =   True
-      Width           =   407
-   End
-   Begin FooterBar Footer
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   25
-      HelpTag         =   ""
+   Begin Beacon.ImportThread Importer
       Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   4
+      Priority        =   0
+      Scope           =   0
+      StackSize       =   ""
+      State           =   ""
       TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   439
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   190
    End
-   Begin ListHeader Header
+   Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DisplayAsMenu   =   False
-      DoubleBuffer    =   False
+      Caption         =   "Item Sets"
+      CaptionEnabled  =   True
+      CaptionIsButton =   True
       Enabled         =   True
-      EraseBackground =   True
-      Height          =   31
+      HasResizer      =   True
+      Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -181,26 +107,121 @@ Begin ContainerControl BeaconEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      SegmentIndex    =   0
-      TabIndex        =   0
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TintColor       =   &cEAEEF100
-      Title           =   "Item Sets"
       Top             =   0
-      Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
       Width           =   190
    End
-   Begin Beacon.ImportThread Importer
+   Begin PagePanel Panel
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   464
+      HelpTag         =   ""
       Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   191
+      LockBottom      =   True
       LockedInPosition=   False
-      Priority        =   0
-      Scope           =   0
-      StackSize       =   ""
-      State           =   ""
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      PanelCount      =   2
+      Panels          =   ""
+      Scope           =   2
+      TabIndex        =   6
       TabPanelIndex   =   0
+      Top             =   0
+      Value           =   0
+      Visible         =   True
+      Width           =   407
+      Begin SetEditor Editor
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         Enabled         =   False
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   464
+         HelpTag         =   ""
+         InitialParent   =   "Panel"
+         Left            =   191
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   407
+      End
+      Begin BeaconToolbar BeaconToolbar1
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   "Item Set Contents"
+         CaptionEnabled  =   True
+         CaptionIsButton =   False
+         Enabled         =   True
+         HasResizer      =   False
+         Height          =   41
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   191
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   0
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   407
+      End
+   End
+   Begin FadedSeparator FadedSeparator1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   464
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   190
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
    End
 End
 #tag EndWindow
@@ -525,11 +546,22 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Sources(Assigns Values() As Beacon.LootSource)
-		  Redim Self.mSources(UBound(Values))
-		  For I As Integer = 0 To UBound(Self.mSources)
+		  Redim Self.mSources(Values.Ubound)
+		  For I As Integer = 0 To Self.mSources.Ubound
 		    Self.mSources(I) = Values(I)
 		  Next
 		  Self.RebuildSetList()
+		  
+		  If Values.Ubound = -1 Then
+		    Header.Caption = "Item Sets"
+		    Header.CaptionIsButton = False
+		  ElseIf Values.Ubound = 0 Then
+		    Header.Caption = Values(0).Label
+		    Header.CaptionIsButton = True
+		  Else
+		    Header.Caption = Str(Values.Ubound + 1, "-0") + " Loot Sources"
+		    Header.CaptionIsButton = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -573,14 +605,14 @@ End
 		    Return
 		  End If
 		  
-		  Footer.Button("DeleteButton").Enabled = Me.SelCount > -1
-		  
 		  If Me.SelCount = 1 Then
 		    Editor.Set = New Beacon.ItemSet(Me.RowTag(Me.ListIndex))
 		    Editor.Enabled = True
+		    Panel.Value = 1
 		  Else
 		    Editor.Enabled = False
 		    Editor.Set = Nil
+		    Panel.Value = 0
 		  End If
 		End Sub
 	#tag EndEvent
@@ -861,98 +893,6 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events Separators
-	#tag Event
-		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused areas
-		  
-		  G.ForeColor = &cCCCCCC
-		  G.FillRect(-1, -1, G.Width + 2, G.Height + 2)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Editor
-	#tag Event
-		Sub Updated()
-		  // The set needs to be cloned into each loot source
-		  
-		  If SetList.SelCount <> 1 Then
-		    Return
-		  End If
-		  
-		  Dim SelIndex As Integer = SetList.ListIndex
-		  Dim OriginalSet As Beacon.ItemSet = SetList.RowTag(SelIndex)
-		  Dim NewSet As Beacon.ItemSet = Editor.Set
-		  
-		  For Each Source As Beacon.LootSource In Self.mSources
-		    Dim Idx As Integer = Source.IndexOf(OriginalSet)
-		    If Idx > -1 Then
-		      Source(Idx) = New Beacon.ItemSet(NewSet)
-		    End If
-		  Next
-		  
-		  SetList.Cell(SelIndex, 0) = NewSet.Label
-		  SetList.RowTag(SelIndex) = New Beacon.ItemSet(NewSet)
-		  
-		  Self.mSorting = True
-		  SetList.Sort
-		  Self.mSorting = False
-		  
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Footer
-	#tag Event
-		Sub Action(Button As FooterBarButton)
-		  Select Case Button.Name
-		  Case "AddButton"
-		    Self.AddSet(New Beacon.ItemSet)
-		  Case "DeleteButton"
-		    Self.RemoveSelectedItemSets(True)
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Dim AddButton As New FooterBarButton("AddButton", IconAddWithMenu)
-		  Dim DeleteButton As New FooterBarButton("DeleteButton", IconRemove)
-		  
-		  DeleteButton.Enabled = False
-		  
-		  Me.Append(AddButton)
-		  Me.Append(DeleteButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function MouseHold(Button As FooterBarButton) As Boolean
-		  Select Case Button.Name
-		  Case "AddButton"
-		    Dim Base As New MenuItem
-		    Self.BuildPresetMenu(Base)
-		    
-		    Dim Position As Xojo.Core.Point = Self.GlobalPosition
-		    Dim Choice As MenuItem = Base.PopUp(Position.X + Me.Left + Button.Left, Position.Y + Me.Top + Button.Top + Button.Height)
-		    If Choice = Nil Then
-		      Return True
-		    End If
-		    
-		    Call Self.HandlePresetMenu(Choice)
-		    Return True
-		  End Select
-		End Function
-	#tag EndEvent
-#tag EndEvents
-#tag Events Header
-	#tag Event
-		Sub Resize(NewSize As Integer)
-		  Me.Height = NewSize
-		  SetList.Top = NewSize
-		  SetList.Height = Separators(2).Top - NewSize
-		  Self.Refresh(False)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events Importer
 	#tag Event
 		Sub UpdateUI()
@@ -997,6 +937,87 @@ End
 		    Self.ImportProgress.BeaconCount = Me.BeaconCount
 		    Self.ImportProgress.LootSourcesProcessed = Me.LootSourcesProcessed
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Header
+	#tag Event
+		Sub Open()
+		  Dim AddButton As New BeaconToolbarItem("AddSet", IconAdd)
+		  AddButton.HasMenu = True
+		  AddButton.HelpTag = "Add a new empty item set. Hold to add a preset from a menu."
+		  
+		  Dim SimulateButton As New BeaconToolbarItem("Simulate", Nil)
+		  SimulateButton.HelpTag = "Simulate loot selection for this loot source."
+		  
+		  Me.LeftItems.Append(AddButton)
+		  Me.RightItems.Append(SimulateButton)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "AddSet"
+		    Self.AddSet(New Beacon.ItemSet)
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub BuildMenu(Item As BeaconToolbarItem, Menu As MenuItem)
+		  Select Case Item.Name
+		  Case "AddSet"
+		    Self.BuildPresetMenu(Menu)
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub HandleMenuAction(Item As BeaconToolbarItem, ChosenItem As MenuItem)
+		  Select Case Item.Name
+		  Case "AddSet"
+		    Call Self.HandlePresetMenu(ChosenItem)
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  NewSize = Max(NewSize, 190)
+		  
+		  Me.Width = NewSize
+		  FadedSeparator1.Left = NewSize
+		  SetList.Width = NewSize
+		  Panel.Left = FadedSeparator1.Left + FadedSeparator1.Width
+		  Panel.Width = Self.Width - (Panel.Left)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Editor
+	#tag Event
+		Sub Updated()
+		  // The set needs to be cloned into each loot source
+		  
+		  If SetList.SelCount <> 1 Then
+		    Return
+		  End If
+		  
+		  Dim SelIndex As Integer = SetList.ListIndex
+		  Dim OriginalSet As Beacon.ItemSet = SetList.RowTag(SelIndex)
+		  Dim NewSet As Beacon.ItemSet = Editor.Set
+		  
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    Dim Idx As Integer = Source.IndexOf(OriginalSet)
+		    If Idx > -1 Then
+		      Source(Idx) = New Beacon.ItemSet(NewSet)
+		    End If
+		  Next
+		  
+		  SetList.Cell(SelIndex, 0) = NewSet.Label
+		  SetList.RowTag(SelIndex) = New Beacon.ItemSet(NewSet)
+		  
+		  Self.mSorting = True
+		  SetList.Sort
+		  Self.mSorting = False
+		  
+		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
 #tag EndEvents

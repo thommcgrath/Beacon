@@ -804,38 +804,19 @@ End
 		Sub Action()
 		  Dim Mask As UInt64 = Self.SelectedMask
 		  Dim Sources() As Beacon.LootSource = Self.mDocument.LootSources
-		  Dim HasInvalidSources As Boolean
-		  Dim ValidSourceCount, ValidPresetCount As Integer
+		  Dim ValidPresetCount As Integer
 		  For Each Source As Beacon.LootSource In Sources
 		    If Source.ValidForMask(Mask) Then
-		      ValidSourceCount = ValidSourceCount + 1
 		      ValidPresetCount = ValidPresetCount + Source.ImplementedPresetCount()
-		    Else
-		      HasInvalidSources = True
 		    End If
 		  Next
-		  
-		  If HasInvalidSources Then
-		    Dim DropCount As Integer = Self.mDocument.BeaconCount - ValidSourceCount
-		    If Not Self.ShowConfirm(DropCount.ToText + " " + if(DropCount = 1, "loot source is", "loot sources are") + " not compatible and will be removed.", "The " + if(DropCount = 1, "loot source is", "loot sources are") + " not valid for the selected map. If you want to keep " + if(DropCount = 1, "this loot source", "these loot sources") + ", cancel now and copy " + if(DropCount = 1, "it", "them") + " into a new document.", "Remove", "Cancel") Then
-		      Return
-		    End If
-		  End If
 		  
 		  Dim MapChanged As Boolean = Self.mDocument.MapCompatibility <> Mask
 		  Self.mDocument.MapCompatibility = Mask
 		  Self.mDocument.DifficultyValue = Val(DifficultyValueField.Text)
 		  
-		  If MapChanged Then
-		    For Each Source As Beacon.LootSource In Sources
-		      If Not Source.ValidForMask(Mask) Then
-		        Self.mDocument.Remove(Source)
-		      End If
-		    Next
-		    
-		    If ValidPresetCount > 0 And Self.ShowConfirm("Would you like to rebuild your item sets based on their presets?", "Presets fill item sets based on the current map. When changing maps, it is recommended to rebuild the item sets from their original presets to get the most correct loot for the new map.", "Rebuild", "Do Not Rebuild") Then
-		      Self.mDocument.ReconfigurePresets()
-		    End If
+		  If MapChanged And ValidPresetCount > 0 And Self.ShowConfirm("Would you like to rebuild your item sets based on their presets?", "Presets fill item sets based on the current map. When changing maps, it is recommended to rebuild the item sets from their original presets to get the most correct loot for the new map.", "Rebuild", "Do Not Rebuild") Then
+		    Self.mDocument.ReconfigurePresets()
 		  End If
 		  
 		  Self.mCancelled = False
