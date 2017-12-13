@@ -219,7 +219,7 @@ End
 		Sub Open()
 		  Dim HelpFile As FolderItem = App.HelpFile("LootSources.html")
 		  If HelpFile <> Nil Then
-		    Self.HelpView.LoadPage(App.HelpFile("LootSources.html"))
+		    Self.HelpView.LoadPage(HelpFile)
 		  End If
 		  Self.UpdateCaptionButton()
 		  Self.UpdateSourceList()
@@ -451,6 +451,9 @@ End
 		  Me.Width = NewSize
 		  FadedSeparator1.Left = NewSize
 		  List.Width = NewSize
+		  Panel.Left = FadedSeparator1.Left + FadedSeparator1.Width
+		  Panel.Width = Self.Width - (Panel.Left)
+		  
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -659,6 +662,13 @@ End
 		  If Self.mBlockSelectionChanged Then
 		    Return
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events HelpView
+	#tag Event
+		Sub TitleChanged(newTitle as String)
+		  HelpHeader.Caption = NewTitle
 		End Sub
 	#tag EndEvent
 #tag EndEvents
