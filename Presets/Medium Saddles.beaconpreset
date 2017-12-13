@@ -222,7 +222,7 @@
 			"MaxQuantity": 1,
 			"MinQuality": "Tier1",
 			"MinQuantity": 1,
-			"RespectQualityModifier": false,
+			"RespectQualityModifier": true,
 			"RespectQuantityMultiplier": false
 		},
 		{
@@ -444,7 +444,7 @@
 			"MaxQuantity": 1,
 			"MinQuality": "Tier1",
 			"MinQuantity": 1,
-			"RespectQualityModifier": false,
+			"RespectQualityModifier": true,
 			"RespectQuantityMultiplier": false
 		},
 		{
@@ -610,24 +610,6 @@
 			"RespectQuantityMultiplier": false
 		},
 		{
-			"Availability": 16,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemArmor_CavewolfSaddle_C",
-					"Path": "/Game/Aberration/Dinos/CaveWolf/PrimalItemArmor_CavewolfSaddle.PrimalItemArmor_CavewolfSaddle",
-					"Weight": 0.5
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": true,
-			"RespectQuantityMultiplier": false
-		},
-		{
 			"Availability": 15,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
@@ -753,7 +735,7 @@
 			"MaxQuantity": 1,
 			"MinQuality": "Tier1",
 			"MinQuantity": 1,
-			"RespectQualityModifier": false,
+			"RespectQualityModifier": true,
 			"RespectQuantityMultiplier": false
 		},
 		{
@@ -800,6 +782,24 @@
 				{
 					"Class": "PrimalItemArmor_DaeodonSaddle_C",
 					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_DaeodonSaddle.PrimalItemArmor_DaeodonSaddle",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 13,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_PelaSaddle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PelaSaddle.PrimalItemArmor_PelaSaddle",
 					"Weight": 0.5
 				}
 			],
@@ -881,24 +881,6 @@
 					"Weight": 0.5
 				}
 			],
-			"MaxQuality": "Tier2",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": false
-		},
-		{
-			"Availability": 13,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemArmor_PelaSaddle_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_PelaSaddle.PrimalItemArmor_PelaSaddle",
-					"Weight": 0.5
-				}
-			],
 			"MaxQuality": "Tier3",
 			"MaxQuantity": 1,
 			"MinQuality": "Tier1",
@@ -950,6 +932,24 @@
 				{
 					"Class": "PrimalItemArmor_SarcoSaddle_C",
 					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/Saddles/PrimalItemArmor_SarcoSaddle.PrimalItemArmor_SarcoSaddle",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_CavewolfSaddle_C",
+					"Path": "/Game/Aberration/Dinos/CaveWolf/PrimalItemArmor_CavewolfSaddle.PrimalItemArmor_CavewolfSaddle",
 					"Weight": 0.5
 				}
 			],

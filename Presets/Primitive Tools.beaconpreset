@@ -2,6 +2,69 @@
 	"Entries": [
 		{
 			"Availability": 31,
+			"ChanceToBeBlueprintOverride": 1.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItem_WeaponFishingRod_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponFishingRod.PrimalItem_WeaponFishingRod",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponLance_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponLance.PrimalItem_WeaponLance",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponLasso_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponLasso.PrimalItem_WeaponLasso",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponScissors_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponScissors.PrimalItem_WeaponScissors",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponStoneHatchet_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStoneHatchet.PrimalItem_WeaponStoneHatchet",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponStonePick_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStonePick.PrimalItem_WeaponStonePick",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponTorch_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponTorch.PrimalItem_WeaponTorch",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponCompass_C",
+					"Path": "/Game/PrimalEarth/Test/PrimalItem_WeaponCompass.PrimalItem_WeaponCompass",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponSpyglass_C",
+					"Path": "/Game/PrimalEarth/Test/PrimalItem_WeaponSpyglass.PrimalItem_WeaponSpyglass",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponWhip_C",
+					"Path": "/Game/ScorchedEarth/WeaponWhip/PrimalItem_WeaponWhip.PrimalItem_WeaponWhip",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -106,74 +169,6 @@
 			"MinQuality": "Tier1",
 			"MinQuantity": 1,
 			"RespectQualityModifier": true,
-			"RespectQuantityMultiplier": false
-		},
-		{
-			"Availability": 31,
-			"ChanceToBeBlueprintOverride": 1.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_WaterJarCraftable_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_WaterJarCraftable.PrimalItemConsumable_WaterJarCraftable",
-					"Weight": 0.5
-				},
-				{
-					"Class": "PrimalItem_WeaponFishingRod_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponFishingRod.PrimalItem_WeaponFishingRod",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItem_WeaponLance_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponLance.PrimalItem_WeaponLance",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItem_WeaponLasso_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponLasso.PrimalItem_WeaponLasso",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItem_WeaponScissors_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponScissors.PrimalItem_WeaponScissors",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItem_WeaponStoneHatchet_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStoneHatchet.PrimalItem_WeaponStoneHatchet",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItem_WeaponStonePick_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponStonePick.PrimalItem_WeaponStonePick",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItem_WeaponTorch_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponTorch.PrimalItem_WeaponTorch",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItem_WeaponCompass_C",
-					"Path": "/Game/PrimalEarth/Test/PrimalItem_WeaponCompass.PrimalItem_WeaponCompass",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItem_WeaponSpyglass_C",
-					"Path": "/Game/PrimalEarth/Test/PrimalItem_WeaponSpyglass.PrimalItem_WeaponSpyglass",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItem_WeaponWhip_C",
-					"Path": "/Game/ScorchedEarth/WeaponWhip/PrimalItem_WeaponWhip.PrimalItem_WeaponWhip",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": false
 		},
 		{

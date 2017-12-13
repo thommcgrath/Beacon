@@ -30,7 +30,7 @@
 			"MaxQuantity": 1,
 			"MinQuality": "Tier1",
 			"MinQuantity": 1,
-			"RespectQualityModifier": false,
+			"RespectQualityModifier": true,
 			"RespectQuantityMultiplier": false
 		},
 		{

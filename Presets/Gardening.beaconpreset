@@ -19,39 +19,6 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 16,
-			"ChanceToBeBlueprintOverride": 1.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Seed_PlantSpeciesZ_C",
-					"Path": "/Game/Aberration/WeaponPlantSpeciesZ/PrimalItemConsumable_Seed_PlantSpeciesZ.PrimalItemConsumable_Seed_PlantSpeciesZ",
-					"Weight": 0.5
-				},
-				{
-					"Class": "PrimalItemStructure_CropPlot_Large_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Large.PrimalItemStructure_CropPlot_Large",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_CropPlot_Medium_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Medium.PrimalItemStructure_CropPlot_Medium",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemStructure_CropPlot_Small_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CropPlot_Small.PrimalItemStructure_CropPlot_Small",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": false
-		},
-		{
 			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
@@ -178,7 +145,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 1.0,
 			"EntryWeight": 1.0,
 			"Items": [

@@ -1,6 +1,24 @@
 {
 	"Entries": [
 		{
+			"Availability": 10,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemAmmo_ArrowFlame_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_ArrowFlame.PrimalItemAmmo_ArrowFlame",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 40,
+			"MinQuality": "Tier1",
+			"MinQuantity": 10,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
 			"Availability": 21,
 			"ChanceToBeBlueprintOverride": 1.0,
 			"EntryWeight": 1.0,
@@ -66,30 +84,12 @@
 					"Weight": 1.0
 				}
 			],
-			"MaxQuality": "Tier1",
+			"MaxQuality": "Tier3",
 			"MaxQuantity": 1,
 			"MinQuality": "Tier1",
 			"MinQuantity": 1,
-			"RespectQualityModifier": false,
+			"RespectQualityModifier": true,
 			"RespectQuantityMultiplier": false
-		},
-		{
-			"Availability": 10,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemAmmo_ArrowFlame_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemAmmo_ArrowFlame.PrimalItemAmmo_ArrowFlame",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 40,
-			"MinQuality": "Tier1",
-			"MinQuantity": 10,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
 		},
 		{
 			"Availability": 31,
@@ -216,11 +216,11 @@
 					"Weight": 1.0
 				}
 			],
-			"MaxQuality": "Tier1",
+			"MaxQuality": "Tier3",
 			"MaxQuantity": 1,
 			"MinQuality": "Tier1",
 			"MinQuantity": 1,
-			"RespectQualityModifier": false,
+			"RespectQualityModifier": true,
 			"RespectQuantityMultiplier": false
 		},
 		{

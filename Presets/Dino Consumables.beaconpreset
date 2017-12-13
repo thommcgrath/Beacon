@@ -33,7 +33,7 @@
 			"MaxQuantity": 1,
 			"MinQuality": "Tier1",
 			"MinQuantity": 1,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -321,7 +321,7 @@
 			"MaxQuantity": 1,
 			"MinQuality": "Tier1",
 			"MinQuantity": 1,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
@@ -429,7 +429,7 @@
 			"MaxQuantity": 1,
 			"MinQuality": "Tier1",
 			"MinQuantity": 1,
-			"RespectQualityModifier": true,
+			"RespectQualityModifier": false,
 			"RespectQuantityMultiplier": true
 		},
 		{
