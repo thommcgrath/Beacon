@@ -130,6 +130,9 @@ Protected Class Engram
 		  End If
 		  
 		  Dim Idx As Integer = Self.mPath.IndexOf(6, "/")
+		  If Idx = -1 Then
+		    Return "Unknown"
+		  End If
 		  Dim Name As Text = Self.mPath.Mid(6, Idx - 6)
 		  Select Case Name
 		  Case "PrimalEarth"
@@ -139,6 +142,9 @@ Protected Class Engram
 		  Case "Mods"
 		    Dim StartAt As Integer = Idx + 1
 		    Dim EndAt As Integer = Self.mPath.IndexOf(StartAt, "/")
+		    If EndAt = -1 Then
+		      EndAt = Self.mPath.Length
+		    End If
 		    Return Self.MakeHumanReadableText(Self.mPath.Mid(StartAt, EndAt - StartAt))
 		  Else
 		    Return Self.MakeHumanReadableText(Name)
