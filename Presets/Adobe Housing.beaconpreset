@@ -1,7 +1,7 @@
 {
 	"Entries": [
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -19,7 +19,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -37,7 +37,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -55,7 +55,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -73,7 +73,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -91,7 +91,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -109,7 +109,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -127,7 +127,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -145,7 +145,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -163,7 +163,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -181,7 +181,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -199,7 +199,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -217,7 +217,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -235,7 +235,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -253,7 +253,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -271,7 +271,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -289,7 +289,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -307,7 +307,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -325,7 +325,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 1.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -458,7 +458,7 @@
 			"RespectQuantityMultiplier": false
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -476,7 +476,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -494,7 +494,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -512,7 +512,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -530,7 +530,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -548,7 +548,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 2,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [

@@ -1,7 +1,7 @@
 {
 	"Entries": [
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -19,7 +19,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -37,7 +37,163 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 1.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_GasCollector_C",
+					"Path": "/Game/Aberration/Structures/GasCollector/PrimalItemStructure_GasCollector.PrimalItemStructure_GasCollector",
+					"Weight": 0.5
+				},
+				{
+					"Class": "PrimalItemStructure_AirConditioner_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_AirConditioner.PrimalItemStructure_AirConditioner",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_Bed_Modern_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bed_Modern.PrimalItemStructure_Bed_Modern",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_Cannon_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Cannon.PrimalItemStructure_Cannon",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_ChemBench_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_ChemBench.PrimalItemStructure_ChemBench",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_Fabricator_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Fabricator.PrimalItemStructure_Fabricator",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_Grill_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Grill.PrimalItemStructure_Grill",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_IceBox_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_IceBox.PrimalItemStructure_IceBox",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_IndustrialCookingPot_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_IndustrialCookingPot.PrimalItemStructure_IndustrialCookingPot",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_IndustrialForge_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_IndustrialForge.PrimalItemStructure_IndustrialForge",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_Keypad_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Keypad.PrimalItemStructure_Keypad",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_Lamppost_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Lamppost.PrimalItemStructure_Lamppost",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_LamppostOmni_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_LamppostOmni.PrimalItemStructure_LamppostOmni",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_StorageBox_Huge_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Huge.PrimalItemStructure_StorageBox_Huge",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_Turret_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Turret.PrimalItemStructure_Turret",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_TurretBallista_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_TurretBallista.PrimalItemStructure_TurretBallista",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_TurretCatapult_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_TurretCatapult.PrimalItemStructure_TurretCatapult",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_TurretMinigun_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_TurretMinigun.PrimalItemStructure_TurretMinigun",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_TurretRocket_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_TurretRocket.PrimalItemStructure_TurretRocket",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_PowerCableIncline_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_PowerCableIncline.PrimalItemStructure_PowerCableIncline",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_PowerCableIntersection_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_PowerCableIntersection.PrimalItemStructure_PowerCableIntersection",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_PowerCableStraight_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_PowerCableStraight.PrimalItemStructure_PowerCableStraight",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_PowerCableVertical_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_PowerCableVertical.PrimalItemStructure_PowerCableVertical",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_PowerGenerator_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_PowerGenerator.PrimalItemStructure_PowerGenerator",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_PowerOutlet_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Pipes/PrimalItemStructure_PowerOutlet.PrimalItemStructure_PowerOutlet",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_GasCollector_C",
+					"Path": "/Game/Aberration/Structures/GasCollector/PrimalItemStructure_GasCollector.PrimalItemStructure_GasCollector",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -55,7 +211,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -73,7 +229,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -91,7 +247,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -109,7 +265,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -127,7 +283,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -145,7 +301,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -301,7 +457,7 @@
 			"RespectQuantityMultiplier": false
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -337,7 +493,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -355,7 +511,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -373,7 +529,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -391,7 +547,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -409,7 +565,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -427,7 +583,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -445,7 +601,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -463,7 +619,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -632,7 +788,7 @@
 			"RespectQuantityMultiplier": false
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -650,7 +806,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -668,7 +824,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -686,7 +842,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -704,7 +860,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -722,7 +878,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [

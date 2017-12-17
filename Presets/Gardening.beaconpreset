@@ -1,7 +1,25 @@
 {
 	"Entries": [
 		{
-			"Availability": 15,
+			"Availability": 10,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_PlantSpeciesY_C",
+					"Path": "/Game/ScorchedEarth/WeaponPlantSpeciesY/PrimalItemConsumable_Seed_PlantSpeciesY.PrimalItemConsumable_Seed_PlantSpeciesY",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 100,
+			"MinQuality": "Tier1",
+			"MinQuantity": 100,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -19,7 +37,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -37,7 +55,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -55,7 +73,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -73,7 +91,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -91,7 +109,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -109,7 +127,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -127,7 +145,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 1.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -155,25 +173,7 @@
 			"RespectQuantityMultiplier": false
 		},
 		{
-			"Availability": 10,
-			"ChanceToBeBlueprintOverride": 0.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumable_Seed_PlantSpeciesY_C",
-					"Path": "/Game/ScorchedEarth/WeaponPlantSpeciesY/PrimalItemConsumable_Seed_PlantSpeciesY.PrimalItemConsumable_Seed_PlantSpeciesY",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": true
-		},
-		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -209,7 +209,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -227,7 +227,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -245,7 +245,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -263,7 +263,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -281,7 +281,25 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Seed_PlantSpeciesZ_C",
+					"Path": "/Game/Aberration/WeaponPlantSpeciesZ/PrimalItemConsumable_Seed_PlantSpeciesZ.PrimalItemConsumable_Seed_PlantSpeciesZ",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 100,
+			"MinQuality": "Tier1",
+			"MinQuantity": 100,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [

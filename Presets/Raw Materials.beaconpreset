@@ -1,7 +1,25 @@
 {
 	"Entries": [
 		{
-			"Availability": 15,
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Mushroom_Auric_C",
+					"Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Mushroom_Auric.PrimalItemConsumable_Mushroom_Auric",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 100,
+			"MinQuality": "Tier1",
+			"MinQuantity": 100,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -37,6 +55,24 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Mushroom_Ascerbic_C",
+					"Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Mushroom_Ascerbic.PrimalItemConsumable_Mushroom_Ascerbic",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 100,
+			"MinQuality": "Tier1",
+			"MinQuantity": 100,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
 			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
@@ -55,7 +91,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -73,80 +109,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 10,
-			"ChanceToBeBlueprintOverride": 1.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumableMiracleGro_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumableMiracleGro.PrimalItemConsumableMiracleGro",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemConsumable_Narcotic_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Narcotic.PrimalItemConsumable_Narcotic",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemConsumable_Stimulant_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Stimulant.PrimalItemConsumable_Stimulant",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_ChitinPaste_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_ChitinPaste.PrimalItemResource_ChitinPaste",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_Electronics_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Electronics.PrimalItemResource_Electronics",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_Gunpowder_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Gunpowder.PrimalItemResource_Gunpowder",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_Polymer_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Polymer.PrimalItemResource_Polymer",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_Sparkpowder_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Sparkpowder.PrimalItemResource_Sparkpowder",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_SubstrateAbsorbent_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_SubstrateAbsorbent.PrimalItemResource_SubstrateAbsorbent",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_Clay_C",
-					"Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_Clay.PrimalItemResource_Clay",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_PreservingSalt_C",
-					"Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_PreservingSalt.PrimalItemResource_PreservingSalt",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_Propellant_C",
-					"Path": "/Game/ScorchedEarth/CoreBlueprints/Resources/PrimalItemResource_Propellant.PrimalItemResource_Propellant",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": false
-		},
-		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -182,7 +145,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -200,7 +163,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -218,7 +181,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -236,7 +199,43 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemConsumable_Mushroom_Aquatic_C",
+					"Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Mushroom_Aquatic.PrimalItemConsumable_Mushroom_Aquatic",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 100,
+			"MinQuality": "Tier1",
+			"MinQuantity": 100,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemResource_Gas_C",
+					"Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_Gas.PrimalItemResource_Gas",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 100,
+			"MinQuality": "Tier1",
+			"MinQuantity": 100,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -254,7 +253,25 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 13,
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemResource_Gem_Fertile_C",
+					"Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_Gem_Fertile.PrimalItemResource_Gem_Fertile",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 100,
+			"MinQuality": "Tier1",
+			"MinQuantity": 100,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 29,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -272,7 +289,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -280,6 +297,24 @@
 					"Class": "PrimalItemResource_RareFlower_C",
 					"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_RareFlower.PrimalItemResource_RareFlower",
 					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 100,
+			"MinQuality": "Tier1",
+			"MinQuantity": 100,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemResource_CommonMushroom_C",
+					"Path": "/Game/Aberration/CoreBlueprints/Items/Consumables/PrimalItemResource_CommonMushroom.PrimalItemResource_CommonMushroom",
+					"Weight": 0.5
 				}
 			],
 			"MaxQuality": "Tier1",
@@ -326,7 +361,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -344,7 +379,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -362,7 +397,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -380,7 +415,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -398,7 +433,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -416,7 +451,25 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemResource_Gem_BioLum_C",
+					"Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_Gem_BioLum.PrimalItemResource_Gem_BioLum",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 100,
+			"MinQuality": "Tier1",
+			"MinQuantity": 100,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -434,7 +487,25 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemResource_FungalWood_C",
+					"Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_FungalWood.PrimalItemResource_FungalWood",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 100,
+			"MinQuality": "Tier1",
+			"MinQuantity": 100,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -452,7 +523,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -470,7 +541,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -488,7 +559,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -506,7 +577,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -524,7 +595,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -560,7 +631,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -578,7 +649,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 13,
+			"Availability": 29,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -614,65 +685,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 5,
-			"ChanceToBeBlueprintOverride": 1.0,
-			"EntryWeight": 1.0,
-			"Items": [
-				{
-					"Class": "PrimalItemConsumableMiracleGro_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/BaseBPs/PrimalItemConsumableMiracleGro.PrimalItemConsumableMiracleGro",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemConsumable_Narcotic_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Narcotic.PrimalItemConsumable_Narcotic",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemConsumable_Stimulant_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Consumables/PrimalItemConsumable_Stimulant.PrimalItemConsumable_Stimulant",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_ChitinPaste_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_ChitinPaste.PrimalItemResource_ChitinPaste",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_Electronics_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Electronics.PrimalItemResource_Electronics",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_Gunpowder_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Gunpowder.PrimalItemResource_Gunpowder",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_Polymer_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Polymer.PrimalItemResource_Polymer",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_Sparkpowder_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_Sparkpowder.PrimalItemResource_Sparkpowder",
-					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItemResource_SubstrateAbsorbent_C",
-					"Path": "/Game/PrimalEarth/CoreBlueprints/Resources/PrimalItemResource_SubstrateAbsorbent.PrimalItemResource_SubstrateAbsorbent",
-					"Weight": 1.0
-				}
-			],
-			"MaxQuality": "Tier1",
-			"MaxQuantity": 1,
-			"MinQuality": "Tier1",
-			"MinQuantity": 1,
-			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": false
-		},
-		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -690,7 +703,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -708,7 +721,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -726,7 +739,25 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemResource_Gem_Element_C",
+					"Path": "/Game/Aberration/CoreBlueprints/Resources/PrimalItemResource_Gem_Element.PrimalItemResource_Gem_Element",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 100,
+			"MinQuality": "Tier1",
+			"MinQuantity": 100,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -744,7 +775,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 13,
+			"Availability": 29,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -762,7 +793,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -780,7 +811,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -816,7 +847,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -834,7 +865,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -852,7 +883,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -924,7 +955,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -942,7 +973,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
