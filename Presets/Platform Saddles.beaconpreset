@@ -62,7 +62,7 @@
 			"RespectQuantityMultiplier": false
 		},
 		{
-			"Availability": 2,
+			"Availability": 18,
 			"ChanceToBeBlueprintOverride": 1.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -134,7 +134,7 @@
 			"RespectQuantityMultiplier": false
 		},
 		{
-			"Availability": 15,
+			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [

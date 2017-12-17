@@ -19,7 +19,7 @@
 			"RespectQuantityMultiplier": false
 		},
 		{
-			"Availability": 13,
+			"Availability": 8,
 			"ChanceToBeBlueprintOverride": 1.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -158,15 +158,10 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 16,
+			"Availability": 5,
 			"ChanceToBeBlueprintOverride": 1.0,
 			"EntryWeight": 1.0,
 			"Items": [
-				{
-					"Class": "PrimalItemArmor_Glider_C",
-					"Path": "/Game/Aberration/CoreBlueprints/Items/Armor/PrimalItemArmor_Glider.PrimalItemArmor_Glider",
-					"Weight": 0.5
-				},
 				{
 					"Class": "PrimalItemArmor_NightVisionGoggles_C",
 					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/SCUBA/PrimalItemArmor_NightVisionGoggles.PrimalItemArmor_NightVisionGoggles",
@@ -211,11 +206,6 @@
 					"Class": "PrimalItem_WeaponGPS_C",
 					"Path": "/Game/PrimalEarth/Test/PrimalItem_WeaponGPS.PrimalItem_WeaponGPS",
 					"Weight": 1.0
-				},
-				{
-					"Class": "PrimalItem_ChainSaw_C",
-					"Path": "/Game/ScorchedEarth/WeaponChainsaw/PrimalItem_ChainSaw.PrimalItem_ChainSaw",
-					"Weight": 1.0
 				}
 			],
 			"MaxQuality": "Tier3",
@@ -226,7 +216,7 @@
 			"RespectQuantityMultiplier": false
 		},
 		{
-			"Availability": 31,
+			"Availability": 10,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -334,6 +324,74 @@
 			"RespectQuantityMultiplier": false
 		},
 		{
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 1.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemArmor_Glider_C",
+					"Path": "/Game/Aberration/CoreBlueprints/Items/Armor/PrimalItemArmor_Glider.PrimalItemArmor_Glider",
+					"Weight": 0.5
+				},
+				{
+					"Class": "PrimalItemArmor_NightVisionGoggles_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Armor/SCUBA/PrimalItemArmor_NightVisionGoggles.PrimalItemArmor_NightVisionGoggles",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_Pliers_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/PrimalItem_Pliers.PrimalItem_Pliers",
+					"Weight": 0.5
+				},
+				{
+					"Class": "PrimalItem_WeaponMetalHatchet_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMetalHatchet.PrimalItem_WeaponMetalHatchet",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponMetalPick_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponMetalPick.PrimalItem_WeaponMetalPick",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponPike_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponPike.PrimalItem_WeaponPike",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponProd_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponProd.PrimalItem_WeaponProd",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponSickle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponSickle.PrimalItem_WeaponSickle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponSword_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItem_WeaponSword.PrimalItem_WeaponSword",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemRadio_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Weapons/PrimalItemRadio.PrimalItemRadio",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItem_WeaponGPS_C",
+					"Path": "/Game/PrimalEarth/Test/PrimalItem_WeaponGPS.PrimalItem_WeaponGPS",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
 			"Availability": 31,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
@@ -377,6 +435,24 @@
 				{
 					"Class": "PrimalItemArmor_Glider_C",
 					"Path": "/Game/Aberration/CoreBlueprints/Items/Armor/PrimalItemArmor_Glider.PrimalItemArmor_Glider",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier3",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": true,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 16,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItem_Pliers_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/PrimalItem_Pliers.PrimalItem_Pliers",
 					"Weight": 0.5
 				}
 			],
