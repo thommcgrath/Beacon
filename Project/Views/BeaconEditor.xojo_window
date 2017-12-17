@@ -94,7 +94,9 @@ Begin ContainerControl BeaconEditor
       Caption         =   "Item Sets"
       CaptionEnabled  =   True
       CaptionIsButton =   True
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       HasResizer      =   True
       Height          =   41
       HelpTag         =   ""
@@ -111,6 +113,7 @@ Begin ContainerControl BeaconEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   190
@@ -173,7 +176,9 @@ Begin ContainerControl BeaconEditor
          Caption         =   "Item Set Contents"
          CaptionEnabled  =   True
          CaptionIsButton =   False
+         DoubleBuffer    =   False
          Enabled         =   True
+         EraseBackground =   False
          HasResizer      =   False
          Height          =   41
          HelpTag         =   ""
@@ -190,6 +195,7 @@ Begin ContainerControl BeaconEditor
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   0
+         Transparent     =   False
          UseFocusRing    =   True
          Visible         =   True
          Width           =   407
@@ -287,19 +293,31 @@ End
 		  Parent.Append(EmptySetItem)
 		  
 		  For Each Group As Text In GroupNames
+		    Dim Arr() As Beacon.Preset = Groups.Value(Group)
+		    Dim Names() As String
+		    Dim Items() As Beacon.Preset
+		    For Each Preset As Beacon.Preset In Arr
+		      If Preset.ValidForMask(Self.MapMask) Then
+		        Names.Append(Preset.Label)
+		        Items.Append(Preset)
+		      End If
+		    Next
+		    If Names.Ubound = -1 Then
+		      Continue For Group
+		    End If
+		    
+		    Names.SortWith(Items)
+		    
 		    Parent.Append(New MenuItem(MenuItem.TextSeparator))
 		    
 		    Dim Header As New MenuItem(Group)
 		    Header.Enabled = False
 		    Parent.Append(Header)
 		    
-		    Dim Arr() As Beacon.Preset = Groups.Value(Group)
-		    For Each Preset As Beacon.Preset In Arr
-		      If Preset.ValidForMask(Self.MapMask) Then
-		        Dim PresetItem As New MenuItem(Preset.Label, Preset)
-		        AddHandler PresetItem.Action, WeakAddressOf Self.HandlePresetMenu
-		        Parent.Append(PresetItem)
-		      End If
+		    For Each Preset As Beacon.Preset In Items
+		      Dim PresetItem As New MenuItem(Preset.Label, Preset)
+		      AddHandler PresetItem.Action, WeakAddressOf Self.HandlePresetMenu
+		      Parent.Append(PresetItem)
 		    Next
 		  Next
 		End Sub

@@ -748,6 +748,7 @@ End
 		    Self.ActionButton.Caption = "Import"
 		    Self.Title = "Import Config"
 		  End Select
+		  Self.MessageLabel.Text = Self.Title
 		  
 		  Dim Mask As UInt64
 		  If Self.mDocument.MapCompatibility > 0 Then
