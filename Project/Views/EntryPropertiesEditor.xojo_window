@@ -925,6 +925,7 @@ End
 		    EditMaxQuantityCheck.Visible = True
 		    EditMinQualityCheck.Visible = True
 		    EditMinQuantityCheck.Visible = True
+		    EditWeightCheck.Visible = True
 		  End If
 		  
 		  Self.Setup()
