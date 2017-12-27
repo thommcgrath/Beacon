@@ -196,6 +196,7 @@ MultiImage=ImgToolbarButtonFillMask;Icons/ImgToolbarButtonFillMask.xojo_image;&h
 MultiImage=ImgToolbarMenuBorderMask;Icons/ImgToolbarMenuBorderMask.xojo_image;&h73D367FF;&h7F977FF;false
 MultiImage=ImgToolbarMenuFillMask;Icons/ImgToolbarMenuFillMask.xojo_image;&h75527FF;&h7F977FF;false
 Class=StatusBar;Custom Controls/StatusBar.xojo_code;&h2FE4FFFF;&h30DCFFFF;false
+Interface=SheetPositionHandler;Modules/BeaconUI/SheetPositionHandler.xojo_code;&h60391FFF;&h12A7B7FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

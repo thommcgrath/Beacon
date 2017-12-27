@@ -43,7 +43,7 @@ Begin ContainerControl SetEditor
       GridLinesVertical=   1
       HasHeading      =   True
       HeadingIndex    =   0
-      Height          =   213
+      Height          =   341
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -69,7 +69,7 @@ Begin ContainerControl SetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   190
+      Top             =   62
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -96,11 +96,11 @@ Begin ContainerControl SetEditor
       Italic          =   False
       Left            =   112
       LimitText       =   0
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
+      LockRight       =   False
+      LockTop         =   False
       Mask            =   ""
       Password        =   False
       ReadOnly        =   False
@@ -113,7 +113,7 @@ Begin ContainerControl SetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   451
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -131,11 +131,11 @@ Begin ContainerControl SetEditor
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
@@ -147,7 +147,7 @@ Begin ContainerControl SetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   451
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -172,11 +172,11 @@ Begin ContainerControl SetEditor
       Italic          =   False
       Left            =   112
       LimitText       =   0
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Mask            =   "###"
       Password        =   False
       ReadOnly        =   False
@@ -189,7 +189,7 @@ Begin ContainerControl SetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   485
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -214,11 +214,11 @@ Begin ContainerControl SetEditor
       Italic          =   False
       Left            =   112
       LimitText       =   0
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Mask            =   "###"
       Password        =   False
       ReadOnly        =   False
@@ -231,7 +231,7 @@ Begin ContainerControl SetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   519
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -247,11 +247,11 @@ Begin ContainerControl SetEditor
       Left            =   112
       LineStep        =   5
       LiveScroll      =   True
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Maximum         =   100
       Minimum         =   1
       PageStep        =   25
@@ -260,7 +260,7 @@ Begin ContainerControl SetEditor
       TabPanelIndex   =   0
       TabStop         =   True
       TickStyle       =   "0"
-      Top             =   122
+      Top             =   553
       Value           =   100
       Visible         =   True
       Width           =   139
@@ -293,7 +293,7 @@ Begin ContainerControl SetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   122
+      Top             =   553
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -311,11 +311,11 @@ Begin ContainerControl SetEditor
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
@@ -327,7 +327,7 @@ Begin ContainerControl SetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   485
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -345,11 +345,11 @@ Begin ContainerControl SetEditor
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
@@ -361,7 +361,7 @@ Begin ContainerControl SetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   519
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -379,11 +379,11 @@ Begin ContainerControl SetEditor
       InitialParent   =   ""
       Italic          =   False
       Left            =   20
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
@@ -395,7 +395,7 @@ Begin ContainerControl SetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   122
+      Top             =   553
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -414,11 +414,11 @@ Begin ContainerControl SetEditor
       InitialParent   =   ""
       Italic          =   False
       Left            =   112
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Scope           =   2
       State           =   1
       TabIndex        =   11
@@ -427,7 +427,7 @@ Begin ContainerControl SetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   157
+      Top             =   588
       Underline       =   False
       Value           =   True
       Visible         =   True
@@ -461,34 +461,6 @@ Begin ContainerControl SetEditor
       Visible         =   True
       Width           =   560
    End
-   Begin ControlCanvas Separators
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   0
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   12
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   189
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   560
-   End
    Begin UpDownArrows MinItemsStepper
       AcceptFocus     =   False
       AutoDeactivate  =   True
@@ -498,16 +470,16 @@ Begin ContainerControl SetEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   192
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Scope           =   2
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   53
+      Top             =   484
       Visible         =   True
       Width           =   13
    End
@@ -520,18 +492,78 @@ Begin ContainerControl SetEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   192
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
-      LockTop         =   True
+      LockTop         =   False
       Scope           =   2
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   87
+      Top             =   518
       Visible         =   True
       Width           =   13
+   End
+   Begin BeaconToolbar Header
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Caption         =   "Untitled"
+      CaptionEnabled  =   True
+      CaptionIsButton =   False
+      Enabled         =   True
+      HasResizer      =   False
+      Height          =   41
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   560
+   End
+   Begin StatusBar Status
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Borders         =   2
+      Caption         =   ""
+      Clickable       =   True
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   21
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   41
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   560
    End
 End
 #tag EndWindow
@@ -594,6 +626,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEntryList(SelectEntries() As Beacon.SetEntry)
+		  Self.UpdateStatus()
+		  
 		  If Self.mSet = Nil Then
 		    EntryList.DeleteAllRows
 		    Return
@@ -660,6 +694,49 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatus()
+		  If Self.mSet = Nil Then
+		    Return
+		  End If
+		  
+		  Dim NumEntries As Integer = Self.mSet.Count
+		  Dim MaxEntries As Integer = Min(Self.mSet.MaxNumItems, NumEntries)
+		  Dim MinEntries As Integer = Min(Self.mSet.MinNumItems, MaxEntries)
+		  
+		  Dim StatusText As String
+		  If NumEntries = 0 Then
+		    StatusText = "No engrams"
+		  Else
+		    If NumEntries = MinEntries And MinEntries = MaxEntries Then
+		      If NumEntries = 1 Then
+		        StatusText = "Chooses lone engram"
+		      Else
+		        StatusText = "Chooses all " + Str(NumEntries, "-0") + " engrams"
+		      End If
+		    Else
+		      If MinEntries = MaxEntries Then
+		        If MinEntries = 1 Then
+		          StatusText = "Chooses 1 of " + Str(NumEntries, "-0") + " engrams"
+		        Else
+		          StatusText = "Chooses " + Str(MinEntries, "-0") + " of " + Str(NumEntries, "-0") + " engrams"
+		        End If
+		      Else
+		        StatusText = "Chooses " + Str(MinEntries, "-0") + "-" + Str(MaxEntries, "-0") + " of " + Str(NumEntries, "-0") + " engrams"
+		      End If
+		    End If
+		  End If
+		  
+		  StatusText = StatusText + ", " + Str(Round(Self.mSet.Weight * 100), "-0") + " weight"
+		  
+		  If Self.mSet.ItemsRandomWithoutReplacement Then
+		    StatusText = StatusText + ", avoids duplicates"
+		  End If
+		  
+		  Status.Caption = StatusText
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event Updated()
@@ -683,6 +760,11 @@ End
 		#tag Setter
 			Set
 			  Self.mSet = Value
+			  If Self.mSet <> Nil Then
+			    Header.Caption = Self.mSet.Label
+			  Else
+			    Header.Caption = "No Selection"
+			  End If
 			  
 			  Self.mUpdating = True
 			  If Self.mSet <> Nil Then
@@ -1032,16 +1114,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Separators
-	#tag Event
-		Sub Paint(index as Integer, g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused areas
-		  
-		  G.ForeColor = &cCCCCCC
-		  G.FillRect(-1, -1, G.Width + 2, G.Height + 2)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events MinItemsStepper
 	#tag Event
 		Sub Down()
@@ -1074,6 +1146,34 @@ End
 		  Dim MaxItems As UInteger = CDbl(MaxItemsField.Text)
 		  MaxItems = Min(MaxItems + 1, EntryCount)
 		  MaxItemsField.Text = Format(MaxItems, "0")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Header
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "AddEntry"
+		    Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self)
+		    If Entries = Nil Then
+		      Return
+		    End If
+		    
+		    For Each Entry As Beacon.SetEntry In Entries
+		      Self.mSet.Append(Entry)
+		    Next
+		    
+		    Self.UpdateEntryList(Entries)
+		    RaiseEvent Updated
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Dim AddButton As New BeaconToolbarItem("AddEntry", IconAdd)
+		  AddButton.HelpTag = "Add engrams to this item set."
+		  
+		  Me.LeftItems.Append(AddButton)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

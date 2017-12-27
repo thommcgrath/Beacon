@@ -118,6 +118,57 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CreateWeightIndicator(OffsetPercent As Double, WeightPercent As Double, WidthInPoints As Integer, HeightInPoints As Integer, Scale As Double = 1.0) As Picture
+		  Dim Pic As New Picture(WidthInPoints * Scale, HeightInPoints * Scale)
+		  ' Pic.Graphics.ScaleX = Scale
+		  ' Pic.Graphics.ScaleY = Scale
+		  ' Pic.HorizontalResolution = 72 * Scale
+		  ' Pic.VerticalResolution = 72 * Scale
+		  
+		  Pic.Graphics.ForeColor = &c000000
+		  Pic.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)
+		  
+		  Pic.Graphics.ForeColor = &cFFFFFF
+		  Pic.Graphics.FillOval(2 * Scale, 2 * Scale, Pic.Width - (4 * Scale) , Pic.Height - (4 * Scale))
+		  
+		  Dim CenterPoint As New REALbasic.Point(Pic.Width / 2, Pic.Height / 2)
+		  
+		  Dim Angles(1) As Double
+		  Angles(0) = (360 * OffsetPercent) - 90
+		  Angles(1) = (360 * (OffsetPercent + WeightPercent)) - 90
+		  
+		  Dim Radius As Double = Min(Pic.Width, Pic.Height) / 2
+		  Dim Distance As Double = Radius * 1.5
+		  Dim Points(2) As Integer
+		  Points(1) = Round(CenterPoint.X)
+		  Points(2) = Round(CenterPoint.Y)
+		  For Each Angle As Double In Angles
+		    While Angle >= 270
+		      Angle = Angle - 360
+		    Wend
+		    Dim Rads As Double = Angle * 0.01745329252
+		    Dim LegX As Double = CenterPoint.X + (Distance * Cos(Rads))
+		    Dim LegY As Double = CenterPoint.Y + (Distance * Sin(Rads))
+		    Points.Append(Round(LegX))
+		    Points.Append(Round(LegY))
+		  Next
+		  
+		  Pic.Graphics.ForeColor = &c000000
+		  Pic.Graphics.FillPolygon(Points)
+		  
+		  Dim Mask As New Picture(Pic.Width, Pic.Height, 32)
+		  Mask.Graphics.ForeColor = &c000000
+		  Mask.Graphics.FillOval(0, 0, Mask.Width, Mask.Height)
+		  Pic.ApplyMask(Mask)
+		  
+		  Dim Final As New Picture(Pic.Width, Pic.Height, 32)
+		  Final.Graphics.DrawPicture(Pic, 0, 0)
+		  
+		  Return New Picture(WidthInPoints, HeightInPoints, Array(Final))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Darker(Extends Source As Color, Percent As Double) As Color
 		  Return Color.HSV(Source.Hue, Source.Saturation, Source.Value * (1 - Percent))
 		End Function
@@ -142,6 +193,43 @@ Protected Module BeaconUI
 		    Panel.TextSize = GetPointSize(FontObject)
 		  #endif
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function Handler_WillPositionSheet(id as Ptr, s as Ptr, WindowHandle As Integer, SheetHandle As Integer, DefaultPosition As NSRect) As NSRect
+		  #Pragma Unused id
+		  #Pragma Unused s
+		  
+		  Dim Bound As Integer = WindowCount - 1
+		  Dim Sheet As Window
+		  
+		  For I As Integer = 0 To Bound
+		    If Window(I).Handle = SheetHandle Then
+		      Sheet = Window(I)
+		      Exit For I
+		    End If
+		  Next
+		  
+		  Dim InitialPosition As New REALbasic.Rect(DefaultPosition.Left, DefaultPosition.Top, DefaultPosition.Width, DefaultPosition.Height)
+		  
+		  For I As Integer = 0 To Bound
+		    If Window(I) IsA BeaconUI.SheetPositionHandler And Window(I).Handle = WindowHandle Then
+		      Dim NewPosition As REALbasic.Rect = BeaconUI.SheetPositionHandler(Window(I)).PositionSheet(Sheet, InitialPosition)
+		      If NewPosition = Nil Then
+		        Return DefaultPosition
+		      Else
+		        Dim ReturnRect As NSRect
+		        ReturnRect.Left = InitialPosition.Left
+		        ReturnRect.Top = InitialPosition.Top
+		        ReturnRect.Width = InitialPosition.Width
+		        ReturnRect.Height = InitialPosition.Height
+		        Return ReturnRect
+		      End If
+		    End If
+		  Next
+		  
+		  Return DefaultPosition
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -261,6 +349,24 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub RegisterSheetPositionHandler()
+		  #if TargetCocoa
+		    If DelegateClass = Nil Then
+		      Declare Function NSSelectorFromString Lib "Cocoa" (SelectorName As CFStringRef) As Ptr
+		      Declare Function NSClassFromString Lib "Cocoa" (ClassName As CFStringRef) As Ptr
+		      Declare Function class_addMethod Lib "Cocoa" (Ref As Ptr, Name As Ptr, Imp As Ptr, Types As CString) As Boolean
+		      
+		      DelegateClass = NSClassFromString("XOJWindowController")
+		      If Not class_addMethod(DelegateClass, NSSelectorFromString("window:willPositionSheet:usingRect:"), AddressOf Handler_WillPositionSheet, "{NSRect=ffff}@:@@{NSRect=ffff}") Then
+		        Break
+		        Return
+		      End If
+		    End If
+		  #endif
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub SavePosition(Extends Win As Window, Key As Text)
 		  Dim Rect As REALbasic.Rect = Win.Bounds
@@ -351,6 +457,10 @@ Protected Module BeaconUI
 
 
 	#tag Property, Flags = &h21
+		Private DelegateClass As Ptr
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mColorProfile As BeaconUI.ColorProfile
 	#tag EndProperty
 
@@ -376,6 +486,14 @@ Protected Module BeaconUI
 	#tag Constant, Name = ToolbarHasBackground, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected
 		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"False"
 	#tag EndConstant
+
+
+	#tag Structure, Name = NSRect, Flags = &h21
+		Left As CGFloat
+		  Top As CGFloat
+		  Width As CGFloat
+		Height As CGFloat
+	#tag EndStructure
 
 
 	#tag ViewBehavior

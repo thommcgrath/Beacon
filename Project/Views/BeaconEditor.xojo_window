@@ -970,8 +970,32 @@ End
 		  If Not Set.IsValid Then
 		    G.ForeColor = BeaconUI.BackgroundColorForInvalidRow(G.ForeColor, IsHighlighted, Me.Selected(Row))
 		    G.FillRect(0, 0, G.Width, G.Height)
-		    Return True
 		  End If
+		  
+		  If Self.mSources.Ubound = 0 Then
+		    Const Padding = 3
+		    
+		    Dim Source As Beacon.LootSource = Self.mSources(0)
+		    Dim OffsetWeight As Double
+		    Dim TotalWeight As Double
+		    
+		    For I As Integer = 0 To Me.ListCount - 1
+		      Dim Sibling As Beacon.ItemSet = Me.RowTag(I)
+		      If I < Row Then
+		        OffsetWeight = OffsetWeight + Sibling.Weight
+		      End If
+		      TotalWeight = TotalWeight + Sibling.Weight
+		    Next
+		    
+		    Dim OffsetPercent As Double = OffsetWeight / TotalWeight
+		    Dim WeightPercent As Double = Set.Weight / TotalWeight
+		    
+		    Dim IndicatorColor As Color = RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 128)
+		    Dim Indicator As Picture = BeaconUI.IconWithColor(BeaconUI.CreateWeightIndicator(OffsetPercent, WeightPercent, Me.DefaultRowHeight - (Padding * 2), Me.DefaultRowHeight - (Padding * 2), G.ScaleX), IndicatorColor)
+		    G.DrawPicture(Indicator, G.Width - (Indicator.Width + Padding), (Me.DefaultRowHeight - Indicator.Height) / 2)
+		  End If
+		  
+		  Return True
 		End Function
 	#tag EndEvent
 #tag EndEvents

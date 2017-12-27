@@ -1,5 +1,5 @@
 #tag Window
-Begin Window MainWindow
+Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -37,7 +37,6 @@ Begin Window MainWindow
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -73,7 +72,6 @@ Begin Window MainWindow
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True
@@ -132,7 +130,6 @@ Begin Window MainWindow
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
          Text            =   "Select Something"
          TextAlign       =   1
          TextColor       =   &c00000000
@@ -252,28 +249,16 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
+		  Super.Constructor()
+		  
 		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
-		    Declare Function NSSelectorFromString Lib CocoaLib (SelectorName As CFStringRef) As Ptr
-		    Declare Function RespondsToSelector Lib CocoaLib Selector "respondsToSelector:" (Target As Integer, SelectorRef As Ptr) As Boolean
-		    Declare Sub SetTitlebarAppearsTransparent Lib CocoaLib Selector "setTitlebarAppearsTransparent:" (Target As Integer, Value As Boolean)
-		    Declare Function NSClassFromString Lib CocoaLib (ClassName As CFStringRef) As Ptr
-		    Declare Function class_addMethod Lib CocoaLib (Ref As Ptr, Name As Ptr, Imp As Ptr, Types As CString) As Boolean
-		    
-		    If Self.DelegateClass = Nil Then
-		      Self.DelegateClass = NSClassFromString("XOJWindowController")
-		      If Not class_addMethod(Self.DelegateClass, NSSelectorFromString("window:willPositionSheet:usingRect:"), AddressOf Handler_WillPositionSheet, "{NSRect=ffff}@:@@{NSRect=ffff}") Then
-		        Break
-		        Return
-		      End If
-		    End If
-		    
-		    Super.Constructor()
+		    Declare Function NSSelectorFromString Lib "Cocoa" (SelectorName As CFStringRef) As Ptr
+		    Declare Function RespondsToSelector Lib "Cocoa" Selector "respondsToSelector:" (Target As Integer, SelectorRef As Ptr) As Boolean
+		    Declare Sub SetTitlebarAppearsTransparent Lib "Cocoa" Selector "setTitlebarAppearsTransparent:" (Target As Integer, Value As Boolean)
 		    
 		    If RespondsToSelector(Self.Handle, NSSelectorFromString("setTitlebarAppearsTransparent:")) Then
 		      SetTitlebarAppearsTransparent(Self.Handle, True)
 		    End If
-		  #else
-		    Super.Constructor()
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -284,26 +269,18 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Shared Function Handler_WillPositionSheet(id as Ptr, s as Ptr, WindowHandle As Integer, SheetHandle As Integer, DefaultPosition As NSRect) As NSRect
-		  #Pragma Unused id
-		  #Pragma Unused s
-		  #Pragma Unused SheetHandle
+	#tag Method, Flags = &h0
+		Function PositionSheet(Sheet As Window, InitialPosition As REALbasic.Rect) As REALbasic.Rect
+		  // Part of the BeaconUI.SheetPositionHandler interface.
 		  
-		  Dim Bound As Integer = WindowCount - 1
-		  For I As Integer = 0 To Bound
-		    If Window(I).Handle <> WindowHandle Then
-		      Continue
-		    End If
+		  #if Not BeaconUI.ToolbarHasBackground
+		    Dim Frame As REALbasic.Rect = Self.Bounds
+		    Dim TitlebarHeight As Integer = Self.Top - Frame.Top
 		    
-		    Dim Target As MainWindow = MainWindow(Window(I))
-		    Dim Frame As REALbasic.Rect = Target.Bounds
-		    Dim TitlebarHeight As Integer = Target.Top - Frame.Top
-		    
-		    DefaultPosition.Top = DefaultPosition.Top - (Target.EmptyToolbar.Height + TitlebarHeight)
-		    Exit
-		  Next
-		  Return DefaultPosition
+		    InitialPosition.Top = InitialPosition.Top - (Self.EmptyToolbar.Height + TitlebarHeight)
+		  #endif
+		  
+		  Return InitialPosition
 		End Function
 	#tag EndMethod
 
@@ -401,10 +378,6 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private Shared DelegateClass As Ptr
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mCurrentView As BeaconSubview
 	#tag EndProperty
 
@@ -423,19 +396,8 @@ End
 	#tag Constant, Name = AbsoluteMinWidth, Type = Double, Dynamic = False, Default = \"800", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = CocoaLib, Type = String, Dynamic = False, Default = \"Cocoa", Scope = Private
-	#tag EndConstant
-
 	#tag Constant, Name = MinSplitterPosition, Type = Double, Dynamic = False, Default = \"300", Scope = Private
 	#tag EndConstant
-
-
-	#tag Structure, Name = NSRect, Flags = &h21
-		Left As CGFloat
-		  Top As CGFloat
-		  Width As CGFloat
-		Height As CGFloat
-	#tag EndStructure
 
 
 #tag EndWindowCode

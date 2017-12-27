@@ -125,6 +125,8 @@ Inherits Application
 		    Self.HandleCommandLineData(System.CommandLine, True)
 		  #endif
 		  
+		  BeaconUI.RegisterSheetPositionHandler()
+		  
 		  Self.AutoQuit = True
 		End Sub
 	#tag EndEvent
