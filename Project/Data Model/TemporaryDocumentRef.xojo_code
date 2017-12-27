@@ -3,8 +3,9 @@ Protected Class TemporaryDocumentRef
 Implements Beacon.DocumentRef
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mDocument = New Beacon.Document
 		  Self.mCounter = Self.mCounter + 1
+		  Self.mDocument = New Beacon.Document
+		  Self.mDocument.Title = "Untitled Document " + Self.mCounter.ToText
 		End Sub
 	#tag EndMethod
 
@@ -32,11 +33,7 @@ Implements Beacon.DocumentRef
 		Function Name() As Text
 		  // Part of the Beacon.DocumentRef interface.
 		  
-		  If Self.mDocument.Title = "" Then
-		    Return "Untitled Document " + Self.mCounter.ToText
-		  Else
-		    Return Self.mDocument.Title
-		  End If
+		  Return Self.mDocument.Title
 		End Function
 	#tag EndMethod
 
@@ -63,11 +60,6 @@ Implements Beacon.DocumentRef
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mDocument"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty

@@ -147,6 +147,7 @@ Inherits ControlCanvas
 			Set
 			  If StrComp(Self.mCaption, Value, 0) <> 0 Then
 			    Self.mCaption = Value
+			    Self.HelpTag = Self.mCaption
 			    Self.Invalidate
 			  End If
 			End Set
@@ -261,7 +262,7 @@ Inherits ControlCanvas
 			Name="Height"
 			Visible=true
 			Group="Position"
-			InitialValue="100"
+			InitialValue="21"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -379,7 +380,7 @@ Inherits ControlCanvas
 			Name="Width"
 			Visible=true
 			Group="Position"
-			InitialValue="21"
+			InitialValue="100"
 			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior

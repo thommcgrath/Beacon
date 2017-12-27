@@ -43,7 +43,7 @@ Begin ContainerControl BeaconEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   423
+      Height          =   402
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -69,11 +69,11 @@ Begin ContainerControl BeaconEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   41
+      Top             =   62
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
-      Width           =   190
+      Width           =   250
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -93,7 +93,7 @@ Begin ContainerControl BeaconEditor
       Backdrop        =   0
       Caption         =   "Item Sets"
       CaptionEnabled  =   True
-      CaptionIsButton =   True
+      CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
@@ -116,7 +116,7 @@ Begin ContainerControl BeaconEditor
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   190
+      Width           =   250
    End
    Begin PagePanel Panel
       AutoDeactivate  =   True
@@ -125,7 +125,7 @@ Begin ContainerControl BeaconEditor
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   191
+      Left            =   251
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -139,7 +139,7 @@ Begin ContainerControl BeaconEditor
       Top             =   0
       Value           =   0
       Visible         =   True
-      Width           =   407
+      Width           =   347
       Begin SetEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -152,7 +152,7 @@ Begin ContainerControl BeaconEditor
          Height          =   464
          HelpTag         =   ""
          InitialParent   =   "Panel"
-         Left            =   191
+         Left            =   251
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -166,7 +166,7 @@ Begin ContainerControl BeaconEditor
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   407
+         Width           =   347
       End
       Begin BeaconToolbar BeaconToolbar1
          AcceptFocus     =   False
@@ -184,7 +184,7 @@ Begin ContainerControl BeaconEditor
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         Left            =   191
+         Left            =   251
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -198,7 +198,7 @@ Begin ContainerControl BeaconEditor
          Transparent     =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   407
+         Width           =   347
       End
    End
    Begin FadedSeparator FadedSeparator1
@@ -213,7 +213,7 @@ Begin ContainerControl BeaconEditor
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   190
+      Left            =   250
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -228,6 +228,37 @@ Begin ContainerControl BeaconEditor
       UseFocusRing    =   True
       Visible         =   True
       Width           =   1
+   End
+   Begin StatusBar Status
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Borders         =   2
+      Caption         =   ""
+      Clickable       =   True
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   21
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   41
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   250
    End
 End
 #tag EndWindow
@@ -571,14 +602,11 @@ End
 		  Self.RebuildSetList()
 		  
 		  If Values.Ubound = -1 Then
-		    Header.Caption = "Item Sets"
-		    Header.CaptionIsButton = False
+		    Status.Caption = "No Selection"
 		  ElseIf Values.Ubound = 0 Then
-		    Header.Caption = Values(0).Label
-		    Header.CaptionIsButton = True
+		    Status.Caption = Values(0).Label
 		  Else
-		    Header.Caption = Str(Values.Ubound + 1, "-0") + " Loot Sources"
-		    Header.CaptionIsButton = True
+		    Status.Caption = Str(Values.Ubound + 1, "-0") + " Sources"
 		  End If
 		End Sub
 	#tag EndMethod
@@ -998,11 +1026,12 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
-		  NewSize = Max(NewSize, 190)
+		  NewSize = Max(NewSize, 250)
 		  
 		  Me.Width = NewSize
 		  FadedSeparator1.Left = NewSize
 		  SetList.Width = NewSize
+		  Status.Width = NewSize
 		  Panel.Left = FadedSeparator1.Left + FadedSeparator1.Width
 		  Panel.Width = Self.Width - (Panel.Left)
 		End Sub

@@ -341,6 +341,13 @@ End
 		Sub Constructor(Ref As Beacon.DocumentRef, Document As Beacon.Document)
 		  Self.mDocument = Document
 		  Self.mRef = Ref
+		  
+		  Dim Title As String = Document.Title.Trim
+		  If Title <> "" Then
+		    Title = Ref.Name.Trim
+		  End If
+		  
+		  Self.Title = Title
 		End Sub
 	#tag EndMethod
 
@@ -418,7 +425,39 @@ End
 		    DocTitle = Self.mRef.Name
 		  End If
 		  
-		  Status.Caption = DocTitle + If(MaxDinoLevel > 0, ", Level " + MaxDinoLevel.ToText, "")
+		  Dim MapText As String
+		  Dim Maps() As Beacon.Map = Self.mDocument.Maps
+		  If Maps.Ubound = -1 Then
+		    MapText = ""
+		  ElseIf Maps.Ubound = 0 Then
+		    MapText = Maps(0).Name
+		  Else
+		    Dim Names() As String
+		    For Each Map As Beacon.Map In Maps
+		      Names.Append(Map.Name)
+		    Next
+		    Names.Sort
+		    
+		    Dim Last As String = Names(Names.Ubound)
+		    Names.Remove(Names.Ubound)
+		    
+		    MapText = Join(Names, ", ") + " and " + Last
+		  End If
+		  
+		  Dim LevelText As String
+		  If MaxDinoLevel > 0 Then
+		    LevelText = "Level " + MaxDinoLevel.ToText + " dinos"
+		  End If
+		  
+		  If LevelText <> "" And MapText <> "" Then
+		    Status.Caption = LevelText + " on " + MapText
+		  ElseIf LevelText <> "" Then
+		    Status.Caption = LevelText
+		  ElseIf MapText <> "" Then
+		    Status.Caption = MapText
+		  Else
+		    Status.Caption = "Click to edit document"
+		  End If
 		End Sub
 	#tag EndMethod
 

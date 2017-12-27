@@ -49,12 +49,6 @@ Inherits ContainerControl
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ViewName() As String
-		  Return "Untitled"
-		End Function
-	#tag EndMethod
-
 
 	#tag Hook, Flags = &h0
 		Event Hidden()
