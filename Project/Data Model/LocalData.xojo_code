@@ -503,7 +503,7 @@ Implements Beacon.DataSource
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT document_id, name, saveinfo FROM local_documents ORDER BY last_used DESC;")
 		  Dim Documents() As LocalDocumentRef
 		  While Not Results.EOF
-		    Dim File As FolderItem = GetFolderItem(DecodeHex(Results.Field("saveinfo").StringValue), FolderItem.PathTypeNative)
+		    Dim File As FolderItem = GetTrueFolderItem(DecodeHex(Results.Field("saveinfo").StringValue), FolderItem.PathTypeNative)
 		    If File <> Nil And File.Exists Then
 		      Documents.Append(New LocalDocumentRef(File, Results.Field("document_id").StringValue.ToText, Results.Field("name").StringValue.ToText))
 		    End If
