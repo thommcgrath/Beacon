@@ -374,7 +374,7 @@ Protected Module BeaconUI
 	#tag EndConstant
 
 	#tag Constant, Name = ToolbarHasBackground, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected
-		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"False"
+		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"True"
 	#tag EndConstant
 
 
