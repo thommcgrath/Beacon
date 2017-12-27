@@ -32,7 +32,7 @@ Begin BeaconSubview DocumentEditorView
       Backdrop        =   0
       Caption         =   "Sources"
       CaptionEnabled  =   True
-      CaptionIsButton =   True
+      CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
@@ -103,7 +103,7 @@ Begin BeaconSubview DocumentEditorView
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   395
+      Height          =   374
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -129,7 +129,7 @@ Begin BeaconSubview DocumentEditorView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   41
+      Top             =   62
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -167,7 +167,9 @@ Begin BeaconSubview DocumentEditorView
          Caption         =   "Nothing Selected"
          CaptionEnabled  =   True
          CaptionIsButton =   False
+         DoubleBuffer    =   False
          Enabled         =   True
+         EraseBackground =   False
          HasResizer      =   False
          Height          =   41
          HelpTag         =   ""
@@ -184,6 +186,7 @@ Begin BeaconSubview DocumentEditorView
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   0
+         Transparent     =   False
          UseFocusRing    =   True
          Visible         =   True
          Width           =   451
@@ -228,6 +231,7 @@ Begin BeaconSubview DocumentEditorView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MapMask         =   ""
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
@@ -238,6 +242,37 @@ Begin BeaconSubview DocumentEditorView
          Visible         =   True
          Width           =   451
       End
+   End
+   Begin StatusBar Status
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Borders         =   2
+      Caption         =   ""
+      Clickable       =   True
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   21
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   41
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   250
    End
 End
 #tag EndWindow
@@ -383,7 +418,7 @@ End
 		    DocTitle = Self.mRef.Name
 		  End If
 		  
-		  Header.Caption = DocTitle + EndOfLine + If(MaxDinoLevel > 0, " Level " + MaxDinoLevel.ToText, "")
+		  Status.Caption = DocTitle + If(MaxDinoLevel > 0, ", Level " + MaxDinoLevel.ToText, "")
 		End Sub
 	#tag EndMethod
 
@@ -485,17 +520,10 @@ End
 		  Me.Width = NewSize
 		  FadedSeparator1.Left = NewSize
 		  List.Width = NewSize
+		  Status.Width = NewSize
 		  Panel.Left = FadedSeparator1.Left + FadedSeparator1.Width
 		  Panel.Width = Self.Width - (Panel.Left)
 		  
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub CaptionClicked()
-		  If DocumentSetupSheet.Present(Self, Self.mDocument, DocumentSetupSheet.Modes.Edit) Then
-		    Self.UpdateCaptionButton()
-		    Self.ContentsChanged = True
-		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -719,6 +747,16 @@ End
 	#tag Event
 		Sub TitleChanged(newTitle as String)
 		  HelpHeader.Caption = NewTitle
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Status
+	#tag Event
+		Sub Action()
+		  If DocumentSetupSheet.Present(Self, Self.mDocument, DocumentSetupSheet.Modes.Edit) Then
+		    Self.UpdateCaptionButton()
+		    Self.ContentsChanged = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
