@@ -317,7 +317,7 @@ End
 		    Else
 		      IgnoredSources.Append(Source)
 		    End If
-		    Self.ContentsChanged = True
+		    Self.ContentsChanged = Self.mDocument.Modified
 		  Next
 		  
 		  Self.UpdateSourceList(Sources)
@@ -333,7 +333,6 @@ End
 		  End If
 		  
 		  Self.List.EnsureSelectionIsVisible()
-		  Self.Focus = Self.List
 		End Sub
 	#tag EndMethod
 
@@ -400,7 +399,7 @@ End
 		    End If
 		  Next
 		  
-		  Self.ContentsChanged = True
+		  Self.ContentsChanged = Self.mDocument.Modified
 		End Sub
 	#tag EndMethod
 
@@ -409,6 +408,19 @@ End
 		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self.TrueWindow, Self.mDocument)
 		  If LootSource <> Nil Then
 		    Self.AddLootSource(LootSource)
+		    Self.Focus = Self.List
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowDuplicateSelectedLootSource()
+		  If List.SelCount = 1 Then
+		    Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentDuplicate(Self.TrueWindow, Self.mDocument, List.RowTag(List.ListIndex))
+		    If LootSource <> Nil Then
+		      Self.AddLootSource(LootSource)
+		      Self.Focus = Self.List
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
@@ -570,6 +582,8 @@ End
 		  Select Case Item.Name
 		  Case "AddSource"
 		    Self.ShowAddLootSource()
+		  Case "Duplicate"
+		    Self.ShowDuplicateSelectedLootSource()
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -611,6 +625,7 @@ End
 		    
 		    Dim Source As Beacon.LootSource = ChosenItem.Tag
 		    Self.AddLootSource(Source)
+		    Self.Focus = Self.List
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -789,12 +804,27 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events Editor
+	#tag Event
+		Sub Updated()
+		  Self.ContentsChanged = Self.mDocument.Modified
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PresentLootSourceEditor(Source As Beacon.LootSource)
+		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self.TrueWindow, Self.mDocument, Source)
+		  If LootSource <> Nil Then
+		    Self.AddLootSource(LootSource)
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events Status
 	#tag Event
 		Sub Action()
 		  If DocumentSetupSheet.Present(Self, Self.mDocument, DocumentSetupSheet.Modes.Edit) Then
 		    Self.UpdateCaptionButton()
-		    Self.ContentsChanged = True
+		    Self.ContentsChanged = Self.mDocument.Modified
 		  End If
 		End Sub
 	#tag EndEvent

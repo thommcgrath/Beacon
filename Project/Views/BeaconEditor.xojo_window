@@ -437,6 +437,8 @@ End
 		    Next
 		    If Not Found Then
 		      Self.ShowAlert("Preset added but not shown", "Because you have multiple loot sources selected, the preset was added to each source, but was configured differently for each. It is not common to all your selected sources, so it isn't currently listed.")
+		    Else
+		      Self.Focus = Self.SetList
 		    End If
 		    RaiseEvent Updated
 		  End If
@@ -526,6 +528,44 @@ End
 		    Next
 		  End If
 		  
+		  If Self.mSources.Ubound = -1 Then
+		    Status.Caption = "No selection"
+		    Status.Clickable = False
+		  ElseIf Self.mSources.Ubound = 0 Then
+		    Dim Source As Beacon.LootSource = Self.mSources(0)
+		    
+		    If Source.Count = 0 Then
+		      Status.Caption = "No item sets"
+		    Else
+		      Dim NumSets As Integer = Source.Count
+		      Dim MaxSets As Integer = Min(Source.MaxItemSets, NumSets)
+		      Dim MinSets As Integer = Min(Source.MinItemSets, MaxSets)
+		      
+		      If NumSets = MinSets And MinSets = MaxSets Then
+		        If NumSets = 1 Then
+		          Status.Caption = "Chooses lone item set"
+		        Else
+		          Status.Caption = "Chooses all " + Str(NumSets, "-0") + " item sets"
+		        End If
+		      Else
+		        If MinSets = MaxSets Then
+		          If MinSets = 1 Then
+		            Status.Caption = "Chooses 1 of " + Str(NumSets, "-0") + " item sets"
+		          Else
+		            Status.Caption = "Chooses " + Str(MinSets, "-0") + " of " + Str(NumSets, "-0") + " item sets"
+		          End
+		        Else
+		          Status.Caption = "Chooses " + Str(MinSets, "-0") + "-" + Str(MaxSets, "-0") + " of " + Str(NumSets, "-0") + " item sets"
+		        End If
+		      End If
+		    End If
+		    
+		    Status.Clickable = True
+		  Else
+		    Status.Caption = "Editing " + Str(Self.mSources.Ubound + 1, "-0") + " sources"
+		    Status.Clickable = False
+		  End If
+		  
 		  Self.mUpdating = False
 		End Sub
 	#tag EndMethod
@@ -600,17 +640,13 @@ End
 		    Self.mSources(I) = Values(I)
 		  Next
 		  Self.RebuildSetList()
-		  
-		  If Values.Ubound = -1 Then
-		    Status.Caption = "No Selection"
-		  ElseIf Values.Ubound = 0 Then
-		    Status.Caption = Values(0).Label
-		  Else
-		    Status.Caption = Str(Values.Ubound + 1, "-0") + " Sources"
-		  End If
 		End Sub
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event PresentLootSourceEditor(Source As Beacon.LootSource)
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Updated()
@@ -1005,6 +1041,7 @@ End
 		  Select Case Item.Name
 		  Case "AddSet"
 		    Self.AddSet(New Beacon.ItemSet)
+		    Self.Focus = Self.SetList
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1065,6 +1102,18 @@ End
 		  Self.mSorting = False
 		  
 		  RaiseEvent Updated
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Status
+	#tag Event
+		Sub Action()
+		  If Self.mSources.Ubound <> 0 Then
+		    Return
+		  End If
+		  
+		  
+		  RaiseEvent PresentLootSourceEditor(Self.mSources(0))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
