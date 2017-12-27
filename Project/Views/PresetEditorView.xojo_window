@@ -749,7 +749,7 @@ Begin BeaconSubview PresetEditorView
             Selectable      =   False
             TabIndex        =   2
             TabPanelIndex   =   2
-            Text            =   "teirs and multiply quantities by"
+            Text            =   "tiers and multiply quantities by"
             TextAlign       =   1
             TextColor       =   &c00000000
             TextFont        =   "System"
@@ -971,7 +971,7 @@ Begin BeaconSubview PresetEditorView
             Selectable      =   False
             TabIndex        =   8
             TabPanelIndex   =   2
-            Text            =   "teirs and multiply quantities by"
+            Text            =   "tiers and multiply quantities by"
             TextAlign       =   1
             TextColor       =   &c00000000
             TextFont        =   "System"
@@ -1091,7 +1091,7 @@ Begin BeaconSubview PresetEditorView
             Selectable      =   False
             TabIndex        =   11
             TabPanelIndex   =   2
-            Text            =   "teirs and multiply quantities by"
+            Text            =   "tiers and multiply quantities by"
             TextAlign       =   1
             TextColor       =   &c00000000
             TextFont        =   "System"
@@ -1211,7 +1211,7 @@ Begin BeaconSubview PresetEditorView
             Selectable      =   False
             TabIndex        =   14
             TabPanelIndex   =   2
-            Text            =   "teirs and multiply quantities by"
+            Text            =   "tiers and multiply quantities by"
             TextAlign       =   1
             TextColor       =   &c00000000
             TextFont        =   "System"
