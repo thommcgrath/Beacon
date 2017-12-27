@@ -124,6 +124,8 @@ Inherits Application
 		  #if TargetWin32
 		    Self.HandleCommandLineData(System.CommandLine, True)
 		  #endif
+		  
+		  Self.AutoQuit = True
 		End Sub
 	#tag EndEvent
 
