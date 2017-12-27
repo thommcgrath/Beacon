@@ -176,6 +176,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  Self.MacCleanupToolbar()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Moved()
 		  If Self.mOpened Then
 		    App.Preferences.RectValue("Main Window Size") = New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
@@ -185,16 +191,6 @@ End
 
 	#tag Event
 		Sub Open()
-		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
-		    Declare Function NSSelectorFromString Lib "Foundation" (SelectorName As CFStringRef) As Ptr
-		    Declare Function RespondsToSelector Lib "Foundation" Selector "respondsToSelector:" (Target As Integer, SelectorRef As Ptr) As Boolean
-		    
-		    If RespondsToSelector(Self.Handle, NSSelectorFromString("setTitlebarAppearsTransparent:")) Then
-		      Declare Sub SetTitlebarAppearsTransparent Lib "AppKit" Selector "setTitlebarAppearsTransparent:" (Target As Integer, Value As Boolean)
-		      SetTitlebarAppearsTransparent(Self.Handle, True)
-		    End If
-		  #endif
-		  
 		  Dim Bounds As Xojo.Core.Rect = App.Preferences.RectValue("Main Window Size")
 		  If Bounds <> Nil Then
 		    // Find the best screen
@@ -231,16 +227,10 @@ End
 		    Self.Top = Top
 		  End If
 		  
+		  Self.MacSetupToolbar()
+		  
 		  Dim SplitterPosition As Integer = App.Preferences.IntegerValue("Main Splitter Position", 300)
 		  Self.ResizeSplitter(SplitterPosition)
-		  
-		  #if TargetCocoa
-		    #if Not DebugBuild
-		      #Pragma Error "Can not ship with MBS plugins in use."
-		    #endif
-		    Self.mMacDelegate = New NSWindowDelegateMBS(Self)
-		    AddHandler Self.mMacDelegate.willPositionSheet, WeakAddressOf PositionSheet
-		  #endif
 		  
 		  Self.mOpened = True
 		End Sub
@@ -272,22 +262,140 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function PositionSheet(Sender As NSWindowDelegateMBS, Win As NSWindowMBS, Sheet As NSWindowMBS, Rect As NSRectMBS) As NSRectMBS
-		  #if BeaconUI.ToolbarHasBackground = False
-		    Dim Frame As REALbasic.Rect = Self.Bounds
-		    Dim TitlebarHeight As Integer = Self.Top - Frame.Top
+		Private Shared Function Handler_WillPositionSheet(id as Ptr, s as Ptr, WindowHandle As Integer, SheetHandle As Integer, DefaultPosition As NSRect) As NSRect
+		  #Pragma Unused id
+		  #Pragma Unused s
+		  #Pragma Unused SheetHandle
+		  
+		  Dim Bound As Integer = WindowCount - 1
+		  For I As Integer = 0 To Bound
+		    If Window(I).Handle <> WindowHandle Then
+		      Continue
+		    End If
 		    
-		    Dim Dest As New NSRectMBS(Rect)
-		    Dest.Y = Dest.Y - (41 + TitlebarHeight)
-		    Return Dest
-		  #endif
+		    Dim Target As MainWindow = MainWindow(Window(I))
+		    Dim Frame As REALbasic.Rect = Target.Bounds
+		    Dim TitlebarHeight As Integer = Target.Top - Frame.Top
+		    
+		    DefaultPosition.Top = DefaultPosition.Top - (Target.EmptyToolbar.Height + TitlebarHeight)
+		    Exit
+		  Next
+		  Return DefaultPosition
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function Handler_WillResize(id as Ptr, s as Ptr, WindowHandle As Integer, NewSize As NSSize) As NSSize
+		  #Pragma Unused id
+		  #Pragma Unused s
+		  
+		  Dim Width As Integer = NewSize.Width
+		  Dim Height As Integer = NewSize.Height
+		  
+		  Dim Bound As Integer = WindowCount - 1
+		  For I As Integer = 0 To Bound
+		    If Window(I).Handle <> WindowHandle Then
+		      Continue
+		    End If
+		    
+		    Dim Target As MainWindow = MainWindow(Window(I))
+		    Dim Frame As REALbasic.Rect = Target.Bounds
+		    Dim HeightDiff As Integer = Frame.Height - Target.Height
+		    Dim WidthDiff As Integer = Frame.Width - Target.Width
+		    
+		    Dim TempWidth As Integer = Width - WidthDiff
+		    Dim TempHeight As Integer = Height - HeightDiff
+		    
+		    Target.ResizeContent(TempWidth, TempHeight)
+		    Target.Width = TempWidth
+		    Target.Height = TempHeight
+		    
+		    NewSize.Width = TempWidth + WidthDiff
+		    NewSize.Height = TempHeight + HeightDiff
+		  Next
+		  
+		  Return NewSize
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub MacCleanupToolbar()
+		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
+		    Declare Sub SetDelegate Lib CocoaLib Selector "setDelegate:" (Target As Integer, Handler As Ptr)
+		    
+		    SetDelegate(Self.Handle, Self.OriginalDelegate)
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub MacSetupToolbar()
+		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
+		    Declare Function NSSelectorFromString Lib CocoaLib (SelectorName As CFStringRef) As Ptr
+		    Declare Function RespondsToSelector Lib CocoaLib Selector "respondsToSelector:" (Target As Integer, SelectorRef As Ptr) As Boolean
+		    
+		    If RespondsToSelector(Self.Handle, NSSelectorFromString("setTitlebarAppearsTransparent:")) Then
+		      Declare Sub SetTitlebarAppearsTransparent Lib CocoaLib Selector "setTitlebarAppearsTransparent:" (Target As Integer, Value As Boolean)
+		      Declare Function NSClassFromString Lib CocoaLib (ClassName As CFStringRef) As Ptr
+		      Declare Function alloc Lib CocoaLib Selector "alloc" (ClassRef As Ptr) As Ptr
+		      Declare Function init Lib CocoaLib Selector "init" (ClassRef As Ptr) As Ptr
+		      Declare Sub objc_registerClassPair Lib CocoaLib (PairRef As Ptr)
+		      Declare Function objc_allocateClassPair Lib CocoaLib (Superclass as Ptr, Name As CString, ExtraBytes As Integer) As Ptr
+		      Declare Function class_addMethod Lib CocoaLib (Ref As Ptr, Name As Ptr, Imp As Ptr, Types As CString) As Boolean
+		      Declare Function objc_getProtocol Lib CocoaLib (Name As CString) As Ptr
+		      Declare Function class_addProtocol Lib CocoaLib (Ref As Ptr, Protocol As Ptr) As Boolean
+		      Declare Sub SetDelegate Lib CocoaLib Selector "setDelegate:" (Target As Integer, Handler As Ptr)
+		      Declare Function GetDelegate Lib CocoaLib Selector "delegate" (Target As Integer) As Ptr
+		      
+		      SetTitlebarAppearsTransparent(Self.Handle, True)
+		      
+		      If Self.DelegateClass = Nil Then
+		        Self.DelegateClass = objc_allocateClassPair(NSClassFromString("XOJWindowController"), "BeaconMainDelegate", 0)
+		        If Self.DelegateClass = Nil Then
+		          Break
+		          Return
+		        End If
+		        
+		        objc_registerClassPair(Self.DelegateClass)
+		        
+		        If Not class_addMethod(Self.DelegateClass, NSSelectorFromString("windowWillResize:toSize:"), AddressOf Handler_WillResize, "{NSSize=ff}@:@{NSSize=ff}") Then
+		          Break
+		          Return
+		        End If
+		        
+		        If Not class_addMethod(Self.DelegateClass, NSSelectorFromString("window:willPositionSheet:usingRect:"), AddressOf Handler_WillPositionSheet, "{NSRect=ffff}@:@@{NSRect=ffff}") Then
+		          Break
+		          Return
+		        End If
+		      End If
+		      
+		      Self.WindowDelegate = init(alloc(Self.DelegateClass))
+		      
+		      // Keep the original delegate so we can restore it before close
+		      Self.OriginalDelegate = GetDelegate(Self.Handle)
+		      
+		      SetDelegate(Self.Handle, Self.WindowDelegate)
+		    End If
+		  #endif
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Presets() As LibraryPanePresets
 		  Return Self.LibraryPane1.PresetsPane
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ResizeContent(ByRef Width As Integer, ByRef Height As Integer)
+		  Width = Max(Min(Width, Self.MaxWidth), Self.MinWidth)
+		  Height = Max(Min(Height, Self.MaxHeight), Self.MinHeight)
+		  
+		  LibraryPane1.Height = Height
+		  Divider.Height = Height
+		  Views.Height = Height
+		  Views.Width = Width - Views.Left
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -367,11 +475,11 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mCurrentView As BeaconSubview
+		Private Shared DelegateClass As Ptr
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMacDelegate As NSWindowDelegateMBS
+		Private mCurrentView As BeaconSubview
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -382,6 +490,14 @@ End
 		Private mSubviews(-1) As BeaconSubview
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private OriginalDelegate As Ptr
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private WindowDelegate As Ptr
+	#tag EndProperty
+
 
 	#tag Constant, Name = AbsoluteMinHeight, Type = Double, Dynamic = False, Default = \"400", Scope = Private
 	#tag EndConstant
@@ -389,8 +505,24 @@ End
 	#tag Constant, Name = AbsoluteMinWidth, Type = Double, Dynamic = False, Default = \"800", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = CocoaLib, Type = String, Dynamic = False, Default = \"Cocoa", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = MinSplitterPosition, Type = Double, Dynamic = False, Default = \"300", Scope = Private
 	#tag EndConstant
+
+
+	#tag Structure, Name = NSRect, Flags = &h21
+		Left As CGFloat
+		  Top As CGFloat
+		  Width As CGFloat
+		Height As CGFloat
+	#tag EndStructure
+
+	#tag Structure, Name = NSSize, Flags = &h21
+		Width As CGFloat
+		Height As CGFloat
+	#tag EndStructure
 
 
 #tag EndWindowCode
