@@ -411,7 +411,7 @@ End
 		  Dim SelectedPreset As Beacon.Preset = Sender.Tag
 		  
 		  If SelectedPreset = Nil Then
-		    Self.AddSet(New Beacon.ItemSet)
+		    Self.ShowNewSet()
 		    Return True
 		  End If
 		  
@@ -438,7 +438,7 @@ End
 		    If Not Found Then
 		      Self.ShowAlert("Preset added but not shown", "Because you have multiple loot sources selected, the preset was added to each source, but was configured differently for each. It is not common to all your selected sources, so it isn't currently listed.")
 		    Else
-		      Self.Focus = Self.SetList
+		      Self.SetList.SetFocus
 		    End If
 		    RaiseEvent Updated
 		  End If
@@ -618,6 +618,17 @@ End
 		  Next
 		  If Updated Then
 		    RaiseEvent Updated
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowNewSet()
+		  Dim Set As Beacon.ItemSet = SetPropertiesEditor.Present(Self, New Beacon.ItemSet)
+		  If Set <> Nil Then
+		    Self.AddSet(Set)  
+		    RaiseEvent Updated()
+		    Self.SetList.SetFocus()
 		  End If
 		End Sub
 	#tag EndMethod
@@ -972,28 +983,30 @@ End
 		    G.FillRect(0, 0, G.Width, G.Height)
 		  End If
 		  
-		  If Self.mSources.Ubound = 0 Then
-		    Const Padding = 3
-		    
-		    Dim Source As Beacon.LootSource = Self.mSources(0)
-		    Dim OffsetWeight As Double
-		    Dim TotalWeight As Double
-		    
-		    For I As Integer = 0 To Me.ListCount - 1
-		      Dim Sibling As Beacon.ItemSet = Me.RowTag(I)
-		      If I < Row Then
-		        OffsetWeight = OffsetWeight + Sibling.Weight
-		      End If
-		      TotalWeight = TotalWeight + Sibling.Weight
-		    Next
-		    
-		    Dim OffsetPercent As Double = OffsetWeight / TotalWeight
-		    Dim WeightPercent As Double = Set.Weight / TotalWeight
-		    
-		    Dim IndicatorColor As Color = RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 128)
-		    Dim Indicator As Picture = BeaconUI.IconWithColor(BeaconUI.CreateWeightIndicator(OffsetPercent, WeightPercent, Me.DefaultRowHeight - (Padding * 2), Me.DefaultRowHeight - (Padding * 2), G.ScaleX), IndicatorColor)
-		    G.DrawPicture(Indicator, G.Width - (Indicator.Width + Padding), (Me.DefaultRowHeight - Indicator.Height) / 2)
-		  End If
+		  #if false
+		    If Self.mSources.Ubound = 0 Then
+		      Const Padding = 3
+		      
+		      Dim Source As Beacon.LootSource = Self.mSources(0)
+		      Dim OffsetWeight As Double
+		      Dim TotalWeight As Double
+		      
+		      For I As Integer = 0 To Me.ListCount - 1
+		        Dim Sibling As Beacon.ItemSet = Me.RowTag(I)
+		        If I < Row Then
+		          OffsetWeight = OffsetWeight + Sibling.Weight
+		        End If
+		        TotalWeight = TotalWeight + Sibling.Weight
+		      Next
+		      
+		      Dim OffsetPercent As Double = OffsetWeight / TotalWeight
+		      Dim WeightPercent As Double = Set.Weight / TotalWeight
+		      
+		      Dim IndicatorColor As Color = RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 128)
+		      Dim Indicator As Picture = BeaconUI.IconWithColor(BeaconUI.CreateWeightIndicator(0, WeightPercent, Me.DefaultRowHeight - (Padding * 2), Me.DefaultRowHeight - (Padding * 2), G.ScaleX), IndicatorColor)
+		      G.DrawPicture(Indicator, G.Width - (Indicator.Width + Padding), (Me.DefaultRowHeight - Indicator.Height) / 2)
+		    End If
+		  #endif
 		  
 		  Return True
 		End Function
@@ -1053,7 +1066,7 @@ End
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Add a new empty item set. Hold to add a preset from a menu."
 		  
-		  Dim SimulateButton As New BeaconToolbarItem("Simulate", Nil)
+		  Dim SimulateButton As New BeaconToolbarItem("Simulate", IconToolbarSimulate)
 		  SimulateButton.HelpTag = "Simulate loot selection for this loot source."
 		  
 		  Me.LeftItems.Append(AddButton)
@@ -1064,8 +1077,7 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddSet"
-		    Self.AddSet(New Beacon.ItemSet)
-		    Self.Focus = Self.SetList
+		    Self.ShowNewSet()
 		  End Select
 		End Sub
 	#tag EndEvent

@@ -296,8 +296,8 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function PrettyText(Extends Value As Double) As Text
+	#tag Method, Flags = &h1
+		Protected Function PrettyText(Value As Double) As Text
 		  Dim Multiplier As UInteger = 1
 		  Dim Places As Integer = 0
 		  Dim Format As Text = "0"
@@ -318,6 +318,12 @@ Protected Module Beacon
 		  
 		  Dim RoundedValue As Double = Round(Value * Multiplier) / Multiplier
 		  Return RoundedValue.ToText(Xojo.Core.Locale.Raw, Format)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PrettyText(Extends Value As Double) As Text
+		  Return PrettyText(Value)
 		End Function
 	#tag EndMethod
 

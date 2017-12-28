@@ -43,7 +43,7 @@ Begin ContainerControl SetEditor
       GridLinesVertical=   1
       HasHeading      =   True
       HeadingIndex    =   0
-      Height          =   341
+      Height          =   366
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -76,434 +76,6 @@ Begin ContainerControl SetEditor
       Width           =   560
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
-   End
-   Begin UITweaks.ResizedTextField LabelField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   112
-      LimitText       =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   451
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   428
-   End
-   Begin Label LabelLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      Text            =   "Label:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   451
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedTextField MinItemsField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   112
-      LimitText       =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Mask            =   "###"
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   485
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedTextField MaxItemsField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   112
-      LimitText       =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Mask            =   "###"
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   519
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   80
-   End
-   Begin Slider WeightSlider
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   23
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   112
-      LineStep        =   5
-      LiveScroll      =   True
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Maximum         =   100
-      Minimum         =   1
-      PageStep        =   25
-      Scope           =   2
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TickStyle       =   "0"
-      Top             =   553
-      Value           =   100
-      Visible         =   True
-      Width           =   139
-   End
-   Begin Label WeightField
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   23
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   263
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      Text            =   "100"
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   553
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   100
-   End
-   Begin Label MinItemsLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      Text            =   "Min Items:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   485
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin Label MaxItemsLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      Text            =   "Max Items:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   519
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin Label WeightLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   23
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      Text            =   "Weight:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   553
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin CheckBox DuplicatesCheck
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "No Duplicates"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   112
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      State           =   1
-      TabIndex        =   11
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   588
-      Underline       =   False
-      Value           =   True
-      Visible         =   True
-      Width           =   251
-   End
-   Begin FooterBar Footer
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   25
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   14
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   403
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   560
-   End
-   Begin UpDownArrows MinItemsStepper
-      AcceptFocus     =   False
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   23
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   192
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   484
-      Visible         =   True
-      Width           =   13
-   End
-   Begin UpDownArrows MaxItemsStepper
-      AcceptFocus     =   False
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   23
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   192
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   518
-      Visible         =   True
-      Width           =   13
    End
    Begin BeaconToolbar Header
       AcceptFocus     =   False
@@ -710,19 +282,19 @@ End
 		  Else
 		    If NumEntries = MinEntries And MinEntries = MaxEntries Then
 		      If NumEntries = 1 Then
-		        StatusText = "Chooses lone engram"
+		        StatusText = "Chooses lone entry"
 		      Else
-		        StatusText = "Chooses all " + Str(NumEntries, "-0") + " engrams"
+		        StatusText = "Chooses all " + Str(NumEntries, "-0") + " entries"
 		      End If
 		    Else
 		      If MinEntries = MaxEntries Then
 		        If MinEntries = 1 Then
-		          StatusText = "Chooses 1 of " + Str(NumEntries, "-0") + " engrams"
+		          StatusText = "Chooses 1 of " + Str(NumEntries, "-0") + " entries"
 		        Else
-		          StatusText = "Chooses " + Str(MinEntries, "-0") + " of " + Str(NumEntries, "-0") + " engrams"
+		          StatusText = "Chooses " + Str(MinEntries, "-0") + " of " + Str(NumEntries, "-0") + " entries"
 		        End If
 		      Else
-		        StatusText = "Chooses " + Str(MinEntries, "-0") + "-" + Str(MaxEntries, "-0") + " of " + Str(NumEntries, "-0") + " engrams"
+		        StatusText = "Chooses " + Str(MinEntries, "-0") + "-" + Str(MaxEntries, "-0") + " of " + Str(NumEntries, "-0") + " entries"
 		      End If
 		    End If
 		  End If
@@ -747,10 +319,6 @@ End
 		Private mSet As Beacon.ItemSet
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mUpdating As Boolean
-	#tag EndProperty
-
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -766,22 +334,7 @@ End
 			    Header.Caption = "No Selection"
 			  End If
 			  
-			  Self.mUpdating = True
-			  If Self.mSet <> Nil Then
-			    LabelField.Text = Self.mSet.Label
-			    MinItemsField.Text = Str(Self.mSet.MinNumItems, "-0")
-			    MaxItemsField.Text = Str(Self.mSet.MaxNumItems, "-0")
-			    WeightSlider.Value = Self.mSet.Weight * 100
-			    DuplicatesCheck.Value = Self.mSet.ItemsRandomWithoutReplacement
-			  Else
-			    LabelField.Text = ""
-			    MinItemsField.Text = ""
-			    MaxItemsField.Text = ""
-			    WeightSlider.Value = 100
-			    DuplicatesCheck.Value = True
-			  End If
 			  Self.UpdateEntryList()
-			  Self.mUpdating = False
 			End Set
 		#tag EndSetter
 		Set As Beacon.ItemSet
@@ -795,12 +348,6 @@ End
 #tag EndWindowCode
 
 #tag Events EntryList
-	#tag Event
-		Sub Change()
-		  Footer.Button("EditButton").Enabled = Me.SelCount > 0
-		  Footer.Button("DeleteButton").Enabled = Me.SelCount > 0
-		End Sub
-	#tag EndEvent
 	#tag Event
 		Function CanCopy() As Boolean
 		  Return Me.ListIndex > -1
@@ -1010,142 +557,9 @@ End
 		  End Select
 		End Function
 	#tag EndEvent
-#tag EndEvents
-#tag Events LabelField
 	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating Then
-		    Return
-		  End If
-		  
-		  Self.mSet.Label = Me.Text.ToText
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MinItemsField
-	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating Then
-		    Return
-		  End If
-		  
-		  Self.mSet.MinNumItems = Val(Me.Text)
-		  Self.UpdateEntryList()
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MaxItemsField
-	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating Then
-		    Return
-		  End If
-		  
-		  Self.mSet.MaxNumItems = Val(Me.Text)
-		  Self.UpdateEntryList()
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events WeightSlider
-	#tag Event
-		Sub ValueChanged()
-		  WeightField.Text = Str(Me.Value, "-0")
-		  
-		  If Self.mUpdating Then
-		    Return
-		  End If
-		  
-		  Self.mSet.Weight = Me.Value / 100
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DuplicatesCheck
-	#tag Event
-		Sub Action()
-		  If Self.mUpdating Then
-		    Return
-		  End If
-		  
-		  Self.mSet.ItemsRandomWithoutReplacement = Me.Value
-		  Self.UpdateEntryList()
-		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Footer
-	#tag Event
-		Sub Open()
-		  Dim AddButton As New FooterBarButton("AddButton", IconAdd)
-		  Dim EditButton As New FooterBarButton("EditButton", IconEdit)
-		  Dim DeleteButton As New FooterBarButton("DeleteButton", IconRemove)
-		  
-		  EditButton.Enabled = False
-		  DeleteButton.Enabled = False
-		  
-		  Me.Append(AddButton)
-		  Me.Append(EditButton)
-		  Me.Append(DeleteButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Button As FooterBarButton)
-		  Select Case Button.Name
-		  Case "AddButton"
-		    Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self)
-		    If Entries = Nil Then
-		      Return
-		    End If
-		    
-		    For Each Entry As Beacon.SetEntry In Entries
-		      Self.mSet.Append(Entry)
-		    Next
-		    
-		    Self.UpdateEntryList(Entries)
-		    RaiseEvent Updated
-		  Case "EditButton"
-		    Self.EditSelectedEntries()
-		  Case "DeleteButton"
-		    Self.RemoveSelectedEntries()
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MinItemsStepper
-	#tag Event
-		Sub Down()
-		  Dim MinItems As UInteger = CDbl(MinItemsField.Text)
-		  MinItems = Max(MinItems - 1, 1)
-		  MinItemsField.Text = Format(MinItems, "0")
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Up()
-		  Dim MinItems As UInteger = CDbl(MinItemsField.Text)
-		  Dim MaxItems As UInteger = CDbl(MaxItemsField.Text)
-		  MinItems = Min(MinItems + 1, MaxItems)
-		  MinItemsField.Text = Format(MinItems, "0")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MaxItemsStepper
-	#tag Event
-		Sub Down()
-		  Dim MinItems As UInteger = CDbl(MinItemsField.Text)
-		  Dim MaxItems As UInteger = CDbl(MaxItemsField.Text)
-		  MaxItems = Max(MaxItems - 1, MinItems)
-		  MaxItemsField.Text = Format(MaxItems, "0")
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Up()
-		  Dim EntryCount As UInteger = Self.mSet.Count
-		  Dim MaxItems As UInteger = CDbl(MaxItemsField.Text)
-		  MaxItems = Min(MaxItems + 1, EntryCount)
-		  MaxItemsField.Text = Format(MaxItems, "0")
+		Sub Change()
+		  Self.Header.EditEntries.Enabled = Me.SelCount > 0
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1165,6 +579,8 @@ End
 		    
 		    Self.UpdateEntryList(Entries)
 		    RaiseEvent Updated
+		  Case "EditEntry"
+		    Self.EditSelectedEntries()
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -1173,7 +589,30 @@ End
 		  Dim AddButton As New BeaconToolbarItem("AddEntry", IconAdd)
 		  AddButton.HelpTag = "Add engrams to this item set."
 		  
+		  Dim EditButton As New BeaconToolbarItem("EditEntries", IconToolbarEdit, False)
+		  EditButton.HelpTag = "Edit the selected entries."
+		  
 		  Me.LeftItems.Append(AddButton)
+		  Me.LeftItems.Append(EditButton)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Status
+	#tag Event
+		Sub Action()
+		  If Self.mSet = Nil Then
+		    Return
+		  End If
+		  
+		  Dim NewSet As Beacon.ItemSet = SetPropertiesEditor.Present(Self, Self.mSet)
+		  If NewSet = Nil Then
+		    Return
+		  End If
+		  
+		  Self.mSet.Constructor(NewSet)
+		  Self.UpdateStatus()
+		  Self.Header.Caption = Self.mSet.Label
+		  RaiseEvent Updated()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
