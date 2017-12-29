@@ -20,6 +20,27 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ComputeWeightStatistics(ByRef TotalWeight As Double, ByRef AverageWeight As Double, ByRef MinWeight As Double, ByRef MaxWeight As Double)
+		  Dim NumSets As Integer = Self.mSets.Ubound + 1
+		  If NumSets = 0 Then
+		    Return
+		  End If
+		  
+		  TotalWeight = Self.mSets(0).Weight
+		  MinWeight = Self.mSets(0).Weight
+		  MaxWeight = Self.mSets(0).Weight
+		  
+		  For I As Integer = 1 To Self.mSets.Ubound
+		    TotalWeight = TotalWeight + Self.mSets(I).Weight
+		    MinWeight = Min(MinWeight, Self.mSets(I).Weight)
+		    MaxWeight = Max(MaxWeight, Self.mSets(I).Weight)
+		  Next
+		  
+		  AverageWeight = TotalWeight / NumSets
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mMinItemSets = 1
