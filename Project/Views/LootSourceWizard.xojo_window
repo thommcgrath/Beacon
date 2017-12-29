@@ -45,7 +45,7 @@ Begin Window LootSourceWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   712
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -176,6 +176,7 @@ Begin Window LootSourceWizard
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
+         RowCount        =   0
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -1043,6 +1044,7 @@ Begin Window LootSourceWizard
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
+         RowCount        =   0
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -1532,28 +1534,12 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, ByRef TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
-		  #Pragma Unused G
-		  #Pragma Unused Row
-		  #Pragma Unused TextColor
-		  #Pragma Unused DrawSpace
-		  #Pragma Unused VerticalPosition
-		  #Pragma Unused IsHighlighted
-		  
-		  If Column <> 0 Then
-		    Return False
-		  End If
-		  
-		  Return True
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean) As Boolean
+		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 		  #Pragma Unused BackgroundColor
 		  #Pragma Unused IsHighlighted
 		  
 		  If Column <> 0 Or Row >= Me.ListCount Then
-		    Return False
+		    Return
 		  End If
 		  
 		  Dim Source As Beacon.LootSource = Me.RowTag(Row)
@@ -1562,9 +1548,7 @@ End
 		  Dim SpaceHeight As Integer = Me.DefaultRowHeight
 		  
 		  G.DrawPicture(Icon, (SpaceWidth - Icon.Width) / 2, (SpaceHeight - Icon.Height) / 2)
-		  
-		  Return True
-		End Function
+		End Sub
 	#tag EndEvent
 	#tag Event
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean

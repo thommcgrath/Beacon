@@ -5,19 +5,99 @@ Inherits Listbox
 		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
 		  #Pragma Unused Column
 		  
-		  Dim TextColor As Color
-		  Dim IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
-		  If Row < Self.ListCount And Self.Selected(Row) Then
-		    G.ForeColor = if(IsHighlighted, Self.SelectedRowColor, Self.SelectedRowColorInactive)
-		    TextColor = if(IsHighlighted, Self.SelectedTextColor, Self.SelectedTextColorInactive)
-		  Else
-		    G.ForeColor = if(Row Mod 2 = 0, Self.PrimaryRowColor, Self.AlternateRowColor)
-		    TextColor = Self.TextColor
+		  Dim ColumnWidth As Integer = Self.Column(Column).WidthActual
+		  Dim RowHeight As Integer = Self.DefaultRowHeight
+		  
+		  Dim RowInvalid, RowSelected As Boolean
+		  If Row < Self.RowCount Then
+		    RowInvalid = RowIsInvalid(Row)
+		    RowSelected = Self.Selected(Row)
 		  End If
 		  
-		  G.FillRect(0, 0, G.Width, G.Height)
+		  // To ensure a consistent drawing experience. Partially obscure rows traditionally have a truncated g.height value.
+		  Dim Clip As Graphics = G.Clip(0, 0, ColumnWidth, RowHeight)
 		  
-		  Call CellBackgroundPaint(G, Row, Column, G.ForeColor, TextColor, IsHighlighted)
+		  Dim BackgroundColor, TextColor As Color
+		  Dim IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
+		  If RowSelected Then
+		    If IsHighlighted Then
+		      BackgroundColor = If(RowInvalid, Self.InvalidSelectedRowColor, Self.SelectedRowColor)
+		      TextColor = If(RowInvalid, Self.InvalidSelectedTextColor, Self.SelectedTextColor)
+		    Else
+		      BackgroundColor = If(RowInvalid, Self.InvalidSelectedRowColorInactive, Self.SelectedRowColorInactive)
+		      TextColor = If(RowInvalid, Self.InvalidSelectedTextColorInactive, Self.SelectedTextColorInactive)
+		    End If
+		  Else
+		    BackgroundColor = If(Row Mod 2 = 0, Self.PrimaryRowColor, Self.AlternateRowColor)
+		    TextColor = If(RowInvalid, Self.InvalidTextColor, Self.TextColor)
+		  End If
+		  
+		  Clip.ForeColor = BackgroundColor
+		  Clip.FillRect(0, 0, G.Width, G.Height)
+		  
+		  Call CellBackgroundPaint(Clip, Row, Column, BackgroundColor, TextColor, IsHighlighted)
+		  
+		  If Row >= Self.RowCount Then
+		    Return True
+		  End If
+		  
+		  // Text paint
+		  
+		  Const CellPadding = 4
+		  
+		  Dim Contents As String = ReplaceLineEndings(Me.Cell(Row, Column), EndOfLine)
+		  Dim Lines() As String = Contents.Split(EndOfLine)
+		  Dim MaxDrawWidth As Integer = ColumnWidth - (CellPadding * 4)
+		  
+		  If Lines.Ubound = -1 Then
+		    Return True
+		  End If
+		  
+		  Clip.TextSize = 0
+		  Clip.TextFont = "System"
+		  Clip.Bold = RowInvalid
+		  
+		  // Need to compute the combined height of the lines
+		  Dim TotalTextHeight As Double = Clip.CapHeight
+		  Clip.TextFont = "SmallSystem"
+		  Clip.Bold = False
+		  TotalTextHeight = TotalTextHeight + ((Clip.CapHeight + CellPadding) * Lines.Ubound)
+		  Clip.TextFont = "System"
+		  Clip.Bold = RowInvalid
+		  
+		  Dim DrawTop As Double = (Clip.Height - TotalTextHeight) / 2
+		  For I As Integer = 0 To Lines.Ubound
+		    Dim LineWidth As Integer = Min(Ceil(Clip.StringWidth(Lines(I))), MaxDrawWidth)
+		    
+		    Dim DrawLeft As Integer
+		    Dim Align As Integer = Self.CellAlignment(Row, Column)
+		    If Align = Listbox.AlignDefault Then
+		      Align = Self.ColumnAlignment(Column)
+		    End If
+		    Select Case Align
+		    Case Listbox.AlignLeft, Listbox.AlignDefault
+		      DrawLeft = CellPadding
+		    Case Listbox.AlignCenter
+		      DrawLeft = CellPadding + ((MaxDrawWidth - LineWidth) / 2)
+		    Case Listbox.AlignRight, Listbox.AlignDecimal
+		      DrawLeft = Clip.Width - (LineWidth + CellPadding)
+		    End Select
+		    
+		    Dim LineHeight As Double = Clip.CapHeight
+		    Dim LinePosition As Integer = Round(DrawTop + LineHeight)
+		    
+		    If Not CellTextPaint(Clip, Row, Column, Lines(I), TextColor, DrawLeft, LinePosition, IsHighlighted) Then
+		      Clip.ForeColor = TextColor
+		      Clip.DrawString(Lines(I), DrawLeft, LinePosition, MaxDrawWidth, True)
+		    End If
+		    
+		    DrawTop = DrawTop + CellPadding + LineHeight
+		    If I = 0 Then
+		      Clip.TextFont = "SmallSystem"
+		      Clip.TextSize = 0
+		      Clip.Bold = False
+		    End If
+		  Next
 		  
 		  Return True
 		End Function
@@ -25,46 +105,54 @@ Inherits Listbox
 
 	#tag Event
 		Function CellTextPaint(g As Graphics, row As Integer, column As Integer, x as Integer, y as Integer) As Boolean
+		  #Pragma Unused G
+		  #Pragma Unused Row
+		  #Pragma Unused Column
 		  #Pragma Unused X
+		  #Pragma Unused Y
 		  
-		  Dim IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
-		  Dim RefTextColor As Color
-		  If Self.Selected(Row) Then
-		    RefTextColor = if(IsHighlighted, Self.SelectedTextColor, Self.SelectedTextColorInactive)
-		  Else
-		    RefTextColor = Self.TextColor
-		  End If
-		  
-		  Dim LeftEdge As Integer = 0
-		  Dim DrawWidth As Integer = Self.Column(Column).WidthActual - 8
-		  Dim RightEdge As Integer = LeftEdge + DrawWidth
-		  
-		  If CellTextPaint(G, Row, Column, RefTextColor, New Xojo.Core.Rect(LeftEdge, 0, DrawWidth, Self.DefaultRowHeight), Y, IsHighlighted) Then
-		    Return True
-		  End If
-		  
-		  G.ForeColor = RefTextColor
-		  G.TextFont = "System"
-		  
-		  Dim Contents As String = Self.Cell(Row, Column)
-		  Dim ContentsWidth As Integer = Min(Ceil(G.StringWidth(Contents)), DrawWidth)
-		  Dim ContentsLeft As Integer
-		  Dim Align As Integer = Self.CellAlignment(Row, Column)
-		  If Align = Listbox.AlignDefault Then
-		    Align = Self.ColumnAlignment(Column)
-		  End If
-		  Select Case Align
-		  Case Listbox.AlignLeft, Listbox.AlignDefault
-		    ContentsLeft = LeftEdge
-		  Case Listbox.AlignCenter
-		    ContentsLeft = ((DrawWidth - ContentsWidth) / 2) + LeftEdge
-		  Case Listbox.AlignRight, Listbox.AlignDecimal
-		    ContentsLeft = RightEdge - ContentsWidth
-		  End Select
-		  
-		  ContentsLeft = ContentsLeft + Self.ColumnAlignmentOffset(Column) + Self.CellAlignmentOffset(Row, Column)
-		  
-		  G.DrawString(Contents, ContentsLeft, Y + 1, DrawWidth, True)
+		  #if false
+		    Dim IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
+		    Dim RefTextColor As Color
+		    If Self.Selected(Row) Then
+		      RefTextColor = if(IsHighlighted, Self.SelectedTextColor, Self.SelectedTextColorInactive)
+		    Else
+		      RefTextColor = Self.TextColor
+		    End If
+		    
+		    Dim LeftEdge As Integer = 0
+		    Dim DrawWidth As Integer = Self.Column(Column).WidthActual - 8
+		    Dim RightEdge As Integer = LeftEdge + DrawWidth
+		    
+		    If CellTextPaint(G, Row, Column, RefTextColor, New Xojo.Core.Rect(LeftEdge, 0, DrawWidth, Self.DefaultRowHeight), Y, IsHighlighted) Then
+		      Return True
+		    End If
+		    
+		    G.ForeColor = RefTextColor
+		    G.TextFont = "System"
+		    
+		    Dim Contents As String = ReplaceLineEndings(Self.Cell(Row, Column), EndOfLine)
+		    Dim Lines() As String = Contents.Split(EndOfLine)
+		    
+		    Dim ContentsWidth As Integer = Min(Ceil(G.StringWidth(Contents)), DrawWidth)
+		    Dim ContentsLeft As Integer
+		    Dim Align As Integer = Self.CellAlignment(Row, Column)
+		    If Align = Listbox.AlignDefault Then
+		      Align = Self.ColumnAlignment(Column)
+		    End If
+		    Select Case Align
+		    Case Listbox.AlignLeft, Listbox.AlignDefault
+		      ContentsLeft = LeftEdge
+		    Case Listbox.AlignCenter
+		      ContentsLeft = ((DrawWidth - ContentsWidth) / 2) + LeftEdge
+		    Case Listbox.AlignRight, Listbox.AlignDecimal
+		      ContentsLeft = RightEdge - ContentsWidth
+		    End Select
+		    
+		    ContentsLeft = ContentsLeft + Self.ColumnAlignmentOffset(Column) + Self.CellAlignmentOffset(Row, Column)
+		    
+		    G.DrawString(Contents, ContentsLeft, Y + 1, DrawWidth, True)
+		  #endif
 		  
 		  Return True
 		End Function
@@ -158,7 +246,11 @@ Inherits Listbox
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub EnsureSelectionIsVisible()
+		Sub EnsureSelectionIsVisible(Animated As Boolean = True)
+		  If Self.SelCount = 0 Then
+		    Return
+		  End If
+		  
 		  Dim ViewportHeight As Integer = Self.Height
 		  If Self.HasHeading Then
 		    ViewportHeight = ViewportHeight - Self.HeaderHeight
@@ -175,8 +267,23 @@ Inherits Listbox
 		      AtLeastOneVisible = AtLeastOneVisible Or (I >= VisibleStart And I <= VisibleEnd)
 		    End If
 		  Next
-		  If AtLeastOneVisible = False And Self.SelCount > 0 Then
-		    Self.ScrollPosition = Self.ListIndex
+		  If Not AtLeastOneVisible Then
+		    If Animated Then
+		      Dim Task As New AnimationKit.ScrollTask(Self)
+		      Task.DurationInSeconds = 0.4
+		      Task.Position = Self.ListIndex
+		      Task.Curve = AnimationKit.Curve.CreateEaseOut
+		      
+		      If Self.mScrollTask <> Nil Then
+		        Self.mScrollTask.Cancel
+		        Self.mScrollTask = Nil
+		      End If
+		      
+		      Self.mScrollTask = Task
+		      Task.Run
+		    Else
+		      Self.ScrollPosition = Self.ListIndex
+		    End If
 		  End If
 		End Sub
 	#tag EndMethod
@@ -209,11 +316,11 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean) As Boolean
+		Event CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event CellTextPaint(G As Graphics, Row As Integer, Column As Integer, ByRef TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		Event CellTextPaint(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -240,6 +347,14 @@ Inherits Listbox
 		Event PerformPaste(Board As Clipboard)
 	#tag EndHook
 
+	#tag Hook, Flags = &h0
+		Event RowIsInvalid(Row As Integer) As Boolean
+	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mScrollTask As AnimationKit.ScrollTask
+	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -269,6 +384,21 @@ Inherits Listbox
 
 
 	#tag Constant, Name = AlternateRowColor, Type = Color, Dynamic = False, Default = \"&cFAFAFA", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = InvalidSelectedRowColor, Type = Color, Dynamic = False, Default = \"&c800000", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = InvalidSelectedRowColorInactive, Type = Color, Dynamic = False, Default = \"&cD4BEBE", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = InvalidSelectedTextColor, Type = Color, Dynamic = False, Default = \"&cFFFFFF", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = InvalidSelectedTextColorInactive, Type = Color, Dynamic = False, Default = \"&c000000", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = InvalidTextColor, Type = Color, Dynamic = False, Default = \"&c800000", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PrimaryRowColor, Type = Color, Dynamic = False, Default = \"&cFFFFFF", Scope = Public

@@ -61,6 +61,12 @@ Inherits AnimationKit.Task
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Completed(Time As Double) As Boolean
+		  Return Self.ElapsedTime(Time) >= (Self.DurationInSeconds * 1000000)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Constructor()
 		  Self.Curve = AnimationKit.Curve.CreateFromPreset(AnimationKit.Curve.Presets.Linear)

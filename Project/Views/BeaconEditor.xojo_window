@@ -956,59 +956,9 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, ByRef TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
-		  #Pragma Unused Column
-		  #Pragma Unused DrawSpace
-		  #Pragma Unused VerticalPosition
-		  
+		Function RowIsInvalid(Row As Integer) As Boolean
 		  Dim Set As Beacon.ItemSet = Me.RowTag(Row)
-		  If Not Set.IsValid Then
-		    TextColor = BeaconUI.TextColorForInvalidRow(IsHighlighted, Me.Selected(Row))
-		    G.Bold = Not Set.IsValid
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean) As Boolean
-		  #Pragma Unused BackgroundColor
-		  #Pragma Unused TextColor
-		  
-		  If Column <> 0 Or Row >= Me.ListCount Then
-		    Return False
-		  End If
-		  
-		  Dim Set As Beacon.ItemSet = Me.RowTag(Row)
-		  If Not Set.IsValid Then
-		    G.ForeColor = BeaconUI.BackgroundColorForInvalidRow(G.ForeColor, IsHighlighted, Me.Selected(Row))
-		    G.FillRect(0, 0, G.Width, G.Height)
-		  End If
-		  
-		  #if false
-		    If Self.mSources.Ubound = 0 Then
-		      Const Padding = 3
-		      
-		      Dim Source As Beacon.LootSource = Self.mSources(0)
-		      Dim OffsetWeight As Double
-		      Dim TotalWeight As Double
-		      
-		      For I As Integer = 0 To Me.ListCount - 1
-		        Dim Sibling As Beacon.ItemSet = Me.RowTag(I)
-		        If I < Row Then
-		          OffsetWeight = OffsetWeight + Sibling.Weight
-		        End If
-		        TotalWeight = TotalWeight + Sibling.Weight
-		      Next
-		      
-		      Dim OffsetPercent As Double = OffsetWeight / TotalWeight
-		      Dim WeightPercent As Double = Set.Weight / TotalWeight
-		      
-		      Dim IndicatorColor As Color = RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 128)
-		      Dim Indicator As Picture = BeaconUI.IconWithColor(BeaconUI.CreateWeightIndicator(0, WeightPercent, Me.DefaultRowHeight - (Padding * 2), Me.DefaultRowHeight - (Padding * 2), G.ScaleX), IndicatorColor)
-		      G.DrawPicture(Indicator, G.Width - (Indicator.Width + Padding), (Me.DefaultRowHeight - Indicator.Height) / 2)
-		    End If
-		  #endif
-		  
-		  Return True
+		  Return Not Set.IsValid
 		End Function
 	#tag EndEvent
 #tag EndEvents

@@ -1,19 +1,5 @@
 #tag Module
 Protected Module BeaconUI
-	#tag Method, Flags = &h1
-		Protected Function BackgroundColorForInvalidRow(InitialColor As Color, Highlighted As Boolean, Selected As Boolean) As Color
-		  If Selected Then
-		    If Highlighted Then
-		      Return &c800000
-		    Else
-		      Return &cD4BEBE
-		    End If
-		  Else
-		    Return InitialColor
-		  End If
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function BlendWith(Extends Color1 As Color, Color2 As Color, Color2Percent As Double) As Color
 		  If Color1.Red = Color2.Red And Color1.Green = Color2.Green And Color1.Blue = Color2.Blue And Color1.Alpha = Color2.Alpha Then
@@ -432,20 +418,6 @@ Protected Module BeaconUI
 		  Dialog.CancelButton.Caption = CancelCaption
 		  Dialog.CancelButton.Visible = True
 		  Return Dialog.ShowModal() = Dialog.ActionButton
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function TextColorForInvalidRow(Highlighted As Boolean, Selected As Boolean) As Color
-		  If Selected Then
-		    If Highlighted Then
-		      Return &cFFFFFF
-		    Else
-		      Return &c000000
-		    End If
-		  Else
-		    Return &c800000
-		  End If
 		End Function
 	#tag EndMethod
 

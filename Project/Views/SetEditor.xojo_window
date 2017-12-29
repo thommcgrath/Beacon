@@ -85,7 +85,9 @@ Begin ContainerControl SetEditor
       Caption         =   "Untitled"
       CaptionEnabled  =   True
       CaptionIsButton =   False
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       HasResizer      =   False
       Height          =   41
       HelpTag         =   ""
@@ -102,6 +104,7 @@ Begin ContainerControl SetEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   560
@@ -485,37 +488,6 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean) As Boolean
-		  #Pragma Unused Column
-		  #Pragma Unused BackgroundColor
-		  #Pragma Unused TextColor
-		  
-		  If Row >= Me.ListCount Then
-		    Return False
-		  End If
-		  
-		  Dim Entry As Beacon.SetEntry = Me.RowTag(Row)
-		  If Not Entry.IsValid Then
-		    G.ForeColor = BeaconUI.BackgroundColorForInvalidRow(G.ForeColor, IsHighlighted, Me.Selected(Row))
-		    G.FillRect(0, 0, G.Width, G.Height)
-		    Return True
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, ByRef TextColor As Color, DrawSpace As Xojo.Core.Rect, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
-		  #Pragma Unused Column
-		  #Pragma Unused DrawSpace
-		  #Pragma Unused VerticalPosition
-		  
-		  Dim Entry As Beacon.SetEntry = Me.RowTag(Row)
-		  If Not Entry.IsValid Then
-		    TextColor = BeaconUI.TextColorForInvalidRow(IsHighlighted, Me.Selected(Row))
-		    G.Bold = Not Entry.IsValid
-		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
 		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
@@ -561,6 +533,12 @@ End
 		Sub Change()
 		  Self.Header.EditEntries.Enabled = Me.SelCount > 0
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function RowIsInvalid(Row As Integer) As Boolean
+		  Dim Entry As Beacon.SetEntry = Me.RowTag(Row)
+		  Return Not Entry.IsValid
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events Header
