@@ -44,6 +44,7 @@ Inherits Listbox
 		  // Text paint
 		  
 		  Const CellPadding = 4
+		  Const LineSpacing = 6
 		  
 		  Dim Contents As String = ReplaceLineEndings(Me.Cell(Row, Column), EndOfLine)
 		  Dim Lines() As String = Contents.Split(EndOfLine)
@@ -61,7 +62,7 @@ Inherits Listbox
 		  Dim TotalTextHeight As Double = Clip.CapHeight
 		  Clip.TextFont = "SmallSystem"
 		  Clip.Bold = False
-		  TotalTextHeight = TotalTextHeight + ((Clip.CapHeight + CellPadding) * Lines.Ubound)
+		  TotalTextHeight = TotalTextHeight + ((Clip.CapHeight + LineSpacing) * Lines.Ubound)
 		  Clip.TextFont = "System"
 		  Clip.Bold = RowInvalid
 		  
@@ -91,7 +92,7 @@ Inherits Listbox
 		      Clip.DrawString(Lines(I), DrawLeft, LinePosition, MaxDrawWidth, True)
 		    End If
 		    
-		    DrawTop = DrawTop + CellPadding + LineHeight
+		    DrawTop = DrawTop + LineSpacing + LineHeight
 		    If I = 0 Then
 		      Clip.TextFont = "SmallSystem"
 		      Clip.TextSize = 0
