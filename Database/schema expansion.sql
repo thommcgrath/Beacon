@@ -137,11 +137,7 @@ CREATE TYPE loot_source_kind AS ENUM (
 	'Standard',
 	'Bonus',
 	'Cave',
-	'Sea',
-	'BossSpider',
-	'BossGorilla',
-	'BossDragon',
-	'BossManticore'
+	'Sea'
 );
 
 CREATE TYPE taming_methods AS ENUM (
@@ -175,9 +171,10 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE deletions TO thezaz_website;
 CREATE TABLE loot_sources (
 	PRIMARY KEY (object_id),
 	FOREIGN KEY (mod_id) REFERENCES mods(mod_id) ON DELETE CASCADE ON UPDATE CASCADE,
-	class_string CITEXT NOT NULL UNIQUE,
-	kind loot_source_kind NOT NULL,
+	path CITEXT NOT NULL UNIQUE,
+	class_string CITEXT NOT NULL,
 	availability INTEGER NOT NULL,
+	kind loot_source_kind NOT NULL,
 	multiplier_min NUMERIC(6,4) NOT NULL,
 	multiplier_max NUMERIC(6,4) NOT NULL,
 	uicolor TEXT NOT NULL CHECK (uicolor ~* '^[0-9a-fA-F]{8}$'),
@@ -256,12 +253,12 @@ CREATE TRIGGER creatures_after_delete_trigger AFTER DELETE ON creatures FOR EACH
 CREATE TRIGGER creatures_compute_class_trigger BEFORE INSERT OR UPDATE ON creatures FOR EACH ROW EXECUTE PROCEDURE compute_class_trigger();
 -- End Creatures
 
--- Saddles: Since multiple creatures can use the same saddle (Ankylo + Aberrant Ankylo) and one create can use multiple saddles (Drake Saddle + Drake Tek Saddle) we need this table to support a many-to-many relationship.
-CREATE TABLE saddles (
-	saddle_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-	engram_id UUID NOT NULL REFERENCES engrams(object_id) ON DELETE CASCADE ON UPDATE CASCADE,
+-- Creature Engrams: Saddles, produced items, drops, eggs, kibble, etc. but not the stuff eaten by the creature.
+CREATE TABLE creature_engrams (
+	relation_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 	creature_id UUID NOT NULL REFERENCES creatures(object_id) ON DELETE CASCADE ON UPDATE CASCADE,
-	UNIQUE (engram_id, creature_id)
+	engram_id UUID NOT NULL REFERENCES engrams(object_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	UNIQUE (creature_id, engram_id)
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE saddles TO thezaz_website;
--- End Saddles
+-- End Creature Engrams
