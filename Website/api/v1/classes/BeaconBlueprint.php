@@ -37,6 +37,68 @@ class BeaconBlueprint extends BeaconObject {
 		return $obj;
 	}
 	
+	public static function GetByClass($class_string, int $min_version = 0, DateTime $updated_since = null) {
+		if (is_array($class_string)) {
+			$classes = array();
+			foreach ($class_string as $item) {
+				if (is_string($item)) {
+					$class = $item;
+				} elseif (is_subclass_of($item, 'BeaconBlueprint')) {
+					$class = $item->ClassString();
+				} else {
+					$class = null;
+				}
+				if (($class !== null) && (!in_array($class, $classes))) {
+					$classes[] = $class;
+				}
+			}
+			$class_string = '{' . implode(',', $classes) . '}';
+		} elseif (is_string($class_string)) {
+			$class_string = '{' . $class_string . '}';
+		} else {
+			$class_string = '{}';
+		}
+		
+		if ($updated_since === null) {
+			$updated_since = new DateTime('2000-01-01');
+		}
+		
+		$database = BeaconCommon::Database();
+		$results = $database->Query(static::BuildSQL('class_string = ANY($1)', '(min_version IS NULL OR min_version <= $2)', 'last_update > $3'), $class_string, $min_version, $updated_since->format('Y-m-d H:i:sO'));
+		return static::FromResults($results);
+	}
+	
+	public static function GetByHash($hash, int $min_version = 0, DateTime $updated_since = null) {
+		if (is_array($hash)) {
+			$hashes = array();
+			foreach ($hash as $item) {
+				if (is_string($item)) {
+					$temp = $item;
+				} elseif (is_subclass_of($item, 'BeaconBlueprint')) {
+					$temp = $item->Hash();
+				} else {
+					$temp = null;
+				}
+				if (($temp !== null) && (!in_array($temp, $hashes))) {
+					$hashes[] = $temp;
+				}
+			}
+			$hash = '{' . implode(',', $hashes) . '}';
+		} elseif (is_string($hash)) {
+			$hash = '{' . $hash . '}';
+		} else {
+			$hash = '{}';
+		}
+		
+		if ($updated_since === null) {
+			$updated_since = new DateTime('2000-01-01');
+		}
+		
+		$database = BeaconCommon::Database();
+		$results = $database->Query(static::BuildSQL('MD5(LOWER(path)) = ANY($1)', '(min_version IS NULL OR min_version <= $2)', 'last_update > $3'), $hash, $min_version, $updated_since->format('Y-m-d H:i:sO'));
+		return static::FromResults($results);
+	}
+	
 	public function jsonSerialize() {
 		$environments = array();
 		if ($this->AvailableToIsland()) {
@@ -60,12 +122,17 @@ class BeaconBlueprint extends BeaconObject {
 		$json['environments'] = $environments;
 		$json['path'] = $this->path;
 		$json['class_string'] = $this->class_string;
+		$json['spawn'] = $this->SpawnCode();
 		
 		return $json;
 	}
 	
 	public function Path() {
 		return $this->path;
+	}
+	
+	public function Hash() {
+		return md5(strtolower($this->path));
 	}
 	
 	public function SetPath(string $path) {
@@ -135,6 +202,10 @@ class BeaconBlueprint extends BeaconObject {
 	
 	public function SetAvailableToAberration(bool $available) {
 		return $this->SetAvailableTo(BeaconMaps::Aberration, $available);
+	}
+	
+	public function SpawnCode() {
+		return 'cheat summon ' . $this->ClassString();
 	}
 	
 	protected static function ClassFromPath(string $path) {

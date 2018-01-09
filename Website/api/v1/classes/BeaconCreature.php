@@ -79,6 +79,10 @@ class BeaconCreature extends BeaconBlueprint {
 		return $json;
 	}
 	
+	public function SpawnCode() {
+		return 'cheat spawndino "Blueprint\'' . $this->Path() . '\'" 1 1 1 30';
+	}
+	
 	public function Tamable() {
 		return $this->tamable;
 	}

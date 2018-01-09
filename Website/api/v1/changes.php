@@ -15,7 +15,7 @@ $arr = array(
 	'schema_version' => 3,
 	'is_full' => ($since === null) ? true : false,
 	'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
-	'engrams' => array(),
+	'engrams' => BeaconEngram::GetAll($min_version, $since),
 	'creatures' => BeaconCreature::GetAll($min_version, $since),
 	'diets' => array(),
 	'expired_records' => BeaconObject::Deletions($min_version, $since)
