@@ -21,13 +21,17 @@ class BeaconLootSource extends BeaconBlueprint {
 		$columns[] = 'multiplier_max';
 		$columns[] = 'uicolor';
 		$columns[] = 'icon';
-		$columns[] = 'sort_order';
+		$columns[] = 'sort';
 		$columns[] = 'required_item_sets';
 		return $columns;
 	}
 	
 	protected static function TableName() {
 		return 'loot_sources';
+	}
+	
+	protected static function SortColumn() {
+		return 'sort';
 	}
 	
 	protected function GetColumnValue(string $column) {
@@ -116,7 +120,7 @@ class BeaconLootSource extends BeaconBlueprint {
 	}
 	
 	public function SetUIColor(string $uicolor) {
-		if (preg_match('/[A-F{8}/i', $uicolor)) {
+		if (preg_match('/[A-F]{8}/i', $uicolor)) {
 			$this->ui_color = strtoupper($uicolor);
 		}
 	}
@@ -126,7 +130,18 @@ class BeaconLootSource extends BeaconBlueprint {
 	}
 	
 	public function SetIcon(string $icon) {
-		// later
+		// must be 144x144 png
+		$info = getimagesizefromstring($icon);
+		if ($info === false) {
+			return;
+		}
+		$width = $info[0];
+		$height = $info[1];
+		$type = $info[2];
+		
+		if (($width == 144) && ($height == 144) && ($type == IMAGETYPE_PNG)) {
+			$this->icon = $icon;
+		}
 	}
 	
 	public function SortOrder() {

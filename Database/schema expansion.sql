@@ -118,7 +118,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION object_delete_trigger () RETURNS TRIGGER AS $$
 BEGIN
-	EXECUTE 'INSERT INTO deletions (object_id, from_table, label) VALUES ($1, $2, $3);' USING OLD.object_id, TG_TABLE_NAME, OLD.label;
+	EXECUTE 'INSERT INTO deletions (object_id, from_table, label, min_version) VALUES ($1, $2, $3, $4);' USING OLD.object_id, TG_TABLE_NAME, OLD.label, OLD.min_version;
 	RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
@@ -162,6 +162,7 @@ CREATE TABLE deletions (
 	object_id UUID NOT NULL PRIMARY KEY,
 	from_table CITEXT NOT NULL,
 	label CITEXT NOT NULL,
+	min_version INTEGER,
 	action_time TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0)
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE deletions TO thezaz_website;
@@ -240,9 +241,8 @@ CREATE TABLE creatures (
 	taming_method taming_methods NOT NULL,
 	tamed_diet UUID REFERENCES diets(object_id) ON DELETE RESTRICT ON UPDATE CASCADE,
 	rideable BOOLEAN NOT NULL,
-	shoulder_mounted BOOLEAN NOT NULL,
+	carryable BOOLEAN NOT NULL,
 	breedable BOOLEAN NOT NULL,
-	egg_engram UUID REFERENCES engrams(object_id) ON DELETE RESTRICT ON UPDATE CASCADE,
 	CHECK (path LIKE '/%')
 ) INHERITS (objects);
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE creatures TO thezaz_website;

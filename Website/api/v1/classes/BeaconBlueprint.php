@@ -31,9 +31,9 @@ class BeaconBlueprint extends BeaconObject {
 		if ($obj === null) {
 			return null;
 		}
-		$obj->availability = $row->Field('availability');
+		$obj->availability = intval($row->Field('availability'));
 		$obj->path = $row->Field('path');
-		$obj->class_string = intval($row->Field('class_string'));
+		$obj->class_string = $row->Field('class_string');
 		return $obj;
 	}
 	
@@ -64,16 +64,16 @@ class BeaconBlueprint extends BeaconObject {
 		return $json;
 	}
 	
-	public Path() {
+	public function Path() {
 		return $this->path;
 	}
 	
-	public SetPath(string $path) {
+	public function SetPath(string $path) {
 		$this->path = $path;
 		$this->class_string = self::ClassFromPath($path);
 	}
 	
-	public ClassString() {
+	public function ClassString() {
 		return $this->class_string;
 	}
 	
