@@ -105,7 +105,11 @@ class BeaconObject implements JsonSerializable {
 		
 		$database->BeginTransaction();
 		$database->Query('INSERT INTO ' . $table . ' (' . implode(', ', $active_columns) . ') VALUES (' . implode(', ', $placeholders) . ') ON CONFLICT (object_id) DO UPDATE SET ' . implode(', ', $set_pairs) . ';', $values);
+		$this->SaveChildrenHook($database);
 		$database->Commit();
+	}
+	
+	protected function SaveChildrenHook(BeaconDatabase $database) {
 	}
 	
 	public static function GetAll(int $min_version = 0, DateTime $updated_since = null) {

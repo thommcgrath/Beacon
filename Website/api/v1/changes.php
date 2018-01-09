@@ -17,7 +17,7 @@ $arr = array(
 	'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
 	'engrams' => BeaconEngram::GetAll($min_version, $since),
 	'creatures' => BeaconCreature::GetAll($min_version, $since),
-	'diets' => array(),
+	'diets' => BeaconDiet::GetAll($min_version, $since),
 	'expired_records' => BeaconObject::Deletions($min_version, $since)
 );
 
