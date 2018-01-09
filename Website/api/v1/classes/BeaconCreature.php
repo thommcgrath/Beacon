@@ -75,6 +75,7 @@ class BeaconCreature extends BeaconBlueprint {
 		$json['rideable'] = $this->rideable;
 		$json['carryable'] = $this->carryable;
 		$json['breedable'] = $this->breedable;
+		$json['related_engram_ids'] = $this->RelatedEngramIDs();
 		return $json;
 	}
 	
@@ -154,6 +155,17 @@ class BeaconCreature extends BeaconBlueprint {
 	
 	public function SetBreedable(bool $breedable) {
 		$this->breedable = $breedable;
+	}
+	
+	public function RelatedEngramIDs() {
+		$database = BeaconCommon::Database();
+		$arr = array();
+		$results = $database->Query('SELECT engram_id FROM creature_engrams WHERE creature_id = $1;', $this->ObjectID());
+		while (!$results->EOF()) {
+			$arr[] = $results->Field('engram_id');
+			$results->MoveNext();
+		}
+		return $arr;
 	}
 }
 

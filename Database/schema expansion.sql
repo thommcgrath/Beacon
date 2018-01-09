@@ -260,5 +260,5 @@ CREATE TABLE creature_engrams (
 	engram_id UUID NOT NULL REFERENCES engrams(object_id) ON DELETE CASCADE ON UPDATE CASCADE,
 	UNIQUE (creature_id, engram_id)
 );
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE saddles TO thezaz_website;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE creature_engrams TO thezaz_website;
 -- End Creature Engrams
