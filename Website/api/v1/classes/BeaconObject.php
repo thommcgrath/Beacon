@@ -123,62 +123,66 @@ class BeaconObject implements JsonSerializable {
 	}
 	
 	public static function GetByObjectID($object_id, int $min_version = 0, DateTime $updated_since = null) {
+		if ((is_string($object_id)) && (strstr($object_id, ','))) {
+			$object_id = explode(',', $object_id);
+		}
+		$object_ids = array();
 		if (is_array($object_id)) {
-			$ids = array();
 			foreach ($object_id as $item) {
 				if (is_string($item)) {
-					$id = $item;
-				} elseif (is_subclass_of($item, 'BeaconObject')) {
-					$id = $item->ObjectID();
-				} else {
-					$id = null;
+					$item = trim($item);
 				}
-				if (($id !== null) && (!in_array($id, $ids))) {
-					$ids[] = $id;
+				if (BeaconCommon::IsUUID($item)) {
+					$object_ids[] = $item;
 				}
 			}
-			$object_id = '{' . implode(',', $ids) . '}';
-		} elseif (is_string($object_id)) {
-			$object_id = '{' . $object_id . '}';
-		} else {
-			$object_id = '{}';
+		} elseif (BeaconCommon::IsUUID($object_id)) {
+			$object_ids[] = $object_id;
 		}
+				
+		$object_list = '{' . implode(',', array_unique($object_ids)) . '}';
 		
 		if ($updated_since === null) {
 			$updated_since = new DateTime('2000-01-01');
 		}
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('object_id = ANY($1)', 'min_version <= $2', 'last_update > $3'), $object_id, $min_version, $updated_since->format('Y-m-d H:i:sO'));
+		$results = $database->Query(static::BuildSQL('object_id = ANY($1)', 'min_version <= $2', 'last_update > $3'), $object_list, $min_version, $updated_since->format('Y-m-d H:i:sO'));
 		return static::FromResults($results);
 	}
 	
 	public static function GetByModID($mod_id, int $min_version = 0, DateTime $updated_since = null) {
+		if ((is_string($mod_id)) && (strstr($mod_id, ','))) {
+			$mod_id = explode(',', $mod_id);
+		}
+		$steam_ids = array();
+		$beacon_ids = array();
 		if (is_array($mod_id)) {
-			$ids = array();
 			foreach ($mod_id as $item) {
 				if (is_string($item)) {
-					$id = $item;
-				} else {
-					$id = null;
+					$item = trim($item);
 				}
-				if (($id !== null) && (!in_array($id, $ids))) {
-					$ids[] = $id;
+				if (BeaconCommon::IsUUID($item)) {
+					$beacon_ids[] = $item;
+				} elseif (ctype_digit($item)) {
+					$steam_ids[] = intval($item);
 				}
 			}
-			$mod_id = '{' . implode(',', $ids) . '}';
-		} elseif (is_string($mod_id)) {
-			$mod_id = '{' . $mod_id . '}';
-		} else {
-			$mod_id = '{}';
+		} elseif (ctype_digit($mod_id)) {
+			$steam_ids[] = intval($mod_id);
+		} elseif (BeaconCommon::IsUUID($mod_id)) {
+			$beacon_ids[] = $mod_id;
 		}
+		
+		$steam_list = '{' . implode(',', array_unique($steam_ids)) . '}';
+		$beacon_list = '{' . implode(',', array_unique($beacon_ids)) . '}';
 		
 		if ($updated_since === null) {
 			$updated_since = new DateTime('2000-01-01');
 		}
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('mod_id = ANY($1)', 'min_version <= $2', 'last_update > $3'), $mod_id, $min_version, $updated_since->format('Y-m-d H:i:sO'));
+		$results = $database->Query(static::BuildSQL('(mods.mod_id = ANY($1) OR mods.workshop_id = ANY($2))', 'min_version <= $3', 'last_update > $4'), $beacon_list, $steam_list, $min_version, $updated_since->format('Y-m-d H:i:sO'));
 		return static::FromResults($results);
 	}
 	
@@ -296,6 +300,13 @@ class BeaconObject implements JsonSerializable {
 	
 	public function ModName() {
 		return $this->mod_name;
+	}
+	
+	public function Delete() {
+		$database = BeaconCommon::Database();
+		$database->BeginTransaction();
+		$database->Query('DELETE FROM ' . static::TableName() . ' WHERE object_id = $1;', $this->object_id);
+		$database->Commit();
 	}
 }
 

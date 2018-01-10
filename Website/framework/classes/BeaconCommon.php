@@ -43,18 +43,22 @@ abstract class BeaconCommon {
 		return $randomString;
 	}
 	
-	public static function IsUUID($input) {
+	public static function IsUUID(&$input) {
 		if (!is_string($input)) {
 			return false;
 		}
 		
-		$input = preg_replace('/\s+/', '', $input);
-		
-		if ($input === '00000000-0000-0000-0000-000000000000') {
+		$cleaned = preg_replace('/\s+/', '', $input);
+		if ($cleaned === '00000000-0000-0000-0000-000000000000') {
 			return true;
 		}
 		
-		return preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i', $input) === 1;
+		if (preg_match('/^([0-9A-F]{8})-?([0-9A-F]{4})-?(4[0-9A-F]{3})-?([89AB][0-9A-F]{3})-?([0-9A-F]{12})$/i', $cleaned, $matches) === 1) {
+			$input = strtolower($matches[1] . '-' . $matches[2] . '-' . $matches[3] . '-' . $matches[4] . '-' . $matches[5]);
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public static function IsAssoc(array $arr) {

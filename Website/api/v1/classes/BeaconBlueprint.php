@@ -38,64 +38,52 @@ class BeaconBlueprint extends BeaconObject {
 	}
 	
 	public static function GetByClass($class_string, int $min_version = 0, DateTime $updated_since = null) {
+		if ((is_string($class_string)) && (strstr($class_string, ','))) {
+			$class_string = explode(',', $class_string);
+		}
+		$class_strings = array();
 		if (is_array($class_string)) {
-			$classes = array();
 			foreach ($class_string as $item) {
 				if (is_string($item)) {
-					$class = $item;
-				} elseif (is_subclass_of($item, 'BeaconBlueprint')) {
-					$class = $item->ClassString();
-				} else {
-					$class = null;
-				}
-				if (($class !== null) && (!in_array($class, $classes))) {
-					$classes[] = $class;
+					$class_strings[] = trim($item);
 				}
 			}
-			$class_string = '{' . implode(',', $classes) . '}';
 		} elseif (is_string($class_string)) {
-			$class_string = '{' . $class_string . '}';
-		} else {
-			$class_string = '{}';
+			$class_strings[] = trim($class_string);
 		}
+		$class_list = '{' . implode(',', array_unique($class_strings)) . '}';
 		
 		if ($updated_since === null) {
 			$updated_since = new DateTime('2000-01-01');
 		}
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('class_string = ANY($1)', 'min_version <= $2', 'last_update > $3'), $class_string, $min_version, $updated_since->format('Y-m-d H:i:sO'));
+		$results = $database->Query(static::BuildSQL('class_string = ANY($1)', 'min_version <= $2', 'last_update > $3'), $class_list, $min_version, $updated_since->format('Y-m-d H:i:sO'));
 		return static::FromResults($results);
 	}
 	
 	public static function GetByHash($hash, int $min_version = 0, DateTime $updated_since = null) {
+		if ((is_string($hash)) && (strstr($hash, ','))) {
+			$hash = explode(',', $hash);
+		}
+		$hashes = array();
 		if (is_array($hash)) {
-			$hashes = array();
 			foreach ($hash as $item) {
 				if (is_string($item)) {
-					$temp = $item;
-				} elseif (is_subclass_of($item, 'BeaconBlueprint')) {
-					$temp = $item->Hash();
-				} else {
-					$temp = null;
-				}
-				if (($temp !== null) && (!in_array($temp, $hashes))) {
-					$hashes[] = $temp;
+					$hashes[] = trim($item);
 				}
 			}
-			$hash = '{' . implode(',', $hashes) . '}';
 		} elseif (is_string($hash)) {
-			$hash = '{' . $hash . '}';
-		} else {
-			$hash = '{}';
+			$hashes[] = trim($hash);
 		}
+		$hash_list = '{' . implode(',', array_unique($hashes)) . '}';
 		
 		if ($updated_since === null) {
 			$updated_since = new DateTime('2000-01-01');
 		}
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('MD5(LOWER(path)) = ANY($1)', 'min_version <= $2', 'last_update > $3'), $hash, $min_version, $updated_since->format('Y-m-d H:i:sO'));
+		$results = $database->Query(static::BuildSQL('MD5(LOWER(path)) = ANY($1)', 'min_version <= $2', 'last_update > $3'), $hash_list, $min_version, $updated_since->format('Y-m-d H:i:sO'));
 		return static::FromResults($results);
 	}
 	
