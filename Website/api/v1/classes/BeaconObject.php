@@ -118,7 +118,7 @@ class BeaconObject implements JsonSerializable {
 		}
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('(min_version IS NULL OR min_version <= $1)', 'last_update > $2'), $min_version, $updated_since->format('Y-m-d H:i:sO'));
+		$results = $database->Query(static::BuildSQL('min_version <= $1', 'last_update > $2'), $min_version, $updated_since->format('Y-m-d H:i:sO'));
 		return static::FromResults($results);
 	}
 	
@@ -149,7 +149,7 @@ class BeaconObject implements JsonSerializable {
 		}
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('object_id = ANY($1)', '(min_version IS NULL OR min_version <= $2)', 'last_update > $3'), $object_id, $min_version, $updated_since->format('Y-m-d H:i:sO'));
+		$results = $database->Query(static::BuildSQL('object_id = ANY($1)', 'min_version <= $2', 'last_update > $3'), $object_id, $min_version, $updated_since->format('Y-m-d H:i:sO'));
 		return static::FromResults($results);
 	}
 	
@@ -178,7 +178,7 @@ class BeaconObject implements JsonSerializable {
 		}
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('mod_id = ANY($1)', '(min_version IS NULL OR min_version <= $2)', 'last_update > $3'), $mod_id, $min_version, $updated_since->format('Y-m-d H:i:sO'));
+		$results = $database->Query(static::BuildSQL('mod_id = ANY($1)', 'min_version <= $2', 'last_update > $3'), $mod_id, $min_version, $updated_since->format('Y-m-d H:i:sO'));
 		return static::FromResults($results);
 	}
 	
@@ -212,7 +212,7 @@ class BeaconObject implements JsonSerializable {
 		$database = BeaconCommon::Database();
 		$table = static::TableName();
 		
-		$results = $database->Query('SELECT MAX(last_update) AS most_recent_change FROM ' . $table . ' WHERE min_version IS NULL OR min_version <= $1;', $min_version);
+		$results = $database->Query('SELECT MAX(last_update) AS most_recent_change FROM ' . $table . ' WHERE min_version <= $1;', $min_version);
 		if ($results->Field('most_recent_change') !== null) {
 			$change_time = new DateTime($results->Field('most_recent_change'));
 		} else {
@@ -220,9 +220,9 @@ class BeaconObject implements JsonSerializable {
 		}
 		
 		if ($table == self::TableName()) {
-			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM deletions WHERE min_version IS NULL OR min_version <= $1;', $min_version);
+			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM deletions WHERE min_version <= $1;', $min_version);
 		} else {
-			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM deletions WHERE (min_version IS NULL OR min_version <= $1) AND from_table = $2;', $min_version, $table);
+			$results = $database->Query('SELECT MAX(action_time) AS most_recent_delete FROM deletions WHERE min_version <= $1 AND from_table = $2;', $min_version, $table);
 		}
 		if ($results->Field('most_recent_delete') !== null) {
 			$delete_time = new DateTime($results->Field('most_recent_delete'));
@@ -241,9 +241,9 @@ class BeaconObject implements JsonSerializable {
 		$table = static::TableName();
 		
 		if ($table == self::TableName()) {
-			$results = $database->Query('SELECT * FROM deletions WHERE (min_version IS NULL OR min_version <= $1) AND action_time > $2;', $min_version, $since->format('Y-m-d H:i:sO'));
+			$results = $database->Query('SELECT * FROM deletions WHERE min_version <= $1 AND action_time > $2;', $min_version, $since->format('Y-m-d H:i:sO'));
 		} else {
-			$results = $database->Query('SELECT * FROM deletions WHERE (min_version IS NULL OR min_version <= $1) AND action_time > $2 AND from_table = $3;', $min_version, $since->format('Y-m-d H:i:sO'), $table);
+			$results = $database->Query('SELECT * FROM deletions WHERE min_version <= $1 AND action_time > $2 AND from_table = $3;', $min_version, $since->format('Y-m-d H:i:sO'), $table);
 		}
 		$arr = array();
 		while (!$results->EOF()) {

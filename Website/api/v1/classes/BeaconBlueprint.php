@@ -64,7 +64,7 @@ class BeaconBlueprint extends BeaconObject {
 		}
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('class_string = ANY($1)', '(min_version IS NULL OR min_version <= $2)', 'last_update > $3'), $class_string, $min_version, $updated_since->format('Y-m-d H:i:sO'));
+		$results = $database->Query(static::BuildSQL('class_string = ANY($1)', 'min_version <= $2', 'last_update > $3'), $class_string, $min_version, $updated_since->format('Y-m-d H:i:sO'));
 		return static::FromResults($results);
 	}
 	
@@ -95,7 +95,7 @@ class BeaconBlueprint extends BeaconObject {
 		}
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('MD5(LOWER(path)) = ANY($1)', '(min_version IS NULL OR min_version <= $2)', 'last_update > $3'), $hash, $min_version, $updated_since->format('Y-m-d H:i:sO'));
+		$results = $database->Query(static::BuildSQL('MD5(LOWER(path)) = ANY($1)', 'min_version <= $2', 'last_update > $3'), $hash, $min_version, $updated_since->format('Y-m-d H:i:sO'));
 		return static::FromResults($results);
 	}
 	
