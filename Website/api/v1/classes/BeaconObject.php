@@ -279,7 +279,6 @@ class BeaconObject implements JsonSerializable {
 		return array(
 			'id' => $this->object_id,
 			'label' => $this->label,
-			'min_version' => $this->min_version,
 			'mod' => array(
 				'id' => $this->mod_id,
 				'name' => $this->mod_name
