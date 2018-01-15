@@ -14,22 +14,18 @@ case 'GET':
 	if ($engram_class === null) {
 		// list engrams
 		if (isset($_GET['mod_id'])) {
-			$engrams = BeaconEngram::GetByModID($_GET['mod_id']);
+			$engrams = BeaconEngram::Get($_GET['mod_id']);
 		} else {
-			$engrams = BeaconEngram::GetAll();
+			$engrams = BeaconEngram::Get();
 		}
 		BeaconAPI::ReplySuccess($engrams);
 	} else {
 		// specific engram(s)
-		if (strtoupper(substr($engram_class, -2)) === '_C') {
-			$engrams = BeaconEngram::GetByClass($engram_class);
-		} else {
-			$engrams = BeaconEngram::GetByUID($engram_class);
-		}
+		$engrams = BeaconEngram::Get($engram_class);
 		if (count($engrams) === 0) {
 			BeaconAPI::ReplyError('No engram found', null, 404);
 		}
-		if (BeaconAPI::ObjectCount() == 1) {
+		if (count($engrams) == 1) {
 			BeaconAPI::ReplySuccess($engrams[0]);
 		} else {
 			BeaconAPI::ReplySuccess($engrams);

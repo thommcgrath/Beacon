@@ -112,77 +112,91 @@ class BeaconObject implements JsonSerializable {
 	protected function SaveChildrenHook(BeaconDatabase $database) {
 	}
 	
+	protected static function PrepareLists($value_list) {
+		if (is_string($value_list)) {
+			$value_list = explode(',', $value_list);
+		}
+		if (!is_array($value_list)) {
+			throw new Exception('Must supply an array or comma-separated string.');
+		}
+		
+		$values = array();
+		foreach ($value_list as $value) {
+			if (is_string($value)) {
+				$value = trim($value);
+			}
+			
+			$possible_columns = array();
+			$converted_value = static::ListValueToParameter($value, $possible_columns);
+			if ($converted_value !== null) {
+				foreach ($possible_columns as $column) {
+					if (array_key_exists($column, $values)) {
+						$values[$column][] = $converted_value;
+					} else {
+						$values[$column] = array($converted_value);
+					}
+				}
+			}
+		}
+		
+		foreach ($values as $column => $elements) {
+			$values[$column] = '{' . implode(',', array_unique($elements)) . '}';
+		}
+		
+		return $values;
+	}
+	
+	protected static function ListValueToParameter($value, array &$possible_columns) {
+		if (is_subclass_of($value, 'BeaconObject')) {
+			$possible_columns[] = 'object_id';
+			return $value->ObjectID();
+		}
+		if (BeaconCommon::IsUUID($value)) {
+			$possible_columns[] = 'object_id';
+			$possible_columns[] = 'mods.mod_id';
+			return $value;
+		}
+		if (ctype_digit($value)) {
+			$possible_columns[] = 'mods.workshop_id';
+			return intval($value);
+		}
+		
+		return null;
+	}
+	
 	public static function GetAll(int $min_version = 0, DateTime $updated_since = null) {
-		if ($updated_since === null) {
-			$updated_since = new DateTime('2000-01-01');
-		}
-		
-		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('min_version <= $1', 'last_update > $2'), $min_version, $updated_since->format('Y-m-d H:i:sO'));
-		return static::FromResults($results);
+		return static::Get(null, $min_version, $updated_since);
 	}
 	
-	public static function GetByObjectID($object_id, int $min_version = 0, DateTime $updated_since = null) {
-		if ((is_string($object_id)) && (strstr($object_id, ','))) {
-			$object_id = explode(',', $object_id);
+	public static function Get($values, int $min_version = 0, DateTime $updated_since = null) {
+		if ($values !== null) {
+			$values = static::PrepareLists($values);
+		} else {
+			$values = array();
 		}
-		$object_ids = array();
-		if (is_array($object_id)) {
-			foreach ($object_id as $item) {
-				if (is_string($item)) {
-					$item = trim($item);
-				}
-				if (BeaconCommon::IsUUID($item)) {
-					$object_ids[] = $item;
-				}
-			}
-		} elseif (BeaconCommon::IsUUID($object_id)) {
-			$object_ids[] = $object_id;
-		}
-				
-		$object_list = '{' . implode(',', array_unique($object_ids)) . '}';
 		
 		if ($updated_since === null) {
 			$updated_since = new DateTime('2000-01-01');
 		}
 		
-		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('object_id = ANY($1)', 'min_version <= $2', 'last_update > $3'), $object_list, $min_version, $updated_since->format('Y-m-d H:i:sO'));
-		return static::FromResults($results);
-	}
-	
-	public static function GetByModID($mod_id, int $min_version = 0, DateTime $updated_since = null) {
-		if ((is_string($mod_id)) && (strstr($mod_id, ','))) {
-			$mod_id = explode(',', $mod_id);
-		}
-		$steam_ids = array();
-		$beacon_ids = array();
-		if (is_array($mod_id)) {
-			foreach ($mod_id as $item) {
-				if (is_string($item)) {
-					$item = trim($item);
-				}
-				if (BeaconCommon::IsUUID($item)) {
-					$beacon_ids[] = $item;
-				} elseif (ctype_digit($item)) {
-					$steam_ids[] = intval($item);
-				}
-			}
-		} elseif (ctype_digit($mod_id)) {
-			$steam_ids[] = intval($mod_id);
-		} elseif (BeaconCommon::IsUUID($mod_id)) {
-			$beacon_ids[] = $mod_id;
-		}
+		$clauses = array();
+		$parameters = array(
+			$min_version,
+			$updated_since->format('Y-m-d H:i:sO')
+		);
 		
-		$steam_list = '{' . implode(',', array_unique($steam_ids)) . '}';
-		$beacon_list = '{' . implode(',', array_unique($beacon_ids)) . '}';
-		
-		if ($updated_since === null) {
-			$updated_since = new DateTime('2000-01-01');
+		$c = 3;
+		foreach ($values as $column => $list) {
+			$clauses[] = $column . ' = ANY($' . $c++ . ')';
+			$parameters[] = $list;
 		}
+		if (count($clauses) > 0) {
+			$clauses = array('(' . implode(' OR ', $clauses) . ')');
+		}
+		array_unshift($clauses, 'min_version <= $1', 'last_update > $2');
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('(mods.mod_id = ANY($1) OR mods.workshop_id = ANY($2))', 'min_version <= $3', 'last_update > $4'), $beacon_list, $steam_list, $min_version, $updated_since->format('Y-m-d H:i:sO'));
+		$results = $database->Query(static::BuildSQL($clauses), $parameters);
 		return static::FromResults($results);
 	}
 	

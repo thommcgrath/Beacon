@@ -37,54 +37,18 @@ class BeaconBlueprint extends BeaconObject {
 		return $obj;
 	}
 	
-	public static function GetByClass($class_string, int $min_version = 0, DateTime $updated_since = null) {
-		if ((is_string($class_string)) && (strstr($class_string, ','))) {
-			$class_string = explode(',', $class_string);
-		}
-		$class_strings = array();
-		if (is_array($class_string)) {
-			foreach ($class_string as $item) {
-				if (is_string($item)) {
-					$class_strings[] = trim($item);
-				}
+	protected static function ListValueToParameter($value, array &$possible_columns) {
+		if (is_string($value)) {
+			if (strtoupper(substr($value, -2)) == '_C') {
+				$possible_columns[] = 'class_string';
+				return $value;
+			} elseif (preg_match('/^[A-F0-9]{32}$/i', $value)) {
+				$possible_columns[] = 'MD5(LOWER(path))';
+				return $value;
 			}
-		} elseif (is_string($class_string)) {
-			$class_strings[] = trim($class_string);
-		}
-		$class_list = '{' . implode(',', array_unique($class_strings)) . '}';
-		
-		if ($updated_since === null) {
-			$updated_since = new DateTime('2000-01-01');
 		}
 		
-		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('class_string = ANY($1)', 'min_version <= $2', 'last_update > $3'), $class_list, $min_version, $updated_since->format('Y-m-d H:i:sO'));
-		return static::FromResults($results);
-	}
-	
-	public static function GetByHash($hash, int $min_version = 0, DateTime $updated_since = null) {
-		if ((is_string($hash)) && (strstr($hash, ','))) {
-			$hash = explode(',', $hash);
-		}
-		$hashes = array();
-		if (is_array($hash)) {
-			foreach ($hash as $item) {
-				if (is_string($item)) {
-					$hashes[] = trim($item);
-				}
-			}
-		} elseif (is_string($hash)) {
-			$hashes[] = trim($hash);
-		}
-		$hash_list = '{' . implode(',', array_unique($hashes)) . '}';
-		
-		if ($updated_since === null) {
-			$updated_since = new DateTime('2000-01-01');
-		}
-		
-		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL('MD5(LOWER(path)) = ANY($1)', 'min_version <= $2', 'last_update > $3'), $hash_list, $min_version, $updated_since->format('Y-m-d H:i:sO'));
-		return static::FromResults($results);
+		return parent::ListValueToParameter($value, $possible_columns);
 	}
 	
 	public function jsonSerialize() {
