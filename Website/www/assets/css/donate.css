@@ -1,0 +1,8 @@
+#stripe_amount_field {
+	max-width: 100px;
+	text-align: center;
+}
+
+#stripe_checkout_form {
+	display: none;
+}

@@ -372,6 +372,21 @@ div.patreon_box img {
 	max-width: 268px;
 }
 
+/* !Triple Column */
+
+div.triple_column {
+	display: table;
+	width: 100%;
+	border-spacing: 30px;
+	border-collapse: separate;
+}
+
+div.triple_column div.column {
+	display: table-row;
+	width: 100%;
+	vertical-align: top;
+}
+
 /* !Medium Screens */
 
 @media (min-width: 413px) {
@@ -401,5 +416,10 @@ div.patreon_box img {
 	
 	header div.inner {
 		height: 70px;
+	}
+	
+	div.triple_column div.column {
+		display: table-cell;
+		width: 33%;
 	}
 }

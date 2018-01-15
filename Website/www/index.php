@@ -1,7 +1,7 @@
 <?php
 
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
-BeaconTemplate::AddStylesheet('index.css');
+BeaconTemplate::AddStylesheet('/assets/css/index.css');
 BeaconTemplate::AddHeaderLine('<meta name="description" content="Using Ark\'s ConfigOverrideSupplyCrateItems to modify loot crate contents by hand is a maddening experience. Beacon makes it easy.">');
 
 ?><p class="text-center"><img id="hero" src="/assets/images/hero.svg"></p>
