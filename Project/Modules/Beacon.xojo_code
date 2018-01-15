@@ -164,6 +164,17 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function HasAllKeys(Extends Dict As Xojo.Core.Dictionary, ParamArray Keys() As Auto) As Boolean
+		  For Each Key As Auto In Keys
+		    If Not Dict.HasKey(Key) Then
+		      Return False
+		    End If
+		  Next
+		  Return True
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function IsBeaconURL(Extends Value As String) As Boolean
 		  Dim Prefix As String = URLScheme + "://"

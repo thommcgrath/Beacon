@@ -207,7 +207,7 @@ End
 		    Return
 		  End Try
 		  
-		  Dim Document As Beacon.Document = Beacon.Document.Read(TextValue)
+		  Dim Document As Beacon.Document = Beacon.Document.Read(TextValue, App.Identity)
 		  If Document = Nil Then
 		    // Cannot be parsed correctly
 		    Self.ShowAlert("Cannot open document", "Sorry, not sure what was downloaded, but it isn't a Beacon document.")

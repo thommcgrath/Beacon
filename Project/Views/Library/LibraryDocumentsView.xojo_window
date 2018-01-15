@@ -393,7 +393,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Document As Beacon.Document = Beacon.Document.Read(File)
+		  Dim Document As Beacon.Document = Beacon.Document.Read(File, App.Identity)
 		  If Document = Nil Then
 		    Self.ShowAlert("Unable to open document", "It doesn't appear to be a Beacon document.")
 		    Return

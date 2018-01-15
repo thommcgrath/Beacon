@@ -24,6 +24,18 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Decrypt(Data As Xojo.Core.MemoryBlock) As Xojo.Core.MemoryBlock
+		  Return Xojo.Crypto.RSADecrypt(Data, Self.mPrivateKey)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Encrypt(Data As Xojo.Core.MemoryBlock) As Xojo.Core.MemoryBlock
+		  Return Xojo.Crypto.RSAEncrypt(Data, Self.mPublicKey)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("Identifier") = Self.mIdentifier
