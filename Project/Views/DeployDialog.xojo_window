@@ -982,46 +982,49 @@ End
 		    End If
 		  Next
 		  
-		  Dim PrefixLines(), SectionLines(), SuffixLines() As String
-		  Dim PrefixMode As Boolean = True
-		  Dim SectionMode As Boolean = False
-		  Dim SuffixMode As Boolean = False
-		  For I As Integer = 0 To Lines.Ubound
-		    If Lines(I) = "[/script/shootergame.shootergamemode]" Then
-		      PrefixMode = False
-		      SectionMode = True
-		      SuffixMode = False
-		      PrefixLines.Append(Lines(I))
-		    ElseIf Lines(I).Left(1) = "[" And Lines(I).Right(1) = "]" And SectionMode = True Then
-		      PrefixMode = False
-		      SectionMode = False
-		      SuffixMode = True
-		      SuffixLines.Append(Lines(I))
-		    Else
-		      If PrefixMode Then
-		        PrefixLines.Append(Lines(I))
-		      ElseIf SectionMode Then
-		        SectionLines.Append(Lines(I))
-		      ElseIf SuffixMode Then
-		        SuffixLines.Append(Lines(I))
-		      End If
+		  Dim CurrentSection As String = ""
+		  Dim Sections As New Dictionary
+		  
+		  For Each Line As String In Lines
+		    If Line.Len = 0 Then
+		      Continue
 		    End If
+		    
+		    If Line.Len > 2 And Line.Left(1) = "[" And Line.Right(1) = "]" Then
+		      CurrentSection = Line.Mid(2, Line.Len - 2)
+		      Continue
+		    End If
+		    
+		    Dim SectionLines() As String
+		    If Sections.HasKey(CurrentSection) Then
+		      SectionLines = Sections.Value(CurrentSection)
+		    End If
+		    
+		    SectionLines.Append(Line)
+		    Sections.Value(CurrentSection) = SectionLines
 		  Next
 		  
-		  If PrefixMode Then
-		    // Section is not included in the file
-		    PrefixLines.Append("")
-		    PrefixLines.Append("[/script/shootergame.shootergamemode]")
+		  Dim LootLines() As String
+		  If Sections.HasKey("/script/shootergame.shootergamemode") Then
+		    LootLines = Sections.Value("/script/shootergame.shootergamemode")
 		  End If
-		  
 		  Dim LootSources() As Beacon.LootSource = Self.mDocument.LootSources
 		  For Each LootSource As Beacon.LootSource In LootSources
 		    If LootSource.ValidForMap(Self.mDocument.Map) Then
-		      SectionLines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Self.mDocument.DifficultyValue))
+		      LootLines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Self.mDocument.DifficultyValue))
 		    End If
 		  Next
+		  Sections.Value("/script/shootergame.shootergamemode") = LootLines
 		  
-		  Dim UpdatedContent As String = Join(PrefixLines, EOL).Trim + EOL + Join(SectionLines, EOL).Trim + if(SuffixLines.Ubound > -1, EOL + EOL, "") + Join(SuffixLines, EOL).Trim
+		  Dim Chunks() As String
+		  Dim Keys() As Variant = Sections.Keys
+		  For Each Key As Variant In Keys
+		    Dim Header As String = "[" + Key.StringValue + "]"
+		    Dim SectionLines() As String = Sections.Value(Key)
+		    Chunks.Append(Header + EOL + Join(SectionLines, EOL).Trim)
+		  Next
+		  
+		  Dim UpdatedContent As String = Join(Chunks, EOL + EOL).Trim + EOL
 		  
 		  Dim OutStream As TextOutputStream = TextOutputStream.Create(File)
 		  OutStream.Write(UpdatedContent)
