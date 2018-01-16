@@ -12,6 +12,8 @@ Protected Class Socket
 		  
 		  Self.ActiveRequest = Request
 		  
+		  Self.Socket.ClearRequestHeaders()
+		  
 		  Dim URL As Text = Request.URL
 		  If Request.Authenticated Then
 		    Self.Socket.RequestHeader("Authorization") = "Basic " + Beacon.EncodeBase64(Request.AuthUser + ":" + Request.AuthPassword, Xojo.Core.TextEncoding.UTF8)
