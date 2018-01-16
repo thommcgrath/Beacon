@@ -45,7 +45,7 @@ Begin Window DeployDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   4
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton IntroCancelButton
@@ -86,7 +86,7 @@ Begin Window DeployDialog
          Cancel          =   False
          Caption         =   "Next"
          Default         =   True
-         Enabled         =   False
+         Enabled         =   True
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
@@ -110,70 +110,6 @@ Begin Window DeployDialog
          Visible         =   True
          Width           =   80
       End
-      Begin Label PrivacyNotice
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   34
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   True
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   4
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "This feature requires FTP access. Your FTP credentials will be securely submitted to Beacon's server. They will not be saved, monitored, or logged in any way."
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   148
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   520
-      End
-      Begin RadioButton PublishChoiceRadio
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Let Beacon update the Game.ini on my servers"
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   2
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   116
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   560
-      End
       Begin RadioButton PublishChoiceRadio
          AutoDeactivate  =   True
          Bold            =   False
@@ -191,13 +127,13 @@ Begin Window DeployDialog
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   84
+         Top             =   162
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -220,13 +156,13 @@ Begin Window DeployDialog
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   52
+         Top             =   130
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -854,6 +790,70 @@ Begin Window DeployDialog
          Value           =   0
          Visible         =   True
          Width           =   560
+      End
+      Begin RadioButton PublishChoiceRadio
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Let Beacon update the Game.ini on my servers"
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   2
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   52
+         Underline       =   False
+         Value           =   True
+         Visible         =   True
+         Width           =   560
+      End
+      Begin Label PrivacyNotice
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   34
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   True
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "This feature requires FTP access. Your FTP credentials will be securely submitted to Beacon's server. They will not be saved, monitored, or logged in any way."
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   84
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   520
       End
    End
    Begin BeaconAPI.Socket APISocket
