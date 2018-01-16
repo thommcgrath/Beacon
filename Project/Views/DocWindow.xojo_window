@@ -627,11 +627,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Doc As Beacon.Document)
+		Sub Constructor(Doc As Beacon.Document, File As FolderItem = Nil)
 		  Self.Doc = Doc
+		  Self.File = File
 		  Super.Constructor
 		  Self.DocumentCounter = Self.DocumentCounter + 1
-		  If Doc.Title <> "" Then
+		  If File <> Nil Then
+		    Self.Title = File.DisplayName
+		  ElseIf Doc.Title <> "" Then
 		    Self.Title = Doc.Title
 		  Else
 		    Self.Title = "Untitled " + Str(Self.DocumentCounter, "-0")
