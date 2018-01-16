@@ -976,7 +976,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateFile(File As FolderItem)
 		  Dim OriginalContent As String
-		  Dim EOL As String = EndOfLine
+		  Dim EOL As String = Chr(13) + Chr(10)
 		  
 		  If File.Exists Then
 		    Dim InStream As TextInputStream = TextInputStream.Open(File)
@@ -995,6 +995,7 @@ End
 		  Dim Sections As New Dictionary
 		  
 		  For Each Line As String In Lines
+		    Line = Line.Trim
 		    If Line.Len = 0 Then
 		      Continue
 		    End If
