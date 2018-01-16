@@ -196,9 +196,14 @@ Inherits Application
 		    Next
 		    
 		    Self.AddToRecentDocuments(Item)
-		    Dim Win As New DocWindow(Item)
-		    Win.Show
-		    Return
+		    
+		    Dim Document As Beacon.Document = Beacon.Document.Read(Item, Self.Identity)
+		    If Document <> Nil Then
+		      Dim Win As New DocWindow(Document)
+		      Win.Title = Item.DisplayName
+		      Win.Show
+		      Return
+		    End If
 		  End If
 		  
 		  Dim Dialog As New MessageDialog

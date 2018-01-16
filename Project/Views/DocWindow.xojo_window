@@ -116,7 +116,6 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -163,7 +162,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -205,7 +203,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -634,24 +631,12 @@ End
 		  Self.Doc = Doc
 		  Super.Constructor
 		  Self.DocumentCounter = Self.DocumentCounter + 1
-		  Self.Title = "Untitled " + Str(Self.DocumentCounter, "-0")
-		  Self.ContentsChanged = False
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(File As FolderItem)
-		  If Not File.IsType(BeaconFileTypes.BeaconDocument) Then
-		    Raise New UnsupportedFormatException
+		  If Doc.Title <> "" Then
+		    Self.Title = Doc.Title
+		  Else
+		    Self.Title = "Untitled " + Str(Self.DocumentCounter, "-0")
 		  End If
-		  
-		  Self.File = File
-		  Self.Doc = Beacon.Document.Read(Self.File, App.Identity)
-		  Self.Title = File.Name
-		  Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
-		  
-		  Super.Constructor
+		  Self.ContentsChanged = False
 		End Sub
 	#tag EndMethod
 
