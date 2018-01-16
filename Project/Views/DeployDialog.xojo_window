@@ -45,7 +45,7 @@ Begin Window DeployDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   4
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton IntroCancelButton
@@ -510,7 +510,7 @@ Begin Window DeployDialog
       End
       Begin Label DownloadingMessageLabel
          AutoDeactivate  =   True
-         Bold            =   True
+         Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
@@ -537,30 +537,9 @@ Begin Window DeployDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   20
+         Top             =   91
          Transparent     =   True
          Underline       =   False
-         Visible         =   True
-         Width           =   560
-      End
-      Begin ProgressWheel DownloadingSpinner
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   162
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Top             =   52
          Visible         =   True
          Width           =   560
       End
@@ -698,7 +677,7 @@ Begin Window DeployDialog
       End
       Begin Label UploadingMessageLabel
          AutoDeactivate  =   True
-         Bold            =   True
+         Bold            =   False
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
@@ -725,30 +704,9 @@ Begin Window DeployDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   20
+         Top             =   91
          Transparent     =   True
          Underline       =   False
-         Visible         =   True
-         Width           =   560
-      End
-      Begin ProgressWheel UploadingSpinner
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   162
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   5
-         TabStop         =   True
-         Top             =   52
          Visible         =   True
          Width           =   560
       End
@@ -853,6 +811,50 @@ Begin Window DeployDialog
          Visible         =   True
          Width           =   560
       End
+      Begin ProgressBar DownloadingBar
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Maximum         =   0
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   3
+         Top             =   123
+         Value           =   0
+         Visible         =   True
+         Width           =   560
+      End
+      Begin ProgressBar UploadingBar
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Maximum         =   0
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   5
+         Top             =   123
+         Value           =   0
+         Visible         =   True
+         Width           =   560
+      End
    End
    Begin BeaconAPI.Socket APISocket
       Index           =   -2147483648
@@ -879,6 +881,18 @@ End
 	#tag Event
 		Sub Open()
 		  Self.SwapButtons()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  Self.Resize()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resizing()
+		  Self.Resize()
 		End Sub
 	#tag EndEvent
 
@@ -941,6 +955,18 @@ End
 		  Win.mDocument = Document
 		  Win.mParentWindow = Parent
 		  Win.ShowModalWithin(Parent)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Resize()
+		  Dim DownloadingContentHeight As Integer = Self.DownloadingMessageLabel.Height + 12 + Self.DownloadingBar.Height
+		  Dim DownloadingContentTop As Integer = (Self.Height - DownloadingContentHeight) / 2
+		  Self.DownloadingMessageLabel.Top = DownloadingContentTop
+		  Self.DownloadingBar.Top = DownloadingContentTop + Self.DownloadingMessageLabel.Height + 12
+		  
+		  Self.UploadingMessageLabel.Top = Self.DownloadingMessageLabel.Top
+		  Self.UploadingBar.Top = Self.DownloadingBar.Top
 		End Sub
 	#tag EndMethod
 
