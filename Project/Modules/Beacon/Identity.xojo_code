@@ -25,7 +25,12 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Function Decrypt(Data As Xojo.Core.MemoryBlock) As Xojo.Core.MemoryBlock
-		  Return Xojo.Crypto.RSADecrypt(Data, Self.mPrivateKey)
+		  Try
+		    Dim Decrypted As Xojo.Core.MemoryBlock = Xojo.Crypto.RSADecrypt(Data, Self.mPrivateKey)
+		    Return Decrypted
+		  Catch Err As Xojo.Crypto.CryptoException
+		    Return Nil
+		  End Try
 		End Function
 	#tag EndMethod
 

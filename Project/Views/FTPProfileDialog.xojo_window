@@ -273,7 +273,7 @@ Begin Window FTPProfileDialog
       LockRight       =   True
       LockTop         =   True
       Mask            =   ""
-      Password        =   False
+      Password        =   True
       ReadOnly        =   False
       Scope           =   2
       TabIndex        =   6

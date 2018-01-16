@@ -45,7 +45,7 @@ Begin Window DeployDialog
       TabIndex        =   7
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   5
+      Value           =   1
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton IntroCancelButton
@@ -600,7 +600,7 @@ Begin Window DeployDialog
          ButtonStyle     =   "0"
          Cancel          =   False
          Caption         =   "Deploy"
-         Default         =   False
+         Default         =   True
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
@@ -1144,19 +1144,11 @@ End
 #tag Events AddServerButton
 	#tag Event
 		Sub Action()
-		  #if TargetWin32
-		    Self.Hide()
-		  #endif
-		  
 		  Dim Profile As Beacon.FTPProfile = FTPProfileDialog.Present()
 		  If Profile <> Nil Then
 		    Self.mDocument.AddFTPProfile(Profile)
 		    Self.UpdateCredentialsList(Profile)
 		  End If
-		  
-		  #if TargetWin32
-		    Self.ShowModalWithin(Self.mParentWindow)
-		  #endif
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -36,12 +36,10 @@ Protected Class FTPProfile
 		    Return Nil
 		  End If
 		  
-		  Dim Pass As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Dict.Value("Pass"))
-		  Try
-		    Pass = Identity.Decrypt(Pass)
-		  Catch Err As RuntimeException
+		  Dim Pass As Xojo.Core.MemoryBlock = Identity.Decrypt(Beacon.DecodeHex(Dict.Value("Pass")))
+		  If Pass = Nil Then
 		    Return Nil
-		  End Try
+		  End If
 		  
 		  Dim Profile As New Beacon.FTPProfile
 		  Profile.Host = Dict.Value("Host")
@@ -141,6 +139,11 @@ Protected Class FTPProfile
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Host"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -161,6 +164,21 @@ Protected Class FTPProfile
 			Type="String"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Password"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Path"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Port"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
@@ -172,6 +190,11 @@ Protected Class FTPProfile
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Username"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
