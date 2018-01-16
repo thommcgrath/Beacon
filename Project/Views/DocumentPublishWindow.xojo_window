@@ -110,6 +110,7 @@ Begin Window DocumentPublishWindow
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Publish Document"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -144,6 +145,7 @@ Begin Window DocumentPublishWindow
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Share Beacon documents online! Other Beacon users will be able to browse and load documents for deployment to other servers."
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -220,6 +222,7 @@ Begin Window DocumentPublishWindow
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Title:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -301,6 +304,7 @@ Begin Window DocumentPublishWindow
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Description:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -379,9 +383,6 @@ End
 	#tag Event
 		Sub Open()
 		  Self.SwapButtons()
-		  
-		  Dim Request As New BeaconAPI.Request("user.php/" + App.Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
-		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent
 
@@ -397,38 +398,6 @@ End
 		  
 		  Self.mCancelled = False
 		  Self.Hide
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_UserLookup(Success As Boolean, Message As Text, Details As Auto)
-		  #Pragma Unused Message
-		  #Pragma Unused Details
-		  
-		  If Success Then
-		    // Already exists
-		    Return
-		  End If
-		  
-		  // Create the user
-		  
-		  Dim Params As New Xojo.Core.Dictionary
-		  Params.Value("user_id") = App.Identity.Identifier
-		  Params.Value("public_key") = App.Identity.PublicKey
-		  
-		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
-		  Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
-		  Self.Socket.Start(Request)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
-		  #Pragma Unused Details
-		  
-		  If Not Success Then
-		    Self.ShowAlert("User profile was not saved to the server. API access is limited.", Message)
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -474,10 +443,6 @@ End
 		  Self.mDocument.IsPublic = Self.PublicCheck.Value
 		  
 		  Dim Dict As Xojo.Core.Dictionary = Self.mDocument.Export(App.Identity)
-		  If Dict.HasKey("FTPServers") Then
-		    Dict.Remove("FTPServers")
-		  End If
-		  
 		  Dim Body As Text = Xojo.Data.GenerateJSON(Dict)
 		  
 		  Dim Request As New BeaconAPI.Request("document.php", "POST", Body, "application/json", AddressOf APICallback_DocumentPost)

@@ -259,9 +259,6 @@ End
 	#tag Event
 		Sub Open()
 		  Self.RecallPosition("Developer Window Position")
-		  
-		  Dim Request As New BeaconAPI.Request("user.php/" + App.Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
-		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent
 
@@ -282,41 +279,6 @@ End
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_UserLookup(Success As Boolean, Message As Text, Details As Auto)
-		  #Pragma Unused Message
-		  #Pragma Unused Details
-		  
-		  If Success Then
-		    // Already exists
-		    Self.ModsView.SetReady()
-		    Return
-		  End If
-		  
-		  // Create the user
-		  
-		  Dim Params As New Xojo.Core.Dictionary
-		  Params.Value("user_id") = App.Identity.Identifier
-		  Params.Value("public_key") = App.Identity.PublicKey
-		  
-		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
-		  Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
-		  Self.Socket.Start(Request)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
-		  #Pragma Unused Details
-		  
-		  If Success Then
-		    Self.ModsView.SetReady()
-		  Else
-		    Self.ShowAlert("User profile was not saved to the server. API access is limited.", Message)
-		  End If
-		End Sub
-	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Shared Function SharedWindow(Create As Boolean = True) As DeveloperWindow

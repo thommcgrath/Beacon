@@ -30,14 +30,41 @@ Protected Class FTPProfile
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Shared Function FromDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity) As Beacon.FTPProfile
-		  If Not Dict.HasAllKeys("Host", "Port", "User", "Pass", "Path") Then
+		  If Not Dict.HasAllKeys("Key", "Vector", "Details") Then
 		    Return Nil
 		  End If
 		  
-		  Dim Pass As Xojo.Core.MemoryBlock = Identity.Decrypt(Beacon.DecodeHex(Dict.Value("Pass")))
-		  If Pass = Nil Then
+		  Dim Key As Xojo.Core.MemoryBlock = Identity.Decrypt(Beacon.DecodeHex(Dict.Value("Key")))
+		  If Key = Nil Then
+		    Return Nil
+		  End If
+		  Dim Vector As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Dict.Value("Vector"))
+		  Dim Encrypted As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Dict.Value("Details"))
+		  Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
+		  AES.SetKey(CType(Key.Data, MemoryBlock).StringValue(0, Key.Size))
+		  AES.SetInitialVector(CType(Vector.Data, MemoryBlock).StringValue(0, Vector.Size))
+		  
+		  Dim Decrypted As String
+		  Try
+		    Decrypted = AES.DecryptCBC(CType(Encrypted.Data, MemoryBlock).StringValue(0, Encrypted.Size))
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		  
+		  If Decrypted = "" Or Not Encodings.UTF8.IsValidData(Decrypted) Then
+		    Return Nil
+		  End If
+		  Decrypted = Decrypted.DefineEncoding(Encodings.UTF8)
+		  
+		  Try
+		    Dict = Xojo.Data.ParseJSON(Decrypted.ToText)
+		  Catch Err As Xojo.Data.InvalidJSONException
+		    Return Nil
+		  End Try
+		  
+		  If Not Dict.HasAllKeys("Host", "Port", "User", "Pass", "Path") Then
 		    Return Nil
 		  End If
 		  
@@ -45,7 +72,7 @@ Protected Class FTPProfile
 		  Profile.Host = Dict.Value("Host")
 		  Profile.Port = Dict.Value("Port")
 		  Profile.Username = Dict.Value("User")
-		  Profile.Password = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Pass)
+		  Profile.Password = Dict.Value("Pass")
 		  Profile.Path = Dict.Value("Path")
 		  Return Profile
 		End Function
@@ -83,14 +110,28 @@ Protected Class FTPProfile
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ToDictionary(Identity As Beacon.Identity) As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("Host") = Self.Host
 		  Dict.Value("Port") = Self.Port
 		  Dict.Value("User") = Self.Username
-		  Dict.Value("Pass") = Beacon.EncodeHex(Identity.Encrypt(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Self.Password)))
+		  Dict.Value("Pass") = Self.Password
 		  Dict.Value("Path") = Self.Path
+		  Dim Content As String = Xojo.Data.GenerateJSON(Dict)
+		  
+		  Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
+		  Dim Key As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(128)
+		  Dim Vector As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)
+		  AES.SetKey(CType(Key.Data, MemoryBlock).StringValue(0, Key.Size))
+		  AES.SetInitialVector(CType(Vector.Data, MemoryBlock).StringValue(0, Vector.Size))
+		  Dim Encrypted As String = AES.EncryptCBC(Content)
+		  
+		  Dict = New Xojo.Core.Dictionary
+		  Dict.Value("Key") = Beacon.EncodeHex(Identity.Encrypt(Key))
+		  Dict.Value("Vector") = Beacon.EncodeHex(Vector)
+		  Dict.Value("Details") = EncodeHex(Encrypted).ToText
+		  
 		  Return Dict
 		End Function
 	#tag EndMethod

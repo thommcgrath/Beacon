@@ -631,8 +631,8 @@ Inherits Application
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub PublishIdentity()
+	#tag Method, Flags = &h0
+		Sub PublishIdentity()
 		  Self.mAPISocket = New BeaconAPI.Socket
 		  
 		  Dim Request As New BeaconAPI.Request("user.php/" + Self.mIdentity.Identifier, "GET", AddressOf APICallback_UserLookup)

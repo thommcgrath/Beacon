@@ -1,3 +1,6 @@
 [submodule "Website/framework/stripe"]
 	path = Website/framework/stripe
 	url = https://github.com/stripe/stripe-php.git
+[submodule "M_Crypto"]
+	path = M_Crypto
+	url = https://github.com/ktekinay/M_Crypto.git
