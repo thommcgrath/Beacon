@@ -21,7 +21,7 @@ Protected Class FTPProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Description() As Text
+		Function DescriptiveHost() As Text
 		  Dim Output As Text = Self.Username + "@" + Self.Host
 		  If Self.Port <> 21 Then
 		    Output = Output + ":" + Self.Port.ToText
@@ -64,7 +64,7 @@ Protected Class FTPProfile
 		    Return Nil
 		  End Try
 		  
-		  If Not Dict.HasAllKeys("Host", "Port", "User", "Pass", "Path") Then
+		  If Not Dict.HasAllKeys("Host", "Port", "User", "Pass", "Path", "Description") Then
 		    Return Nil
 		  End If
 		  
@@ -74,6 +74,7 @@ Protected Class FTPProfile
 		  Profile.Username = Dict.Value("User")
 		  Profile.Password = Dict.Value("Pass")
 		  Profile.Path = Dict.Value("Path")
+		  Profile.Description = Dict.Value("Description")
 		  Return Profile
 		End Function
 	#tag EndMethod
@@ -94,7 +95,7 @@ Protected Class FTPProfile
 		    Return 0
 		  End If
 		  
-		  Return Self.Description.Compare(Other.Description)
+		  Return Self.DescriptiveHost.Compare(Other.DescriptiveHost)
 		End Function
 	#tag EndMethod
 
@@ -118,6 +119,7 @@ Protected Class FTPProfile
 		  Dict.Value("User") = Self.Username
 		  Dict.Value("Pass") = Self.Password
 		  Dict.Value("Path") = Self.Path
+		  Dict.Value("Description") = Self.Description
 		  Dim Content As String = Xojo.Data.GenerateJSON(Dict)
 		  
 		  Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
@@ -136,6 +138,10 @@ Protected Class FTPProfile
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h0
+		Description As Text
+	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		Host As Text

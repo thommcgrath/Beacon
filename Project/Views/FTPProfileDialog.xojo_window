@@ -9,7 +9,7 @@ Begin Window FTPProfileDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   262
+   Height          =   296
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -46,13 +46,13 @@ Begin Window FTPProfileDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   222
+      Top             =   256
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -77,13 +77,13 @@ Begin Window FTPProfileDialog
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   222
+      Top             =   256
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -108,8 +108,9 @@ Begin Window FTPProfileDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "FTP Server Settings"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -150,7 +151,7 @@ Begin Window FTPProfileDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -158,7 +159,7 @@ Begin Window FTPProfileDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   52
+      Top             =   86
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -188,11 +189,11 @@ Begin Window FTPProfileDialog
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   "####0"
+      Mask            =   "#####"
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "21"
@@ -200,7 +201,7 @@ Begin Window FTPProfileDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   86
+      Top             =   120
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -234,7 +235,7 @@ Begin Window FTPProfileDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -242,7 +243,7 @@ Begin Window FTPProfileDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   120
+      Top             =   154
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -276,7 +277,7 @@ Begin Window FTPProfileDialog
       Password        =   True
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -284,7 +285,7 @@ Begin Window FTPProfileDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   154
+      Top             =   188
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -318,7 +319,7 @@ Begin Window FTPProfileDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -326,7 +327,7 @@ Begin Window FTPProfileDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   188
+      Top             =   222
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -352,13 +353,13 @@ Begin Window FTPProfileDialog
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   222
+      Top             =   256
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -383,15 +384,16 @@ Begin Window FTPProfileDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Hostname:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   52
+      Top             =   86
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -417,15 +419,16 @@ Begin Window FTPProfileDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   10
+      TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Port:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   86
+      Top             =   120
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -451,15 +454,16 @@ Begin Window FTPProfileDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   11
+      TabIndex        =   7
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Username:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   120
+      Top             =   154
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -485,15 +489,16 @@ Begin Window FTPProfileDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   12
+      TabIndex        =   9
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Password:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   154
+      Top             =   188
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -519,15 +524,16 @@ Begin Window FTPProfileDialog
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   13
+      TabIndex        =   11
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "File Path:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   188
+      Top             =   222
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -553,12 +559,89 @@ Begin Window FTPProfileDialog
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   14
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   313
       Visible         =   False
       Width           =   16
+   End
+   Begin UITweaks.ResizedTextField DescriptionField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   128
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   52
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   382
+   End
+   Begin UITweaks.ResizedLabel DescriptionLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Description:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   52
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   96
    End
 End
 #tag EndWindow
@@ -592,6 +675,7 @@ End
 		    Win.UserField.Text = EditProfile.Username
 		    Win.PassField.Text = EditProfile.Password
 		    Win.PathField.Text = EditProfile.Path
+		    Win.DescriptionField.Text = EditProfile.Description
 		  End If
 		  Win.ShowModal()
 		  
@@ -614,6 +698,7 @@ End
 		  Profile.Username = Self.UserField.Text.ToText
 		  Profile.Password = Self.PassField.Text.ToText
 		  Profile.Path = Self.PathField.Text.ToText
+		  Profile.Description = Self.DescriptionField.Text.ToText
 		  Return Profile
 		End Function
 	#tag EndMethod
@@ -708,6 +793,13 @@ End
 		  Self.Spinner.Visible = True
 		  Self.Spinner.Top = Self.Height - (20 + Self.Spinner.Height)
 		  Self.Spinner.Left = 20
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DescriptionField
+	#tag Event
+		Sub TextChange()
+		  Self.CheckEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
