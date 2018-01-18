@@ -19,12 +19,18 @@ if (strtolower(substr($ftp_path, -4)) != '.ini') {
 	BeaconAPI::ReplyError('Requested file does not appear to be an ini file.', array('ref' => $ref, 'path' => $ftp_path), 500);
 }
 
-$connection = ftp_connect($ftp_host, $ftp_port);
+$connection = ftp_ssl_connect($ftp_host, $ftp_port);
 if ($connection === false) {
 	BeaconAPI::ReplyError('Unable to connect to host.', array('ref' => $ref, 'host' => $ftp_host . ':' . $ftp_port), 500);
 }
 if (!@ftp_login($connection, $ftp_user, $ftp_pass)) {
-	BeaconAPI::ReplyError('Unable to authenticate with host.', array('ref' => $ref), 500);
+	$connection = ftp_connect($ftp_host, $ftp_port);
+	if ($connection === false) {
+		BeaconAPI::ReplyError('Unable to connect to host.', array('ref' => $ref, 'host' => $ftp_host . ':' . $ftp_port), 500);
+	}
+	if (!@ftp_login($connection, $ftp_user, $ftp_pass)) {
+		BeaconAPI::ReplyError('Unable to authenticate with host.', array('ref' => $ref), 500);
+	}
 }
 ftp_pasv($connection, true);
 
