@@ -47,6 +47,7 @@ Begin BeaconSubview DeveloperIdentityView
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "User ID:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -175,6 +176,7 @@ Begin BeaconSubview DeveloperIdentityView
       Selectable      =   False
       TabIndex        =   4
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Public Key:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -209,6 +211,7 @@ Begin BeaconSubview DeveloperIdentityView
       Selectable      =   False
       TabIndex        =   7
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Private Key:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -338,6 +341,7 @@ Begin BeaconSubview DeveloperIdentityView
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "This is how you are identified to the Beacon server. Your documents and registered mods are bound to this key pair and cannot be replaced if lost. So if you use these features, you are strongly recommended to backup this identity. You can also use the backup and restore buttons to move this identity to another computer. But keep it private like a password.\n\nThese keys are also used for API authentication. See the API Guide for more information about the Beacon API."
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -413,38 +417,6 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_UserLookup(Success As Boolean, Message As Text, Details As Auto)
-		  #Pragma Unused Message
-		  #Pragma Unused Details
-		  
-		  If Success Then
-		    // Already exists
-		    Return
-		  End If
-		  
-		  // Create the user
-		  
-		  Dim Params As New Xojo.Core.Dictionary
-		  Params.Value("user_id") = App.Identity.Identifier
-		  Params.Value("public_key") = App.Identity.PublicKey
-		  
-		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
-		  Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
-		  Self.Socket.Start(Request)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
-		  #Pragma Unused Details
-		  
-		  If Not Success Then
-		    Self.ShowAlert("User profile was not saved to the server. API access is limited.", Message)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Function ExportPrivateKey(Key As Text) As String
 		  Dim Contents As String = "-----BEGIN RSA PRIVATE KEY-----" + EndOfLine + EncodeBase64(Crypto.DEREncodePrivateKey(Key), 64) + EndOfLine + "-----END RSA PRIVATE KEY-----"
 		  Return ReplaceLineEndings(Contents, EndOfLine.UNIX)
@@ -495,8 +467,7 @@ End
 		  Dim Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
 		  App.Identity = Identity
 		  Self.UpdateUI(Identity)
-		  Dim Request As New BeaconAPI.Request("user.php/" + Identity.Identifier, "GET", AddressOf APICallback_UserLookup)
-		  Self.Socket.Start(Request)
+		  App.PublishIdentity()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

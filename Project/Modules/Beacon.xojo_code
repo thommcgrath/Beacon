@@ -195,6 +195,15 @@ Protected Module Beacon
 		    End If
 		  Next
 		  Return -1
+		  End Function
+		  
+		  Function HasAllKeys(Extends Dict As Xojo.Core.Dictionary, ParamArray Keys() As Auto) As Boolean
+		    For Each Key As Auto In Keys
+		      If Not Dict.HasKey(Key) Then
+		        Return False
+		      End If
+		    Next
+		    Return True
 		End Function
 	#tag EndMethod
 

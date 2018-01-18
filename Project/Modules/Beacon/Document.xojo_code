@@ -14,6 +14,21 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AddFTPProfile(Profile As Beacon.FTPProfile)
+		  Dim Hash As Text = Profile.Hash
+		  
+		  For I As Integer = 0 To Self.mFTPProfiles.Ubound
+		    If Self.mFTPProfiles(I).Hash = Hash Then
+		      Return
+		    End If
+		  Next
+		  
+		  Self.mFTPProfiles.Append(New Beacon.FTPProfile(Profile))
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BeaconCount() As Integer
 		  Return UBound(Self.mLootSources) + 1
 		End Function
@@ -36,7 +51,7 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Export() As Xojo.Core.Dictionary
+		Function Export(Identity As Beacon.Identity) As Xojo.Core.Dictionary
 		  Dim Document As New Xojo.Core.Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
 		  Document.Value("Identifier") = Self.Identifier
@@ -53,7 +68,39 @@ Implements Beacon.DocumentItem
 		    Document.Value("DifficultyValue") = Self.DifficultyValue
 		  End If
 		  
+		  Dim Profiles() As Xojo.Core.Dictionary
+		  For Each Profile As Beacon.FTPProfile In Self.mFTPProfiles
+		    Profiles.Append(Profile.ToDictionary(Identity))
+		  Next
+		  Document.Value("FTPServers") = Profiles
+		  
 		  Return Document
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FTPProfile(Index As Integer) As Beacon.FTPProfile
+		  Return New Beacon.FTPProfile(Self.mFTPProfiles(Index))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub FTPProfile(Index As Integer, Assigns Profile As Beacon.FTPProfile)
+		  Dim Hash As Text = Profile.Hash
+		  For I As Integer = 0 To Self.mFTPProfiles.Ubound
+		    If Self.mFTPProfiles(I).Hash = Hash Then
+		      Return
+		    End If
+		  Next
+		  
+		  Self.mFTPProfiles(Index) = New Beacon.FTPProfile(Profile)
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function FTPProfileCount() As Integer
+		  Return Self.mFTPProfiles.Ubound + 1
 		End Function
 	#tag EndMethod
 
@@ -85,7 +132,6 @@ Implements Beacon.DocumentItem
 		    If Not Self.SupportsLootSource(Source) Then
 		      Return False
 		    End If
-		    
 		    If Not Source.IsValid Then
 		      Return False
 		    End If
@@ -160,17 +206,17 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Shared Function Read(File As Global.FolderItem) As Beacon.Document
+		Shared Function Read(File As Global.FolderItem, Identity As Beacon.Identity) As Beacon.Document
 		  Dim Stream As TextInputStream = TextInputStream.Open(File)
 		  Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
 		  Stream.Close
 		  
-		  Return Beacon.Document.Read(Contents.ToText)
+		  Return Beacon.Document.Read(Contents.ToText, Identity)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Read(Contents As Text) As Beacon.Document
+		Shared Function Read(Contents As Text, Identity As Beacon.Identity) As Beacon.Document
 		  Dim Parsed As Auto
 		  Try
 		    Parsed = Xojo.Data.ParseJSON(Contents)
@@ -214,6 +260,15 @@ Implements Beacon.DocumentItem
 		        Doc.DifficultyValue = Dict.Value("DifficultyValue")
 		      Else
 		        Doc.mDifficultyValue = -1
+		      End If
+		      If Dict.HasKey("FTPServers") Then
+		        Dim ServerDicts() As Auto = Dict.Value("FTPServers")
+		        For Each ServerDict As Xojo.Core.Dictionary In ServerDicts
+		          Dim Profile As Beacon.FTPProfile = Beacon.FTPProfile.FromDictionary(ServerDict, Identity)
+		          If Profile <> Nil Then
+		            Doc.mFTPProfiles.Append(Profile)
+		          End If
+		        Next
 		      End If
 		    Catch Err As RuntimeException
 		      // Likely a KeyNotFoundException or TypeMismatchException, either way, we can't handle it
@@ -270,14 +325,14 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Shared Function Read(File As Xojo.IO.FolderItem) As Beacon.Document
+		Shared Function Read(File As Xojo.IO.FolderItem, Identity As Beacon.Identity) As Beacon.Document
 		  Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(File, Xojo.IO.BinaryStream.LockModes.Read)
 		  Dim Data As Xojo.Core.MemoryBlock = Stream.Read(Stream.Length)
 		  Stream.Close
 		  
 		  Dim Contents As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Data)
 		  
-		  Return Beacon.Document.Read(Contents)
+		  Return Beacon.Document.Read(Contents, Identity)
 		End Function
 	#tag EndMethod
 
@@ -298,6 +353,19 @@ Implements Beacon.DocumentItem
 		  For I As Integer = 0 To UBound(Self.mLootSources)
 		    If Self.mLootSources(I) = LootSource Then
 		      Self.mLootSources.Remove(I)
+		      Self.mModified = True
+		      Return
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveFTPProfile(Profile As Beacon.FTPProfile)
+		  Dim Hash As Text = Profile.Hash
+		  For I As Integer = 0 To Self.mFTPProfiles.Ubound
+		    If Self.mFTPProfiles(I).Hash = Hash Then
+		      Self.mFTPProfiles.Remove(I)
 		      Self.mModified = True
 		      Return
 		    End If
@@ -410,6 +478,10 @@ Implements Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mFTPProfiles() As Beacon.FTPProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mIdentifier As Text
 	#tag EndProperty
 
@@ -486,6 +558,11 @@ Implements Beacon.DocumentItem
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MapCompatibility"
+			Group="Behavior"
+			Type="UInt64"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"

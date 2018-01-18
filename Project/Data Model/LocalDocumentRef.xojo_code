@@ -34,7 +34,7 @@ Implements Beacon.DocumentRef
 
 	#tag Method, Flags = &h0
 		Shared Function Import(File As FolderItem) As LocalDocumentRef
-		  Dim Document As Beacon.Document = Beacon.Document.Read(File)
+		  Dim Document As Beacon.Document = Beacon.Document.Read(File, App.Identity)
 		  If Document = Nil Then
 		    Return Nil
 		  End If
@@ -78,11 +78,6 @@ Implements Beacon.DocumentRef
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mDocumentID"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty

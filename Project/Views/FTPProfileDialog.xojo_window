@@ -1,20 +1,20 @@
 #tag Window
-Begin Window DocumentPublishWindow
+Begin Window FTPProfileDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   8
+   Frame           =   1
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   340
+   Height          =   296
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
    MaxHeight       =   32000
-   MaximizeButton  =   True
+   MaximizeButton  =   False
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
@@ -22,16 +22,16 @@ Begin Window DocumentPublishWindow
    MinimizeButton  =   False
    MinWidth        =   64
    Placement       =   1
-   Resizeable      =   True
-   Title           =   "Publish"
+   Resizeable      =   False
+   Title           =   "FTP Server"
    Visible         =   True
-   Width           =   500
+   Width           =   530
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
       Cancel          =   False
-      Caption         =   "Publish"
+      Caption         =   "OK"
       Default         =   True
       Enabled         =   False
       Height          =   20
@@ -39,20 +39,20 @@ Begin Window DocumentPublishWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   400
-      LockBottom      =   True
+      Left            =   430
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   False
+      LockTop         =   True
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   300
+      Top             =   256
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -70,20 +70,20 @@ Begin Window DocumentPublishWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   308
-      LockBottom      =   True
+      Left            =   338
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
-      LockTop         =   False
+      LockTop         =   True
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   300
+      Top             =   256
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -111,7 +111,7 @@ Begin Window DocumentPublishWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Publish Document"
+      Text            =   "FTP Server Settings"
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -121,44 +121,9 @@ Begin Window DocumentPublishWindow
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   460
+      Width           =   490
    End
-   Begin Label ExplanationLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   36
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   True
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Share Beacon documents online! Other Beacon users will be able to browse and load documents for deployment to other servers."
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   52
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   460
-   End
-   Begin UITweaks.ResizedTextField TitleField
+   Begin UITweaks.ResizedTextField HostField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
@@ -175,7 +140,7 @@ Begin Window DocumentPublishWindow
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   110
+      Left            =   128
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -186,7 +151,7 @@ Begin Window DocumentPublishWindow
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -194,13 +159,212 @@ Begin Window DocumentPublishWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   100
+      Top             =   86
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   370
+      Width           =   382
    End
-   Begin Label TitleLabel
+   Begin UITweaks.ResizedTextField PortField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   128
+      LimitText       =   5
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Mask            =   "#####"
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "21"
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   120
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   83
+   End
+   Begin UITweaks.ResizedTextField UserField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   128
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   154
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   382
+   End
+   Begin UITweaks.ResizedTextField PassField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   128
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   True
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   188
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   382
+   End
+   Begin UITweaks.ResizedTextField PathField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   128
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   222
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   382
+   End
+   Begin UITweaks.ResizedPushButton TestButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Test"
+      Default         =   False
+      Enabled         =   False
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   13
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   256
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedLabel HostLabel
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
@@ -220,75 +384,28 @@ Begin Window DocumentPublishWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Title:"
+      Text            =   "Hostname:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   101
+      Top             =   86
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   78
+      Width           =   96
    End
-   Begin TextArea DescriptionField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   True
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   122
-      HelpTag         =   ""
-      HideSelection   =   True
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   110
-      LimitText       =   0
-      LineHeight      =   0.0
-      LineSpacing     =   1.0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Multiline       =   True
-      ReadOnly        =   False
-      Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollbarVertical=   True
-      Styled          =   True
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   134
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   370
-   End
-   Begin Label DescriptionLabel
+   Begin UITweaks.ResizedLabel PortLabel
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      Height          =   20
+      Height          =   22
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -302,20 +419,131 @@ Begin Window DocumentPublishWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Description:"
+      Text            =   "Port:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   135
+      Top             =   120
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   78
+      Width           =   96
+   End
+   Begin UITweaks.ResizedLabel UserLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Username:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   154
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   96
+   End
+   Begin UITweaks.ResizedLabel PasswordLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Password:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   188
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   96
+   End
+   Begin UITweaks.ResizedLabel PathLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "File Path:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   222
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   96
+   End
+   Begin BeaconAPI.Socket APISocket
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
    End
    Begin ProgressWheel Spinner
       AutoDeactivate  =   True
@@ -324,102 +552,154 @@ Begin Window DocumentPublishWindow
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   304
-      Visible         =   False
-      Width           =   16
-   End
-   Begin BeaconAPI.Socket Socket
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   0
-      TabPanelIndex   =   0
-   End
-   Begin CheckBox PublicCheck
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "List this document publicly in the document browser"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   110
+      Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      State           =   0
-      TabIndex        =   9
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
+      Top             =   313
+      Visible         =   False
+      Width           =   16
+   End
+   Begin UITweaks.ResizedTextField DescriptionField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   128
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   268
+      Top             =   52
       Underline       =   False
-      Value           =   False
+      UseFocusRing    =   True
       Visible         =   True
-      Width           =   370
+      Width           =   382
+   End
+   Begin UITweaks.ResizedLabel DescriptionLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Description:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   52
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   96
    End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Event
-		Sub Open()
-		  Self.SwapButtons()
-		End Sub
-	#tag EndEvent
-
-
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentPost(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_FTPDownload(Success As Boolean, Message As Text, Details As Auto)
 		  #Pragma Unused Details
 		  
-		  If Not Success Then
-		    Self.ShowAlert("Unable to publish document", "The document was not saved. The server said """ + Message + """")
-		    Return
+		  If Success Then
+		    Self.ShowAlert("Success", "Your Game.ini file was downloaded from the server!")
+		  Else
+		    Self.ShowAlert("Something is wrong", "Server said '" + Message + "'")
 		  End If
-		  
-		  Self.mCancelled = False
-		  Self.Hide
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub CheckEnabled()
-		  Self.ActionButton.Enabled = Self.Spinner.Visible = False And Self.TitleField.Text <> "" And Self.DescriptionField.Text <> ""
-		  Self.CancelButton.Enabled = Self.Spinner.Visible = False
+		  ActionButton.Enabled = HostField.Text <> "" And PortField.Text <> "" And UserField.Text <> "" And PassField.Text <> "" And PathField.Text <> ""
+		  TestButton.Enabled = ActionButton.Enabled
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Document As Beacon.Document) As Boolean
-		  Dim Win As New DocumentPublishWindow
-		  Win.mDocument = Document
-		  Win.TitleField.Text = Document.Title
-		  Win.DescriptionField.Text = Document.Description
-		  Win.PublicCheck.Value = Document.IsPublic
-		  Win.CheckEnabled()
-		  Win.ShowModalWithin(Parent)
-		  Dim Cancelled As Boolean = Win.mCancelled
+		Shared Function Present(EditProfile As Beacon.FTPProfile = Nil) As Beacon.FTPProfile
+		  Dim Win As New FTPProfileDialog
+		  If EditProfile <> Nil Then
+		    Win.HostField.Text = EditProfile.Host
+		    Win.PortField.Text = EditProfile.Port.ToText
+		    Win.UserField.Text = EditProfile.Username
+		    Win.PassField.Text = EditProfile.Password
+		    Win.PathField.Text = EditProfile.Path
+		    Win.DescriptionField.Text = EditProfile.Description
+		  End If
+		  Win.ShowModal()
+		  
+		  If Win.mCancelled Then
+		    Win.Close
+		    Return Nil
+		  End If
+		  
+		  Dim Profile As Beacon.FTPProfile = Win.Profile
 		  Win.Close
-		  Return Not Cancelled
+		  Return Profile
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function Profile() As Beacon.FTPProfile
+		  Dim Profile As New Beacon.FTPProfile
+		  Profile.Host = Self.HostField.Text.ToText
+		  Profile.Port = CDbl(Self.PortField.Text)
+		  Profile.Username = Self.UserField.Text.ToText
+		  Profile.Password = Self.PassField.Text.ToText
+		  Profile.Path = Self.PathField.Text.ToText
+		  Profile.Description = Self.DescriptionField.Text.ToText
+		  Return Profile
 		End Function
 	#tag EndMethod
 
@@ -428,26 +708,14 @@ End
 		Private mCancelled As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mDocument As Beacon.Document
-	#tag EndProperty
-
 
 #tag EndWindowCode
 
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Self.mDocument.Title = Self.TitleField.Text.ToText
-		  Self.mDocument.Description = Self.DescriptionField.Text.ToText
-		  Self.mDocument.IsPublic = Self.PublicCheck.Value
-		  
-		  Dim Dict As Xojo.Core.Dictionary = Self.mDocument.Export(App.Identity)
-		  Dim Body As Text = Xojo.Data.GenerateJSON(Dict)
-		  
-		  Dim Request As New BeaconAPI.Request("document.php", "POST", Body, "application/json", AddressOf APICallback_DocumentPost)
-		  Request.Sign(App.Identity)
-		  Self.Socket.Start(Request)
+		  Self.mCancelled = False
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -459,30 +727,78 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events TitleField
+#tag Events HostField
 	#tag Event
 		Sub TextChange()
 		  Self.CheckEnabled()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PortField
+	#tag Event
+		Sub TextChange()
+		  Self.CheckEnabled()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events UserField
+	#tag Event
+		Sub TextChange()
+		  Self.CheckEnabled()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PassField
+	#tag Event
+		Sub TextChange()
+		  Self.CheckEnabled()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events PathField
+	#tag Event
+		Sub TextChange()
+		  Self.CheckEnabled()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TestButton
+	#tag Event
+		Sub Action()
+		  Dim Profile As Beacon.FTPProfile = Self.Profile()
+		  Dim Request As New BeaconAPI.Request("ftp.php?" + Profile.QueryString, "GET", AddressOf APICallback_FTPDownload)
+		  Request.Sign(App.Identity)
+		  Self.APISocket.Start(Request)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events APISocket
+	#tag Event
+		Sub WorkCompleted()
+		  Self.TestButton.Visible = True
+		  Self.TestButton.Top = Self.Height - (20 + Self.TestButton.Height)
+		  Self.TestButton.Left = 20
+		  
+		  Self.Spinner.Visible = False
+		  Self.Spinner.Top = Self.Height + (20 + Self.Spinner.Height)
+		  Self.Spinner.Left = 20
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub WorkStarted()
+		  Self.TestButton.Visible = False
+		  Self.TestButton.Top = Self.Height + (20 + Self.TestButton.Height)
+		  Self.TestButton.Left = 20
+		  
+		  Self.Spinner.Visible = True
+		  Self.Spinner.Top = Self.Height - (20 + Self.Spinner.Height)
+		  Self.Spinner.Left = 20
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events DescriptionField
 	#tag Event
 		Sub TextChange()
-		  Self.CheckEnabled()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Socket
-	#tag Event
-		Sub WorkCompleted()
-		  Spinner.Visible = False
-		  Self.CheckEnabled()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub WorkStarted()
-		  Spinner.Visible = True
 		  Self.CheckEnabled()
 		End Sub
 	#tag EndEvent
@@ -583,7 +899,6 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="LiveResize"
-		Visible=true
 		Group="Behavior"
 		InitialValue="True"
 		Type="Boolean"
@@ -626,7 +941,8 @@ End
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MenuBarVisible"
-		Group="Behavior"
+		Visible=true
+		Group="Deprecated"
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"

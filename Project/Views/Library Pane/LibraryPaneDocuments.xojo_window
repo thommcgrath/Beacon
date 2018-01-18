@@ -78,6 +78,7 @@ Begin LibrarySubview LibraryPaneDocuments
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -116,6 +117,7 @@ Begin LibrarySubview LibraryPaneDocuments
       Width           =   300
    End
    Begin Xojo.Net.HTTPSocket Downloader
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -123,6 +125,7 @@ Begin LibrarySubview LibraryPaneDocuments
       ValidateCertificates=   False
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -384,7 +387,7 @@ End
 		  Next
 		  
 		  // Nope, load it
-		  Dim Document As Beacon.Document = Beacon.Document.Read(File)
+		  Dim Document As Beacon.Document = Beacon.Document.Read(File, App.Identity)
 		  If Document = Nil Then
 		    Return
 		  End If
@@ -401,7 +404,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub OpenLocalDocument(Ref As LocalDocumentRef)
-		  Dim Document As Beacon.Document = Beacon.Document.Read(Ref.File)
+		  Dim Document As Beacon.Document = Beacon.Document.Read(Ref.File, App.Identity)
 		  If Document = Nil Then
 		    Return
 		  End If
@@ -870,7 +873,7 @@ End
 		    Return
 		  End Try
 		  
-		  Dim Document As Beacon.Document = Beacon.Document.Read(TextValue)
+		  Dim Document As Beacon.Document = Beacon.Document.Read(TextValue, App.Identity)
 		  If Document = Nil Then
 		    // Cannot be parsed correctly
 		    Self.ShowAlert("Cannot open document", "Sorry, not sure what was downloaded, but it isn't a Beacon document.")

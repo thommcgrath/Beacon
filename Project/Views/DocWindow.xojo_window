@@ -397,6 +397,11 @@ End
 
 	#tag MenuHandler
 		Function FileExport() As Boolean Handles FileExport.Action
+			DeployDialog.Present(Self, Self.Doc)
+			Self.ScanForErrors()
+			Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
+			
+			#if false
 			If Not Self.Doc.IsValid Then
 			Beep
 			ResolveIssuesDialog.Present(Self, Self.Doc)
@@ -507,6 +512,7 @@ End
 			Dim OutStream As TextOutputStream = TextOutputStream.Create(File)
 			OutStream.Write(UpdatedContent)
 			OutStream.Close
+			#endif
 			
 			Return True
 		End Function
@@ -623,28 +629,19 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Doc As Beacon.Document)
+		Sub Constructor(Doc As Beacon.Document, File As FolderItem = Nil)
 		  Self.Doc = Doc
+		  Self.File = File
 		  Super.Constructor
 		  Self.DocumentCounter = Self.DocumentCounter + 1
-		  Self.Title = "Untitled " + Str(Self.DocumentCounter, "-0")
-		  Self.ContentsChanged = False
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(File As FolderItem)
-		  If Not File.IsType(BeaconFileTypes.BeaconDocument) Then
-		    Raise New UnsupportedFormatException
+		  If File <> Nil Then
+		    Self.Title = File.DisplayName
+		  ElseIf Doc.Title <> "" Then
+		    Self.Title = Doc.Title
+		  Else
+		    Self.Title = "Untitled " + Str(Self.DocumentCounter, "-0")
 		  End If
-		  
-		  Self.File = File
-		  Self.Doc = Beacon.Document.Read(Self.File)
-		  Self.Title = File.Name
-		  Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
-		  
-		  Super.Constructor
+		  Self.ContentsChanged = False
 		End Sub
 	#tag EndMethod
 
@@ -747,7 +744,7 @@ End
 		  Self.Doc.Modified = False
 		  App.AddToRecentDocuments(File)
 		  
-		  Dim Writer As New Beacon.JSONWriter(Self.Doc.Export, File)
+		  Dim Writer As New Beacon.JSONWriter(Self.Doc.Export(App.Identity), File)
 		  AddHandler Writer.Finished, AddressOf WriterFinished
 		  Writer.Run
 		End Sub

@@ -55,6 +55,13 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
+      Begin MenuItem FileImport
+         SpecialMenu = 0
+         Text = "Import…"
+         Index = -2147483648
+         AutoEnable = False
+         Visible = True
+      End
       Begin MenuItem UntitledSeparator
          SpecialMenu = 0
          Text = "-"
@@ -83,23 +90,9 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
-      Begin MenuItem UntitledSeparator9
-         SpecialMenu = 0
-         Text = "-"
-         Index = -2147483648
-         AutoEnable = True
-         Visible = True
-      End
-      Begin MenuItem FileImport
-         SpecialMenu = 0
-         Text = "Import…"
-         Index = -2147483648
-         AutoEnable = False
-         Visible = True
-      End
       Begin MenuItem FileExport
          SpecialMenu = 0
-         Text = "Export…"
+         Text = "Deploy…"
          Index = -2147483648
          AutoEnable = False
          Visible = True

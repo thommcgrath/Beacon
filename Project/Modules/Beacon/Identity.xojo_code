@@ -30,6 +30,8 @@ Protected Class Identity
 		    Return False
 		  End If
 		  
+		  #Pragma Warning "Handle KeyNotFoundException"
+		  
 		  Dim Signature As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Dict.Value("validation"))
 		  Dim IsPatreonSupporter As Boolean = Dict.Lookup("is_patreon_supporter", False)
 		  Dim PatreonUserID As Integer = If(Dict.Lookup("patreon_user_id", Nil) <> Nil, Dict.Value("patreon_user_id"), 0)
@@ -51,6 +53,24 @@ Protected Class Identity
 		  End If
 		  
 		  Return Changed
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Decrypt(Data As Xojo.Core.MemoryBlock) As Xojo.Core.MemoryBlock
+		  Try
+		    Dim Decrypted As Xojo.Core.MemoryBlock = Xojo.Crypto.RSADecrypt(Data, Self.mPrivateKey)
+		    Return Decrypted
+		  Catch Err As Xojo.Crypto.CryptoException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Encrypt(Data As Xojo.Core.MemoryBlock) As Xojo.Core.MemoryBlock
+		  Return Xojo.Crypto.RSAEncrypt(Data, Self.mPublicKey)
 		End Function
 	#tag EndMethod
 

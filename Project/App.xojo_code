@@ -113,6 +113,7 @@ Inherits Application
 		    Self.Identity = New Beacon.Identity
 		  End If
 		  Self.Log("Identity is " + Self.mIdentity.Identifier)
+		  Self.PublishIdentity()
 		  
 		  BeaconAPI.Send(New BeaconAPI.Request("user.php/" + Self.mIdentity.Identifier, "GET", AddressOf HandleUserLookupReply))
 		  
@@ -356,6 +357,37 @@ Inherits Application
 		    Documents.Remove(Documents.Ubound)
 		  Wend
 		  Self.RecentDocuments = Documents
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_UserLookup(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Message
+		  #Pragma Unused Details
+		  
+		  If Success Then
+		    // Already exists
+		    Return
+		  End If
+		  
+		  // Create the user
+		  
+		  Dim Params As New Xojo.Core.Dictionary
+		  Params.Value("user_id") = Self.mIdentity.Identifier
+		  Params.Value("public_key") = Self.mIdentity.PublicKey
+		  
+		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
+		  Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
+		  Self.mAPISocket.Start(Request)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  #Pragma Unused Details
+		  
+		  Self.Log("Unable to publish identity: " + Message)
 		End Sub
 	#tag EndMethod
 
@@ -637,6 +669,15 @@ Inherits Application
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub PublishIdentity()
+		  Self.mAPISocket = New BeaconAPI.Socket
+		  
+		  Dim Request As New BeaconAPI.Request("user.php/" + Self.mIdentity.Identifier, "GET", AddressOf APICallback_UserLookup)
+		  Self.mAPISocket.Start(Request)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub RebuildRecentMenu()
 		  While FileOpenRecent.Count > 0
@@ -724,6 +765,10 @@ Inherits Application
 
 	#tag Property, Flags = &h0
 		LaunchOnQuit As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAPISocket As BeaconAPI.Socket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
