@@ -55,6 +55,29 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function CreateCSV(Engrams() As Beacon.Engram) As Text
+		  Dim Columns(3) As Text
+		  Columns(0) = """Path"""
+		  Columns(1) = """Label"""
+		  Columns(2) = """Availability Mask"""
+		  Columns(3) = """Can Blueprint"""
+		  
+		  Dim Lines(0) As Text
+		  Lines(0) = Text.Join(Columns, ",")
+		  
+		  For Each Engram As Beacon.Engram In Engrams
+		    Columns(0) = """" + Engram.mPath + """"
+		    Columns(1) = """" + Engram.mLabel + """"
+		    Columns(2) = Engram.mAvailability.ToText
+		    Columns(3) = If(Engram.mCanBeBlueprint, "True", "False")
+		    Lines.Append(Text.Join(Columns, ","))
+		  Next
+		  
+		  Return Text.Join(Lines, Text.FromUnicodeCodepoint(13) + Text.FromUnicodeCodepoint(10))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function CreateUnknownEngram(Path As Text) As Beacon.Engram
 		  Dim Engram As New Beacon.Engram
 		  If Path.Length > 6 And Path.Left(6) = "/Game/" Then
@@ -149,6 +172,82 @@ Protected Class Engram
 		  Else
 		    Return Self.MakeHumanReadableText(Name)
 		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ParseCSV(Input As Text) As Beacon.Engram()
+		  Input = Input.Trim
+		  
+		  Dim CarriageReturn As Text = Text.FromUnicodeCodepoint(13)
+		  Dim NewLine As Text = Text.FromUnicodeCodepoint(10)
+		  
+		  Dim Lines() As Auto
+		  Dim ColumnBuffer(), Columns() As Text
+		  Dim Started, InQuotes As Boolean
+		  For Each Character As Text In Input.Characters
+		    If InQuotes Then
+		      Started = True
+		      If Character = """" Then
+		        InQuotes = False
+		      Else
+		        ColumnBuffer.Append(Character)
+		      End If
+		    Else
+		      If Character = """" Then
+		        InQuotes = True
+		        If Started Then
+		          ColumnBuffer.Append(Character)
+		        End If
+		      ElseIf Character = "," Then
+		        Columns.Append(Text.Join(ColumnBuffer, ""))
+		        Redim ColumnBuffer(-1)
+		        Started = False
+		      ElseIf Character = Text.FromUnicodeCodepoint(13) Then
+		        // Ignore
+		      ElseIf Character = Text.FromUnicodeCodepoint(10) Then
+		        // Next line
+		        Columns.Append(Text.Join(ColumnBuffer, ""))
+		        Lines.Append(Columns)
+		        Redim ColumnBuffer(-1)
+		        Columns = Array("") // To create a new array
+		        Redim Columns(-1)
+		        Started = False
+		      Else
+		        ColumnBuffer.Append(Character)
+		      End If
+		    End If
+		  Next
+		  Columns.Append(Text.Join(ColumnBuffer, ""))
+		  Lines.Append(Columns)
+		  
+		  Dim Engrams() As Beacon.Engram
+		  For Each Columns In Lines
+		    If Columns.Ubound <> 3 Then
+		      Dim Err As New UnsupportedFormatException
+		      Err.Reason = "Incorrect number of columns"
+		      Raise Err
+		    End If
+		    
+		    If Columns(0) = "Path" And Columns(1) = "Label" And Columns(2) = "Availability Mask" And Columns(3) = "Can Blueprint" Then
+		      // Header
+		      Continue
+		    End If
+		    
+		    Dim Path As Text = Columns(0)
+		    Dim Label As Text = Columns(1)
+		    Dim Availability As UInt64 = UInt64.FromText(Columns(2))
+		    Dim CanBlueprint As Boolean = If(Columns(3) = "True", True, False)
+		    
+		    Dim Engram As New Beacon.Engram
+		    Engram.mAvailability = Availability
+		    Engram.mCanBeBlueprint = CanBlueprint
+		    Engram.mIsValid = True
+		    Engram.mLabel = Label
+		    Engram.mPath = Path
+		    Engrams.Append(Engram)
+		  Next
+		  Return Engrams
 		End Function
 	#tag EndMethod
 

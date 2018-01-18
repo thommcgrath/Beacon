@@ -103,17 +103,13 @@ Inherits Beacon.SetEntry
 
 	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Beacon.Map) As Boolean
-		  Return Map = Nil Or Map.Matches(Self.mAvailability)
+		  Return Self.ValidForMask(Map.Mask)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ValidForMap(Map As Beacon.Map, Assigns Value As Boolean)
-		  If Value Then
-		    Self.mAvailability = Self.mAvailability Or Map.Mask
-		  Else
-		    Self.mAvailability = Self.mAvailability And Not Map.Mask
-		  End If
+		  Self.ValidForMask(Map.Mask) = Value
 		End Sub
 	#tag EndMethod
 
@@ -121,6 +117,16 @@ Inherits Beacon.SetEntry
 		Function ValidForMask(Mask As UInt64) As Boolean
 		  Return (Self.mAvailability And Mask) > 0
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ValidForMask(Mask As UInt64, Assigns Value As Boolean)
+		  If Value Then
+		    Self.mAvailability = Self.mAvailability Or Mask
+		  Else
+		    Self.mAvailability = Self.mAvailability And Not Mask
+		  End If
+		End Sub
 	#tag EndMethod
 
 

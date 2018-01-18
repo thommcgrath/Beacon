@@ -61,6 +61,12 @@ Protected Class Map
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Operator_Convert() As UInt64
+		  Return Self.mMask
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mDifficultyScale As Double

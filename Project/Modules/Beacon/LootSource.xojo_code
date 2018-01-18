@@ -505,7 +505,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Beacon.Map) As Boolean
-		  Return Map = Nil Or (Self.mAvailability And Map.Mask) = Map.Mask
+		  Return Self.ValidForMask(Map.Mask)
 		End Function
 	#tag EndMethod
 
