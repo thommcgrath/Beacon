@@ -117,6 +117,12 @@ Inherits Beacon.SetEntry
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ValidForMask(Mask As UInt64) As Boolean
+		  Return (Self.mAvailability And Mask) > 0
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mAvailability As Integer

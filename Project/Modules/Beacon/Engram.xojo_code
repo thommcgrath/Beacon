@@ -168,6 +168,12 @@ Protected Class Engram
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ValidForMask(Mask As UInt64) As Boolean
+		  Return Mask = 0 Or (Self.mAvailability And Mask) > 0
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h1
 		Protected mAvailability As UInt64

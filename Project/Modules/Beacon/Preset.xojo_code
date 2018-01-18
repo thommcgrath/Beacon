@@ -345,6 +345,20 @@ Implements Beacon.Countable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ValidForMask(Mask As UInt64) As Boolean
+		  If Mask = 0 Then
+		    Return True
+		  End If
+		  
+		  For Each Entry As Beacon.PresetEntry In Self.mContents
+		    If Entry.ValidForMask(Mask) Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h1
 		Protected mContents() As Beacon.PresetEntry

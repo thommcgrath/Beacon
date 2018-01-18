@@ -9,23 +9,23 @@ Begin Window DocumentSetupDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   330
+   Height          =   450
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
-   MaxHeight       =   32000
+   MaxHeight       =   450
    MaximizeButton  =   False
-   MaxWidth        =   32000
+   MaxWidth        =   511
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   330
+   MinHeight       =   450
    MinimizeButton  =   False
-   MinWidth        =   600
+   MinWidth        =   511
    Placement       =   2
    Resizeable      =   False
    Title           =   "Document Setup"
    Visible         =   True
-   Width           =   600
+   Width           =   511
    Begin DocumentSetupContainer Container
       AcceptFocus     =   False
       AcceptTabs      =   True
@@ -35,7 +35,7 @@ Begin Window DocumentSetupDialog
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      Height          =   330
+      Height          =   450
       HelpTag         =   ""
       InitialParent   =   ""
       Left            =   0
@@ -52,7 +52,7 @@ Begin Window DocumentSetupDialog
       Transparent     =   True
       UseFocusRing    =   False
       Visible         =   True
-      Width           =   600
+      Width           =   511
    End
 End
 #tag EndWindow

@@ -9,7 +9,7 @@ Begin ContainerControl DocumentSetupContainer
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   330
+   Height          =   450
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -24,72 +24,7 @@ Begin ContainerControl DocumentSetupContainer
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   600
-   Begin UITweaks.ResizedPopupMenu MapMenu
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   ""
-      Italic          =   False
-      Left            =   109
-      ListIndex       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Underline       =   False
-      Visible         =   True
-      Width           =   177
-   End
-   Begin UITweaks.ResizedLabel MapLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      Text            =   "Map:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   77
-   End
+   Width           =   511
    Begin GroupBox DifficultyGroup
       AutoDeactivate  =   True
       Bold            =   False
@@ -100,7 +35,7 @@ Begin ContainerControl DocumentSetupContainer
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   109
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -113,7 +48,7 @@ Begin ContainerControl DocumentSetupContainer
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   52
+      Top             =   172
       Underline       =   False
       Visible         =   True
       Width           =   471
@@ -128,7 +63,7 @@ Begin ContainerControl DocumentSetupContainer
          Index           =   -2147483648
          InitialParent   =   "DifficultyGroup"
          Italic          =   False
-         Left            =   129
+         Left            =   40
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -139,13 +74,14 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "You only need to enter one of these values, the rest will be calculated automatically."
          TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   88
+         Top             =   208
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -162,7 +98,7 @@ Begin ContainerControl DocumentSetupContainer
          Index           =   -2147483648
          InitialParent   =   "DifficultyGroup"
          Italic          =   False
-         Left            =   129
+         Left            =   40
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -173,13 +109,14 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Difficulty Offset:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   136
+         Top             =   256
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -203,7 +140,7 @@ Begin ContainerControl DocumentSetupContainer
          Index           =   -2147483648
          InitialParent   =   "DifficultyGroup"
          Italic          =   False
-         Left            =   248
+         Left            =   159
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -222,7 +159,7 @@ Begin ContainerControl DocumentSetupContainer
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   136
+         Top             =   256
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -246,7 +183,7 @@ Begin ContainerControl DocumentSetupContainer
          Index           =   -2147483648
          InitialParent   =   "DifficultyGroup"
          Italic          =   False
-         Left            =   248
+         Left            =   159
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -265,7 +202,7 @@ Begin ContainerControl DocumentSetupContainer
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   170
+         Top             =   290
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -289,7 +226,7 @@ Begin ContainerControl DocumentSetupContainer
          Index           =   -2147483648
          InitialParent   =   "DifficultyGroup"
          Italic          =   False
-         Left            =   248
+         Left            =   159
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -308,7 +245,7 @@ Begin ContainerControl DocumentSetupContainer
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   204
+         Top             =   324
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -325,7 +262,7 @@ Begin ContainerControl DocumentSetupContainer
          Index           =   -2147483648
          InitialParent   =   "DifficultyGroup"
          Italic          =   False
-         Left            =   129
+         Left            =   40
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -336,13 +273,14 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Difficulty Value:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   170
+         Top             =   290
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -359,7 +297,7 @@ Begin ContainerControl DocumentSetupContainer
          Index           =   -2147483648
          InitialParent   =   "DifficultyGroup"
          Italic          =   False
-         Left            =   129
+         Left            =   40
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -370,13 +308,14 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Max Dino Level:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   204
+         Top             =   324
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -393,7 +332,7 @@ Begin ContainerControl DocumentSetupContainer
          Index           =   -2147483648
          InitialParent   =   "DifficultyGroup"
          Italic          =   False
-         Left            =   248
+         Left            =   159
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -404,13 +343,14 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   8
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "http://ark.gamepedia.com/Difficulty"
          TextAlign       =   0
          TextColor       =   &c0000FF00
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   238
+         Top             =   358
          Transparent     =   False
          Underline       =   True
          Visible         =   True
@@ -427,7 +367,7 @@ Begin ContainerControl DocumentSetupContainer
          Index           =   -2147483648
          InitialParent   =   "DifficultyGroup"
          Italic          =   False
-         Left            =   129
+         Left            =   40
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -438,13 +378,14 @@ Begin ContainerControl DocumentSetupContainer
          Selectable      =   False
          TabIndex        =   7
          TabPanelIndex   =   0
+         TabStop         =   True
          Text            =   "Learn More:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   238
+         Top             =   358
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -464,7 +405,7 @@ Begin ContainerControl DocumentSetupContainer
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   500
+      Left            =   411
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -477,7 +418,7 @@ Begin ContainerControl DocumentSetupContainer
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   290
+      Top             =   410
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -495,7 +436,7 @@ Begin ContainerControl DocumentSetupContainer
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   408
+      Left            =   319
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -508,7 +449,7 @@ Begin ContainerControl DocumentSetupContainer
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   290
+      Top             =   410
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -522,6 +463,194 @@ Begin ContainerControl DocumentSetupContainer
       State           =   ""
       TabPanelIndex   =   0
    End
+   Begin GroupBox MapGroup
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Maps"
+      Enabled         =   True
+      Height          =   140
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Underline       =   False
+      Visible         =   True
+      Width           =   471
+      Begin CheckBox MapCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "The Island"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   1
+         InitialParent   =   "MapGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         State           =   1
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   56
+         Underline       =   False
+         Value           =   True
+         Visible         =   True
+         Width           =   158
+      End
+      Begin CheckBox MapCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Scorched Earth"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   2
+         InitialParent   =   "MapGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         State           =   0
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   88
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   158
+      End
+      Begin CheckBox MapCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Aberration"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   16
+         InitialParent   =   "MapGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         State           =   0
+         TabIndex        =   2
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   120
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   158
+      End
+      Begin CheckBox MapCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "The Center"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   4
+         InitialParent   =   "MapGroup"
+         Italic          =   False
+         Left            =   210
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         State           =   0
+         TabIndex        =   3
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   56
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   158
+      End
+      Begin CheckBox MapCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Ragnarok"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   8
+         InitialParent   =   "MapGroup"
+         Italic          =   False
+         Left            =   210
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         State           =   0
+         TabIndex        =   4
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   88
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   158
+      End
+   End
 End
 #tag EndWindow
 
@@ -530,10 +659,13 @@ End
 		Sub Open()
 		  Dim Maps() As Beacon.Map = Beacon.Maps.All
 		  For Each Map As Beacon.Map In Maps
-		    Self.MapMenu.AddRow(Map.Name, Map)
+		    If MapCheck(Map.Mask) <> Nil Then
+		      MapCheck(Map.Mask).Caption = Map.Name
+		    End If
 		  Next
 		  Self.DifficultyOffsetField.Text = "1"
-		  Self.MapMenu.ListIndex = 0
+		  Self.DifficultyValueField.Text = "4"
+		  Self.MaxDinoLevelField.Text = "120"
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
@@ -550,26 +682,39 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SelectedMaps() As Beacon.Map()
+		  Return Beacon.Maps.ForMask(Self.SelectedMask)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SelectedMaps(Assigns Maps() As Beacon.Map)
+		  Self.SelectedMask = Maps.Mask
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
-		Private Function SelectedMap() As Beacon.Map
-		  If MapMenu.ListIndex = -1 Then
-		    Return Beacon.Maps.TheIsland
-		  Else
-		    Return MapMenu.RowTag(MapMenu.ListIndex)
-		  End If
+		Private Function SelectedMask() As UInt64
+		  Dim Mask As UInt64
+		  Dim Maps() As Beacon.Map = Beacon.Maps.All
+		  For Each Map As Beacon.Map In Maps
+		    If MapCheck(Map.Mask) <> Nil And MapCheck(Map.Mask).Value Then
+		      Mask = Mask Or Map.Mask
+		    End If
+		  Next
+		  Return Mask
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SelectedMap(Assigns Map As Beacon.Map)
-		  For I As Integer = 0 To Self.MapMenu.ListCount - 1
-		    Dim MenuMap As Beacon.Map = Self.MapMenu.RowTag(I)
-		    If MenuMap = Map Then
-		      Self.MapMenu.ListIndex = I
-		      Return
+		Private Sub SelectedMask(Assigns Mask As UInt64)
+		  Dim Maps() As Beacon.Map = Beacon.Maps.All
+		  For Each Map As Beacon.Map In Maps
+		    If MapCheck(Map.Mask) <> Nil Then
+		      MapCheck(Map.Mask).Value = (Map.Mask And Mask) = Map.Mask
 		    End If
 		  Next
-		  Self.MapMenu.ListIndex = 0
 		End Sub
 	#tag EndMethod
 
@@ -581,21 +726,17 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Setup(Doc As Beacon.Document)
-		  Dim Map As Beacon.Map
-		  If Doc.Map <> Nil Then
-		    Map = Doc.Map
-		  Else
-		    Map = Beacon.Maps.GuessMap(Doc.LootSources)
-		  End If
+		  Dim Maps() As Beacon.Map = Doc.Maps
+		  Dim Scale As Double = Maps.DifficultyScale()
 		  
 		  Dim DifficultyValue As Double = Doc.DifficultyValue
 		  If DifficultyValue = -1 Then
-		    DifficultyValue = Map.DifficultyValue(1.0)
+		    DifficultyValue = Beacon.DifficultyValue(1.0, Scale)
 		  End If
 		  
-		  Self.SelectedMap = Map
+		  Self.SelectedMaps = Doc.Maps
 		  
-		  Dim DifficultyOffset As Double = Map.DifficultyOffset(DifficultyValue)
+		  Dim DifficultyOffset As Double = Beacon.DifficultyOffset(DifficultyValue, Scale)
 		  Dim MaxDinoLevel As Integer = DifficultyValue * 30
 		  
 		  Self.DifficultyValueField.Text = DifficultyValue.PrettyText
@@ -653,24 +794,12 @@ End
 
 #tag EndWindowCode
 
-#tag Events MapMenu
-	#tag Event
-		Sub Change()
-		  Dim DifficultyOffset As Double = Val(DifficultyOffsetField.Text)
-		  Dim DifficultyValue As Double = Self.SelectedMap.DifficultyValue(DifficultyOffset)
-		  Dim MaxDinoLevel As Integer = DifficultyValue * 30
-		  
-		  DifficultyValueField.Text = DifficultyValue.PrettyText
-		  MaxDinoLevelField.Text = MaxDinoLevel.ToText
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events DifficultyOffsetField
 	#tag Event
 		Sub TextChange()
 		  If Self.Focus = Me Then
 		    Dim DifficultyOffset As Double = Val(Me.Text)
-		    Dim DifficultyValue As Double = Self.SelectedMap.DifficultyValue(DifficultyOffset)
+		    Dim DifficultyValue As Double = Beacon.DifficultyValue(DifficultyOffset, Self.SelectedMaps.DifficultyScale)
 		    Dim MaxDinoLevel As Integer = DifficultyValue * 30
 		    
 		    Self.DifficultyValueField.Text = DifficultyValue.PrettyText
@@ -684,7 +813,7 @@ End
 		Sub TextChange()
 		  If Self.Focus = Me Then
 		    Dim DifficultyValue As Double = Val(Me.Text)
-		    Dim DifficultyOffset As Double = Self.SelectedMap.DifficultyOffset(DifficultyValue)
+		    Dim DifficultyOffset As Double = Beacon.DifficultyOffset(DifficultyValue, Self.SelectedMaps.DifficultyScale)
 		    Dim MaxDinoLevel As Integer = DifficultyValue * 30
 		    
 		    Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
@@ -699,7 +828,7 @@ End
 		  If Self.Focus = Me Then
 		    Dim MaxDinoLevel As Integer = Val(Me.Text)
 		    Dim DifficultyValue As Double = MaxDinoLevel / 30
-		    Dim DifficultyOffset As Double = Self.SelectedMap.DifficultyOffset(DifficultyValue)
+		    Dim DifficultyOffset As Double = Beacon.DifficultyOffset(DifficultyValue, Self.SelectedMaps.DifficultyScale)
 		    
 		    Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
 		    Self.DifficultyValueField.Text = DifficultyValue.PrettyText
@@ -718,40 +847,21 @@ End
 	#tag Event
 		Sub Action()
 		  If Self.mDoc <> Nil Then
-		    Dim Map As Beacon.Map = Self.SelectedMap
+		    Dim Mask As UInt64 = Self.SelectedMask
 		    Dim Sources() As Beacon.LootSource = Self.mDoc.LootSources
-		    Dim HasInvalidSources As Boolean
-		    Dim ValidSourceCount, ValidPresetCount As Integer
+		    Dim ValidPresetCount As Integer
 		    For Each Source As Beacon.LootSource In Sources
-		      If Source.ValidForMap(Map) Then
-		        ValidSourceCount = ValidSourceCount + 1
+		      If Source.ValidForMask(Mask) Then
 		        ValidPresetCount = ValidPresetCount + Source.ImplementedPresetCount()
-		      Else
-		        HasInvalidSources = True
 		      End If
 		    Next
 		    
-		    If HasInvalidSources Then
-		      Dim DropCount As Integer = Self.mDoc.BeaconCount - ValidSourceCount
-		      If Not Self.ShowConfirm(DropCount.ToText + " " + if(DropCount = 1, "loot source is", "loot sources are") + " not compatible and will be removed.", "The " + if(DropCount = 1, "loot source is", "loot sources are") + " not valid for the selected map. If you want to keep " + if(DropCount = 1, "this loot source", "these loot sources") + ", cancel now and copy " + if(DropCount = 1, "it", "them") + " into a new document.", "Remove", "Cancel") Then
-		        Return
-		      End If
-		    End If
-		    
-		    Dim MapChanged As Boolean = Self.mDoc.Map <> Nil And Self.mDoc.Map.Mask <> Map.Mask
-		    Self.mDoc.Map = Map
+		    Dim MapChanged As Boolean = Self.mDoc.MapCompatibility <> Mask
+		    Self.mDoc.MapCompatibility = Mask
 		    Self.mDoc.DifficultyValue = Val(DifficultyValueField.Text)
 		    
-		    If MapChanged Then
-		      For Each Source As Beacon.LootSource In Sources
-		        If Not Source.ValidForMap(Map) Then
-		          Self.mDoc.Remove(Source)
-		        End If
-		      Next
-		      
-		      If ValidPresetCount > 0 And Self.ShowConfirm("Would you like to rebuild your item sets based on their presets?", "Presets fill item sets based on the current map. When changing maps, it is recommended to rebuild the item sets from their original presets to get the most correct loot for the new map.", "Rebuild", "Do Not Rebuild") Then
-		        Self.mDoc.ReconfigurePresets()
-		      End If
+		    If MapChanged And ValidPresetCount > 0 And Self.ShowConfirm("Would you like to rebuild your item sets based on their presets?", "Presets fill item sets based on the current map. When changing maps, it is recommended to rebuild the item sets from their original presets to get the most correct loot for the new map.", "Rebuild", "Do Not Rebuild") Then
+		      Self.mDoc.ReconfigurePresets()
 		    End If
 		    
 		    RaiseEvent ShouldClose
@@ -760,11 +870,11 @@ End
 		  
 		  If UBound(Self.mImportedSources) > -1 Then
 		    Dim Doc As New Beacon.Document
-		    Doc.Map = Self.SelectedMap
+		    Doc.MapCompatibility = Self.SelectedMaps.Mask
 		    Doc.DifficultyValue = Val(DifficultyValueField.Text)
 		    
 		    For Each Source As Beacon.LootSource In Self.mImportedSources
-		      If Source.ValidForMap(Doc.Map) Then
+		      If Doc.SupportsLootSource(Source) Then
 		        Doc.Add(Source)
 		      End If
 		    Next
@@ -782,7 +892,7 @@ End
 		  
 		  If Self.mImportContent = "" Then
 		    Dim Doc As New Beacon.Document
-		    Doc.Map = Self.SelectedMap
+		    Doc.MapCompatibility = Self.SelectedMaps.Mask
 		    Doc.DifficultyValue = Val(DifficultyValueField.Text)
 		    Doc.Modified = False
 		    
@@ -823,42 +933,12 @@ End
 		      Return
 		    End If
 		    
-		    Dim GuessedMap As Beacon.Map = Beacon.Maps.GuessMap(Sources)
-		    If GuessedMap <> Self.SelectedMap Then
-		      Dim Dialog As New MessageDialog
-		      Dialog.Title = ""
-		      Dialog.Message = GuessedMap.Name + " may be a better map selection. Would you like to change your settings?"
-		      Dialog.Explanation = "Beacon will only import loot sources which are valid for the selected map."
-		      Dialog.ActionButton.Caption = "Change Settings"
-		      Dialog.CancelButton.Caption = "Keep Importing"
-		      Dialog.CancelButton.Visible = True
-		      
-		      Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
-		      If Choice = Dialog.ActionButton Then
-		        For I As Integer = 0 To MapMenu.ListCount - 1
-		          Dim Tag As Beacon.Map = MapMenu.RowTag(I)
-		          If Tag = GuessedMap Then
-		            MapMenu.ListIndex = I
-		          End If
-		        Next
-		        Self.mImportContent = ""
-		        Self.mImportedSources = Sources
-		        Return
-		      End If
-		    End If
-		    
 		    Dim Doc As New Beacon.Document
-		    Doc.Map = Self.SelectedMap
+		    Doc.MapCompatibility = Self.SelectedMask
 		    Doc.DifficultyValue = Val(DifficultyValueField.Text)
 		    For Each Source As Beacon.LootSource In Sources
-		      If Source.ValidForMap(Doc.Map) Then
-		        Doc.Add(Source)
-		      End If
+		      Doc.Add(Source)
 		    Next
-		    If Doc.BeaconCount = 0 Then
-		      Self.ShowAlert("Nothing imported", "No loot sources were imported for the selected map.")
-		      Return
-		    End If
 		    
 		    Dim Win As New DocWindow(Doc)
 		    Win.Show
@@ -871,6 +951,22 @@ End
 		    Self.ImportProgress.BeaconCount = Me.BeaconCount
 		    Self.ImportProgress.LootSourcesProcessed = Me.LootSourcesProcessed
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MapCheck
+	#tag Event
+		Sub Action(index as Integer)
+		  Dim Mask As UInt64 = Self.SelectedMask
+		  Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Mask)
+		  Dim DifficultyOffset As Double = Val(DifficultyOffsetField.Text)
+		  Dim DifficultyValue As Double = Beacon.DifficultyValue(DifficultyOffset, Maps.DifficultyScale)
+		  Dim MaxDinoLevel As Integer = DifficultyValue * 30
+		  
+		  DifficultyValueField.Text = DifficultyValue.PrettyText
+		  MaxDinoLevelField.Text = MaxDinoLevel.ToText
+		  
+		  Self.ActionButton.Enabled = Mask > 0
 		End Sub
 	#tag EndEvent
 #tag EndEvents

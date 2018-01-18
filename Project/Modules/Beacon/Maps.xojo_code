@@ -20,18 +20,25 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ForMask(Mask As UInt64) As Beacon.Map
-		  Dim List() As Beacon.Map = All
-		  For Each Map As Beacon.Map In List
-		    If Map.Mask = Mask Then
-		      Return Map
+		Protected Function ForMask(Mask As UInt64) As Beacon.Map()
+		  Dim Possibles() As Beacon.Map = All
+		  If Mask = 0 Then
+		    Return Possibles
+		  End If
+		  
+		  Dim Matches() As Beacon.Map
+		  For Each Map As Beacon.Map In Possibles
+		    If (Map.Mask And Mask) > 0 Then
+		      Matches.Append(Map)
 		    End If
 		  Next
+		  
+		  Return Matches
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function GuessMap(Sources() As Beacon.LootSource) As Beacon.Map
+		Protected Function GuessMap(Sources() As Beacon.LootSource) As UInt64
 		  Dim List() As Beacon.Map = All
 		  Dim Counts As New Xojo.Core.Dictionary
 		  
@@ -62,7 +69,7 @@ Protected Module Maps
 		    BestMask = TheIsland.Mask
 		  End If
 		  
-		  Return ForMask(BestMask)
+		  Return BestMask
 		End Function
 	#tag EndMethod
 

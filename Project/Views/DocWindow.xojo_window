@@ -330,7 +330,7 @@ End
 			Return True
 			End If
 			
-			Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentDuplicate(Self, Self.Doc, BeaconList.RowTag(BeaconList.ListIndex), Self.CurrentMap)
+			Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentDuplicate(Self, Self.Doc, BeaconList.RowTag(BeaconList.ListIndex))
 			If LootSource <> Nil Then
 			Self.AddLootSource(LootSource)
 			End If
@@ -500,7 +500,7 @@ End
 			End If
 			
 			For Each LootSource As Beacon.LootSource In LootSources
-			If LootSource.ValidForMap(Self.Doc.Map) Then
+			If Self.Doc.SupportsLootSource(LootSource) Then
 			SectionLines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Self.Doc.DifficultyValue))
 			End If
 			Next
@@ -545,7 +545,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim CurrentMap As Beacon.Map = Self.CurrentMap
+		  Dim CurrentMask As UInt64 = Self.CurrentMask
 		  Dim IgnoredSources() As Beacon.LootSource
 		  
 		  For Each Source As Beacon.LootSource In Sources
@@ -553,7 +553,7 @@ End
 		      Self.Doc.Remove(Source)
 		    End If
 		    
-		    If CurrentMap = Nil Or Source.ValidForMap(CurrentMap) Then
+		    If Self.Doc.SupportsLootSource(Source) Then
 		      Self.Doc.Add(Source)
 		    Else
 		      IgnoredSources.Append(Source)
@@ -570,7 +570,7 @@ End
 		    Next
 		    
 		    Dim IgnoredCount As Integer = IgnoredSources.Ubound + 1
-		    Self.ShowAlert(IgnoredCount.ToText + if(IgnoredCount = 1, " loot source was", " loot sources were") + " not added because " + if(IgnoredCount = 1, "it is", "they are") + " not compatible with " + if(CurrentMap <> Nil, CurrentMap.Name, "the current map") + ".", "The following " + if(IgnoredCount = 1, "loot source was", "loot sources were") + " skipped: " + Text.Join(SourcesList, ", "))
+		    Self.ShowAlert(IgnoredCount.ToText + if(IgnoredCount = 1, " loot source was", " loot sources were") + " not added because " + if(IgnoredCount = 1, "it is", "they are") + " not compatible with the selected maps.", "The following " + if(IgnoredCount = 1, "loot source was", "loot sources were") + " skipped: " + Text.Join(SourcesList, ", "))
 		  End If
 		End Sub
 	#tag EndMethod
@@ -644,8 +644,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function CurrentMap() As Beacon.Map
-		  Return Self.Doc.Map
+		Private Function CurrentMask() As UInt64
+		  Return Self.Doc.MapCompatibility
 		End Function
 	#tag EndMethod
 
@@ -768,7 +768,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddBeacon()
-		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self, Self.Doc, Self.CurrentMap)
+		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self, Self.Doc)
 		  If LootSource <> Nil Then
 		    Self.AddLootSource(LootSource)
 		  End If
@@ -777,17 +777,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
-		  Dim CurrentMap As Beacon.Map = Self.CurrentMap
-		  Editor.CurrentMap = CurrentMap
-		  Self.Doc.Map = CurrentMap
+		  Dim CurrentMask As UInt64 = Self.CurrentMask
+		  Editor.MapMask = CurrentMask
 		  
-		  Dim Sources() As Beacon.LootSource = Self.Doc.LootSources
-		  Dim VisibleSources() As Beacon.LootSource
-		  For Each Source As Beacon.LootSource In Sources
-		    If CurrentMap = Nil Or Source.ValidForMap(CurrentMap) Then
-		      VisibleSources.Append(Source)
-		    End If
-		  Next
+		  Dim VisibleSources() As Beacon.LootSource = Self.Doc.LootSources
 		  VisibleSources.Sort
 		  
 		  Dim SelectedClasses() As Text
@@ -1082,7 +1075,7 @@ End
 		      Return
 		    End If
 		    
-		    Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self, Self.Doc, BeaconList.RowTag(BeaconList.ListIndex), Self.CurrentMap)
+		    Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self, Self.Doc, BeaconList.RowTag(BeaconList.ListIndex))
 		    If LootSource <> Nil Then
 		      Self.AddLootSource(LootSource)
 		    End If
@@ -1105,13 +1098,13 @@ End
 		  Case "AddButton"
 		    Dim Base As New MenuItem
 		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("")
-		    Dim CurrentMap As Beacon.Map = Self.CurrentMap
+		    Dim CurrentMask As UInt64 = Self.CurrentMask
 		    For I As Integer = UBound(LootSources) DownTo 0
 		      If Self.Doc.HasLootSource(LootSources(I)) Then
 		        LootSources.Remove(I)
 		        Continue For I
 		      End If
-		      If Not LootSources(I).ValidForMap(CurrentMap) Then
+		      If Not Self.Doc.SupportsLootSource(LootSources(I)) Then
 		        LootSources.Remove(I)
 		      End If
 		    Next

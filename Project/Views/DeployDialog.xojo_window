@@ -1046,7 +1046,7 @@ End
 		  End If
 		  Dim LootSources() As Beacon.LootSource = Self.mDocument.LootSources
 		  For Each LootSource As Beacon.LootSource In LootSources
-		    If LootSource.ValidForMap(Self.mDocument.Map) Then
+		    If Self.mDocument.SupportsLootSource(LootSource) Then
 		      LootLines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Self.mDocument.DifficultyValue))
 		    End If
 		  Next
