@@ -549,8 +549,8 @@ End
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Define an additional loot source. Hold to quickly add a source from a menu."
 		  
-		  Dim ShareButton As New BeaconToolbarItem("Export", IconToolbarExport, Self.mDocument.IsValid)
-		  ShareButton.HelpTag = "Export this document."
+		  Dim ShareButton As New BeaconToolbarItem("Deploy", IconToolbarExport, Self.mDocument.IsValid)
+		  ShareButton.HelpTag = "Deploy this document."
 		  
 		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected loot source."
@@ -584,6 +584,9 @@ End
 		    Self.ShowAddLootSource()
 		  Case "Duplicate"
 		    Self.ShowDuplicateSelectedLootSource()
+		  Case "Deploy"
+		    DeployDialog.Present(Self, Self.mDocument)
+		    Self.ContentsChanged = Self.ContentsChanged Or Self.mDocument.Modified
 		  End Select
 		End Sub
 	#tag EndEvent

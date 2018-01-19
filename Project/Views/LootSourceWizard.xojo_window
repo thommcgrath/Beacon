@@ -20,12 +20,12 @@ Begin Window LootSourceWizard
    MenuBarVisible  =   True
    MinHeight       =   300
    MinimizeButton  =   False
-   MinWidth        =   712
+   MinWidth        =   450
    Placement       =   1
    Resizeable      =   True
    Title           =   "Add Loot Source"
    Visible         =   True
-   Width           =   712
+   Width           =   550
    Begin PagePanel Panel
       AutoDeactivate  =   True
       Enabled         =   True
@@ -45,9 +45,9 @@ Begin Window LootSourceWizard
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   2
       Visible         =   True
-      Width           =   712
+      Width           =   550
       Begin UITweaks.ResizedPushButton SelectionActionButton
          AutoDeactivate  =   True
          Bold            =   False
@@ -61,7 +61,7 @@ Begin Window LootSourceWizard
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
-         Left            =   612
+         Left            =   450
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -92,7 +92,7 @@ Begin Window LootSourceWizard
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
-         Left            =   520
+         Left            =   358
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -132,6 +132,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "Add Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -142,16 +143,16 @@ Begin Window LootSourceWizard
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   672
+         Width           =   510
       End
       Begin BeaconListbox SourceList
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   True
-         ColumnCount     =   4
+         ColumnCount     =   2
          ColumnsResizable=   False
-         ColumnWidths    =   "30,2*,100,*"
+         ColumnWidths    =   "30,*"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   30
@@ -192,7 +193,7 @@ Begin Window LootSourceWizard
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   672
+         Width           =   510
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -249,6 +250,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Define Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -259,7 +261,7 @@ Begin Window LootSourceWizard
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   672
+         Width           =   510
       End
       Begin UITweaks.ResizedPushButton DefineActionButton
          AutoDeactivate  =   True
@@ -274,7 +276,7 @@ Begin Window LootSourceWizard
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
-         Left            =   612
+         Left            =   450
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -305,7 +307,7 @@ Begin Window LootSourceWizard
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
-         Left            =   520
+         Left            =   358
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -336,7 +338,7 @@ Begin Window LootSourceWizard
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
-         Left            =   612
+         Left            =   450
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -367,7 +369,7 @@ Begin Window LootSourceWizard
          Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
-         Left            =   520
+         Left            =   358
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -407,6 +409,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "Customize Loot Source"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -417,7 +420,7 @@ Begin Window LootSourceWizard
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   672
+         Width           =   510
       End
       Begin UITweaks.ResizedLabel DefineMaxMultiplierLabel
          AutoDeactivate  =   True
@@ -441,13 +444,14 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   11
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Max Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   220
+         Top             =   188
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -475,13 +479,14 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   9
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Min Multiplier:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   186
+         Top             =   154
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -509,6 +514,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Class String:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -543,6 +549,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Label:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -577,6 +584,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Kind:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -584,40 +592,6 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   122
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   104
-      End
-      Begin Label DefinePackageLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   7
-         TabPanelIndex   =   2
-         Text            =   "Availability:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   154
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -691,7 +665,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   220
+         Top             =   188
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -734,7 +708,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   186
+         Top             =   154
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -781,7 +755,7 @@ Begin Window LootSourceWizard
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   556
+         Width           =   394
       End
       Begin UITweaks.ResizedTextField DefineClassField
          AcceptTabs      =   False
@@ -824,7 +798,7 @@ Begin Window LootSourceWizard
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   556
+         Width           =   394
       End
       Begin UITweaks.ResizedTextField CustomizeMinSetsField
          AcceptTabs      =   False
@@ -891,6 +865,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "Min Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -968,6 +943,7 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "Max Sets:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -996,7 +972,7 @@ Begin Window LootSourceWizard
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
          Scope           =   2
          State           =   0
@@ -1010,7 +986,7 @@ Begin Window LootSourceWizard
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   444
+         Width           =   394
       End
       Begin BeaconListbox CustomizePresetsList
          AutoDeactivate  =   True
@@ -1030,7 +1006,7 @@ Begin Window LootSourceWizard
          GridLinesVertical=   0
          HasHeading      =   False
          HeadingIndex    =   1
-         Height          =   162
+         Height          =   130
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -1056,11 +1032,11 @@ Begin Window LootSourceWizard
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   154
+         Top             =   186
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   556
+         Width           =   394
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -1086,13 +1062,14 @@ Begin Window LootSourceWizard
          Selectable      =   False
          TabIndex        =   6
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "Presets:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   154
+         Top             =   186
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -1128,30 +1105,30 @@ Begin Window LootSourceWizard
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   556
+         Width           =   394
       End
-      Begin CheckBox DefineAvailabilityChecks
+      Begin CheckBox CustomizeAppendModeCheck
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "The Island"
+         Caption         =   "Add Contents to Default Loot"
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
-         Index           =   1
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Italic          =   False
          Left            =   136
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
          Scope           =   2
          State           =   0
-         TabIndex        =   15
-         TabPanelIndex   =   2
+         TabIndex        =   11
+         TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
@@ -1160,135 +1137,7 @@ Begin Window LootSourceWizard
          Underline       =   False
          Value           =   False
          Visible         =   True
-         Width           =   90
-      End
-      Begin CheckBox DefineAvailabilityChecks
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Scorched Earth"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   2
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   238
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         State           =   0
-         TabIndex        =   16
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   154
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   120
-      End
-      Begin CheckBox DefineAvailabilityChecks
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "The Center"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   4
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   370
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         State           =   0
-         TabIndex        =   17
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   154
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   100
-      End
-      Begin CheckBox DefineAvailabilityChecks
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Ragnarok"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   8
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   482
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         State           =   0
-         TabIndex        =   18
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   154
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   90
-      End
-      Begin CheckBox DefineAvailabilityChecks
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Aberration"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   16
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   584
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         State           =   0
-         TabIndex        =   23
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   154
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   100
+         Width           =   394
       End
    End
 End
@@ -1322,7 +1171,7 @@ End
 		  AllowedLootSources.Sort
 		  
 		  For Each Source As Beacon.LootSource In AllowedLootSources
-		    SourceList.AddRow("", Source.Label, Beacon.LootSource.KindToText(Source.Kind), Source.Maps.Label)
+		    SourceList.AddRow("", Source.Label)
 		    SourceList.RowTag(SourceList.LastIndex) = Source
 		  Next
 		  
@@ -1332,16 +1181,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CheckDefineReady()
-		  Dim AvailabilityChecked As Boolean
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
-		  For Each Map As Beacon.Map In Maps
-		    If DefineAvailabilityChecks(Map.Mask) <> Nil And DefineAvailabilityChecks(Map.Mask).Value Then
-		      AvailabilityChecked = True
-		      Exit
-		    End If
-		  Next
-		  
-		  DefineActionButton.Enabled = DefineClassField.Text.Right(2) = "_C" And DefineNameField.Text <> "" And DefineKindMenu.ListIndex > -1 And AvailabilityChecked And DefineMinMultiplierField.Text <> "" And DefineMaxMultiplierField.Text <> ""
+		  Self.DefineActionButton.Enabled = DefineClassField.Text.Right(2) = "_C" And DefineNameField.Text <> "" And DefineKindMenu.ListIndex > -1 And DefineMinMultiplierField.Text <> "" And DefineMaxMultiplierField.Text <> ""
 		End Sub
 	#tag EndMethod
 
@@ -1440,13 +1280,6 @@ End
 		  Case Self.PaneSelection
 		    
 		  Case Self.PaneDefine
-		    Dim Maps() As Beacon.Map = Beacon.Maps.All
-		    For Each Map As Beacon.Map In Maps
-		      If DefineAvailabilityChecks(Map.Mask) <> Nil Then
-		        DefineAvailabilityChecks(Map.Mask).Value = Self.mEditing.ValidForMap(Map)
-		      End If
-		    Next
-		    
 		    DefineClassField.Text = Self.mEditing.ClassString
 		    DefineNameField.Text = Self.mEditing.Label
 		    DefineMinMultiplierField.Text = Format(Self.mEditing.Multipliers.Min, "0.0000")
@@ -1457,6 +1290,7 @@ End
 		    CustomizeMinSetsField.Text = Format(Self.mEditing.MinItemSets, "-0")
 		    CustomizeMaxSetsField.Text = Format(Self.mEditing.MaxItemSets, "-0")
 		    CustomizePreventDuplicatesCheck.Value = Self.mEditing.SetsRandomWithoutReplacement
+		    CustomizeAppendModeCheck.Value = Self.mEditing.AppendMode
 		    
 		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets()
 		    
@@ -1595,18 +1429,10 @@ End
 		    Self.mEditing.IsOfficial = True
 		    Self.mEditing.UseBlueprints = Source.UseBlueprints
 		  Else
-		    Dim Maps() As Beacon.Map = Beacon.Maps.All
-		    Dim Availability As UInt64
-		    For Each Map As Beacon.Map In Maps
-		      If DefineAvailabilityChecks(Map.Mask) <> Nil And DefineAvailabilityChecks(Map.Mask).Value Then
-		        Availability = Availability Or Map.Mask
-		      End If
-		    Next
-		    
 		    Self.mEditing.ClassString = DefineClassField.Text.ToText
 		    Self.mEditing.Label = DefineNameField.Text.ToText
 		    Self.mEditing.Kind = Beacon.LootSource.TextToKind(DefineKindMenu.RowTag(DefineKindMenu.ListIndex))
-		    Self.mEditing.Availability = Availability
+		    Self.mEditing.Availability = Self.mCurrentMask
 		    Self.mEditing.Multipliers = New Beacon.Range(CDbl(DefineMinMultiplierField.Text), CDbl(DefineMaxMultiplierField.Text))
 		    Self.mEditing.IsOfficial = False
 		    Self.mEditing.UseBlueprints = False
@@ -1635,6 +1461,7 @@ End
 		  Self.mEditing.MinItemSets = CDbl(CustomizeMinSetsField.Text)
 		  Self.mEditing.MaxItemSets = CDbl(CustomizeMaxSetsField.Text)
 		  Self.mEditing.SetsRandomWithoutReplacement = CustomizePreventDuplicatesCheck.Value
+		  Self.mEditing.AppendMode = CustomizeAppendModeCheck.Value
 		  
 		  For I As Integer = 0 To CustomizePresetsList.ListCount - 1
 		    Dim Preset As Beacon.Preset = CustomizePresetsList.RowTag(I)
@@ -1738,13 +1565,6 @@ End
 	#tag Event
 		Sub Open()
 		  Me.ColumnType(0) = ListBox.TypeCheckbox
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DefineAvailabilityChecks
-	#tag Event
-		Sub Action(index as Integer)
-		  Self.CheckDefineReady()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

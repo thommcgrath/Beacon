@@ -97,7 +97,7 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h0
 		Function ColorProfile() As BeaconUI.ColorProfile
 		  If mColorProfile = Nil Then
-		    mColorProfile = New BeaconUI.ColorProfile(PrimaryColor)
+		    mColorProfile = New BeaconUI.ColorProfile(BeaconUI.PrimaryColor)
 		  End If
 		  Return mColorProfile
 		End Function
@@ -290,7 +290,9 @@ Protected Module BeaconUI
 		Protected Sub PrimaryColor(Assigns Value As Color)
 		  Dim CurrentColor As Color = PrimaryColor()
 		  App.Preferences.ColorValue("UI Color") = Value
-		  If CurrentColor <> Value Then
+		  Dim NewColor As Color = PrimaryColor()
+		  
+		  If CurrentColor <> NewColor Then
 		    mColorProfile = New BeaconUI.ColorProfile(Value)
 		    NotificationKit.Post(PrimaryColorNotification, mColorProfile)
 		  End If
@@ -449,7 +451,7 @@ Protected Module BeaconUI
 	#tag Constant, Name = BorderTop, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = DefaultPrimaryColor, Type = Color, Dynamic = False, Default = \"&cA64DCF", Scope = Protected
+	#tag Constant, Name = DefaultPrimaryColor, Type = Color, Dynamic = False, Default = \"&c713A9A", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = PrimaryColorNotification, Type = Text, Dynamic = False, Default = \"UI Color Changed", Scope = Protected

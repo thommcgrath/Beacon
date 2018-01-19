@@ -115,8 +115,6 @@ Inherits Application
 		  Self.Log("Identity is " + Self.mIdentity.Identifier)
 		  Self.PublishIdentity()
 		  
-		  BeaconAPI.Send(New BeaconAPI.Request("user.php/" + Self.mIdentity.Identifier, "GET", AddressOf HandleUserLookupReply))
-		  
 		  Self.mUpdateChecker = New UpdateChecker
 		  AddHandler Self.mUpdateChecker.UpdateAvailable, WeakAddressOf Self.mUpdateChecker_UpdateAvailable
 		  AddHandler Self.mUpdateChecker.NoUpdate, WeakAddressOf Self.mUpdateChecker_NoUpdate
@@ -363,22 +361,33 @@ Inherits Application
 	#tag Method, Flags = &h21
 		Private Sub APICallback_UserLookup(Success As Boolean, Message As Text, Details As Auto)
 		  #Pragma Unused Message
-		  #Pragma Unused Details
+		  
+		  Dim OriginalUIColor As Color = BeaconUI.PrimaryColor()
 		  
 		  If Success Then
-		    // Already exists
-		    Return
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Details
+		      If Self.mIdentity.ConsumeUserDictionary(Dict) Then
+		        Self.WriteIdentity()
+		      End If
+		    Catch Err As TypeMismatchException
+		    End Try
+		  Else
+		    Dim Params As New Xojo.Core.Dictionary
+		    Params.Value("user_id") = Self.mIdentity.Identifier
+		    Params.Value("public_key") = Self.mIdentity.PublicKey
+		    
+		    Dim Body As Text = Xojo.Data.GenerateJSON(Params)
+		    Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
+		    Self.mAPISocket.Start(Request)
 		  End If
 		  
-		  // Create the user
+		  Self.mIdentity.Validate()
 		  
-		  Dim Params As New Xojo.Core.Dictionary
-		  Params.Value("user_id") = Self.mIdentity.Identifier
-		  Params.Value("public_key") = Self.mIdentity.PublicKey
-		  
-		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
-		  Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
-		  Self.mAPISocket.Start(Request)
+		  Dim NewUIColor As Color = BeaconUI.PrimaryColor()
+		  If OriginalUIColor <> NewUIColor Then
+		    NotificationKit.Post("UI Color Changed", New BeaconUI.ColorProfile(NewUIColor))
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -511,31 +520,6 @@ Inherits Application
 		  
 		  Return True
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub HandleUserLookupReply(Success As Boolean, Message As Text, Details As Auto)
-		  #Pragma Unused Message
-		  
-		  Dim OriginalUIColor As Color = BeaconUI.PrimaryColor()
-		  
-		  If Success Then
-		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Details
-		      If Self.mIdentity.ConsumeUserDictionary(Dict) Then
-		        Self.WriteIdentity()
-		      End If
-		    Catch Err As TypeMismatchException
-		    End Try
-		  End If
-		  
-		  Self.mIdentity.Validate()
-		  
-		  Dim NewUIColor As Color = BeaconUI.PrimaryColor()
-		  If OriginalUIColor <> NewUIColor Then
-		    NotificationKit.Post("UI Color Changed", NewUIColor)
-		  End If
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

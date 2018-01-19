@@ -117,6 +117,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("Label") = Self.mLabel
 		  Keys.Value("UseBlueprints") = Self.mUseBlueprints
 		  Keys.Value("RequiredItemSets") = Self.RequiredItemSets
+		  Keys.Value("AppendMode") = Self.mAppendMode
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -162,7 +163,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim UIColor As Text = Dict.Lookup("UIColor", "FFFFFF00")
 		    Dim MutableSource As New Beacon.MutableLootSource(ClassString, False)
 		    MutableSource.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
-		    MutableSource.Availability = Dict.Lookup("Availability", Beacon.Maps.All.Mask)
+		    MutableSource.Availability = Beacon.Maps.All.Mask
 		    MutableSource.Kind = Beacon.LootSource.TextToKind(Dict.Lookup("Kind", "Standard"))
 		    MutableSource.UIColor = Color.RGBA(Integer.FromHex(UIColor.Mid(0, 2)), Integer.FromHex(UIColor.Mid(2, 2)), Integer.FromHex(UIColor.Mid(4, 2)), Integer.FromHex(UIColor.Mid(6, 2)))
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
@@ -185,6 +186,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    LootSource.SetsRandomWithoutReplacement = Dict.Value("bSetsRandomWithoutReplacement")
 		  ElseIf Dict.HasKey("SetsRandomWithoutReplacement") Then
 		    LootSource.SetsRandomWithoutReplacement = Dict.Value("SetsRandomWithoutReplacement")
+		  End If
+		  If Dict.HasKey("AppendMode") Then
+		    LootSource.AppendMode = Dict.Value("AppendMode")
 		  End If
 		  
 		  Dim Children() As Auto
@@ -225,7 +229,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim UIColor As Text = Dict.Lookup("UIColor", "FFFFFF00")
 		    Dim MutableSource As New Beacon.MutableLootSource(ClassString, False)
 		    MutableSource.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
-		    MutableSource.Availability = Dict.Lookup("Availability", Beacon.Maps.All.Mask)
+		    MutableSource.Availability = Beacon.Maps.All.Mask
 		    MutableSource.Kind = Beacon.LootSource.TextToKind(Dict.Lookup("Kind", "Standard"))
 		    MutableSource.UIColor = Color.RGBA(Integer.FromHex(UIColor.Mid(0, 2)), Integer.FromHex(UIColor.Mid(2, 2)), Integer.FromHex(UIColor.Mid(4, 2)), Integer.FromHex(UIColor.Mid(6, 2)))
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
@@ -246,6 +250,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  If Dict.HasKey("bSetsRandomWithoutReplacement") Then
 		    LootSource.SetsRandomWithoutReplacement = Dict.Value("bSetsRandomWithoutReplacement")
+		  End If
+		  If Dict.HasKey("bAppendItemSets") Then
+		    LootSource.AppendMode = Dict.Value("bAppendItemSets")
 		  End If
 		  
 		  Dim Children() As Auto
@@ -507,6 +514,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Values.Append("MaxItemSets=" + MaxItemSets.ToText)
 		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.PrettyText)
 		  Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
+		  Values.Append("bAppendItemSets=" + if(Self.mAppendMode, "true", "false"))
 		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mSets, ",", Self.mMultipliers, Self.mUseBlueprints, DifficultyValue) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
@@ -536,6 +544,27 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mAppendMode
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mAppendMode <> Value Then
+			    Self.mAppendMode = Value
+			    Self.mModified = True
+			  End If
+			End Set
+		#tag EndSetter
+		AppendMode As Boolean
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mAppendMode As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mAvailability As UInt64

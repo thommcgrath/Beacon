@@ -32,7 +32,7 @@ Protected Class Identity
 		  
 		  #Pragma Warning "Handle KeyNotFoundException"
 		  
-		  Dim Signature As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Dict.Value("validation"))
+		  Dim Signature As Xojo.Core.MemoryBlock = If(Dict.HasKey("validation"), Beacon.DecodeHex(Dict.Value("validation")), Nil)
 		  Dim IsPatreonSupporter As Boolean = Dict.Lookup("is_patreon_supporter", False)
 		  Dim PatreonUserID As Integer = If(Dict.Lookup("patreon_user_id", Nil) <> Nil, Dict.Value("patreon_user_id"), 0)
 		  Dim Changed As Boolean
@@ -53,7 +53,6 @@ Protected Class Identity
 		  End If
 		  
 		  Return Changed
-		  
 		End Function
 	#tag EndMethod
 
