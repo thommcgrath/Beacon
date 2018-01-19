@@ -177,10 +177,12 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Shared Function ParseCSV(Input As Text) As Beacon.Engram()
-		  Input = Input.Trim
-		  
 		  Dim CarriageReturn As Text = Text.FromUnicodeCodepoint(13)
-		  Dim NewLine As Text = Text.FromUnicodeCodepoint(10)
+		  Dim LineFeed As Text = Text.FromUnicodeCodepoint(10)
+		  
+		  Input = Input.Trim
+		  Input = Input.ReplaceAll(CarriageReturn + LineFeed, CarriageReturn)
+		  Input = Input.ReplaceAll(LineFeed, CarriageReturn)
 		  
 		  Dim Lines() As Auto
 		  Dim ColumnBuffer(), Columns() As Text
@@ -203,9 +205,7 @@ Protected Class Engram
 		        Columns.Append(Text.Join(ColumnBuffer, ""))
 		        Redim ColumnBuffer(-1)
 		        Started = False
-		      ElseIf Character = Text.FromUnicodeCodepoint(13) Then
-		        // Ignore
-		      ElseIf Character = Text.FromUnicodeCodepoint(10) Then
+		      ElseIf Character = CarriageReturn Then
 		        // Next line
 		        Columns.Append(Text.Join(ColumnBuffer, ""))
 		        Lines.Append(Columns)
