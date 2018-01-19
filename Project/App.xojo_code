@@ -676,7 +676,7 @@ Inherits Application
 		  
 		  Dim Documents() As FolderItem
 		  For Each Data As Text In SaveData
-		    Dim File As FolderItem = GetTrueFolderItem(DecodeBase64(Data), FolderItem.PathTypeNative)
+		    Dim File As FolderItem = GetFolderItem(DecodeBase64(Data), FolderItem.PathTypeNative)
 		    If File <> Nil Then
 		      Documents.Append(File)
 		    End If
