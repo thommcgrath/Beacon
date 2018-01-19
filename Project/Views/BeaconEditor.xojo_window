@@ -536,6 +536,9 @@ End
 		    
 		    If Source.Count = 0 Then
 		      Status.Caption = "No item sets"
+		    ElseIf Source.AppendMode Then
+		      Dim NumSets As Integer = Source.Count
+		      Status.Caption = "Adds " + Str(NumSets, "-0") + " item set" + if(NumSets = 1, "", "s")
 		    Else
 		      Dim NumSets As Integer = Source.Count
 		      Dim MaxSets As Integer = Min(Source.MaxItemSets, NumSets)
