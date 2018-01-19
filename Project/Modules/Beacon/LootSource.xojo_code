@@ -51,6 +51,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mSortValue = 99
 		  Self.mNumItemSetsPower = 1
 		  Self.mUseBlueprints = False
+		  Self.mAppendMode = False
 		End Sub
 	#tag EndMethod
 
@@ -73,6 +74,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mUIColor = Source.mUIColor
 		  Self.mSortValue = Source.mSortValue
 		  Self.mUseBlueprints = Source.mUseBlueprints
+		  Self.mAppendMode = Source.mAppendMode
 		  
 		  For I As Integer = 0 To UBound(Source.mSets)
 		    Self.mSets(I) = New Beacon.ItemSet(Source.mSets(I))
@@ -507,14 +509,18 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Values.Append("SupplyCrateClassString=""" + Self.mClassString + """")
 		  End If
 		  
-		  Dim MinItemSets As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMinItemSets, Self.Count), 0)
-		  Dim MaxItemSets As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMaxItemSets, Self.Count), 0)
+		  If Self.mAppendMode Then
+		    Values.Append("bAppendItemSets=true")
+		  Else
+		    Dim MinItemSets As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMinItemSets, Self.Count), 0)
+		    Dim MaxItemSets As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMaxItemSets, Self.Count), 0)
+		    
+		    Values.Append("MinItemSets=" + MinItemSets.ToText)
+		    Values.Append("MaxItemSets=" + MaxItemSets.ToText)
+		    Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.PrettyText)
+		    Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
+		  End If
 		  
-		  Values.Append("MinItemSets=" + MinItemSets.ToText)
-		  Values.Append("MaxItemSets=" + MaxItemSets.ToText)
-		  Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.PrettyText)
-		  Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("bAppendItemSets=" + if(Self.mAppendMode, "true", "false"))
 		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mSets, ",", Self.mMultipliers, Self.mUseBlueprints, DifficultyValue) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
@@ -723,6 +729,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="AppendMode"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
