@@ -42,7 +42,7 @@ Begin ContainerControl DocumentSetupContainer
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -412,7 +412,7 @@ Begin ContainerControl DocumentSetupContainer
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -443,7 +443,7 @@ Begin ContainerControl DocumentSetupContainer
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -480,7 +480,7 @@ Begin ContainerControl DocumentSetupContainer
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -542,7 +542,7 @@ Begin ContainerControl DocumentSetupContainer
          LockTop         =   True
          Scope           =   2
          State           =   0
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   0
          TabStop         =   True
          TextFont        =   "System"
@@ -574,7 +574,7 @@ Begin ContainerControl DocumentSetupContainer
          LockTop         =   True
          Scope           =   2
          State           =   0
-         TabIndex        =   2
+         TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
          TextFont        =   "System"
@@ -606,7 +606,7 @@ Begin ContainerControl DocumentSetupContainer
          LockTop         =   True
          Scope           =   2
          State           =   0
-         TabIndex        =   3
+         TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
          TextFont        =   "System"
@@ -638,7 +638,7 @@ Begin ContainerControl DocumentSetupContainer
          LockTop         =   True
          Scope           =   2
          State           =   0
-         TabIndex        =   4
+         TabIndex        =   3
          TabPanelIndex   =   0
          TabStop         =   True
          TextFont        =   "System"

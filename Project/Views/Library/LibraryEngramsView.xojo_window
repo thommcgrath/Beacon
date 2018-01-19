@@ -146,7 +146,7 @@ Begin BeaconSubview LibraryEngramsView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -194,7 +194,7 @@ Begin BeaconSubview LibraryEngramsView
       ScrollBarVertical=   True
       SelectionType   =   1
       ShowDropIndicator=   False
-      TabIndex        =   4
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -228,7 +228,7 @@ Begin BeaconSubview LibraryEngramsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
