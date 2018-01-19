@@ -502,7 +502,7 @@ End
 		  If File <> Nil Then
 		    Dim Engrams() As Beacon.Engram = LocalData.SharedInstance.GetCustomEngrams()
 		    Dim CSV As Text = Beacon.Engram.CreateCSV(Engrams)
-		    Dim Stream As TextOutputStream
+		    Dim Stream As TextOutputStream = TextOutputStream.Create(File)
 		    Stream.Write(CSV)
 		    Stream.Close
 		  End If
