@@ -75,12 +75,26 @@
 	#tag FileType
 		CodeName=Text
 		Extension=.asc;.ascii;.bas;.c;.class;.cp;.cpp;.h;.hp;.hpp;.i3;.java;.m2;.m3;.mak;.text;.txt
-		Flags=&h0
+		Flags=&h9
 		MacCreator=????
 		MacType=TEXT
 		Name=text/plain
 		UTI=public.text
 		UTIConformsTo=public.data, public.content
+		Description=
+		MimeType=
+		Imported=True
+	#tag EndFileType
+
+	#tag FileType
+		CodeName=CSVFile
+		Extension=.csv
+		Flags=&h9
+		MacCreator=
+		MacType=TEXT
+		Name=CSV File
+		UTI=
+		UTIConformsTo=public.text
 		Description=
 		MimeType=
 		Imported=True

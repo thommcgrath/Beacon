@@ -52,10 +52,18 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Export(Identity As Beacon.Identity) As Xojo.Core.Dictionary
+		  Dim LootSources() As Xojo.Core.Dictionary
+		  For Each LootSource As Beacon.LootSource In Self.mLootSources
+		    Dim Dict As Xojo.Core.Dictionary = LootSource.Export()
+		    If Dict <> Nil Then
+		      LootSources.Append(Dict)
+		    End If
+		  Next
+		  
 		  Dim Document As New Xojo.Core.Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
 		  Document.Value("Identifier") = Self.Identifier
-		  Document.Value("LootSources") = Self.mLootSources
+		  Document.Value("LootSources") = LootSources
 		  Document.Value("Title") = Self.Title
 		  Document.Value("Description") = Self.Description
 		  Document.Value("Public") = Self.IsPublic

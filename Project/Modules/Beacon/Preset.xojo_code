@@ -333,15 +333,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Beacon.Map) As Boolean
-		  If Map = Nil Then
-		    Return True
-		  End If
-		  
-		  For Each Entry As Beacon.PresetEntry In Self.mContents
-		    If Entry.ValidForMap(Map) Then
-		      Return True
-		    End If
-		  Next
+		  Return Self.ValidForMask(Map.Mask)
 		End Function
 	#tag EndMethod
 

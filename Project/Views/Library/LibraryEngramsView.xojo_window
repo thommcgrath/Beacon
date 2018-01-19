@@ -146,7 +146,7 @@ Begin BeaconSubview LibraryEngramsView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -194,7 +194,7 @@ Begin BeaconSubview LibraryEngramsView
       ScrollBarVertical=   True
       SelectionType   =   1
       ShowDropIndicator=   False
-      TabIndex        =   4
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -207,6 +207,37 @@ Begin BeaconSubview LibraryEngramsView
       Width           =   760
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin UITweaks.ResizedPushButton ExportEngramsButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Export All"
+      Default         =   False
+      Enabled         =   False
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   446
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Underline       =   False
+      Visible         =   True
+      Width           =   130
    End
 End
 #tag EndWindow
@@ -223,8 +254,16 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Import(Contents As String)
+		  Dim Engrams() As Beacon.Engram
+		  
+		  Try
+		    Engrams = Beacon.Engram.ParseCSV(Contents.ToText)
+		  Catch Err As RuntimeException
+		    // Probably not a csv
+		    Engrams = Beacon.PullEngramsFromText(Contents)
+		  End Try
+		  
 		  Dim ImportedCount, SkippedCount As Integer
-		  Dim Engrams() As Beacon.Engram = Beacon.PullEngramsFromText(Contents)
 		  For Each Engram As Beacon.Engram In Engrams
 		    If LocalData.SharedInstance.SaveEngram(Engram, False) Then
 		      ImportedCount = ImportedCount + 1
@@ -269,13 +308,18 @@ End
 		  List.DeleteAllRows
 		  
 		  Dim Engrams() As Beacon.Engram = LocalData.SharedInstance.GetCustomEngrams()
-		  For Each Engram As Beacon.Engram In Engrams
-		    List.AddRow("")
-		    Self.ShowEngramInRow(Engram, List.LastIndex)
-		    If SelectedPaths.IndexOf(Engram.Path) > -1 Then
-		      List.Selected(List.LastIndex) = True
-		    End If
-		  Next
+		  If Engrams <> Nil Then
+		    For Each Engram As Beacon.Engram In Engrams
+		      List.AddRow("")
+		      Self.ShowEngramInRow(Engram, List.LastIndex)
+		      If SelectedPaths.IndexOf(Engram.Path) > -1 Then
+		        List.Selected(List.LastIndex) = True
+		      End If
+		    Next
+		    ExportEngramsButton.Enabled = Engrams.Ubound > -1
+		  Else
+		    ExportEngramsButton.Enabled = False
+		  End If
 		  
 		  List.Sort
 		  If List.SelCount > 0 Then
@@ -331,7 +375,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Dialog As New OpenDialog
-		  Dialog.Filter = BeaconFileTypes.Text
+		  Dialog.Filter = BeaconFileTypes.Text + BeaconFileTypes.CSVFile
 		  
 		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File = Nil Then
@@ -442,6 +486,25 @@ End
 		  Else
 		    Beep
 		    Self.ShowEngramInRow(Engram, Row)
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ExportEngramsButton
+	#tag Event
+		Sub Action()
+		  Dim Dialog As New SaveAsDialog
+		  Dialog.SuggestedFileName = "Beacon Engrams.csv"
+		  Dialog.PromptText = "Export engrams to CSV"
+		  Dialog.Filter = BeaconFileTypes.CSVFile
+		  
+		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If File <> Nil Then
+		    Dim Engrams() As Beacon.Engram = LocalData.SharedInstance.GetCustomEngrams()
+		    Dim CSV As Text = Beacon.Engram.CreateCSV(Engrams)
+		    Dim Stream As TextOutputStream
+		    Stream.Write(CSV)
+		    Stream.Close
 		  End If
 		End Sub
 	#tag EndEvent
