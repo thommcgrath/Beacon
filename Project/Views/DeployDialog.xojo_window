@@ -270,6 +270,7 @@ Begin Window DeployDialog
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
+         RowCount        =   0
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -1233,7 +1234,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Request As New BeaconAPI.Request("ftp.php?" + Profile.QueryString + "&ref=" + Profile.Hash, "GET", WeakAddressOf APICallback_FTPDownload)
+		    Dim Request As New BeaconAPI.Request("ftp.php?" + Profile.QueryString("Game.ini") + "&ref=" + Profile.Hash, "GET", WeakAddressOf APICallback_FTPDownload)
 		    Request.Sign(App.Identity)
 		    Self.APISocket.Start(Request)
 		  Next
@@ -1269,7 +1270,7 @@ End
 		    Dim Content As String = Stream.ReadAll(Encodings.UTF8)
 		    Stream.Close
 		    
-		    Dim Request As New BeaconAPI.Request("ftp.php?" + Profile.QueryString + "&ref=" + Profile.Hash, "POST", Content.ToText, "text/plain", WeakAddressOf APICallback_FTPUpload)
+		    Dim Request As New BeaconAPI.Request("ftp.php?" + Profile.QueryString("Game.ini") + "&ref=" + Profile.Hash, "POST", Content.ToText, "text/plain", WeakAddressOf APICallback_FTPUpload)
 		    Request.Sign(App.Identity)
 		    Self.APISocket.Start(Request)
 		  Next

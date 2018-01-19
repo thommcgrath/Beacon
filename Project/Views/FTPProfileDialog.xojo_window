@@ -527,7 +527,7 @@ Begin Window FTPProfileDialog
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "File Path:"
+      Text            =   "Game.ini Path:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -766,7 +766,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Profile As Beacon.FTPProfile = Self.Profile()
-		  Dim Request As New BeaconAPI.Request("ftp.php?" + Profile.QueryString, "GET", AddressOf APICallback_FTPDownload)
+		  Dim Request As New BeaconAPI.Request("ftp.php?" + Profile.QueryString("Game.ini"), "GET", AddressOf APICallback_FTPDownload)
 		  Request.Sign(App.Identity)
 		  Self.APISocket.Start(Request)
 		End Sub

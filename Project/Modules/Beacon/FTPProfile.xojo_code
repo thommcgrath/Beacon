@@ -104,7 +104,7 @@ Protected Class FTPProfile
 
 	#tag Method, Flags = &h0
 		Function Hash() As Text
-		  Return Beacon.EncodeHex(Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Self.QueryString)))
+		  Return Beacon.EncodeHex(Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Self.QueryString("Game.ini"))))
 		End Function
 	#tag EndMethod
 
@@ -123,13 +123,24 @@ Protected Class FTPProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function QueryString() As Text
+		Function QueryString(ToFile As Text) As Text
+		  Dim Path As Text = Self.Path.ReplaceAll("\", "/")
+		  Dim Components() As Text = Path.Split("/")
+		  If Components.Ubound > -1 Then
+		    Dim LastComponent As Text = Components(Components.Ubound)
+		    If LastComponent.Length > 4 And LastComponent.Right(4) = ".ini" Then
+		      Components.Remove(Components.Ubound)
+		    End If
+		  End If
+		  Components.Append(ToFile)
+		  Path = Text.Join(Components, "/")
+		  
 		  Dim Pieces() As Text
 		  Pieces.Append("host=" + Beacon.EncodeURLComponent(Self.Host))
 		  Pieces.Append("port=" + Self.Port.ToText)
 		  Pieces.Append("user=" + Beacon.EncodeURLComponent(Self.Username))
 		  Pieces.Append("pass=" + Beacon.EncodeURLComponent(Self.Password))
-		  Pieces.Append("path=" + Beacon.EncodeURLComponent(Self.Path))
+		  Pieces.Append("path=" + Beacon.EncodeURLComponent(Path))
 		  Return Text.Join(Pieces, "&")
 		End Function
 	#tag EndMethod
@@ -305,6 +316,16 @@ Protected Class FTPProfile
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Description"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Host"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -319,30 +340,20 @@ Protected Class FTPProfile
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mHost"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mPassword"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mPath"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mUsername"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Password"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Path"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Port"
@@ -361,6 +372,11 @@ Protected Class FTPProfile
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Username"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
