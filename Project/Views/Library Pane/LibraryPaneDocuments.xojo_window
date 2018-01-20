@@ -78,7 +78,6 @@ Begin LibrarySubview LibraryPaneDocuments
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -117,7 +116,6 @@ Begin LibrarySubview LibraryPaneDocuments
       Width           =   300
    End
    Begin Xojo.Net.HTTPSocket Downloader
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -125,7 +123,6 @@ Begin LibrarySubview LibraryPaneDocuments
       ValidateCertificates=   False
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -294,57 +291,62 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub FinishImport(Sources() As Beacon.LootSource)
-		  If UBound(Sources) = -1 Then
-		    Self.ShowAlert("No loot sources imported.", "The file contained no loot sources.")
-		    Return
-		  End If
-		  
-		  Dim Document As Beacon.Document = Self.mImportedRef.Document
-		  Document.MapCompatibility = Beacon.Maps.GuessMap(Sources)
-		  Document.DifficultyValue = Beacon.DifficultyValue(1.0, Beacon.Maps.ForMask(Document.MapCompatibility).DifficultyScale)
-		  If Not DocumentSetupSheet.Present(Self.TrueWindow, Document, DocumentSetupSheet.Modes.Import) Then
-		    Return
-		  End If
-		  
-		  For Each Source As Beacon.LootSource In Sources
-		    Document.Add(Source)
-		  Next
-		  
-		  Self.mTempDocuments.Append(Self.mImportedRef)
-		  Self.View = Self.ViewRecentDocuments
-		  Self.SelectDocument(Self.mImportedRef)
-		  
-		  Dim View As New DocumentEditorView(Self.mImportedRef, Document)
-		  View.ContentsChanged = True
-		  Self.mViews.Value(Document.Identifier) = View
-		  Self.ShowView(View)
+		Private Sub FinishImport(Document As Beacon.Document)
+		  #if false
+		    If UBound(Sources) = -1 Then
+		      Self.ShowAlert("No loot sources imported.", "The file contained no loot sources.")
+		      Return
+		    End If
+		    
+		    Document.MapCompatibility = Beacon.Maps.GuessMap(Sources)
+		    Document.DifficultyValue = Beacon.DifficultyValue(1.0, Beacon.Maps.ForMask(Document.MapCompatibility).DifficultyScale)
+		    If Not DocumentSetupSheet.Present(Self.TrueWindow, Document, DocumentSetupSheet.Modes.Import) Then
+		      Return
+		    End If
+		    
+		    For Each Source As Beacon.LootSource In Sources
+		      Document.Add(Source)
+		    Next
+		    
+		    Self.mTempDocuments.Append(Self.mImportedRef)
+		    Self.View = Self.ViewRecentDocuments
+		    Self.SelectDocument(Self.mImportedRef)
+		    
+		    Dim View As New DocumentEditorView(Self.mImportedRef, Document)
+		    View.ContentsChanged = True
+		    Self.mViews.Value(Document.Identifier) = View
+		    Self.ShowView(View)
+		  #endif
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ImportFile(File As FolderItem)
-		  Self.mImportedRef = New TemporaryDocumentRef
+		  Dim Document As Beacon.Document = DocumentSetupSheet.Present(Self, File)
+		  If Document = Nil Then
+		    Return
+		  End If
 		  
-		  Self.mImportProgress = New ImporterWindow
-		  Self.mImportProgress.Source = File.DisplayName
-		  Self.mImportProgress.CancelAction = WeakAddressOf Self.CancelImport
-		  Self.mImportProgress.ShowWithin(Self.TrueWindow)
-		  
-		  Self.Importer.Run(File)
+		  Dim Ref As New TemporaryDocumentRef(Document)
+		  Self.mTempDocuments.Append(Ref)
+		  Self.View = Self.ViewRecentDocuments
+		  Self.SelectDocument(Ref)
+		  Self.OpenDocument(Ref)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub NewDocument()
-		  Dim Ref As New TemporaryDocumentRef
-		  If DocumentSetupSheet.Present(Self, Ref.Document, DocumentSetupSheet.Modes.Create) Then
-		    Self.mTempDocuments.Append(Ref)
-		    
-		    Self.View = Self.ViewRecentDocuments
-		    Self.SelectDocument(Ref)
-		    Self.OpenDocument(Ref)
+		  Dim Document As Beacon.Document = DocumentSetupSheet.Present(Self)
+		  If Document = Nil Then
+		    Return
 		  End If
+		  
+		  Dim Ref As New TemporaryDocumentRef(Document)
+		  Self.mTempDocuments.Append(Ref)
+		  Self.View = Self.ViewRecentDocuments
+		  Self.SelectDocument(Ref)
+		  Self.OpenDocument(Ref)
 		End Sub
 	#tag EndMethod
 
@@ -914,17 +916,16 @@ End
 #tag Events Importer
 	#tag Event
 		Sub UpdateUI()
-		  If Me.LootSourcesProcessed = Me.BeaconCount Then
+		  If Me.Finished Then
 		    If Self.mImportProgress <> Nil Then
 		      Self.mImportProgress.Close
 		      Self.mImportProgress = Nil
 		    End If
 		    
-		    Self.FinishImport(Me.LootSources)
+		    Self.FinishImport(Me.Document)
 		    Return
 		  ElseIf Self.mImportProgress <> Nil Then
-		    Self.mImportProgress.BeaconCount = Me.BeaconCount
-		    Self.mImportProgress.LootSourcesProcessed = Me.LootSourcesProcessed
+		    Self.mImportProgress.Progress = Me.Progress
 		  End If
 		End Sub
 	#tag EndEvent

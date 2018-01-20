@@ -155,6 +155,7 @@ Begin BeaconSubview DocumentEditorView
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   1
       Visible         =   True
@@ -224,6 +225,7 @@ Begin BeaconSubview DocumentEditorView
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -798,7 +800,7 @@ End
 #tag Events Status
 	#tag Event
 		Sub Action()
-		  If DocumentSetupSheet.Present(Self, Self.mDocument, DocumentSetupSheet.Modes.Edit) Then
+		  If DocumentSetupSheet.Present(Self, Self.mDocument) Then
 		    Self.UpdateCaptionButton()
 		    Self.ContentsChanged = Self.mDocument.Modified
 		  End If

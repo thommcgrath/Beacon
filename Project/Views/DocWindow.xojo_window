@@ -117,6 +117,7 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -164,6 +165,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -205,6 +207,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -657,17 +660,29 @@ End
 		  Self.ImportProgress.Source = File.Name
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
 		  Self.ImportProgress.ShowWithin(Self)
-		  Self.Importer.Run(File)
+		  Self.Importer.AddContent(File)
+		  Self.Importer.Run
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Import(Content As String, Source As String)
+		  If Content.Encoding = Nil Then
+		    If Encodings.UTF8.IsValidData(Content) Then
+		      Content = Content.DefineEncoding(Encodings.UTF8)
+		    Else
+		      Self.ShowAlert("Unable to import from clipboard", "The data is using an unknown encoding and cannot be imported.")
+		      Return
+		    End If
+		  End If
+		  
 		  Self.ImportProgress = New ImporterWindow
 		  Self.ImportProgress.Source = Source
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
 		  Self.ImportProgress.ShowWithin(Self)
-		  Self.Importer.Run(Content.ToText)
+		  
+		  Self.Importer.AddContent(Content.ToText)
+		  Self.Importer.Run
 		End Sub
 	#tag EndMethod
 
@@ -1050,7 +1065,7 @@ End
 		  Case "DeleteButton"
 		    Self.RemoveSelectedBeacons(True)
 		  Case "SettingsButton"
-		    If DocumentSetupSheet.Present(Self, Self.Doc, DocumentSetupSheet.Modes.Edit) Then
+		    If DocumentSetupSheet.Present(Self, Self.Doc) Then
 		      Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
 		      Self.UpdateSourceList()
 		    End If
@@ -1124,22 +1139,22 @@ End
 #tag Events Importer
 	#tag Event
 		Sub UpdateUI()
-		  If Me.LootSourcesProcessed = Me.BeaconCount Then
+		  If Me.Finished Then
 		    If Self.ImportProgress <> Nil Then
 		      Self.ImportProgress.Close
 		      Self.ImportProgress = Nil
 		    End If
 		    
-		    Dim LootSources() As Beacon.LootSource = Me.LootSources
-		    Me.Reset
+		    Dim Document As Beacon.Document = Me.Document
+		    If Document <> Nil Then
+		      Self.AddLootSources(Document.LootSources)
+		    End If
 		    
-		    Self.AddLootSources(LootSources)
 		    Return
 		  End If
 		  
 		  If Self.ImportProgress <> Nil Then
-		    Self.ImportProgress.BeaconCount = Me.BeaconCount
-		    Self.ImportProgress.LootSourcesProcessed = Me.LootSourcesProcessed
+		    Self.ImportProgress.Progress = Me.Progress
 		  End If
 		End Sub
 	#tag EndEvent

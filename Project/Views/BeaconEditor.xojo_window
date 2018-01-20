@@ -78,6 +78,7 @@ Begin ContainerControl BeaconEditor
       _ScrollWidth    =   -1
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -136,6 +137,7 @@ Begin ContainerControl BeaconEditor
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True
@@ -151,6 +153,7 @@ Begin ContainerControl BeaconEditor
          HasBackColor    =   False
          Height          =   464
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -454,7 +457,8 @@ End
 		  Self.ImportProgress.Source = Source
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
 		  Self.ImportProgress.ShowWithin(Self.TrueWindow)
-		  Self.Importer.Run(Content.ToText)
+		  Self.Importer.AddContent(Content.ToText)
+		  Self.Importer.Run
 		End Sub
 	#tag EndMethod
 
@@ -968,14 +972,17 @@ End
 #tag Events Importer
 	#tag Event
 		Sub UpdateUI()
-		  If Me.LootSourcesProcessed = Me.BeaconCount Then
+		  If Me.Finished Then
 		    If Self.ImportProgress <> Nil Then
 		      Self.ImportProgress.Close
 		      Self.ImportProgress = Nil
 		    End If
 		    
-		    Dim SourceLootSources() As Beacon.LootSource = Me.LootSources
-		    Me.Reset
+		    If Me.Document = Nil Then
+		      Return
+		    End If
+		    
+		    Dim SourceLootSources() As Beacon.LootSource = Me.Document.LootSources
 		    
 		    Dim Updated As Boolean
 		    Dim SetNames() As String
@@ -1006,8 +1013,7 @@ End
 		  End If
 		  
 		  If Self.ImportProgress <> Nil Then
-		    Self.ImportProgress.BeaconCount = Me.BeaconCount
-		    Self.ImportProgress.LootSourcesProcessed = Me.LootSourcesProcessed
+		    Self.ImportProgress.Progress = Me.Progress
 		  End If
 		End Sub
 	#tag EndEvent

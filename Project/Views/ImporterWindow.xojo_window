@@ -70,7 +70,7 @@ Begin Window ImporterWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Maximum         =   0
+      Maximum         =   400
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -101,6 +101,7 @@ Begin Window ImporterWindow
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Importing from """""
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -113,40 +114,6 @@ Begin Window ImporterWindow
       Visible         =   True
       Width           =   360
    End
-   Begin Label StatusLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      Text            =   ""
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   84
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   268
-   End
 End
 #tag EndWindow
 
@@ -155,28 +122,6 @@ End
 		Delegate Sub CancelDelegate()
 	#tag EndDelegateDeclaration
 
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mBeaconCount
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Self.mBeaconCount = Value
-			  If Self.mBeaconCount = 0 Then
-			    Self.JobProgress.Maximum = 0
-			    Self.StatusLabel.Text = ""
-			  Else
-			    Self.JobProgress.Maximum = 1000
-			    Self.StatusLabel.Text = Str(Self.mLootSourcesProcessed, "0") + " of " + Str(Self.mBeaconCount, "0") + " processed"
-			  End If
-			  Self.JobProgress.Value = (Self.mLootSourcesProcessed / Self.mBeaconCount) * Self.JobProgress.Maximum
-			End Set
-		#tag EndSetter
-		BeaconCount As UInteger
-	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -193,41 +138,36 @@ End
 		CancelAction As ImporterWindow.CancelDelegate
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mLootSourcesProcessed
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Self.mLootSourcesProcessed = Value
-			  If Self.mBeaconCount = 0 Then
-			    Self.StatusLabel.Text = ""
-			  Else
-			    Self.StatusLabel.Text = Str(Self.mLootSourcesProcessed, "0") + " of " + Str(Self.mBeaconCount, "0") + " processed"
-			  End If
-			  Self.JobProgress.Value = (Self.mLootSourcesProcessed / Self.mBeaconCount) * Self.JobProgress.Maximum
-			End Set
-		#tag EndSetter
-		LootSourcesProcessed As UInteger
-	#tag EndComputedProperty
-
-	#tag Property, Flags = &h21
-		Private mBeaconCount As UInteger
-	#tag EndProperty
-
 	#tag Property, Flags = &h21
 		Private mCancelAction As ImporterWindow.CancelDelegate
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLootSourcesProcessed As UInteger
+		Private mProgress As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSource As String
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mProgress
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mProgress = Value
+			  
+			  Dim BarValue As Integer = Round(Self.JobProgress.Maximum * Value)
+			  If Self.JobProgress.Value <> BarValue Then
+			    Self.JobProgress.Value = BarValue
+			  End If
+			End Set
+		#tag EndSetter
+		Progress As Double
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter

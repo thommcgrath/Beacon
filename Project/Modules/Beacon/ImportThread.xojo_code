@@ -7,23 +7,20 @@ Inherits Beacon.Thread
 		  Static LF As Text = Text.FromUnicodeCodepoint(10)
 		  Static CRLF As Text = CR + LF
 		  
-		  Self.Reset
+		  Self.mFinished = False
 		  Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Single
 		  
 		  // Normalize line endings
-		  Self.mContent = Self.mContent.ReplaceAll(CRLF, CR)
-		  Self.mContent = Self.mContent.ReplaceAll(LF, CR)
+		  Dim Content As Text = Self.mContent
+		  Self.mContent = ""
+		  Self.mCharactersProcessed = 0
+		  Self.mCharactersTotal = Content.Length
+		  Content = Content.ReplaceAll(CRLF, CR)
+		  Content = Content.ReplaceAll(LF, CR)
 		  
-		  Dim Lines() As Text = Self.mContent.Split(CR)
-		  For I As Integer = UBound(Lines) DownTo 0
-		    If Lines(I).Length < 30 Or Lines(I).Left(30) <> "ConfigOverrideSupplyCrateItems" Then
-		      Lines.Remove(I)
-		    End If
-		  Next
-		  
-		  Self.mBeaconCount = UBound(Lines) + 1
-		  Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Single
-		  
+		  Dim Document As New Beacon.Document
+		  Dim FoundDifficultyOverride As Boolean
+		  Dim Lines() As Text = Content.Split(CR)
 		  For Each Line As Text In Lines
 		    Try
 		      Dim Value As Auto = Self.Import(Line + CR)
@@ -31,33 +28,78 @@ Inherits Beacon.Thread
 		        Continue
 		      End If
 		      Dim ValueInfo As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		      If ValueInfo.FullName <> "Xojo.Core.Dictionary" Or Xojo.Core.Dictionary(Value).HasKey("ConfigOverrideSupplyCrateItems") = False Then
+		      If ValueInfo.FullName <> "Xojo.Core.Dictionary" Then
 		        Continue
 		      End If
 		      
-		      Dim LootSource As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(Xojo.Core.Dictionary(Value), 1.0)
-		      If LootSource <> Nil Then
-		        LootSource.NumItemSetsPower = 1.0
-		        Self.mLootSources.Append(LootSource)
+		      Dim Dict As Xojo.Core.Dictionary = Value
+		      If Dict.HasKey("ConfigOverrideSupplyCrateItems") Then
+		        Dim LootSource As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(Dict.Value("ConfigOverrideSupplyCrateItems"), 1.0)
+		        If LootSource <> Nil Then
+		          LootSource.NumItemSetsPower = 1.0
+		          Document.Add(LootSource)
+		        End If
+		      ElseIf Dict.HasKey("OverrideOfficialDifficulty") Then
+		        Document.DifficultyValue = Dict.Value("OverrideOfficialDifficulty")
+		        FoundDifficultyOverride = True
+		      ElseIf Dict.HasKey("DifficultyOffset") And FoundDifficultyOverride = False Then
+		        Document.DifficultyValue = Beacon.DifficultyValue(Dict.Value("DifficultyOffset"), Document.Maps.DifficultyScale)
+		      ElseIf Dict.HasKey("SessionName") Then
+		        Document.Title = Dict.Value("SessionName")
 		      End If
 		    Catch Stop As Beacon.ThreadStopException
 		      Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Off
-		      Self.Reset
 		      Return
 		    Catch Err As RuntimeException
 		      // Don't let an error halt processing, skip and move on
 		    End Try
-		    Self.mLootSourcesProcessed = Self.mLootSourcesProcessed + 1
 		    Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Single
 		  Next
+		  
+		  Self.mCreatedDocument = Document
+		  Self.mFinished = True
 		End Sub
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Sub AddContent(File As Global.FolderItem)
+		  If File = Nil Or File.Exists = False Then
+		    Return
+		  End If
+		  
+		  Dim Stream As Global.TextInputStream = Global.TextInputStream.Open(File)
+		  Dim Content As Text = Stream.ReadAll(Encodings.UTF8).ToText
+		  Stream.Close
+		  
+		  Self.AddContent(Content)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Function BeaconCount() As UInteger
-		  Return Self.mBeaconCount
-		End Function
+		Sub AddContent(Content As Text)
+		  If Self.State <> Beacon.Thread.States.NotRunning Then
+		    Dim Err As New RuntimeException
+		    Err.Reason = "Importer is already running"
+		    Raise Err
+		  End If
+		  
+		  Self.mContent = Self.mContent + Text.FromUnicodeCodepoint(13) + Content
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddContent(File As Xojo.IO.FolderItem)
+		  If File = Nil Or File.Exists = False Then
+		    Return
+		  End If
+		  
+		  Dim Stream As Xojo.IO.TextInputStream = Xojo.IO.TextInputStream.Open(File, Xojo.Core.TextEncoding.UTF8)
+		  Dim Content As Text = Stream.ReadAll
+		  Stream.Close
+		  
+		  Self.AddContent(Content)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -66,9 +108,21 @@ Inherits Beacon.Thread
 		  
 		  Self.mUpdateTimer = New Xojo.Core.Timer
 		  Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Off
-		  Self.mUpdateTimer.Period = 1
+		  Self.mUpdateTimer.Period = 10
 		  AddHandler Self.mUpdateTimer.Action, WeakAddressOf Self.mUpdateTimer_Action
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Document() As Beacon.Document
+		  Return Self.mCreatedDocument
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Finished() As Boolean
+		  Return Self.mFinished
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -80,28 +134,13 @@ Inherits Beacon.Thread
 		      Value = Parser.Value
 		      Exit
 		    End If
+		    Self.mCharactersProcessed = Self.mCharactersProcessed + 1
+		    Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Single
 		  Next
+		  Self.mCharactersProcessed = Self.mCharactersTotal
+		  Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Single
 		  
 		  Return Self.ToXojoType(Value)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function LootSources() As Beacon.LootSource()
-		  Dim Results() As Beacon.LootSource
-		  Redim Results(UBound(Self.mLootSources))
-		  
-		  For I As Integer = 0 To UBound(Self.mLootSources)
-		    Results(I) = New Beacon.LootSource(Self.mLootSources(I))
-		  Next
-		  
-		  Return Results
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function LootSourcesProcessed() As UInteger
-		  Return Self.mLootSourcesProcessed
 		End Function
 	#tag EndMethod
 
@@ -114,62 +153,9 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Reset()
-		  Self.mBeaconCount = 0
-		  Self.mLootSourcesProcessed = 0
-		  Redim Self.mLootSources(-1)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Run()
-		  Super.Run
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub Run(File As Global.FolderItem)
-		  If Self.State <> Beacon.Thread.States.NotRunning Then
-		    Dim Err As New RuntimeException
-		    Err.Reason = "Importer is already running"
-		    Raise Err
-		  End If
-		  
-		  Dim Stream As Global.TextInputStream = Global.TextInputStream.Open(File)
-		  Self.mContent = Stream.ReadAll(Encodings.UTF8).ToText
-		  Stream.Close
-		  
-		  Self.Run()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Run(Content As Text)
-		  If Self.State <> Beacon.Thread.States.NotRunning Then
-		    Dim Err As New RuntimeException
-		    Err.Reason = "Importer is already running"
-		    Raise Err
-		  End If
-		  
-		  Self.mContent = Content
-		  Self.Run()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Sub Run(File As Xojo.IO.FolderItem)
-		  If Self.State <> Beacon.Thread.States.NotRunning Then
-		    Dim Err As New RuntimeException
-		    Err.Reason = "Importer is already running"
-		    Raise Err
-		  End If
-		  
-		  Dim Stream As Xojo.IO.TextInputStream = Xojo.IO.TextInputStream.Open(File, Xojo.Core.TextEncoding.UTF8)
-		  Self.mContent = Stream.ReadAll
-		  Stream.Close
-		  
-		  Self.Run()
-		End Sub
+		Function Progress() As Double
+		  Return Self.mCharactersProcessed / Self.mCharactersTotal
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -207,8 +193,10 @@ Inherits Beacon.Thread
 		  Case "Text"
 		    If Input = "true" Then
 		      Return True
-		    ElseIf Input = "false" then
+		    ElseIf Input = "false" Then
 		      Return False
+		    ElseIf Input = "" Then
+		      Return ""
 		    Else
 		      Dim IsNumeric As Boolean = True
 		      Dim DecimalPoints As Integer
@@ -250,7 +238,11 @@ Inherits Beacon.Thread
 
 
 	#tag Property, Flags = &h21
-		Private mBeaconCount As UInteger
+		Private mCharactersProcessed As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCharactersTotal As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -258,11 +250,11 @@ Inherits Beacon.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLootSources() As Beacon.LootSource
+		Private mCreatedDocument As Beacon.Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLootSourcesProcessed As UInteger
+		Private mFinished As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

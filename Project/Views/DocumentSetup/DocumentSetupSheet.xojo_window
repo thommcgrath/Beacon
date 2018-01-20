@@ -13,12 +13,12 @@ Begin Window DocumentSetupSheet
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
-   MaxHeight       =   500
+   MaxHeight       =   496
    MaximizeButton  =   False
    MaxWidth        =   511
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   484
+   MinHeight       =   124
    MinimizeButton  =   False
    MinWidth        =   511
    Placement       =   1
@@ -45,10 +45,10 @@ Begin Window DocumentSetupSheet
       TabIndex        =   8
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   2
+      Value           =   1
       Visible         =   True
       Width           =   511
-      Begin Label MessageLabel
+      Begin Label FinalizeMessageLabel
          AutoDeactivate  =   True
          Bold            =   True
          DataField       =   ""
@@ -71,7 +71,7 @@ Begin Window DocumentSetupSheet
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
-         Text            =   "New Document"
+         Text            =   "Document Settings"
          TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "System"
@@ -1082,6 +1082,15 @@ Begin Window DocumentSetupSheet
          Width           =   471
       End
    End
+   Begin Beacon.ImportThread Importer
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   0
+      Scope           =   2
+      StackSize       =   ""
+      State           =   ""
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -1101,6 +1110,18 @@ End
 		Sub Open()
 		  Self.DifficultyOffsetField.Text = "1"
 		  Self.SwapButtons()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  Self.Resize()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resizing()
+		  Self.Resize()
 		End Sub
 	#tag EndEvent
 
@@ -1174,23 +1195,74 @@ End
 		Private Sub FinishDownloads()
 		  // At least one of mGameIniFile and mGameUserSettingsIniFile will exist, hopefully both
 		  
-		  Break
+		  Self.ProgressStatus.Text = "Processing files..."
+		  
+		  Self.Importer.AddContent(Self.mGameUserSettingsIniFile)
+		  Self.Importer.AddContent(Self.mGameIniFile)
+		  Self.Importer.Run
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Document As Beacon.Document, Mode As DocumentSetupSheet.Modes) As Boolean
-		  Parent = Parent.TrueWindow
+		Shared Function Present(Parent As Window) As Beacon.Document
+		  Dim Win As New DocumentSetupSheet
+		  Win.Title = "New Document"
+		  Win.FinalizeActionButton.Caption = "Create"
+		  Win.FinalizeCancelButton.Caption = "Back"
+		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
+		  If Win.mCancelled Then
+		    Win.Close
+		    Return Nil
+		  End If
+		  
+		  Dim Document As Beacon.Document = Win.mDocument
+		  Win.Close
+		  Return Document
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window, Document As Beacon.Document) As Boolean
 		  Dim Win As New DocumentSetupSheet
 		  Win.mDocument = Document
-		  Win.Setup(Mode)
-		  Win.ShowModalWithin(Parent)
+		  Win.Title = "Edit Document"
+		  Win.FinalizeActionButton.Caption = "Edit"
+		  Win.FinalizeCancelButton.Caption = "Cancel"
+		  Win.Pages.Value = DocumentSetupSheet.PageFinalize
+		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  Dim Cancelled As Boolean = Win.mCancelled
 		  Win.Close
 		  
 		  Return Not Cancelled
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window, SourceFile As FolderItem) As Beacon.Document
+		  Dim Win As New DocumentSetupSheet
+		  If Not Win.SetupLocalImportWithFile(SourceFile) Then
+		    Win.Close
+		    Return Nil
+		  End If
+		  
+		  Win.Height = Win.MinHeight
+		  Win.Title = "Import Local Config"
+		  Win.FinalizeActionButton.Caption = "Import"
+		  Win.FinalizeCancelButton.Caption = "Cancel"
+		  Win.Pages.Value = DocumentSetupSheet.PageImportProgress
+		  Win.FinishDownloads()
+		  Win.ShowModalWithin(Parent.TrueWindow)
+		  
+		  If Win.mCancelled Then
+		    Win.Close
+		    Return Nil
+		  End If
+		  
+		  Dim Document As Beacon.Document = Win.mDocument
+		  Win.Close
+		  Return Document
 		End Function
 	#tag EndMethod
 
@@ -1201,53 +1273,15 @@ End
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  Dialog.PromptText = "Please select a Game.ini or GameUserSettings.ini file"
 		  
-		  Dim FirstFile As FolderItem = Dialog.ShowModal()
-		  If FirstFile = Nil Then
+		  Dim File As FolderItem = Dialog.ShowModal()
+		  If File = Nil Then
 		    Return
 		  End If
 		  
-		  Dim FirstFileType As ConfigFileType = Self.DetectConfigType(FirstFile)
-		  Dim OtherFileName As String
-		  Dim DesiredOtherFileType As ConfigFileType
-		  Select Case FirstFileType
-		  Case ConfigFileType.Other
-		    Self.ShowAlert("Unknown config file", "Sorry, Beacon can't determine which config file this is.")
-		    Return
-		  Case ConfigFileType.GameIni
-		    OtherFileName = "GameUserSettings.ini"
-		    DesiredOtherFileType = ConfigFileType.GameUserSettingsIni
-		  Case ConfigFileType.GameUserSettingsIni
-		    OtherFileName = "Game.ini"
-		    DesiredOtherFileType = ConfigFileType.GameIni
-		  End Select
-		  
-		  Dim Parent As FolderItem = FirstFile.Parent
-		  Dim SecondFile As FolderItem = Parent.Child(OtherFileName)
-		  If SecondFile = Nil Or SecondFile.Exists = False Then
-		    // Couldn't find the sibling file
-		    Dialog.SuggestedFileName = OtherFileName
-		    Dialog.PromptText = "Now please select " + OtherFileName
-		    
-		    SecondFile = Dialog.ShowModal()
+		  If Self.SetupLocalImportWithFile(File) Then
+		    Self.Pages.Value = Self.PageImportProgress
+		    Self.FinishDownloads()
 		  End If
-		  
-		  Dim SecondFileType As ConfigFileType = Self.DetectConfigType(SecondFile)
-		  If SecondFileType <> DesiredOtherFileType Then
-		    If Not Self.ShowConfirm("Do you want to do a partial import?", "Beacon couldn't find both Game.ini and GameUserSettings.ini files. Beacon can do a partial import, but you will need to fill in some settings yourself.", "Import Anyway", "Cancel") Then
-		      Return
-		    End If
-		  End If
-		  
-		  If FirstFileType = ConfigFileType.GameIni Then
-		    Self.mGameIniFile = FirstFile
-		    Self.mGameUserSettingsIniFile = SecondFile
-		  Else
-		    Self.mGameIniFile = SecondFile
-		    Self.mGameUserSettingsIniFile = FirstFile
-		  End If
-		  
-		  Self.Pages.Value = Self.PageImportProgress
-		  Self.FinishDownloads()
 		End Sub
 	#tag EndMethod
 
@@ -1273,6 +1307,16 @@ End
 		  Else
 		    Self.Pages.Value = Self.PageIntro
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Resize()
+		  Dim ImportContentHeight As Integer = Self.ProgressIndicator.Height + 12 + Self.ProgressStatus.Height
+		  Dim ImportContentTop As Integer = Max(Self.ProgressMessageLabel.Top + Self.ProgressMessageLabel.Height + 12, (Self.Height - ImportContentHeight) / 2)
+		  
+		  Self.ProgressIndicator.Top = ImportContentTop
+		  Self.ProgressStatus.Top = Self.ProgressIndicator.Top + Self.ProgressIndicator.Height + 12
 		End Sub
 	#tag EndMethod
 
@@ -1313,49 +1357,50 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Setup(Mode As DocumentSetupSheet.Modes)
-		  Select Case Mode
-		  Case Modes.Create, Modes.Import
-		    Self.FinalizeCancelButton.Caption = "Back"
-		    Self.FinalizeActionButton.Caption = "Create"
-		    Self.Title = "New Document"
-		  Case Modes.Edit
-		    Self.FinalizeCancelButton.Caption = "Cancel"
-		    Self.FinalizeActionButton.Caption = "Edit"
-		    Self.Title = "Edit Document Settings"
-		    Self.Pages.Value = Self.PageFinalize
+		Private Function SetupLocalImportWithFile(FirstFile As FolderItem) As Boolean
+		  Dim FirstFileType As ConfigFileType = Self.DetectConfigType(FirstFile)
+		  Dim OtherFileName As String
+		  Dim DesiredOtherFileType As ConfigFileType
+		  Select Case FirstFileType
+		  Case ConfigFileType.Other
+		    Self.ShowAlert("Unknown config file", "Sorry, Beacon can't determine which config file this is.")
+		    Return False
+		  Case ConfigFileType.GameIni
+		    OtherFileName = "GameUserSettings.ini"
+		    DesiredOtherFileType = ConfigFileType.GameUserSettingsIni
+		  Case ConfigFileType.GameUserSettingsIni
+		    OtherFileName = "Game.ini"
+		    DesiredOtherFileType = ConfigFileType.GameIni
 		  End Select
-		  Self.MessageLabel.Text = Self.Title
 		  
-		  Dim Mask As UInt64
-		  If Self.mDocument.MapCompatibility > 0 Then
-		    Mask = Self.mDocument.MapCompatibility
+		  Dim Parent As FolderItem = FirstFile.Parent
+		  Dim SecondFile As FolderItem = Parent.Child(OtherFileName)
+		  If SecondFile = Nil Or SecondFile.Exists = False Then
+		    // Couldn't find the sibling file
+		    Dim Dialog As New OpenDialog
+		    Dialog.SuggestedFileName = OtherFileName
+		    Dialog.PromptText = "Now please select " + OtherFileName
+		    
+		    SecondFile = Dialog.ShowModal()
+		  End If
+		  
+		  Dim SecondFileType As ConfigFileType = Self.DetectConfigType(SecondFile)
+		  If SecondFileType <> DesiredOtherFileType Then
+		    If Not Self.ShowConfirm("Do you want to do a partial import?", "Beacon couldn't find both Game.ini and GameUserSettings.ini files. Beacon can do a partial import, but you will need to fill in some settings yourself.", "Import Anyway", "Cancel") Then
+		      Return False
+		    End If
+		  End If
+		  
+		  If FirstFileType = ConfigFileType.GameIni Then
+		    Self.mGameIniFile = FirstFile
+		    Self.mGameUserSettingsIniFile = SecondFile
 		  Else
-		    Mask = Beacon.Maps.GuessMap(Self.mDocument.LootSources)
+		    Self.mGameIniFile = SecondFile
+		    Self.mGameUserSettingsIniFile = FirstFile
 		  End If
 		  
-		  Dim SelectedMaps() As Beacon.Map = Beacon.Maps.ForMask(Mask)
-		  Dim DifficultyScale As Double
-		  Dim DifficultyMatches As Boolean = True
-		  For Each Map As Beacon.Map In SelectedMaps
-		    DifficultyScale = Max(DifficultyScale, Map.DifficultyScale)
-		    DifficultyMatches = DifficultyMatches And (DifficultyScale = Map.DifficultyScale)
-		  Next
-		  
-		  Dim DifficultyValue As Double = Self.mDocument.DifficultyValue
-		  If DifficultyValue = -1 Then
-		    DifficultyValue = Beacon.DifficultyValue(1.0, DifficultyScale)
-		  End If
-		  
-		  Self.SelectedMask = Mask
-		  
-		  Dim DifficultyOffset As Double = Beacon.DifficultyOffset(DifficultyValue, DifficultyScale)
-		  Dim MaxDinoLevel As Integer = DifficultyValue * 30
-		  
-		  Self.DifficultyValueField.Text = DifficultyValue.PrettyText
-		  Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
-		  Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
-		End Sub
+		  Return True
+		End Function
 	#tag EndMethod
 
 
@@ -1400,15 +1445,63 @@ End
 		Other
 	#tag EndEnum
 
-	#tag Enum, Name = Modes, Type = Integer, Flags = &h0
-		Create
-		  Edit
-		Import
-	#tag EndEnum
-
 
 #tag EndWindowCode
 
+#tag Events Pages
+	#tag Event
+		Sub Change()
+		  If Me.Value = Self.PageImportProgress Then
+		    If Self.Height <> Self.MinHeight Then
+		      Dim Task As New AnimationKit.MoveTask(Self)
+		      Task.Height = Self.MinHeight
+		      Task.Curve = AnimationKit.Curve.CreateEaseOut
+		      Task.DurationInSeconds = 0.15
+		      Task.Run
+		    End If
+		  Else
+		    If Self.Height <> Self.MaxHeight Then
+		      Dim Task As New AnimationKit.MoveTask(Self)
+		      Task.Height = Self.MaxHeight
+		      Task.Curve = AnimationKit.Curve.CreateEaseOut
+		      Task.DurationInSeconds = 0.15
+		      Task.Run
+		    End If
+		  End If
+		  
+		  If Me.Value = Self.PageFinalize Then
+		    Dim Mask As UInt64
+		    If Self.mDocument.MapCompatibility > 0 Then
+		      Mask = Self.mDocument.MapCompatibility
+		    Else
+		      Mask = Beacon.Maps.GuessMap(Self.mDocument.LootSources)
+		    End If
+		    
+		    Dim SelectedMaps() As Beacon.Map = Beacon.Maps.ForMask(Mask)
+		    Dim DifficultyScale As Double
+		    Dim DifficultyMatches As Boolean = True
+		    For Each Map As Beacon.Map In SelectedMaps
+		      DifficultyScale = Max(DifficultyScale, Map.DifficultyScale)
+		      DifficultyMatches = DifficultyMatches And (DifficultyScale = Map.DifficultyScale)
+		    Next
+		    
+		    Dim DifficultyValue As Double = Self.mDocument.DifficultyValue
+		    If DifficultyValue = -1 Then
+		      DifficultyValue = Beacon.DifficultyValue(1.0, DifficultyScale)
+		    End If
+		    
+		    Self.SelectedMask = Mask
+		    
+		    Dim DifficultyOffset As Double = Beacon.DifficultyOffset(DifficultyValue, DifficultyScale)
+		    Dim MaxDinoLevel As Integer = DifficultyValue * 30
+		    
+		    Self.DifficultyValueField.Text = DifficultyValue.PrettyText
+		    Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
+		    Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events MapCheck
 	#tag Event
 		Sub Action(index as Integer)
@@ -1526,6 +1619,7 @@ End
 		  ElseIf ImportLocalRadio.Value Then
 		    Self.PresentLocalImport()
 		  ElseIf CreateEmptyRadio.Value Then
+		    Self.mDocument = New Beacon.Document
 		    Self.Pages.Value = Self.PageFinalize
 		  End If
 		End Sub
@@ -1536,6 +1630,22 @@ End
 		Sub Action()
 		  Self.mCancelled = True
 		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Importer
+	#tag Event
+		Sub UpdateUI()
+		  Dim ProgressValue As Integer = Round(Me.Progress * Self.ProgressIndicator.Maximum)
+		  If Self.ProgressIndicator.Value <> ProgressValue Then
+		    Self.ProgressIndicator.Value = ProgressValue
+		  End If
+		  
+		  If Me.Finished Then
+		    Self.mDocument = Me.Document
+		    Self.FinalizeMessageLabel.Text = "Review Document Settings"
+		    Self.Pages.Value = Self.PageFinalize
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
