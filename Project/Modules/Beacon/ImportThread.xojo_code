@@ -11,10 +11,10 @@ Inherits Beacon.Thread
 		  Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Single
 		  
 		  // Normalize line endings
-		  Self.mContent = Self.mContent.ReplaceAll(CRLF, LF)
-		  Self.mContent = Self.mContent.ReplaceAll(CR, LF)
+		  Self.mContent = Self.mContent.ReplaceAll(CRLF, CR)
+		  Self.mContent = Self.mContent.ReplaceAll(LF, CR)
 		  
-		  Dim Lines() As Text = Self.mContent.Split(LF)
+		  Dim Lines() As Text = Self.mContent.Split(CR)
 		  For I As Integer = UBound(Lines) DownTo 0
 		    If Lines(I).Length < 30 Or Lines(I).Left(30) <> "ConfigOverrideSupplyCrateItems" Then
 		      Lines.Remove(I)
@@ -26,14 +26,19 @@ Inherits Beacon.Thread
 		  
 		  For Each Line As Text In Lines
 		    Try
-		      Dim Value As Auto = Self.Import(Line)
-		      If Value IsA Beacon.Pair And Beacon.Pair(Value).Key = "ConfigOverrideSupplyCrateItems" Then
-		        Dim Dict As Xojo.Core.Dictionary = Beacon.Pair(Value).Value
-		        Dim LootSource As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(Dict, 1.0)
-		        If LootSource <> Nil Then
-		          LootSource.NumItemSetsPower = 1.0
-		          Self.mLootSources.Append(LootSource)
-		        End If
+		      Dim Value As Auto = Self.Import(Line + CR)
+		      If Value = Nil Then
+		        Continue
+		      End If
+		      Dim ValueInfo As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		      If ValueInfo.FullName <> "Xojo.Core.Dictionary" Or Xojo.Core.Dictionary(Value).HasKey("ConfigOverrideSupplyCrateItems") = False Then
+		        Continue
+		      End If
+		      
+		      Dim LootSource As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(Xojo.Core.Dictionary(Value), 1.0)
+		      If LootSource <> Nil Then
+		        LootSource.NumItemSetsPower = 1.0
+		        Self.mLootSources.Append(LootSource)
 		      End If
 		    Catch Stop As Beacon.ThreadStopException
 		      Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Off
@@ -68,117 +73,16 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h21
 		Private Function Import(Content As Text) As Auto
-		  Dim Offset As Integer = 0
-		  Return Self.Import(Content, Offset)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function Import(Content As Text, ByRef Offset As Integer) As Auto
-		  If Self.ShouldStop Then
-		    Raise New Beacon.ThreadStopException
-		  End If
-		  
-		  If Content.Mid(Offset, 1) = "(" Then
-		    Dim IsDictionary As Boolean = True
-		    Dim Children() As Auto
-		    Do Until Content.Mid(Offset, 1) = ")"
-		      Offset = Offset + 1
-		      Dim Value As Auto = Self.Import(Content, Offset)
-		      If Value = Nil Then
-		        Continue
-		      End If
-		      If IsDictionary Then
-		        Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		        IsDictionary = Info.FullName = "Beacon.Pair"
-		      End If
-		      Children.Append(Value)
-		    Loop
-		    Offset = Offset + 1
-		    
-		    If IsDictionary Then
-		      Dim Dict As New Xojo.Core.Dictionary
-		      For Each Child As Beacon.Pair In Children
-		        Dict.Value(Child.Key) = Child.Value
-		      Next
-		      Return Dict
-		    Else
-		      Return Children
+		  Dim Parser As New Beacon.ConfigParser
+		  Dim Value As Auto
+		  For Each Char As Text In Content.Characters
+		    If Parser.AddCharacter(Char) Then
+		      Value = Parser.Value
+		      Exit
 		    End If
-		  ElseIf Content.Mid(Offset, 1) = """" Then
-		    // Text
-		    Dim ClosingPos As Integer = Content.IndexOf(Offset + 1, """")
-		    Dim TextValue As Text = Content.Mid(Offset + 1, ClosingPos - (Offset + 1))
-		    Offset = ClosingPos + 1
-		    Return TextValue
-		  End If
+		  Next
 		  
-		  Dim Pos As Integer = Self.PositionOfNextDelimeter(Offset, Content)
-		  If Pos = -1 Then
-		    Dim Piece As Text = Content.Mid(Offset)
-		    Offset = Offset + Piece.Length
-		    Return Self.ImportIntrinsic(Piece)
-		  End If
-		  
-		  If Content.Mid(Pos, 1) = "=" Then
-		    // Pair
-		    Dim Key As Text = Content.Mid(Offset, Pos - Offset)
-		    Offset = Pos + 1
-		    Dim Value As Auto = Self.Import(Content, Offset)
-		    Return New Beacon.Pair(Key.Trim, Value)
-		  Else
-		    // Array entry
-		    Dim Piece As Text = Content.Mid(Offset, Pos - Offset)
-		    Offset = Pos
-		    Dim Value As Auto = Self.ImportIntrinsic(Piece)
-		    Return Value
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function ImportIntrinsic(Content As Text) As Auto
-		  If Self.ShouldStop Then
-		    Raise New Beacon.ThreadStopException
-		  End If
-		  
-		  If Content = "" Then
-		    Return Nil
-		  End If
-		  
-		  If Content.Left(1) = """" And Content.Right(1) = """" Then
-		    // Text in quotes
-		    Return Content.Mid(1, Content.Length - 2)
-		  ElseIf Content = "true" Or Content = "false" Then
-		    // Boolean
-		    Return Content = "true"
-		  Else
-		    Dim IsNumeric As Boolean = True
-		    Dim DecimalPoints As Integer
-		    For Each Char As Text In Content.Characters
-		      Select Case Char
-		      Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
-		        // Still a Number
-		      Case "."
-		        If DecimalPoints = 1 Then
-		          IsNumeric = False
-		          Exit
-		        Else
-		          DecimalPoints = 1
-		        End If
-		      Else
-		        IsNumeric = False
-		        Exit
-		      End Select
-		    Next
-		    If IsNumeric Then
-		      // Number
-		      Return Double.FromText(Content)
-		    Else
-		      // Probably Text
-		      Return Content
-		    End If
-		  End If
+		  Return Self.ToXojoType(Value)
 		End Function
 	#tag EndMethod
 
@@ -207,32 +111,6 @@ Inherits Beacon.Thread
 		  
 		  RaiseEvent UpdateUI
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function PositionOfNextDelimeter(Offset As Integer, Content As Text) As Integer
-		  If Self.ShouldStop Then
-		    Raise New Beacon.ThreadStopException
-		  End If
-		  
-		  Dim Positions() As Integer
-		  Positions.Append(Content.IndexOf(Offset, "="))
-		  Positions.Append(Content.IndexOf(Offset, ","))
-		  Positions.Append(Content.IndexOf(Offset, ")"))
-		  
-		  Dim Position As Integer = -1
-		  For I As Integer = 0 To UBound(Positions)
-		    If Positions(I) = -1 Then
-		      Continue
-		    End If
-		    If Position = -1 Then
-		      Position = Positions(I)
-		    Else
-		      Position = Min(Position, Positions(I))
-		    End If
-		  Next
-		  Return Position
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -292,6 +170,77 @@ Inherits Beacon.Thread
 		  
 		  Self.Run()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function ToXojoType(Input As Auto) As Auto
+		  If Input = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Input)
+		  Select Case Info.FullName
+		  Case "Beacon.Pair"
+		    Dim Dict As New Xojo.Core.Dictionary
+		    Dict.Value(Beacon.Pair(Input).Key) = ToXojoType(Beacon.Pair(Input).Value)
+		    Return Dict
+		  Case "Auto()"
+		    Dim ArrayValue() As Auto = Input
+		    Dim IsDict As Boolean = True
+		    For Each Item As Auto In ArrayValue
+		      Dim ItemInfo As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Item)
+		      IsDict = IsDict And ItemInfo.FullName = "Beacon.Pair"
+		    Next
+		    If IsDict Then
+		      Dim Dict As New Xojo.Core.Dictionary
+		      For Each Item As Beacon.Pair In ArrayValue
+		        Dict.Value(Item.Key) = ToXojoType(Item.Value)
+		      Next
+		      Return Dict
+		    Else
+		      Dim Items() As Auto
+		      For Each Item As Auto In ArrayValue
+		        Items.Append(ToXojoType(Item))
+		      Next
+		      Return Items
+		    End If
+		  Case "Text"
+		    If Input = "true" Then
+		      Return True
+		    ElseIf Input = "false" then
+		      Return False
+		    Else
+		      Dim IsNumeric As Boolean = True
+		      Dim DecimalPoints As Integer
+		      Dim TextValue As Text = Input
+		      For Each Char As Text In TextValue.Characters
+		        Select Case Char
+		        Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
+		          // Still a Number
+		        Case "."
+		          If DecimalPoints = 1 Then
+		            IsNumeric = False
+		            Exit
+		          Else
+		            DecimalPoints = 1
+		          End If
+		        Else
+		          IsNumeric = False
+		          Exit
+		        End Select
+		      Next
+		      If IsNumeric Then
+		        // Number
+		        Return Double.FromText(TextValue)
+		      Else
+		        // Probably Text
+		        Return TextValue
+		      End If
+		    End If
+		  Else
+		    Break
+		  End Select
+		End Function
 	#tag EndMethod
 
 
