@@ -44,6 +44,7 @@ Begin Window DeployDialog
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True
@@ -765,6 +766,7 @@ Begin Window DeployDialog
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
+         TabStop         =   True
          Top             =   123
          Value           =   0
          Visible         =   True
@@ -787,6 +789,7 @@ Begin Window DeployDialog
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   5
+         TabStop         =   True
          Top             =   123
          Value           =   0
          Visible         =   True
@@ -858,6 +861,7 @@ Begin Window DeployDialog
       End
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -991,7 +995,7 @@ End
 		      Continue
 		    End If
 		    
-		    CredentialsList.AddRow(Profile.Description, Profile.DescriptiveHost, Profile.Path)
+		    CredentialsList.AddRow(Profile.Description, Profile.DescriptiveHost, Profile.GameIniPath)
 		    CredentialsList.RowTag(CredentialsList.LastIndex) = Profile
 		    CredentialsList.Selected(CredentialsList.LastIndex) = Profile = ForceSelect Or SelectedHashes.IndexOf(Profile.Hash) > -1
 		  Next
@@ -1234,7 +1238,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Request As New BeaconAPI.Request("ftp.php?" + Profile.QueryString("Game.ini") + "&ref=" + Profile.Hash, "GET", WeakAddressOf APICallback_FTPDownload)
+		    Dim Request As New BeaconAPI.Request("ftp.php" + Profile.GameIniURL + "&ref=" + Profile.Hash, "GET", WeakAddressOf APICallback_FTPDownload)
 		    Request.Sign(App.Identity)
 		    Self.APISocket.Start(Request)
 		  Next
@@ -1270,7 +1274,7 @@ End
 		    Dim Content As String = Stream.ReadAll(Encodings.UTF8)
 		    Stream.Close
 		    
-		    Dim Request As New BeaconAPI.Request("ftp.php?" + Profile.QueryString("Game.ini") + "&ref=" + Profile.Hash, "POST", Content.ToText, "text/plain", WeakAddressOf APICallback_FTPUpload)
+		    Dim Request As New BeaconAPI.Request("ftp.php" + Profile.GameIniURL + "&ref=" + Profile.Hash, "POST", Content.ToText, "text/plain", WeakAddressOf APICallback_FTPUpload)
 		    Request.Sign(App.Identity)
 		    Self.APISocket.Start(Request)
 		  Next

@@ -33,11 +33,23 @@ Protected Class FTPProfile
 		    Self.mPort = Source.mPort
 		    Self.mUsername = Source.mUsername
 		    Self.mPassword = Source.mPassword
-		    Self.mPath = Source.mPath
+		    Self.mGameIniPath = Source.mGameIniPath
+		    Self.mGameUserSettingsIniPath = Source.mGameUserSettingsIniPath
 		    Self.mDescription = Source.mDescription
 		    Self.mCacheDictionary = Self.Clone(Source.mCacheDictionary)
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function Credentials() As Text
+		  Dim Pieces() As Text
+		  Pieces.Append("host=" + Beacon.EncodeURLComponent(Self.Host))
+		  Pieces.Append("port=" + Self.Port.ToText)
+		  Pieces.Append("user=" + Beacon.EncodeURLComponent(Self.Username))
+		  Pieces.Append("pass=" + Beacon.EncodeURLComponent(Self.Password))
+		  Return Text.Join(Pieces, "&")
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -47,6 +59,12 @@ Protected Class FTPProfile
 		    Output = Output + ":" + Self.Port.ToText
 		  End If
 		  Return Output
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DiscoveryURL() As Text
+		  Return "/discover?" + Self.Credentials
 		End Function
 	#tag EndMethod
 
@@ -86,7 +104,7 @@ Protected Class FTPProfile
 		    Return Nil
 		  End Try
 		  
-		  If Not Dict.HasAllKeys("Host", "Port", "User", "Pass", "Path", "Description") Then
+		  If Not Dict.HasAllKeys("Host", "Port", "User", "Pass", "Description") Then
 		    Return Nil
 		  End If
 		  
@@ -95,7 +113,26 @@ Protected Class FTPProfile
 		  Profile.mPort = Dict.Value("Port")
 		  Profile.mUsername = Dict.Value("User")
 		  Profile.mPassword = Dict.Value("Pass")
-		  Profile.mPath = Dict.Value("Path")
+		  If Dict.HasAllKeys("Game.ini Path", "GameUserSettings.ini Path") Then
+		    Profile.mGameIniPath = Dict.Value("Game.ini Path")
+		    Profile.mGameUserSettingsIniPath = Dict.Value("GameUserSettings.ini Path")
+		  ElseIf Dict.HasKey("Path") Then
+		    Dim Path As Text = Dict.Value("Path")
+		    Dim Components() As Text = Path.Split("/")
+		    If Components.Ubound > -1 Then
+		      Dim LastComponent As Text = Components(Components.Ubound)
+		      If LastComponent.Length > 4 And LastComponent.Right(4) = ".ini" Then
+		        Components.Remove(Components.Ubound)
+		      End If
+		    End If
+		    Components.Append("Game.ini")
+		    Profile.mGameIniPath = Text.Join(Components, "/")
+		    
+		    Components(Components.Ubound) = "GameUserSettings.ini"
+		    Profile.mGameUserSettingsIniPath = Text.Join(Components, "/")
+		  Else
+		    Return Nil
+		  End If
 		  Profile.mDescription = Dict.Value("Description")
 		  Profile.mCacheDictionary = CacheDict
 		  Return Profile
@@ -103,8 +140,21 @@ Protected Class FTPProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GameIniURL() As Text
+		  Return "?path=" + Self.mGameIniPath + "&" + Self.Credentials
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameUserSettingsIniURL() As Text
+		  Return "?path=" + Self.mGameUserSettingsIniPath + "&" + Self.Credentials
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Hash() As Text
-		  Return Beacon.EncodeHex(Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Self.QueryString("Game.ini"))))
+		  Dim Source As Text = Xojo.Data.GenerateJSON(Self.ToUnencryptedDictionary)
+		  Return Beacon.EncodeHex(Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source)))
 		End Function
 	#tag EndMethod
 
@@ -122,43 +172,13 @@ Protected Class FTPProfile
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function QueryString(ToFile As Text) As Text
-		  Dim Path As Text = Self.Path.ReplaceAll("\", "/")
-		  Dim Components() As Text = Path.Split("/")
-		  If Components.Ubound > -1 Then
-		    Dim LastComponent As Text = Components(Components.Ubound)
-		    If LastComponent.Length > 4 And LastComponent.Right(4) = ".ini" Then
-		      Components.Remove(Components.Ubound)
-		    End If
-		  End If
-		  Components.Append(ToFile)
-		  Path = Text.Join(Components, "/")
-		  
-		  Dim Pieces() As Text
-		  Pieces.Append("host=" + Beacon.EncodeURLComponent(Self.Host))
-		  Pieces.Append("port=" + Self.Port.ToText)
-		  Pieces.Append("user=" + Beacon.EncodeURLComponent(Self.Username))
-		  Pieces.Append("pass=" + Beacon.EncodeURLComponent(Self.Password))
-		  Pieces.Append("path=" + Beacon.EncodeURLComponent(Path))
-		  Return Text.Join(Pieces, "&")
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function ToDictionary(Identity As Beacon.Identity) As Xojo.Core.Dictionary
 		  If Self.mCacheDictionary <> Nil Then
 		    Return Self.Clone(Self.mCacheDictionary)
 		  End If
 		  
-		  Dim Dict As New Xojo.Core.Dictionary
-		  Dict.Value("Host") = Self.Host
-		  Dict.Value("Port") = Self.Port
-		  Dict.Value("User") = Self.Username
-		  Dict.Value("Pass") = Self.Password
-		  Dict.Value("Path") = Self.Path
-		  Dict.Value("Description") = Self.Description
-		  Dim Content As String = Xojo.Data.GenerateJSON(Dict)
+		  Dim Content As Text = Xojo.Data.GenerateJSON(Self.ToUnencryptedDictionary)
 		  
 		  Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
 		  Dim Key As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(128)
@@ -167,11 +187,25 @@ Protected Class FTPProfile
 		  AES.SetInitialVector(CType(Vector.Data, MemoryBlock).StringValue(0, Vector.Size))
 		  Dim Encrypted As String = AES.EncryptCBC(Content)
 		  
-		  Dict = New Xojo.Core.Dictionary
+		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("Key") = Beacon.EncodeHex(Identity.Encrypt(Key))
 		  Dict.Value("Vector") = Beacon.EncodeHex(Vector)
 		  Dict.Value("Details") = EncodeHex(Encrypted).ToText
 		  Self.mCacheDictionary = Self.Clone(Dict)
+		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ToUnencryptedDictionary() As Xojo.Core.Dictionary
+		  Dim Dict As New Xojo.Core.Dictionary
+		  Dict.Value("Host") = Self.mHost
+		  Dict.Value("Port") = Self.mPort
+		  Dict.Value("User") = Self.mUsername
+		  Dict.Value("Pass") = Self.mPassword
+		  Dict.Value("Game.ini Path") = Self.mGameIniPath
+		  Dict.Value("GameUserSettings.ini Path") = Self.mGameUserSettingsIniPath
+		  Dict.Value("Description") = Self.mDescription
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -192,6 +226,40 @@ Protected Class FTPProfile
 			End Set
 		#tag EndSetter
 		Description As Text
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mGameIniPath
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mGameIniPath.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
+			    Self.mGameIniPath = Value
+			    Self.mCacheDictionary = Nil
+			  End If
+			End Set
+		#tag EndSetter
+		GameIniPath As Text
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mGameUserSettingsIniPath
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mGameUserSettingsIniPath.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
+			    Self.mGameUserSettingsIniPath = Value
+			    Self.mCacheDictionary = Nil
+			  End If
+			End Set
+		#tag EndSetter
+		GameUserSettingsIniPath As Text
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -220,15 +288,19 @@ Protected Class FTPProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mGameIniPath As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameUserSettingsIniPath As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mHost As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mPassword As Text
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPath As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -254,23 +326,6 @@ Protected Class FTPProfile
 			End Set
 		#tag EndSetter
 		Password As Text
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mPath
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mPath.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
-			    Self.mPath = Value
-			    Self.mCacheDictionary = Nil
-			  End If
-			End Set
-		#tag EndSetter
-		Path As Text
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0

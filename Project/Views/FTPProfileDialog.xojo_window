@@ -674,7 +674,7 @@ End
 		    Win.PortField.Text = EditProfile.Port.ToText
 		    Win.UserField.Text = EditProfile.Username
 		    Win.PassField.Text = EditProfile.Password
-		    Win.PathField.Text = EditProfile.Path
+		    Win.PathField.Text = EditProfile.GameUserSettingsIniPath
 		    Win.DescriptionField.Text = EditProfile.Description
 		  End If
 		  Win.ShowModal()
@@ -697,7 +697,8 @@ End
 		  Profile.Port = CDbl(Self.PortField.Text)
 		  Profile.Username = Self.UserField.Text.ToText
 		  Profile.Password = Self.PassField.Text.ToText
-		  Profile.Path = Self.PathField.Text.ToText
+		  Profile.GameIniPath = Self.PathField.Text.ToText
+		  Profile.GameUserSettingsIniPath = Profile.GameIniPath.Replace("Game.ini", "GameUserSettings.ini")
 		  Profile.Description = Self.DescriptionField.Text.ToText
 		  Return Profile
 		End Function
@@ -766,7 +767,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Profile As Beacon.FTPProfile = Self.Profile()
-		  Dim Request As New BeaconAPI.Request("ftp.php?" + Profile.QueryString("Game.ini"), "GET", AddressOf APICallback_FTPDownload)
+		  Dim Request As New BeaconAPI.Request("ftp.php" + Profile.GameIniURL, "GET", AddressOf APICallback_FTPDownload)
 		  Request.Sign(App.Identity)
 		  Self.APISocket.Start(Request)
 		End Sub

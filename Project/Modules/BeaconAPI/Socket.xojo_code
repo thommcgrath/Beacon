@@ -98,7 +98,7 @@ Protected Class Socket
 	#tag Method, Flags = &h0
 		Sub Start(Request As BeaconAPI.Request)
 		  Self.Queue.Append(Request)
-		  If UBound(Self.Queue) = 0 Then
+		  If UBound(Self.Queue) = 0 And Self.Working = False Then
 		    Xojo.Core.Timer.CallLater(50, WeakAddressOf Self.AdvanceQueue)
 		    Self.Working = True
 		  End If

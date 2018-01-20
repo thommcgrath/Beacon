@@ -18,8 +18,47 @@ Inherits Beacon.Thread
 		  Content = Content.ReplaceAll(CRLF, CR)
 		  Content = Content.ReplaceAll(LF, CR)
 		  
+		  Dim SetDifficulty As Boolean
+		  
+		  // Discovery details, if available
+		  Dim Discovery As Xojo.Core.Dictionary = Self.mDiscoveryDict
+		  Self.mDiscoveryDict = Nil
+		  
 		  Dim Document As New Beacon.Document
-		  Dim FoundDifficultyOverride As Boolean
+		  If Discovery <> Nil Then
+		    If Discovery.HasKey("Maps") Then
+		      Dim Maps() As Auto = Discovery.Value("Maps")
+		      Document.MapCompatibility = 0
+		      For Each Map As Text In Maps
+		        Select Case Map
+		        Case "TheIsland"
+		          Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.TheIsland.Mask
+		        Case "ScorchedEarth_P"
+		          Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.ScorchedEarth.Mask
+		        Case "Aberration_P"
+		          Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.Aberration.Mask
+		        Case "TheCenter"
+		          Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.TheCenter.Mask
+		        Case "Ragnarok"
+		          Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.Ragnarok.Mask
+		        End Select
+		      Next
+		    End If
+		    If Discovery.HasAllKeys("Game.ini", "GameUserSettings.ini") Then
+		      Dim Profile As New Beacon.FTPProfile
+		      Profile.GameIniPath = Discovery.Value("Game.ini")
+		      Profile.GameUserSettingsIniPath = Discovery.Value("GameUserSettings.ini")
+		      Document.AddFTPProfile(Profile)
+		    End If
+		    If Discovery.HasKey("Options") Then
+		      Dim Options As Xojo.Core.Dictionary = Discovery.Value("Options")
+		      If Options.HasKey("OverrideOfficialDifficulty") Then
+		        Document.DifficultyValue = Double.FromText(Options.Value("OverrideOfficialDifficulty"))
+		        SetDifficulty = True
+		      End If
+		    End If
+		  End If
+		  
 		  Dim Lines() As Text = Content.Split(CR)
 		  For Each Line As Text In Lines
 		    Try
@@ -34,15 +73,15 @@ Inherits Beacon.Thread
 		      
 		      Dim Dict As Xojo.Core.Dictionary = Value
 		      If Dict.HasKey("ConfigOverrideSupplyCrateItems") Then
-		        Dim LootSource As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(Dict.Value("ConfigOverrideSupplyCrateItems"), 1.0)
+		        Dim LootSource As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(Dict.Value("ConfigOverrideSupplyCrateItems"), Document.DifficultyValue)
 		        If LootSource <> Nil Then
 		          LootSource.NumItemSetsPower = 1.0
 		          Document.Add(LootSource)
 		        End If
-		      ElseIf Dict.HasKey("OverrideOfficialDifficulty") Then
+		      ElseIf Dict.HasKey("OverrideOfficialDifficulty") And SetDifficulty = False Then
 		        Document.DifficultyValue = Dict.Value("OverrideOfficialDifficulty")
-		        FoundDifficultyOverride = True
-		      ElseIf Dict.HasKey("DifficultyOffset") And FoundDifficultyOverride = False Then
+		        SetDifficulty = True
+		      ElseIf Dict.HasKey("DifficultyOffset") And SetDifficulty = False Then
 		        Document.DifficultyValue = Beacon.DifficultyValue(Dict.Value("DifficultyOffset"), Document.Maps.DifficultyScale)
 		      ElseIf Dict.HasKey("SessionName") Then
 		        Document.Title = Dict.Value("SessionName")
@@ -63,7 +102,7 @@ Inherits Beacon.Thread
 
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub AddContent(File As Global.FolderItem)
+		Sub AddContent(File As Global.FolderItem, Prepend As Boolean = False)
 		  If File = Nil Or File.Exists = False Then
 		    Return
 		  End If
@@ -72,24 +111,28 @@ Inherits Beacon.Thread
 		  Dim Content As Text = Stream.ReadAll(Encodings.UTF8).ToText
 		  Stream.Close
 		  
-		  Self.AddContent(Content)
+		  Self.AddContent(Content, Prepend)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddContent(Content As Text)
+		Sub AddContent(Content As Text, Prepend As Boolean = False)
 		  If Self.State <> Beacon.Thread.States.NotRunning Then
 		    Dim Err As New RuntimeException
 		    Err.Reason = "Importer is already running"
 		    Raise Err
 		  End If
 		  
-		  Self.mContent = Self.mContent + Text.FromUnicodeCodepoint(13) + Content
+		  If Prepend Then
+		    Self.mContent = Content + Text.FromUnicodeCodepoint(13) + Self.mContent
+		  Else
+		    Self.mContent = Self.mContent + Text.FromUnicodeCodepoint(13) + Content
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddContent(File As Xojo.IO.FolderItem)
+		Sub AddContent(File As Xojo.IO.FolderItem, Prepend As Boolean = False)
 		  If File = Nil Or File.Exists = False Then
 		    Return
 		  End If
@@ -98,7 +141,15 @@ Inherits Beacon.Thread
 		  Dim Content As Text = Stream.ReadAll
 		  Stream.Close
 		  
-		  Self.AddContent(Content)
+		  Self.AddContent(Content, Prepend)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Clear()
+		  Self.mCreatedDocument = Nil
+		  Self.mContent = ""
+		  Self.mFinished = False
 		End Sub
 	#tag EndMethod
 
@@ -156,6 +207,12 @@ Inherits Beacon.Thread
 		Function Progress() As Double
 		  Return Self.mCharactersProcessed / Self.mCharactersTotal
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SetDiscoveryDict(Dict As Xojo.Core.Dictionary)
+		  Self.mDiscoveryDict = Dict
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -251,6 +308,10 @@ Inherits Beacon.Thread
 
 	#tag Property, Flags = &h21
 		Private mCreatedDocument As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDiscoveryDict As Xojo.Core.Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
