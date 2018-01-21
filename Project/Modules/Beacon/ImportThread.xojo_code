@@ -18,6 +18,12 @@ Inherits Beacon.Thread
 		  Content = Content.ReplaceAll(CRLF, CR)
 		  Content = Content.ReplaceAll(LF, CR)
 		  
+		  #if DebugBuild
+		    Dim Stream As TextOutputStream = TextOutputStream.Create(SpecialFolder.Desktop.Child("DebugOutput.ini"))
+		    Stream.Write(Content)
+		    Stream.Close
+		  #endif
+		  
 		  Dim SetDifficulty As Boolean
 		  
 		  // Discovery details, if available
@@ -61,6 +67,10 @@ Inherits Beacon.Thread
 		  
 		  Dim Lines() As Text = Content.Split(CR)
 		  For Each Line As Text In Lines
+		    If Line = "" Then
+		      Continue
+		    End If
+		    
 		    Try
 		      Dim Value As Auto = Self.Import(Line + CR)
 		      If Value = Nil Then

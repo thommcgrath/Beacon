@@ -1628,7 +1628,7 @@ End
 		  Dim GamePath As Text = Dict.Value("Game.ini")
 		  Dim SettingsPath As Text = Dict.Value("GameUserSettings.ini")
 		  
-		  Dim SettingsRequest As New BeaconAPI.Request("ftp.php?" + Query + "&path=" + Beacon.EncodeURLComponent(GamePath) + "&ref=GameUserSettings", "GET", WeakAddressOf APICallback_DownloadConfigFile)
+		  Dim SettingsRequest As New BeaconAPI.Request("ftp.php?" + Query + "&path=" + Beacon.EncodeURLComponent(SettingsPath) + "&ref=GameUserSettings", "GET", WeakAddressOf APICallback_DownloadConfigFile)
 		  SettingsRequest.Sign(App.Identity)
 		  BeaconAPI.Send(SettingsRequest)
 		  
@@ -1690,26 +1690,6 @@ End
 		  
 		  Self.ProgressStatus.Text = "Inspecting Server..."
 		  Self.Pages.Value = Self.PageProgressIndex
-		  
-		  #if false
-		    Dim FTPSettings As Beacon.FTPProfile = FTPProfileDialog.Present(Self.mFTPSettings)
-		    If FTPSettings <> Nil Then
-		      Self.mFTPSettings = FTPSettings
-		      
-		      Dim Hash As Text = FTPSettings.Hash
-		      Dim GameIniRequest As New BeaconAPI.Request("ftp.php" + FTPSettings.GameIniURL + "&ref=Game" + Hash, "GET", WeakAddressOf APICallback_DownloadConfigFile)
-		      Dim GameUserSettingsIniRequest As New BeaconAPI.Request("ftp.php" + FTPSettings.GameUserSettingsIniURL + "&ref=GameUserSettings" + Hash, "GET", WeakAddressOf APICallback_DownloadConfigFile)
-		      GameIniRequest.Sign(App.Identity)
-		      GameUserSettingsIniRequest.Sign(App.Identity)
-		      
-		      BeaconAPI.Send(GameIniRequest)
-		      BeaconAPI.Send(GameUserSettingsIniRequest)
-		      
-		      
-		    Else
-		      Self.Pages.Value = Self.PageIntroIndex
-		    End If
-		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -1738,9 +1718,14 @@ End
 		  Const GameIniHeader = "[/Script/ShooterGame.ShooterGameMode]"
 		  Const GameUserSettingsIniHeader = "[/Script/ShooterGame.ShooterGameUserSettings]"
 		  
-		  If Content.InStr(GameIniHeader) > 0 Then
+		  Dim GameIniPos As Integer = Content.InStr(GameIniHeader)
+		  Dim SettingsIniPos As Integer = Content.InStr(GameUserSettingsIniHeader)
+		  
+		  If GameIniPos > 0 And SettingsIniPos > 0 Then
+		    Return ConfigFileType.Combo
+		  ElseIf GameIniPos > 0 Then
 		    Return ConfigFileType.GameIni
-		  ElseIf Content.InStr(GameUserSettingsIniHeader) > 0 Then
+		  ElseIf SettingsIniPos > 0 Then
 		    Return ConfigFileType.GameUserSettingsIni
 		  Else
 		    Return ConfigFileType.Other
@@ -1800,6 +1785,7 @@ End
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, SourceFile As FolderItem) As Beacon.Document
 		  Dim Win As New DocumentSetupSheet
+		  Win.Visible = False
 		  If Not Win.SetupLocalImportWithFile(SourceFile) Then
 		    Win.Close
 		    Return Nil
@@ -1890,6 +1876,29 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function SelectOtherFile(Filename As String, DesiredFileType as ConfigFileType) As FolderItem
+		  Do
+		    Dim Chooser As New OpenDialog
+		    Chooser.Filter = BeaconFileTypes.IniFile
+		    Chooser.SuggestedFileName = Filename
+		    
+		    Dim File As FolderItem = Chooser.ShowModal()
+		    If File = Nil Then
+		      Return Nil
+		    End If
+		    
+		    Dim FileType As ConfigFileType = Self.DetectConfigType(File)
+		    If FileType <> DesiredFileType Then
+		      Self.ShowAlert("Incorrect file chosen", "Sorry, Beacon needs " + Filename + ".")
+		      Continue
+		    End If
+		    
+		    Return File
+		  Loop
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function SetupLocalImportWithFile(FirstFile As FolderItem) As Boolean
 		  Dim FirstFileType As ConfigFileType = Self.DetectConfigType(FirstFile)
 		  Dim OtherFileName As String
@@ -1904,24 +1913,41 @@ End
 		  Case ConfigFileType.GameUserSettingsIni
 		    OtherFileName = "Game.ini"
 		    DesiredOtherFileType = ConfigFileType.GameIni
+		  Case ConfigFileType.Combo
+		    Self.Importer.AddContent(FirstFile)
+		    Return True
 		  End Select
 		  
 		  Dim Parent As FolderItem = FirstFile.Parent
 		  Dim SecondFile As FolderItem = Parent.Child(OtherFileName)
 		  If SecondFile = Nil Or SecondFile.Exists = False Then
-		    // Couldn't find the sibling file
-		    Dim Dialog As New OpenDialog
-		    Dialog.SuggestedFileName = OtherFileName
-		    Dialog.PromptText = "Now please select " + OtherFileName
-		    
-		    SecondFile = Dialog.ShowModal()
-		  End If
-		  
-		  Dim SecondFileType As ConfigFileType = Self.DetectConfigType(SecondFile)
-		  If SecondFileType <> DesiredOtherFileType Then
-		    If Not Self.ShowConfirm("Do you want to do a partial import?", "Beacon couldn't find both Game.ini and GameUserSettings.ini files. Beacon can do a partial import, but you will need to fill in some settings yourself.", "Import Anyway", "Cancel") Then
-		      Return False
-		    End If
+		    Do
+		      Dim ConfirmDialog As New MessageDialog
+		      ConfirmDialog.Title = ""
+		      ConfirmDialog.Message = "Would you like to import your " + OtherFileName + " file too?"
+		      ConfirmDialog.Explanation = "By importing both files, Beacon can complete more details for you."
+		      ConfirmDialog.ActionButton.Caption = "Locate " + OtherFileName
+		      ConfirmDialog.CancelButton.Caption = "Stop Import"
+		      ConfirmDialog.AlternateActionButton.Caption = FirstFile.Name + " Only"
+		      ConfirmDialog.CancelButton.Visible = True
+		      ConfirmDialog.AlternateActionButton.Visible = True
+		      
+		      Dim Choice As MessageDialogButton = ConfirmDialog.ShowModal()
+		      Select Case Choice
+		      Case ConfirmDialog.ActionButton
+		        Dim File As FolderItem = Self.SelectOtherFile(OtherFileName, DesiredOtherFileType)
+		        If File = Nil Then
+		          Continue
+		        End If
+		        
+		        SecondFile = File
+		        Exit
+		      Case ConfirmDialog.CancelButton
+		        Return False
+		      Case ConfirmDialog.AlternateActionButton
+		        Exit
+		      End Select
+		    Loop
 		  End If
 		  
 		  If FirstFileType = ConfigFileType.GameIni Then
@@ -1978,6 +2004,7 @@ End
 	#tag Enum, Name = ConfigFileType, Type = Integer, Flags = &h21
 		GameIni
 		  GameUserSettingsIni
+		  Combo
 		Other
 	#tag EndEnum
 
