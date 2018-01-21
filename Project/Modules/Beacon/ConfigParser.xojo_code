@@ -2,32 +2,32 @@
 Private Class ConfigParser
 	#tag Method, Flags = &h0
 		Function AddCharacter(Char As Text) As Boolean
+		  Self.ConsumedLastChar = True
+		  
 		  If Self.SubParser <> Nil Then
 		    If Self.SubParser.AddCharacter(Char) Then
 		      // This parser is done
+		      
 		      Select Case Self.Type
-		      Case Self.TypeIntrinsic
-		        Self.mValue = Text.Join(Self.Buffer, "").Trim
-		        Self.SubParser = Nil
-		        Return True
 		      Case Self.TypePair
 		        Self.mValue = New Beacon.Pair(Self.Key, Self.SubParser.Value)
+		        Self.ConsumedLastChar = Self.SubParser.ConsumedLastChar
 		        Self.SubParser = Nil
 		        Return True
 		      Case Self.TypeArray
 		        Dim Values() As Auto = Self.mValue
 		        Values.Append(Self.SubParser.Value)
 		        Self.mValue = Values
-		        If Char = "," Then
-		          Self.SubParser = New Beacon.ConfigParser
+		        Dim Consumed As Boolean = Self.SubParser.ConsumedLastChar
+		        Self.SubParser = Nil
+		        
+		        If Consumed Then
 		          Return False
-		        Else
-		          Self.SubParser = Nil
-		          Return True
 		        End If
 		      End Select
+		    Else
+		      Return False
 		    End If
-		    Return False
 		  End If
 		  
 		  If InQuotes Then
@@ -39,41 +39,37 @@ Private Class ConfigParser
 		    Return False
 		  End If
 		  
-		  If Char = "(" Then
-		    Self.SubParser = New Beacon.ConfigParser
-		    Self.Type = Self.TypeArray
-		    
-		    Dim Values() As Auto
-		    Self.mValue = Values
-		    Return False
-		  End If
-		  
-		  If Self.Type = Self.TypeIntrinsic And Char = "=" Then
-		    Self.Key = Text.Join(Self.Buffer, "").Trim
-		    Redim Self.Buffer(-1)
-		    Self.Type = Self.TypePair
-		    Self.SubParser = New Beacon.ConfigParser
-		    Return False
-		  End If
-		  
-		  Select Case Char
-		  Case """"
-		    InQuotes = True
-		  Case ")", ",", Text.FromUnicodeCodepoint(13)
-		    Select Case Self.Type
-		    Case Self.TypeIntrinsic
-		      Self.mValue = Text.Join(Self.Buffer, "").Trim
-		    Case Self.TypePair
-		      Self.mValue = New Beacon.Pair(Self.Key, Text.Join(Self.Buffer, "").Trim)
-		    Case Self.TypeArray
-		      Dim Values() As Auto = Self.mValue
-		      Values.Append(Text.Join(Self.Buffer, "").Trim)
+		  Select Case Self.Type
+		  Case Self.TypeIntrinsic
+		    Select Case Char
+		    Case "("
+		      Self.SubParser = New Beacon.ConfigParser
+		      Self.Type = Self.TypeArray
+		      
+		      Dim Values() As Auto
 		      Self.mValue = Values
+		    Case "="
+		      Self.Key = Text.Join(Self.Buffer, "").Trim
+		      Redim Self.Buffer(-1)
+		      Self.Type = Self.TypePair
+		      Self.SubParser = New Beacon.ConfigParser
+		    Case ")", ",", Text.FromUnicodeCodepoint(13)
+		      Self.ConsumedLastChar = False
+		      Self.mValue = Text.Join(Self.Buffer, "")
+		      Redim Self.Buffer(-1)
+		      Return True
+		    Case """"
+		      Self.InQuotes = True
+		    Else
+		      Self.Buffer.Append(Char)
 		    End Select
-		    Redim Self.Buffer(-1)
-		    Return True
-		  Else
-		    Self.Buffer.Append(Char)
+		  Case Self.TypeArray
+		    Select Case Char
+		    Case ")", Text.FromUnicodeCodepoint(13)
+		      Return True
+		    Case ","
+		      Self.SubParser = New Beacon.ConfigParser
+		    End Select
 		  End Select
 		End Function
 	#tag EndMethod
@@ -93,6 +89,10 @@ Private Class ConfigParser
 
 	#tag Property, Flags = &h21
 		Private Buffer() As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private ConsumedLastChar As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
