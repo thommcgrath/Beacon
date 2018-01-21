@@ -2036,7 +2036,10 @@ End
 		    Task.Run
 		  End If
 		  
-		  If Me.Value = Self.PageFinalizeIndex Then
+		  Select Case Me.Value
+		  Case Self.PageServerIndex
+		    Self.ServerHostField.SetFocus
+		  Case Self.PageFinalizeIndex
 		    Dim Mask As UInt64
 		    If Self.mDocument.MapCompatibility > 0 Then
 		      Mask = Self.mDocument.MapCompatibility
@@ -2065,7 +2068,7 @@ End
 		    Self.DifficultyValueField.Text = DifficultyValue.PrettyText
 		    Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
 		    Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
-		  End If
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents
