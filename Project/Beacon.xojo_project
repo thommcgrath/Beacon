@@ -213,6 +213,7 @@ Class=InvalidPaddingException;Modules/M_Crypto/InvalidPaddingException.xojo_code
 Class=UnsupportedFunctionException;Modules/M_Crypto/UnsupportedFunctionException.xojo_code;&h0000000053EAAFFF;&h000000005949A7FF;false
 Class=UnimplementedEnumException;Modules/M_Crypto/UnimplementedEnumException.xojo_code;&h000000003C64A7FF;&h000000005949A7FF;false
 Class=ConfigParser;Modules/Beacon/ConfigParser.xojo_code;&h000000005BA577FF;&h0000000055ADDFFF;false
+Window=SimulatorView;Views/SimulatorView.xojo_window;&h000000004191F7FF;&h0000000008A387FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

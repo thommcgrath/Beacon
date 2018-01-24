@@ -43,7 +43,7 @@ Begin ContainerControl BeaconEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   402
+      Height          =   219
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -78,7 +78,6 @@ Begin ContainerControl BeaconEditor
       _ScrollWidth    =   -1
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -137,7 +136,6 @@ Begin ContainerControl BeaconEditor
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True
@@ -153,7 +151,6 @@ Begin ContainerControl BeaconEditor
          HasBackColor    =   False
          Height          =   464
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -260,6 +257,34 @@ Begin ContainerControl BeaconEditor
       Top             =   41
       Transparent     =   True
       UseFocusRing    =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin SimulatorView Simulator
+      AcceptFocus     =   False
+      AcceptTabs      =   True
+      AutoDeactivate  =   True
+      BackColor       =   &cFFFFFF00
+      Backdrop        =   0
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackColor    =   False
+      Height          =   183
+      HelpTag         =   ""
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   281
+      Transparent     =   True
+      UseFocusRing    =   False
       Visible         =   True
       Width           =   250
    End
@@ -573,6 +598,7 @@ End
 		    Status.Clickable = False
 		  End If
 		  
+		  Self.Simulator.Simulate()
 		  Self.mUpdating = False
 		End Sub
 	#tag EndMethod
@@ -657,6 +683,13 @@ End
 		  For I As Integer = 0 To Self.mSources.Ubound
 		    Self.mSources(I) = Values(I)
 		  Next
+		  If Self.mSources.Ubound = 0 Then
+		    Self.Header.Simulate.Enabled = True
+		    Self.Simulator.Simulate(Self.mSources(0))
+		  Else
+		    Self.Header.Simulate.Enabled = False
+		    Self.Simulator.Clear()
+		  End If
 		  Self.RebuildSetList()
 		End Sub
 	#tag EndMethod
@@ -1026,6 +1059,7 @@ End
 		  AddButton.HelpTag = "Add a new empty item set. Hold to add a preset from a menu."
 		  
 		  Dim SimulateButton As New BeaconToolbarItem("Simulate", IconToolbarSimulate)
+		  SimulateButton.Enabled = False
 		  SimulateButton.HelpTag = "Simulate loot selection for this loot source."
 		  
 		  Me.LeftItems.Append(AddButton)
@@ -1037,6 +1071,8 @@ End
 		  Select Case Item.Name
 		  Case "AddSet"
 		    Self.ShowNewSet()
+		  Case "Simulate"
+		    Self.Simulator.Simulate(Self.mSources(0))
 		  End Select
 		End Sub
 	#tag EndEvent

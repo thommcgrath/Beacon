@@ -379,6 +379,71 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Simulate() As Beacon.SimulatedSelection()
+		  Dim Selections() As Beacon.SimulatedSelection
+		  If Self.mEntries.Ubound = -1 Then
+		    Return Selections
+		  End If
+		  
+		  Dim NumEntries As Integer = Self.Count
+		  Dim MinEntries As Integer = Xojo.Math.Max(Xojo.Math.Min(Self.MinNumItems, NumEntries), 1)
+		  Dim MaxEntries As Integer = Xojo.Math.Max(Xojo.Math.Min(Self.MaxNumItems, NumEntries), MinEntries)
+		  
+		  Dim SelectedEntries() As Beacon.SetEntry
+		  If NumEntries = MinEntries And MinEntries = MaxEntries Then
+		    // All
+		    For Each Entry As Beacon.SetEntry In Self.mEntries
+		      SelectedEntries.Append(Entry)
+		    Next
+		  Else
+		    Dim WeightLookup As New Xojo.Core.Dictionary
+		    Dim Sum, Weights() As Double
+		    For Each Entry As Beacon.SetEntry In Self.mEntries
+		      If Entry.Weight = 0 Then
+		        Continue
+		      End If
+		      Sum = Sum + Entry.Weight
+		      Weights.Append(Sum * 100000)
+		      WeightLookup.Value(Sum * 100000) = Entry
+		    Next
+		    Weights.Sort
+		    
+		    Dim ChooseEntries As Integer = Xojo.Math.RandomInt(MinEntries, MaxEntries)
+		    For I As Integer = 1 To ChooseEntries
+		      Do
+		        Dim Decision As Double = Xojo.Math.RandomInt(100000, 100000 + (Sum * 100000)) - 100000
+		        Dim SelectedEntry As Beacon.SetEntry
+		        
+		        For X As Integer = 0 To Weights.Ubound
+		          If Weights(X) >= Decision Then
+		            Dim SelectedWeight As Double = Weights(X)
+		            SelectedEntry = WeightLookup.Value(SelectedWeight)
+		            Exit For X
+		          End If
+		        Next
+		        
+		        If SelectedEntry = Nil Then
+		          Continue
+		        End If
+		        
+		        SelectedEntries.Append(SelectedEntry)
+		        
+		        Exit
+		      Loop
+		    Next
+		  End If
+		  
+		  For Each Entry As Beacon.SetEntry In SelectedEntries
+		    Dim EntrySelections() As Beacon.SimulatedSelection = Entry.Simulate()
+		    For Each Selection As Beacon.SimulatedSelection In EntrySelections
+		      Selections.Append(Selection)
+		    Next
+		  Next
+		  Return Selections
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SourcePresetID() As Text
 		  Return Self.mSourcePresetID
 		End Function

@@ -468,6 +468,69 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Simulate() As Beacon.SimulatedSelection()
+		  Dim Selections() As Beacon.SimulatedSelection
+		  If Self.mSets.Ubound = -1 Then
+		    Return Selections
+		  End If
+		  
+		  Dim NumSets As Integer = Self.Count
+		  Dim MinSets As Integer = Xojo.Math.Max(Xojo.Math.Min(Self.MinItemSets, NumSets), 1)
+		  Dim MaxSets As Integer = Xojo.Math.Max(Xojo.Math.Min(Self.MaxItemSets, NumSets), MinSets)
+		  
+		  Dim SelectedSets() As Beacon.ItemSet
+		  If NumSets = MinSets And MinSets = MaxSets Then
+		    // All
+		    SelectedSets = Self.mSets
+		  Else
+		    Dim WeightLookup As New Xojo.Core.Dictionary
+		    Dim Sum, Weights() As Double
+		    For Each Set As Beacon.ItemSet In Self.mSets
+		      If Set.Weight = 0 Then
+		        Continue
+		      End If
+		      Sum = Sum + Set.Weight
+		      Weights.Append(Sum * 100000)
+		      WeightLookup.Value(Sum * 100000) = Set
+		    Next
+		    Weights.Sort
+		    
+		    Dim ChooseSets As Integer = Xojo.Math.RandomInt(MinSets, MaxSets)
+		    For I As Integer = 1 To ChooseSets
+		      Do
+		        Dim Decision As Double = Xojo.Math.RandomInt(100000, 100000 + (Sum * 100000)) - 100000
+		        Dim SelectedSet As Beacon.ItemSet
+		        
+		        For X As Integer = 0 To Weights.Ubound
+		          If Weights(X) >= Decision Then
+		            Dim SelectedWeight As Double = Weights(X)
+		            SelectedSet = WeightLookup.Value(SelectedWeight)
+		            Exit For X
+		          End If
+		        Next
+		        
+		        If SelectedSet = Nil Then
+		          Continue
+		        End If
+		        
+		        SelectedSets.Append(SelectedSet)
+		        
+		        Exit
+		      Loop
+		    Next
+		  End If
+		  
+		  For Each Set As Beacon.ItemSet In SelectedSets
+		    Dim SetSelections() As Beacon.SimulatedSelection = Set.Simulate
+		    For Each Selection As Beacon.SimulatedSelection In SetSelections
+		      Selections.Append(Selection)
+		    Next
+		  Next
+		  Return Selections
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SortValue() As Integer
 		  Return Self.mSortValue
 		End Function
