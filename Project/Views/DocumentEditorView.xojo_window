@@ -589,6 +589,10 @@ End
 		  Case "Deploy"
 		    DeployDialog.Present(Self, Self.mDocument)
 		    Self.ContentsChanged = Self.ContentsChanged Or Self.mDocument.Modified
+		  Case "Rebuild"
+		    Self.mDocument.ReconfigurePresets()
+		    Self.UpdateSourceList()
+		    Self.ContentsChanged = Self.ContentsChanged Or Self.mDocument.Modified
 		  End Select
 		End Sub
 	#tag EndEvent
