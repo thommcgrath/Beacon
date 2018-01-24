@@ -2,7 +2,7 @@
 Protected Module Maps
 	#tag Method, Flags = &h1
 		Protected Function Aberration() As Beacon.Map
-		  Return New Beacon.Map("Aberration", 16, 5.0)
+		  Return New Beacon.Map("Aberration", 16, 4.0)
 		End Function
 	#tag EndMethod
 
@@ -77,7 +77,7 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function ScorchedEarth() As Beacon.Map
-		  Return New Beacon.Map("Scorched Earth", 2, 5.0)
+		  Return New Beacon.Map("Scorched Earth", 2, 4.0)
 		End Function
 	#tag EndMethod
 
