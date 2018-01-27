@@ -2263,20 +2263,20 @@ End
 		  If Me.Finished Then
 		    Self.mDocument = Me.Document
 		    
-		    Dim Profile As Beacon.FTPProfile
-		    If Self.mDocument.FTPProfileCount = 1 Then
-		      Profile = Self.mDocument.FTPProfile(0)
+		    Dim Profile As Beacon.FTPServerProfile
+		    If Self.mDocument.ServerProfileCount = 1 And Self.mDocument.ServerProfile(0) IsA Beacon.FTPServerProfile Then
+		      Profile = Beacon.FTPServerProfile(Self.mDocument.ServerProfile(0))
 		    Else
-		      Profile = New Beacon.FTPProfile
+		      Profile = New Beacon.FTPServerProfile
 		    End If
 		    Profile.Host = Self.ServerHostField.Text.ToText
 		    Profile.Port = Val(Self.ServerPortField.Text)
 		    Profile.Username = Self.ServerUserField.Text.ToText
 		    Profile.Password = Self.ServerPassField.Text.ToText
-		    If Self.mDocument.FTPProfileCount = 1 Then
-		      Self.mDocument.FTPProfile(0) = Profile
+		    If Self.mDocument.ServerProfileCount = 1 Then
+		      Self.mDocument.ServerProfile(0) = Profile
 		    Else
-		      Self.mDocument.AddFTPProfile(Profile)
+		      Self.mDocument.Add(Profile)
 		    End If
 		    
 		    Self.FinalizeMessageLabel.Text = "Review Document Settings"

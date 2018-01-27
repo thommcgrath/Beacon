@@ -667,7 +667,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(EditProfile As Beacon.FTPProfile = Nil) As Beacon.FTPProfile
+		Shared Function Present(EditProfile As Beacon.FTPServerProfile = Nil) As Beacon.FTPServerProfile
 		  Dim Win As New FTPProfileDialog
 		  If EditProfile <> Nil Then
 		    Win.HostField.Text = EditProfile.Host
@@ -675,7 +675,7 @@ End
 		    Win.UserField.Text = EditProfile.Username
 		    Win.PassField.Text = EditProfile.Password
 		    Win.PathField.Text = EditProfile.GameUserSettingsIniPath
-		    Win.DescriptionField.Text = EditProfile.Description
+		    Win.DescriptionField.Text = EditProfile.Name
 		  End If
 		  Win.ShowModal()
 		  
@@ -684,22 +684,22 @@ End
 		    Return Nil
 		  End If
 		  
-		  Dim Profile As Beacon.FTPProfile = Win.Profile
+		  Dim Profile As Beacon.FTPServerProfile = Win.Profile
 		  Win.Close
 		  Return Profile
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function Profile() As Beacon.FTPProfile
-		  Dim Profile As New Beacon.FTPProfile
+		Private Function Profile() As Beacon.FTPServerProfile
+		  Dim Profile As New Beacon.FTPServerProfile
 		  Profile.Host = Self.HostField.Text.ToText
 		  Profile.Port = CDbl(Self.PortField.Text)
 		  Profile.Username = Self.UserField.Text.ToText
 		  Profile.Password = Self.PassField.Text.ToText
 		  Profile.GameIniPath = Self.PathField.Text.ToText
 		  Profile.GameUserSettingsIniPath = Profile.GameIniPath.Replace("Game.ini", "GameUserSettings.ini")
-		  Profile.Description = Self.DescriptionField.Text.ToText
+		  Profile.Name = Self.DescriptionField.Text.ToText
 		  Return Profile
 		End Function
 	#tag EndMethod
@@ -766,10 +766,14 @@ End
 #tag Events TestButton
 	#tag Event
 		Sub Action()
-		  Dim Profile As Beacon.FTPProfile = Self.Profile()
-		  Dim Request As New BeaconAPI.Request("ftp.php" + Profile.GameIniURL, "GET", AddressOf APICallback_FTPDownload)
-		  Request.Sign(App.Identity)
-		  Self.APISocket.Start(Request)
+		  #Pragma Warning "Implement this test button"
+		  
+		  #if false
+		    Dim Profile As Beacon.FTPServerProfile = Self.Profile()
+		    Dim Request As New BeaconAPI.Request("ftp.php" + Profile.GameIniURL, "GET", AddressOf APICallback_FTPDownload)
+		    Request.Sign(App.Identity)
+		    Self.APISocket.Start(Request)
+		  #endif
 		End Sub
 	#tag EndEvent
 #tag EndEvents

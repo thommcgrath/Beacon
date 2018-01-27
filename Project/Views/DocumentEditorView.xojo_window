@@ -396,7 +396,7 @@ End
 		  
 		  For I As Integer = Self.List.ListCount - 1 DownTo 0
 		    If Self.List.Selected(I) Then
-		      Self.mDocument.Remove(Self.List.RowTag(I))
+		      Self.mDocument.Remove(Beacon.LootSource(Self.List.RowTag(I)))
 		      Self.List.RemoveRow(I)
 		    End If
 		  Next

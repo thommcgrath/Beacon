@@ -1,6 +1,24 @@
 #tag Module
 Protected Module Beacon
 	#tag Method, Flags = &h1
+		Protected Function Clone(Source As Xojo.Core.Dictionary) As Xojo.Core.Dictionary
+		  // This method only exists because the built-in clone method causes crashes.
+		  // However, this only handles basic cases.
+		  
+		  If Source = Nil Then
+		    // That was easy
+		    Return Nil
+		  End If
+		  
+		  Dim Clone As New Xojo.Core.Dictionary
+		  For Each Entry As Xojo.Core.DictionaryEntry In Source
+		    Clone.Value(Entry.Key) = Entry.Value
+		  Next
+		  Return Clone
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function CreateUUID() As Text
 		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)
 		  Dim Id As New Xojo.Core.MutableMemoryBlock(Bytes)
@@ -66,13 +84,6 @@ Protected Module Beacon
 		    Dim Temp As New Xojo.Core.MemoryBlock(Block)
 		    Return Temp.Left(Block.Size)
 		  #endif
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function DecodeHex(Source As Text, Encoding As Xojo.Core.TextEncoding) As Text
-		  Dim Bytes As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Source)
-		  Return Encoding.ConvertDataToText(Bytes)
 		End Function
 	#tag EndMethod
 
@@ -151,8 +162,18 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Protected Function EncodeHex(Block As Global.MemoryBlock) As Text
+		  Return REALbasic.EncodeHex(Block).ToText
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
-		Protected Function EncodeHex(Value As Text, Encoding As Xojo.Core.TextEncoding) As Text
+		Protected Function EncodeHex(Value As Text, Encoding As Xojo.Core.TextEncoding = Nil) As Text
+		  If Encoding = Nil Then
+		    Encoding = Xojo.Core.TextEncoding.UTF8
+		  End If
+		  
 		  Dim Bytes As Xojo.Core.MemoryBlock = Encoding.ConvertTextToData(Value)
 		  Return Beacon.EncodeHex(Bytes)
 		End Function
@@ -199,6 +220,29 @@ Protected Module Beacon
 		  Wend
 		  
 		  Return New Xojo.Core.Point(Left, Top)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Protected Function Hash(Block As Global.MemoryBlock) As Text
+		  Dim Temp As New Xojo.Core.MemoryBlock(Block)
+		  Return Beacon.Hash(Temp.Left(Block.Size))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Hash(Value As Text, Encoding As Xojo.Core.TextEncoding = Nil) As Text
+		  If Encoding = Nil Then
+		    Encoding = Xojo.Core.TextEncoding.UTF8
+		  End If
+		  
+		  Return Beacon.Hash(Encoding.ConvertTextToData(Value))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Hash(Block As Xojo.Core.MemoryBlock) As Text
+		  Return Beacon.EncodeHex(Xojo.Crypto.SHA512(Block))
 		End Function
 	#tag EndMethod
 

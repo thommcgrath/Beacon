@@ -976,29 +976,31 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateCredentialsList(ForceSelect As Beacon.FTPProfile = Nil)
-		  Dim SelectedHashes() As Text
-		  For I As Integer = 0 To CredentialsList.ListCount - 1
-		    If Not CredentialsList.Selected(I) Then
-		      Continue
-		    End If
+		Private Sub UpdateCredentialsList(ForceSelect As Beacon.FTPServerProfile = Nil)
+		  #if false
+		    Dim SelectedHashes() As Text
+		    For I As Integer = 0 To CredentialsList.ListCount - 1
+		      If Not CredentialsList.Selected(I) Then
+		        Continue
+		      End If
+		      
+		      Dim Profile As Beacon.FTPProfile = CredentialsList.RowTag(I)
+		      SelectedHashes.Append(Profile.Hash)
+		    Next
 		    
-		    Dim Profile As Beacon.FTPProfile = CredentialsList.RowTag(I)
-		    SelectedHashes.Append(Profile.Hash)
-		  Next
-		  
-		  CredentialsList.DeleteAllRows
-		  
-		  For I As Integer = 0 To Self.mDocument.FTPProfileCount - 1
-		    Dim Profile As Beacon.FTPProfile = Self.mDocument.FTPProfile(I)
-		    If Profile = Nil Then
-		      Continue
-		    End If
+		    CredentialsList.DeleteAllRows
 		    
-		    CredentialsList.AddRow(Profile.Description, Profile.DescriptiveHost, Profile.GameIniPath)
-		    CredentialsList.RowTag(CredentialsList.LastIndex) = Profile
-		    CredentialsList.Selected(CredentialsList.LastIndex) = Profile = ForceSelect Or SelectedHashes.IndexOf(Profile.Hash) > -1
-		  Next
+		    For I As Integer = 0 To Self.mDocument.FTPProfileCount - 1
+		      Dim Profile As Beacon.FTPProfile = Self.mDocument.FTPProfile(I)
+		      If Profile = Nil Then
+		        Continue
+		      End If
+		      
+		      CredentialsList.AddRow(Profile.Description, Profile.DescriptiveHost, Profile.GameIniPath)
+		      CredentialsList.RowTag(CredentialsList.LastIndex) = Profile
+		      CredentialsList.Selected(CredentialsList.LastIndex) = Profile = ForceSelect Or SelectedHashes.IndexOf(Profile.Hash) > -1
+		    Next
+		  #endif
 		  
 		  CredentialsActionButton.Enabled = CredentialsList.ListCount > 0
 		End Sub
@@ -1185,28 +1187,32 @@ End
 #tag Events AddServerButton
 	#tag Event
 		Sub Action()
-		  Dim Profile As Beacon.FTPProfile = FTPProfileDialog.Present()
-		  If Profile <> Nil Then
-		    Self.mDocument.AddFTPProfile(Profile)
-		    Self.UpdateCredentialsList(Profile)
-		  End If
+		  #if false
+		    Dim Profile As Beacon.FTPProfile = FTPProfileDialog.Present()
+		    If Profile <> Nil Then
+		      Self.mDocument.AddFTPProfile(Profile)
+		      Self.UpdateCredentialsList(Profile)
+		    End If
+		  #endif
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events EditServerButton
 	#tag Event
 		Sub Action()
-		  Dim Profile As Beacon.FTPProfile = CredentialsList.RowTag(CredentialsList.ListIndex)
-		  If Profile = Nil Then
-		    Return
-		  End If
-		  
-		  Dim NewProfile As Beacon.FTPProfile = FTPProfileDialog.Present(Profile)
-		  If NewProfile <> Nil Then
-		    Self.mDocument.RemoveFTPProfile(Profile)
-		    Self.mDocument.AddFTPProfile(NewProfile)
-		    Self.UpdateCredentialsList(NewProfile)
-		  End If
+		  #if false
+		    Dim Profile As Beacon.FTPProfile = CredentialsList.RowTag(CredentialsList.ListIndex)
+		    If Profile = Nil Then
+		      Return
+		    End If
+		    
+		    Dim NewProfile As Beacon.FTPProfile = FTPProfileDialog.Present(Profile)
+		    If NewProfile <> Nil Then
+		      Self.mDocument.RemoveFTPProfile(Profile)
+		      Self.mDocument.AddFTPProfile(NewProfile)
+		      Self.UpdateCredentialsList(NewProfile)
+		    End If
+		  #endif
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1214,12 +1220,14 @@ End
 	#tag Event
 		Sub Action()
 		  For I As Integer = 0 To CredentialsList.ListCount - 1
-		    Dim Profile As Beacon.FTPProfile = CredentialsList.RowTag(I)
-		    If Profile = Nil Then
-		      Continue
-		    End If
-		    
-		    Self.mDocument.RemoveFTPProfile(Profile)
+		    #if false
+		      Dim Profile As Beacon.FTPProfile = CredentialsList.RowTag(I)
+		      If Profile = Nil Then
+		        Continue
+		      End If
+		      
+		      Self.mDocument.RemoveFTPProfile(Profile)
+		    #endif
 		  Next
 		  
 		  Self.UpdateCredentialsList()
@@ -1232,16 +1240,18 @@ End
 		  Self.mDownloadSuccess = True
 		  Self.Pages.Value = Self.PageDownloading
 		  
-		  For I As Integer = 0 To CredentialsList.ListCount - 1
-		    Dim Profile As Beacon.FTPProfile = CredentialsList.RowTag(I)
-		    If Profile = Nil Then
-		      Continue
-		    End If
-		    
-		    Dim Request As New BeaconAPI.Request("ftp.php" + Profile.GameIniURL + "&ref=" + Profile.Hash, "GET", WeakAddressOf APICallback_FTPDownload)
-		    Request.Sign(App.Identity)
-		    Self.APISocket.Start(Request)
-		  Next
+		  #if false
+		    For I As Integer = 0 To CredentialsList.ListCount - 1
+		      Dim Profile As Beacon.FTPProfile = CredentialsList.RowTag(I)
+		      If Profile = Nil Then
+		        Continue
+		      End If
+		      
+		      Dim Request As New BeaconAPI.Request("ftp.php" + Profile.GameIniURL + "&ref=" + Profile.Hash, "GET", WeakAddressOf APICallback_FTPDownload)
+		      Request.Sign(App.Identity)
+		      Self.APISocket.Start(Request)
+		    Next
+		  #endif
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1258,26 +1268,28 @@ End
 		  Self.mUploadSuccess = True
 		  Self.Pages.Value = Self.PageUploading
 		  
-		  For I As Integer = 0 To CredentialsList.ListCount - 1
-		    Dim Profile As Beacon.FTPProfile = CredentialsList.RowTag(I)
-		    If Profile = Nil Then
-		      Continue
-		    End If
-		    
-		    Dim Hash As Text = Profile.Hash
-		    Dim File As FolderItem = Self.mTempFolder.Child(Hash + ".ini")
-		    If Not File.Exists Then
-		      Continue
-		    End If
-		    
-		    Dim Stream As TextInputStream = TextInputStream.Open(File)
-		    Dim Content As String = Stream.ReadAll(Encodings.UTF8)
-		    Stream.Close
-		    
-		    Dim Request As New BeaconAPI.Request("ftp.php" + Profile.GameIniURL + "&ref=" + Profile.Hash, "POST", Content.ToText, "text/plain", WeakAddressOf APICallback_FTPUpload)
-		    Request.Sign(App.Identity)
-		    Self.APISocket.Start(Request)
-		  Next
+		  #if false
+		    For I As Integer = 0 To CredentialsList.ListCount - 1
+		      Dim Profile As Beacon.FTPProfile = CredentialsList.RowTag(I)
+		      If Profile = Nil Then
+		        Continue
+		      End If
+		      
+		      Dim Hash As Text = Profile.Hash
+		      Dim File As FolderItem = Self.mTempFolder.Child(Hash + ".ini")
+		      If Not File.Exists Then
+		        Continue
+		      End If
+		      
+		      Dim Stream As TextInputStream = TextInputStream.Open(File)
+		      Dim Content As String = Stream.ReadAll(Encodings.UTF8)
+		      Stream.Close
+		      
+		      Dim Request As New BeaconAPI.Request("ftp.php" + Profile.GameIniURL + "&ref=" + Profile.Hash, "POST", Content.ToText, "text/plain", WeakAddressOf APICallback_FTPUpload)
+		      Request.Sign(App.Identity)
+		      Self.APISocket.Start(Request)
+		    Next
+		  #endif
 		End Sub
 	#tag EndEvent
 #tag EndEvents

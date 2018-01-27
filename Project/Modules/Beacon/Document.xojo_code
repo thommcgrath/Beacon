@@ -14,16 +14,20 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AddFTPProfile(Profile As Beacon.FTPProfile)
-		  Dim Hash As Text = Profile.Hash
+		Sub Add(Profile As Beacon.ServerProfile)
+		  If Profile = Nil Then
+		    Return
+		  End If
 		  
-		  For I As Integer = 0 To Self.mFTPProfiles.Ubound
-		    If Self.mFTPProfiles(I).Hash = Hash Then
+		  For I As Integer = 0 To Self.mServerProfiles.Ubound
+		    If Self.mServerProfiles(I) = Profile Then
+		      Self.mServerProfiles(I) = Profile.Clone
+		      Self.mModified = True
 		      Return
 		    End If
 		  Next
 		  
-		  Self.mFTPProfiles.Append(New Beacon.FTPProfile(Profile))
+		  Self.mServerProfiles.Append(Profile.Clone)
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
@@ -76,39 +80,35 @@ Implements Beacon.DocumentItem
 		    Document.Value("DifficultyValue") = Self.DifficultyValue
 		  End If
 		  
+		  Dim EncryptedData As New Xojo.Core.Dictionary
 		  Dim Profiles() As Xojo.Core.Dictionary
-		  For Each Profile As Beacon.FTPProfile In Self.mFTPProfiles
-		    Profiles.Append(Profile.ToDictionary(Identity))
+		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
+		    Profiles.Append(Profile.ToDictionary)
 		  Next
-		  Document.Value("FTPServers") = Profiles
+		  EncryptedData.Value("Servers") = Profiles
+		  
+		  Dim Content As Text = Xojo.Data.GenerateJSON(EncryptedData)
+		  Dim Hash As Text = Beacon.Hash(Content)
+		  If Hash <> Self.mLastSecureHash Then
+		    Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
+		    Dim Key As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(128)
+		    Dim Vector As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)
+		    AES.SetKey(CType(Key.Data, MemoryBlock).StringValue(0, Key.Size))
+		    AES.SetInitialVector(CType(Vector.Data, MemoryBlock).StringValue(0, Vector.Size))
+		    Dim Encrypted As Global.MemoryBlock = AES.EncryptCBC(Content)
+		    
+		    Dim SecureDict As New Xojo.Core.Dictionary
+		    SecureDict.Value("Key") = Beacon.EncodeHex(Identity.Encrypt(Key))
+		    SecureDict.Value("Vector") = Beacon.EncodeHex(Vector)
+		    SecureDict.Value("Content") = Beacon.EncodeHex(Encrypted)
+		    SecureDict.Value("Hash") = Hash
+		    
+		    Self.mLastSecureHash = Hash
+		    Self.mLastSecureDict = SecureDict
+		  End If
+		  Document.Value("Secure") = Beacon.Clone(Self.mLastSecureDict)
 		  
 		  Return Document
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function FTPProfile(Index As Integer) As Beacon.FTPProfile
-		  Return New Beacon.FTPProfile(Self.mFTPProfiles(Index))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub FTPProfile(Index As Integer, Assigns Profile As Beacon.FTPProfile)
-		  Dim Hash As Text = Profile.Hash
-		  For I As Integer = 0 To Self.mFTPProfiles.Ubound
-		    If Self.mFTPProfiles(I).Hash = Hash Then
-		      Return
-		    End If
-		  Next
-		  
-		  Self.mFTPProfiles(Index) = New Beacon.FTPProfile(Profile)
-		  Self.mModified = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function FTPProfileCount() As Integer
-		  Return Self.mFTPProfiles.Ubound + 1
 		End Function
 	#tag EndMethod
 
@@ -269,12 +269,47 @@ Implements Beacon.DocumentItem
 		      Else
 		        Doc.mDifficultyValue = -1
 		      End If
-		      If Dict.HasKey("FTPServers") Then
+		      If Dict.HasKey("Secure") Then
+		        Dim SecureDict As Xojo.Core.Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
+		        If SecureDict <> Nil Then
+		          Doc.mLastSecureDict = Dict.Value("Secure")
+		          Doc.mLastSecureHash = Doc.mLastSecureDict.Value("Hash")
+		          
+		          Dim ServerDicts() As Auto = SecureDict.Value("Servers")
+		          For Each ServerDict As Xojo.Core.Dictionary In ServerDicts
+		            Dim Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
+		            If Profile <> Nil Then
+		              Doc.mServerProfiles.Append(Profile)
+		            End If
+		          Next
+		        End If
+		      ElseIf Dict.HasKey("FTPServers") Then
 		        Dim ServerDicts() As Auto = Dict.Value("FTPServers")
 		        For Each ServerDict As Xojo.Core.Dictionary In ServerDicts
-		          Dim Profile As Beacon.FTPProfile = Beacon.FTPProfile.FromDictionary(ServerDict, Identity)
-		          If Profile <> Nil Then
-		            Doc.mFTPProfiles.Append(Profile)
+		          Dim FTPInfo As Xojo.Core.Dictionary = ReadSecureData(ServerDict, Identity, True)
+		          If FTPInfo <> Nil And FTPInfo.HasAllKeys("Description", "Host", "Port", "User", "Pass", "Path") Then
+		            Dim Profile As New Beacon.FTPServerProfile
+		            Profile.Name = FTPInfo.Value("Description")
+		            Profile.Host = FTPInfo.Value("Host")
+		            Profile.Port = FTPInfo.Value("Port")
+		            Profile.Username = FTPInfo.Value("User")
+		            Profile.Password = FTPInfo.Value("Pass")
+		            
+		            Dim Path As Text = FTPInfo.Value("Path")
+		            Dim Components() As Text = Path.Split("/")
+		            If Components.Ubound > -1 Then
+		              Dim LastComponent As Text = Components(Components.Ubound)
+		              If LastComponent.Length > 4 And LastComponent.Right(4) = ".ini" Then
+		                Components.Remove(Components.Ubound)
+		              End If
+		            End If
+		            Components.Append("Game.ini")
+		            Profile.GameIniPath = Text.Join(Components, "/")
+		            
+		            Components(Components.Ubound) = "GameUserSettings.ini"
+		            Profile.GameUserSettingsIniPath = Text.Join(Components, "/")
+		            
+		            Doc.mServerProfiles.Append(Profile)
 		          End If
 		        Next
 		      End If
@@ -344,6 +379,54 @@ Implements Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Private Shared Function ReadSecureData(SecureDict As Xojo.Core.Dictionary, Identity As Beacon.Identity, SkipHashVerification As Boolean = False) As Xojo.Core.Dictionary
+		  If Not SecureDict.HasAllKeys("Key", "Vector", "Content", "Hash") Then
+		    Return Nil
+		  End If
+		  
+		  Dim Key As Xojo.Core.MemoryBlock = Identity.Decrypt(Beacon.DecodeHex(SecureDict.Value("Key")))
+		  If Key = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Dim ExpectedHash As Text = SecureDict.Lookup("Hash", "")
+		  Dim Vector As Xojo.Core.MemoryBlock = Beacon.DecodeHex(SecureDict.Value("Vector"))
+		  Dim Encrypted As Xojo.Core.MemoryBlock = Beacon.DecodeHex(SecureDict.Value("Content"))
+		  Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
+		  AES.SetKey(CType(Key.Data, MemoryBlock).StringValue(0, Key.Size))
+		  AES.SetInitialVector(CType(Vector.Data, MemoryBlock).StringValue(0, Vector.Size))
+		  
+		  Dim Decrypted As String
+		  Try
+		    Decrypted = AES.DecryptCBC(CType(Encrypted.Data, MemoryBlock).StringValue(0, Encrypted.Size))
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		  
+		  If SkipHashVerification = False Then
+		    Dim ComputedHash As Text = Beacon.EncodeHex(Decrypted)
+		    If ComputedHash <> ExpectedHash Then
+		      Return Nil
+		    End If
+		  End If
+		  
+		  If Decrypted = "" Or Not Encodings.UTF8.IsValidData(Decrypted) Then
+		    Return Nil
+		  End If
+		  Decrypted = Decrypted.DefineEncoding(Encodings.UTF8)
+		  
+		  Dim DecryptedDict As Xojo.Core.Dictionary
+		  Try
+		    DecryptedDict = Xojo.Data.ParseJSON(Decrypted.ToText)
+		  Catch Err As Xojo.Data.InvalidJSONException
+		    Return Nil
+		  End Try
+		  
+		  Return DecryptedDict
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub ReconfigurePresets()
 		  If Self.mMapCompatibility = 0 Then
@@ -369,16 +452,33 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveFTPProfile(Profile As Beacon.FTPProfile)
-		  Dim Hash As Text = Profile.Hash
-		  For I As Integer = 0 To Self.mFTPProfiles.Ubound
-		    If Self.mFTPProfiles(I).Hash = Hash Then
-		      Self.mFTPProfiles.Remove(I)
-		      Self.mModified = True
+		Sub Remove(Profile As Beacon.ServerProfile)
+		  For I As Integer = 0 To Self.mServerProfiles.Ubound
+		    If Self.mServerProfiles(I) = Profile Then
+		      Self.mServerProfiles.Remove(I)
 		      Return
 		    End If
 		  Next
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ServerProfile(Index As Integer) As Beacon.ServerProfile
+		  Return Self.mServerProfiles(Index)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ServerProfile(Index As Integer, Assigns Profile As Beacon.ServerProfile)
+		  Self.mServerProfiles(Index) = Profile.Clone
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ServerProfileCount() As Integer
+		  Return Self.mServerProfiles.Ubound + 1
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -486,15 +586,19 @@ Implements Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mFTPProfiles() As Beacon.FTPProfile
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mIdentifier As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mIsPublic As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastSecureDict As Xojo.Core.Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastSecureHash As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -507,6 +611,10 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mModified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mServerProfiles() As Beacon.ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -45,10 +45,10 @@ Inherits Beacon.Thread
 		      Next
 		    End If
 		    If Discovery.HasAllKeys("Game.ini", "GameUserSettings.ini") Then
-		      Dim Profile As New Beacon.FTPProfile
+		      Dim Profile As New Beacon.FTPServerProfile
 		      Profile.GameIniPath = Discovery.Value("Game.ini")
 		      Profile.GameUserSettingsIniPath = Discovery.Value("GameUserSettings.ini")
-		      Document.AddFTPProfile(Profile)
+		      Document.Add(Profile)
 		    End If
 		    If Discovery.HasKey("Options") Then
 		      Dim Options As Xojo.Core.Dictionary = Discovery.Value("Options")

@@ -718,7 +718,7 @@ End
 		  
 		  For I As Integer = BeaconList.ListCount - 1 DownTo 0
 		    If BeaconList.Selected(I) Then
-		      Self.Doc.Remove(BeaconList.RowTag(I))
+		      Self.Doc.Remove(Beacon.LootSource(BeaconList.RowTag(I)))
 		      BeaconList.RemoveRow(I)
 		    End If
 		  Next
