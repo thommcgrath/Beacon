@@ -39,7 +39,7 @@ Begin Window DocumentSetupSheet
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   4
+      PanelCount      =   5
       Panels          =   ""
       Scope           =   2
       TabIndex        =   0
@@ -69,7 +69,7 @@ Begin Window DocumentSetupSheet
          Scope           =   2
          Selectable      =   False
          TabIndex        =   0
-         TabPanelIndex   =   4
+         TabPanelIndex   =   5
          TabStop         =   True
          Text            =   "Document Settings"
          TextAlign       =   0
@@ -101,7 +101,7 @@ Begin Window DocumentSetupSheet
          LockTop         =   True
          Scope           =   2
          TabIndex        =   1
-         TabPanelIndex   =   4
+         TabPanelIndex   =   5
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
@@ -131,7 +131,7 @@ Begin Window DocumentSetupSheet
             Scope           =   2
             State           =   0
             TabIndex        =   0
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             TextFont        =   "System"
             TextSize        =   0.0
@@ -163,7 +163,7 @@ Begin Window DocumentSetupSheet
             Scope           =   2
             State           =   0
             TabIndex        =   2
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             TextFont        =   "System"
             TextSize        =   0.0
@@ -195,7 +195,7 @@ Begin Window DocumentSetupSheet
             Scope           =   2
             State           =   0
             TabIndex        =   4
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             TextFont        =   "System"
             TextSize        =   0.0
@@ -227,7 +227,7 @@ Begin Window DocumentSetupSheet
             Scope           =   2
             State           =   0
             TabIndex        =   1
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             TextFont        =   "System"
             TextSize        =   0.0
@@ -259,7 +259,7 @@ Begin Window DocumentSetupSheet
             Scope           =   2
             State           =   0
             TabIndex        =   3
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             TextFont        =   "System"
             TextSize        =   0.0
@@ -289,7 +289,7 @@ Begin Window DocumentSetupSheet
          LockTop         =   True
          Scope           =   2
          TabIndex        =   2
-         TabPanelIndex   =   4
+         TabPanelIndex   =   5
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
@@ -319,7 +319,7 @@ Begin Window DocumentSetupSheet
             Scope           =   2
             Selectable      =   False
             TabIndex        =   0
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             Text            =   "You only need to enter one of these values, the rest will be calculated automatically. All selected maps must use the same difficulty, otherwise Beacon will produce incorrect quality items."
             TextAlign       =   0
@@ -354,7 +354,7 @@ Begin Window DocumentSetupSheet
             Scope           =   2
             Selectable      =   False
             TabIndex        =   1
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             Text            =   "Difficulty Offset:"
             TextAlign       =   2
@@ -398,7 +398,7 @@ Begin Window DocumentSetupSheet
             ReadOnly        =   False
             Scope           =   2
             TabIndex        =   2
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             Text            =   ""
             TextColor       =   &c00000000
@@ -441,7 +441,7 @@ Begin Window DocumentSetupSheet
             ReadOnly        =   False
             Scope           =   2
             TabIndex        =   4
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             Text            =   ""
             TextColor       =   &c00000000
@@ -484,7 +484,7 @@ Begin Window DocumentSetupSheet
             ReadOnly        =   False
             Scope           =   2
             TabIndex        =   6
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             Text            =   ""
             TextColor       =   &c00000000
@@ -518,7 +518,7 @@ Begin Window DocumentSetupSheet
             Scope           =   2
             Selectable      =   False
             TabIndex        =   3
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             Text            =   "Difficulty Value:"
             TextAlign       =   2
@@ -553,7 +553,7 @@ Begin Window DocumentSetupSheet
             Scope           =   2
             Selectable      =   False
             TabIndex        =   5
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             Text            =   "Max Dino Level:"
             TextAlign       =   2
@@ -588,7 +588,7 @@ Begin Window DocumentSetupSheet
             Scope           =   2
             Selectable      =   False
             TabIndex        =   8
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             Text            =   "http://ark.gamepedia.com/Difficulty"
             TextAlign       =   0
@@ -623,7 +623,7 @@ Begin Window DocumentSetupSheet
             Scope           =   2
             Selectable      =   False
             TabIndex        =   7
-            TabPanelIndex   =   4
+            TabPanelIndex   =   5
             TabStop         =   True
             Text            =   "Learn More:"
             TextAlign       =   2
@@ -659,7 +659,7 @@ Begin Window DocumentSetupSheet
          LockTop         =   True
          Scope           =   2
          TabIndex        =   4
-         TabPanelIndex   =   4
+         TabPanelIndex   =   5
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
@@ -690,7 +690,7 @@ Begin Window DocumentSetupSheet
          LockTop         =   True
          Scope           =   2
          TabIndex        =   3
-         TabPanelIndex   =   4
+         TabPanelIndex   =   5
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
@@ -764,41 +764,6 @@ Begin Window DocumentSetupSheet
          Visible         =   True
          Width           =   471
       End
-      Begin Label ImportServerExplanation
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   110
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   True
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   2
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "With this option, Beacon will download the GameUserSettings.ini and Game.ini files from a server using FTP and create a document with the current map, difficulty, and loot settings. Beacon will be able to upload changes back to the server.\n\nFTP credentials will be sent to Beacon's server, which will make the connections. These credentials will not be stored on the server in any way."
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   84
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   431
-      End
       Begin RadioButton ImportLocalRadio
          AutoDeactivate  =   True
          Bold            =   False
@@ -822,7 +787,7 @@ Begin Window DocumentSetupSheet
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   206
+         Top             =   148
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -857,7 +822,7 @@ Begin Window DocumentSetupSheet
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   238
+         Top             =   180
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -886,7 +851,7 @@ Begin Window DocumentSetupSheet
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   301
+         Top             =   243
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -921,7 +886,7 @@ Begin Window DocumentSetupSheet
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   333
+         Top             =   275
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -953,7 +918,7 @@ Begin Window DocumentSetupSheet
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   365
+         Top             =   307
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -984,7 +949,7 @@ Begin Window DocumentSetupSheet
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   365
+         Top             =   307
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -1010,7 +975,7 @@ Begin Window DocumentSetupSheet
          Scope           =   2
          Selectable      =   False
          TabIndex        =   0
-         TabPanelIndex   =   3
+         TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Importing Config…"
          TextAlign       =   0
@@ -1040,7 +1005,7 @@ Begin Window DocumentSetupSheet
          Maximum         =   0
          Scope           =   2
          TabIndex        =   1
-         TabPanelIndex   =   3
+         TabPanelIndex   =   4
          Top             =   222
          Value           =   0
          Visible         =   True
@@ -1067,7 +1032,7 @@ Begin Window DocumentSetupSheet
          Scope           =   2
          Selectable      =   False
          TabIndex        =   2
-         TabPanelIndex   =   3
+         TabPanelIndex   =   4
          TabStop         =   True
          Text            =   "Downloading files…"
          TextAlign       =   0
@@ -1111,7 +1076,7 @@ Begin Window DocumentSetupSheet
          ReadOnly        =   False
          Scope           =   2
          TabIndex        =   2
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
          TextColor       =   &c00000000
@@ -1145,7 +1110,7 @@ Begin Window DocumentSetupSheet
          Scope           =   2
          Selectable      =   False
          TabIndex        =   0
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Server Settings"
          TextAlign       =   0
@@ -1180,7 +1145,7 @@ Begin Window DocumentSetupSheet
          Scope           =   2
          Selectable      =   False
          TabIndex        =   1
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Host:"
          TextAlign       =   2
@@ -1224,7 +1189,7 @@ Begin Window DocumentSetupSheet
          ReadOnly        =   False
          Scope           =   2
          TabIndex        =   4
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "21"
          TextColor       =   &c00000000
@@ -1258,7 +1223,7 @@ Begin Window DocumentSetupSheet
          Scope           =   2
          Selectable      =   False
          TabIndex        =   3
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Port:"
          TextAlign       =   2
@@ -1302,7 +1267,7 @@ Begin Window DocumentSetupSheet
          ReadOnly        =   False
          Scope           =   2
          TabIndex        =   6
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
          TextColor       =   &c00000000
@@ -1336,7 +1301,7 @@ Begin Window DocumentSetupSheet
          Scope           =   2
          Selectable      =   False
          TabIndex        =   5
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Username:"
          TextAlign       =   2
@@ -1380,7 +1345,7 @@ Begin Window DocumentSetupSheet
          ReadOnly        =   False
          Scope           =   2
          TabIndex        =   8
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
          TextColor       =   &c00000000
@@ -1414,7 +1379,7 @@ Begin Window DocumentSetupSheet
          Scope           =   2
          Selectable      =   False
          TabIndex        =   7
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Password:"
          TextAlign       =   2
@@ -1449,7 +1414,7 @@ Begin Window DocumentSetupSheet
          LockTop         =   True
          Scope           =   2
          TabIndex        =   12
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
@@ -1480,7 +1445,7 @@ Begin Window DocumentSetupSheet
          LockTop         =   True
          Scope           =   2
          TabIndex        =   11
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
@@ -1520,7 +1485,7 @@ Begin Window DocumentSetupSheet
          ReadOnly        =   False
          Scope           =   2
          TabIndex        =   10
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
          TextColor       =   &c00000000
@@ -1554,7 +1519,7 @@ Begin Window DocumentSetupSheet
          Scope           =   2
          Selectable      =   False
          TabIndex        =   9
-         TabPanelIndex   =   2
+         TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "Path Prefix:"
          TextAlign       =   2
@@ -1567,6 +1532,135 @@ Begin Window DocumentSetupSheet
          Underline       =   False
          Visible         =   True
          Width           =   86
+      End
+      Begin UITweaks.ResizedPopupMenu IntroServerTypeMenu
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   "Nitrado\nOther Provider with FTP Access"
+         Italic          =   False
+         Left            =   105
+         ListIndex       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   9
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   116
+         Underline       =   False
+         Visible         =   True
+         Width           =   366
+      End
+      Begin UITweaks.ResizedLabel IntroServerTypeLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   10
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Host:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   116
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   53
+      End
+      Begin Label ImportImportExplanation
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   11
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "With this option, Beacon will handle as much of the work as possible."
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   84
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   431
+      End
+      Begin NitradoDeploymentView NitradoDeploymentView1
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   496
+         HelpTag         =   ""
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   511
       End
    End
    Begin Beacon.ImportThread Importer
@@ -1751,6 +1845,7 @@ End
 		  Win.FinalizeActionButton.Caption = "Create"
 		  Win.FinalizeCancelButton.Caption = "Back"
 		  Win.Pages.Value = DocumentSetupSheet.PageIntroIndex
+		  Win.mDocument = New Beacon.Document
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  If Win.mCancelled Then
@@ -1979,25 +2074,28 @@ End
 	#tag Constant, Name = PageFinalizeHeight, Type = Double, Dynamic = False, Default = \"496", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageFinalizeIndex, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag Constant, Name = PageFinalizeIndex, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageIntroHeight, Type = Double, Dynamic = False, Default = \"405", Scope = Private
+	#tag Constant, Name = PageIntroHeight, Type = Double, Dynamic = False, Default = \"347", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageIntroIndex, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = PageNitradoIndex, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageProgressHeight, Type = Double, Dynamic = False, Default = \"124", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageProgressIndex, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = PageProgressIndex, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageServerHeight, Type = Double, Dynamic = False, Default = \"260", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageServerIndex, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = PageServerIndex, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 
@@ -2018,6 +2116,8 @@ End
 		  Select Case Me.Value
 		  Case Self.PageIntroIndex
 		    DesiredHeight = Self.PageIntroHeight
+		  Case Self.PageNitradoIndex
+		    DesiredHeight = Self.NitradoDeploymentView1.DesiredHeight
 		  Case Self.PageServerIndex
 		    DesiredHeight = Self.PageServerHeight
 		  Case Self.PageProgressIndex
@@ -2185,7 +2285,14 @@ End
 	#tag Event
 		Sub Action()
 		  If ImportServerRadio.Value Then
-		    Self.Pages.Value = Self.PageServerIndex
+		    Select Case IntroServerTypeMenu.ListIndex
+		    Case 0
+		      Self.NitradoDeploymentView1.Document = Self.mDocument
+		      Self.NitradoDeploymentView1.Begin
+		      Self.Pages.Value = Self.PageNitradoIndex
+		    Case 1
+		      Self.Pages.Value = Self.PageServerIndex
+		    End Select
 		  ElseIf ImportLocalRadio.Value Then
 		    Self.PresentLocalImport()
 		  ElseIf CreateEmptyRadio.Value Then
@@ -2249,6 +2356,24 @@ End
 	#tag Event
 		Sub TextChange()
 		  Self.CheckServerActionButton()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NitradoDeploymentView1
+	#tag Event
+		Sub ShouldCancel()
+		  Self.Pages.Value = Self.PageIntroIndex
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  If Self.Pages.Value = Self.PageNitradoIndex Then
+		    Dim Task As New AnimationKit.MoveTask(Self)
+		    Task.Height = NewHeight
+		    Task.Curve = AnimationKit.Curve.CreateEaseOut
+		    Task.DurationInSeconds = 0.15
+		    Task.Run
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

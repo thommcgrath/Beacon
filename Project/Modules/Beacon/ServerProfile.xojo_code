@@ -1,6 +1,12 @@
 #tag Class
 Protected Class ServerProfile
 	#tag Method, Flags = &h0
+		Sub Authenticate(Document As Beacon.Document)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone() As Beacon.ServerProfile
 		  Return Beacon.ServerProfile.FromDictionary(Self.ToDictionary())
 		End Function
@@ -26,6 +32,12 @@ Protected Class ServerProfile
 		  
 		  Self.mName = Dict.Value("Name")
 		  Self.mProfileID = Dict.Value("Profile ID")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Discover()
+		  
 		End Sub
 	#tag EndMethod
 
@@ -63,6 +75,12 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ListServers(Document As Beacon.Document)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.ServerProfile) As Integer
 		  If Other = Nil Then
 		    Return 1
@@ -85,6 +103,18 @@ Protected Class ServerProfile
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function ShowURL(URL As Text, URLHandler As Beacon.URLHandler = Nil) As Beacon.WebView
+		  Return RaiseEvent ShowURL(URL, URLHandler)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function SupportsCapability(Capability As Beacon.ServerProfile.Capabilities) As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
@@ -103,6 +133,10 @@ Protected Class ServerProfile
 
 	#tag Hook, Flags = &h0
 		Event ReadFromDictionary(Dict As Xojo.Core.Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShowURL(URL As Text, URLHandler As Beacon.URLHandler) As Beacon.WebView
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -133,6 +167,14 @@ Protected Class ServerProfile
 		#tag EndSetter
 		Name As Text
 	#tag EndComputedProperty
+
+
+	#tag Enum, Name = Capabilities, Type = Integer, Flags = &h0
+		ListSevers = 1
+		  DiscoverServer = 2
+		  UpdateConfig = 4
+		RestartServer = 6
+	#tag EndEnum
 
 
 	#tag ViewBehavior

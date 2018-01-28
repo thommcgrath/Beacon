@@ -37,6 +37,21 @@ Inherits Beacon.ServerProfile
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Function SupportsCapability(Capability As Beacon.ServerProfile.Capabilities) As Boolean
+		  Select Case Capability
+		  Case Beacon.ServerProfile.Capabilities.DiscoverServer
+		    Return True
+		  Case Beacon.ServerProfile.Capabilities.ListSevers
+		    Return False
+		  Case Beacon.ServerProfile.Capabilities.RestartServer
+		    Return False
+		  Case Beacon.ServerProfile.Capabilities.UpdateConfig
+		    Return True
+		  End Select
+		End Function
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -167,6 +182,21 @@ Inherits Beacon.ServerProfile
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="GameIniPath"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GameUserSettingsIniPath"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Host"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -187,6 +217,16 @@ Inherits Beacon.ServerProfile
 			Type="String"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="Password"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Port"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
@@ -198,6 +238,11 @@ Inherits Beacon.ServerProfile
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Username"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

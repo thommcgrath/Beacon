@@ -88,6 +88,41 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function DecodeURLComponent(Value As Text) As Text
+		  Dim Chars(), HexChars() As Text
+		  Dim HexMode, UnicodeMode As Boolean
+		  For Each Character As Text In Value.Characters
+		    If HexMode Then
+		      HexChars.Append(Character)
+		      If HexChars.Ubound = 0 And Character = "u" Then
+		        UnicodeMode = True
+		        HexChars.Remove(0)
+		      ElseIf (UnicodeMode = False And HexChars.Ubound = 1) Or (UnicodeMode = True And HexChars.Ubound = 3) Then
+		        Dim Encoded As Text = Text.Join(HexChars, "")
+		        Redim HexChars(-1)
+		        HexMode = False
+		        UnicodeMode = False
+		        
+		        Chars.Append(Text.FromUnicodeCodepoint(UInt32.FromHex(Encoded)))
+		      End If
+		      
+		      Continue
+		    End If
+		    
+		    If Character = "%" Then
+		      HexMode = True
+		      Continue
+		    ElseIf Character = "+" Then
+		      Character = " "
+		    End If
+		    
+		    Chars.Append(Character)
+		  Next
+		  Return Text.Join(Chars, "")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function DifficultyOffset(Value As Double, Scale As Double) As Double
 		  Return Xojo.Math.Min((Value - 0.5) / (Scale - 0.5), 1.0)
 		End Function
@@ -198,11 +233,12 @@ Protected Module Beacon
 		Protected Function EncodeURLComponent(Value As Text) As Text
 		  Dim Encoded() As Text
 		  For Each CodePoint As UInt32 In Value.Codepoints
-		    If (CodePoint >= 48 And CodePoint <= 57) Or (CodePoint >= 65 And CodePoint <= 90) Or (CodePoint >= 97 And CodePoint <= 122) Then
-		      Encoded.Append(Text.FromUnicodeCodepoint(CodePoint))
-		    Else
+		    Select Case CodePoint
+		    Case &h21, &h23, &h24, &h26, &h27, &h28, &h29, &h2A, &h2B, &h2C, &h2F, &h3A, &h3B, &h3D, &h3F, &h40, &h5B, &h5D
 		      Encoded.Append("%" + CodePoint.ToHex(2))
-		    End If
+		    Else
+		      Encoded.Append(Text.FromUnicodeCodepoint(CodePoint))
+		    End Select
 		  Next
 		  Return Text.Join(Encoded, "")
 		End Function
@@ -267,16 +303,29 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function IsBeaconURL(Extends Value As String) As Boolean
-		  Dim Prefix As String = URLScheme + "://"
-		  Return Value.Len > Prefix.Len And Value.Left(Prefix.Len) = Prefix
+		Function IsBeaconURL(ByRef Value As String) As Boolean
+		  Dim TextValue As Text = Value.ToText
+		  If Beacon.IsBeaconURL(TextValue) Then
+		    Value = TextValue
+		    Return True
+		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsBeaconURL(Extends Value As Text) As Boolean
-		  Dim Prefix As Text = URLScheme + "://"
-		  Return Value.Length > Prefix.Length And Value.Left(Prefix.Length) = Prefix
+		Function IsBeaconURL(ByRef Value As Text) As Boolean
+		  Dim PossiblePrefixes() As Text
+		  PossiblePrefixes.Append(Beacon.URLScheme + "://")
+		  PossiblePrefixes.Append("https://app.beaconapp.cc/")
+		  
+		  Dim URLLength As Integer = Value.Length
+		  For Each PossiblePrefix As Text In PossiblePrefixes
+		    Dim PrefixLength As Integer = PossiblePrefix.Length
+		    If URLLength > PrefixLength And Value.Left(PrefixLength) = PossiblePrefix Then
+		      Value = Value.Mid(PrefixLength)
+		      Return True
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
@@ -538,6 +587,10 @@ Protected Module Beacon
 		  Return Item.Count - 1
 		End Function
 	#tag EndMethod
+
+	#tag DelegateDeclaration, Flags = &h1
+		Protected Delegate Function URLHandler(URL As Text) As Boolean
+	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1
 		Protected Function WebURL(Path As Text = "/") As Text

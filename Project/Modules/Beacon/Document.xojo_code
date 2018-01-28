@@ -86,6 +86,9 @@ Implements Beacon.DocumentItem
 		    Profiles.Append(Profile.ToDictionary)
 		  Next
 		  EncryptedData.Value("Servers") = Profiles
+		  If Self.mOAuthDicts <> Nil Then
+		    EncryptedData.Value("OAuth") = Self.mOAuthDicts
+		  End If
 		  
 		  Dim Content As Text = Xojo.Data.GenerateJSON(EncryptedData)
 		  Dim Hash As Text = Beacon.Hash(Content)
@@ -204,6 +207,31 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function OAuthData(Provider As Text) As Xojo.Core.Dictionary
+		  If Self.mOAuthDicts <> Nil And Self.mOAuthDicts.HasKey(Provider) Then
+		    Return Beacon.Clone(Self.mOAuthDicts.Value(Provider))
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OAuthData(Provider As Text, Assigns Dict As Xojo.Core.Dictionary)
+		  If Self.mOAuthDicts = Nil Then
+		    Self.mOAuthDicts = New Xojo.Core.Dictionary
+		  End If
+		  If Dict = Nil Then
+		    If Self.mOAuthDicts.HasKey(Provider) Then
+		      Self.mOAuthDicts.Remove(Provider)
+		      Self.mModified = True
+		    End If
+		  Else
+		    Self.mOAuthDicts.Value(Provider) = Beacon.Clone(Dict)
+		    Self.mModified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.Document) As Integer
 		  If Other = Nil Then
 		    Return 1
@@ -282,6 +310,10 @@ Implements Beacon.DocumentItem
 		              Doc.mServerProfiles.Append(Profile)
 		            End If
 		          Next
+		          
+		          If SecureDict.HasKey("OAuth") Then
+		            Doc.mOAuthDicts = SecureDict.Value("OAuth")
+		          End If
 		        End If
 		      ElseIf Dict.HasKey("FTPServers") Then
 		        Dim ServerDicts() As Auto = Dict.Value("FTPServers")
@@ -611,6 +643,10 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mModified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOAuthDicts As Xojo.Core.Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

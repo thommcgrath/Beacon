@@ -455,9 +455,9 @@ Inherits Application
 		  
 		  If Args.Ubound > 0 Then
 		    Dim Path As String = DefineEncoding(Args(1), Encodings.UTF8)
-		    If Path.IsBeaconURL Then
+		    If Beacon.IsBeaconURL(Path) Then
 		      // Given a url
-		      Call Self.HandleURL(Path)
+		      Call Self.HandleURL(Path, True)
 		    ElseIf URLOnly = False Then
 		      // Given a file
 		      Dim File As FolderItem = GetFolderItem(Path, FolderItem.PathTypeNative)
@@ -470,13 +470,10 @@ Inherits Application
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HandleURL(URL As String) As Boolean
-		  If Not URL.IsBeaconURL Then
+		Function HandleURL(URL As String, AlreadyConfirmed As Boolean = False) As Boolean
+		  If AlreadyConfirmed = False And Beacon.IsBeaconURL(URL) = False Then
 		    Return False
 		  End If
-		  
-		  Dim PrefixLength As Integer = Len(Beacon.URLScheme + "://")
-		  URL = URL.Mid(PrefixLength + 1)
 		  
 		  If URL.Left(7) = "action/" Then
 		    Dim Instructions As String = Mid(URL, 8)
@@ -505,6 +502,9 @@ Inherits Application
 		    Else
 		      Break
 		    End Select
+		  ElseIf URL.Left(6) = "oauth?" Then
+		    // Do nothing
+		    Return False
 		  Else
 		    Dim LegacyURL As Text = "thezaz.com/beacon/documents.php/"
 		    Dim TextURL As Text = URL.ToText
