@@ -63,13 +63,14 @@ Protected Class OAuth2Client
 		  Dim Content As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(TextContent, False)
 		  Dim ContentType As Text = "application/x-www-form-urlencoded"
 		  
-		  SimpleHTTP.Post(Self.mEndpoint + "/auth", ContentType, Content, AddressOf Refresh_Callback)
+		  SimpleHTTP.Post(Self.mEndpoint + "/auth", ContentType, Content, AddressOf Refresh_Callback, Nil)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Authorization_Callback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock)
+		Private Sub Authorization_Callback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
 		  #Pragma Unused URL
+		  #Pragma Unused Tag
 		  
 		  If Status <> 200 Then
 		    RaiseEvent AuthenticationError
@@ -147,7 +148,7 @@ Protected Class OAuth2Client
 		  Dim Content As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(TextContent, False)
 		  Dim ContentType As Text = "application/x-www-form-urlencoded"
 		  
-		  SimpleHTTP.Post(Self.mEndPoint + "/token", ContentType, Content, AddressOf Authorization_Callback)
+		  SimpleHTTP.Post(Self.mEndPoint + "/token", ContentType, Content, AddressOf Authorization_Callback, Nil)
 		  
 		  Return True
 		End Function
@@ -166,7 +167,7 @@ Protected Class OAuth2Client
 		  End If
 		  
 		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
-		  If Self.mExpiration <= Now Then
+		  If Self.mExpiration.SecondsFrom1970 <= Now.SecondsFrom1970 Then
 		    System.DebugLog("Not authenticated because expiration has passed")
 		    Return False
 		  End If
@@ -210,8 +211,9 @@ Protected Class OAuth2Client
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Refresh_Callback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock)
+		Private Sub Refresh_Callback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
 		  #Pragma Unused URL
+		  #Pragma Unused Tag
 		  
 		  If Status <> 200 Then
 		    Self.NewAuthorization()

@@ -38,16 +38,16 @@ Begin DeploymentView NitradoDeploymentView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
+      PanelCount      =   3
       Panels          =   ""
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   1
+      Value           =   2
       Visible         =   True
       Width           =   514
-      Begin PushButton CancelButton
+      Begin PushButton FindingCancelButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -78,7 +78,7 @@ Begin DeploymentView NitradoDeploymentView
          Visible         =   True
          Width           =   80
       End
-      Begin Label Label1
+      Begin Label FindingLabel
          AutoDeactivate  =   True
          Bold            =   False
          DataField       =   ""
@@ -113,7 +113,7 @@ Begin DeploymentView NitradoDeploymentView
          Visible         =   True
          Width           =   474
       End
-      Begin ProgressBar ProgressBar1
+      Begin ProgressBar FindingProgress
          AutoDeactivate  =   True
          Enabled         =   True
          Height          =   20
@@ -284,6 +284,63 @@ Begin DeploymentView NitradoDeploymentView
          Visible         =   True
          Width           =   80
       End
+      Begin ProgressBar ImportingProgress
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Maximum         =   0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         Top             =   206
+         Value           =   0
+         Visible         =   True
+         Width           =   474
+      End
+      Begin Label ImportingLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "Downloading Required Files…"
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   174
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   474
+      End
    End
    Begin Beacon.OAuth2Client AuthClient
       Index           =   -2147483648
@@ -302,6 +359,13 @@ Begin DeploymentView NitradoDeploymentView
       LockedInPosition=   False
       Mode            =   0
       Period          =   1000
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin Beacon.ImportThread Importer
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   0
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -324,12 +388,17 @@ End
 
 	#tag Event
 		Sub Resize()
-		  Dim ContentHeight As Integer = Label1.Height + 12 + ProgressBar1.Height
-		  Dim AvailableHeight As Integer = Self.Height - (52 + CancelButton.Height)
+		  Dim ContentHeight As Integer = FindingLabel.Height + 12 + FindingProgress.Height
+		  Dim AvailableHeight As Integer = Self.Height - (52 + FindingCancelButton.Height)
 		  
 		  Dim ContentTop As Integer = 20 + ((AvailableHeight - ContentHeight) / 2)
-		  Label1.Top = ContentTop
-		  ProgressBar1.Top = ContentTop + Label1.Top + 12
+		  FindingLabel.Top = ContentTop
+		  FindingProgress.Top = ContentTop + FindingLabel.Height + 12
+		  
+		  AvailableHeight = Self.Height - 40
+		  ContentTop = 20 + ((AvailableHeight - ContentHeight) / 2)
+		  ImportingLabel.Top = ContentTop
+		  ImportingProgress.Top = ContentTop + ImportingLabel.Height + 12
 		End Sub
 	#tag EndEvent
 
@@ -363,9 +432,14 @@ End
 	#tag EndHook
 
 
+	#tag Property, Flags = &h21
+		Private mSelectedServers As Xojo.Core.Dictionary
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
-#tag Events CancelButton
+#tag Events FindingCancelButton
 	#tag Event
 		Sub Action()
 		  Self.ShouldCancel()
@@ -388,6 +462,27 @@ End
 	#tag Event
 		Sub Action()
 		  Self.ShouldCancel()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ListActionButton
+	#tag Event
+		Sub Action()
+		  Self.DesiredHeight = 92
+		  Self.PagePanel1.Value = 3
+		  
+		  Self.mSelectedServers = New Xojo.Core.Dictionary
+		  
+		  For I As Integer = 0 To Self.List.ListCount - 1
+		    If Not Self.List.CellCheck(I, 0) Then
+		      Continue
+		    End If
+		    
+		    Dim Profile As Beacon.NitradoServerProfile = Self.List.RowTag(I)
+		    Self.mSelectedServers.Value(Profile) = New Xojo.Core.Dictionary
+		    
+		    Self.DeployEngine.LookupServer(Profile, Self.AuthClient.AccessToken)
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -421,9 +516,9 @@ End
 		  
 		  Self.List.DeleteAllRows
 		  
-		  For I As Integer = 0 To Servers.Ubound
-		    Self.List.AddRow(Servers(I).Name, Servers(I).Address)
-		    Self.List.RowTag(I) = Servers(I)
+		  For Each Server As Beacon.NitradoServerProfile In Servers
+		    Self.List.AddRow("", Server.Name, Server.Address)
+		    Self.List.RowTag(Self.List.LastIndex) = Server
 		  Next
 		  Self.List.Sort
 		  
@@ -431,11 +526,115 @@ End
 		  Self.PagePanel1.Value = 1
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub ServerDetails(Profile As Beacon.NitradoServerProfile, Map As Beacon.Map, DifficultyValue As Double)
+		  If Map = Nil Then
+		    Break
+		    Self.ShowAlert("Unable to lookup server details", Profile.Name + " did not reply correctly.")
+		    Self.ShouldCancel()
+		    Return
+		  End If
+		  
+		  Dim ServerDict As Xojo.Core.Dictionary = Self.mSelectedServers.Value(Profile)
+		  ServerDict.Value("Map") = Map
+		  ServerDict.Value("Difficulty") = DifficultyValue
+		  Self.mSelectedServers.Value(Profile) = ServerDict
+		  
+		  Me.DownloadGameIni(Profile, Self.AuthClient.AccessToken)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub GameIniContent(Profile As Beacon.NitradoServerProfile, Content As Xojo.Core.MemoryBlock)
+		  If Content = Nil Then
+		    Break
+		    Self.ShowAlert("Unable to retrieve Game.ini", Profile.Name + " did not reply correctly.")
+		    Self.ShouldCancel()
+		    Return
+		  End If
+		  
+		  Dim ServerDict As Xojo.Core.Dictionary = Self.mSelectedServers.Value(Profile)
+		  ServerDict.Value("Game.ini") = Content
+		  ServerDict.Value("Finished") = True
+		  Self.mSelectedServers.Value(Profile) = ServerDict
+		  
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedServers
+		    Dim Dict As Xojo.Core.Dictionary = Entry.Value
+		    If Dict.HasKey("Finished") = False Or Dict.Value("Finished") = False Then
+		      Return
+		    End If
+		  Next
+		  
+		  // Everything has been downloaded
+		  Dim CombinedGameIni As New Xojo.Core.MutableMemoryBlock(0)
+		  Dim CRLF(1) As Byte
+		  CRLF(0) = 13
+		  CRLF(1) = 10
+		  
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedServers
+		    Dim Dict As Xojo.Core.Dictionary = Entry.Value
+		    
+		    If CombinedGameIni.Size > 0 Then
+		      CombinedGameIni.Append(CRLF)
+		    End If
+		    
+		    CombinedGameIni.Append(Xojo.Core.MemoryBlock(Dict.Value("Game.ini")))
+		  Next
+		  
+		  Self.Importer.AddContent(Xojo.Core.TextEncoding.UTF8.ConvertDataToText(CombinedGameIni))
+		  Self.Importer.Run
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events LookupStartTimer
 	#tag Event
 		Sub Action()
 		  Self.AuthClient.Authenticate()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Importer
+	#tag Event
+		Sub UpdateUI()
+		  If Not Me.Finished Then
+		    If ImportingProgress.Maximum = 0 Then
+		      ImportingLabel.Text = "Parsing Config…"
+		      ImportingProgress.Maximum = 500
+		    End If
+		    ImportingProgress.Value = ImportingProgress.Maximum * Me.Progress
+		    Return
+		  End If
+		  
+		  ImportingProgress.Value = ImportingProgress.Maximum
+		  
+		  Dim MapMask As UInt64
+		  Dim DifficultySum As Double
+		  Dim Profiles() As Beacon.NitradoServerProfile
+		  
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedServers
+		    Dim Profile As Beacon.NitradoServerProfile = Entry.Key
+		    Dim Dict As Xojo.Core.Dictionary = Entry.Value
+		    
+		    Profiles.Append(Profile)
+		    MapMask = MapMask Or Beacon.Map(Dict.Value("Map")).Mask
+		    DifficultySum = DifficultySum + Dict.Value("Difficulty")
+		  Next
+		  
+		  Dim ImportedDoc As Beacon.Document = Me.Document
+		  ImportedDoc.DifficultyValue = DifficultySum / Self.mSelectedServers.Count
+		  ImportedDoc.MapCompatibility = MapMask
+		  
+		  If Profiles.Ubound = 0 Then
+		    ImportedDoc.Title = Profiles(0).Name
+		  Else
+		    ImportedDoc.Title = "Nitrado Cluster"
+		  End If
+		  
+		  For Each Profile As Beacon.NitradoServerProfile In Profiles
+		    ImportedDoc.Add(Profile)
+		  Next
+		  
+		  Self.Document = ImportedDoc
+		  Self.ShouldFinish()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

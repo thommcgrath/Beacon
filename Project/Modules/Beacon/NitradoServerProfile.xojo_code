@@ -4,12 +4,17 @@ Inherits Beacon.ServerProfile
 	#tag Event
 		Sub ReadFromDictionary(Dict As Xojo.Core.Dictionary)
 		  Self.Address = Dict.Value("Address")
+		  Self.ServiceID = Dict.Value("Service ID")
+		  Self.GamePath = Dict.Value("Path")
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub WriteToDictionary(Dict As Xojo.Core.Dictionary)
 		  Dict.Value("Address") = Self.Address
+		  Dict.Value("Service ID") = Self.ServiceID
+		  Dict.Value("Path") = Self.GamePath
+		  Dict.Value("Provider") = "Nitrado"
 		End Sub
 	#tag EndEvent
 
@@ -38,6 +43,14 @@ Inherits Beacon.ServerProfile
 
 	#tag Property, Flags = &h0
 		Address As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		GamePath As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		ServiceID As Integer
 	#tag EndProperty
 
 

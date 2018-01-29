@@ -62,6 +62,8 @@ Inherits Beacon.Thread
 		  Dim Lines() As Text = Content.Split(CR)
 		  For Each Line As Text In Lines
 		    If Line.Length = 0 Or Line.Left(1) = ";" Then
+		      Self.mCharactersProcessed = Self.mCharactersProcessed + Line.Length
+		      Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Single
 		      Continue
 		    End If
 		    
@@ -192,8 +194,6 @@ Inherits Beacon.Thread
 		    Self.mCharactersProcessed = Self.mCharactersProcessed + 1
 		    Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Single
 		  Next
-		  Self.mCharactersProcessed = Self.mCharactersTotal
-		  Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Single
 		  
 		  Return Self.ToXojoType(Value)
 		End Function

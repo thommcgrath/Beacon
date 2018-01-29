@@ -1,7 +1,7 @@
 #tag Module
 Protected Module SimpleHTTP
 	#tag Method, Flags = &h1
-		Protected Sub Delete(URL As Text, Handler As SimpleHTTP.ResponseCallback, Headers As Xojo.Core.Dictionary = Nil)
+		Protected Sub Delete(URL As Text, Handler As SimpleHTTP.ResponseCallback, Tag As Auto, Headers As Xojo.Core.Dictionary = Nil)
 		  Dim Socket As SimpleHTTP.SimpleHTTPSocket = GetSocket()
 		  If Headers <> Nil Then
 		    For Each Entry As Xojo.Core.DictionaryEntry In Headers
@@ -9,12 +9,13 @@ Protected Module SimpleHTTP
 		    Next
 		  End If
 		  Socket.Handler = Handler
+		  Socket.Tag = Tag
 		  Socket.Send("DELETE", URL)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Get(URL As Text, Handler As SimpleHTTP.ResponseCallback, Headers As Xojo.Core.Dictionary = Nil)
+		Protected Sub Get(URL As Text, Handler As SimpleHTTP.ResponseCallback, Tag As Auto, Headers As Xojo.Core.Dictionary = Nil)
 		  Dim Socket As SimpleHTTP.SimpleHTTPSocket = GetSocket()
 		  If Headers <> Nil Then
 		    For Each Entry As Xojo.Core.DictionaryEntry In Headers
@@ -22,6 +23,7 @@ Protected Module SimpleHTTP
 		    Next
 		  End If
 		  Socket.Handler = Handler
+		  Socket.Tag = Tag
 		  Socket.Send("GET", URL)
 		End Sub
 	#tag EndMethod
@@ -41,7 +43,7 @@ Protected Module SimpleHTTP
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Post(URL As Text, ContentType As Text, Content As Xojo.Core.MemoryBlock, Handler As SimpleHTTP.ResponseCallback, Headers As Xojo.Core.Dictionary = Nil)
+		Protected Sub Post(URL As Text, ContentType As Text, Content As Xojo.Core.MemoryBlock, Handler As SimpleHTTP.ResponseCallback, Tag As Auto, Headers As Xojo.Core.Dictionary = Nil)
 		  Dim Socket As SimpleHTTP.SimpleHTTPSocket = GetSocket()
 		  Socket.SetRequestContent(Content, ContentType)
 		  If Headers <> Nil Then
@@ -50,12 +52,13 @@ Protected Module SimpleHTTP
 		    Next
 		  End If
 		  Socket.Handler = Handler
+		  Socket.Tag = Tag
 		  Socket.Send("POST", URL)
 		End Sub
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h1
-		Protected Delegate Sub ResponseCallback(URL As Text, Status As Integer, Content As Xojo . Core . MemoryBlock)
+		Protected Delegate Sub ResponseCallback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
 	#tag EndDelegateDeclaration
 
 

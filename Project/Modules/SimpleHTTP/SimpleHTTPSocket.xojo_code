@@ -4,8 +4,10 @@ Inherits Xojo.Net.HTTPSocket
 	#tag Event
 		Sub Error(err as RuntimeException)
 		  If Self.Handler <> Nil Then
-		    Self.Handler.Invoke(Self.mURL, 0, Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Err.Reason, True))
+		    Self.Handler.Invoke(Self.mURL, 0, Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Err.Reason, True), Self.Tag)
 		    Self.Handler = Nil
+		  Else
+		    Break
 		  End If
 		  Self.ClearRequestHeaders()
 		  Self.mWorking = False
@@ -15,8 +17,10 @@ Inherits Xojo.Net.HTTPSocket
 	#tag Event
 		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
 		  If Self.Handler <> Nil Then
-		    Self.Handler.Invoke(URL, HTTPStatus, Content)
+		    Self.Handler.Invoke(URL, HTTPStatus, Content, Self.Tag)
 		    Self.Handler = Nil
+		  Else
+		    Break
 		  End If
 		  Self.ClearRequestHeaders()
 		  Self.mWorking = False
@@ -49,6 +53,10 @@ Inherits Xojo.Net.HTTPSocket
 
 	#tag Property, Flags = &h21
 		Private mWorking As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		Tag As Auto
 	#tag EndProperty
 
 

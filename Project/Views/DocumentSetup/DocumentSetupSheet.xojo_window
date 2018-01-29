@@ -2376,6 +2376,12 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub Finished()
+		  Self.mDocument = Me.Document
+		  Self.Pages.Value = Self.PageFinalizeIndex
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events Importer
 	#tag Event
