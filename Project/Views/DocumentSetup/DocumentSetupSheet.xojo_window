@@ -45,7 +45,7 @@ Begin Window DocumentSetupSheet
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   3
+      Value           =   0
       Visible         =   True
       Width           =   511
       Begin Label FinalizeMessageLabel
@@ -738,7 +738,7 @@ Begin Window DocumentSetupSheet
       Begin RadioButton ImportServerRadio
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "Import settings from a server"
+         Caption         =   "Import existing settings"
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
@@ -764,70 +764,6 @@ Begin Window DocumentSetupSheet
          Visible         =   True
          Width           =   471
       End
-      Begin RadioButton ImportLocalRadio
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Import settings from this computer"
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   148
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   471
-      End
-      Begin Label ImportLocalExplanation
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   51
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   True
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   4
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Beacon can import the GameUserSettings and Game.ini from this computer to obtain current loot settings, map, and difficulty settings. Automatic deployment can be enabled after import."
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   180
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   431
-      End
       Begin RadioButton CreateEmptyRadio
          AutoDeactivate  =   True
          Bold            =   False
@@ -851,48 +787,13 @@ Begin Window DocumentSetupSheet
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   243
+         Top             =   116
          Underline       =   False
          Value           =   False
          Visible         =   True
          Width           =   471
       End
-      Begin Label CreateEmptyExplanation
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   True
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   6
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Start with an empty file. Automatic deployment can be enabled later."
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   275
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   431
-      End
-      Begin PushButton IntroActionButton
+      Begin UITweaks.ResizedPushButton IntroActionButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -918,12 +819,12 @@ Begin Window DocumentSetupSheet
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   307
+         Top             =   148
          Underline       =   False
          Visible         =   True
          Width           =   80
       End
-      Begin PushButton IntroCancelButton
+      Begin UITweaks.ResizedPushButton IntroCancelButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -949,7 +850,7 @@ Begin Window DocumentSetupSheet
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   307
+         Top             =   148
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -964,7 +865,7 @@ Begin Window DocumentSetupSheet
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   "Nitrado\nOther Provider with FTP Access"
+         InitialValue    =   "Nitrado\nOther Server with FTP Access\nLocal Files or Copy && Paste"
          Italic          =   False
          Left            =   105
          ListIndex       =   0
@@ -980,10 +881,10 @@ Begin Window DocumentSetupSheet
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   116
+         Top             =   84
          Underline       =   False
          Visible         =   True
-         Width           =   366
+         Width           =   222
       End
       Begin UITweaks.ResizedLabel IntroServerTypeLabel
          AutoDeactivate  =   True
@@ -1008,52 +909,17 @@ Begin Window DocumentSetupSheet
          TabIndex        =   10
          TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "Host:"
+         Text            =   "Source:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   116
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   53
-      End
-      Begin Label ImportImportExplanation
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   11
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "With this option, Beacon will handle as much of the work as possible."
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   84
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   431
+         Width           =   53
       End
       Begin NitradoDiscoveryView NitradoView
          AcceptFocus     =   False
@@ -1286,7 +1152,7 @@ End
 	#tag Constant, Name = PageFTPIndex, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageIntroHeight, Type = Double, Dynamic = False, Default = \"347", Scope = Private
+	#tag Constant, Name = PageIntroHeight, Type = Double, Dynamic = False, Default = \"188", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageIntroIndex, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -1478,10 +1344,10 @@ End
 		    Case 1
 		      Self.FTPView.Begin
 		      Self.Pages.Value = Self.PageFTPIndex
+		    Case 2
+		      Self.LocalView.Begin
+		      Self.Pages.Value = Self.PageLocalIndex
 		    End Select
-		  ElseIf ImportLocalRadio.Value Then
-		    Self.LocalView.Begin
-		    Self.Pages.Value = Self.PageLocalIndex
 		  ElseIf CreateEmptyRadio.Value Then
 		    Self.mDocument = New Beacon.Document
 		    Self.Pages.Value = Self.PageFinalizeIndex

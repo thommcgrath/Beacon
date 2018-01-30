@@ -371,6 +371,13 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub Open()
+		  RaiseEvent Open
+		  Self.SwapButtons()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Resize()
 		  Dim ContentHeight As Integer = ImportingLabel.Height + 12 + ImportingProgress.Height
 		  Dim AvailableHeight As Integer = Self.Height - 40
@@ -449,6 +456,11 @@ End
 		  End If
 		End Function
 	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Open()
+	#tag EndHook
 
 
 	#tag Property, Flags = &h21
