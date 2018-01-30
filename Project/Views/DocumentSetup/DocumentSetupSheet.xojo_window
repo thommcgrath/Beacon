@@ -45,7 +45,7 @@ Begin Window DocumentSetupSheet
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   4
+      Value           =   3
       Visible         =   True
       Width           =   511
       Begin Label FinalizeMessageLabel
@@ -954,98 +954,6 @@ Begin Window DocumentSetupSheet
          Visible         =   True
          Width           =   80
       End
-      Begin Label ProgressMessageLabel
-         AutoDeactivate  =   True
-         Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Text            =   "Importing Config…"
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   20
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   471
-      End
-      Begin ProgressBar ProgressIndicator
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Maximum         =   0
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   4
-         Top             =   222
-         Value           =   0
-         Visible         =   True
-         Width           =   471
-      End
-      Begin Label ProgressStatus
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   2
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Text            =   "Downloading files…"
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   254
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   471
-      End
       Begin UITweaks.ResizedPopupMenu IntroServerTypeMenu
          AutoDeactivate  =   True
          Bold            =   False
@@ -1203,6 +1111,34 @@ Begin Window DocumentSetupSheet
          Visible         =   True
          Width           =   511
       End
+      Begin LocalDiscoveryView LocalView
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   496
+         HelpTag         =   ""
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   4
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   511
+      End
    End
 End
 #tag EndWindow
@@ -1215,18 +1151,6 @@ End
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub Resized()
-		  Self.Resize()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resizing()
-		  Self.Resize()
-		End Sub
-	#tag EndEvent
-
 
 	#tag Method, Flags = &h21
 		Private Sub AnimateToHeight(Height As Integer)
@@ -1236,40 +1160,6 @@ End
 		  Task.DurationInSeconds = 0.15
 		  Task.Run
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function DetectConfigType(File As FolderItem) As ConfigFileType
-		  If File = Nil Then
-		    Return ConfigFileType.Other
-		  End If
-		  
-		  Dim Stream As TextInputStream = TextInputStream.Open(File)
-		  Dim Content As String = Stream.ReadAll(Encodings.UTF8)
-		  Stream.Close
-		  
-		  Return DetectConfigType(Content)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function DetectConfigType(Content As String) As ConfigFileType
-		  Const GameIniHeader = "[/Script/ShooterGame.ShooterGameMode]"
-		  Const GameUserSettingsIniHeader = "[/Script/ShooterGame.ShooterGameUserSettings]"
-		  
-		  Dim GameIniPos As Integer = Content.InStr(GameIniHeader)
-		  Dim SettingsIniPos As Integer = Content.InStr(GameUserSettingsIniHeader)
-		  
-		  If GameIniPos > 0 And SettingsIniPos > 0 Then
-		    Return ConfigFileType.Combo
-		  ElseIf GameIniPos > 0 Then
-		    Return ConfigFileType.GameIni
-		  ElseIf SettingsIniPos > 0 Then
-		    Return ConfigFileType.GameUserSettingsIni
-		  Else
-		    Return ConfigFileType.Other
-		  End If
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1316,16 +1206,14 @@ End
 		Shared Function Present(Parent As Window, SourceFile As FolderItem) As Beacon.Document
 		  Dim Win As New DocumentSetupSheet
 		  Win.Visible = False
-		  If Not Win.SetupLocalImportWithFile(SourceFile) Then
-		    Win.Close
-		    Return Nil
-		  End If
-		  
-		  Win.Height = DocumentSetupSheet.PageProgressHeight
+		  Win.LocalView.Begin
+		  Win.LocalView.AddFile(SourceFile)
+		  Win.Height = Win.LocalView.DesiredHeight
 		  Win.Title = "Import Local Config"
 		  Win.FinalizeActionButton.Caption = "Import"
 		  Win.FinalizeCancelButton.Caption = "Cancel"
-		  Win.Pages.Value = DocumentSetupSheet.PageProgressIndex
+		  Win.Pages.Value = DocumentSetupSheet.PageLocalIndex
+		  Win.mQuickCancel = True
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  If Win.mCancelled Then
@@ -1337,35 +1225,6 @@ End
 		  Win.Close
 		  Return Document
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub PresentLocalImport()
-		  Dim Dialog As New OpenDialog
-		  Dialog.SuggestedFileName = "Game.ini"
-		  Dialog.Filter = BeaconFileTypes.IniFile
-		  Dialog.PromptText = "Please select a Game.ini or GameUserSettings.ini file"
-		  
-		  Dim File As FolderItem = Dialog.ShowModal()
-		  If File = Nil Then
-		    Return
-		  End If
-		  
-		  If Self.SetupLocalImportWithFile(File) Then
-		    Self.Pages.Value = Self.PageProgressIndex
-		    
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Resize()
-		  Dim ImportContentHeight As Integer = Self.ProgressIndicator.Height + 12 + Self.ProgressStatus.Height
-		  Dim ImportContentTop As Integer = Max(Self.ProgressMessageLabel.Top + Self.ProgressMessageLabel.Height + 12, (Self.Height - ImportContentHeight) / 2)
-		  
-		  Self.ProgressIndicator.Top = ImportContentTop
-		  Self.ProgressStatus.Top = Self.ProgressIndicator.Top + Self.ProgressIndicator.Height + 12
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1404,94 +1263,6 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function SelectOtherFile(Filename As String, DesiredFileType as ConfigFileType) As FolderItem
-		  Do
-		    Dim Chooser As New OpenDialog
-		    Chooser.Filter = BeaconFileTypes.IniFile
-		    Chooser.SuggestedFileName = Filename
-		    
-		    Dim File As FolderItem = Chooser.ShowModal()
-		    If File = Nil Then
-		      Return Nil
-		    End If
-		    
-		    Dim FileType As ConfigFileType = Self.DetectConfigType(File)
-		    If FileType <> DesiredFileType Then
-		      Self.ShowAlert("Incorrect file chosen", "Sorry, Beacon needs " + Filename + ".")
-		      Continue
-		    End If
-		    
-		    Return File
-		  Loop
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function SetupLocalImportWithFile(FirstFile As FolderItem) As Boolean
-		  Dim FirstFileType As ConfigFileType = Self.DetectConfigType(FirstFile)
-		  Dim OtherFileName As String
-		  Dim DesiredOtherFileType As ConfigFileType
-		  Select Case FirstFileType
-		  Case ConfigFileType.Other
-		    Self.ShowAlert("Unknown config file", "Sorry, Beacon can't determine which config file this is.")
-		    Return False
-		  Case ConfigFileType.GameIni
-		    OtherFileName = "GameUserSettings.ini"
-		    DesiredOtherFileType = ConfigFileType.GameUserSettingsIni
-		  Case ConfigFileType.GameUserSettingsIni
-		    OtherFileName = "Game.ini"
-		    DesiredOtherFileType = ConfigFileType.GameIni
-		  Case ConfigFileType.Combo
-		    Return True
-		  End Select
-		  
-		  Dim Parent As FolderItem = FirstFile.Parent
-		  Dim SecondFile As FolderItem = Parent.Child(OtherFileName)
-		  If SecondFile = Nil Or SecondFile.Exists = False Then
-		    Do
-		      Dim ConfirmDialog As New MessageDialog
-		      ConfirmDialog.Title = ""
-		      ConfirmDialog.Message = "Would you like to import your " + OtherFileName + " file too?"
-		      ConfirmDialog.Explanation = "By importing both files, Beacon can complete more details for you."
-		      ConfirmDialog.ActionButton.Caption = "Locate " + OtherFileName
-		      ConfirmDialog.CancelButton.Caption = "Stop Import"
-		      ConfirmDialog.AlternateActionButton.Caption = FirstFile.Name + " Only"
-		      ConfirmDialog.CancelButton.Visible = True
-		      ConfirmDialog.AlternateActionButton.Visible = True
-		      
-		      Dim Choice As MessageDialogButton = ConfirmDialog.ShowModal()
-		      Select Case Choice
-		      Case ConfirmDialog.ActionButton
-		        Dim File As FolderItem = Self.SelectOtherFile(OtherFileName, DesiredOtherFileType)
-		        If File = Nil Then
-		          Continue
-		        End If
-		        
-		        SecondFile = File
-		        Exit
-		      Case ConfirmDialog.CancelButton
-		        Return False
-		      Case ConfirmDialog.AlternateActionButton
-		        Exit
-		      End Select
-		    Loop
-		  End If
-		  
-		  #if false
-		    If FirstFileType = ConfigFileType.GameIni Then
-		      Self.Importer.AddContent(SecondFile)
-		      Self.Importer.AddContent(FirstFile)
-		    Else
-		      Self.Importer.AddContent(FirstFile)
-		      Self.Importer.AddContent(SecondFile)
-		    End If
-		  #endif
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
@@ -1502,7 +1273,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDownloadedSettings As Boolean
+		Private mQuickCancel As Boolean
 	#tag EndProperty
 
 
@@ -1521,22 +1292,11 @@ End
 	#tag Constant, Name = PageIntroIndex, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = PageLocalIndex, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageNitradoIndex, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
-
-	#tag Constant, Name = PageProgressHeight, Type = Double, Dynamic = False, Default = \"124", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageProgressIndex, Type = Double, Dynamic = False, Default = \"3", Scope = Private
-	#tag EndConstant
-
-
-	#tag Enum, Name = ConfigFileType, Type = Integer, Flags = &h21
-		GameIni
-		  GameUserSettingsIni
-		  Combo
-		Other
-	#tag EndEnum
 
 
 #tag EndWindowCode
@@ -1552,8 +1312,8 @@ End
 		    DesiredHeight = Self.NitradoView.DesiredHeight
 		  Case Self.PageFTPIndex
 		    DesiredHeight = Self.FTPView.DesiredHeight
-		  Case Self.PageProgressIndex
-		    DesiredHeight = Self.PageProgressHeight
+		  Case Self.PageLocalIndex
+		    DesiredHeight = Self.LocalView.DesiredHeight
 		  Case Self.PageFinalizeIndex
 		    DesiredHeight = Self.PageFinalizeHeight
 		  Else
@@ -1720,7 +1480,8 @@ End
 		      Self.Pages.Value = Self.PageFTPIndex
 		    End Select
 		  ElseIf ImportLocalRadio.Value Then
-		    Self.PresentLocalImport()
+		    Self.LocalView.Begin
+		    Self.Pages.Value = Self.PageLocalIndex
 		  ElseIf CreateEmptyRadio.Value Then
 		    Self.mDocument = New Beacon.Document
 		    Self.Pages.Value = Self.PageFinalizeIndex
@@ -1739,7 +1500,12 @@ End
 #tag Events NitradoView
 	#tag Event
 		Sub ShouldCancel()
-		  Self.Pages.Value = Self.PageIntroIndex
+		  If Self.mQuickCancel Then
+		    Self.mCancelled = True
+		    Self.Hide
+		  Else
+		    Self.Pages.Value = Self.PageIntroIndex
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1765,12 +1531,42 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ShouldCancel()
-		  Self.Pages.Value = Self.PageIntroIndex
+		  If Self.mQuickCancel Then
+		    Self.mCancelled = True
+		    Self.Hide
+		  Else
+		    Self.Pages.Value = Self.PageIntroIndex
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub ShouldResize(NewHeight As Integer)
 		  If Self.Pages.Value = Self.PageFTPIndex Then
+		    Self.AnimateToHeight(NewHeight)
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LocalView
+	#tag Event
+		Sub Finished(Document As Beacon.Document)
+		  Self.mDocument = Document
+		  Self.Pages.Value = Self.PageFinalizeIndex
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.mQuickCancel Then
+		    Self.mCancelled = True
+		    Self.Hide
+		  Else
+		    Self.Pages.Value = Self.PageIntroIndex
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  If Self.Pages.Value = Self.PageLocalIndex Then
 		    Self.AnimateToHeight(NewHeight)
 		  End If
 		End Sub

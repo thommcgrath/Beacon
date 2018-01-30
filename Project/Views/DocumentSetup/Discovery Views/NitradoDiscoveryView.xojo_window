@@ -24,7 +24,7 @@ Begin DiscoveryView NitradoDiscoveryView
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   514
+   Width           =   511
    Begin PagePanel PagePanel1
       AutoDeactivate  =   True
       Enabled         =   True
@@ -46,7 +46,7 @@ Begin DiscoveryView NitradoDiscoveryView
       Top             =   0
       Value           =   1
       Visible         =   True
-      Width           =   514
+      Width           =   511
       Begin UITweaks.ResizedPushButton FindingCancelButton
          AutoDeactivate  =   True
          Bold            =   False
@@ -60,7 +60,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   414
+         Left            =   411
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -111,7 +111,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   474
+         Width           =   471
       End
       Begin ProgressBar FindingProgress
          AutoDeactivate  =   True
@@ -133,7 +133,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Top             =   222
          Value           =   0
          Visible         =   True
-         Width           =   474
+         Width           =   471
       End
       Begin BeaconListbox List
          AutoDeactivate  =   True
@@ -183,7 +183,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   474
+         Width           =   471
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -220,7 +220,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   474
+         Width           =   471
       End
       Begin UITweaks.ResizedPushButton ListCancelButton
          AutoDeactivate  =   True
@@ -235,7 +235,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   322
+         Left            =   319
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -266,7 +266,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   414
+         Left            =   411
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -304,7 +304,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Top             =   206
          Value           =   0
          Visible         =   True
-         Width           =   474
+         Width           =   471
       End
       Begin Label ImportingLabel
          AutoDeactivate  =   True
@@ -339,7 +339,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   474
+         Width           =   471
       End
    End
    Begin Beacon.OAuth2Client AuthClient

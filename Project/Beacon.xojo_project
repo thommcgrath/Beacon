@@ -227,6 +227,7 @@ Class=NitradoDeploymentEngine;Modules/Beacon/NitradoDeploymentEngine.xojo_code;&
 Class=DiscoveryView;Views/DocumentSetup/Discovery Views/DiscoveryView.xojo_code;&h00000000381F57FF;&h0000000020AC2FFF;false
 Window=NitradoDiscoveryView;Views/DocumentSetup/Discovery Views/NitradoDiscoveryView.xojo_window;&h000000007617CFFF;&h0000000020AC2FFF;false
 Window=FTPDiscoveryView;Views/DocumentSetup/Discovery Views/FTPDiscoveryView.xojo_window;&h000000001681EFFF;&h0000000020AC2FFF;false
+Window=LocalDiscoveryView;Views/DocumentSetup/Discovery Views/LocalDiscoveryView.xojo_window;&h0000000035476FFF;&h0000000020AC2FFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0
