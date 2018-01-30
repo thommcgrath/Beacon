@@ -9,27 +9,27 @@ Begin Window DocumentSetupSheet
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   496
+   Height          =   530
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
-   MaxHeight       =   496
+   MaxHeight       =   530
    MaximizeButton  =   False
-   MaxWidth        =   511
+   MaxWidth        =   600
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   124
    MinimizeButton  =   False
-   MinWidth        =   511
+   MinWidth        =   600
    Placement       =   1
    Resizeable      =   False
    Title           =   "Document Setup"
    Visible         =   True
-   Width           =   511
+   Width           =   600
    Begin PagePanel Pages
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   496
+      Height          =   530
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -45,661 +45,9 @@ Begin Window DocumentSetupSheet
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   4
       Visible         =   True
-      Width           =   511
-      Begin Label FinalizeMessageLabel
-         AutoDeactivate  =   True
-         Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   5
-         TabStop         =   True
-         Text            =   "Document Settings"
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   20
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   471
-      End
-      Begin GroupBox MapGroup
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Supported Maps"
-         Enabled         =   True
-         Height          =   140
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   5
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   52
-         Underline       =   False
-         Visible         =   True
-         Width           =   471
-         Begin CheckBox MapCheck
-            AutoDeactivate  =   True
-            Bold            =   False
-            Caption         =   "The Island"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   1
-            InitialParent   =   "MapGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            State           =   0
-            TabIndex        =   0
-            TabPanelIndex   =   5
-            TabStop         =   True
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   88
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            Width           =   174
-         End
-         Begin CheckBox MapCheck
-            AutoDeactivate  =   True
-            Bold            =   False
-            Caption         =   "Scorched Earth"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   2
-            InitialParent   =   "MapGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            State           =   0
-            TabIndex        =   2
-            TabPanelIndex   =   5
-            TabStop         =   True
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   120
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            Width           =   174
-         End
-         Begin CheckBox MapCheck
-            AutoDeactivate  =   True
-            Bold            =   False
-            Caption         =   "Aberration"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   16
-            InitialParent   =   "MapGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            State           =   0
-            TabIndex        =   4
-            TabPanelIndex   =   5
-            TabStop         =   True
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   152
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            Width           =   174
-         End
-         Begin CheckBox MapCheck
-            AutoDeactivate  =   True
-            Bold            =   False
-            Caption         =   "The Center"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   4
-            InitialParent   =   "MapGroup"
-            Italic          =   False
-            Left            =   226
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            State           =   0
-            TabIndex        =   1
-            TabPanelIndex   =   5
-            TabStop         =   True
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   88
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            Width           =   174
-         End
-         Begin CheckBox MapCheck
-            AutoDeactivate  =   True
-            Bold            =   False
-            Caption         =   "Ragnarok"
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   8
-            InitialParent   =   "MapGroup"
-            Italic          =   False
-            Left            =   226
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Scope           =   2
-            State           =   0
-            TabIndex        =   3
-            TabPanelIndex   =   5
-            TabStop         =   True
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   120
-            Underline       =   False
-            Value           =   False
-            Visible         =   True
-            Width           =   174
-         End
-      End
-      Begin GroupBox DifficultyGroup
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Difficulty"
-         Enabled         =   True
-         Height          =   240
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   5
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   204
-         Underline       =   False
-         Visible         =   True
-         Width           =   471
-         Begin Label DifficultyExplanationLabel
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   50
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   True
-            LockTop         =   True
-            Multiline       =   True
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   0
-            TabPanelIndex   =   5
-            TabStop         =   True
-            Text            =   "You only need to enter one of these values, the rest will be calculated automatically. All selected maps must use the same difficulty, otherwise Beacon will produce incorrect quality items."
-            TextAlign       =   0
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   240
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   431
-         End
-         Begin UITweaks.ResizedLabel DifficultyOffsetLabel
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   1
-            TabPanelIndex   =   5
-            TabStop         =   True
-            Text            =   "Difficulty Offset:"
-            TextAlign       =   2
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   302
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   107
-         End
-         Begin UITweaks.ResizedTextField DifficultyOffsetField
-            AcceptTabs      =   False
-            Alignment       =   0
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   159
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   2
-            TabPanelIndex   =   5
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   302
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   80
-         End
-         Begin UITweaks.ResizedTextField DifficultyValueField
-            AcceptTabs      =   False
-            Alignment       =   0
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   159
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   4
-            TabPanelIndex   =   5
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   336
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   80
-         End
-         Begin UITweaks.ResizedTextField MaxDinoLevelField
-            AcceptTabs      =   False
-            Alignment       =   0
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   159
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   6
-            TabPanelIndex   =   5
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   370
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   80
-         End
-         Begin UITweaks.ResizedLabel DifficultyValueLabel
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   3
-            TabPanelIndex   =   5
-            TabStop         =   True
-            Text            =   "Difficulty Value:"
-            TextAlign       =   2
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   336
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   107
-         End
-         Begin UITweaks.ResizedLabel MaxDinoLevelLabel
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   5
-            TabPanelIndex   =   5
-            TabStop         =   True
-            Text            =   "Max Dino Level:"
-            TextAlign       =   2
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   370
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   107
-         End
-         Begin LinkLabel DifficultyDetailsLink
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   159
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   True
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   8
-            TabPanelIndex   =   5
-            TabStop         =   True
-            Text            =   "http://ark.gamepedia.com/Difficulty"
-            TextAlign       =   0
-            TextColor       =   &c0000FF00
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   404
-            Transparent     =   False
-            Underline       =   True
-            Visible         =   True
-            Width           =   312
-         End
-         Begin Label DifficultyDetailsLabel
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   7
-            TabPanelIndex   =   5
-            TabStop         =   True
-            Text            =   "Learn More:"
-            TextAlign       =   2
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   404
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   107
-         End
-      End
-      Begin UITweaks.ResizedPushButton FinalizeActionButton
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   False
-         Caption         =   "Create"
-         Default         =   True
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   411
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   5
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   456
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedPushButton FinalizeCancelButton
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   True
-         Caption         =   "Back"
-         Default         =   False
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   319
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   5
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   456
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
+      Width           =   600
       Begin Label IntroMessageLabel
          AutoDeactivate  =   True
          Bold            =   True
@@ -733,7 +81,7 @@ Begin Window DocumentSetupSheet
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   471
+         Width           =   560
       End
       Begin RadioButton ImportServerRadio
          AutoDeactivate  =   True
@@ -762,7 +110,7 @@ Begin Window DocumentSetupSheet
          Underline       =   False
          Value           =   True
          Visible         =   True
-         Width           =   471
+         Width           =   560
       End
       Begin RadioButton CreateEmptyRadio
          AutoDeactivate  =   True
@@ -806,11 +154,11 @@ Begin Window DocumentSetupSheet
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   411
+         Left            =   500
          LockBottom      =   False
          LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
+         LockLeft        =   False
+         LockRight       =   True
          LockTop         =   True
          Scope           =   2
          TabIndex        =   8
@@ -837,11 +185,11 @@ Begin Window DocumentSetupSheet
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   319
+         Left            =   408
          LockBottom      =   False
          LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
+         LockLeft        =   False
+         LockRight       =   True
          LockTop         =   True
          Scope           =   2
          TabIndex        =   7
@@ -930,7 +278,7 @@ Begin Window DocumentSetupSheet
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   496
+         Height          =   530
          HelpTag         =   ""
          InitialParent   =   "Pages"
          Left            =   0
@@ -947,7 +295,7 @@ Begin Window DocumentSetupSheet
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   511
+         Width           =   600
       End
       Begin FTPDiscoveryView FTPView
          AcceptFocus     =   False
@@ -958,7 +306,7 @@ Begin Window DocumentSetupSheet
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   496
+         Height          =   530
          HelpTag         =   ""
          InitialParent   =   "Pages"
          Left            =   0
@@ -975,7 +323,7 @@ Begin Window DocumentSetupSheet
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   511
+         Width           =   600
       End
       Begin LocalDiscoveryView LocalView
          AcceptFocus     =   False
@@ -986,7 +334,7 @@ Begin Window DocumentSetupSheet
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   496
+         Height          =   530
          HelpTag         =   ""
          InitialParent   =   "Pages"
          Left            =   0
@@ -1003,7 +351,35 @@ Begin Window DocumentSetupSheet
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   511
+         Width           =   600
+      End
+      Begin DocumentSettingsView SettingsView
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   530
+         HelpTag         =   ""
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   5
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   600
       End
    End
 End
@@ -1012,7 +388,6 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.DifficultyOffsetField.Text = "1"
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
@@ -1033,8 +408,7 @@ End
 		  Dim Win As New DocumentSetupSheet
 		  Win.Height = DocumentSetupSheet.PageIntroHeight
 		  Win.Title = "New Document"
-		  Win.FinalizeActionButton.Caption = "Create"
-		  Win.FinalizeCancelButton.Caption = "Back"
+		  Win.SettingsView.SetEditMode(False)
 		  Win.Pages.Value = DocumentSetupSheet.PageIntroIndex
 		  Win.mDocument = New Beacon.Document
 		  Win.ShowModalWithin(Parent.TrueWindow)
@@ -1053,11 +427,10 @@ End
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Document As Beacon.Document) As Boolean
 		  Dim Win As New DocumentSetupSheet
-		  Win.Height = DocumentSetupSheet.PageFinalizeHeight
+		  Win.Height = Win.SettingsView.ViewHeight
+		  Win.SettingsView.SetEditMode(True)
 		  Win.mDocument = Document
 		  Win.Title = "Edit Document"
-		  Win.FinalizeActionButton.Caption = "Edit"
-		  Win.FinalizeCancelButton.Caption = "Cancel"
 		  Win.Pages.Value = DocumentSetupSheet.PageFinalizeIndex
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
@@ -1076,8 +449,7 @@ End
 		  Win.LocalView.AddFile(SourceFile)
 		  Win.Height = Win.LocalView.DesiredHeight
 		  Win.Title = "Import Local Config"
-		  Win.FinalizeActionButton.Caption = "Import"
-		  Win.FinalizeCancelButton.Caption = "Cancel"
+		  Win.SettingsView.SetEditMode(False)
 		  Win.Pages.Value = DocumentSetupSheet.PageLocalIndex
 		  Win.mQuickCancel = True
 		  Win.ShowModalWithin(Parent.TrueWindow)
@@ -1093,42 +465,6 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function SelectedMaps() As Beacon.Map()
-		  Return Beacon.Maps.ForMask(Self.SelectedMask)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SelectedMaps(Assigns Maps() As Beacon.Map)
-		  Self.SelectedMask = Maps.Mask
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function SelectedMask() As UInt64
-		  Dim Mask As UInt64
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
-		  For Each Map As Beacon.Map In Maps
-		    If MapCheck(Map.Mask) <> Nil And MapCheck(Map.Mask).Value Then
-		      Mask = Mask Or Map.Mask
-		    End If
-		  Next
-		  Return Mask
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SelectedMask(Assigns Mask As UInt64)
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
-		  For Each Map As Beacon.Map In Maps
-		    If MapCheck(Map.Mask) <> Nil Then
-		      MapCheck(Map.Mask).Value = (Map.Mask And Mask) = Map.Mask
-		    End If
-		  Next
-		End Sub
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
@@ -1142,9 +478,6 @@ End
 		Private mQuickCancel As Boolean
 	#tag EndProperty
 
-
-	#tag Constant, Name = PageFinalizeHeight, Type = Double, Dynamic = False, Default = \"496", Scope = Private
-	#tag EndConstant
 
 	#tag Constant, Name = PageFinalizeIndex, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
@@ -1181,7 +514,7 @@ End
 		  Case Self.PageLocalIndex
 		    DesiredHeight = Self.LocalView.DesiredHeight
 		  Case Self.PageFinalizeIndex
-		    DesiredHeight = Self.PageFinalizeHeight
+		    DesiredHeight = Self.SettingsView.ViewHeight
 		  Else
 		    DesiredHeight = Self.Height
 		  End Select
@@ -1192,144 +525,8 @@ End
 		  
 		  Select Case Me.Value
 		  Case Self.PageFinalizeIndex
-		    Dim Mask As UInt64
-		    If Self.mDocument.MapCompatibility > 0 Then
-		      Mask = Self.mDocument.MapCompatibility
-		    Else
-		      Mask = Beacon.Maps.GuessMap(Self.mDocument.LootSources)
-		    End If
-		    
-		    Dim SelectedMaps() As Beacon.Map = Beacon.Maps.ForMask(Mask)
-		    Dim DifficultyScale As Double
-		    Dim DifficultyMatches As Boolean = True
-		    For Each Map As Beacon.Map In SelectedMaps
-		      DifficultyScale = Max(DifficultyScale, Map.DifficultyScale)
-		      DifficultyMatches = DifficultyMatches And (DifficultyScale = Map.DifficultyScale)
-		    Next
-		    
-		    Dim DifficultyValue As Double = Self.mDocument.DifficultyValue
-		    If DifficultyValue = -1 Then
-		      DifficultyValue = Beacon.DifficultyValue(1.0, DifficultyScale)
-		    End If
-		    
-		    Self.SelectedMask = Mask
-		    
-		    Dim DifficultyOffset As Double = Beacon.DifficultyOffset(DifficultyValue, DifficultyScale)
-		    Dim MaxDinoLevel As Integer = DifficultyValue * 30
-		    
-		    Self.DifficultyValueField.Text = DifficultyValue.PrettyText
-		    Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
-		    Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
+		    Self.SettingsView.Document = Self.mDocument
 		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MapCheck
-	#tag Event
-		Sub Action(index as Integer)
-		  Dim Maps() As Beacon.Map = Self.SelectedMaps
-		  If Maps.Ubound = -1 Then
-		    Self.FinalizeActionButton.Enabled = False
-		    Return
-		  End If
-		  
-		  Dim Scale As Double = Maps.DifficultyScale
-		  
-		  Dim DifficultyOffset As Double = Val(Self.DifficultyOffsetField.Text)
-		  Dim DifficultyValue As Double = Beacon.DifficultyValue(DifficultyOffset, Scale)
-		  Dim MaxDinoLevel As Integer = DifficultyValue * 30
-		  
-		  Self.DifficultyValueField.Text = DifficultyValue.PrettyText
-		  Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
-		  Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
-		  
-		  Self.FinalizeActionButton.Enabled = True
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DifficultyOffsetField
-	#tag Event
-		Sub TextChange()
-		  If Self.Focus = Me Then
-		    Dim DifficultyOffset As Double = Val(Me.Text)
-		    Dim DifficultyValue As Double = Beacon.DifficultyValue(DifficultyOffset, Self.SelectedMaps.DifficultyScale)
-		    Dim MaxDinoLevel As Integer = DifficultyValue * 30
-		    
-		    Self.DifficultyValueField.Text = DifficultyValue.PrettyText
-		    Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DifficultyValueField
-	#tag Event
-		Sub TextChange()
-		  If Self.Focus = Me Then
-		    Dim DifficultyValue As Double = Val(Me.Text)
-		    Dim DifficultyOffset As Double = Beacon.DifficultyOffset(DifficultyValue, Self.SelectedMaps.DifficultyScale)
-		    Dim MaxDinoLevel As Integer = DifficultyValue * 30
-		    
-		    Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
-		    Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MaxDinoLevelField
-	#tag Event
-		Sub TextChange()
-		  If Self.Focus = Me Then
-		    Dim MaxDinoLevel As Integer = Val(Me.Text)
-		    Dim DifficultyValue As Double = MaxDinoLevel / 30
-		    Dim DifficultyOffset As Double = Beacon.DifficultyOffset(DifficultyValue, Self.SelectedMaps.DifficultyScale)
-		    
-		    Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
-		    Self.DifficultyValueField.Text = DifficultyValue.PrettyText
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DifficultyDetailsLink
-	#tag Event
-		Sub Action()
-		  ShowURL("http://ark.gamepedia.com/Difficulty")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events FinalizeActionButton
-	#tag Event
-		Sub Action()
-		  Dim Mask As UInt64 = Self.SelectedMask
-		  Dim Sources() As Beacon.LootSource = Self.mDocument.LootSources
-		  Dim ValidPresetCount As Integer
-		  For Each Source As Beacon.LootSource In Sources
-		    If Source.ValidForMask(Mask) Then
-		      ValidPresetCount = ValidPresetCount + Source.ImplementedPresetCount()
-		    End If
-		  Next
-		  
-		  Dim MapChanged As Boolean = Self.mDocument.MapCompatibility <> Mask
-		  Self.mDocument.MapCompatibility = Mask
-		  Self.mDocument.DifficultyValue = Val(DifficultyValueField.Text)
-		  
-		  If MapChanged And ValidPresetCount > 0 And Self.ShowConfirm("Would you like to rebuild your item sets based on their presets?", "Presets fill item sets based on the current map. When changing maps, it is recommended to rebuild the item sets from their original presets to get the most correct loot for the new map.", "Rebuild", "Do Not Rebuild") Then
-		    Self.mDocument.ReconfigurePresets()
-		  End If
-		  
-		  Self.mCancelled = False
-		  Self.Hide
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events FinalizeCancelButton
-	#tag Event
-		Sub Action()
-		  If Me.Caption = "Back" Then
-		    Self.Pages.Value = Self.PageIntroIndex
-		  Else
-		    Self.mCancelled = True
-		    Self.Hide
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1435,6 +632,25 @@ End
 		  If Self.Pages.Value = Self.PageLocalIndex Then
 		    Self.AnimateToHeight(NewHeight)
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SettingsView
+	#tag Event
+		Sub ShouldCancel()
+		  If Self.mQuickCancel Then
+		    Self.mCancelled = True
+		    Self.Hide
+		  Else
+		    Self.Pages.Value = Self.PageIntroIndex
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldFinish()
+		  // The view should have edited mDocument itself, it uses references instead of copies
+		  Self.mCancelled = False
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents

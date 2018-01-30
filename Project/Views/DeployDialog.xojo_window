@@ -2,12 +2,12 @@
 Begin Window DeployDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   CloseButton     =   False
+   CloseButton     =   True
    Compatibility   =   ""
    Composite       =   False
    Frame           =   8
    FullScreen      =   False
-   FullScreenButton=   False
+   FullScreenButton=   True
    HasBackColor    =   False
    Height          =   234
    ImplicitInstance=   False
@@ -44,7 +44,6 @@ Begin Window DeployDialog
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True
@@ -766,7 +765,6 @@ Begin Window DeployDialog
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
          Top             =   123
          Value           =   0
          Visible         =   True
@@ -789,7 +787,6 @@ Begin Window DeployDialog
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   5
-         TabStop         =   True
          Top             =   123
          Value           =   0
          Visible         =   True
@@ -861,7 +858,6 @@ Begin Window DeployDialog
       End
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

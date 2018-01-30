@@ -8,14 +8,21 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function All() As Beacon.Map()
-		  Dim Maps(4) As Beacon.Map
+		  Dim Maps(5) As Beacon.Map
 		  Maps(0) = Beacon.Maps.TheIsland
 		  Maps(1) = Beacon.Maps.ScorchedEarth
 		  Maps(2) = Beacon.Maps.TheCenter
 		  Maps(3) = Beacon.Maps.Ragnarok
 		  Maps(4) = Beacon.Maps.Aberration
+		  Maps(5) = Beacon.Maps.Extinction
 		  Return Maps
 		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Extinction() As Beacon.Map
+		  Return New Beacon.Map("Extinction", 32, 4.0)
 		End Function
 	#tag EndMethod
 

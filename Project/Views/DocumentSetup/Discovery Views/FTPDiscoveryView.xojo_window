@@ -9,7 +9,7 @@ Begin DiscoveryView FTPDiscoveryView
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   366
+   Height          =   352
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -24,11 +24,11 @@ Begin DiscoveryView FTPDiscoveryView
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   511
+   Width           =   600
    Begin PagePanel PagePanel1
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   366
+      Height          =   352
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -46,7 +46,7 @@ Begin DiscoveryView FTPDiscoveryView
       Top             =   0
       Value           =   0
       Visible         =   True
-      Width           =   511
+      Width           =   600
       Begin UITweaks.ResizedPushButton ServerActionButton
          AutoDeactivate  =   True
          Bold            =   False
@@ -60,7 +60,7 @@ Begin DiscoveryView FTPDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   411
+         Left            =   500
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -73,7 +73,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   326
+         Top             =   312
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -91,7 +91,7 @@ Begin DiscoveryView FTPDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   319
+         Left            =   408
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -104,7 +104,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   326
+         Top             =   312
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -146,11 +146,11 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   294
+         Top             =   278
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   373
+         Width           =   462
       End
       Begin UITweaks.ResizedLabel ServerPathLabel
          AutoDeactivate  =   True
@@ -181,7 +181,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   294
+         Top             =   278
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -224,11 +224,11 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   260
+         Top             =   244
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   373
+         Width           =   462
       End
       Begin UITweaks.ResizedLabel ServerPassLabel
          AutoDeactivate  =   True
@@ -259,7 +259,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   260
+         Top             =   244
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -302,11 +302,11 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   226
+         Top             =   210
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   373
+         Width           =   462
       End
       Begin UITweaks.ResizedLabel ServerUserLabel
          AutoDeactivate  =   True
@@ -337,7 +337,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   226
+         Top             =   210
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -380,11 +380,11 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   192
+         Top             =   176
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   84
+         Width           =   173
       End
       Begin UITweaks.ResizedLabel ServerPortLabel
          AutoDeactivate  =   True
@@ -415,7 +415,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   192
+         Top             =   176
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -458,11 +458,11 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   158
+         Top             =   142
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   373
+         Width           =   462
       End
       Begin UITweaks.ResizedLabel ServerHostLabel
          AutoDeactivate  =   True
@@ -493,7 +493,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   158
+         Top             =   142
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -532,14 +532,14 @@ Begin DiscoveryView FTPDiscoveryView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   471
+         Width           =   560
       End
       Begin GroupBox GroupBox1
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   ""
          Enabled         =   True
-         Height          =   94
+         Height          =   78
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
@@ -560,14 +560,14 @@ Begin DiscoveryView FTPDiscoveryView
          Top             =   52
          Underline       =   False
          Visible         =   True
-         Width           =   471
+         Width           =   560
          Begin Label Label1
             AutoDeactivate  =   True
             Bold            =   False
             DataField       =   ""
             DataSource      =   ""
             Enabled         =   True
-            Height          =   54
+            Height          =   38
             HelpTag         =   ""
             Index           =   -2147483648
             InitialParent   =   "GroupBox1"
@@ -594,7 +594,7 @@ Begin DiscoveryView FTPDiscoveryView
             Transparent     =   True
             Underline       =   False
             Visible         =   True
-            Width           =   431
+            Width           =   520
          End
       End
       Begin ProgressBar ImportingProgress
@@ -617,7 +617,7 @@ Begin DiscoveryView FTPDiscoveryView
          Top             =   189
          Value           =   0
          Visible         =   True
-         Width           =   471
+         Width           =   560
       End
       Begin Label ImportingLabel
          AutoDeactivate  =   True
@@ -652,7 +652,7 @@ Begin DiscoveryView FTPDiscoveryView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   471
+         Width           =   560
       End
    End
    Begin BeaconAPI.Socket APISocket
@@ -676,7 +676,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Begin()
-		  Self.DesiredHeight = 366
+		  Self.DesiredHeight = 352
 		  Self.PagePanel1.Value = 0
 		End Sub
 	#tag EndEvent

@@ -24,7 +24,7 @@ Begin DiscoveryView LocalDiscoveryView
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   511
+   Width           =   600
    Begin PagePanel PagePanel1
       AutoDeactivate  =   True
       Enabled         =   True
@@ -46,7 +46,7 @@ Begin DiscoveryView LocalDiscoveryView
       Top             =   0
       Value           =   0
       Visible         =   True
-      Width           =   511
+      Width           =   600
       Begin Label SetupMessageLabel
          AutoDeactivate  =   True
          Bold            =   True
@@ -80,14 +80,14 @@ Begin DiscoveryView LocalDiscoveryView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   471
+         Width           =   560
       End
       Begin GroupBox ExplanationGroup
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   ""
          Enabled         =   True
-         Height          =   91
+         Height          =   78
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
@@ -108,14 +108,14 @@ Begin DiscoveryView LocalDiscoveryView
          Top             =   52
          Underline       =   False
          Visible         =   True
-         Width           =   471
+         Width           =   560
          Begin Label ExplanationLabel
             AutoDeactivate  =   True
             Bold            =   False
             DataField       =   ""
             DataSource      =   ""
             Enabled         =   True
-            Height          =   51
+            Height          =   38
             HelpTag         =   ""
             Index           =   -2147483648
             InitialParent   =   "ExplanationGroup"
@@ -142,7 +142,7 @@ Begin DiscoveryView LocalDiscoveryView
             Transparent     =   True
             Underline       =   False
             Visible         =   True
-            Width           =   431
+            Width           =   520
          End
       End
       Begin UITweaks.ResizedPushButton ActionButton
@@ -158,7 +158,7 @@ Begin DiscoveryView LocalDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   411
+         Left            =   500
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -189,7 +189,7 @@ Begin DiscoveryView LocalDiscoveryView
          Index           =   -2147483648
          InitialParent   =   "PagePanel1"
          Italic          =   False
-         Left            =   319
+         Left            =   408
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -250,7 +250,7 @@ Begin DiscoveryView LocalDiscoveryView
          DataSource      =   ""
          Enabled         =   True
          Format          =   ""
-         Height          =   189
+         Height          =   202
          HelpTag         =   ""
          HideSelection   =   True
          Index           =   -2147483648
@@ -263,7 +263,7 @@ Begin DiscoveryView LocalDiscoveryView
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
          Mask            =   ""
          Multiline       =   True
@@ -280,11 +280,11 @@ Begin DiscoveryView LocalDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   155
+         Top             =   142
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   471
+         Width           =   560
       End
       Begin Label ImportingLabel
          AutoDeactivate  =   True
@@ -319,7 +319,7 @@ Begin DiscoveryView LocalDiscoveryView
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   471
+         Width           =   560
       End
       Begin ProgressBar ImportingProgress
          AutoDeactivate  =   True
@@ -341,7 +341,7 @@ Begin DiscoveryView LocalDiscoveryView
          Top             =   204
          Value           =   0
          Visible         =   True
-         Width           =   471
+         Width           =   560
       End
    End
    Begin Timer TextChangeTimer

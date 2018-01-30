@@ -147,6 +147,7 @@ Class=Quality;Modules/Beacon/Quality.xojo_code;&h000000003D5447FF;&h0000000055AD
 Module=Qualities;Modules/Beacon/Qualities.xojo_code;&h00000000036B37FF;&h0000000055ADDFFF;false
 Folder=DocumentSetup;Views/DocumentSetup;&h0000000056C127FF;&h0000000008A387FF;false
 Window=DocumentSetupSheet;Views/DocumentSetup/DocumentSetupSheet.xojo_window;&h00000000128957FF;&h0000000056C127FF;false
+Window=DocumentSettingsView;Views/DocumentSetup/DocumentSettingsView.xojo_window;&h000000006381DFFF;&h0000000056C127FF;false
 Folder=Discovery Views;Views/DocumentSetup/Discovery Views;&h0000000020AC2FFF;&h0000000056C127FF;false
 Window=MainWindow;Views/MainWindow.xojo_window;&h00000000392627FF;&h0000000008A387FF;false
 Folder=Library Pane;Views/Library Pane;&h000000000CC70FFF;&h0000000008A387FF;false

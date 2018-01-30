@@ -78,6 +78,7 @@ Begin LibrarySubview LibraryPaneDocuments
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -116,6 +117,7 @@ Begin LibrarySubview LibraryPaneDocuments
       Width           =   300
    End
    Begin Xojo.Net.HTTPSocket Downloader
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

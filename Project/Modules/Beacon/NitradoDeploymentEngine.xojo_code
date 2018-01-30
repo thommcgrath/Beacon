@@ -71,7 +71,6 @@ Protected Class NitradoDeploymentEngine
 		    Dim PrefixPos As Integer = URL.IndexOf(TokenPrefix) + TokenPrefix.Length
 		    Dim SuffixPos As Integer = URL.IndexOf(PrefixPos, TokenSuffix)
 		    Dim AccessToken As Text = URL.Mid(PrefixPos, SuffixPos - PrefixPos)
-		    Break
 		    
 		    SimpleHTTP.Get("https://api.nitrado.net/services/" + Profile.ServiceID.ToText + "/gameservers/file_server/download?access_token=" + AccessToken + "&file=" + Beacon.EncodeURLComponent(Profile.ConfigPath + "/Game.ini"), AddressOf DownloadGameIni_Prepare_Callback, Profile)
 		  Catch Err As RuntimeException
