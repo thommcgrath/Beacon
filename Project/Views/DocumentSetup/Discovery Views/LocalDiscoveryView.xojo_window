@@ -82,7 +82,7 @@ Begin DiscoveryView LocalDiscoveryView
          Visible         =   True
          Width           =   471
       End
-      Begin GroupBox GroupBox1
+      Begin GroupBox ExplanationGroup
          AutoDeactivate  =   True
          Bold            =   False
          Caption         =   ""
@@ -109,7 +109,7 @@ Begin DiscoveryView LocalDiscoveryView
          Underline       =   False
          Visible         =   True
          Width           =   471
-         Begin Label Label1
+         Begin Label ExplanationLabel
             AutoDeactivate  =   True
             Bold            =   False
             DataField       =   ""
@@ -118,7 +118,7 @@ Begin DiscoveryView LocalDiscoveryView
             Height          =   51
             HelpTag         =   ""
             Index           =   -2147483648
-            InitialParent   =   "GroupBox1"
+            InitialParent   =   "ExplanationGroup"
             Italic          =   False
             Left            =   40
             LockBottom      =   True
@@ -286,12 +286,76 @@ Begin DiscoveryView LocalDiscoveryView
          Visible         =   True
          Width           =   471
       End
+      Begin Label ImportingLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Parsing Config…"
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   172
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   471
+      End
+      Begin ProgressBar ImportingProgress
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Maximum         =   0
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   2
+         Top             =   204
+         Value           =   0
+         Visible         =   True
+         Width           =   471
+      End
    End
    Begin Timer TextChangeTimer
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
       Period          =   500
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin Beacon.ImportThread Importer
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   0
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -302,6 +366,18 @@ End
 	#tag Event
 		Sub Begin()
 		  Self.DesiredHeight = 400
+		  Self.PagePanel1.Value = 0
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize()
+		  Dim ContentHeight As Integer = ImportingLabel.Height + 12 + ImportingProgress.Height
+		  Dim AvailableHeight As Integer = Self.Height - 40
+		  
+		  Dim ContentTop As Integer = 20 + ((AvailableHeight - ContentHeight) / 2)
+		  ImportingLabel.Top = ContentTop
+		  ImportingProgress.Top = ContentTop + ImportingLabel.Height + 12
 		End Sub
 	#tag EndEvent
 
@@ -390,6 +466,19 @@ End
 
 #tag EndWindowCode
 
+#tag Events ActionButton
+	#tag Event
+		Sub Action()
+		  Self.PagePanel1.Value = 1
+		  Self.DesiredHeight = 92
+		  Self.ImportingProgress.Maximum = 500
+		  
+		  Self.Importer.Clear
+		  Self.Importer.AddContent(Self.ConfigArea.Text.ToText)
+		  Self.Importer.Run
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
@@ -436,6 +525,67 @@ End
 		Sub Action()
 		  Self.mCurrentConfigType = Self.DetectConfigType(Self.ConfigArea.Text)
 		  Self.ActionButton.Enabled = Self.mCurrentConfigType <> ConfigFileType.Other
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Importer
+	#tag Event
+		Sub UpdateUI()
+		  Dim Value As Integer = Self.ImportingProgress.Maximum * Me.Progress
+		  If Self.ImportingProgress.Value <> Value Then
+		    Self.ImportingProgress.Value = Value
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Finished(ParsedData As Xojo.Core.Dictionary)
+		  Dim Document As New Beacon.Document
+		  
+		  If ParsedData.HasKey("SessionName") Then
+		    Try
+		      Document.Title = ParsedData.Value("SessionName")
+		    Catch Err As TypeMismatchException
+		    End Try
+		  End If
+		  If Document.Title = "" Then
+		    Document.Title = "Single Player Loot"
+		  End If
+		  
+		  Dim SetDifficulty As Boolean
+		  If ParsedData.HasKey("OverrideOfficialDifficulty") Then
+		    Try
+		      Document.DifficultyValue = ParsedData.Value("OverrideOfficialDifficulty")
+		      SetDifficulty = True
+		    Catch Err As TypeMismatchException
+		      
+		    End Try
+		  End If
+		  If Not SetDifficulty And ParsedData.HasKey("DifficultyOffset") Then
+		    Dim Offset As Double
+		    Try
+		      Offset = ParsedData.Value("DifficultyOffset")
+		      SetDifficulty = True
+		    Catch Err As TypeMismatchException
+		      Offset = 1.0
+		    End Try
+		    Document.DifficultyValue = Beacon.DifficultyValue(Offset, Document.Maps.DifficultyScale)
+		  End If
+		  
+		  Dim Dicts() As Auto
+		  Try
+		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
+		  Catch Err As TypeMismatchException
+		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
+		  End Try
+		  
+		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
+		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Document.DifficultyValue)
+		    If Source <> Nil Then
+		      Document.Add(Source)
+		    End If
+		  Next
+		  
+		  Self.ShouldFinish(Document)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -103,12 +103,6 @@ Protected Class ServerProfile
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function ShowURL(URL As Text, URLHandler As Beacon.URLHandler = Nil) As Beacon.WebView
-		  Return RaiseEvent ShowURL(URL, URLHandler)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Shared Function SupportsCapability(Capability As Beacon.ServerProfile.Capabilities) As Boolean
 		  Return False
@@ -133,10 +127,6 @@ Protected Class ServerProfile
 
 	#tag Hook, Flags = &h0
 		Event ReadFromDictionary(Dict As Xojo.Core.Dictionary)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event ShowURL(URL As Text, URLHandler As Beacon.URLHandler) As Beacon.WebView
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
