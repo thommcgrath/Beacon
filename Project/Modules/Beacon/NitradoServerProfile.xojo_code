@@ -5,7 +5,7 @@ Inherits Beacon.ServerProfile
 		Sub ReadFromDictionary(Dict As Xojo.Core.Dictionary)
 		  Self.Address = Dict.Value("Address")
 		  Self.ServiceID = Dict.Value("Service ID")
-		  Self.GamePath = Dict.Value("Path")
+		  Self.ConfigPath = Dict.Value("Path")
 		End Sub
 	#tag EndEvent
 
@@ -13,7 +13,7 @@ Inherits Beacon.ServerProfile
 		Sub WriteToDictionary(Dict As Xojo.Core.Dictionary)
 		  Dict.Value("Address") = Self.Address
 		  Dict.Value("Service ID") = Self.ServiceID
-		  Dict.Value("Path") = Self.GamePath
+		  Dict.Value("Path") = Self.ConfigPath
 		  Dict.Value("Provider") = "Nitrado"
 		End Sub
 	#tag EndEvent
@@ -46,7 +46,7 @@ Inherits Beacon.ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		GamePath As Text
+		ConfigPath As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -55,6 +55,16 @@ Inherits Beacon.ServerProfile
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Address"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ConfigPath"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -74,6 +84,11 @@ Inherits Beacon.ServerProfile
 			Visible=true
 			Group="ID"
 			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ServiceID"
+			Group="Behavior"
+			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

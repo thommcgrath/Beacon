@@ -122,15 +122,6 @@ Begin LibrarySubview LibraryPaneDocuments
       TabPanelIndex   =   0
       ValidateCertificates=   False
    End
-   Begin Beacon.ImportThread Importer
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Priority        =   0
-      Scope           =   2
-      StackSize       =   ""
-      State           =   ""
-      TabPanelIndex   =   0
-   End
    Begin ViewSwitcher Switcher
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -909,23 +900,6 @@ End
 		Sub ReceiveProgress(BytesReceived as Int64, TotalBytes as Int64, NewData as xojo.Core.MemoryBlock)
 		  If Self.mDownloadProgress <> Nil Then
 		    Self.mDownloadProgress.Progress = BytesReceived / TotalBytes
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Importer
-	#tag Event
-		Sub UpdateUI()
-		  If Me.Finished Then
-		    If Self.mImportProgress <> Nil Then
-		      Self.mImportProgress.Close
-		      Self.mImportProgress = Nil
-		    End If
-		    
-		    Self.FinishImport(Me.Document)
-		    Return
-		  ElseIf Self.mImportProgress <> Nil Then
-		    Self.mImportProgress.Progress = Me.Progress
 		  End If
 		End Sub
 	#tag EndEvent

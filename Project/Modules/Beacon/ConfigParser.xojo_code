@@ -43,21 +43,29 @@ Private Class ConfigParser
 		  Case Self.TypeIntrinsic
 		    Select Case Char
 		    Case "("
-		      Self.SubParser = New Beacon.ConfigParser
-		      Self.Type = Self.TypeArray
-		      
-		      Dim Values() As Auto
-		      Self.mValue = Values
+		      If Self.Buffer.Ubound = -1 Then
+		        Self.SubParser = New Beacon.ConfigParser(Self.Level + 1)
+		        Self.Type = Self.TypeArray
+		        
+		        Dim Values() As Auto
+		        Self.mValue = Values
+		      Else
+		        Self.Buffer.Append(Char)
+		      End If
 		    Case "="
 		      Self.Key = Text.Join(Self.Buffer, "").Trim
 		      Redim Self.Buffer(-1)
 		      Self.Type = Self.TypePair
-		      Self.SubParser = New Beacon.ConfigParser
+		      Self.SubParser = New Beacon.ConfigParser(Self.Level) // Same level
 		    Case ")", ",", Text.FromUnicodeCodepoint(13)
-		      Self.ConsumedLastChar = False
-		      Self.mValue = Text.Join(Self.Buffer, "")
-		      Redim Self.Buffer(-1)
-		      Return True
+		      If Self.Level = 0 And Char <> Text.FromUnicodeCodepoint(13) Then
+		        Self.Buffer.Append(Char)
+		      Else
+		        Self.ConsumedLastChar = False
+		        Self.mValue = Text.Join(Self.Buffer, "")
+		        Redim Self.Buffer(-1)
+		        Return True
+		      End If
 		    Case """"
 		      Self.InQuotes = True
 		    Else
@@ -68,15 +76,16 @@ Private Class ConfigParser
 		    Case ")", Text.FromUnicodeCodepoint(13)
 		      Return True
 		    Case ","
-		      Self.SubParser = New Beacon.ConfigParser
+		      Self.SubParser = New Beacon.ConfigParser(Self.Level + 1)
 		    End Select
 		  End Select
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor()
+		Sub Constructor(Level As Integer = 0)
 		  Self.Type = Self.TypeIntrinsic
+		  Self.Level = Level
 		End Sub
 	#tag EndMethod
 
@@ -101,6 +110,10 @@ Private Class ConfigParser
 
 	#tag Property, Flags = &h21
 		Private Key As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Level As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

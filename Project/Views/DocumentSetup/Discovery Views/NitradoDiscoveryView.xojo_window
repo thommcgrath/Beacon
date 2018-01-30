@@ -1,5 +1,5 @@
 #tag Window
-Begin DeploymentView NitradoDeploymentView
+Begin DiscoveryView NitradoDiscoveryView
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -13,10 +13,10 @@ Begin DeploymentView NitradoDeploymentView
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   False
-   LockLeft        =   False
-   LockRight       =   False
-   LockTop         =   False
+   LockBottom      =   True
+   LockLeft        =   True
+   LockRight       =   True
+   LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
@@ -44,10 +44,10 @@ Begin DeploymentView NitradoDeploymentView
       TabIndex        =   3
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   2
+      Value           =   1
       Visible         =   True
       Width           =   514
-      Begin PushButton FindingCancelButton
+      Begin UITweaks.ResizedPushButton FindingCancelButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -222,7 +222,7 @@ Begin DeploymentView NitradoDeploymentView
          Visible         =   True
          Width           =   474
       End
-      Begin PushButton ListCancelButton
+      Begin UITweaks.ResizedPushButton ListCancelButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -253,7 +253,7 @@ Begin DeploymentView NitradoDeploymentView
          Visible         =   True
          Width           =   80
       End
-      Begin PushButton ListActionButton
+      Begin UITweaks.ResizedPushButton ListActionButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -367,6 +367,8 @@ Begin DeploymentView NitradoDeploymentView
       LockedInPosition=   False
       Priority        =   0
       Scope           =   2
+      StackSize       =   ""
+      State           =   ""
       TabPanelIndex   =   0
    End
 End
@@ -377,12 +379,15 @@ End
 		Sub Begin()
 		  Self.DesiredHeight = 124
 		  Self.LookupStartTimer.Mode = Timer.ModeSingle
+		  Self.PagePanel1.Value = 0
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
 		  OAuthProviders.SetupNitrado(Self.AuthClient)
+		  Self.SwapButtons()
+		  RaiseEvent Open
 		End Sub
 	#tag EndEvent
 
@@ -413,16 +418,6 @@ End
 		  Next
 		  
 		  Self.ListActionButton.Enabled = False
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Document(Assigns Value As Beacon.Document)
-		  Super.Document = Value
-		  
-		  If Value <> Nil Then
-		    Self.AuthClient.AuthData = Value.OAuthData("Nitrado")
-		  End If
 		End Sub
 	#tag EndMethod
 
@@ -489,7 +484,6 @@ End
 #tag Events AuthClient
 	#tag Event
 		Sub Authenticated()
-		  Self.Document.OAuthData("Nitrado") = Me.AuthData
 		  Self.DeployEngine.ListServers(Me.AccessToken)
 		End Sub
 	#tag EndEvent
@@ -566,21 +560,12 @@ End
 		  
 		  // Everything has been downloaded
 		  Dim CombinedGameIni As New Xojo.Core.MutableMemoryBlock(0)
-		  Dim CRLF(1) As Byte
-		  CRLF(0) = 13
-		  CRLF(1) = 10
 		  
+		  Self.Importer.Clear
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedServers
 		    Dim Dict As Xojo.Core.Dictionary = Entry.Value
-		    
-		    If CombinedGameIni.Size > 0 Then
-		      CombinedGameIni.Append(CRLF)
-		    End If
-		    
-		    CombinedGameIni.Append(Xojo.Core.MemoryBlock(Dict.Value("Game.ini")))
+		    Self.Importer.AddContent(Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Dict.Value("Game.ini")))
 		  Next
-		  
-		  Self.Importer.AddContent(Xojo.Core.TextEncoding.UTF8.ConvertDataToText(CombinedGameIni))
 		  Self.Importer.Run
 		End Sub
 	#tag EndEvent
@@ -595,17 +580,15 @@ End
 #tag Events Importer
 	#tag Event
 		Sub UpdateUI()
-		  If Not Me.Finished Then
-		    If ImportingProgress.Maximum = 0 Then
-		      ImportingLabel.Text = "Parsing Config…"
-		      ImportingProgress.Maximum = 500
-		    End If
-		    ImportingProgress.Value = ImportingProgress.Maximum * Me.Progress
-		    Return
+		  If ImportingProgress.Maximum = 0 Then
+		    ImportingLabel.Text = "Parsing Config…"
+		    ImportingProgress.Maximum = 500
 		  End If
-		  
-		  ImportingProgress.Value = ImportingProgress.Maximum
-		  
+		  ImportingProgress.Value = ImportingProgress.Maximum * Me.Progress
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Finished(ParsedData As Xojo.Core.Dictionary)
 		  Dim MapMask As UInt64
 		  Dim DifficultySum As Double
 		  Dim Profiles() As Beacon.NitradoServerProfile
@@ -619,22 +602,36 @@ End
 		    DifficultySum = DifficultySum + Dict.Value("Difficulty")
 		  Next
 		  
-		  Dim ImportedDoc As Beacon.Document = Me.Document
-		  ImportedDoc.DifficultyValue = DifficultySum / Self.mSelectedServers.Count
-		  ImportedDoc.MapCompatibility = MapMask
+		  Dim Document As New Beacon.Document
+		  Document.OAuthData("Nitrado") = Self.AuthClient.AuthData
+		  Document.DifficultyValue = DifficultySum / Self.mSelectedServers.Count
+		  Document.MapCompatibility = MapMask
 		  
 		  If Profiles.Ubound = 0 Then
-		    ImportedDoc.Title = Profiles(0).Name
+		    Document.Title = Profiles(0).Name
 		  Else
-		    ImportedDoc.Title = "Nitrado Cluster"
+		    Document.Title = "Nitrado Cluster"
 		  End If
 		  
 		  For Each Profile As Beacon.NitradoServerProfile In Profiles
-		    ImportedDoc.Add(Profile)
+		    Document.Add(Profile)
 		  Next
 		  
-		  Self.Document = ImportedDoc
-		  Self.ShouldFinish()
+		  Dim Dicts() As Auto
+		  Try
+		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
+		  Catch Err As TypeMismatchException
+		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
+		  End Try
+		  
+		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
+		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Document.DifficultyValue)
+		    If Source <> Nil Then
+		      Document.Add(Source)
+		    End If
+		  Next
+		  
+		  Self.ShouldFinish(Document)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

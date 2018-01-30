@@ -1005,48 +1005,59 @@ End
 #tag Events Importer
 	#tag Event
 		Sub UpdateUI()
-		  If Me.Finished Then
-		    If Self.ImportProgress <> Nil Then
-		      Self.ImportProgress.Close
-		      Self.ImportProgress = Nil
-		    End If
-		    
-		    If Me.Document = Nil Then
-		      Return
-		    End If
-		    
-		    Dim SourceLootSources() As Beacon.LootSource = Me.Document.LootSources
-		    
-		    Dim Updated As Boolean
-		    Dim SetNames() As String
-		    For Each SourceLootSource As Beacon.LootSource In SourceLootSources
-		      Dim DestinationLootSource As Beacon.LootSource
-		      For I As Integer = 0 To UBound(Self.mSources)
-		        If SourceLootSource.ClassString = Self.mSources(I).ClassString Then
-		          DestinationLootSource = Self.mSources(I)
-		          Exit For I
-		        End If
-		      Next
-		      If DestinationLootSource <> Nil Then
-		        For Each Set As Beacon.ItemSet In SourceLootSource
-		          DestinationLootSource.Append(Set)
-		          Updated = True
-		          If SetNames.IndexOf(Set.Label) = -1 Then
-		            SetNames.Append(Set.Label)
-		          End If
-		        Next
-		      End If
-		    Next
-		    
-		    Self.RebuildSetList(SetNames)
-		    If Updated Then
-		      RaiseEvent Updated
-		    End If
-		    Return
-		  End If
-		  
 		  If Self.ImportProgress <> Nil Then
 		    Self.ImportProgress.Progress = Me.Progress
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Finished(ParsedData As Xojo.Core.Dictionary)
+		  If Self.ImportProgress <> Nil Then
+		    Self.ImportProgress.Close
+		    Self.ImportProgress = Nil
+		  End If
+		  
+		  Dim Dicts() As Auto
+		  Try
+		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
+		  Catch Err As TypeMismatchException
+		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
+		  End Try
+		  
+		  #Pragma Warning "Does not account for quality multiplier"
+		  
+		  Dim SourceLootSources() As Beacon.LootSource
+		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
+		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, 5.0)
+		    If Source <> Nil Then
+		      SourceLootSources.Append(Source)
+		    End If
+		  Next
+		  
+		  Dim Updated As Boolean
+		  Dim SetNames() As String
+		  For Each SourceLootSource As Beacon.LootSource In SourceLootSources
+		    Dim DestinationLootSource As Beacon.LootSource
+		    For I As Integer = 0 To UBound(Self.mSources)
+		      If SourceLootSource.ClassString = Self.mSources(I).ClassString Then
+		        DestinationLootSource = Self.mSources(I)
+		        Exit For I
+		      End If
+		    Next
+		    If DestinationLootSource <> Nil Then
+		      For Each Set As Beacon.ItemSet In SourceLootSource
+		        DestinationLootSource.Append(Set)
+		        Updated = True
+		        If SetNames.IndexOf(Set.Label) = -1 Then
+		          SetNames.Append(Set.Label)
+		        End If
+		      Next
+		    End If
+		  Next
+		  
+		  Self.RebuildSetList(SetNames)
+		  If Updated Then
+		    RaiseEvent Updated
 		  End If
 		End Sub
 	#tag EndEvent

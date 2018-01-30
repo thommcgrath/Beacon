@@ -1,5 +1,5 @@
 #tag Class
-Protected Class DeploymentView
+Protected Class DiscoveryView
 Inherits ContainerControl
 	#tag Event
 		Sub Resized()
@@ -35,18 +35,6 @@ Inherits ContainerControl
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function Document() As Beacon.Document
-		  Return Self.mDocument
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Document(Assigns Value As Beacon.Document)
-		  Self.mDocument = Value
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Sub ShouldCancel()
 		  RaiseEvent ShouldCancel()
@@ -54,8 +42,8 @@ Inherits ContainerControl
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish()
-		  RaiseEvent Finished
+		Protected Sub ShouldFinish(Document As Beacon.Document)
+		  RaiseEvent Finished(Document)
 		End Sub
 	#tag EndMethod
 
@@ -65,7 +53,7 @@ Inherits ContainerControl
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Finished()
+		Event Finished(Document As Beacon.Document)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -83,10 +71,6 @@ Inherits ContainerControl
 
 	#tag Property, Flags = &h21
 		Private mDesiredHeight As Integer = 64
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDocument As Beacon.Document
 	#tag EndProperty
 
 

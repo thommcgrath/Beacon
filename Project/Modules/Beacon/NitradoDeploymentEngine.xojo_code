@@ -2,13 +2,17 @@
 Protected Class NitradoDeploymentEngine
 	#tag Method, Flags = &h0
 		Sub DownloadGameIni(Profile As Beacon.NitradoServerProfile, AccessToken As Text)
-		  If Profile = Nil Or AccessToken = "" Or Profile.GamePath = "" Then
+		  If Profile = Nil Or AccessToken = "" Or Profile.ConfigPath = "" Then
 		    RaiseEvent GameIniContent(Profile, Nil)
 		    Return
 		  End If
 		  
-		  Dim URL As Text = "https://api.nitrado.net/services/" + Profile.ServiceID.ToText + "/gameservers/file_server/download?access_token=" + Beacon.EncodeURLComponent(AccessToken) + "&file=" + Beacon.EncodeURLComponent(Profile.GamePath + "ShooterGame/Saved/Config/WindowsServer/Game.ini")
-		  SimpleHTTP.Get(URL, AddressOf DownloadGameIni_Callback, Profile)
+		  // The path may not yet be complete, so we'll need to do some discovery first
+		  If Profile.ConfigPath.EndsWith("Server") Then
+		    SimpleHTTP.Get("https://api.nitrado.net/services/" + Profile.ServiceID.ToText + "/gameservers/file_server/download?access_token=" + Beacon.EncodeURLComponent(AccessToken) + "&file=" + Beacon.EncodeURLComponent(Profile.ConfigPath + "/Game.ini"), AddressOf DownloadGameIni_Prepare_Callback, Profile)
+		  Else
+		    SimpleHTTP.Get("https://api.nitrado.net/services/" + Profile.ServiceID.ToText + "/gameservers/file_server/list?access_token=" + Beacon.EncodeURLComponent(AccessToken) + "&dir=" + Beacon.EncodeURLComponent(Profile.ConfigPath), AddressOf DownloadGameIni_List_Callback, Profile)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -23,7 +27,61 @@ Protected Class NitradoDeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DownloadGameIni_Callback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub DownloadGameIni_List_Callback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  If Status <> 200 Then
+		    RaiseEvent GameIniContent(Tag, Nil)
+		    Return
+		  End If
+		  
+		  Try
+		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
+		    Dim Reply As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    If Reply.HasKey("status") = False Or Reply.Value("status") <> "success" Then
+		      RaiseEvent GameIniContent(Tag, Nil)
+		      Return
+		    End If
+		    
+		    Dim Data As Xojo.Core.Dictionary = Reply.Value("data")
+		    Dim Entries() As Auto = Data.Value("entries")
+		    Dim Found As Boolean
+		    Dim Profile As Beacon.NitradoServerProfile = Tag
+		    For Each Entry As Xojo.Core.Dictionary In Entries
+		      // Looking for a type:dir that ends with Server
+		      If Entry.Value("type") <> "dir" Then
+		        Continue
+		      End If
+		      
+		      Dim Path As Text = Entry.Value("path")
+		      If Path.EndsWith("Server") Then
+		        Found = True
+		        Profile.ConfigPath = Path
+		        Exit
+		      End If
+		    Next
+		    
+		    If Not Found Then
+		      RaiseEvent GameIniContent(Profile, Nil)
+		      Return
+		    End If
+		    
+		    // Extract the access token from the url
+		    // IT WILL ALREADY BE URL ENCODED
+		    Dim TokenPrefix As Text = "?access_token="
+		    Dim TokenSuffix As Text = "&dir="
+		    Dim PrefixPos As Integer = URL.IndexOf(TokenPrefix) + TokenPrefix.Length
+		    Dim SuffixPos As Integer = URL.IndexOf(PrefixPos, TokenSuffix)
+		    Dim AccessToken As Text = URL.Mid(PrefixPos, SuffixPos - PrefixPos)
+		    Break
+		    
+		    SimpleHTTP.Get("https://api.nitrado.net/services/" + Profile.ServiceID.ToText + "/gameservers/file_server/download?access_token=" + AccessToken + "&file=" + Beacon.EncodeURLComponent(Profile.ConfigPath + "/Game.ini"), AddressOf DownloadGameIni_Prepare_Callback, Profile)
+		  Catch Err As RuntimeException
+		    RaiseEvent GameIniContent(Tag, Nil)
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DownloadGameIni_Prepare_Callback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
 		  If Status <> 200 Then
 		    RaiseEvent GameIniContent(Tag, Nil)
 		    Return
@@ -134,7 +192,9 @@ Protected Class NitradoDeploymentEngine
 		    Dim GameServer As Xojo.Core.Dictionary = Data.Value("gameserver")
 		    Dim GameSpecific As Xojo.Core.Dictionary = GameServer.Value("game_specific")
 		    
-		    Profile.GamePath = GameSpecific.Value("path")
+		    If Profile.ConfigPath = "" Then
+		      Profile.ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config"
+		    End If
 		    
 		    Dim Settings As Xojo.Core.Dictionary = GameServer.Value("settings")
 		    Dim Config As Xojo.Core.Dictionary = Settings.Value("config")

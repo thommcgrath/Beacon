@@ -45,7 +45,7 @@ Begin Window DocumentSetupSheet
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   1
+      Value           =   4
       Visible         =   True
       Width           =   511
       Begin Label FinalizeMessageLabel
@@ -1046,493 +1046,6 @@ Begin Window DocumentSetupSheet
          Visible         =   True
          Width           =   471
       End
-      Begin UITweaks.ResizedTextField ServerHostField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   118
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   52
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   373
-      End
-      Begin Label ServerMessageLabel
-         AutoDeactivate  =   True
-         Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "Server Settings"
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   20
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   471
-      End
-      Begin UITweaks.ResizedLabel ServerHostLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   1
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "Host:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   52
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   86
-      End
-      Begin UITweaks.ResizedTextField ServerPortField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   118
-         LimitText       =   5
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   "#####"
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "21"
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   86
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   84
-      End
-      Begin UITweaks.ResizedLabel ServerPortLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   3
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "Port:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   86
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   86
-      End
-      Begin UITweaks.ResizedTextField ServerUserField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   118
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   6
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   120
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   373
-      End
-      Begin UITweaks.ResizedLabel ServerUserLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   5
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "Username:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   120
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   86
-      End
-      Begin UITweaks.ResizedTextField ServerPassField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   118
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   True
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   8
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   154
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   373
-      End
-      Begin UITweaks.ResizedLabel ServerPassLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   7
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "Password:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   154
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   86
-      End
-      Begin PushButton ServerActionButton
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   False
-         Caption         =   "Connect"
-         Default         =   True
-         Enabled         =   False
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   411
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   12
-         TabPanelIndex   =   3
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   220
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin PushButton ServerCancelButton
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   True
-         Caption         =   "Cancel"
-         Default         =   False
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   319
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   11
-         TabPanelIndex   =   3
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   220
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedTextField ServerPathField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   "Optional"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   118
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   10
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   188
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   373
-      End
-      Begin UITweaks.ResizedLabel ServerPathLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   9
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "Path Prefix:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   188
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   86
-      End
       Begin UITweaks.ResizedPopupMenu IntroServerTypeMenu
          AutoDeactivate  =   True
          Bold            =   False
@@ -1634,7 +1147,7 @@ Begin Window DocumentSetupSheet
          Visible         =   True
          Width           =   431
       End
-      Begin NitradoDeploymentView NitradoDeploymentView1
+      Begin NitradoDiscoveryView NitradoView
          AcceptFocus     =   False
          AcceptTabs      =   True
          AutoDeactivate  =   True
@@ -1662,15 +1175,34 @@ Begin Window DocumentSetupSheet
          Visible         =   True
          Width           =   511
       End
-   End
-   Begin Beacon.ImportThread Importer
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Priority        =   0
-      Scope           =   2
-      StackSize       =   ""
-      State           =   ""
-      TabPanelIndex   =   0
+      Begin FTPDiscoveryView FTPView
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   496
+         HelpTag         =   ""
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   511
+      End
    End
 End
 #tag EndWindow
@@ -1697,99 +1229,12 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_Discovery(Success As Boolean, Message As Text, Details As Auto)
-		  If Not Success Then
-		    Self.ShowAlert("Unable to connect to server", "Server said '" + Message + "'")
-		    Self.Pages.Value = Self.PageServerIndex
-		    Return
-		  End If
-		  
-		  Dim Dict As Xojo.Core.Dictionary = Details
-		  If Not Dict.HasAllKeys("Game.ini", "GameUserSettings.ini") Then
-		    If Not Self.ShowConfirm("Could not find config files", "Beacon was unable to find the server's Game.ini and GameUserSettings.ini files. Would you like to continue without them?", "Continue", "Cancel") Then
-		      Self.Pages.Value = Self.PageServerIndex
-		      Return
-		    End If
-		  End If
-		  
-		  Dim Pieces() As Text
-		  Pieces.Append("host=" + Beacon.EncodeURLComponent(Self.ServerHostField.Text.ToText))
-		  Pieces.Append("port=" + Beacon.EncodeURLComponent(Self.ServerPortField.Text.ToText))
-		  Pieces.Append("user=" + Beacon.EncodeURLComponent(Self.ServerUserField.Text.ToText))
-		  Pieces.Append("pass=" + Beacon.EncodeURLComponent(Self.ServerPassField.Text.ToText))
-		  
-		  Dim Query As Text = Text.Join(Pieces, "&")
-		  Dim GamePath As Text = Dict.Value("Game.ini")
-		  Dim SettingsPath As Text = Dict.Value("GameUserSettings.ini")
-		  
-		  Dim SettingsRequest As New BeaconAPI.Request("ftp.php?" + Query + "&path=" + Beacon.EncodeURLComponent(SettingsPath) + "&ref=GameUserSettings", "GET", WeakAddressOf APICallback_DownloadConfigFile)
-		  SettingsRequest.Sign(App.Identity)
-		  BeaconAPI.Send(SettingsRequest)
-		  
-		  Dim GameRequest As New BeaconAPI.Request("ftp.php?" + Query + "&path=" + Beacon.EncodeURLComponent(GamePath) + "&ref=Game", "GET", WeakAddressOf APICallback_DownloadConfigFile)
-		  GameRequest.Sign(App.Identity)
-		  BeaconAPI.Send(GameRequest)
-		  
-		  Self.mDownloadedSettings = False
-		  
-		  Self.Importer.Clear()
-		  Self.Importer.SetDiscoveryDict(Dict)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_DownloadConfigFile(Success As Boolean, Message As Text, Details As Auto)
-		  // GameUserSettings.ini will come first
-		  
-		  If Success Then
-		    Dim Dict As Xojo.Core.Dictionary = Details
-		    Dim Content As Text = Dict.Value("content")
-		    Dim Ref As Text = Dict.Value("ref")
-		    Self.Importer.AddContent(Content)
-		    
-		    Select Case Ref
-		    Case "GameUserSettings"
-		      Self.mDownloadedSettings = True
-		    Case "Game"
-		      If Self.mDownloadedSettings Then
-		        Self.FinishDownloads()
-		      Else
-		        Break
-		      End If
-		    End Select
-		  Else
-		    If Self.Pages.Value = Self.PageProgressIndex Then
-		      Self.ShowAlert("Unable to download config", "Server said " + Message)
-		      Self.Pages.Value = Self.PageServerIndex
-		    End If
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub BeginServerImport()
-		  Dim Pieces() As Text
-		  Pieces.Append("host=" + Beacon.EncodeURLComponent(Self.ServerHostField.Text.ToText))
-		  Pieces.Append("port=" + Beacon.EncodeURLComponent(Self.ServerPortField.Text.ToText))
-		  Pieces.Append("user=" + Beacon.EncodeURLComponent(Self.ServerUserField.Text.ToText))
-		  Pieces.Append("pass=" + Beacon.EncodeURLComponent(Self.ServerPassField.Text.ToText))
-		  If Self.ServerPathField.Text <> "" Then
-		    Pieces.Append("path=" + Beacon.EncodeURLComponent(Self.ServerPathField.Text.ToText))
-		  End If
-		  
-		  Dim URL As Text = "ftp.php/discover?" + Text.Join(Pieces, "&")
-		  Dim DiscoveryRequest As New BeaconAPI.Request(URL, "GET", WeakAddressOf APICallback_Discovery)
-		  DiscoveryRequest.Sign(App.Identity)
-		  BeaconAPI.Send(DiscoveryRequest)
-		  
-		  Self.ProgressStatus.Text = "Inspecting Server..."
-		  Self.Pages.Value = Self.PageProgressIndex
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub CheckServerActionButton()
-		  Self.ServerActionButton.Enabled = ServerHostField.Text <> "" And Val(ServerPortField.Text) > 0 And ServerUserField.Text <> "" And ServerPassField.Text <> ""
+		Private Sub AnimateToHeight(Height As Integer)
+		  Dim Task As New AnimationKit.MoveTask(Self)
+		  Task.Height = Height
+		  Task.Curve = AnimationKit.Curve.CreateEaseOut
+		  Task.DurationInSeconds = 0.15
+		  Task.Run
 		End Sub
 	#tag EndMethod
 
@@ -1825,16 +1270,6 @@ End
 		    Return ConfigFileType.Other
 		  End If
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub FinishDownloads()
-		  // At least one of mGameIniFile and mGameUserSettingsIniFile will exist, hopefully both
-		  
-		  Self.ProgressStatus.Text = "Processing files..."
-		  
-		  Self.Importer.Run
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1891,7 +1326,6 @@ End
 		  Win.FinalizeActionButton.Caption = "Import"
 		  Win.FinalizeCancelButton.Caption = "Cancel"
 		  Win.Pages.Value = DocumentSetupSheet.PageProgressIndex
-		  Win.FinishDownloads()
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  If Win.mCancelled Then
@@ -1919,7 +1353,7 @@ End
 		  
 		  If Self.SetupLocalImportWithFile(File) Then
 		    Self.Pages.Value = Self.PageProgressIndex
-		    Self.FinishDownloads()
+		    
 		  End If
 		End Sub
 	#tag EndMethod
@@ -2009,7 +1443,6 @@ End
 		    OtherFileName = "Game.ini"
 		    DesiredOtherFileType = ConfigFileType.GameIni
 		  Case ConfigFileType.Combo
-		    Self.Importer.AddContent(FirstFile)
 		    Return True
 		  End Select
 		  
@@ -2045,13 +1478,15 @@ End
 		    Loop
 		  End If
 		  
-		  If FirstFileType = ConfigFileType.GameIni Then
-		    Self.Importer.AddContent(SecondFile)
-		    Self.Importer.AddContent(FirstFile)
-		  Else
-		    Self.Importer.AddContent(FirstFile)
-		    Self.Importer.AddContent(SecondFile)
-		  End If
+		  #if false
+		    If FirstFileType = ConfigFileType.GameIni Then
+		      Self.Importer.AddContent(SecondFile)
+		      Self.Importer.AddContent(FirstFile)
+		    Else
+		      Self.Importer.AddContent(FirstFile)
+		      Self.Importer.AddContent(SecondFile)
+		    End If
+		  #endif
 		  
 		  Return True
 		End Function
@@ -2077,6 +1512,9 @@ End
 	#tag Constant, Name = PageFinalizeIndex, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = PageFTPIndex, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageIntroHeight, Type = Double, Dynamic = False, Default = \"347", Scope = Private
 	#tag EndConstant
 
@@ -2090,12 +1528,6 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PageProgressIndex, Type = Double, Dynamic = False, Default = \"3", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageServerHeight, Type = Double, Dynamic = False, Default = \"260", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageServerIndex, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 
@@ -2117,9 +1549,9 @@ End
 		  Case Self.PageIntroIndex
 		    DesiredHeight = Self.PageIntroHeight
 		  Case Self.PageNitradoIndex
-		    DesiredHeight = Self.NitradoDeploymentView1.DesiredHeight
-		  Case Self.PageServerIndex
-		    DesiredHeight = Self.PageServerHeight
+		    DesiredHeight = Self.NitradoView.DesiredHeight
+		  Case Self.PageFTPIndex
+		    DesiredHeight = Self.FTPView.DesiredHeight
 		  Case Self.PageProgressIndex
 		    DesiredHeight = Self.PageProgressHeight
 		  Case Self.PageFinalizeIndex
@@ -2129,16 +1561,10 @@ End
 		  End Select
 		  
 		  If Self.Height <> DesiredHeight Then
-		    Dim Task As New AnimationKit.MoveTask(Self)
-		    Task.Height = DesiredHeight
-		    Task.Curve = AnimationKit.Curve.CreateEaseOut
-		    Task.DurationInSeconds = 0.15
-		    Task.Run
+		    Self.AnimateToHeight(DesiredHeight)
 		  End If
 		  
 		  Select Case Me.Value
-		  Case Self.PageServerIndex
-		    Self.ServerHostField.SetFocus
 		  Case Self.PageFinalizeIndex
 		    Dim Mask As UInt64
 		    If Self.mDocument.MapCompatibility > 0 Then
@@ -2287,11 +1713,11 @@ End
 		  If ImportServerRadio.Value Then
 		    Select Case IntroServerTypeMenu.ListIndex
 		    Case 0
-		      Self.NitradoDeploymentView1.Document = Self.mDocument
-		      Self.NitradoDeploymentView1.Begin
+		      Self.NitradoView.Begin
 		      Self.Pages.Value = Self.PageNitradoIndex
 		    Case 1
-		      Self.Pages.Value = Self.PageServerIndex
+		      Self.FTPView.Begin
+		      Self.Pages.Value = Self.PageFTPIndex
 		    End Select
 		  ElseIf ImportLocalRadio.Value Then
 		    Self.PresentLocalImport()
@@ -2310,56 +1736,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ServerHostField
-	#tag Event
-		Sub TextChange()
-		  Self.CheckServerActionButton()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerPortField
-	#tag Event
-		Sub TextChange()
-		  Self.CheckServerActionButton()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerUserField
-	#tag Event
-		Sub TextChange()
-		  Self.CheckServerActionButton()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerPassField
-	#tag Event
-		Sub TextChange()
-		  Self.CheckServerActionButton()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerActionButton
-	#tag Event
-		Sub Action()
-		  Self.BeginServerImport()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerCancelButton
-	#tag Event
-		Sub Action()
-		  Self.Pages.Value = Self.PageIntroIndex
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerPathField
-	#tag Event
-		Sub TextChange()
-		  Self.CheckServerActionButton()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events NitradoDeploymentView1
+#tag Events NitradoView
 	#tag Event
 		Sub ShouldCancel()
 		  Self.Pages.Value = Self.PageIntroIndex
@@ -2368,50 +1745,33 @@ End
 	#tag Event
 		Sub ShouldResize(NewHeight As Integer)
 		  If Self.Pages.Value = Self.PageNitradoIndex Then
-		    Dim Task As New AnimationKit.MoveTask(Self)
-		    Task.Height = NewHeight
-		    Task.Curve = AnimationKit.Curve.CreateEaseOut
-		    Task.DurationInSeconds = 0.15
-		    Task.Run
+		    Self.AnimateToHeight(NewHeight)
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished()
-		  Self.mDocument = Me.Document
+		Sub Finished(Document As Beacon.Document)
+		  Self.mDocument = Document
 		  Self.Pages.Value = Self.PageFinalizeIndex
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Importer
+#tag Events FTPView
 	#tag Event
-		Sub UpdateUI()
-		  Dim ProgressValue As Integer = Round(Me.Progress * Self.ProgressIndicator.Maximum)
-		  If Self.ProgressIndicator.Value <> ProgressValue Then
-		    Self.ProgressIndicator.Value = ProgressValue
-		  End If
-		  
-		  If Me.Finished Then
-		    Self.mDocument = Me.Document
-		    
-		    Dim Profile As Beacon.FTPServerProfile
-		    If Self.mDocument.ServerProfileCount = 1 And Self.mDocument.ServerProfile(0) IsA Beacon.FTPServerProfile Then
-		      Profile = Beacon.FTPServerProfile(Self.mDocument.ServerProfile(0))
-		    Else
-		      Profile = New Beacon.FTPServerProfile
-		    End If
-		    Profile.Host = Self.ServerHostField.Text.ToText
-		    Profile.Port = Val(Self.ServerPortField.Text)
-		    Profile.Username = Self.ServerUserField.Text.ToText
-		    Profile.Password = Self.ServerPassField.Text.ToText
-		    If Self.mDocument.ServerProfileCount = 1 Then
-		      Self.mDocument.ServerProfile(0) = Profile
-		    Else
-		      Self.mDocument.Add(Profile)
-		    End If
-		    
-		    Self.FinalizeMessageLabel.Text = "Review Document Settings"
-		    Self.Pages.Value = Self.PageFinalizeIndex
+		Sub Finished(Document As Beacon.Document)
+		  Self.mDocument = Document
+		  Self.Pages.Value = Self.PageFinalizeIndex
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCancel()
+		  Self.Pages.Value = Self.PageIntroIndex
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(NewHeight As Integer)
+		  If Self.Pages.Value = Self.PageFTPIndex Then
+		    Self.AnimateToHeight(NewHeight)
 		  End If
 		End Sub
 	#tag EndEvent

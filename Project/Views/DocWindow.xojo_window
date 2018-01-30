@@ -117,7 +117,6 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -165,7 +164,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -207,7 +205,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1139,23 +1136,35 @@ End
 #tag Events Importer
 	#tag Event
 		Sub UpdateUI()
-		  If Me.Finished Then
-		    If Self.ImportProgress <> Nil Then
-		      Self.ImportProgress.Close
-		      Self.ImportProgress = Nil
-		    End If
-		    
-		    Dim Document As Beacon.Document = Me.Document
-		    If Document <> Nil Then
-		      Self.AddLootSources(Document.LootSources)
-		    End If
-		    
-		    Return
-		  End If
-		  
 		  If Self.ImportProgress <> Nil Then
 		    Self.ImportProgress.Progress = Me.Progress
 		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Finished(ParsedData As Xojo.Core.Dictionary)
+		  If Self.ImportProgress <> Nil Then
+		    Self.ImportProgress.Close
+		    Self.ImportProgress = Nil
+		  End If
+		  
+		  If Not ParsedData.HasKey("ConfigOverrideSupplyCrateItems") Then
+		    Return
+		  End If
+		  
+		  Dim Dicts() As Auto
+		  Try
+		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
+		  Catch Err As TypeMismatchException
+		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
+		  End Try
+		  
+		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
+		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Self.Doc.DifficultyValue)
+		    If Source <> Nil Then
+		      Self.AddLootSource(Source)
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
