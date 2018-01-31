@@ -437,7 +437,7 @@ Implements Beacon.DocumentItem
 		  End Try
 		  
 		  If SkipHashVerification = False Then
-		    Dim ComputedHash As Text = Beacon.EncodeHex(Decrypted)
+		    Dim ComputedHash As Text = Beacon.Hash(Decrypted)
 		    If ComputedHash <> ExpectedHash Then
 		      Return Nil
 		    End If
