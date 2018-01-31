@@ -119,6 +119,7 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
+         RowCount        =   0
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -191,6 +192,7 @@ Begin BeaconSubview PresetEditorView
          Selectable      =   False
          TabIndex        =   4
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "Map Filter:"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -225,6 +227,7 @@ Begin BeaconSubview PresetEditorView
          Selectable      =   False
          TabIndex        =   5
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "Checking the box next to a quantity or quality will allow the values to be adjusted by the values on the settings tab."
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -345,6 +348,7 @@ Begin BeaconSubview PresetEditorView
          Selectable      =   False
          TabIndex        =   2
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Name:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -379,6 +383,7 @@ Begin BeaconSubview PresetEditorView
          Selectable      =   False
          TabIndex        =   3
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Grouping:"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -413,6 +418,7 @@ Begin BeaconSubview PresetEditorView
          Selectable      =   False
          TabIndex        =   4
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "Select at least"
          TextAlign       =   2
          TextColor       =   &c00000000
@@ -490,6 +496,7 @@ Begin BeaconSubview PresetEditorView
          Selectable      =   False
          TabIndex        =   6
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "items, but not more than"
          TextAlign       =   1
          TextColor       =   &c00000000
@@ -567,6 +574,7 @@ Begin BeaconSubview PresetEditorView
          Selectable      =   False
          TabIndex        =   8
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "items."
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -672,6 +680,7 @@ Begin BeaconSubview PresetEditorView
             Selectable      =   False
             TabIndex        =   0
             TabPanelIndex   =   2
+            TabStop         =   True
             Text            =   "In standard beacons, improve qualities by"
             TextAlign       =   2
             TextColor       =   &c00000000
@@ -749,6 +758,7 @@ Begin BeaconSubview PresetEditorView
             Selectable      =   False
             TabIndex        =   2
             TabPanelIndex   =   2
+            TabStop         =   True
             Text            =   "tiers and multiply quantities by"
             TextAlign       =   1
             TextColor       =   &c00000000
@@ -826,6 +836,7 @@ Begin BeaconSubview PresetEditorView
             Selectable      =   False
             TabIndex        =   4
             TabPanelIndex   =   2
+            TabStop         =   True
             Text            =   "In bonus beacons, improve qualities by"
             TextAlign       =   2
             TextColor       =   &c00000000
@@ -860,6 +871,7 @@ Begin BeaconSubview PresetEditorView
             Selectable      =   False
             TabIndex        =   5
             TabPanelIndex   =   2
+            TabStop         =   True
             Text            =   "In cave crates, improve qualities by"
             TextAlign       =   2
             TextColor       =   &c00000000
@@ -894,6 +906,7 @@ Begin BeaconSubview PresetEditorView
             Selectable      =   False
             TabIndex        =   6
             TabPanelIndex   =   2
+            TabStop         =   True
             Text            =   "In sea && desert crates, improve qualities by"
             TextAlign       =   2
             TextColor       =   &c00000000
@@ -971,6 +984,7 @@ Begin BeaconSubview PresetEditorView
             Selectable      =   False
             TabIndex        =   8
             TabPanelIndex   =   2
+            TabStop         =   True
             Text            =   "tiers and multiply quantities by"
             TextAlign       =   1
             TextColor       =   &c00000000
@@ -1091,6 +1105,7 @@ Begin BeaconSubview PresetEditorView
             Selectable      =   False
             TabIndex        =   11
             TabPanelIndex   =   2
+            TabStop         =   True
             Text            =   "tiers and multiply quantities by"
             TextAlign       =   1
             TextColor       =   &c00000000
@@ -1211,6 +1226,7 @@ Begin BeaconSubview PresetEditorView
             Selectable      =   False
             TabIndex        =   14
             TabPanelIndex   =   2
+            TabStop         =   True
             Text            =   "tiers and multiply quantities by"
             TextAlign       =   1
             TextColor       =   &c00000000

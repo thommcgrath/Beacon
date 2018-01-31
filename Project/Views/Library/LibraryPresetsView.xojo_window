@@ -181,6 +181,7 @@ Begin BeaconSubview LibraryPresetsView Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
+      RowCount        =   0
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True

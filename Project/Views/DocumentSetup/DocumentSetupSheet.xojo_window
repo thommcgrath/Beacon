@@ -45,7 +45,7 @@ Begin Window DocumentSetupSheet
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   4
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin Label IntroMessageLabel
@@ -419,6 +419,10 @@ End
 		  End If
 		  
 		  Dim Document As Beacon.Document = Win.mDocument
+		  If Document.Title = "" Then
+		    UntitledDocumentCounter = UntitledDocumentCounter + 1
+		    Document.Title = "Untitled Document " + UntitledDocumentCounter.ToText
+		  End If
 		  Win.Close
 		  Return Document
 		End Function
@@ -460,6 +464,10 @@ End
 		  End If
 		  
 		  Dim Document As Beacon.Document = Win.mDocument
+		  If Document.Title = "" Then
+		    UntitledDocumentCounter = UntitledDocumentCounter + 1
+		    Document.Title = "Untitled Document " + UntitledDocumentCounter.ToText
+		  End If
 		  Win.Close
 		  Return Document
 		End Function
@@ -476,6 +484,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mQuickCancel As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Shared UntitledDocumentCounter As Integer
 	#tag EndProperty
 
 

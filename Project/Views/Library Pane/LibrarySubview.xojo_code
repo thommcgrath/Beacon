@@ -2,6 +2,12 @@
 Protected Class LibrarySubview
 Inherits ContainerControl
 	#tag Event
+		Sub EnableMenuItems()
+		  // Parent view will call down to EnableMenuItems method
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  RaiseEvent Open
 		  
@@ -13,8 +19,14 @@ Inherits ContainerControl
 
 
 	#tag Method, Flags = &h1
-		Protected Sub DiscardView(View As BeaconSubview)
-		  RaiseEvent ShouldDiscardView(View)
+		Protected Function DiscardView(View As BeaconSubview) As Boolean
+		  Return RaiseEvent ShouldDiscardView(View)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub EnableMenuItems()
+		  RaiseEvent EnableMenuItems()
 		End Sub
 	#tag EndMethod
 
@@ -38,6 +50,10 @@ Inherits ContainerControl
 
 
 	#tag Hook, Flags = &h0
+		Event EnableMenuItems()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Hidden()
 	#tag EndHook
 
@@ -46,7 +62,7 @@ Inherits ContainerControl
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ShouldDiscardView(View As BeaconSubview)
+		Event ShouldDiscardView(View As BeaconSubview) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -2,6 +2,12 @@
 Protected Class BeaconSubview
 Inherits ContainerControl
 	#tag Event
+		Sub EnableMenuItems()
+		  // The parent view will call down to the EnableMenuItems method
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  RaiseEvent Open
 		  RaiseEvent Resize
@@ -24,6 +30,53 @@ Inherits ContainerControl
 		End Sub
 	#tag EndEvent
 
+
+	#tag MenuHandler
+		Function FileSave() As Boolean Handles FileSave.Action
+			If Self.ContentsChanged Then
+			Call RaiseEvent ShouldSave
+			End If
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+
+	#tag Method, Flags = &h0
+		Function ConfirmClose() As Boolean
+		  If Not Self.ContentsChanged Then
+		    Return True
+		  End If
+		  
+		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
+		  Dialog.Message = "Do you want to save the changes made to the document """ + Self.Title + """?"
+		  Dialog.Explanation = "Your changes will be lost if you don't save them."
+		  Dialog.ActionButton.Caption = "Save…"
+		  Dialog.CancelButton.Visible = True
+		  Dialog.AlternateActionButton.Caption = "Don't Save"
+		  Dialog.AlternateActionButton.Visible = True
+		  
+		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Select Case Choice
+		  Case Dialog.ActionButton
+		    Return RaiseEvent ShouldSave()
+		  Case Dialog.CancelButton
+		    Return False
+		  Case Dialog.AlternateActionButton
+		    Return True
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub EnableMenuItems()
+		  If Self.ContentsChanged Then
+		    FileSave.Enable
+		  End If
+		  
+		  RaiseEvent EnableMenuItems()
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function MinHeight() As UInteger
@@ -51,6 +104,10 @@ Inherits ContainerControl
 
 
 	#tag Hook, Flags = &h0
+		Event EnableMenuItems()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Hidden()
 	#tag EndHook
 
@@ -60,6 +117,10 @@ Inherits ContainerControl
 
 	#tag Hook, Flags = &h0
 		Event Resize()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShouldSave() As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -26,6 +26,7 @@ Begin BeaconSubview LibraryDocumentsView
    Visible         =   True
    Width           =   800
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

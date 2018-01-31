@@ -155,7 +155,6 @@ Begin BeaconSubview DocumentEditorView
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   1
       Visible         =   True
@@ -225,7 +224,6 @@ Begin BeaconSubview DocumentEditorView
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -281,6 +279,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub EnableMenuItems()
+		  FileSaveAs.Enable
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Dim HelpFile As FolderItem = App.HelpFile("LootSources.html")
 		  If HelpFile <> Nil Then
@@ -290,6 +294,30 @@ End
 		  Self.UpdateSourceList()
 		End Sub
 	#tag EndEvent
+
+	#tag Event
+		Function ShouldSave() As Boolean
+		  Select Case Self.mRef
+		  Case IsA TemporaryDocumentRef
+		    Return Self.SaveAs()
+		  Case IsA LocalDocumentRef
+		    Dim File As FolderItem = LocalDocumentRef(Self.mRef).File
+		    Dim Writer As New Beacon.JSONWriter(Self.mDocument.Export(App.Identity), File)
+		    Writer.Run
+		    Self.ContentsChanged = False
+		  Else
+		    Break
+		  End Select
+		End Function
+	#tag EndEvent
+
+
+	#tag MenuHandler
+		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
+			Call Self.SaveAs()
+			Return True
+		End Function
+	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h21
@@ -403,6 +431,30 @@ End
 		  
 		  Self.ContentsChanged = Self.mDocument.Modified
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SaveAs() As Boolean
+		  Dim Dialog As New SaveAsDialog
+		  Dialog.SuggestedFileName = Self.mDocument.Title + BeaconFileTypes.BeaconDocument.PrimaryExtension
+		  Dialog.Filter = BeaconFileTypes.BeaconDocument
+		  
+		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If File = Nil Then
+		    Return False
+		  End If
+		  
+		  Dim Ref As New LocalDocumentRef(File, Self.mDocument)
+		  LocalData.SharedInstance.RememberDocument(Ref)
+		  Self.mRef = Ref
+		  
+		  Dim Writer As New Beacon.JSONWriter(Self.mDocument.Export(App.Identity), File)
+		  Writer.Run
+		  
+		  Self.ContentsChanged = False
+		  
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

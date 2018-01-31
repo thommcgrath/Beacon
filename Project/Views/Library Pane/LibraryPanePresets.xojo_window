@@ -89,6 +89,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
+      RowCount        =   0
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -212,19 +213,21 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ClosePreset(Preset As Beacon.Preset)
+		Private Function ClosePreset(Preset As Beacon.Preset) As Boolean
 		  If Preset = Nil Then
-		    Return
+		    Return True
 		  End If
 		  
 		  If Not Self.mViews.HasKey(Preset.PresetID) Then
-		    Return
+		    Return True
 		  End If
 		  
 		  Dim View As BeaconSubview = Self.mViews.Value(Preset.PresetID)
-		  Self.DiscardView(View)
-		  Self.mViews.Remove(Preset.PresetID)
-		End Sub
+		  If Self.DiscardView(View) Then
+		    Self.mViews.Remove(Preset.PresetID)
+		    Return True
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -242,8 +245,9 @@ End
 		  For I As Integer = 0 To List.ListCount - 1
 		    If List.Selected(I) Then
 		      Dim Preset As Beacon.Preset = List.RowTag(I)
-		      Self.ClosePreset(Preset)
-		      Beacon.Data.RemovePreset(Preset)
+		      If Self.ClosePreset(Preset) Then
+		        Beacon.Data.RemovePreset(Preset)
+		      End If
 		    End If
 		  Next    
 		  Self.UpdatePresets()

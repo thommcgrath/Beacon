@@ -78,7 +78,6 @@ Begin LibrarySubview LibraryPaneDocuments
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -117,7 +116,6 @@ Begin LibrarySubview LibraryPaneDocuments
       Width           =   300
    End
    Begin Xojo.Net.HTTPSocket Downloader
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -763,12 +761,9 @@ End
 		    End If
 		    
 		    If View <> Nil Then
-		      If View.ContentsChanged Then
-		        #Pragma Warning "Prompt to save changes."
-		        Break
+		      If Not Self.DiscardView(View) Then
+		        Continue
 		      End If
-		      
-		      Self.DiscardView(View)
 		    End If
 		    
 		    For I As Integer = Me.ListCount - 1 DownTo 0

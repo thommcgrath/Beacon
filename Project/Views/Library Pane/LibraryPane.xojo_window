@@ -72,6 +72,7 @@ Begin ContainerControl LibraryPane
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
+         View            =   0
          Visible         =   True
          Width           =   300
       End
@@ -194,6 +195,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub EnableMenuItems()
+		  Self.CurrentView.EnableMenuItems()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.CurrentView.SwitchedTo()
 		  RaiseEvent Open
@@ -265,7 +272,7 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ShouldDiscardView(View As BeaconSubview)
+		Event ShouldDiscardView(View As BeaconSubview) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -306,9 +313,9 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ShouldDiscardView(View As BeaconSubview)
-		  RaiseEvent ShouldDiscardView(View)
-		End Sub
+		Function ShouldDiscardView(View As BeaconSubview) As Boolean
+		  Return RaiseEvent ShouldDiscardView(View)
+		End Function
 	#tag EndEvent
 	#tag Event
 		Sub ShouldShowView(View As BeaconSubview)
@@ -328,9 +335,9 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ShouldDiscardView(View As BeaconSubview)
-		  RaiseEvent ShouldDiscardView(View)
-		End Sub
+		Function ShouldDiscardView(View As BeaconSubview) As Boolean
+		  Return RaiseEvent ShouldDiscardView(View)
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag Events EngramsView

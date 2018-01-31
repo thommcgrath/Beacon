@@ -130,6 +130,7 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "Select Something"
          TextAlign       =   1
          TextColor       =   &c00000000
@@ -175,6 +176,58 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Function CancelClose(appQuitting as Boolean) As Boolean
+		  Dim ModifiedViews() As BeaconSubview
+		  
+		  For Each View As BeaconSubview In Self.mSubviews
+		    If View.ContentsChanged Then
+		      ModifiedViews.Append(View)
+		    End If
+		  Next
+		  
+		  Select Case ModifiedViews.Ubound
+		  Case -1
+		    Return False
+		  Case 0
+		    Return Not Self.DiscardView(ModifiedViews(0))
+		  Else
+		    Dim NumChanges As Integer = ModifiedViews.Ubound + 1
+		    
+		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = "You have " + NumChanges.ToText + " documents with unsaved changes. Do you want to review these changes before quitting?"
+		    Dialog.Explanation = "If you don't review your documents, all your changes will be lost."
+		    Dialog.ActionButton.Caption = "Review Changes…"
+		    Dialog.CancelButton.Visible = True
+		    Dialog.AlternateActionButton.Caption = "Discard Changes"
+		    Dialog.AlternateActionButton.Visible = True
+		    
+		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
+		    If Choice = Dialog.ActionButton Then
+		      For Each View As BeaconSubview In ModifiedViews
+		        If Not Self.DiscardView(View) Then
+		          Return True
+		        End If
+		      Next      
+		      Return False
+		    ElseIf Choice = Dialog.CancelButton Then
+		      Return True
+		    ElseIf Choice = Dialog.AlternateActionButton Then
+		      Return False
+		    End If
+		  End Select
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub EnableMenuItems()
+		  If Self.mCurrentView <> Nil Then
+		    Self.mCurrentView.EnableMenuItems()
+		  End If
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub Moved()
 		  If Self.mOpened Then
@@ -261,6 +314,31 @@ End
 		    End If
 		  #endif
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DiscardView(View As BeaconSubview) As Boolean
+		  If View.ContentsChanged Then
+		    Self.ShowView(View)
+		    If Not View.ConfirmClose Then
+		      Return False
+		    End If
+		  End If
+		  
+		  If View = Self.mCurrentView Then
+		    Self.ShowView(Nil)
+		  End If
+		  
+		  Dim ViewIndex As Integer = Self.mSubviews.IndexOf(View)
+		  If ViewIndex = -1 Then
+		    Return True
+		  End If
+		  
+		  Self.mSubviews.Remove(ViewIndex)
+		  View.Close
+		  
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -414,19 +492,9 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ShouldDiscardView(View As BeaconSubview)
-		  Dim ViewIndex As Integer = Self.mSubviews.IndexOf(View)
-		  If ViewIndex = -1 Then
-		    Return
-		  End If
-		  
-		  If View = Self.mCurrentView Then
-		    Self.ShowView(Nil)
-		  End If
-		  
-		  Self.mSubviews.Remove(ViewIndex)
-		  View.Close
-		End Sub
+		Function ShouldDiscardView(View As BeaconSubview) As Boolean
+		  Return Self.DiscardView(View)
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

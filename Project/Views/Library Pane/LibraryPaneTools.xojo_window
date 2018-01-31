@@ -57,6 +57,7 @@ Begin LibrarySubview LibraryPaneTools
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
+      RowCount        =   0
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True

@@ -287,6 +287,7 @@ Begin BeaconSubview DeveloperIdentityView
       Width           =   120
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
