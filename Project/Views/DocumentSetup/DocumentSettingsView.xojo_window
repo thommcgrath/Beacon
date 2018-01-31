@@ -52,7 +52,7 @@ Begin ContainerControl DocumentSettingsView
       TextUnit        =   0
       Top             =   52
       Underline       =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   560
       Begin GroupBox MapGroup
@@ -922,12 +922,6 @@ Begin ContainerControl DocumentSettingsView
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin Beacon.NitradoDeploymentEngine NitradoEngine
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
 End
 #tag EndWindow
 
@@ -995,6 +989,8 @@ End
 		  Next
 		  Self.ProfilesList.SortedColumn = 0
 		  Self.ProfilesList.Sort
+		  
+		  Self.NitradoOAuth.AuthData = Self.mDocument.OAuthData("Nitrado")
 		End Sub
 	#tag EndMethod
 
@@ -1168,6 +1164,13 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events AddNitradoServerButton
+	#tag Event
+		Sub Action()
+		  Self.NitradoOAuth.Authenticate
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events AddFTPServerButton
 	#tag Event
 		Sub Action()
@@ -1261,6 +1264,35 @@ End
 		  
 		  RaiseEvent ShouldFinish()
 		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NitradoOAuth
+	#tag Event
+		Sub Authenticated()
+		  Dim CurrentProfiles() As Beacon.NitradoServerProfile
+		  For I As Integer = 0 To Self.ProfilesList.ListCount - 1
+		    Dim Profile As Beacon.ServerProfile = Self.ProfilesList.RowTag(I)
+		    If Profile IsA Beacon.NitradoServerProfile Then
+		      CurrentProfiles.Append(Beacon.NitradoServerProfile(Profile))
+		    End If
+		  Next
+		  
+		  Dim Profiles() As Beacon.NitradoServerProfile = NitradoServerSelectionDialog.Present(Me.AccessToken, CurrentProfiles)
+		  If Profiles = Nil Then
+		    Return
+		  End If
+		  
+		  For Each Profile As Beacon.NitradoServerProfile In Profiles
+		    Self.ProfilesList.AddRow(Profile.Name, "Nitrado", Profile.Address)
+		    Self.ProfilesList.RowTag(Self.ProfilesList.LastIndex) = Profile
+		  Next
+		  Self.ProfilesList.Sort()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ShowURL(URL As Text) As Beacon.WebView
+		  Return MiniBrowser.ShowURL(URL)
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

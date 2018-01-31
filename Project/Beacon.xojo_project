@@ -229,6 +229,7 @@ Class=DiscoveryView;Views/DocumentSetup/Discovery Views/DiscoveryView.xojo_code;
 Window=NitradoDiscoveryView;Views/DocumentSetup/Discovery Views/NitradoDiscoveryView.xojo_window;&h000000007617CFFF;&h0000000020AC2FFF;false
 Window=FTPDiscoveryView;Views/DocumentSetup/Discovery Views/FTPDiscoveryView.xojo_window;&h000000001681EFFF;&h0000000020AC2FFF;false
 Window=LocalDiscoveryView;Views/DocumentSetup/Discovery Views/LocalDiscoveryView.xojo_window;&h0000000035476FFF;&h0000000020AC2FFF;false
+Window=NitradoServerSelectionDialog;Views/DocumentSetup/NitradoServerSelectionDialog.xojo_window;&h0000000076808FFF;&h0000000056C127FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0
