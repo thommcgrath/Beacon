@@ -1156,7 +1156,7 @@ End
 		    Self.EditServerButton.Enabled = False
 		    Self.RemoveServerButton.Enabled = True
 		    Self.RemoveServerButton.Caption = "Unlink"
-		  Case IsA Beacon.NitradoServerProfile
+		  Case IsA Beacon.FTPServerProfile
 		    Self.EditServerButton.Enabled = True
 		    Self.RemoveServerButton.Enabled = True
 		    Self.RemoveServerButton.Caption = "Remove"
