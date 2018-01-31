@@ -9,23 +9,23 @@ Begin Window NitradoServerSelectionDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   400
+   Height          =   300
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
-   MaxHeight       =   32000
+   MaxHeight       =   300
    MaximizeButton  =   False
-   MaxWidth        =   32000
+   MaxWidth        =   500
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
+   MinHeight       =   92
    MinimizeButton  =   False
-   MinWidth        =   64
+   MinWidth        =   500
    Placement       =   2
    Resizeable      =   False
    Title           =   "Select Servers"
    Visible         =   True
-   Width           =   600
+   Width           =   500
    Begin Beacon.NitradoDeploymentEngine Engine
       Index           =   -2147483648
       LockedInPosition=   False
@@ -35,7 +35,7 @@ Begin Window NitradoServerSelectionDialog
    Begin PagePanel Pages
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   400
+      Height          =   300
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -53,7 +53,7 @@ Begin Window NitradoServerSelectionDialog
       Top             =   0
       Value           =   1
       Visible         =   True
-      Width           =   600
+      Width           =   500
       Begin Label FindingLabel
          AutoDeactivate  =   True
          Bold            =   False
@@ -87,7 +87,7 @@ Begin Window NitradoServerSelectionDialog
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   560
+         Width           =   460
       End
       Begin ProgressBar FindingProgress
          AutoDeactivate  =   True
@@ -109,7 +109,7 @@ Begin Window NitradoServerSelectionDialog
          Top             =   206
          Value           =   0
          Visible         =   True
-         Width           =   560
+         Width           =   460
       End
       Begin Label DownloadingLabel
          AutoDeactivate  =   True
@@ -144,7 +144,7 @@ Begin Window NitradoServerSelectionDialog
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   560
+         Width           =   460
       End
       Begin ProgressBar DownloadingProgress
          AutoDeactivate  =   True
@@ -166,7 +166,7 @@ Begin Window NitradoServerSelectionDialog
          Top             =   206
          Value           =   0
          Visible         =   True
-         Width           =   560
+         Width           =   460
       End
       Begin Label MessageLabel
          AutoDeactivate  =   True
@@ -201,7 +201,7 @@ Begin Window NitradoServerSelectionDialog
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   560
+         Width           =   460
       End
       Begin BeaconListbox List
          AutoDeactivate  =   True
@@ -221,7 +221,7 @@ Begin Window NitradoServerSelectionDialog
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   -1
-         Height          =   296
+         Height          =   196
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -251,7 +251,7 @@ Begin Window NitradoServerSelectionDialog
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   560
+         Width           =   460
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
@@ -268,7 +268,7 @@ Begin Window NitradoServerSelectionDialog
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   500
+         Left            =   400
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -281,7 +281,7 @@ Begin Window NitradoServerSelectionDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   360
+         Top             =   260
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -299,7 +299,7 @@ Begin Window NitradoServerSelectionDialog
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   408
+         Left            =   308
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   False
@@ -312,7 +312,7 @@ Begin Window NitradoServerSelectionDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   360
+         Top             =   260
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -359,7 +359,7 @@ End
 		  Dim Win As New NitradoServerSelectionDialog
 		  Win.mToken = AccessToken
 		  For Each Profile As Beacon.NitradoServerProfile In CurrentProfiles
-		    Win.mIgnoreAddresses.Append(Profile.Address)
+		    Win.mIgnoredServices.Append(Profile.ServiceID)
 		  Next
 		  Win.Engine.ListServers(AccessToken)
 		  Win.ShowModal()
@@ -386,7 +386,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mIgnoreAddresses() As Text
+		Private mIgnoredServices() As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -415,7 +415,7 @@ End
 		  
 		  Dim NewServers() As Beacon.NitradoServerProfile
 		  For Each Profile As Beacon.NitradoServerProfile In Servers
-		    If Self.mIgnoreAddresses.IndexOf(Profile.Address) > -1 Then
+		    If Self.mIgnoredServices.IndexOf(Profile.ServiceID) > -1 Then
 		      Continue
 		    End If
 		    
@@ -444,8 +444,6 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ServerDetails(Profile As Beacon.NitradoServerProfile, Map As Beacon.Map, DifficultyValue As Double)
-		  Self.mServerLookupsRemaining = Self.mServerLookupsRemaining - 1
-		  
 		  If Map = Nil Then
 		    If Self.Pages.Value = 2 Then
 		      Self.ShowAlert("Unable to get files from server", "Beacon could not find the Game.ini for " + Profile.Name)
@@ -453,6 +451,21 @@ End
 		    End If
 		    Return
 		  End If
+		  
+		  Me.DownloadGameIni(Profile, Self.mToken)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub GameIniContent(Profile As Beacon.NitradoServerProfile, Content As Xojo.Core.MemoryBlock)
+		  If Content = Nil Then
+		    If Self.Pages.Value = 2 Then
+		      Self.ShowAlert("Unable to get files from server", "Beacon could not find the Game.ini for " + Profile.Name)
+		      Self.Pages.Value = 1
+		    End If
+		    Return
+		  End If
+		  
+		  Self.mServerLookupsRemaining = Self.mServerLookupsRemaining - 1
 		  
 		  If Self.mServerLookupsRemaining = 0 Then
 		    // Done!
@@ -470,7 +483,7 @@ End
 		  Case 0, 2
 		    DesiredHeight = 92
 		  Case 1
-		    DesiredHeight = 400
+		    DesiredHeight = 300
 		  End Select
 		  
 		  If Self.Height <> DesiredHeight Then
