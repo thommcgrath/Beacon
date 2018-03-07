@@ -9,7 +9,7 @@ Begin Window DeployDialog
    FullScreen      =   False
    FullScreenButton=   True
    HasBackColor    =   False
-   Height          =   234
+   Height          =   266
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -18,7 +18,7 @@ Begin Window DeployDialog
    MaxWidth        =   3200
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   234
+   MinHeight       =   266
    MinimizeButton  =   False
    MinWidth        =   600
    Placement       =   1
@@ -29,7 +29,7 @@ Begin Window DeployDialog
    Begin PagePanel Pages
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   234
+      Height          =   266
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -39,13 +39,13 @@ Begin Window DeployDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   6
+      PanelCount      =   7
       Panels          =   ""
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   6
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton IntroCancelButton
@@ -68,13 +68,13 @@ Begin Window DeployDialog
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   5
+         TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   194
+         Top             =   226
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -99,13 +99,13 @@ Begin Window DeployDialog
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   6
+         TabIndex        =   7
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   194
+         Top             =   226
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -127,13 +127,13 @@ Begin Window DeployDialog
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   5
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   162
+         Top             =   194
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -156,13 +156,13 @@ Begin Window DeployDialog
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   130
+         Top             =   162
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -256,7 +256,7 @@ Begin Window DeployDialog
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   -1
-         Height          =   130
+         Height          =   162
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -409,7 +409,7 @@ Begin Window DeployDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   194
+         Top             =   226
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -440,7 +440,7 @@ Begin Window DeployDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   194
+         Top             =   226
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -541,7 +541,7 @@ Begin Window DeployDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   194
+         Top             =   226
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -572,7 +572,7 @@ Begin Window DeployDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   194
+         Top             =   226
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -583,7 +583,7 @@ Begin Window DeployDialog
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         Height          =   130
+         Height          =   162
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
@@ -708,7 +708,7 @@ Begin Window DeployDialog
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   194
+         Top             =   226
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -719,7 +719,7 @@ Begin Window DeployDialog
          DataField       =   ""
          DataSource      =   ""
          Enabled         =   True
-         Height          =   130
+         Height          =   162
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
@@ -856,10 +856,192 @@ Begin Window DeployDialog
          Visible         =   True
          Width           =   520
       End
+      Begin RadioButton PublishChoiceRadio
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Use copy + paste to edit the Game.ini in my host's control panel"
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   3
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   130
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin Label CopyPasteMessageLabel
+         AutoDeactivate  =   True
+         Bold            =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   7
+         TabStop         =   True
+         Text            =   "#CopyPasteMessage"
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   20
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin UITweaks.ResizedPushButton CopyPasteCancelButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   True
+         Caption         =   "Back"
+         Default         =   False
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   408
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   7
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   226
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedPushButton CopyPasteActionButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Done"
+         Default         =   True
+         Enabled         =   False
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   500
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   7
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   226
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin TextArea CopyPasteArea
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   True
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   162
+         HelpTag         =   ""
+         HideSelection   =   True
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LimitText       =   0
+         LineHeight      =   0.0
+         LineSpacing     =   1.0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Mask            =   ""
+         Multiline       =   True
+         ReadOnly        =   True
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollbarVertical=   True
+         Styled          =   True
+         TabIndex        =   3
+         TabPanelIndex   =   7
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   52
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   560
+      End
    End
    Begin BeaconAPI.Socket APISocket
       Index           =   -2147483648
       LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin Timer CopyPasteWatcher
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Mode            =   2
+      Period          =   100
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -1005,15 +1187,27 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateFile(File As FolderItem)
 		  Dim OriginalContent As String
-		  Dim EOL As String = Chr(13) + Chr(10)
 		  
 		  If File.Exists Then
 		    Dim InStream As TextInputStream = TextInputStream.Open(File)
-		    OriginalContent = ReplaceLineEndings(InStream.ReadAll(Encodings.UTF8), EOL)
+		    OriginalContent = InStream.ReadAll(Encodings.UTF8)
 		    InStream.Close
 		  End If
 		  
-		  Dim Lines() As String = OriginalContent.Split(EOL)
+		  Dim UpdatedContent As String = Self.UpdateString(OriginalContent)
+		  
+		  Dim OutStream As TextOutputStream = TextOutputStream.Create(File)
+		  OutStream.Write(UpdatedContent)
+		  OutStream.Close
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function UpdateString(Content As String) As String
+		  Dim EOL As String = Chr(13) + Chr(10)
+		  Content = ReplaceLineEndings(Content, EOL)
+		  
+		  Dim Lines() As String = Content.Split(EOL)
 		  For I As Integer = Lines.Ubound DownTo 0
 		    If Lines(I).Left(31) = "ConfigOverrideSupplyCrateItems=" Then
 		      Lines.Remove(I)
@@ -1063,14 +1257,14 @@ End
 		    Chunks.Append(Header + EOL + Join(SectionLines, EOL).Trim)
 		  Next
 		  
-		  Dim UpdatedContent As String = Join(Chunks, EOL + EOL).Trim + EOL
-		  
-		  Dim OutStream As TextOutputStream = TextOutputStream.Create(File)
-		  OutStream.Write(UpdatedContent)
-		  OutStream.Close
-		End Sub
+		  Return Join(Chunks, EOL + EOL).Trim + EOL
+		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mCopiedContentHash As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
@@ -1092,6 +1286,12 @@ End
 		Private mUploadSuccess As Boolean
 	#tag EndProperty
 
+
+	#tag Constant, Name = CopyPasteMessage, Type = String, Dynamic = False, Default = \"Go to your host\'s control panel and copy your Game.ini contents", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageCopyPaste, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = PageCredentials, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
@@ -1161,6 +1361,10 @@ End
 		    
 		    Self.UpdateCredentialsList()
 		    Self.Pages.Value = Self.PageCredentials
+		  ElseIf PublishChoiceRadio(3).Value Then
+		    // Copy & Paste
+		    
+		    Self.Pages.Value = Self.PageCopyPaste
 		  End If
 		End Sub
 	#tag EndEvent
@@ -1168,7 +1372,7 @@ End
 #tag Events PublishChoiceRadio
 	#tag Event
 		Sub Action(index as Integer)
-		  IntroActionButton.Enabled = PublishChoiceRadio(0).Value Or PublishChoiceRadio(1).Value Or PublishChoiceRadio(2).Value
+		  IntroActionButton.Enabled = PublishChoiceRadio(0).Value Or PublishChoiceRadio(1).Value Or PublishChoiceRadio(2).Value Or PublishChoiceRadio(3).Value
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1303,6 +1507,20 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events CopyPasteCancelButton
+	#tag Event
+		Sub Action()
+		  Self.Pages.Value = Self.PageIntro
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CopyPasteActionButton
+	#tag Event
+		Sub Action()
+		  Self.Close
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events APISocket
 	#tag Event
 		Sub WorkCompleted()
@@ -1324,6 +1542,55 @@ End
 		      Self.Pages.Value = Self.PageWaiting
 		    End If
 		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CopyPasteWatcher
+	#tag Event
+		Sub Action()
+		  Dim Clip As New Clipboard
+		  If Not Clip.TextAvailable Then
+		    Return
+		  End If
+		  
+		  Dim Content As String = Clip.Text
+		  Dim Hash As String = EncodeHex(Crypto.MD5(Content))
+		  If Hash = Self.mCopiedContentHash Then
+		    Return
+		  End If
+		  
+		  Self.mCopiedContentHash = Hash
+		  
+		  Dim HasGameContent As Boolean = Content.InStr("[/script/shootergame.shootergamemode]") > 0
+		  Dim HasSettingsContent As Boolean = Content.InStr("[ServerSettings]") > 0
+		  
+		  If Not HasGameContent And HasSettingsContent Then
+		    CopyPasteMessageLabel.Text = Self.CopyPasteMessage
+		    CopyPasteArea.Text = "Whoops, that's the GameUserSettings.ini file. You need to copy the Game.ini file."
+		    CopyPasteActionButton.Enabled = False
+		    Return
+		  End If
+		  
+		  If HasGameContent And HasSettingsContent Then
+		    CopyPasteMessageLabel.Text = Self.CopyPasteMessage
+		    CopyPasteArea.Text = "There's a problem. What you've copied has config content for both Game.ini and GameUserSettings.ini. That's not right. You'll need to separate the config content into their correct files, your settings won't work correctly until then."
+		    CopyPasteActionButton.Enabled = False
+		    Return
+		  End If
+		  
+		  If Not HasGameContent And Not HasSettingsContent Then
+		    CopyPasteMessageLabel.Text = Self.CopyPasteMessage
+		    CopyPasteArea.Text = "Waiting for Game.ini copy"
+		    CopyPasteActionButton.Enabled = False
+		    Return
+		  End If
+		  
+		  CopyPasteMessageLabel.Text = "Ready! Here's the updated content. It has already been copied for you."
+		  Dim Updated As String = Self.UpdateString(Content)
+		  CopyPasteArea.Text = Updated
+		  Clip.Text = Updated
+		  Self.mCopiedContentHash = EncodeHex(Crypto.MD5(Updated))
+		  CopyPasteActionButton.Enabled = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
