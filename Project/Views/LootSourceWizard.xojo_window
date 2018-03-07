@@ -1633,7 +1633,7 @@ End
 		    
 		    Self.mEditing.ClassString = DefineClassField.Text.ToText
 		    Self.mEditing.Label = DefineNameField.Text.ToText
-		    Self.mEditing.Kind = Beacon.LootSource.TextToKind(DefineKindMenu.RowTag(DefineKindMenu.ListIndex))
+		    Self.mEditing.Kind = CType(DefineKindMenu.RowTag(DefineKindMenu.ListIndex), Beacon.LootSource.Kinds)
 		    Self.mEditing.Availability = Availability
 		    Self.mEditing.Multipliers = New Beacon.Range(CDbl(DefineMinMultiplierField.Text), CDbl(DefineMaxMultiplierField.Text))
 		    Self.mEditing.IsOfficial = False
