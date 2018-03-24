@@ -95,9 +95,24 @@ class BeaconMod implements JsonSerializable {
 		return self::GetFromResults($results);
 	}
 	
+	public static function GetByModID(string $mod_id) {
+		$database = BeaconCommon::Database();
+		$results = $database->Query(self::BuildSQL('mod_id = $1'), $mod_id);
+		$arr = self::GetFromResults($results);
+		if (count($arr) == 1) {
+			return $arr[0];
+		}
+	}
+	
 	public static function GetAll(string $user_id) {
 		$database = BeaconCommon::Database();
 		$results = $database->Query(self::BuildSQL('user_id = $1'), $user_id);
+		return self::GetFromResults($results);
+	}
+	
+	public static function GetLive() {
+		$database = BeaconCommon::Database();
+		$results = $database->Query(self::BuildSQL('(SELECT COUNT(object_id) FROM objects WHERE objects.mod_id = mods.mod_id) > 0 AND mods.confirmed = TRUE'));
 		return self::GetFromResults($results);
 	}
 	

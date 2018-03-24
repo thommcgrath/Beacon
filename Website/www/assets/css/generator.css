@@ -1,0 +1,24 @@
+#mode_tabs {
+	display: flex;
+}
+
+#mode_tabs_new, #mode_tabs_paste, #mode_tabs_upload {
+	background-color: rgba(0, 0, 0, 0.1);
+	padding: 6px 10px;
+	text-align: center;
+	margin-right: 6px;
+	cursor: pointer;
+}
+
+#mode_tabs div.selected {
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+#mode_view, #mode_customizations {
+	background-color: rgba(255, 255, 255, 0.1);
+	padding: 10px;
+}
+
+#mode_view_paste, #mode_view_upload {
+	display: none;
+}

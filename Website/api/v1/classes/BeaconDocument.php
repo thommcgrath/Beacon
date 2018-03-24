@@ -4,7 +4,7 @@ class BeaconDocument extends BeaconDocumentMetadata {
 	protected $content = '';
 	
 	public function Content() {
-		return $content;
+		return $this->content;
 	}
 	
 	protected static function GetFromResult(BeaconRecordSet $results) {
@@ -12,13 +12,13 @@ class BeaconDocument extends BeaconDocumentMetadata {
 		if ($document === null) {
 			return null;
 		}
-		$document->content = json_decode($results->Field('contents'), true);
+		$document->content = json_decode($results->Field('formatted_contents'), true);
 		return $document;
 	}
 	
 	public static function DatabaseColumns() {
 		$columns = parent::DatabaseColumns();
-		$columns[] = 'contents';
+		$columns[] = 'jsonb_pretty(contents) AS formatted_contents';
 		return $columns;
 	}
 	

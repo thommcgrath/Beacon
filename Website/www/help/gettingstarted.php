@@ -20,7 +20,7 @@ BeaconTemplate::SetTitle('Getting Started With Beacon');
 		<p>Inside each set is the list of possible contents. Item set entries have a minimum quantity, maximum quantity, minimum quality, maximum quality, weight, and blueprint chance. Quantities need no explanation, and weight works the same as with item sets.</p>
 		<p>Quality ranges are&hellip; interesting. The range specified is ideal, but Ark introduces an amount of randomness to quality values, so do not take these as hard limits. The quality values Beacon uses have been extensively tested to produce <em>the most statistically likely</em> loot at the desired quality, but it is not guaranteed. This is just how Ark behaves unfortunately.</p>
 		<p>The blueprint chance is just the chance for an item to be blueprint instead of a usable item. Not all items have a blueprint - like wood for example - so their blueprint chance is always 0%.</p>
-		<p>The next step is to go to the &quot;File&quot; menu and select &quot;Deploy&quot; to create a Game.ini file ready for the server, or to update the Game.ini on your server using FTP.</p>
+		<p>The next step is to go to the &quot;File&quot; menu and select &quot;Export&quot; to create a Game.ini file ready for the server.</p>
 	</div>
 	<h2><a id="TipsTricks"></a>Tips &amp; Tricks</h2>
 	<ul>
