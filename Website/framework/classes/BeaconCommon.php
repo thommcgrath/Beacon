@@ -148,6 +148,19 @@ abstract class BeaconCommon {
 	public static function IsWindowsPhone() {
 		return stristr($_SERVER['HTTP_USER_AGENT'], 'Windows Phone OS') !== false;
 	}
+	
+	public static function ArrayToEnglish(array $items) {
+		if (count($items) == 0) {
+			return '';
+		} elseif (count($items) == 1) {
+			return $items[0];
+		} elseif (count($items) == 2) {
+			return $items[0] . ' and ' . $items[1];
+		} else {
+			$last = array_pop($items);
+			return implode(', ', $items) . ', and ' . $last;
+		}
+	}
 }
 
 ?>

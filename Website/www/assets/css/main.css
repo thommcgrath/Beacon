@@ -168,6 +168,33 @@ pre.code {
 	text-shadow: 0px 1px 0px #ffffff;
 }
 
+.platform_tag {
+	color: #FFFFFF;
+	border-radius: 0.5em;
+	display: inline-block;
+	padding: 0.2em 0.5em;
+}
+
+.platform_tag + .platform_tag {
+	margin-left: 0.5em;
+}
+
+.platform_tag.xbox {
+	background-color: #107c10;
+}
+
+.platform_tag.playstation {
+	background-color: #003791;
+}
+
+.platform_tag.nintendo {
+	background-color: #e60012;
+}
+
+.platform_tag.pc {
+	background-color: #546e7a;
+}
+
 /* !Buttons */
 
 @keyframes default_button {
@@ -180,6 +207,7 @@ input[type="submit"],
 input[type="reset"],
 a.button {
 	-webkit-appearance: none;
+	appearance: none;
 	background-color: #713a9a;
 	border-radius: 0.4em;
 	border: 1px solid rgba(0, 0, 0, 0.4);
@@ -191,7 +219,7 @@ a.button {
 	font-family: inherit;
 	font-size: 1.0em;
 	margin: 6px;
-	padding: 8px;
+	padding: 5px 8px;
 	text-align: center;
 	text-decoration: none;
 	text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8);
@@ -240,8 +268,10 @@ input[type="email"],
 input[type="url"],
 input[type="tel"],
 input[type="search"],
+input[type="number"],
 textarea {
 	-webkit-appearance: none;
+	appearance: none;
 	background-color: rgba(255, 255, 255, 0.7);
 	border-radius: 0.4em;
 	border: 1px solid rgba(0, 0, 0, 0.4);
@@ -264,6 +294,7 @@ input[type="email"]:focus,
 input[type="url"]:focus,
 input[type="tel"]:focus,
 input[type="search"]:focus,
+input[type="number"]:focus,
 textarea:focus {
 	background-color: rgba(255, 255, 255, 1.0);
 }
@@ -274,9 +305,147 @@ input[type="email"]::placeholder,
 input[type="url"]::placeholder,
 input[type="tel"]::placeholder,
 input[type="search"]::placeholder,
+input[type="number"]::placeholder,
 textarea::placeholder {
 	color: rgba(0, 0, 0, 0.5);
 	padding: 2px 0px;
+}
+
+/* !Checkboxes & Radios */
+
+label.checkbox input[type="checkbox"],
+label.radio input[type="radio"] {
+	display: none;
+}
+
+label.checkbox,
+label.radio {
+	white-space: nowrap;
+}
+
+label.checkbox span,
+label.radio span {
+	display: inline-block;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	background-color: rgba(0, 0, 0, 0.1);
+	vertical-align: middle;
+	margin: 6px;
+	position: relative;
+	border-radius: 16px;
+	transition-property: background-color;
+	transition-timing-function: ease-out;
+	transition-duration: 0.15s;
+}
+
+label.checkbox span {
+	width: 44px;
+	height: 22px;
+}
+
+label.radio span {
+	width: 22px;
+	height: 22px;
+}
+
+label.checkbox :checked + span,
+label.radio :checked + span {
+	background-color: #713a9a;
+}
+
+label.checkbox span:after {
+	position: absolute;
+	top: 4px;
+	left: 4px;
+	background-color: #FFFFFF;
+	width: 14px;
+	height: 14px;
+	border-radius: 14px;
+	display: block;
+	content: '';
+	transition-property: left;
+	transition-timing-function: ease-out;
+	transition-duration: 0.15s;
+	box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+label.checkbox :checked + span:after {
+	left: 26px;
+}
+
+label.radio span:after {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	background-color: #FFFFFF;
+	width: 12px;
+	height: 12px;
+	border-radius: 12px;
+	display: block;
+	content: '';
+	transition-property: opacity;
+	transition-timing-function: ease-out;
+	transition-duration: 0.15s;
+	box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+	opacity: 0.0
+}
+
+label.radio :checked + span:after {
+	opacity: 1.0;
+}
+
+label.checkbox :active + span,
+label.radio :active + span {
+	background-color: rgba(0, 0, 0, 0.3);
+}
+
+label.checkbox :checked:active + span,
+label.radio :checked:active + span {
+	background-color: #3f1262;
+}
+
+/* Menus */
+
+div.select {
+	position: relative ;
+	display: inline-block;
+}
+
+div.select select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	min-height: 22px;
+	border-radius: 0.4em;
+	background-color: #713a9a;
+	display: inline-block;
+	color: #FFFFFF;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	font-family: inherit;
+	font-size: 1.0em;
+	text-align: center;
+	text-decoration: none;
+	text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8);
+	transition-duration: 0.15s;
+	transition-property: background-color;
+	transition-timing-function: ease-out;
+	vertical-align: middle;
+	white-space: nowrap;
+	padding: 4px 32px 4px 8px;
+	margin-left: 8px;
+}
+
+div.select select:active {
+	background-color: #3f1262;
+}
+
+div.select span:after {
+	position: absolute;
+	top: 2px;
+	right: 9px;
+	content: '▾';
+	color: #FFFFFF;
+	text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8);
+	font-size: 18px;
 }
 
 /* !Header */
@@ -555,6 +724,12 @@ span.object_type {
 	padding: 0.1em 0.5em 0.1em 0.5em;
 	border-radius: 0.3em;
 	font-weight: 400;
+}
+
+.option_group {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 }
 
 /* !Triple Column */

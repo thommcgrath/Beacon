@@ -144,4 +144,21 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		});
 	}
+	
+	var choose_field = document.getElementById('upload_file_selector');
+	var choose_button = document.getElementById('upload_file_selector_button');
+	if (choose_field && choose_button) {
+		choose_button.addEventListener('click', function(event) {
+			choose_field.click();
+			if (event.preventDefault) {
+				event.preventDefault();
+			}
+			return false;
+		});
+		choose_field.addEventListener('change', function(event) {
+			if (this.value !== '') {
+				this.form.submit();
+			}
+		});
+	}
 });

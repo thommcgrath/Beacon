@@ -11,6 +11,7 @@ class BeaconDocumentMetadata implements JsonSerializable {
 	protected $is_public = false;
 	protected $map_mask = 0;
 	protected $difficulty_value = 0;
+	protected $console_safe = true;
 	
 	public function DocumentID() {
 		return $this->document_id;
@@ -50,6 +51,26 @@ class BeaconDocumentMetadata implements JsonSerializable {
 	
 	public function DifficultyValue() {
 		return $this->difficulty_value;
+	}
+	
+	public function ConsoleSafe() {
+		return $this->console_safe;
+	}
+	
+	public function LookupRequiredMods() {
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT DISTINCT mods.mod_id FROM (SELECT DISTINCT jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(contents->\'LootSources\')->\'ItemSets\')->\'ItemEntries\')->\'Items\')->>\'Path\' AS path FROM documents WHERE document_id = $1) AS items LEFT JOIN (engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id)) ON (items.path = engrams.path);', $this->document_id);
+		$mods = array();
+		while (!$results->EOF()) {
+			$mod_id = $results->Field('mod_id');
+			if (is_null($mod_id)) {
+				$mods[] = null; // yes
+			} else {
+				$mods[] = BeaconMod::GetByModID($mod_id);
+			}
+			$results->MoveNext();
+		}
+		return $mods;
 	}
 	
 	public function ResourceURL() {
@@ -110,6 +131,11 @@ class BeaconDocumentMetadata implements JsonSerializable {
 			case 'map_any':
 				$values[] = intval($value);
 				$clauses[] = 'map & $' . $next_placeholder++ . ' != 0';
+				break;
+			case 'console_safe':
+				$values[] = boolval($value);
+				$clauses[] = 'console_safe = $' . $next_placeholder++;
+				break;
 			}
 		}
 		
@@ -153,6 +179,7 @@ class BeaconDocumentMetadata implements JsonSerializable {
 		$document->is_public = boolval($results->Field('is_public'));
 		$document->map_mask = intval($results->Field('map'));
 		$document->difficulty_value = floatval($results->Field('difficulty'));
+		$document->console_safe = boolval($results->Field('console_safe'));
 		return $document;
 	}
 	
@@ -185,7 +212,8 @@ class BeaconDocumentMetadata implements JsonSerializable {
 			'user_id',
 			'is_public',
 			'map',
-			'difficulty'
+			'difficulty',
+			'console_safe'
 		);
 	}
 	
@@ -200,6 +228,7 @@ class BeaconDocumentMetadata implements JsonSerializable {
 			'last_updated' => $this->last_updated->format('Y-m-d H:i:sO'),
 			'map_mask' => $this->map_mask,
 			'difficulty_value' => $this->difficulty_value,
+			'console_safe' => $this->console_safe,
 			'resource_url' => $this->ResourceURL()
 		);
 	}

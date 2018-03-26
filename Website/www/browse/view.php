@@ -38,9 +38,9 @@ BeaconTemplate::AddHeaderLine('<script src="/assets/scripts/generator.js"></scri
 <div class="indent">
 	<p><?php echo htmlentities($document->Description()); ?></p>
 </div>
-<h3>Supported Maps</h3>
+<h3>Requirements</h3>
 <div class="indent">
-	<p><?php
+	<p>Maps: <?php
 $map_names = BeaconMaps::Names($document->MapMask());
 if (count($map_names) >= 3) {
 	$last = array_pop($map_names);
@@ -52,6 +52,26 @@ if (count($map_names) >= 3) {
 	echo $map_names[0];
 }
 ?></p>
+	<p>Platforms: <span class="platform_tag pc">PC</span><?php if ($document->ConsoleSafe()) {?><span class="platform_tag xbox">Xbox</span><span class="platform_tag playstation">PlayStation</span><?php } ?></p>
+	<p>Uses Mods: <?php
+	
+	$mods = $document->LookupRequiredMods();
+	$mod_links = array();
+	$unknown_mods = false;
+	foreach ($mods as $mod) {
+		if (is_null($mod)) {
+			$unknown_mods = true;
+		} else {
+			$mod_links[] = '<a href="/mods/info.php?mod_id=' . $mod->ModID() . '">' . htmlentities($mod->Name()) . '</a>';
+		}
+	}
+	if ($unknown_mods) {
+		$mod_links[] = 'one or more mods not listed with Beacon';
+	}
+	
+	echo ucfirst(BeaconCommon::ArrayToEnglish($mod_links)) . '.';
+		
+	?></p>
 </div>
 <h3>Download</h3>
 <div class="indent">
@@ -62,18 +82,20 @@ if (count($map_names) >= 3) {
 	<p>Create a customized Game.ini from this document.</p>
 	<div id="mode_tabs"><div id="mode_tabs_new" class="selected">Create New</div><div id="mode_tabs_paste">Paste Text</div><div id="mode_tabs_upload">Upload File</div></div>
 	<div id="mode_customizations">
-		<p>Settings<input type="hidden" id="map_mask" name="map_mask" value="<?php echo ($map_filter & $document->MapMask()); ?>"></p>
-		<?php if (count($map_names) > 1) { ?><p>Include Maps:<?php
+		<input type="hidden" id="map_mask" name="map_mask" value="<?php echo ($map_filter & $document->MapMask()); ?>">
+		<table id="options_table">
+		<?php if (count($map_names) > 1) { ?><tr><td class="label">Include Maps:</td><td><?php
 		
 		foreach ($map_names as $name) {
 			$value = BeaconMaps::ValueForName($name);
 			$id = 'map_check_' . $value;
-			echo ' <input id="' . $id . '" type="checkbox" value="' . $value . '"' . (($map_filter & $value) == $value ? ' checked' : '') . '> <label for="' . $id . '">' . htmlentities($name) . '</label>';
+			echo ' <label class="checkbox"><input id="' . $id . '" type="checkbox" value="' . $value . '"' . (($map_filter & $value) == $value ? ' checked' : '') . '><span></span>' . htmlentities($name) . '</label>';
 		}
 		
-		?></p><?php } ?>
-		<p><label for="dino_level_field">Max Dino Level:</label> <input type="number" id="dino_level_field" value="120"></p>
-		<p><label for="difficulty_reference">Required Difficulty Settings:</label> <textarea readonly rows="2" id="difficulty_reference"></textarea><br><span class="smaller">This space is merely a reference. These options will produce the desired dino level. Loot will be scaled accordingly.</span></p>
+		?></td></tr><?php } ?>
+		<tr><td class="label"><label for="dino_level_field">Max Dino Level:</label></td><td><input type="number" id="dino_level_field" value="120"></td></tr>
+		<tr><td class="label"><label for="difficulty_reference">Difficulty Settings:</label></td><td><textarea readonly rows="2" id="difficulty_reference"></textarea><br><span class="smaller">This space is only a reference. These options will produce the desired dino level. Loot will be scaled accordingly.</span></td></tr>
+		</table>
 	</div>
 	<div id="mode_view">
 		<div id="mode_view_new">
@@ -81,7 +103,7 @@ if (count($map_names) >= 3) {
 			<form action="generate.php" method="get">
 				<input type="hidden" name="document_id" value="<?php echo htmlentities($document->DocumentID()); ?>">
 				<input type="hidden" name="difficulty_value" value="" id="create_difficulty_value">
-				<p class="text-center"><input type="radio" name="mode" value="inline" id="create_inline_check" checked> <label for="create_inline_check">Show new Game.ini in browser</label><br><input type="radio" name="mode" value="download" id="create_download_check"> <label for="create_download_check">Download new Game.ini</label></p>
+				<p class="text-center"><label class="radio"><input type="radio" name="mode" value="inline" id="create_inline_check" checked><span></span>Show new Game.ini in browser</label><br><label class="radio"><input type="radio" name="mode" value="download" id="create_download_check"><span></span>Download new Game.ini</label></p>
 				<p class="text-center"><input type="submit" value="Generate"></p>
 			</form>
 		</div>
@@ -101,8 +123,8 @@ if (count($map_names) >= 3) {
 				<input type="hidden" name="document_id" value="<?php echo htmlentities($document->DocumentID()); ?>">
 				<input type="hidden" name="mode" value="download">
 				<input type="hidden" name="difficulty_value" value="" id="upload_difficulty_value">
-				<input type="file" name="content" accept=".ini">
-				<p class="text-center"><input type="submit" value="Generate"></p>
+				<input type="file" name="content" accept=".ini" id="upload_file_selector">
+				<p class="text-center"><input type="submit" id="upload_file_selector_button" value="Choose File"></p>
 			</form>
 		</div>
 	</div>

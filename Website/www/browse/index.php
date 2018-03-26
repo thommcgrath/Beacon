@@ -1,6 +1,7 @@
 <?php
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
 BeaconTemplate::SetTitle('Browse Documents');
+BeaconTemplate::AddStylesheet('/assets/css/generator.css');
 
 $search_keys = array(
 	'public' => true
@@ -40,33 +41,61 @@ if (array_key_exists('sort', $_GET)) {
 if (array_key_exists('offset', $_GET)) {
 	$offset = intval($_GET['offset']);
 }
+if (array_key_exists('console_safe', $_GET)) {
+	$search_keys['console_safe'] = boolval($_GET['console_safe']);
+}
 
 $start_time = microtime(true);
 $document_count = BeaconDocumentMetadata::Search($search_keys, $sort_order, $limit, $offset, true);
 $documents = BeaconDocumentMetadata::Search($search_keys, $sort_order, $limit, $offset, false);
 $end_time = microtime(true);
-echo '<!-- Query took ' . number_format($end_time - $start_time, 4) . ' seconds -->';
 
 ?><h1>Browse Documents</h1>
-<form action="" method="get">
-	<p>
-		<input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::TheIsland; ?>" id="map_checkbox_island"<?php if (($selected_maps & BeaconMaps::TheIsland) == BeaconMaps::TheIsland) { echo ' checked'; } ?>> <label for="map_checkbox_island">The Island</label><br>
-		<input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::ScorchedEarth; ?>" id="map_checkbox_scorched"<?php if (($selected_maps & BeaconMaps::ScorchedEarth) == BeaconMaps::ScorchedEarth) { echo ' checked'; } ?>> <label for="map_checkbox_scorched">Scorched Earth</label><br>
-		<input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Aberration; ?>" id="map_checkbox_aberration"<?php if (($selected_maps & BeaconMaps::Aberration) == BeaconMaps::Aberration) { echo ' checked'; } ?>> <label for="map_checkbox_aberration">Aberration</label><br>
-		<input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::TheCenter; ?>" id="map_checkbox_center"<?php if (($selected_maps & BeaconMaps::TheCenter) == BeaconMaps::TheCenter) { echo ' checked'; } ?>> <label for="map_checkbox_center">The Center</label><br>
-		<input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Ragnarok; ?>" id="map_checkbox_ragnarok"<?php if (($selected_maps & BeaconMaps::Ragnarok) == BeaconMaps::Ragnarok) { echo ' checked'; } ?>> <label for="map_checkbox_ragnarok">Ragnarok</label><br>
-		<hr>
-		<input type="radio" name="maps_operator" value="any" id="map_operator_radio_any"<?php if ($map_operator === 'any') { echo ' checked'; } ?>> <label for="map_operator_radio_any"> Any Selected Map</label><br>
-		<input type="radio" name="maps_operator" value="all" id="map_operator_radio_all"<?php if ($map_operator === 'all') { echo ' checked'; } ?>> <label for="map_operator_radio_all"> All Selected Maps</label>
-	</p>
-	<p>
-		<label for="sort_menu">Sort By</label> <select name="sort" id="sort_menu">
-			<option value="most_downloaded"<?php if ($sort_order === 'download_count DESC') { echo ' selected'; } ?>>Most Downloaded</option>
-			<option value="recently_updated"<?php if ($sort_order === 'last_update DESC') { echo ' selected'; } ?>>Recently Updated</option>
-		</select>
-	</p>
-	<p><input type="submit" value="Search"></p>
-</form>
+<div id="search_form">
+	<form action="" method="get">
+		<table id="options_table">
+			<tr>
+				<td class="label">Maps</td>
+				<td>
+					<div class="option_group">
+						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::TheIsland; ?>" id="map_checkbox_island"<?php if (($selected_maps & BeaconMaps::TheIsland) == BeaconMaps::TheIsland) { echo ' checked'; } ?>><span></span>The Island</label></div>
+						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::ScorchedEarth; ?>" id="map_checkbox_scorched"<?php if (($selected_maps & BeaconMaps::ScorchedEarth) == BeaconMaps::ScorchedEarth) { echo ' checked'; } ?>><span></span>Scorched Earth</label></div>
+						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Aberration; ?>" id="map_checkbox_aberration"<?php if (($selected_maps & BeaconMaps::Aberration) == BeaconMaps::Aberration) { echo ' checked'; } ?>><span></span>Aberration</label></div>
+						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::TheCenter; ?>" id="map_checkbox_center"<?php if (($selected_maps & BeaconMaps::TheCenter) == BeaconMaps::TheCenter) { echo ' checked'; } ?>><span></span>The Center</label></div>
+						<div><label class="checkbox"><input type="checkbox" name="maps[]" value="<?php echo BeaconMaps::Ragnarok; ?>" id="map_checkbox_ragnarok"<?php if (($selected_maps & BeaconMaps::Ragnarok) == BeaconMaps::Ragnarok) { echo ' checked'; } ?>><span></span>Ragnarok</label></div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">Require</td>
+				<td>
+					<div class="option_group">
+						<div><label class="radio"><input type="radio" name="maps_operator" value="any" id="map_operator_radio_any"<?php if ($map_operator === 'any') { echo ' checked'; } ?>><span></span>Any Selected Map</label></div>
+						<div><label class="radio"><input type="radio" name="maps_operator" value="all" id="map_operator_radio_all"<?php if ($map_operator === 'all') { echo ' checked'; } ?>><span></span>All Selected Maps</label></div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td class="label">Compatibility</td>
+				<td>
+					<label class="checkbox"><input type="checkbox" name="console_safe" value="true" id="console_checkbox"<?php if (isset($search_keys['console_safe']) && boolval($search_keys['console_safe'])) { echo ' checked'; } ?>><span></span>Show only console-compatible documents</label>
+				</td>
+			</tr>
+			<tr>
+				<td class="label"><label for="sort_menu">Sort By</label></td>
+				<td>
+					<div class="select"><span></span>
+						<select name="sort" id="sort_menu">
+							<option value="most_downloaded"<?php if ($sort_order === 'download_count DESC') { echo ' selected'; } ?>>Most Downloaded</option>
+							<option value="recently_updated"<?php if ($sort_order === 'last_update DESC') { echo ' selected'; } ?>>Recently Updated</option>
+						</select>
+					</div>
+				</td>
+			</tr>
+		</table>
+		<p class="text-center"><input type="submit" value="Search"></p>
+	</form>
+</div>
 <?php
 
 if ($document_count == 0) {
