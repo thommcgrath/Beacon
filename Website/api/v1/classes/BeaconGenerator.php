@@ -37,6 +37,8 @@ class BeaconGenerator {
 				$definition->SetMultiplierMin($json['Multiplier_Min']);
 				$definition->SetMultiplierMax($json['Multiplier_Max']);
 				$definition->SetAvailability($json['Availability']);
+			} else {
+				$definition = $definition[0];
 			}
 			if ($definition->AvailableTo($this->map_mask) == false) {
 				continue;

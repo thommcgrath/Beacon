@@ -276,7 +276,8 @@ class BeaconObject implements JsonSerializable {
 			$arr[] = array(
 				'object_id' => $results->Field('object_id'),
 				'group' => $results->Field('from_table'),
-				'label' => $results->Field('label')
+				'label' => $results->Field('label'),
+				'tag' => $results->Field('tag')
 			);
 			$results->MoveNext();
 		}

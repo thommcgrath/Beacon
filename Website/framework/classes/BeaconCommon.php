@@ -53,7 +53,7 @@ abstract class BeaconCommon {
 			return true;
 		}
 		
-		if (preg_match('/^([0-9A-F]{8})-?([0-9A-F]{4})-?(4[0-9A-F]{3})-?([89AB][0-9A-F]{3})-?([0-9A-F]{12})$/i', $cleaned, $matches) === 1) {
+		if (preg_match('/^([0-9A-F]{8})-?([0-9A-F]{4})-?([0-9A-F]{4})-?([0-9A-F]{4})-?([0-9A-F]{12})$/i', $cleaned, $matches) === 1) {
 			$input = strtolower($matches[1] . '-' . $matches[2] . '-' . $matches[3] . '-' . $matches[4] . '-' . $matches[5]);
 			return true;
 		} else {

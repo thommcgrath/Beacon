@@ -1,5 +1,5 @@
 <?php
-
+	
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
 
 $since = null;
@@ -11,7 +11,7 @@ $min_version = array_key_exists('version', $_GET) ? intval($_GET['version']) : 0
 
 $database = BeaconCommon::Database();
 
-if ($min_version > 31) {
+if ($min_version > 32) {
 	$beacon_version = 3;
 	$values = array(
 		'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
@@ -50,7 +50,7 @@ if ($min_version > 31) {
 		$values['loot_sources']['removals'][] = $loot_source['object_id'];
 	}
 	
-	$values['engrams'] = array('additions' => array(), 'removals' => array());
+	$values['engrams'] = array('additions' => array(), 'removed_paths' => array());
 	$engrams = BeaconEngram::GetAll($min_version, $since);
 	foreach ($engrams as $engram) {
 		$values['engrams']['additions'][] = array(
@@ -64,7 +64,7 @@ if ($min_version > 31) {
 	}
 	$deleted_engrams = BeaconEngram::Deletions($min_version, $since);
 	foreach ($deleted_engrams as $engram) {
-		$values['engrams']['removals'][] = $engram['object_id'];
+		$values['engrams']['removed_paths'][] = $engram['tag'];
 	}
 	
 	$values['presets'] = array('additions' => array(), 'removals' => array());
