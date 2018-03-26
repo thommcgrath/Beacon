@@ -221,8 +221,9 @@ CREATE TABLE deletions (
 	object_id UUID NOT NULL PRIMARY KEY,
 	from_table CITEXT NOT NULL,
 	label CITEXT NOT NULL,
-	min_version INTEGER,
-	action_time TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0)
+	min_version INTEGER NOT NULL,
+	action_time TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+	tag TEXT
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE deletions TO thezaz_website;
 -- End Core Object Structure
@@ -250,6 +251,7 @@ CREATE TRIGGER loot_sources_after_delete_trigger AFTER DELETE ON loot_sources FO
 -- End Loot Sources
 
 -- Engrams: Any item that can find its way into a loot source.
+-- Note: uses custom delete trigger to track the path for legacy versions.
 CREATE TABLE engrams (
 	PRIMARY KEY (object_id),
 	FOREIGN KEY (mod_id) REFERENCES mods(mod_id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -260,10 +262,16 @@ CREATE TABLE engrams (
 	CHECK (path LIKE '/%')
 ) INHERITS (objects);
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE engrams TO thezaz_website;
+CREATE OR REPLACE FUNCTION engram_delete_trigger () RETURNS TRIGGER AS $$
+BEGIN
+	EXECUTE 'INSERT INTO deletions (object_id, from_table, label, min_version, tag) VALUES ($1, $2, $3, $4, $5);' USING OLD.object_id, TG_TABLE_NAME, OLD.label, OLD.min_version, OLD.path;
+	RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
 CREATE UNIQUE INDEX engrams_classstring_mod_id_uidx ON engrams(class_string, mod_id);
 CREATE TRIGGER engrams_before_insert_trigger BEFORE INSERT ON engrams FOR EACH ROW EXECUTE PROCEDURE object_insert_trigger();
 CREATE TRIGGER engrams_before_update_trigger BEFORE UPDATE ON engrams FOR EACH ROW EXECUTE PROCEDURE object_update_trigger();
-CREATE TRIGGER engrams_after_delete_trigger AFTER DELETE ON engrams FOR EACH ROW EXECUTE PROCEDURE object_delete_trigger();
+CREATE TRIGGER engrams_after_delete_trigger AFTER DELETE ON engrams FOR EACH ROW EXECUTE PROCEDURE engram_delete_trigger();
 CREATE TRIGGER engrams_compute_class_trigger BEFORE INSERT OR UPDATE ON engrams FOR EACH ROW EXECUTE PROCEDURE compute_class_trigger();
 -- End Engrams
 
