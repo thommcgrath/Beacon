@@ -47,6 +47,7 @@ CREATE TABLE documents (
 	is_public BOOLEAN NOT NULL,
 	map INTEGER NOT NULL,
 	difficulty NUMERIC(8, 4) NOT NULL,
+	console_safe BOOLEAN NOT NULL,
 	last_update TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT clock_timestamp(),
 	revision INTEGER NOT NULL DEFAULT 1,
 	download_count INTEGER NOT NULL DEFAULT 0,
@@ -57,6 +58,8 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON documents TO thezaz_website;
 CREATE OR REPLACE FUNCTION documents_maintenance_function() RETURNS TRIGGER AS $$
 DECLARE
 	p_update_meta BOOLEAN;
+	p_console_safe_known BOOLEAN;
+	p_rec RECORD;
 BEGIN
 	IF TG_OP = 'INSERT' THEN
 		NEW.document_id = (NEW.contents->>'Identifier')::UUID;
@@ -70,7 +73,7 @@ BEGIN
 			NEW.revision = NEW.revision + 1;
 			p_update_meta = TRUE;
 		ELSE
-			IF NEW.title != OLD.title OR NEW.description != OLD.description OR NEW.is_public != OLD.is_public OR NEW.map != OLD.map OR NEW.difficulty != OLD.difficulty THEN
+			IF NEW.title != OLD.title OR NEW.description != OLD.description OR NEW.is_public != OLD.is_public OR NEW.map != OLD.map OR NEW.difficulty != OLD.difficulty OR NEW.console_safe != OLD.console_safe THEN
 				RAISE EXCEPTION 'Do not change meta properties. Change the contents JSON instead.';
 			END IF;
 		END IF;
@@ -81,6 +84,15 @@ BEGIN
 		NEW.is_public = coalesce((NEW.contents->>'Public')::boolean, FALSE);
 		NEW.map = coalesce((NEW.contents->>'Map')::integer, 1);
 		NEW.difficulty = coalesce((NEW.contents->>'DifficultyValue')::numeric, 4.0);
+		NEW.console_safe = TRUE;
+		p_console_safe_known = FALSE;
+		FOR p_rec IN SELECT DISTINCT mods.console_safe FROM (SELECT DISTINCT jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(NEW.contents->'LootSources')->'ItemSets')->'ItemEntries')->'Items')->>'Path' AS path) AS items LEFT JOIN (engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id)) ON (items.path = engrams.path) LOOP
+			NEW.console_safe = NEW.console_safe AND coalesce(p_rec.console_safe, FALSE);
+			p_console_safe_known = TRUE;
+		END LOOP;
+		IF NOT p_console_safe_known THEN
+			NEW.console_safe = FALSE;
+		END IF;
 	END IF;
 	RETURN NEW;
 END;
@@ -97,16 +109,17 @@ CREATE TABLE mods (
 	confirmed BOOLEAN NOT NULL DEFAULT FALSE,
 	confirmation_code UUID NOT NULL DEFAULT gen_random_uuid(),
 	pull_url TEXT,
-	last_pull_hash TEXT
+	last_pull_hash TEXT,
+	console_safe BOOLEAN NOT NULL DEFAULT FALSE
 );
 CREATE UNIQUE INDEX mods_workshop_id_user_id_uidx ON mods(workshop_id, user_id);
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE mods TO thezaz_website;
-INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed) VALUES ('30bbab29-44b2-4f4b-a373-6d4740d9d3b5', -346110, '90217323-e0c4-4b28-ba24-eed4676f2a83', 'Ark Prime', TRUE);
-INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed) VALUES ('55dd6a68-7041-46aa-9405-9adc5ae1825f', -512540, '90217323-e0c4-4b28-ba24-eed4676f2a83', 'Scorched Earth', TRUE);
-INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed) VALUES ('38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8', -708770, '90217323-e0c4-4b28-ba24-eed4676f2a83', 'Aberration', TRUE);
-INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed) VALUES ('4dd9a0a5-add5-439c-9e80-103c6197d620', -473850, '90217323-e0c4-4b28-ba24-eed4676f2a83', 'The Center', TRUE);
-INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed) VALUES ('d23706bb-9875-46f4-b2aa-c137516aa65f', -642250, '90217323-e0c4-4b28-ba24-eed4676f2a83', 'Ragnarok', TRUE);
-INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed) VALUES ('397741a2-b35c-46a0-8cb0-1b61ff7d3d29', 731604991, '90217323-e0c4-4b28-ba24-eed4676f2a83', 'Structures Plus', TRUE);
+INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed, console_safe) VALUES ('30bbab29-44b2-4f4b-a373-6d4740d9d3b5', -346110, '90217323-e0c4-4b28-ba24-eed4676f2a83', 'Ark Prime', TRUE, TRUE);
+INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed, console_safe) VALUES ('55dd6a68-7041-46aa-9405-9adc5ae1825f', -512540, '90217323-e0c4-4b28-ba24-eed4676f2a83', 'Scorched Earth', TRUE, TRUE);
+INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed, console_safe) VALUES ('38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8', -708770, '90217323-e0c4-4b28-ba24-eed4676f2a83', 'Aberration', TRUE, TRUE);
+INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed, console_safe) VALUES ('4dd9a0a5-add5-439c-9e80-103c6197d620', -473850, '90217323-e0c4-4b28-ba24-eed4676f2a83', 'The Center', TRUE, TRUE);
+INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed, console_safe) VALUES ('d23706bb-9875-46f4-b2aa-c137516aa65f', -642250, '90217323-e0c4-4b28-ba24-eed4676f2a83', 'Ragnarok', TRUE, TRUE);
+INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed, console_safe) VALUES ('397741a2-b35c-46a0-8cb0-1b61ff7d3d29', 731604991, '90217323-e0c4-4b28-ba24-eed4676f2a83', 'Structures Plus', TRUE, FALSE);
 CREATE OR REPLACE FUNCTION enforce_mod_owner() RETURNS trigger AS $$
 DECLARE
 	confirmed_count INTEGER := 0;
