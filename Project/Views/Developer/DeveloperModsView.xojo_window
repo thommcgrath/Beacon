@@ -58,7 +58,6 @@ Begin BeaconSubview DeveloperModsView
       Width           =   235
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -100,6 +99,7 @@ Begin BeaconSubview DeveloperModsView
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
       SelectionType   =   1
+      ShowDropIndicator=   False
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
@@ -181,7 +181,6 @@ Begin BeaconSubview DeveloperModsView
       HasBackColor    =   False
       Height          =   419
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   236
       LockBottom      =   True
@@ -207,9 +206,7 @@ End
 		Sub Shown(UserData As Auto = Nil)
 		  #Pragma Unused UserData
 		  
-		  If Self.mReady Then
-		    Self.RefreshMods()
-		  End If
+		  Self.RefreshMods()
 		  
 		  // Purely because the header is drawing in the "clear" state instead of the active state
 		  Xojo.Core.Timer.CallLater(100, AddressOf RefreshHeader)
@@ -286,21 +283,6 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub SetReady()
-		  If Not Self.mReady Then
-		    Self.mReady = True
-		    Self.Footer.Button("AddButton").Enabled = True
-		    Self.RefreshMods()
-		  End If
-		End Sub
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mReady As Boolean
-	#tag EndProperty
-
 
 #tag EndWindowCode
 
@@ -326,10 +308,6 @@ End
 #tag Events Footer
 	#tag Event
 		Sub Action(Button As FooterBarButton)
-		  If Not Self.mReady Then
-		    Return
-		  End If
-		  
 		  Select Case Button.Name
 		  Case "AddButton"
 		    If DeveloperAddModDialog.Present(Self) Then
@@ -360,7 +338,7 @@ End
 	#tag Event
 		Sub Open()
 		  Dim AddButton As New FooterBarButton("AddButton", IconAdd)
-		  AddButton.Enabled = Self.mReady
+		  AddButton.Enabled = True
 		  Me.Append(AddButton)
 		  
 		  Dim SettingsButton As New FooterBarButton("SettingsButton", IconSettings)
