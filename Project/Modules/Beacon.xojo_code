@@ -47,19 +47,25 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function DecodeHex(Source As Text) As Xojo.Core.MemoryBlock
-		  Dim Mem As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source)
-		  Dim Size As UInt64 = Mem.Size\2-1
-		  Static Lookup() As Integer = Array(0,1,2,3,4,5,6,7,8,9,_
-		  0,0,0,0,0,0,0,10,11,12,13,14,15,0,0,0,0,0,0,0,0,0,0,_
-		  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,12,13,14,15)
-		  Dim Bytes() As UInt8
-		  Redim Bytes(Size)
-		  For I As UInt64 = 0 To Size
-		    Dim Index As UInt64 = I + I
-		    Bytes(I) = (Lookup(Mem.UInt8Value(Index) - 48) * 16) + Lookup(Mem.UInt8Value(Index + 1) - 48)
-		  Next
-		  
-		  Return New Xojo.Core.MemoryBlock(Bytes)
+		  #if TargetiOS
+		    Dim Mem As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Source)
+		    Dim Size As UInt64 = Mem.Size\2-1
+		    Static Lookup() As Integer = Array(0,1,2,3,4,5,6,7,8,9,_
+		    0,0,0,0,0,0,0,10,11,12,13,14,15,0,0,0,0,0,0,0,0,0,0,_
+		    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,10,11,12,13,14,15)
+		    Dim Bytes() As UInt8
+		    Redim Bytes(Size)
+		    For I As UInt64 = 0 To Size
+		      Dim Index As UInt64 = I + I
+		      Bytes(I) = (Lookup(Mem.UInt8Value(Index) - 48) * 16) + Lookup(Mem.UInt8Value(Index + 1) - 48)
+		    Next
+		    
+		    Return New Xojo.Core.MemoryBlock(Bytes)
+		  #else
+		    Dim Block As Global.MemoryBlock = REALbasic.DecodeHex(Source)
+		    Dim Temp As New Xojo.Core.MemoryBlock(Block)
+		    Return Temp.Left(Block.Size)
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -102,41 +108,45 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function EncodeBase64(Source As Xojo.Core.MemoryBlock) As Text
-		  Dim Chars As Text = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-		  
-		  Dim Remainder As Integer = (Source.Size Mod 3)
-		  Dim Padding As Integer
-		  If Remainder > 0 Then
-		    Padding = 3 - Remainder
-		    If Padding > 0 Then
-		      Dim Clone As New Xojo.Core.MutableMemoryBlock(Source)
-		      Clone.Append(New Xojo.Core.MemoryBlock(Padding))
-		      Source = New Xojo.Core.MemoryBlock(Clone)
+		  #if TargetiOS
+		    Dim Chars As Text = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+		    
+		    Dim Remainder As Integer = (Source.Size Mod 3)
+		    Dim Padding As Integer
+		    If Remainder > 0 Then
+		      Padding = 3 - Remainder
+		      If Padding > 0 Then
+		        Dim Clone As New Xojo.Core.MutableMemoryBlock(Source)
+		        Clone.Append(New Xojo.Core.MemoryBlock(Padding))
+		        Source = New Xojo.Core.MemoryBlock(Clone)
+		      End If
 		    End If
-		  End If
-		  
-		  Dim Output() As Text
-		  
-		  For I As Integer = 0 To Source.Size - 3 Step 3
-		    Dim N As Integer = Beacon.ShiftLeft(Source.UInt8Value(I), 16) + Beacon.ShiftLeft(Source.UInt8Value(I + 1), 8) + Source.UInt8Value(I + 2)
 		    
-		    Dim Offsets(3) As UInt8
-		    Offsets(0) = Beacon.ShiftRight(N, 18) And 63
-		    Offsets(1) = Beacon.ShiftRight(N, 12) And 63
-		    Offsets(2) = Beacon.ShiftRight(N, 6) And 63
-		    Offsets(3) = N And 63
+		    Dim Output() As Text
 		    
-		    Output.Append(Chars.Mid(Offsets(0), 1))
-		    Output.Append(Chars.Mid(Offsets(1), 1))
-		    Output.Append(Chars.Mid(Offsets(2), 1))
-		    Output.Append(Chars.Mid(Offsets(3), 1))
-		  Next
-		  
-		  For I As Integer = 0 To Padding - 1
-		    Output(UBound(Output) - I) = "="
-		  Next
-		  
-		  Return Text.Join(Output, "")
+		    For I As Integer = 0 To Source.Size - 3 Step 3
+		      Dim N As Integer = Beacon.ShiftLeft(Source.UInt8Value(I), 16) + Beacon.ShiftLeft(Source.UInt8Value(I + 1), 8) + Source.UInt8Value(I + 2)
+		      
+		      Dim Offsets(3) As UInt8
+		      Offsets(0) = Beacon.ShiftRight(N, 18) And 63
+		      Offsets(1) = Beacon.ShiftRight(N, 12) And 63
+		      Offsets(2) = Beacon.ShiftRight(N, 6) And 63
+		      Offsets(3) = N And 63
+		      
+		      Output.Append(Chars.Mid(Offsets(0), 1))
+		      Output.Append(Chars.Mid(Offsets(1), 1))
+		      Output.Append(Chars.Mid(Offsets(2), 1))
+		      Output.Append(Chars.Mid(Offsets(3), 1))
+		    Next
+		    
+		    For I As Integer = 0 To Padding - 1
+		      Output(UBound(Output) - I) = "="
+		    Next
+		    
+		    Return Text.Join(Output, "")
+		  #else
+		    Return EncodeBase64(CType(Source.Data, Global.MemoryBlock).StringValue(0, Source.Size), 0).ToText
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -149,12 +159,16 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function EncodeHex(Block As Xojo.Core.MemoryBlock) As Text
-		  Dim Chars() As Text
-		  For I As Integer = 0 To Block.Size - 1
-		    Dim Value As UInt8 = Block.UInt8Value(I)
-		    Chars.Append(Value.ToHex(2))
-		  Next
-		  Return Text.Join(Chars, "")
+		  #if TargetiOS
+		    Dim Chars() As Text
+		    For I As Integer = 0 To Block.Size - 1
+		      Dim Value As UInt8 = Block.UInt8Value(I)
+		      Chars.Append(Value.ToHex(2))
+		    Next
+		    Return Text.Join(Chars, "")
+		  #else
+		    Return REALbasic.EncodeHex(CType(Block.Data, Global.MemoryBlock).StringValue(0, Block.Size)).ToText
+		  #endif
 		End Function
 	#tag EndMethod
 

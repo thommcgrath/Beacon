@@ -369,7 +369,7 @@ Implements Beacon.DataSource
 		      Dim UseBlueprints As Boolean = (Dict.Value("use_blueprints") = 1)
 		      Dim RequiredItemSets As Integer = Dict.Lookup("required_item_sets", 1)
 		      
-		      Self.SQLExecute("DELETE FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
+		      Self.SQLExecute("DELETE FROM loot_sources WHERE LOWER(class_string) = LOWER(?1) OR sort = ?2;", ClassString, SortValue)
 		      Self.SQLExecute("INSERT INTO loot_sources (class_string, label, kind, engram_mask, multiplier_min, multiplier_max, uicolor, icon, sort, use_blueprints, required_item_sets) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11);", ClassString, Label, Kind, Availability, MultMin, MultMax, UIColor, DecodeHex(IconHex), SortValue, UseBlueprints, RequiredItemSets)
 		    Next
 		    
