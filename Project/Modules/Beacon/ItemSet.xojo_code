@@ -386,7 +386,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function TextValue(Multipliers As Beacon.Range, SumSetWeights As Double, UseBlueprints As Boolean, DifficultyValue As Double) As Text
-		  Dim SetWeight As Double = Self.mSetWeight / SumSetWeights
+		  Dim SetWeight As Integer = Xojo.Math.Round((Self.mSetWeight / SumSetWeights * 1000))
 		  Dim MinItems As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMinNumItems, Self.Count), 0)
 		  Dim MaxItems As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMaxNumItems, Self.Count), 0)
 		  
@@ -395,7 +395,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Values.Append("MinNumItems=" + MinItems.ToText)
 		  Values.Append("MaxNumItems=" + MaxItems.ToText)
 		  Values.Append("NumItemsPower=" + Self.mNumItemsPower.PrettyText)
-		  Values.Append("SetWeight=" + SetWeight.PrettyText)
+		  Values.Append("SetWeight=" + SetWeight.ToText)
 		  Values.Append("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "true", "false"))
 		  Values.Append("ItemEntries=(" + Beacon.SetEntry.Join(Self.mEntries, ",", Multipliers, UseBlueprints, DifficultyValue) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
