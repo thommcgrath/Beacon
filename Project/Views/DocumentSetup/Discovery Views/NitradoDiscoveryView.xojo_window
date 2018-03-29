@@ -43,6 +43,7 @@ Begin DiscoveryView NitradoDiscoveryView
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   1
       Visible         =   True
@@ -130,6 +131,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   1
+         TabStop         =   True
          Top             =   222
          Value           =   0
          Visible         =   True
@@ -301,6 +303,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3
+         TabStop         =   True
          Top             =   206
          Value           =   0
          Visible         =   True
@@ -343,18 +346,21 @@ Begin DiscoveryView NitradoDiscoveryView
       End
    End
    Begin Beacon.OAuth2Client AuthClient
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Beacon.NitradoDeploymentEngine DeployEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Timer LookupStartTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -363,6 +369,7 @@ Begin DiscoveryView NitradoDiscoveryView
       TabPanelIndex   =   0
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0

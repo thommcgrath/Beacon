@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LocalData
-Implements Beacon.DataSource
+Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub BeginTransaction()
 		  Self.mLock.Enter
@@ -26,7 +26,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE official_presets (preset_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (preset_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE local_documents (document_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, saveinfo TEXT NOT NULL, last_used TIMESTAMP);")
+		  Self.SQLExecute("CREATE TABLE documents (hash TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, url TEXT NOT NULL, last_used TIMESTAMP);")
 		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		  
 		  Self.mBase.UserVersion = Self.SchemaVersion
@@ -150,9 +150,21 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ForgetDocument(Document As LocalDocumentRef)
+		Sub Destructor()
+		  NotificationKit.Ignore(Self, "Beacon.Document.TitleChanged")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ForgetDocument(Document As Beacon.DocumentController)
+		  Self.ForgetDocument(Document.URL)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ForgetDocument(Document As Beacon.DocumentURL)
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM local_documents WHERE LOWER(document_id) = LOWER(?1);", Document.DocumentID)
+		  Self.SQLExecute("DELETE FROM documents WHERE LOWER(hash) = LOWER(?1);", Document.Hash)
 		  Self.Commit()
 		End Sub
 	#tag EndMethod
@@ -499,14 +511,19 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LocalDocuments() As LocalDocumentRef()
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT document_id, name, saveinfo FROM local_documents ORDER BY last_used DESC;")
-		  Dim Documents() As LocalDocumentRef
+		Function LocalDocuments() As Beacon.DocumentURL()
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT url FROM documents ORDER BY last_used DESC;")
+		  Dim Documents() As Beacon.DocumentURL
 		  While Not Results.EOF
-		    Dim File As FolderItem = GetTrueFolderItem(DecodeHex(Results.Field("saveinfo").StringValue), FolderItem.PathTypeNative)
-		    If File <> Nil And File.Exists Then
-		      Documents.Append(New LocalDocumentRef(File, Results.Field("document_id").StringValue.ToText, Results.Field("name").StringValue.ToText))
-		    End If
+		    Dim URL As Beacon.DocumentURL
+		    Try
+		      URL = Results.Field("url").StringValue.ToText
+		    Catch Err As RuntimeException
+		      Results.MoveNext
+		      Continue
+		    End Try
+		    
+		    Documents.Append(URL)
 		    Results.MoveNext
 		  Wend
 		  Return Documents
@@ -567,18 +584,16 @@ Implements Beacon.DataSource
 		    Dim PresetsFolder As FolderItem = SupportFolder.Child("Presets")
 		    If PresetsFolder.Exists Then
 		      For I As Integer = PresetsFolder.Count DownTo 1
-		        Dim File As FolderItem = PresetsFolder.Item(I)
+		        Dim File As Beacon.FolderItem = PresetsFolder.Item(I)
 		        If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
 		          File.Delete
 		          Continue
 		        End If
 		        
-		        Dim Stream As TextInputStream = TextInputStream.Open(File)
-		        Dim Content As String = Stream.ReadAll(Encodings.UTF8)
-		        Stream.Close
+		        Dim Content As Text = File.Read(Xojo.Core.TextEncoding.UTF8)
 		        
 		        Try
-		          Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content.ToText)
+		          Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content)
 		          Dim PresetID As Text = Dict.Value("ID")
 		          Dim Label As Text = Dict.Value("Label")
 		          
@@ -629,6 +644,12 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Call Self.Import(TextContent)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
 		End Sub
 	#tag EndMethod
 
@@ -700,10 +721,24 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RememberDocument(Document As LocalDocumentRef)
-		  Dim SaveInfo As String = EncodeHex(Document.File.GetSaveInfo(Nil))
+		Sub RememberDocument(Document As Beacon.DocumentController)
+		  Self.RememberDocument(Document.URL)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RememberDocument(Document As Beacon.DocumentURL)
+		  If Document.Scheme <> Beacon.DocumentURL.TypeLocal Then
+		    Return
+		  End If
+		  
 		  Self.BeginTransaction()
-		  Self.SQLExecute("INSERT OR REPLACE INTO local_documents (document_id, name, saveinfo, last_used) VALUES (?1, ?2, ?3, CURRENT_TIMESTAMP);", Document.DocumentID, Document.Name, SaveInfo)
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT hash FROM documents WHERE LOWER(hash) = LOWER(?1);", Document.Hash)
+		  If Results.RecordCount = 0 Then
+		    Self.SQLExecute("INSERT INTO documents (hash, name, url, last_used) VALUES (LOWER(?1), ?2, ?3, CURRENT_TIMESTAMP);", Document.Hash, Document.Name, Document.URL)
+		  Else
+		    Self.SQLExecute("UPDATE documents SET name = ?2, url = ?3, last_used = CURRENT_TIMESTAMP WHERE LOWER(hash) = LOWER(?1);", Document.Hash, Document.Name, Document.URL)
+		  End If
 		  Self.Commit()
 		End Sub
 	#tag EndMethod

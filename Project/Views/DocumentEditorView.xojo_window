@@ -297,17 +297,11 @@ End
 
 	#tag Event
 		Function ShouldSave() As Boolean
-		  Select Case Self.mRef
-		  Case IsA TemporaryDocumentRef
-		    Return Self.SaveAs()
-		  Case IsA LocalDocumentRef
-		    Dim File As FolderItem = LocalDocumentRef(Self.mRef).File
-		    Dim Writer As New Beacon.JSONWriter(Self.mDocument.Export(App.Identity), File)
-		    Writer.Run
-		    Self.ContentsChanged = False
+		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeTransient Then
+		    Self.mController.Save(App.Identity)
 		  Else
-		    Break
-		  End Select
+		    Self.SaveAs()
+		  End If
 		End Function
 	#tag EndEvent
 
@@ -334,20 +328,20 @@ End
 		    Return
 		  End If
 		  
-		  Dim CurrentMask As UInt64 = Self.mDocument.MapCompatibility
+		  Dim CurrentMask As UInt64 = Self.mController.Document.MapCompatibility
 		  Dim IgnoredSources() As Beacon.LootSource
 		  
 		  For Each Source As Beacon.LootSource In Sources
-		    If Self.mDocument.HasLootSource(Source) Then
-		      Self.mDocument.Remove(Source)
+		    If Self.mController.Document.HasLootSource(Source) Then
+		      Self.mController.Document.Remove(Source)
 		    End If
 		    
-		    If Self.mDocument.SupportsLootSource(Source) Then
-		      Self.mDocument.Add(Source)
+		    If Self.mController.Document.SupportsLootSource(Source) Then
+		      Self.mController.Document.Add(Source)
 		    Else
 		      IgnoredSources.Append(Source)
 		    End If
-		    Self.ContentsChanged = Self.mDocument.Modified
+		    Self.ContentsChanged = Self.mController.Document.Modified
 		  Next
 		  
 		  Self.UpdateSourceList(Sources)
@@ -367,35 +361,31 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Ref As Beacon.DocumentRef, Document As Beacon.Document)
-		  Self.mDocument = Document
-		  Self.mRef = Ref
-		  
-		  Dim Title As String = Document.Title.Trim
-		  If Title <> "" Then
-		    Title = Ref.Name.Trim
-		  End If
-		  
-		  Self.Title = Title
+		Sub Constructor(Controller As Beacon.DocumentController)
+		  Self.mController = Controller
+		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess
+		  AddHandler Controller.WriteError, WeakAddressOf mController_WriteError
+		  Self.Title = Controller.Name
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Document() As Beacon.Document
-		  Return Self.mDocument
+		  Return Self.mController.Document
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function File() As FolderItem
-		  If Self.mRef = Nil Then
-		    Return Nil
-		  End If
-		  
-		  If Self.mRef IsA LocalDocumentRef Then
-		    Return LocalDocumentRef(Self.mRef).File
-		  End If
-		End Function
+	#tag Method, Flags = &h21
+		Private Sub mController_WriteError(Sender As Beacon.DocumentController)
+		  Break
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
+		  Self.ContentsChanged = Sender.Document.Modified
+		  LocalData.SharedInstance.RememberDocument(Sender)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -424,42 +414,33 @@ End
 		  
 		  For I As Integer = Self.List.ListCount - 1 DownTo 0
 		    If Self.List.Selected(I) Then
-		      Self.mDocument.Remove(Beacon.LootSource(Self.List.RowTag(I)))
+		      Self.mController.Document.Remove(Beacon.LootSource(Self.List.RowTag(I)))
 		      Self.List.RemoveRow(I)
 		    End If
 		  Next
 		  
-		  Self.ContentsChanged = Self.mDocument.Modified
+		  Self.ContentsChanged = Self.mController.Document.Modified
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function SaveAs() As Boolean
+		Private Sub SaveAs()
 		  Dim Dialog As New SaveAsDialog
-		  Dialog.SuggestedFileName = Self.mDocument.Title + BeaconFileTypes.BeaconDocument.PrimaryExtension
+		  Dialog.SuggestedFileName = Self.mController.Name + BeaconFileTypes.BeaconDocument.PrimaryExtension
 		  Dialog.Filter = BeaconFileTypes.BeaconDocument
 		  
 		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File = Nil Then
-		    Return False
+		    Return
 		  End If
 		  
-		  Dim Ref As New LocalDocumentRef(File, Self.mDocument)
-		  LocalData.SharedInstance.RememberDocument(Ref)
-		  Self.mRef = Ref
-		  
-		  Dim Writer As New Beacon.JSONWriter(Self.mDocument.Export(App.Identity), File)
-		  Writer.Run
-		  
-		  Self.ContentsChanged = False
-		  
-		  Return True
-		End Function
+		  Self.mController.SaveAs(Beacon.DocumentURL.TypeLocal + "://" + File.NativePath.ToText, App.Identity)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddLootSource()
-		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self.TrueWindow, Self.mDocument)
+		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self.TrueWindow, Self.mController.Document)
 		  If LootSource <> Nil Then
 		    Self.AddLootSource(LootSource)
 		    Self.Focus = Self.List
@@ -470,7 +451,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowDuplicateSelectedLootSource()
 		  If List.SelCount = 1 Then
-		    Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentDuplicate(Self.TrueWindow, Self.mDocument, List.RowTag(List.ListIndex))
+		    Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentDuplicate(Self.TrueWindow, Self.mController.Document, List.RowTag(List.ListIndex))
 		    If LootSource <> Nil Then
 		      Self.AddLootSource(LootSource)
 		      Self.Focus = Self.List
@@ -481,18 +462,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateCaptionButton()
-		  Dim DocTitle As Text = Self.mDocument.Title.Trim
 		  Dim MaxDinoLevel As Integer
-		  If Self.mDocument.DifficultyValue > 0 Then
-		    MaxDinoLevel = Round(Self.mDocument.DifficultyValue * 30)
-		  End If
-		  
-		  If DocTitle = "" Then
-		    DocTitle = Self.mRef.Name
+		  If Self.mController.Document.DifficultyValue > 0 Then
+		    MaxDinoLevel = Round(Self.mController.Document.DifficultyValue * 30)
 		  End If
 		  
 		  Dim MapText As String
-		  Dim Maps() As Beacon.Map = Self.mDocument.Maps
+		  Dim Maps() As Beacon.Map = Self.mController.Document.Maps
 		  If Maps.Ubound = -1 Then
 		    MapText = ""
 		  ElseIf Maps.Ubound = 0 Then
@@ -529,10 +505,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
-		  Dim CurrentMask As UInt64 = Self.mDocument.MapCompatibility
+		  Dim CurrentMask As UInt64 = Self.mController.Document.MapCompatibility
 		  //Editor.MapMask = CurrentMask
 		  
-		  Dim VisibleSources() As Beacon.LootSource = Self.mDocument.LootSources
+		  Dim VisibleSources() As Beacon.LootSource = Self.mController.Document.LootSources
 		  VisibleSources.Sort
 		  
 		  Dim SelectedClasses() As Text
@@ -566,7 +542,7 @@ End
 		  Next
 		  Self.mBlockSelectionChanged = False
 		  
-		  Editor.MapMask = Self.mDocument.MapCompatibility
+		  Editor.MapMask = Self.mController.Document.MapCompatibility
 		  Editor.Sources = Selection
 		  If Selection.Ubound = -1 Then
 		    Panel.Value = 0
@@ -576,17 +552,19 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function URL() As Beacon.DocumentURL
+		  Return Self.mController.URL
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mBlockSelectionChanged As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDocument As Beacon.Document
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mRef As Beacon.DocumentRef
+		Private mController As Beacon.DocumentController
 	#tag EndProperty
 
 
@@ -603,13 +581,13 @@ End
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Define an additional loot source. Hold to quickly add a source from a menu."
 		  
-		  Dim ShareButton As New BeaconToolbarItem("Deploy", IconToolbarExport, Self.mDocument.IsValid)
+		  Dim ShareButton As New BeaconToolbarItem("Deploy", IconToolbarExport, Self.mController.Document.IsValid)
 		  ShareButton.HelpTag = "Deploy this document."
 		  
 		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected loot source."
 		  
-		  Dim RebuildButton As New BeaconToolbarItem("Rebuild", Nil, Self.mDocument.BeaconCount > 0)
+		  Dim RebuildButton As New BeaconToolbarItem("Rebuild", Nil, Self.mController.Document.LootSourceCount > 0)
 		  RebuildButton.HelpTag = "Rebuild all item sets using their presets."
 		  
 		  Me.LeftItems.Append(AddButton)
@@ -639,12 +617,12 @@ End
 		  Case "Duplicate"
 		    Self.ShowDuplicateSelectedLootSource()
 		  Case "Deploy"
-		    DeployDialog.Present(Self, Self.mDocument)
-		    Self.ContentsChanged = Self.ContentsChanged Or Self.mDocument.Modified
+		    DeployDialog.Present(Self, Self.mController.Document)
+		    Self.ContentsChanged = Self.ContentsChanged Or Self.mController.Document.Modified
 		  Case "Rebuild"
-		    Self.mDocument.ReconfigurePresets()
+		    Self.mController.Document.ReconfigurePresets()
 		    Self.UpdateSourceList()
-		    Self.ContentsChanged = Self.ContentsChanged Or Self.mDocument.Modified
+		    Self.ContentsChanged = Self.ContentsChanged Or Self.mController.Document.Modified
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -653,13 +631,13 @@ End
 		  Select Case Item.Name
 		  Case "AddSource"
 		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("")
-		    Dim CurrentMask As UInt64 = Self.mDocument.MapCompatibility
+		    Dim CurrentMask As UInt64 = Self.mController.Document.MapCompatibility
 		    For I As Integer = LootSources.Ubound DownTo 0
-		      If Self.mDocument.HasLootSource(LootSources(I)) Then
+		      If Self.mController.Document.HasLootSource(LootSources(I)) Then
 		        LootSources.Remove(I)
 		        Continue For I
 		      End If
-		      If Not Self.mDocument.SupportsLootSource(LootSources(I)) Then
+		      If Not Self.mController.Document.SupportsLootSource(LootSources(I)) Then
 		        LootSources.Remove(I)
 		      End If
 		    Next
@@ -743,7 +721,7 @@ End
 		      Dim Source As Beacon.LootSource = Me.RowTag(I)
 		      Dicts.Append(Source.Export)
 		      If Source.IsValid Then
-		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue(Self.mDocument.DifficultyValue))
+		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue(Self.mController.Document.DifficultyValue))
 		      End If
 		    End If
 		  Next
@@ -841,12 +819,12 @@ End
 #tag Events Editor
 	#tag Event
 		Sub Updated()
-		  Self.ContentsChanged = Self.mDocument.Modified
+		  Self.ContentsChanged = Self.mController.Document.Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PresentLootSourceEditor(Source As Beacon.LootSource)
-		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self.TrueWindow, Self.mDocument, Source)
+		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self.TrueWindow, Self.mController.Document, Source)
 		  If LootSource <> Nil Then
 		    Self.AddLootSource(LootSource)
 		  End If
@@ -856,9 +834,9 @@ End
 #tag Events Status
 	#tag Event
 		Sub Action()
-		  If DocumentSetupSheet.Present(Self, Self.mDocument) Then
+		  If DocumentSetupSheet.Present(Self, Self.mController.Document) Then
 		    Self.UpdateCaptionButton()
-		    Self.ContentsChanged = Self.mDocument.Modified
+		    Self.ContentsChanged = Self.mController.Document.Modified
 		  End If
 		End Sub
 	#tag EndEvent

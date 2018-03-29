@@ -120,12 +120,19 @@ End
 		  Dim AddedPresets() As Beacon.Preset
 		  
 		  Do
-		    If Obj.FolderItemAvailable And Obj.FolderItem.IsType(BeaconFileTypes.BeaconPreset) Then
-		      Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(Obj.FolderItem)
-		      If Preset <> Nil Then
-		        Beacon.Data.SavePreset(Preset)
-		        AddedPresets.Append(Preset)
-		      End If
+		    If Not Obj.FolderItemAvailable Then
+		      Continue
+		    End If
+		    
+		    Dim File As Beacon.FolderItem = Obj.FolderItem
+		    If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
+		      Continue
+		    End If
+		    
+		    Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
+		    If Preset <> Nil Then
+		      Beacon.Data.SavePreset(Preset)
+		      AddedPresets.Append(Preset)
 		    End If
 		  Loop Until Obj.NextItem = False
 		  

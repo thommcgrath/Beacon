@@ -24,20 +24,14 @@ Inherits Beacon.Thread
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub Constructor(Source As Xojo.Core.Dictionary, Destination As Global.FolderItem)
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
+		Sub Constructor(Source As Xojo.Core.Dictionary, Destination As Beacon.FolderItem)
 		  Super.Constructor
 		  Self.mSource = Source
 		  Self.mDestination = Destination
-		  Self.mLock = New Mutex(EncodeHex(Crypto.MD5(Lowercase(Destination.NativePath))))
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Sub Constructor(Source As Xojo.Core.Dictionary, Destination As Xojo.IO.FolderItem)
-		  Super.Constructor
-		  Self.mSource = Source
-		  Self.mDestination = Destination
+		  #if Not TargetiOS
+		    Self.mLock = New CriticalSection
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -102,67 +96,18 @@ Inherits Beacon.Thread
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Shared Function WriteSynchronous(Source As Xojo.Core.Dictionary, File As Global.FolderItem) As Boolean
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
+		Shared Function WriteSynchronous(Source As Xojo.Core.Dictionary, File As Beacon.FolderItem) As Boolean
 		  // Prepare
 		  Dim Content As Text = Xojo.Data.GenerateJSON(Source)
 		  
 		  // Pretty
 		  Content = JSONPrettyPrint(Content)
 		  
-		  // Temporary
-		  Dim Temp As FolderItem = SpecialFolder.Temporary.Child(Beacon.CreateUUID + ".beacon")
-		  
-		  // Stream
-		  Dim Stream As TextOutputStream = TextOutputStream.Create(Temp)
-		  Stream.Write(Content)
-		  Stream.Close
-		  
-		  // Delete the existing one
-		  If File.Exists Then
-		    File.Delete
-		    Dim Err As Integer = File.LastErrorCode
-		    If Err <> 0 Then
-		      Return False
-		    End If
-		  End If
-		  
-		  // Move the temporary
-		  Temp.MoveFileTo(File)
-		  If Temp.LastErrorCode <> 0 Then
-		    Dim Err As Integer = Temp.LastErrorCode
-		    If Err <> 0 Then
-		      Return False
-		    End If
-		  End If
+		  // Do it
+		  File.Write(Content, Xojo.Core.TextEncoding.UTF8)
 		  
 		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Shared Function WriteSynchronous(Source As Xojo.Core.Dictionary, File As Xojo.IO.FolderItem) As Boolean
-		  // Prepare
-		  Dim Content As Text = Xojo.Data.GenerateJSON(Source)
-		  
-		  // Pretty
-		  Content = JSONPrettyPrint(Content)
-		  
-		  // Temporary
-		  Dim Temp As Xojo.IO.FolderItem = Xojo.IO.SpecialFolder.Temporary.Child(Beacon.CreateUUID + ".beacon")
-		  
-		  // Stream
-		  Dim Stream As Xojo.IO.TextOutputStream = Xojo.IO.TextOutputStream.Create(Temp, Xojo.Core.TextEncoding.UTF8)
-		  Stream.Write(Content)
-		  Stream.Close
-		  
-		  // Delete the existing one
-		  If File.Exists Then
-		    File.Delete
-		  End If
-		  
-		  // Move the temporary
-		  Temp.MoveTo(File)
 		End Function
 	#tag EndMethod
 
@@ -181,12 +126,8 @@ Inherits Beacon.Thread
 		Finished As Boolean
 	#tag EndComputedProperty
 
-	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Private mDestination As Global.FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Private mDestination As Xojo.IO.FolderItem
+	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
+		Private mDestination As Beacon.FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -194,7 +135,7 @@ Inherits Beacon.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Private mLock As Mutex
+		Private mLock As CriticalSection
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

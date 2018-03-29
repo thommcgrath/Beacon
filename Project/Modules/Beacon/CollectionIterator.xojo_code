@@ -1,49 +1,40 @@
 #tag Class
-Protected Class TemporaryDocumentRef
-Implements Beacon.DocumentRef
+Protected Class CollectionIterator
+Implements Xojo.Core.Iterator
 	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Self.mCounter = Self.mCounter + 1
-		  Self.mDocument = New Beacon.Document
-		  Self.mDocument.Title = "Untitled Document " + Self.mCounter.ToText
+		Sub Constructor(Source As Beacon.Collection)
+		  Redim Self.mItems(Source.UBound)
+		  For I As Integer = 0 To Self.mItems.Ubound
+		    Self.mItems(I) = Source(I)
+		  Next
+		  Self.mIndex = -1
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Document As Beacon.Document)
-		  Self.mDocument = Document
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Document() As Beacon.Document
-		  Return Self.mDocument
+		Function MoveNext() As Boolean
+		  // Part of the Xojo.Core.Iterator interface.
+		  
+		  Self.mIndex = Self.mIndex + 1
+		  Return Self.mIndex <= Self.mItems.Ubound
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DocumentID() As Text
-		  // Part of the Beacon.DocumentRef interface.
+		Function Value() As Auto
+		  // Part of the Xojo.Core.Iterator interface.
 		  
-		  Return Self.mDocument.Identifier
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Name() As Text
-		  // Part of the Beacon.DocumentRef interface.
-		  
-		  Return Self.mDocument.Title
+		  Return Self.mItems(Self.mIndex)
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private Shared mCounter As Integer
+		Private mIndex As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDocument As Beacon.Document
+		Private mItems() As Auto
 	#tag EndProperty
 
 
@@ -60,6 +51,11 @@ Implements Beacon.DocumentRef
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="mItems()"
+			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty

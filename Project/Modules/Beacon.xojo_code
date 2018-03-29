@@ -89,36 +89,42 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function DecodeURLComponent(Value As Text) As Text
-		  Dim Chars(), HexChars() As Text
-		  Dim HexMode, UnicodeMode As Boolean
-		  For Each Character As Text In Value.Characters
-		    If HexMode Then
-		      HexChars.Append(Character)
-		      If HexChars.Ubound = 0 And Character = "u" Then
-		        UnicodeMode = True
-		        HexChars.Remove(0)
-		      ElseIf (UnicodeMode = False And HexChars.Ubound = 1) Or (UnicodeMode = True And HexChars.Ubound = 3) Then
-		        Dim Encoded As Text = Text.Join(HexChars, "")
-		        Redim HexChars(-1)
-		        HexMode = False
-		        UnicodeMode = False
+		  #if TargetiOS
+		    Dim Chars(), HexChars() As Text
+		    Dim HexMode, UnicodeMode As Boolean
+		    For Each Character As Text In Value.Characters
+		      If HexMode Then
+		        HexChars.Append(Character)
+		        If HexChars.Ubound = 0 And Character = "u" Then
+		          UnicodeMode = True
+		          HexChars.Remove(0)
+		        ElseIf (UnicodeMode = False And HexChars.Ubound = 1) Or (UnicodeMode = True And HexChars.Ubound = 3) Then
+		          Dim Encoded As Text = Text.Join(HexChars, "")
+		          Redim HexChars(-1)
+		          HexMode = False
+		          UnicodeMode = False
+		          
+		          Chars.Append(Text.FromUnicodeCodepoint(UInt32.FromHex(Encoded)))
+		        End If
 		        
-		        Chars.Append(Text.FromUnicodeCodepoint(UInt32.FromHex(Encoded)))
+		        Continue
 		      End If
 		      
-		      Continue
-		    End If
-		    
-		    If Character = "%" Then
-		      HexMode = True
-		      Continue
-		    ElseIf Character = "+" Then
-		      Character = " "
-		    End If
-		    
-		    Chars.Append(Character)
-		  Next
-		  Return Text.Join(Chars, "")
+		      If Character = "%" Then
+		        HexMode = True
+		        Continue
+		      ElseIf Character = "+" Then
+		        Character = " "
+		      End If
+		      
+		      Chars.Append(Character)
+		    Next
+		    Return Text.Join(Chars, "")
+		  #else
+		    Dim StringValue As String = Value
+		    StringValue = StringValue.ReplaceAll("+", " ")
+		    Return DefineEncoding(DecodeURLComponent(StringValue), Encodings.UTF8).ToText
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -231,16 +237,21 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function EncodeURLComponent(Value As Text) As Text
-		  Dim Encoded() As Text
-		  For Each CodePoint As UInt32 In Value.Codepoints
-		    Select Case CodePoint
-		    Case &h21, &h23, &h24, &h26, &h27, &h28, &h29, &h2A, &h2B, &h2C, &h2F, &h3A, &h3B, &h3D, &h3F, &h40, &h5B, &h5D
-		      Encoded.Append("%" + CodePoint.ToHex(2))
-		    Else
-		      Encoded.Append(Text.FromUnicodeCodepoint(CodePoint))
-		    End Select
-		  Next
-		  Return Text.Join(Encoded, "")
+		  #if TargetiOS
+		    Dim Encoded() As Text
+		    For Each CodePoint As UInt32 In Value.Codepoints
+		      Select Case CodePoint
+		      Case &h21, &h23, &h24, &h26, &h27, &h28, &h29, &h2A, &h2B, &h2C, &h2F, &h3A, &h3B, &h3D, &h3F, &h40, &h5B, &h5D
+		        Encoded.Append("%" + CodePoint.ToHex(2))
+		      Else
+		        Encoded.Append(Text.FromUnicodeCodepoint(CodePoint))
+		      End Select
+		    Next
+		    Return Text.Join(Encoded, "")
+		  #else
+		    Dim StringValue As String = Value
+		    Return EncodeURLComponent(StringValue).ReplaceAll(" ", "%20").ToText
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -256,6 +267,17 @@ Protected Module Beacon
 		  Wend
 		  
 		  Return New Xojo.Core.Point(Left, Top)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasAllKeys(Extends Dict As Xojo.Core.Dictionary, ParamArray Keys() As Auto) As Boolean
+		  For Each Key As Auto In Keys
+		    If Not Dict.HasKey(Key) Then
+		      Return False
+		    End If
+		  Next
+		  Return True
 		End Function
 	#tag EndMethod
 
@@ -279,26 +301,6 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function Hash(Block As Xojo.Core.MemoryBlock) As Text
 		  Return Beacon.EncodeHex(Xojo.Crypto.SHA512(Block))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IndexOfRef(Extends Refs() As Beacon.DocumentRef, Ref As Beacon.DocumentRef) As Integer
-		  For I As Integer = 0 To Refs.Ubound
-		    If Refs(I).DocumentID = Ref.DocumentID Then
-		      Return I
-		    End If
-		  Next
-		  Return -1
-		  End Function
-		  
-		  Function HasAllKeys(Extends Dict As Xojo.Core.Dictionary, ParamArray Keys() As Auto) As Boolean
-		    For Each Key As Auto In Keys
-		      If Not Dict.HasKey(Key) Then
-		        Return False
-		      End If
-		    Next
-		    Return True
 		End Function
 	#tag EndMethod
 
@@ -326,13 +328,6 @@ Protected Module Beacon
 		      Return True
 		    End If
 		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Function IsType(Extends File As FolderItem, Type As FileType) As Boolean
-		  Dim Extension As String = Type.PrimaryExtension
-		  Return Right(File.Name, Len(Extension)) = Extension
 		End Function
 	#tag EndMethod
 

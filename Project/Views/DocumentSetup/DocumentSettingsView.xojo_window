@@ -9,7 +9,7 @@ Begin ContainerControl DocumentSettingsView
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   530
+   Height          =   586
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -29,7 +29,7 @@ Begin ContainerControl DocumentSettingsView
       AutoDeactivate  =   True
       Bold            =   False
       Enabled         =   True
-      Height          =   426
+      Height          =   514
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -44,15 +44,15 @@ Begin ContainerControl DocumentSettingsView
       Scope           =   2
       SmallTabs       =   False
       TabDefinition   =   "General\rDeploy Targets"
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   13.0
       TextUnit        =   0
-      Top             =   52
+      Top             =   20
       Underline       =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   560
       Begin GroupBox MapGroup
@@ -72,13 +72,13 @@ Begin ContainerControl DocumentSettingsView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   90
+         Top             =   146
          Underline       =   False
          Visible         =   True
          Width           =   520
@@ -102,13 +102,13 @@ Begin ContainerControl DocumentSettingsView
             LockTop         =   True
             Scope           =   2
             State           =   0
-            TabIndex        =   0
+            TabIndex        =   5
             TabPanelIndex   =   1
             TabStop         =   True
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   190
+            Top             =   246
             Underline       =   False
             Value           =   False
             Visible         =   True
@@ -134,13 +134,13 @@ Begin ContainerControl DocumentSettingsView
             LockTop         =   True
             Scope           =   2
             State           =   0
-            TabIndex        =   1
+            TabIndex        =   4
             TabPanelIndex   =   1
             TabStop         =   True
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   190
+            Top             =   246
             Underline       =   False
             Value           =   False
             Visible         =   True
@@ -166,13 +166,13 @@ Begin ContainerControl DocumentSettingsView
             LockTop         =   True
             Scope           =   2
             State           =   0
-            TabIndex        =   2
+            TabIndex        =   0
             TabPanelIndex   =   1
             TabStop         =   True
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   126
+            Top             =   182
             Underline       =   False
             Value           =   False
             Visible         =   True
@@ -198,13 +198,13 @@ Begin ContainerControl DocumentSettingsView
             LockTop         =   True
             Scope           =   2
             State           =   0
-            TabIndex        =   3
+            TabIndex        =   1
             TabPanelIndex   =   1
             TabStop         =   True
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   158
+            Top             =   214
             Underline       =   False
             Value           =   False
             Visible         =   True
@@ -230,13 +230,13 @@ Begin ContainerControl DocumentSettingsView
             LockTop         =   True
             Scope           =   2
             State           =   0
-            TabIndex        =   4
+            TabIndex        =   2
             TabPanelIndex   =   1
             TabStop         =   True
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   158
+            Top             =   214
             Underline       =   False
             Value           =   False
             Visible         =   True
@@ -262,13 +262,13 @@ Begin ContainerControl DocumentSettingsView
             LockTop         =   True
             Scope           =   2
             State           =   0
-            TabIndex        =   5
+            TabIndex        =   3
             TabPanelIndex   =   1
             TabStop         =   True
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   158
+            Top             =   214
             Underline       =   False
             Value           =   False
             Visible         =   True
@@ -292,13 +292,13 @@ Begin ContainerControl DocumentSettingsView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   242
+         Top             =   298
          Underline       =   False
          Visible         =   True
          Width           =   520
@@ -322,7 +322,7 @@ Begin ContainerControl DocumentSettingsView
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   0
+            TabIndex        =   7
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Learn More:"
@@ -331,7 +331,7 @@ Begin ContainerControl DocumentSettingsView
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   418
+            Top             =   474
             Transparent     =   True
             Underline       =   False
             Visible         =   True
@@ -357,7 +357,7 @@ Begin ContainerControl DocumentSettingsView
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   1
+            TabIndex        =   8
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "http://ark.gamepedia.com/Difficulty"
@@ -366,7 +366,7 @@ Begin ContainerControl DocumentSettingsView
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   418
+            Top             =   474
             Transparent     =   False
             Underline       =   True
             Visible         =   True
@@ -392,7 +392,7 @@ Begin ContainerControl DocumentSettingsView
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   2
+            TabIndex        =   5
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Max Dino Level:"
@@ -401,7 +401,7 @@ Begin ContainerControl DocumentSettingsView
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   384
+            Top             =   440
             Transparent     =   True
             Underline       =   False
             Visible         =   True
@@ -427,7 +427,7 @@ Begin ContainerControl DocumentSettingsView
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   3
+            TabIndex        =   1
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Difficulty Value:"
@@ -436,99 +436,13 @@ Begin ContainerControl DocumentSettingsView
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   350
+            Top             =   406
             Transparent     =   True
             Underline       =   False
             Visible         =   True
             Width           =   111
          End
          Begin UITweaks.ResizedTextField MaxDinoLevelField
-            AcceptTabs      =   False
-            Alignment       =   0
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   429
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   4
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   384
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   111
-         End
-         Begin UITweaks.ResizedTextField DifficultyValueField
-            AcceptTabs      =   False
-            Alignment       =   0
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   179
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   5
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   350
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   111
-         End
-         Begin UITweaks.ResizedTextField DifficultyOffsetField
             AcceptTabs      =   False
             Alignment       =   0
             AutoDeactivate  =   True
@@ -565,7 +479,93 @@ Begin ContainerControl DocumentSettingsView
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   350
+            Top             =   440
+            Underline       =   False
+            UseFocusRing    =   True
+            Visible         =   True
+            Width           =   111
+         End
+         Begin UITweaks.ResizedTextField DifficultyValueField
+            AcceptTabs      =   False
+            Alignment       =   0
+            AutoDeactivate  =   True
+            AutomaticallyCheckSpelling=   False
+            BackColor       =   &cFFFFFF00
+            Bold            =   False
+            Border          =   True
+            CueText         =   ""
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Format          =   ""
+            Height          =   22
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "DifficultyGroup"
+            Italic          =   False
+            Left            =   179
+            LimitText       =   0
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Mask            =   ""
+            Password        =   False
+            ReadOnly        =   False
+            Scope           =   2
+            TabIndex        =   2
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   ""
+            TextColor       =   &c00000000
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   406
+            Underline       =   False
+            UseFocusRing    =   True
+            Visible         =   True
+            Width           =   111
+         End
+         Begin UITweaks.ResizedTextField DifficultyOffsetField
+            AcceptTabs      =   False
+            Alignment       =   0
+            AutoDeactivate  =   True
+            AutomaticallyCheckSpelling=   False
+            BackColor       =   &cFFFFFF00
+            Bold            =   False
+            Border          =   True
+            CueText         =   ""
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Format          =   ""
+            Height          =   22
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "DifficultyGroup"
+            Italic          =   False
+            Left            =   429
+            LimitText       =   0
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Mask            =   ""
+            Password        =   False
+            ReadOnly        =   False
+            Scope           =   2
+            TabIndex        =   4
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   ""
+            TextColor       =   &c00000000
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   406
             Underline       =   False
             UseFocusRing    =   True
             Visible         =   True
@@ -591,7 +591,7 @@ Begin ContainerControl DocumentSettingsView
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   7
+            TabIndex        =   3
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "Difficulty Offset:"
@@ -600,7 +600,7 @@ Begin ContainerControl DocumentSettingsView
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   350
+            Top             =   406
             Transparent     =   True
             Underline       =   False
             Visible         =   True
@@ -626,7 +626,7 @@ Begin ContainerControl DocumentSettingsView
             Multiline       =   True
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   8
+            TabIndex        =   0
             TabPanelIndex   =   1
             TabStop         =   True
             Text            =   "You only need to enter one of these values, the other two will be calculated automatically. Difficulty Value is the one value that really matters. Difficulty Offset and Max Dino Level are simply assistive values."
@@ -635,7 +635,7 @@ Begin ContainerControl DocumentSettingsView
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   278
+            Top             =   334
             Transparent     =   True
             Underline       =   False
             Visible         =   True
@@ -660,7 +660,7 @@ Begin ContainerControl DocumentSettingsView
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   -1
-         Height          =   336
+         Height          =   424
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -680,13 +680,13 @@ Begin ContainerControl DocumentSettingsView
          ScrollBarVertical=   True
          SelectionType   =   0
          ShowDropIndicator=   False
-         TabIndex        =   0
+         TabIndex        =   4
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   122
+         Top             =   90
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -714,13 +714,13 @@ Begin ContainerControl DocumentSettingsView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   90
+         Top             =   58
          Underline       =   False
          Visible         =   True
          Width           =   150
@@ -745,13 +745,13 @@ Begin ContainerControl DocumentSettingsView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   90
+         Top             =   58
          Underline       =   False
          Visible         =   True
          Width           =   126
@@ -782,7 +782,7 @@ Begin ContainerControl DocumentSettingsView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   90
+         Top             =   58
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -807,52 +807,88 @@ Begin ContainerControl DocumentSettingsView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   4
+         TabIndex        =   2
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   90
+         Top             =   58
          Underline       =   False
          Visible         =   True
          Width           =   80
       End
-   End
-   Begin Label MessageLabel
-      AutoDeactivate  =   True
-      Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Document Settings"
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   560
+      Begin GroupBox TitleGroup
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Title"
+         Enabled         =   True
+         Height          =   76
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   58
+         Underline       =   False
+         Visible         =   True
+         Width           =   520
+         Begin UITweaks.ResizedTextField TitleField
+            AcceptTabs      =   False
+            Alignment       =   0
+            AutoDeactivate  =   True
+            AutomaticallyCheckSpelling=   False
+            BackColor       =   &cFFFFFF00
+            Bold            =   False
+            Border          =   True
+            CueText         =   ""
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Format          =   ""
+            Height          =   22
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "TitleGroup"
+            Italic          =   False
+            Left            =   60
+            LimitText       =   0
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            Mask            =   ""
+            Password        =   False
+            ReadOnly        =   False
+            Scope           =   2
+            TabIndex        =   0
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   ""
+            TextColor       =   &c00000000
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   94
+            Underline       =   False
+            UseFocusRing    =   True
+            Visible         =   True
+            Width           =   480
+         End
+      End
    End
    Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
@@ -874,13 +910,13 @@ Begin ContainerControl DocumentSettingsView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   490
+      Top             =   546
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -905,13 +941,13 @@ Begin ContainerControl DocumentSettingsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   490
+      Top             =   546
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -934,6 +970,28 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Sub CheckEnabled()
+		  Dim Maps() As Beacon.Map = Self.SelectedMaps
+		  If Maps.Ubound = -1 Then
+		    Self.ActionButton.Enabled = False
+		    Return
+		  End If
+		  
+		  Dim Scale As Double = Maps.DifficultyScale
+		  
+		  Dim DifficultyOffset As Double = Val(Self.DifficultyOffsetField.Text)
+		  Dim DifficultyValue As Double = Beacon.DifficultyValue(DifficultyOffset, Scale)
+		  Dim MaxDinoLevel As Integer = DifficultyValue * 30
+		  
+		  Self.DifficultyValueField.Text = DifficultyValue.PrettyText
+		  Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
+		  Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
+		  
+		  Self.ActionButton.Enabled = Self.TitleField.Text.Trim <> ""
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Document() As Beacon.Document
@@ -974,6 +1032,8 @@ End
 		  Self.DifficultyValueField.Text = DifficultyValue.PrettyText
 		  Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
 		  Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
+		  
+		  Self.TitleField.Text = Document.Title
 		  
 		  Self.ProfilesList.DeleteAllRows()
 		  Dim ProfileCount As Integer = Self.mDocument.ServerProfileCount
@@ -1061,7 +1121,7 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = ViewHeight, Type = Double, Dynamic = False, Default = \"530", Scope = Public
+	#tag Constant, Name = ViewHeight, Type = Double, Dynamic = False, Default = \"586", Scope = Public
 	#tag EndConstant
 
 
@@ -1070,23 +1130,7 @@ End
 #tag Events MapCheck
 	#tag Event
 		Sub Action(index as Integer)
-		  Dim Maps() As Beacon.Map = Self.SelectedMaps
-		  If Maps.Ubound = -1 Then
-		    Self.ActionButton.Enabled = False
-		    Return
-		  End If
-		  
-		  Dim Scale As Double = Maps.DifficultyScale
-		  
-		  Dim DifficultyOffset As Double = Val(Self.DifficultyOffsetField.Text)
-		  Dim DifficultyValue As Double = Beacon.DifficultyValue(DifficultyOffset, Scale)
-		  Dim MaxDinoLevel As Integer = DifficultyValue * 30
-		  
-		  Self.DifficultyValueField.Text = DifficultyValue.PrettyText
-		  Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
-		  Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
-		  
-		  Self.ActionButton.Enabled = True
+		  Self.CheckEnabled()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1224,6 +1268,13 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events TitleField
+	#tag Event
+		Sub TextChange()
+		  Self.CheckEnabled()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
@@ -1261,6 +1312,12 @@ End
 		  Next
 		  
 		  Self.mDocument.OAuthData("Nitrado") = Self.NitradoOAuth.AuthData
+		  
+		  Dim Title As Text = Self.TitleField.Text.ToText.Trim
+		  If Title <> "" And Self.mDocument.Title.Compare(Title, Text.CompareCaseSensitive) <> 0 Then
+		    Self.mDocument.Title = Title
+		    NotificationKit.Post("Beacon.Document.TitleChanged", Self.mDocument)
+		  End If
 		  
 		  RaiseEvent ShouldFinish()
 		End Sub

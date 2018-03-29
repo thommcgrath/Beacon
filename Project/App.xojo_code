@@ -132,17 +132,17 @@ Inherits Application
 
 	#tag Event
 		Sub OpenDocument(item As FolderItem)
-		  If Not Item.Exists Then
+		  Dim File As Beacon.FolderItem = Item
+		  
+		  If Not File.Exists Then
 		    Return
 		  End If
 		  
-		  If Item.IsType(BeaconFileTypes.JsonFile) Then
+		  If File.IsType(BeaconFileTypes.JsonFile) Then
 		    Try
-		      Dim Stream As TextInputStream = TextInputStream.Open(Item)
-		      Dim Content As String = Stream.ReadAll(Encodings.UTF8)
-		      Stream.Close
+		      Dim Content As Text = File.Read(Xojo.Core.TextEncoding.UTF8)
 		      
-		      If LocalData.SharedInstance.Import(Content.ToText) Then
+		      If LocalData.SharedInstance.Import(Content) Then
 		        // Imported
 		        For I As Integer = 0 To WindowCount - 1
 		          If Window(I) IsA AboutWindow Then
@@ -173,26 +173,26 @@ Inherits Application
 		    Return
 		  End If
 		  
-		  If Item.IsType(BeaconFileTypes.BeaconPreset) Then
-		    Self.AddToRecentDocuments(Item)
-		    PresetWindow.Present(Item)
+		  If File.IsType(BeaconFileTypes.BeaconPreset) Then
+		    Self.AddToRecentDocuments(File)
+		    PresetWindow.Present(File)
 		    Return
 		  End If
 		  
-		  If Item.IsType(BeaconFileTypes.IniFile) Then
-		    MainWindow.Documents.ImportFile(Item)
+		  If File.IsType(BeaconFileTypes.IniFile) Then
+		    MainWindow.Documents.ImportFile(File)
 		    Return
 		  End If
 		  
-		  If Item.IsType(BeaconFileTypes.BeaconDocument) Then
-		    MainWindow.Documents.OpenFile(Item)
+		  If File.IsType(BeaconFileTypes.BeaconDocument) Then
+		    MainWindow.Documents.OpenFile(File)
 		    Return
 		  End If
 		  
 		  Dim Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = "Unable to open file"
-		  Dialog.Explanation = "Beacon doesn't know what to do with the file " + Item.Name
+		  Dialog.Explanation = "Beacon doesn't know what to do with the file " + File.Name
 		  Call Dialog.ShowModal
 		End Sub
 	#tag EndEvent
@@ -230,7 +230,7 @@ Inherits Application
 			Dim Dialog As New OpenDialog
 			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.JsonFile
 			
-			Dim File As FolderItem = Dialog.ShowModal
+			Dim File As Beacon.FolderItem = Dialog.ShowModal
 			If File <> Nil Then
 			If File.IsType(BeaconFileTypes.BeaconPreset) Then
 			Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)

@@ -1,5 +1,5 @@
 #tag Window
-Begin LibrarySubview LibraryPaneDocuments
+Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -115,13 +115,6 @@ Begin LibrarySubview LibraryPaneDocuments
       Visible         =   True
       Width           =   300
    End
-   Begin Xojo.Net.HTTPSocket Downloader
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-      ValidateCertificates=   False
-   End
    Begin ViewSwitcher Switcher
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -168,24 +161,6 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub AdvanceDownloadQueue()
-		  If Self.mDownloadQueue.Ubound = -1 Or Self.mDownloadQueueRunning Then
-		    Return
-		  End If
-		  
-		  Dim URL As Text = Self.mDownloadQueue(0)
-		  Self.mDownloadQueue.Remove(0)
-		  Self.mDownloadQueueRunning = True
-		  Self.Downloader.ValidateCertificates = True
-		  Self.Downloader.Send("GET", URL)
-		  
-		  Self.mDownloadProgress = New DocumentDownloadWindow
-		  Self.mDownloadProgress.URL = URL
-		  Self.mDownloadProgress.ShowWithin(Self.TrueWindow)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub APICallback_CloudDocumentsList(Success As Boolean, Message As Text, Details As Auto)
 		  #Pragma Unused Message
 		  
@@ -194,12 +169,18 @@ End
 		  End If
 		  
 		  Dim Dicts() As Auto = Details
-		  Dim Documents() As BeaconAPI.Document
+		  For I As Integer = Self.mDocuments.Ubound DownTo 0
+		    If Self.mDocuments(I).Scheme = Beacon.DocumentURL.TypeCloud Then
+		      Self.mDocuments.Remove(I)
+		    End If
+		  Next
 		  For Each Dict As Xojo.Core.Dictionary In Dicts
-		    Documents.Append(New BeaconAPI.Document(Dict))
+		    Dim Document As New BeaconAPI.Document(Dict)
+		    Dim URL As Text = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Mid(Document.ResourceURL.IndexOf("://") + 3)
+		    
+		    Self.mDocuments.Append(URL)
 		  Next
 		  
-		  Self.mCloudDocuments = Documents
 		  If Self.View = Self.ViewCloudDocuments Then
 		    Self.UpdateDocumentsList()
 		  End If
@@ -215,12 +196,16 @@ End
 		  End If
 		  
 		  Dim Dicts() As Auto = Details
-		  Dim Documents() As BeaconAPI.Document
+		  For I As Integer = Self.mDocuments.Ubound DownTo 0
+		    If Self.mDocuments(I).Scheme = Beacon.DocumentURL.TypeCloud Then
+		      Self.mDocuments.Remove(I)
+		    End If
+		  Next
 		  For Each Dict As Xojo.Core.Dictionary In Dicts
-		    Documents.Append(New BeaconAPI.Document(Dict))
+		    Dim Document As New BeaconAPI.Document(Dict)
+		    Self.mDocuments.Append(Document.ResourceURL)
 		  Next
 		  
-		  Self.mCommunityDocuments = Documents
 		  If Self.View = Self.ViewCommunityDocuments Then
 		    Self.UpdateDocumentsList()
 		  End If
@@ -246,68 +231,54 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub CancelImport()
-		  
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mViews = New Xojo.Core.Dictionary
-		  Self.mDocumentURLs = New Xojo.Core.Dictionary
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function DocumentType(Document As Beacon.DocumentRef) As DocumentTypes
-		  If Document IsA LocalDocumentRef Then
-		    Return DocumentTypes.Local
+		Private Sub Controller_Loaded(Sender As Beacon.DocumentController, Document As Beacon.Document)
+		  If Self.mProgress <> Nil Then
+		    Self.mProgress.Close
+		    Self.mProgress = Nil
 		  End If
 		  
-		  If Document IsA BeaconAPI.Document Then
-		    If BeaconAPI.Document(Document).UserID = App.Identity.Identifier Then
-		      Return DocumentTypes.UserCloud
-		    Else
-		      Return DocumentTypes.CommunityCloud
-		    End If
-		  End If
+		  RemoveHandler Sender.Loaded, WeakAddressOf Controller_Loaded
+		  RemoveHandler Sender.LoadError, WeakAddressOf Controller_LoadError
+		  RemoveHandler Sender.LoadProgress, WeakAddressOf Controller_LoadProgress
 		  
-		  If Document IsA TemporaryDocumentRef Then
-		    Return DocumentTypes.Temporary
-		  End If
-		  
-		  Return DocumentTypes.Unknown
-		End Function
+		  Dim View As New DocumentEditorView(Sender)
+		  Self.mViews.Value(Sender.URL.Hash) = View
+		  Self.ShowView(View)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub FinishImport(Document As Beacon.Document)
-		  #if false
-		    If UBound(Sources) = -1 Then
-		      Self.ShowAlert("No loot sources imported.", "The file contained no loot sources.")
-		      Return
-		    End If
-		    
-		    Document.MapCompatibility = Beacon.Maps.GuessMap(Sources)
-		    Document.DifficultyValue = Beacon.DifficultyValue(1.0, Beacon.Maps.ForMask(Document.MapCompatibility).DifficultyScale)
-		    If Not DocumentSetupSheet.Present(Self.TrueWindow, Document, DocumentSetupSheet.Modes.Import) Then
-		      Return
-		    End If
-		    
-		    For Each Source As Beacon.LootSource In Sources
-		      Document.Add(Source)
-		    Next
-		    
-		    Self.mTempDocuments.Append(Self.mImportedRef)
-		    Self.View = Self.ViewRecentDocuments
-		    Self.SelectDocument(Self.mImportedRef)
-		    
-		    Dim View As New DocumentEditorView(Self.mImportedRef, Document)
-		    View.ContentsChanged = True
-		    Self.mViews.Value(Document.Identifier) = View
-		    Self.ShowView(View)
-		  #endif
+		Private Sub Controller_LoadError(Sender As Beacon.DocumentController)
+		  If Sender.URL.Scheme = Beacon.DocumentURL.TypeLocal Then
+		    LocalData.SharedInstance.ForgetDocument(Sender)
+		    Self.UpdateDocumentsList()
+		  End If
+		  
+		  Self.ShowAlert("Unable to load " + Sender.Name, "The document may no longer exist so it has been removed from this list.")
+		  
+		  If Self.mProgress <> Nil Then
+		    Self.mProgress.Close
+		    Self.mProgress = Nil
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Controller_LoadProgress(Sender As Beacon.DocumentController, BytesReceived As Int64, BytesTotal As Int64)
+		  If Self.mProgress = Nil Then
+		    Self.mProgress = New DocumentDownloadWindow
+		    Self.mProgress.URL = Sender.URL
+		    Self.mProgress.ShowWithin(Self.TrueWindow)
+		  End If
+		  
+		  Self.mProgress.Progress = BytesReceived / BytesTotal
 		End Sub
 	#tag EndMethod
 
@@ -318,152 +289,104 @@ End
 		    Return
 		  End If
 		  
-		  Dim Ref As New TemporaryDocumentRef(Document)
-		  Self.mTempDocuments.Append(Ref)
-		  Self.View = Self.ViewRecentDocuments
-		  Self.SelectDocument(Ref)
-		  Self.OpenDocument(Ref)
+		  Self.NewDocument(Document)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NewDocument()
-		  Dim Document As Beacon.Document = DocumentSetupSheet.Present(Self)
+		Sub NewDocument(Document As Beacon.Document = Nil)
 		  If Document = Nil Then
-		    Return
+		    Document = DocumentSetupSheet.Present(Self)
+		    If Document = Nil Then
+		      Return
+		    End If
 		  End If
 		  
-		  Dim Ref As New TemporaryDocumentRef(Document)
-		  Self.mTempDocuments.Append(Ref)
+		  Dim Controller As New Beacon.DocumentController(Document)
+		  Dim URL As Beacon.DocumentURL = Controller.URL
+		  
+		  Self.mDocuments.Append(URL)
 		  Self.View = Self.ViewRecentDocuments
-		  Self.SelectDocument(Ref)
-		  Self.OpenDocument(Ref)
+		  Self.SelectDocument(Controller.URL)
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub OpenDocument(Ref As Beacon.DocumentRef)
-		  If Self.mViews <> Nil And Self.mViews.HasKey(Ref.DocumentID) Then
-		    Dim View As BeaconSubview = Self.mViews.Value(Ref.DocumentID)
-		    Self.ShowView(View)
-		    Return
-		  End If
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
 		  
-		  If Ref IsA LocalDocumentRef Then
-		    Self.OpenLocalDocument(LocalDocumentRef(Ref))
-		    Return
-		  End If
-		  
-		  If Ref IsA BeaconAPI.Document Then
-		    Self.OpenURL(BeaconAPI.Document(Ref).ResourceURL)
-		    Return
-		  End If
-		  
-		  If Ref IsA TemporaryDocumentRef Then
-		    Dim View As New DocumentEditorView(Ref, TemporaryDocumentRef(Ref).Document)
-		    Self.mViews.Value(Ref.DocumentID) = View
-		    Self.ShowView(View)
-		    Return
-		  End If
+		  Select Case Notification.Name
+		  Case "Beacon.Document.TitleChanged"
+		    Dim Document As Beacon.Document = Notification.UserData
+		    Break
+		  End Select
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub OpenFile(File As FolderItem)
-		  // See if the file is already open
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mViews
-		    Dim View As DocumentEditorView = Entry.Value
-		    If View <> Nil And View.File <> Nil And View.File.NativePath = File.NativePath Then
+		  Dim URL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
+		  Self.OpenURL(URL)
+		  LocalData.SharedInstance.RememberDocument(URL)
+		  Self.UpdateLocalDocuments()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenURL(URL As Beacon.DocumentURL)
+		  If Self.mViews.HasKey(URL.Hash) Then
+		    Dim View As DocumentEditorView = Self.mViews.Value(URL.Hash)
+		    If View <> Nil Then
+		      #if DebugBuild
+		        System.DebugLog("Found existing view for " + URL.URL + " (" + URL.Hash + ")")
+		      #endif
 		      Self.ShowView(View)
 		      Return
 		    End If
-		  Next
-		  
-		  // Nope, load it
-		  Dim Document As Beacon.Document = Beacon.Document.Read(File, App.Identity)
-		  If Document = Nil Then
-		    Return
 		  End If
 		  
-		  Dim Ref As New LocalDocumentRef(File, Document.Identifier, Document.Title)
-		  LocalData.SharedInstance.RememberDocument(Ref)
-		  Self.UpdateLocalDocuments()
+		  #if DebugBuild
+		    System.DebugLog("Opening new view for " + URL.URL + " (" + URL.Hash + ")")
+		  #endif
 		  
-		  Dim View As New DocumentEditorView(Ref, Document)
-		  Self.mViews.Value(Document.Identifier) = View
-		  Self.ShowView(View)
+		  Dim Controller As New Beacon.DocumentController(URL)
+		  AddHandler Controller.Loaded, WeakAddressOf Controller_Loaded
+		  AddHandler Controller.LoadError, WeakAddressOf Controller_LoadError
+		  AddHandler Controller.LoadProgress, WeakAddressOf Controller_LoadProgress
+		  Controller.Load(App.Identity)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub OpenLocalDocument(Ref As LocalDocumentRef)
-		  Dim Document As Beacon.Document = Beacon.Document.Read(Ref.File, App.Identity)
-		  If Document = Nil Then
-		    Return
-		  End If
-		  
-		  LocalData.SharedInstance.RememberDocument(Ref)
-		  Self.UpdateLocalDocuments()
-		  
-		  Dim View As New DocumentEditorView(Ref, Document)
-		  Self.mViews.Value(Ref.DocumentID) = View
-		  Self.ShowView(View)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub OpenURL(URL As Text)
-		  // First determine if this url is already loaded
-		  If Self.mDocumentURLs <> Nil And Self.mDocumentURLs.HasKey(URL) Then
-		    Dim DocumentID As Text = Self.mDocumentURLs.Value(URL)
-		    If Self.mViews <> Nil And Self.mViews.HasKey(DocumentID) Then
-		      Self.ShowView(Self.mViews.Value(DocumentID))
-		      Return
-		    Else
-		      Self.mDocumentURLs.Remove(URL)
-		    End If
-		  End If
-		  
-		  // Nope, let's download it
-		  If Self.mDownloadQueue.IndexOf(URL) = -1 Then
-		    Self.mDownloadQueue.Append(URL)
-		    If Self.mDownloadQueue.Ubound = 0 Then
-		      Self.AdvanceDownloadQueue()
-		    End If
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SelectDocument(Document As Beacon.DocumentRef)
+		Private Sub SelectDocument(Document As Beacon.DocumentURL)
 		  For I As Integer = Self.List.ListCount - 1 DownTo 0
-		    Self.List.Selected(I) = Beacon.DocumentRef(Self.List.RowTag(I)).DocumentID = Document.DocumentID
+		    Self.List.Selected(I) = Beacon.DocumentURL(Self.List.RowTag(I)) = Document
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SelectedDocuments() As Beacon.DocumentRef()
-		  Dim Refs() As Beacon.DocumentRef
+		Function SelectedDocuments() As Beacon.DocumentURL()
+		  Dim Documents() As Beacon.DocumentURL
 		  For I As Integer = 0 To Self.List.ListCount - 1
 		    If Self.List.Selected(I) Then
-		      Refs.Append(Self.List.RowTag(I))
+		      Documents.Append(Self.List.RowTag(I))
 		    End If
 		  Next
-		  Return Refs
+		  Return Documents
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SelectedDocuments(Assigns Refs() As Beacon.DocumentRef)
+		Sub SelectedDocuments(Assigns Documents() As Beacon.DocumentURL)
 		  Dim Selected() As Text
-		  For Each Ref As Beacon.DocumentRef In Refs
-		    Selected.Append(Ref.DocumentID)
+		  For Each URL As Beacon.DocumentURL In Documents
+		    Selected.Append(URL)
 		  Next
 		  
 		  For I As Integer = 0 To Self.List.ListCount - 1
-		    Dim Ref As Beacon.DocumentRef = Self.List.RowTag(I)
-		    Self.List.Selected(I) = Selected.IndexOf(Ref.DocumentID) > -1
+		    Dim URL As Text = Beacon.DocumentURL(Self.List.RowTag(I))
+		    Self.List.Selected(I) = Selected.IndexOf(URL) > -1
 		  Next
 		End Sub
 	#tag EndMethod
@@ -500,60 +423,55 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateDocumentsList()
 		  Dim View As Integer = Self.Switcher.Value
-		  Dim Documents() As Beacon.DocumentRef
-		  Select Case View
-		  Case Self.ViewRecentDocuments
-		    For I As Integer = 0 To Self.mRecentDocuments.Ubound
-		      Documents.Append(Self.mRecentDocuments(I))
-		    Next
-		    For I As Integer = 0 To Self.mTempDocuments.Ubound
-		      Documents.Append(Self.mTempDocuments(I))
-		    Next
-		  Case Self.ViewCloudDocuments
-		    Documents = Self.mCloudDocuments
-		  Case Self.ViewCommunityDocuments
-		    Documents = Self.mCommunityDocuments
-		  Else
-		    Return
-		  End Select
+		  Dim Documents() As Beacon.DocumentURL
+		  For Each Document As Beacon.DocumentURL In Self.mDocuments
+		    If (View = Self.ViewRecentDocuments And (Document.Scheme = Beacon.DocumentURL.TypeLocal Or Document.Scheme = Beacon.DocumentURL.TypeTransient)) Or (View = Self.ViewCloudDocuments And Document.Scheme = Beacon.DocumentURL.TypeCloud) Or (View = Self.ViewCommunityDocuments And Document.Scheme = Beacon.DocumentURL.TypeWeb) Then
+		      Documents.Append(Document)
+		    End If
+		  Next
 		  
 		  Dim RowBound As Integer = Self.List.ListCount - 1
-		  Dim SelectedIDs() As Text
+		  Dim SelectedURLs() As Text
 		  For I As Integer = 0 To RowBound
 		    If Self.List.Selected(I) Then
-		      Dim Ref As Beacon.DocumentRef = Self.List.RowTag(I)
-		      SelectedIDs.Append(Ref.DocumentID)
+		      Dim URL As Beacon.DocumentURL = Self.List.RowTag(I)
+		      SelectedURLs.Append(URL)
 		    End If
 		  Next
 		  
 		  Self.List.RowCount = Documents.Ubound + 1
 		  
 		  For I As Integer = 0 To Documents.Ubound
-		    Dim Ref As Beacon.DocumentRef = Documents(I)
-		    Self.List.Cell(I, 0) = Ref.Name
-		    Self.List.RowTag(I) = Ref
-		    Self.List.Selected(I) = SelectedIDs.IndexOf(Ref.DocumentID) > -1
+		    Dim URL As Beacon.DocumentURL = Documents(I)
+		    Self.List.Cell(I, 0) = URL.Name
+		    Self.List.RowTag(I) = URL
+		    Self.List.Selected(I) = SelectedURLs.IndexOf(URL) > -1
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateLocalDocuments()
-		  Dim Documents() As LocalDocumentRef = LocalData.SharedInstance.LocalDocuments
+		  Dim Documents() As Beacon.DocumentURL = LocalData.SharedInstance.LocalDocuments
 		  If Documents.Ubound = -1 Then
 		    Dim Files() As FolderItem = App.RecentDocuments
 		    For Each File As FolderItem In Files
 		      If File <> Nil And File.Exists Then
-		        Dim Ref As LocalDocumentRef = LocalDocumentRef.Import(File)
-		        If Ref <> Nil Then
-		          LocalData.SharedInstance.RememberDocument(Ref)
-		        End If
+		        Dim URL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
+		        LocalData.SharedInstance.RememberDocument(URL)
+		        Documents.Append(URL)
 		      End If
 		    Next
-		    Documents = LocalData.SharedInstance.LocalDocuments
 		  End If
 		  
-		  Self.mRecentDocuments = Documents
+		  For I As Integer = Self.mDocuments.Ubound DownTo 0
+		    If Self.mDocuments(I).Scheme = Beacon.DocumentURL.TypeLocal Then
+		      Self.mDocuments.Remove(I)
+		    End If
+		  Next
+		  For I As Integer = 0 To Documents.Ubound
+		    Self.mDocuments.Append(Documents(I))
+		  Next
 		  
 		  If Self.View = Self.ViewRecentDocuments Then
 		    Self.UpdateDocumentsList()
@@ -568,43 +486,11 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mCloudDocuments() As Beacon.DocumentRef
+		Private mDocuments() As Beacon.DocumentURL
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCommunityDocuments() As Beacon.DocumentRef
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDocumentURLs As Xojo.Core.Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDownloadProgress As DocumentDownloadWindow
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDownloadQueue() As Text
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDownloadQueueRunning As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mImportedRef As TemporaryDocumentRef
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mImportProgress As ImporterWindow
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mRecentDocuments() As Beacon.DocumentRef
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTempDocuments() As TemporaryDocumentRef
+		Private mProgress As DocumentDownloadWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -647,15 +533,6 @@ End
 	#tag EndConstant
 
 
-	#tag Enum, Name = DocumentTypes, Type = Integer, Flags = &h21
-		Unknown
-		  Temporary
-		  Local
-		  UserCloud
-		CommunityCloud
-	#tag EndEnum
-
-
 #tag EndWindowCode
 
 #tag Events List
@@ -666,8 +543,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Ref As Beacon.DocumentRef = Self.List.RowTag(I)
-		    Self.OpenDocument(Ref)
+		    Self.OpenURL(Beacon.DocumentURL(Self.List.RowTag(I)))
 		  Next
 		End Sub
 	#tag EndEvent
@@ -675,19 +551,10 @@ End
 		Function CompareRows(row1 as Integer, row2 as Integer, column as Integer, ByRef result as Integer) As Boolean
 		  Select Case Column
 		  Case 0
-		    Dim Row1Ref As Beacon.DocumentRef = Me.RowTag(Row1)
-		    Dim Row2Ref As Beacon.DocumentRef = Me.RowTag(Row2)
+		    Dim Row1URL As Beacon.DocumentURL = Me.RowTag(Row1)
+		    Dim Row2URL As Beacon.DocumentURL = Me.RowTag(Row2)
 		    
-		    Dim Row1Value As Integer = CType(Self.DocumentType(Row1Ref), Integer)
-		    Dim Row2Value As Integer = CType(Self.DocumentType(Row2Ref), Integer)
-		    
-		    If Row1Value > Row2Value Then
-		      Result = 1
-		    ElseIf Row1Value < Row2Value Then
-		      Result = -1
-		    Else
-		      Result = Row1Ref.Name.Compare(Row2Ref.Name)
-		    End If
+		    Result = Row1URL.Name.Compare(Row2URL.Name)
 		    
 		    Return True
 		  End Select
@@ -704,13 +571,10 @@ End
 		      Continue For I
 		    End If
 		    
-		    Dim Ref As Beacon.DocumentRef = Me.RowTag(I)
-		    Dim Type As DocumentTypes = Self.DocumentType(Ref)
-		    
-		    Select Case Type
-		    Case DocumentTypes.Unknown, DocumentTypes.CommunityCloud
+		    Dim Controller As New Beacon.DocumentController(Beacon.DocumentURL(Me.RowTag(I)))
+		    If Not Controller.CanWrite Then
 		      Return False
-		    End Select
+		    End If
 		  Next
 		  
 		  Return True
@@ -722,86 +586,88 @@ End
 		  // User cloud can be deleted via api
 		  // Community cloud cannot be deleted
 		  
-		  Dim Documents() As Beacon.DocumentRef
-		  For I As Integer = Me.ListCount - 1 DownTo 0
-		    If Not Me.Selected(I) Then
-		      Continue For I
-		    End If
+		  #if false
+		    Dim Documents() As Beacon.DocumentRef
+		    For I As Integer = Me.ListCount - 1 DownTo 0
+		      If Not Me.Selected(I) Then
+		        Continue For I
+		      End If
+		      
+		      Dim Ref As Beacon.DocumentRef = Me.RowTag(I)
+		      Dim Type As DocumentTypes = Self.DocumentType(Ref)
+		      
+		      Select Case Type
+		      Case DocumentTypes.Local, DocumentTypes.Temporary, DocumentTypes.UserCloud
+		        Documents.Append(Ref)
+		      End Select
+		    Next
 		    
-		    Dim Ref As Beacon.DocumentRef = Me.RowTag(I)
-		    Dim Type As DocumentTypes = Self.DocumentType(Ref)
-		    
-		    Select Case Type
-		    Case DocumentTypes.Local, DocumentTypes.Temporary, DocumentTypes.UserCloud
-		      Documents.Append(Ref)
-		    End Select
-		  Next
-		  
-		  If Warn Then
-		    Dim Message, Explanation As String
-		    If Documents.Ubound = 0 Then
-		      Message = "Are you sure you want to delete the document """ + Documents(0).Name + """?"
-		    Else
-		      Message = "Are you sure you want to delete these " + Str(Documents.Ubound + 1, "-0") + " documents?"
-		    End If
-		    Explanation = "Files will be deleted immediately and cannot be recovered."
-		    
-		    If Not Self.ShowConfirm(Message, Explanation, "Delete", "Cancel") Then
-		      Return
-		    End If
-		  End If
-		  
-		  Dim ViewIndex As Integer = Self.View
-		  Dim RefreshDocumentsList As Boolean
-		  For Each Ref As Beacon.DocumentRef In Documents
-		    Dim DocumentID As Text = Ref.DocumentID
-		    Dim View As DocumentEditorView
-		    If Self.mViews.HasKey(DocumentID) Then
-		      View = Self.mViews.Value(DocumentID)
-		    End If
-		    
-		    If View <> Nil Then
-		      If Not Self.DiscardView(View) Then
-		        Continue
+		    If Warn Then
+		      Dim Message, Explanation As String
+		      If Documents.Ubound = 0 Then
+		        Message = "Are you sure you want to delete the document """ + Documents(0).Name + """?"
+		      Else
+		        Message = "Are you sure you want to delete these " + Str(Documents.Ubound + 1, "-0") + " documents?"
+		      End If
+		      Explanation = "Files will be deleted immediately and cannot be recovered."
+		      
+		      If Not Self.ShowConfirm(Message, Explanation, "Delete", "Cancel") Then
+		        Return
 		      End If
 		    End If
 		    
-		    For I As Integer = Me.ListCount - 1 DownTo 0
-		      If Me.RowTag(I) = Ref Then
-		        Me.RemoveRow(I)
-		        Exit For I
+		    Dim ViewIndex As Integer = Self.View
+		    Dim RefreshDocumentsList As Boolean
+		    For Each Ref As Beacon.DocumentRef In Documents
+		      Dim DocumentID As Text = Ref.DocumentID
+		      Dim View As DocumentEditorView
+		      If Self.mViews.HasKey(DocumentID) Then
+		        View = Self.mViews.Value(DocumentID)
+		      End If
+		      
+		      If View <> Nil Then
+		        If Not Self.DiscardView(View) Then
+		          Continue
+		        End If
+		      End If
+		      
+		      For I As Integer = Me.ListCount - 1 DownTo 0
+		        If Me.RowTag(I) = Ref Then
+		          Me.RemoveRow(I)
+		          Exit For I
+		        End If
+		      Next
+		      
+		      If Ref IsA LocalDocumentRef Then
+		        Dim Idx As Integer = Self.mRecentDocuments.IndexOfRef(Ref)
+		        If Idx > -1 Then
+		          Self.mRecentDocuments.Remove(Idx)
+		          RefreshDocumentsList = RefreshDocumentsList Or ViewIndex = Self.ViewRecentDocuments
+		        End If
+		        LocalDocumentRef(Ref).File.Delete
+		        LocalData.SharedInstance.ForgetDocument(LocalDocumentRef(Ref))
+		      ElseIf Ref IsA BeaconAPI.Document Then
+		        Dim Idx As Integer = Self.mCloudDocuments.IndexOfRef(Ref)
+		        If Idx > -1 Then
+		          Self.mCloudDocuments.Remove(Idx)
+		          RefreshDocumentsList = RefreshDocumentsList Or ViewIndex = Self.ViewCloudDocuments
+		        End If
+		        Dim Request As New BeaconAPI.Request(BeaconAPI.Document(Ref).ResourceURL, "DELETE", AddressOf APICallback_DocumentDelete)
+		        Request.Sign(App.Identity)
+		        Self.APISocket.Start(Request)
+		      ElseIf Ref IsA TemporaryDocumentRef Then
+		        Dim Idx As Integer = Self.mTempDocuments.IndexOfRef(Ref)
+		        If Idx > -1 Then
+		          Self.mTempDocuments.Remove(Idx)
+		          RefreshDocumentsList = RefreshDocumentsList Or ViewIndex = Self.ViewRecentDocuments
+		        End If
 		      End If
 		    Next
 		    
-		    If Ref IsA LocalDocumentRef Then
-		      Dim Idx As Integer = Self.mRecentDocuments.IndexOfRef(Ref)
-		      If Idx > -1 Then
-		        Self.mRecentDocuments.Remove(Idx)
-		        RefreshDocumentsList = RefreshDocumentsList Or ViewIndex = Self.ViewRecentDocuments
-		      End If
-		      LocalDocumentRef(Ref).File.Delete
-		      LocalData.SharedInstance.ForgetDocument(LocalDocumentRef(Ref))
-		    ElseIf Ref IsA BeaconAPI.Document Then
-		      Dim Idx As Integer = Self.mCloudDocuments.IndexOfRef(Ref)
-		      If Idx > -1 Then
-		        Self.mCloudDocuments.Remove(Idx)
-		        RefreshDocumentsList = RefreshDocumentsList Or ViewIndex = Self.ViewCloudDocuments
-		      End If
-		      Dim Request As New BeaconAPI.Request(BeaconAPI.Document(Ref).ResourceURL, "DELETE", AddressOf APICallback_DocumentDelete)
-		      Request.Sign(App.Identity)
-		      Self.APISocket.Start(Request)
-		    ElseIf Ref IsA TemporaryDocumentRef Then
-		      Dim Idx As Integer = Self.mTempDocuments.IndexOfRef(Ref)
-		      If Idx > -1 Then
-		        Self.mTempDocuments.Remove(Idx)
-		        RefreshDocumentsList = RefreshDocumentsList Or ViewIndex = Self.ViewRecentDocuments
-		      End If
+		    If RefreshDocumentsList Then
+		      Self.UpdateDocumentsList()
 		    End If
-		  Next
-		  
-		  If RefreshDocumentsList Then
-		    Self.UpdateDocumentsList()
-		  End If
+		  #endif
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -826,78 +692,6 @@ End
 		  Case "Add"
 		    Self.NewDocument()
 		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Downloader
-	#tag Event
-		Sub Error(err as RuntimeException)
-		  Self.mDownloadQueueRunning = False
-		  Self.AdvanceDownloadQueue()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub HeadersReceived(URL as Text, HTTPStatus as Integer)
-		  
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
-		  #Pragma Unused URL
-		  #Pragma Unused HTTPStatus
-		  
-		  If Self.mDownloadProgress <> Nil Then
-		    Self.mDownloadProgress.Close
-		    Self.mDownloadProgress = Nil
-		  End If
-		  
-		  Self.mDownloadQueueRunning = False
-		  Self.AdvanceDownloadQueue()
-		  
-		  Dim TextValue As Text
-		  Try
-		    TextValue = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
-		  Catch Err As RuntimeException
-		    // Cannot be converted
-		    Self.ShowAlert("Cannot open document", "Sorry, not sure what was downloaded, but it isn't a UTF8 data.")
-		    Return
-		  End Try
-		  
-		  Dim Document As Beacon.Document = Beacon.Document.Read(TextValue, App.Identity)
-		  If Document = Nil Then
-		    // Cannot be parsed correctly
-		    Self.ShowAlert("Cannot open document", "Sorry, not sure what was downloaded, but it isn't a Beacon document.")
-		    Return
-		  End If
-		  
-		  Self.mDocumentURLs.Value(URL) = Document.Identifier
-		  
-		  Dim DocumentRef As Beacon.DocumentRef
-		  For I As Integer = Self.List.ListCount - 1 DownTo 0
-		    Dim Ref As Beacon.DocumentRef = Self.List.RowTag(I)
-		    If Ref.DocumentID = Document.Identifier Then
-		      DocumentRef = Ref
-		      Exit For I
-		    End If
-		  Next
-		  
-		  If DocumentRef = Nil Then
-		    DocumentRef = New TemporaryDocumentRef(Document)
-		    Self.mTempDocuments.Append(TemporaryDocumentRef(DocumentRef))
-		    Self.View = Self.ViewRecentDocuments
-		    Self.SelectDocument(DocumentRef)
-		  End If
-		  
-		  Dim View As New DocumentEditorView(DocumentRef, Document)
-		  Self.mViews.Value(Document.Identifier) = View
-		  Self.ShowView(View)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ReceiveProgress(BytesReceived as Int64, TotalBytes as Int64, NewData as xojo.Core.MemoryBlock)
-		  If Self.mDownloadProgress <> Nil Then
-		    Self.mDownloadProgress.Progress = BytesReceived / TotalBytes
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

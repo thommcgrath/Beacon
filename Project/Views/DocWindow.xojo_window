@@ -284,7 +284,7 @@ End
 		    EditClear.Enable
 		  End Select
 		  
-		  If Self.Doc.BeaconCount > 0 Then
+		  If Self.Doc.LootSourceCount > 0 Then
 		    DocumentRebuildPresets.Enable
 		    FileExport.Enable
 		    If Self.mIsPublished = False Or (Self.mIsPublished = True And Self.mPublishedByUser) Then
@@ -299,10 +299,9 @@ End
 
 	#tag Event
 		Sub Open()
-		  Dim LootSources() As Beacon.LootSource = Self.Doc.LootSources
 		  Self.UpdateSourceList()
 		  
-		  If UBound(LootSources) > -1 Then
+		  If Self.Doc.LootSourceCount > 0 Then
 		    // Check publish status
 		    Dim Request As New BeaconAPI.Request("document.php/" + Self.Doc.Identifier + "?simple", "GET", AddressOf APICallback_DocumentStatus)
 		    Self.Socket.Start(Request)
@@ -791,9 +790,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
-		  Dim VisibleSources() As Beacon.LootSource = Self.Doc.LootSources // Show them all
-		  VisibleSources.Sort
-		  
 		  Dim SelectedClasses() As Text
 		  If SelectedSources <> Nil Then
 		    For Each Source As Beacon.LootSource In SelectedSources
@@ -807,7 +803,7 @@ End
 		    Next
 		  End If
 		  
-		  Dim TargetRowCount As Integer = UBound(VisibleSources) + 1
+		  Dim TargetRowCount As Integer = Self.Doc.LootSourceCount
 		  While BeaconList.ListCount > TargetRowCount
 		    BeaconList.RemoveRow(0)
 		  Wend
@@ -817,16 +813,18 @@ End
 		  
 		  Self.mBlockSelectionChanged = True
 		  Dim Selection() As Beacon.LootSource
-		  For I As Integer = 0 To UBound(VisibleSources)
-		    BeaconList.RowTag(I) = VisibleSources(I)
-		    BeaconList.Cell(I, 0) = "" // Causes a redraw of the cell
-		    BeaconList.Cell(I, 1) = VisibleSources(I).Label
-		    If SelectedClasses.IndexOf(VisibleSources(I).ClassString) > -1 Then
-		      BeaconList.Selected(I) = True
-		      Selection.Append(VisibleSources(I))
+		  Dim RowIndex As Integer
+		  For Each Source As Beacon.LootSource In Self.Doc.LootSources
+		    BeaconList.RowTag(RowIndex) = Source
+		    BeaconList.Cell(RowIndex, 0) = "" // Causes a redraw of the cell
+		    BeaconList.Cell(RowIndex, 1) = Source.Label
+		    If SelectedClasses.IndexOf(Source.ClassString) > -1 Then
+		      BeaconList.Selected(RowIndex) = True
+		      Selection.Append(Source)
 		    Else
-		      BeaconList.Selected(I) = False
+		      BeaconList.Selected(RowIndex) = False
 		    End If
+		    RowIndex = RowIndex + 1
 		  Next
 		  Self.mBlockSelectionChanged = False
 		  

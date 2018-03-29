@@ -9,6 +9,7 @@ Implements Beacon.DocumentItem
 		    End If
 		  Next
 		  Self.mLootSources.Append(LootSource)
+		  Self.mLootSources.Sort()
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
@@ -33,8 +34,8 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BeaconCount() As Integer
-		  Return UBound(Self.mLootSources) + 1
+		Attributes( Deprecated = "Beacon.Document.LootSourceCount" )  Function BeaconCount() As Integer
+		  
 		End Function
 	#tag EndMethod
 
@@ -55,204 +56,20 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Export(Identity As Beacon.Identity) As Xojo.Core.Dictionary
-		  Dim LootSources() As Xojo.Core.Dictionary
-		  For Each LootSource As Beacon.LootSource In Self.mLootSources
-		    Dim Dict As Xojo.Core.Dictionary = LootSource.Export()
-		    If Dict <> Nil Then
-		      LootSources.Append(Dict)
-		    End If
-		  Next
-		  
-		  Dim Document As New Xojo.Core.Dictionary
-		  Document.Value("Version") = Self.DocumentVersion
-		  Document.Value("Identifier") = Self.Identifier
-		  Document.Value("LootSources") = LootSources
-		  Document.Value("Title") = Self.Title
-		  Document.Value("Description") = Self.Description
-		  Document.Value("Public") = Self.IsPublic
-		  
-		  If Self.mMapCompatibility > 0 Then
-		    Document.Value("Map") = Self.mMapCompatibility
-		  End If
-		  
-		  If Self.DifficultyValue > -1 Then
-		    Document.Value("DifficultyValue") = Self.DifficultyValue
-		  End If
-		  
-		  Dim EncryptedData As New Xojo.Core.Dictionary
-		  Dim Profiles() As Xojo.Core.Dictionary
-		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
-		    Profiles.Append(Profile.ToDictionary)
-		  Next
-		  EncryptedData.Value("Servers") = Profiles
-		  If Self.mOAuthDicts <> Nil Then
-		    EncryptedData.Value("OAuth") = Self.mOAuthDicts
-		  End If
-		  
-		  Dim Content As Text = Xojo.Data.GenerateJSON(EncryptedData)
-		  Dim Hash As Text = Beacon.Hash(Content)
-		  If Hash <> Self.mLastSecureHash Then
-		    Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
-		    Dim Key As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(128)
-		    Dim Vector As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)
-		    AES.SetKey(CType(Key.Data, MemoryBlock).StringValue(0, Key.Size))
-		    AES.SetInitialVector(CType(Vector.Data, MemoryBlock).StringValue(0, Vector.Size))
-		    Dim Encrypted As Global.MemoryBlock = AES.EncryptCBC(Content)
-		    
-		    Dim SecureDict As New Xojo.Core.Dictionary
-		    SecureDict.Value("Key") = Beacon.EncodeHex(Identity.Encrypt(Key))
-		    SecureDict.Value("Vector") = Beacon.EncodeHex(Vector)
-		    SecureDict.Value("Content") = Beacon.EncodeHex(Encrypted)
-		    SecureDict.Value("Hash") = Hash
-		    
-		    Self.mLastSecureHash = Hash
-		    Self.mLastSecureDict = SecureDict
-		  End If
-		  Document.Value("Secure") = Beacon.Clone(Self.mLastSecureDict)
-		  
-		  Return Document
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HasLootSource(LootSource As Beacon.LootSource) As Boolean
-		  For I As Integer = 0 To UBound(Self.mLootSources)
-		    If Self.mLootSources(I) = LootSource Then
-		      Return True
-		    End If
-		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Identifier() As Text
+		Function DocumentID() As Text
 		  Return Self.mIdentifier
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsValid() As Boolean
-		  If Self.mMapCompatibility = 0 Then
-		    Return False
-		  End If
-		  If Self.DifficultyValue = -1 Then
-		    Return False
-		  End If
-		  For Each Source As Beacon.LootSource In Self.mLootSources
-		    If Not Self.SupportsLootSource(Source) Then
-		      Return False
-		    End If
-		    If Not Source.IsValid Then
-		      Return False
-		    End If
-		  Next
-		  Return True
+		Attributes( Deprecated = "Beacon.Document.ToDictionary" )  Function Export(Identity As Beacon.Identity) As Xojo.Core.Dictionary
+		  // Legacy alias
+		  Return Self.ToDictionary(Identity)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LootSource(Index As Integer) As Beacon.LootSource
-		  Return Self.mLootSources(Index)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function LootSources() As Beacon.LootSource()
-		  Dim Results() As Beacon.LootSource
-		  For Each LootSource As Beacon.LootSource In Self.mLootSources
-		    Results.Append(LootSource)
-		  Next
-		  Return Results
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Maps() As Beacon.Map()
-		  Dim Possibles() As Beacon.Map = Beacon.Maps.All
-		  Dim Matches() As Beacon.Map
-		  For Each Map As Beacon.Map In Possibles
-		    If Map.Matches(Self.mMapCompatibility) Then
-		      Matches.Append(Map)
-		    End If
-		  Next
-		  Return Matches
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Modified() As Boolean
-		  If Self.mModified Then
-		    Return True
-		  End If
-		  
-		  For Each Source As Beacon.LootSource In Self.mLootSources
-		    If Source.Modified Then
-		      Return True
-		    End If
-		  Next
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Modified(Assigns Value As Boolean)
-		  Self.mModified = Value
-		  
-		  If Not Value Then
-		    For Each Source As Beacon.LootSource In Self.mLootSources
-		      Source.Modified = False
-		    Next
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function OAuthData(Provider As Text) As Xojo.Core.Dictionary
-		  If Self.mOAuthDicts <> Nil And Self.mOAuthDicts.HasKey(Provider) Then
-		    Return Beacon.Clone(Self.mOAuthDicts.Value(Provider))
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub OAuthData(Provider As Text, Assigns Dict As Xojo.Core.Dictionary)
-		  If Self.mOAuthDicts = Nil Then
-		    Self.mOAuthDicts = New Xojo.Core.Dictionary
-		  End If
-		  If Dict = Nil Then
-		    If Self.mOAuthDicts.HasKey(Provider) Then
-		      Self.mOAuthDicts.Remove(Provider)
-		      Self.mModified = True
-		    End If
-		  Else
-		    Self.mOAuthDicts.Value(Provider) = Beacon.Clone(Dict)
-		    Self.mModified = True
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As Beacon.Document) As Integer
-		  If Other = Nil Then
-		    Return 1
-		  End If
-		  
-		  Return Self.mIdentifier.Compare(Other.mIdentifier)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Shared Function Read(File As Global.FolderItem, Identity As Beacon.Identity) As Beacon.Document
-		  Dim Stream As TextInputStream = TextInputStream.Open(File)
-		  Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
-		  Stream.Close
-		  
-		  Return Beacon.Document.Read(Contents.ToText, Identity)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function Read(Contents As Text, Identity As Beacon.Identity) As Beacon.Document
+		Shared Function FromText(Contents As Text, Identity As Beacon.Identity) As Beacon.Document
 		  Dim Parsed As Auto
 		  Try
 		    Parsed = Xojo.Data.ParseJSON(Contents)
@@ -399,15 +216,143 @@ Implements Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Shared Function Read(File As Xojo.IO.FolderItem, Identity As Beacon.Identity) As Beacon.Document
-		  Dim Stream As Xojo.IO.BinaryStream = Xojo.IO.BinaryStream.Open(File, Xojo.IO.BinaryStream.LockModes.Read)
-		  Dim Data As Xojo.Core.MemoryBlock = Stream.Read(Stream.Length)
-		  Stream.Close
+	#tag Method, Flags = &h0
+		Function HasLootSource(LootSource As Beacon.LootSource) As Boolean
+		  For I As Integer = 0 To UBound(Self.mLootSources)
+		    If Self.mLootSources(I) = LootSource Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "Beacon.Document.DocumentID" )  Function Identifier() As Text
+		  // Legacy alias
+		  Return Self.mIdentifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsValid() As Boolean
+		  If Self.mMapCompatibility = 0 Then
+		    Return False
+		  End If
+		  If Self.DifficultyValue = -1 Then
+		    Return False
+		  End If
+		  For Each Source As Beacon.LootSource In Self.mLootSources
+		    If Not Self.SupportsLootSource(Source) Then
+		      Return False
+		    End If
+		    If Not Source.IsValid Then
+		      Return False
+		    End If
+		  Next
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LootSource(Index As Integer) As Beacon.LootSource
+		  Return Self.mLootSources(Index)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LootSourceCount() As UInteger
+		  Return Self.mLootSources.Ubound + 1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LootSources() As Beacon.LootSourceCollection
+		  Dim Results As New Beacon.LootSourceCollection
+		  For Each LootSource As Beacon.LootSource In Self.mLootSources
+		    Results.Append(LootSource)
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Maps() As Beacon.Map()
+		  Dim Possibles() As Beacon.Map = Beacon.Maps.All
+		  Dim Matches() As Beacon.Map
+		  For Each Map As Beacon.Map In Possibles
+		    If Map.Matches(Self.mMapCompatibility) Then
+		      Matches.Append(Map)
+		    End If
+		  Next
+		  Return Matches
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Modified() As Boolean
+		  If Self.mModified Then
+		    Return True
+		  End If
 		  
-		  Dim Contents As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Data)
+		  For Each Source As Beacon.LootSource In Self.mLootSources
+		    If Source.Modified Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Modified(Assigns Value As Boolean)
+		  Self.mModified = Value
 		  
-		  Return Beacon.Document.Read(Contents, Identity)
+		  If Not Value Then
+		    For Each Source As Beacon.LootSource In Self.mLootSources
+		      Source.Modified = False
+		    Next
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function OAuthData(Provider As Text) As Xojo.Core.Dictionary
+		  If Self.mOAuthDicts <> Nil And Self.mOAuthDicts.HasKey(Provider) Then
+		    Return Beacon.Clone(Self.mOAuthDicts.Value(Provider))
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OAuthData(Provider As Text, Assigns Dict As Xojo.Core.Dictionary)
+		  If Self.mOAuthDicts = Nil Then
+		    Self.mOAuthDicts = New Xojo.Core.Dictionary
+		  End If
+		  If Dict = Nil Then
+		    If Self.mOAuthDicts.HasKey(Provider) Then
+		      Self.mOAuthDicts.Remove(Provider)
+		      Self.mModified = True
+		    End If
+		  Else
+		    Self.mOAuthDicts.Value(Provider) = Beacon.Clone(Dict)
+		    Self.mModified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.Document) As Integer
+		  If Other = Nil Then
+		    Return 1
+		  End If
+		  
+		  Return Self.mIdentifier.Compare(Other.mIdentifier)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "Beacon.Document.FromText" )  Shared Function Read(Contents As Text, Identity As Beacon.Identity) As Beacon.Document
+		  // Legacy alias
+		  Return Beacon.Document.FromText(Contents, Identity)
 		End Function
 	#tag EndMethod
 
@@ -533,6 +478,67 @@ Implements Beacon.DocumentItem
 		    Self.mMapCompatibility = Self.mMapCompatibility And Not Map.Mask
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ToDictionary(Identity As Beacon.Identity) As Xojo.Core.Dictionary
+		  Dim LootSources() As Xojo.Core.Dictionary
+		  For Each LootSource As Beacon.LootSource In Self.mLootSources
+		    Dim Dict As Xojo.Core.Dictionary = LootSource.Export()
+		    If Dict <> Nil Then
+		      LootSources.Append(Dict)
+		    End If
+		  Next
+		  
+		  Dim Document As New Xojo.Core.Dictionary
+		  Document.Value("Version") = Self.DocumentVersion
+		  Document.Value("Identifier") = Self.Identifier
+		  Document.Value("LootSources") = LootSources
+		  Document.Value("Title") = Self.Title
+		  Document.Value("Description") = Self.Description
+		  Document.Value("Public") = Self.IsPublic
+		  
+		  If Self.mMapCompatibility > 0 Then
+		    Document.Value("Map") = Self.mMapCompatibility
+		  End If
+		  
+		  If Self.DifficultyValue > -1 Then
+		    Document.Value("DifficultyValue") = Self.DifficultyValue
+		  End If
+		  
+		  Dim EncryptedData As New Xojo.Core.Dictionary
+		  Dim Profiles() As Xojo.Core.Dictionary
+		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
+		    Profiles.Append(Profile.ToDictionary)
+		  Next
+		  EncryptedData.Value("Servers") = Profiles
+		  If Self.mOAuthDicts <> Nil Then
+		    EncryptedData.Value("OAuth") = Self.mOAuthDicts
+		  End If
+		  
+		  Dim Content As Text = Xojo.Data.GenerateJSON(EncryptedData)
+		  Dim Hash As Text = Beacon.Hash(Content)
+		  If Hash <> Self.mLastSecureHash Then
+		    Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
+		    Dim Key As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(128)
+		    Dim Vector As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)
+		    AES.SetKey(CType(Key.Data, MemoryBlock).StringValue(0, Key.Size))
+		    AES.SetInitialVector(CType(Vector.Data, MemoryBlock).StringValue(0, Vector.Size))
+		    Dim Encrypted As Global.MemoryBlock = AES.EncryptCBC(Content)
+		    
+		    Dim SecureDict As New Xojo.Core.Dictionary
+		    SecureDict.Value("Key") = Beacon.EncodeHex(Identity.Encrypt(Key))
+		    SecureDict.Value("Vector") = Beacon.EncodeHex(Vector)
+		    SecureDict.Value("Content") = Beacon.EncodeHex(Encrypted)
+		    SecureDict.Value("Hash") = Hash
+		    
+		    Self.mLastSecureHash = Hash
+		    Self.mLastSecureDict = SecureDict
+		  End If
+		  Document.Value("Secure") = Beacon.Clone(Self.mLastSecureDict)
+		  
+		  Return Document
+		End Function
 	#tag EndMethod
 
 

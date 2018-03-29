@@ -37,6 +37,7 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -72,6 +73,7 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   0
       Visible         =   True

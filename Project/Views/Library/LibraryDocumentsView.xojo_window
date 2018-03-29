@@ -376,12 +376,12 @@ End
 		  Dim Dialog As New OpenDialog
 		  Dialog.Filter = BeaconFileTypes.BeaconDocument
 		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  Dim File As Beacon.FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File = Nil Then
 		    Return
 		  End If
 		  
-		  Dim Document As Beacon.Document = Beacon.Document.Read(File, App.Identity)
+		  Dim Document As Beacon.Document = Beacon.Document.Read(File.Read(Xojo.Core.TextEncoding.UTF8), App.Identity)
 		  If Document = Nil Then
 		    Self.ShowAlert("Unable to open document", "It doesn't appear to be a Beacon document.")
 		    Return

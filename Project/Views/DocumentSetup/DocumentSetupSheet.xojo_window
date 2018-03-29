@@ -434,6 +434,7 @@ End
 		  Win.Height = Win.SettingsView.ViewHeight
 		  Win.SettingsView.SetEditMode(True)
 		  Win.mDocument = Document
+		  Win.mQuickCancel = True
 		  Win.Title = "Edit Document"
 		  Win.Pages.Value = DocumentSetupSheet.PageFinalizeIndex
 		  Win.ShowModalWithin(Parent.TrueWindow)
