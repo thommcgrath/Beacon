@@ -1,6 +1,19 @@
 #tag Class
 Protected Class DocumentController
 	#tag Method, Flags = &h21
+		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Message
+		  #Pragma Unused Details
+		  
+		  If Success Then
+		    RaiseEvent DeleteSuccess
+		  Else
+		    RaiseEvent DeleteError
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub APICallback_DocumentDownload(Success As Boolean, Message As Text, Details As Auto)
 		  // Reminder: this will happen on the main thread
 		  #Pragma Unused Message
@@ -16,6 +29,20 @@ Protected Class DocumentController
 		  Catch Err As RuntimeException
 		    Self.mBusy = False
 		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_DocumentUpload(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Message
+		  #Pragma Unused Details
+		  
+		  If Success Then
+		    Self.mDocument.Modified = False
+		    RaiseEvent WriteSuccess
+		  Else
+		    RaiseEvent WriteError
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -42,6 +69,7 @@ Protected Class DocumentController
 		  End If
 		  
 		  Self.mAPISocket = New BeaconAPI.Socket
+		  AddHandler Self.mAPISocket.WorkProgress, WeakAddressOf Self.mAPISocket_WorkProgress
 		End Sub
 	#tag EndMethod
 
@@ -83,11 +111,24 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h0
 		Sub Delete()
+		  If Not Self.CanWrite Then
+		    RaiseEvent DeleteError
+		    Return
+		  End If
+		  
 		  Select Case Self.mDocumentURL.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
-		    
+		    Dim Request As New BeaconAPI.Request("https://" + Self.mDocumentURL.Path, "DELETE", AddressOf APICallback_DocumentDelete)
+		    Request.Sign(App.Identity)
+		    Self.mAPISocket.Start(Request)
 		  Case Beacon.DocumentURL.TypeLocal
-		    
+		    Dim File As New Beacon.FolderItem(Self.mDocumentURL.Path)
+		    If File.Exists Then
+		      File.Delete  
+		      RaiseEvent DeleteSuccess
+		    Else
+		      RaiseEvent DeleteError
+		    End If
 		  Case Beacon.DocumentURL.TypeTransient
 		    Dim Path As Text = Self.mDocumentURL.URL.Mid(Beacon.DocumentURL.TypeTransient.Length + 3)
 		    Dim File As Beacon.FolderItem = Beacon.FolderItem.Temporary.Child(Path + BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText)
@@ -126,13 +167,23 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub mAPISocket_WorkProgress(Sender As BeaconAPI.Socket, Request As BeaconAPI.Request, BytesReceived As Int64, BytesTotal As Int64)
+		  #Pragma Unused Request
+		  
+		  RaiseEvent LoadProgress(BytesReceived, BytesTotal)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mLoadThread_Run(Sender As Thread)
 		  Select Case Self.mDocumentURL.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
 		    // authenticated api request
+		    Self.CheckAPISocket()
+		    
 		    Dim Request As New BeaconAPI.Request("https://" + Self.mDocumentURL.Path, "GET", WeakAddressOf APICallback_DocumentDownload)
 		    Request.Sign(Self.mIdentity)
-		    BeaconAPI.Send(Request)
+		    Self.mAPISocket.Start(Request)
 		  Case Beacon.DocumentURL.TypeWeb
 		    // basic https request
 		    Self.CheckSocket()
@@ -321,7 +372,12 @@ Protected Class DocumentController
 		  
 		  Select Case Destination.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
+		    Self.CheckAPISocket()
 		    
+		    Dim Body As Text = Xojo.Data.GenerateJSON(Self.mDocument.ToDictionary(App.Identity))
+		    Dim Request As New BeaconAPI.Request("https://" + Self.mDocumentURL.Path, "POST", Body, "application/json", AddressOf APICallback_DocumentUpload)
+		    Request.Sign(WithIdentity)
+		    Self.mAPISocket.Start(Request)
 		  Case Beacon.DocumentURL.TypeLocal
 		    Dim Writer As New Beacon.JSONWriter(Self.mDocument.ToDictionary(WithIdentity), New Beacon.FolderItem(Destination.Path))
 		    AddHandler Writer.Finished, AddressOf Writer_Finished

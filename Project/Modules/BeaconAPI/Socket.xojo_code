@@ -38,6 +38,7 @@ Protected Class Socket
 		  Self.Socket.ValidateCertificates = True
 		  AddHandler Self.Socket.Error, WeakAddressOf Socket_Error
 		  AddHandler Self.Socket.PageReceived, WeakAddressOf Socket_PageReceived
+		  AddHandler Self.Socket.ReceiveProgress, WeakAddressOf Socket_ReceiveProgress
 		End Sub
 	#tag EndMethod
 
@@ -95,6 +96,15 @@ Protected Class Socket
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub Socket_ReceiveProgress(Sender As Xojo.Net.HTTPSocket, BytesReceived As Int64, BytesTotal As Int64, NewData As Xojo.Core.MemoryBlock)
+		  #Pragma Unused Sender
+		  #Pragma Unused NewData
+		  
+		  RaiseEvent WorkProgress(Self.ActiveRequest, BytesReceived, BytesTotal)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Start(Request As BeaconAPI.Request)
 		  Self.Queue.Append(Request)
@@ -129,6 +139,10 @@ Protected Class Socket
 
 	#tag Hook, Flags = &h0
 		Event WorkCompleted()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event WorkProgress(Request As BeaconAPI.Request, BytesReceived As Int64, BytesTotal As Int64)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
