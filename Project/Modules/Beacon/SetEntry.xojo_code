@@ -545,19 +545,19 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    SumOptionWeights = SumOptionWeights + Self.mOptions(I).Weight
 		  Next
 		  For I As Integer = 0 To UBound(Self.mOptions)
-		    Dim RelativeWeight As Double = Self.mOptions(I).Weight / SumOptionWeights
+		    Dim RelativeWeight As Integer = Xojo.Math.Round((Self.mOptions(I).Weight / SumOptionWeights) * 1000)
 		    Paths(I) = Self.mOptions(I).Engram.GeneratedClassBlueprintPath()
 		    Classes(I) = """" + Self.mOptions(I).Engram.ClassString + """"
-		    Weights(I) = RelativeWeight.PrettyText
+		    Weights(I) = RelativeWeight.ToText
 		  Next
 		  
 		  Dim MinQuality As Double = Self.mMinQuality.Value(Multipliers.Min, DifficultyValue)
 		  Dim MaxQuality As Double = Self.mMaxQuality.Value(Multipliers.Max, DifficultyValue)
 		  Dim Chance As Double = if(Self.CanBeBlueprint, Self.mChanceToBeBlueprint, 0)
-		  Dim EntryWeight As Double = Self.mWeight / SumEntryWeights
+		  Dim EntryWeight As Integer = Xojo.Math.Round((Self.mWeight / SumEntryWeights) * 1000)
 		  
 		  Dim Values() As Text
-		  Values.Append("EntryWeight=" + EntryWeight.PrettyText)
+		  Values.Append("EntryWeight=" + EntryWeight.ToText)
 		  If UseBlueprints Then
 		    Values.Append("Items=(" + Text.Join(Paths, ",") + ")")
 		  Else

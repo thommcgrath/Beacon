@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Beacon"
-#define MyAppVersion "1.0.0b23"
+#define MyAppVersion "1.0.0b25"
 #define MyAppPublisher "The ZAZ Studios"
 #define MyAppURL "https://beaconapp.cc/"
 #define MyAppExeName "Beacon.exe"
@@ -39,6 +39,7 @@ Source: "..\..\Project\Builds - Beacon.xojo_project\OS X 64 bit\Beacon.app\Conte
 Source: "..\..\Artwork\BeaconDocument.ico"; DestDir: "{app}\Resources"; Flags: ignoreversion
 Source: "..\..\Artwork\BeaconIdentity.ico"; DestDir: "{app}\Resources"; Flags: ignoreversion
 Source: "..\..\Artwork\BeaconPreset.ico"; DestDir: "{app}\Resources"; Flags: ignoreversion
+Source: "Files\VC_redist.x86.exe"; DestDir: "{tmp}"
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -71,3 +72,4 @@ Root: HKCR; Subkey: "beacon\shell\open\command"; ValueType: "string"; ValueData:
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 32-bit runtime..."; Flags: waituntilterminated
