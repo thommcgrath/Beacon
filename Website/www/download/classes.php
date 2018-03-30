@@ -11,7 +11,7 @@ $min_version = array_key_exists('version', $_GET) ? intval($_GET['version']) : 0
 
 $database = BeaconCommon::Database();
 
-if ($min_version > 32) {
+if ($min_version > 33) {
 	$beacon_version = 3;
 	$values = array(
 		'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
@@ -19,6 +19,7 @@ if ($min_version > 32) {
 		'presets' => BeaconPreset::GetAll($min_version, $since),
 		'creatures' => BeaconCreature::GetAll($min_version, $since),
 		'diets' => BeaconDiet::GetAll($min_version, $since),
+		'mods' => BeaconMod::GetLive(),
 		'deletions' => BeaconObject::Deletions($min_version, $since)
 	);
 } else {

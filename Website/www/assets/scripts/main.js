@@ -1,33 +1,49 @@
 document.addEventListener('DOMContentLoaded', function() {
 	search.init();
-	/*var search_field = document.getElementById('sidebar_search_field');
-	if (search_field) {
-		search_field.searchTimeout = 0;
-		search_field.addEventListener('input', function(event) {
-			if (this.searchTimeout > 0) {
-				clearTimeout(this.searchTimeout);
-				this.searchTimeout = 0;
-			}
-			
-			this.searchTimeout = setTimeout(function() {
-				search_field.searchTimeout = 0;
-				
-				var terms = search_field.value;
-				var xhr = new XMLHttpRequest();
-				xhr.open('GET', '/search.php?query=' + encodeURIComponent(terms) + '&count=3', true);
-				xhr.setRequestHeader('Accept', 'application/json');
-				xhr.onreadystatechange = function() {
-					if (xhr.readyState != 4 || xhr.status != 200) {
-						return;
-					}
-					
-					console.log(xhr.responseText);
-				};
-				xhr.send();
-			}, 250);
-		});
-	}*/
+	sidebar.init();
 });
+
+var sidebar = {
+	init: function () {
+		var hamburger = document.getElementById('header_hamburger');
+		if (hamburger) {
+			hamburger.addEventListener('click', function(event) {
+				sidebar.show();
+			});
+		}
+		
+		var darkener = document.getElementById('darkener');
+		if (darkener) {
+			darkener.addEventListener('click', function(event) {
+				sidebar.hide();
+			});
+		}
+	},
+	show: function() {
+		var darkener = document.getElementById('darkener');
+		var sidebar = document.getElementById('sidebar');
+		if (sidebar && darkener) {
+			darkener.className = 'exist';
+			sidebar.className = 'exist';
+			setTimeout(function() {
+				darkener.className = 'exist visible';
+				sidebar.className = 'exist visible';
+			}, 1);
+		}
+	},
+	hide: function() {
+		var darkener = document.getElementById('darkener');
+		var sidebar = document.getElementById('sidebar');
+		if (sidebar && darkener) {
+			darkener.className = 'exist';
+			sidebar.className = 'exist';
+			setTimeout(function() {
+				darkener.className = '';
+				sidebar.className = '';
+			}, 200);
+		}
+	}
+};
 
 var search = {
 	timeout: 0,

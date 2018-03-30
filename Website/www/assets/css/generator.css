@@ -55,3 +55,27 @@
 	margin-bottom: 20px;
 	padding: 10px;
 }
+
+#browse_results th.low-priority-detail,
+#browse_results td.low-priority-detail {
+	display: none;
+}
+
+#browse_results div.properties-text {
+	color: #808080;
+	border-top: 1px solid #f4f4f4;
+	font-size: smaller;
+	margin-top: 0.5em;
+	padding-top: 0.5em;
+}
+
+@media (min-width: 999px) {
+	#browse_results th.low-priority-detail,
+	#browse_results td.low-priority-detail {
+		display: table-cell;
+	}
+	
+	#browse_results div.properties-text {
+		display: none;
+	}
+}

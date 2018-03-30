@@ -32,8 +32,9 @@
 body {
 	background-color: #fdfdfd;
 	color: #000000;
+	font-size: 75%;
+	line-height: 1.3;
 	font-family: Open Sans, sans-serif;
-	font-size: 62.5%/1.5;
 	margin: 0px;
 	min-width: 320px;
 	box-sizing: border-box;
@@ -219,7 +220,7 @@ a.button {
 	font-family: inherit;
 	font-size: 1.0em;
 	margin: 6px;
-	padding: 5px 8px;
+	padding: 0.5em 0.8em;
 	text-align: center;
 	text-decoration: none;
 	text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8);
@@ -316,11 +317,6 @@ textarea::placeholder {
 label.checkbox input[type="checkbox"],
 label.radio input[type="radio"] {
 	display: none;
-}
-
-label.checkbox,
-label.radio {
-	white-space: nowrap;
 }
 
 label.checkbox span,
@@ -430,7 +426,7 @@ div.select select {
 	transition-timing-function: ease-out;
 	vertical-align: middle;
 	white-space: nowrap;
-	padding: 4px 32px 4px 8px;
+	padding: 0.5em 2.5em 0.5em 0.8em;
 	margin-left: 8px;
 }
 
@@ -440,12 +436,12 @@ div.select select:active {
 
 div.select span:after {
 	position: absolute;
-	top: 2px;
-	right: 9px;
+	top: 4%;
+	right: 7%;
 	content: '▾';
 	color: #FFFFFF;
 	text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.8);
-	font-size: 18px;
+	font-size: 1.3em;
 }
 
 /* !Header */
@@ -506,33 +502,140 @@ header div.inner {
 
 #site_wrapper {
 	display: flex;
+	flex-direction: column;
 }
 
 #main {
 	flex: 1 0 0;
-	padding: 15px;
+	padding: 63px 15px 15px 15px;
 }
 
-/* !Sidebar */
+/* !Header / Sidebar */
+
+#sidebar,
+#header {
+	background-color: #713a9a;
+	padding: 0.0em;
+	flex: 0 0 auto;
+	color: #FFFFFF;
+	flex-direction: row;
+}
 
 #sidebar {
-	background-color: #713a9a;
-	padding: 15px;
-	width: 220px;
-	flex: 0 0 auto;
-	font-size: 0.8em;
-	color: #FFFFFF;
+	display: none;
+	position: fixed;
+	top: 0px;
+	bottom: 0px;
+	left: -250px;
+	width: 250px;
+	transition: left 0.15s ease-out;
+	z-index: 101;
+	overflow-y: auto;
+}
+
+#header {
+	display: flex;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	z-index: 99;
+}
+
+#darkener {
+	display: none;
+	position: fixed;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	transition-duration: 0.15s;
+	transition-timing-function: ease-out;
+	transition-property: background-color, -webkit-backdrop-filter;
+	z-index: 100;
+	background-color: rgba(0, 0, 0, 0.0);
+	-webkit-backdrop-filter: blur(0px);
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+#sidebar.visible {
+	left: 0px;
+}
+
+#darkener.visible {
+	-webkit-backdrop-filter: blur(5px);
+	background-color: rgba(0, 0, 0, 0.6);
+}
+
+#sidebar.exist,
+#darkener.exist {
+	display: block;
+}
+
+#header > div {
+	margin: 8px;
+}
+
+#sidebar > div {
+	margin: 15px;
+}
+
+#sidebar_logo_container,
+#header_logo_container {
+	flex: 1 1 0;
 }
 
 #sidebar_logo {
+	width: 64px;
+	height: 64px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#header_logo {
+	width: 32px;
+	height: 32px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#sidebar_title {
 	text-align: center;
 	font-weight: 700;
 	font-size: 2.0em;
+	display: block;
+	width: 160px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5px;
 }
 
 #sidebar_search {
 	margin: 15px 0px;
 	font-size: 1.2em;
+	vertical-align: middle;
+	flex: 1 1 0;
+}
+
+#header_hamburger_container {
+	width: 32px;
+	flex: 0 0 0;
+}
+
+#header_hamburger {
+	width: 32px;
+	min-width: 32px;
+	height: 32px;
+	display: block;
+	cursor: pointer;
+}
+
+#header_spacer {
+	width: 32px;
+	min-width: 32px;
+	flex: 0 0 0;
 }
 
 #sidebar ul {
@@ -565,12 +668,11 @@ header div.inner {
 	box-shadow: none;
 }
 
-#double_button {
-	display: flex;
+#sidebar_double_button {
 	flex-direction: column;
 }
 
-#double_button a {
+#sidebar_double_button a {
 	display: block;
 	text-align: center;
 	padding: 0.5em;
@@ -581,12 +683,12 @@ header div.inner {
 	transition-property: color, background-color;
 }
 
-#double_button a + a {
+#sidebar_double_button a + a {
 	border-top: none;
 	border-radius: 0px 0px 0.4em 0.4em;
 }
 
-#double_button a:hover {
+#sidebar_double_button a:hover {
 	background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -747,39 +849,75 @@ div.triple_column div.column {
 	vertical-align: top;
 }
 
-/* !Medium Screens */
-
-@media (min-width: 413px) {
-	#top-menu a+a {
-		margin-left: 15px;
-	}
-}
-
 /* !Large Screens */
 
-@media (min-width: 642px) {
+@media (min-width: 666px) {
+	body {
+		font-size: 100%;
+	}
+	
+	#site_wrapper {
+		flex-direction: row;
+	}
+	
+	#sidebar {
+		display: block;
+		position: relative;
+		top: 0px;
+		left: 0px;
+		font-size: 0.8em;
+		overflow-y: visible;
+	}
+	
+	#sidebar_logo_container {
+		width: auto;
+		height: auto;
+	}
+	
+	#sidebar_logo {
+		width: 64px;
+		height: 64px;
+	}
+	
+	#sidebar_search {
+		display: block;
+	}
+	
+	#sidebar_menu {
+		display: block;
+	}
+	
+	#sidebar_double_button {
+		display: flex;
+	}
+	
 	.inner {
 		padding: 15px;
 	}
 	
-	#header_logo_small {
+	#header {
 		display: none;
 	}
 	
-	#header_logo_full {
-		display: inline-block;
+	#darkener.exist {
+		display: none;
 	}
 	
-	header {
-		height: 70px;
-	}
-	
-	header div.inner {
-		height: 70px;
+	#main {
+		padding: 15px;
 	}
 	
 	div.triple_column div.column {
 		display: table-cell;
 		width: 33%;
+	}
+}
+
+/* !Full Screens */
+
+@media (min-width: 999px) {
+	label.checkbox,
+	label.radio {
+		white-space: nowrap;
 	}
 }

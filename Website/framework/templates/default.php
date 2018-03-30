@@ -39,40 +39,48 @@ if (!BeaconTemplate::IsHTML()) {
 	</head>
 	<body>
 		<div id="site_wrapper">
+			<div id="header">
+				<div id="header_hamburger_container"><img id="header_hamburger" src="/assets/images/hamburger-white.svg"></div>
+				<div id="header_logo_container"><img id="header_logo" src="/assets/images/beacon-white.svg" alt="Beacon - A loot editor for Ark: Survival Evolved"></div>
+				<div id="header_spacer"></div>
+			</div>
+			<div id="darkener"></div>
 			<div id="sidebar">
-				<div id="sidebar_logo"><a href="/"><img id="sidebar_logo" width="64" height="64" src="/assets/images/beacon-color.svg" alt="Beacon - A Loot Editor for Ark: Survival Evolved"></a><br>Beacon</div>
+				<div id="sidebar_logo_container"><img id="sidebar_logo" src="/assets/images/beacon-white.svg" alt="Beacon - A loot editor for Ark: Survival Evolved"><img id="sidebar_title" src="/assets/images/beacon-title-white.svg"></div>
 				<div id="sidebar_search"><form action="/search.php" method="get"><input type="search" placeholder="Search" id="sidebar_search_field" name="query" autocomplete="off"></form></div>
-				<div id="double_button"><a href="/download/">Download</a><a href="/donate.php">Donate</a></div>
-				<h3>Help</h3>
-				<ul>
-					<?php
-					
-					$article_ids = array('96d0efc7-2e62-4ae4-9d9b-70cc890dc98e', '78cf1d4c-2368-4d24-ab73-00ba80a85fd7');
-					foreach ($article_ids as $article_id) {
-						$article = BeaconArticleMetadata::GetByArticleID($article_id);
-						echo '<li><a href="/read.php/' . $article->ArticleID() . '">' . htmlentities($article->Title()) . '</a></li>';
-					}
-					
-					?><li><a href="/spawn/">Ark Spawn Codes</a></li>
-					<li><a href="/help/">More Topics&hellip;</a></li>
-				</ul>
-				<h3>News</h3>
-				<ul>
-					<?php
-					
-					$posts = BeaconArticleMetadata::GetRecentArticles(3, BeaconArticleMetadata::TYPE_BLOG);
-					foreach ($posts as $post) {
-						echo '<li><a href="/read.php/' . $post->ArticleID() . '">' . htmlentities($post->Title()) . '</a></li>';
-					}
-					
-					?>
-					<li><a href="/blog/">Older&hellip;</a></li>
-				</ul>
-				<h3>Community</h3>
-				<ul>
-					<li><a href="/browse/">Browse Community Configs</a></li>
-					<li><a href="/mods/">Supported Mods</a></li>
-				</ul>
+				<div id="sidebar_double_button"><a href="/download/">Download</a><a href="/donate.php">Donate</a></div>
+				<div id="sidebar_menu">
+					<h3>Help</h3>
+					<ul>
+						<?php
+						
+						$article_ids = array('96d0efc7-2e62-4ae4-9d9b-70cc890dc98e', '78cf1d4c-2368-4d24-ab73-00ba80a85fd7');
+						foreach ($article_ids as $article_id) {
+							$article = BeaconArticleMetadata::GetByArticleID($article_id);
+							echo '<li><a href="/read.php/' . $article->ArticleID() . '">' . htmlentities($article->Title()) . '</a></li>';
+						}
+						
+						?><li><a href="/spawn/">Ark Spawn Codes</a></li>
+						<li><a href="/help/">More Topics&hellip;</a></li>
+					</ul>
+					<h3>News</h3>
+					<ul>
+						<?php
+						
+						$posts = BeaconArticleMetadata::GetRecentArticles(3, BeaconArticleMetadata::TYPE_BLOG);
+						foreach ($posts as $post) {
+							echo '<li><a href="/read.php/' . $post->ArticleID() . '">' . htmlentities($post->Title()) . '</a></li>';
+						}
+						
+						?>
+						<li><a href="/blog/">Older&hellip;</a></li>
+					</ul>
+					<h3>Community</h3>
+					<ul>
+						<li><a href="/browse/">Browse Community Configs</a></li>
+						<li><a href="/mods/">Supported Mods</a></li>
+					</ul>
+				</div>
 			</div>
 			<div id="main">
 				<?php echo $buffer; ?>
