@@ -1110,6 +1110,7 @@ End
 		  Me.Width = NewSize
 		  FadedSeparator1.Left = NewSize
 		  SetList.Width = NewSize
+		  Simulator.Width = NewSize
 		  Status.Width = NewSize
 		  Panel.Left = FadedSeparator1.Left + FadedSeparator1.Width
 		  Panel.Width = Self.Width - (Panel.Left)

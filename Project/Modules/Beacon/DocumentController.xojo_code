@@ -150,6 +150,11 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h0
 		Sub Load(WithIdentity As Beacon.Identity)
+		  If Self.Loaded Then
+		    RaiseEvent Loaded(Self.mDocument)
+		    Return
+		  End If
+		  
 		  If Self.mBusy Then
 		    Return
 		  End If

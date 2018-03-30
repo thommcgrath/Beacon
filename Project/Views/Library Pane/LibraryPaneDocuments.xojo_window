@@ -274,6 +274,17 @@ End
 		  RemoveHandler Sender.LoadError, WeakAddressOf Controller_LoadError
 		  RemoveHandler Sender.LoadProgress, WeakAddressOf Controller_LoadProgress
 		  
+		  Dim URL As Beacon.DocumentURL = Sender.URL
+		  Select Case URL.Scheme
+		  Case Beacon.DocumentURL.TypeLocal, Beacon.DocumentURL.TypeTransient
+		    Self.View = Self.ViewRecentDocuments
+		  Case Beacon.DocumentURL.TypeCloud
+		    Self.View = Self.ViewCloudDocuments
+		  Case Beacon.DocumentURL.TypeWeb
+		    Self.View = Self.ViewCommunityDocuments
+		  End Select
+		  Self.SelectDocument(URL)
+		  
 		  Dim View As New DocumentEditorView(Sender)
 		  Self.mViews.Value(Sender.URL.Hash) = View
 		  Self.ShowView(View)
@@ -328,13 +339,7 @@ End
 		    End If
 		  End If
 		  
-		  Dim Controller As New Beacon.DocumentController(Document)
-		  Dim URL As Beacon.DocumentURL = Controller.URL
-		  
-		  Self.mDocuments.Append(URL)
-		  Self.View = Self.ViewRecentDocuments
-		  Self.SelectDocument(Controller.URL)
-		  Self.OpenURL(Controller.URL)
+		  Self.OpenController(New Beacon.DocumentController(Document))
 		End Sub
 	#tag EndMethod
 
@@ -350,10 +355,31 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub OpenController(Controller As Beacon.DocumentController)
+		  Dim URL As Beacon.DocumentURL = Controller.URL
+		  
+		  If Self.mViews.HasKey(URL.Hash) Then
+		    Dim View As DocumentEditorView = Self.mViews.Value(URL.Hash)
+		    If View <> Nil Then
+		      Self.ShowView(View)
+		      Return
+		    End If
+		  End If
+		  
+		  Self.mDocuments.Append(URL)
+		  
+		  AddHandler Controller.Loaded, WeakAddressOf Controller_Loaded
+		  AddHandler Controller.LoadError, WeakAddressOf Controller_LoadError
+		  AddHandler Controller.LoadProgress, WeakAddressOf Controller_LoadProgress
+		  Controller.Load(App.Identity)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub OpenFile(File As FolderItem)
 		  Dim URL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
-		  Self.OpenURL(URL)
+		  Self.OpenController(New Beacon.DocumentController(URL))
 		  LocalData.SharedInstance.RememberDocument(URL)
 		  Self.UpdateLocalDocuments()
 		End Sub
@@ -361,26 +387,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub OpenURL(URL As Beacon.DocumentURL)
-		  If Self.mViews.HasKey(URL.Hash) Then
-		    Dim View As DocumentEditorView = Self.mViews.Value(URL.Hash)
-		    If View <> Nil Then
-		      #if DebugBuild
-		        System.DebugLog("Found existing view for " + URL.URL + " (" + URL.Hash + ")")
-		      #endif
-		      Self.ShowView(View)
-		      Return
-		    End If
-		  End If
-		  
-		  #if DebugBuild
-		    System.DebugLog("Opening new view for " + URL.URL + " (" + URL.Hash + ")")
-		  #endif
-		  
-		  Dim Controller As New Beacon.DocumentController(URL)
-		  AddHandler Controller.Loaded, WeakAddressOf Controller_Loaded
-		  AddHandler Controller.LoadError, WeakAddressOf Controller_LoadError
-		  AddHandler Controller.LoadProgress, WeakAddressOf Controller_LoadProgress
-		  Controller.Load(App.Identity)
+		  Self.OpenController(New Beacon.DocumentController(URL))
 		End Sub
 	#tag EndMethod
 
