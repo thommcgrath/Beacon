@@ -44,7 +44,7 @@ Protected Module Beacon
 		  Chars.Insert( 6, "-")
 		  Chars.Insert( 4, "-")
 		  
-		  Return Text.Join(Chars, "")
+		  Return Text.Join(Chars, "").Lowercase
 		End Function
 	#tag EndMethod
 
@@ -61,6 +61,19 @@ Protected Module Beacon
 		    mDataSource.LoadPresets
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function DecodeBase64(Source As Text) As Xojo.Core.MemoryBlock
+		  #if TargetiOS
+		    
+		  #else
+		    Dim StringValue As String = Source
+		    Dim Block As Global.MemoryBlock = DecodeBase64(StringValue)
+		    Dim Temp As New Xojo.Core.MemoryBlock(Block)
+		    Return Temp.Left(Block.Size)
+		  #endif
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
