@@ -238,6 +238,32 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub Controller_DeleteError(Sender As Beacon.DocumentController)
+		  Break
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Controller_DeleteSuccess(Sender As Beacon.DocumentController)
+		  Dim URL As Beacon.DocumentURL = Sender.URL
+		  
+		  For I As Integer = Self.List.ListCount - 1 DownTo 0
+		    If Self.List.RowTag(I) = URL Then
+		      Self.List.RemoveRow(I)
+		    End If
+		  Next
+		  
+		  For I As Integer = Self.mDocuments.Ubound DownTo 0
+		    If Self.mDocuments(I) = URL Then
+		      Self.mDocuments.Remove(I)
+		    End If
+		  Next
+		  
+		  LocalData.SharedInstance.ForgetDocument(URL)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Controller_Loaded(Sender As Beacon.DocumentController, Document As Beacon.Document)
 		  If Self.mProgress <> Nil Then
 		    Self.mProgress.Close
@@ -308,6 +334,7 @@ End
 		  Self.mDocuments.Append(URL)
 		  Self.View = Self.ViewRecentDocuments
 		  Self.SelectDocument(Controller.URL)
+		  Self.OpenURL(Controller.URL)
 		End Sub
 	#tag EndMethod
 
@@ -586,88 +613,53 @@ End
 		  // User cloud can be deleted via api
 		  // Community cloud cannot be deleted
 		  
-		  #if false
-		    Dim Documents() As Beacon.DocumentRef
-		    For I As Integer = Me.ListCount - 1 DownTo 0
-		      If Not Me.Selected(I) Then
-		        Continue For I
-		      End If
-		      
-		      Dim Ref As Beacon.DocumentRef = Me.RowTag(I)
-		      Dim Type As DocumentTypes = Self.DocumentType(Ref)
-		      
-		      Select Case Type
-		      Case DocumentTypes.Local, DocumentTypes.Temporary, DocumentTypes.UserCloud
-		        Documents.Append(Ref)
-		      End Select
-		    Next
+		  Dim Controllers() As Beacon.DocumentController
+		  For I As Integer = Me.ListCount - 1 DownTo 0
+		    If Not Me.Selected(I) Then
+		      Continue For I
+		    End If
 		    
-		    If Warn Then
-		      Dim Message, Explanation As String
-		      If Documents.Ubound = 0 Then
-		        Message = "Are you sure you want to delete the document """ + Documents(0).Name + """?"
-		      Else
-		        Message = "Are you sure you want to delete these " + Str(Documents.Ubound + 1, "-0") + " documents?"
-		      End If
-		      Explanation = "Files will be deleted immediately and cannot be recovered."
-		      
-		      If Not Self.ShowConfirm(Message, Explanation, "Delete", "Cancel") Then
-		        Return
+		    Dim URL As Beacon.DocumentURL = Me.RowTag(I)
+		    Dim Controller As New Beacon.DocumentController(URL)
+		    If Controller.CanWrite() Then
+		      Controllers.Append(Controller)
+		    End If
+		  Next
+		  
+		  If Warn Then
+		    Dim Message, Explanation As String
+		    If Controllers.Ubound = 0 Then
+		      Message = "Are you sure you want to delete the document """ + Controllers(0).Name + """?"
+		    Else
+		      Message = "Are you sure you want to delete these " + Str(Controllers.Ubound + 1, "-0") + " documents?"
+		    End If
+		    Explanation = "Files will be deleted immediately and cannot be recovered."
+		    
+		    If Not Self.ShowConfirm(Message, Explanation, "Delete", "Cancel") Then
+		      Return
+		    End If
+		  End If
+		  
+		  Dim ViewIndex As Integer = Self.View
+		  Dim RefreshDocumentsList As Boolean
+		  For Each Controller As Beacon.DocumentController In Controllers
+		    Dim Hash As Text = Controller.URL.Hash
+		    Dim View As DocumentEditorView
+		    If Self.mViews.HasKey(Hash) Then
+		      View = Self.mViews.Value(Hash)
+		    End If
+		    
+		    If View <> Nil Then
+		      If Not Self.DiscardView(View) Then
+		        Continue
 		      End If
 		    End If
 		    
-		    Dim ViewIndex As Integer = Self.View
-		    Dim RefreshDocumentsList As Boolean
-		    For Each Ref As Beacon.DocumentRef In Documents
-		      Dim DocumentID As Text = Ref.DocumentID
-		      Dim View As DocumentEditorView
-		      If Self.mViews.HasKey(DocumentID) Then
-		        View = Self.mViews.Value(DocumentID)
-		      End If
-		      
-		      If View <> Nil Then
-		        If Not Self.DiscardView(View) Then
-		          Continue
-		        End If
-		      End If
-		      
-		      For I As Integer = Me.ListCount - 1 DownTo 0
-		        If Me.RowTag(I) = Ref Then
-		          Me.RemoveRow(I)
-		          Exit For I
-		        End If
-		      Next
-		      
-		      If Ref IsA LocalDocumentRef Then
-		        Dim Idx As Integer = Self.mRecentDocuments.IndexOfRef(Ref)
-		        If Idx > -1 Then
-		          Self.mRecentDocuments.Remove(Idx)
-		          RefreshDocumentsList = RefreshDocumentsList Or ViewIndex = Self.ViewRecentDocuments
-		        End If
-		        LocalDocumentRef(Ref).File.Delete
-		        LocalData.SharedInstance.ForgetDocument(LocalDocumentRef(Ref))
-		      ElseIf Ref IsA BeaconAPI.Document Then
-		        Dim Idx As Integer = Self.mCloudDocuments.IndexOfRef(Ref)
-		        If Idx > -1 Then
-		          Self.mCloudDocuments.Remove(Idx)
-		          RefreshDocumentsList = RefreshDocumentsList Or ViewIndex = Self.ViewCloudDocuments
-		        End If
-		        Dim Request As New BeaconAPI.Request(BeaconAPI.Document(Ref).ResourceURL, "DELETE", AddressOf APICallback_DocumentDelete)
-		        Request.Sign(App.Identity)
-		        Self.APISocket.Start(Request)
-		      ElseIf Ref IsA TemporaryDocumentRef Then
-		        Dim Idx As Integer = Self.mTempDocuments.IndexOfRef(Ref)
-		        If Idx > -1 Then
-		          Self.mTempDocuments.Remove(Idx)
-		          RefreshDocumentsList = RefreshDocumentsList Or ViewIndex = Self.ViewRecentDocuments
-		        End If
-		      End If
-		    Next
+		    AddHandler Controller.DeleteSuccess, AddressOf Controller_DeleteSuccess
+		    AddHandler Controller.DeleteError, AddressOf Controller_DeleteError
 		    
-		    If RefreshDocumentsList Then
-		      Self.UpdateDocumentsList()
-		    End If
-		  #endif
+		    Controller.Delete()
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
