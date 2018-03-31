@@ -29,6 +29,13 @@
 	src: local('Open Sans Bold'), local('OpenSans-Bold'), url(/assets/fonts/OpenSans-Bold.ttf) format('truetype');
 }
 
+@font-face {
+	font-family: 'Source Code Pro';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Source Code Pro'), local('SourceCodePro-Regular'), url(/assets/fonts/SourceCodePro-Regular.woff2) format('woff2');
+}
+
 body {
 	background-color: #fdfdfd;
 	color: #000000;
@@ -160,13 +167,26 @@ a:active {
 	font-size: smaller;
 }
 
-pre.code {
-	border: 1px solid #ffffff;
-	padding: 20px;
+pre {
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	padding: 0.6em;
+	border-radius: 0.4em;
 	overflow: auto;
 	background-color: rgba(255, 255, 255, 0.75);
 	color: #000000;
 	text-shadow: 0px 1px 0px #ffffff;
+	margin: 10px;
+	display: block;
+	font-size: 0.8em;
+}
+
+code {
+	font-family: 'Source Code Pro', monospace;
+	font-weight: 400;
+}
+
+.break-code code {
+	word-break: break-all;
 }
 
 .platform_tag {
@@ -503,11 +523,13 @@ header div.inner {
 #site_wrapper {
 	display: flex;
 	flex-direction: column;
+	max-width: 100%;
 }
 
 #main {
 	flex: 1 0 0;
 	padding: 63px 15px 15px 15px;
+	min-width: 0px;
 }
 
 /* !Header / Sidebar */

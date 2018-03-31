@@ -8,10 +8,9 @@ window.addEventListener('load', function() {
 				var classstring = event.target.getAttribute('beacon-class');
 				var cell = document.getElementById('spawn_' + classstring.toLowerCase());
 				if (cell) {
-					cell.select();
 					try {
-						document.execCommand('copy');
-						cell.blur();
+						clipboard.writeText(cell.value);
+						
 						event.target.innerText = 'Copied!';
 						event.target.disabled = true;
 						setTimeout(function() {

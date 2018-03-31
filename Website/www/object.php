@@ -66,12 +66,7 @@ $parser = new Parsedown();
 echo '<h1><span class="object_type">' . htmlentities($type) . '</span> ' . htmlentities($obj->Label()) . '</h1>';
 echo '<table id="object_details" class="generic">';
 foreach ($properties as $key => $value) {
-	$rendered = $parser->text($value);
-	if (preg_match('/<code>(.+)<\/code>/', $rendered, $matches)) {
-		$rendered = str_replace($matches[0], '<input type="text" value="' . htmlentities($matches[1]) . '" readonly>', $rendered);
-	}
-	
-	echo '<tr><td class="label">' . htmlentities($key) . '</td><td>' . $rendered . '</td></tr>';
+	echo '<tr><td class="label">' . htmlentities($key) . '</td><td class="break-code">' . $parser->text($value) . '</td></tr>';
 }
 echo '</table>';
 

@@ -1,6 +1,7 @@
 <?php
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
 BeaconTemplate::SetTitle('Item Spawn Codes');
+BeaconTemplate::AddHeaderLine('<script src="/assets/scripts/clipboard-polyfill.js"></script>');
 BeaconTemplate::AddHeaderLine('<script src="spawncodes.js"></script>');
 BeaconTemplate::AddHeaderLine('<link href="spawncodes.css" rel="stylesheet" media="all" type="text/css">');
 $mod_id = array_key_exists('mod_id', $_GET) ? $_GET['mod_id'] : null;
