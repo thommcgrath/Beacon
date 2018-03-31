@@ -77,6 +77,18 @@ class BeaconArticleMetadata {
 		return $articles;
 	}
 	
+	public static function GetAll(string $type) {
+		$columns = static::Columns();
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT ' . implode(', ', $columns) . ' FROM articles WHERE type = $1 ORDER BY title;', $type);
+		$articles = array();
+		while (!$results->EOF()) {
+			$articles[] = new static($results);
+			$results->MoveNext();
+		}
+		return $articles;
+	}
+	
 	protected static function Columns() {
 		return array('article_id', 'publish_time', 'last_update', 'title', 'type');
 	}
