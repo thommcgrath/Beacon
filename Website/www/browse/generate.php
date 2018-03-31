@@ -57,6 +57,7 @@ if ($mode === 'download') {
 	exit;
 }
 
+BeaconTemplate::AddHeaderLine('<script src="/assets/scripts/clipboard-polyfill.js"></script>');
 BeaconTemplate::AddHeaderLine('<script src="/assets/scripts/generator.js"></script>');
 
 ?><h1>Your Game.ini</h1>

@@ -127,11 +127,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		button.addEventListener('click', function(event) {
 			var cell = document.getElementById('content_output');
 			if (cell) {
-				cell.select();
 				try {
-					document.execCommand('copy');
-					cell.selectionStart = 0;
-					cell.selectionEnd = 0;
+					clipboard.writeText(cell.value);
 					event.target.innerText = 'Copied!';
 					event.target.disabled = true;
 					setTimeout(function() {

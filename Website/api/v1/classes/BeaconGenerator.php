@@ -175,7 +175,7 @@ class BeaconGenerator {
 		$min_entries = min(max(intval($set['MinNumItems']), 1), count($entries));
 		$max_entries = min(max(intval($set['MaxNumItems']), $min_entries), count($entries));
 		$local_weight = floatval($set['SetWeight']);
-		$relative_weight = $local_weight / $weight_total;
+		$relative_weight = round(($local_weight / $weight_total) * 1000);
 		
 		$entries_weight_sum = $this->SumOfEntryWeights($entries);
 		$children = array();
@@ -188,7 +188,7 @@ class BeaconGenerator {
 			sprintf('MinNumItems=%u', $min_entries),
 			sprintf('MaxNumItems=%u', $max_entries),
 			'NumItemsPower=1',
-			sprintf('SetWeight=%F', $relative_weight),
+			sprintf('SetWeight=%u', $relative_weight),
 			sprintf('bItemsRandomWithoutReplacement=%s', $random_without_replacement ? 'true' : 'false'),
 			sprintf('ItemEntries=(%s)', implode(',', $children))
 		);
@@ -199,7 +199,7 @@ class BeaconGenerator {
 	protected function RenderEntry(array $entry, float $weight_total) {
 		$blueprint_chance = floatval($entry['ChanceToBeBlueprintOverride']);
 		$local_weight = floatval($entry['EntryWeight']);
-		$relative_weight = $local_weight / $weight_total;
+		$relative_weight = round(($local_weight / $weight_total) * 1000);
 		$items = $entry['Items'];
 		$max_quality_tag = $entry['MaxQuality'];
 		$min_quality_tag = $entry['MinQuality'];
@@ -214,11 +214,11 @@ class BeaconGenerator {
 		}
 		foreach ($items as $item) {
 			$classes[] = sprintf('"%s"', $item['Class']);
-			$relative_weights[] = sprintf('%F', floatval($item['Weight']) / $options_weight_sum);
+			$relative_weights[] = sprintf('%u', round((floatval($item['Weight']) / $options_weight_sum) * 1000));
 		}
 		
 		$keys = array(
-			sprintf('EntryWeight=%F', $relative_weight),
+			sprintf('EntryWeight=%u', $relative_weight),
 			sprintf('MinQuantity=%u', $min_quantity),
 			sprintf('MaxQuantity=%u', $max_quantity),
 			sprintf('bForceBlueprint=%s', $blueprint_chance >= 1 ? 'true' : 'false'),
