@@ -737,20 +737,37 @@ ul.results li {
 
 #floating_search_results {
 	display: none;
-	position: absolute;
+	position: fixed;
 	top: 0px;
 	left: 0px;
 	z-index: 200;
 	flex-direction: column;
-	background-color: rgba(0, 0, 0, 0.5);
-	padding: 2px;
-	box-shadow: 0px 1px 10px 0px rgba(0, 0, 0, 0.2);
+	border: 1px solid #3b3b3b;
+	padding: 0px;
+	box-shadow: 0px 1px 10px 5px rgba(0, 0, 0, 0.4);
+	max-width: 300px;
 }
 
-#floating_search_results .result {
-	background-color: #FFFFFF;
+#floating_search_results .result,
+#floating_search_results .more {
 	padding: 6px;
-	margin: 2px;
+	margin: 0px;
+}
+
+#floating_search_results .result.even {
+	background-color: #ffffff;
+}
+
+#floating_search_results .result.odd {
+	background-color: #f5fbff;
+}
+
+#floating_search_results .more {
+	background-color: #3b3b3b;
+}
+
+#floating_search_results .more a {
+	color: #ffffff;
 }
 
 #floating_search_results .result_type {

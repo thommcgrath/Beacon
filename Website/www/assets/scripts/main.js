@@ -73,7 +73,7 @@ var search = {
 		
 		var terms = document.getElementById('sidebar_search_field').value;
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', '/search.php?query=' + encodeURIComponent(terms) + '&count=3', true);
+		xhr.open('GET', '/search.php?query=' + encodeURIComponent(terms) + '&count=4', true);
 		xhr.setRequestHeader('Accept', 'application/json');
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState != 4 || xhr.status != 200) {
@@ -81,11 +81,11 @@ var search = {
 			}
 			
 			var obj = JSON.parse(xhr.responseText);
-			search.displayResults(obj.results);
+			search.displayResults(obj);
 		};
 		xhr.send();
 	},
-	displayResults: function(results) {
+	displayResults: function(obj) {
 		if (this.list === null) {
 			this.list = document.createElement('div');
 			this.list.id = 'floating_search_results';
@@ -102,6 +102,10 @@ var search = {
 			this.list.removeChild(this.list.firstChild);
 		}
 		
+		var results = obj.results;
+		var total = obj.total;
+		var terms = obj.terms;
+		
 		// add new nodes
 		for (var i = 0; i < results.length; i++) {
 			var link = document.createElement('a');
@@ -113,10 +117,26 @@ var search = {
 			tag.appendChild(document.createTextNode(results[i].type));
 			
 			var node = document.createElement('div');
-			node.className = 'result';
+			if ((i % 2) == 0) {
+				node.className = 'result even';
+			} else {
+				node.className = 'result odd';
+			}
 			node.appendChild(link);
 			node.appendChild(document.createTextNode(' '));
 			node.appendChild(tag);
+			
+			this.list.appendChild(node);
+		}
+		
+		if (total > results.length) {
+			var link = document.createElement('a');
+			link.href = '/search.php?query=' + encodeURIComponent(terms);
+			link.appendChild(document.createTextNode('More Results…'));
+			
+			var node = document.createElement('div');
+			node.className = 'more';
+			node.appendChild(link);
 			
 			this.list.appendChild(node);
 		}
