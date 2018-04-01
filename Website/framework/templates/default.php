@@ -70,7 +70,7 @@ if (!BeaconTemplate::IsHTML()) {
 					<ul>
 						<?php
 						
-						$posts = BeaconArticleMetadata::GetRecentArticles(3, BeaconArticleMetadata::TYPE_BLOG);
+						$posts = BeaconArticleMetadata::GetRecentArticles(3, 0, BeaconArticleMetadata::TYPE_BLOG);
 						foreach ($posts as $post) {
 							echo '<li><a href="/read.php/' . $post->ArticleID() . '">' . htmlentities($post->Title()) . '</a></li>';
 						}

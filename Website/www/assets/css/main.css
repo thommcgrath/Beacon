@@ -879,6 +879,12 @@ span.object_type {
 	flex-wrap: wrap;
 }
 
+div.article + div.article {
+	margin-top: 1.6em;
+	border-top: 1px solid #e4e4e4;
+	padding-top: 1.6em;
+}
+
 /* !Triple Column */
 
 div.triple_column {
@@ -892,6 +898,35 @@ div.triple_column div.column {
 	display: table-row;
 	width: 100%;
 	vertical-align: top;
+}
+
+/* !Page Navigation */
+
+#pagenav {
+	color: #aaaaaa;
+	display: flex;
+	flex-direction: row;
+	margin-left: auto;
+	margin-right: auto;
+	width: 300px;
+	margin-top: 1.6em;
+}
+
+#pagenav-newer, #pagenav-current, #pagenav-older {
+	flex: 1 0 33%;
+}
+
+#pagenav-newer {
+	text-align: right;
+}
+
+#pagenav-current {
+	text-align: center;
+	color: #000000;
+}
+
+#pagenav-older {
+	text-align: left;
 }
 
 /* !Large Screens */

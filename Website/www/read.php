@@ -29,7 +29,9 @@ if (is_null($article)) {
 	exit;
 }
 
-?><h1><?php echo htmlentities($article->Title()); ?></h1>
+BeaconTemplate::SetTitle($article->Title());
+
+?><div class="article"><h1><?php echo htmlentities($article->Title()); ?></h1>
 <?php
 
 $parser = new Parsedown();
@@ -38,4 +40,4 @@ $html = str_replace('<table>', '<table class="generic">', $html);
 
 echo $html;
 
-?>
+?></div>

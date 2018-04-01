@@ -65,16 +65,23 @@ class BeaconArticleMetadata {
 		}
 	}
 	
-	public static function GetRecentArticles(int $count, string $type) {
+	public static function GetRecentArticles(int $count, int $offset, string $type) {
 		$columns = static::Columns();
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', $columns) . ' FROM articles WHERE type = $1 ORDER BY publish_time DESC LIMIT $2;', $type, $count);
+		$results = $database->Query('SELECT ' . implode(', ', $columns) . ' FROM articles WHERE type = $1 ORDER BY publish_time DESC LIMIT $2 OFFSET $3;', $type, $count, $offset);
 		$articles = array();
 		while (!$results->EOF()) {
 			$articles[] = new static($results);
 			$results->MoveNext();
 		}
 		return $articles;
+	}
+	
+	public static function GetCount(string $type) {
+		$columns = static::Columns();
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT COUNT(article_id) AS article_count FROM articles WHERE type = $1;', $type);
+		return intval($results->Field('article_count'));
 	}
 	
 	public static function GetAll(string $type) {
