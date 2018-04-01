@@ -19,6 +19,7 @@ if (!BeaconTemplate::IsHTML()) {
 		<link rel="shortcut icon" href="/assets/favicon/favicon.ico">
 		<link rel="alternate" type="application/json" title="Beacon Developer Blog" href="/blog/json.php">
 		<link rel="alternate" type="application/rss+xml" title="Beacon Developer Blog" href="/blog/rss.php">
+		<link rel="search" type="application/opensearchdescription+xml" href="/search/opensearch.php" title="Beacon Search">
 		<meta name="apple-mobile-web-app-title" content="Beacon">
 		<meta name="application-name" content="Beacon">
 		<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
@@ -49,7 +50,7 @@ if (!BeaconTemplate::IsHTML()) {
 			<div id="darkener"></div>
 			<div id="sidebar">
 				<div id="sidebar_logo_container"><img id="sidebar_logo" src="/assets/images/beacon-white.svg" alt="Beacon - A loot editor for Ark: Survival Evolved"><img id="sidebar_title" src="/assets/images/beacon-title-white.svg"></div>
-				<div id="sidebar_search"><form action="/search.php" method="get"><input type="search" placeholder="Search" id="sidebar_search_field" name="query" autocomplete="off"></form></div>
+				<div id="sidebar_search"><form action="/search/" method="get"><input type="search" placeholder="Search" id="sidebar_search_field" name="query" autocomplete="off"></form></div>
 				<div id="sidebar_double_button"><a href="/download/">Download</a><a href="/donate.php">Donate</a></div>
 				<div id="sidebar_menu">
 					<h3>Help</h3>

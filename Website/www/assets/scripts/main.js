@@ -73,7 +73,7 @@ var search = {
 		
 		var terms = document.getElementById('sidebar_search_field').value;
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', '/search.php?query=' + encodeURIComponent(terms) + '&count=4', true);
+		xhr.open('GET', '/search/?query=' + encodeURIComponent(terms) + '&count=4', true);
 		xhr.setRequestHeader('Accept', 'application/json');
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState != 4 || xhr.status != 200) {
@@ -131,7 +131,7 @@ var search = {
 		
 		if (total > results.length) {
 			var link = document.createElement('a');
-			link.href = '/search.php?query=' + encodeURIComponent(terms);
+			link.href = '/search/?query=' + encodeURIComponent(terms);
 			link.appendChild(document.createTextNode('More Results…'));
 			
 			var node = document.createElement('div');
