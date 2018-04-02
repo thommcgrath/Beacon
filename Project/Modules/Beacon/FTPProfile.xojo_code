@@ -63,12 +63,12 @@ Protected Class FTPProfile
 		  Dim Vector As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Dict.Value("Vector"))
 		  Dim Encrypted As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Dict.Value("Details"))
 		  Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
-		  AES.SetKey(CType(Key.Data, MemoryBlock).StringValue(0, Key.Size))
-		  AES.SetInitialVector(CType(Vector.Data, MemoryBlock).StringValue(0, Vector.Size))
+		  AES.SetKey(Beacon.ConvertMemoryBlock(Key))
+		  AES.SetInitialVector(Beacon.ConvertMemoryBlock(Vector))
 		  
 		  Dim Decrypted As String
 		  Try
-		    Decrypted = AES.DecryptCBC(CType(Encrypted.Data, MemoryBlock).StringValue(0, Encrypted.Size))
+		    Decrypted = AES.DecryptCBC(Beacon.ConvertMemoryBlock(Encrypted))
 		  Catch Err As RuntimeException
 		    Return Nil
 		  End Try
@@ -152,8 +152,8 @@ Protected Class FTPProfile
 		  Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
 		  Dim Key As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(128)
 		  Dim Vector As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)
-		  AES.SetKey(CType(Key.Data, MemoryBlock).StringValue(0, Key.Size))
-		  AES.SetInitialVector(CType(Vector.Data, MemoryBlock).StringValue(0, Vector.Size))
+		  AES.SetKey(Beacon.ConvertMemoryBlock(Key))
+		  AES.SetInitialVector(Beacon.ConvertMemoryBlock(Vector))
 		  Dim Encrypted As String = AES.EncryptCBC(Content)
 		  
 		  Dict = New Xojo.Core.Dictionary
@@ -305,6 +305,16 @@ Protected Class FTPProfile
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Description"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Host"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -319,30 +329,20 @@ Protected Class FTPProfile
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mHost"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mPassword"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mPath"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mUsername"
-			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Password"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Path"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Port"
@@ -361,6 +361,11 @@ Protected Class FTPProfile
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Username"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
