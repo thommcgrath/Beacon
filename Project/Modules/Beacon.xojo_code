@@ -1,5 +1,18 @@
 #tag Module
 Protected Module Beacon
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Protected Function ConvertMemoryBlock(Source As Global.MemoryBlock) As Xojo.Core.MemoryBlock
+		  Dim Temp As New Xojo.Core.MemoryBlock(Source)
+		  Return Temp.Left(Source.Size)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Protected Function ConvertMemoryBlock(Source As Xojo.Core.MemoryBlock) As Global.MemoryBlock
+		  Return CType(Source.Data, Global.MemoryBlock).StringValue(0, Source.Size)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function Clone(Source As Xojo.Core.Dictionary) As Xojo.Core.Dictionary
 		  // This method only exists because the built-in clone method causes crashes.
@@ -93,9 +106,7 @@ Protected Module Beacon
 		    
 		    Return New Xojo.Core.MemoryBlock(Bytes)
 		  #else
-		    Dim Block As Global.MemoryBlock = REALbasic.DecodeHex(Source)
-		    Dim Temp As New Xojo.Core.MemoryBlock(Block)
-		    Return Temp.Left(Block.Size)
+		    Return Beacon.ConvertMemoryBlock(REALbasic.DecodeHex(Source))
 		  #endif
 		End Function
 	#tag EndMethod
@@ -211,7 +222,7 @@ Protected Module Beacon
 		    
 		    Return Text.Join(Output, "")
 		  #else
-		    Return EncodeBase64(CType(Source.Data, Global.MemoryBlock).StringValue(0, Source.Size), 0).ToText
+		    Return EncodeBase64(Beacon.ConvertMemoryBlock(Source), 0).ToText
 		  #endif
 		End Function
 	#tag EndMethod
@@ -243,7 +254,7 @@ Protected Module Beacon
 		    Next
 		    Return Text.Join(Chars, "")
 		  #else
-		    Return REALbasic.EncodeHex(CType(Block.Data, Global.MemoryBlock).StringValue(0, Block.Size)).ToText
+		    Return REALbasic.EncodeHex(Beacon.ConvertMemoryBlock(Block)).ToText
 		  #endif
 		End Function
 	#tag EndMethod
