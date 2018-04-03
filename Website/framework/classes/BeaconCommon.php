@@ -11,6 +11,18 @@ abstract class BeaconCommon {
 		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 	}
 	
+	public static function StartSession() {
+		if (session_status() == PHP_SESSION_NONE) {
+			if (self::InProduction()) {
+				session_name('beacon');
+			} else {
+				session_name('beacon_dev');
+			}
+			session_set_cookie_params(0, '/', '.beaconapp.cc', true, true);
+			session_start();
+		}
+	}
+	
 	public static function EnvironmentName() {
 		return basename(dirname(__FILE__, 4));
 	}

@@ -25,23 +25,22 @@ CREATE DOMAIN hex AS citext CHECK (value ~ '^[a-fA-F0-9]+$');
 CREATE TABLE users (
 	user_id UUID NOT NULL PRIMARY KEY,
 	login_key email UNIQUE,
-	password_iterations INTEGER,
-	password_salt hex,
-	password_hash hex,
-	private_key hex,
 	public_key TEXT NOT NULL,
+	private_key hex,
+	private_key_salt hex,
+	private_key_iterations INTEGER,
 	patreon_id INTEGER,
 	is_patreon_supporter BOOLEAN NOT NULL DEFAULT FALSE,
-	CHECK ((login_key IS NULL AND password_iterations IS NULL AND password_salt IS NULL AND password_hash IS NULL AND private_key IS NULL) OR (login_key IS NOT NULL AND password_iterations IS NOT NULL AND password_salt IS NOT NULL AND password_hash IS NOT NULL AND private_key IS NOT NULL))
+	CHECK ((login_key IS NULL AND private_key_iterations IS NULL AND private_key_salt IS NULL AND private_key IS NULL) OR (login_key IS NOT NULL AND private_key_iterations IS NOT NULL AND private_key_salt IS NOT NULL AND private_key IS NOT NULL))
 );
-GRANT SELECT, INSERT ON TABLE users TO thezaz_website;
+GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE users TO thezaz_website;
 INSERT INTO users (user_id, public_key) VALUES ('90217323-e0c4-4b28-ba24-eed4676f2a83', E'-----BEGIN PUBLIC KEY-----\nMIIBIDANBgkqhkiG9w0BAQEFAAOCAQ0AMIIBCAKCAQEAv5cpgtzTlpTYEDpGTVzB\n3tAuAkL5HfZCxLdF1pJoEOOXh4vKlFDX3pIxtIRq3KWDTpAPJQGlgapoPPBMEka1\nYq6sbiyewGNAPQQyFSee9xnuqFHaF673uBujKGdDyx18t3SKRuyFohIcW4hkwhbY\n7wYjuBUc35L6X7iBtVGo749L5nH4ihBMb+mw5Et8GLxY6gLyv9xvE8eJ4+fpELdd\nWkyNNBE/BhwGTc5L7StOqgdJ7V0cJsY/syBAfkx57lnho8Ux2zC2hhmYE4FYA4r9\n3mdE7jy42v+qYpg88NZHisnBzy/S4IY4D5HKO+EF/9/ON4w2shKoeBVZ7YwMTZJK\nwwIBEQ==\n-----END PUBLIC KEY-----');
 -- End Users
 
 -- Documents: Files that are shareable in the community (time to rethink this?)
 CREATE TABLE documents (
 	document_id UUID NOT NULL PRIMARY KEY,
-	user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT ON UPDATE CASCADE,
 	title TEXT NOT NULL,
 	description TEXT NOT NULL,
 	is_public BOOLEAN NOT NULL,
@@ -104,7 +103,7 @@ CREATE TRIGGER documents_maintenance_trigger BEFORE INSERT OR UPDATE ON document
 CREATE TABLE mods (
 	mod_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 	workshop_id BIGINT NOT NULL,
-	user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT ON UPDATE CASCADE,
 	name TEXT NOT NULL DEFAULT 'Unknown Mod',
 	confirmed BOOLEAN NOT NULL DEFAULT FALSE,
 	confirmation_code UUID NOT NULL DEFAULT gen_random_uuid(),
