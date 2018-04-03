@@ -2,11 +2,11 @@
 
 class BeaconUser implements JsonSerializable {
 	protected $user_id = '';
-	protected $login_key = '';
+	protected $login_key = null;
 	protected $public_key = '';
-	protected $private_key = '';
-	protected $private_key_salt = '';
-	protected $private_key_iterations = 0;
+	protected $private_key = null;
+	protected $private_key_salt = null;
+	protected $private_key_iterations = null;
 	protected $patreon_user_id = null;
 	protected $is_patreon_supporter = false;
 	
@@ -25,6 +25,10 @@ class BeaconUser implements JsonSerializable {
 		return $this->user_id;
 	}
 	
+	public function LoginKey() {
+		return $this->login_key;
+	}
+	
 	public function PublicKey() {
 		return $this->public_key;
 	}
@@ -35,6 +39,10 @@ class BeaconUser implements JsonSerializable {
 	
 	public function IsPatreonSupporter() {
 		return $this->is_patreon_supporter;
+	}
+	
+	public function IsAnonymous() {
+		return empty($this->login_key);
 	}
 	
 	public function Validation() {
@@ -176,6 +184,10 @@ class BeaconUser implements JsonSerializable {
 			$results->MoveNext();
 		}
 		return $users;
+	}
+	
+	public static function ValidateLoginKey(string $login_key) {
+		return filter_var($login_key, FILTER_VALIDATE_EMAIL);
 	}
 	
 	public static function ValidatePassword(string $password) {
