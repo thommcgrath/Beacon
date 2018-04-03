@@ -50,20 +50,8 @@ case 'POST':
 	
 	break;
 case 'GET':
-	if ($user_id === null) {
-		BeaconAPI::ReplyError('Listing users is not allowed', null, 405);
-	}
-	
-	$users = BeaconUser::GetByUserID($user_id);
-	
-	if (count($users) == 1) {
-		BeaconAPI::ReplySuccess($users[0]);
-	} elseif (count($users) == 0) {
-		BeaconAPI::ReplyError('User not found', null, 404);
-	} else {
-		BeaconAPI::ReplySuccess($users);
-	}
-	
+	BeaconAPI::Authenticate();
+	BeaconAPI::ReplySuccess(BeaconUser::GetByUserID(BeaconAPI::UserID()));	
 	break;
 case 'DELETE':
 	BeaconAPI::Authorize();
