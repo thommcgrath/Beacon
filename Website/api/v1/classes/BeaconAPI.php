@@ -77,7 +77,17 @@ abstract class BeaconAPI {
 		$content = '';
 		self::$user_id = BeaconCommon::GenerateUUID(); // To return a "new" UUID even if authorization fails.
 		
-		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && BeaconCommon::IsUUID($_SERVER['PHP_AUTH_USER'])) {
+		if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+			$authorization = $_SERVER['HTTP_AUTHORIZATION'];
+			if (substr($authorization, 0, 8) === 'Session ') {
+				$session_id = substr($authorization, 8);
+				$session = BeaconSession::GetBySessionID($session_id);
+				if (!is_null($session)) {
+					self::$user_id = $session->UserID();
+					$authorized = true;
+				}
+			}
+		} else if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && BeaconCommon::IsUUID($_SERVER['PHP_AUTH_USER'])) {
 			$user_id = strtolower($_SERVER['PHP_AUTH_USER']);
 			$signature = $_SERVER['PHP_AUTH_PW'];
 			$database = BeaconCommon::Database();

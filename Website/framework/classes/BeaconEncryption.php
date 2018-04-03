@@ -72,6 +72,24 @@ abstract class BeaconEncryption {
 		}
 		return $decrypted;
 	}
+	
+	public static function PublicKeyToPEM(string $public_key) {
+		if (substr($public_key, 0, 26) != '-----BEGIN PUBLIC KEY-----') {
+			$public_key = hex2bin($public_key);
+			$public_key = trim(chunk_split(base64_encode($public_key), 64, "\n"));
+			$public_key = "-----BEGIN PUBLIC KEY-----\n$public_key\n-----END PUBLIC KEY-----";
+		}
+		return $public_key;
+	}
+	
+	public static function PrivateKeyToPEM(string $private_key) {
+		if (substr($private_key, 0, 31) != '-----BEGIN RSA PRIVATE KEY-----') {
+			$private_key = hex2bin($private_key);
+			$private_key = trim(chunk_split(base64_encode($private_key), 64, "\n"));
+			$private_key = "-----BEGIN RSA PRIVATE KEY-----\n$private_key\n-----END RSA PRIVATE KEY-----";
+		}
+		return $private_key
+	}
 }
 
 ?>
