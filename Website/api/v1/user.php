@@ -42,17 +42,7 @@ case 'POST':
 			BeaconAPI::ReplyError('User ' . $user_id . 'already exists');
 		}
 		
-		// Prepare the public key if necessary
-		if (substr($public_key, 0, 26) == '-----BEGIN PUBLIC KEY-----') {
-			// Ready for use
-		} else {
-			// Needs conversion
-			$public_key = hex2bin($public_key);
-			$public_key = trim(chunk_split(base64_encode($public_key), 64, "\n"));
-			$public_key = "-----BEGIN PUBLIC KEY-----\n$public_key\n-----END PUBLIC KEY-----";
-		}
-		
-		$database->Query('INSERT INTO users (user_id, public_key) VALUES ($1, $2);', $user_id, $public_key);
+		$database->Query('INSERT INTO users (user_id, public_key) VALUES ($1, $2);', $user_id, BeaconEncryption::PublicKeyToPEM($public_key));
 	}
 	$database->Commit();
 	
