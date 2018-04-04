@@ -69,7 +69,11 @@ case 'GET':
 				);
 			}
 		}
-		BeaconAPI::ReplySuccess($users, count($users) > 0 ? 200 : 404);
+		if (count($users) == 1) {
+			BeaconAPI::ReplySuccess($users[0]);
+		} else {
+			BeaconAPI::ReplySuccess($users, count($users) > 0 ? 200 : 404);
+		}
 	}
 	
 	break;
