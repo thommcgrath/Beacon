@@ -69,7 +69,12 @@ abstract class BeaconAPI {
 	}
 	
 	public static function ContentType() {
-		return strtolower($_SERVER['CONTENT_TYPE']);
+		$pos = strpos($_SERVER['CONTENT_TYPE'], ';');
+		if ($pos === false) {
+			return strtolower($_SERVER['CONTENT_TYPE']);
+		} else {
+			return substr(strtolower($_SERVER['CONTENT_TYPE']), 0, $pos);
+		}
 	}
 	
 	public static function Authorize(bool $optional = false) {

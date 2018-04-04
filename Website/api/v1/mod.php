@@ -55,6 +55,7 @@ case 'POST':
 		$items = $payload;
 	}
 	
+	$mods = array();
 	$database->BeginTransaction();
 	foreach ($items as $item) {
 		if (!BeaconCommon::HasAllKeys($item, 'mod_id')) {
@@ -93,10 +94,12 @@ case 'POST':
 				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMessage());
 			}
 		}
+		
+		$mods[] = BeaconMod::GetByWorkshopID(BeaconAPI::UserID(), $workshop_id)[0];
 	}
 	$database->Commit();
 		
-	BeaconAPI::ReplySuccess();
+	BeaconAPI::ReplySuccess($mods);
 	
 	break;
 case 'DELETE':

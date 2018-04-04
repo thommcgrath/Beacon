@@ -17,7 +17,7 @@ case 'POST':
 		BeaconAPI::ReplyError('Send a JSON payload');
 	}
 	
-	$payload = BeaconAPI::JSONPayload();
+	$userdata = BeaconAPI::JSONPayload();
 	if (BeaconCommon::IsAssoc($payload)) {
 		// single
 		$items = array($payload);
@@ -50,7 +50,7 @@ case 'POST':
 	
 	break;
 case 'GET':
-	BeaconAPI::Authenticate();
+	BeaconAPI::Authorize();
 	BeaconAPI::ReplySuccess(BeaconUser::GetByUserID(BeaconAPI::UserID()));	
 	break;
 case 'DELETE':
@@ -60,6 +60,8 @@ case 'DELETE':
 	}
 	
 	$database->BeginTransaction();
+	$database->Query('DELETE FROM documents WHERE user_id = $1;', BeaconAPI::UserID());
+	$database->Query('DELETE FROM mods WHERE user_id = $1;', BeaconAPI::UserID());
 	$database->Query('DELETE FROM users WHERE user_id = $1;', BeaconAPI::UserID());
 	$database->Commit();
 	

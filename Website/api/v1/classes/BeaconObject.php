@@ -168,7 +168,7 @@ class BeaconObject implements JsonSerializable {
 		return static::Get(null, $min_version, $updated_since);
 	}
 	
-	public static function Get($values, int $min_version = 0, DateTime $updated_since = null) {
+	public static function Get($values = null, int $min_version = 0, DateTime $updated_since = null) {
 		if ($values !== null) {
 			$values = static::PrepareLists($values);
 		} else {
@@ -194,7 +194,6 @@ class BeaconObject implements JsonSerializable {
 			$clauses = array('(' . implode(' OR ', $clauses) . ')');
 		}
 		array_unshift($clauses, 'min_version <= $1', 'last_update > $2');
-		
 		
 		$database = BeaconCommon::Database();
 		$results = $database->Query(static::BuildSQL($clauses), $parameters);
