@@ -45,7 +45,7 @@ class BeaconBlueprint extends BeaconObject {
 			} elseif (preg_match('/^[A-F0-9]{32}$/i', $value)) {
 				$possible_columns[] = 'MD5(LOWER(path))';
 				return $value;
-			} else {
+			} elseif (strtolower(substr($value, 0, 6)) == '/game/') {
 				$possible_columns[] = 'path';
 				return $value;
 			}

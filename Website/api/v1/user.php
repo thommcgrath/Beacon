@@ -17,7 +17,7 @@ case 'POST':
 		BeaconAPI::ReplyError('Send a JSON payload');
 	}
 	
-	$userdata = BeaconAPI::JSONPayload();
+	$payload = BeaconAPI::JSONPayload();
 	if (BeaconCommon::IsAssoc($payload)) {
 		// single
 		$items = array($payload);
@@ -50,8 +50,28 @@ case 'POST':
 	
 	break;
 case 'GET':
-	BeaconAPI::Authorize();
-	BeaconAPI::ReplySuccess(BeaconUser::GetByUserID(BeaconAPI::UserID()));	
+	if (is_null(BeaconAPI::ObjectID())) {
+		BeaconAPI::Authorize();
+		BeaconAPI::ReplySuccess(BeaconUser::GetByUserID(BeaconAPI::UserID()));
+	} else {
+		// legacy support
+		$identifiers = explode(',', BeaconAPI::ObjectID());
+		$users = array();
+		foreach ($identifiers as $identifier) {
+			if (BeaconCommon::IsUUID($identifier)) {
+				$user = BeaconUser::GetByUserID($identifier);
+			}
+			if (!is_null($user)) {
+				// don't use the regular method that includes lots of values
+				$users[] = array(
+					'user_id' => $user->UserID(),
+					'public_key' => $user->PublicKey()
+				);
+			}
+		}
+		BeaconAPI::ReplySuccess($users, count($users) > 0 ? 200 : 404);
+	}
+	
 	break;
 case 'DELETE':
 	BeaconAPI::Authorize();

@@ -156,9 +156,12 @@ class BeaconObject implements JsonSerializable {
 			$possible_columns[] = 'mods.mod_id';
 			return $value;
 		}
-		if (ctype_digit($value)) {
-			$possible_columns[] = 'mods.workshop_id';
-			return intval($value);
+		if (is_numeric($value)) {
+			$numeric_value = $value + 0;
+			if (is_int($numeric_value)) {
+				$possible_columns[] = 'mods.workshop_id';
+				return $numeric_value;
+			}
 		}
 		
 		return null;
