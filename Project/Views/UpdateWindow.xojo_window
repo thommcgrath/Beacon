@@ -44,6 +44,7 @@ Begin BeaconWindow UpdateWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   1
       Visible         =   True
@@ -70,6 +71,7 @@ Begin BeaconWindow UpdateWindow
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   1
+         TabStop         =   True
          Text            =   "Check for Beacon updates…"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -99,6 +101,7 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Top             =   52
          Value           =   0
          Visible         =   True
@@ -185,6 +188,7 @@ Begin BeaconWindow UpdateWindow
          Selectable      =   False
          TabIndex        =   1
          TabPanelIndex   =   2
+         TabStop         =   True
          Text            =   "A new version of Beacon is available!"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -387,6 +391,7 @@ Begin BeaconWindow UpdateWindow
          Selectable      =   False
          TabIndex        =   0
          TabPanelIndex   =   3
+         TabStop         =   True
          Text            =   "Downloading update…"
          TextAlign       =   0
          TextColor       =   &c00000000
@@ -444,6 +449,7 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
+         TabStop         =   True
          Top             =   52
          Value           =   0
          Visible         =   True
@@ -482,12 +488,14 @@ Begin BeaconWindow UpdateWindow
       End
    End
    Begin UpdateChecker Checker
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Xojo.Net.HTTPSocket Downloader
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -779,9 +787,7 @@ End
 		  #Pragma Unused HTTPStatus
 		  
 		  Dim Stream As BinaryStream = BinaryStream.Create(Self.mFile, True)
-		  For I As Integer = 0 To Content.Size - 1
-		    Stream.WriteUInt8(Content.UInt8Value(I))
-		  Next
+		  Stream.Write(Beacon.ConvertMemoryBlock(Content))
 		  Stream.Close
 		  
 		  If UpdateChecker.VerifyFile(Self.mFile, Self.mSignature) Then
