@@ -16,6 +16,7 @@ if ($results->RecordCount() == 1) {
 
 $results = $database->Query("SELECT MAX(last_update) FROM objects WHERE min_version <= $1;", array($build));
 $last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
+$include_mod_names = true;
 
 if ($mod_id === null) {
 	$title = 'All Spawn Codes';
@@ -35,6 +36,7 @@ if ($mod_id === null) {
 		exit;
 	} elseif (count($mod_names) == 1) {
 		$title = $mod_names[0];
+		$include_mod_names = false;
 	} elseif (count($mod_names) == 2) {
 		$title = $mod_names[0] . ' and ' . $mod_names[1];
 	} else {
@@ -57,10 +59,17 @@ if ($mod_id === null) {
 	<?php
 	
 	foreach ($engrams as $engram) {
+		$id = $engram->ObjectID();
 		$class = $engram->ClassString();
 		$label = $engram->Label();
 		$spawn = $engram->SpawnCode();
-		echo '<tr class="beacon-engram" beacon-label="' . htmlentities(strtolower($label)) . '"><td>' . htmlentities($label) . '</td><td><input type="text" class="beacon-spawn-code" id="spawn_' . htmlentities(strtolower($class)) . '" value="' . htmlentities($spawn) . '" readonly></td><td><button class="beacon-engram-copy" beacon-class="' . htmlentities($class) . '">Copy</button></tr>';
+		$mod = $engram->ModName();
+		
+		echo '<tr id="spawn_' . htmlentities($id) . '" class="beacon-engram" beacon-label="' . htmlentities(strtolower($label)) . '" beacon-spawn-code="' . htmlentities($spawn) . '" beacon-uuid="' . $id . '">';
+		echo '<td>' . htmlentities($label) . ($include_mod_names ? '<span class="beacon-engram-mod-name"><br>' . htmlentities($mod) . '</span>' : '') . '<div class="beacon-spawn-code-small">' . htmlentities($spawn) . '</div></td>';
+		echo '<td>' . htmlentities($spawn) . '</td>';
+		echo '<td><button class="beacon-engram-copy" beacon-uuid="' . htmlentities($id) . '">Copy</button></td>';
+		echo '</tr>';
 	}
 	
 	?>

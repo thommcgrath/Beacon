@@ -1,13 +1,45 @@
 #spawntable tr td:nth-of-type(1) {
 	width: auto;
-	max-width: 150px;
 }
 
 #spawntable tr td:nth-of-type(2) {
-	width: auto;
+	display: none;
 }
 
 #spawntable tr td:nth-of-type(3) {
-	width: 100px;
+	width: 80px;
 	text-align: center;
+}
+
+.beacon-engram-mod-name {
+	font-size: 0.8em;
+	color: #808080;
+}
+
+.beacon-spawn-code-small {
+	font-size: 0.8em;
+	padding: 0px;
+	margin-top: 10px;
+	word-break: break-word;
+}
+
+@media (min-width: 1000px) {
+	#spawntable tr td:nth-of-type(1) {
+		min-width: 250px;
+	}
+	
+	#spawntable tr td:nth-of-type(2) {
+		display: table-cell;
+		width: auto;
+		word-break: break-word;
+		font-size: 0.8em;
+	}
+	
+	#spawntable tr td:nth-of-type(3) {
+		width: 100px;
+	}
+	
+	.beacon-spawn-code-small {
+		display: none;
+	}
 }
