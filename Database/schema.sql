@@ -34,7 +34,6 @@ CREATE TABLE users (
 	CHECK ((login_key IS NULL AND private_key_iterations IS NULL AND private_key_salt IS NULL AND private_key IS NULL) OR (login_key IS NOT NULL AND private_key_iterations IS NOT NULL AND private_key_salt IS NOT NULL AND private_key IS NOT NULL))
 );
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE users TO thezaz_website;
-INSERT INTO users (user_id, public_key) VALUES ('84aa7e0b-ecca-4a64-96dc-e11c032fd573', E'-----BEGIN PUBLIC KEY-----\nMIIBIDANBgkqhkiG9w0BAQEFAAOCAQ0AMIIBCAKCAQEApd0V8w42ue4SL4QD2vW4\nUXYalW8XgZWig7DbY+emo9aWNwm6qwGSCrp4TUDNkAjA/w6xyJXy7+62fLEJ9GDV\nxZh3Lv30SpatoAWOGkMJc0y8sUuUJmfRM9m163SUNV9W2moYbFatGQAyUnK2/mZM\nEj3uHOo894VihmhxJ6KUN6gX4OkZuUodmRifFtSEHkCwx9xv1nqdlSgQQi/SCgBt\nCcR/BHB92X2C/GDwoH9XF2LxWN/bFBH95MWLByaei5Xp4F0+gFTGUsuQ3ATMK9NG\nWTfGPanyuMJyhCki0Tt1xlTl2/zypyA7VGMW9PMewgLiIYM9k9jh1iU7LblN3oaP\n6QIBEQ==\n-----END PUBLIC KEY-----');
 -- End Users
 
 -- Documents: Files that are shareable in the community (time to rethink this?)
@@ -113,13 +112,7 @@ CREATE TABLE mods (
 );
 CREATE UNIQUE INDEX mods_workshop_id_user_id_uidx ON mods(workshop_id, user_id);
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE mods TO thezaz_website;
-INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed, console_safe) VALUES ('30bbab29-44b2-4f4b-a373-6d4740d9d3b5', -346110, '84aa7e0b-ecca-4a64-96dc-e11c032fd573', 'Ark Prime', TRUE, TRUE);
-INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed, console_safe) VALUES ('55dd6a68-7041-46aa-9405-9adc5ae1825f', -512540, '84aa7e0b-ecca-4a64-96dc-e11c032fd573', 'Scorched Earth', TRUE, TRUE);
-INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed, console_safe) VALUES ('38b6b5ae-1a60-4f2f-9bc6-9a23620b56d8', -708770, '84aa7e0b-ecca-4a64-96dc-e11c032fd573', 'Aberration', TRUE, TRUE);
-INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed, console_safe) VALUES ('4dd9a0a5-add5-439c-9e80-103c6197d620', -473850, '84aa7e0b-ecca-4a64-96dc-e11c032fd573', 'The Center', TRUE, TRUE);
-INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed, console_safe) VALUES ('d23706bb-9875-46f4-b2aa-c137516aa65f', -642250, '84aa7e0b-ecca-4a64-96dc-e11c032fd573', 'Ragnarok', TRUE, TRUE);
-INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed, console_safe) VALUES ('68d1be8b-a66e-41a2-b0b4-cb2a724fc80b', -508150, '84aa7e0b-ecca-4a64-96dc-e11c032fd573', 'Primitive+', TRUE, TRUE);
-INSERT INTO mods (mod_id, workshop_id, user_id, name, confirmed, console_safe) VALUES ('397741a2-b35c-46a0-8cb0-1b61ff7d3d29', 731604991, '84aa7e0b-ecca-4a64-96dc-e11c032fd573', 'Structures Plus', TRUE, FALSE);
+
 CREATE OR REPLACE FUNCTION enforce_mod_owner() RETURNS trigger AS $$
 DECLARE
 	confirmed_count INTEGER := 0;
