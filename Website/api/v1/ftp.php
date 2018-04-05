@@ -45,7 +45,8 @@ case 'GET':
 		
 		$results = array(
 			'Game.ini' => $game_ini_path,
-			'GameUserSettings.ini' => $settings_ini_path
+			'GameUserSettings.ini' => $settings_ini_path,
+			'ref' => $ref
 		);
 		
 		$log_found = false;

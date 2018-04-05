@@ -156,9 +156,12 @@ class BeaconObject implements JsonSerializable {
 			$possible_columns[] = 'mods.mod_id';
 			return $value;
 		}
-		if (ctype_digit($value)) {
-			$possible_columns[] = 'mods.workshop_id';
-			return intval($value);
+		if (is_numeric($value)) {
+			$numeric_value = $value + 0;
+			if (is_int($numeric_value)) {
+				$possible_columns[] = 'mods.workshop_id';
+				return $numeric_value;
+			}
 		}
 		
 		return null;
@@ -168,7 +171,7 @@ class BeaconObject implements JsonSerializable {
 		return static::Get(null, $min_version, $updated_since);
 	}
 	
-	public static function Get($values, int $min_version = 0, DateTime $updated_since = null) {
+	public static function Get($values = null, int $min_version = 0, DateTime $updated_since = null) {
 		if ($values !== null) {
 			$values = static::PrepareLists($values);
 		} else {
@@ -200,6 +203,13 @@ class BeaconObject implements JsonSerializable {
 		return static::FromResults($results);
 	}
 	
+	public static function GetByObjectID(string $object_id, int $min_version = 0, DateTime $updated_since = null) {
+		$objects = static::Get($object_id, $min_version, $updated_since);
+		if (count($objects) == 1) {
+			return $objects[0];
+		}
+	}
+	
 	protected static function FromResults(BeaconRecordSet $results) {
 		if (($results === null) || ($results->RecordCount() == 0)) {
 			return array();
@@ -220,7 +230,7 @@ class BeaconObject implements JsonSerializable {
 		$obj = new static($row->Field('object_id'));
 		$obj->object_group = $row->Field('table_name');
 		$obj->label = $row->Field('label');
-		$obj->min_version = $row->Field('min_version');
+		$obj->min_version = intval($row->Field('min_version'));
 		$obj->mod_id = $row->Field('mod_id');
 		$obj->mod_name = $row->Field('mod_name');
 		return $obj;
@@ -268,7 +278,8 @@ class BeaconObject implements JsonSerializable {
 			$arr[] = array(
 				'object_id' => $results->Field('object_id'),
 				'group' => $results->Field('from_table'),
-				'label' => $results->Field('label')
+				'label' => $results->Field('label'),
+				'tag' => $results->Field('tag')
 			);
 			$results->MoveNext();
 		}
@@ -324,4 +335,3 @@ class BeaconObject implements JsonSerializable {
 }
 
 ?>
-		

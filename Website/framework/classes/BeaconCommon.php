@@ -11,6 +11,18 @@ abstract class BeaconCommon {
 		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 	}
 	
+	public static function StartSession() {
+		if (session_status() == PHP_SESSION_NONE) {
+			if (self::InProduction()) {
+				session_name('beacon');
+			} else {
+				session_name('beacon_dev');
+			}
+			session_set_cookie_params(0, '/', '.beaconapp.cc', true, true);
+			session_start();
+		}
+	}
+	
 	public static function EnvironmentName() {
 		return basename(dirname(__FILE__, 4));
 	}
@@ -53,7 +65,7 @@ abstract class BeaconCommon {
 			return true;
 		}
 		
-		if (preg_match('/^([0-9A-F]{8})-?([0-9A-F]{4})-?(4[0-9A-F]{3})-?([89AB][0-9A-F]{3})-?([0-9A-F]{12})$/i', $cleaned, $matches) === 1) {
+		if (preg_match('/^([0-9A-F]{8})-?([0-9A-F]{4})-?([0-9A-F]{4})-?([0-9A-F]{4})-?([0-9A-F]{12})$/i', $cleaned, $matches) === 1) {
 			$input = strtolower($matches[1] . '-' . $matches[2] . '-' . $matches[3] . '-' . $matches[4] . '-' . $matches[5]);
 			return true;
 		} else {
@@ -147,6 +159,19 @@ abstract class BeaconCommon {
 	
 	public static function IsWindowsPhone() {
 		return stristr($_SERVER['HTTP_USER_AGENT'], 'Windows Phone OS') !== false;
+	}
+	
+	public static function ArrayToEnglish(array $items) {
+		if (count($items) == 0) {
+			return '';
+		} elseif (count($items) == 1) {
+			return $items[0];
+		} elseif (count($items) == 2) {
+			return $items[0] . ' and ' . $items[1];
+		} else {
+			$last = array_pop($items);
+			return implode(', ', $items) . ', and ' . $last;
+		}
 	}
 }
 

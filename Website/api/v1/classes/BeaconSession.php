@@ -41,7 +41,7 @@ class BeaconSession implements JsonSerializable {
 		$database->Query("INSERT INTO sessions (session_id, user_id, valid_until) VALUES (encode(digest($1, 'sha512'), 'hex'), $2, CURRENT_TIMESTAMP(0) + '30d');", $session_id, $user_id);
 		$database->Commit();
 		
-		return static::GetByID($session_id);
+		return static::GetBySessionID($session_id);
 	}
 	
 	public static function GetBySessionID(string $session_id) {

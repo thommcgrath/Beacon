@@ -45,6 +45,9 @@ class BeaconBlueprint extends BeaconObject {
 			} elseif (preg_match('/^[A-F0-9]{32}$/i', $value)) {
 				$possible_columns[] = 'MD5(LOWER(path))';
 				return $value;
+			} elseif (strtolower(substr($value, 0, 6)) == '/game/') {
+				$possible_columns[] = 'path';
+				return $value;
 			}
 		}
 		
@@ -105,7 +108,7 @@ class BeaconBlueprint extends BeaconObject {
 	}
 	
 	public function AvailableTo(int $mask) {
-		return ($this->availability & $mask) === $mask;
+		return ($this->availability & $mask) !== 0;
 	}
 	
 	public function SetAvailableTo(int $mask, bool $available) {
@@ -166,6 +169,10 @@ class BeaconBlueprint extends BeaconObject {
 		$components = explode('.', $tail);
 		$class = array_pop($components);
 		return $class . '_C';
+	}
+	
+	public function RelatedObjectIDs() {
+		return array();
 	}
 }
 

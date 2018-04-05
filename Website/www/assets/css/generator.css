@@ -1,0 +1,81 @@
+#mode_tabs {
+	display: flex;
+}
+
+#mode_tabs_new, #mode_tabs_paste, #mode_tabs_upload {
+	background-color: rgba(0, 0, 0, 0.05);
+	padding: 6px 10px;
+	text-align: center;
+	margin-right: 6px;
+	cursor: pointer;
+}
+
+#mode_tabs div.selected {
+	background-color: rgba(0, 0, 0, 0.1);
+	font-weight: 700;
+}
+
+#mode_view, #mode_customizations {
+	background-color: rgba(0, 0, 0, 0.1);
+	padding: 10px;
+}
+
+#mode_view_paste, #mode_view_upload {
+	display: none;
+}
+
+#dino_level_field {
+	max-width: 100px;
+}
+
+#options_table {
+	width: 100%;
+	box-sizing: border-box;
+	border-collapse: collapse;
+}
+
+#options_table td {
+	padding: 5px;
+}
+
+#options_table td.label {
+	white-space: nowrap;
+	width: 10px;
+	text-align: right;
+	font-weight: 600;
+}
+
+#upload_file_selector {
+	display: none;
+}
+
+#search_form {
+	border: 1px solid #f4f4f4;
+	border-radius: 0.6em;
+	margin-bottom: 20px;
+	padding: 10px;
+}
+
+#browse_results th.low-priority-detail,
+#browse_results td.low-priority-detail {
+	display: none;
+}
+
+#browse_results div.properties-text {
+	color: #808080;
+	border-top: 1px solid #f4f4f4;
+	font-size: smaller;
+	margin-top: 0.5em;
+	padding-top: 0.5em;
+}
+
+@media (min-width: 999px) {
+	#browse_results th.low-priority-detail,
+	#browse_results td.low-priority-detail {
+		display: table-cell;
+	}
+	
+	#browse_results div.properties-text {
+		display: none;
+	}
+}

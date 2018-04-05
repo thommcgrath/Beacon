@@ -5,13 +5,12 @@ window.addEventListener('load', function() {
 		var links = row.getElementsByClassName('beacon-engram-copy');
 		if (links.length === 1) {
 			links[0].addEventListener('click', function(event) {
-				var classstring = event.target.getAttribute('beacon-class');
-				var cell = document.getElementById('spawn_' + classstring.toLowerCase());
-				if (cell) {
-					cell.select();
+				var uuid = event.target.getAttribute('beacon-uuid');
+				var row = document.getElementById('spawn_' + uuid);
+				if (row) {
 					try {
-						document.execCommand('copy');
-						cell.blur();
+						clipboard.writeText(row.getAttribute('beacon-spawn-code'));
+						
 						event.target.innerText = 'Copied!';
 						event.target.disabled = true;
 						setTimeout(function() {
@@ -22,7 +21,7 @@ window.addEventListener('load', function() {
 						alert('Looks like this browser does not support automatic copy. You will need to do it yourself.');
 					}
 				} else {
-					console.log('Cell spawn_' + classstring.toLowerCase() + ' was not found');
+					console.log('Row ' + uuid + ' was not found');
 				}
 			});
 		} else {

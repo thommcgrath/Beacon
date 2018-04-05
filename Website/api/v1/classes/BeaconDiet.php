@@ -33,6 +33,17 @@ class BeaconDiet extends BeaconObject implements ArrayAccess {
 		return $this->engram_ids;
 	}
 	
+	public function CreatureIDs() {
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT DISTINCT object_id, label FROM creatures WHERE taming_diet = $1 OR tamed_diet = $1 ORDER BY label;', $this->ObjectID());
+		$arr = array();
+		while (!$results->EOF()) {
+			$arr[] = $results->Field('object_id');
+			$results->MoveNext();
+		}
+		return $arr;
+	}
+	
 	protected function SaveChildrenHook(BeaconDatabase $database) {
 		$database->Query('DELETE FROM diet_contents WHERE diet_id = $1 AND engram_id != ANY($2);', $this->ObjectID(), '{' . implode(',', $this->engram_ids) . '}');
 		$c = 0;

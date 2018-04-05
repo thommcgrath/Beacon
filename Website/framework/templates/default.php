@@ -17,11 +17,15 @@ if (!BeaconTemplate::IsHTML()) {
 		<link rel="manifest" href="/assets/favicon/manifest.json">
 		<link rel="mask-icon" href="/assets/favicon/safari-pinned-tab.svg" color="#713a9a">
 		<link rel="shortcut icon" href="/assets/favicon/favicon.ico">
+		<link rel="alternate" type="application/json" title="Beacon Developer Blog" href="/blog/json.php">
+		<link rel="alternate" type="application/rss+xml" title="Beacon Developer Blog" href="/blog/rss.php">
+		<link rel="search" type="application/opensearchdescription+xml" href="/search/opensearch.php" title="Beacon Search">
 		<meta name="apple-mobile-web-app-title" content="Beacon">
 		<meta name="application-name" content="Beacon">
 		<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
 		<meta name="theme-color" content="#713a9a">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="/assets/scripts/main.js"></script>
 		<?php
 		$header_lines = BeaconTemplate::ExtraHeaderLines();
 		for ($i = 0; $i < count($header_lines); $i++) {
@@ -37,23 +41,58 @@ if (!BeaconTemplate::IsHTML()) {
 		?>
 	</head>
 	<body>
-		<header>
-			<div class="inner">
-				<a href="/" id="header_link"><img id="header_logo_small" width="40" height="40" src="/assets/images/beacon-color.svg" alt="Beacon - A Loot Editor for Ark: Survival Evolved"><img id="header_logo_full" width="256" height="40" src="/assets/images/header.svg" alt="Beacon - A Loot Editor for Ark: Survival Evolved"></a>
-				<div id="top-menu">
-					<a href="/spawn/">Spawn Codes</a>
-					<a href="/help/">Help</a>
-					<a href="/download/">Download</a>
+		<div id="site_wrapper">
+			<div id="header">
+				<div id="header_hamburger_container"><img id="header_hamburger" src="/assets/images/hamburger-white.svg"></div>
+				<div id="header_logo_container"><img id="header_logo" src="/assets/images/beacon-white.svg" alt="Beacon - A loot editor for Ark: Survival Evolved"></div>
+				<div id="header_spacer"></div>
+			</div>
+			<div id="darkener"></div>
+			<div id="sidebar">
+				<div id="sidebar_logo_container"><img id="sidebar_logo" src="/assets/images/beacon-white.svg" alt="Beacon - A loot editor for Ark: Survival Evolved"><img id="sidebar_title" src="/assets/images/beacon-title-white.svg"></div>
+				<div id="sidebar_search"><form action="/search/" method="get"><input type="search" placeholder="Search" id="sidebar_search_field" name="query" autocomplete="off"></form></div>
+				<div id="sidebar_double_button"><a href="/download/">Download</a><a href="/donate.php">Donate</a></div>
+				<div id="sidebar_menu">
+					<h3>Help</h3>
+					<ul>
+						<?php
+						
+						$article_ids = array('96d0efc7-2e62-4ae4-9d9b-70cc890dc98e', '78cf1d4c-2368-4d24-ab73-00ba80a85fd7');
+						foreach ($article_ids as $article_id) {
+							$article = BeaconArticleMetadata::GetByArticleID($article_id);
+							echo '<li><a href="/read.php/' . $article->ArticleID() . '">' . htmlentities($article->Title()) . '</a></li>';
+						}
+						
+						?><li><a href="/spawn/">Ark Spawn Codes</a></li>
+						<li><a href="/help/">More Topics&hellip;</a></li>
+					</ul>
+					<h3>News</h3>
+					<ul>
+						<?php
+						
+						$posts = BeaconArticleMetadata::GetRecentArticles(3, 0, BeaconArticleMetadata::TYPE_BLOG);
+						foreach ($posts as $post) {
+							echo '<li><a href="/read.php/' . $post->ArticleID() . '">' . htmlentities($post->Title()) . '</a></li>';
+						}
+						
+						?>
+						<li><a href="/blog/">Older&hellip;</a></li>
+					</ul>
+					<h3>Community</h3>
+					<ul>
+						<li><a href="/browse/">Browse Community Configs</a></li>
+						<li><a href="/mods/">Supported Mods</a></li>
+					</ul>
 				</div>
 			</div>
-		</header>
-		<main class="inner">
-			<?php echo $buffer; ?>
-		</main>
-		<footer class="inner">
-			<p><a id="footer_github_logo" href="https://github.com/thommcgrath/Beacon"><img height="24" src="/assets/images/github.svg"></a><a id="footer_patreon_logo" href="https://www.patreon.com/thommcgrath"><img height="24" src="/assets/images/patreon-white.svg"></a><a id="footer_discord_logo" href="https://discord.gg/2vbT7fV"><img height="24" src="/assets/images/discord-white.svg"></a></p>
-			<p>Beacon is an open source project by Thom McGrath. Copyright 2016-<?php echo date('Y'); ?>.</p>
-			<p>Get in touch using <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.</p>
-		</footer>
+			<div id="main">
+				<?php echo $buffer; ?>
+				<footer class="inner">
+					<p><a id="footer_github_logo" href="https://github.com/thommcgrath/Beacon"><img height="24" src="/assets/images/github-color.svg"></a><a id="footer_patreon_logo" href="https://www.patreon.com/thommcgrath"><img height="24" src="/assets/images/patreon-color.svg"></a><a id="footer_discord_logo" href="https://discord.gg/2vbT7fV"><img height="24" src="/assets/images/discord-color.svg"></a></p>
+					<p>Beacon is an open source project by Thom McGrath. Copyright 2016-<?php echo date('Y'); ?>.</p>
+					<p>Get in touch using <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.</p>
+				</footer>
+			</div>
+		</div>
 	</body>
 </html>

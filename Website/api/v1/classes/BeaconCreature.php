@@ -59,7 +59,7 @@ class BeaconCreature extends BeaconBlueprint {
 		$obj->tamable = $row->Field('tamable');
 		$obj->taming_diet_id = $row->Field('taming_diet');
 		$obj->taming_method = $row->Field('taming_method');
-		$obj->tamed_diet = $row->Field('tamed_diet');
+		$obj->tamed_diet_id = $row->Field('tamed_diet');
 		$obj->rideable = $row->Field('rideable');
 		$obj->carryable = $row->Field('carryable');
 		$obj->breedable = $row->Field('breedable');
@@ -71,11 +71,11 @@ class BeaconCreature extends BeaconBlueprint {
 		$json['tamable'] = $this->tamable;
 		$json['taming_diet_id'] = $this->taming_diet_id;
 		$json['taming_method'] = $this->taming_method;
-		$json['tamed_diet'] = $this->tamed_diet;
+		$json['tamed_diet'] = $this->tamed_diet_id;
 		$json['rideable'] = $this->rideable;
 		$json['carryable'] = $this->carryable;
 		$json['breedable'] = $this->breedable;
-		$json['related_engram_ids'] = $this->RelatedEngramIDs();
+		$json['related_object_ids'] = $this->RelatedObjectIDs();
 		return $json;
 	}
 	
@@ -149,7 +149,11 @@ class BeaconCreature extends BeaconBlueprint {
 		return $this->carryable;
 	}
 	
+<<<<<<< HEAD
 	public function SetCarruable(bool $carryable) {
+=======
+	public function SetCarryable(bool $carryable) {
+>>>>>>> master
 		$this->carryable = $carryable;
 	}
 	
@@ -161,7 +165,7 @@ class BeaconCreature extends BeaconBlueprint {
 		$this->breedable = $breedable;
 	}
 	
-	public function RelatedEngramIDs() {
+	public function RelatedObjectIDs() {
 		$database = BeaconCommon::Database();
 		$arr = array();
 		$results = $database->Query('SELECT engram_id FROM creature_engrams WHERE creature_id = $1;', $this->ObjectID());
