@@ -72,7 +72,7 @@ case 'GET':
 		if (count($users) == 1) {
 			BeaconAPI::ReplySuccess($users[0]);
 		} else {
-			BeaconAPI::ReplySuccess($users, count($users) > 0 ? 200 : 404);
+			BeaconAPI::ReplySuccess($users);
 		}
 	}
 	
