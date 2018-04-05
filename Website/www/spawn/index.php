@@ -1,22 +1,27 @@
 <?php
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
 BeaconTemplate::SetTitle('Item Spawn Codes');
+BeaconTemplate::AddHeaderLine('<script src="/assets/scripts/clipboard-polyfill.js"></script>');
 BeaconTemplate::AddHeaderLine('<script src="spawncodes.js"></script>');
 BeaconTemplate::AddHeaderLine('<link href="spawncodes.css" rel="stylesheet" media="all" type="text/css">');
 $mod_id = array_key_exists('mod_id', $_GET) ? $_GET['mod_id'] : null;
 $database = BeaconCommon::Database();
 
 $results = $database->Query("SELECT build_number FROM updates ORDER BY build_number DESC LIMIT 1;");
-$build   = $results->Field('build_number');
+if ($results->RecordCount() == 1) {
+	$build = intval($results->Field('build_number'));
+} else {
+	$build = 0;
+}
 
-$results = $database->Query("SELECT MAX(last_update) FROM updatable_objects WHERE min_version IS NULL OR min_version <= $1;", array($build));
+$results = $database->Query("SELECT MAX(last_update) FROM objects WHERE min_version <= $1;", array($build));
 $last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
 
 if ($mod_id === null) {
 	$title = 'All Spawn Codes';
 	$engrams = BeaconEngram::GetAll();
 } else {
-	$engrams = BeaconEngram::GetByModID($mod_id);
+	$engrams = BeaconEngram::Get($mod_id);
 	$mod_names = array();
 	foreach ($engrams as $engram) {
 		if (in_array($engram->ModName(), $mod_names) === false) {

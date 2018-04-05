@@ -3,12 +3,16 @@ require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
 
 $database = BeaconCommon::Database();
 $results = $database->Query("SELECT mac_url, win_url, build_display, build_number FROM updates ORDER BY build_number DESC LIMIT 1;");
+if ($results->RecordCount() != 1) {
+	echo 'Whoops, no version information was found.';
+	exit;
+}
 $mac_url = $results->Field('mac_url');
 $win_url = $results->Field('win_url');
 $version = $results->Field('build_display');
-$build   = $results->Field('build_number');
+$build   = intval($results->Field('build_number'));
 
-$results = $database->Query("SELECT MAX(last_update) FROM updatable_objects WHERE min_version IS NULL OR min_version <= $1;", array($build));
+$results = $database->Query("SELECT MAX(last_update) FROM objects WHERE min_version <= $1;", array($build));
 $last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
 
 define('MODE_NA', 0);
@@ -40,7 +44,7 @@ if (BeaconCommon::IsMacOS()) {
 <?php } else { ?>
 <p class="text-center"><a class="button" href="<?php echo $primary_url; ?>"><?php echo htmlentities($primary_label); ?></a><br><span class="mini">Or <a href="<?php echo $alternate_url; ?>"><?php echo htmlentities($alternate_label); ?></a></span></p>
 <?php } ?>
-<div class="patreon_box"><p><a href="https://www.patreon.com/thommcgrath"><img src="/assets/images/patreon-white.svg"></a></p><p>Beacon may be free, but developing it isn't. Consider helping out with a couple bucks towards things like server rentals.</p></div>
+<div class="patreon_box"><p><a href="/donate.php" class="button">Donate</a></p><p>Beacon may be free, but developing it isn't. Consider helping out with a couple bucks towards things like server rentals.</p></div>
 <h3>Engrams Database</h3>
 <div class="indent">
 	<p><a href="classes.php?version=<?php echo $build; ?>">Download Engrams Database</a><br>Last updated <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?>.</p>

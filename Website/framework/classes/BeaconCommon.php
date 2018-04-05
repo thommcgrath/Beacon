@@ -11,6 +11,18 @@ abstract class BeaconCommon {
 		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 	}
 	
+	public static function StartSession() {
+		if (session_status() == PHP_SESSION_NONE) {
+			if (self::InProduction()) {
+				session_name('beacon');
+			} else {
+				session_name('beacon_dev');
+			}
+			session_set_cookie_params(0, '/', '.beaconapp.cc', true, true);
+			session_start();
+		}
+	}
+	
 	public static function EnvironmentName() {
 		return basename(dirname(__FILE__, 4));
 	}
@@ -43,18 +55,22 @@ abstract class BeaconCommon {
 		return $randomString;
 	}
 	
-	public static function IsUUID($input) {
+	public static function IsUUID(&$input) {
 		if (!is_string($input)) {
 			return false;
 		}
 		
-		$input = preg_replace('/\s+/', '', $input);
-		
-		if ($input === '00000000-0000-0000-0000-000000000000') {
+		$cleaned = preg_replace('/\s+/', '', $input);
+		if ($cleaned === '00000000-0000-0000-0000-000000000000') {
 			return true;
 		}
 		
-		return preg_match('/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i', $input) === 1;
+		if (preg_match('/^([0-9A-F]{8})-?([0-9A-F]{4})-?([0-9A-F]{4})-?([0-9A-F]{4})-?([0-9A-F]{12})$/i', $cleaned, $matches) === 1) {
+			$input = strtolower($matches[1] . '-' . $matches[2] . '-' . $matches[3] . '-' . $matches[4] . '-' . $matches[5]);
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public static function IsAssoc(array $arr) {
@@ -62,10 +78,15 @@ abstract class BeaconCommon {
 	    return array_keys($arr) !== range(0, count($arr) - 1);
 	}
 	
-	public static function Redirect(string $destination) {
+	public static function Redirect(string $destination, bool $temp = false) {
 		header('Location: ' . $destination);
-		http_response_code(301);
-		echo '<p>This page has moved to <a href="' . $destination . '">' . htmlentities($destination, ENT_COMPAT, 'UTF-8') . '</a>.</p>';
+		if ($temp === true) {
+			http_response_code(302);
+			echo '<p>Please relocate to <a href="' . $destination . '">' . htmlentities($destination, ENT_COMPAT, 'UTF-8') . '</a>.</p>';
+		} else {
+			http_response_code(301);
+			echo '<p>This page has moved to <a href="' . $destination . '">' . htmlentities($destination, ENT_COMPAT, 'UTF-8') . '</a>.</p>';
+		}
 		exit;
 	}
 	
@@ -138,6 +159,19 @@ abstract class BeaconCommon {
 	
 	public static function IsWindowsPhone() {
 		return stristr($_SERVER['HTTP_USER_AGENT'], 'Windows Phone OS') !== false;
+	}
+	
+	public static function ArrayToEnglish(array $items) {
+		if (count($items) == 0) {
+			return '';
+		} elseif (count($items) == 1) {
+			return $items[0];
+		} elseif (count($items) == 2) {
+			return $items[0] . ' and ' . $items[1];
+		} else {
+			$last = array_pop($items);
+			return implode(', ', $items) . ', and ' . $last;
+		}
 	}
 }
 

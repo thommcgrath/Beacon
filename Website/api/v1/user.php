@@ -42,17 +42,7 @@ case 'POST':
 			BeaconAPI::ReplyError('User ' . $user_id . 'already exists');
 		}
 		
-		// Prepare the public key if necessary
-		if (substr($public_key, 0, 26) == '-----BEGIN PUBLIC KEY-----') {
-			// Ready for use
-		} else {
-			// Needs conversion
-			$public_key = hex2bin($public_key);
-			$public_key = trim(chunk_split(base64_encode($public_key), 64, "\n"));
-			$public_key = "-----BEGIN PUBLIC KEY-----\n$public_key\n-----END PUBLIC KEY-----";
-		}
-		
-		$database->Query('INSERT INTO users (user_id, public_key) VALUES ($1, $2);', $user_id, $public_key);
+		$database->Query('INSERT INTO users (user_id, public_key) VALUES ($1, $2);', $user_id, BeaconEncryption::PublicKeyToPEM($public_key));
 	}
 	$database->Commit();
 	
@@ -60,28 +50,30 @@ case 'POST':
 	
 	break;
 case 'GET':
-	if ($user_id === null) {
-		BeaconAPI::ReplyError('Listing users is not allowed', null, 405);
-	}
-	
-	$results = $database->Query('SELECT user_id, public_key FROM users WHERE user_id = ANY($1);', '{' . $user_id . '}');
-	if ($results->RecordCount() == 0) {
-		BeaconAPI::ReplyError('User does not exist.', null, 404);
-	}
-	
-	$users = array();
-	while (!$results->EOF()) {
-		$users[] = array(
-			'user_id' => $results->Field('user_id'),
-			'public_key' => $results->Field('public_key')
-		);
-		$results->MoveNext();
-	}
-	
-	if (count($users) == 1) {
-		BeaconAPI::ReplySuccess($users[0]);
+	if (is_null(BeaconAPI::ObjectID())) {
+		BeaconAPI::Authorize();
+		BeaconAPI::ReplySuccess(BeaconUser::GetByUserID(BeaconAPI::UserID()));
 	} else {
-		BeaconAPI::ReplySuccess($users);
+		// legacy support
+		$identifiers = explode(',', BeaconAPI::ObjectID());
+		$users = array();
+		foreach ($identifiers as $identifier) {
+			if (BeaconCommon::IsUUID($identifier)) {
+				$user = BeaconUser::GetByUserID($identifier);
+			}
+			if (!is_null($user)) {
+				// don't use the regular method that includes lots of values
+				$users[] = array(
+					'user_id' => $user->UserID(),
+					'public_key' => $user->PublicKey()
+				);
+			}
+		}
+		if (count($users) == 1) {
+			BeaconAPI::ReplySuccess($users[0]);
+		} else {
+			BeaconAPI::ReplySuccess($users, count($users) > 0 ? 200 : 404);
+		}
 	}
 	
 	break;
@@ -92,6 +84,8 @@ case 'DELETE':
 	}
 	
 	$database->BeginTransaction();
+	$database->Query('DELETE FROM documents WHERE user_id = $1;', BeaconAPI::UserID());
+	$database->Query('DELETE FROM mods WHERE user_id = $1;', BeaconAPI::UserID());
 	$database->Query('DELETE FROM users WHERE user_id = $1;', BeaconAPI::UserID());
 	$database->Commit();
 	

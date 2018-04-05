@@ -8,7 +8,11 @@ class BeaconWorkshopItem {
 	protected $body;
 	
 	public static function URLForModID(int $mod_id) {
-		return self::BASE_URL . $mod_id;
+		if ($mod_id < 0) {
+			return 'http://store.steampowered.com/app/' . abs($mod_id);
+		} else {
+			return self::BASE_URL . $mod_id;
+		}
 	}
 	
 	public static function Load(int $mod_id) {

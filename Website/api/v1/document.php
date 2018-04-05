@@ -130,6 +130,7 @@ case 'POST':
 		$items = $payload;
 	}
 	
+	$documents = array();
 	$database->BeginTransaction();
 	foreach ($items as $document) {
 		if (!BeaconCommon::HasAllKeys($document, 'Description', 'Identifier', 'Title', 'LootSources')) {
@@ -138,24 +139,26 @@ case 'POST':
 		}
 		
 		$document_id = $document['Identifier'];
-		$description = $document['Description'];
-		$title = $document['Title'];
-		$public = array_key_exists('Public', $document) ? ($document['Public'] === true) : false;
+		$contents = json_encode($document);
 		
 		// make sure this document is either new or owner by the server
 		$results = $database->Query('SELECT user_id FROM documents WHERE document_id = $1;', $document_id);
-		if ($results->RecordCount() == 1 && $results->Field('user_id') !== BeaconAPI::UserID()) {
-			BeaconAPI::ReplyError('Document ' . $document_id . ' does not belong to you.');
+		if ($results->RecordCount() == 1) {
+			if (strtolower($results->Field('user_id')) !== strtolower(BeaconAPI::UserID())) {
+				$database->Rollback();
+				BeaconAPI::ReplyError('Document ' . $document_id . ' does not belong to you.');
+			}
+			
+			$database->Query('UPDATE documents SET contents = $2 WHERE document_id = $1;', $document_id, $contents);
+		} else {
+			$database->Query('INSERT INTO documents (user_id, contents) VALUES ($1, $2);', BeaconAPI::UserID(), $contents);
 		}
 		
-		// insert
-		$contents = json_encode($document);
-		$hash = md5($contents);
-		$database->Query('INSERT INTO documents (document_id, user_id, title, description, contents, contents_hash, is_public) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (document_id) DO UPDATE SET title = $3, description = $4, contents = $5, contents_hash = $6, is_public = $7, revision = documents.revision + 1, last_update = CURRENT_TIMESTAMP(0);', $document_id, BeaconAPI::UserID(), $title, $description, $contents, $hash, $public);
+		$documents[] = BeaconDocumentMetadata::GetByDocumentID($document_id)[0];
 	}
 	$database->Commit();
 	
-	BeaconAPI::ReplySuccess();
+	BeaconAPI::ReplySuccess($documents);
 	
 	break;
 case 'DELETE':

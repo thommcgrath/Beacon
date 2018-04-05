@@ -14,22 +14,18 @@ case 'GET':
 	if ($engram_class === null) {
 		// list engrams
 		if (isset($_GET['mod_id'])) {
-			$engrams = BeaconEngram::GetByModID($_GET['mod_id']);
+			$engrams = BeaconEngram::Get($_GET['mod_id']);
 		} else {
-			$engrams = BeaconEngram::GetAll();
+			$engrams = BeaconEngram::Get();
 		}
 		BeaconAPI::ReplySuccess($engrams);
 	} else {
 		// specific engram(s)
-		if (strtoupper(substr($engram_class, -2)) === '_C') {
-			$engrams = BeaconEngram::GetByClass($engram_class);
-		} else {
-			$engrams = BeaconEngram::GetByUID($engram_class);
-		}
+		$engrams = BeaconEngram::Get($engram_class);
 		if (count($engrams) === 0) {
 			BeaconAPI::ReplyError('No engram found', null, 404);
 		}
-		if (BeaconAPI::ObjectCount() == 1) {
+		if (count($engrams) == 1) {
 			BeaconAPI::ReplySuccess($engrams[0]);
 		} else {
 			BeaconAPI::ReplySuccess($engrams);
@@ -58,62 +54,93 @@ case 'POST':
 	
 	// get the distinct workshop ids for each item
 	$workshop_ids = array();
+	$mod_ids = array();
 	foreach ($items as $item) {
 		if (!BeaconCommon::HasAllKeys($item, 'path', 'label', 'mod_id', 'availability', 'can_blueprint')) {
 			BeaconAPI::ReplyError('Not all keys are present.', $item);
 		}
 		
-		$workshop_id = $item['mod_id'];
-		if (in_array($workshop_id, $workshop_ids) === false) {
-			$workshop_ids[] = $workshop_id;
+		if (is_int($item['mod_id'])) {
+			$workshop_id = $item['mod_id'];
+			if (in_array($workshop_id, $workshop_ids) === false) {
+				$workshop_ids[] = $workshop_id;
+			}
+		} elseif (BeaconCommon::IsUUID($item['mod_id'])) {
+			$mod_id = $item['mod_id'];
+			if (in_array($mod_id, $mod_ids) === false) {
+				$mod_ids[] = $mod_id;
+			}
 		}
 	}
 	
-	// get mod ids from workshop ids
-	$mod_ids = array();
-	$results = $database->Query('SELECT mod_id, user_id, workshop_id FROM mods WHERE confirmed = TRUE AND workshop_id = ANY($1);', '{' . implode(',', $workshop_ids) . '}');
+	if (count($workshop_ids) > 0 && count($mod_ids) > 0) {
+		$results = $database->Query('SELECT DISTINCT mod_id, workshop_id FROM mods WHERE confirmed = TRUE AND user_id = $1 AND (workshop_id = ANY($2) OR mod_id = ANY($3));', BeaconAPI::UserID(), '{' . implode(',', $workshop_ids) . '}', '{' . implode(',', $mod_ids) . '}');
+	} elseif (count($workshop_ids) > 0) {
+		$results = $database->Query('SELECT DISTINCT mod_id, workshop_id FROM mods WHERE confirmed = TRUE AND user_id = $1 AND workshop_id = ANY($2);', BeaconAPI::UserID(), '{' . implode(',', $workshop_ids) . '}');
+	} elseif (count($mod_ids) > 0) { 
+		$results = $database->Query('SELECT DISTINCT mod_id, workshop_id FROM mods WHERE confirmed = TRUE AND user_id = $1 AND mod_id = ANY($2);', BeaconAPI::UserID(), '{' . implode(',', $mod_ids) . '}');
+	} else {
+		BeaconAPI::ReplyError('No mods specified.', null);
+	}
+	if ($results->RecordCount() == 0) {
+		BeaconAPI::ReplyError('No authorized mods found.', null);
+	}
+	
+	$mods = array();
 	while (!$results->EOF()) {
-		if ($results->Field('user_id') !== BeaconAPI::UserID()) {
-			BeaconAPI::ReplyError('Mod ' . $results->Field('workshop_id') . ' does not belong to you.');
-		}
-		
-		$mod_ids[$results->Field('workshop_id')] = $results->Field('mod_id');
-		
+		$mods[$results->Field('workshop_id')] = $results->Field('mod_id');
 		$results->MoveNext();
 	}
 	
 	// start inserting
+	$engrams = array();
 	$database->BeginTransaction();
 	foreach ($items as $item) {
-		$workshop_id = $item['mod_id'];
-		if (!array_key_exists($workshop_id, $mod_ids)) {
-			$database->Rollback();
-			BeaconAPI::ReplyError('Mod ' . $workshop_id . ' does not exist.');
+		if (BeaconCommon::IsUUID($item['mod_id'])) {
+			$mod_id = $item['mod_id'];
+			if (!in_array($mod_id, $mods)) {
+				continue;
+			}
+		} else {
+			if (!array_key_exists($item['mod_id'], $mods)) {
+				continue;
+			}
+			$mod_id = $mods[$item['mod_id']];
 		}
-		$mod_id = $mod_ids[$workshop_id];
+		
 		$path = $item['path'];
 		$label = $item['label'];
-		$availability_keys = $item['availability'];
-		$can_blueprint = $item['can_blueprint'];
-		
 		$availability = 0;
+		$availability_keys = null;
+		$can_blueprint = boolval($item['can_blueprint']);
+		if (array_key_exists('availability', $item)) {
+			if (is_int($item['availability'])) {
+				$availability = $item['availability'];
+			} elseif (is_array($item['availability'])) {
+				$availability_keys = $item['availability'];
+			}
+		}
+		if (array_key_exists('environments', $item) && is_array($item['environments'])) {
+			$availability_keys = $item['environments'];
+		}
+		
 		if (is_array($availability_keys)) {
 			foreach ($availability_keys as $key) {
 				$key = strtolower(trim($key));
 				if ($key === 'island') {
-					$availability = $availability | BeaconEngram::ENVIRONMENT_ISLAND;
+					$availability = $availability | BeaconMaps::TheIsland;
 				}
 				if ($key === 'scorched') {
-					$availability = $availability | BeaconEngram::ENVIRONMENT_SCORCHED;
+					$availability = $availability | BeaconMaps::ScorchedEarth;
 				}
 				if ($key === 'center') {
-					$availability = $availability | BeaconEngram::ENVIRONMENT_CENTER;
+					$availability = $availability | BeaconMaps::TheCenter;
 				}
 				if ($key === 'ragnarok') {
-					$availability = $availability | BeaconEngram::ENVIRONMENT_RAGNAROK;
+					$availability = $availability | BeaconMaps::Ragnarok;
 				}
 				if (($key === 'abberation') || ($key === 'aberration')) {
-					$availability = $availability | BeaconEngram::ENVIRONMENT_ABERRATION;
+					$availability = $availability | BeaconMaps::Aberration;
 				}
 			}
 		}
@@ -134,10 +161,15 @@ case 'POST':
 			// new
 			$database->Query('INSERT INTO engrams (path, label, availability, can_blueprint, mod_id) VALUES ($1, $2, $3, $4, $5);', $path, $label, $availability, $can_blueprint, $mod_id);
 		}
+		
+		$engram = BeaconEngram::Get($path);
+		if (!is_null($engram) && count($engram) == 1) {
+			$engrams[] = $engram[0];
+		}
 	}
 	$database->Commit();
 	
-	BeaconAPI::ReplySuccess();
+	BeaconAPI::ReplySuccess($engrams);
 	
 	break;
 case 'DELETE':

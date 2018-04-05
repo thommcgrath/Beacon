@@ -23,9 +23,9 @@ abstract class BeaconAPI {
 		return self::$payload;
 	}
 	
-	public static function ReplySuccess($payload = null) {
+	public static function ReplySuccess($payload = null, int $code = 200) {
 		header('Content-Type: application/json');
-		http_response_code(200);
+		http_response_code($code);
 		if ($payload !== null) {
 			echo json_encode($payload, JSON_PRETTY_PRINT);
 		}
@@ -69,7 +69,12 @@ abstract class BeaconAPI {
 	}
 	
 	public static function ContentType() {
-		return strtolower($_SERVER['CONTENT_TYPE']);
+		$pos = strpos($_SERVER['CONTENT_TYPE'], ';');
+		if ($pos === false) {
+			return strtolower($_SERVER['CONTENT_TYPE']);
+		} else {
+			return substr(strtolower($_SERVER['CONTENT_TYPE']), 0, $pos);
+		}
 	}
 	
 	public static function Authorize(bool $optional = false) {
@@ -77,25 +82,49 @@ abstract class BeaconAPI {
 		$content = '';
 		self::$user_id = BeaconCommon::GenerateUUID(); // To return a "new" UUID even if authorization fails.
 		
-		if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']) && BeaconCommon::IsUUID($_SERVER['PHP_AUTH_USER'])) {
-			$user_id = strtolower($_SERVER['PHP_AUTH_USER']);
-			$signature = $_SERVER['PHP_AUTH_PW'];
-			$database = BeaconCommon::Database();
-			$results = $database->Query('SELECT public_key FROM users WHERE user_id = $1;', $user_id);
-			if ($results->RecordCount() == 1) {
-				$public_key = $results->Field('public_key');
-				
-				$url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-				
-				$content = self::Method() . chr(10) . $url;
-				if (self::Method() !== 'GET') {
-					$content .= chr(10) . self::Body();
-				}
-				$verified = openssl_verify($content, hex2bin($signature), $public_key);
-				if ($verified === 1) {
-					self::$user_id = $user_id;
+		if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+			$authorization = $_SERVER['HTTP_AUTHORIZATION'];
+			$pos = strpos($authorization, ' ');
+			$auth_type = strtolower(substr($authorization, 0, $pos));
+			$auth_value = substr($authorization, $pos + 1);
+			
+			switch ($auth_type) {
+			case 'session':
+				$session = BeaconSession::GetBySessionID($auth_value);
+				if (!is_null($session)) {
+					self::$user_id = $session->UserID();
 					$authorized = true;
 				}
+				break;
+			case 'basic':
+				$decoded = base64_decode($auth_value);
+				list($username, $password) = explode(':', $decoded, 2);
+				
+				if (BeaconCommon::IsUUID($username)) {
+					// public key authorization
+					$database = BeaconCommon::Database();
+					$results = $database->Query('SELECT public_key FROM users WHERE user_id = $1;', $username);
+					if ($results->RecordCount() == 1) {
+						$public_key = $results->Field('public_key');
+						
+						$url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+						
+						$content = self::Method() . chr(10) . $url;
+						if (self::Method() !== 'GET') {
+							$content .= chr(10) . self::Body();
+						}
+						$verified = openssl_verify($content, hex2bin($password), $public_key);
+						if ($verified === 1) {
+							self::$user_id = $username;
+							$authorized = true;
+						}
+					}
+				} elseif (BeaconUser::ValidateLoginKey($username)) {
+					// password authorization
+					// not yet implemented
+				}
+				
+				break;
 			}
 		}
 		

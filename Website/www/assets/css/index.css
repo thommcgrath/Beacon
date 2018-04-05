@@ -1,7 +1,15 @@
+#index_container {
+	width: 100%;
+	max-width: 600px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 #hero {
 	width: 100%;
 	margin-left: auto;
 	margin-right: auto;
+	display: block;
 }
 
 .frontpage-left,
@@ -16,6 +24,7 @@
 .frontpage-left h1,
 .frontpage-right h1 {
 	margin-top: 0px;
+	color: #713a9a;
 }
 
 .frontpage-left h1,
@@ -31,7 +40,7 @@
 
 .frontpage-left+.frontpage-right,
 .frontpage-right+.frontpage-left {
-	border-top: 1px solid #ffffff;
+	border-top: 1px solid #713a9a;
 	padding-top: 30px;
 }
 
@@ -58,7 +67,7 @@ img.landing-icon {
 	margin-bottom: 5px;
 }
 
-@media (min-width: 642px) {
+@media (min-width: 666px) {
 	.frontpage-left,
 	.frontpage-right {
 		min-height: 100px;
@@ -86,5 +95,9 @@ img.landing-icon {
 	img.landing-icon {
 		height: 100px;
 		margin-bottom: 10px;
+	}
+	
+	#index_container {
+		max-width: 800px;
 	}
 }
