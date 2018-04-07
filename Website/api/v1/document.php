@@ -102,7 +102,7 @@ case 'GET':
 				header('Content-Type: application/octet-stream');
 				header('Content-Disposition: attachment; filename="' . $documents[0]->Name() . '.beacon"');
 				http_response_code(200);
-				echo json_encode($documents[0], true);
+				echo json_encode($documents[0], JSON_PRETTY_PRINT);
 				exit;
 			}
 		} else {
