@@ -149,11 +149,7 @@ class BeaconCreature extends BeaconBlueprint {
 		return $this->carryable;
 	}
 	
-<<<<<<< HEAD
-	public function SetCarruable(bool $carryable) {
-=======
 	public function SetCarryable(bool $carryable) {
->>>>>>> master
 		$this->carryable = $carryable;
 	}
 	
