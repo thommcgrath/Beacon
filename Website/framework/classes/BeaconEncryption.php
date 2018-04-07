@@ -31,7 +31,7 @@ abstract class BeaconEncryption {
 	public static function RSAVerify(string $public_key, string $data, string $signature) {
 		$status = @openssl_verify($data, $signature, $public_key, OPENSSL_ALGO_SHA1);
 		if ($status == -1) {
-			throw new \Exception('Unable to verify signature');
+			throw new Exception('Unable to verify signature');
 		}
 		return $status == 1;
 	}
@@ -50,8 +50,8 @@ abstract class BeaconEncryption {
 		$magic_byte = unpack('C', $data[0])[1];
 		$version = unpack('C', $data[1])[1];
 		$iv = substr($data, 2, 8);
-		$len = unpack('N', substr($data, 10, 4))[1];
-		$expected_checksum = unpack('N', substr($data, 14, 4))[1];
+		$len = self::UnpackUInt32(substr($data, 10, 4));
+		$expected_checksum = self::UnpackUInt32(substr($data, 14, 4));
 		$data = substr($data, 18);
 		
 		if ($magic_byte != self::BlowfishMagicByte) {
@@ -61,13 +61,17 @@ abstract class BeaconEncryption {
 			throw new Exception('Encryption is too new');
 		}
 		
-		$decrypted = openssl_decrypt($data, 'bf-cbc', $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv);
+		$decrypted = openssl_decrypt($data, 'bf-cbc', $key, OPENSSL_RAW_DATA, $iv);
 		if ($decrypted === false) {
 			throw new Exception('Unable to decrypt: ' . openssl_error_string());
 		}
 		$decrypted = substr($decrypted, 0, $len);
-		$computed_checksum = crc32($decrypted);
-		if ($computed_checksum !== $expected_checksum) {
+		if (PHP_INT_SIZE <= 4) {
+			$computed_checksum = sprintf('%u', crc32($decrypted));
+		} else {
+			$computed_checksum = crc32($decrypted);
+		}
+		if ($computed_checksum != $expected_checksum) {
 			throw new Exception('CRC32 checksum failed on decrypted data: ' . $expected_checksum . ' expected, ' . $computed_checksum . ' computed');
 		}
 		return $decrypted;
@@ -88,7 +92,16 @@ abstract class BeaconEncryption {
 			$private_key = trim(chunk_split(base64_encode($private_key), 64, "\n"));
 			$private_key = "-----BEGIN RSA PRIVATE KEY-----\n$private_key\n-----END RSA PRIVATE KEY-----";
 		}
-		return $private_key
+		return $private_key;
+	}
+	
+	private static function UnpackUInt32(string $bin) {
+		if (PHP_INT_SIZE <= 4) {
+			$a = unpack('n*', $bin);
+			return ($a[2] + ($a[1] * 0x010000));
+		} else {
+			return unpack('N', $bin)[1];
+		}
 	}
 }
 

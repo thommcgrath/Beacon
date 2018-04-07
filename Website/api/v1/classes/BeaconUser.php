@@ -33,6 +33,18 @@ class BeaconUser implements JsonSerializable {
 		return $this->public_key;
 	}
 	
+	public function PrivateKey() {
+		return $this->private_key;
+	}
+	
+	public function PrivateKeySalt() {
+		return $this->private_key_salt;
+	}
+	
+	public function PrivateKeyIterations() {
+		return $this->private_key_iterations;
+	}
+	
 	public function IsPatreonLinked() {
 		return $this->patreon_user_id !== null;
 	}

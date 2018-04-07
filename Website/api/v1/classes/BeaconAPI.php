@@ -4,6 +4,11 @@ abstract class BeaconAPI {
 	private static $user_id = null;
 	private static $payload = null;
 	private static $body_raw = null;
+	private static $auth_style = null;
+	
+	const AUTH_STYLE_PUBLIC_KEY = 'public key';
+	const AUTH_STYLE_EMAIL_WITH_PASSWORD = 'email+password';
+	const AUTH_STYLE_SESSION = 'session';
 	
 	public static function Body() {
 		if (self::$body_raw === null) {
@@ -83,6 +88,7 @@ abstract class BeaconAPI {
 		self::$user_id = BeaconCommon::GenerateUUID(); // To return a "new" UUID even if authorization fails.
 		
 		if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+			$optional = false; // if authorization included, it is no longer optional
 			$authorization = $_SERVER['HTTP_AUTHORIZATION'];
 			$pos = strpos($authorization, ' ');
 			$auth_type = strtolower(substr($authorization, 0, $pos));
@@ -93,6 +99,7 @@ abstract class BeaconAPI {
 				$session = BeaconSession::GetBySessionID($auth_value);
 				if (!is_null($session)) {
 					self::$user_id = $session->UserID();
+					self::$auth_style = self::AUTH_STYLE_SESSION;
 					$authorized = true;
 				}
 				break;
@@ -116,12 +123,19 @@ abstract class BeaconAPI {
 						$verified = openssl_verify($content, hex2bin($password), $public_key);
 						if ($verified === 1) {
 							self::$user_id = $username;
+							self::$auth_style = self::AUTH_STYLE_PUBLIC_KEY;
 							$authorized = true;
 						}
 					}
 				} elseif (BeaconUser::ValidateLoginKey($username)) {
 					// password authorization
 					// not yet implemented
+					$user = BeaconUser::GetByEmail($username);
+					if (is_null($user) == false && $user->TestPassword($password)) {
+						self::$user_id = $user->UserID();
+						self::$auth_style = self::AUTH_STYLE_EMAIL_WITH_PASSWORD;
+						$authorized = true;
+					}
 				}
 				
 				break;
@@ -132,6 +146,14 @@ abstract class BeaconAPI {
 			header('WWW-Authenticate: Basic realm="Beacon API"');
 			self::ReplyError('Unauthorized', $content, 401);
 		}
+	}
+	
+	public static function Authenticated() {
+		return is_null(self::$auth_style) == false;
+	}
+	
+	public static function AuthenticationMethod() {
+		return self::$auth_style;
 	}
 	
 	public static function UserID() {
