@@ -16,7 +16,7 @@ abstract class BeaconEncryption {
 		if (@openssl_public_encrypt($data, $result, $public_key, OPENSSL_PKCS1_OAEP_PADDING)) {
 			return $result;
 		} else {
-			throw new \Exception('Unable to encrypt');
+			throw new Exception('Unable to encrypt');
 		}
 	}
 	
@@ -24,7 +24,7 @@ abstract class BeaconEncryption {
 		if (@openssl_private_decrypt($data, $result, $private_key, OPENSSL_PKCS1_OAEP_PADDING)) {
 			return $result;
 		} else {
-			throw new \Exception('Unable to decrypt');
+			throw new Exception('Unable to decrypt');
 		}
 	}
 	
@@ -39,7 +39,7 @@ abstract class BeaconEncryption {
 	public static function BlowfishEncrypt(string $key, string $data) {
 		$iv_size = openssl_cipher_iv_length('bf-cbc');
 		$iv = random_bytes($iv_size);
-		$encrypted = openssl_encrypt(str_pad($data, ceil(strlen($data) / 8) * 8, chr(0)), 'bf-cbc', $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv);
+		$encrypted = openssl_encrypt(str_pad($data, ceil(strlen($data) / 8) * 8, chr(0)), 'bf-cbc', $key, OPENSSL_RAW_DATA, $iv);
 		if ($encrypted === false) {
 			throw new Exception('Unable to encrypt: ' . openssl_error_string());
 		}
