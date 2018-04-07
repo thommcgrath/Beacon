@@ -66,8 +66,10 @@ case 'GET':
 		}
 		if (count($users) == 1) {
 			BeaconAPI::ReplySuccess($users[0]);
-		} else {
+		} elseif (count($users) > 1) {
 			BeaconAPI::ReplySuccess($users);
+		} else {
+			BeaconAPI::ReplyError('Users not found', $users, 404);
 		}
 	}
 	
