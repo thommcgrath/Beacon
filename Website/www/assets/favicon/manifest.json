@@ -1,5 +1,6 @@
 {
     "name": "Beacon",
+    "short_name": "Beacon",
     "icons": [
         {
             "src": "/assets/favicon/android-chrome-192x192.png",
@@ -14,5 +15,6 @@
     ],
     "theme_color": "#713a9a",
     "background_color": "#713a9a",
-    "display": "standalone"
+    "display": "standalone",
+    "start_url": "."
 }

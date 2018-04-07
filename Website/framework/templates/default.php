@@ -6,7 +6,7 @@ if (!BeaconTemplate::IsHTML()) {
 }
 
 ?><!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<title><?php echo htmlentities(BeaconTemplate::Title()); ?></title>
@@ -88,7 +88,7 @@ if (!BeaconTemplate::IsHTML()) {
 			<div id="main">
 				<?php echo $buffer; ?>
 				<footer class="inner">
-					<p><a id="footer_github_logo" href="https://github.com/thommcgrath/Beacon"><img height="24" src="/assets/images/github-color.svg"></a><a id="footer_patreon_logo" href="https://www.patreon.com/thommcgrath"><img height="24" src="/assets/images/patreon-color.svg"></a><a id="footer_discord_logo" href="https://discord.gg/2vbT7fV"><img height="24" src="/assets/images/discord-color.svg"></a></p>
+					<p><a id="footer_github_logo" href="https://github.com/thommcgrath/Beacon" title="GitHub"><img height="24" src="/assets/images/github-color.svg"></a><a id="footer_patreon_logo" href="https://www.patreon.com/thommcgrath" title="Patreon"><img height="24" src="/assets/images/patreon-color.svg"></a><a id="footer_discord_logo" href="https://discord.gg/2vbT7fV" title="Discord"><img height="24" src="/assets/images/discord-color.svg"></a></p>
 					<p>Beacon is an open source project by Thom McGrath. Copyright 2016-<?php echo date('Y'); ?>.</p>
 					<p>Get in touch using <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.</p>
 				</footer>

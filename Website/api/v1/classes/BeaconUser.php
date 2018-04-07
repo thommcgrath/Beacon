@@ -33,6 +33,18 @@ class BeaconUser implements JsonSerializable {
 		return $this->public_key;
 	}
 	
+	public function PrivateKey() {
+		return $this->private_key;
+	}
+	
+	public function PrivateKeySalt() {
+		return $this->private_key_salt;
+	}
+	
+	public function PrivateKeyIterations() {
+		return $this->private_key_iterations;
+	}
+	
 	public function IsPatreonLinked() {
 		return $this->patreon_user_id !== null;
 	}
@@ -72,77 +84,6 @@ class BeaconUser implements JsonSerializable {
 		$hash = BeaconEncryption::HashFromPassword($password, hex2bin($this->private_key_salt), $this->private_key_iterations);
 		try {
 			BeaconEncryption::BlowfishDecrypt($hash, hex2bin($this->private_key));
-			return true;
-		} catch (Exception $e) {
-			return false;
-		}
-	}
-	
-	public function SetupAuthentication(string $username, string $password, string $pem_private_key) {
-		$iterations = 12000;
-		$salt = BeaconEncryption::GenerateSalt();
-		$hash = BeaconEncryption::HashFromPassword($password, $salt, $iterations);
-		$encrypted_private_key = BeaconEncryption::BlowfishEncrypt($hash, $pem_private_key);
-		
-		$private_key = openssl_pkey_get_private($pem_private_key);
-		$pem_public_key = openssl_pkey_get_details($private_key)['key'];
-		unset($private_key, $pem_private_key);
-		
-		if (empty($this->user_id)) {
-			$this->user_id = BeaconCommon::GenerateUUID();
-		}
-		
-		$database = BeaconCommon::Database();
-		$database->BeginTransaction();
-		$results = $database->Query('SELECT user_id FROM users WHERE user_id = $1;', $this->user_id);
-		if ($results->RecordCount() == 0) {
-			$results = $database->Query('INSERT INTO users (user_id, login_key, public_key, private_key, private_key_salt, private_key_iterations) VALUES ($1, $2, $3, $4, $5, $6) RETURNING ' . implode(', ', static::SQLColumns()) . ';', $this->user_id, $username, $pem_public_key, bin2hex($encrypted_private_key), bin2hex($salt), $iterations);
-		} else {
-			$results = $database->Query('UPDATE users SET login_key = $2, public_key = $3, private_key = $4, private_key_salt = $5, private_key_iterations = $6 WHERE user_id = $1 RETURNING ' . implode(', ', static::SQLColumns()) . ';', $this->user_id, $username, $pem_public_key, bin2hex($encrypted_private_key), bin2hex($salt), $iterations);
-		}
-		$database->Commit();
-		
-		$this->ConsumeRecordSet($results);
-	}
-	
-	public static function MergeUsers(BeaconUser $retain_user, $claim_users) {
-		$user_ids = array();
-		if (!is_array($claim_users)) {
-			$claim_users = array($claim_users);
-		}
-		foreach ($claim_users as $user) {
-			if (BeaconCommon::IsUUID($user)) {
-				$user_ids[] = $user;
-			} elseif ($user instanceof self) {
-				$user_ids[] = $user->UserID();
-			}
-		}
-		
-		if (count($user_ids) == 0) {
-			return false;
-		}
-		
-		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT user_id FROM users WHERE login_key IS NULL AND user_id = ANY($1);', '{' . implode(',', $user_ids) . '}');
-		if ($results->RecordCount() == 0) {
-			return false;
-		}
-		
-		// rebuild $user_ids with the results to ensure we're working with only valid values
-		$user_ids = array();
-		while (!$results->EOF()) {
-			$user_ids[] = $results->Field('user_id');
-			$results->MoveNext();
-		}
-		
-		$users = '{' . implode(',', $user_ids) . '}';
-		try {
-			$database->BeginTransaction();
-			$database->Query('UPDATE documents SET user_id = $1 WHERE user_id = ANY($2);', $retain_user->UserID(), $users);
-			$database->Query('UPDATE mods SET user_id = $1 WHERE user_id = ANY($2);', $retain_user->UserID(), $users);
-			$database->Query('UPDATE sessions SET user_id = $1 WHERE user_id = ANY($2);', $retain_user->UserID(), $users);
-			$database->Query('DELETE FROM users WHERE user_id = ANY($1);', $users);
-			$database->Commit();
 			return true;
 		} catch (Exception $e) {
 			return false;
