@@ -207,6 +207,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   15
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "%"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -312,6 +313,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   12
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Chance To Be Blueprint:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -377,6 +379,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   9
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Max Quality:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -442,6 +445,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Min Quality:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -519,6 +523,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Max Quantity:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -596,6 +601,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Min Quantity:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -630,6 +636,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   17
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Weight:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -734,6 +741,7 @@ Begin ContainerControl EntryPropertiesEditor
       Selectable      =   False
       TabIndex        =   20
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   ""
       TextAlign       =   0
       TextColor       =   &c00000000

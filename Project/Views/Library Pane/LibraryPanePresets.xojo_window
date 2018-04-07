@@ -151,6 +151,8 @@ End
 	#tag Event
 		Sub Open()
 		  Self.AcceptFileDrop(BeaconFileTypes.BeaconPreset)
+		  Self.ToolbarIcon = IconLibraryPresets
+		  Self.ToolbarCaption = "Presets"
 		  RaiseEvent Open
 		End Sub
 	#tag EndEvent
@@ -669,6 +671,17 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarCaption"
+		Group="Behavior"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Group="Behavior"
+		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"

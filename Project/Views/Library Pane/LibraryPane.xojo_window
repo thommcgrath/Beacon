@@ -28,7 +28,7 @@ Begin ContainerControl LibraryPane
    Begin PagePanel Views
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   416
+      Height          =   468
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -56,7 +56,7 @@ Begin ContainerControl LibraryPane
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   416
+         Height          =   468
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   0
@@ -69,6 +69,8 @@ Begin ContainerControl LibraryPane
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -85,7 +87,7 @@ Begin ContainerControl LibraryPane
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   416
+         Height          =   468
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   0
@@ -98,6 +100,8 @@ Begin ContainerControl LibraryPane
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -113,7 +117,7 @@ Begin ContainerControl LibraryPane
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   416
+         Height          =   468
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   0
@@ -126,6 +130,8 @@ Begin ContainerControl LibraryPane
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
+         ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -141,7 +147,7 @@ Begin ContainerControl LibraryPane
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   416
+         Height          =   468
          HelpTag         =   ""
          InitialParent   =   "Views"
          Left            =   0
@@ -154,41 +160,14 @@ Begin ContainerControl LibraryPane
          TabIndex        =   0
          TabPanelIndex   =   4
          TabStop         =   True
+         ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
          Width           =   300
       End
-   End
-   Begin Shelf Switcher
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      BorderStyle     =   1
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   52
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   416
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   300
    End
 End
 #tag EndWindow
@@ -227,6 +206,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function EngramsPane() As LibraryPaneEngrams
+		  Return Self.EngramsView
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function PresetsPane() As LibraryPanePresets
 		  Return Self.PresetsView
 		End Function
@@ -249,6 +234,12 @@ End
 		    Self.Views.Value = Index
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ToolsPane() As LibraryPaneTools
+		  Return Self.ToolsView
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -299,13 +290,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events Views
-	#tag Event
-		Sub Change()
-		  Self.Switcher.SelectedIndex = Me.Value
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events DocumentsView
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
@@ -351,21 +335,6 @@ End
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
 		  RaiseEvent ShouldResize(NewSize)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Switcher
-	#tag Event
-		Sub Open()
-		  Me.Add(IconLibraryDocuments, "Documents", "documents")
-		  Me.Add(IconLibraryPresets, "Presets", "presets")
-		  Me.Add(IconLibraryEngrams, "Engrams", "engrams")
-		  Me.Add(IconLibraryTools, "Tools", "tools")
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Change()
-		  Self.ShowPage(Me.SelectedIndex)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

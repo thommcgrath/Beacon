@@ -1,33 +1,10 @@
 #tag Class
 Protected Class LibrarySubview
-Inherits ContainerControl
-	#tag Event
-		Sub EnableMenuItems()
-		  // Parent view will call down to EnableMenuItems method
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Open()
-		  RaiseEvent Open
-		  
-		  Self.DoubleBuffer = TargetWin32
-		  Self.Transparent = Not Self.DoubleBuffer
-		  Self.EraseBackground = Not Self.DoubleBuffer
-		End Sub
-	#tag EndEvent
-
-
+Inherits BeaconSubview
 	#tag Method, Flags = &h1
 		Protected Function DiscardView(View As BeaconSubview) As Boolean
 		  Return RaiseEvent ShouldDiscardView(View)
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub EnableMenuItems()
-		  RaiseEvent EnableMenuItems()
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
@@ -36,30 +13,6 @@ Inherits ContainerControl
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub SwitchedFrom()
-		  RaiseEvent Hidden
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub SwitchedTo(UserData As Auto = Nil)
-		  RaiseEvent Shown(UserData)
-		End Sub
-	#tag EndMethod
-
-
-	#tag Hook, Flags = &h0
-		Event EnableMenuItems()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Hidden()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Open()
-	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event ShouldDiscardView(View As BeaconSubview) As Boolean
@@ -67,10 +20,6 @@ Inherits ContainerControl
 
 	#tag Hook, Flags = &h0
 		Event ShouldShowView(View As BeaconSubview)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Shown(UserData As Auto = Nil)
 	#tag EndHook
 
 

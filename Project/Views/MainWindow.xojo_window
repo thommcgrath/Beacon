@@ -4,7 +4,7 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
    Backdrop        =   0
    CloseButton     =   True
    Compatibility   =   ""
-   Composite       =   False
+   Composite       =   True
    Frame           =   0
    FullScreen      =   False
    FullScreenButton=   False
@@ -35,9 +35,8 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
-      Height          =   400
+      Height          =   340
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -49,7 +48,7 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   0
+      Top             =   60
       Transparent     =   True
       UseFocusRing    =   False
       Visible         =   True
@@ -58,7 +57,7 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
    Begin PagePanel Views
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   400
+      Height          =   340
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -73,29 +72,24 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
+      Top             =   60
       Value           =   0
       Visible         =   True
       Width           =   499
-      Begin BeaconToolbar EmptyToolbar
+      Begin DashboardPane DashboardPane1
          AcceptFocus     =   False
-         AcceptTabs      =   False
+         AcceptTabs      =   True
          AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         Caption         =   "Welcome to Beacon"
-         CaptionEnabled  =   False
-         CaptionIsButton =   False
-         DoubleBuffer    =   False
          Enabled         =   True
-         EraseBackground =   False
-         HasResizer      =   False
-         Height          =   41
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   340
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   301
-         LockBottom      =   False
+         LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
@@ -104,46 +98,13 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         Top             =   0
-         Transparent     =   False
-         UseFocusRing    =   True
+         ToolbarCaption  =   ""
+         ToolbarIcon     =   0
+         Top             =   60
+         Transparent     =   True
+         UseFocusRing    =   False
          Visible         =   True
          Width           =   499
-      End
-      Begin Label Label1
-         AutoDeactivate  =   True
-         Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   319
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Views"
-         Italic          =   False
-         Left            =   321
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Select Something"
-         TextAlign       =   1
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   61
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   459
       End
    End
    Begin FadedSeparator Divider
@@ -154,7 +115,7 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   400
+      Height          =   340
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -168,11 +129,39 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   0
+      Top             =   60
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
       Width           =   1
+   End
+   Begin MasterToolbar AppToolbar
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   60
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   800
    End
 End
 #tag EndWindow
@@ -302,6 +291,42 @@ End
 	#tag EndEvent
 
 
+	#tag MenuHandler
+		Function ViewDashboard() As Boolean Handles ViewDashboard.Action
+			Self.ShowView(Nil)
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function ViewDocuments() As Boolean Handles ViewDocuments.Action
+			LibraryPane1.ShowPage(LibraryPane.PaneDocuments)
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function ViewEngrams() As Boolean Handles ViewEngrams.Action
+			LibraryPane1.ShowPage(LibraryPane.PaneEngrams)
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function ViewPresets() As Boolean Handles ViewPresets.Action
+			LibraryPane1.ShowPage(LibraryPane.PanePresets)
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function ViewTools() As Boolean Handles ViewTools.Action
+			LibraryPane1.ShowPage(LibraryPane.PaneTools)
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Super.Constructor()
@@ -357,7 +382,7 @@ End
 		    Dim Frame As REALbasic.Rect = Self.Bounds
 		    Dim TitlebarHeight As Integer = Self.Top - Frame.Top
 		    
-		    InitialPosition.Top = InitialPosition.Top - (Self.EmptyToolbar.Height + TitlebarHeight)
+		    InitialPosition.Top = InitialPosition.Top - (101 + TitlebarHeight)
 		  #endif
 		  
 		  Return InitialPosition
@@ -398,6 +423,25 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowView(View As BeaconSubview)
+		  Select Case View
+		  Case LibraryPane1.DocumentsPane
+		    AppToolbar.SelectView(View)
+		    LibraryPane1.ShowPage(LibraryPane.PaneDocuments)
+		    Return
+		  Case LibraryPane1.PresetsPane
+		    AppToolbar.SelectView(View)
+		    LibraryPane1.ShowPage(LibraryPane.PanePresets)
+		    Return
+		  Case LibraryPane1.EngramsPane
+		    AppToolbar.SelectView(View)
+		    LibraryPane1.ShowPage(LibraryPane.PaneEngrams)
+		    Return
+		  Case LibraryPane1.ToolsPane
+		    AppToolbar.SelectView(View)
+		    LibraryPane1.ShowPage(LibraryPane.PaneTools)
+		    Return
+		  End Select
+		  
 		  If Self.mCurrentView = View Then
 		    Return
 		  End If
@@ -406,10 +450,11 @@ End
 		    Self.mCurrentView.Visible = False
 		  End If
 		  
-		  If View = Nil Then
+		  If View = Nil Or View = DashboardPane1 Then
 		    Self.ContentsChanged = False
 		    Self.mCurrentView = Nil
 		    Self.Views.Value = 0
+		    Self.AppToolbar.SelectView(DashboardPane1)
 		    Return
 		  End If
 		  
@@ -419,9 +464,11 @@ End
 		  If Self.mSubviews.IndexOf(View) = -1 Then
 		    Self.mSubviews.Append(View)
 		    View.EmbedWithinPanel(Self.Views, 1, 0, 0, Self.Views.Width, Self.Views.Height)
+		    AppToolbar.AddView(View, False)
 		    
 		    AddHandler View.ContentsChanged, WeakAddressOf Subview_ContentsChanged
 		  End If
+		  Self.AppToolbar.SelectView(View)
 		  
 		  Self.ContentsChanged = View.ContentsChanged
 		  Self.MinWidth = Max(Self.MinSplitterPosition + View.MinWidth, Self.AbsoluteMinWidth)
@@ -497,6 +544,26 @@ End
 		Function ShouldDiscardView(View As BeaconSubview) As Boolean
 		  Return Self.DiscardView(View)
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events AppToolbar
+	#tag Event
+		Sub Open()
+		  Me.AddView(LibraryPane1.DocumentsPane, True)
+		  Me.AddView(LibraryPane1.PresetsPane, True)
+		  Me.AddView(LibraryPane1.EngramsPane, True)
+		  Me.AddView(LibraryPane1.ToolsPane, True)
+		  
+		  Me.AddView(DashboardPane1, False)
+		  
+		  Self.ShowView(LibraryPane1.DocumentsPane)
+		  Self.ShowView(DashboardPane1)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ViewClicked(View As BeaconSubview)
+		  Self.ShowView(View)
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

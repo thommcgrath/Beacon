@@ -209,6 +209,71 @@ Begin Menu MainMenuBar
          Visible = True
       End
    End
+   Begin MenuItem ViewMenu
+      SpecialMenu = 0
+      Text = "View"
+      Index = -2147483648
+      AutoEnable = True
+      Visible = True
+      Begin MenuItem ViewDashboard
+         SpecialMenu = 0
+         Text = "Dashboard"
+         Index = -2147483648
+         ShortcutKey = "H"
+         Shortcut = "Cmd+Shift+H"
+         MenuModifier = True
+         AltMenuModifier = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem UntitledSeparator9
+         SpecialMenu = 0
+         Text = "-"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem ViewDocuments
+         SpecialMenu = 0
+         Text = "Documents"
+         Index = -2147483648
+         ShortcutKey = "1"
+         Shortcut = "Cmd+1"
+         MenuModifier = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem ViewPresets
+         SpecialMenu = 0
+         Text = "Presets"
+         Index = -2147483648
+         ShortcutKey = "2"
+         Shortcut = "Cmd+2"
+         MenuModifier = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem ViewEngrams
+         SpecialMenu = 0
+         Text = "Engrams"
+         Index = -2147483648
+         ShortcutKey = "3"
+         Shortcut = "Cmd+3"
+         MenuModifier = True
+         AutoEnable = True
+         Visible = True
+      End
+      Begin MenuItem ViewTools
+         SpecialMenu = 0
+         Text = "Tools"
+         Index = -2147483648
+         ShortcutKey = "4"
+         Shortcut = "Cmd+4"
+         MenuModifier = True
+         AutoEnable = True
+         Visible = True
+      End
+   End
    Begin MenuItem DocumentMenu
       SpecialMenu = 0
       Text = "Document"

@@ -1,5 +1,5 @@
 #tag Window
-Begin LibrarySubview LibraryPaneTools
+Begin BeaconSubview DashboardPane
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -9,7 +9,7 @@ Begin LibrarySubview LibraryPaneTools
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   300
+   Height          =   556
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -24,71 +24,40 @@ Begin LibrarySubview LibraryPaneTools
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   300
-   Begin BeaconListbox ToolsList
+   Width           =   808
+   Begin HTMLViewer DashboardView
       AutoDeactivate  =   True
-      AutoHideScrollbars=   True
-      Bold            =   False
-      Border          =   False
-      ColumnCount     =   1
-      ColumnsResizable=   False
-      ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      DefaultRowHeight=   22
       Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
-      HeadingIndex    =   -1
-      Height          =   259
+      Height          =   515
       HelpTag         =   ""
-      Hierarchical    =   False
       Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   "Mods\nIdentity\nAPI Guide\nAPI Builder"
-      Italic          =   False
       Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      RequiresSelection=   False
-      RowCount        =   0
+      Renderer        =   1
       Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   0
-      ShowDropIndicator=   False
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
       Top             =   41
-      Underline       =   False
-      UseFocusRing    =   True
       Visible         =   True
-      Width           =   300
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
+      Width           =   808
    End
-   Begin BeaconToolbar Header
+   Begin BeaconToolbar EmptyToolbar
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   "Tools"
+      Caption         =   "Welcome to Beacon"
       CaptionEnabled  =   False
       CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasResizer      =   True
+      HasResizer      =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -107,7 +76,7 @@ Begin LibrarySubview LibraryPaneTools
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   300
+      Width           =   808
    End
 End
 #tag EndWindow
@@ -115,23 +84,23 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.ToolbarIcon = IconLibraryTools
-		  Self.ToolbarCaption = "Tools"
+		  Self.ToolbarIcon = IconLibraryDocuments
+		  Self.ToolbarCaption = "Home"
 		End Sub
 	#tag EndEvent
 
 
-	#tag Hook, Flags = &h0
-		Event ShouldResize(ByRef NewSize As Integer)
-	#tag EndHook
-
-
 #tag EndWindowCode
 
-#tag Events Header
+#tag Events DashboardView
 	#tag Event
-		Sub ShouldResize(ByRef NewSize As Integer)
-		  RaiseEvent ShouldResize(NewSize)
+		Sub Open()
+		  Me.LoadURL(Beacon.WebURL("/dashboard/"))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub TitleChanged(newTitle as String)
+		  EmptyToolbar.Caption = NewTitle
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -124,18 +124,18 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   31
+      Height          =   32
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   3
+      LockLeft        =   False
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   0
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   41
@@ -156,6 +156,9 @@ End
 		    Self.UpdateCloudDocuments()
 		    Self.UpdateCommunityDocuments()
 		  #endif
+		  
+		  Self.ToolbarIcon = IconLibraryDocuments
+		  Self.ToolbarCaption = "Documents"
 		End Sub
 	#tag EndEvent
 
@@ -851,6 +854,17 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarCaption"
+		Group="Behavior"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Group="Behavior"
+		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"

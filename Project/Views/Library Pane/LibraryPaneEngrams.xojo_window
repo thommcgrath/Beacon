@@ -220,6 +220,14 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.ToolbarIcon = IconLibraryEngrams
+		  Self.ToolbarCaption = "Engrams"
+		End Sub
+	#tag EndEvent
+
+
 	#tag Hook, Flags = &h0
 		Event ShouldResize(ByRef NewSize As Integer)
 	#tag EndHook
@@ -377,6 +385,17 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarCaption"
+		Group="Behavior"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Group="Behavior"
+		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"

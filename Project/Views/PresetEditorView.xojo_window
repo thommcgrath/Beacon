@@ -1362,6 +1362,8 @@ End
 		Shared Function Create(Preset As Beacon.Preset) As PresetEditorView
 		  Dim View As New PresetEditorView
 		  View.mPreset = New Beacon.MutablePreset(Preset)
+		  View.ToolbarCaption = Preset.Label
+		  View.ToolbarIcon = IconLibraryPresets
 		  Return View
 		End Function
 	#tag EndMethod
@@ -2161,6 +2163,17 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarCaption"
+		Group="Behavior"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Group="Behavior"
+		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"

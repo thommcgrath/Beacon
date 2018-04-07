@@ -1,6 +1,7 @@
 #tag Class
 Protected Class BeaconSubview
 Inherits ContainerControl
+Implements ObservationKit.Observable
 	#tag Event
 		Sub EnableMenuItems()
 		  // The parent view will call down to the EnableMenuItems method
@@ -40,6 +41,37 @@ Inherits ContainerControl
 		End Function
 	#tag EndMenuHandler
 
+
+	#tag Method, Flags = &h0
+		Sub AddObserver(Observer As ObservationKit.Observer, Key As Text)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Self.mObservers = Nil Then
+		    Self.mObservers = New Xojo.Core.Dictionary
+		  End If
+		  
+		  Dim Refs() As Xojo.Core.WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = UBound(Refs) DownTo 0
+		    If Refs(I).Value = Nil Then
+		      Refs.Remove(I)
+		      Continue
+		    End If
+		    
+		    If Refs(I).Value = Observer Then
+		      // Already being watched
+		      Return
+		    End If
+		  Next
+		  
+		  Refs.Append(Xojo.Core.WeakRef.Create(Observer))
+		  Self.mObservers.Value(Key) = Refs
+		  
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ConfirmClose() As Boolean
@@ -91,6 +123,56 @@ Inherits ContainerControl
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub NotifyObservers(Key As Text, Value As Auto)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Self.mObservers = Nil Then
+		    Self.mObservers = New Xojo.Core.Dictionary
+		  End If
+		  
+		  Dim Refs() As Xojo.Core.WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = UBound(Refs) DownTo 0
+		    If Refs(I).Value = Nil Then
+		      Refs.Remove(I)
+		      Continue
+		    End If
+		    
+		    Dim Observer As ObservationKit.Observer = ObservationKit.Observer(Refs(I).Value)
+		    Observer.ObservedValueChanged(Self, Key, Value)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As Text)
+		  // Part of the ObservationKit.Observable interface.
+		  
+		  If Self.mObservers = Nil Then
+		    Self.mObservers = New Xojo.Core.Dictionary
+		  End If
+		  
+		  Dim Refs() As Xojo.Core.WeakRef
+		  If Self.mObservers.HasKey(Key) Then
+		    Refs = Self.mObservers.Value(Key)
+		  End If
+		  
+		  For I As Integer = UBound(Refs) DownTo 0
+		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
+		      Refs.Remove(I)
+		      Continue
+		    End If
+		  Next
+		  
+		  Self.mObservers.Value(Key) = Refs
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SwitchedFrom()
 		  RaiseEvent Hidden
 		End Sub
@@ -126,6 +208,61 @@ Inherits ContainerControl
 	#tag Hook, Flags = &h0
 		Event Shown(UserData As Auto = Nil)
 	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mObservers As Xojo.Core.Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mToolbarCaption As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mToolbarIcon As Picture
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mToolbarCaption <> "" Then
+			    Return Self.mToolbarCaption
+			  ElseIf Self.Title <> "" Then
+			    Return Self.Title
+			  Else
+			    Return "Untitled"
+			  End If
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If StrComp(Self.mToolbarCaption, Value, 0) <> 0 Then
+			    Self.mToolbarCaption = Value
+			    Self.NotifyObservers("ToolbarCaption", Value)
+			  End If
+			End Set
+		#tag EndSetter
+		ToolbarCaption As String
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mToolbarIcon <> Nil Then
+			    Return Self.mToolbarIcon
+			  Else
+			    Return IconLibraryDocuments
+			  End If
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mToolbarIcon = Value
+			  Self.NotifyObservers("ToolbarIcon", Value)
+			End Set
+		#tag EndSetter
+		ToolbarIcon As Picture
+	#tag EndComputedProperty
 
 
 	#tag ViewBehavior
@@ -271,6 +408,17 @@ Inherits ContainerControl
 			InitialValue="True"
 			Type="Boolean"
 			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ToolbarCaption"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ToolbarIcon"
+			Group="Behavior"
+			Type="Picture"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"
