@@ -4,7 +4,14 @@ Inherits ControlCanvas
 Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Self.mMouseDownItem = Self.ItemAtPixel(X, Y)
+		  Dim Item As MasterToolbarItem = Self.ItemAtPixel(X, Y)
+		  If Item = Nil Then
+		    Return True
+		  End If
+		  If Item.CloseRect.Contains(New REALbasic.Point(X, Y)) Then
+		    Self.mCloseTarget = Item.CloseRect
+		  End If
+		  Self.mMouseDownItem = Item
 		  Self.mPressedItem = Self.mMouseDownItem
 		  Self.Invalidate
 		  Return True
@@ -13,11 +20,16 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 
 	#tag Event
 		Sub MouseDrag(X As Integer, Y As Integer)
-		  If Self.mMouseDownItem = Nil Then
-		    Return
+		  Dim Point As New REALbasic.Point(X, Y)
+		  
+		  Dim Pressed As Boolean
+		  If Self.mCloseTarget <> Nil Then
+		    Pressed = Self.mCloseTarget.Contains(Point)
+		  ElseIf Self.mMouseDownItem <> Nil Then
+		    Pressed = Self.mMouseDownItem.Rect.Contains(Point)
 		  End If
 		  
-		  If Self.mMouseDownItem.Rect.Contains(New REALbasic.Point(X, Y)) Then
+		  If Pressed Then
 		    If Self.mPressedItem = Nil Then
 		      Self.mPressedItem = Self.mMouseDownItem
 		      Self.Invalidate
@@ -32,17 +44,39 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 	#tag EndEvent
 
 	#tag Event
-		Sub MouseUp(X As Integer, Y As Integer)
-		  If Self.mMouseDownItem = Nil Then
-		    Return
+		Sub MouseExit()
+		  ' If Self.mHoverItem <> Nil Then
+		  ' Self.mHoverItem = Nil
+		  ' Self.Invalidate
+		  ' End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseMove(X As Integer, Y As Integer)
+		  Dim Item As MasterToolbarItem = Self.ItemAtPixel(X, Y)
+		  If Self.mHoverItem <> Item Then
+		    Self.mHoverItem = Item
+		    Self.Invalidate
 		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseUp(X As Integer, Y As Integer)
+		  Dim Point As New REALbasic.Point(X, Y)
+		  
+		  Dim ClosePressed As Boolean = Self.mCloseTarget <> Nil And Self.mCloseTarget.Contains(Point)
+		  Self.mCloseTarget = Nil
 		  
 		  Dim Item As MasterToolbarItem = Self.mMouseDownItem
 		  Self.mMouseDownItem = Nil
 		  Self.mPressedItem = Nil
 		  Self.Invalidate
 		  
-		  If Item.Rect.Contains(New REALbasic.Point(X, Y)) Then
+		  If ClosePressed Then
+		    RaiseEvent CloseView(Item.View)
+		  ElseIf Item <> Nil And Item.Rect.Contains(New REALbasic.Point(X, Y)) Then
 		    RaiseEvent ViewClicked(Item.View)
 		  End If
 		End Sub
@@ -123,8 +157,26 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		  G.ForeColor = ForegroundColor
 		  G.DrawString(Item.Caption, CaptionLeft, CaptionTop, Self.MaxCaptionWidth, True)
 		  
-		  If Self.mPressedItem = Item Then
-		    G.ForeColor = &c000000a4
+		  If Item.View.ContentsChanged Then
+		    G.ForeColor = ShadowColor
+		    G.FillOval(Self.CellVerticalPadding, Self.CellVerticalPadding + 1, 4, 4)
+		    G.ForeColor = ForegroundColor
+		    G.FillOval(Self.CellVerticalPadding, Self.CellVerticalPadding, 4, 4)
+		  End If
+		  
+		  If Item.View.CanBeClosed And Self.mHoverItem = Item Then
+		    Dim CloseForeground As Picture = BeaconUI.IconWithColor(IconClose, ForegroundColor)
+		    Dim CloseShadow As Picture = BeaconUI.IconWithColor(IconClose, ShadowColor)
+		    G.DrawPicture(CloseShadow, G.Width - (Self.CellVerticalPadding + CloseShadow.Width), Self.CellVerticalPadding + 1)
+		    G.DrawPicture(CloseForeground, G.Width - (Self.CellVerticalPadding + CloseForeground.Width), Self.CellVerticalPadding)
+		    If Self.mCloseTarget <> Nil And Self.mPressedItem = Item Then
+		      G.ForeColor = &c000000A4
+		      G.FillRoundRect(G.Width - Self.mCloseTarget.Width, 0, Self.mCloseTarget.Width, Self.mCloseTarget.Height, Self.CellCornerSize, Self.CellCornerSize)
+		    End If
+		  End If
+		  
+		  If Self.mCloseTarget = Nil And Self.mPressedItem = Item Then
+		    G.ForeColor = &c000000A4
 		    G.FillRoundRect(0, 0, G.Width, G.Height, Self.CellCornerSize, Self.CellCornerSize)
 		  End If
 		End Sub
@@ -150,6 +202,9 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		    SwitchWidth = SwitchWidth + Items(I).Rect.Width
 		    NextSwitchLeft = Items(I).Rect.Right
 		  Next
+		  If HighlightRect <> Nil Then
+		    SwitchWidth = Max(SwitchWidth, (HighlightRect.Right + Self.CellVerticalSpacing) - SwitchLeft)
+		  End If
 		  
 		  Dim BackgroundColor As Color = Self.ColorProfile.BackgroundColor
 		  Dim ShadowColor, BorderColor, InsideColor As Color
@@ -215,6 +270,33 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  Self.Invalidate()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveView(View As BeaconSubview)
+		  // Loop over main first, more likely to find a match
+		  For I As Integer = 0 To Self.mMainItems.Ubound
+		    If Self.mMainItems(I).View = View Then
+		      If Self.mMainHighlightRect <> Nil And Self.mMainItems(I).Rect <> Nil And Self.mMainHighlightRect.Left > Self.mMainItems(I).Rect.Left Then
+		        Self.mMainHighlightRect.Offset(Self.mMainItems(I).Rect.Width * -1, 0)
+		      End If
+		      Self.mMainItems.Remove(I)
+		      Self.Invalidate
+		      Return
+		    End If
+		  Next
+		  
+		  For I As Integer = 0 To Self.mSidebarItems.Ubound
+		    If Self.mSidebarItems(I).View = View Then
+		      If Self.mSidebarHighlightRect <> Nil And Self.mSidebarItems(I).Rect <> Nil And Self.mSidebarHighlightRect.Left > Self.mSidebarItems(I).Rect.Left Then
+		        Self.mSidebarHighlightRect.Offset(Self.mSidebarItems(I).Rect.Width * -1, 0)
+		      End If
+		      Self.mSidebarItems.Remove(I)
+		      Self.Invalidate
+		      Return
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -306,9 +388,21 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 
 
 	#tag Hook, Flags = &h0
+		Event CloseView(View As BeaconSubview)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event ViewClicked(View As BeaconSubview)
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private mCloseTarget As REALbasic.Rect
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHoverItem As MasterToolbarItem
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mMainHighlightRect As REALbasic.Rect
@@ -371,7 +465,7 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 	#tag Constant, Name = CellSize, Type = Double, Dynamic = False, Default = \"24", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = CellVerticalPadding, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = CellVerticalPadding, Type = Double, Dynamic = False, Default = \"4", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = CellVerticalSpacing, Type = Double, Dynamic = False, Default = \"4", Scope = Private

@@ -7,6 +7,16 @@ Protected Class MasterToolbarItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function CloseRect() As REALbasic.Rect
+		  If Self.Rect = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Return New REALbasic.Rect(Self.Rect.Right - (IconClose.Width + (MasterToolbar.CellVerticalPadding * 2)), Self.Rect.Top, IconClose.Width + (MasterToolbar.CellVerticalPadding * 2), IconClose.Height + (MasterToolbar.CellVerticalPadding * 2))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(View As BeaconSubview)
 		  Self.mView = New WeakRef(View)
 		End Sub

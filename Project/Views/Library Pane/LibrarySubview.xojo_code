@@ -1,6 +1,12 @@
 #tag Class
 Protected Class LibrarySubview
 Inherits BeaconSubview
+	#tag Method, Flags = &h0
+		Function CanBeClosed() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function DiscardView(View As BeaconSubview) As Boolean
 		  Return RaiseEvent ShouldDiscardView(View)
@@ -167,6 +173,17 @@ Inherits BeaconSubview
 			InitialValue="True"
 			Type="Boolean"
 			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ToolbarCaption"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ToolbarIcon"
+			Group="Behavior"
+			Type="Picture"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

@@ -90,6 +90,13 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Function CanBeClosed() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
+
 #tag EndWindowCode
 
 #tag Events DashboardView

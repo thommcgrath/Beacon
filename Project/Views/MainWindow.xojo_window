@@ -345,6 +345,10 @@ End
 
 	#tag Method, Flags = &h0
 		Function DiscardView(View As BeaconSubview) As Boolean
+		  If View = DashboardPane1 Then
+		    Return False
+		  End If
+		  
 		  If View.ContentsChanged Then
 		    Self.ShowView(View)
 		    If Not View.ConfirmClose Then
@@ -363,6 +367,7 @@ End
 		  
 		  Self.mSubviews.Remove(ViewIndex)
 		  View.Close
+		  Self.AppToolbar.RemoveView(View)
 		  
 		  Return True
 		End Function
@@ -500,6 +505,7 @@ End
 		      Self.Title = "Beacon"
 		    End If
 		  End If
+		  Self.AppToolbar.Invalidate
 		End Sub
 	#tag EndMethod
 
@@ -563,6 +569,11 @@ End
 	#tag Event
 		Sub ViewClicked(View As BeaconSubview)
 		  Self.ShowView(View)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CloseView(View As BeaconSubview)
+		  Call Self.DiscardView(View)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
