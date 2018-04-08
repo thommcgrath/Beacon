@@ -98,14 +98,14 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		Private Sub DrawItem(G As Graphics, Item As MasterToolbarItem, Highlighted As Boolean)
 		  G = G.Clip(Item.Rect.Left, Item.Rect.Top, Item.Rect.Width, Item.Rect.Height)
 		  
-		  Dim BackgroundColor As Color = If(Highlighted, Self.ColorProfile.PrimaryColor, Self.ColorProfile.SelectedBackgroundColor)
+		  Dim BackgroundColor As Color = If(Highlighted, Self.ColorProfile.PrimaryColor, Self.ColorProfile.BackgroundColor)
 		  Dim ForegroundColor, ShadowColor As Color
 		  If BackgroundColor.IsBright Then
-		    ForegroundColor = BackgroundColor.Darker(0.7)
-		    ShadowColor = BackgroundColor.Lighter(0.35)
+		    ForegroundColor = BackgroundColor.Darker(0.8)
+		    ShadowColor = BackgroundColor.BlendWith(&cFFFFFF, 0.7)
 		  Else
-		    ForegroundColor = &cFFFFFF
-		    ShadowColor = BackgroundColor.Darker(0.4)
+		    ForegroundColor = &CFFFFFF
+		    ShadowColor = BackgroundColor.Darker(0.5)
 		  End If
 		  
 		  Dim Icon As Picture = BeaconUI.IconWithColor(Item.Icon, ForegroundColor)
@@ -151,11 +151,22 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		    NextSwitchLeft = Items(I).Rect.Right
 		  Next
 		  
-		  G.ForeColor = Self.ColorProfile.ShadowColor
+		  Dim BackgroundColor As Color = Self.ColorProfile.BackgroundColor
+		  Dim ShadowColor, BorderColor, InsideColor As Color
+		  If BackgroundColor.IsBright Then
+		    ShadowColor = &cFFFFFF
+		    InsideColor = BackgroundColor.Darker(0.1)
+		  Else
+		    ShadowColor = BackgroundColor.BlendWith(&cFFFFFF, 0.3)
+		    InsideColor = BackgroundColor.Darker(0.3)
+		  End If  
+		  BorderColor = InsideColor.Darker(0.3)
+		  
+		  G.ForeColor = ShadowColor
 		  G.FillRoundRect(SwitchLeft, SwitchTop + 1, SwitchWidth, SwitchHeight, Self.CellCornerSize, Self.CellCornerSize)
-		  G.ForeColor = Self.ColorProfile.SelectedBackgroundColor
+		  G.ForeColor = InsideColor
 		  G.FillRoundRect(SwitchLeft, SwitchTop, SwitchWidth, SwitchHeight, Self.CellCornerSize, Self.CellCornerSize)
-		  G.ForeColor = Self.ColorProfile.BorderColor
+		  G.ForeColor = BorderColor
 		  G.DrawRoundRect(SwitchLeft, SwitchTop, SwitchWidth, SwitchHeight, Self.CellCornerSize, Self.CellCornerSize)
 		  
 		  For I As Integer = 0 To Items.Ubound

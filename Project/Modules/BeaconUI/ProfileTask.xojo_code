@@ -31,7 +31,7 @@ Inherits AnimationKit.Task
 	#tag Method, Flags = &h1021
 		Private Sub Constructor()
 		  Self.Curve = AnimationKit.Curve.CreateEaseOut
-		  Self.DurationInSeconds = 0.15
+		  Self.DurationInSeconds = 1.15
 		End Sub
 	#tag EndMethod
 

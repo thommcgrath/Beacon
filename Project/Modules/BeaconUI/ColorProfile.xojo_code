@@ -8,7 +8,15 @@ Protected Class ColorProfile
 
 	#tag Method, Flags = &h0
 		Function BackgroundColor() As Color
-		  Return Self.mStandardBackgroundColor
+		  #if BeaconUI.ToolbarHasBackground
+		    Return Self.mStandardBackgroundColor
+		  #else
+		    #if TargetMacOS
+		      Return &cECECEC
+		    #else
+		      Return FillColor
+		    #endif
+		  #endif
 		End Function
 	#tag EndMethod
 

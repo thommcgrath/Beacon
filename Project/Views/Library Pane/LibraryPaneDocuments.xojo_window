@@ -131,9 +131,9 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   False
-      LockTop         =   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
       Scope           =   0
       TabIndex        =   0
       TabPanelIndex   =   0

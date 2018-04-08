@@ -245,7 +245,7 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h0
 		Function IsBright(Extends Source As Color) As Boolean
-		  Return Source.Luminance > 0.5
+		  Return Source.Luminance > 0.65
 		End Function
 	#tag EndMethod
 
