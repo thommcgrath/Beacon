@@ -115,7 +115,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.ToolbarIcon = IconLibraryTools
+		  Self.ToolbarIcon = IconTools
 		  Self.ToolbarCaption = "Tools"
 		End Sub
 	#tag EndEvent

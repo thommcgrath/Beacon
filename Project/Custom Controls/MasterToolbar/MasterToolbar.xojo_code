@@ -1,7 +1,7 @@
 #tag Class
 Protected Class MasterToolbar
 Inherits ControlCanvas
-Implements ObservationKit.Observer,  AnimationKit.ValueAnimator
+Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  Self.mMouseDownItem = Self.ItemAtPixel(X, Y)
@@ -114,14 +114,14 @@ Implements ObservationKit.Observer,  AnimationKit.ValueAnimator
 		  G.DrawPicture(IconShadow, (G.Width - IconShadow.Width) / 2, Self.CellVerticalPadding + 1)
 		  G.DrawPicture(Icon, (G.Width - Icon.Width) / 2, Self.CellVerticalPadding)
 		  
-		  Dim CaptionWidth As Integer = Ceil(G.StringWidth(Item.Caption))
+		  Dim CaptionWidth As Integer = Min(Ceil(G.StringWidth(Item.Caption)), Self.MaxCaptionWidth)
 		  Dim CaptionLeft As Integer = (G.Width - CaptionWidth) / 2
 		  Dim CaptionTop As Integer = (Self.CellVerticalPadding * 2) + Self.CellSize + G.CapHeight
 		  
 		  G.ForeColor = ShadowColor
-		  G.DrawString(Item.Caption, CaptionLeft, CaptionTop + 1)
+		  G.DrawString(Item.Caption, CaptionLeft, CaptionTop + 1, Self.MaxCaptionWidth, True)
 		  G.ForeColor = ForegroundColor
-		  G.DrawString(Item.Caption, CaptionLeft, CaptionTop)
+		  G.DrawString(Item.Caption, CaptionLeft, CaptionTop, Self.MaxCaptionWidth, True)
 		  
 		  If Self.mPressedItem = Item Then
 		    G.ForeColor = &c000000a4
@@ -145,7 +145,7 @@ Implements ObservationKit.Observer,  AnimationKit.ValueAnimator
 		  Dim SwitchWidth As Integer = Self.CellVerticalSpacing * 2
 		  Dim NextSwitchLeft As Integer = SwitchLeft + Self.CellVerticalSpacing
 		  For I As Integer = 0 To Items.Ubound
-		    Dim InsideWidth As Integer = Max(Items(I).Icon.Width, Ceil(G.StringWidth(Items(I).Caption)))
+		    Dim InsideWidth As Integer = Min(Max(Items(I).Icon.Width, Ceil(G.StringWidth(Items(I).Caption))), Self.MaxCaptionWidth)
 		    Items(I).Rect = New REALbasic.Rect(NextSwitchLeft, SwitchTop + Self.CellVerticalSpacing, InsideWidth + (Self.CellHorizontalPadding * 2), SwitchHeight - (Self.CellVerticalSpacing * 2))
 		    SwitchWidth = SwitchWidth + Items(I).Rect.Width
 		    NextSwitchLeft = Items(I).Rect.Right
@@ -364,6 +364,9 @@ Implements ObservationKit.Observer,  AnimationKit.ValueAnimator
 	#tag EndConstant
 
 	#tag Constant, Name = CellVerticalSpacing, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = MaxCaptionWidth, Type = Double, Dynamic = False, Default = \"100", Scope = Private
 	#tag EndConstant
 
 

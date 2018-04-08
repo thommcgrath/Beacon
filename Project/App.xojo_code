@@ -566,11 +566,15 @@ Inherits Application
 		  
 		  Self.mLogLock.Enter
 		  
-		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
-		  Dim LogFile As FolderItem = Self.ApplicationSupport.Child("Events.log")
-		  Dim Stream As TextOutputStream = TextOutputStream.Append(LogFile)
-		  Stream.WriteLine(Now.ToText + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Chr(9) + Message)
-		  Stream.Close
+		  #if DebugBuild
+		    System.DebugLog(Message)
+		  #else
+		    Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
+		    Dim LogFile As FolderItem = Self.ApplicationSupport.Child("Events.log")
+		    Dim Stream As TextOutputStream = TextOutputStream.Append(LogFile)
+		    Stream.WriteLine(Now.ToText + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Chr(9) + Message)
+		    Stream.Close
+		  #endif
 		  
 		  Self.mLogLock.Leave
 		End Sub

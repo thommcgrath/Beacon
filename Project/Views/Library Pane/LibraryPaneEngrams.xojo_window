@@ -222,7 +222,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.ToolbarIcon = IconLibraryEngrams
+		  Self.ToolbarIcon = IconEngrams
 		  Self.ToolbarCaption = "Engrams"
 		End Sub
 	#tag EndEvent

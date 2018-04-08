@@ -251,7 +251,7 @@ Implements ObservationKit.Observable
 			  If Self.mToolbarIcon <> Nil Then
 			    Return Self.mToolbarIcon
 			  Else
-			    Return IconLibraryDocuments
+			    Return IconGenericView
 			  End If
 			End Get
 		#tag EndGetter

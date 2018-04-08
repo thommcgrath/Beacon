@@ -151,7 +151,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.AcceptFileDrop(BeaconFileTypes.BeaconPreset)
-		  Self.ToolbarIcon = IconLibraryPresets
+		  Self.ToolbarIcon = IconPresets
 		  Self.ToolbarCaption = "Presets"
 		  RaiseEvent Open
 		End Sub

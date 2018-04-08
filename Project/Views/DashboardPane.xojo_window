@@ -84,7 +84,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.ToolbarIcon = IconLibraryDocuments
+		  Self.ToolbarIcon = IconHome
 		  Self.ToolbarCaption = "Home"
 		End Sub
 	#tag EndEvent

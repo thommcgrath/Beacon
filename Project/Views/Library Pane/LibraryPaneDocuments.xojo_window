@@ -157,7 +157,7 @@ End
 		    Self.UpdateCommunityDocuments()
 		  #endif
 		  
-		  Self.ToolbarIcon = IconLibraryDocuments
+		  Self.ToolbarIcon = IconDocuments
 		  Self.ToolbarCaption = "Documents"
 		End Sub
 	#tag EndEvent

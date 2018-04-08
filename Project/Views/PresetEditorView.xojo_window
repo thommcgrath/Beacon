@@ -1363,7 +1363,7 @@ End
 		  Dim View As New PresetEditorView
 		  View.mPreset = New Beacon.MutablePreset(Preset)
 		  View.ToolbarCaption = Preset.Label
-		  View.ToolbarIcon = IconLibraryPresets
+		  View.ToolbarIcon = IconPresets
 		  Return View
 		End Function
 	#tag EndMethod
