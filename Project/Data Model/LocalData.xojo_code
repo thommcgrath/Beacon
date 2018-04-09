@@ -884,7 +884,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      
 		      Self.SQLExecute("UPDATE engrams SET path = ?1, class_string = ?2, label = ?3, can_blueprint = ?4, availability = ?5 WHERE LOWER(path) = LOWER(?1);", Engram.Path, Engram.ClassString, Engram.Label, Engram.CanBeBlueprint, Engram.Availability)
 		    Else
-		      Self.SQLExecute("INSERT INTO engrams (path, class_string, label, can_blueprint, availability, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Engram.Path, Engram.ClassString, Engram.Label, Engram.CanBeBlueprint, Engram.Availability, Self.UserModID)
+		      Self.SQLExecute("INSERT INTO engrams (object_id, path, class_string, label, can_blueprint, availability, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", Beacon.CreateUUID, Engram.Path, Engram.ClassString, Engram.Label, Engram.CanBeBlueprint, Engram.Availability, Self.UserModID)
 		    End If
 		    Self.Commit()
 		  Catch Err As UnsupportedOperationException

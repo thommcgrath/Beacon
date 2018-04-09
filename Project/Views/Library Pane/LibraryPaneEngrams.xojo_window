@@ -216,6 +216,14 @@ Begin LibrarySubview LibraryPaneEngrams
       Visible         =   True
       Width           =   300
    End
+   Begin Timer ClipboardWatcher
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Mode            =   2
+      Period          =   500
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -228,6 +236,54 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Shared Function Import(Contents As String) As String()
+		  Dim Engrams() As Beacon.Engram
+		  
+		  Try
+		    Engrams = Beacon.Engram.ParseCSV(Contents.ToText)
+		  Catch Err As RuntimeException
+		    // Probably not a csv
+		    Engrams = Beacon.PullEngramsFromText(Contents)
+		  End Try
+		  
+		  Dim ImportedCount, SkippedCount As Integer
+		  For Each Engram As Beacon.Engram In Engrams
+		    If LocalData.SharedInstance.SaveEngram(Engram, False) Then
+		      ImportedCount = ImportedCount + 1
+		    Else
+		      SkippedCount = SkippedCount + 1
+		    End If
+		  Next
+		  
+		  Dim Messages() As String
+		  If ImportedCount = 1 Then
+		    Messages.Append("1 engram was added.")
+		  ElseIf ImportedCount > 1 Then
+		    Messages.Append(Str(ImportedCount, "-0") + " engrams were added.")
+		  End If
+		  If SkippedCount = 1 Then
+		    Messages.Append("1 engram was skipped because it already exists in the database.")
+		  ElseIf SkippedCount > 1 Then
+		    Messages.Append(Str(SkippedCount, "-0") + " engrams were skipped because they already exist in the database.")
+		  End If
+		  If ImportedCount = 0 And SkippedCount = 0 Then
+		    Messages.Append("No engrams were found to import.")
+		  End If
+		  
+		  NotificationKit.Post("Engram Import Complete", Nil)
+		  Return Messages
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ImportWithDialog(Contents As String)
+		  Dim Messages() As String = Self.Import(Contents)
+		  Self.ShowAlert("Import complete", Join(Messages, " "))
+		End Sub
+	#tag EndMethod
+
+
 	#tag Hook, Flags = &h0
 		Event ShouldResize(ByRef NewSize As Integer)
 	#tag EndHook
@@ -235,10 +291,68 @@ End
 
 #tag EndWindowCode
 
+#tag Events ImportURLButton
+	#tag Event
+		Sub Action()
+		  Dim Content As String = LibraryEngramsURLDialog.Present(Self)
+		  If Content <> "" Then
+		    Self.ImportWithDialog(Content)
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ImportClipboardButton
+	#tag Event
+		Sub Action()
+		  Dim Board As New Clipboard
+		  If Board.TextAvailable Then
+		    Self.ImportWithDialog(Board.Text)
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ImportFileButton
+	#tag Event
+		Sub Action()
+		  Dim Dialog As New OpenDialog
+		  Dialog.Filter = BeaconFileTypes.Text + BeaconFileTypes.CSVFile
+		  
+		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If File = Nil Then
+		    Return
+		  End If
+		  
+		  Dim Stream As TextInputStream = TextInputStream.Open(File)
+		  Dim Content As String = Stream.ReadAll(Encodings.UTF8)
+		  Stream.Close
+		  
+		  Self.ImportWithDialog(Content)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ManageEngramsButton
+	#tag Event
+		Sub Action()
+		  Dim View As BeaconSubview = Self.View("EngramsManagerView")
+		  If View = Nil Then
+		    View = New EngramsManagerView()
+		  End If
+		  Self.ShowView(View)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events Header
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
 		  RaiseEvent ShouldResize(NewSize)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ClipboardWatcher
+	#tag Event
+		Sub Action()
+		  Dim Board As New Clipboard
+		  Self.ImportClipboardButton.Enabled = Board.TextAvailable And (InStr(Board.Text, "Blueprint") > 0 Or InStr(Board.Text, "cheat giveitem") > 0)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -146,6 +146,7 @@ Begin ContainerControl BeaconEditor
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         ConsoleSafe     =   False
          Enabled         =   False
          EraseBackground =   True
          HasBackColor    =   False
