@@ -155,7 +155,7 @@ End
 		    Sources.Append(EntryList.RowTag(I))
 		  Next
 		  
-		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Sources)
+		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.ConsoleSafe, Sources)
 		  If Entries = Nil Then
 		    Return
 		  End If
@@ -317,6 +317,10 @@ End
 		Event Updated()
 	#tag EndHook
 
+
+	#tag Property, Flags = &h0
+		ConsoleSafe As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSet As Beacon.ItemSet
@@ -546,7 +550,7 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEntry"
-		    Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self)
+		    Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.ConsoleSafe)
 		    If Entries = Nil Then
 		      Return
 		    End If
@@ -631,6 +635,11 @@ End
 		Group="Background"
 		Type="Picture"
 		EditorType="Picture"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ConsoleSafe"
+		Group="Behavior"
+		Type="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"

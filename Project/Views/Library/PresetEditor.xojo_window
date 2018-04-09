@@ -84,6 +84,7 @@ Begin ContainerControl PresetEditor
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
+         RowCount        =   0
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -1762,7 +1763,7 @@ End
 #tag Events AddButton
 	#tag Event
 		Sub Action()
-		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow)
+		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, False)
 		  For Each Entry As Beacon.SetEntry In Entries
 		    Dim Item As New Beacon.PresetEntry(Entry)
 		    Self.PutEntryInRow(Item, -1)
@@ -1787,7 +1788,7 @@ End
 		    Entries.Append(Entry)
 		  Next
 		  
-		  Dim NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, Entries)
+		  Dim NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, False, Entries)
 		  If NewEntries = Nil Then
 		    Return
 		  End If

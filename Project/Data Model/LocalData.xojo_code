@@ -148,7 +148,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function DeleteEngram(Engram As Beacon.Engram) As Boolean
 		  Try
 		    Dim Results As RecordSet = Self.SQLSelect("SELECT mod_id FROM engrams WHERE LOWER(path) = LOWER(?1);", Engram.Path)
-		    If Results.RecordCount = 1 And Results.Field("mod_id").StringValue = Self.UserModID Then
+		    If Results.RecordCount = 1 And Results.Field("mod_id").StringValue <> Self.UserModID Then
 		      Return False
 		    End If
 		    
@@ -186,7 +186,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function GetCustomEngrams() As Beacon.Engram()
 		  Try
-		    Dim RS As RecordSet = Self.SQLSelect("SELECT path, label, availability, can_blueprint FROM engrams WHERE mod_id = ?1;", Self.UserModID)
+		    Dim RS As RecordSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE mods.mod_id = ?1;", Self.UserModID)
 		    If RS.RecordCount = 0 Then
 		      Return Nil
 		    End If
@@ -211,7 +211,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      ClassString = ClassString + "_C"
 		    End If
 		    
-		    Dim RS As RecordSet = Self.SQLSelect("SELECT path, label, availability, can_blueprint FROM engrams WHERE LOWER(class_string) = LOWER(?1);", ClassString)
+		    Dim RS As RecordSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(class_string) = LOWER(?1);", ClassString)
 		    If RS.RecordCount = 0 Then
 		      Return Nil
 		    End If
@@ -236,7 +236,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Try
-		    Dim RS As RecordSet = Self.SQLSelect("SELECT path, label, availability, can_blueprint FROM engrams WHERE LOWER(path) = LOWER(?1);", Path)
+		    Dim RS As RecordSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(path) = LOWER(?1);", Path)
 		    If RS.RecordCount = 0 Then
 		      Return Nil
 		    End If
@@ -753,6 +753,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Engram.Label = Results.Field("label").StringValue.ToText
 		    Engram.Availability = Results.Field("availability").IntegerValue
 		    Engram.CanBeBlueprint = Results.Field("can_blueprint").BooleanValue
+		    Engram.ConsoleSafe = Results.Field("console_safe").BooleanValue
+		    Engram.ModID = Results.Field("mod_id").StringValue.ToText
+		    Engram.ModName = Results.Field("mod_name").StringValue.ToText
 		    Engrams.Append(Engram)
 		    Results.MoveNext
 		  Wend
@@ -914,17 +917,31 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As Text) As Beacon.Engram()
+		Function SearchForEngrams(SearchText As Text, ConsoleSafe As Boolean) As Beacon.Engram()
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Dim Engrams() As Beacon.Engram
 		  
 		  Try
+		    Dim Clauses() As String
+		    If ConsoleSafe Then
+		      Clauses.Append("mods.console_safe = 1")
+		    End If
+		    If SearchText <> "" Then
+		      Clauses.Append("LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1)")
+		    End If
+		    
+		    Dim SQL As String = Self.EngramSelectSQL
+		    If Clauses.Ubound > -1 Then
+		      SQL = SQL + " WHERE " + Join(Clauses, " AND ")
+		    End If
+		    SQL = SQL + " ORDER BY label;"
+		    
 		    Dim Results As RecordSet
 		    If SearchText = "" Then
-		      Results = Self.SQLSelect("SELECT path, label, availability, can_blueprint FROM engrams ORDER BY label;")
+		      Results = Self.SQLSelect(SQL)
 		    Else
-		      Results = Self.SQLSelect("SELECT path, label, availability, can_blueprint FROM engrams WHERE LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1) ORDER BY label;", "%" + SearchText + "%")
+		      Results = Self.SQLSelect(SQL, "%" + SearchText + "%")
 		    End If
 		    
 		    Engrams = Self.RecordSetToEngram(Results)
@@ -940,17 +957,31 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForLootSources(SearchText As Text) As Beacon.LootSource()
+		Function SearchForLootSources(SearchText As Text, ConsoleSafe As Boolean) As Beacon.LootSource()
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Dim Sources() As Beacon.LootSource
 		  
 		  Try
+		    Dim Clauses() As String
+		    If ConsoleSafe Then
+		      Clauses.Append("mods.console_safe = 1")
+		    End If
+		    If SearchText <> "" Then
+		      Clauses.Append("LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1)")
+		    End If
+		    
+		    Dim SQL As String = "SELECT class_string, label, kind, availability, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort_order, required_item_sets, mods.console_safe, mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
+		    If Clauses.Ubound > -1 Then
+		      SQL = SQL + " WHERE " + Join(Clauses, " AND ")
+		    End If
+		    SQL = SQL + " ORDER BY label;"
+		    
 		    Dim Results As RecordSet
 		    If SearchText = "" Then
-		      Results = Self.SQLSelect("SELECT class_string, label, kind, availability, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort_order, required_item_sets FROM loot_sources ORDER BY label;")
+		      Results = Self.SQLSelect(SQL)
 		    Else
-		      Results = Self.SQLSelect("SELECT class_string, label, kind, availability, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort_order, required_item_sets FROM loot_sources WHERE LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1) ORDER BY label;", "%" + SearchText + "%")
+		      Results = Self.SQLSelect(SQL, "%" + SearchText + "%")
 		    End If
 		    
 		    Sources = Self.RecordSetToLootSource(Results)
@@ -1173,10 +1204,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 
+	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT path\x2C label\x2C availability\x2C can_blueprint\x2C mods.console_safe\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = UserModID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Private
+	#tag Constant, Name = UserModID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Public
 	#tag EndConstant
 
 

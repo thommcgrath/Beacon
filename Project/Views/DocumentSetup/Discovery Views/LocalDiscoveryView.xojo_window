@@ -357,6 +357,8 @@ Begin DiscoveryView LocalDiscoveryView
       LockedInPosition=   False
       Priority        =   0
       Scope           =   2
+      StackSize       =   ""
+      State           =   ""
       TabPanelIndex   =   0
    End
 End

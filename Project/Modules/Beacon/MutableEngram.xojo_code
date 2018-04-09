@@ -14,6 +14,12 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ConsoleSafe(Assigns Value As Boolean)
+		  Self.mConsoleSafe = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Path As Text)
 		  Super.Constructor()
 		  
@@ -25,6 +31,18 @@ Inherits Beacon.Engram
 	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As Text)
 		  Self.mLabel = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ModID(Assigns Value As Text)
+		  Self.mModID = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ModName(Assigns Value As Text)
+		  Self.mModName = Value
 		End Sub
 	#tag EndMethod
 

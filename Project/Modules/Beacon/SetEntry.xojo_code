@@ -39,6 +39,18 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ConsoleSafe() As Boolean
+		  For Each Option As Beacon.SetEntryOption In Self.mOptions
+		    If Not Option.Engram.ConsoleSafe Then
+		      Return False
+		    End If
+		  Next
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mMinQuantity = 1
 		  Self.mMaxQuantity = 1

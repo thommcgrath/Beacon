@@ -109,6 +109,11 @@ Implements Beacon.DocumentItem
 		      Else
 		        Doc.mDifficultyValue = -1
 		      End If
+		      If Dict.HasKey("ConsoleModsOnly") Then
+		        Doc.ConsoleModsOnly = Dict.Value("ConsoleModsOnly")
+		      Else
+		        Doc.ConsoleModsOnly = False
+		      End If
 		      If Dict.HasKey("Secure") Then
 		        Dim SecureDict As Xojo.Core.Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
 		        If SecureDict <> Nil Then
@@ -189,7 +194,7 @@ Implements Beacon.DocumentItem
 		              Next
 		              
 		              // Reconfigure
-		              Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask)
+		              Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.ConsoleModsOnly)
 		              
 		              // Now "deconfigure" it
 		              Redim Set(UBound(Entries))
@@ -406,7 +411,7 @@ Implements Beacon.DocumentItem
 		  End If
 		  
 		  For Each Source As Beacon.LootSource In Self.mLootSources
-		    Source.ReconfigurePresets(Self.mMapCompatibility)
+		    Source.ReconfigurePresets(Self.mMapCompatibility, Self.ConsoleModsOnly)
 		  Next
 		End Sub
 	#tag EndMethod
@@ -492,6 +497,7 @@ Implements Beacon.DocumentItem
 		  Document.Value("Title") = Self.Title
 		  Document.Value("Description") = Self.Description
 		  Document.Value("Public") = Self.IsPublic
+		  Document.Value("ConsoleModsOnly") = Self.ConsoleModsOnly
 		  
 		  If Self.mMapCompatibility > 0 Then
 		    Document.Value("Map") = Self.mMapCompatibility
@@ -536,6 +542,25 @@ Implements Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mConsoleModsOnly
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mConsoleModsOnly = Value Then
+			    Return
+			  End If
+			  
+			  Self.mConsoleModsOnly = Value
+			  Self.mModified = True
+			End Set
+		#tag EndSetter
+		ConsoleModsOnly As Boolean
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -609,6 +634,10 @@ Implements Beacon.DocumentItem
 		#tag EndSetter
 		MapCompatibility As UInt64
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mConsoleModsOnly As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDescription As Text

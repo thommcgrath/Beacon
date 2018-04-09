@@ -35,6 +35,12 @@ Protected Class Engram
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ConsoleSafe() As Boolean
+		  Return Self.mConsoleSafe
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mCanBeBlueprint = True
@@ -51,6 +57,9 @@ Protected Class Engram
 		  Self.mPath = Source.mPath
 		  Self.mLabel = Source.mLabel
 		  Self.mIsValid = Source.mIsValid
+		  Self.mModID = Source.mModID
+		  Self.mModName = Source.mModName
+		  Self.mConsoleSafe = Source.mConsoleSafe
 		End Sub
 	#tag EndMethod
 
@@ -147,7 +156,17 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ModID() As Text
+		  Return Self.mModID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ModName() As Text
+		  If Self.mModID <> LocalData.UserModID Then
+		    Return Self.mModName
+		  End If
+		  
 		  If Not Self.IsValid Or Self.mPath.Length < 6 Or Self.mPath.Left(6) <> "/Game/" Then
 		    Return ""
 		  End If
@@ -283,11 +302,23 @@ Protected Class Engram
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
+		Protected mConsoleSafe As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
 		Protected mIsValid As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mLabel As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mModID As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mModName As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

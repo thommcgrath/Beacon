@@ -9,7 +9,7 @@ Begin ContainerControl DocumentSettingsView
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   586
+   Height          =   512
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -29,7 +29,7 @@ Begin ContainerControl DocumentSettingsView
       AutoDeactivate  =   True
       Bold            =   False
       Enabled         =   True
-      Height          =   514
+      Height          =   440
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -78,7 +78,7 @@ Begin ContainerControl DocumentSettingsView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   146
+         Top             =   300
          Underline       =   False
          Visible         =   True
          Width           =   520
@@ -108,7 +108,7 @@ Begin ContainerControl DocumentSettingsView
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   246
+            Top             =   400
             Underline       =   False
             Value           =   False
             Visible         =   True
@@ -140,7 +140,7 @@ Begin ContainerControl DocumentSettingsView
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   246
+            Top             =   400
             Underline       =   False
             Value           =   False
             Visible         =   True
@@ -172,7 +172,7 @@ Begin ContainerControl DocumentSettingsView
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   182
+            Top             =   336
             Underline       =   False
             Value           =   False
             Visible         =   True
@@ -204,7 +204,7 @@ Begin ContainerControl DocumentSettingsView
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   214
+            Top             =   368
             Underline       =   False
             Value           =   False
             Visible         =   True
@@ -236,7 +236,7 @@ Begin ContainerControl DocumentSettingsView
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   214
+            Top             =   368
             Underline       =   False
             Value           =   False
             Visible         =   True
@@ -268,378 +268,11 @@ Begin ContainerControl DocumentSettingsView
             TextFont        =   "System"
             TextSize        =   0.0
             TextUnit        =   0
-            Top             =   214
+            Top             =   368
             Underline       =   False
             Value           =   False
             Visible         =   True
             Width           =   152
-         End
-      End
-      Begin GroupBox DifficultyGroup
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Difficulty"
-         Enabled         =   True
-         Height          =   216
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   298
-         Underline       =   False
-         Visible         =   True
-         Width           =   520
-         Begin Label DifficultyDetailsLabel
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   60
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   7
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   "Learn More:"
-            TextAlign       =   2
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   474
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   107
-         End
-         Begin LinkLabel DifficultyDetailsLink
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   20
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   179
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   True
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   8
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   "http://ark.gamepedia.com/Difficulty"
-            TextAlign       =   0
-            TextColor       =   &c0000FF00
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   474
-            Transparent     =   False
-            Underline       =   True
-            Visible         =   True
-            Width           =   361
-         End
-         Begin UITweaks.ResizedLabel MaxDinoLevelLabel
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   310
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   5
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   "Max Dino Level:"
-            TextAlign       =   2
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   440
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   111
-         End
-         Begin UITweaks.ResizedLabel DifficultyValueLabel
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   60
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   1
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   "Difficulty Value:"
-            TextAlign       =   2
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   406
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   111
-         End
-         Begin UITweaks.ResizedTextField MaxDinoLevelField
-            AcceptTabs      =   False
-            Alignment       =   0
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   429
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   6
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   440
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   111
-         End
-         Begin UITweaks.ResizedTextField DifficultyValueField
-            AcceptTabs      =   False
-            Alignment       =   0
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   179
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   2
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   406
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   111
-         End
-         Begin UITweaks.ResizedTextField DifficultyOffsetField
-            AcceptTabs      =   False
-            Alignment       =   0
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   429
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   4
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   406
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   111
-         End
-         Begin UITweaks.ResizedLabel DifficultyOffsetLabel
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   310
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   3
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   "Difficulty Offset:"
-            TextAlign       =   2
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   406
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   111
-         End
-         Begin Label DifficultyExplanationLabel
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   60
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "DifficultyGroup"
-            Italic          =   False
-            Left            =   60
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   True
-            LockTop         =   True
-            Multiline       =   True
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   0
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   "You only need to enter one of these values, the other two will be calculated automatically. Difficulty Value is the one value that really matters. Difficulty Offset and Max Dino Level are simply assistive values."
-            TextAlign       =   0
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   334
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   480
          End
       End
       Begin BeaconListbox ProfilesList
@@ -660,7 +293,7 @@ Begin ContainerControl DocumentSettingsView
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   -1
-         Height          =   424
+         Height          =   350
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -821,9 +454,9 @@ Begin ContainerControl DocumentSettingsView
       Begin GroupBox TitleGroup
          AutoDeactivate  =   True
          Bold            =   False
-         Caption         =   "Title"
+         Caption         =   "Basic"
          Enabled         =   True
-         Height          =   76
+         Height          =   230
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
@@ -863,7 +496,7 @@ Begin ContainerControl DocumentSettingsView
             Index           =   -2147483648
             InitialParent   =   "TitleGroup"
             Italic          =   False
-            Left            =   60
+            Left            =   183
             LimitText       =   0
             LockBottom      =   False
             LockedInPosition=   False
@@ -877,7 +510,7 @@ Begin ContainerControl DocumentSettingsView
             TabIndex        =   0
             TabPanelIndex   =   1
             TabStop         =   True
-            Text            =   ""
+            Text            =   "Untitled Document"
             TextColor       =   &c00000000
             TextFont        =   "System"
             TextSize        =   0.0
@@ -886,8 +519,349 @@ Begin ContainerControl DocumentSettingsView
             Underline       =   False
             UseFocusRing    =   True
             Visible         =   True
-            Width           =   480
+            Width           =   357
          End
+         Begin UITweaks.ResizedLabel Label1
+            AutoDeactivate  =   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "TitleGroup"
+            Italic          =   False
+            Left            =   60
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   1
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Title:"
+            TextAlign       =   2
+            TextColor       =   &c00000000
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   94
+            Transparent     =   True
+            Underline       =   False
+            Visible         =   True
+            Width           =   111
+         End
+         Begin CheckBox ConsoleSafeCheck
+            AutoDeactivate  =   True
+            Bold            =   False
+            Caption         =   "Show Only Console-Safe Engrams"
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   20
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "TitleGroup"
+            Italic          =   False
+            Left            =   183
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Scope           =   2
+            State           =   0
+            TabIndex        =   2
+            TabPanelIndex   =   1
+            TabStop         =   True
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   128
+            Underline       =   False
+            Value           =   False
+            Visible         =   True
+            Width           =   357
+         End
+         Begin UITweaks.ResizedTextField MaxDinoLevelField
+            AcceptTabs      =   False
+            Alignment       =   0
+            AutoDeactivate  =   True
+            AutomaticallyCheckSpelling=   False
+            BackColor       =   &cFFFFFF00
+            Bold            =   False
+            Border          =   True
+            CueText         =   ""
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Format          =   ""
+            Height          =   22
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "TitleGroup"
+            Italic          =   False
+            Left            =   183
+            LimitText       =   0
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Mask            =   ""
+            Password        =   False
+            ReadOnly        =   False
+            Scope           =   2
+            TabIndex        =   3
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "120"
+            TextColor       =   &c00000000
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   160
+            Underline       =   False
+            UseFocusRing    =   True
+            Visible         =   True
+            Width           =   111
+         End
+         Begin UITweaks.ResizedLabel MaxDinoLevelLabel
+            AutoDeactivate  =   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   22
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "TitleGroup"
+            Italic          =   False
+            Left            =   60
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   4
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Max Dino Level:"
+            TextAlign       =   2
+            TextColor       =   &c00000000
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   160
+            Transparent     =   True
+            Underline       =   False
+            Visible         =   True
+            Width           =   111
+         End
+         Begin UITweaks.ResizedTextField DifficultyValueField
+            AcceptTabs      =   False
+            Alignment       =   0
+            AutoDeactivate  =   True
+            AutomaticallyCheckSpelling=   False
+            BackColor       =   &cFFFFFF00
+            Bold            =   False
+            Border          =   True
+            CueText         =   ""
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Format          =   ""
+            Height          =   22
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "TitleGroup"
+            Italic          =   False
+            Left            =   183
+            LimitText       =   0
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Mask            =   ""
+            Password        =   False
+            ReadOnly        =   True
+            Scope           =   2
+            TabIndex        =   5
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   ""
+            TextColor       =   &c00000000
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   194
+            Underline       =   False
+            UseFocusRing    =   True
+            Visible         =   True
+            Width           =   111
+         End
+         Begin UITweaks.ResizedLabel DifficultyValueLabel
+            AutoDeactivate  =   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   22
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "TitleGroup"
+            Italic          =   False
+            Left            =   60
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   6
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Difficulty Value:"
+            TextAlign       =   2
+            TextColor       =   &c00000000
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   194
+            Transparent     =   True
+            Underline       =   False
+            Visible         =   True
+            Width           =   111
+         End
+         Begin UITweaks.ResizedLabel DifficultyConfigLabel
+            AutoDeactivate  =   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   22
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "TitleGroup"
+            Italic          =   False
+            Left            =   60
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   False
+            LockTop         =   True
+            Multiline       =   False
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   7
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Difficulty Config:"
+            TextAlign       =   2
+            TextColor       =   &c00000000
+            TextFont        =   "System"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   228
+            Transparent     =   True
+            Underline       =   False
+            Visible         =   True
+            Width           =   111
+         End
+         Begin Label DifficultyExplanationLabel
+            AutoDeactivate  =   True
+            Bold            =   False
+            DataField       =   ""
+            DataSource      =   ""
+            Enabled         =   True
+            Height          =   56
+            HelpTag         =   ""
+            Index           =   -2147483648
+            InitialParent   =   "TitleGroup"
+            Italic          =   False
+            Left            =   306
+            LockBottom      =   False
+            LockedInPosition=   False
+            LockLeft        =   True
+            LockRight       =   True
+            LockTop         =   True
+            Multiline       =   True
+            Scope           =   2
+            Selectable      =   False
+            TabIndex        =   8
+            TabPanelIndex   =   1
+            TabStop         =   True
+            Text            =   "Difficulty affects loot quality, so make sure Max Dino Level is correct. Config below is a reference so you can set your server to match."
+            TextAlign       =   0
+            TextColor       =   &c00000000
+            TextFont        =   "SmallSystem"
+            TextSize        =   0.0
+            TextUnit        =   0
+            Top             =   160
+            Transparent     =   True
+            Underline       =   False
+            Visible         =   True
+            Width           =   234
+         End
+      End
+      Begin TextArea DifficultyConfigArea
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   True
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   40
+         HelpTag         =   ""
+         HideSelection   =   True
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   183
+         LimitText       =   0
+         LineHeight      =   0.0
+         LineSpacing     =   1.0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Mask            =   ""
+         Multiline       =   True
+         ReadOnly        =   True
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollbarVertical=   True
+         Styled          =   True
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "DifficultyOffset=\nOverrideOfficialDifficulty="
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   228
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   357
       End
    End
    Begin UITweaks.ResizedPushButton CancelButton
@@ -916,7 +890,7 @@ Begin ContainerControl DocumentSettingsView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   546
+      Top             =   472
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -947,7 +921,7 @@ Begin ContainerControl DocumentSettingsView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   546
+      Top             =   472
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -979,17 +953,29 @@ End
 		    Return
 		  End If
 		  
-		  Dim Scale As Double = Maps.DifficultyScale
-		  
-		  Dim DifficultyOffset As Double = Val(Self.DifficultyOffsetField.Text)
-		  Dim DifficultyValue As Double = Beacon.DifficultyValue(DifficultyOffset, Scale)
-		  Dim MaxDinoLevel As Integer = DifficultyValue * 30
-		  
-		  Self.DifficultyValueField.Text = DifficultyValue.PrettyText
-		  Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
-		  Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
-		  
 		  Self.ActionButton.Enabled = Self.TitleField.Text.Trim <> ""
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ComputeDifficulty()
+		  Dim Maps() As Beacon.Map = Self.SelectedMaps
+		  Dim MinDifficulty As Double = 10000000000
+		  Dim MaxDifficulty As Double = 0
+		  For Each Map As Beacon.Map In Maps
+		    MinDifficulty = Min(MinDifficulty, Map.DifficultyScale)
+		    MaxDifficulty = Max(MaxDifficulty, Map.DifficultyScale)
+		  Next
+		  
+		  Dim DinoLevel As Integer = Max(Val(MaxDinoLevelField.Text), 1)
+		  Dim DifficultyOffset, DifficultyValue, OverrideDifficulty As Double
+		  Beacon.ComputeDifficultySettings(MaxDifficulty, DinoLevel, DifficultyValue, DifficultyOffset, OverrideDifficulty)
+		  
+		  DifficultyValueField.Text = DifficultyValue.PrettyText
+		  DifficultyConfigArea.Text = "DifficultyOffset=" + DifficultyOffset.PrettyText
+		  If OverrideDifficulty <> MaxDifficulty Or MinDifficulty <> MaxDifficulty Then
+		    DifficultyConfigArea.Text = DifficultyConfigArea.Text + EndOfLine + "OverrideOfficialDifficulty=" + OverrideDifficulty.PrettyText
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1010,28 +996,13 @@ End
 		  Else
 		    Mask = Beacon.Maps.GuessMap(Self.mDocument.LootSources)
 		  End If
-		  
-		  Dim SelectedMaps() As Beacon.Map = Beacon.Maps.ForMask(Mask)
-		  Dim DifficultyScale As Double
-		  Dim DifficultyMatches As Boolean = True
-		  For Each Map As Beacon.Map In SelectedMaps
-		    DifficultyScale = Max(DifficultyScale, Map.DifficultyScale)
-		    DifficultyMatches = DifficultyMatches And (DifficultyScale = Map.DifficultyScale)
-		  Next
+		  Self.SelectedMask = Mask
 		  
 		  Dim DifficultyValue As Double = Self.mDocument.DifficultyValue
 		  If DifficultyValue = -1 Then
-		    DifficultyValue = Beacon.DifficultyValue(1.0, DifficultyScale)
+		    DifficultyValue = 4.0
 		  End If
-		  
-		  Self.SelectedMask = Mask
-		  
-		  Dim DifficultyOffset As Double = Beacon.DifficultyOffset(DifficultyValue, DifficultyScale)
-		  Dim MaxDinoLevel As Integer = DifficultyValue * 30
-		  
-		  Self.DifficultyValueField.Text = DifficultyValue.PrettyText
-		  Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
-		  Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
+		  Self.MaxDinoLevelField.Text = Round(DifficultyValue * 30).PrettyText
 		  
 		  Self.TitleField.Text = Document.Title
 		  
@@ -1127,7 +1098,7 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = ViewHeight, Type = Double, Dynamic = False, Default = \"586", Scope = Public
+	#tag Constant, Name = ViewHeight, Type = Double, Dynamic = False, Default = \"512", Scope = Public
 	#tag EndConstant
 
 
@@ -1136,56 +1107,8 @@ End
 #tag Events MapCheck
 	#tag Event
 		Sub Action(index as Integer)
+		  Self.ComputeDifficulty()
 		  Self.CheckEnabled()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DifficultyDetailsLink
-	#tag Event
-		Sub Action()
-		  ShowURL("http://ark.gamepedia.com/Difficulty")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MaxDinoLevelField
-	#tag Event
-		Sub TextChange()
-		  If Self.Focus = Me Then
-		    Dim MaxDinoLevel As Integer = Val(Me.Text)
-		    Dim DifficultyValue As Double = MaxDinoLevel / 30
-		    Dim DifficultyOffset As Double = Beacon.DifficultyOffset(DifficultyValue, Self.SelectedMaps.DifficultyScale)
-		    
-		    Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
-		    Self.DifficultyValueField.Text = DifficultyValue.PrettyText
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DifficultyValueField
-	#tag Event
-		Sub TextChange()
-		  If Self.Focus = Me Then
-		    Dim DifficultyValue As Double = Val(Me.Text)
-		    Dim DifficultyOffset As Double = Beacon.DifficultyOffset(DifficultyValue, Self.SelectedMaps.DifficultyScale)
-		    Dim MaxDinoLevel As Integer = DifficultyValue * 30
-		    
-		    Self.DifficultyOffsetField.Text = DifficultyOffset.PrettyText
-		    Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DifficultyOffsetField
-	#tag Event
-		Sub TextChange()
-		  If Self.Focus = Me Then
-		    Dim DifficultyOffset As Double = Val(Me.Text)
-		    Dim DifficultyValue As Double = Beacon.DifficultyValue(DifficultyOffset, Self.SelectedMaps.DifficultyScale)
-		    Dim MaxDinoLevel As Integer = DifficultyValue * 30
-		    
-		    Self.DifficultyValueField.Text = DifficultyValue.PrettyText
-		    Self.MaxDinoLevelField.Text = MaxDinoLevel.ToText
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1281,6 +1204,13 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events MaxDinoLevelField
+	#tag Event
+		Sub TextChange()
+		  Self.ComputeDifficulty()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
@@ -1302,7 +1232,8 @@ End
 		  
 		  Dim MapChanged As Boolean = Self.mDocument.MapCompatibility <> Mask
 		  Self.mDocument.MapCompatibility = Mask
-		  Self.mDocument.DifficultyValue = Val(DifficultyValueField.Text)
+		  Self.mDocument.DifficultyValue = Val(Self.DifficultyValueField.Text)
+		  Self.mDocument.ConsoleModsOnly = Self.ConsoleSafeCheck.Value
 		  
 		  If MapChanged And ValidPresetCount > 0 And Self.ShowConfirm("Would you like to rebuild your item sets based on their presets?", "Presets fill item sets based on the current map. When changing maps, it is recommended to rebuild the item sets from their original presets to get the most correct loot for the new map.", "Rebuild", "Do Not Rebuild") Then
 		    Self.mDocument.ReconfigurePresets()

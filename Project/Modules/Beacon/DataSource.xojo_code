@@ -55,13 +55,13 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As Text) As Beacon.Engram()
+		Function SearchForEngrams(SearchText As Text, ConsoleSafe As Boolean) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForLootSources(SearchText As Text) As Beacon.LootSource()
+		Function SearchForLootSources(SearchText As Text, ConsoleSafe As Boolean) As Beacon.LootSource()
 		  
 		End Function
 	#tag EndMethod

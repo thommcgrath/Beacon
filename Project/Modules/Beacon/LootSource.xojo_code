@@ -438,7 +438,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReconfigurePresets(Mask As UInt64)
+		Sub ReconfigurePresets(Mask As UInt64, ConsoleSafe As Boolean)
 		  For Each Set As Beacon.ItemSet In Self.mSets
 		    If Set.SourcePresetID = "" Then
 		      Continue
@@ -449,7 +449,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Continue
 		    End If
 		    
-		    Set.ReconfigureWithPreset(Preset, Self, Mask)
+		    Set.ReconfigureWithPreset(Preset, Self, Mask, ConsoleSafe)
 		  Next
 		End Sub
 	#tag EndMethod

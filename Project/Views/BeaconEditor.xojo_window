@@ -137,7 +137,7 @@ Begin ContainerControl BeaconEditor
       TabIndex        =   6
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   347
       Begin SetEditor Editor
@@ -445,7 +445,7 @@ End
 		  
 		  Dim Added As Boolean
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Source, Self.MapMask)
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Source, Self.MapMask, Self.ConsoleSafe)
 		    If Source.IndexOf(Set) = -1 Then
 		      Source.Append(Set)
 		      Added = True
@@ -704,12 +704,31 @@ End
 	#tag EndHook
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mConsoleSafe
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.mConsoleSafe = Value
+			  Self.Editor.ConsoleSafe = Value
+			End Set
+		#tag EndSetter
+		ConsoleSafe As Boolean
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private ImportProgress As ImporterWindow
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		MapMask As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConsoleSafe As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -958,7 +977,7 @@ End
 		        For Each Source As Beacon.LootSource In Self.mSources
 		          Dim OriginalHash As Text = Set.Hash
 		          Dim NewSet As Beacon.ItemSet = New Beacon.ItemSet(Set)
-		          NewSet.ReconfigureWithPreset(Preset, Source, Self.MapMask)
+		          NewSet.ReconfigureWithPreset(Preset, Source, Self.MapMask, Self.ConsoleSafe)
 		          If NewSet.Hash = OriginalHash Then
 		            Continue
 		          End If
@@ -1197,6 +1216,11 @@ End
 		Group="Background"
 		Type="Picture"
 		EditorType="Picture"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ConsoleSafe"
+		Group="Behavior"
+		Type="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"

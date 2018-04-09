@@ -45,7 +45,7 @@ Begin Window DocumentSetupSheet
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   0
+      Value           =   4
       Visible         =   True
       Width           =   600
       Begin Label IntroMessageLabel

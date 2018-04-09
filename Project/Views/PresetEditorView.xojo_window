@@ -1408,7 +1408,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, Entries)
+		  Dim NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, False, Entries)
 		  If NewEntries = Nil Then
 		    Return
 		  End If
@@ -1536,7 +1536,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddDialog()
-		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow)
+		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, False)
 		  If Entries = Nil Or Entries.Ubound = -1 Then
 		    Return
 		  End If

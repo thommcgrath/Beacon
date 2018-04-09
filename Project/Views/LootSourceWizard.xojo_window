@@ -1214,8 +1214,8 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub BuildSourceList(CurrentSources() As Beacon.LootSource)
-		  Dim AllowedLootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("")
+		Private Sub BuildSourceList(CurrentSources() As Beacon.LootSource, ConsoleSafe As Boolean)
+		  Dim AllowedLootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", ConsoleSafe)
 		  For X As Integer = UBound(AllowedLootSources) DownTo 0
 		    If Not AllowedLootSources(X).ValidForMask(Self.mCurrentMask) Then
 		      AllowedLootSources.Remove(X)
@@ -1251,7 +1251,8 @@ End
 		Shared Function PresentAdd(Parent As Window, Document As Beacon.Document) As Beacon.LootSource
 		  Dim Win As New LootSourceWizard
 		  Win.mCurrentMask = Document.MapCompatibility
-		  Win.BuildSourceList(Document.LootSources)
+		  Win.mConsoleSafe = Document.ConsoleModsOnly
+		  Win.BuildSourceList(Document.LootSources, Document.ConsoleModsOnly)
 		  Win.mOriginal = Nil
 		  Win.ShowModalWithin(Parent)
 		  
@@ -1267,7 +1268,8 @@ End
 		Shared Function PresentDuplicate(Parent As Window, Document As Beacon.Document, Source As Beacon.LootSource) As Beacon.LootSource
 		  Dim Win As New LootSourceWizard
 		  Win.mCurrentMask = Document.MapCompatibility
-		  Win.BuildSourceList(Document.LootSources)
+		  Win.mConsoleSafe = Document.ConsoleModsOnly
+		  Win.BuildSourceList(Document.LootSources, Document.ConsoleModsOnly)
 		  Win.mOriginal = New Beacon.LootSource(Source)
 		  Win.ShowModalWithin(Parent)
 		  
@@ -1283,7 +1285,8 @@ End
 		Shared Function PresentEdit(Parent As Window, Document As Beacon.Document, Source As Beacon.LootSource) As Beacon.LootSource
 		  Dim Win As New LootSourceWizard
 		  Win.mCurrentMask = Document.MapCompatibility
-		  Win.BuildSourceList(Document.LootSources)
+		  Win.mConsoleSafe = Document.ConsoleModsOnly
+		  Win.BuildSourceList(Document.LootSources, Document.ConsoleModsOnly)
 		  Win.mOriginal = New Beacon.LootSource(Source)
 		  Win.mEditing = New Beacon.MutableLootSource(Source)
 		  
@@ -1308,6 +1311,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mConsoleSafe As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1534,13 +1541,13 @@ End
 		        If Set.SourcePresetID = Preset.PresetID Then
 		          If CustomizeReconfigureCheckbox.Value Then
 		            // Wants to rebuild it
-		            Self.mEditing(X).ReconfigureWithPreset(Preset, Self.mEditing, Self.mCurrentMask)
+		            Self.mEditing(X).ReconfigureWithPreset(Preset, Self.mEditing, Self.mCurrentMask, Self.mConsoleSafe)
 		          End If
 		          Continue For I
 		        End If
 		      Next
 		      
-		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Self.mEditing, Self.mCurrentMask)
+		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Self.mEditing, Self.mCurrentMask, Self.mConsoleSafe)
 		      Self.mEditing.Append(Set)
 		    Else
 		      For X As Integer = 0 To UBound(Self.mEditing)

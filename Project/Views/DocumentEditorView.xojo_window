@@ -290,10 +290,11 @@ End
 		  If HelpFile <> Nil Then
 		    Self.HelpView.LoadPage(HelpFile)
 		  End If
+		  Self.Editor.ConsoleSafe = Self.mController.Document.ConsoleModsOnly
 		  Self.UpdateCaptionButton()
 		  Self.UpdateSourceList()
 		  Self.ToolbarIcon = IconDocuments
-		  Self.ToolbarCaption = self.mController.Name
+		  Self.ToolbarCaption = Self.mController.Name
 		End Sub
 	#tag EndEvent
 
@@ -638,7 +639,7 @@ End
 		Sub BuildMenu(Item As BeaconToolbarItem, Menu As MenuItem)
 		  Select Case Item.Name
 		  Case "AddSource"
-		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("")
+		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Document.ConsoleModsOnly)
 		    Dim CurrentMask As UInt64 = Self.mController.Document.MapCompatibility
 		    For I As Integer = LootSources.Ubound DownTo 0
 		      If Self.mController.Document.HasLootSource(LootSources(I)) Then
@@ -844,6 +845,7 @@ End
 		Sub Action()
 		  If DocumentSetupSheet.Present(Self, Self.mController.Document) Then
 		    Self.UpdateCaptionButton()
+		    Self.Editor.ConsoleSafe = Self.mController.Document.ConsoleModsOnly
 		    Self.ContentsChanged = Self.mController.Document.Modified
 		  End If
 		End Sub

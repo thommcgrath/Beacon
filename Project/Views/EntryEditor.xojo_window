@@ -128,10 +128,12 @@ Begin Window EntryEditor
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
+         RowCount        =   0
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionType   =   0
+         ShowDropIndicator=   False
          TabIndex        =   1
          TabPanelIndex   =   0
          TabStop         =   True
@@ -294,10 +296,12 @@ Begin Window EntryEditor
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
+         RowCount        =   0
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
          SelectionType   =   0
+         ShowDropIndicator=   False
          TabIndex        =   0
          TabPanelIndex   =   0
          TabStop         =   True
@@ -443,13 +447,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Sources() As Beacon.SetEntry = Nil) As Beacon.SetEntry()
+		Shared Function Present(Parent As Window, ConsoleSafe As Boolean, Sources() As Beacon.SetEntry = Nil) As Beacon.SetEntry()
 		  If Sources <> Nil And UBound(Sources) > 0 Then
 		    // Need to use the multi-edit window
 		    Return EntryMultiEditor.Present(Parent, Sources)
 		  End If
 		  
 		  Dim Win As New EntryEditor
+		  Win.mConsoleSafe = ConsoleSafe
 		  
 		  If Sources <> Nil And UBound(Sources) = 0 Then
 		    Win.mOriginalEntry = New Beacon.SetEntry(Sources(0))
@@ -475,7 +480,7 @@ End
 		    FilterField.Text = SearchText
 		  End If
 		  
-		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText)
+		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mConsoleSafe)
 		  EngramList.DeleteAllRows
 		  
 		  Dim PerfectMatch As Boolean
@@ -609,6 +614,10 @@ End
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mConsoleSafe As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCreatedEntries() As Beacon.SetEntry

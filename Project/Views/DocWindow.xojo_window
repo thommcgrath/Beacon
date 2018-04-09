@@ -1079,7 +1079,7 @@ End
 		  Select Case Button.Name
 		  Case "AddButton"
 		    Dim Base As New MenuItem
-		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("")
+		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Doc.ConsoleModsOnly)
 		    Dim CurrentMask As UInt64 = Self.CurrentMask
 		    For I As Integer = UBound(LootSources) DownTo 0
 		      If Self.Doc.HasLootSource(LootSources(I)) Then
