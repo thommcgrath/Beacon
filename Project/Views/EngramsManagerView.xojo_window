@@ -30,7 +30,7 @@ Begin BeaconSubview EngramsManagerView Implements NotificationKit.Receiver
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   "Custom Engrams"
+      Caption         =   "My Engrams"
       CaptionEnabled  =   True
       CaptionIsButton =   False
       Enabled         =   True
@@ -120,7 +120,7 @@ End
 		Sub Open()
 		  Self.RebuildList()
 		  Self.ToolbarIcon = IconEngrams
-		  Self.ToolbarCaption = "Engrams Manager"
+		  Self.ToolbarCaption = "My Engrams"
 		  NotificationKit.Watch(Self, "Engram Import Complete")
 		End Sub
 	#tag EndEvent
