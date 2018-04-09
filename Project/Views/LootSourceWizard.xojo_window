@@ -44,6 +44,7 @@ Begin Window LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Value           =   2
       Visible         =   True
@@ -1229,7 +1230,7 @@ End
 		      End If
 		    Next
 		  Next
-		  AllowedLootSources.Sort
+		  Beacon.Sort(AllowedLootSources)
 		  
 		  For Each Source As Beacon.LootSource In AllowedLootSources
 		    SourceList.AddRow("", Source.Label)

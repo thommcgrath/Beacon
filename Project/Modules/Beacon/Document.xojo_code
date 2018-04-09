@@ -3,13 +3,14 @@ Protected Class Document
 Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Add(LootSource As Beacon.LootSource)
-		  For I As Integer = 0 To UBound(Self.mLootSources)
+		  Dim Bound As Integer = Self.mLootSources.Ubound
+		  For I As Integer = 0 To Bound
 		    If Self.mLootSources(I) = LootSource Then
 		      Return
 		    End If
 		  Next
 		  Self.mLootSources.Append(LootSource)
-		  Self.mLootSources.Sort()
+		  Beacon.Sort(Self.mLootSources)
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
@@ -31,12 +32,6 @@ Implements Beacon.DocumentItem
 		  Self.mServerProfiles.Append(Profile.Clone)
 		  Self.mModified = True
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Beacon.Document.LootSourceCount" )  Function BeaconCount() As Integer
-		  
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

@@ -511,7 +511,7 @@ End
 		  //Editor.MapMask = CurrentMask
 		  
 		  Dim VisibleSources() As Beacon.LootSource = Self.mController.Document.LootSources
-		  VisibleSources.Sort
+		  Beacon.Sort(VisibleSources)
 		  
 		  Dim SelectedClasses() As Text
 		  If SelectedSources <> Nil Then
@@ -654,7 +654,7 @@ End
 		      Return
 		    End If
 		    
-		    LootSources.Sort
+		    Beacon.Sort(LootSources)
 		    
 		    For Each LootSource As Beacon.LootSource In LootSources
 		      Menu.Append(New MenuItem(LootSource.Label, LootSource))

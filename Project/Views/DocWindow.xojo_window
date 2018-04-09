@@ -117,6 +117,7 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -164,6 +165,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -205,6 +207,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1092,7 +1095,7 @@ End
 		      Return False
 		    End If
 		    
-		    LootSources.Sort
+		    Beacon.Sort(LootSources)
 		    
 		    For Each LootSource As Beacon.LootSource In LootSources
 		      Base.Append(New MenuItem(LootSource.Label, LootSource))

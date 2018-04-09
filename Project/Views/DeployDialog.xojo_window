@@ -44,7 +44,6 @@ Begin Window DeployDialog
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   6
       Visible         =   True
@@ -766,7 +765,6 @@ Begin Window DeployDialog
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
          Top             =   123
          Value           =   0
          Visible         =   True
@@ -789,7 +787,6 @@ Begin Window DeployDialog
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   5
-         TabStop         =   True
          Top             =   123
          Value           =   0
          Visible         =   True
@@ -1035,7 +1032,6 @@ Begin Window DeployDialog
       End
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1129,7 +1125,7 @@ End
 		    End If
 		  End If
 		  
-		  If Document.BeaconCount = 0 Then
+		  If Document.LootSourceCount = 0 Then
 		    Dim Warning As New MessageDialog
 		    Warning.Title = ""
 		    Warning.Message = "No loot sources to export"

@@ -571,11 +571,16 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Sort(Extends Sources() As Beacon.LootSource)
+	#tag Method, Flags = &h1
+		Protected Sub Sort(Sources() As Beacon.LootSource)
+		  Dim Bound As Integer = Sources.Ubound
+		  If Bound = -1 Then
+		    Return
+		  End If
+		  
 		  Dim Order() As Integer
-		  Redim Order(UBound(Sources))
-		  For I As Integer = 0 To UBound(Order)
+		  Redim Order(Bound)
+		  For I As Integer = 0 To Bound
 		    Order(I) = Sources(I).SortValue
 		  Next
 		  
@@ -583,11 +588,16 @@ Protected Module Beacon
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Sort(Extends Qualities() As Beacon.Quality)
+	#tag Method, Flags = &h1
+		Protected Sub Sort(Qualities() As Beacon.Quality)
+		  Dim Bound As Integer = Qualities.Ubound
+		  If Bound = -1 Then
+		    Return
+		  End If
+		  
 		  Dim Order() As Double
-		  Redim Order(UBound(Qualities))
-		  For I As Integer = 0 To UBound(Order)
+		  Redim Order(Bound)
+		  For I As Integer = 0 To Bound
 		    Order(I) = Qualities(I).BaseValue
 		  Next
 		  
