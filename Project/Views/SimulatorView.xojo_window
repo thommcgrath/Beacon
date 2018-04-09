@@ -99,7 +99,7 @@ Begin ContainerControl SimulatorView
       TextUnit        =   0
       Top             =   22
       Underline       =   False
-      UseFocusRing    =   True
+      UseFocusRing    =   False
       Visible         =   True
       Width           =   250
       _ScrollOffset   =   0
@@ -129,7 +129,7 @@ Begin ContainerControl SimulatorView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Simulator"
-      TextAlign       =   0
+      TextAlign       =   1
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
