@@ -1304,6 +1304,7 @@ End
 
 	#tag Event
 		Sub Open()
+		  Self.ToolbarIcon = IconPresets
 		  Self.UpdateUI()
 		End Sub
 	#tag EndEvent
@@ -1359,13 +1360,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Create(Preset As Beacon.Preset) As PresetEditorView
-		  Dim View As New PresetEditorView
-		  View.mPreset = New Beacon.MutablePreset(Preset)
-		  View.ToolbarCaption = Preset.Label
-		  View.ToolbarIcon = IconPresets
-		  Return View
-		End Function
+		Sub Constructor(Preset As Beacon.Preset)
+		  Self.mPreset = New Beacon.MutablePreset(Preset)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1572,6 +1569,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  Self.Header.Caption = Self.mPreset.Label
+		  Self.ToolbarCaption = Self.mPreset.Label
 		  Self.mUpdating = True
 		  Self.ContentsChanged = False
 		  Self.MapFilterMenu.ListIndex = 0
@@ -1603,6 +1601,12 @@ End
 		  
 		  Self.mUpdating = False
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ViewID() As Text
+		  Return Self.mPreset.PresetID
+		End Function
 	#tag EndMethod
 
 

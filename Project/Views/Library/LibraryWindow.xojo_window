@@ -130,6 +130,8 @@ Begin BeaconMultiview LibraryWindow
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   31
          Transparent     =   True
          UseFocusRing    =   False
@@ -159,6 +161,8 @@ Begin BeaconMultiview LibraryWindow
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   31
          Transparent     =   True
          UseFocusRing    =   False
@@ -188,6 +192,8 @@ Begin BeaconMultiview LibraryWindow
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
+         ToolbarCaption  =   ""
+         ToolbarIcon     =   0
          Top             =   31
          Transparent     =   True
          UseFocusRing    =   False

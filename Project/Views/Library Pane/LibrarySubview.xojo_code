@@ -7,16 +7,67 @@ Inherits BeaconSubview
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub CleanupClosedViews()
+		  If Self.mViews = Nil Then
+		    Return
+		  End If
+		  
+		  Dim ViewsToRemove() As Text
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mViews
+		    Dim ID As Text = Entry.Key
+		    Dim View As BeaconSubview = Entry.Value
+		    
+		    If View = Nil Or View.Closed Then
+		      ViewsToRemove.Append(ID)
+		    End If
+		  Next
+		  
+		  For Each ID As Text In ViewsToRemove
+		    Self.mViews.Remove(ID)
+		  Next
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function DiscardView(View As BeaconSubview) As Boolean
-		  Return RaiseEvent ShouldDiscardView(View)
+		  If RaiseEvent ShouldDiscardView(View) Then
+		    Self.CleanupClosedViews()
+		    Return True
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HasView(ViewID As Text) As Boolean
+		  If Self.mViews = Nil Then
+		    Return False
+		  End If
+		  
+		  Self.CleanupClosedViews()
+		  Return Self.mViews.HasKey(ViewID)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Sub ShowView(View As BeaconSubview)
+		  If Self.mViews = Nil Then
+		    Self.mViews = New Xojo.Core.Dictionary
+		  End If
+		  Self.mViews.Value(View.ViewID) = View
 		  RaiseEvent ShouldShowView(View)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function View(ViewID As Text) As BeaconSubview
+		  If Self.mViews = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Self.CleanupClosedViews()
+		  Return Self.mViews.Lookup(ViewID, Nil)
+		End Function
 	#tag EndMethod
 
 
@@ -27,6 +78,11 @@ Inherits BeaconSubview
 	#tag Hook, Flags = &h0
 		Event ShouldShowView(View As BeaconSubview)
 	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mViews As Xojo.Core.Dictionary
+	#tag EndProperty
 
 
 	#tag ViewBehavior

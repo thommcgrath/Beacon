@@ -539,6 +539,7 @@ End
 		  Select Case Me.Value
 		  Case Self.PageFinalizeIndex
 		    Self.SettingsView.Document = Self.mDocument
+		    Self.SettingsView.SetFocus
 		  End Select
 		End Sub
 	#tag EndEvent

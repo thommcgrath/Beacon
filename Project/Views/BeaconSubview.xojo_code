@@ -3,6 +3,13 @@ Protected Class BeaconSubview
 Inherits ContainerControl
 Implements ObservationKit.Observable
 	#tag Event
+		Sub Close()
+		  RaiseEvent Close
+		  Self.mClosed = True
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub EnableMenuItems()
 		  // The parent view will call down to the EnableMenuItems method
 		End Sub
@@ -76,6 +83,12 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function CanBeClosed() As Boolean
 		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Closed() As Boolean
+		  Return Self.mClosed
 		End Function
 	#tag EndMethod
 
@@ -190,6 +203,17 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ViewID() As Text
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Self)
+		  Return Info.FullName
+		End Function
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Close()
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event EnableMenuItems()
@@ -215,6 +239,10 @@ Implements ObservationKit.Observable
 		Event Shown(UserData As Auto = Nil)
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private mClosed As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mObservers As Xojo.Core.Dictionary

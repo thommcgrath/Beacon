@@ -227,22 +227,9 @@ End
 		    Return True
 		  End If
 		  
-		  If Not Self.mViews.HasKey(Preset.PresetID) Then
-		    Return True
-		  End If
-		  
-		  Dim View As BeaconSubview = Self.mViews.Value(Preset.PresetID)
-		  If Self.DiscardView(View) Then
-		    Self.mViews.Remove(Preset.PresetID)
-		    Return True
-		  End If
+		  Dim View As BeaconSubview = Self.View(Preset.PresetID)
+		  Return Self.DiscardView(View)
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Self.mViews = New Xojo.Core.Dictionary
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -330,11 +317,11 @@ End
 		    Return
 		  End If
 		  
-		  If Not Self.mViews.HasKey(Preset.PresetID) Then
-		    Self.mViews.Value(Preset.PresetID) = PresetEditorView.Create(Preset)
+		  Dim View As BeaconSubview = Self.View(Preset.PresetID)
+		  If View = Nil Then
+		    View = New PresetEditorView(Preset)
 		  End If
-		  
-		  Self.ShowView(Self.mViews.Value(Preset.PresetID))
+		  Self.ShowView(View)
 		End Sub
 	#tag EndMethod
 
@@ -399,11 +386,6 @@ End
 	#tag Hook, Flags = &h0
 		Event ShouldResize(ByRef NewSize As Integer)
 	#tag EndHook
-
-
-	#tag Property, Flags = &h21
-		Private mViews As Xojo.Core.Dictionary
-	#tag EndProperty
 
 
 #tag EndWindowCode

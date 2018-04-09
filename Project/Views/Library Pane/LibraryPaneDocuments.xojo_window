@@ -200,7 +200,7 @@ End
 		  
 		  Dim Dicts() As Auto = Details
 		  For I As Integer = Self.mDocuments.Ubound DownTo 0
-		    If Self.mDocuments(I).Scheme = Beacon.DocumentURL.TypeCloud Then
+		    If Self.mDocuments(I).Scheme = Beacon.DocumentURL.TypeWeb Then
 		      Self.mDocuments.Remove(I)
 		    End If
 		  Next
@@ -231,12 +231,6 @@ End
 		  End If
 		  
 		  Self.ShowAlert("Cloud document was not deleted", Message)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Self.mViews = New Xojo.Core.Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -289,7 +283,6 @@ End
 		  Self.SelectDocument(URL)
 		  
 		  Dim View As New DocumentEditorView(Sender)
-		  Self.mViews.Value(Sender.URL.Hash) = View
 		  Self.ShowView(View)
 		End Sub
 	#tag EndMethod
@@ -361,16 +354,13 @@ End
 	#tag Method, Flags = &h21
 		Private Sub OpenController(Controller As Beacon.DocumentController)
 		  Dim URL As Beacon.DocumentURL = Controller.URL
-		  
-		  If Self.mViews.HasKey(URL.Hash) Then
-		    Dim View As DocumentEditorView = Self.mViews.Value(URL.Hash)
-		    If View <> Nil Then
-		      Self.ShowView(View)
-		      Return
-		    End If
+		  Dim View As BeaconSubview = Self.View(URL.Hash)
+		  If View <> Nil Then
+		    Self.ShowView(View)
+		    Return
 		  End If
 		  
-		  Self.mDocuments.Append(URL)
+		  //Self.mDocuments.Append(URL)
 		  
 		  AddHandler Controller.Loaded, WeakAddressOf Controller_Loaded
 		  AddHandler Controller.LoadError, WeakAddressOf Controller_LoadError
@@ -530,10 +520,6 @@ End
 		Private mProgress As DocumentDownloadWindow
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mViews As Xojo.Core.Dictionary
-	#tag EndProperty
-
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -653,12 +639,7 @@ End
 		  Dim ViewIndex As Integer = Self.View
 		  Dim RefreshDocumentsList As Boolean
 		  For Each Controller As Beacon.DocumentController In Controllers
-		    Dim Hash As Text = Controller.URL.Hash
-		    Dim View As DocumentEditorView
-		    If Self.mViews.HasKey(Hash) Then
-		      View = Self.mViews.Value(Hash)
-		    End If
-		    
+		    Dim View As BeaconSubview = Self.View(Controller.URL.Hash)
 		    If View <> Nil Then
 		      If Not Self.DiscardView(View) Then
 		        Continue

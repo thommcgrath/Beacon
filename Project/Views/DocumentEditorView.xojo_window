@@ -560,6 +560,12 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ViewID() As Text
+		  Return Self.mController.URL.Hash
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mBlockSelectionChanged As Boolean
