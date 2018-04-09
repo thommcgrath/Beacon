@@ -1,5 +1,5 @@
 #tag Window
-Begin LibrarySubview LibraryPaneTools
+Begin BeaconSubview APIGuideView
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -9,14 +9,14 @@ Begin LibrarySubview LibraryPaneTools
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   300
+   Height          =   350
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   True
-   LockLeft        =   True
-   LockRight       =   True
-   LockTop         =   True
+   LockBottom      =   False
+   LockLeft        =   False
+   LockRight       =   False
+   LockTop         =   False
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
@@ -24,71 +24,17 @@ Begin LibrarySubview LibraryPaneTools
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   300
-   Begin BeaconListbox ToolsList
-      AutoDeactivate  =   True
-      AutoHideScrollbars=   True
-      Bold            =   False
-      Border          =   False
-      ColumnCount     =   1
-      ColumnsResizable=   False
-      ColumnWidths    =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      DefaultRowHeight=   22
-      Enabled         =   True
-      EnableDrag      =   False
-      EnableDragReorder=   False
-      GridLinesHorizontal=   0
-      GridLinesVertical=   0
-      HasHeading      =   False
-      HeadingIndex    =   -1
-      Height          =   259
-      HelpTag         =   ""
-      Hierarchical    =   False
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   "Mods\nIdentity\nAPI Guide\nAPI Builder"
-      Italic          =   False
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      RequiresSelection=   False
-      RowCount        =   0
-      Scope           =   2
-      ScrollbarHorizontal=   False
-      ScrollBarVertical=   True
-      SelectionType   =   0
-      ShowDropIndicator=   False
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   41
-      Underline       =   False
-      UseFocusRing    =   False
-      Visible         =   True
-      Width           =   300
-      _ScrollOffset   =   0
-      _ScrollWidth    =   -1
-   End
+   Width           =   500
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   "Tools"
-      CaptionEnabled  =   False
+      Caption         =   "API Guide"
+      CaptionEnabled  =   True
       CaptionIsButton =   False
-      DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   False
-      HasResizer      =   True
+      HasResizer      =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -100,14 +46,34 @@ Begin LibrarySubview LibraryPaneTools
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
-      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   300
+      Width           =   500
+   End
+   Begin HTMLViewer Viewer
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   309
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Renderer        =   0
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   41
+      Visible         =   True
+      Width           =   500
    End
 End
 #tag EndWindow
@@ -115,42 +81,42 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.ToolbarIcon = IconTools
-		  Self.ToolbarCaption = "Tools"
+		  Self.ToolbarCaption = "API Guide"
+		  Self.Viewer.LoadURL(BeaconAPI.URL)
 		End Sub
 	#tag EndEvent
-
-
-	#tag Hook, Flags = &h0
-		Event ShouldResize(ByRef NewSize As Integer)
-	#tag EndHook
 
 
 #tag EndWindowCode
 
-#tag Events ToolsList
+#tag Events Header
 	#tag Event
-		Sub DoubleClick()
-		  If Me.ListIndex = -1 Then
-		    Return
-		  End If
-		  
-		  Dim Item As String = Me.Cell(Me.ListIndex, 0)
-		  Select Case Item
-		  Case "API Guide"
-		    Dim View As BeaconSubview = Self.View("APIGuideView")
-		    If View = Nil Then
-		      View = New APIGuideView
-		    End If
-		    Self.ShowView(View)
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "BackButton"
+		    Viewer.GoBack
+		  Case "ForwardButton"
+		    Viewer.GoForward
 		  End Select
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events Header
 	#tag Event
-		Sub ShouldResize(ByRef NewSize As Integer)
-		  RaiseEvent ShouldResize(NewSize)
+		Sub Open()
+		  Me.LeftItems.Append(New BeaconToolbarItem("BackButton", IconToolbarNew, False))
+		  Me.LeftItems.Append(New BeaconToolbarItem("ForwardButton", IconToolbarNew, False))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Viewer
+	#tag Event
+		Sub TitleChanged(newTitle as String)
+		  Header.Caption = NewTitle
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DocumentComplete(URL as String)
+		  Header.BackButton.Enabled = Me.CanGoBack
+		  Header.ForwardButton.Enabled = Me.CanGoForward
 		End Sub
 	#tag EndEvent
 #tag EndEvents

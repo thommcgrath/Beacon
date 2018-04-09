@@ -347,6 +347,16 @@ End
 		  RaiseEvent ShouldResize(NewSize)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function ShouldDiscardView(View As BeaconSubview) As Boolean
+		  Return RaiseEvent ShouldDiscardView(View)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ShouldShowView(View As BeaconSubview)
+		  RaiseEvent ShouldShowView(View)
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

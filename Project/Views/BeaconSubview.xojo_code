@@ -206,7 +206,7 @@ Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
 		Function ViewID() As Text
 		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Self)
-		  Return Info.FullName
+		  Return Info.Name
 		End Function
 	#tag EndMethod
 
