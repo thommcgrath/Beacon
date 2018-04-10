@@ -492,7 +492,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
@@ -508,7 +508,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
+		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
 		  Select Case hitItem.Tag
 		  Case "createblueprintentry"
 		    Dim Entries() As Beacon.SetEntry

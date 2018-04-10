@@ -890,7 +890,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
 		  Dim Targets() As Beacon.ItemSet
 		  If Me.SelCount = 0 Then
 		    Dim Idx As Integer = Me.RowFromXY(X, Y)
@@ -954,7 +954,7 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
+		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
 		  If HitItem = Nil Then
 		    Return False
 		  End If

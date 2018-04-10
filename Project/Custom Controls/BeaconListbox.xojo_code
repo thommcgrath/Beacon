@@ -160,6 +160,64 @@ Inherits Listbox
 	#tag EndEvent
 
 	#tag Event
+		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
+		  Dim Board As New Clipboard
+		  Dim CanCopy As Boolean = RaiseEvent CanCopy()
+		  Dim CanDelete As Boolean = RaiseEvent CanDelete()
+		  Dim CanPaste As Boolean = RaiseEvent CanPaste(Board)
+		  
+		  Dim CutItem As New MenuItem("Cut", "cut")
+		  CutItem.KeyboardShortcut = "X"
+		  CutItem.Enabled = CanCopy And CanDelete
+		  Base.Append(CutItem)
+		  
+		  Dim CopyItem As New MenuItem("Copy", "copy")
+		  CopyItem.KeyboardShortcut = "C"
+		  CopyItem.Enabled = CanCopy
+		  Base.Append(CopyItem)
+		  
+		  Dim PasteItem As New MenuItem("Paste", "paste")
+		  PasteItem.KeyboardShortcut = "V"
+		  PasteItem.Enabled = CanPaste
+		  Base.Append(PasteItem)
+		  
+		  Dim DeleteItem As New MenuItem("Delete", "clear")
+		  DeleteItem.Enabled = CanDelete
+		  Base.Append(DeleteItem)
+		  
+		  Call ConstructContextualMenu(Base, X, Y)
+		  
+		  Dim Bound As Integer = Base.Count - 1
+		  For I As Integer = 0 To Bound
+		    If Base.Item(I) = DeleteItem And I < Bound Then
+		      Base.Insert(I + 1, New MenuItem(MenuItem.TextSeparator))
+		    End If
+		  Next
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
+		  Select Case HitItem.Tag
+		  Case "cut"
+		    Self.DoCut()
+		  Case "copy"
+		    Self.DoCopy()
+		  Case "paste"
+		    Self.DoPaste()
+		  Case "clear"
+		    Self.DoClear()
+		  Else
+		    Return ContextualMenuAction(HitItem)
+		  End Select
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub EnableMenuItems()
 		  If Self.Window = Nil Or Self.Window.Focus <> Self Then
 		    Return
@@ -202,32 +260,28 @@ Inherits Listbox
 
 	#tag MenuHandler
 		Function EditClear() As Boolean Handles EditClear.Action
-			RaiseEvent PerformClear(True)
+			Self.DoClear()
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function EditCopy() As Boolean Handles EditCopy.Action
-			Dim Board As New Clipboard
-			RaiseEvent PerformCopy(Board)
+			Self.DoCopy()
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function EditCut() As Boolean Handles EditCut.Action
-			Dim Board As New Clipboard
-			RaiseEvent PerformCopy(Board)
-			RaiseEvent PerformClear(False)
+			Self.DoCut()
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function EditPaste() As Boolean Handles EditPaste.Action
-			Dim Board As New Clipboard
-			RaiseEvent PerformPaste(Board)
+			Self.DoPaste()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -244,6 +298,34 @@ Inherits Listbox
 		  Dim Board As New Clipboard
 		  Return RaiseEvent CanPaste(Board)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DoClear()
+		  RaiseEvent PerformClear(True)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DoCopy()
+		  Dim Board As New Clipboard
+		  RaiseEvent PerformCopy(Board)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DoCut()
+		  Dim Board As New Clipboard
+		  RaiseEvent PerformCopy(Board)
+		  RaiseEvent PerformClear(False)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DoPaste()
+		  Dim Board As New Clipboard
+		  RaiseEvent PerformPaste(Board)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -322,6 +404,14 @@ Inherits Listbox
 
 	#tag Hook, Flags = &h0
 		Event CellTextPaint(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ContextualMenuAction(HitItem As MenuItem) As Boolean
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
