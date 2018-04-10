@@ -891,8 +891,8 @@ End
 		  
 		  Me.LeftItems.Append(New BeaconToolbarItem("PublishButton", IconToolbarPublish, False, "Publish changes to make them live."))
 		  
-		  Me.RightItems.Append(New BeaconToolbarItem("ImportFileButton", IconToolbarImport, "Import engrams from file."))
-		  Me.RightItems.Append(New BeaconToolbarItem("ImportURLButton", IconToolbarImport, "Import engrams from url."))
+		  Me.RightItems.Append(New BeaconToolbarItem("ImportFileButton", IconToolbarFile, "Import engrams from file."))
+		  Me.RightItems.Append(New BeaconToolbarItem("ImportURLButton", IconToolbarLink, "Import engrams from url."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
