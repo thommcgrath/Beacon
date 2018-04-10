@@ -1,5 +1,5 @@
 #tag Window
-Begin LibrarySubview LibraryPaneTools
+Begin BeaconSubview ModsView
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -9,7 +9,7 @@ Begin LibrarySubview LibraryPaneTools
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   300
+   Height          =   419
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -23,9 +23,15 @@ Begin LibrarySubview LibraryPaneTools
    Top             =   0
    Transparent     =   True
    UseFocusRing    =   False
-   Visible         =   True
-   Width           =   300
-   Begin BeaconListbox ToolsList
+   Visible         =   False
+   Width           =   1100
+   Begin BeaconAPI.Socket Socket
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin BeaconListbox ModList
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -43,27 +49,27 @@ Begin LibrarySubview LibraryPaneTools
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   259
+      Height          =   378
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Mods\nIdentity\nAPI Guide\nAPI Builder"
+      InitialValue    =   ""
       Italic          =   False
       Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
       RowCount        =   0
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionType   =   0
+      SelectionType   =   1
       ShowDropIndicator=   False
-      TabIndex        =   0
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -73,17 +79,73 @@ Begin LibrarySubview LibraryPaneTools
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
-      Width           =   300
+      Width           =   235
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin FadedSeparator Divider
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   419
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   235
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
+   End
+   Begin ModDetailView ModView
+      AcceptFocus     =   False
+      AcceptTabs      =   True
+      AutoDeactivate  =   True
+      BackColor       =   &cFFFFFF00
+      Backdrop        =   0
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackColor    =   False
+      Height          =   419
+      HelpTag         =   ""
+      InitialParent   =   ""
+      Left            =   236
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   True
+      UseFocusRing    =   False
+      Visible         =   True
+      Width           =   864
    End
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   "Tools"
-      CaptionEnabled  =   False
+      Caption         =   "Mods"
+      CaptionEnabled  =   True
       CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
@@ -97,17 +159,17 @@ Begin LibrarySubview LibraryPaneTools
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   300
+      Width           =   235
    End
 End
 #tag EndWindow
@@ -115,60 +177,142 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.ToolbarIcon = IconTools
-		  Self.ToolbarCaption = "Tools"
+		  Self.ToolbarCaption = "Mods"
+		  Self.ToolbarIcon = IconMods
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Shown(UserData As Auto = Nil)
+		  #Pragma Unused UserData
+		  
+		  Self.RefreshMods()
 		End Sub
 	#tag EndEvent
 
 
-	#tag Hook, Flags = &h0
-		Event ShouldResize(ByRef NewSize As Integer)
-	#tag EndHook
+	#tag Method, Flags = &h21
+		Private Sub APICallback_DeleteMod(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Details
+		  
+		  If Success Then
+		    Self.RefreshMods
+		    Return
+		  End If
+		  
+		  Self.ShowAlert("Unable to delete mod", Message)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_ListMods(Success As Boolean, Message As Text, Details As Auto)
+		  If Not Success Then
+		    MsgBox("Unable to load mods: " + Message)
+		    Return
+		  End If
+		  
+		  Dim SelectedMod As BeaconAPI.WorkshopMod
+		  If ModList.ListIndex > -1 Then
+		    SelectedMod = Self.SelectedMod()
+		  End If
+		  
+		  ModList.DeleteAllRows()
+		  
+		  Dim Arr() As Auto = Details
+		  For Each Dict As Xojo.Core.Dictionary In Arr
+		    Dim UserMod As New BeaconAPI.WorkshopMod(Dict)
+		    
+		    ModList.AddRow(UserMod.Name)
+		    ModList.RowTag(ModList.LastIndex) = UserMod
+		    
+		    If Not UserMod.Confirmed Then
+		      ModList.CellItalic(ModList.LastIndex, 0) = True
+		    End If
+		    
+		    If UserMod = SelectedMod Then
+		      ModList.ListIndex = ModList.LastIndex
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RefreshMods()
+		  Dim Request As New BeaconAPI.Request("mod.php", "GET", AddressOf APICallback_ListMods)
+		  Request.Sign(App.Identity)
+		  Self.Socket.Start(Request)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SelectedMod() As BeaconAPI.WorkshopMod
+		  If ModList.ListIndex = -1 Then
+		    Return Nil
+		  End If
+		  
+		  Return ModList.RowTag(ModList.ListIndex)
+		End Function
+	#tag EndMethod
 
 
 #tag EndWindowCode
 
-#tag Events ToolsList
+#tag Events ModList
 	#tag Event
-		Sub DoubleClick()
-		  If Me.ListIndex = -1 Then
-		    Return
-		  End If
-		  
-		  Dim Item As String = Me.Cell(Me.ListIndex, 0)
-		  Select Case Item
-		  Case "API Guide"
-		    Dim View As BeaconSubview = Self.View("APIGuideView")
-		    If View = Nil Then
-		      View = New APIGuideView
-		    End If
-		    Self.ShowView(View)
-		  Case "Identity"
-		    Dim View As BeaconSubview = Self.View("IdentityView")
-		    If View = Nil Then
-		      View = New IdentityView
-		    End If
-		    Self.ShowView(View)
-		  Case "API Builder"
-		    Dim View As BeaconSubview = Self.View("APIBuilderView")
-		    If View = Nil Then
-		      View = New APIBuilderView
-		    End If
-		    Self.ShowView(View)
-		  Case "Mods"
-		    Dim View As BeaconSubview = Self.View("ModsView")
-		    If View = Nil Then
-		      View = New ModsView
-		    End If
-		    Self.ShowView(View)
-		  End Select
+		Sub Change()
+		  Header.RemoveButton.Enabled = Me.ListIndex > -1
+		  Header.SettingsButton.Enabled = Me.ListIndex > -1
+		  ModView.CurrentMod = Self.SelectedMod()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Header
 	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "AddButton"
+		    If DeveloperAddModDialog.Present(Self) Then
+		      Self.RefreshMods
+		    End If
+		  Case "RemoveButton"
+		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = "Are you sure you want to remove your mod?"
+		    Dialog.Explanation = "This cannot be undone. All associated engrams will also be removed."
+		    Dialog.ActionButton.Caption = "Delete"
+		    Dialog.CancelButton.Visible = True
+		    
+		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		    If Choice = Dialog.ActionButton Then
+		      Dim Request As New BeaconAPI.Request(Self.SelectedMod.ResourceURL, "DELETE", AddressOf APICallback_DeleteMod)
+		      Request.Sign(App.Identity)
+		      Self.Socket.Start(Request)
+		    End If
+		  Case "SettingsButton"
+		    Dim WorkshopMod As BeaconAPI.WorkshopMod = Self.SelectedMod()
+		    If WorkshopMod <> Nil Then
+		      DeveloperModSettingsDialog.Present(Self, WorkshopMod)
+		    End If
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconAdd, "Register a new mod."))
+		  Me.LeftItems.Append(New BeaconToolbarItem("RemoveButton", IconRemove, False, "Remove the selected mod."))
+		  
+		  Me.RightItems.Append(New BeaconToolbarItem("SettingsButton", IconSettings, False, "Change settings for the selected mod."))
+		End Sub
+	#tag EndEvent
+	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
-		  RaiseEvent ShouldResize(NewSize)
+		  NewSize = Max(Min(NewSize, 400, Self.Width - 300), 235)
+		  
+		  Me.Width = NewSize
+		  ModList.Width = NewSize
+		  Divider.Left = Me.Left + Me.Width
+		  ModView.Left = Divider.Left + Divider.Width
+		  ModView.Width = Self.Width - ModView.Left
 		End Sub
 	#tag EndEvent
 #tag EndEvents

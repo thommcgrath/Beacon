@@ -453,6 +453,7 @@ End
 		  
 		  If Self.mCurrentView <> Nil Then
 		    Self.mCurrentView.Visible = False
+		    Self.mCurrentView.SwitchedFrom()
 		  End If
 		  
 		  If View = Nil Or View = DashboardPane1 Then
@@ -460,6 +461,7 @@ End
 		    Self.mCurrentView = Nil
 		    Self.Views.Value = 0
 		    Self.AppToolbar.SelectView(DashboardPane1)
+		    DashboardPane1.SwitchedTo()
 		    Return
 		  End If
 		  
@@ -491,6 +493,7 @@ End
 		    Self.Title = "Beacon"
 		  End If
 		  
+		  Self.mCurrentView.SwitchedTo()
 		  Self.Views.Value = 1
 		End Sub
 	#tag EndMethod
