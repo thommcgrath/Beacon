@@ -149,6 +149,12 @@ End
 		      View = New IdentityView
 		    End If
 		    Self.ShowView(View)
+		  Case "API Builder"
+		    Dim View As BeaconSubview = Self.View("APIBuilderView")
+		    If View = Nil Then
+		      View = New APIBuilderView
+		    End If
+		    Self.ShowView(View)
 		  End Select
 		End Sub
 	#tag EndEvent
