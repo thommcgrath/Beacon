@@ -219,6 +219,7 @@ Begin BeaconSubview DocumentEditorView
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         ConsoleSafe     =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -596,7 +597,7 @@ End
 		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected loot source."
 		  
-		  Dim RebuildButton As New BeaconToolbarItem("Rebuild", Nil, Self.mController.Document.LootSourceCount > 0)
+		  Dim RebuildButton As New BeaconToolbarItem("Rebuild", IconToolbarRebuild, Self.mController.Document.LootSourceCount > 0)
 		  RebuildButton.HelpTag = "Rebuild all item sets using their presets."
 		  
 		  Me.LeftItems.Append(AddButton)

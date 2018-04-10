@@ -82,6 +82,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.ToolbarCaption = "API Guide"
+		  Self.ToolbarIcon = IconGuide
 		  Self.Viewer.LoadURL(BeaconAPI.URL)
 		End Sub
 	#tag EndEvent
@@ -102,8 +103,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("BackButton", IconToolbarNew, False))
-		  Me.LeftItems.Append(New BeaconToolbarItem("ForwardButton", IconToolbarNew, False))
+		  Me.LeftItems.Append(New BeaconToolbarItem("BackButton", IconToolbarBack, False))
+		  Me.LeftItems.Append(New BeaconToolbarItem("ForwardButton", IconToolbarForward, False))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
