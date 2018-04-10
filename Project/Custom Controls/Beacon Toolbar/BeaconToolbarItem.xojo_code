@@ -39,10 +39,29 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Name As String, Icon As Picture, Enabled As Boolean = True)
+		Sub Constructor(Name As String, Icon As Picture)
 		  Self.Constructor(Name)
 		  Self.mIcon = Icon
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Name As String, Icon As Picture, Enabled As Boolean)
+		  Self.Constructor(Name, Icon, Enabled, "")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Name As String, Icon As Picture, Enabled As Boolean, HelpTag As String)
+		  Self.Constructor(Name, Icon)
 		  Self.mEnabled = Enabled
+		  Self.mHelpTag = HelpTag
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Name As String, Icon As Picture, HelpTag As String)
+		  Self.Constructor(Name, Icon, True, HelpTag)
 		End Sub
 	#tag EndMethod
 
@@ -248,6 +267,11 @@ Implements ObservationKit.Observable
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Caption"
+			Group="Behavior"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Enabled"
 			Group="Behavior"
 			Type="Boolean"
@@ -286,6 +310,11 @@ Implements ObservationKit.Observable
 			Name="Name"
 			Visible=true
 			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Subcaption"
+			Group="Behavior"
 			Type="String"
 		#tag EndViewProperty
 		#tag ViewProperty
