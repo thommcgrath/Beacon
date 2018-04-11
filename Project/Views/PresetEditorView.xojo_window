@@ -1498,7 +1498,7 @@ End
 		  Self.ContentsList.RowTag(Index) = Entry
 		  Self.ContentsList.Cell(Index, Self.ColumnDescription) = Entry.Label
 		  Self.ContentsList.Cell(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Format(Entry.MinQuantity, "0"), Format(Entry.MinQuantity, "0") + "-" + Format(Entry.MaxQuantity, "0"))
-		  Self.ContentsList.Cell(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MinQuality).Left(4) + "-" + Language.LabelForQuality(Entry.MaxQuality).Left(4))
+		  Self.ContentsList.Cell(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MinQuality, True) + "-" + Language.LabelForQuality(Entry.MaxQuality, True))
 		  Self.ContentsList.CellCheck(Index, Self.ColumnQuantity) = Entry.RespectQuantityMultiplier
 		  Self.ContentsList.CellCheck(Index, Self.ColumnQuality) = Entry.RespectQualityModifier
 		  

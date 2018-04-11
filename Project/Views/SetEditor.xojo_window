@@ -30,9 +30,9 @@ Begin ContainerControl SetEditor
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   False
-      ColumnCount     =   7
+      ColumnCount     =   4
       ColumnsResizable=   False
-      ColumnWidths    =   "*,80,80,80,80,80,80"
+      ColumnWidths    =   "*,80,120,140"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
@@ -48,7 +48,7 @@ Begin ContainerControl SetEditor
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Description	Min Quantity	Max Quantity	Min Quality	Max Quality	Select %	Blueprint %"
+      InitialValue    =   "Description	Quantity	Quality	Figures"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -243,13 +243,29 @@ End
 		      ChanceText = Str(RelativeWeight * 100, "0") + "%"
 		    End If
 		    
-		    EntryList.Cell(I, 0) = Entry.Label
-		    EntryList.Cell(I, 1) = Str(Entry.MinQuantity)
-		    EntryList.Cell(I, 2) = Str(Entry.MaxQuantity)
-		    EntryList.Cell(I, 3) = Language.LabelForQuality(Entry.MinQuality)
-		    EntryList.Cell(I, 4) = Language.LabelForQuality(Entry.MaxQuality)
-		    EntryList.Cell(I, 5) = ChanceText
-		    EntryList.Cell(I, 6) = Str(BlueprintChance * 100, "0") + "%"
+		    Dim QualityText As String
+		    If Entry.MinQuality = Entry.MaxQuality Then
+		      QualityText = Language.LabelForQuality(Entry.MinQuality)
+		    Else
+		      QualityText = Language.LabelForQuality(Entry.MinQuality, True) + " - " + Language.LabelForQuality(Entry.MaxQuality, True)
+		    End If
+		    
+		    Dim QuantityText As String
+		    If Entry.MinQuantity = Entry.MaxQuantity Then
+		      QuantityText = Entry.MinQuantity.ToText
+		    Else
+		      QuantityText = Entry.MinQuantity.ToText + " - " + Entry.MaxQuantity.ToText
+		    End If
+		    
+		    Dim FiguresText As String = Str(Round(Entry.Weight * 100), "0") + " wt"
+		    If Entry.CanBeBlueprint Then
+		      FiguresText = FiguresText + ", " + Str(BlueprintChance, "0%") + " bp"
+		    End If
+		    
+		    EntryList.Cell(I, Self.ColumnLabel) = Entry.Label
+		    EntryList.Cell(I, Self.ColumnQuality) = QualityText
+		    EntryList.Cell(I, Self.ColumnQuantity) = QuantityText
+		    EntryList.Cell(I, Self.ColumnFigures) = FiguresText
 		    
 		    EntryList.RowTag(I) = Entry
 		    EntryList.Selected(I) = Selected.IndexOf(Entry.UniqueID) > -1
@@ -347,6 +363,18 @@ End
 		Set As Beacon.ItemSet
 	#tag EndComputedProperty
 
+
+	#tag Constant, Name = ColumnFigures, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnLabel, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnQuality, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnQuantity, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.setentry", Scope = Private
 	#tag EndConstant
@@ -449,21 +477,25 @@ End
 		  
 		  Dim Value1, Value2 As Double
 		  Select Case Column
-		  Case 0 // Description
+		  Case Self.ColumnLabel
 		    Return False
-		  Case 1 // Min quantity
-		    Value1 = Entry1.MinQuantity
-		    Value2 = Entry2.MinQuantity
-		  Case 2 // Max quantity
-		    Value1 = Entry1.MaxQuantity
-		    Value2 = Entry2.MaxQuantity
-		  Case 3 // Min quality
-		    Value1 = Entry1.MinQuality.BaseValue
-		    Value2 = Entry2.MinQuality.BaseValue
-		  Case 4 // Max quality
-		    Value1 = Entry1.MaxQuality.BaseValue
-		    Value2 = Entry2.MaxQuality.BaseValue
-		  Case 5 // Chance
+		  Case Self.ColumnQuantity
+		    If Entry1.MinQuantity = Entry2.MinQuantity Then
+		      Value1 = Entry1.MaxQuantity
+		      Value2 = Entry2.MaxQuantity
+		    Else
+		      Value1 = Entry1.MinQuantity
+		      Value2 = Entry2.MinQuantity
+		    End If
+		  Case Self.ColumnQuality
+		    If Entry1.MinQuality = Entry2.MinQuality Then
+		      Value1 = Entry1.MaxQuality.BaseValue
+		      Value2 = Entry2.MaxQuality.BaseValue
+		    Else
+		      Value1 = Entry1.MinQuality.BaseValue
+		      Value2 = Entry2.MinQuality.BaseValue
+		    End If
+		  Case Self.ColumnFigures
 		    Value1 = Entry1.Weight
 		    Value2 = Entry2.Weight
 		  End Select
@@ -480,10 +512,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.ColumnAlignment(1) = Listbox.AlignRight
-		  Me.ColumnAlignment(2) = Listbox.AlignRight
-		  Me.ColumnAlignment(5) = Listbox.AlignRight
-		  Me.ColumnAlignment(6) = Listbox.AlignRight
+		  
 		End Sub
 	#tag EndEvent
 	#tag Event

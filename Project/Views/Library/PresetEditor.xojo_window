@@ -1509,7 +1509,7 @@ End
 		  ContentsList.RowTag(Index) = Entry
 		  ContentsList.Cell(Index, Self.ColumnDescription) = Entry.Label
 		  ContentsList.Cell(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Format(Entry.MinQuantity, "0"), Format(Entry.MinQuantity, "0") + "-" + Format(Entry.MaxQuantity, "0"))
-		  ContentsList.Cell(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MinQuality).Left(4) + "-" + Language.LabelForQuality(Entry.MaxQuality).Left(4))
+		  ContentsList.Cell(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MinQuality, True) + "-" + Language.LabelForQuality(Entry.MaxQuality, True))
 		  ContentsList.CellCheck(Index, Self.ColumnIslandValid) = Entry.ValidForMap(Beacon.Maps.TheIsland)
 		  ContentsList.CellCheck(Index, Self.ColumnScorchedValid) = Entry.ValidForMap(Beacon.Maps.ScorchedEarth)
 		  ContentsList.CellCheck(Index, Self.ColumnCenterValid) = Entry.ValidForMap(Beacon.Maps.TheCenter)
