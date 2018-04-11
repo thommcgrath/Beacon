@@ -14,7 +14,7 @@ $feed = array(
 );
 
 $parser = new Parsedown();
-$articles = BeaconArticle::GetRecentArticles(10, 'Blog');
+$articles = BeaconArticle::GetRecentArticles(10, 0, 'Blog');
 $link_find = 'href="/';
 $link_replace = 'href="' . BeaconCommon::AbsoluteURL('/');
 foreach ($articles as $article) {

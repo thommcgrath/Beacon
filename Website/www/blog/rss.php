@@ -13,7 +13,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 		<atom:link href="<?php echo BeaconCommon::AbsoluteURL('/blog/rss.php'); ?>" rel="self" type="application/rss+xml" />
 		<?php
 		$parser = new Parsedown();
-		$articles = BeaconArticle::GetRecentArticles(10, 'Blog');
+		$articles = BeaconArticle::GetRecentArticles(10, 0, 'Blog');
 		$link_find = 'href="/';
 		$link_replace = 'href="' . BeaconCommon::AbsoluteURL('/');
 		foreach ($articles as $article) {
