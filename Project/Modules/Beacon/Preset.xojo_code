@@ -7,19 +7,9 @@ Implements Beacon.Countable
 		  Self.mGrouping = "Miscellaneous"
 		  Self.mMinItems = 1
 		  Self.mMaxItems = 3
-		  
-		  Self.mQualityModifierStandard = 0
-		  Self.mQualityModifierBonus = 3
-		  Self.mQualityModifierCave = 6
-		  Self.mQualityModifierSea = 6
-		  
-		  Self.mQuantityMultiplierStandard = 1
-		  Self.mQuantityMultiplierBonus = 2
-		  Self.mQuantityMultiplierCave = 1
-		  Self.mQuantityMultiplierSea = 1
-		  
 		  Self.mPresetID = Beacon.CreateUUID
 		  Self.Type = Types.Custom
+		  Self.mModifierValues = New Xojo.Core.Dictionary
 		End Sub
 	#tag EndMethod
 
@@ -29,24 +19,24 @@ Implements Beacon.Countable
 		  Self.mGrouping = Source.mGrouping
 		  Self.mMinItems = Source.mMinItems
 		  Self.mMaxItems = Source.mMaxItems
+		  Self.mPresetID = Source.mPresetID
+		  Self.Type = Source.Type
 		  
-		  Self.mQualityModifierStandard = Source.mQualityModifierStandard
-		  Self.mQualityModifierBonus = Source.mQualityModifierBonus
-		  Self.mQualityModifierCave = Source.mQualityModifierCave
-		  Self.mQualityModifierSea = Source.mQualityModifierSea
+		  Self.mModifierValues = New Xojo.Core.Dictionary
+		  For Each Entry As Xojo.Core.DictionaryEntry In Source.mModifierValues
+		    Dim Dict As Xojo.Core.Dictionary = Entry.Value
+		    Self.mModifierValues.Value(Entry.Key) = Beacon.Clone(Dict)
+		  Next
 		  
-		  Self.mQuantityMultiplierStandard = Source.mQuantityMultiplierStandard
-		  Self.mQuantityMultiplierBonus = Source.mQuantityMultiplierBonus
-		  Self.mQuantityMultiplierCave = Source.mQuantityMultiplierCave
-		  Self.mQuantityMultiplierSea = Source.mQuantityMultiplierSea
+		  Redim Self.mModifiers(Source.mModifiers.Ubound)
+		  For I As Integer = 0 To Source.mModifiers.Ubound
+		    Self.mModifiers(I) = New Beacon.PresetModifier(Source.mModifiers(I))
+		  Next
 		  
 		  Redim Self.mContents(UBound(Source.mContents))
 		  For I As Integer = 0 To UBound(Self.mContents)
 		    Self.mContents(I) = New Beacon.PresetEntry(Source.mContents(I))
 		  Next
-		  
-		  Self.mPresetID = Source.mPresetID
-		  Self.Type = Source.Type
 		End Sub
 	#tag EndMethod
 
@@ -105,25 +95,53 @@ Implements Beacon.Countable
 		    End If
 		  End If
 		  
-		  Dim Modifiers As Xojo.Core.Dictionary = Dict.Lookup("Modifiers", Nil)
-		  If Modifiers <> Nil Then
+		  If Dict.HasKey("Modifier Definitions") Then
+		    // Only import the unknown ones. All get exported anyway.
+		    Dim Definitions() As Auto = Dict.Value("Modifier Definitions")
+		    For Each Definition As Xojo.Core.Dictionary In Definitions
+		      If Not Definition.HasKey("ModifierID") Then
+		        Continue
+		      End If
+		      
+		      Dim ModifierID As Text = Definition.Value("ModifierID")
+		      Dim Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
+		      If Modifier = Nil Then
+		        Modifier = Beacon.PresetModifier.FromDictionary(Definition)
+		        If Modifier <> Nil Then
+		          Preset.mModifiers.Append(Modifier)
+		        End If
+		      End If
+		    Next
+		  End If
+		  
+		  If Dict.HasKey("Modifiers") Then
+		    Dim Modifiers As Xojo.Core.Dictionary = Dict.Value("Modifiers")
 		    For Each Set As Xojo.Core.DictionaryEntry In Modifiers
 		      Dim Item As Xojo.Core.Dictionary = Set.Value
+		      Dim ModifierID As Text = Set.Key
+		      Dim Quality As Integer = Item.Lookup("Quality", 1)
+		      Dim Quantity As Double = Item.Lookup("Quantity", 1.0)
+		      Dim IDs() As Text
 		      
-		      Select Case Set.Key
+		      Select Case ModifierID
 		      Case "Standard"
-		        Preset.mQualityModifierStandard = Item.Lookup("Quality", Preset.QualityModifier(Beacon.LootSource.Kinds.Standard))
-		        Preset.mQuantityMultiplierStandard = Item.Lookup("Quantity", Preset.QuantityMultiplier(Beacon.LootSource.Kinds.Standard))
+		        IDs = SourceKindToModifierID(Beacon.LootSource.Kinds.Standard)
 		      Case "Bonus"
-		        Preset.mQualityModifierBonus = Item.Lookup("Quality", Preset.QualityModifier(Beacon.LootSource.Kinds.Bonus))
-		        Preset.mQuantityMultiplierBonus = Item.Lookup("Quantity", Preset.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus))
+		        IDs = SourceKindToModifierID(Beacon.LootSource.Kinds.Bonus)
 		      Case "Cave"
-		        Preset.mQualityModifierCave = Item.Lookup("Quality", Preset.QualityModifier(Beacon.LootSource.Kinds.Cave))
-		        Preset.mQuantityMultiplierCave = Item.Lookup("Quantity", Preset.QuantityMultiplier(Beacon.LootSource.Kinds.Cave))
+		        IDs = SourceKindToModifierID(Beacon.LootSource.Kinds.Cave)
 		      Case "Sea"
-		        Preset.mQualityModifierSea = Item.Lookup("Quality", Preset.QualityModifier(Beacon.LootSource.Kinds.Sea))
-		        Preset.mQuantityMultiplierSea = Item.Lookup("Quantity", Preset.QuantityMultiplier(Beacon.LootSource.Kinds.Sea))
+		        IDs = SourceKindToModifierID(Beacon.LootSource.Kinds.Sea)
+		      Else
+		        IDs.Append(ModifierID)
 		      End Select
+		      
+		      For Each ID As Text In IDs
+		        Dim ModifierDict As New Xojo.Core.Dictionary
+		        ModifierDict.Value("Quality") = Quality
+		        ModifierDict.Value("Quantity") = Quantity
+		        Preset.mModifierValues.Value(ID) = ModifierDict
+		      Next
 		    Next
 		  End If
 		  
@@ -247,31 +265,77 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function QualityModifier(Kind As Beacon.LootSource.Kinds) As Integer
-		  Select Case Kind
-		  Case Beacon.LootSource.Kinds.Bonus
-		    Return Self.mQualityModifierBonus
-		  Case Beacon.LootSource.Kinds.Cave
-		    Return Self.mQualityModifierCave
-		  Case Beacon.LootSource.Kinds.Sea
-		    Return Self.mQualityModifierSea
-		  Else
-		    Return Self.mQualityModifierStandard
-		  End Select
+		  Dim IDs() As Text = Self.SourceKindToModifierID(Kind)
+		  If IDs.Ubound = -1 Then
+		    Return 1
+		  End If
+		  Return Self.QualityModifier(IDs(0))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function QualityModifier(Modifier As Beacon.PresetModifier) As Integer
+		  Return Self.QualityModifier(Modifier.ModifierID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function QualityModifier(ModifierID As Text) As Integer
+		  If Self.mModifierValues = Nil Then
+		    Return 1
+		  End If
+		  
+		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  Return Dict.Lookup("Quality", 1)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function QuantityMultiplier(Kind As Beacon.LootSource.Kinds) As Double
+		  Dim IDs() As Text = Self.SourceKindToModifierID(Kind)
+		  If IDs.Ubound = -1 Then
+		    Return 1.0
+		  End If
+		  Return Self.QuantityMultiplier(IDs(0))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function QuantityMultiplier(Modifier As Beacon.PresetModifier) As Double
+		  Return Self.QuantityMultiplier(Modifier.ModifierID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function QuantityMultiplier(ModifierID As Text) As Double
+		  If Self.mModifierValues = Nil Then
+		    Return 1.0
+		  End If
+		  
+		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  Return Dict.Lookup("Quantity", 1.0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Shared Function SourceKindToModifierID(Kind As Beacon.LootSource.Kinds) As Text()
+		  Dim IDs() As Text
 		  Select Case Kind
 		  Case Beacon.LootSource.Kinds.Bonus
-		    Return Self.mQuantityMultiplierBonus
+		    IDs.Append(Beacon.PresetModifier.BonusCratesID)
+		    IDs.Append(Beacon.PresetModifier.AberrationSurfaceBonusCratesID)
 		  Case Beacon.LootSource.Kinds.Cave
-		    Return Self.mQuantityMultiplierCave
+		    IDs.Append(Beacon.PresetModifier.CaveCratesID)
 		  Case Beacon.LootSource.Kinds.Sea
-		    Return Self.mQuantityMultiplierSea
-		  Else
-		    Return Self.mQuantityMultiplierStandard
+		    IDs.Append(Beacon.PresetModifier.DeepSeaCratesID)
+		    IDs.Append(Beacon.PresetModifier.OpenDesertCratesID)
+		  Case Beacon.LootSource.Kinds.Standard
+		    IDs.Append(Beacon.PresetModifier.BasicCratesID)
+		    IDs.Append(Beacon.PresetModifier.AberrationSurfaceCratesID)
+		    IDs.Append(Beacon.PresetModifier.BossesID)
+		    IDs.Append(Beacon.PresetModifier.ArtifactCratesID)
 		  End Select
+		  Return IDs
 		End Function
 	#tag EndMethod
 
@@ -285,27 +349,24 @@ Implements Beacon.Countable
 		  Next
 		  Hashes.SortWith(Contents)
 		  
-		  Dim StandardModifiers As New Xojo.Core.Dictionary
-		  StandardModifiers.Value("Quality") = Self.mQualityModifierStandard
-		  StandardModifiers.Value("Quantity") = Self.mQuantityMultiplierStandard
-		  
-		  Dim BonusModifiers As New Xojo.Core.Dictionary
-		  BonusModifiers.Value("Quality") = Self.mQualityModifierBonus
-		  BonusModifiers.Value("Quantity") = Self.mQuantityMultiplierBonus
-		  
-		  Dim CaveModifiers As New Xojo.Core.Dictionary
-		  CaveModifiers.Value("Quality") = Self.mQualityModifierCave
-		  CaveModifiers.Value("Quantity") = Self.mQuantityMultiplierCave
-		  
-		  Dim SeaModifiers As New Xojo.Core.Dictionary
-		  SeaModifiers.Value("Quality") = Self.mQualityModifierSea
-		  SeaModifiers.Value("Quantity") = Self.mQuantityMultiplierSea
-		  
-		  Dim Modifiers As New Xojo.Core.Dictionary
-		  Modifiers.Value("Standard") = StandardModifiers
-		  Modifiers.Value("Bonus") = BonusModifiers
-		  Modifiers.Value("Cave") = CaveModifiers
-		  Modifiers.Value("Sea") = SeaModifiers
+		  // Export every definition, even though built-ins will be dropped on read. This preserves
+		  // the file in the future if a built-in is dropped.
+		  Dim Definitions() As Xojo.Core.Dictionary
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mModifierValues
+		    Dim ModifierID As Text = Entry.Key
+		    Dim Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
+		    If Modifier = Nil Then
+		      For I As Integer = 0 To Self.mModifiers.Ubound
+		        If Self.mModifiers(I).ModifierID = ModifierID Then
+		          Modifier = Self.mModifiers(I)
+		          Exit For I
+		        End If
+		      Next
+		    End If
+		    If Modifier <> Nil Then
+		      Definitions.Append(Modifier.ToDictionary)
+		    End If
+		  Next
 		  
 		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("ID") = Self.PresetID
@@ -314,7 +375,8 @@ Implements Beacon.Countable
 		  Dict.Value("Min") = Self.MinItems
 		  Dict.Value("Max") = Self.MaxItems
 		  Dict.Value("Entries") = Contents
-		  Dict.Value("Modifiers") = Modifiers
+		  Dict.Value("Modifiers") = Self.mModifierValues
+		  Dict.Value("Modifier Definitions") = Definitions
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -372,40 +434,16 @@ Implements Beacon.Countable
 		Protected mMinItems As Integer
 	#tag EndProperty
 
+	#tag Property, Flags = &h1
+		Protected mModifiers() As Beacon.PresetModifier
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mModifierValues As Xojo.Core.Dictionary
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mPresetID As Text
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mQualityModifierBonus As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mQualityModifierCave As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mQualityModifierSea As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mQualityModifierStandard As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mQuantityMultiplierBonus As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mQuantityMultiplierCave As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mQuantityMultiplierSea As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mQuantityMultiplierStandard As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

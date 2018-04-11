@@ -47,9 +47,6 @@ Protected Class DocumentURL
 		  
 		  Dim HashData As Text = Self.mScheme + "://" + Self.mPath
 		  Self.mHash = Beacon.EncodeHex(Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(HashData)))
-		  #if DebugBuild
-		    System.DebugLog("Hash of '" + HashData + "' is '" + Self.mHash + "'")
-		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -234,11 +231,6 @@ Protected Class DocumentURL
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mScheme"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty

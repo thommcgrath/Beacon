@@ -28,6 +28,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, can_blueprint INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, pattern TEXT NOT NULL);")
 		  
 		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX engrams_path_idx ON engrams(path);")
@@ -281,6 +282,21 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetPresetModifier(ModifierID As Text) As Beacon.PresetModifier
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers WHERE LOWER(object_id) = LOWER(?1);", ModifierID)
+		  If Results.RecordCount <> 1 Then
+		    Return Nil
+		  End If
+		  
+		  Dim Dict As New Xojo.Core.Dictionary
+		  Dict.Value("ModifierID") = Results.Field("object_id").StringValue.ToText
+		  Dict.Value("Pattern") = Results.Field("pattern").StringValue.ToText
+		  Dict.Value("Label") = Results.Field("label").StringValue.ToText
+		  Return Beacon.PresetModifier.FromDictionary(Dict)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IconForLootSource(Source As Beacon.LootSource, HighlightColor As Color) As Picture
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT icon FROM loot_sources WHERE class_string = ?1;", Source.ClassString)
 		  Dim SpriteSheet As Picture
@@ -344,7 +360,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function Import(Content As Text) As Boolean
 		  Dim ChangeDict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content)
 		  
-		  Dim RequiredKeys() As Text = Array("mods", "loot_sources", "engrams", "presets", "timestamp", "is_full", "beacon_version")
+		  Dim RequiredKeys() As Text = Array("mods", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
 		  For Each RequiredKey As Text In RequiredKeys
 		    If Not ChangeDict.HasKey(RequiredKey) Then
 		      App.Log("Cannot import classes because key '" + RequiredKey + "' is missing.")
@@ -378,6 +394,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.SQLExecute("DELETE FROM mods WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM loot_sources WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM engrams WHERE mod_id != ?1;", Self.UserModID)
+		      Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id != ?1;", Self.UserModID)
 		      Self.SQLExecute("DELETE FROM official_presets;")
 		    End If
 		    
@@ -484,6 +501,22 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.SQLExecute("UPDATE official_presets SET label = ?2, contents = ?3 WHERE LOWER(object_id) = LOWER(?1);", ObjectID, Label, Contents)
 		      Else
 		        Self.SQLExecute("INSERT INTO official_presets (object_id, label, contents) VALUES (LOWER(?1), ?2, ?3);", ObjectID, Label, Contents)
+		      End If
+		    Next
+		    
+		    Dim PresetModifiers() As Auto = ChangeDict.Value("preset_modifiers")
+		    For Each Dict As Xojo.Core.Dictionary In PresetModifiers
+		      Dim ObjectID As Text = Dict.Value("id")
+		      Dim Label As Text = Dict.Value("label")
+		      Dim Pattern As Text = Dict.Value("pattern")
+		      Dim ModID As Text = Xojo.Core.Dictionary(Dict.Value("mod")).Value("id")
+		      
+		      ReloadPresets = True
+		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM preset_modifiers WHERE LOWER(object_id) = LOWER(?1);", ObjectID)
+		      If Results.RecordCount = 1 Then
+		        Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3, mod_id = ?4 WHERE LOWER(object_id) = LOWER(?1);", ObjectID, Label, Pattern, ModID)
+		      Else
+		        Self.SQLExecute("INSERT INTO preset_modifiers (object_id, label, pattern, mod_id) VALUES (?1, ?2, ?3, ?4);", ObjectID, Label, Pattern, ModID)
 		      End If
 		    Next
 		    

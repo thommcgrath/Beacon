@@ -256,6 +256,7 @@ Window=ModsView;Views/ModsView.xojo_window;&h0000000065FC77FF;&h0000000008A387FF
 Window=ModDetailView;Views/ModDetailView.xojo_window;&h00000000023DBFFF;&h0000000008A387FF;false
 MultiImage=IconToolbarLink;Icons/IconToolbarLink.xojo_image;&h0000000054354FFF;&h0000000007F977FF;false
 MultiImage=IconToolbarFile;Icons/IconToolbarFile.xojo_image;&h000000004BDFC7FF;&h0000000007F977FF;false
+Class=PresetModifier;Modules/Beacon/PresetModifier.xojo_code;&h0000000077C49FFF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

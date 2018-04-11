@@ -344,6 +344,16 @@ CREATE TRIGGER presets_before_update_trigger BEFORE UPDATE ON presets FOR EACH R
 CREATE TRIGGER presets_after_delete_trigger AFTER DELETE ON presets FOR EACH ROW EXECUTE PROCEDURE object_delete_trigger();
 CREATE TRIGGER presets_json_sync_trigger BEFORE INSERT OR UPDATE ON presets FOR EACH ROW EXECUTE PROCEDURE presets_json_sync_function();
 
+CREATE TABLE preset_modifiers (
+	PRIMARY KEY (object_id),
+	FOREIGN KEY (mod_id) REFERENCES mods(mod_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	pattern TEXT NOT NULL UNIQUE
+) INHERITS (objects);
+GRANT SELECT ON TABLE preset_modifiers TO thezaz_website;
+
+CREATE TRIGGER preset_modifiers_before_insert_trigger BEFORE INSERT ON preset_modifiers FOR EACH ROW EXECUTE PROCEDURE object_insert_trigger();
+CREATE TRIGGER preset_modifiers_before_update_trigger BEFORE UPDATE ON preset_modifiers FOR EACH ROW EXECUTE PROCEDURE object_update_trigger();
+CREATE TRIGGER preset_modifiers_after_delete_trigger AFTER DELETE ON preset_modifiers FOR EACH ROW EXECUTE PROCEDURE object_delete_trigger();
 -- End Presets
 
 -- Articles

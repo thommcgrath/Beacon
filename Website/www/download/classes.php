@@ -17,6 +17,7 @@ if ($min_version > 33) {
 		'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
 		'engrams' => BeaconEngram::GetAll($min_version, $since),
 		'presets' => BeaconPreset::GetAll($min_version, $since),
+		'preset_modifiers' => BeaconPresetModifier::GetAll($min_version, $since),
 		'creatures' => BeaconCreature::GetAll($min_version, $since),
 		'diets' => BeaconDiet::GetAll($min_version, $since),
 		'mods' => BeaconMod::GetLive(),
@@ -98,5 +99,6 @@ header('Content-Type: application/json');
 header('Content-Disposition: attachment; filename="BeaconData' . $last_database_update->format('YmdHis') . '.json"');
 header('Content-MD5: ' . $hash);
 echo $body;
+exit;
 
 ?>
