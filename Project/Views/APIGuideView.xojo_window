@@ -6,6 +6,7 @@ Begin BeaconSubview APIGuideView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -13,10 +14,10 @@ Begin BeaconSubview APIGuideView
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   False
-   LockLeft        =   False
-   LockRight       =   False
-   LockTop         =   False
+   LockBottom      =   True
+   LockLeft        =   True
+   LockRight       =   True
+   LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
@@ -33,7 +34,9 @@ Begin BeaconSubview APIGuideView
       Caption         =   "API Guide"
       CaptionEnabled  =   True
       CaptionIsButton =   False
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       HasResizer      =   False
       Height          =   41
       HelpTag         =   ""
@@ -50,6 +53,7 @@ Begin BeaconSubview APIGuideView
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   500
@@ -122,6 +126,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

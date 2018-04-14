@@ -71,6 +71,7 @@ Begin BeaconWindow DocWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   63
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -112,6 +113,8 @@ Begin BeaconWindow DocWindow
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
+      ConsoleSafe     =   False
+      DoubleBuffer    =   False
       Enabled         =   False
       EraseBackground =   True
       HasBackColor    =   False
@@ -549,7 +552,6 @@ End
 		    Return
 		  End If
 		  
-		  Dim CurrentMask As UInt64 = Self.CurrentMask
 		  Dim IgnoredSources() As Beacon.LootSource
 		  
 		  For Each Source As Beacon.LootSource In Sources
@@ -1080,7 +1082,6 @@ End
 		  Case "AddButton"
 		    Dim Base As New MenuItem
 		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Doc.ConsoleModsOnly)
-		    Dim CurrentMask As UInt64 = Self.CurrentMask
 		    For I As Integer = UBound(LootSources) DownTo 0
 		      If Self.Doc.HasLootSource(LootSources(I)) Then
 		        LootSources.Remove(I)

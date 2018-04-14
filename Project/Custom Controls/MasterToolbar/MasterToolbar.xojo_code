@@ -84,13 +84,9 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  #if BeaconUI.ToolbarHasBackground
-		    G.ForeColor = Self.ColorProfile.BackgroundColor
-		    G.FillRect(0, 0, G.Width, G.Height)
-		  #endif
+		  #Pragma Unused Areas
 		  
-		  Self.mSidebarRect = Self.DrawSwitchSet(G, Self.CellHorizontalSpacing, Self.mSidebarItems, Self.mSidebarHighlightRect)
-		  Self.mMainRect = Self.DrawSwitchSet(G, Self.mSidebarRect.Right + Self.CellHorizontalSpacing, Self.mMainItems, Self.mMainHighlightRect)
+		  Self.PaintInto(G)
 		End Sub
 	#tag EndEvent
 
@@ -273,6 +269,18 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub PaintInto(G As Graphics)
+		  #if BeaconUI.ToolbarHasBackground
+		    G.ForeColor = Self.ColorProfile.BackgroundColor
+		    G.FillRect(0, 0, G.Width, G.Height)
+		  #endif
+		  
+		  Self.mSidebarRect = Self.DrawSwitchSet(G, Self.CellHorizontalSpacing, Self.mSidebarItems, Self.mSidebarHighlightRect)
+		  Self.mMainRect = Self.DrawSwitchSet(G, Self.mSidebarRect.Right + Self.CellHorizontalSpacing, Self.mMainItems, Self.mMainHighlightRect)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub RemoveView(View As BeaconSubview)
 		  // Loop over main first, more likely to find a match
@@ -324,8 +332,9 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		  End If
 		  
 		  If Item.Rect = Nil Then
-		    // Brand new, force a paint to get a rect
-		    Self.Refresh()
+		    // Brand new, draw to calculate rects
+		    Dim Temp As New Picture(Self.Width, Self.Height)
+		    Self.PaintInto(Temp.Graphics)
 		  End If
 		  
 		  Dim TargetRect As REALbasic.Rect
@@ -522,6 +531,7 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"

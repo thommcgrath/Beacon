@@ -1,5 +1,5 @@
 Type=Desktop
-RBProjectVersion=2017.03
+RBProjectVersion=2018.01
 MinIDEVersion=20150400
 Class=App;App.xojo_code;&h00000000283BFFFF;&h0000000000000000;false
 MenuBar=MainMenuBar;MainMenuBar.xojo_menu;&h0000000030BBA7FF;&h0000000000000000;false
@@ -8,6 +8,7 @@ BuildSteps=Build Automation;Build Automation.xojo_code;&h000000000D6ED7FF;&h0000
 Folder=Views;Views;&h0000000008A387FF;&h0000000000000000;false
 Class=BeaconWindow;Views/BeaconWindow.xojo_code;&h000000000A6D47FF;&h0000000008A387FF;false
 Class=BeaconMultiview;Views/BeaconMultiview.xojo_code;&h000000000FBF7FFF;&h0000000008A387FF;false
+Class=BeaconContainer;Views/BeaconContainer.xojo_code;&h0000000046FEDFFF;&h0000000008A387FF;false
 Class=BeaconSubview;Views/BeaconSubview.xojo_code;&h000000005369F7FF;&h0000000008A387FF;false
 Window=DocWindow;Views/DocWindow.xojo_window;&h000000007746B7FF;&h0000000008A387FF;false
 Window=BeaconEditor;Views/BeaconEditor.xojo_window;&h000000006D9A07FF;&h0000000008A387FF;false

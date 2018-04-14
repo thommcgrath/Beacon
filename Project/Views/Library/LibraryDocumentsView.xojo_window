@@ -6,6 +6,7 @@ Begin BeaconSubview LibraryDocumentsView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -59,6 +60,7 @@ Begin BeaconSubview LibraryDocumentsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   172
@@ -107,6 +109,7 @@ Begin BeaconSubview LibraryDocumentsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   60
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -141,6 +144,7 @@ Begin BeaconSubview LibraryDocumentsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -172,6 +176,7 @@ Begin BeaconSubview LibraryDocumentsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -203,6 +208,7 @@ Begin BeaconSubview LibraryDocumentsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -234,6 +240,7 @@ Begin BeaconSubview LibraryDocumentsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -426,6 +433,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

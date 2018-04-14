@@ -1,6 +1,6 @@
 #tag Class
 Protected Class BeaconSubview
-Inherits ContainerControl
+Inherits BeaconContainer
 Implements ObservationKit.Observable
 	#tag Event
 		Sub Close()
@@ -19,10 +19,6 @@ Implements ObservationKit.Observable
 		Sub Open()
 		  RaiseEvent Open
 		  RaiseEvent Resize
-		  
-		  Self.DoubleBuffer = TargetWin32
-		  Self.Transparent = Not Self.DoubleBuffer
-		  Self.EraseBackground = Not Self.DoubleBuffer
 		End Sub
 	#tag EndEvent
 
@@ -300,6 +296,14 @@ Implements ObservationKit.Observable
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="DoubleBuffer"
+			Visible=true
+			Group="Windows Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AcceptFocus"
 			Visible=true

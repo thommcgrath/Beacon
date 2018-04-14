@@ -6,6 +6,7 @@ Begin BeaconSubview DocumentEditorView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -130,6 +131,7 @@ Begin BeaconSubview DocumentEditorView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   62
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -155,7 +157,9 @@ Begin BeaconSubview DocumentEditorView
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
+      Transparent     =   False
       Value           =   1
       Visible         =   True
       Width           =   451
@@ -220,11 +224,13 @@ Begin BeaconSubview DocumentEditorView
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
          ConsoleSafe     =   False
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -332,7 +338,6 @@ End
 		    Return
 		  End If
 		  
-		  Dim CurrentMask As UInt64 = Self.mController.Document.MapCompatibility
 		  Dim IgnoredSources() As Beacon.LootSource
 		  
 		  For Each Source As Beacon.LootSource In Sources
@@ -509,9 +514,6 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
-		  Dim CurrentMask As UInt64 = Self.mController.Document.MapCompatibility
-		  //Editor.MapMask = CurrentMask
-		  
 		  Dim VisibleSources() As Beacon.LootSource = Self.mController.Document.LootSources
 		  Beacon.Sort(VisibleSources)
 		  
@@ -641,7 +643,6 @@ End
 		  Select Case Item.Name
 		  Case "AddSource"
 		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Document.ConsoleModsOnly)
-		    Dim CurrentMask As UInt64 = Self.mController.Document.MapCompatibility
 		    For I As Integer = LootSources.Ubound DownTo 0
 		      If Self.mController.Document.HasLootSource(LootSources(I)) Then
 		        LootSources.Remove(I)
@@ -853,6 +854,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

@@ -32,6 +32,7 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
@@ -73,6 +74,7 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       TabIndex        =   1
       TabPanelIndex   =   0
       Top             =   60
+      Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   499
@@ -82,6 +84,7 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False

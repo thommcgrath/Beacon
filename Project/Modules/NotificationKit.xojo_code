@@ -20,7 +20,7 @@ Protected Module NotificationKit
 		    
 		    If UBound(Refs) > -1 Then
 		      mReceivers.Value(Key) = Refs
-		    Else
+		    ElseIf mReceivers.HasKey(Key) Then
 		      mReceivers.Remove(Key)
 		    End If
 		  Next

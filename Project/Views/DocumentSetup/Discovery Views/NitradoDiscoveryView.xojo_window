@@ -6,6 +6,7 @@ Begin DiscoveryView NitradoDiscoveryView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -43,7 +44,9 @@ Begin DiscoveryView NitradoDiscoveryView
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
+      Transparent     =   False
       Value           =   1
       Visible         =   True
       Width           =   600
@@ -74,6 +77,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   360
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -130,7 +134,9 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   1
+         TabStop         =   True
          Top             =   222
+         Transparent     =   False
          Value           =   0
          Visible         =   True
          Width           =   560
@@ -180,6 +186,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   52
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -249,6 +256,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   360
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -280,6 +288,7 @@ Begin DiscoveryView NitradoDiscoveryView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   360
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -301,7 +310,9 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3
+         TabStop         =   True
          Top             =   206
+         Transparent     =   False
          Value           =   0
          Visible         =   True
          Width           =   560
@@ -343,18 +354,21 @@ Begin DiscoveryView NitradoDiscoveryView
       End
    End
    Begin Beacon.OAuth2Client AuthClient
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Beacon.NitradoDeploymentEngine DeployEngine
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Timer LookupStartTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -363,6 +377,7 @@ Begin DiscoveryView NitradoDiscoveryView
       TabPanelIndex   =   0
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -559,7 +574,6 @@ End
 		  Next
 		  
 		  // Everything has been downloaded
-		  Dim CombinedGameIni As New Xojo.Core.MutableMemoryBlock(0)
 		  
 		  Self.Importer.Clear
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedServers
@@ -636,6 +650,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

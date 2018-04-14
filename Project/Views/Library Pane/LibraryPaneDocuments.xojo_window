@@ -6,6 +6,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -70,6 +71,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   72
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -78,6 +80,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -636,8 +639,6 @@ End
 		    End If
 		  End If
 		  
-		  Dim ViewIndex As Integer = Self.View
-		  Dim RefreshDocumentsList As Boolean
 		  For Each Controller As Beacon.DocumentController In Controllers
 		    Dim View As BeaconSubview = Self.View(Controller.URL.Hash)
 		    If View <> Nil Then
@@ -693,6 +694,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

@@ -92,7 +92,6 @@ Inherits ControlCanvas
 		  If Self.Clickable Then
 		    CaptionSpace = CaptionSpace - (IconEdit.Width + CaptionLeft)
 		  End If
-		  Dim CaptionWidth As Integer = Min(Ceil(Clip.StringWidth(Self.mCaption)), CaptionSpace)
 		  Dim CaptionBottom As Integer = Round((Clip.Height / 2) + (Clip.CapHeight / 2))
 		  
 		  Clip.ForeColor = ShadowColor
@@ -257,6 +256,7 @@ Inherits ControlCanvas
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"

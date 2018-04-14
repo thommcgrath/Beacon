@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ControlCanvas
 Inherits Canvas
-Implements BeaconUI.ProfileAnimator, NotificationKit.Receiver
+Implements BeaconUI.ProfileAnimator,NotificationKit.Receiver
 	#tag Event
 		Sub Close()
 		  RaiseEvent Close
@@ -17,9 +17,14 @@ Implements BeaconUI.ProfileAnimator, NotificationKit.Receiver
 		  
 		  RaiseEvent Open
 		  
-		  Self.DoubleBuffer = TargetWin32
-		  Self.Transparent = Not Self.DoubleBuffer
-		  Self.EraseBackground = Not Self.DoubleBuffer
+		  #if XojoVersion >= 2018.01
+		    Self.DoubleBuffer = False
+		    Self.Transparent = TargetMacOS
+		  #else
+		    Self.DoubleBuffer = TargetWin32
+		    Self.Transparent = Not Self.DoubleBuffer
+		    Self.EraseBackground = Not Self.DoubleBuffer
+		  #endif
 		End Sub
 	#tag EndEvent
 
@@ -61,17 +66,23 @@ Implements BeaconUI.ProfileAnimator, NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Invalidate(eraseBackground As Boolean = True)
-		  #Pragma Unused eraseBackground
-		  
-		  Super.Invalidate(Self.EraseBackground)
+		  #if XojoVersion >= 2018.01
+		    Super.Invalidate(EraseBackground)
+		  #else
+		    #Pragma Unused eraseBackground
+		    Super.Invalidate(Self.EraseBackground)
+		  #endif
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Invalidate(x As Integer, y As Integer, width As Integer, height As Integer, eraseBackground As Boolean = True)
-		  #Pragma Unused eraseBackground
-		  
-		  Super.Invalidate(X, Y, Width, Height, Self.EraseBackground)
+		  #if XojoVersion >= 2018.01
+		    Super.Invalidate(X, Y, Width, Height, EraseBackground)
+		  #else
+		    #Pragma Unused eraseBackground
+		    Super.Invalidate(X, Y, Width, Height, Self.EraseBackground)
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -97,17 +108,23 @@ Implements BeaconUI.ProfileAnimator, NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Refresh(eraseBackground As Boolean = True)
-		  #Pragma Unused eraseBackground
-		  
-		  Super.Refresh(Self.EraseBackground)
+		  #if XojoVersion >= 2018.01
+		    Super.Refresh(EraseBackground)
+		  #else
+		    #Pragma Unused eraseBackground
+		    Super.Refresh(Self.EraseBackground)
+		  #endif
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub RefreshRect(x As Integer, y As Integer, width As Integer, height As Integer, eraseBackground As Boolean = True)
-		  #Pragma Unused eraseBackground
-		  
-		  Super.RefreshRect(X, Y, Width, Height, Self.EraseBackground)
+		  #if XojoVersion >= 2018.01
+		    Super.RefreshRect(X, Y, Width, Height, EraseBackground)
+		  #else
+		    #Pragma Unused eraseBackground
+		    Super.RefreshRect(X, Y, Width, Height, Self.EraseBackground)
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -181,6 +198,7 @@ Implements BeaconUI.ProfileAnimator, NotificationKit.Receiver
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"

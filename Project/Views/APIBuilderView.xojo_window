@@ -6,6 +6,7 @@ Begin BeaconSubview APIBuilderView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -13,10 +14,10 @@ Begin BeaconSubview APIBuilderView
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   False
-   LockLeft        =   False
-   LockRight       =   False
-   LockTop         =   False
+   LockBottom      =   True
+   LockLeft        =   True
+   LockRight       =   True
+   LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
@@ -33,7 +34,9 @@ Begin BeaconSubview APIBuilderView
       Caption         =   "API Builder"
       CaptionEnabled  =   True
       CaptionIsButton =   False
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       HasResizer      =   False
       Height          =   41
       HelpTag         =   ""
@@ -50,6 +53,7 @@ Begin BeaconSubview APIBuilderView
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   1100
@@ -81,6 +85,7 @@ Begin BeaconSubview APIBuilderView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   239
+      Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
@@ -128,6 +133,7 @@ Begin BeaconSubview APIBuilderView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   127
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -195,6 +201,7 @@ Begin BeaconSubview APIBuilderView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   271
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   72
@@ -241,6 +248,7 @@ Begin BeaconSubview APIBuilderView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   303
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -318,6 +326,7 @@ Begin BeaconSubview APIBuilderView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   205
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -385,6 +394,7 @@ Begin BeaconSubview APIBuilderView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   271
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   133
@@ -486,6 +496,7 @@ Begin BeaconSubview APIBuilderView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   95
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   133
@@ -527,6 +538,7 @@ Begin BeaconSubview APIBuilderView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   61
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -765,6 +777,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

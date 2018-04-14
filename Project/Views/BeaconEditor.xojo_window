@@ -1,11 +1,12 @@
 #tag Window
-Begin ContainerControl BeaconEditor
+Begin BeaconContainer BeaconEditor
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -70,6 +71,7 @@ Begin ContainerControl BeaconEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   62
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -137,6 +139,7 @@ Begin ContainerControl BeaconEditor
       TabIndex        =   6
       TabPanelIndex   =   0
       Top             =   0
+      Transparent     =   False
       Value           =   1
       Visible         =   True
       Width           =   347
@@ -147,6 +150,7 @@ Begin ContainerControl BeaconEditor
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
          ConsoleSafe     =   False
+         DoubleBuffer    =   False
          Enabled         =   False
          EraseBackground =   True
          HasBackColor    =   False
@@ -267,6 +271,7 @@ Begin ContainerControl BeaconEditor
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
@@ -283,6 +288,7 @@ Begin ContainerControl BeaconEditor
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
+      ToolbarIcon     =   0
       Top             =   281
       Transparent     =   True
       UseFocusRing    =   False
@@ -1181,6 +1187,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

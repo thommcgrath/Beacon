@@ -53,6 +53,7 @@ Begin Window DocumentPublishWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   300
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -84,6 +85,7 @@ Begin Window DocumentPublishWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   300
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -195,6 +197,7 @@ Begin Window DocumentPublishWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   100
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -277,6 +280,7 @@ Begin Window DocumentPublishWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   134
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -335,6 +339,7 @@ Begin Window DocumentPublishWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   304
+      Transparent     =   False
       Visible         =   False
       Width           =   16
    End
@@ -372,6 +377,7 @@ Begin Window DocumentPublishWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   268
+      Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
