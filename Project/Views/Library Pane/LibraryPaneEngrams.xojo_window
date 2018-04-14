@@ -6,6 +6,7 @@ Begin LibrarySubview LibraryPaneEngrams
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -60,7 +61,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Visible         =   True
       Width           =   260
    End
-   Begin PushButton ImportURLButton
+   Begin UITweaks.ResizedPushButton ImportURLButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -87,11 +88,12 @@ Begin LibrarySubview LibraryPaneEngrams
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   201
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   173
    End
-   Begin PushButton ImportClipboardButton
+   Begin UITweaks.ResizedPushButton ImportClipboardButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -118,11 +120,12 @@ Begin LibrarySubview LibraryPaneEngrams
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   233
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   173
    End
-   Begin PushButton ImportFileButton
+   Begin UITweaks.ResizedPushButton ImportFileButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -149,11 +152,12 @@ Begin LibrarySubview LibraryPaneEngrams
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   265
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   173
    End
-   Begin PushButton ManageEngramsButton
+   Begin UITweaks.ResizedPushButton ManageEngramsButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -180,6 +184,7 @@ Begin LibrarySubview LibraryPaneEngrams
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   297
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   173
@@ -357,6 +362,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true
