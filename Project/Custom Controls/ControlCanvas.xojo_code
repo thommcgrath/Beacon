@@ -11,6 +11,13 @@ Implements BeaconUI.ProfileAnimator,NotificationKit.Receiver
 	#tag EndEvent
 
 	#tag Event
+		Function MouseWheel(X As Integer, Y As Integer, deltaX as Integer, deltaY as Integer) As Boolean
+		  Dim WheelData As New BeaconUI.ScrollEvent(Self.ScrollSpeed, DeltaX, DeltaY)
+		  Return MouseWheel(X, Y, WheelData.ScrollX, WheelData.ScrollY, WheelData)
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  NotificationKit.Watch(Self, BeaconUI.PrimaryColorNotification)
 		  Self.mColorProfile = BeaconUI.ColorProfile
@@ -134,6 +141,10 @@ Implements BeaconUI.ProfileAnimator,NotificationKit.Receiver
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Integer, PixelsY As Integer, WheelData As BeaconUI.ScrollEvent) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
 
@@ -148,6 +159,10 @@ Implements BeaconUI.ProfileAnimator,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mProfileAnimator As BeaconUI.ProfileTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		ScrollSpeed As Integer = 20
 	#tag EndProperty
 
 

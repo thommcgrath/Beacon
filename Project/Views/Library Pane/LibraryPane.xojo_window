@@ -6,6 +6,7 @@ Begin ContainerControl LibraryPane
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -38,13 +39,14 @@ Begin ContainerControl LibraryPane
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   4
+      PanelCount      =   5
       Panels          =   ""
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   2
+      Transparent     =   False
+      Value           =   4
       Visible         =   True
       Width           =   300
       Begin LibraryPaneDocuments DocumentsView
@@ -53,6 +55,7 @@ Begin ContainerControl LibraryPane
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -84,6 +87,7 @@ Begin ContainerControl LibraryPane
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -114,6 +118,7 @@ Begin ContainerControl LibraryPane
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -144,6 +149,7 @@ Begin ContainerControl LibraryPane
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -159,6 +165,37 @@ Begin ContainerControl LibraryPane
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   4
+         TabStop         =   True
+         ToolbarCaption  =   ""
+         ToolbarIcon     =   0
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   300
+      End
+      Begin LibraryPaneSearch SearchView
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   468
+         HelpTag         =   ""
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   5
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
@@ -218,6 +255,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SearchPane() As LibraryPaneSearch
+		  Return Self.SearchView
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ShowPage(Index As Integer, UserData As Auto = Nil)
 		  If Self.Views.Value = Index Or Index = -1 Then
 		    Return
@@ -229,9 +272,9 @@ End
 		  End If
 		  
 		  Dim NewPage As LibrarySubview = Self.ViewAtIndex(Index)
-		  If NewPage <> Nil Then
-		    NewPage.SwitchedTo(UserData)
+		  If NewPage <> Nil Then  
 		    Self.Views.Value = Index
+		    NewPage.SwitchedTo(UserData)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -253,6 +296,8 @@ End
 		    Return Self.EngramsView
 		  Case Self.PaneTools
 		    Return Self.ToolsView
+		  Case Self.PaneSearch
+		    Return Self.SearchView
 		  End Select
 		End Function
 	#tag EndMethod
@@ -282,6 +327,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PanePresets, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = PaneSearch, Type = Double, Dynamic = False, Default = \"4", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PaneTools, Type = Double, Dynamic = False, Default = \"3", Scope = Public
@@ -358,7 +406,32 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events SearchView
+	#tag Event
+		Function ShouldDiscardView(View As BeaconSubview) As Boolean
+		  Return RaiseEvent ShouldDiscardView(View)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ShouldShowView(View As BeaconSubview)
+		  RaiseEvent ShouldShowView(View)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  RaiseEvent ShouldResize(NewSize)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

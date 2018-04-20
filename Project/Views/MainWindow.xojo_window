@@ -448,6 +448,10 @@ End
 		    AppToolbar.SelectView(View)
 		    LibraryPane1.ShowPage(LibraryPane.PaneTools)
 		    Return
+		  Case LibraryPane1.SearchPane
+		    AppToolbar.SelectView(View)
+		    LibraryPane1.ShowPage(LibraryPane.PaneSearch)
+		    Return
 		  End Select
 		  
 		  If Self.mCurrentView = View Then
@@ -565,6 +569,7 @@ End
 		  Me.AddView(LibraryPane1.PresetsPane, True)
 		  Me.AddView(LibraryPane1.EngramsPane, True)
 		  Me.AddView(LibraryPane1.ToolsPane, True)
+		  Me.AddView(LibraryPane1.SearchPane, True)
 		  
 		  Me.AddView(DashboardPane1, False)
 		  
