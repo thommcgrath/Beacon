@@ -26,7 +26,7 @@ Begin Window MiniBrowser Implements Beacon.WebView
    Title           =   "Browser"
    Visible         =   True
    Width           =   800
-   Begin HTMLViewer View
+   Begin BeaconWebView View
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   600
@@ -104,29 +104,6 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CancelLoad(URL as String) As Boolean
-		  #if TargetCocoa
-		    // Bug on Mac means it can't see the redirects
-		    Declare Function GetMainFrame Lib "Cocoa" Selector "mainFrame" (Target As Integer) As Integer
-		    Declare Function GetDataSource Lib "Cocoa" Selector "provisionalDataSource" (Target As Integer) As Integer
-		    Declare Function GetRequest Lib "Cocoa" Selector "request" (Target As Integer) As Integer
-		    Declare Function GetMainDocumentURL Lib "Cocoa" Selector "mainDocumentURL" (Target As Integer) As Integer
-		    Declare Function GetAbsoluteURL Lib "Cocoa" Selector "absoluteString" (Target As Integer) As CFStringRef
-		    
-		    Dim FrameHandle As Integer = GetMainFrame(Me.Handle)
-		    If FrameHandle <> 0 Then
-		      Dim DataSourceHandle As Integer = GetDataSource(FrameHandle)
-		      If DataSourceHandle <> 0 Then
-		        Dim RequestHandle As Integer = GetRequest(DataSourceHandle)
-		        If RequestHandle <> 0 Then
-		          Dim URLHandle As Integer = GetMainDocumentURL(RequestHandle)
-		          If URLHandle <> 0 Then
-		            URL = GetAbsoluteURL(URLHandle)
-		          End If
-		        End If
-		      End If
-		    End If
-		  #endif
-		  
 		  If Not Beacon.IsBeaconURL(URL) Then
 		    Return False
 		  End If
@@ -141,25 +118,6 @@ End
 		  
 		  Return False
 		End Function
-	#tag EndEvent
-	#tag Event
-		Sub DocumentBegin(URL as String)
-		  #if false
-		    // Cocoa can't seem to see the redirects
-		    Declare Function GetMainFrame Lib "Cocoa" Selector "mainFrame" (Target As Integer) As Integer
-		    Declare Function GetDataSource Lib "Cocoa" Selector "provisionalDataSource" (Target As Integer) As Integer
-		    Declare Function GetRequest Lib "Cocoa" Selector "request" (Target As Integer) As Integer
-		    Declare Function GetMainDocumentURL Lib "Cocoa" Selector "mainDocumentURL" (Target As Integer) As Integer
-		    Declare Function GetAbsoluteURL Lib "Cocoa" Selector "absoluteString" (Target As Integer) As CFStringRef
-		    
-		    Dim FrameHandle As Integer = GetMainFrame(Me.Handle)
-		    Dim DataSourceHandle As Integer = GetDataSource(FrameHandle)
-		    Dim RequestHandle As Integer = GetRequest(DataSourceHandle)
-		    Dim URLHandle As Integer = GetMainDocumentURL(RequestHandle)
-		    URL = GetAbsoluteURL(URLHandle)
-		    Break
-		  #endif
-		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
