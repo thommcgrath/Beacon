@@ -30,29 +30,27 @@ Protected Class Identity
 		    Return False
 		  End If
 		  
-		  #Pragma Warning "Handle KeyNotFoundException"
-		  
-		  Dim Signature As Xojo.Core.MemoryBlock = If(Dict.HasKey("validation"), Beacon.DecodeHex(Dict.Value("validation")), Nil)
-		  Dim IsPatreonSupporter As Boolean = Dict.Lookup("is_patreon_supporter", False)
-		  Dim PatreonUserID As Integer = If(Dict.Lookup("patreon_user_id", Nil) <> Nil, Dict.Value("patreon_user_id"), 0)
-		  Dim Changed As Boolean
-		  
-		  If Self.mSignature <> Signature Then
-		    Self.mSignature = Signature
-		    Changed = True
-		  End If
-		  
-		  If Self.mIsPatreonSupporter <> IsPatreonSupporter Then
-		    Self.mIsPatreonSupporter = IsPatreonSupporter
-		    Changed = True
-		  End If
-		  
-		  If Self.mPatreonUserID <> PatreonUserID Then
-		    Self.mPatreonUserID = PatreonUserID
-		    Changed = True
-		  End If
-		  
-		  Return Changed
+		  Try
+		    Dim Signature As Xojo.Core.MemoryBlock = If(Dict.HasKey("validation"), Beacon.DecodeHex(Dict.Value("validation")), Nil)
+		    Dim IsPatreonSupporter As Boolean = Dict.Lookup("is_patreon_supporter", False)
+		    Dim PatreonUserID As Integer = If(Dict.Lookup("patreon_user_id", Nil) <> Nil, Dict.Value("patreon_user_id"), 0)
+		    
+		    If Self.mSignature <> Signature Then
+		      Self.mSignature = Signature
+		    End If
+		    
+		    If Self.mIsPatreonSupporter <> IsPatreonSupporter Then
+		      Self.mIsPatreonSupporter = IsPatreonSupporter
+		    End If
+		    
+		    If Self.mPatreonUserID <> PatreonUserID Then
+		      Self.mPatreonUserID = PatreonUserID
+		    End If
+		    
+		    Return True
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -88,6 +86,39 @@ Protected Class Identity
 		    Dict.Value("Signature") = Beacon.EncodeHex(Self.mSignature)
 		  End If
 		  Return Dict
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromUserDictionary(Dict As Xojo.Core.Dictionary, Password As Text) As Beacon.Identity
+		  Try
+		    Dim PrivateKey As Xojo.Core.MemoryBlock
+		    
+		    If Password = "" Then
+		      Return Nil
+		    End If
+		    
+		    Try
+		      Dim Salt As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Dict.Value("private_key_salt"))
+		      Dim Iterations As Integer = Dict.Value("private_key_iterations")
+		      Dim Key As Xojo.Core.MemoryBlock = Xojo.Crypto.PBKDF2(Salt, Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Password), Iterations, 56, Xojo.Crypto.HashAlgorithms.SHA512)
+		      Dim Decrypted As Xojo.Core.MemoryBlock = BeaconEncryption.BlowfishDecrypt(Key, Beacon.DecodeHex(Dict.Value("private_key")))
+		      PrivateKey = BeaconEncryption.PEMDecodePrivateKey(Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Decrypted, False))
+		    Catch Err As Xojo.Crypto.CryptoException
+		      Return Nil
+		    End Try
+		    
+		    Dim PublicKey As Xojo.Core.MemoryBlock = BeaconEncryption.PEMDecodePublicKey(Dict.Value("public_key"))
+		    Dim UserID As Text = Dict.Value("user_id")
+		    
+		    Dim Identity As New Beacon.Identity(UserID, PublicKey, PrivateKey)
+		    If Not Identity.ConsumeUserDictionary(Dict) Then
+		      Return Nil
+		    End If
+		    Return Identity
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
 		End Function
 	#tag EndMethod
 

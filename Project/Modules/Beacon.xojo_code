@@ -40,6 +40,33 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function CRC32(Data As Xojo.Core.MemoryBlock) As UInt32
+		  dim crcg, c, t, x,b as uint32
+		  dim ch as uint8
+		  crcg = &hffffffff
+		  c = Data.Size - 1
+		  
+		  for x=0 to c
+		    ch = data.uint8value(x)
+		    
+		    t = (crcg and &hFF) xor ch
+		    
+		    for b=0 to 7
+		      if( (t and &h1) = &h1) then
+		        t = Beacon.ShiftRight( t, 1) xor &hEDB88320
+		      else
+		        t = Beacon.ShiftRight(t, 1)
+		      end if
+		    next
+		    crcg = Beacon.ShiftRight(crcg, 8) xor t
+		  next
+		  
+		  crcg = crcg Xor &hFFFFFFFF
+		  return crcg
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function CreateUUID() As Text
 		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)
 		  Dim Id As New Xojo.Core.MutableMemoryBlock(Bytes)

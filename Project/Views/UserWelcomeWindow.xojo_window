@@ -1,5 +1,5 @@
 #tag Window
-Begin Window MiniBrowser Implements Beacon.WebView
+Begin Window UserWelcomeWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -14,19 +14,19 @@ Begin Window MiniBrowser Implements Beacon.WebView
    LiveResize      =   True
    MacProcID       =   0
    MaxHeight       =   32000
-   MaximizeButton  =   True
+   MaximizeButton  =   False
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   600
-   MinimizeButton  =   True
-   MinWidth        =   800
+   MinHeight       =   64
+   MinimizeButton  =   False
+   MinWidth        =   64
    Placement       =   2
    Resizeable      =   False
-   Title           =   "Browser"
+   Title           =   ""
    Visible         =   True
-   Width           =   800
-   Begin BeaconWebView View
+   Width           =   400
+   Begin BeaconWebView ContentView
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   600
@@ -38,94 +38,203 @@ Begin Window MiniBrowser Implements Beacon.WebView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Renderer        =   1
+      Renderer        =   0
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
       Visible         =   True
-      Width           =   800
+      Width           =   400
    End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Method, Flags = &h0
+	#tag Event
 		Sub Close()
-		  // Part of the Beacon.WebView interface.
-		  
-		  Super.Close
+		  If App.Identity = Nil Then
+		    Quit
+		  Else
+		    MainWindow.Show()
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
+		  App.Preferences.BooleanValue("Online Enabled") = False
+		  Self.mBaseURL = Beacon.WebURL("inapp/")
+		  Self.ContentView.LoadURL(Self.mBaseURL + "welcome.php")
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_CreateSession(Success As Boolean, Message As Text, Details As Auto)
+		  If Success Then
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Details
+		      Dim Token As Text = Dict.Value("session_id")
+		      App.Preferences.TextValue("Online Token") = Token
+		      App.Preferences.BooleanValue("Online Enabled") = True
+		      Self.Close()
+		    Catch Err As RuntimeException
+		      If Self.ShowConfirm("Something went wrong while saving your authentication token.", "Would you like to try again?", "Try Again", "Cancel") Then
+		        Self.ObtainToken()
+		      Else
+		        Self.Close()
+		      End If
+		    End Try
+		  Else
+		    If Self.ShowConfirm("Beacon was unable to authenticate with the cloud.", "Would you like to try again?", "Try Again", "Cancel") Then
+		      Self.ObtainToken()
+		    Else
+		      Self.Close()
+		    End If
+		  End If
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Shared Function NewView() As HTMLViewer
-		  Dim Win As New MiniBrowser
-		  Win.Show
-		  Return Win.View
-		End Function
+	#tag Method, Flags = &h21
+		Private Sub APICallback_GetCurrentUser(Success As Boolean, Message As Text, Details As Auto)
+		  If Success Then
+		    Dim Dict As Xojo.Core.Dictionary = Details
+		    Dim Identity As Beacon.Identity = Beacon.Identity.FromUserDictionary(Dict, Self.mUserPassword.ToText)
+		    If Identity <> Nil Then
+		      App.Preferences.TextValue("Online Token") = Self.mUserToken.ToText
+		      App.Preferences.BooleanValue("Online Enabled") = True
+		      App.Identity = Identity
+		      Self.Close
+		      Return
+		    End If
+		  End If
+		  
+		  Self.ShowAlert("Beacon was unable to download your user details.", Message)
+		  App.Identity = New Beacon.Identity
+		  Self.Close()
+		  Return
+		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Shared Function ShowURL(URL As Text) As MiniBrowser
-		  Dim Win As New MiniBrowser
-		  Win.View.LoadURL(URL)
-		  Return Win
-		End Function
+	#tag Method, Flags = &h21
+		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
+		  If Success Then
+		    Self.ObtainToken()
+		  Else
+		    Self.ShowAlert("Beacon was unable to create a user with the cloud. For now, online features are disabled.", Message)
+		    Self.Close()
+		  End If
+		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function URLHandler() As Beacon.URLHandler
-		  Return Self.mHandler
-		End Function
+	#tag Method, Flags = &h21
+		Private Sub HandleAnonymous()
+		  
+		  App.Identity = New Beacon.Identity
+		  
+		  Dim Params As New Xojo.Core.Dictionary
+		  Params.Value("user_id") = App.Identity.Identifier
+		  Params.Value("public_key") = App.Identity.PublicKey
+		  
+		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
+		  Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
+		  BeaconAPI.Send(Request)
+		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub URLHandler(Assigns Handler As Beacon.URLHandler)
-		  Self.mHandler = Handler
+	#tag Method, Flags = &h21
+		Private Sub HandleDisableOnline()
+		  App.Identity = New Beacon.Identity
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ObtainToken()
+		  Dim Request As New BeaconAPI.Request("session.php", "POST", "", "text/plain", AddressOf APICallback_CreateSession)
+		  Request.Sign(App.Identity)
+		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mHandler As Beacon.URLHandler
+		Private mBaseURL As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUserPassword As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUserToken As String
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events View
-	#tag Event
-		Sub TitleChanged(newTitle as String)
-		  Self.Title = NewTitle
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Function NewWindow() As HTMLViewer
-		  Dim Win As New MiniBrowser
-		  Win.Left = Self.Left + 20
-		  Win.Top = Self.Top + 20
-		  Win.Show
-		  Return Win.View
-		End Function
-	#tag EndEvent
+#tag Events ContentView
 	#tag Event
 		Function CancelLoad(URL as String) As Boolean
-		  If Not Beacon.IsBeaconURL(URL) Then
+		  If URL.Left(Self.mBaseURL.Len) = Self.mBaseURL Then
 		    Return False
 		  End If
-		  
-		  If Self.mHandler <> Nil And Self.mHandler.Invoke(URL.ToText) Then
+		  If Not Beacon.IsBeaconURL(URL) Then
+		    ShowURL(URL)
 		    Return True
 		  End If
 		  
-		  If App.HandleURL(URL, True) Then
-		    Return True
+		  Dim Pos As Integer = URL.InStr("?")
+		  Dim Path As String = URL.Left(Pos - 1)
+		  Dim Query As String = URL.Mid(Pos + 1)
+		  
+		  Pos = Query.InStr("#")
+		  If Pos > 0 Then
+		    Query = Query.Left(Pos - 1)
 		  End If
 		  
-		  Return False
+		  Dim Params As New Dictionary
+		  Dim Parts() As String = Split(Query, "&")
+		  For Each Part As String In Parts
+		    Pos = Part.InStr("=")
+		    Dim Key As String = DecodeURLComponent(Part.Left(Pos - 1)).DefineEncoding(Encodings.UTF8)
+		    Dim Value As String = DecodeURLComponent(Part.Mid(Pos + 1)).DefineEncoding(Encodings.UTF8)
+		    Params.Value(Key) = Value
+		  Next
+		  
+		  Select Case Path
+		  Case "set_user_privacy"
+		    Dim Action As String = Params.Lookup("action", "full") // err on the side of privacy
+		    Select Case Action
+		    Case "anonymous"
+		      Self.HandleAnonymous()
+		    Case "full"
+		      Self.HandleDisableOnline()
+		    Case "none"
+		    Else
+		    End Select
+		  Case "set_user_token"
+		    Self.mUserToken = Params.Lookup("token", "")
+		    Self.mUserPassword = Params.Lookup("password", "")
+		    
+		    Dim Request As New BeaconAPI.Request("user.php", "GET", "", "text/plain", AddressOf APICallback_GetCurrentUser)
+		    Request.Authenticate(Self.mUserToken.ToText)
+		    BeaconAPI.Send(Request)
+		  Else
+		    Return False
+		  End Select
+		  
+		  Return True
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Error(errorNumber as Integer, errorMessage as String)
+		  App.Log("UserWelcomeWindow.ContentView.Error " + Str(ErrorNumber) + ": " + ErrorMessage)
+		  If App.Identity = Nil Then
+		    App.Identity = New Beacon.Identity
+		  End If
+		  Self.Close()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

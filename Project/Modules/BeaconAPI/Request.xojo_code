@@ -1,8 +1,28 @@
 #tag Class
 Protected Class Request
 	#tag Method, Flags = &h0
+		Sub Authenticate(Token As Text)
+		  Self.mAuthHeader = "Session " + Token
+		  Self.mAuthUser = ""
+		  Self.mAuthPassword = ""
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Authenticate(Username As Text, Password As Text)
+		  Self.mAuthHeader = "Basic " + Beacon.EncodeBase64(Username + ":" + Password, Xojo.Core.TextEncoding.UTF8)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Authenticated() As Boolean
-		  Return Self.mAuthUser <> "" And Self.mAuthPassword <> ""
+		  Return Self.mAuthHeader <> ""
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function AuthHeader() As Text
+		  Return Self.mAuthHeader
 		End Function
 	#tag EndMethod
 
@@ -115,8 +135,7 @@ Protected Class Request
 		  End If
 		  Content = Content + Self.mPayload
 		  
-		  Self.mAuthUser = Identity.Identifier
-		  Self.mAuthPassword = Beacon.EncodeHex(Identity.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Content)))
+		  Self.Authenticate(Identity.Identifier, Beacon.EncodeHex(Identity.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Content))))
 		End Sub
 	#tag EndMethod
 
@@ -126,6 +145,10 @@ Protected Class Request
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h1
+		Protected mAuthHeader As Text
+	#tag EndProperty
 
 	#tag Property, Flags = &h1
 		Protected mAuthPassword As Text

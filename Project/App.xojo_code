@@ -47,7 +47,9 @@ Inherits Application
 
 	#tag Event
 		Sub NewDocument()
-		  MainWindow.Show
+		  If Self.mIdentity <> Nil Then
+		    MainWindow.Show
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -109,11 +111,9 @@ Inherits Application
 		    Self.mIdentity = Identity
 		  End If
 		  If Self.mIdentity = Nil Then
-		    Self.Log("Creating new identity")
-		    Self.Identity = New Beacon.Identity
+		    Dim WelcomeWindow As New UserWelcomeWindow
+		    WelcomeWindow.Show()
 		  End If
-		  Self.Log("Identity is " + Self.mIdentity.Identifier)
-		  Self.PublishIdentity()
 		  
 		  Self.mUpdateChecker = New UpdateChecker
 		  AddHandler Self.mUpdateChecker.UpdateAvailable, WeakAddressOf Self.mUpdateChecker_UpdateAvailable
@@ -132,6 +132,10 @@ Inherits Application
 
 	#tag Event
 		Sub OpenDocument(item As FolderItem)
+		  If Self.mIdentity = Nil Then
+		    Return
+		  End If
+		  
 		  Dim File As Beacon.FolderItem = Item
 		  
 		  If Not File.Exists Then
@@ -358,48 +362,6 @@ Inherits Application
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub APICallback_UserLookup(Success As Boolean, Message As Text, Details As Auto)
-		  #Pragma Unused Message
-		  
-		  Dim OriginalUIColor As Color = BeaconUI.PrimaryColor()
-		  
-		  If Success Then
-		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Details
-		      If Self.mIdentity.ConsumeUserDictionary(Dict) Then
-		        Self.WriteIdentity()
-		      End If
-		    Catch Err As TypeMismatchException
-		    End Try
-		  Else
-		    Dim Params As New Xojo.Core.Dictionary
-		    Params.Value("user_id") = Self.mIdentity.Identifier
-		    Params.Value("public_key") = Self.mIdentity.PublicKey
-		    
-		    Dim Body As Text = Xojo.Data.GenerateJSON(Params)
-		    Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
-		    Self.mAPISocket.Start(Request)
-		  End If
-		  
-		  Self.mIdentity.Validate()
-		  
-		  Dim NewUIColor As Color = BeaconUI.PrimaryColor()
-		  If OriginalUIColor <> NewUIColor Then
-		    NotificationKit.Post("UI Color Changed", New BeaconUI.ColorProfile(NewUIColor))
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
-		  #Pragma Unused Details
-		  #Pragma Unused Details
-		  
-		  Self.Log("Unable to publish identity: " + Message)
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
 		  Dim AppSupport As FolderItem = SpecialFolder.ApplicationData
@@ -553,8 +515,13 @@ Inherits Application
 
 	#tag Method, Flags = &h0
 		Sub Identity(Assigns Value As Beacon.Identity)
+		  Dim OriginalUIColor As Color = BeaconUI.PrimaryColor()
 		  Self.mIdentity = Value
 		  Self.WriteIdentity()
+		  Dim NewUIColor As Color = BeaconUI.PrimaryColor()
+		  If OriginalUIColor <> NewUIColor Then
+		    NotificationKit.Post("UI Color Changed", New BeaconUI.ColorProfile(NewUIColor))
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -655,15 +622,6 @@ Inherits Application
 		  End If
 		  Return Self.mPreferences
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub PublishIdentity()
-		  Self.mAPISocket = New BeaconAPI.Socket
-		  
-		  Dim Request As New BeaconAPI.Request("user.php/" + Self.mIdentity.Identifier, "GET", AddressOf APICallback_UserLookup)
-		  Self.mAPISocket.Start(Request)
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

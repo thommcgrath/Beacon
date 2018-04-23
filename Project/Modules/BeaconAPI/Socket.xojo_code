@@ -16,7 +16,7 @@ Protected Class Socket
 		  
 		  Dim URL As Text = Request.URL
 		  If Request.Authenticated Then
-		    Self.Socket.RequestHeader("Authorization") = "Basic " + Beacon.EncodeBase64(Request.AuthUser + ":" + Request.AuthPassword, Xojo.Core.TextEncoding.UTF8)
+		    Self.Socket.RequestHeader("Authorization") = Request.AuthHeader
 		  End If
 		  
 		  If Request.Method = "GET" Then
