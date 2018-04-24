@@ -77,6 +77,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_CreateSession(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Message
+		  
 		  If Success Then
 		    Try
 		      Dim Dict As Xojo.Core.Dictionary = Details
@@ -110,13 +112,23 @@ End
 		      Preferences.OnlineToken = Self.mUserToken.ToText
 		      Preferences.OnlineEnabled = True
 		      
-		      If App.Identity <> Nil And App.Identity.Identifier <> Identity.Identifier Then
+		      If App.Identity <> Nil And App.Identity.Identifier <> Identity.Identifier And Identity.LoginKey <> "" Then
 		        // merge old identity
 		        Dim OldIdentity As Beacon.Identity = App.Identity
 		        App.Identity = Identity
-		        #if Not DebugBuild
-		          #Pragma Error "Merge old account into downloaded one"
-		        #endif
+		        
+		        Dim SignedValue As Text = Beacon.CreateUUID
+		        Dim Signature As Text = Beacon.EncodeHex(OldIdentity.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(SignedValue)))
+		        
+		        Dim MergeKeys As New Xojo.Core.Dictionary
+		        MergeKeys.Value("user_id") = OldIdentity.Identifier
+		        MergeKeys.Value("login_key") = Identity.LoginKey
+		        MergeKeys.Value("signed_value") = SignedValue
+		        MergeKeys.Value("signature") = Signature
+		        
+		        Dim Request As New BeaconAPI.Request("user.php", "POST", Xojo.Data.GenerateJSON(MergeKeys), "application/json", AddressOf APICallback_MergeUser)
+		        Request.Authenticate(Preferences.OnlineToken)
+		        BeaconAPI.Send(Request)
 		      Else
 		        App.Identity = Identity
 		        Self.Close
@@ -129,6 +141,16 @@ End
 		  App.Identity = New Beacon.Identity
 		  Self.Close()
 		  Return
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_MergeUser(Success As Boolean, Message As Text, Details As Auto)
+		  #Pragma Unused Success
+		  #Pragma Unused Message
+		  #Pragma Unused Details
+		  
+		  Self.Close()
 		End Sub
 	#tag EndMethod
 
@@ -186,6 +208,7 @@ End
 		  If App.Identity = Nil Then
 		    App.Identity = New Beacon.Identity
 		  End If
+		  Self.Close()
 		End Sub
 	#tag EndMethod
 
@@ -229,8 +252,13 @@ End
 		  End If
 		  
 		  Dim Pos As Integer = URL.InStr("?")
-		  Dim Path As String = URL.Left(Pos - 1)
-		  Dim Query As String = URL.Mid(Pos + 1)
+		  Dim Path, Query As String
+		  If Pos > 0 Then
+		    Path = URL.Left(Pos - 1)
+		    Query = URL.Mid(Pos + 1)
+		  Else
+		    Path = URL
+		  End If
 		  
 		  Pos = Query.InStr("#")
 		  If Pos > 0 Then
