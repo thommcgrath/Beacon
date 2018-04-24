@@ -1,0 +1,151 @@
+body {
+	margin: 0px;
+	text-align: center;
+	width: 400px;
+}
+
+#branding_section {
+	padding: 20px;
+	background-color: #f4f4f4;
+}
+
+#branding_logo {
+	width: 128px;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+}
+
+#overlay {
+	background-color: rgba(0, 0, 0, 0.0);
+	display: none;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+}
+
+.explanation {
+	font-size: 0.9em;
+	color: #404040;
+}
+
+button,
+input[type="submit"] {
+	text-decoration: none;
+	display: inline-block;
+	padding: 6px 12px;
+	color: #713a9a;
+	background-color: #ffffff;
+	border: 1px solid #713a9a;
+	text-shadow: none;
+	cursor: default;
+	margin: 0px;
+}
+
+button:enabled:active {
+	color: #35204a;
+	border-color: #35204a;
+	background-color: #808080;
+}
+
+button.primary_button,
+input[type="submit"] {
+	background-color: #713a9a;
+	color: #ffffff;
+	animation: none;
+}
+
+button.primary_button:enabled:active,
+input[type="submit"]:enabled:active {
+	background-color: #35204a;
+	color: #808080;
+}
+
+p {
+	margin: 20px;
+}
+
+#page_intro,
+#page_loading,
+#page_login,
+#page_recover,
+#page_verify,
+#page_password {
+	padding: 20px;
+}
+
+#page_loading,
+#page_login,
+#page_recover,
+#page_verify,
+#page_password {
+	display: none;
+}
+
+#overlay {
+	display: none;
+	position: fixed;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	transition-duration: 0.15s;
+	transition-timing-function: ease-out;
+	transition-property: background-color, -webkit-backdrop-filter;
+	z-index: 100;
+	background-color: rgba(0, 0, 0, 0.0);
+	-webkit-backdrop-filter: blur(0px);
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+#overlay.exist {
+	display: block;
+}
+
+#overlay.visible {
+	-webkit-backdrop-filter: blur(5px);
+	background-color: rgba(0, 0, 0, 0.6);
+}
+
+#dialog {
+	display: none;
+	position: fixed;
+	top: 30%;
+	width: 260px;
+	left: 50px;
+	background-color: #ffffff;
+	border-radius: 10px;
+	z-index: 101;
+	padding: 20px;
+	opacity: 0;
+	transition-duration: 0.15s;
+	transition-timing-function: ease-out;
+	transition-property: opacity;
+	transition-delay: 0s;
+	box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+#dialog.exist {
+	display: block;
+}
+
+#dialog.visible {
+	opacity: 1;
+	transition-delay: 0.2s;
+}
+
+#dialog p {
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+#dialog_message {
+	font-weight: 600;
+	text-align: left;
+}
+
+#dialog_explanation {
+	text-align: left;
+}

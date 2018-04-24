@@ -129,7 +129,6 @@ abstract class BeaconAPI {
 					}
 				} elseif (BeaconUser::ValidateLoginKey($username)) {
 					// password authorization
-					// not yet implemented
 					$user = BeaconUser::GetByEmail($username);
 					if (is_null($user) == false && $user->TestPassword($password)) {
 						self::$user_id = $user->UserID();

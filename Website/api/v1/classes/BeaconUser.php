@@ -141,7 +141,7 @@ class BeaconUser implements JsonSerializable {
 		$chars = count_chars($password);
 		foreach ($chars as $char => $count) {
 			$percent = $count / $passlen;
-			if ($percent > 0.2) {
+			if ($percent > 0.3) {
 				return false;
 			}
 		}
