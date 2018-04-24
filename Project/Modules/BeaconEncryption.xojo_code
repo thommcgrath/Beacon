@@ -74,7 +74,7 @@ Protected Module BeaconEncryption
 		  Key = Key.ReplaceAll(Text.FromUnicodeCodepoint(13), Text.FromUnicodeCodepoint(10))
 		  
 		  Dim Lines() As Text = Key.Split(Text.FromUnicodeCodepoint(10))
-		  If Lines(0).IndexOf("BEGIN RSA PRIVATE KEY") = -1 Or Lines(Lines.Ubound).IndexOf("END RSA PRIVATE KEY") = -1 Then
+		  If (Lines(0).IndexOf("BEGIN PRIVATE KEY") = -1 Or Lines(Lines.Ubound).IndexOf("END PRIVATE KEY") = -1) And (Lines(0).IndexOf("BEGIN RSA PRIVATE KEY") = -1 Or Lines(Lines.Ubound).IndexOf("END RSA PRIVATE KEY") = -1) Then
 		    Dim Err As New Xojo.Crypto.CryptoException
 		    Err.Reason = "Text does not appear to be a PEM-encoded private key"
 		    Raise Err
@@ -85,7 +85,14 @@ Protected Module BeaconEncryption
 		  
 		  Key = Text.Join(Lines, Text.FromUnicodeCodepoint(10))
 		  
-		  Return Xojo.Crypto.BERDecodePrivateKey(Beacon.DecodeBase64(Key))
+		  Dim Decoded As Xojo.Core.MemoryBlock = Beacon.DecodeBase64(Key)
+		  #Pragma BreakOnExceptions Off
+		  Try
+		    Return Xojo.Crypto.BERDecodePrivateKey(Decoded)
+		  Catch Err As Xojo.Crypto.CryptoException
+		    Return Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Beacon.EncodeHex(Decoded))
+		  End Try
+		  #Pragma BreakOnExceptions Default
 		End Function
 	#tag EndMethod
 
@@ -107,11 +114,12 @@ Protected Module BeaconEncryption
 		  
 		  Key = Text.Join(Lines, Text.FromUnicodeCodepoint(10))
 		  
+		  Dim Decoded As Xojo.Core.MemoryBlock = Beacon.DecodeBase64(Key)
 		  #Pragma BreakOnExceptions Off
 		  Try
-		    Return Xojo.Crypto.BERDecodePublicKey(Beacon.DecodeBase64(Key))
+		    Return Xojo.Crypto.BERDecodePublicKey(Decoded)
 		  Catch Err As Xojo.Crypto.CryptoException
-		    Return Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Beacon.EncodeHex(Beacon.DecodeBase64(Key)))
+		    Return Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Beacon.EncodeHex(Decoded))
 		  End Try
 		  #Pragma BreakOnExceptions Default
 		End Function
@@ -120,7 +128,7 @@ Protected Module BeaconEncryption
 	#tag Method, Flags = &h1
 		Protected Function PEMEncodePrivateKey(Key As Xojo.Core.MemoryBlock) As Text
 		  Dim Base64 As Text = Beacon.EncodeBase64(Xojo.Crypto.DEREncodePrivateKey(Key))
-		  Dim Lines() As Text = Array("-----BEGIN RSA PRIVATE KEY-----")
+		  Dim Lines() As Text = Array("-----BEGIN PRIVATE KEY-----")
 		  While Base64.Length > 64
 		    Lines.Append(Base64.Left(64))
 		    Base64 = Base64.Mid(64)
@@ -128,7 +136,7 @@ Protected Module BeaconEncryption
 		  If Base64.Length > 0 Then
 		    Lines.Append(Base64)
 		  End If
-		  Lines.Append("-----END RSA PRIVATE KEY-----")
+		  Lines.Append("-----END PRIVATE KEY-----")
 		  Return Text.Join(Lines, Text.FromUnicodeCodepoint(10))
 		End Function
 	#tag EndMethod
@@ -162,12 +170,6 @@ Protected Module BeaconEncryption
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="Name"
-			Visible=true
-			Group="ID"
-			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -175,17 +177,23 @@ Protected Module BeaconEncryption
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Super"
-			Visible=true
-			Group="ID"
-			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Left"
 			Visible=true
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

@@ -517,6 +517,7 @@ Inherits Application
 		Sub Identity(Assigns Value As Beacon.Identity)
 		  Dim OriginalUIColor As Color = BeaconUI.PrimaryColor()
 		  Self.mIdentity = Value
+		  Self.Log("Identity is now " + Value.Identifier)
 		  Self.WriteIdentity()
 		  Dim NewUIColor As Color = BeaconUI.PrimaryColor()
 		  If OriginalUIColor <> NewUIColor Then

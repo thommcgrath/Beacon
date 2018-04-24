@@ -19,6 +19,8 @@ Protected Class Socket
 		    Self.Socket.RequestHeader("Authorization") = Request.AuthHeader
 		  End If
 		  
+		  Self.Socket.RequestHeader("Cache-Control") = "no-cache"
+		  
 		  If Request.Method = "GET" Then
 		    Dim Query As Text = Request.Query
 		    If Query <> "" Then
