@@ -87,10 +87,10 @@ abstract class BeaconEncryption {
 	}
 	
 	public static function PrivateKeyToPEM(string $private_key) {
-		if (substr($private_key, 0, 31) != '-----BEGIN RSA PRIVATE KEY-----') {
+		if (substr($private_key, 0, 31) != '-----BEGIN PRIVATE KEY-----') {
 			$private_key = hex2bin($private_key);
 			$private_key = trim(chunk_split(base64_encode($private_key), 64, "\n"));
-			$private_key = "-----BEGIN RSA PRIVATE KEY-----\n$private_key\n-----END RSA PRIVATE KEY-----";
+			$private_key = "-----BEGIN PRIVATE KEY-----\n$private_key\n-----END RSA PRIVATE KEY-----";
 		}
 		return $private_key;
 	}
@@ -102,6 +102,18 @@ abstract class BeaconEncryption {
 		} else {
 			return unpack('N', $bin)[1];
 		}
+	}
+	
+	public static function GenerateKeyPair(&$public_key, &$private_key) {
+		$handle = openssl_pkey_new(array(
+			'digest_alg' => 'sha512',
+			'private_key_bits' => 2048,
+			'private_key_type' => OPENSSL_KEYTYPE_RSA
+		));
+		openssl_pkey_export($handle, $private_key);
+		$public_key = openssl_pkey_get_details($handle);
+		$public_key = $public_key['key'];
+		openssl_pkey_free($handle);
 	}
 }
 
