@@ -47,6 +47,10 @@ Protected Class Identity
 		      Self.mPatreonUserID = PatreonUserID
 		    End If
 		    
+		    If Dict.HasKey("login_key") Then
+		      Self.mLoginKey = Dict.Value("login_key")
+		    End If
+		    
 		    Return True
 		  Catch Err As RuntimeException
 		    Return False
@@ -85,6 +89,7 @@ Protected Class Identity
 		  If Self.mSignature <> Nil Then
 		    Dict.Value("Signature") = Beacon.EncodeHex(Self.mSignature)
 		  End If
+		  Dict.Value("LoginKey") = Self.mLoginKey
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -170,6 +175,10 @@ Protected Class Identity
 		    Identity.mSignature = Beacon.DecodeHex(Source.Value("Signature"))
 		  End If
 		  
+		  If Source.HasKey("LoginKey") Then
+		    Identity.mLoginKey = Source.Value("LoginKey")
+		  End If
+		  
 		  Return Identity
 		End Function
 	#tag EndMethod
@@ -177,6 +186,12 @@ Protected Class Identity
 	#tag Method, Flags = &h0
 		Function IsPatreonSupporter() As Boolean
 		  Return Self.mIsPatreonSupporter
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function LoginKey() As Text
+		  Return Self.mLoginKey
 		End Function
 	#tag EndMethod
 
@@ -224,6 +239,10 @@ Protected Class Identity
 
 	#tag Property, Flags = &h21
 		Private mIsPatreonSupporter As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLoginKey As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

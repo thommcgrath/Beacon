@@ -152,6 +152,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineStateChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  #if false
 		    Self.UpdateLocalDocuments()
@@ -162,11 +168,8 @@ End
 		  Self.ToolbarIcon = IconDocuments
 		  Self.ToolbarCaption = "Documents"
 		  
-		  If Not Preferences.OnlineEnabled Then
-		    Self.Switcher.Visible = False
-		    Self.List.Height = Self.List.Height + Self.Switcher.Height
-		    Self.List.Top = Self.Switcher.Top
-		  End If
+		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged)
+		  Self.SwitcherVisible = Preferences.OnlineEnabled
 		End Sub
 	#tag EndEvent
 
@@ -355,6 +358,8 @@ End
 		  Case "Beacon.Document.TitleChanged"
 		    Dim Document As Beacon.Document = Notification.UserData
 		    Break
+		  Case Preferences.Notification_OnlineStateChanged
+		    Self.SwitcherVisible = Preferences.OnlineEnabled
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -527,6 +532,31 @@ End
 	#tag Property, Flags = &h21
 		Private mProgress As DocumentDownloadWindow
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Return Self.Switcher.Visible
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.Switcher.Visible = Value Then
+			    Return
+			  End If
+			  
+			  Self.Switcher.Visible = Value
+			  Dim Top As Integer = Self.Switcher.Top
+			  If Value Then
+			    Top = Top + Self.Switcher.Height
+			  End If
+			  
+			  Self.List.Top = Top
+			  Self.List.Height = Self.Height - Top
+			End Set
+		#tag EndSetter
+		Private SwitcherVisible As Boolean
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter

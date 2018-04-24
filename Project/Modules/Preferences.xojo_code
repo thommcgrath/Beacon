@@ -108,8 +108,12 @@ Protected Module Preferences
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  If Value = OnlineEnabled Then
+			    Return
+			  End If
+			  
 			  mManager.BooleanValue("Online Enabled") = Value
+			  NotificationKit.Post(Notification_OnlineStateChanged, Value)
 			End Set
 		#tag EndSetter
 		OnlineEnabled As Boolean
@@ -146,6 +150,10 @@ Protected Module Preferences
 		#tag EndSetter
 		UIColor As Color
 	#tag EndComputedProperty
+
+
+	#tag Constant, Name = Notification_OnlineStateChanged, Type = Text, Dynamic = False, Default = \"Online State Changed", Scope = Protected
+	#tag EndConstant
 
 
 	#tag ViewBehavior

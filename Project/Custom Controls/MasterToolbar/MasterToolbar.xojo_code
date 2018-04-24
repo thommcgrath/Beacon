@@ -8,7 +8,7 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		  If Item = Nil Then
 		    Return True
 		  End If
-		  If Item.CloseRect.Contains(New REALbasic.Point(X, Y)) Then
+		  If Item.CloseRect <> Nil And Item.CloseRect.Contains(New REALbasic.Point(X, Y)) Then
 		    Self.mCloseTarget = Item.CloseRect
 		  End If
 		  Self.mMouseDownItem = Item
@@ -77,7 +77,11 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		  If ClosePressed Then
 		    RaiseEvent CloseView(Item.View)
 		  ElseIf Item <> Nil And Item.Rect.Contains(New REALbasic.Point(X, Y)) Then
-		    RaiseEvent ViewClicked(Item.View)
+		    If Item = Self.mMenuItem Then
+		      Self.ShowMenu()
+		    Else
+		      RaiseEvent ViewClicked(Item.View)
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
@@ -121,6 +125,14 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		    Self.mMainHighlightRect.Width = Value
 		    Self.Invalidate
 		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Super.Constructor
+		  
+		  Self.mMenuItem = New MasterToolbarItem(Nil)
 		End Sub
 	#tag EndMethod
 
@@ -174,6 +186,53 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		  If Self.mCloseTarget = Nil And Self.mPressedItem = Item Then
 		    G.ForeColor = &c000000A4
 		    G.FillRoundRect(0, 0, G.Width, G.Height, Self.CellCornerSize, Self.CellCornerSize)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DrawMenu(G As Graphics)
+		  Dim BackgroundColor As Color = Self.ColorProfile.BackgroundColor
+		  Dim ForegroundColor, ShadowColor As Color
+		  If BackgroundColor.IsBright Then
+		    ForegroundColor = BackgroundColor.Darker(0.8)
+		    ShadowColor = BackgroundColor.BlendWith(&cFFFFFF, 0.7)
+		  Else
+		    ForegroundColor = &CFFFFFF
+		    ShadowColor = BackgroundColor.Darker(0.5)
+		  End If
+		  
+		  Dim Rect As REALbasic.Rect = Self.mMenuItem.Rect
+		  
+		  If Self.mPressedItem = Self.mMenuItem Or Self.mHoverItem = Self.mMenuItem Then
+		    Dim FrameShadowColor, FrameBorderColor, FrameInsideColor As Color
+		    If BackgroundColor.IsBright Then
+		      FrameShadowColor = &cFFFFFF
+		      FrameInsideColor = BackgroundColor.Darker(0.1)
+		    Else
+		      FrameShadowColor = BackgroundColor.BlendWith(&cFFFFFF, 0.3)
+		      FrameInsideColor = BackgroundColor.Darker(0.3)
+		    End If  
+		    FrameBorderColor = FrameInsideColor.Darker(0.3)
+		    
+		    G.ForeColor = FrameShadowColor
+		    G.FillRoundRect(Rect.Left, Rect.Top + 1, Rect.Width, Rect.Height, Self.CellCornerSize, Self.CellCornerSize)
+		    G.ForeColor = FrameInsideColor
+		    G.FillRoundRect(Rect.Left, Rect.Top, Rect.Width, Rect.Height, Self.CellCornerSize, Self.CellCornerSize)
+		    G.ForeColor = FrameBorderColor
+		    G.DrawRoundRect(Rect.Left, Rect.Top, Rect.Width, Rect.Height, Self.CellCornerSize, Self.CellCornerSize)
+		  End If
+		  
+		  Dim Icon As Picture = BeaconUI.IconWithColor(IconMenu, ForegroundColor)
+		  Dim IconShadow As Picture = BeaconUI.IconWithColor(IconMenu, ShadowColor)
+		  Dim X As Integer = Self.mMenuItem.Rect.Left + ((Self.mMenuItem.Rect.Width - Icon.Width) / 2)
+		  Dim Y As Integer = Self.mMenuItem.Rect.Top + ((Self.mMenuItem.Rect.Height - Icon.Height) / 2)
+		  G.DrawPicture(IconShadow, X, Y + 1)
+		  G.DrawPicture(Icon, X, Y)
+		  
+		  If Self.mPressedItem = Self.mMenuItem Then
+		    G.ForeColor = &c000000A4
+		    G.FillRoundRect(Self.mMenuItem.Rect.Left, Self.mMenuItem.Rect.Top, Self.mMenuItem.Rect.Width, Self.mMenuItem.Rect.Height, Self.CellCornerSize, Self.CellCornerSize)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -247,6 +306,9 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 	#tag Method, Flags = &h21
 		Private Function ItemAtPixel(X As Integer, Y As Integer) As MasterToolbarItem
 		  Dim Point As New REALbasic.Point(X, Y)
+		  If Self.mMenuItem.Rect <> Nil And Self.mMenuItem.Rect.Contains(Point) Then
+		    Return Self.mMenuItem
+		  End If
 		  For I As Integer = 0 To Self.mSidebarItems.Ubound
 		    If Self.mSidebarItems(I).Rect <> Nil And Self.mSidebarItems(I).Rect.Contains(Point) Then
 		      Return Self.mSidebarItems(I)
@@ -276,8 +338,12 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		    G.FillRect(0, 0, G.Width, G.Height)
 		  #endif
 		  
-		  Self.mSidebarRect = Self.DrawSwitchSet(G, Self.CellHorizontalSpacing, Self.mSidebarItems, Self.mSidebarHighlightRect)
+		  Const MenuSize = 24
+		  Self.mMenuItem.Rect = New REALbasic.Rect(Self.CellHorizontalSpacing, (G.Height - MenuSize) / 2, MenuSize, MenuSize)
+		  Self.mSidebarRect = Self.DrawSwitchSet(G, MenuSize + (Self.CellHorizontalSpacing * 2), Self.mSidebarItems, Self.mSidebarHighlightRect)
 		  Self.mMainRect = Self.DrawSwitchSet(G, Self.mSidebarRect.Right + Self.CellHorizontalSpacing, Self.mMainItems, Self.mMainHighlightRect)
+		  Self.mMenuItem.Rect = New REALbasic.Rect(Self.mMenuItem.Rect.Left, Self.mSidebarRect.Top, Self.mMenuItem.Rect.Width, Self.mSidebarRect.Height)
+		  Self.DrawMenu(G)
 		End Sub
 	#tag EndMethod
 
@@ -395,9 +461,52 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ShowMenu()
+		  Dim Menu As New MenuItem
+		  RaiseEvent ConstructMenu(Menu)
+		  If Menu.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Dim X As Integer = Self.mMenuItem.Rect.Left
+		  Dim Y As Integer = Self.mMenuItem.Rect.Bottom
+		  Dim Parent As Window = Self.Window
+		  Do
+		    X = X + Parent.Left
+		    Y = Y + Parent.Top
+		    
+		    If Parent IsA ContainerControl Then
+		      Parent = ContainerControl(Parent).Window
+		    Else
+		      Parent = Nil
+		    End If
+		  Loop Until Parent = Nil
+		  
+		  Dim Choice As MenuItem = Menu.PopUp(X, Y)
+		  If Choice <> Nil Then
+		    RaiseEvent MenuItemSelected(Choice)
+		  End If
+		  
+		  Dim Item As MasterToolbarItem = Self.ItemAtPixel(Me.MouseX, Me.MouseY)
+		  If Self.mHoverItem <> Item Then
+		    Self.mHoverItem = Item
+		    Self.Invalidate
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event CloseView(View As BeaconSubview)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ConstructMenu(Menu As MenuItem)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event MenuItemSelected(Item As MenuItem)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -431,6 +540,10 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 
 	#tag Property, Flags = &h21
 		Private mMainWidthAnimation As AnimationKit.ValueTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMenuItem As MasterToolbarItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -531,7 +644,6 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"
@@ -594,6 +706,12 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 			Group="ID"
 			Type="String"
 			EditorType="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollSpeed"
+			Group="Behavior"
+			InitialValue="20"
+			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

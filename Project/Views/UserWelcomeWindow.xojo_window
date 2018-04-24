@@ -63,9 +63,14 @@ End
 
 	#tag Event
 		Sub Open()
-		  Preferences.OnlineEnabled = False
 		  Self.mBaseURL = Beacon.WebURL("inapp/")
-		  Self.ContentView.LoadURL(Self.mBaseURL + "welcome.php")
+		  Dim File As String = "welcome.php"
+		  If Self.mLoginOnly Then
+		    File = File + "?login_only=true"
+		  Else
+		    Preferences.OnlineEnabled = False
+		  End If
+		  Self.ContentView.LoadURL(Self.mBaseURL + File)
 		End Sub
 	#tag EndEvent
 
@@ -104,8 +109,18 @@ End
 		    If Identity <> Nil Then
 		      Preferences.OnlineToken = Self.mUserToken.ToText
 		      Preferences.OnlineEnabled = True
-		      App.Identity = Identity
-		      Self.Close
+		      
+		      If App.Identity <> Nil And App.Identity.Identifier <> Identity.Identifier Then
+		        // merge old identity
+		        Dim OldIdentity As Beacon.Identity = App.Identity
+		        App.Identity = Identity
+		        #if Not DebugBuild
+		          #Pragma Error "Merge old account into downloaded one"
+		        #endif
+		      Else
+		        App.Identity = Identity
+		        Self.Close
+		      End If
 		      Return
 		    End If
 		  End If
@@ -119,6 +134,20 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
+		  Try
+		    If Success = False And Details IsA Xojo.Core.Dictionary Then
+		      Dim Dict As Xojo.Core.Dictionary = Details
+		      Dim PublicKey As Text = Dict.Value("public_key")
+		      Dim UserID As Text = Dict.Value("user_id")
+		      
+		      If App.Identity.Identifier = UserID And App.Identity.PublicKey = PublicKey Then
+		        Success = True
+		      End If
+		    End If
+		  Catch Err As RuntimeException
+		    
+		  End Try
+		  
 		  If Success Then
 		    Self.ObtainToken()
 		  Else
@@ -128,10 +157,19 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Constructor(LoginOnly As Boolean = False)
+		  Self.mLoginOnly = LoginOnly
+		  Super.Constructor
+		  
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub HandleAnonymous()
-		  
-		  App.Identity = New Beacon.Identity
+		  If App.Identity = Nil Then
+		    App.Identity = New Beacon.Identity
+		  End If
 		  
 		  Dim Params As New Xojo.Core.Dictionary
 		  Params.Value("user_id") = App.Identity.Identifier
@@ -145,7 +183,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub HandleDisableOnline()
-		  App.Identity = New Beacon.Identity
+		  If App.Identity = Nil Then
+		    App.Identity = New Beacon.Identity
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -160,6 +200,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mBaseURL As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLoginOnly As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -220,6 +264,8 @@ End
 		    Dim Request As New BeaconAPI.Request("user.php", "GET", "", "text/plain", AddressOf APICallback_GetCurrentUser)
 		    Request.Authenticate(Self.mUserToken.ToText)
 		    BeaconAPI.Send(Request)
+		  Case "dismiss_me"
+		    Self.Close()
 		  Else
 		    Return False
 		  End Select

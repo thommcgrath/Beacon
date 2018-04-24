@@ -18,7 +18,9 @@ Protected Class MasterToolbarItem
 
 	#tag Method, Flags = &h0
 		Sub Constructor(View As BeaconSubview)
-		  Self.mView = New WeakRef(View)
+		  If View <> Nil Then
+		    Self.mView = New WeakRef(View)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -30,7 +32,7 @@ Protected Class MasterToolbarItem
 
 	#tag Method, Flags = &h0
 		Function IsValid() As Boolean
-		  Return Self.mView.Value <> Nil
+		  Return Self.mView <> Nil And Self.mView.Value <> Nil
 		End Function
 	#tag EndMethod
 

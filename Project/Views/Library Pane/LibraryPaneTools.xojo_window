@@ -1,5 +1,5 @@
 #tag Window
-Begin LibrarySubview LibraryPaneTools
+Begin LibrarySubview LibraryPaneTools Implements NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -115,11 +115,47 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineStateChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.ToolbarIcon = IconTools
 		  Self.ToolbarCaption = "Tools"
+		  
+		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged)
+		  
+		  Self.RebuildList()
 		End Sub
 	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case Preferences.Notification_OnlineStateChanged
+		    Self.RebuildList()
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RebuildList()
+		  Self.ToolsList.DeleteAllRows
+		  
+		  If Preferences.OnlineEnabled Then
+		    Self.ToolsList.AddRow("Mods")
+		  End If
+		  
+		  Self.ToolsList.AddRow("Identity")
+		  Self.ToolsList.AddRow("API Guide")
+		  Self.ToolsList.AddRow("API Builder")
+		End Sub
+	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
@@ -163,19 +199,6 @@ End
 		    End If
 		    Self.ShowView(View)
 		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.DeleteAllRows
-		  
-		  If Preferences.OnlineEnabled Then
-		    Me.AddRow("Mods")
-		  End If
-		  
-		  Me.AddRow("Identity")
-		  Me.AddRow("API Guide")
-		  Me.AddRow("API Builder")
 		End Sub
 	#tag EndEvent
 #tag EndEvents

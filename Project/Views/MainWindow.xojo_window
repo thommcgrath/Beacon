@@ -586,6 +586,33 @@ End
 		  Call Self.DiscardView(View)
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub ConstructMenu(Menu As MenuItem)
+		  If Preferences.OnlineEnabled Then
+		    If App.Identity.LoginKey = "" Then
+		      Menu.Append(New MenuItem("Sign In…", "sign_in"))
+		    Else
+		      Menu.Append(New MenuItem(App.Identity.LoginKey, "view_account"))
+		    End If
+		  Else
+		    Menu.Append(New MenuItem("Enable Cloud && Community Features…", "enable_online"))
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MenuItemSelected(Item As MenuItem)
+		  Select Case Item.Tag
+		  Case "enable_online"
+		    Dim WelcomeWindow As New UserWelcomeWindow(False)
+		    WelcomeWindow.Show()
+		  Case "sign_in"
+		    Dim WelcomeWindow As New UserWelcomeWindow(True)
+		    WelcomeWindow.Show()
+		  Case "view_account"
+		    
+		  End Select
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
