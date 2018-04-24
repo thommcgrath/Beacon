@@ -63,7 +63,7 @@ End
 
 	#tag Event
 		Sub Open()
-		  App.Preferences.BooleanValue("Online Enabled") = False
+		  Preferences.OnlineEnabled = False
 		  Self.mBaseURL = Beacon.WebURL("inapp/")
 		  Self.ContentView.LoadURL(Self.mBaseURL + "welcome.php")
 		End Sub
@@ -76,8 +76,8 @@ End
 		    Try
 		      Dim Dict As Xojo.Core.Dictionary = Details
 		      Dim Token As Text = Dict.Value("session_id")
-		      App.Preferences.TextValue("Online Token") = Token
-		      App.Preferences.BooleanValue("Online Enabled") = True
+		      Preferences.OnlineToken = Token
+		      Preferences.OnlineEnabled = True
 		      Self.Close()
 		    Catch Err As RuntimeException
 		      If Self.ShowConfirm("Something went wrong while saving your authentication token.", "Would you like to try again?", "Try Again", "Cancel") Then
@@ -102,8 +102,8 @@ End
 		    Dim Dict As Xojo.Core.Dictionary = Details
 		    Dim Identity As Beacon.Identity = Beacon.Identity.FromUserDictionary(Dict, Self.mUserPassword.ToText)
 		    If Identity <> Nil Then
-		      App.Preferences.TextValue("Online Token") = Self.mUserToken.ToText
-		      App.Preferences.BooleanValue("Online Enabled") = True
+		      Preferences.OnlineToken = Self.mUserToken.ToText
+		      Preferences.OnlineEnabled = True
 		      App.Identity = Identity
 		      Self.Close
 		      Return

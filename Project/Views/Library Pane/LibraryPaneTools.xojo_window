@@ -100,6 +100,7 @@ Begin LibrarySubview LibraryPaneTools
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -162,6 +163,19 @@ End
 		    End If
 		    Self.ShowView(View)
 		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.DeleteAllRows
+		  
+		  If Preferences.OnlineEnabled Then
+		    Me.AddRow("Mods")
+		  End If
+		  
+		  Me.AddRow("Identity")
+		  Me.AddRow("API Guide")
+		  Me.AddRow("API Builder")
 		End Sub
 	#tag EndEvent
 #tag EndEvents

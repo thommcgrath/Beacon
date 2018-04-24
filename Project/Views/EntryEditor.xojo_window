@@ -219,6 +219,7 @@ Begin Window EntryEditor
          HasBackColor    =   False
          Height          =   209
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   422
          LockBottom      =   True
@@ -416,8 +417,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Dim DefaultSize As New Xojo.Core.Size(900, 500)
-		  Dim PreferredSize As Xojo.Core.Size = App.Preferences.SizeValue("Entry Editor Size", DefaultSize)
+		  Dim PreferredSize As Xojo.Core.Size = Preferences.EntryEditorSize
 		  
 		  Self.Width = Max(PreferredSize.Width, Self.MinWidth)
 		  Self.Height = Max(PreferredSize.Height, Self.MinHeight)
@@ -428,7 +428,7 @@ End
 
 	#tag Event
 		Sub Resized()
-		  App.Preferences.SizeValue("Entry Editor Size") = New Xojo.Core.Size(Self.Width, Self.Height)
+		  Preferences.EntryEditorSize = New Xojo.Core.Size(Self.Width, Self.Height)
 		End Sub
 	#tag EndEvent
 

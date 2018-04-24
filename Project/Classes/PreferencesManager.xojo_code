@@ -1,5 +1,5 @@
 #tag Class
-Protected Class Preferences
+Protected Class PreferencesManager
 	#tag Method, Flags = &h0
 		Function AutoValue(Key As Text, Default As Auto = Nil) As Auto
 		  If Not Self.mValues.HasKey(Key) Then

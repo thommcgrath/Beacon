@@ -279,7 +279,7 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h1
 		Protected Function PrimaryColor() As Color
 		  If App.Identity <> Nil And App.Identity.IsPatreonSupporter Then
-		    Return App.Preferences.ColorValue("UI Color", DefaultPrimaryColor)
+		    Return Preferences.UIColor
 		  Else
 		    Return DefaultPrimaryColor
 		  End If
@@ -289,7 +289,7 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h1
 		Protected Sub PrimaryColor(Assigns Value As Color)
 		  Dim CurrentColor As Color = PrimaryColor()
-		  App.Preferences.ColorValue("UI Color") = Value
+		  Preferences.UIColor = Value
 		  Dim NewColor As Color = PrimaryColor()
 		  
 		  If CurrentColor <> NewColor Then
@@ -300,40 +300,8 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RecallPosition(Extends Win As Window, Key As Text)
-		  Dim Rect As Xojo.Core.Rect = App.Preferences.RectValue(Key, Nil)
-		  If Rect = Nil Then
-		    // That's ok
-		    Return
-		  End If
-		  
-		  Dim Bounds As New REALbasic.Rect(Rect.Left, Rect.Top, Rect.Width, Rect.Height)
-		  Dim ScreenCount As Integer = ScreenCount
-		  Dim MaxArea As Integer
-		  Dim TargetRect As REALbasic.Rect
-		  For I As Integer = 0 To ScreenCount - 1
-		    Dim ScreenRect As New REALbasic.Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
-		    Dim Overlap As REALbasic.Rect = ScreenRect.Intersection(Bounds)
-		    If Overlap = Nil Then
-		      Continue
-		    End If
-		    Dim Area As Integer = Overlap.Width * Overlap.Height
-		    If Area > MaxArea Then
-		      MaxArea = Area
-		      TargetRect = ScreenRect
-		    End If
-		  Next
-		  If TargetRect = Nil Then
-		    // Also ok
-		    Return
-		  End If
-		  
-		  Bounds.Width = Max(Min(Bounds.Width, TargetRect.Width), Win.MinWidth)
-		  Bounds.Height = Max(Min(Bounds.Height, TargetRect.Height), Win.MinHeight)
-		  Bounds.Left = Min(Bounds.Left, TargetRect.Right - Bounds.Width)
-		  Bounds.Top = Min(Bounds.Top, TargetRect.Bottom - Bounds.Height)
-		  
-		  Win.Bounds = Bounds
+		Attributes( Deprecated )  Sub RecallPosition(Extends Win As Window, Key As Text)
+		  // Do nothing
 		End Sub
 	#tag EndMethod
 
@@ -356,10 +324,8 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SavePosition(Extends Win As Window, Key As Text)
-		  Dim Rect As REALbasic.Rect = Win.Bounds
-		  
-		  App.Preferences.RectValue(Key) = New Xojo.Core.Rect(Rect.Left, Rect.Top, Rect.Width, Rect.Height)
+		Attributes( Deprecated )  Sub SavePosition(Extends Win As Window, Key As Text)
+		  // Do Nothing
 		End Sub
 	#tag EndMethod
 

@@ -32,7 +32,6 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
@@ -74,7 +73,6 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       TabIndex        =   1
       TabPanelIndex   =   0
       Top             =   60
-      Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   499
@@ -84,7 +82,6 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -129,6 +126,7 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -157,6 +155,7 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
@@ -225,14 +224,14 @@ End
 	#tag Event
 		Sub Moved()
 		  If Self.mOpened Then
-		    App.Preferences.RectValue("Main Window Size") = New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
+		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
-		  Dim Bounds As Xojo.Core.Rect = App.Preferences.RectValue("Main Window Size")
+		  Dim Bounds As Xojo.Core.Rect = Preferences.MainWindowPosition
 		  If Bounds <> Nil Then
 		    // Find the best screen
 		    Dim IdealScreen As Screen = Screen(0)
@@ -268,7 +267,7 @@ End
 		    Self.Top = Top
 		  End If
 		  
-		  Dim SplitterPosition As Integer = App.Preferences.IntegerValue("Main Splitter Position", 300)
+		  Dim SplitterPosition As Integer = Preferences.MainSplitterPosition
 		  Self.ResizeSplitter(SplitterPosition)
 		  
 		  Self.mOpened = True
@@ -278,7 +277,7 @@ End
 	#tag Event
 		Sub Resized()
 		  If Self.mOpened Then
-		    App.Preferences.RectValue("Main Window Size") = New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
+		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
 		  End If
 		  
 		  Dim Value As Integer = Self.LibraryPane1.Width
@@ -424,7 +423,7 @@ End
 		  Views.Width = Self.Width - Views.Left
 		  
 		  If Self.mOpened Then
-		    App.Preferences.IntegerValue("Main Splitter Position") = NewSize
+		    Preferences.MainSplitterPosition = NewSize
 		  End If
 		End Sub
 	#tag EndMethod

@@ -157,6 +157,7 @@ Begin BeaconWindow UpdateWindow
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
+         ScrollSpeed     =   20
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
@@ -675,7 +676,7 @@ End
 		Sub Action()
 		  Self.Close
 		  
-		  If App.Preferences.BooleanValue("Has Shown Subscribe Dialog") = False Then
+		  If Not Preferences.HasShownSubscribeDialog Then
 		    SubscribeDialog.Present()
 		  End If
 		End Sub

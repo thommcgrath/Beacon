@@ -602,7 +602,7 @@ Inherits Application
 		Private Sub mUpdateChecker_NoUpdate(Sender As UpdateChecker)
 		  #Pragma Unused Sender
 		  
-		  If Self.Preferences.BooleanValue("Has Shown Subscribe Dialog") = False Then
+		  If Not Preferences.HasShownSubscribeDialog Then
 		    SubscribeDialog.Present()
 		  End If
 		End Sub
@@ -614,15 +614,6 @@ Inherits Application
 		  
 		  UpdateWindow.Present(Version, Notes, URL, Signature)
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Preferences() As Preferences
-		  If Self.mPreferences = Nil Then
-		    Self.mPreferences = New Preferences(Self.ApplicationSupport.Child("Preferences.json"))
-		  End If
-		  Return Self.mPreferences
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -656,8 +647,7 @@ Inherits Application
 
 	#tag Method, Flags = &h0
 		Function RecentDocuments() As FolderItem()
-		  Dim SaveData() As Auto
-		  SaveData = Self.Preferences.AutoValue("Documents", SaveData)
+		  Dim SaveData() As Text = Preferences.RecentDocuments
 		  
 		  Dim Documents() As FolderItem
 		  For Each Data As Text In SaveData
@@ -673,14 +663,14 @@ Inherits Application
 
 	#tag Method, Flags = &h0
 		Sub RecentDocuments(Assigns Documents() As FolderItem)
-		  Dim SaveData() As Auto
+		  Dim SaveData() As Text
 		  For Each Document As FolderItem In Documents
 		    If Document <> Nil And Document.Exists Then
 		      Dim Data As String = Document.GetSaveInfo(Nil)
 		      SaveData.Append(EncodeBase64(Data, 0).ToText)
 		    End If
 		  Next
-		  Self.Preferences.AutoValue("Documents") = SaveData
+		  Preferences.RecentDocuments = SaveData
 		  Self.RebuildRecentMenu()
 		End Sub
 	#tag EndMethod
@@ -732,10 +722,6 @@ Inherits Application
 
 	#tag Property, Flags = &h21
 		Private mMutex As Mutex
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPreferences As Preferences
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

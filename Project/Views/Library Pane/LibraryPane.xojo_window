@@ -6,7 +6,6 @@ Begin ContainerControl LibraryPane
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
-   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -45,7 +44,6 @@ Begin ContainerControl LibraryPane
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Transparent     =   False
       Value           =   4
       Visible         =   True
       Width           =   300
@@ -55,7 +53,6 @@ Begin ContainerControl LibraryPane
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -87,7 +84,6 @@ Begin ContainerControl LibraryPane
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -118,7 +114,6 @@ Begin ContainerControl LibraryPane
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -149,7 +144,6 @@ Begin ContainerControl LibraryPane
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -180,7 +174,6 @@ Begin ContainerControl LibraryPane
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -424,14 +417,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

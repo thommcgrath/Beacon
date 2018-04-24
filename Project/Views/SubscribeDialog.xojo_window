@@ -511,7 +511,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present()
-		  App.Preferences.BooleanValue("Has Shown Subscribe Dialog") = True
+		  Preferences.HasShownSubscribeDialog = True
 		  
 		  Dim Win As New SubscribeDialog
 		  Win.Show
