@@ -79,6 +79,24 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		}
 	};
 	
+	var cancel_function = function(event) {
+		if (login_only) {
+			if (current_page == 'login') {
+				window.location = 'beacon://dismiss_me';
+			} else {
+				show_page('login');
+				focus_first(['login_email_field', 'login_password_field', 'login_action_button']);
+			}
+		} else {
+			show_page('intro');
+		}
+	};
+	
+	if (login_only) {
+		show_page('login');
+		focus_first(['login_email_field', 'login_password_field', 'login_action_button']);
+	}
+	
 	document.getElementById('welcome_continue_button').addEventListener('click', function(event) {
 		show_page('loading');
 		
@@ -96,9 +114,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		window.location = 'beacon://set_user_privacy?action=full';
 	});
 	
-	document.getElementById('login_cancel_button').addEventListener('click', function(event) {
-		show_page('intro');
-	});
+	document.getElementById('login_cancel_button').addEventListener('click', cancel_function);
 	
 	document.getElementById('login_recover_button').addEventListener('click', function(event) {
 		show_page('recover');
@@ -106,17 +122,11 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		focus_first(['recover_email_field', 'recover_action_button']);
 	});
 	
-	document.getElementById('recover_cancel_button').addEventListener('click', function(event) {
-		show_page('intro');
-	});
+	document.getElementById('recover_cancel_button').addEventListener('click', cancel_function);
 	
-	document.getElementById('verify_cancel_button').addEventListener('click', function(event) {
-		show_page('intro');
-	});
+	document.getElementById('verify_cancel_button').addEventListener('click', cancel_function);
 	
-	document.getElementById('password_cancel_button').addEventListener('click', function(event) {
-		show_page('intro');
-	});
+	document.getElementById('password_cancel_button').addEventListener('click', cancel_function);
 	
 	document.getElementById('login_form').addEventListener('submit', function(event) {
 		event.preventDefault();
