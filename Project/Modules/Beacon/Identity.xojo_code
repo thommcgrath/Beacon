@@ -30,31 +30,37 @@ Protected Class Identity
 		    Return False
 		  End If
 		  
+		  Dim Changed As Boolean
 		  Try
 		    Dim Signature As Xojo.Core.MemoryBlock = If(Dict.HasKey("validation"), Beacon.DecodeHex(Dict.Value("validation")), Nil)
 		    Dim IsPatreonSupporter As Boolean = Dict.Lookup("is_patreon_supporter", False)
 		    Dim PatreonUserID As Integer = If(Dict.Lookup("patreon_user_id", Nil) <> Nil, Dict.Value("patreon_user_id"), 0)
+		    Dim LoginKey As Text = Dict.Lookup("login_key", "")
 		    
 		    If Self.mSignature <> Signature Then
 		      Self.mSignature = Signature
+		      Changed = True
 		    End If
 		    
 		    If Self.mIsPatreonSupporter <> IsPatreonSupporter Then
 		      Self.mIsPatreonSupporter = IsPatreonSupporter
+		      Changed = True
 		    End If
 		    
 		    If Self.mPatreonUserID <> PatreonUserID Then
 		      Self.mPatreonUserID = PatreonUserID
+		      Changed = True
 		    End If
 		    
-		    If Dict.HasKey("login_key") Then
-		      Self.mLoginKey = Dict.Value("login_key")
+		    If Self.mLoginKey <> LoginKey Then
+		      Self.mLoginKey = LoginKey
+		      Changed = True
 		    End If
-		    
-		    Return True
 		  Catch Err As RuntimeException
-		    Return False
+		    
 		  End Try
+		  
+		  Return Changed
 		End Function
 	#tag EndMethod
 

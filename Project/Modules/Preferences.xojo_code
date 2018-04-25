@@ -128,8 +128,12 @@ Protected Module Preferences
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Init
+			  If OnlineToken = Value Then
+			    Return
+			  End If
+			  
 			  mManager.TextValue("Online Token") = Value
+			  NotificationKit.Post(Notification_OnlineTokenChanged, Value)
 			End Set
 		#tag EndSetter
 		OnlineToken As Text
@@ -155,8 +159,16 @@ Protected Module Preferences
 	#tag Constant, Name = Notification_OnlineStateChanged, Type = Text, Dynamic = False, Default = \"Online State Changed", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = Notification_OnlineTokenChanged, Type = Text, Dynamic = False, Default = \"Online Token Changed", Scope = Protected
+	#tag EndConstant
+
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="HasShownSubscribeDialog"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -172,10 +184,25 @@ Protected Module Preferences
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="MainSplitterPosition"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="OnlineEnabled"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="OnlineToken"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -189,6 +216,12 @@ Protected Module Preferences
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UIColor"
+			Group="Behavior"
+			InitialValue="&c000000"
+			Type="Color"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

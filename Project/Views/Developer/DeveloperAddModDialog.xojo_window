@@ -48,6 +48,7 @@ Begin Window DeveloperAddModDialog
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Register Mod"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -82,6 +83,7 @@ Begin Window DeveloperAddModDialog
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Register your mod with Beacon here to add support for your custom items. You will be given a confirmation code which should be added to your mod page temporarily to prove you are the owner of the mod."
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -220,6 +222,7 @@ Begin Window DeveloperAddModDialog
       Width           =   16
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
@@ -230,7 +233,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub APICallback_RegisterMod(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_RegisterMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Details
 		  
 		  If Success Then

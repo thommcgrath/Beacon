@@ -6,7 +6,6 @@ Begin BeaconContainer ModDetailView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
-   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -44,8 +43,9 @@ Begin BeaconContainer ModDetailView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
-      Transparent     =   False
+      Transparent     =   "False"
       Value           =   3
       Visible         =   True
       Width           =   864
@@ -87,7 +87,7 @@ Begin BeaconContainer ModDetailView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   199
-         Transparent     =   False
+         Transparent     =   "False"
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -120,7 +120,7 @@ Begin BeaconContainer ModDetailView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   233
-         Transparent     =   False
+         Transparent     =   "False"
          Underline       =   False
          Visible         =   True
          Width           =   145
@@ -187,7 +187,7 @@ Begin BeaconContainer ModDetailView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   233
-         Transparent     =   False
+         Transparent     =   "False"
          Underline       =   False
          Visible         =   True
          Width           =   145
@@ -244,8 +244,9 @@ Begin BeaconContainer ModDetailView
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
+         TabStop         =   True
          Top             =   199
-         Transparent     =   False
+         Transparent     =   "False"
          Value           =   0
          Visible         =   True
          Width           =   340
@@ -294,7 +295,7 @@ Begin BeaconContainer ModDetailView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   41
-         Transparent     =   False
+         Transparent     =   "False"
          Underline       =   False
          UseFocusRing    =   False
          Visible         =   True
@@ -325,6 +326,7 @@ Begin BeaconContainer ModDetailView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   4
          TabStop         =   True
@@ -357,6 +359,7 @@ Begin BeaconContainer ModDetailView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
@@ -389,6 +392,7 @@ Begin BeaconContainer ModDetailView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
@@ -421,6 +425,7 @@ Begin BeaconContainer ModDetailView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollSpeed     =   20
          TabIndex        =   4
          TabPanelIndex   =   3
          TabStop         =   True
@@ -432,6 +437,7 @@ Begin BeaconContainer ModDetailView
       End
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -462,7 +468,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ConfirmMod(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_ConfirmMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  If Success Then
 		    Self.CurrentMod.Constructor(Details)
 		    If Self.CurrentMod.Confirmed Then
@@ -480,7 +486,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_EngramsDelete(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_EngramsDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Details
 		  
 		  If Not Success Then
@@ -498,7 +504,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_EngramsLoad(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_EngramsLoad(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Success
 		  #Pragma Unused Message
 		  
@@ -509,7 +515,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_EngramsPost(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_EngramsPost(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Details
 		  
 		  If Not Success Then
@@ -916,14 +922,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

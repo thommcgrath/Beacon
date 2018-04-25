@@ -78,6 +78,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -175,7 +176,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_CloudDocumentsList(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_CloudDocumentsList(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Message
 		  
 		  If Not Success Then
@@ -202,7 +203,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_CommunityDocumentsList(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_CommunityDocumentsList(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Message
 		  
 		  If Not Success Then
@@ -227,7 +228,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Details
 		  
 		  If Success Then

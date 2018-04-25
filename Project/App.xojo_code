@@ -113,6 +113,10 @@ Inherits Application
 		  If Self.mIdentity = Nil Then
 		    Dim WelcomeWindow As New UserWelcomeWindow
 		    WelcomeWindow.Show()
+		  ElseIf Preferences.OnlineEnabled And Preferences.OnlineToken <> "" Then
+		    Dim Request As New BeaconAPI.Request("user.php", "GET", AddressOf APICallback_GetCurrentUser)
+		    Request.Authenticate(Preferences.OnlineToken)
+		    BeaconAPI.Send(Request)
 		  End If
 		  
 		  Self.mUpdateChecker = New UpdateChecker
@@ -362,6 +366,46 @@ Inherits Application
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub APICallback_CreateSession(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		  If Not Success Then
+		    Return
+		  End If
+		  
+		  Try
+		    Dim Dict As Xojo.Core.Dictionary = Details
+		    Dim Token As Text = Dict.Value("session_id")
+		    Preferences.OnlineToken = Token
+		    
+		    Dim Request As New BeaconAPI.Request("user.php", "GET", AddressOf APICallback_GetCurrentUser)
+		    Request.Authenticate(Token)
+		    BeaconAPI.Send(Request)
+		  Catch Err As RuntimeException
+		    
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_GetCurrentUser(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		  If Success Then
+		    Try
+		      Dim Identity As Beacon.Identity = Self.Identity
+		      If Identity.ConsumeUserDictionary(Details) Then
+		        Self.Identity = Identity
+		      End If
+		    Catch Err As RuntimeException
+		      
+		    End Try
+		  ElseIf HTTPStatus = 401 Then
+		    // Need to get a new token
+		    Dim Request As New BeaconAPI.Request("session.php", "POST", AddressOf APICallback_CreateSession)
+		    Request.Sign(Self.Identity)
+		    BeaconAPI.Send(Request)
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
 		  Dim AppSupport As FolderItem = SpecialFolder.ApplicationData
@@ -517,7 +561,6 @@ Inherits Application
 		Sub Identity(Assigns Value As Beacon.Identity)
 		  Dim OriginalUIColor As Color = BeaconUI.PrimaryColor()
 		  Self.mIdentity = Value
-		  Self.Log("Identity is now " + Value.Identifier)
 		  Self.WriteIdentity()
 		  Dim NewUIColor As Color = BeaconUI.PrimaryColor()
 		  If OriginalUIColor <> NewUIColor Then

@@ -26,6 +26,7 @@ Begin BeaconSubview ModsView
    Visible         =   False
    Width           =   1100
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -102,6 +103,7 @@ Begin BeaconSubview ModsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -122,6 +124,7 @@ Begin BeaconSubview ModsView
       HasBackColor    =   False
       Height          =   419
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   236
       LockBottom      =   True
@@ -162,6 +165,7 @@ Begin BeaconSubview ModsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
@@ -192,7 +196,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DeleteMod(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_DeleteMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Details
 		  
 		  If Success Then
@@ -205,7 +209,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ListMods(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_ListMods(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  If Not Success Then
 		    MsgBox("Unable to load mods: " + Message)
 		    Return

@@ -2,10 +2,10 @@
 Begin Window UserWelcomeWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   CloseButton     =   True
+   CloseButton     =   False
    Compatibility   =   ""
    Composite       =   True
-   Frame           =   0
+   Frame           =   1
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -76,7 +76,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_CreateSession(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_CreateSession(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Message
 		  
 		  If Success Then
@@ -104,7 +104,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_GetCurrentUser(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_GetCurrentUser(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  If Success Then
 		    Dim Dict As Xojo.Core.Dictionary = Details
 		    Dim Identity As Beacon.Identity = Beacon.Identity.FromUserDictionary(Dict, Self.mUserPassword.ToText)
@@ -145,7 +145,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_MergeUser(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_MergeUser(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Success
 		  #Pragma Unused Message
 		  #Pragma Unused Details
@@ -155,7 +155,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  Try
 		    If Success = False And Details IsA Xojo.Core.Dictionary Then
 		      Dim Dict As Xojo.Core.Dictionary = Details

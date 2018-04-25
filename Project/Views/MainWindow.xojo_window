@@ -588,15 +588,32 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ConstructMenu(Menu As MenuItem)
+		  Menu.Append(New MenuItem("About Beacon", "about"))
+		  Menu.Append(New MenuItem(MenuItem.TextSeparator))
+		  Menu.Append(New MenuItem("Check for Updates…", "check_updates"))
+		  Menu.Append(New MenuItem("Release Notes…", "release_notes"))
+		  Menu.Append(New MenuItem(MenuItem.TextSeparator))
+		  Menu.Append(New MenuItem("Preferences…", "preferences"))
+		  Menu.Append(New MenuItem(MenuItem.TextSeparator))
+		  
 		  If Preferences.OnlineEnabled Then
 		    If App.Identity.LoginKey = "" Then
 		      Menu.Append(New MenuItem("Sign In…", "sign_in"))
 		    Else
-		      Menu.Append(New MenuItem(App.Identity.LoginKey, "view_account"))
+		      Dim UsernameItem As New MenuItem("Logged in as " + App.Identity.LoginKey)
+		      UsernameItem.Enabled = False
+		      Menu.Append(UsernameItem)
+		      
+		      Menu.Append(New MenuItem("Manage Account", "view_account"))
 		    End If
 		  Else
 		    Menu.Append(New MenuItem("Enable Cloud && Community Features…", "enable_online"))
 		  End If
+		  
+		  Menu.Append(New MenuItem(MenuItem.TextSeparator))
+		  Menu.Append(New MenuItem("Admin Spawn Codes", "spawn_codes"))
+		  Menu.Append(New MenuItem("Report a Problem…", "report_bug"))
+		  Menu.Append(New MenuItem("Make a Donation…", "donate"))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -609,7 +626,21 @@ End
 		    Dim WelcomeWindow As New UserWelcomeWindow(True)
 		    WelcomeWindow.Show()
 		  Case "view_account"
-		    
+		    ShowURL(Beacon.WebURL("/account/?session_id=" + Preferences.OnlineToken))
+		  Case "preferences"
+		    PreferencesWindow.Show
+		  Case "about"
+		    AboutWindow.Show
+		  Case "spawn_codes"
+		    ShowURL(Beacon.WebURL("/spawn/"))
+		  Case "check_updates"
+		    UpdateWindow.Present()
+		  Case "donate"
+		    ShowURL(Beacon.WebURL("/donate.php"))
+		  Case "release_notes"
+		    ShowURL(Beacon.WebURL("/history.php#build" + App.NonReleaseVersion.ToText(Xojo.Core.Locale.Raw, "0")))
+		  Case "report_bug"
+		    Beacon.ReportAProblem()
 		  End Select
 		End Sub
 	#tag EndEvent

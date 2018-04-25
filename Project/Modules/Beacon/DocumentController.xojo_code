@@ -1,7 +1,7 @@
 #tag Class
 Protected Class DocumentController
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Message
 		  #Pragma Unused Details
 		  
@@ -14,7 +14,7 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentDownload(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_DocumentDownload(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  // Reminder: this will happen on the main thread
 		  #Pragma Unused Message
 		  
@@ -33,7 +33,7 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentUpload(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_DocumentUpload(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Message
 		  #Pragma Unused Details
 		  

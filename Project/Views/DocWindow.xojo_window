@@ -71,7 +71,6 @@ Begin BeaconWindow DocWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   63
-      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -98,6 +97,7 @@ Begin BeaconWindow DocWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -114,13 +114,11 @@ Begin BeaconWindow DocWindow
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
       ConsoleSafe     =   False
-      DoubleBuffer    =   False
       Enabled         =   False
       EraseBackground =   True
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -158,6 +156,7 @@ Begin BeaconWindow DocWindow
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -168,7 +167,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -197,6 +195,7 @@ Begin BeaconWindow DocWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       SegmentIndex    =   0
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -210,7 +209,6 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -582,7 +580,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Message
 		  #Pragma Unused Details
 		  
@@ -606,7 +604,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentStatus(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_DocumentStatus(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Message
 		  
 		  If Success Then

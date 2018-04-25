@@ -316,6 +316,7 @@ Begin ContainerControl DeveloperModView
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
+         ScrollSpeed     =   20
          TabIndex        =   1
          TabPanelIndex   =   4
          TabStop         =   True
@@ -358,7 +359,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ConfirmMod(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_ConfirmMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  If Success Then
 		    Self.CurrentMod.Constructor(Details)
 		    If Self.CurrentMod.Confirmed Then
@@ -376,7 +377,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_EngramsDelete(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_EngramsDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Details
 		  
 		  If Not Success Then
@@ -394,7 +395,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_EngramsLoad(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_EngramsLoad(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Success
 		  #Pragma Unused Message
 		  
@@ -405,7 +406,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_EngramsPost(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_EngramsPost(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Details
 		  
 		  If Not Success Then

@@ -95,8 +95,8 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub InvokeCallback(Success As Boolean, Message As Text, Details As Auto)
-		  Self.mCallback.Invoke(Success, Message, Details)
+		Sub InvokeCallback(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		  Self.mCallback.Invoke(Success, Message, Details, HTTPStatus)
 		  Self.mCallback = Nil
 		End Sub
 	#tag EndMethod
@@ -120,7 +120,7 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ReplyCallback(Success As Boolean, Message As Text, Details As Auto)
+		Delegate Sub ReplyCallback(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0

@@ -584,10 +584,11 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DoNothing(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_DoNothing(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Success
 		  #Pragma Unused Message
 		  #Pragma Unused Details
+		  #Pragma Unused HTTPStatus
 		End Sub
 	#tag EndMethod
 

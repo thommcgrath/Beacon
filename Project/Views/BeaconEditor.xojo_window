@@ -6,7 +6,6 @@ Begin BeaconContainer BeaconEditor
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
-   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -71,7 +70,6 @@ Begin BeaconContainer BeaconEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   62
-      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -111,6 +109,7 @@ Begin BeaconContainer BeaconEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
@@ -139,7 +138,6 @@ Begin BeaconContainer BeaconEditor
       TabIndex        =   6
       TabPanelIndex   =   0
       Top             =   0
-      Transparent     =   False
       Value           =   1
       Visible         =   True
       Width           =   347
@@ -150,7 +148,6 @@ Begin BeaconContainer BeaconEditor
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
          ConsoleSafe     =   False
-         DoubleBuffer    =   False
          Enabled         =   False
          EraseBackground =   True
          HasBackColor    =   False
@@ -196,6 +193,7 @@ Begin BeaconContainer BeaconEditor
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollSpeed     =   20
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
@@ -225,6 +223,7 @@ Begin BeaconContainer BeaconEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
@@ -256,6 +255,7 @@ Begin BeaconContainer BeaconEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -271,7 +271,6 @@ Begin BeaconContainer BeaconEditor
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
-      DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
@@ -288,7 +287,6 @@ Begin BeaconContainer BeaconEditor
       TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
-      ToolbarIcon     =   0
       Top             =   281
       Transparent     =   True
       UseFocusRing    =   False
@@ -1187,14 +1185,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

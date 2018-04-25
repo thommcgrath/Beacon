@@ -45,6 +45,7 @@ Begin BeaconSubview DeveloperModsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       SegmentIndex    =   0
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -135,6 +136,7 @@ Begin BeaconSubview DeveloperModsView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -163,6 +165,7 @@ Begin BeaconSubview DeveloperModsView
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
@@ -218,7 +221,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DeleteMod(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_DeleteMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Details
 		  
 		  If Success Then
@@ -231,7 +234,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ListMods(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_ListMods(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  If Not Success Then
 		    MsgBox("Unable to load mods: " + Message)
 		    Return

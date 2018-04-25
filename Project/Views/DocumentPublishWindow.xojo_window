@@ -53,7 +53,6 @@ Begin Window DocumentPublishWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   300
-      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -85,7 +84,6 @@ Begin Window DocumentPublishWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   300
-      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -197,7 +195,6 @@ Begin Window DocumentPublishWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   100
-      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -280,7 +277,6 @@ Begin Window DocumentPublishWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   134
-      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -339,12 +335,10 @@ Begin Window DocumentPublishWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   304
-      Transparent     =   False
       Visible         =   False
       Width           =   16
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
@@ -377,7 +371,6 @@ Begin Window DocumentPublishWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   268
-      Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
@@ -395,7 +388,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentPost(Success As Boolean, Message As Text, Details As Auto)
+		Private Sub APICallback_DocumentPost(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
 		  #Pragma Unused Details
 		  
 		  If Not Success Then

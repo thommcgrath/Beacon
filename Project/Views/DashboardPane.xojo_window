@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconSubview DashboardPane
+Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -84,9 +84,19 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineTokenChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.ToolbarIcon = IconHome
 		  Self.ToolbarCaption = "Home"
+		  
+		  NotificationKit.Watch(Self, Preferences.Notification_OnlineTokenChanged)
+		  
+		  Self.DashboardView.LoadURL(Beacon.WebURL("/inapp/dashboard.php/" + Beacon.EncodeURLComponent(Preferences.OnlineToken)))
 		End Sub
 	#tag EndEvent
 
@@ -97,15 +107,21 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case Preferences.Notification_OnlineTokenChanged
+		    Self.DashboardView.LoadURL(Beacon.WebURL("/inapp/dashboard.php/" + Beacon.EncodeURLComponent(Preferences.OnlineToken)))
+		  End Select
+		End Sub
+	#tag EndMethod
+
 
 #tag EndWindowCode
 
 #tag Events DashboardView
-	#tag Event
-		Sub Open()
-		  Me.LoadURL(Beacon.WebURL("/dashboard/"))
-		End Sub
-	#tag EndEvent
 	#tag Event
 		Sub TitleChanged(newTitle as String)
 		  EmptyToolbar.Caption = NewTitle
