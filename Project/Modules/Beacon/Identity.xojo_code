@@ -35,7 +35,10 @@ Protected Class Identity
 		    Dim Signature As Xojo.Core.MemoryBlock = If(Dict.HasKey("validation"), Beacon.DecodeHex(Dict.Value("validation")), Nil)
 		    Dim IsPatreonSupporter As Boolean = Dict.Lookup("is_patreon_supporter", False)
 		    Dim PatreonUserID As Integer = If(Dict.Lookup("patreon_user_id", Nil) <> Nil, Dict.Value("patreon_user_id"), 0)
-		    Dim LoginKey As Text = Dict.Lookup("login_key", "")
+		    Dim LoginKey As Auto = Dict.Lookup("login_key", "")
+		    If LoginKey = Nil Then
+		      LoginKey = ""
+		    End If
 		    
 		    If Self.mSignature <> Signature Then
 		      Self.mSignature = Signature

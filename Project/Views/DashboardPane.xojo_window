@@ -57,7 +57,9 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasResizer      =   False
+      HasBottomBorder =   True
+      HasResizer      =   "False"
+      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -68,6 +70,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Resizer         =   ""
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   1
@@ -96,7 +99,7 @@ End
 		  
 		  NotificationKit.Watch(Self, Preferences.Notification_OnlineTokenChanged)
 		  
-		  Self.DashboardView.LoadURL(Beacon.WebURL("/inapp/dashboard.php/" + Beacon.EncodeURLComponent(Preferences.OnlineToken)))
+		  Self.DashboardView.LoadURL(Self.DashboardURL)
 		End Sub
 	#tag EndEvent
 
@@ -108,12 +111,18 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DashboardURL() As Text
+		  Return Beacon.WebURL("/inapp/dashboard.php/" + Beacon.EncodeURLComponent(Preferences.OnlineToken) + "?build=" + App.NonReleaseVersion.ToText)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
 		  Case Preferences.Notification_OnlineTokenChanged
-		    Self.DashboardView.LoadURL(Beacon.WebURL("/inapp/dashboard.php/" + Beacon.EncodeURLComponent(Preferences.OnlineToken)))
+		    Self.DashboardView.LoadURL(Self.DashboardURL)
 		  End Select
 		End Sub
 	#tag EndMethod

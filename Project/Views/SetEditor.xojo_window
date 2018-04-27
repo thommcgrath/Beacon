@@ -88,7 +88,8 @@ Begin BeaconContainer SetEditor
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasResizer      =   False
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -99,6 +100,7 @@ Begin BeaconContainer SetEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Resizer         =   ""
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   15

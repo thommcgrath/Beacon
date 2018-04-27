@@ -36,7 +36,8 @@ Begin LibrarySubview LibraryPaneSearch
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasResizer      =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -47,6 +48,7 @@ Begin LibrarySubview LibraryPaneSearch
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Resizer         =   "1"
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   0
@@ -130,6 +132,7 @@ Begin LibrarySubview LibraryPaneSearch
       Width           =   300
    End
    Begin Timer SearchTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -138,6 +141,7 @@ Begin LibrarySubview LibraryPaneSearch
       TabPanelIndex   =   0
    End
    Begin Xojo.Net.HTTPSocket SearchSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

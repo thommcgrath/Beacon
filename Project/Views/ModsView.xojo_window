@@ -153,7 +153,9 @@ Begin BeaconSubview ModsView
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasResizer      =   True
+      HasBottomBorder =   True
+      HasResizer      =   "True"
+      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -164,6 +166,7 @@ Begin BeaconSubview ModsView
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      Resizer         =   ""
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   5

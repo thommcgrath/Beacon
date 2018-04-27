@@ -143,6 +143,38 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.IntegerValue("Simulator Size", 200)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Simulator Size") = Value
+			End Set
+		#tag EndSetter
+		SimulatorSize As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.BooleanValue("Simulator Visible")
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.BooleanValue("Simulator Visible") = Value
+			End Set
+		#tag EndSetter
+		SimulatorVisible As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.ColorValue("UI Color", BeaconUI.DefaultPrimaryColor)
 			End Get
 		#tag EndGetter

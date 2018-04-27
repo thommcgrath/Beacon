@@ -6,7 +6,6 @@ Begin LibrarySubview LibraryPaneEngrams
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
-   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -88,7 +87,6 @@ Begin LibrarySubview LibraryPaneEngrams
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   201
-      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   173
@@ -120,7 +118,6 @@ Begin LibrarySubview LibraryPaneEngrams
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   233
-      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   173
@@ -152,7 +149,6 @@ Begin LibrarySubview LibraryPaneEngrams
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   265
-      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   173
@@ -184,7 +180,6 @@ Begin LibrarySubview LibraryPaneEngrams
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   297
-      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   173
@@ -200,7 +195,8 @@ Begin LibrarySubview LibraryPaneEngrams
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasResizer      =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -211,7 +207,9 @@ Begin LibrarySubview LibraryPaneEngrams
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Resizer         =   "1"
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
@@ -222,6 +220,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Width           =   300
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -362,14 +361,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

@@ -45,7 +45,6 @@ Begin BeaconContainer ModDetailView
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
-      Transparent     =   "False"
       Value           =   3
       Visible         =   True
       Width           =   864
@@ -87,7 +86,6 @@ Begin BeaconContainer ModDetailView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   199
-         Transparent     =   "False"
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -120,7 +118,6 @@ Begin BeaconContainer ModDetailView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   233
-         Transparent     =   "False"
          Underline       =   False
          Visible         =   True
          Width           =   145
@@ -187,7 +184,6 @@ Begin BeaconContainer ModDetailView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   233
-         Transparent     =   "False"
          Underline       =   False
          Visible         =   True
          Width           =   145
@@ -246,7 +242,6 @@ Begin BeaconContainer ModDetailView
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   199
-         Transparent     =   "False"
          Value           =   0
          Visible         =   True
          Width           =   340
@@ -295,7 +290,6 @@ Begin BeaconContainer ModDetailView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   41
-         Transparent     =   "False"
          Underline       =   False
          UseFocusRing    =   False
          Visible         =   True
@@ -314,7 +308,9 @@ Begin BeaconContainer ModDetailView
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasResizer      =   False
+         HasBottomBorder =   True
+         HasResizer      =   "False"
+         HasTopBorder    =   False
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -325,6 +321,7 @@ Begin BeaconContainer ModDetailView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Resizer         =   ""
          Scope           =   2
          ScrollSpeed     =   20
          TabIndex        =   1
@@ -347,7 +344,9 @@ Begin BeaconContainer ModDetailView
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasResizer      =   False
+         HasBottomBorder =   True
+         HasResizer      =   "False"
+         HasTopBorder    =   False
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -358,6 +357,7 @@ Begin BeaconContainer ModDetailView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Resizer         =   ""
          Scope           =   2
          ScrollSpeed     =   20
          TabIndex        =   1
@@ -380,7 +380,9 @@ Begin BeaconContainer ModDetailView
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasResizer      =   False
+         HasBottomBorder =   True
+         HasResizer      =   "False"
+         HasTopBorder    =   False
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -391,6 +393,7 @@ Begin BeaconContainer ModDetailView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Resizer         =   ""
          Scope           =   2
          ScrollSpeed     =   20
          TabIndex        =   1
@@ -413,7 +416,9 @@ Begin BeaconContainer ModDetailView
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasResizer      =   False
+         HasBottomBorder =   True
+         HasResizer      =   "False"
+         HasTopBorder    =   False
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -424,6 +429,7 @@ Begin BeaconContainer ModDetailView
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Resizer         =   ""
          Scope           =   2
          ScrollSpeed     =   20
          TabIndex        =   4

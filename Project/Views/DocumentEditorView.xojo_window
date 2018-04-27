@@ -6,7 +6,6 @@ Begin BeaconSubview DocumentEditorView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
-   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -37,7 +36,8 @@ Begin BeaconSubview DocumentEditorView
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasResizer      =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -48,7 +48,9 @@ Begin BeaconSubview DocumentEditorView
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      Resizer         =   "1"
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -77,6 +79,7 @@ Begin BeaconSubview DocumentEditorView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -131,7 +134,6 @@ Begin BeaconSubview DocumentEditorView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   62
-      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -159,42 +161,9 @@ Begin BeaconSubview DocumentEditorView
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
-      Transparent     =   False
       Value           =   1
       Visible         =   True
       Width           =   451
-      Begin BeaconToolbar HelpHeader
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         Caption         =   "Nothing Selected"
-         CaptionEnabled  =   True
-         CaptionIsButton =   False
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   False
-         HasResizer      =   False
-         Height          =   41
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   251
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   451
-      End
       Begin HTMLViewer HelpView
          AutoDeactivate  =   True
          Enabled         =   True
@@ -224,7 +193,6 @@ Begin BeaconSubview DocumentEditorView
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
          ConsoleSafe     =   False
-         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -246,6 +214,41 @@ Begin BeaconSubview DocumentEditorView
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
+         Visible         =   True
+         Width           =   451
+      End
+      Begin BeaconToolbar HelpHeader
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   "Nothing Selected"
+         CaptionEnabled  =   True
+         CaptionIsButton =   False
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   False
+         HasBottomBorder =   True
+         HasTopBorder    =   False
+         Height          =   41
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Resizer         =   ""
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   False
+         UseFocusRing    =   True
          Visible         =   True
          Width           =   451
       End
@@ -272,6 +275,7 @@ Begin BeaconSubview DocumentEditorView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
@@ -854,14 +858,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true
