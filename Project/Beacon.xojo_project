@@ -268,6 +268,7 @@ Class=KeyPair;Modules/BeaconEncryption/KeyPair.xojo_code;&h00000000638FF7FF;&h00
 Class=BlowfishHeader;Modules/BeaconEncryption/BlowfishHeader.xojo_code;&h00000000186BC4E4;&h0000000029410FFF;false
 Module=Preferences;Modules/Preferences.xojo_code;&h000000005D6CEFFF;&h000000001444B7FF;false
 MultiImage=IconMenu;Icons/IconMenu.xojo_image;&h000000006D49E7FF;&h0000000007F977FF;false
+Module=FrameworkExtensions;Modules/FrameworkExtensions.xojo_code;&h0000000053D607FF;&h000000001444B7FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0
