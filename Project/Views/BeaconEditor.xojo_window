@@ -140,7 +140,7 @@ Begin BeaconContainer BeaconEditor
       TabIndex        =   6
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   347
       Begin SetEditor Editor
@@ -203,6 +203,36 @@ Begin BeaconContainer BeaconEditor
          TabStop         =   True
          Top             =   0
          Transparent     =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   347
+      End
+      Begin LogoFillCanvas LogoFillCanvas1
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   "No Selection"
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   423
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   41
+         Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
          Width           =   347

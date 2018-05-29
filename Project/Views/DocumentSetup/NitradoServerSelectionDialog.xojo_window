@@ -27,7 +27,6 @@ Begin Window NitradoServerSelectionDialog
    Visible         =   True
    Width           =   500
    Begin Beacon.NitradoDeploymentEngine Engine
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -51,9 +50,7 @@ Begin Window NitradoServerSelectionDialog
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
-      Transparent     =   False
       Value           =   1
       Visible         =   True
       Width           =   500
@@ -109,9 +106,7 @@ Begin Window NitradoServerSelectionDialog
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
          Top             =   206
-         Transparent     =   False
          Value           =   0
          Visible         =   True
          Width           =   460
@@ -168,9 +163,7 @@ Begin Window NitradoServerSelectionDialog
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
          Top             =   206
-         Transparent     =   False
          Value           =   0
          Visible         =   True
          Width           =   460
@@ -255,7 +248,6 @@ Begin Window NitradoServerSelectionDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   52
-         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -290,7 +282,6 @@ Begin Window NitradoServerSelectionDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   260
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -322,7 +313,6 @@ Begin Window NitradoServerSelectionDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   260
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80

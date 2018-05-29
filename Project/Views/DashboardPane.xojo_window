@@ -58,7 +58,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Enabled         =   True
       EraseBackground =   False
       HasBottomBorder =   True
-      HasResizer      =   "False"
       HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""

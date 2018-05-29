@@ -159,33 +159,10 @@ Begin BeaconSubview DocumentEditorView
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   451
-      Begin HTMLViewer HelpView
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   395
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   251
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Renderer        =   1
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   41
-         Visible         =   True
-         Width           =   451
-      End
       Begin BeaconEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -198,7 +175,6 @@ Begin BeaconSubview DocumentEditorView
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -252,6 +228,36 @@ Begin BeaconSubview DocumentEditorView
          Visible         =   True
          Width           =   451
       End
+      Begin LogoFillCanvas LogoFillCanvas1
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   "No Selection"
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   395
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   0
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   41
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   451
+      End
    End
    Begin StatusBar Status
       AcceptFocus     =   False
@@ -290,17 +296,23 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub ContentsChanged()
+		  Self.Header.Deploy.Enabled = Self.ReadyToDeploy()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub EnableMenuItems()
 		  FileSaveAs.Enable
+		  
+		  If Self.ReadyToDeploy Then
+		    FileExport.Enable
+		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
-		  Dim HelpFile As FolderItem = App.HelpFile("LootSources.html")
-		  If HelpFile <> Nil Then
-		    Self.HelpView.LoadPage(HelpFile)
-		  End If
 		  Self.Editor.ConsoleSafe = Self.mController.Document.ConsoleModsOnly
 		  Self.UpdateCaptionButton()
 		  Self.UpdateSourceList()
@@ -319,6 +331,14 @@ End
 		End Function
 	#tag EndEvent
 
+
+	#tag MenuHandler
+		Function FileExport() As Boolean Handles FileExport.Action
+			Self.StartDeploy()
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
@@ -402,6 +422,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function ReadyToDeploy() As Boolean
+		  Return Self.Document <> Nil And Self.Document.IsValid
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub RemoveSelectedBeacons(RequireConfirmation As Boolean)
 		  If Self.List.SelCount = 0 Then
 		    Return
@@ -470,6 +496,13 @@ End
 		      Self.Focus = Self.List
 		    End If
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub StartDeploy()
+		  DeployDialog.Present(Self, Self.Document)
+		  Self.ContentsChanged = Self.ContentsChanged Or Self.Document.Modified
 		End Sub
 	#tag EndMethod
 
@@ -597,8 +630,8 @@ End
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Define an additional loot source. Hold to quickly add a source from a menu."
 		  
-		  Dim ShareButton As New BeaconToolbarItem("Deploy", IconToolbarExport, Self.mController.Document.IsValid)
-		  ShareButton.HelpTag = "Deploy this document."
+		  Dim DeployButton As New BeaconToolbarItem("Deploy", IconToolbarExport, Self.ReadyToDeploy)
+		  DeployButton.HelpTag = "Deploy this document."
 		  
 		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected loot source."
@@ -609,7 +642,7 @@ End
 		  Me.LeftItems.Append(AddButton)
 		  Me.LeftItems.Append(DuplicateButton)
 		  Me.RightItems.Append(RebuildButton)
-		  Me.RightItems.Append(ShareButton)
+		  Me.RightItems.Append(DeployButton)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -633,8 +666,7 @@ End
 		  Case "Duplicate"
 		    Self.ShowDuplicateSelectedLootSource()
 		  Case "Deploy"
-		    DeployDialog.Present(Self, Self.mController.Document)
-		    Self.ContentsChanged = Self.ContentsChanged Or Self.mController.Document.Modified
+		    Self.StartDeploy()
 		  Case "Rebuild"
 		    Self.mController.Document.ReconfigurePresets()
 		    Self.UpdateSourceList()
@@ -822,13 +854,6 @@ End
 		  Dim Source As Beacon.LootSource = Me.RowTag(Row)
 		  Return Not Source.IsValid
 		End Function
-	#tag EndEvent
-#tag EndEvents
-#tag Events HelpView
-	#tag Event
-		Sub TitleChanged(newTitle as String)
-		  HelpHeader.Caption = NewTitle
-		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events Editor

@@ -479,7 +479,7 @@ End
 		    View.EmbedWithinPanel(Self.Views, 1, 0, 0, Self.Views.Width, Self.Views.Height)
 		    AppToolbar.AddView(View, False)
 		    
-		    AddHandler View.ContentsChanged, WeakAddressOf Subview_ContentsChanged
+		    AddHandler View.OwnerModifiedHook, WeakAddressOf Subview_ContentsChanged
 		  End If
 		  Self.AppToolbar.SelectView(View)
 		  

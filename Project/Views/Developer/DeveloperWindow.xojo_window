@@ -46,6 +46,7 @@ Begin BeaconMultiview DeveloperWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -75,6 +76,7 @@ Begin BeaconMultiview DeveloperWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True

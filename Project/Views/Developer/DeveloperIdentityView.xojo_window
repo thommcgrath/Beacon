@@ -6,7 +6,6 @@ Begin BeaconSubview DeveloperIdentityView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
-   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -103,7 +102,7 @@ Begin BeaconSubview DeveloperIdentityView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   54
-      Transparent     =   False
+      Transparent     =   "False"
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -151,7 +150,7 @@ Begin BeaconSubview DeveloperIdentityView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   232
-      Transparent     =   False
+      Transparent     =   "False"
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -254,7 +253,7 @@ Begin BeaconSubview DeveloperIdentityView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
-      Transparent     =   False
+      Transparent     =   "False"
       Underline       =   False
       Visible         =   True
       Width           =   120
@@ -286,7 +285,7 @@ Begin BeaconSubview DeveloperIdentityView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
-      Transparent     =   False
+      Transparent     =   "False"
       Underline       =   False
       Visible         =   True
       Width           =   120
@@ -322,7 +321,7 @@ Begin BeaconSubview DeveloperIdentityView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   52
-      Transparent     =   False
+      Transparent     =   "False"
       Underline       =   False
       Visible         =   True
       Width           =   370
@@ -399,7 +398,7 @@ Begin BeaconSubview DeveloperIdentityView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
-      Transparent     =   False
+      Transparent     =   "False"
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -497,14 +496,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

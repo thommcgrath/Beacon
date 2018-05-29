@@ -44,10 +44,8 @@ Begin Window DeployDialog
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
-      Transparent     =   False
-      Value           =   6
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton IntroCancelButton
@@ -77,7 +75,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -109,7 +106,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -138,7 +134,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   194
-         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -168,7 +163,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   162
-         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -289,7 +283,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   52
-         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -324,7 +317,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   52
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   95
@@ -356,7 +348,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   84
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   95
@@ -388,7 +379,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   116
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   95
@@ -420,7 +410,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -452,7 +441,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -554,7 +542,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -586,7 +573,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -723,7 +709,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -780,9 +765,7 @@ Begin Window DeployDialog
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
          Top             =   123
-         Transparent     =   False
          Value           =   0
          Visible         =   True
          Width           =   560
@@ -804,9 +787,7 @@ Begin Window DeployDialog
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   5
-         TabStop         =   True
          Top             =   123
-         Transparent     =   False
          Value           =   0
          Visible         =   True
          Width           =   560
@@ -835,7 +816,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   52
-         Transparent     =   False
          Underline       =   False
          Value           =   True
          Visible         =   True
@@ -900,7 +880,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   130
-         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -968,7 +947,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -1000,7 +978,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
-         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -1048,7 +1025,6 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   52
-         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -1056,14 +1032,12 @@ Begin Window DeployDialog
       End
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Timer CopyPasteWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
