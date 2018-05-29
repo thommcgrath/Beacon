@@ -177,7 +177,7 @@ Begin BeaconContainer BeaconEditor
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         Caption         =   "Item Set Contents"
+         Caption         =   "No Selection"
          CaptionEnabled  =   True
          CaptionIsButton =   False
          DoubleBuffer    =   False

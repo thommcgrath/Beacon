@@ -5,7 +5,11 @@ Inherits ControlCanvas
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  G.TextSize = 24
 		  
-		  Dim BackgroundColor As Color = Self.ColorProfile.BackgroundColor
+		  #if BeaconUI.ToolbarHasBackground
+		    G.ForeColor = Self.ColorProfile.BackgroundColor
+		    G.FillRect(0, 0, G.Width, G.Height)
+		  #endif
+		  
 		  Dim ShadowColor As Color = Self.ColorProfile.ShadowColor
 		  Dim ForeColor As Color = Self.ColorProfile.ForegroundColor
 		  

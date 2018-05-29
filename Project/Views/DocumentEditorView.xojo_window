@@ -198,7 +198,7 @@ Begin BeaconSubview DocumentEditorView
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         Caption         =   "Nothing Selected"
+         Caption         =   "No Selection"
          CaptionEnabled  =   True
          CaptionIsButton =   False
          DoubleBuffer    =   False
