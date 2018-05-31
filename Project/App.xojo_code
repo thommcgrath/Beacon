@@ -277,21 +277,14 @@ Inherits Application
 
 	#tag MenuHandler
 		Function FileOpen() As Boolean Handles FileOpen.Action
-			Dim Dialog As New OpenDialog
-			Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset
-			
-			Dim File As FolderItem = Dialog.ShowModalWithin(MainWindow)
-			If File <> Nil Then
-			Self.OpenDocument(File)
-			End If
-			
+			MainWindow.Documents.ShowOpenDocument()
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpAboutBeacon() As Boolean Handles HelpAboutBeacon.Action
-			AboutWindow.Show
+			MainWindow.ShowView(Nil)
 			Return True
 			
 		End Function

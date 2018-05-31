@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
+Begin BeaconSubview DashboardPane
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -25,27 +25,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
    UseFocusRing    =   False
    Visible         =   True
    Width           =   808
-   Begin HTMLViewer DashboardView
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   515
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Renderer        =   1
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   41
-      Visible         =   True
-      Width           =   808
-   End
    Begin BeaconToolbar EmptyToolbar
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -81,24 +60,309 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Visible         =   True
       Width           =   808
    End
+   Begin UITweaks.ResizedPushButton NewFileButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "New Beacon File…"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   260
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   244
+      Underline       =   False
+      Visible         =   True
+      Width           =   138
+   End
+   Begin UITweaks.ResizedPushButton OpenFileButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Open Beacon File…"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   410
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   244
+      Underline       =   False
+      Visible         =   True
+      Width           =   138
+   End
+   Begin ControlCanvas LogoCanvas
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   128
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   340
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   53
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   128
+   End
+   Begin Label VersionLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   229
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Version X"
+      TextAlign       =   1
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   276
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   350
+   End
+   Begin Label CopyrightLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   229
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "© 2016-2018 Thom McGrath, All Rights Reserved."
+      TextAlign       =   1
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   516
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   350
+   End
+   Begin LinkLabel WebsiteLink
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   229
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "https://beaconapp.cc/"
+      TextAlign       =   1
+      TextColor       =   &c0000FF00
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   320
+      Transparent     =   True
+      Underline       =   True
+      Visible         =   True
+      Width           =   350
+   End
+   Begin Label SyncLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   229
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Engrams Updated Y"
+      TextAlign       =   1
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   298
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   350
+   End
+   Begin ControlCanvas TitleCanvas
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   31
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   331
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   193
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   145
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
-		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineTokenChanged)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
 		  Self.ToolbarIcon = IconHome
 		  Self.ToolbarCaption = "Home"
 		  
-		  NotificationKit.Watch(Self, Preferences.Notification_OnlineTokenChanged)
+		  Self.mMainGroup = New ControlGroup(LogoCanvas, TitleCanvas, VersionLabel, NewFileButton, OpenFileButton, SyncLabel, WebsiteLink)
+		  Self.mCopyrightGroup = New ControlGroup(CopyrightLabel)
 		  
-		  Self.DashboardView.LoadURL(Self.DashboardURL)
+		  Self.MinHeight = EmptyToolbar.Height + Self.mMainGroup.Height + Self.mCopyrightGroup.Height + 60
+		  Self.MinWidth = Max(Self.mMainGroup.Width, Self.mCopyrightGroup.Width) + 40
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize()
+		  If Self.mCopyrightGroup <> Nil Then
+		    Dim Left As Integer = (Self.Width - Self.mCopyrightGroup.Width) / 2
+		    Dim Top As Integer = Self.Height - (Self.mCopyrightGroup.Height + 20)
+		    Dim DeltaX As Integer = Left - Self.mCopyrightGroup.Left
+		    Dim DeltaY As Integer = Top - Self.mCopyrightGroup.Top
+		    Self.mCopyrightGroup.Offset(DeltaX, DeltaY)
+		  End If
+		  
+		  If Self.mMainGroup <> Nil Then
+		    Dim AvailableTop As Integer = Self.EmptyToolbar.Top + Self.EmptyToolbar.Height + 20
+		    Dim AvailableBottom As Integer
+		    If Self.mCopyrightGroup <> Nil Then
+		      AvailableBottom = Self.mCopyrightGroup.Top - 20
+		    Else
+		      AvailableBottom = Self.CopyrightLabel.Top - 20
+		    End If
+		    Dim AvailableHeight As Integer = AvailableBottom - AvailableTop
+		    
+		    Dim Left As Integer = (Self.Width - Self.mMainGroup.Width) / 2
+		    Dim Top As Integer = AvailableTop + Max((AvailableHeight - Self.mMainGroup.Height) / 3, 0)
+		    Dim DeltaX As Integer = Left - Self.mMainGroup.Left
+		    Dim DeltaY As Integer = Top - Self.mMainGroup.Top
+		    Self.mMainGroup.Offset(DeltaX, DeltaY)
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -115,24 +379,74 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
-		  // Part of the NotificationKit.Receiver interface.
-		  
-		  Select Case Notification.Name
-		  Case Preferences.Notification_OnlineTokenChanged
-		    Self.DashboardView.LoadURL(Self.DashboardURL)
-		  End Select
-		End Sub
-	#tag EndMethod
+
+	#tag Property, Flags = &h21
+		Private mCopyrightGroup As ControlGroup
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMainGroup As ControlGroup
+	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events DashboardView
+#tag Events NewFileButton
 	#tag Event
-		Sub TitleChanged(newTitle as String)
-		  EmptyToolbar.Caption = NewTitle
+		Sub Action()
+		  MainWindow.Documents.NewDocument()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events OpenFileButton
+	#tag Event
+		Sub Action()
+		  MainWindow.Documents.ShowOpenDocument()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LogoCanvas
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  G.DrawPicture(LogoColor, 0, 0)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events VersionLabel
+	#tag Event
+		Sub Open()
+		  Me.Text = "Version " + App.ShortVersion + " (Build " + Str(App.NonReleaseVersion, "-0") + ")"
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events WebsiteLink
+	#tag Event
+		Sub Open()
+		  Me.Text = Beacon.WebURL()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  ShowURL(Me.Text)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SyncLabel
+	#tag Event
+		Sub Open()
+		  Dim LastSync As Xojo.Core.Date = LocalData.SharedInstance.LastSync
+		  If LastSync = Nil Then
+		    Me.Text = "No engram data available"
+		  Else
+		    Me.Text = "Engrams updated " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC"
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TitleCanvas
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  G.DrawPicture(BeaconText, 0, 0)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
