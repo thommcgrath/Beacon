@@ -46,14 +46,6 @@ Inherits Application
 	#tag EndEvent
 
 	#tag Event
-		Sub NewDocument()
-		  If Self.mIdentity <> Nil Then
-		    MainWindow.Show
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
 		  #if TargetMacOS
 		    Self.Log("Beacon " + Str(Self.NonReleaseVersion, "-0") + " for Mac.")
@@ -110,19 +102,13 @@ Inherits Application
 		    Dim Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
 		    Self.mIdentity = Identity
 		  End If
-		  If Self.mIdentity = Nil Then
-		    Dim WelcomeWindow As New UserWelcomeWindow
-		    WelcomeWindow.Show()
-		  ElseIf Preferences.OnlineEnabled And Preferences.OnlineToken <> "" Then
-		    Dim Request As New BeaconAPI.Request("user.php", "GET", AddressOf APICallback_GetCurrentUser)
-		    Request.Authenticate(Preferences.OnlineToken)
-		    BeaconAPI.Send(Request)
-		  End If
 		  
-		  Self.mUpdateChecker = New UpdateChecker
-		  AddHandler Self.mUpdateChecker.UpdateAvailable, WeakAddressOf Self.mUpdateChecker_UpdateAvailable
-		  AddHandler Self.mUpdateChecker.NoUpdate, WeakAddressOf Self.mUpdateChecker_NoUpdate
-		  Self.mUpdateChecker.Check(False)
+		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_PrivacyCheck)
+		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_ShowMainWindow)
+		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_RequestUser)
+		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_CheckUpdates)
+		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_NewsletterPrompt)
+		  Self.NextLaunchQueueTask()
 		  
 		  #if TargetWin32
 		    Self.HandleCommandLineData(System.CommandLine, True)
@@ -284,9 +270,10 @@ Inherits Application
 
 	#tag MenuHandler
 		Function HelpAboutBeacon() As Boolean Handles HelpAboutBeacon.Action
+			If Self.mIdentity <> Nil Then
 			MainWindow.ShowView(Nil)
+			End If
 			Return True
-			
 		End Function
 	#tag EndMenuHandler
 
@@ -299,7 +286,7 @@ Inherits Application
 
 	#tag MenuHandler
 		Function HelpCheckforUpdates() As Boolean Handles HelpCheckforUpdates.Action
-			UpdateWindow.Present()
+			Self.CheckForUpdates(False)
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -419,6 +406,28 @@ Inherits Application
 		    End If
 		  Else
 		    Folder.CreateAsFolder
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub CheckForUpdates(Silent As Boolean)
+		  If Preferences.OnlineEnabled = False Then
+		    Dim WelcomeWindow As New UserWelcomeWindow
+		    WelcomeWindow.Show()
+		    Return
+		  End If
+		  
+		  If Silent Then
+		    If Self.mUpdateChecker = Nil Then
+		      Self.mUpdateChecker = New UpdateChecker
+		      AddHandler Self.mUpdateChecker.UpdateAvailable, WeakAddressOf Self.mUpdateChecker_UpdateAvailable
+		      AddHandler Self.mUpdateChecker.NoUpdate, WeakAddressOf Self.mUpdateChecker_NoUpdate
+		    End If
+		    
+		    Self.mUpdateChecker.Check(False)
+		  Else
+		    UpdateWindow.Present()
 		  End If
 		End Sub
 	#tag EndMethod
@@ -562,6 +571,57 @@ Inherits Application
 		End Sub
 	#tag EndMethod
 
+	#tag DelegateDeclaration, Flags = &h21
+		Private Delegate Sub LaunchQueueTask()
+	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_CheckUpdates()
+		  Self.CheckForUpdates(True)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_NewsletterPrompt()
+		  If Not Preferences.HasShownSubscribeDialog Then
+		    SubscribeDialog.Present()
+		  Else
+		    Self.NextLaunchQueueTask()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_PrivacyCheck()
+		  If Self.mIdentity = Nil Then
+		    Dim WelcomeWindow As New UserWelcomeWindow
+		    WelcomeWindow.Show()
+		  Else
+		    Self.NextLaunchQueueTask()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_RequestUser()
+		  If Preferences.OnlineEnabled And Preferences.OnlineToken <> "" Then
+		    Dim Request As New BeaconAPI.Request("user.php", "GET", AddressOf APICallback_GetCurrentUser)
+		    Request.Authenticate(Preferences.OnlineToken)
+		    BeaconAPI.Send(Request)
+		  End If
+		  
+		  Self.NextLaunchQueueTask()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_ShowMainWindow()
+		  MainWindow.Show()
+		  
+		  Self.NextLaunchQueueTask()
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Log(Message As String)
 		  If Self.mLogLock = Nil Then
@@ -638,9 +698,7 @@ Inherits Application
 		Private Sub mUpdateChecker_NoUpdate(Sender As UpdateChecker)
 		  #Pragma Unused Sender
 		  
-		  If Not Preferences.HasShownSubscribeDialog Then
-		    SubscribeDialog.Present()
-		  End If
+		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
 
@@ -649,6 +707,19 @@ Inherits Application
 		  #Pragma Unused Sender
 		  
 		  UpdateWindow.Present(Version, Notes, URL, Signature)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NextLaunchQueueTask()
+		  If Self.mLaunchQueue.Ubound = -1 Then
+		    Return
+		  End If
+		  
+		  Dim Task As LaunchQueueTask = Self.mLaunchQueue(0)
+		  Self.mLaunchQueue.Remove(0)
+		  
+		  Task.Invoke()
 		End Sub
 	#tag EndMethod
 
@@ -750,6 +821,10 @@ Inherits Application
 
 	#tag Property, Flags = &h21
 		Private mIdentity As Beacon.Identity
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLaunchQueue() As LaunchQueueTask
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

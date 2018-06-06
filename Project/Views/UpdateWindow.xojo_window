@@ -44,7 +44,6 @@ Begin BeaconWindow UpdateWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Value           =   1
       Visible         =   True
@@ -101,7 +100,6 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
          Top             =   52
          Value           =   0
          Visible         =   True
@@ -450,7 +448,6 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
          Top             =   52
          Value           =   0
          Visible         =   True
@@ -489,14 +486,12 @@ Begin BeaconWindow UpdateWindow
       End
    End
    Begin UpdateChecker Checker
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Xojo.Net.HTTPSocket Downloader
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -725,15 +720,9 @@ End
 		  Dim Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = "You are using the latest version."
-		  Dialog.Explanation = "That's good news, unless you're having a problem. If you are, please report the problem."
-		  Dialog.ActionButton.Caption = "Report Now"
-		  Dialog.CancelButton.Visible = True
+		  Dialog.Explanation = "Beacon automatically checks for updates on each launch so you won't miss a release."
 		  
-		  Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
-		  If Choice = Dialog.ActionButton Then
-		    Beacon.ReportAProblem()
-		  End If
-		  
+		  Call Dialog.ShowModalWithin(Self)
 		  Self.Close
 		End Sub
 	#tag EndEvent

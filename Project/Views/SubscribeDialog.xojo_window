@@ -491,7 +491,6 @@ Begin Window SubscribeDialog
       Width           =   110
    End
    Begin Xojo.Net.HTTPSocket SubscribeSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -502,6 +501,12 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Close()
+		  App.NextLaunchQueueTask()
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub Open()
 		  Self.SwapButtons()

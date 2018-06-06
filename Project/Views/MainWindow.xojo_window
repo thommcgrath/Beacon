@@ -470,6 +470,7 @@ End
 		    Self.mCurrentView = Nil
 		    Self.Views.Value = 0
 		    Self.AppToolbar.SelectView(DashboardPane1)
+		    Self.UpdateSizeForView(DashboardPane1)
 		    DashboardPane1.SwitchedTo()
 		    Return
 		  End If
@@ -487,14 +488,7 @@ End
 		  Self.AppToolbar.SelectView(View)
 		  
 		  Self.ContentsChanged = View.ContentsChanged
-		  Self.MinWidth = Max(Self.MinSplitterPosition + View.MinWidth, Self.AbsoluteMinWidth)
-		  Self.MinHeight = Max(View.MinHeight, Self.AbsoluteMinHeight)
-		  If Self.Width < Self.MinWidth Then
-		    Self.Width = Self.MinWidth
-		  End If
-		  If Self.Height < Self.MinHeight Then
-		    Self.Height = Self.MinHeight
-		  End If
+		  Self.UpdateSizeForView(View)
 		  
 		  If View.Title <> "" Then
 		    Self.Title = "Beacon: " + View.Title
@@ -518,6 +512,19 @@ End
 		    End If
 		  End If
 		  Self.AppToolbar.Invalidate
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateSizeForView(View As BeaconSubview)
+		  Self.MinWidth = Max(Self.MinSplitterPosition + View.MinWidth, Self.AbsoluteMinWidth)
+		  Self.MinHeight = Max(View.MinHeight, Self.AbsoluteMinHeight)
+		  If Self.Width < Self.MinWidth Then
+		    Self.Width = Self.MinWidth
+		  End If
+		  If Self.Height < Self.MinHeight Then
+		    Self.Height = Self.MinHeight
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -633,7 +640,7 @@ End
 		  Case "spawn_codes"
 		    ShowURL(Beacon.WebURL("/spawn/"))
 		  Case "check_updates"
-		    UpdateWindow.Present()
+		    App.CheckForUpdates(False)
 		  Case "donate"
 		    ShowURL(Beacon.WebURL("/donate.php"))
 		  Case "release_notes"
