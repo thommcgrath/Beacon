@@ -90,8 +90,6 @@ Inherits Application
 		  #endif
 		  Self.RebuildRecentMenu()
 		  
-		  LocalData.Start
-		  
 		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
 		  If IdentityFile.Exists Then
 		    Dim Stream As TextInputStream = TextInputStream.Open(IdentityFile)
@@ -104,6 +102,7 @@ Inherits Application
 		  End If
 		  
 		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_PrivacyCheck)
+		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_SetupDatabase)
 		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_ShowMainWindow)
 		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_RequestUser)
 		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_CheckUpdates)
@@ -413,8 +412,10 @@ Inherits Application
 	#tag Method, Flags = &h0
 		Sub CheckForUpdates(Silent As Boolean)
 		  If Preferences.OnlineEnabled = False Then
-		    Dim WelcomeWindow As New UserWelcomeWindow
-		    WelcomeWindow.Show()
+		    If Not Silent Then
+		      Dim WelcomeWindow As New UserWelcomeWindow
+		      WelcomeWindow.Show()
+		    End If
 		    Return
 		  End If
 		  
@@ -610,6 +611,13 @@ Inherits Application
 		    BeaconAPI.Send(Request)
 		  End If
 		  
+		  Self.NextLaunchQueueTask()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_SetupDatabase()
+		  LocalData.Start
 		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
