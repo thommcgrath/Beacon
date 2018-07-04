@@ -412,7 +412,7 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		    End If
 		    If Self.mSidebarWidthAnimation <> Nil Then
 		      Self.mSidebarWidthAnimation.Cancel
-		      Self.mSidebarWidthAnimation = NIl
+		      Self.mSidebarWidthAnimation = Nil
 		    End If
 		    TargetRect = Self.mSidebarHighlightRect
 		    Prefix = "Sidebar"
@@ -423,7 +423,7 @@ Implements ObservationKit.Observer,AnimationKit.ValueAnimator
 		    End If
 		    If Self.mMainWidthAnimation <> Nil Then
 		      Self.mMainWidthAnimation.Cancel
-		      Self.mMainWidthAnimation = NIl
+		      Self.mMainWidthAnimation = Nil
 		    End If
 		    TargetRect = Self.mMainHighlightRect
 		    Prefix = "Main"

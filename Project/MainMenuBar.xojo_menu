@@ -273,6 +273,16 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin MenuItem ViewSearch
+         SpecialMenu = 0
+         Text = "Search"
+         Index = -2147483648
+         ShortcutKey = "5"
+         Shortcut = "Cmd+5"
+         MenuModifier = True
+         AutoEnable = True
+         Visible = True
+      End
    End
    Begin MenuItem DocumentMenu
       SpecialMenu = 0
@@ -396,33 +406,6 @@ Begin Menu MainMenuBar
          Index = -2147483648
          AutoEnable = True
          Visible = True
-      End
-      Begin MenuItem WindowLibrary
-         SpecialMenu = 0
-         Text = "Library"
-         Index = -2147483648
-         ShortcutKey = "1"
-         Shortcut = "Cmd+1"
-         MenuModifier = True
-         AutoEnable = True
-         Visible = True
-      End
-      Begin MenuItem WindowDeveloperTools
-         SpecialMenu = 0
-         Text = "Developer Tools"
-         Index = -2147483648
-         ShortcutKey = "2"
-         Shortcut = "Cmd+2"
-         MenuModifier = True
-         AutoEnable = True
-         Visible = True
-      End
-      Begin MenuItem UntitledSeparator4
-         SpecialMenu = 0
-         Text = "-"
-         Index = -2147483648
-         AutoEnable = True
-         Visible = False
       End
    End
    Begin MenuItem HelpMenu

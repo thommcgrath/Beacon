@@ -298,35 +298,43 @@ End
 
 	#tag MenuHandler
 		Function ViewDashboard() As Boolean Handles ViewDashboard.Action
-			Self.ShowView(Nil)
+			Self.ShowView(Self.DashboardPane1)
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewDocuments() As Boolean Handles ViewDocuments.Action
-			LibraryPane1.ShowPage(LibraryPane.PaneDocuments)
+			Self.ShowView(Self.LibraryPane1.DocumentsPane)
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewEngrams() As Boolean Handles ViewEngrams.Action
-			LibraryPane1.ShowPage(LibraryPane.PaneEngrams)
+			Self.ShowView(Self.LibraryPane1.EngramsPane)
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewPresets() As Boolean Handles ViewPresets.Action
-			LibraryPane1.ShowPage(LibraryPane.PanePresets)
+			Self.ShowView(Self.LibraryPane1.PresetsPane)
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function ViewSearch() As Boolean Handles ViewSearch.Action
+			Self.ShowView(Self.LibraryPane1.SearchPane)
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function ViewTools() As Boolean Handles ViewTools.Action
-			LibraryPane1.ShowPage(LibraryPane.PaneTools)
+			Self.ShowView(Self.LibraryPane1.ToolsPane)
 			Return True
 		End Function
 	#tag EndMenuHandler
