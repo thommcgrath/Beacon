@@ -37,7 +37,6 @@ Begin BeaconSubview PresetEditorView
       Enabled         =   True
       EraseBackground =   False
       HasBottomBorder =   True
-      HasResizer      =   "False"
       HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
@@ -1663,9 +1662,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("AddEntries", Nil))
-		  Me.LeftItems.Append(New BeaconToolbarItem("EditEntries", Nil, False))
-		  Me.LeftItems.Append(New BeaconToolbarItem("DeleteEntries", Nil, False))
+		  Me.LeftItems.Append(New BeaconToolbarItem("AddEntries", IconAdd))
+		  Me.LeftItems.Append(New BeaconToolbarItem("EditEntries", IconToolbarEdit, False))
+		  Me.LeftItems.Append(New BeaconToolbarItem("DeleteEntries", IconRemove, False))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
