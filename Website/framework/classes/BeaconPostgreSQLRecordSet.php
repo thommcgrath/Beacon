@@ -62,7 +62,7 @@ class BeaconPostgreSQLRecordSet extends BeaconRecordSet {
 			return null;
 		}
 		
-		$value = pg_fetch_result($this->result, $index);
+		$value = pg_fetch_result($this->result, $this->offset, $index);
 		$type = pg_field_type($this->result, $index);
 		switch ($type) {
 		case 'boolean':
