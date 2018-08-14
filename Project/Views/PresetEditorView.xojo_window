@@ -36,7 +36,8 @@ Begin BeaconSubview PresetEditorView
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasResizer      =   False
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -47,7 +48,9 @@ Begin BeaconSubview PresetEditorView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Resizer         =   ""
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -1659,9 +1662,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("AddEntries", Nil))
-		  Me.LeftItems.Append(New BeaconToolbarItem("EditEntries", Nil, False))
-		  Me.LeftItems.Append(New BeaconToolbarItem("DeleteEntries", Nil, False))
+		  Me.LeftItems.Append(New BeaconToolbarItem("AddEntries", IconAdd))
+		  Me.LeftItems.Append(New BeaconToolbarItem("EditEntries", IconToolbarEdit, False))
+		  Me.LeftItems.Append(New BeaconToolbarItem("DeleteEntries", IconRemove, False))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

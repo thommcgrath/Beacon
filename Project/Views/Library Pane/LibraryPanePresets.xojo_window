@@ -36,7 +36,8 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasResizer      =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -47,7 +48,9 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Resizer         =   "1"
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True

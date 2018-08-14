@@ -54,6 +54,11 @@ Inherits Listbox
 		    Return True
 		  End If
 		  
+		  Dim IsChecked As Boolean = Self.CellType(Row, Column) = Listbox.TypeCheckbox Or Self.ColumnType(Column) = Listbox.TypeCheckbox
+		  If IsChecked Then
+		    MaxDrawWidth = MaxDrawWidth - 20
+		  End If
+		  
 		  Clip.TextSize = 0
 		  Clip.TextFont = "System"
 		  Clip.Bold = RowInvalid
@@ -77,9 +82,9 @@ Inherits Listbox
 		    End If
 		    Select Case Align
 		    Case Listbox.AlignLeft, Listbox.AlignDefault
-		      DrawLeft = CellPadding
+		      DrawLeft = CellPadding + If(IsChecked, 20, 0)
 		    Case Listbox.AlignCenter
-		      DrawLeft = CellPadding + ((MaxDrawWidth - LineWidth) / 2)
+		      DrawLeft = CellPadding + If(IsChecked, 20, 0) + ((MaxDrawWidth - LineWidth) / 2)
 		    Case Listbox.AlignRight, Listbox.AlignDecimal
 		      DrawLeft = Clip.Width - (LineWidth + CellPadding)
 		    End Select
@@ -111,49 +116,6 @@ Inherits Listbox
 		  #Pragma Unused Column
 		  #Pragma Unused X
 		  #Pragma Unused Y
-		  
-		  #if false
-		    Dim IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
-		    Dim RefTextColor As Color
-		    If Self.Selected(Row) Then
-		      RefTextColor = if(IsHighlighted, Self.SelectedTextColor, Self.SelectedTextColorInactive)
-		    Else
-		      RefTextColor = Self.TextColor
-		    End If
-		    
-		    Dim LeftEdge As Integer = 0
-		    Dim DrawWidth As Integer = Self.Column(Column).WidthActual - 8
-		    Dim RightEdge As Integer = LeftEdge + DrawWidth
-		    
-		    If CellTextPaint(G, Row, Column, RefTextColor, New Xojo.Core.Rect(LeftEdge, 0, DrawWidth, Self.DefaultRowHeight), Y, IsHighlighted) Then
-		      Return True
-		    End If
-		    
-		    G.ForeColor = RefTextColor
-		    G.TextFont = "System"
-		    
-		    Dim Contents As String = ReplaceLineEndings(Self.Cell(Row, Column), EndOfLine)
-		    Dim Lines() As String = Contents.Split(EndOfLine)
-		    
-		    Dim ContentsWidth As Integer = Min(Ceil(G.StringWidth(Contents)), DrawWidth)
-		    Dim ContentsLeft As Integer
-		    Dim Align As Integer = Self.CellAlignment(Row, Column)
-		    If Align = Listbox.AlignDefault Then
-		      Align = Self.ColumnAlignment(Column)
-		    End If
-		    Select Case Align
-		    Case Listbox.AlignLeft, Listbox.AlignDefault
-		      ContentsLeft = LeftEdge
-		    Case Listbox.AlignCenter
-		      ContentsLeft = ((DrawWidth - ContentsWidth) / 2) + LeftEdge
-		    Case Listbox.AlignRight, Listbox.AlignDecimal
-		      ContentsLeft = RightEdge - ContentsWidth
-		    End Select
-		    
-		    ContentsLeft = ContentsLeft + Self.ColumnAlignmentOffset(Column) + Self.CellAlignmentOffset(Row, Column)
-		    
-		    G.DrawString(Contents, ContentsLeft, Y + 1, DrawWidth, True)
-		  #endif
 		  
 		  Return True
 		End Function

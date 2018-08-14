@@ -10,6 +10,13 @@ Implements ObservationKit.Observable
 	#tag EndEvent
 
 	#tag Event
+		Sub ContentsChanged()
+		  RaiseEvent ContentsChanged
+		  RaiseEvent OwnerModifiedHook
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub EnableMenuItems()
 		  // The parent view will call down to the EnableMenuItems method
 		End Sub
@@ -212,6 +219,10 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event ContentsChanged()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event EnableMenuItems()
 	#tag EndHook
 
@@ -221,6 +232,10 @@ Implements ObservationKit.Observable
 
 	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event OwnerModifiedHook()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -296,14 +311,6 @@ Implements ObservationKit.Observable
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Visible=true
-			Group="Windows Behavior"
-			InitialValue="False"
-			Type="Boolean"
-			EditorType="Boolean"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AcceptFocus"
 			Visible=true

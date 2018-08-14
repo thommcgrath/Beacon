@@ -539,6 +539,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.Rollback()
 		    Return False
 		  End Try
+		  
+		  Exception Err As RuntimeException
+		    App.Log("Unhabdled exception in LocalData.Import: " + Err.Message)
+		    Return False
 		End Function
 	#tag EndMethod
 

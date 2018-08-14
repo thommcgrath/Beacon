@@ -36,7 +36,9 @@ Begin BeaconSubview APIBuilderView
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasResizer      =   False
+      HasBottomBorder =   True
+      HasResizer      =   "False"
+      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -47,6 +49,7 @@ Begin BeaconSubview APIBuilderView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Resizer         =   ""
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   0

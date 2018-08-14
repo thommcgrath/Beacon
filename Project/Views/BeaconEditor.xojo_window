@@ -97,7 +97,8 @@ Begin BeaconContainer BeaconEditor
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasResizer      =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -108,6 +109,7 @@ Begin BeaconContainer BeaconEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      Resizer         =   "1"
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   5
@@ -138,7 +140,7 @@ Begin BeaconContainer BeaconEditor
       TabIndex        =   6
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   347
       Begin SetEditor Editor
@@ -175,13 +177,14 @@ Begin BeaconContainer BeaconEditor
          AcceptTabs      =   False
          AutoDeactivate  =   True
          Backdrop        =   0
-         Caption         =   "Item Set Contents"
+         Caption         =   "No Selection"
          CaptionEnabled  =   True
          CaptionIsButton =   False
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasResizer      =   False
+         HasBottomBorder =   True
+         HasTopBorder    =   False
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -192,6 +195,7 @@ Begin BeaconContainer BeaconEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         Resizer         =   ""
          Scope           =   2
          ScrollSpeed     =   20
          TabIndex        =   0
@@ -199,6 +203,36 @@ Begin BeaconContainer BeaconEditor
          TabStop         =   True
          Top             =   0
          Transparent     =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   347
+      End
+      Begin LogoFillCanvas LogoFillCanvas1
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   "No Selection"
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   423
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   41
+         Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
          Width           =   347
@@ -297,6 +331,19 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.Simulator.Height = Preferences.SimulatorSize
+		  If Self.SimulatorVisible Then
+		    Self.Simulator.Top = Self.Height - Self.Simulator.Height
+		  Else
+		    Self.Simulator.Top = Self.Height
+		  End If
+		  Self.SetList.Height = Self.Simulator.Top - Self.SetList.Top
+		End Sub
+	#tag EndEvent
+
+
 	#tag MenuHandler
 		Function DocumentRemoveItemSet() As Boolean Handles DocumentRemoveItemSet.Action
 			Self.RemoveSelectedItemSets(True)
@@ -672,6 +719,62 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SimulatorVisible() As Boolean
+		  Return Preferences.SimulatorVisible
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SimulatorVisible(Animated As Boolean = True, Assigns Value As Boolean)
+		  If Value = Self.SimulatorVisible Then
+		    Return
+		  End If
+		  
+		  Preferences.SimulatorVisible = Value
+		  
+		  Dim SimulatorTop As Integer
+		  
+		  If Value Then
+		    SimulatorTop = Self.Height - Preferences.SimulatorSize
+		  Else
+		    SimulatorTop = Self.Height
+		  End If
+		  
+		  If Not Animated Then
+		    Self.Simulator.Top = SimulatorTop
+		    Self.SetList.Height = SimulatorTop - Self.SetList.Top
+		    Return
+		  End If
+		  
+		  Dim Curve As AnimationKit.Curve = AnimationKit.Curve.CreateEaseOut
+		  Dim Duration As Double = 0.15
+		  
+		  If Self.mSetListTask <> Nil Then
+		    Self.mSetListTask.Cancel
+		    Self.mSetListTask = Nil
+		  End If
+		  
+		  If Self.mSimulatorTask <> Nil Then
+		    Self.mSimulatorTask.Cancel
+		    Self.mSimulatorTask = Nil
+		  End If
+		  
+		  Self.mSetListTask = New AnimationKit.MoveTask(Self.SetList)
+		  Self.mSetListTask.Height = SimulatorTop - Self.SetList.Top
+		  Self.mSetListTask.DurationInSeconds = Duration
+		  Self.mSetListTask.Curve = Curve
+		  Self.mSetListTask.Run
+		  
+		  Self.mSimulatorTask = New AnimationKit.MoveTask(Self.Simulator)
+		  Self.mSimulatorTask.Top = SimulatorTop
+		  Self.mSimulatorTask.Height = Preferences.SimulatorSize
+		  Self.mSimulatorTask.DurationInSeconds = Duration
+		  Self.mSimulatorTask.Curve = Curve
+		  Self.mSimulatorTask.Run
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Sources() As Beacon.LootSource()
 		  // Clone the array, but not the items
 		  Dim Results() As Beacon.LootSource
@@ -734,6 +837,14 @@ End
 
 	#tag Property, Flags = &h21
 		Private mConsoleSafe As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSetListTask As AnimationKit.MoveTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSimulatorTask As AnimationKit.MoveTask
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1107,6 +1218,7 @@ End
 		  Case "AddSet"
 		    Self.ShowNewSet()
 		  Case "Simulate"
+		    Self.SimulatorVisible = True
 		    Self.Simulator.Simulate(Self.mSources(0))
 		  End Select
 		End Sub
@@ -1181,6 +1293,29 @@ End
 		  
 		  
 		  RaiseEvent PresentLootSourceEditor(Self.mSources(0))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Simulator
+	#tag Event
+		Sub ShouldResize(ByRef NewSize As Integer)
+		  Me.Height = NewSize
+		  Self.SetList.Height = (Self.Height - Self.SetList.Top) - NewSize
+		  Me.Top = Self.SetList.Top + Self.SetList.Height
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ResizeFinished()
+		  If Me.Height < 100 Then
+		    Self.SimulatorVisible = False
+		  Else
+		    Preferences.SimulatorSize = Me.Height
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldClose()
+		  Self.SimulatorVisible = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents

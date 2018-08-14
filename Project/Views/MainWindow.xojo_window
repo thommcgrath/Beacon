@@ -231,6 +231,9 @@ End
 
 	#tag Event
 		Sub Open()
+		  Self.MinWidth = Self.AbsoluteMinWidth
+		  Self.MinHeight = Self.AbsoluteMinHeight
+		  
 		  Dim Bounds As Xojo.Core.Rect = Preferences.MainWindowPosition
 		  If Bounds <> Nil Then
 		    // Find the best screen
@@ -295,35 +298,43 @@ End
 
 	#tag MenuHandler
 		Function ViewDashboard() As Boolean Handles ViewDashboard.Action
-			Self.ShowView(Nil)
+			Self.ShowView(Self.DashboardPane1)
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewDocuments() As Boolean Handles ViewDocuments.Action
-			LibraryPane1.ShowPage(LibraryPane.PaneDocuments)
+			Self.ShowView(Self.LibraryPane1.DocumentsPane)
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewEngrams() As Boolean Handles ViewEngrams.Action
-			LibraryPane1.ShowPage(LibraryPane.PaneEngrams)
+			Self.ShowView(Self.LibraryPane1.EngramsPane)
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewPresets() As Boolean Handles ViewPresets.Action
-			LibraryPane1.ShowPage(LibraryPane.PanePresets)
+			Self.ShowView(Self.LibraryPane1.PresetsPane)
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function ViewSearch() As Boolean Handles ViewSearch.Action
+			Self.ShowView(Self.LibraryPane1.SearchPane)
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function ViewTools() As Boolean Handles ViewTools.Action
-			LibraryPane1.ShowPage(LibraryPane.PaneTools)
+			Self.ShowView(Self.LibraryPane1.ToolsPane)
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -467,6 +478,7 @@ End
 		    Self.mCurrentView = Nil
 		    Self.Views.Value = 0
 		    Self.AppToolbar.SelectView(DashboardPane1)
+		    Self.UpdateSizeForView(DashboardPane1)
 		    DashboardPane1.SwitchedTo()
 		    Return
 		  End If
@@ -479,19 +491,12 @@ End
 		    View.EmbedWithinPanel(Self.Views, 1, 0, 0, Self.Views.Width, Self.Views.Height)
 		    AppToolbar.AddView(View, False)
 		    
-		    AddHandler View.ContentsChanged, WeakAddressOf Subview_ContentsChanged
+		    AddHandler View.OwnerModifiedHook, WeakAddressOf Subview_ContentsChanged
 		  End If
 		  Self.AppToolbar.SelectView(View)
 		  
 		  Self.ContentsChanged = View.ContentsChanged
-		  Self.MinWidth = Max(Self.MinSplitterPosition + View.MinWidth, Self.AbsoluteMinWidth)
-		  Self.MinHeight = Max(View.MinHeight, Self.AbsoluteMinHeight)
-		  If Self.Width < Self.MinWidth Then
-		    Self.Width = Self.MinWidth
-		  End If
-		  If Self.Height < Self.MinHeight Then
-		    Self.Height = Self.MinHeight
-		  End If
+		  Self.UpdateSizeForView(View)
 		  
 		  If View.Title <> "" Then
 		    Self.Title = "Beacon: " + View.Title
@@ -518,6 +523,19 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateSizeForView(View As BeaconSubview)
+		  Self.MinWidth = Max(Self.MinSplitterPosition + View.MinWidth, Self.AbsoluteMinWidth)
+		  Self.MinHeight = Max(View.MinHeight, Self.AbsoluteMinHeight)
+		  If Self.Width < Self.MinWidth Then
+		    Self.Width = Self.MinWidth
+		  End If
+		  If Self.Height < Self.MinHeight Then
+		    Self.Height = Self.MinHeight
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mCurrentView As BeaconSubview
@@ -532,7 +550,7 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = AbsoluteMinHeight, Type = Double, Dynamic = False, Default = \"400", Scope = Private
+	#tag Constant, Name = AbsoluteMinHeight, Type = Double, Dynamic = False, Default = \"468", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = AbsoluteMinWidth, Type = Double, Dynamic = False, Default = \"800", Scope = Private
@@ -588,8 +606,6 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ConstructMenu(Menu As MenuItem)
-		  Menu.Append(New MenuItem("About Beacon", "about"))
-		  Menu.Append(New MenuItem(MenuItem.TextSeparator))
 		  Menu.Append(New MenuItem("Check for Updates…", "check_updates"))
 		  Menu.Append(New MenuItem("Release Notes…", "release_notes"))
 		  Menu.Append(New MenuItem(MenuItem.TextSeparator))
@@ -629,12 +645,10 @@ End
 		    ShowURL(Beacon.WebURL("/account/?session_id=" + Preferences.OnlineToken))
 		  Case "preferences"
 		    PreferencesWindow.Show
-		  Case "about"
-		    AboutWindow.Show
 		  Case "spawn_codes"
 		    ShowURL(Beacon.WebURL("/spawn/"))
 		  Case "check_updates"
-		    UpdateWindow.Present()
+		    App.CheckForUpdates(False)
 		  Case "donate"
 		    ShowURL(Beacon.WebURL("/donate.php"))
 		  Case "release_notes"

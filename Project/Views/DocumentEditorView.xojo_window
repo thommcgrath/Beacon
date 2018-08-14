@@ -6,7 +6,6 @@ Begin BeaconSubview DocumentEditorView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
-   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -37,7 +36,8 @@ Begin BeaconSubview DocumentEditorView
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasResizer      =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -48,7 +48,9 @@ Begin BeaconSubview DocumentEditorView
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      Resizer         =   "1"
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -77,6 +79,7 @@ Begin BeaconSubview DocumentEditorView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
@@ -131,7 +134,6 @@ Begin BeaconSubview DocumentEditorView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   62
-      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -157,66 +159,10 @@ Begin BeaconSubview DocumentEditorView
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
-      Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   451
-      Begin BeaconToolbar HelpHeader
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         Caption         =   "Nothing Selected"
-         CaptionEnabled  =   True
-         CaptionIsButton =   False
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   False
-         HasResizer      =   False
-         Height          =   41
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   251
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   451
-      End
-      Begin HTMLViewer HelpView
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   395
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   251
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Renderer        =   1
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   41
-         Visible         =   True
-         Width           =   451
-      End
       Begin BeaconEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -224,13 +170,11 @@ Begin BeaconSubview DocumentEditorView
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
          ConsoleSafe     =   False
-         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -246,6 +190,71 @@ Begin BeaconSubview DocumentEditorView
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
+         Visible         =   True
+         Width           =   451
+      End
+      Begin BeaconToolbar HelpHeader
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   "No Selection"
+         CaptionEnabled  =   True
+         CaptionIsButton =   False
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   False
+         HasBottomBorder =   True
+         HasTopBorder    =   False
+         Height          =   41
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Resizer         =   ""
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   451
+      End
+      Begin LogoFillCanvas LogoFillCanvas1
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   "No Selection"
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   395
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   0
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   41
+         Transparent     =   True
+         UseFocusRing    =   True
          Visible         =   True
          Width           =   451
       End
@@ -272,6 +281,7 @@ Begin BeaconSubview DocumentEditorView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
@@ -286,17 +296,23 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub ContentsChanged()
+		  Self.Header.Deploy.Enabled = Self.ReadyToDeploy()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub EnableMenuItems()
 		  FileSaveAs.Enable
+		  
+		  If Self.ReadyToDeploy Then
+		    FileExport.Enable
+		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
-		  Dim HelpFile As FolderItem = App.HelpFile("LootSources.html")
-		  If HelpFile <> Nil Then
-		    Self.HelpView.LoadPage(HelpFile)
-		  End If
 		  Self.Editor.ConsoleSafe = Self.mController.Document.ConsoleModsOnly
 		  Self.UpdateCaptionButton()
 		  Self.UpdateSourceList()
@@ -315,6 +331,14 @@ End
 		End Function
 	#tag EndEvent
 
+
+	#tag MenuHandler
+		Function FileExport() As Boolean Handles FileExport.Action
+			Self.StartDeploy()
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
@@ -398,6 +422,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function ReadyToDeploy() As Boolean
+		  Return Self.Document <> Nil And Self.Document.IsValid
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub RemoveSelectedBeacons(RequireConfirmation As Boolean)
 		  If Self.List.SelCount = 0 Then
 		    Return
@@ -466,6 +496,13 @@ End
 		      Self.Focus = Self.List
 		    End If
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub StartDeploy()
+		  DeployDialog.Present(Self, Self.Document)
+		  Self.ContentsChanged = Self.ContentsChanged Or Self.Document.Modified
 		End Sub
 	#tag EndMethod
 
@@ -593,8 +630,8 @@ End
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Define an additional loot source. Hold to quickly add a source from a menu."
 		  
-		  Dim ShareButton As New BeaconToolbarItem("Deploy", IconToolbarExport, Self.mController.Document.IsValid)
-		  ShareButton.HelpTag = "Deploy this document."
+		  Dim DeployButton As New BeaconToolbarItem("Deploy", IconToolbarExport, Self.ReadyToDeploy)
+		  DeployButton.HelpTag = "Deploy this document."
 		  
 		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected loot source."
@@ -605,7 +642,7 @@ End
 		  Me.LeftItems.Append(AddButton)
 		  Me.LeftItems.Append(DuplicateButton)
 		  Me.RightItems.Append(RebuildButton)
-		  Me.RightItems.Append(ShareButton)
+		  Me.RightItems.Append(DeployButton)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -629,8 +666,7 @@ End
 		  Case "Duplicate"
 		    Self.ShowDuplicateSelectedLootSource()
 		  Case "Deploy"
-		    DeployDialog.Present(Self, Self.mController.Document)
-		    Self.ContentsChanged = Self.ContentsChanged Or Self.mController.Document.Modified
+		    Self.StartDeploy()
 		  Case "Rebuild"
 		    Self.mController.Document.ReconfigurePresets()
 		    Self.UpdateSourceList()
@@ -820,13 +856,6 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events HelpView
-	#tag Event
-		Sub TitleChanged(newTitle as String)
-		  HelpHeader.Caption = NewTitle
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events Editor
 	#tag Event
 		Sub Updated()
@@ -854,14 +883,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
-	#tag ViewProperty
-		Name="DoubleBuffer"
-		Visible=true
-		Group="Windows Behavior"
-		InitialValue="False"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

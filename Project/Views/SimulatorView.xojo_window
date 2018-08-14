@@ -25,35 +25,6 @@ Begin BeaconContainer SimulatorView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   250
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin BeaconListbox List
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
@@ -72,7 +43,7 @@ Begin BeaconContainer SimulatorView
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   178
+      Height          =   159
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -98,7 +69,7 @@ Begin BeaconContainer SimulatorView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   22
+      Top             =   41
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -106,50 +77,20 @@ Begin BeaconContainer SimulatorView
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
-   Begin Label Label1
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Simulator"
-      TextAlign       =   1
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   1
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   210
-   End
-   Begin FadedSeparator FadedSeparator2
+   Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Caption         =   "Simulator"
+      CaptionEnabled  =   True
+      CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
-      EraseBackground =   True
-      Height          =   1
+      EraseBackground =   False
+      HasBottomBorder =   True
+      HasTopBorder    =   True
+      Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -159,13 +100,14 @@ Begin BeaconContainer SimulatorView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Resizer         =   "2"
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   21
-      Transparent     =   True
+      Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   250
@@ -233,7 +175,19 @@ End
 
 
 	#tag Hook, Flags = &h0
+		Event ResizeFinished()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ResizeStarted()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event ShouldClose()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShouldResize(ByRef NewSize As Integer)
 	#tag EndHook
 
 
@@ -244,6 +198,40 @@ End
 
 #tag EndWindowCode
 
+#tag Events Header
+	#tag Event
+		Sub ResizerDragged(DeltaX As Integer, DeltaY As Integer)
+		  Dim NewSize As Integer = Self.Height - DeltaY
+		  RaiseEvent ShouldResize(NewSize)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ResizeFinished()
+		  RaiseEvent ResizeFinished()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ResizeStarted()
+		  RaiseEvent ResizeStarted()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "Refresh"
+		    Self.Simulate()
+		  Case "Close"
+		    RaiseEvent ShouldClose
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.LeftItems.Append(New BeaconToolbarItem("Refresh", IconToolbarRefresh, "Re-run the simulator"))
+		  Me.RightItems.Append(New BeaconToolbarItem("Close", IconToolbarClose, "Close the simulator"))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="AcceptFocus"

@@ -31,8 +31,14 @@ Implements ObservationKit.Observer
 		  
 		  If Self.mResizerRect <> Nil And Self.mResizerRect.Contains(Point) Then
 		    Self.mResizing = True
-		    Self.mStartingWidth = Self.Width
-		    Self.mResizeOffset = X
+		    RaiseEvent ResizeStarted()
+		    If Self.mResizerStyle = ResizerTypes.Horizontal Then
+		      Self.mStartingSize = Self.Width
+		      Self.mResizeOffset = X
+		    ElseIf Self.mResizerStyle = ResizerTypes.Vertical Then
+		      Self.mStartingSize = Self.Top
+		      Self.mResizeOffset = Y
+		    End If
 		    Return True
 		  End If
 		  
@@ -66,10 +72,25 @@ Implements ObservationKit.Observer
 		  Self.mMouseY = Y
 		  
 		  If Self.mResizing Then
-		    Dim NewSize As Integer = Self.mStartingWidth + (X - Self.mResizeOffset)
-		    RaiseEvent ShouldResize(NewSize)
-		    Self.mResizeOffset = Self.mResizeOffset + (Self.Width - Self.mStartingWidth)
-		    Self.mStartingWidth = Self.Width
+		    Dim DeltaX As Integer = 0
+		    Dim DeltaY As Integer = 0
+		    
+		    If Self.mResizerStyle = ResizerTypes.Horizontal Then
+		      DeltaX = X - Self.mResizeOffset
+		      
+		      Dim NewWidth As Integer = Self.Width + DeltaX
+		      RaiseEvent ShouldResize(NewWidth)
+		      Self.mResizeOffset = Self.mResizeOffset + (Self.Width - Self.mStartingSize)
+		      Self.mStartingSize = Self.Width
+		    ElseIf Self.mResizerStyle = ResizerTypes.Vertical Then
+		      DeltaY = Y - Self.mResizeOffset
+		      
+		      Dim NewTop As Integer = Self.Top + DeltaY
+		      RaiseEvent ShouldResize(NewTop)
+		    End If
+		    
+		    RaiseEvent ResizerDragged(DeltaX, DeltaY)
+		    
 		    Return
 		  End If
 		  
@@ -131,7 +152,11 @@ Implements ObservationKit.Observer
 		  
 		  Dim Point As New REALbasic.Point(X, Y)
 		  If Self.mResizerRect.Contains(Point) Then
-		    Self.MouseCursor = System.Cursors.SplitterEastWest
+		    If Self.mResizerStyle = ResizerTypes.Horizontal Then
+		      Self.MouseCursor = System.Cursors.SplitterEastWest
+		    ElseIf Self.mResizerStyle = ResizerTypes.Vertical Then
+		      Self.MouseCursor = System.Cursors.SplitterNorthSouth
+		    End If
 		  Else
 		    Self.MouseCursor = Nil
 		  End If
@@ -150,6 +175,7 @@ Implements ObservationKit.Observer
 		  
 		  If Self.mResizing Then
 		    Self.mResizing = False
+		    RaiseEvent ResizeFinished()
 		    Return
 		  End If
 		  
@@ -182,189 +208,26 @@ Implements ObservationKit.Observer
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  Const CellPadding = 8
-		  Const ButtonSize = 24
-		  
-		  Self.ComputeColors()
-		  
-		  #if BeaconUI.ToolbarHasBackground
-		    G.ForeColor = Self.ColorProfile.BackgroundColor
-		    G.FillRect(0, 0, G.Width, G.Height)
-		  #endif
-		  
-		  Dim Highlighted As Boolean = True
-		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
-		    Declare Function IsMainWindow Lib "Cocoa.framework" Selector "isMainWindow" (Target As Integer) As Boolean
-		    Declare Function IsKeyWindow Lib "Cocoa.framework" Selector "isKeyWindow" (Target As Integer) As Boolean
-		    Highlighted = IsKeyWindow(Self.TrueWindow.Handle) Or IsMainWindow(Self.TrueWindow.Handle)
-		  #endif
-		  
-		  Dim ContentRect As New REALbasic.Rect(CellPadding, CellPadding, Self.Width - (CellPadding * 2), Self.Height - (CellPadding * 2))
-		  
-		  If Self.HasResizer Then
-		    Const ResizerStripes = 3
-		    Const ResizerHeight = 12
-		    
-		    Dim ResizerWidth As Integer = (ResizerStripes * 2) + (ResizerStripes - 1)
-		    ContentRect.Right = ContentRect.Right - (CellPadding + ResizerWidth)
-		    
-		    Dim ResizerLeft As Integer = ContentRect.Right + CellPadding
-		    Dim ResizerTop As Integer = (Self.Height - ResizerHeight) / 2
-		    
-		    Self.mResizerRect = New REALbasic.Rect(ResizerLeft, 0, Self.Width - ResizerLeft, Self.Height)
-		    
-		    Dim LeftColor, RightColor As Color
-		    #if BeaconUI.ToolbarHasBackground
-		      LeftColor = Self.ColorProfile.ForegroundColor
-		      RightColor = Self.ColorProfile.ShadowColor
-		      LeftColor = RGB(LeftColor.Red, LeftColor.Green, LeftColor.Blue, 155)
-		      RightColor = RGB(RightColor.Red, RightColor.Green, RightColor.Blue, 155)
-		    #else
-		      LeftColor = &c0000009B
-		      RightColor = &cFFFFFF00
-		    #endif
-		    
-		    For I As Integer = 1 To ResizerStripes
-		      Dim X As Integer = ResizerLeft + ((I - 1) * 3)
-		      G.ForeColor = LeftColor
-		      G.DrawLine(X, ResizerTop, X, ResizerTop + ResizerHeight)
-		      G.ForeColor = RightColor
-		      G.DrawLine(X + 1, ResizerTop + 1, X + 1, ResizerTop + 1 + ResizerHeight)
-		    Next
-		  Else
-		    Self.mResizerRect = Nil
+		  Dim ContentTop As Integer = 0
+		  Dim ContentHeight As Integer = G.Height
+		  If Self.mHasTopBorder Then
+		    ContentTop = ContentTop + 1
+		    ContentHeight = ContentHeight - 1
+		  End If
+		  If Self.mHasBottomBorder Then
+		    ContentHeight = ContentHeight - 1
 		  End If
 		  
-		  Dim NextLeft As Integer = ContentRect.Left
-		  Dim NextRight As Integer = ContentRect.Right
-		  Dim ItemsPerSide As Integer = Max(Self.LeftItems.Count, Self.RightItems.Count)
-		  ContentRect.Left = ContentRect.Left + (ItemsPerSide * (ButtonSize + CellPadding))
-		  ContentRect.Width = ContentRect.Width - ((ItemsPerSide * 2) * (ButtonSize + CellPadding))
-		  
-		  For I As Integer = 0 To Self.mLeftItems.UBound
-		    Dim Item As BeaconToolbarItem = Self.mLeftItems(I)
-		    Dim Mode As ButtonModes = ButtonModes.Normal
-		    If Self.mPressedName = Item.Name Then
-		      Mode = ButtonModes.Pressed
-		    End If
-		    If Not Item.Enabled Then
-		      Mode = ButtonModes.Disabled
-		    End If
-		    
-		    Item.Rect = New REALbasic.Rect(NextLeft, CellPadding, ButtonSize, ButtonSize)
-		    Self.DrawButton(G, Item, Item.Rect, Mode, Highlighted)
-		    NextLeft = Item.Rect.Right + CellPadding
-		  Next
-		  
-		  For I As Integer = 0 To Self.mRightItems.UBound
-		    Dim Item As BeaconToolbarItem = Self.mRightItems(I)
-		    Dim Mode As ButtonModes = ButtonModes.Normal
-		    If Self.mPressedName = Item.Name Then
-		      Mode = ButtonModes.Pressed
-		    End If
-		    If Not Item.Enabled Then
-		      Mode = ButtonModes.Disabled
-		    End If
-		    
-		    Item.Rect = New REALbasic.Rect(NextRight - ButtonSize, CellPadding, ButtonSize, ButtonSize)
-		    Self.DrawButton(G, Item, Item.Rect, Mode, Highlighted)
-		    NextRight = Item.Rect.Left - CellPadding
-		  Next
-		  
-		  If Self.Caption <> "" Then
-		    Dim Caption As String = Self.Caption.NthField(EndOfLine, 1)
-		    Dim Subcaption As String = Self.Caption.NthField(EndOfLine, 2)
-		    
-		    Dim CaptionSize, SubcaptionSize As Double = 0
-		    If Subcaption <> "" Then
-		      CaptionSize = 11
-		      SubcaptionSize = 8
-		    End If
-		    
-		    G.TextSize = CaptionSize
-		    Dim CaptionWidth As Integer = Ceil(G.StringWidth(Caption))
-		    G.TextSize = SubcaptionSize
-		    Dim SubcaptionWidth As Integer = Ceil(G.StringWidth(Subcaption))
-		    
-		    If Self.CaptionIsButton Then
-		      Const CaptionPadding = 8
-		      
-		      Dim ButtonWidth As Integer = Min(Max(CaptionWidth, SubcaptionWidth) + (CaptionPadding * 2), ContentRect.Width)
-		      Dim ButtonRect As New REALbasic.Rect(ContentRect.Left + ((ContentRect.Width - ButtonWidth) / 2), CellPadding, ButtonWidth, ButtonSize)
-		      
-		      Dim Mode As ButtonModes = ButtonModes.Normal
-		      If Self.mPressedName = Self.CaptionButtonName Then
-		        Mode = ButtonModes.Pressed
-		      End If
-		      If Not Self.mCaptionEnabled Then
-		        Mode = ButtonModes.Disabled
-		      End If
-		      
-		      Dim Set As ColorSet = If(Highlighted, Self.mColorSet, Self.mColorSetClear)
-		      Dim CaptionColor, ShadowColor As Color
-		      Select Case Mode
-		      Case ButtonModes.Pressed
-		        CaptionColor = Set.IconColorPressed
-		        ShadowColor = Set.ShadowColorPressed
-		      Case ButtonModes.Disabled
-		        CaptionColor = Set.IconColorDisabled
-		        ShadowColor = Set.ShadowColorDisabled
-		      Else
-		        CaptionColor = Set.IconColor
-		        ShadowColor = Set.ShadowColor
-		      End Select
-		      
-		      Self.DrawButtonFrame(G, ButtonRect, Mode, Highlighted, False)
-		      
-		      Dim CaptionLeft As Integer = Max(ButtonRect.HorizontalCenter - (CaptionWidth / 2), ButtonRect.Left + CaptionPadding)   
-		      Dim SubcaptionLeft As Integer = Max(ButtonRect.HorizontalCenter - (SubcaptionWidth / 2), ButtonRect.Left + CaptionPadding)
-		      
-		      G.TextSize = CaptionSize
-		      Dim CaptionHeight As Integer = G.CapHeight
-		      G.TextSize = SubcaptionSize
-		      Dim SubcaptionHeight As Integer = G.CapHeight
-		      
-		      Dim TextHeight As Integer = CaptionHeight
-		      If Subcaption <> "" Then
-		        TextHeight = TextHeight + 3 + SubcaptionHeight
-		      End If
-		      
-		      Dim TextTop As Integer = Ceil(ButtonRect.VerticalCenter - (TextHeight / 2))
-		      Dim CaptionBottom As Integer = TextTop + CaptionHeight
-		      Dim SubcaptionBottom As Integer = TextTop + TextHeight
-		      
-		      G.TextSize = CaptionSize
-		      G.ForeColor = ShadowColor
-		      G.DrawString(Caption, CaptionLeft, CaptionBottom + 1, ButtonRect.Width - (CaptionPadding * 2), True)
-		      G.ForeColor = CaptionColor
-		      G.DrawString(Caption, CaptionLeft, CaptionBottom, ButtonRect.Width - (CaptionPadding * 2), True)
-		      If Subcaption <> "" Then
-		        G.TextSize = SubcaptionSize
-		        G.ForeColor = ShadowColor
-		        G.DrawString(Subcaption, SubcaptionLeft, SubcaptionBottom + 1, ButtonRect.Width - (CaptionPadding * 2), True)
-		        G.ForeColor = CaptionColor
-		        G.DrawString(Subcaption, SubcaptionLeft, SubcaptionBottom, ButtonRect.Width - (CaptionPadding * 2), True)
-		      End If
-		      
-		      Self.mCaptionRect = ButtonRect
-		    Else
-		      CaptionWidth = Min(CaptionWidth, ContentRect.Width)
-		      Dim CaptionLeft As Integer = ContentRect.Left + ((ContentRect.Width - CaptionWidth) / 2)
-		      Dim CaptionBottom As Integer = ContentRect.Top + (ContentRect.Height / 2) + ((G.TextAscent * 0.8) / 2)
-		      
-		      G.ForeColor = If(BeaconUI.ToolbarHasBackground, Self.ColorProfile.ShadowColor, &cFFFFFF)
-		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom + 1, CaptionWidth, True)
-		      G.ForeColor = If(BeaconUI.ToolbarHasBackground, Self.ColorProfile.ForegroundColor, &c333333)
-		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, CaptionWidth, True)
-		      
-		      Self.mCaptionRect = Nil
-		    End If
-		  Else
-		    Self.mCaptionRect = Nil
-		  End If
+		  Dim Clip As Graphics = G.Clip(0, ContentTop, G.Width, ContentHeight)
+		  Self.PaintContent(Clip)
 		  
 		  G.ForeColor = Self.ColorProfile.BorderColor
-		  G.DrawLine(-1, G.Height - 1, G.Width + 1, G.Height - 1)
+		  If Self.mHasTopBorder Then
+		    G.DrawLine(-1, 0, G.Width + 1, 0)
+		  End If
+		  If Self.mHasBottomBorder Then
+		    G.DrawLine(-1, G.Height - 1, G.Width + 1, G.Height - 1)
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -672,6 +535,205 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub PaintContent(G As Graphics)
+		  Const CellPadding = 8
+		  Const ButtonSize = 24
+		  
+		  Self.ComputeColors()
+		  
+		  #if BeaconUI.ToolbarHasBackground
+		    G.ForeColor = Self.ColorProfile.BackgroundColor
+		    G.FillRect(0, 0, G.Width, G.Height)
+		  #endif
+		  
+		  Dim Highlighted As Boolean = True
+		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
+		    Declare Function IsMainWindow Lib "Cocoa.framework" Selector "isMainWindow" (Target As Integer) As Boolean
+		    Declare Function IsKeyWindow Lib "Cocoa.framework" Selector "isKeyWindow" (Target As Integer) As Boolean
+		    Highlighted = IsKeyWindow(Self.TrueWindow.Handle) Or IsMainWindow(Self.TrueWindow.Handle)
+		  #endif
+		  
+		  Dim ContentRect As New REALbasic.Rect(CellPadding, CellPadding, G.Width - (CellPadding * 2), G.Height - (CellPadding * 2))
+		  
+		  If Self.mResizerStyle <> ResizerTypes.None Then
+		    Const ResizerStripes = 3
+		    Dim ResizerHeight As Integer = 12
+		    
+		    Dim ResizerWidth As Integer = (ResizerStripes * 2) + (ResizerStripes - 1)
+		    If Self.mResizerStyle = ResizerTypes.Vertical Then
+		      Dim Temp as Integer = ResizerHeight
+		      ResizerHeight = ResizerWidth
+		      ResizerWidth = Temp
+		    End If
+		    
+		    ContentRect.Right = ContentRect.Right - (CellPadding + ResizerWidth)
+		    
+		    Dim ResizerLeft As Integer = ContentRect.Right + CellPadding
+		    Dim ResizerTop As Integer = (G.Height - ResizerHeight) / 2
+		    
+		    Self.mResizerRect = New REALbasic.Rect(ResizerLeft, 0, G.Width - ResizerLeft, G.Height)
+		    
+		    Dim LeftColor, RightColor As Color
+		    #if BeaconUI.ToolbarHasBackground
+		      LeftColor = Self.ColorProfile.ForegroundColor
+		      RightColor = Self.ColorProfile.ShadowColor
+		      LeftColor = RGB(LeftColor.Red, LeftColor.Green, LeftColor.Blue, 155)
+		      RightColor = RGB(RightColor.Red, RightColor.Green, RightColor.Blue, 155)
+		    #else
+		      LeftColor = &c0000009B
+		      RightColor = &cFFFFFF00
+		    #endif
+		    
+		    For I As Integer = 1 To ResizerStripes
+		      If Self.mResizerStyle = ResizerTypes.Vertical Then
+		        Dim Y As Integer = ResizerTop + ((I - 1) * 3)
+		        G.ForeColor = LeftColor
+		        G.DrawLine(ResizerLeft, Y, ResizerLeft + ResizerWidth, Y)
+		        G.ForeColor = RightColor
+		        G.DrawLine(ResizerLeft + 1, Y + 1, ResizerLeft + ResizerWidth + 1, Y + 1)
+		      Else
+		        Dim X As Integer = ResizerLeft + ((I - 1) * 3)
+		        G.ForeColor = LeftColor
+		        G.DrawLine(X, ResizerTop, X, ResizerTop + ResizerHeight)
+		        G.ForeColor = RightColor
+		        G.DrawLine(X + 1, ResizerTop + 1, X + 1, ResizerTop + 1 + ResizerHeight)
+		      End If
+		    Next
+		  Else
+		    Self.mResizerRect = Nil
+		  End If
+		  
+		  Dim NextLeft As Integer = ContentRect.Left
+		  Dim NextRight As Integer = ContentRect.Right
+		  Dim ItemsPerSide As Integer = Max(Self.LeftItems.Count, Self.RightItems.Count)
+		  ContentRect.Left = ContentRect.Left + (ItemsPerSide * (ButtonSize + CellPadding))
+		  ContentRect.Width = ContentRect.Width - ((ItemsPerSide * 2) * (ButtonSize + CellPadding))
+		  
+		  For I As Integer = 0 To Self.mLeftItems.UBound
+		    Dim Item As BeaconToolbarItem = Self.mLeftItems(I)
+		    Dim Mode As ButtonModes = ButtonModes.Normal
+		    If Self.mPressedName = Item.Name Then
+		      Mode = ButtonModes.Pressed
+		    End If
+		    If Not Item.Enabled Then
+		      Mode = ButtonModes.Disabled
+		    End If
+		    
+		    Item.Rect = New REALbasic.Rect(NextLeft, CellPadding, ButtonSize, ButtonSize)
+		    Self.DrawButton(G, Item, Item.Rect, Mode, Highlighted)
+		    NextLeft = Item.Rect.Right + CellPadding
+		  Next
+		  
+		  For I As Integer = 0 To Self.mRightItems.UBound
+		    Dim Item As BeaconToolbarItem = Self.mRightItems(I)
+		    Dim Mode As ButtonModes = ButtonModes.Normal
+		    If Self.mPressedName = Item.Name Then
+		      Mode = ButtonModes.Pressed
+		    End If
+		    If Not Item.Enabled Then
+		      Mode = ButtonModes.Disabled
+		    End If
+		    
+		    Item.Rect = New REALbasic.Rect(NextRight - ButtonSize, CellPadding, ButtonSize, ButtonSize)
+		    Self.DrawButton(G, Item, Item.Rect, Mode, Highlighted)
+		    NextRight = Item.Rect.Left - CellPadding
+		  Next
+		  
+		  If Self.Caption <> "" Then
+		    Dim Caption As String = Self.Caption.NthField(EndOfLine, 1)
+		    Dim Subcaption As String = Self.Caption.NthField(EndOfLine, 2)
+		    
+		    Dim CaptionSize, SubcaptionSize As Double = 0
+		    If Subcaption <> "" Then
+		      CaptionSize = 11
+		      SubcaptionSize = 8
+		    End If
+		    
+		    G.TextSize = CaptionSize
+		    Dim CaptionWidth As Integer = Ceil(G.StringWidth(Caption))
+		    G.TextSize = SubcaptionSize
+		    Dim SubcaptionWidth As Integer = Ceil(G.StringWidth(Subcaption))
+		    
+		    If Self.CaptionIsButton Then
+		      Const CaptionPadding = 8
+		      
+		      Dim ButtonWidth As Integer = Min(Max(CaptionWidth, SubcaptionWidth) + (CaptionPadding * 2), ContentRect.Width)
+		      Dim ButtonRect As New REALbasic.Rect(ContentRect.Left + ((ContentRect.Width - ButtonWidth) / 2), CellPadding, ButtonWidth, ButtonSize)
+		      
+		      Dim Mode As ButtonModes = ButtonModes.Normal
+		      If Self.mPressedName = Self.CaptionButtonName Then
+		        Mode = ButtonModes.Pressed
+		      End If
+		      If Not Self.mCaptionEnabled Then
+		        Mode = ButtonModes.Disabled
+		      End If
+		      
+		      Dim Set As ColorSet = If(Highlighted, Self.mColorSet, Self.mColorSetClear)
+		      Dim CaptionColor, ShadowColor As Color
+		      Select Case Mode
+		      Case ButtonModes.Pressed
+		        CaptionColor = Set.IconColorPressed
+		        ShadowColor = Set.ShadowColorPressed
+		      Case ButtonModes.Disabled
+		        CaptionColor = Set.IconColorDisabled
+		        ShadowColor = Set.ShadowColorDisabled
+		      Else
+		        CaptionColor = Set.IconColor
+		        ShadowColor = Set.ShadowColor
+		      End Select
+		      
+		      Self.DrawButtonFrame(G, ButtonRect, Mode, Highlighted, False)
+		      
+		      Dim CaptionLeft As Integer = Max(ButtonRect.HorizontalCenter - (CaptionWidth / 2), ButtonRect.Left + CaptionPadding)   
+		      Dim SubcaptionLeft As Integer = Max(ButtonRect.HorizontalCenter - (SubcaptionWidth / 2), ButtonRect.Left + CaptionPadding)
+		      
+		      G.TextSize = CaptionSize
+		      Dim CaptionHeight As Integer = G.CapHeight
+		      G.TextSize = SubcaptionSize
+		      Dim SubcaptionHeight As Integer = G.CapHeight
+		      
+		      Dim TextHeight As Integer = CaptionHeight
+		      If Subcaption <> "" Then
+		        TextHeight = TextHeight + 3 + SubcaptionHeight
+		      End If
+		      
+		      Dim TextTop As Integer = Ceil(ButtonRect.VerticalCenter - (TextHeight / 2))
+		      Dim CaptionBottom As Integer = TextTop + CaptionHeight
+		      Dim SubcaptionBottom As Integer = TextTop + TextHeight
+		      
+		      G.TextSize = CaptionSize
+		      G.ForeColor = ShadowColor
+		      G.DrawString(Caption, CaptionLeft, CaptionBottom + 1, ButtonRect.Width - (CaptionPadding * 2), True)
+		      G.ForeColor = CaptionColor
+		      G.DrawString(Caption, CaptionLeft, CaptionBottom, ButtonRect.Width - (CaptionPadding * 2), True)
+		      If Subcaption <> "" Then
+		        G.TextSize = SubcaptionSize
+		        G.ForeColor = ShadowColor
+		        G.DrawString(Subcaption, SubcaptionLeft, SubcaptionBottom + 1, ButtonRect.Width - (CaptionPadding * 2), True)
+		        G.ForeColor = CaptionColor
+		        G.DrawString(Subcaption, SubcaptionLeft, SubcaptionBottom, ButtonRect.Width - (CaptionPadding * 2), True)
+		      End If
+		      
+		      Self.mCaptionRect = ButtonRect
+		    Else
+		      CaptionWidth = Min(CaptionWidth, ContentRect.Width)
+		      Dim CaptionLeft As Integer = ContentRect.Left + ((ContentRect.Width - CaptionWidth) / 2)
+		      Dim CaptionBottom As Integer = ContentRect.Top + (ContentRect.Height / 2) + ((G.TextAscent * 0.8) / 2)
+		      
+		      G.ForeColor = If(BeaconUI.ToolbarHasBackground, Self.ColorProfile.ShadowColor, &cFFFFFF)
+		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom + 1, CaptionWidth, True)
+		      G.ForeColor = If(BeaconUI.ToolbarHasBackground, Self.ColorProfile.ForegroundColor, &c333333)
+		      G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, CaptionWidth, True)
+		      
+		      Self.mCaptionRect = Nil
+		    End If
+		  Else
+		    Self.mCaptionRect = Nil
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ShowHoverTooltip()
 		  If Self.mHoverItem = Nil Then
 		    Return
@@ -704,6 +766,18 @@ Implements ObservationKit.Observer
 
 	#tag Hook, Flags = &h0
 		Event HandleMenuAction(Item As BeaconToolbarItem, ChosenItem As MenuItem)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ResizeFinished()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ResizerDragged(DeltaX As Integer, DeltaY As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ResizeStarted()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -765,18 +839,35 @@ Implements ObservationKit.Observer
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mHasResizer
+			  Return Self.mHasBottomBorder
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mHasResizer <> Value Then
-			    Self.mHasResizer = Value
+			  If Self.mHasBottomBorder <> Value Then
+			    Self.mHasBottomBorder = Value
 			    Self.Invalidate
 			  End If
 			End Set
 		#tag EndSetter
-		HasResizer As Boolean
+		HasBottomBorder As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mHasTopBorder
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mHasTopBorder <> Value Then
+			    Self.mHasTopBorder = Value
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		HasTopBorder As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -813,7 +904,11 @@ Implements ObservationKit.Observer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHasResizer As Boolean
+		Private mHasBottomBorder As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHasTopBorder As Boolean = False
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -865,6 +960,10 @@ Implements ObservationKit.Observer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mResizerStyle As BeaconToolbar.ResizerTypes
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mResizing As Boolean
 	#tag EndProperty
 
@@ -873,8 +972,25 @@ Implements ObservationKit.Observer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mStartingWidth As Integer
+		Private mStartingSize As Integer
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mResizerStyle
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mResizerStyle <> Value Then
+			    Self.mResizerStyle = Value
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		Resizer As BeaconToolbar.ResizerTypes
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -909,6 +1025,12 @@ Implements ObservationKit.Observer
 		Normal
 		  Disabled
 		Pressed
+	#tag EndEnum
+
+	#tag Enum, Name = ResizerTypes, Type = Integer, Flags = &h0
+		None
+		  Horizontal
+		Vertical
 	#tag EndEnum
 
 
@@ -978,10 +1100,17 @@ Implements ObservationKit.Observer
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="HasResizer"
+			Name="HasBottomBorder"
 			Visible=true
 			Group="Behavior"
 			InitialValue="True"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasTopBorder"
+			Visible=true
+			Group="Behavior"
+			InitialValue="False"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -1050,6 +1179,25 @@ Implements ObservationKit.Observer
 			Group="ID"
 			Type="String"
 			EditorType="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Resizer"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="BeaconToolbar.ResizerTypes"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - None"
+				"1 - Horizontal"
+				"2 - Vertical"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ScrollSpeed"
+			Group="Behavior"
+			InitialValue="20"
+			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

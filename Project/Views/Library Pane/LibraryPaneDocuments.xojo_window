@@ -78,7 +78,6 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -95,7 +94,8 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasResizer      =   True
+      HasBottomBorder =   True
+      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -106,6 +106,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      Resizer         =   "1"
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   2
@@ -429,6 +430,18 @@ End
 		    Dim URL As Text = Beacon.DocumentURL(Self.List.RowTag(I))
 		    Self.List.Selected(I) = Selected.IndexOf(URL) > -1
 		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowOpenDocument()
+		  Dim Dialog As New OpenDialog
+		  Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset
+		  
+		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If File <> Nil Then
+		    App.OpenDocument(File)
+		  End If
 		End Sub
 	#tag EndMethod
 

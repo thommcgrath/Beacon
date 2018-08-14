@@ -56,7 +56,7 @@ End
 		  If App.Identity = Nil Then
 		    Quit
 		  Else
-		    MainWindow.Show()
+		    App.NextLaunchQueueTask()
 		  End If
 		End Sub
 	#tag EndEvent

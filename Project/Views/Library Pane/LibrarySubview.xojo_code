@@ -31,7 +31,7 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h1
 		Protected Function DiscardView(View As BeaconSubview) As Boolean
-		  If RaiseEvent ShouldDiscardView(View) Then
+		  If View = Nil Or RaiseEvent ShouldDiscardView(View) Then
 		    Self.CleanupClosedViews()
 		    Return True
 		  End If

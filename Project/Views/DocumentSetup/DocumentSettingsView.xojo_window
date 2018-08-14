@@ -52,7 +52,7 @@ Begin ContainerControl DocumentSettingsView
       TextUnit        =   0
       Top             =   20
       Underline       =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   560
       Begin GroupBox MapGroup
