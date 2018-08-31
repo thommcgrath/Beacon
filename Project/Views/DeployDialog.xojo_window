@@ -1214,9 +1214,16 @@ End
 		  
 		  Dim Lines() As String = Content.Split(EOL)
 		  For I As Integer = Lines.Ubound DownTo 0
-		    If Lines(I).Left(31) = "ConfigOverrideSupplyCrateItems=" Then
-		      Lines.Remove(I)
+		    Dim Pos As Integer = Lines(I).InStr("=")
+		    If Pos = 0 Then
+		      Continue
 		    End If
+		    
+		    Dim Key As String = Lines(I).Left(Pos - 1)
+		    Select Case Key
+		    Case "ConfigOverrideSupplyCrateItems", "SupplyCrateLootQualityMultiplier"
+		      Lines.Remove(I)
+		    End Select
 		  Next
 		  
 		  Dim CurrentSection As String = ""
@@ -1252,6 +1259,7 @@ End
 		      LootLines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Self.mDocument.DifficultyValue))
 		    End If
 		  Next
+		  LootLines.Append("SupplyCrateLootQualityMultiplier=" + Beacon.PrettyText(Self.mDocument.LootMultiplier))
 		  Sections.Value("/script/shootergame.shootergamemode") = LootLines
 		  
 		  Dim Chunks() As String

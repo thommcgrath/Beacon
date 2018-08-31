@@ -39,6 +39,7 @@ Implements Beacon.DocumentItem
 		  Self.mIdentifier = Beacon.CreateUUID
 		  Self.mDifficultyValue = 4.0
 		  Self.mMapCompatibility = Beacon.Maps.TheIsland.Mask
+		  Self.mLootMultiplier = 1.0
 		End Sub
 	#tag EndMethod
 
@@ -113,6 +114,9 @@ Implements Beacon.DocumentItem
 		      Else
 		        Doc.MaxDinoLevel = 120
 		        Doc.DinoLevelSteps = 4
+		      End If
+		      If Dict.HasKey("LootMultiplier") Then
+		        Doc.LootMultiplier = Dict.Value("LootMultiplier")
 		      End If
 		      If Dict.HasKey("ConsoleModsOnly") Then
 		        Doc.ConsoleModsOnly = Dict.Value("ConsoleModsOnly")
@@ -506,6 +510,7 @@ Implements Beacon.DocumentItem
 		  Document.Value("MaxDinoLevel") = Self.MaxDinoLevel
 		  Document.Value("DinoLevelSteps") = Self.DinoLevelSteps
 		  Document.Value("DifficultyValue") = Self.DifficultyValue
+		  Document.Value("LootMultiplier") = Self.LootMultiplier
 		  
 		  If Self.mMapCompatibility > 0 Then
 		    Document.Value("Map") = Self.mMapCompatibility
@@ -640,6 +645,27 @@ Implements Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mLootMultiplier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Value = Max(Value, 0.1)
+			  
+			  If Self.mLootMultiplier = Value Then
+			    Return
+			  End If
+			  
+			  Self.mLootMultiplier = Value
+			  Self.mModified = True
+			End Set
+		#tag EndSetter
+		LootMultiplier As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mMapCompatibility
 			End Get
 		#tag EndGetter
@@ -706,6 +732,10 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mLastSecureHash As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLootMultiplier As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

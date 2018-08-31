@@ -71,6 +71,10 @@ Inherits ContainerControl
 		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
 		  End Try
 		  
+		  If ParsedData.HasKey("SupplyCrateLootQualityMultiplier") Then
+		    Document.LootMultiplier = ParsedData.Value("SupplyCrateLootQualityMultiplier")
+		  End If
+		  
 		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
 		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Document.DifficultyValue)
 		    If Source <> Nil Then

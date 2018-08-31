@@ -9,18 +9,18 @@ Begin Window DocumentSettingsSheet
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   362
+   Height          =   397
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
-   MaxHeight       =   32000
+   MaxHeight       =   397
    MaximizeButton  =   False
-   MaxWidth        =   32000
+   MaxWidth        =   700
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
+   MinHeight       =   397
    MinimizeButton  =   False
-   MinWidth        =   64
+   MinWidth        =   700
    Placement       =   1
    Resizeable      =   False
    Title           =   "Document Settings"
@@ -608,7 +608,7 @@ Begin Window DocumentSettingsSheet
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   290
+      Top             =   325
       Underline       =   False
       Value           =   False
       Visible         =   True
@@ -640,7 +640,7 @@ Begin Window DocumentSettingsSheet
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   322
+      Top             =   357
       Underline       =   False
       Visible         =   True
       Width           =   100
@@ -671,7 +671,7 @@ Begin Window DocumentSettingsSheet
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   322
+      Top             =   357
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -702,8 +702,113 @@ Begin Window DocumentSettingsSheet
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   322
+      Top             =   357
       Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin Slider LootMultiplierSlider
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   23
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   143
+      LineStep        =   1
+      LiveScroll      =   True
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Maximum         =   200
+      Minimum         =   10
+      PageStep        =   20
+      Scope           =   0
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TickStyle       =   "0"
+      Top             =   290
+      Value           =   100
+      Visible         =   True
+      Width           =   230
+   End
+   Begin UITweaks.ResizedLabel LootMultiplierLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   23
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Loot Quality:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   290
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   111
+   End
+   Begin UITweaks.ResizedTextField LootMultiplierField
+      AcceptTabs      =   False
+      Alignment       =   2
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   385
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "100%"
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   290
+      Underline       =   False
+      UseFocusRing    =   True
       Visible         =   True
       Width           =   80
    End
@@ -802,6 +907,8 @@ End
 		  Self.RagnarokCheckbox.Value = Beacon.Maps.Ragnarok.Matches(Document.MapCompatibility)
 		  
 		  Self.ConsoleSafeCheckbox.Value = Document.ConsoleModsOnly
+		  
+		  Self.LootMultiplierField.Text = Str(Round(Document.LootMultiplier * 100), "-0") + "%"
 		End Sub
 	#tag EndMethod
 
@@ -816,6 +923,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mImportedDocument As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpdateLootMultiplierText As Boolean = True
 	#tag EndProperty
 
 
@@ -894,6 +1005,14 @@ End
 		    Next
 		  End If
 		  
+		  Dim Search As New RegEx
+		  Search.SearchPattern = "(\d+)"
+		  Dim Matches As RegExMatch = Search.Search(Self.LootMultiplierField.Text.Trim)
+		  If Matches <> Nil Then
+		    Dim Value As Integer = Val(Matches.SubExpressionString(1))
+		    Self.mDocument.LootMultiplier = Value / 100
+		  End If
+		  
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -903,6 +1022,32 @@ End
 		Sub Action()
 		  Self.mCancelled = True
 		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LootMultiplierSlider
+	#tag Event
+		Sub ValueChanged()
+		  If Self.mUpdateLootMultiplierText Then
+		    LootMultiplierField.Text = Str(Me.Value, "-0") + "%"
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LootMultiplierField
+	#tag Event
+		Sub TextChange()
+		  Dim TextValue As String = Me.Text.Trim
+		  Dim Search As New RegEx
+		  Search.SearchPattern = "(\d+)"
+		  
+		  Dim Matches As RegExMatch = Search.Search(TextValue)
+		  If Matches <> Nil Then
+		    Dim Value As Integer = Val(Matches.SubExpressionString(1))
+		    Self.mUpdateLootMultiplierText = False
+		    LootMultiplierSlider.Value = Value
+		    Self.mUpdateLootMultiplierText = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
