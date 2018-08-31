@@ -52,7 +52,7 @@ Begin ContainerControl DocumentSettingsView
       TextUnit        =   0
       Top             =   20
       Underline       =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   560
       Begin GroupBox MapGroup
@@ -932,6 +932,37 @@ Begin ContainerControl DocumentSettingsView
       Scope           =   2
       TabPanelIndex   =   0
    End
+   Begin PushButton ImportButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   True
+      Caption         =   "Import Existing Settings"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   472
+      Underline       =   False
+      Visible         =   True
+      Width           =   173
+   End
 End
 #tag EndWindow
 
@@ -1022,6 +1053,7 @@ End
 		  Self.ProfilesList.Sort
 		  
 		  Self.NitradoOAuth.AuthData = Self.mDocument.OAuthData("Nitrado")
+		  Self.SetFocus()
 		End Sub
 	#tag EndMethod
 
@@ -1064,18 +1096,14 @@ End
 	#tag Method, Flags = &h0
 		Sub SetEditMode(Value As Boolean)
 		  If Value Then
-		    Self.ActionButton.Caption = "OK"
-		    Self.CancelButton.Caption = "Cancel"
-		  Else
-		    Self.ActionButton.Caption = "Done"
-		    Self.CancelButton.Caption = "Back"
+		    Self.ImportButton.Visible = False
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub SetFocus()
-		  TitleField.SetFocus
+		  Self.TitleField.SetFocus
 		End Sub
 	#tag EndMethod
 
@@ -1090,6 +1118,10 @@ End
 
 	#tag Hook, Flags = &h0
 		Event ShouldFinish()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShouldImport()
 	#tag EndHook
 
 
@@ -1232,7 +1264,7 @@ End
 		  
 		  Dim MapChanged As Boolean = Self.mDocument.MapCompatibility <> Mask
 		  Self.mDocument.MapCompatibility = Mask
-		  Self.mDocument.DifficultyValue = Val(Self.DifficultyValueField.Text)
+		  //Self.mDocument.DifficultyValue = Val(Self.DifficultyValueField.Text)
 		  Self.mDocument.ConsoleModsOnly = Self.ConsoleSafeCheck.Value
 		  
 		  If MapChanged And ValidPresetCount > 0 And Self.ShowConfirm("Would you like to rebuild your item sets based on their presets?", "Presets fill item sets based on the current map. When changing maps, it is recommended to rebuild the item sets from their original presets to get the most correct loot for the new map.", "Rebuild", "Do Not Rebuild") Then
@@ -1287,6 +1319,13 @@ End
 		Function ShowURL(URL As Text) As Beacon.WebView
 		  Return MiniBrowser.ShowURL(URL)
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events ImportButton
+	#tag Event
+		Sub Action()
+		  RaiseEvent ShouldImport
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

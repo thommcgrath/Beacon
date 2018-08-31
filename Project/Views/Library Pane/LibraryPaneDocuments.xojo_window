@@ -78,6 +78,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -296,6 +297,7 @@ End
 		  Self.SelectDocument(URL)
 		  
 		  Dim View As New DocumentEditorView(Sender)
+		  View.ContentsChanged = Sender.Document.Modified
 		  Self.ShowView(View)
 		End Sub
 	#tag EndMethod
@@ -330,7 +332,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ImportFile(File As FolderItem)
-		  Dim Document As Beacon.Document = DocumentSetupSheet.Present(Self, File)
+		  Dim Document As Beacon.Document = DocumentImportDialog.Present(File)
 		  If Document = Nil Then
 		    Return
 		  End If
@@ -342,10 +344,11 @@ End
 	#tag Method, Flags = &h0
 		Sub NewDocument(Document As Beacon.Document = Nil)
 		  If Document = Nil Then
-		    Document = DocumentSetupSheet.Present(Self)
-		    If Document = Nil Then
-		      Return
-		    End If
+		    Document = New Beacon.Document
+		  End If
+		  
+		  If Not DocumentSettingsSheet.Present(Self, Document) Then
+		    Return
 		  End If
 		  
 		  Self.OpenController(New Beacon.DocumentController(Document))

@@ -508,10 +508,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateCaptionButton()
-		  Dim MaxDinoLevel As Integer
-		  If Self.mController.Document.DifficultyValue > 0 Then
-		    MaxDinoLevel = Round(Self.mController.Document.DifficultyValue * 30)
-		  End If
+		  Dim MaxDinoLevel As Integer = Self.mController.Document.MaxDinoLevel
 		  
 		  Dim MapText As String
 		  Dim Maps() As Beacon.Map = Self.mController.Document.Maps
@@ -874,7 +871,7 @@ End
 #tag Events Status
 	#tag Event
 		Sub Action()
-		  If DocumentSetupSheet.Present(Self, Self.mController.Document) Then
+		  If DocumentSettingsSheet.Present(Self, Self.mController.Document) Then
 		    Self.UpdateCaptionButton()
 		    Self.Editor.ConsoleSafe = Self.mController.Document.ConsoleModsOnly
 		    Self.ContentsChanged = Self.mController.Document.Modified

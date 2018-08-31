@@ -888,34 +888,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Finished(ParsedData As Xojo.Core.Dictionary)
-		  Dim Document As New Beacon.Document
+		  Dim Document As Beacon.Document = Self.CreateDocumentFromImport(ParsedData, Self.mDiscoveredData)
 		  
-		  If Self.mDiscoveredData.HasKey("Maps") Then
-		    Dim Maps() As Auto = Self.mDiscoveredData.Value("Maps")
-		    Document.MapCompatibility = 0
-		    For Each Map As Text In Maps
-		      Select Case Map
-		      Case "ScorchedEarth_P"
-		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.ScorchedEarth.Mask
-		      Case "Aberration_P"
-		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.Aberration.Mask
-		      Case "TheCenter"
-		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.TheCenter.Mask
-		      Case "Ragnarok"
-		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.Ragnarok.Mask
-		      Else
-		        // Unofficial maps will be tagged as The Island
-		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.TheIsland.Mask
-		      End Select
-		    Next
-		  End If
-		  
-		  If ParsedData.HasKey("SessionName") Then
-		    Try
-		      Document.Title = ParsedData.Value("SessionName")
-		    Catch Err As TypeMismatchException
-		    End Try
-		  End If
 		  If Document.Title = "" Then
 		    Dim Maps() As Beacon.Map = Document.Maps
 		    If Maps.Ubound = 0 Then
@@ -938,47 +912,6 @@ End
 		    Profile.GameUserSettingsIniPath = Self.mDiscoveredData.Value("GameUserSettings.ini")
 		  End If
 		  Document.Add(Profile)
-		  
-		  Dim SetDifficulty As Boolean
-		  If Self.mDiscoveredData.HasKey("Options") Then
-		    Dim Options As Xojo.Core.Dictionary = Self.mDiscoveredData.Value("Options")
-		    If Options.HasKey("OverrideOfficialDifficulty") Then
-		      Document.DifficultyValue = Double.FromText(Options.Value("OverrideOfficialDifficulty"))
-		      SetDifficulty = True
-		    End If
-		  End If
-		  If Not SetDifficulty And ParsedData.HasKey("OverrideOfficialDifficulty") Then
-		    Try
-		      Document.DifficultyValue = ParsedData.Value("OverrideOfficialDifficulty")
-		      SetDifficulty = True
-		    Catch Err As TypeMismatchException
-		      
-		    End Try
-		  End If
-		  If Not SetDifficulty And ParsedData.HasKey("DifficultyOffset") Then
-		    Dim Offset As Double
-		    Try
-		      Offset = ParsedData.Value("DifficultyOffset")
-		      SetDifficulty = True
-		    Catch Err As TypeMismatchException
-		      Offset = 1.0
-		    End Try
-		    Document.DifficultyValue = Beacon.DifficultyValue(Offset, Document.Maps.DifficultyScale)
-		  End If
-		  
-		  Dim Dicts() As Auto
-		  Try
-		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
-		  Catch Err As TypeMismatchException
-		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
-		  End Try
-		  
-		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
-		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Document.DifficultyValue)
-		    If Source <> Nil Then
-		      Document.Add(Source)
-		    End If
-		  Next
 		  
 		  Self.ShouldFinish(Document)
 		End Sub

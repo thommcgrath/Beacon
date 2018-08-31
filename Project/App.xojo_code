@@ -115,6 +115,15 @@ Inherits Application
 		  
 		  BeaconUI.RegisterSheetPositionHandler()
 		  
+		  #if DebugBuild
+		    Dim DifficultyValue, DifficultyOffset, OverrideOfficialDifficulty As Double
+		    Beacon.ComputeDifficultySettings(300, 10, DifficultyValue, DifficultyOffset, OverrideOfficialDifficulty)
+		    Beacon.ComputeDifficultySettings(120, 4, DifficultyValue, DifficultyOffset, OverrideOfficialDifficulty)
+		    Beacon.ComputeDifficultySettings(100, 1, DifficultyValue, DifficultyOffset, OverrideOfficialDifficulty)
+		    Beacon.ComputeDifficultySettings(350, 10, DifficultyValue, DifficultyOffset, OverrideOfficialDifficulty)
+		    Beacon.ComputeDifficultySettings(15, 4, DifficultyValue, DifficultyOffset, OverrideOfficialDifficulty)
+		  #endif
+		  
 		  Self.AutoQuit = True
 		End Sub
 	#tag EndEvent

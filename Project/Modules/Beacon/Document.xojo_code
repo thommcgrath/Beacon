@@ -104,10 +104,15 @@ Implements Beacon.DocumentItem
 		      Else
 		        Doc.mMapCompatibility = 0
 		      End If
-		      If Dict.HasKey("DifficultyValue") Then
-		        Doc.DifficultyValue = Dict.Value("DifficultyValue")
+		      If Dict.HasKey("MaxDinoLevel") And Dict.HasKey("DinoLevelSteps") Then
+		        Doc.MaxDinoLevel = Dict.Value("MaxDinoLevel")
+		        Doc.DinoLevelSteps = Dict.Value("DinoLevelSteps")
+		      ElseIf Dict.HasKey("DifficultyValue") Then      
+		        Doc.MaxDinoLevel = Dict.Value("DifficultyValue") * 30
+		        Doc.DinoLevelSteps = 5
 		      Else
-		        Doc.mDifficultyValue = -1
+		        Doc.MaxDinoLevel = 120
+		        Doc.DinoLevelSteps = 4
 		      End If
 		      If Dict.HasKey("ConsoleModsOnly") Then
 		        Doc.ConsoleModsOnly = Dict.Value("ConsoleModsOnly")
@@ -498,13 +503,12 @@ Implements Beacon.DocumentItem
 		  Document.Value("Description") = Self.Description
 		  Document.Value("Public") = Self.IsPublic
 		  Document.Value("ConsoleModsOnly") = Self.ConsoleModsOnly
+		  Document.Value("MaxDinoLevel") = Self.MaxDinoLevel
+		  Document.Value("DinoLevelSteps") = Self.DinoLevelSteps
+		  Document.Value("DifficultyValue") = Self.DifficultyValue
 		  
 		  If Self.mMapCompatibility > 0 Then
 		    Document.Value("Map") = Self.mMapCompatibility
-		  End If
-		  
-		  If Self.DifficultyValue > -1 Then
-		    Document.Value("DifficultyValue") = Self.DifficultyValue
 		  End If
 		  
 		  Dim EncryptedData As New Xojo.Core.Dictionary
@@ -587,18 +591,31 @@ Implements Beacon.DocumentItem
 			  Return Self.mDifficultyValue
 			End Get
 		#tag EndGetter
+		DifficultyValue As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mDinoLevelSteps
+			End Get
+		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Max(Value, 0.5)
-			  If Self.mDifficultyValue = Value Then
+			  Value = Max(Value, 1)
+			  
+			  If Self.mDinoLevelSteps = Value Then
 			    Return
 			  End If
 			  
+			  Self.mDinoLevelSteps = Value
+			  Dim DiffValue, DiffOffset, DiffOverride As Double
+			  Beacon.ComputeDifficultySettings(Self.mMaxDinoLevel, Self.mDinoLevelSteps, DiffValue, DiffOffset, DiffOverride)
+			  Self.mDifficultyValue = DiffValue
 			  Self.mModified = True
-			  Self.mDifficultyValue = Value
 			End Set
 		#tag EndSetter
-		DifficultyValue As Double
+		DinoLevelSteps As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -635,6 +652,30 @@ Implements Beacon.DocumentItem
 		MapCompatibility As UInt64
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mMaxDinoLevel
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Value = Max(Value, 15)
+			  
+			  If Self.mMaxDinoLevel = Value Then
+			    Return
+			  End If
+			  
+			  Self.mMaxDinoLevel = Value
+			  Dim DiffValue, DiffOffset, DiffOverride As Double
+			  Beacon.ComputeDifficultySettings(Self.mMaxDinoLevel, Self.mDinoLevelSteps, DiffValue, DiffOffset, DiffOverride)
+			  Self.mDifficultyValue = DiffValue
+			  Self.mModified = True
+			End Set
+		#tag EndSetter
+		MaxDinoLevel As Integer
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mConsoleModsOnly As Boolean
 	#tag EndProperty
@@ -645,6 +686,10 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mDifficultyValue As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDinoLevelSteps As Integer = 4
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -669,6 +714,10 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mMapCompatibility As UInt64
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMaxDinoLevel As Integer = 120
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -713,6 +762,11 @@ Implements Beacon.DocumentItem
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="ConsoleModsOnly"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Description"
 			Group="Behavior"
 			Type="Text"
@@ -721,6 +775,11 @@ Implements Beacon.DocumentItem
 			Name="DifficultyValue"
 			Group="Behavior"
 			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DinoLevelSteps"
+			Group="Behavior"
+			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -747,6 +806,11 @@ Implements Beacon.DocumentItem
 			Type="UInt64"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="MaxDinoLevel"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
@@ -769,11 +833,6 @@ Implements Beacon.DocumentItem
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ConsoleModsOnly"
-			Group="Behavior"
-			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

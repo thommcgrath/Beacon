@@ -53,7 +53,6 @@ Begin Window FTPProfileDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   256
-      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -85,7 +84,6 @@ Begin Window FTPProfileDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   256
-      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -162,7 +160,6 @@ Begin Window FTPProfileDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   86
-      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -205,7 +202,6 @@ Begin Window FTPProfileDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   120
-      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -248,7 +244,6 @@ Begin Window FTPProfileDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   154
-      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -291,7 +286,6 @@ Begin Window FTPProfileDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   188
-      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -334,7 +328,6 @@ Begin Window FTPProfileDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   222
-      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -367,7 +360,6 @@ Begin Window FTPProfileDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   256
-      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -572,7 +564,6 @@ Begin Window FTPProfileDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   313
-      Transparent     =   False
       Visible         =   False
       Width           =   16
    End
@@ -613,7 +604,6 @@ Begin Window FTPProfileDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   52
-      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True

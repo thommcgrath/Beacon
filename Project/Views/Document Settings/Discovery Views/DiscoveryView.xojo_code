@@ -20,6 +20,68 @@ Inherits ContainerControl
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function CreateDocumentFromImport(ParsedData As Xojo.Core.Dictionary, DiscoveredData As Xojo.Core.Dictionary) As Beacon.Document
+		  Dim Document As New Beacon.Document
+		  
+		  If DiscoveredData <> Nil And DiscoveredData.HasKey("Maps") Then
+		    Dim Maps() As Auto = DiscoveredData.Value("Maps")
+		    Document.MapCompatibility = 0
+		    For Each Map As Text In Maps
+		      Select Case Map
+		      Case "ScorchedEarth_P"
+		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.ScorchedEarth.Mask
+		      Case "Aberration_P"
+		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.Aberration.Mask
+		      Case "TheCenter"
+		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.TheCenter.Mask
+		      Case "Ragnarok"
+		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.Ragnarok.Mask
+		      Else
+		        // Unofficial maps will be tagged as The Island
+		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.TheIsland.Mask
+		      End Select
+		    Next
+		  End If
+		  
+		  If ParsedData.HasKey("SessionName") Then
+		    Try
+		      Document.Title = ParsedData.Value("SessionName")
+		    Catch Err As TypeMismatchException
+		    End Try
+		  End If
+		  
+		  If DiscoveredData <> Nil And DiscoveredData.HasKey("Options") Then
+		    Document.DinoLevelSteps = Self.OverrideOfficialDifficultyFromDict(DiscoveredData.Value("Options"), ParsedData)
+		  Else
+		    Document.DinoLevelSteps = Self.OverrideOfficialDifficultyFromDict(ParsedData)
+		  End If
+		  
+		  Try
+		    If ParsedData.HasKey("DifficultyOffset") Then
+		      Document.MaxDinoLevel = Beacon.ComputeMaxDinoLevel(ParsedData.Value("DifficultyOffset"), Document.DinoLevelSteps)
+		    End If
+		  Catch Err As TypeMismatchException
+		  End Try
+		  
+		  Dim Dicts() As Auto
+		  Try
+		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
+		  Catch Err As TypeMismatchException
+		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
+		  End Try
+		  
+		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
+		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Document.DifficultyValue)
+		    If Source <> Nil Then
+		      Document.Add(Source)
+		    End If
+		  Next
+		  
+		  Return Document
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function DesiredHeight() As Integer
 		  Return Self.mDesiredHeight
@@ -30,9 +92,33 @@ Inherits ContainerControl
 		Protected Sub DesiredHeight(Assigns Value As Integer)
 		  If Value <> Self.mDesiredHeight Then
 		    Self.mDesiredHeight = Value
-		    RaiseEvent ShouldResize(Value)
-		  End If
+		  End If  
+		  RaiseEvent ShouldResize(Value)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function OverrideOfficialDifficultyFromDict(ParamArray Dicts() As Xojo.Core.Dictionary) As Double
+		  For Each Dict As Xojo.Core.Dictionary In Dicts
+		    If Not Dict.HasKey("OverrideOfficialDifficulty") Then
+		      Continue
+		    End If
+		    
+		    Dim Value As Auto = Dict.Value("OverrideOfficialDifficulty")
+		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		    Try
+		      Select Case Info.Name
+		      Case "Text"
+		        Return Double.FromText(Value)
+		      Case "Int32", "Int64", "Double"
+		        Return Value
+		      End Select
+		    Catch Err As TypeMismatchException
+		    End Try
+		  Next
+		  
+		  Return 4.0
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1

@@ -309,7 +309,6 @@ Begin BeaconContainer ModDetailView
          Enabled         =   True
          EraseBackground =   False
          HasBottomBorder =   True
-         HasResizer      =   "False"
          HasTopBorder    =   False
          Height          =   41
          HelpTag         =   ""
@@ -345,7 +344,6 @@ Begin BeaconContainer ModDetailView
          Enabled         =   True
          EraseBackground =   False
          HasBottomBorder =   True
-         HasResizer      =   "False"
          HasTopBorder    =   False
          Height          =   41
          HelpTag         =   ""
@@ -381,7 +379,6 @@ Begin BeaconContainer ModDetailView
          Enabled         =   True
          EraseBackground =   False
          HasBottomBorder =   True
-         HasResizer      =   "False"
          HasTopBorder    =   False
          Height          =   41
          HelpTag         =   ""
@@ -417,7 +414,6 @@ Begin BeaconContainer ModDetailView
          Enabled         =   True
          EraseBackground =   False
          HasBottomBorder =   True
-         HasResizer      =   "False"
          HasTopBorder    =   False
          Height          =   41
          HelpTag         =   ""

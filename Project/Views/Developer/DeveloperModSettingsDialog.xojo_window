@@ -257,6 +257,7 @@ Begin Window DeveloperModSettingsDialog
       Width           =   16
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

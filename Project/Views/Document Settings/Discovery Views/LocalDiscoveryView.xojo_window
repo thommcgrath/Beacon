@@ -369,6 +369,7 @@ End
 		Sub Begin()
 		  Self.DesiredHeight = 400
 		  Self.PagePanel1.Value = 0
+		  Self.ConfigArea.Text = ""
 		End Sub
 	#tag EndEvent
 
@@ -401,13 +402,17 @@ End
 		    Dim Other As FolderItem
 		    Dim Type As ConfigFileType = Self.DetectConfigType(Content)
 		    Select Case Type
-		    Case ConfigFileType.GameIni
+		    Case ConfigFileType.GameIni    
+		      Self.mGameIniFile = File
 		      If Self.mCurrentConfigType <> ConfigFileType.GameUserSettingsIni Then
 		        Other = File.Parent.Child("GameUserSettings.ini")
+		        Self.mGameUserSettingsFile = Other
 		      End If
-		    Case ConfigFileType.GameUserSettingsIni
+		    Case ConfigFileType.GameUserSettingsIni    
+		      Self.mGameUserSettingsFile = File
 		      If Self.mCurrentConfigType <> ConfigFileType.GameIni Then
 		        Other = File.Parent.Child("Game.ini")
+		        Self.mGameIniFile = Other
 		      End If
 		    End Select
 		    If Other <> Nil And Other.Exists Then
@@ -467,6 +472,14 @@ End
 
 	#tag Property, Flags = &h21
 		Private mCurrentConfigType As ConfigFileType
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameIniFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameUserSettingsFile As FolderItem
 	#tag EndProperty
 
 
@@ -553,51 +566,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Finished(ParsedData As Xojo.Core.Dictionary)
-		  Dim Document As New Beacon.Document
+		  #Pragma Warning "Does not setup a local deployment target."
 		  
-		  If ParsedData.HasKey("SessionName") Then
-		    Try
-		      Document.Title = ParsedData.Value("SessionName")
-		    Catch Err As TypeMismatchException
-		    End Try
-		  End If
+		  Dim Document As Beacon.Document = Self.CreateDocumentFromImport(ParsedData, Nil)
+		  
 		  If Document.Title = "" Then
 		    Document.Title = "Single Player Loot"
 		  End If
-		  
-		  Dim SetDifficulty As Boolean
-		  If ParsedData.HasKey("OverrideOfficialDifficulty") Then
-		    Try
-		      Document.DifficultyValue = ParsedData.Value("OverrideOfficialDifficulty")
-		      SetDifficulty = True
-		    Catch Err As TypeMismatchException
-		      
-		    End Try
-		  End If
-		  If Not SetDifficulty And ParsedData.HasKey("DifficultyOffset") Then
-		    Dim Offset As Double
-		    Try
-		      Offset = ParsedData.Value("DifficultyOffset")
-		      SetDifficulty = True
-		    Catch Err As TypeMismatchException
-		      Offset = 1.0
-		    End Try
-		    Document.DifficultyValue = Beacon.DifficultyValue(Offset, Document.Maps.DifficultyScale)
-		  End If
-		  
-		  Dim Dicts() As Auto
-		  Try
-		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
-		  Catch Err As TypeMismatchException
-		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
-		  End Try
-		  
-		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
-		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Document.DifficultyValue)
-		    If Source <> Nil Then
-		      Document.Add(Source)
-		    End If
-		  Next
 		  
 		  Self.ShouldFinish(Document)
 		End Sub

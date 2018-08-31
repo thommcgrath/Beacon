@@ -44,7 +44,7 @@ Begin DiscoveryView NitradoDiscoveryView
       TabIndex        =   3
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedPushButton FindingCancelButton
@@ -588,22 +588,21 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Finished(ParsedData As Xojo.Core.Dictionary)
-		  Dim MapMask As UInt64
-		  Dim DifficultySum As Double
-		  Dim Profiles() As Beacon.NitradoServerProfile
+		  #Pragma Warning "Does not parse difficulty"
 		  
+		  Dim Document As Beacon.Document = Self.CreateDocumentFromImport(ParsedData, Nil)
+		  
+		  Dim MapMask As UInt64
+		  Dim Profiles() As Beacon.NitradoServerProfile
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedServers
 		    Dim Profile As Beacon.NitradoServerProfile = Entry.Key
 		    Dim Dict As Xojo.Core.Dictionary = Entry.Value
 		    
 		    Profiles.Append(Profile)
 		    MapMask = MapMask Or Beacon.Map(Dict.Value("Map")).Mask
-		    DifficultySum = DifficultySum + Dict.Value("Difficulty")
 		  Next
 		  
-		  Dim Document As New Beacon.Document
 		  Document.OAuthData("Nitrado") = Self.AuthClient.AuthData
-		  Document.DifficultyValue = DifficultySum / Self.mSelectedServers.Count
 		  Document.MapCompatibility = MapMask
 		  
 		  If Profiles.Ubound = 0 Then
@@ -614,20 +613,6 @@ End
 		  
 		  For Each Profile As Beacon.NitradoServerProfile In Profiles
 		    Document.Add(Profile)
-		  Next
-		  
-		  Dim Dicts() As Auto
-		  Try
-		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
-		  Catch Err As TypeMismatchException
-		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
-		  End Try
-		  
-		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
-		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Document.DifficultyValue)
-		    If Source <> Nil Then
-		      Document.Add(Source)
-		    End If
 		  Next
 		  
 		  Self.ShouldFinish(Document)

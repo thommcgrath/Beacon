@@ -26,6 +26,23 @@ Protected Module Beacon
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub ComputeDifficultySettings(MaxDinoLevel As Integer, DinoLevelSteps As Integer, ByRef DifficultyValue As Double, ByRef DifficultyOffset As Double, ByRef OverrideOfficialDifficulty As Double)
+		  MaxDinoLevel = Max(MaxDinoLevel, 15)
+		  DinoLevelSteps = Max(DinoLevelSteps, 1)
+		  DifficultyValue = MaxDinoLevel / 30 
+		  OverrideOfficialDifficulty = DinoLevelSteps
+		  DifficultyOffset = Max(((MaxDinoLevel / 30) - 0.5) / (DinoLevelSteps - 0.5), 0.01)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ComputeMaxDinoLevel(Offset As Double, Steps As Integer) As Integer
+		  Dim DifficultyValue As Double = (Offset * (Steps - 0.5)) + 0.5
+		  Return DifficultyValue * 30
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Protected Function ConvertMemoryBlock(Source As Global.MemoryBlock) As Xojo.Core.MemoryBlock
 		  Dim Temp As New Xojo.Core.MemoryBlock(Source)
@@ -205,7 +222,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function DifficultyValue(Offset As Double, Scale As Double) As Double
-		  Offset = Xojo.Math.Min(Offset, 1.0)
+		  Offset = Xojo.Math.Max(Offset, 0.0001)
 		  Return (Offset * (Scale - 0.5)) + 0.5
 		End Function
 	#tag EndMethod
@@ -669,6 +686,16 @@ Protected Module Beacon
 		  Return Domain + Path
 		End Function
 	#tag EndMethod
+
+
+	#tag Note, Name = Difficulty
+		OverrideOfficialDifficulty determines the steps dino levels will take. For example, when set to 5.0,
+		you will see levels 5, 10, 15, 20. When set to 10, levels will be 10, 20, 30, 40.
+		
+		This means computing the correct difficulty offset requires both the max dino level and the dino level
+		step value.
+		
+	#tag EndNote
 
 
 	#tag Property, Flags = &h21

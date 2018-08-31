@@ -39,320 +39,15 @@ Begin Window DocumentSetupSheet
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   5
+      PanelCount      =   2
       Panels          =   ""
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
-      Value           =   4
+      Value           =   1
       Visible         =   True
       Width           =   600
-      Begin Label IntroMessageLabel
-         AutoDeactivate  =   True
-         Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "New Document"
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   20
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   560
-      End
-      Begin RadioButton ImportServerRadio
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Import existing settings"
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   52
-         Underline       =   False
-         Value           =   True
-         Visible         =   True
-         Width           =   560
-      End
-      Begin RadioButton CreateEmptyRadio
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Create a document from scratch"
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   5
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   116
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   471
-      End
-      Begin UITweaks.ResizedPushButton IntroActionButton
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   False
-         Caption         =   "Next"
-         Default         =   True
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   500
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   8
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   148
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedPushButton IntroCancelButton
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   True
-         Caption         =   "Cancel"
-         Default         =   False
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   408
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   7
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   148
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedPopupMenu IntroServerTypeMenu
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         InitialValue    =   "Nitrado\nOther Server with FTP Access\nLocal Files or Copy && Paste"
-         Italic          =   False
-         Left            =   105
-         ListIndex       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   9
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   84
-         Underline       =   False
-         Visible         =   True
-         Width           =   222
-      End
-      Begin UITweaks.ResizedLabel IntroServerTypeLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Pages"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   10
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Source:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   84
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   53
-      End
-      Begin NitradoDiscoveryView NitradoView
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
-         Backdrop        =   0
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   530
-         HelpTag         =   ""
-         InitialParent   =   "Pages"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   True
-         UseFocusRing    =   False
-         Visible         =   True
-         Width           =   600
-      End
-      Begin FTPDiscoveryView FTPView
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
-         Backdrop        =   0
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   530
-         HelpTag         =   ""
-         InitialParent   =   "Pages"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   True
-         UseFocusRing    =   False
-         Visible         =   True
-         Width           =   600
-      End
-      Begin LocalDiscoveryView LocalView
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
-         Backdrop        =   0
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   530
-         HelpTag         =   ""
-         InitialParent   =   "Pages"
-         Left            =   0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   4
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   True
-         UseFocusRing    =   False
-         Visible         =   True
-         Width           =   600
-      End
       Begin DocumentSettingsView SettingsView
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -373,7 +68,36 @@ Begin Window DocumentSetupSheet
          LockTop         =   True
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   5
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   600
+      End
+      Begin DocumentImportView ImportView
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   530
+         HelpTag         =   ""
+         InitialParent   =   "Pages"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         QuickCancel     =   False
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
          TabStop         =   True
          Top             =   0
          Transparent     =   True
@@ -388,7 +112,9 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.SwapButtons()
+		  Self.Height = DocumentSettingsView.ViewHeight
+		  Self.SettingsView.Document = Self.mDocument
+		  Self.Pages.Value = Self.PageSettingsIndex
 		End Sub
 	#tag EndEvent
 
@@ -404,13 +130,26 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  // Calling the overridden superclass constructor.
+		  Self.mDocument = New Beacon.Document
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Document As Beacon.Document)
+		  // Calling the overridden superclass constructor.
+		  Self.mDocument = Document
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window) As Beacon.Document
 		  Dim Win As New DocumentSetupSheet
-		  Win.Height = DocumentSetupSheet.PageIntroHeight
 		  Win.Title = "New Document"
 		  Win.SettingsView.SetEditMode(False)
-		  Win.Pages.Value = DocumentSetupSheet.PageIntroIndex
-		  Win.mDocument = New Beacon.Document
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  If Win.mCancelled Then
@@ -430,13 +169,9 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Document As Beacon.Document) As Boolean
-		  Dim Win As New DocumentSetupSheet
-		  Win.Height = Win.SettingsView.ViewHeight
+		  Dim Win As New DocumentSetupSheet(Document)
 		  Win.SettingsView.SetEditMode(True)
-		  Win.mDocument = Document
-		  Win.mQuickCancel = True
 		  Win.Title = "Edit Document"
-		  Win.Pages.Value = DocumentSetupSheet.PageFinalizeIndex
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  Dim Cancelled As Boolean = Win.mCancelled
@@ -450,13 +185,11 @@ End
 		Shared Function Present(Parent As Window, SourceFile As FolderItem) As Beacon.Document
 		  Dim Win As New DocumentSetupSheet
 		  Win.Visible = False
-		  Win.LocalView.Begin
-		  Win.LocalView.AddFile(SourceFile)
-		  Win.Height = Win.LocalView.DesiredHeight
+		  Win.Pages.Value = PageImportIndex
+		  Win.ImportView.QuickCancel = True
+		  Win.ImportView.Import(SourceFile)
 		  Win.Title = "Import Local Config"
 		  Win.SettingsView.SetEditMode(False)
-		  Win.Pages.Value = DocumentSetupSheet.PageLocalIndex
-		  Win.mQuickCancel = True
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  If Win.mCancelled Then
@@ -484,30 +217,14 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mQuickCancel As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private Shared UntitledDocumentCounter As Integer
 	#tag EndProperty
 
 
-	#tag Constant, Name = PageFinalizeIndex, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = PageImportIndex, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PageFTPIndex, Type = Double, Dynamic = False, Default = \"2", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageIntroHeight, Type = Double, Dynamic = False, Default = \"188", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageIntroIndex, Type = Double, Dynamic = False, Default = \"0", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageLocalIndex, Type = Double, Dynamic = False, Default = \"3", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = PageNitradoIndex, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = PageSettingsIndex, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
 
@@ -516,135 +233,10 @@ End
 #tag Events Pages
 	#tag Event
 		Sub Change()
-		  Dim DesiredHeight As Integer
-		  Select Case Me.Value
-		  Case Self.PageIntroIndex
-		    DesiredHeight = Self.PageIntroHeight
-		  Case Self.PageNitradoIndex
-		    DesiredHeight = Self.NitradoView.DesiredHeight
-		  Case Self.PageFTPIndex
-		    DesiredHeight = Self.FTPView.DesiredHeight
-		  Case Self.PageLocalIndex
-		    DesiredHeight = Self.LocalView.DesiredHeight
-		  Case Self.PageFinalizeIndex
-		    DesiredHeight = Self.SettingsView.ViewHeight
-		  Else
-		    DesiredHeight = Self.Height
-		  End Select
-		  
-		  If Self.Height <> DesiredHeight Then
-		    Self.AnimateToHeight(DesiredHeight)
-		  End If
-		  
-		  Select Case Me.Value
-		  Case Self.PageFinalizeIndex
-		    Self.SettingsView.Document = Self.mDocument
-		    Self.SettingsView.SetFocus
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events IntroActionButton
-	#tag Event
-		Sub Action()
-		  If ImportServerRadio.Value Then
-		    Select Case IntroServerTypeMenu.ListIndex
-		    Case 0
-		      Self.NitradoView.Begin
-		      Self.Pages.Value = Self.PageNitradoIndex
-		    Case 1
-		      Self.FTPView.Begin
-		      Self.Pages.Value = Self.PageFTPIndex
-		    Case 2
-		      Self.LocalView.Begin
-		      Self.Pages.Value = Self.PageLocalIndex
-		    End Select
-		  ElseIf CreateEmptyRadio.Value Then
-		    Self.mDocument = New Beacon.Document
-		    Self.Pages.Value = Self.PageFinalizeIndex
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events IntroCancelButton
-	#tag Event
-		Sub Action()
-		  Self.mCancelled = True
-		  Self.Hide
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events NitradoView
-	#tag Event
-		Sub ShouldCancel()
-		  If Self.mQuickCancel Then
-		    Self.mCancelled = True
-		    Self.Hide
-		  Else
-		    Self.Pages.Value = Self.PageIntroIndex
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(NewHeight As Integer)
-		  If Self.Pages.Value = Self.PageNitradoIndex Then
-		    Self.AnimateToHeight(NewHeight)
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Finished(Document As Beacon.Document)
-		  Self.mDocument = Document
-		  Self.Pages.Value = Self.PageFinalizeIndex
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events FTPView
-	#tag Event
-		Sub Finished(Document As Beacon.Document)
-		  Self.mDocument = Document
-		  Self.Pages.Value = Self.PageFinalizeIndex
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldCancel()
-		  If Self.mQuickCancel Then
-		    Self.mCancelled = True
-		    Self.Hide
-		  Else
-		    Self.Pages.Value = Self.PageIntroIndex
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(NewHeight As Integer)
-		  If Self.Pages.Value = Self.PageFTPIndex Then
-		    Self.AnimateToHeight(NewHeight)
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events LocalView
-	#tag Event
-		Sub Finished(Document As Beacon.Document)
-		  Self.mDocument = Document
-		  Self.Pages.Value = Self.PageFinalizeIndex
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldCancel()
-		  If Self.mQuickCancel Then
-		    Self.mCancelled = True
-		    Self.Hide
-		  Else
-		    Self.Pages.Value = Self.PageIntroIndex
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ShouldResize(NewHeight As Integer)
-		  If Self.Pages.Value = Self.PageLocalIndex Then
-		    Self.AnimateToHeight(NewHeight)
+		  If Me.Value = Self.PageSettingsIndex Then
+		    If Self.Height <> DocumentSettingsView.ViewHeight Then
+		      Self.AnimateToHeight(DocumentSettingsView.ViewHeight)
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
@@ -652,12 +244,8 @@ End
 #tag Events SettingsView
 	#tag Event
 		Sub ShouldCancel()
-		  If Self.mQuickCancel Then
-		    Self.mCancelled = True
-		    Self.Hide
-		  Else
-		    Self.Pages.Value = Self.PageIntroIndex
-		  End If
+		  Self.mCancelled = True
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -665,6 +253,37 @@ End
 		  // The view should have edited mDocument itself, it uses references instead of copies
 		  Self.mCancelled = False
 		  Self.Hide
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldImport()
+		  Self.Pages.Value = Self.PageImportIndex
+		  Self.ImportView.Reset
+		  Self.ImportView.QuickCancel = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ImportView
+	#tag Event
+		Sub DocumentImported(Document As Beacon.Document)
+		  Self.mDocument = Document
+		  Self.SettingsView.Document = Self.mDocument
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldDismiss()
+		  Self.Pages.Value = Self.PageSettingsIndex
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldResize(Height As Integer)
+		  If Self.Pages.Value = Self.PageImportIndex And Self.Height <> Height Then
+		    If Self.Visible Then
+		      Self.AnimateToHeight(Height)
+		    Else
+		      Self.Height = Height
+		    End If
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
