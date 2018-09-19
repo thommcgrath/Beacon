@@ -62,6 +62,7 @@ var request = {
 };
 
 document.addEventListener('DOMContentLoaded', function(event) {
+	var known_vulnerable_password = '';
 	var current_page = 'intro';
 	var show_page = function(to_page) {
 		document.getElementById('page_' + current_page).style.display = 'none';
@@ -223,15 +224,23 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		}
 		
 		show_page('loading');
-		request.start('GET', '/inapp/password.php?email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&code=' + encodeURIComponent(code), function(obj) {
+		var url = '/inapp/password.php?email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&code=' + encodeURIComponent(code);
+		if (password == known_vulnerable_password) {
+			url += '&allow_vulnerable=true';
+		}
+		request.start('GET', url, function(obj) {
 			window.location = 'beacon://set_user_token?token=' + encodeURIComponent(obj.session_id) + '&password=' + encodeURIComponent(password);
 		}, function(http_status, content) {
 			show_page('password');
 			
 			switch (http_status) {
-			case 400:
-				var obj = JSON.parse(content);
-				dialog.show('User save error', obj.message);
+			case 436:
+			case 437:
+				dialog.show('Unable to create Beacon account.', obj.message);
+				break;
+			case 438:
+				known_vulnerable_password = password;
+				dialog.show('Your password is vulnerable.', 'Your password has been leaked in a previous breach and should not be used. To ignore this warning, you may submit the password again, but that is not recommended.');
 				break;
 			default:
 				dialog.show('Unable to create user', 'There was a ' + http_status + ' error while trying to create your account.');

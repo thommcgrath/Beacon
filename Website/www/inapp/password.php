@@ -16,19 +16,38 @@ if (empty($_GET['email']) || BeaconUser::ValidateLoginKey($_GET['email']) == fal
 $email = $_GET['email'];
 $password = $_GET['password'];
 $code = $_GET['code'];
+$allow_vulnerable = isset($_GET['allow_vulnerable']) ? boolval($_GET['allow_vulnerable']) : false;
 
 $database = BeaconCommon::Database();
 $results = $database->Query('SELECT * FROM email_verification WHERE email = $1 AND code = encode(digest($2, \'sha512\'), \'hex\');', $email, $code);
 if ($results->RecordCount() == 0) {
-	http_response_code(400);
+	http_response_code(436);
 	echo json_encode(array('message' => 'Email not verified.'), JSON_PRETTY_PRINT);
 	exit;
 }
 
 if (!BeaconUser::ValidatePassword($password)) {
-	http_response_code(400);
+	http_response_code(437);
 	echo json_encode(array('message' => 'Password must be at least 8 characters and you should avoid repeating characters.'), JSON_PRETTY_PRINT);
 	exit;
+}
+
+if ($allow_vulnerable == false) {
+	$hash = strtolower(sha1($password));
+	$prefix = substr($hash, 0, 5);
+	$suffix = substr($hash, 5);
+	$url = 'https://api.pwnedpasswords.com/range/' . $prefix;
+	$hashes = explode("\n", file_get_contents($url));
+	foreach ($hashes as $hash) {
+		$count = intval(substr($hash, 36));
+		$hash = strtolower(substr($hash, 0, 35));
+		if ($hash == $suffix && $count > 0) {
+			// vulnerable
+			http_response_code(438);
+			echo json_encode(array('message' => 'Password is listed as vulnerable according to haveibeenpwned.com'), JSON_PRETTY_PRINT);
+			exit;
+		}
+	}
 }
 
 $new_user = false;
