@@ -37,12 +37,20 @@ GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE users TO thezaz_website;
 -- End Users
 
 -- Documents: Files that are shareable in the community (time to rethink this?)
+CREATE TYPE publish_status AS ENUM (
+	'Private',
+	'Requested',
+	'Approved',
+	'Approved But Private',
+	'Denied'
+);
+
 CREATE TABLE documents (
 	document_id UUID NOT NULL PRIMARY KEY,
 	user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT ON UPDATE CASCADE,
 	title TEXT NOT NULL,
 	description TEXT NOT NULL,
-	is_public BOOLEAN NOT NULL,
+	published publish_status NOT NULL,
 	map INTEGER NOT NULL,
 	difficulty NUMERIC(8, 4) NOT NULL,
 	console_safe BOOLEAN NOT NULL,
@@ -71,7 +79,7 @@ BEGIN
 			NEW.revision = NEW.revision + 1;
 			p_update_meta = TRUE;
 		ELSE
-			IF NEW.title != OLD.title OR NEW.description != OLD.description OR NEW.is_public != OLD.is_public OR NEW.map != OLD.map OR NEW.difficulty != OLD.difficulty OR NEW.console_safe != OLD.console_safe THEN
+			IF NEW.title != OLD.title OR NEW.description != OLD.description OR NEW.map != OLD.map OR NEW.difficulty != OLD.difficulty OR NEW.console_safe != OLD.console_safe THEN
 				RAISE EXCEPTION 'Do not change meta properties. Change the contents JSON instead.';
 			END IF;
 		END IF;
@@ -79,7 +87,6 @@ BEGIN
 	IF p_update_meta = TRUE THEN
 		NEW.title = coalesce(NEW.contents->>'Title', 'Untitled Document');
 		NEW.description = coalesce(NEW.contents->>'Description', '');
-		NEW.is_public = coalesce((NEW.contents->>'Public')::boolean, FALSE);
 		NEW.map = coalesce((NEW.contents->>'Map')::integer, 1);
 		NEW.difficulty = coalesce((NEW.contents->>'DifficultyValue')::numeric, 4.0);
 		NEW.console_safe = TRUE;
@@ -364,6 +371,6 @@ GRANT SELECT ON TABLE articles TO thezaz_website;
 -- End Articles
 
 -- Search
-CREATE OR REPLACE VIEW search_contents AS (SELECT article_id AS id, title, body, setweight(to_tsvector(title), 'A') || ' ' || setweight(to_tsvector(body), 'B') AS lexemes, 'Article' AS type FROM articles) UNION (SELECT object_id AS id, label AS title, '' AS body, setweight(to_tsvector(label), 'A') AS lexemes, 'Object' AS type FROM objects WHERE objects.tableoid::regclass IN ('engrams', 'creatures', 'loot_sources')) UNION (SELECT mod_id AS id, name AS title, '' AS body, setweight(to_tsvector(name), 'C') AS lexemes, 'Mod' AS type FROM mods WHERE confirmed = TRUE) UNION (SELECT document_id, title, description AS body, setweight(to_tsvector(title), 'A') || ' ' || setweight(to_tsvector(description), 'B') AS lexemes, 'Document' AS type FROM documents WHERE is_public = TRUE);
+CREATE OR REPLACE VIEW search_contents AS (SELECT article_id AS id, title, body, setweight(to_tsvector(title), 'A') || ' ' || setweight(to_tsvector(body), 'B') AS lexemes, 'Article' AS type FROM articles) UNION (SELECT object_id AS id, label AS title, '' AS body, setweight(to_tsvector(label), 'A') AS lexemes, 'Object' AS type FROM objects WHERE objects.tableoid::regclass IN ('engrams', 'creatures', 'loot_sources')) UNION (SELECT mod_id AS id, name AS title, '' AS body, setweight(to_tsvector(name), 'C') AS lexemes, 'Mod' AS type FROM mods WHERE confirmed = TRUE) UNION (SELECT document_id, title, description AS body, setweight(to_tsvector(title), 'A') || ' ' || setweight(to_tsvector(description), 'B') AS lexemes, 'Document' AS type FROM documents WHERE published = 'Approved');
 GRANT SELECT ON TABLE search_contents TO thezaz_website;
 -- End Search

@@ -38,10 +38,10 @@ case 'GET':
 			$params['limit_user_id'] = $_GET['user_id'];
 		}
 		if (isset($user_id)) {
-			$clauses[] = '(user_id = ::current_user_id:: OR is_public = true)';
+			$clauses[] = '(user_id = ::current_user_id:: OR published = \'Approved\')';
 			$params['current_user_id'] = $user_id;
 		} else {
-			$clauses[] = 'is_public = true';
+			$clauses[] = 'published = \'Approved\'';
 		}
 		$sql = 'SELECT ' . implode(', ', BeaconDocumentMetadata::DatabaseColumns()) . ' FROM documents WHERE ' . implode(' AND ', $clauses);
 		
@@ -152,6 +152,63 @@ case 'POST':
 			$database->Query('UPDATE documents SET contents = $2 WHERE document_id = $1;', $document_id, $contents);
 		} else {
 			$database->Query('INSERT INTO documents (user_id, contents) VALUES ($1, $2);', BeaconAPI::UserID(), $contents);
+		}
+		
+		// see if a publish request is needed
+		$results = $database->Query('SELECT published FROM documents WHERE document_id = $1;', $document_id);
+		$current_status = $results->Field('published');
+		$new_status = $current_status;
+		$wants_publish = boolval($document['Public']) == true;
+		if ($wants_publish) {
+			if ($current_status == BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED_PRIVATE) {
+				$new_status = BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED;
+			} elseif ($current_status == BeaconDocumentMetadata::PUBLISH_STATUS_PRIVATE) {
+				$new_status = BeaconDocumentMetadata::PUBLISH_STATUS_REQUESTED;
+				
+				$obj = array(
+					'text' => 'Request to publish document',
+					'attachments' => array(
+						array(
+							'title' => $document['Title'],
+							'text' => $document['Description'],
+							'fallback' => 'Unable to show response buttons.',
+							'callback_id' => 'publish_document:' . $document_id,
+							'actions' => array(
+								array(
+									'name' => 'status',
+									'text' => 'Approve',
+									'type' => 'button',
+									'value' => BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED,
+									'confirm' => array(
+										'text' => 'Are you sure you want to approve this document?',
+										'ok_text' => 'Approve'
+									)
+								),
+								array(
+									'name' => 'status',
+									'text' => 'Deny',
+									'type' => 'button',
+									'value' => BeaconDocumentMetadata::PUBLISH_STATUS_DENIED,
+									'confirm' => array(
+										'text' => 'Are you sure you want to reject this document?',
+										'ok_text' => 'Deny'
+									)
+								)
+							)
+						)
+					)
+				);
+				BeaconCommon::PostSlackRaw(json_encode($obj));	
+			}
+		} else {
+			if ($current_status == BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED) {
+				$new_status = BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED_PRIVATE;
+			} elseif ($current_status == BeaconDocumentMetadata::PUBLISH_STATUS_REQUESTED) {
+				$new_status = BeaconDocumentMetadata::PUBLISH_STATUS_PRIVATE;
+			}
+		}
+		if ($new_status != $current_status) {
+			$database->Query('UPDATE documents SET published = $2 WHERE document_id = $1;', $document_id, $new_status);
 		}
 		
 		$documents[] = BeaconDocumentMetadata::GetByDocumentID($document_id)[0];
