@@ -171,6 +171,32 @@ Protected Class FolderItem
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.FolderItem) As Integer
+		  #if TargetiOS
+		    If Other = Nil And Self.mSource = Nil Then
+		      Return 0
+		    ElseIf Other = Nil And Self.mSource <> Nil Then
+		      Return 1
+		    ElseIf Other <> Nil And Self.mSource = Nil Then
+		      Return -1
+		    Else
+		      Return StrComp(Self.mSource.Path, Other.Path, 0)
+		    End If
+		  #else
+		    If Other = Nil And Self.mLegacySource = Nil Then
+		      Return 0
+		    ElseIf Other = Nil And Self.mLegacySource <> Nil Then
+		      Return 1
+		    ElseIf Other <> Nil And Self.mLegacySource = Nil Then
+		      Return -1
+		    Else
+		      Return StrComp(Self.mLegacySource.NativePath, Other.Path, 0)
+		    End If
+		  #endif
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function Operator_Convert() As Global.FolderItem
 		  Return Self.mLegacySource
