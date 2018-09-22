@@ -1,6 +1,12 @@
 <?php
 
 class BeaconDocumentMetadata implements JsonSerializable {
+	const PUBLISH_STATUS_PRIVATE = 'Private';
+	const PUBLISH_STATUS_REQUESTED = 'Requested';
+	const PUBLISH_STATUS_APPROVED = 'Approved';
+	const PUBLISH_STATUS_APPROVED_PRIVATE = 'Approved But Private';
+	const PUBLISH_STATUS_DENIED = 'Denied';
+	
 	protected $document_id = '';
 	protected $name = '';
 	protected $description = '';
@@ -8,7 +14,7 @@ class BeaconDocumentMetadata implements JsonSerializable {
 	protected $download_count = 0;
 	protected $last_updated = null;
 	protected $user_id = '';
-	protected $is_public = false;
+	protected $published = self::PUBLISH_STATUS_PRIVATE;
 	protected $map_mask = 0;
 	protected $difficulty_value = 0;
 	protected $console_safe = true;
@@ -42,7 +48,11 @@ class BeaconDocumentMetadata implements JsonSerializable {
 	}
 	
 	public function IsPublic() {
-		return $this->is_public;
+		return $this->published == PUBLISH_STATUS_APPROVED;
+	}
+	
+	public function PublishStatus() {
+		return $this->published;
 	}
 	
 	public function MapMask() {
@@ -108,8 +118,11 @@ class BeaconDocumentMetadata implements JsonSerializable {
 				break;
 			case 'public':
 			case 'is_public':
-				$values[] = boolval($value);
-				$clauses[] = 'is_public = $' . $next_placeholder++;
+				$clauses[] = 'published = \'Approved\'';
+				break;
+			case 'published':
+				$values[] = $value;
+				$clauses[] = 'published = $' . $next_placeholder++;
 				break;
 			case 'user_id':
 				if (is_array($value)) {
@@ -176,7 +189,7 @@ class BeaconDocumentMetadata implements JsonSerializable {
 		$document->download_count = intval($results->Field('download_count'));
 		$document->last_updated = new DateTime($results->Field('last_update'));
 		$document->user_id = $results->Field('user_id');
-		$document->is_public = boolval($results->Field('is_public'));
+		$document->published = boolval($results->Field('published'));
 		$document->map_mask = intval($results->Field('map'));
 		$document->difficulty_value = floatval($results->Field('difficulty'));
 		$document->console_safe = boolval($results->Field('console_safe'));
@@ -210,7 +223,7 @@ class BeaconDocumentMetadata implements JsonSerializable {
 			'download_count',
 			'last_update',
 			'user_id',
-			'is_public',
+			'published',
 			'map',
 			'difficulty',
 			'console_safe'

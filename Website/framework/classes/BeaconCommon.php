@@ -122,14 +122,17 @@ abstract class BeaconCommon {
 	}
 	
 	public static function PostSlackMessage($message) {
+		self::PostSlackRaw(json_encode(array('text' => $message)));
+	}
+	
+	public static function PostSlackRaw(string $raw) {
 		$url = self::GetGlobal('Slack_WebHook_URL');
 		if ($url === null) {
 			trigger_error('Config file did not specify Slack_WebHook_URL', E_USER_ERROR);
 		}
-		$json = json_encode(array('text' => $message));
 	
 		$ch = curl_init($url);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $raw);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
