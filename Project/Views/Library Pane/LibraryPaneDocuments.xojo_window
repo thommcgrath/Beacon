@@ -729,11 +729,11 @@ End
 	#tag Event
 		Sub Open()
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconAPI, "Recent", "recent")
+		  Me.Add(IconRecentDocuments, "Recent", "recent")
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconAPI, "Cloud", "cloud")
+		  Me.Add(IconCloudDocuments, "Cloud", "cloud")
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
-		  Me.Add(IconAPI, "Community", "community")
+		  Me.Add(IconCommunityDocuments, "Community", "community")
 		  Me.Add(ShelfItem.NewFlexibleSpacer)
 		  Me.SelectedIndex = Self.ViewRecentDocuments
 		End Sub

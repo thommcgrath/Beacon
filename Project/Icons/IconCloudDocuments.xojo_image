@@ -1,0 +1,46 @@
+#tag MultiImage
+Image IconCloudDocuments
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAGqAAAAAAGqAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8WSWNvbkNsb3VkRG9jdW1lbnRzLnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFEvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkljb25DbG91ZERvY3VtZW50cy5wbmcAAA4ALgAWAEkAYwBvAG4AQwBsAG8AdQBkAEQAbwBjAHUAbQBlAG4AdABzAC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBPVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvSWNvbkNsb3VkRG9jdW1lbnRzLnBuZwAAEwABLwAAFQACABL//wAAAAAAAAAA
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconCloudDocuments.png
+		PartialPath = ..\Icons\IconCloudDocuments.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 24.00
+			Orientation = Any
+			Platform = 15
+			PPI = 72
+			VSize = 24.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAG0AAAAAAG0AAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8ZSWNvbkNsb3VkRG9jdW1lbnRzQDJ4LnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFQvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkljb25DbG91ZERvY3VtZW50c0AyeC5wbmcADgA0ABkASQBjAG8AbgBDAGwAbwB1AGQARABvAGMAdQBtAGUAbgB0AHMAQAAyAHgALgBwAG4AZwAPABoADABNAGEAYwBpAG4AdABvAHMAaAAgAEgARAASAFJVc2Vycy90aG9tbWNncmF0aC9Eb2N1bWVudHMvVGhlIFpBWiBTb3VyY2VzL0JlYWNvbi9JY29ucy9JY29uQ2xvdWREb2N1bWVudHNAMngucG5nABMAAS8AABUAAgAS//8AAAAAAAAAAA==
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconCloudDocuments@2x.png
+		PartialPath = ..\Icons\IconCloudDocuments@2x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 24.00
+			Orientation = Any
+			Platform = 15
+			PPI = 144
+			VSize = 24.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAG0AAAAAAG0AAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8ZSWNvbkNsb3VkRG9jdW1lbnRzQDN4LnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFQvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkljb25DbG91ZERvY3VtZW50c0AzeC5wbmcADgA0ABkASQBjAG8AbgBDAGwAbwB1AGQARABvAGMAdQBtAGUAbgB0AHMAQAAzAHgALgBwAG4AZwAPABoADABNAGEAYwBpAG4AdABvAHMAaAAgAEgARAASAFJVc2Vycy90aG9tbWNncmF0aC9Eb2N1bWVudHMvVGhlIFpBWiBTb3VyY2VzL0JlYWNvbi9JY29ucy9JY29uQ2xvdWREb2N1bWVudHNAM3gucG5nABMAAS8AABUAAgAS//8AAAAAAAAAAA==
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconCloudDocuments@3x.png
+		PartialPath = ..\Icons\IconCloudDocuments@3x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 24.00
+			Orientation = Any
+			Platform = 15
+			PPI = 216
+			VSize = 24.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+End Image
+#tag EndMultiImage
