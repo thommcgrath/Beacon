@@ -622,82 +622,32 @@ Implements ObservationKit.Observer
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="ScrollSpeed"
-			Group="Behavior"
-			InitialValue="20"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptFocus"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptTabs"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AutoDeactivate"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Backdrop"
-			Group="Appearance"
-			Type="Picture"
-			EditorType="Picture"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Caption"
-			Visible=true
-			Group="Behavior"
-			InitialValue="Untitled"
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Enabled"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EraseBackground"
-			Group="Behavior"
-			Type="Boolean"
-			EditorType="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Height"
-			Visible=true
-			Group="Position"
-			InitialValue="41"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=true
-			Group="Appearance"
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
 			Type="Integer"
 			EditorType="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+			EditorType="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+			EditorType="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Height"
+			Visible=true
+			Group="Position"
+			InitialValue="40"
+			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="InitialParent"
@@ -739,33 +689,6 @@ Implements ObservationKit.Observer
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Name"
-			Visible=true
-			Group="ID"
-			Type="String"
-			EditorType="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Resizer"
-			Visible=true
-			Group="Behavior"
-			InitialValue="0"
-			Type="BeaconToolbar.ResizerTypes"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - None"
-				"1 - Horizontal"
-				"2 - Vertical"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Super"
-			Visible=true
-			Group="ID"
-			Type="String"
-			EditorType="String"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="TabIndex"
 			Visible=true
 			Group="Position"
@@ -792,10 +715,38 @@ Implements ObservationKit.Observer
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Transparent"
-			Group="Behavior"
+			Name="Width"
+			Visible=true
+			Group="Position"
+			InitialValue="200"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutoDeactivate"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Backdrop"
+			Group="Appearance"
+			Type="Picture"
+			EditorType="Picture"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Enabled"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HelpTag"
+			Visible=true
+			Group="Appearance"
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="UseFocusRing"
@@ -812,11 +763,60 @@ Implements ObservationKit.Observer
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Width"
-			Visible=true
-			Group="Position"
-			InitialValue="200"
+			Name="ScrollSpeed"
+			Group="Behavior"
+			InitialValue="20"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AcceptFocus"
+			Visible=true
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AcceptTabs"
+			Visible=true
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Caption"
+			Visible=true
+			Group="Behavior"
+			InitialValue="Untitled"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DoubleBuffer"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EraseBackground"
+			Group="Behavior"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Resizer"
+			Visible=true
+			Group="Behavior"
+			InitialValue="0"
+			Type="BeaconToolbar.ResizerTypes"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - None"
+				"1 - Horizontal"
+				"2 - Vertical"
+			#tag EndEnumValues
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Transparent"
+			Group="Behavior"
+			Type="Boolean"
+			EditorType="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

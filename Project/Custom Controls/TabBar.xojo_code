@@ -77,10 +77,10 @@ Inherits ControlCanvas
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.ForeColor = SystemColors.ControlBackgroundColor
-		  G.FillRect(0, 0, G.Width, G.Height - 1)
-		  G.ForeColor = SystemColors.SeparatorColor
-		  G.FillRect(0, G.Height - 1, G.Width, 1)
+		  ' G.ForeColor = SystemColors.ControlBackgroundColor
+		  ' G.FillRect(0, 0, G.Width, G.Height - 1)
+		  ' G.ForeColor = SystemColors.SeparatorColor
+		  ' G.FillRect(0, G.Height - 1, G.Width, 1)
 		  
 		  Dim Count As Integer = Self.Count
 		  Dim MaxTotalTabWidth As Integer = (Count * Self.MaxTabWidth) + (Count - 1)
@@ -99,8 +99,11 @@ Inherits ControlCanvas
 		    End If
 		    
 		    Dim Clip As Graphics = G.Clip(LeftPos, 0, TabWidth, G.Height)
-		    If Self.mSelectedIndex = I Then
-		      Clip.ClearRect(0, 0, Clip.Width, Clip.Height)
+		    If Self.mSelectedIndex <> I Then
+		      Clip.ForeColor = SystemColors.ControlBackgroundColor
+		      Clip.FillRect(0, 0, Clip.Width, Clip.Height - 1)
+		      Clip.ForeColor = SystemColors.SeparatorColor
+		      Clip.FillRect(0, Clip.Height - 1, Clip.Width, 1)
 		    End If
 		    
 		    Dim View As BeaconSubview = RaiseEvent ViewAtIndex(I)
@@ -132,6 +135,11 @@ Inherits ControlCanvas
 		    G.FillRect(LeftPos, 0, 1, G.Height - 1)
 		    LeftPos = LeftPos + 1
 		  Next
+		  
+		  G.ForeColor = SystemColors.ControlBackgroundColor
+		  G.FillRect(LeftPos, 0, G.Width - LeftPos, G.Height - 1)
+		  G.ForeColor = SystemColors.SeparatorColor
+		  G.FillRect(LeftPos, G.Height - 1, G.Width - LeftPos, 1)
 		End Sub
 	#tag EndEvent
 

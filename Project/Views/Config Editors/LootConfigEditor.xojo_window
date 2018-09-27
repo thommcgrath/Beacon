@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconSubview LootConfigEditor
+Begin ConfigEditor LootConfigEditor
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -193,6 +193,36 @@ Begin BeaconSubview LootConfigEditor
          Visible         =   True
          Width           =   451
       End
+      Begin LogoFillCanvas LogoFillCanvas1
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   "No Selection"
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   395
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   0
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   41
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   451
+      End
       Begin BeaconToolbar HelpHeader
          AcceptFocus     =   False
          AcceptTabs      =   False
@@ -220,36 +250,6 @@ Begin BeaconSubview LootConfigEditor
          TabStop         =   True
          Top             =   0
          Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   451
-      End
-      Begin LogoFillCanvas LogoFillCanvas1
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         Caption         =   "No Selection"
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   True
-         Height          =   395
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   251
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   0
-         ScrollSpeed     =   20
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   41
-         Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
          Width           =   451
@@ -292,56 +292,18 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub ContentsChanged()
-		  Self.Header.Deploy.Enabled = Self.ReadyToDeploy()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub EnableMenuItems()
-		  FileSaveAs.Enable
-		  
-		  If Self.ReadyToDeploy Then
-		    FileExport.Enable
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
-		  Self.Editor.ConsoleSafe = Self.mController.Document.ConsoleModsOnly
+		  Self.Editor.ConsoleSafe = Self.Document.ConsoleModsOnly
 		  Self.UpdateCaptionButton()
 		  Self.UpdateSourceList()
-		  Self.ToolbarIcon = IconDocuments
-		  Self.ToolbarCaption = Self.mController.Name
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Function ShouldSave() As Boolean
-		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeTransient Then
-		    Self.mController.Save(App.Identity)
-		  Else
-		    Self.SaveAs()
-		  End If
+		  
 		End Function
 	#tag EndEvent
-
-
-	#tag MenuHandler
-		Function FileExport() As Boolean Handles FileExport.Action
-			Self.StartDeploy()
-			Return True
-			
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
-		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
-			Call Self.SaveAs()
-			Return True
-		End Function
-	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h21
@@ -361,16 +323,16 @@ End
 		  Dim IgnoredSources() As Beacon.LootSource
 		  
 		  For Each Source As Beacon.LootSource In Sources
-		    If Self.mController.Document.HasLootSource(Source) Then
-		      Self.mController.Document.Remove(Source)
+		    If Self.Document.HasLootSource(Source) Then
+		      Self.Document.Remove(Source)
 		    End If
 		    
-		    If Self.mController.Document.SupportsLootSource(Source) Then
-		      Self.mController.Document.Add(Source)
+		    If Self.Document.SupportsLootSource(Source) Then
+		      Self.Document.Add(Source)
 		    Else
 		      IgnoredSources.Append(Source)
 		    End If
-		    Self.ContentsChanged = Self.mController.Document.Modified
+		    Self.ContentsChanged = Self.Document.Modified
 		  Next
 		  
 		  Self.UpdateSourceList(Sources)
@@ -387,40 +349,6 @@ End
 		  
 		  Self.List.EnsureSelectionIsVisible()
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Controller As Beacon.DocumentController)
-		  Self.mController = Controller
-		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess
-		  AddHandler Controller.WriteError, WeakAddressOf mController_WriteError
-		  Self.Title = Controller.Name
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Document() As Beacon.Document
-		  Return Self.mController.Document
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mController_WriteError(Sender As Beacon.DocumentController)
-		  Break
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
-		  Self.ContentsChanged = Sender.Document.Modified
-		  LocalData.SharedInstance.RememberDocument(Sender)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function ReadyToDeploy() As Boolean
-		  Return Self.Document <> Nil And Self.Document.IsValid
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -449,33 +377,18 @@ End
 		  
 		  For I As Integer = Self.List.ListCount - 1 DownTo 0
 		    If Self.List.Selected(I) Then
-		      Self.mController.Document.Remove(Beacon.LootSource(Self.List.RowTag(I)))
+		      Self.Document.Remove(Beacon.LootSource(Self.List.RowTag(I)))
 		      Self.List.RemoveRow(I)
 		    End If
 		  Next
 		  
-		  Self.ContentsChanged = Self.mController.Document.Modified
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SaveAs()
-		  Dim Dialog As New SaveAsDialog
-		  Dialog.SuggestedFileName = Self.mController.Name + BeaconFileTypes.BeaconDocument.PrimaryExtension
-		  Dialog.Filter = BeaconFileTypes.BeaconDocument
-		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
-		  If File = Nil Then
-		    Return
-		  End If
-		  
-		  Self.mController.SaveAs(Beacon.DocumentURL.TypeLocal + "://" + File.NativePath.ToText, App.Identity)
+		  Self.ContentsChanged = Self.Document.Modified
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddLootSource()
-		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self.TrueWindow, Self.mController.Document)
+		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self.TrueWindow, Self.Document)
 		  If LootSource <> Nil Then
 		    Self.AddLootSource(LootSource)
 		    Self.Focus = Self.List
@@ -486,7 +399,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowDuplicateSelectedLootSource()
 		  If List.SelCount = 1 Then
-		    Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentDuplicate(Self.TrueWindow, Self.mController.Document, List.RowTag(List.ListIndex))
+		    Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentDuplicate(Self.TrueWindow, Self.Document, List.RowTag(List.ListIndex))
 		    If LootSource <> Nil Then
 		      Self.AddLootSource(LootSource)
 		      Self.Focus = Self.List
@@ -495,19 +408,12 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub StartDeploy()
-		  DeployDialog.Present(Self, Self.Document)
-		  Self.ContentsChanged = Self.ContentsChanged Or Self.Document.Modified
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub UpdateCaptionButton()
-		  Dim MaxDinoLevel As Integer = Self.mController.Document.MaxDinoLevel
+		  Dim MaxDinoLevel As Integer = Self.Document.MaxDinoLevel
 		  
 		  Dim MapText As String
-		  Dim Maps() As Beacon.Map = Self.mController.Document.Maps
+		  Dim Maps() As Beacon.Map = Self.Document.Maps
 		  If Maps.Ubound = -1 Then
 		    MapText = ""
 		  ElseIf Maps.Ubound = 0 Then
@@ -544,7 +450,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
-		  Dim VisibleSources() As Beacon.LootSource = Self.mController.Document.LootSources
+		  Dim VisibleSources() As Beacon.LootSource = Self.Document.LootSources
 		  Beacon.Sort(VisibleSources)
 		  
 		  Dim SelectedClasses() As Text
@@ -578,7 +484,7 @@ End
 		  Next
 		  Self.mBlockSelectionChanged = False
 		  
-		  Editor.MapMask = Self.mController.Document.MapCompatibility
+		  Editor.MapMask = Self.Document.MapCompatibility
 		  Editor.Sources = Selection
 		  If Selection.Ubound = -1 Then
 		    Panel.Value = 0
@@ -588,25 +494,9 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function URL() As Beacon.DocumentURL
-		  Return Self.mController.URL
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ViewID() As Text
-		  Return Self.mController.URL.Hash
-		End Function
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h21
 		Private mBlockSelectionChanged As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mController As Beacon.DocumentController
 	#tag EndProperty
 
 
@@ -623,19 +513,15 @@ End
 		  AddButton.HasMenu = True
 		  AddButton.HelpTag = "Define an additional loot source. Hold to quickly add a source from a menu."
 		  
-		  Dim DeployButton As New BeaconToolbarItem("Deploy", IconToolbarExport, Self.ReadyToDeploy)
-		  DeployButton.HelpTag = "Deploy this document."
-		  
 		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
 		  DuplicateButton.HelpTag = "Duplicate the selected loot source."
 		  
-		  Dim RebuildButton As New BeaconToolbarItem("Rebuild", IconToolbarRebuild, Self.mController.Document.LootSourceCount > 0)
+		  Dim RebuildButton As New BeaconToolbarItem("Rebuild", IconToolbarRebuild, Self.Document.LootSourceCount > 0)
 		  RebuildButton.HelpTag = "Rebuild all item sets using their presets."
 		  
 		  Me.LeftItems.Append(AddButton)
 		  Me.LeftItems.Append(DuplicateButton)
 		  Me.RightItems.Append(RebuildButton)
-		  Me.RightItems.Append(DeployButton)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -658,12 +544,10 @@ End
 		    Self.ShowAddLootSource()
 		  Case "Duplicate"
 		    Self.ShowDuplicateSelectedLootSource()
-		  Case "Deploy"
-		    Self.StartDeploy()
 		  Case "Rebuild"
-		    Self.mController.Document.ReconfigurePresets()
+		    Self.Document.ReconfigurePresets()
 		    Self.UpdateSourceList()
-		    Self.ContentsChanged = Self.ContentsChanged Or Self.mController.Document.Modified
+		    Self.ContentsChanged = Self.ContentsChanged Or Self.Document.Modified
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -673,11 +557,11 @@ End
 		  Case "AddSource"
 		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Document.ConsoleModsOnly)
 		    For I As Integer = LootSources.Ubound DownTo 0
-		      If Self.mController.Document.HasLootSource(LootSources(I)) Then
+		      If Self.Document.HasLootSource(LootSources(I)) Then
 		        LootSources.Remove(I)
 		        Continue For I
 		      End If
-		      If Not Self.mController.Document.SupportsLootSource(LootSources(I)) Then
+		      If Not Self.Document.SupportsLootSource(LootSources(I)) Then
 		        LootSources.Remove(I)
 		      End If
 		    Next
@@ -761,7 +645,7 @@ End
 		      Dim Source As Beacon.LootSource = Me.RowTag(I)
 		      Dicts.Append(Source.Export)
 		      If Source.IsValid Then
-		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue(Self.mController.Document.DifficultyValue))
+		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue(Self.Document.DifficultyValue))
 		      End If
 		    End If
 		  Next
@@ -852,12 +736,12 @@ End
 #tag Events Editor
 	#tag Event
 		Sub Updated()
-		  Self.ContentsChanged = Self.mController.Document.Modified
+		  Self.ContentsChanged = Self.Document.Modified
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PresentLootSourceEditor(Source As Beacon.LootSource)
-		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self.TrueWindow, Self.mController.Document, Source)
+		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self.TrueWindow, Self.Document, Source)
 		  If LootSource <> Nil Then
 		    Self.AddLootSource(LootSource)
 		  End If
@@ -867,10 +751,10 @@ End
 #tag Events Status
 	#tag Event
 		Sub Action()
-		  If DocumentSettingsSheet.Present(Self, Self.mController.Document) Then
+		  If DocumentSettingsSheet.Present(Self, Self.Document) Then
 		    Self.UpdateCaptionButton()
-		    Self.Editor.ConsoleSafe = Self.mController.Document.ConsoleModsOnly
-		    Self.ContentsChanged = Self.mController.Document.Modified
+		    Self.Editor.ConsoleSafe = Self.Document.ConsoleModsOnly
+		    Self.ContentsChanged = Self.Document.Modified
 		  End If
 		End Sub
 	#tag EndEvent

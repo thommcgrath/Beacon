@@ -85,8 +85,6 @@ Begin BeaconContainer SimulatorView
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Simulator"
-      CaptionEnabled  =   True
-      CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
