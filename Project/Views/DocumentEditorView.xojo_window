@@ -114,6 +114,7 @@ Begin BeaconSubview DocumentEditorView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Caption         =   ""
       Count           =   0
       DoubleBuffer    =   False
       Enabled         =   True
@@ -348,7 +349,7 @@ End
 		Sub Open()
 		  Dim ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
 		  Dim ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToDeploy, "Save new config files…")
-		  Dim DeployButton As New BeaconToolbarItem("DeployButton", Nil, Self.ReadyToDeploy, "Make config changes live.")
+		  Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToDeploy, "Make config changes live.")
 		  Dim PublishButton As New BeaconToolbarItem("PublishButton", IconToolbarPublish, "Upload this document to the cloud.")
 		  
 		  Me.LeftItems.Append(ImportButton)

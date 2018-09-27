@@ -35,7 +35,7 @@ Begin ConfigEditor LootConfigEditor
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      Height          =   41
+      Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -104,7 +104,7 @@ Begin ConfigEditor LootConfigEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   374
+      Height          =   395
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -130,7 +130,7 @@ Begin ConfigEditor LootConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   62
+      Top             =   41
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
@@ -202,7 +202,7 @@ Begin ConfigEditor LootConfigEditor
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
-         Height          =   395
+         Height          =   436
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
@@ -217,56 +217,22 @@ Begin ConfigEditor LootConfigEditor
          TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
-         Top             =   41
+         Top             =   0
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
          Width           =   451
       End
-      Begin BeaconToolbar HelpHeader
-         AcceptFocus     =   False
-         AcceptTabs      =   False
-         AutoDeactivate  =   True
-         Backdrop        =   0
-         Caption         =   "No Selection"
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   False
-         Height          =   41
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   251
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Resizer         =   ""
-         Scope           =   2
-         ScrollSpeed     =   20
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Top             =   0
-         Transparent     =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   451
-      End
    End
-   Begin StatusBar Status
+   Begin FadedSeparator FadedSeparator2
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Borders         =   2
-      Caption         =   ""
-      Clickable       =   True
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   21
+      Height          =   1
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -281,7 +247,7 @@ Begin ConfigEditor LootConfigEditor
       TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   41
+      Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -294,7 +260,6 @@ End
 	#tag Event
 		Sub Open()
 		  Self.Editor.ConsoleSafe = Self.Document.ConsoleModsOnly
-		  Self.UpdateCaptionButton()
 		  Self.UpdateSourceList()
 		End Sub
 	#tag EndEvent
@@ -409,46 +374,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateCaptionButton()
-		  Dim MaxDinoLevel As Integer = Self.Document.MaxDinoLevel
-		  
-		  Dim MapText As String
-		  Dim Maps() As Beacon.Map = Self.Document.Maps
-		  If Maps.Ubound = -1 Then
-		    MapText = ""
-		  ElseIf Maps.Ubound = 0 Then
-		    MapText = Maps(0).Name
-		  Else
-		    Dim Names() As String
-		    For Each Map As Beacon.Map In Maps
-		      Names.Append(Map.Name)
-		    Next
-		    Names.Sort
-		    
-		    Dim Last As String = Names(Names.Ubound)
-		    Names.Remove(Names.Ubound)
-		    
-		    MapText = Join(Names, ", ") + " and " + Last
-		  End If
-		  
-		  Dim LevelText As String
-		  If MaxDinoLevel > 0 Then
-		    LevelText = "Level " + MaxDinoLevel.ToText + " dinos"
-		  End If
-		  
-		  If LevelText <> "" And MapText <> "" Then
-		    Status.Caption = LevelText + " on " + MapText
-		  ElseIf LevelText <> "" Then
-		    Status.Caption = LevelText
-		  ElseIf MapText <> "" Then
-		    Status.Caption = MapText
-		  Else
-		    Status.Caption = "Click to edit document"
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub UpdateSourceList(SelectedSources() As Beacon.LootSource = Nil)
 		  Dim VisibleSources() As Beacon.LootSource = Self.Document.LootSources
 		  Beacon.Sort(VisibleSources)
@@ -531,7 +456,7 @@ End
 		  Me.Width = NewSize
 		  FadedSeparator1.Left = NewSize
 		  List.Width = NewSize
-		  Status.Width = NewSize
+		  FadedSeparator2.Width = NewSize
 		  Panel.Left = FadedSeparator1.Left + FadedSeparator1.Width
 		  Panel.Width = Self.Width - (Panel.Left)
 		  
@@ -744,17 +669,6 @@ End
 		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self.TrueWindow, Self.Document, Source)
 		  If LootSource <> Nil Then
 		    Self.AddLootSource(LootSource)
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Status
-	#tag Event
-		Sub Action()
-		  If DocumentSettingsSheet.Present(Self, Self.Document) Then
-		    Self.UpdateCaptionButton()
-		    Self.Editor.ConsoleSafe = Self.Document.ConsoleModsOnly
-		    Self.ContentsChanged = Self.Document.Modified
 		  End If
 		End Sub
 	#tag EndEvent

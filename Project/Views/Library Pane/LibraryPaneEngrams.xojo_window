@@ -55,7 +55,7 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   61
+      Top             =   60
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -87,7 +87,7 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   201
+      Top             =   200
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -119,7 +119,7 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   233
+      Top             =   232
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -151,7 +151,7 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   265
+      Top             =   264
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -183,7 +183,7 @@ Begin LibrarySubview LibraryPaneEngrams
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   297
+      Top             =   296
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -198,7 +198,7 @@ Begin LibrarySubview LibraryPaneEngrams
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      Height          =   41
+      Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""

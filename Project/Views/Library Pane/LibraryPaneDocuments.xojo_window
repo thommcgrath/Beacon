@@ -44,7 +44,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   228
+      Height          =   199
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -70,7 +70,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   72
+      Top             =   101
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
@@ -80,7 +80,6 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -92,12 +91,10 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Documents"
-      CaptionEnabled  =   True
-      CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      Height          =   41
+      Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -119,34 +116,35 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       Visible         =   True
       Width           =   300
    End
-   Begin ViewSwitcher Switcher
+   Begin Shelf Switcher
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Borders         =   0
       DoubleBuffer    =   False
+      DrawCaptions    =   True
       Enabled         =   True
       EraseBackground =   True
-      Height          =   32
+      Height          =   61
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
+      IsVertical      =   False
       Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      RequiresSelection=   True
       Scope           =   0
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   41
+      Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
-      Value           =   0
       Visible         =   True
       Width           =   300
    End
@@ -479,7 +477,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateDocumentsList()
-		  Dim View As Integer = Self.Switcher.Value
+		  Dim View As Integer = Self.Switcher.SelectedIndex
 		  Dim Documents() As Beacon.DocumentURL
 		  For Each Document As Beacon.DocumentURL In Self.mDocuments
 		    If (View = Self.ViewRecentDocuments And (Document.Scheme = Beacon.DocumentURL.TypeLocal Or Document.Scheme = Beacon.DocumentURL.TypeTransient)) Or (View = Self.ViewCloudDocuments And Document.Scheme = Beacon.DocumentURL.TypeCloud) Or (View = Self.ViewCommunityDocuments And Document.Scheme = Beacon.DocumentURL.TypeWeb) Then
@@ -578,13 +576,13 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.Switcher.Value
+			  Return Self.Switcher.SelectedIndex
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.Switcher.Value <> Value Then
-			    Self.Switcher.Value = Value
+			  If Self.Switcher.SelectedIndex <> Value Then
+			    Self.Switcher.SelectedIndex = Value
 			  End If
 			  
 			  Select Case Value
@@ -601,13 +599,13 @@ End
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = ViewCloudDocuments, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag Constant, Name = ViewCloudDocuments, Type = Double, Dynamic = False, Default = \"3", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = ViewCommunityDocuments, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag Constant, Name = ViewCommunityDocuments, Type = Double, Dynamic = False, Default = \"5", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = ViewRecentDocuments, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag Constant, Name = ViewRecentDocuments, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
 
 
@@ -710,11 +708,7 @@ End
 #tag Events Header
 	#tag Event
 		Sub Open()
-		  Dim Item As BeaconToolbarItem
-		  
-		  Item = New BeaconToolbarItem("Add", IconToolbarNew)
-		  Item.HelpTag = "Start a new Beacon document."
-		  Me.LeftItems.Append(Item)
+		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconToolbarAdd, "Start a new Beacon document."))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -734,14 +728,19 @@ End
 #tag Events Switcher
 	#tag Event
 		Sub Open()
-		  Me.Append("Recent", "Cloud", "Community")
-		  Me.Borders = ViewSwitcher.BorderBottom
-		  Me.Value = Self.ViewRecentDocuments
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.Add(IconAPI, "Recent", "recent")
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.Add(IconAPI, "Cloud", "cloud")
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.Add(IconAPI, "Community", "community")
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.SelectedIndex = Self.ViewRecentDocuments
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Action(NewIndex As Integer)
-		  Self.View = NewIndex
+		Sub Change()
+		  Self.View = Me.SelectedIndex
 		End Sub
 	#tag EndEvent
 #tag EndEvents

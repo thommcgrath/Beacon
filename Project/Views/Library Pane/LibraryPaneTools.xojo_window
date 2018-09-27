@@ -44,7 +44,7 @@ Begin LibrarySubview LibraryPaneTools Implements NotificationKit.Receiver
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   259
+      Height          =   260
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -70,7 +70,7 @@ Begin LibrarySubview LibraryPaneTools Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   41
+      Top             =   40
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
@@ -85,12 +85,10 @@ Begin LibrarySubview LibraryPaneTools Implements NotificationKit.Receiver
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Tools"
-      CaptionEnabled  =   False
-      CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      Height          =   41
+      Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""

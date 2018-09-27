@@ -226,6 +226,7 @@ Begin ContainerControl SlidingLibraryPane
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
+      RequiresSelection=   False
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   1

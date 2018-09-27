@@ -1,0 +1,46 @@
+#tag MultiImage
+Image IconToolbarDeploy
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAGkAAAAAAGkAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8VSWNvblRvb2xiYXJEZXBsb3kucG5nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFAvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkljb25Ub29sYmFyRGVwbG95LnBuZwAOACwAFQBJAGMAbwBuAFQAbwBvAGwAYgBhAHIARABlAHAAbABvAHkALgBwAG4AZwAPABoADABNAGEAYwBpAG4AdABvAHMAaAAgAEgARAASAE5Vc2Vycy90aG9tbWNncmF0aC9Eb2N1bWVudHMvVGhlIFpBWiBTb3VyY2VzL0JlYWNvbi9JY29ucy9JY29uVG9vbGJhckRlcGxveS5wbmcAEwABLwAAFQACABL//wAAAAAAAAAA
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconToolbarDeploy.png
+		PartialPath = ..\Icons\IconToolbarDeploy.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 16.00
+			Orientation = Any
+			Platform = 15
+			PPI = 72
+			VSize = 16.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAGyAAAAAAGyAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8YSWNvblRvb2xiYXJEZXBsb3lAMngucG5nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFMvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkljb25Ub29sYmFyRGVwbG95QDJ4LnBuZwAADgAyABgASQBjAG8AbgBUAG8AbwBsAGIAYQByAEQAZQBwAGwAbwB5AEAAMgB4AC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBRVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvSWNvblRvb2xiYXJEZXBsb3lAMngucG5nAAATAAEvAAAVAAIAEv//AAAAAAAAAAA=
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconToolbarDeploy@2x.png
+		PartialPath = ..\Icons\IconToolbarDeploy@2x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 16.00
+			Orientation = Any
+			Platform = 15
+			PPI = 144
+			VSize = 16.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAGyAAAAAAGyAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8YSWNvblRvb2xiYXJEZXBsb3lAM3gucG5nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFMvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkljb25Ub29sYmFyRGVwbG95QDN4LnBuZwAADgAyABgASQBjAG8AbgBUAG8AbwBsAGIAYQByAEQAZQBwAGwAbwB5AEAAMwB4AC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBRVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvSWNvblRvb2xiYXJEZXBsb3lAM3gucG5nAAATAAEvAAAVAAIAEv//AAAAAAAAAAA=
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconToolbarDeploy@3x.png
+		PartialPath = ..\Icons\IconToolbarDeploy@3x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 16.00
+			Orientation = Any
+			Platform = 15
+			PPI = 216
+			VSize = 16.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+End Image
+#tag EndMultiImage

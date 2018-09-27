@@ -32,12 +32,10 @@ Begin LibrarySubview LibraryPaneSearch
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Search"
-      CaptionEnabled  =   False
-      CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      Height          =   41
+      Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -95,7 +93,7 @@ Begin LibrarySubview LibraryPaneSearch
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   51
+      Top             =   50
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -103,7 +101,6 @@ Begin LibrarySubview LibraryPaneSearch
       Width           =   280
    End
    Begin Timer SearchTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -112,7 +109,6 @@ Begin LibrarySubview LibraryPaneSearch
       TabPanelIndex   =   0
    End
    Begin Xojo.Net.HTTPSocket SearchSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -127,7 +123,7 @@ Begin LibrarySubview LibraryPaneSearch
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   217
+      Height          =   218
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -142,7 +138,7 @@ Begin LibrarySubview LibraryPaneSearch
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   83
+      Top             =   82
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True

@@ -17,13 +17,13 @@ Inherits ControlCanvas
 
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Dim Point As New REALbasic.Point(X,Y)
+		  Dim Point As New BeaconUI.Point(X,Y)
 		  
 		  For I As Integer = 0 To Self.mHitRects.Ubound
 		    If Self.mHitRects(I) = Nil Then
 		      Continue
 		    End If
-		    If Self.mHitRects(I).Contains(Point) Then
+		    If Self.mHitRects(I).Contains(Point) And (Self.RequiresSelection = False Or I <> Self.mSelectedIndex) Then
 		      Self.mMouseDownItem = I
 		      Self.mPressed = True
 		      Self.Invalidate
@@ -44,8 +44,8 @@ Inherits ControlCanvas
 		    Return
 		  End If
 		  
-		  Dim Point As New REALbasic.Point(X,Y)
-		  Dim TargetRect As REALbasic.Rect = Self.mHitRects(Self.mMouseDownItem)
+		  Dim Point As New BeaconUI.Point(X,Y)
+		  Dim TargetRect As BeaconUI.Rect = Self.mHitRects(Self.mMouseDownItem)
 		  If TargetRect.Contains(Point) = True And Self.mPressed = False Then
 		    Self.mPressed = True
 		    Self.Invalidate
@@ -64,7 +64,7 @@ Inherits ControlCanvas
 
 	#tag Event
 		Sub MouseMove(X As Integer, Y As Integer)
-		  Dim Point As New REALbasic.Point(X,Y)
+		  Dim Point As New BeaconUI.Point(X,Y)
 		  For I As Integer = 0 To Self.mHitRects.Ubound
 		    If Self.mHitRects(I) = Nil Then
 		      Continue
@@ -84,8 +84,8 @@ Inherits ControlCanvas
 		    Return
 		  End If
 		  
-		  Dim Point As New REALbasic.Point(X,Y)
-		  Dim TargetRect As REALbasic.Rect = Self.mHitRects(Self.mMouseDownItem)
+		  Dim Point As New BeaconUI.Point(X,Y)
+		  Dim TargetRect As BeaconUI.Rect = Self.mHitRects(Self.mMouseDownItem)
 		  If TargetRect.Contains(Point) = True Then
 		    Self.mPressed = False
 		    If Self.SelectedIndex = Self.mMouseDownItem Then
@@ -117,11 +117,31 @@ Inherits ControlCanvas
 		  
 		  Dim CellPadding, CellSpacing As Double
 		  If Self.IsVertical Then
-		    CellSpacing = (G.Width - Self.IconSize) / 4
+		    CellSpacing = Min((G.Width - Self.IconSize) / 4, 6)
 		  Else
-		    CellSpacing = (G.Height - Self.IconSize) / 4
+		    CellSpacing = Min((G.Height - Self.IconSize) / 4, 6)
 		  End If
 		  CellPadding = CellSpacing
+		  
+		  Dim FlexibleSpaceCount, StaticSpaceCount As Integer
+		  For I As Integer = 0 To Self.mItems.Ubound
+		    Select Case Self.mItems(I).Type
+		    Case ShelfItem.TypeNormal, ShelfItem.TypeSpacer
+		      StaticSpaceCount = StaticSpaceCount + 1
+		    Case ShelfItem.TypeFlexibleSpacer
+		      FlexibleSpaceCount = FlexibleSpaceCount + 1
+		    End Select
+		  Next
+		  
+		  Dim AvailableSpace,MaximumCellWidth As Double
+		  If Self.IsVertical Then
+		    AvailableSpace = G.Height - ((StaticSpaceCount + 1) * CellSpacing)
+		    MaximumCellWidth = G.Width - (CellSpacing * 2)
+		  Else
+		    AvailableSpace = G.Width - ((StaticSpaceCount + 1) * CellSpacing)
+		    MaximumCellWidth = AvailableSpace / StaticSpaceCount
+		  End If
+		  MaximumCellWidth = Max(MaximumCellWidth, Self.IconSize + (CellPadding * 2))
 		  
 		  Dim CellWidth As Double = Self.IconSize + (CellPadding * 2)
 		  Dim CellHeight As Double = CellWidth
@@ -135,27 +155,12 @@ Inherits ControlCanvas
 		    MaxCaptionWidth = Max(MaxCaptionWidth, G.StringWidth(Self.mItems(I).Caption))
 		  Next
 		  If Self.DrawCaptions Then
-		    CellWidth = Max(Self.IconSize, MaxCaptionWidth) + (CellPadding * 2)
+		    CellWidth = Min(Max(Self.IconSize, MaxCaptionWidth) + (CellPadding * 2), MaximumCellWidth)
 		    CellHeight = Self.IconSize + (CellPadding * 3) + Self.TextHeight
 		  End If
 		  
-		  Dim MinRequiredSpace, SpaceConsumedByItems As Double
-		  Dim Amount As Double = If(Self.IsVertical, CellHeight, CellWidth)
-		  Dim FlexibleSpaceCount As Integer
-		  For I As Integer = 0 To Self.mItems.Ubound
-		    MinRequiredSpace = MinRequiredSpace + Amount
-		    Select Case Self.mItems(I).Type
-		    Case ShelfItem.TypeNormal, ShelfItem.TypeSpacer
-		      SpaceConsumedByItems = SpaceConsumedByItems + Amount
-		    Case ShelfItem.TypeFlexibleSpacer
-		      FlexibleSpaceCount = FlexibleSpaceCount + 1
-		    End Select
-		  Next
-		  SpaceConsumedByItems = SpaceConsumedByItems + ((Self.Count + 1) * CellSpacing)
-		  MinRequiredSpace = MinRequiredSpace + ((Self.Count + 1) * CellSpacing)
-		  
-		  Dim AdditionalSpaceAvailableToFlexers As Double = Max(MinRequiredSpace - SpaceConsumedByItems, 0)
-		  Dim AdditionalFlexibleSpaceSize As Double = AdditionalSpaceAvailableToFlexers / FlexibleSpaceCount
+		  Dim RequiredSpace As Double = (StaticSpaceCount * If(Self.IsVertical, CellHeight, CellWidth)) + ((StaticSpaceCount + 1) * CellSpacing)
+		  Dim FlexibleSpaceSize As Double = Max(Floor(AvailableSpace - RequiredSpace) / FlexibleSpaceCount, 0)
 		  
 		  Dim NextPos As Double = CellSpacing
 		  Redim Self.mHitRects(Self.mItems.Ubound)
@@ -166,12 +171,12 @@ Inherits ControlCanvas
 		      Continue For I
 		    ElseIf Self.mItems(I).Type = ShelfItem.TypeFlexibleSpacer Then
 		      Self.mHitRects(I) = Nil
-		      NextPos = NextPos + If(Self.IsVertical, CellHeight, CellWidth) + AdditionalFlexibleSpaceSize + CellSpacing
+		      NextPos = NextPos + FlexibleSpaceSize + CellSpacing
 		      Continue For I
 		    End If
 		    
 		    Dim IconColor As Color = SystemColors.SecondaryLabelColor
-		    Dim CellRect As New REALbasic.Rect(If(Self.IsVertical, CellSpacing, NextPos), If(Self.IsVertical, NextPos, CellSpacing), CellWidth, CellHeight)
+		    Dim CellRect As New BeaconUI.Rect(If(Self.IsVertical, CellSpacing, NextPos), If(Self.IsVertical, NextPos, CellSpacing), CellWidth, CellHeight)
 		    Self.mHitRects(I) = CellRect
 		    
 		    If Self.mSelectedIndex = I Then
@@ -180,7 +185,7 @@ Inherits ControlCanvas
 		      IconColor = SystemColors.AlternateSelectedControlTextColor
 		    End If
 		    
-		    Dim IconRect As New REALbasic.Rect(CellRect.Left + ((CellRect.Width - Self.IconSize) / 2), CellRect.Top + CellSpacing, Self.IconSize, Self.IconSize)
+		    Dim IconRect As New BeaconUI.Rect(CellRect.Left + ((CellRect.Width - Self.IconSize) / 2), CellRect.Top + CellSpacing, Self.IconSize, Self.IconSize)
 		    Dim Icon As Picture = BeaconUI.IconWithColor(Self.mItems(I).Icon, IconColor)
 		    G.DrawPicture(Icon, IconRect.Left, IconRect.Top, IconRect.Width, IconRect.Height, 0, 0, Icon.Width, Icon.Height)
 		    
@@ -189,7 +194,7 @@ Inherits ControlCanvas
 		      Dim CaptionY As Double = IconRect.Bottom + CellSpacing + Self.TextHeight
 		      Dim CaptionWidth As Double = G.StringWidth(Caption)
 		      CaptionWidth = Min(CaptionWidth, CellRect.Width - (CellPadding * 2))
-		      Dim CaptionX As Double = (CellRect.Width - CaptionWidth) / 2
+		      Dim CaptionX As Double = CellRect.Left + ((CellRect.Width - CaptionWidth) / 2)
 		      
 		      G.ForeColor = IconColor
 		      G.DrawString(Caption, CaptionX, CaptionY, CaptionWidth, True)
@@ -240,7 +245,7 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Sub SelectedIndex(Assigns Value As Integer)
-		  Value = Max(Min(Self.mItems.Ubound, Value), -1)
+		  Value = Max(Min(Self.mItems.Ubound, Value), If(Self.RequiresSelection, 0, -1))
 		  If Self.mSelectedIndex <> Value Then
 		    Self.mSelectedIndex = Value
 		    RaiseEvent Change
@@ -277,7 +282,7 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h21
 		Private Sub ShowHoverToolTip()
-		  Dim Point As New REALbasic.Point(Self.MouseX, Self.MouseY)
+		  Dim Point As New BeaconUI.Point(Self.MouseX, Self.MouseY)
 		  For I As Integer = 0 To Self.mHitRects.Ubound
 		    If Self.mHitRects(I) = Nil Then
 		      Continue
@@ -339,7 +344,7 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHitRects() As REALbasic.Rect
+		Private mHitRects() As BeaconUI.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -358,6 +363,10 @@ Inherits ControlCanvas
 		Private mSelectedIndex As Integer = -1
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		RequiresSelection As Boolean
+	#tag EndProperty
+
 
 	#tag Constant, Name = IconSize, Type = Double, Dynamic = False, Default = \"24", Scope = Private
 	#tag EndConstant
@@ -367,12 +376,6 @@ Inherits ControlCanvas
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="ScrollSpeed"
-			Group="Behavior"
-			InitialValue="20"
-			Type="Integer"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -516,6 +519,12 @@ Inherits ControlCanvas
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
+			Name="ScrollSpeed"
+			Group="Behavior"
+			InitialValue="20"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="AcceptFocus"
 			Visible=true
 			Group="Behavior"
@@ -551,6 +560,13 @@ Inherits ControlCanvas
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DrawCaptions"
+			Visible=true
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RequiresSelection"
 			Visible=true
 			Group="Behavior"
 			InitialValue="True"

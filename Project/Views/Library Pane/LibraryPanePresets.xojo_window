@@ -32,12 +32,10 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Presets"
-      CaptionEnabled  =   False
-      CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      Height          =   41
+      Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -77,7 +75,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   259
+      Height          =   260
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -103,7 +101,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   41
+      Top             =   40
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
@@ -396,7 +394,7 @@ End
 #tag Events Header
 	#tag Event
 		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconToolbarNew))
+		  Me.LeftItems.Append(New BeaconToolbarItem("Add", IconToolbarAdd))
 		  Me.LeftItems.Append(New BeaconToolbarItem("Duplicate", IconToolbarClone, False))
 		  Me.RightItems.Append(New BeaconToolbarItem("Export", IconToolbarExport, False))
 		  
