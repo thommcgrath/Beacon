@@ -106,6 +106,7 @@ Begin BeaconMultiview LibraryWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   31
+      Transparent     =   False
       Value           =   2
       Visible         =   True
       Width           =   800
@@ -115,6 +116,7 @@ Begin BeaconMultiview LibraryWindow
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -146,6 +148,7 @@ Begin BeaconMultiview LibraryWindow
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -177,6 +180,7 @@ Begin BeaconMultiview LibraryWindow
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False

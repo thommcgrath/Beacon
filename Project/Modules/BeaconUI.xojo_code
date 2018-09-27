@@ -1,6 +1,15 @@
 #tag Module
 Protected Module BeaconUI
 	#tag Method, Flags = &h0
+		Function AtOpacity(Extends SourceColor As Color, Opacity As Double = 1.0) As Color
+		  // Opacity = 1.0 means unchanged, may not actually be opaque
+		  // Opacity = 0.5 means cut opacity in half
+		  
+		  Return RGB(SourceColor.Red, SourceColor.Green, SourceColor.Blue, 255 + ((SourceColor.Alpha - 255) * Opacity))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function BlendWith(Extends Color1 As Color, Color2 As Color, Color2Percent As Double) As Color
 		  If Color1.Red = Color2.Red And Color1.Green = Color2.Green And Color1.Blue = Color2.Blue And Color1.Alpha = Color2.Alpha Then
 		    Return Color1
@@ -219,7 +228,7 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function IconWithColor(Icon As Picture, FillColor As Color) As Picture
+		Protected Function IconWithColor(Icon As Picture, FillColor As Color, Overlay As Picture = Nil) As Picture
 		  Dim Width As Integer = Icon.Width
 		  Dim Height As Integer = Icon.Height
 		  
@@ -234,6 +243,12 @@ Protected Module BeaconUI
 		    Pic.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)
 		    Pic.Mask.Graphics.ClearRect(0, 0, Pic.Width, Pic.Height)
 		    Pic.Mask.Graphics.DrawPicture(Mask, 0, 0, Mask.Width, Mask.Height, 0, 0, Mask.Width, Mask.Height)
+		    
+		    If Overlay <> Nil Then
+		      Dim OverlayMask As Picture = Overlay.BestRepresentation(Width, Height, Factor)
+		      Pic.Mask.Graphics.DrawPicture(OverlayMask, 0, 0, Mask.Width, Mask.Height, 0, 0, OverlayMask.Width, OverlayMask.Height)
+		    End If
+		    
 		    Pic.Mask.Graphics.ForeColor = RGB(255, 255, 255, 255 - FillColor.Alpha)
 		    Pic.Mask.Graphics.FillRect(0, 0, Pic.Width, Pic.Height)
 		    

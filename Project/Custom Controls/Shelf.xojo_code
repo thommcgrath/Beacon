@@ -2,10 +2,27 @@
 Protected Class Shelf
 Inherits ControlCanvas
 	#tag Event
+		Sub Activate()
+		  RaiseEvent Activate
+		  Self.Invalidate
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Deactivate()
+		  RaiseEvent Deactivate
+		  Self.Invalidate
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Dim Point As New Xojo.Core.Point(X,Y)
+		  Dim Point As New REALbasic.Point(X,Y)
 		  
 		  For I As Integer = 0 To Self.mHitRects.Ubound
+		    If Self.mHitRects(I) = Nil Then
+		      Continue
+		    End If
 		    If Self.mHitRects(I).Contains(Point) Then
 		      Self.mMouseDownItem = I
 		      Self.mPressed = True
@@ -27,8 +44,8 @@ Inherits ControlCanvas
 		    Return
 		  End If
 		  
-		  Dim Point As New Xojo.Core.Point(X,Y)
-		  Dim TargetRect As Xojo.Core.Rect = Self.mHitRects(Self.mMouseDownItem)
+		  Dim Point As New REALbasic.Point(X,Y)
+		  Dim TargetRect As REALbasic.Rect = Self.mHitRects(Self.mMouseDownItem)
 		  If TargetRect.Contains(Point) = True And Self.mPressed = False Then
 		    Self.mPressed = True
 		    Self.Invalidate
@@ -40,100 +57,150 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
+		Sub MouseExit()
+		  Xojo.Core.Timer.CancelCall(WeakAddressOf ShowHoverToolTip)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseMove(X As Integer, Y As Integer)
+		  Dim Point As New REALbasic.Point(X,Y)
+		  For I As Integer = 0 To Self.mHitRects.Ubound
+		    If Self.mHitRects(I) = Nil Then
+		      Continue
+		    End If
+		    If Self.mHitRects(I).Contains(Point) Then
+		      Xojo.Core.Timer.CancelCall(WeakAddressOf ShowHoverToolTip)
+		      Xojo.Core.Timer.CallLater(2000, WeakAddressOf ShowHoverToolTip)
+		      Return
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub MouseUp(X As Integer, Y As Integer)
 		  If Self.mMouseDownItem = -1 Then
 		    Return
 		  End If
 		  
-		  Dim Point As New Xojo.Core.Point(X,Y)
-		  Dim TargetRect As Xojo.Core.Rect = Self.mHitRects(Self.mMouseDownItem)
+		  Dim Point As New REALbasic.Point(X,Y)
+		  Dim TargetRect As REALbasic.Rect = Self.mHitRects(Self.mMouseDownItem)
 		  If TargetRect.Contains(Point) = True Then
 		    Self.mPressed = False
-		    Self.SelectedIndex = Self.mMouseDownItem
+		    If Self.SelectedIndex = Self.mMouseDownItem Then
+		      Self.SelectedIndex = -1
+		    Else
+		      Self.SelectedIndex = Self.mMouseDownItem
+		    End If
 		    Self.mMouseDownItem = -1
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
+		Sub Open()
+		  RaiseEvent Open
+		  Self.Transparent = True
+		  Self.DoubleBuffer = False
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  #Pragma Unused areas
+		  Const CellCornerRadius = 6
 		  
-		  G.ForeColor = Self.ColorProfile.BorderColor
-		  G.FillRect(0, 0, G.Width, G.Height)
+		  #Pragma Unused areas
 		  
 		  G.TextSize = 10
 		  G.TextUnit = FontUnits.Point
 		  
-		  Dim ContentTop As Integer = 0
-		  Dim ContentHeight As Integer = G.Height
-		  
-		  If (Self.mBorderStyle And Self.BorderTop) = Self.BorderTop Then
-		    ContentTop = ContentTop + 1
-		    ContentHeight = ContentHeight - 1
+		  Dim CellPadding, CellSpacing As Double
+		  If Self.IsVertical Then
+		    CellSpacing = (G.Width - Self.IconSize) / 4
+		  Else
+		    CellSpacing = (G.Height - Self.IconSize) / 4
 		  End If
-		  If (Self.mBorderStyle And Self.BorderBottom) = Self.BorderBottom Then
-		    ContentHeight = ContentHeight - 1
+		  CellPadding = CellSpacing
+		  
+		  Dim CellWidth As Double = Self.IconSize + (CellPadding * 2)
+		  Dim CellHeight As Double = CellWidth
+		  
+		  Dim MaxCaptionWidth As Double
+		  For I As Integer = 0 To Self.mItems.Ubound
+		    If Self.mItems(I).Type <> ShelfItem.TypeNormal Then
+		      Continue
+		    End If
+		    
+		    MaxCaptionWidth = Max(MaxCaptionWidth, G.StringWidth(Self.mItems(I).Caption))
+		  Next
+		  If Self.DrawCaptions Then
+		    CellWidth = Max(Self.IconSize, MaxCaptionWidth) + (CellPadding * 2)
+		    CellHeight = Self.IconSize + (CellPadding * 3) + Self.TextHeight
 		  End If
 		  
-		  Dim Content As Graphics = G.Clip(0, ContentTop, G.Width, ContentHeight)
-		  Content.ForeColor = Self.ColorProfile.BackgroundColor
-		  Content.FillRect(0, 0, Content.Width, Content.Height)
+		  Dim MinRequiredSpace, SpaceConsumedByItems As Double
+		  Dim Amount As Double = If(Self.IsVertical, CellHeight, CellWidth)
+		  Dim FlexibleSpaceCount As Integer
+		  For I As Integer = 0 To Self.mItems.Ubound
+		    MinRequiredSpace = MinRequiredSpace + Amount
+		    Select Case Self.mItems(I).Type
+		    Case ShelfItem.TypeNormal, ShelfItem.TypeSpacer
+		      SpaceConsumedByItems = SpaceConsumedByItems + Amount
+		    Case ShelfItem.TypeFlexibleSpacer
+		      FlexibleSpaceCount = FlexibleSpaceCount + 1
+		    End Select
+		  Next
+		  SpaceConsumedByItems = SpaceConsumedByItems + ((Self.Count + 1) * CellSpacing)
+		  MinRequiredSpace = MinRequiredSpace + ((Self.Count + 1) * CellSpacing)
 		  
-		  Dim AvailableWidth As Integer = G.Width - (Self.EdgePadding * 2)
-		  Dim CommonCellWidth As Integer = Floor(AvailableWidth / Self.Count)
-		  Dim Remainder As Integer = AvailableWidth - (CommonCellWidth * Self.Count)
+		  Dim AdditionalSpaceAvailableToFlexers As Double = Max(MinRequiredSpace - SpaceConsumedByItems, 0)
+		  Dim AdditionalFlexibleSpaceSize As Double = AdditionalSpaceAvailableToFlexers / FlexibleSpaceCount
 		  
-		  Dim NextLeft As Integer = Self.EdgePadding
+		  Dim NextPos As Double = CellSpacing
 		  Redim Self.mHitRects(Self.mItems.Ubound)
 		  For I As Integer = 0 To Self.mItems.Ubound
-		    Dim CellWidth As Integer = CommonCellWidth
-		    If I < Remainder Then
-		      CellWidth = CellWidth + 1
+		    If Self.mItems(I).Type = ShelfItem.TypeSpacer Then
+		      Self.mHitRects(I) = Nil
+		      NextPos = NextPos + If(Self.IsVertical, CellHeight, CellWidth) + CellSpacing
+		      Continue For I
+		    ElseIf Self.mItems(I).Type = ShelfItem.TypeFlexibleSpacer Then
+		      Self.mHitRects(I) = Nil
+		      NextPos = NextPos + If(Self.IsVertical, CellHeight, CellWidth) + AdditionalFlexibleSpaceSize + CellSpacing
+		      Continue For I
 		    End If
 		    
-		    Dim ItemHeight As Integer = Self.IconSize + Self.CellPadding + Self.TextHeight
-		    Dim CellContent As Graphics = Content.Clip(NextLeft, 0, CellWidth, Content.Height)
-		    Dim IconLeft As Integer = (CellContent.Width - Self.IconSize) / 2
-		    Dim IconTop As Integer = (CellContent.Height - ItemHeight) / 2
-		    Dim Caption As String = Self.mItems(I).Caption
-		    Dim CaptionY As Integer = IconTop + Self.IconSize + Self.CellPadding + Self.TextHeight
-		    Dim CaptionWidth As Integer = Ceil(CellContent.StringWidth(Caption))
-		    CaptionWidth = Min(CaptionWidth, CellContent.Width - (Self.CellPadding / 2))
-		    Dim CaptionX As Integer = (CellContent.Width - CaptionWidth) / 2
-		    Dim FillColor As Color = Self.ColorProfile.ForegroundColor
-		    Dim ShadowColor As Color = Self.ColorProfile.ShadowColor
+		    Dim IconColor As Color = SystemColors.SecondaryLabelColor
+		    Dim CellRect As New REALbasic.Rect(If(Self.IsVertical, CellSpacing, NextPos), If(Self.IsVertical, NextPos, CellSpacing), CellWidth, CellHeight)
+		    Self.mHitRects(I) = CellRect
 		    
 		    If Self.mSelectedIndex = I Then
-		      FillColor = Self.ColorProfile.SelectedForegroundColor
-		      ShadowColor = Self.ColorProfile.SelectedShadowColor
-		      Dim CellColor As Color = Self.ColorProfile.SelectedBackgroundColor
+		      G.ForeColor = SystemColors.SelectedContentBackgroundColor
+		      G.FillRoundRect(CellRect.Left, CellRect.Top, CellRect.Width, CellRect.Height, CellCornerRadius, CellCornerRadius)
+		      IconColor = SystemColors.AlternateSelectedControlTextColor
+		    End If
+		    
+		    Dim IconRect As New REALbasic.Rect(CellRect.Left + ((CellRect.Width - Self.IconSize) / 2), CellRect.Top + CellSpacing, Self.IconSize, Self.IconSize)
+		    Dim Icon As Picture = BeaconUI.IconWithColor(Self.mItems(I).Icon, IconColor)
+		    G.DrawPicture(Icon, IconRect.Left, IconRect.Top, IconRect.Width, IconRect.Height, 0, 0, Icon.Width, Icon.Height)
+		    
+		    If Self.DrawCaptions Then
+		      Dim Caption As String = Self.mItems(I).Caption
+		      Dim CaptionY As Double = IconRect.Bottom + CellSpacing + Self.TextHeight
+		      Dim CaptionWidth As Double = G.StringWidth(Caption)
+		      CaptionWidth = Min(CaptionWidth, CellRect.Width - (CellPadding * 2))
+		      Dim CaptionX As Double = (CellRect.Width - CaptionWidth) / 2
 		      
-		      CellContent.ForeColor = HSV(CellColor.Hue, CellColor.Saturation, CellColor.Value / 1.2, CellColor.Alpha)
-		      CellContent.FillRect(0, 0, CellContent.Width, CellContent.Height)
-		      CellContent.ForeColor = CellColor
-		      CellContent.FillRect(1, 0, CellContent.Width - 2, CellContent.Height)
+		      G.ForeColor = IconColor
+		      G.DrawString(Caption, CaptionX, CaptionY, CaptionWidth, True)
 		    End If
 		    
-		    CellContent.ForeColor = ShadowColor
-		    CellContent.DrawString(Caption, CaptionX, CaptionY + 1, CaptionWidth, True)
-		    CellContent.ForeColor = FillColor
-		    CellContent.DrawString(Caption, CaptionX, CaptionY, CaptionWidth, True)
-		    
-		    Dim ShadowIcon As Picture = BeaconUI.IconWithColor(Self.mItems(I).Icon, ShadowColor)
-		    Dim FillIcon As Picture = BeaconUI.IconWithColor(Self.mItems(I).Icon, FillColor)
-		    CellContent.DrawPicture(ShadowIcon, IconLeft, IconTop + 1, Self.IconSize, Self.IconSize, 0, 0, Self.mItems(I).Icon.Width, Self.mItems(I).Icon.Height)
-		    CellContent.DrawPicture(FillIcon, IconLeft, IconTop, Self.IconSize, Self.IconSize, 0, 0, Self.mItems(I).Icon.Width, Self.mItems(I).Icon.Height)
-		    
-		    Dim HitRect As New Xojo.Core.Rect(NextLeft, ContentTop, CellWidth, ContentHeight)
-		    Self.mHitRects(I) = HitRect
-		    
-		    If Self.mPressed And Self.mMouseDownItem = I And Self.mSelectedIndex <> I Then
-		      CellContent.ForeColor = &c000000CC
-		      CellContent.FillRect(0, 0, CellContent.Width, CellContent.Height)
+		    If Self.mPressed And Self.mMouseDownItem = I Then
+		      G.ForeColor = &c000000CC
+		      G.FillRoundRect(CellRect.Left, CellRect.Top, CellRect.Width, CellRect.Height, CellCornerRadius, CellCornerRadius)
 		    End If
 		    
-		    NextLeft = NextLeft + CellWidth
+		    NextPos = NextPos + If(Self.IsVertical, CellHeight, CellWidth) + CellSpacing
 		  Next
 		End Sub
 	#tag EndEvent
@@ -173,7 +240,7 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Sub SelectedIndex(Assigns Value As Integer)
-		  Value = Max(Min(Self.mItems.Ubound, Value), 0)
+		  Value = Max(Min(Self.mItems.Ubound, Value), -1)
 		  If Self.mSelectedIndex <> Value Then
 		    Self.mSelectedIndex = Value
 		    RaiseEvent Change
@@ -184,12 +251,21 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Function SelectedItem() As ShelfItem
+		  If Self.mSelectedIndex = -1 Then
+		    Return Nil
+		  End If
+		  
 		  Return Self.mItems(Self.mSelectedIndex)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub SelectedItem(Assigns Value As ShelfItem)
+		  If Value = Nil Then
+		    Self.SelectedIndex = -1
+		    Return
+		  End If
+		  
 		  For I As Integer = 0 To Self.mItems.Ubound
 		    If Self.mItems(I).Tag = Value.Tag Then
 		      Self.SelectedIndex = I
@@ -199,39 +275,71 @@ Inherits ControlCanvas
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ShowHoverToolTip()
+		  Dim Point As New REALbasic.Point(Self.MouseX, Self.MouseY)
+		  For I As Integer = 0 To Self.mHitRects.Ubound
+		    If Self.mHitRects(I) = Nil Then
+		      Continue
+		    End If
+		    If Self.mHitRects(I).Contains(Point) Then
+		      Tooltip.Show(Self.mItems(I).Caption, System.MouseX, System.MouseY + 16)
+		      Return
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Activate()
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Change()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Deactivate()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Open()
 	#tag EndHook
 
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mBorderStyle
+			  Return Self.mDrawCaptions
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Value And (Self.BorderNone Or Self.BorderTop Or Self.BorderBottom)
-			  
-			  If Self.mBorderStyle = Value Then
-			    Return
+			  If Self.mDrawCaptions <> Value Then
+			    Self.mDrawCaptions = Value
+			    Self.Invalidate
 			  End If
-			  
-			  Self.mBorderStyle = Value
-			  Self.Invalidate()
 			End Set
 		#tag EndSetter
-		BorderStyle As Integer
+		DrawCaptions As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.Height > Self.Width
+			End Get
+		#tag EndGetter
+		IsVertical As Boolean
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mBorderStyle As Integer
+		Private mDrawCaptions As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHitRects() As Xojo.Core.Rect
+		Private mHitRects() As REALbasic.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -247,24 +355,9 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedIndex As Integer
+		Private mSelectedIndex As Integer = -1
 	#tag EndProperty
 
-
-	#tag Constant, Name = BorderBottom, Type = Double, Dynamic = False, Default = \"2", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = BorderNone, Type = Double, Dynamic = False, Default = \"0", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = BorderTop, Type = Double, Dynamic = False, Default = \"1", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = CellPadding, Type = Double, Dynamic = False, Default = \"6", Scope = Private
-	#tag EndConstant
-
-	#tag Constant, Name = EdgePadding, Type = Double, Dynamic = False, Default = \"5", Scope = Private
-	#tag EndConstant
 
 	#tag Constant, Name = IconSize, Type = Double, Dynamic = False, Default = \"24", Scope = Private
 	#tag EndConstant
@@ -275,74 +368,10 @@ Inherits ControlCanvas
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="AcceptFocus"
-			Visible=true
+			Name="ScrollSpeed"
 			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AcceptTabs"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AutoDeactivate"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Backdrop"
-			Visible=true
-			Group="Appearance"
-			Type="Picture"
-			EditorType="Picture"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="BorderStyle"
-			Visible=true
-			Group="Behavior"
-			InitialValue="1"
+			InitialValue="20"
 			Type="Integer"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - None"
-				"1 - Top"
-				"2 - Bottom"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DoubleBuffer"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Enabled"
-			Visible=true
-			Group="Appearance"
-			InitialValue="True"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EraseBackground"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Height"
-			Visible=true
-			Group="Position"
-			InitialValue="72"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HelpTag"
-			Visible=true
-			Group="Appearance"
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -350,6 +379,27 @@ Inherits ControlCanvas
 			Group="ID"
 			Type="Integer"
 			EditorType="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+			EditorType="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+			EditorType="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Height"
+			Visible=true
+			Group="Position"
+			InitialValue="72"
+			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="InitialParent"
@@ -391,20 +441,6 @@ Inherits ControlCanvas
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Name"
-			Visible=true
-			Group="ID"
-			Type="String"
-			EditorType="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Super"
-			Visible=true
-			Group="ID"
-			Type="String"
-			EditorType="String"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="TabIndex"
 			Visible=true
 			Group="Position"
@@ -431,10 +467,39 @@ Inherits ControlCanvas
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Transparent"
-			Group="Behavior"
+			Name="Width"
+			Visible=true
+			Group="Position"
+			InitialValue="376"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutoDeactivate"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
 			Type="Boolean"
-			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Backdrop"
+			Visible=true
+			Group="Appearance"
+			Type="Picture"
+			EditorType="Picture"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Enabled"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HelpTag"
+			Visible=true
+			Group="Appearance"
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="UseFocusRing"
@@ -451,11 +516,45 @@ Inherits ControlCanvas
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Width"
+			Name="AcceptFocus"
 			Visible=true
-			Group="Position"
-			InitialValue="376"
-			Type="Integer"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AcceptTabs"
+			Visible=true
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DoubleBuffer"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EraseBackground"
+			Group="Behavior"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Transparent"
+			Group="Behavior"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsVertical"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DrawCaptions"
+			Visible=true
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -6,6 +6,7 @@ Begin LibrarySubview LibraryPaneSearch
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -36,8 +37,6 @@ Begin LibrarySubview LibraryPaneSearch
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasBottomBorder =   True
-      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -48,7 +47,7 @@ Begin LibrarySubview LibraryPaneSearch
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Resizer         =   "1"
+      Resizer         =   "0"
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   0
@@ -97,39 +96,11 @@ Begin LibrarySubview LibraryPaneSearch
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   51
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   280
-   End
-   Begin FadedSeparator TopBorder
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   83
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   300
    End
    Begin Timer SearchTimer
       Enabled         =   True
@@ -156,7 +127,7 @@ Begin LibrarySubview LibraryPaneSearch
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   216
+      Height          =   217
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -171,7 +142,7 @@ Begin LibrarySubview LibraryPaneSearch
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   84
+      Top             =   83
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -234,30 +205,36 @@ End
 		    Return Rect
 		  End If
 		  
+		  Dim BackgroundColor, TypeFrameColor, TypeTextColor, LinkColor, SummaryColor As Color
 		  If Selected Then
-		    G.ForeColor = &c2A6BD2
-		    G.FillRoundRect(Rect.Left, Rect.Top, Rect.Width, Rect.Height, 12, 12)
-		    G.ForeColor = &c37619F
-		    G.DrawRoundRect(Rect.Left, Rect.Top, Rect.Width, Rect.Height, 12, 12)
-		    G.ForeColor = &cA4C1EA
+		    BackgroundColor = SystemColors.SelectedContentBackgroundColor
+		    TypeFrameColor = SystemColors.AlternateSelectedControlTextColor
+		    TypeTextColor = BackgroundColor
+		    LinkColor = TypeFrameColor
+		    SummaryColor = TypeFrameColor
 		  Else
-		    G.ForeColor = &cE4E4E4
-		    G.DrawRoundRect(Rect.Left, Rect.Top, Rect.Width, Rect.Height, 12, 12)
+		    BackgroundColor = SystemColors.ControlColor
+		    TypeFrameColor = SystemColors.ControlBackgroundColor
+		    TypeFrameColor = SystemColors.AlternateSelectedControlTextColor
+		    LinkColor = SystemColors.LinkColor
+		    SummaryColor = SystemColors.LabelColor
 		  End If
+		  
+		  G.ForeColor = BackgroundColor
+		  G.FillRoundRect(Rect.Left, Rect.Top, Rect.Width, Rect.Height, 12, 12)
+		  G.ForeColor = TypeFrameColor
 		  G.FillRoundRect(TypeLeft, TypeTop, TypeWidth, TypeHeight, 6, 6)
 		  G.TextSize = FontSizePoints
-		  G.ForeColor = If(Selected, &cFFFFFF, &c2c60b2)
+		  G.ForeColor = LinkColor
 		  G.Underline = True
 		  G.DrawString(Title, Rect.Left + 1 + Self.ResultPadding, TitleBaseline, TitleMaxWidth, True)
 		  G.TextSize = SmallFontSizePoints
 		  G.Underline = False
 		  If Summary <> "" Then
-		    G.ForeColor = If(Selected, &cFFFFFF, &c404040)
+		    G.ForeColor = SummaryColor
 		    G.DrawString(Summary, Rect.Left + 1 + Self.ResultPadding, TitlebaseLine + 4 + Self.ResultPadding + TypeCapHeight, MaxTextWidth, False)
 		  End If
-		  G.ForeColor = &cFFFFFF
-		  G.DrawString(Type, TypeLeft + 4, TitleBaseline + 1)
-		  G.ForeColor = &c353535
+		  G.ForeColor = TypeTextColor
 		  G.DrawString(Type, TypeLeft + 4, TitleBaseline)
 		  
 		  Return Rect
@@ -416,9 +393,7 @@ End
 #tag Events Area
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  G.ForeColor = &cFFFFFF
-		  G.FillRect(0, 0, G.Width, G.Height)
-		  G.ForeColor = &c000000
+		  G.ForeColor = SystemColors.LabelColor
 		  
 		  If Self.mResultDicts.Ubound = -1 Then
 		    If Self.mSearchTerms = "" Then
@@ -513,6 +488,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

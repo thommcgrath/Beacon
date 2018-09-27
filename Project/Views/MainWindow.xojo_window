@@ -1,5 +1,5 @@
 #tag Window
-Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
+Begin Window MainWindow Implements AnimationKit.ValueAnimator
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -26,43 +26,14 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
    Title           =   "Beacon"
    Visible         =   True
    Width           =   800
-   Begin LibraryPane LibraryPane1
-      AcceptFocus     =   False
-      AcceptTabs      =   True
-      AutoDeactivate  =   True
-      BackColor       =   &cFFFFFF00
-      Backdrop        =   0
-      Enabled         =   True
-      EraseBackground =   True
-      HasBackColor    =   False
-      Height          =   340
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   60
-      Transparent     =   True
-      UseFocusRing    =   False
-      Visible         =   True
-      Width           =   300
-   End
    Begin PagePanel Views
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   340
+      Height          =   375
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   301
+      Left            =   41
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -73,25 +44,25 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   60
+      Top             =   25
+      Transparent     =   False
       Value           =   0
       Visible         =   True
-      Width           =   499
+      Width           =   759
       Begin DashboardPane DashboardPane1
          AcceptFocus     =   False
          AcceptTabs      =   True
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   340
+         Height          =   375
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
-         Left            =   301
+         Left            =   41
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -103,55 +74,27 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
-         Top             =   60
+         Top             =   25
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   499
+         Width           =   759
       End
    End
-   Begin FadedSeparator Divider
+   Begin TabBar TabBar1
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      Count           =   0
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   340
+      Height          =   25
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   300
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   60
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   1
-   End
-   Begin MasterToolbar AppToolbar
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   60
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
+      Left            =   41
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -159,14 +102,73 @@ Begin Window MainWindow Implements BeaconUI.SheetPositionHandler
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   3
+      SelectedIndex   =   0
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   800
+      Width           =   759
+   End
+   Begin ControlCanvas OverlayCanvas
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   100
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   69
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   445
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   False
+      Width           =   100
+   End
+   Begin SlidingLibraryPane LibraryPane1
+      AcceptFocus     =   False
+      AcceptTabs      =   True
+      AutoDeactivate  =   True
+      BackColor       =   &cFFFFFF00
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackColor    =   False
+      Height          =   400
+      HelpTag         =   ""
+      InitialParent   =   ""
+      Left            =   -259
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   True
+      UseFocusRing    =   False
+      Visible         =   True
+      Width           =   300
    End
 End
 #tag EndWindow
@@ -344,18 +346,14 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Super.Constructor()
+		Sub AnimationStep(Identifier As Text, Value As Double)
+		  // Part of the AnimationKit.ValueAnimator interface.
 		  
-		  #if TargetCocoa And BeaconUI.ToolbarHasBackground = False
-		    Declare Function NSSelectorFromString Lib "Cocoa" (SelectorName As CFStringRef) As Ptr
-		    Declare Function RespondsToSelector Lib "Cocoa" Selector "respondsToSelector:" (Target As Integer, SelectorRef As Ptr) As Boolean
-		    Declare Sub SetTitlebarAppearsTransparent Lib "Cocoa" Selector "setTitlebarAppearsTransparent:" (Target As Integer, Value As Boolean)
-		    
-		    If RespondsToSelector(Self.Handle, NSSelectorFromString("setTitlebarAppearsTransparent:")) Then
-		      SetTitlebarAppearsTransparent(Self.Handle, True)
-		    End If
-		  #endif
+		  Select Case Identifier
+		  Case "overlay_opacity"
+		    Self.mOverlayFillOpacity = Value
+		    Self.OverlayCanvas.Invalidate
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -383,7 +381,7 @@ End
 		  
 		  Self.mSubviews.Remove(ViewIndex)
 		  View.Close
-		  Self.AppToolbar.RemoveView(View)
+		  Self.TabBar1.Count = Self.mSubviews.Ubound + 2
 		  
 		  Return True
 		End Function
@@ -395,19 +393,10 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function PositionSheet(Sheet As Window, InitialPosition As REALbasic.Rect) As REALbasic.Rect
-		  // Part of the BeaconUI.SheetPositionHandler interface.
-		  
-		  #if Not BeaconUI.ToolbarHasBackground
-		    Dim Frame As REALbasic.Rect = Self.Bounds
-		    Dim TitlebarHeight As Integer = Self.Top - Frame.Top
-		    
-		    InitialPosition.Top = InitialPosition.Top - (101 + TitlebarHeight)
-		  #endif
-		  
-		  Return InitialPosition
-		End Function
+	#tag Method, Flags = &h21
+		Private Sub mOverlayFillAnimation_Completed(Sender As AnimationKit.ValueTask)
+		  Self.OverlayCanvas.Visible = False
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -432,8 +421,7 @@ End
 		  End If
 		  
 		  LibraryPane1.Width = NewSize
-		  Divider.Left = NewSize
-		  Views.Left = Divider.Left + Divider.Width
+		  Views.Left = NewSize
 		  Views.Width = Self.Width - Views.Left
 		  
 		  If Self.mOpened Then
@@ -444,28 +432,10 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowView(View As BeaconSubview)
-		  Select Case View
-		  Case LibraryPane1.DocumentsPane
-		    AppToolbar.SelectView(View)
-		    LibraryPane1.ShowPage(LibraryPane.PaneDocuments)
+		  If View = LibraryPane1.DocumentsPane Then
+		    Break
 		    Return
-		  Case LibraryPane1.PresetsPane
-		    AppToolbar.SelectView(View)
-		    LibraryPane1.ShowPage(LibraryPane.PanePresets)
-		    Return
-		  Case LibraryPane1.EngramsPane
-		    AppToolbar.SelectView(View)
-		    LibraryPane1.ShowPage(LibraryPane.PaneEngrams)
-		    Return
-		  Case LibraryPane1.ToolsPane
-		    AppToolbar.SelectView(View)
-		    LibraryPane1.ShowPage(LibraryPane.PaneTools)
-		    Return
-		  Case LibraryPane1.SearchPane
-		    AppToolbar.SelectView(View)
-		    LibraryPane1.ShowPage(LibraryPane.PaneSearch)
-		    Return
-		  End Select
+		  End If
 		  
 		  If Self.mCurrentView = View Then
 		    Return
@@ -480,29 +450,34 @@ End
 		    Self.ContentsChanged = False
 		    Self.mCurrentView = Nil
 		    Self.Views.Value = 0
-		    Self.AppToolbar.SelectView(DashboardPane1)
+		    Self.TabBar1.SelectedIndex = 0
 		    Self.UpdateSizeForView(DashboardPane1)
 		    DashboardPane1.SwitchedTo()
+		    Self.Title = "Beacon"
 		    Return
 		  End If
 		  
 		  View.Visible = True
 		  Self.mCurrentView = View
 		  
-		  If Self.mSubviews.IndexOf(View) = -1 Then
+		  Dim ViewIndex As Integer = Self.mSubviews.IndexOf(View)
+		  If ViewIndex = -1 Then
 		    Self.mSubviews.Append(View)
+		    ViewIndex = Self.mSubviews.Ubound
+		    Self.TabBar1.Count = Self.mSubviews.Ubound + 2
 		    View.EmbedWithinPanel(Self.Views, 1, 0, 0, Self.Views.Width, Self.Views.Height)
-		    AppToolbar.AddView(View, False)
 		    
 		    AddHandler View.OwnerModifiedHook, WeakAddressOf Subview_ContentsChanged
 		  End If
-		  Self.AppToolbar.SelectView(View)
+		  Self.TabBar1.SelectedIndex = ViewIndex + 1
 		  
 		  Self.ContentsChanged = View.ContentsChanged
 		  Self.UpdateSizeForView(View)
 		  
 		  If View.Title <> "" Then
 		    Self.Title = "Beacon: " + View.Title
+		  ElseIf View.ToolbarCaption <> "" Then
+		    Self.Title = "Beacon: " + View.ToolbarCaption
 		  Else
 		    Self.Title = "Beacon"
 		  End If
@@ -522,7 +497,7 @@ End
 		      Self.Title = "Beacon"
 		    End If
 		  End If
-		  Self.AppToolbar.Invalidate
+		  Self.TabBar1.Invalidate
 		End Sub
 	#tag EndMethod
 
@@ -545,7 +520,19 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLibraryPaneAnimation As AnimationKit.MoveTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mOpened As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOverlayFillAnimation As AnimationKit.ValueTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOverlayFillOpacity As Double = 0
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -565,6 +552,78 @@ End
 
 #tag EndWindowCode
 
+#tag Events TabBar1
+	#tag Event
+		Sub Open()
+		  Me.Count = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function ViewAtIndex(TabIndex As Integer) As BeaconSubview
+		  If TabIndex = 0 Then
+		    Return DashboardPane1
+		  Else
+		    Return Self.mSubviews(TabIndex - 1)
+		  End If
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub ShouldDismissView(ViewIndex As Integer)
+		  If ViewIndex = 0 Then
+		    Return
+		  End If
+		  
+		  ViewIndex = ViewIndex - 1
+		  If ViewIndex <= Self.mSubviews.Ubound Then
+		    Call Self.DiscardView(Self.mSubviews(ViewIndex))
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SwitchToView(ViewIndex As Integer)
+		  If ViewIndex = 0 Then
+		    Self.ShowView(DashboardPane1)
+		    Return
+		  End If
+		  
+		  ViewIndex = ViewIndex - 1
+		  If ViewIndex <= Self.mSubviews.Ubound Then
+		    Self.ShowView(Self.mSubviews(ViewIndex))
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events OverlayCanvas
+	#tag Event
+		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
+		  G.ForeColor = SystemColors.ShadowColor.AtOpacity(Self.mOverlayFillOpacity)
+		  G.FillRect(0, 0, G.Width, G.Height)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MouseUp(X As Integer, Y As Integer)
+		  If X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height Then
+		    Self.LibraryPane1.Dismiss
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.Visible = False
+		  Me.Left = 0
+		  Me.Top = 0
+		  Me.Width = Self.Width
+		  Me.Height = Self.Height
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events LibraryPane1
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
@@ -581,84 +640,36 @@ End
 		  Return Self.DiscardView(View)
 		End Function
 	#tag EndEvent
-#tag EndEvents
-#tag Events AppToolbar
 	#tag Event
-		Sub Open()
-		  Me.AddView(LibraryPane1.DocumentsPane, True)
-		  Me.AddView(LibraryPane1.PresetsPane, True)
-		  Me.AddView(LibraryPane1.EngramsPane, True)
-		  Me.AddView(LibraryPane1.ToolsPane, True)
-		  Me.AddView(LibraryPane1.SearchPane, True)
-		  
-		  Me.AddView(DashboardPane1, False)
-		  
-		  Self.ShowView(LibraryPane1.DocumentsPane)
-		  Self.ShowView(DashboardPane1)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ViewClicked(View As BeaconSubview)
-		  Self.ShowView(View)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub CloseView(View As BeaconSubview)
-		  Call Self.DiscardView(View)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ConstructMenu(Menu As MenuItem)
-		  Menu.Append(New MenuItem("Check for Updates…", "check_updates"))
-		  Menu.Append(New MenuItem("Release Notes…", "release_notes"))
-		  Menu.Append(New MenuItem(MenuItem.TextSeparator))
-		  Menu.Append(New MenuItem("Preferences…", "preferences"))
-		  Menu.Append(New MenuItem(MenuItem.TextSeparator))
-		  
-		  If Preferences.OnlineEnabled Then
-		    If App.Identity.LoginKey = "" Then
-		      Menu.Append(New MenuItem("Sign In…", "sign_in"))
-		    Else
-		      Dim UsernameItem As New MenuItem("Logged in as " + App.Identity.LoginKey)
-		      UsernameItem.Enabled = False
-		      Menu.Append(UsernameItem)
-		      
-		      Menu.Append(New MenuItem("Manage Account", "view_account"))
-		    End If
-		  Else
-		    Menu.Append(New MenuItem("Enable Cloud && Community Features…", "enable_online"))
+		Sub ChangePosition(Difference As Integer)
+		  If Self.mLibraryPaneAnimation <> Nil Then
+		    Self.mLibraryPaneAnimation.Cancel
+		    Self.mLibraryPaneAnimation = Nil
 		  End If
 		  
-		  Menu.Append(New MenuItem(MenuItem.TextSeparator))
-		  Menu.Append(New MenuItem("Admin Spawn Codes", "spawn_codes"))
-		  Menu.Append(New MenuItem("Report a Problem…", "report_bug"))
-		  Menu.Append(New MenuItem("Make a Donation…", "donate"))
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub MenuItemSelected(Item As MenuItem)
-		  Select Case Item.Tag
-		  Case "enable_online"
-		    Dim WelcomeWindow As New UserWelcomeWindow(False)
-		    WelcomeWindow.Show()
-		  Case "sign_in"
-		    Dim WelcomeWindow As New UserWelcomeWindow(True)
-		    WelcomeWindow.Show()
-		  Case "view_account"
-		    ShowURL(Beacon.WebURL("/account/?session_id=" + Preferences.OnlineToken))
-		  Case "preferences"
-		    PreferencesWindow.Show
-		  Case "spawn_codes"
-		    ShowURL(Beacon.WebURL("/spawn/"))
-		  Case "check_updates"
-		    App.CheckForUpdates(False)
-		  Case "donate"
-		    ShowURL(Beacon.WebURL("/donate.php"))
-		  Case "release_notes"
-		    ShowURL(Beacon.WebURL("/history.php#build" + App.NonReleaseVersion.ToText(Xojo.Core.Locale.Raw, "0")))
-		  Case "report_bug"
-		    Beacon.ReportAProblem()
-		  End Select
+		  If Self.mOverlayFillAnimation <> Nil Then
+		    Self.mOverlayFillAnimation.Cancel
+		    Self.mOverlayFillAnimation = Nil
+		  End If
+		  
+		  Self.mLibraryPaneAnimation = New AnimationKit.MoveTask(Me)
+		  
+		  If Difference > 0 Then
+		    Self.OverlayCanvas.Visible = True
+		    Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.2)
+		  Else
+		    Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.0)
+		    AddHandler Self.mOverlayFillAnimation.Completed, WeakAddressOf mOverlayFillAnimation_Completed
+		  End If
+		  
+		  Self.mLibraryPaneAnimation.Left = Me.Left + Difference
+		  Self.mLibraryPaneAnimation.Curve = AnimationKit.Curve.CreateEaseOut
+		  Self.mLibraryPaneAnimation.DurationInSeconds = 0.12
+		  Self.mLibraryPaneAnimation.Run
+		  
+		  Self.mOverlayFillAnimation.Curve = Self.mLibraryPaneAnimation.Curve
+		  Self.mOverlayFillAnimation.DurationInSeconds = Self.mLibraryPaneAnimation.DurationInSeconds
+		  Self.mOverlayFillAnimation.Run
 		End Sub
 	#tag EndEvent
 #tag EndEvents

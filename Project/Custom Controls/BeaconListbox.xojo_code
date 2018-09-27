@@ -17,19 +17,23 @@ Inherits Listbox
 		  // To ensure a consistent drawing experience. Partially obscure rows traditionally have a truncated g.height value.
 		  Dim Clip As Graphics = G.Clip(0, 0, ColumnWidth, RowHeight)
 		  
+		  // Need to fill with color first so translucent system colors can apply correctly
+		  Clip.ForeColor = SystemColors.ControlBackgroundColor
+		  Clip.FillRect(0, 0, Clip.Width, Clip.Height)
+		  
 		  Dim BackgroundColor, TextColor As Color
 		  Dim IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
 		  If RowSelected Then
 		    If IsHighlighted Then
-		      BackgroundColor = If(RowInvalid, Self.InvalidSelectedRowColor, Self.SelectedRowColor)
-		      TextColor = If(RowInvalid, Self.InvalidSelectedTextColor, Self.SelectedTextColor)
+		      BackgroundColor = If(RowInvalid, SystemColors.SystemRedColor, SystemColors.SelectedContentBackgroundColor)
+		      TextColor = SystemColors.AlternateSelectedControlTextColor
 		    Else
-		      BackgroundColor = If(RowInvalid, Self.InvalidSelectedRowColorInactive, Self.SelectedRowColorInactive)
-		      TextColor = If(RowInvalid, Self.InvalidSelectedTextColorInactive, Self.SelectedTextColorInactive)
+		      BackgroundColor = SystemColors.UnemphasizedSelectedContentBackgroundColor
+		      TextColor = SystemColors.UnemphasizedSelectedTextColor
 		    End If
 		  Else
-		    BackgroundColor = If(Row Mod 2 = 0, Self.PrimaryRowColor, Self.AlternateRowColor)
-		    TextColor = If(RowInvalid, Self.InvalidTextColor, Self.TextColor)
+		    BackgroundColor = If(Row Mod 2 = 0, SystemColors.ListEvenRowColor, SystemColors.ListOddRowColor)
+		    TextColor = If(RowInvalid, SystemColors.SystemRedColor, SystemColors.TextColor)
 		  End If
 		  
 		  Clip.ForeColor = BackgroundColor
@@ -474,6 +478,14 @@ Inherits Listbox
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Transparent"
+			Visible=true
+			Group="Appearance"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AutoDeactivate"
 			Visible=true

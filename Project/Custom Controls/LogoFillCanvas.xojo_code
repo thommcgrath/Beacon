@@ -5,21 +5,13 @@ Inherits ControlCanvas
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  G.TextSize = 24
 		  
-		  #if BeaconUI.ToolbarHasBackground
-		    G.ForeColor = Self.ColorProfile.BackgroundColor
-		    G.FillRect(0, 0, G.Width, G.Height)
-		  #endif
+		  Dim ForeColor As Color = SystemColors.TertiaryLabelColor
 		  
-		  Dim ShadowColor As Color = Self.ColorProfile.ShadowColor
-		  Dim ForeColor As Color = Self.ColorProfile.ForegroundColor
-		  
-		  Dim LogoShadow As Picture = BeaconUI.IconWithColor(LogoMask, ShadowColor)
 		  Dim LogoForeground As Picture = BeaconUI.IconWithColor(LogoMask, ForeColor)
 		  
 		  Dim LogoLeft As Integer = (G.Width - LogoMask.Width) / 2
 		  Dim LogoTop As Integer = (G.Height - LogoMask.Height) / 2
 		  
-		  G.DrawPicture(LogoShadow, LogoLeft, LogoTop + 1)
 		  G.DrawPicture(LogoForeground, LogoLeft, LogoTop)
 		  
 		  Dim CaptionTop As Integer = LogoTop + LogoMask.Height + 8
@@ -27,8 +19,6 @@ Inherits ControlCanvas
 		  Dim CaptionWidth As Integer = Min(Ceil(G.StringWidth(Self.mCaption)), G.Width - 40)
 		  Dim CaptionLeft As Integer = (G.Width - CaptionWidth) / 2
 		  
-		  G.ForeColor = ShadowColor
-		  G.DrawString(Self.mCaption, CaptionLeft, CaptionBase + 1, CaptionWidth, False)
 		  G.ForeColor = ForeColor
 		  G.DrawString(Self.mCaption, CaptionLeft, CaptionBase, CaptionWidth, False)
 		End Sub
@@ -112,6 +102,7 @@ Inherits ControlCanvas
 			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Height"

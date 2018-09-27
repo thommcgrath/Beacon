@@ -217,7 +217,7 @@ Begin Menu MainMenuBar
       Visible = True
       Begin MenuItem ViewDashboard
          SpecialMenu = 0
-         Text = "Dashboard"
+         Text = "Home"
          Index = -2147483648
          ShortcutKey = "H"
          Shortcut = "Cmd+Shift+H"

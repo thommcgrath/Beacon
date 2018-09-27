@@ -6,6 +6,7 @@ Begin BeaconSubview DashboardPane
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -31,13 +32,9 @@ Begin BeaconSubview DashboardPane
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Welcome to Beacon"
-      CaptionEnabled  =   False
-      CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasBottomBorder =   True
-      HasTopBorder    =   False
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -87,6 +84,7 @@ Begin BeaconSubview DashboardPane
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   244
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   138
@@ -118,6 +116,7 @@ Begin BeaconSubview DashboardPane
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   244
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   138
@@ -446,11 +445,19 @@ End
 #tag Events TitleCanvas
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  G.DrawPicture(BeaconText, 0, 0)
+		  G.DrawPicture(BeaconUI.IconWithColor(BeaconText,SystemColors.LabelColor), 0, 0)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

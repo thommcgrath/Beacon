@@ -44,7 +44,9 @@ Begin BeaconWindow UpdateWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
+      Transparent     =   False
       Value           =   1
       Visible         =   True
       Width           =   600
@@ -100,7 +102,9 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Top             =   52
+         Transparent     =   False
          Value           =   0
          Visible         =   True
          Width           =   560
@@ -132,6 +136,7 @@ Begin BeaconWindow UpdateWindow
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   84
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -249,6 +254,7 @@ Begin BeaconWindow UpdateWindow
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   360
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -280,6 +286,7 @@ Begin BeaconWindow UpdateWindow
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   360
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -448,7 +455,9 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
+         TabStop         =   True
          Top             =   52
+         Transparent     =   False
          Value           =   0
          Visible         =   True
          Width           =   560
@@ -480,18 +489,21 @@ Begin BeaconWindow UpdateWindow
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   84
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
       End
    End
    Begin UpdateChecker Checker
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Xojo.Net.HTTPSocket Downloader
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

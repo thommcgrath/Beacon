@@ -6,6 +6,7 @@ Begin BeaconContainer BeaconEditor
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -70,6 +71,7 @@ Begin BeaconContainer BeaconEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   62
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -78,6 +80,7 @@ Begin BeaconContainer BeaconEditor
       _ScrollWidth    =   -1
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -97,8 +100,8 @@ Begin BeaconContainer BeaconEditor
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasBottomBorder =   True
-      HasTopBorder    =   False
+      HasBottomBorder =   "True"
+      HasTopBorder    =   "False"
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -139,7 +142,9 @@ Begin BeaconContainer BeaconEditor
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
+      Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   347
@@ -150,11 +155,13 @@ Begin BeaconContainer BeaconEditor
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
          ConsoleSafe     =   False
+         DoubleBuffer    =   False
          Enabled         =   False
          EraseBackground =   True
          HasBackColor    =   False
          Height          =   464
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -183,8 +190,8 @@ Begin BeaconContainer BeaconEditor
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasBottomBorder =   True
-         HasTopBorder    =   False
+         HasBottomBorder =   "True"
+         HasTopBorder    =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -305,11 +312,13 @@ Begin BeaconContainer BeaconEditor
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
       Height          =   183
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -1320,6 +1329,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

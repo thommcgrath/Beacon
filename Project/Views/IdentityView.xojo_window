@@ -6,6 +6,7 @@ Begin BeaconSubview IdentityView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -36,9 +37,9 @@ Begin BeaconSubview IdentityView
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasBottomBorder =   True
+      HasBottomBorder =   "True"
       HasResizer      =   "False"
-      HasTopBorder    =   False
+      HasTopBorder    =   "False"
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -85,7 +86,7 @@ Begin BeaconSubview IdentityView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   61
-      Transparent     =   "False"
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   370
@@ -167,7 +168,7 @@ Begin BeaconSubview IdentityView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   273
-      Transparent     =   "False"
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -250,7 +251,7 @@ Begin BeaconSubview IdentityView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   95
-      Transparent     =   "False"
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -335,7 +336,7 @@ Begin BeaconSubview IdentityView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   61
-      Transparent     =   "False"
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -478,6 +479,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

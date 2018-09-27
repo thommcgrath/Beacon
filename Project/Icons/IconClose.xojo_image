@@ -7,11 +7,11 @@ Image IconClose
 		#tag ImageSpecification
 			Comment = 
 			Device = 31
-			HSize = 5.00
+			HSize = 16.00
 			Orientation = Any
 			Platform = 15
 			PPI = 72
-			VSize = 5.00
+			VSize = 16.00
 		#tag EndImageSpecification
 	#tag EndImageRepresentation
 	#tag ImageRepresentation
@@ -21,11 +21,11 @@ Image IconClose
 		#tag ImageSpecification
 			Comment = 
 			Device = 31
-			HSize = 5.00
+			HSize = 16.00
 			Orientation = Any
 			Platform = 15
 			PPI = 144
-			VSize = 5.00
+			VSize = 16.00
 		#tag EndImageSpecification
 	#tag EndImageRepresentation
 	#tag ImageRepresentation
@@ -35,11 +35,11 @@ Image IconClose
 		#tag ImageSpecification
 			Comment = 
 			Device = 31
-			HSize = 5.00
+			HSize = 16.00
 			Orientation = Any
 			Platform = 15
 			PPI = 216
-			VSize = 5.00
+			VSize = 16.00
 		#tag EndImageSpecification
 	#tag EndImageRepresentation
 End Image

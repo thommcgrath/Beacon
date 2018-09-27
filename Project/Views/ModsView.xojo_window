@@ -6,6 +6,7 @@ Begin BeaconSubview ModsView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -77,6 +78,7 @@ Begin BeaconSubview ModsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   41
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -119,6 +121,7 @@ Begin BeaconSubview ModsView
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
@@ -153,9 +156,9 @@ Begin BeaconSubview ModsView
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasBottomBorder =   True
+      HasBottomBorder =   "True"
       HasResizer      =   "True"
-      HasTopBorder    =   False
+      HasTopBorder    =   "False"
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -324,6 +327,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

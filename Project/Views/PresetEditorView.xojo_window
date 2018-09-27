@@ -6,6 +6,7 @@ Begin BeaconSubview PresetEditorView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -36,8 +37,8 @@ Begin BeaconSubview PresetEditorView
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasBottomBorder =   True
-      HasTopBorder    =   False
+      HasBottomBorder =   "True"
+      HasTopBorder    =   "False"
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -86,6 +87,7 @@ Begin BeaconSubview PresetEditorView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   53
+      Transparent     =   False
       Underline       =   False
       Value           =   0
       Visible         =   True
@@ -135,6 +137,7 @@ Begin BeaconSubview PresetEditorView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   123
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -169,6 +172,7 @@ Begin BeaconSubview PresetEditorView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   92
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   139
@@ -281,6 +285,7 @@ Begin BeaconSubview PresetEditorView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   91
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -324,6 +329,7 @@ Begin BeaconSubview PresetEditorView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   125
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -472,6 +478,7 @@ Begin BeaconSubview PresetEditorView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   159
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -550,6 +557,7 @@ Begin BeaconSubview PresetEditorView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   159
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -609,6 +617,7 @@ Begin BeaconSubview PresetEditorView
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   159
+         Transparent     =   False
          Visible         =   True
          Width           =   13
       End
@@ -631,6 +640,7 @@ Begin BeaconSubview PresetEditorView
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   159
+         Transparent     =   False
          Visible         =   True
          Width           =   13
       End
@@ -658,6 +668,7 @@ Begin BeaconSubview PresetEditorView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   201
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   660
@@ -734,6 +745,7 @@ Begin BeaconSubview PresetEditorView
             TextSize        =   0.0
             TextUnit        =   0
             Top             =   237
+            Transparent     =   False
             Underline       =   False
             UseFocusRing    =   True
             Visible         =   True
@@ -812,6 +824,7 @@ Begin BeaconSubview PresetEditorView
             TextSize        =   0.0
             TextUnit        =   0
             Top             =   237
+            Transparent     =   False
             Underline       =   False
             UseFocusRing    =   True
             Visible         =   True
@@ -960,6 +973,7 @@ Begin BeaconSubview PresetEditorView
             TextSize        =   0.0
             TextUnit        =   0
             Top             =   271
+            Transparent     =   False
             Underline       =   False
             UseFocusRing    =   True
             Visible         =   True
@@ -1038,6 +1052,7 @@ Begin BeaconSubview PresetEditorView
             TextSize        =   0.0
             TextUnit        =   0
             Top             =   271
+            Transparent     =   False
             Underline       =   False
             UseFocusRing    =   True
             Visible         =   True
@@ -1081,6 +1096,7 @@ Begin BeaconSubview PresetEditorView
             TextSize        =   0.0
             TextUnit        =   0
             Top             =   305
+            Transparent     =   False
             Underline       =   False
             UseFocusRing    =   True
             Visible         =   True
@@ -1159,6 +1175,7 @@ Begin BeaconSubview PresetEditorView
             TextSize        =   0.0
             TextUnit        =   0
             Top             =   305
+            Transparent     =   False
             Underline       =   False
             UseFocusRing    =   True
             Visible         =   True
@@ -1202,6 +1219,7 @@ Begin BeaconSubview PresetEditorView
             TextSize        =   0.0
             TextUnit        =   0
             Top             =   339
+            Transparent     =   False
             Underline       =   False
             UseFocusRing    =   True
             Visible         =   True
@@ -1280,6 +1298,7 @@ Begin BeaconSubview PresetEditorView
             TextSize        =   0.0
             TextUnit        =   0
             Top             =   339
+            Transparent     =   False
             Underline       =   False
             UseFocusRing    =   True
             Visible         =   True
@@ -2028,6 +2047,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

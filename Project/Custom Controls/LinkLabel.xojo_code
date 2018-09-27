@@ -6,7 +6,7 @@ Inherits Label
 		  #Pragma Unused X
 		  #Pragma Unused Y
 		  
-		  Me.TextColor = &cFF0000
+		  Me.TextColor = SystemColors.SystemRedColor
 		  Return True
 		End Function
 	#tag EndEvent
@@ -14,10 +14,10 @@ Inherits Label
 	#tag Event
 		Sub MouseDrag(X As Integer, Y As Integer)
 		  If X >= 0 And X <= Me.Width And Y >= 0 And Y <= Me.Height Then
-		    Me.TextColor = &cFF0000
+		    Me.TextColor = SystemColors.SystemRedColor
 		    Me.MouseCursor = System.Cursors.FingerPointer
 		  Else
-		    Me.TextColor = &c0000FF
+		    Me.TextColor = SystemColors.LinkColor
 		    Me.MouseCursor = System.Cursors.StandardPointer
 		  End If
 		End Sub
@@ -33,7 +33,7 @@ Inherits Label
 		Sub MouseUp(X As Integer, Y As Integer)
 		  If X >= 0 And X <= Me.Width And Y >= 0 And Y <= Me.Height Then
 		    RaiseEvent Action
-		    Me.TextColor = &c0000FF
+		    Me.TextColor = SystemColors.LinkColor
 		  End If
 		End Sub
 	#tag EndEvent
@@ -42,7 +42,7 @@ Inherits Label
 		Sub Open()
 		  RaiseEvent Open
 		  
-		  Me.TextColor = &c0000FF
+		  Me.TextColor = SystemColors.LinkColor
 		  Me.Underline = True
 		End Sub
 	#tag EndEvent
@@ -58,6 +58,13 @@ Inherits Label
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="TabStop"
+			Visible=true
+			Group="Position"
+			InitialValue="True"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AutoDeactivate"
 			Visible=true
@@ -265,6 +272,7 @@ Inherits Label
 			Group="Appearance"
 			InitialValue="False"
 			Type="Boolean"
+			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Underline"

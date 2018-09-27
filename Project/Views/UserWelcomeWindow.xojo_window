@@ -38,7 +38,7 @@ Begin Window UserWelcomeWindow
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Renderer        =   0
+      Renderer        =   1
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0

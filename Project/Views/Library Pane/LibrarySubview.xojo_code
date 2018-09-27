@@ -87,6 +87,14 @@ Inherits BeaconSubview
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="DoubleBuffer"
+			Visible=true
+			Group="Windows Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="AcceptFocus"
 			Visible=true
 			Group="Behavior"

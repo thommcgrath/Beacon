@@ -106,6 +106,7 @@ Begin BeaconMultiview DeveloperWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   31
+      Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   1100
@@ -115,6 +116,7 @@ Begin BeaconMultiview DeveloperWindow
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -146,6 +148,7 @@ Begin BeaconMultiview DeveloperWindow
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -177,6 +180,7 @@ Begin BeaconMultiview DeveloperWindow
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
@@ -208,6 +212,7 @@ Begin BeaconMultiview DeveloperWindow
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False

@@ -1,5 +1,5 @@
 #tag Window
-Begin ContainerControl LibraryPane
+Begin ContainerControl SlidingLibraryPane
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -46,9 +46,9 @@ Begin ContainerControl LibraryPane
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   4
+      Value           =   2
       Visible         =   True
-      Width           =   300
+      Width           =   259
       Begin LibraryPaneDocuments DocumentsView
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -79,7 +79,7 @@ Begin ContainerControl LibraryPane
          UseFocusRing    =   False
          View            =   0
          Visible         =   True
-         Width           =   300
+         Width           =   259
       End
       Begin LibraryPanePresets PresetsView
          AcceptFocus     =   False
@@ -110,7 +110,7 @@ Begin ContainerControl LibraryPane
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   300
+         Width           =   259
       End
       Begin LibraryPaneEngrams EngramsView
          AcceptFocus     =   False
@@ -141,7 +141,7 @@ Begin ContainerControl LibraryPane
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   300
+         Width           =   259
       End
       Begin LibraryPaneTools ToolsView
          AcceptFocus     =   False
@@ -172,7 +172,7 @@ Begin ContainerControl LibraryPane
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   300
+         Width           =   259
       End
       Begin LibraryPaneSearch SearchView
          AcceptFocus     =   False
@@ -203,8 +203,39 @@ Begin ContainerControl LibraryPane
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   300
+         Width           =   259
       End
+   End
+   Begin Shelf ViewShelf
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      DrawCaptions    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   468
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      IsVertical      =   False
+      Left            =   259
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   40
    End
 End
 #tag EndWindow
@@ -217,9 +248,25 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		  Return True
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.CurrentView.SwitchedTo()
 		  RaiseEvent Open
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  G.ForeColor = SystemColors.ControlBackgroundColor
+		  G.FillRect(0, 0, G.Width - 1, G.Height)
+		  
+		  G.ForeColor = SystemColors.SeparatorColor
+		  G.FillRect(G.Width - 1, 0, 1, G.Height)
 		End Sub
 	#tag EndEvent
 
@@ -234,6 +281,14 @@ End
 		Protected Function CurrentView() As LibrarySubview
 		  Return Self.ViewAtIndex(Self.Views.Value)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Dismiss()
+		  If Self.ViewShelf.SelectedItem <> Nil Then
+		    Self.ViewShelf.SelectedItem = Nil
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -304,6 +359,10 @@ End
 
 
 	#tag Hook, Flags = &h0
+		Event ChangePosition(Difference As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
 
@@ -318,6 +377,11 @@ End
 	#tag Hook, Flags = &h0
 		Event ShouldShowView(View As BeaconSubview)
 	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mOpened As Boolean
+	#tag EndProperty
 
 
 	#tag Constant, Name = PaneDocuments, Type = Double, Dynamic = False, Default = \"0", Scope = Public
@@ -352,6 +416,7 @@ End
 	#tag Event
 		Sub ShouldShowView(View As BeaconSubview)
 		  RaiseEvent ShouldShowView(View)
+		  Self.ViewShelf.SelectedItem = Nil
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -364,6 +429,7 @@ End
 	#tag Event
 		Sub ShouldShowView(View As BeaconSubview)
 		  RaiseEvent ShouldShowView(View)
+		  Self.ViewShelf.SelectedItem = Nil
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -386,6 +452,7 @@ End
 	#tag Event
 		Sub ShouldShowView(View As BeaconSubview)
 		  RaiseEvent ShouldShowView(View)
+		  Self.ViewShelf.SelectedItem = Nil
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -403,6 +470,7 @@ End
 	#tag Event
 		Sub ShouldShowView(View As BeaconSubview)
 		  RaiseEvent ShouldShowView(View)
+		  Self.ViewShelf.SelectedItem = Nil
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -415,11 +483,52 @@ End
 	#tag Event
 		Sub ShouldShowView(View As BeaconSubview)
 		  RaiseEvent ShouldShowView(View)
+		  Self.ViewShelf.SelectedItem = Nil
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
 		  RaiseEvent ShouldResize(NewSize)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ViewShelf
+	#tag Event
+		Sub Open()
+		  Me.Add(IconMenu, "Menu", "menu")
+		  Me.Add(ShelfItem.NewSpacer)
+		  Me.Add(IconDocuments, "Documents", "documents")
+		  Me.Add(IconPresets, "Presets", "presets")
+		  Me.Add(IconEngrams, "Engrams", "engrams")
+		  Me.Add(IconTools, "Tools", "tools")
+		  Me.Add(IconSearch, "Search", "search")
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  If Me.SelectedItem = Nil Then
+		    RaiseEvent ChangePosition(Self.Views.Width * -1)
+		    Self.mOpened = False
+		    Return
+		  End If
+		  
+		  Select Case Me.SelectedItem.Tag
+		  Case "documents"
+		    Self.ShowPage(Self.PaneDocuments)
+		  Case "presets"
+		    Self.ShowPage(Self.PanePresets)
+		  Case "engrams"
+		    Self.ShowPage(Self.PaneEngrams)
+		  Case "tools"
+		    Self.ShowPage(Self.PaneTools)
+		  Case "search"
+		    Self.ShowPage(Self.PaneSearch)
+		  End Select
+		  
+		  If Self.mOpened = False Then
+		    RaiseEvent ChangePosition(Self.Views.Width)
+		    Self.mOpened = True
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

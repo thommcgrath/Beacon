@@ -71,6 +71,7 @@ Begin BeaconWindow DocWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   63
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -114,11 +115,13 @@ Begin BeaconWindow DocWindow
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
       ConsoleSafe     =   False
+      DoubleBuffer    =   False
       Enabled         =   False
       EraseBackground =   True
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -167,6 +170,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -209,6 +213,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

@@ -6,6 +6,7 @@ Begin BeaconContainer ModDetailView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -45,6 +46,7 @@ Begin BeaconContainer ModDetailView
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       Value           =   3
       Visible         =   True
       Width           =   864
@@ -86,6 +88,7 @@ Begin BeaconContainer ModDetailView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   199
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -118,6 +121,7 @@ Begin BeaconContainer ModDetailView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   233
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   145
@@ -184,6 +188,7 @@ Begin BeaconContainer ModDetailView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   233
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   145
@@ -242,6 +247,7 @@ Begin BeaconContainer ModDetailView
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   199
+         Transparent     =   False
          Value           =   0
          Visible         =   True
          Width           =   340
@@ -290,6 +296,7 @@ Begin BeaconContainer ModDetailView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   41
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   False
          Visible         =   True
@@ -308,8 +315,8 @@ Begin BeaconContainer ModDetailView
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasBottomBorder =   True
-         HasTopBorder    =   False
+         HasBottomBorder =   "True"
+         HasTopBorder    =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -343,8 +350,8 @@ Begin BeaconContainer ModDetailView
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasBottomBorder =   True
-         HasTopBorder    =   False
+         HasBottomBorder =   "True"
+         HasTopBorder    =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -378,8 +385,8 @@ Begin BeaconContainer ModDetailView
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasBottomBorder =   True
-         HasTopBorder    =   False
+         HasBottomBorder =   "True"
+         HasTopBorder    =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -413,8 +420,8 @@ Begin BeaconContainer ModDetailView
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasBottomBorder =   True
-         HasTopBorder    =   False
+         HasBottomBorder =   "True"
+         HasTopBorder    =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -924,6 +931,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true
