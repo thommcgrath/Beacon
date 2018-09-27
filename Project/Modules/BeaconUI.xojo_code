@@ -432,6 +432,9 @@ Protected Module BeaconUI
 	#tag Constant, Name = BorderTop, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant
 
+	#tag Constant, Name = CursorsEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = DefaultPrimaryColor, Type = Color, Dynamic = False, Default = \"&c713A9A", Scope = Protected
 	#tag EndConstant
 

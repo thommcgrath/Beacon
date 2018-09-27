@@ -15,17 +15,23 @@ Inherits Label
 		Sub MouseDrag(X As Integer, Y As Integer)
 		  If X >= 0 And X <= Me.Width And Y >= 0 And Y <= Me.Height Then
 		    Me.TextColor = SystemColors.SystemRedColor
-		    Me.MouseCursor = System.Cursors.FingerPointer
+		    #if BeaconUI.CursorsEnabled
+		      Me.MouseCursor = System.Cursors.FingerPointer
+		    #endif
 		  Else
 		    Me.TextColor = SystemColors.LinkColor
-		    Me.MouseCursor = System.Cursors.StandardPointer
+		    #if BeaconUI.CursorsEnabled
+		      Me.MouseCursor = System.Cursors.StandardPointer
+		    #endif
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub MouseEnter()
-		  Me.MouseCursor = System.Cursors.FingerPointer
+		  #if BeaconUI.CursorsEnabled
+		    Me.MouseCursor = System.Cursors.FingerPointer
+		  #endif
 		End Sub
 	#tag EndEvent
 

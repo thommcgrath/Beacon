@@ -116,7 +116,9 @@ Implements ObservationKit.Observer
 
 	#tag Event
 		Sub MouseExit()
-		  Self.MouseCursor = Nil
+		  #if BeaconUI.CursorsEnabled
+		    Self.MouseCursor = Nil
+		  #endif
 		  Self.HoverItem = Nil
 		End Sub
 	#tag EndEvent
@@ -128,15 +130,17 @@ Implements ObservationKit.Observer
 		  End If
 		  
 		  Dim Point As New REALbasic.Point(X, Y)
-		  If Self.mResizerRect.Contains(Point) Then
-		    If Self.mResizerStyle = ResizerTypes.Horizontal Then
-		      Self.MouseCursor = System.Cursors.SplitterEastWest
-		    ElseIf Self.mResizerStyle = ResizerTypes.Vertical Then
-		      Self.MouseCursor = System.Cursors.SplitterNorthSouth
+		  #if BeaconUI.CursorsEnabled
+		    If Self.mResizerRect.Contains(Point) Then
+		      If Self.mResizerStyle = ResizerTypes.Horizontal Then
+		        Self.MouseCursor = System.Cursors.SplitterEastWest
+		      ElseIf Self.mResizerStyle = ResizerTypes.Vertical Then
+		        Self.MouseCursor = System.Cursors.SplitterNorthSouth
+		      End If
+		    Else
+		      Self.MouseCursor = Nil
 		    End If
-		  Else
-		    Self.MouseCursor = Nil
-		  End If
+		  #endif
 		  
 		  Self.HoverItem = Self.ItemAtPoint(Point)
 		End Sub
