@@ -542,6 +542,25 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Sub Collapse()
+		  Self.DisclosureTriangle1.Value = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub EditName()
+		  Self.NameField.SetFocus()
+		  Self.NameField.SelectAll()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Expand()
+		  Self.DisclosureTriangle1.Value = True
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub SetupUI()
 		  If Self.DisclosureTriangle1.Value Then

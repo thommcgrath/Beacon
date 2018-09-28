@@ -6,6 +6,7 @@ Begin BeaconContainer EntryPropertiesEditor
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -52,6 +53,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   142
+      Transparent     =   False
       Underline       =   False
       Value           =   True
       Visible         =   False
@@ -84,6 +86,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   110
+      Transparent     =   False
       Underline       =   False
       Value           =   True
       Visible         =   False
@@ -116,6 +119,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   78
+      Transparent     =   False
       Underline       =   False
       Value           =   True
       Visible         =   False
@@ -148,6 +152,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   44
+      Transparent     =   False
       Underline       =   False
       Value           =   True
       Visible         =   False
@@ -180,6 +185,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   10
+      Transparent     =   False
       Underline       =   False
       Value           =   True
       Visible         =   False
@@ -258,6 +264,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   142
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -287,6 +294,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabStop         =   True
       TickStyle       =   "0"
       Top             =   142
+      Transparent     =   False
       Value           =   25
       Visible         =   True
       Width           =   139
@@ -353,6 +361,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   110
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   244
@@ -419,6 +428,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   78
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   244
@@ -496,6 +506,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   44
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -574,6 +585,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   10
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -673,6 +685,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabStop         =   True
       TickStyle       =   "0"
       Top             =   176
+      Transparent     =   False
       Value           =   25
       Visible         =   True
       Width           =   139
@@ -714,6 +727,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   176
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -781,6 +795,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   176
+      Transparent     =   False
       Underline       =   False
       Value           =   True
       Visible         =   False
@@ -1081,6 +1096,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

@@ -110,38 +110,6 @@ Begin BeaconContainer ItemSetEditor
       Visible         =   True
       Width           =   560
    End
-   Begin StatusBar Status
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      Borders         =   2
-      Caption         =   ""
-      Clickable       =   True
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   21
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   16
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   -88
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   560
-   End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -259,10 +227,17 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ShowSettings(FocusOnName As Boolean = False)
+		  Self.Settings.Expand()
+		  If FocusOnName Then
+		    Self.Settings.EditName()
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub UpdateEntryList(SelectEntries() As Beacon.SetEntry)
-		  Self.UpdateStatus()
-		  
 		  If Self.mSet = Nil Then
 		    EntryList.DeleteAllRows
 		    Return
@@ -342,49 +317,6 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateEntryList(ParamArray SelectEntries() As Beacon.SetEntry)
 		  Self.UpdateEntryList(SelectEntries)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateStatus()
-		  If Self.mSet = Nil Then
-		    Return
-		  End If
-		  
-		  Dim NumEntries As Integer = Self.mSet.Count
-		  Dim MaxEntries As Integer = Min(Self.mSet.MaxNumItems, NumEntries)
-		  Dim MinEntries As Integer = Min(Self.mSet.MinNumItems, MaxEntries)
-		  
-		  Dim StatusText As String
-		  If NumEntries = 0 Then
-		    StatusText = "No engrams"
-		  Else
-		    If NumEntries = MinEntries And MinEntries = MaxEntries Then
-		      If NumEntries = 1 Then
-		        StatusText = "Chooses lone entry"
-		      Else
-		        StatusText = "Chooses all " + Str(NumEntries, "-0") + " entries"
-		      End If
-		    Else
-		      If MinEntries = MaxEntries Then
-		        If MinEntries = 1 Then
-		          StatusText = "Chooses 1 of " + Str(NumEntries, "-0") + " entries"
-		        Else
-		          StatusText = "Chooses " + Str(MinEntries, "-0") + " of " + Str(NumEntries, "-0") + " entries"
-		        End If
-		      Else
-		        StatusText = "Chooses " + Str(MinEntries, "-0") + "-" + Str(MaxEntries, "-0") + " of " + Str(NumEntries, "-0") + " entries"
-		      End If
-		    End If
-		  End If
-		  
-		  StatusText = StatusText + ", " + Str(Round(Self.mSet.Weight * 100), "-0") + " weight"
-		  
-		  If Self.mSet.ItemsRandomWithoutReplacement Then
-		    StatusText = StatusText + ", avoids duplicates"
-		  End If
-		  
-		  Status.Caption = StatusText
 		End Sub
 	#tag EndMethod
 
@@ -660,24 +592,6 @@ End
 		  
 		  Me.LeftItems.Append(AddButton)
 		  Me.LeftItems.Append(EditButton)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Status
-	#tag Event
-		Sub Action()
-		  If Self.mSet = Nil Then
-		    Return
-		  End If
-		  
-		  Dim NewSet As Beacon.ItemSet = SetPropertiesEditor.Present(Self, Self.mSet)
-		  If NewSet = Nil Then
-		    Return
-		  End If
-		  
-		  Self.mSet.Constructor(NewSet)
-		  Self.UpdateStatus()
-		  RaiseEvent Updated()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -660,12 +660,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowNewSet()
-		  Dim Set As Beacon.ItemSet = SetPropertiesEditor.Present(Self, New Beacon.ItemSet)
-		  If Set <> Nil Then
-		    Self.AddSet(Set)  
-		    RaiseEvent Updated()
-		    Self.SetList.SetFocus()
-		  End If
+		  Self.AddSet(New Beacon.ItemSet)
+		  RaiseEvent Updated()
+		  Self.Editor.ShowSettings(True)
+		  Self.Editor.SetFocus()
 		End Sub
 	#tag EndMethod
 

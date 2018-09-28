@@ -11,7 +11,6 @@ Class=BeaconMultiview;Views/BeaconMultiview.xojo_code;&h000000000FBF7FFF;&h00000
 Class=BeaconContainer;Views/BeaconContainer.xojo_code;&h0000000046FEDFFF;&h0000000008A387FF;false
 Class=BeaconSubview;Views/BeaconSubview.xojo_code;&h000000005369F7FF;&h0000000008A387FF;false
 Window=DocWindow;Views/DocWindow.xojo_window;&h000000007746B7FF;&h0000000008A387FF;false
-Window=SetPropertiesEditor;Views/SetPropertiesEditor.xojo_window;&h00000000229CAFFF;&h0000000008A387FF;false
 Window=EntryEditor;Views/EntryEditor.xojo_window;&h00000000423027FF;&h0000000008A387FF;false
 Window=EntryMultiEditor;Views/EntryMultiEditor.xojo_window;&h00000000359B5FFF;&h0000000008A387FF;false
 Window=EntryPropertiesEditor;Views/EntryPropertiesEditor.xojo_window;&h000000007302C7FF;&h0000000008A387FF;false
