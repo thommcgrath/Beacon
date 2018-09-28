@@ -156,7 +156,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   47
+      Width           =   50
    End
    Begin UITweaks.ResizedLabel MinItemSetsLabel
       AutoDeactivate  =   True
@@ -234,7 +234,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   47
+      Width           =   50
    End
    Begin UITweaks.ResizedLabel MaxItemSetsLabel
       AutoDeactivate  =   True

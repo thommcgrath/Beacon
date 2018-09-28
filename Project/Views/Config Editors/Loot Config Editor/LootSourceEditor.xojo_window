@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconContainer BeaconEditor
+Begin BeaconContainer LootSourceEditor
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -142,7 +142,7 @@ Begin BeaconContainer BeaconEditor
       Value           =   0
       Visible         =   True
       Width           =   347
-      Begin SetEditor Editor
+      Begin ItemSetEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
          AutoDeactivate  =   True
@@ -231,38 +231,6 @@ Begin BeaconContainer BeaconEditor
       UseFocusRing    =   True
       Visible         =   True
       Width           =   1
-   End
-   Begin StatusBar Status
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      Borders         =   2
-      Caption         =   ""
-      Clickable       =   True
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   21
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   -11
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   -75
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
    End
    Begin SimulatorView Simulator
       AcceptFocus     =   False
@@ -631,47 +599,6 @@ End
 		        DuplicatesState = CheckBox.CheckedStates.Indeterminate
 		      End If
 		    Next
-		  End If
-		  
-		  If Self.mSources.Ubound = -1 Then
-		    Status.Caption = "No selection"
-		    Status.Clickable = False
-		  ElseIf Self.mSources.Ubound = 0 Then
-		    Dim Source As Beacon.LootSource = Self.mSources(0)
-		    
-		    If Source.Count = 0 Then
-		      Status.Caption = "No item sets"
-		    ElseIf Source.AppendMode Then
-		      Dim NumSets As Integer = Source.Count
-		      Status.Caption = "Adds " + Str(NumSets, "-0") + " item set" + if(NumSets = 1, "", "s")
-		    Else
-		      Dim NumSets As Integer = Source.Count
-		      Dim MaxSets As Integer = Min(Source.MaxItemSets, NumSets)
-		      Dim MinSets As Integer = Min(Source.MinItemSets, MaxSets)
-		      
-		      If NumSets = MinSets And MinSets = MaxSets Then
-		        If NumSets = 1 Then
-		          Status.Caption = "Chooses lone item set"
-		        Else
-		          Status.Caption = "Chooses all " + Str(NumSets, "-0") + " item sets"
-		        End If
-		      Else
-		        If MinSets = MaxSets Then
-		          If MinSets = 1 Then
-		            Status.Caption = "Chooses 1 of " + Str(NumSets, "-0") + " item sets"
-		          Else
-		            Status.Caption = "Chooses " + Str(MinSets, "-0") + " of " + Str(NumSets, "-0") + " item sets"
-		          End
-		        Else
-		          Status.Caption = "Chooses " + Str(MinSets, "-0") + "-" + Str(MaxSets, "-0") + " of " + Str(NumSets, "-0") + " item sets"
-		        End If
-		      End If
-		    End If
-		    
-		    Status.Clickable = True
-		  Else
-		    Status.Caption = "Editing " + Str(Self.mSources.Ubound + 1, "-0") + " sources"
-		    Status.Clickable = False
 		  End If
 		  
 		  Self.Simulator.Simulate()
@@ -1272,7 +1199,6 @@ End
 		  FadedSeparator1.Left = NewSize
 		  SetList.Width = NewSize
 		  Simulator.Width = NewSize
-		  Status.Width = NewSize
 		  LootSourceSettingsContainer1.Width = NewSize
 		  FadedSeparator3.Width = NewSize
 		  Panel.Left = FadedSeparator1.Left + FadedSeparator1.Width
@@ -1308,18 +1234,6 @@ End
 		  Self.mSorting = False
 		  
 		  RaiseEvent Updated
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Status
-	#tag Event
-		Sub Action()
-		  If Self.mSources.Ubound <> 0 Then
-		    Return
-		  End If
-		  
-		  
-		  RaiseEvent PresentLootSourceEditor(Self.mSources(0))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

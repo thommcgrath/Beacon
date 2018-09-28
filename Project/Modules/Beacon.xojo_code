@@ -485,12 +485,12 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function PrettyText(Value As Double) As Text
+		Protected Function PrettyText(Value As Double, DecimalPlaces As Integer = 6) As Text
 		  Dim Multiplier As UInteger = 1
 		  Dim Places As Integer = 0
 		  Dim Format As Text = "0"
 		  
-		  While Places < 6
+		  While Places < DecimalPlaces
 		    Dim TestValue As Double = Value * Multiplier
 		    If Xojo.Math.Floor(TestValue) = TestValue Then
 		      Exit
@@ -510,8 +510,8 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PrettyText(Extends Value As Double) As Text
-		  Return PrettyText(Value)
+		Function PrettyText(Extends Value As Double, DecimalPlaces As Integer = 6) As Text
+		  Return PrettyText(Value, DecimalPlaces)
 		End Function
 	#tag EndMethod
 

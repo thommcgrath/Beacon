@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconContainer SetEditor
+Begin BeaconContainer ItemSetEditor
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -44,7 +44,7 @@ Begin BeaconContainer SetEditor
       GridLinesVertical=   1
       HasHeading      =   True
       HeadingIndex    =   0
-      Height          =   366
+      Height          =   364
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -70,7 +70,7 @@ Begin BeaconContainer SetEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   62
+      Top             =   64
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
@@ -84,15 +84,11 @@ Begin BeaconContainer SetEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   "Untitled"
-      CaptionEnabled  =   True
-      CaptionIsButton =   False
+      Caption         =   "Item Set Contents"
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasBottomBorder =   "True"
-      HasTopBorder    =   "False"
-      Height          =   41
+      Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -140,9 +136,67 @@ Begin BeaconContainer SetEditor
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   41
+      Top             =   -88
       Transparent     =   True
       UseFocusRing    =   True
+      Visible         =   True
+      Width           =   560
+   End
+   Begin FadedSeparator FadedSeparator1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   40
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   560
+   End
+   Begin ItemSetSettingsContainer Settings
+      AcceptFocus     =   False
+      AcceptTabs      =   True
+      AutoDeactivate  =   True
+      BackColor       =   &cFFFFFF00
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackColor    =   False
+      Height          =   23
+      HelpTag         =   ""
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   41
+      Transparent     =   True
+      UseFocusRing    =   False
       Visible         =   True
       Width           =   560
    End
@@ -357,12 +411,7 @@ End
 		#tag Setter
 			Set
 			  Self.mSet = Value
-			  If Self.mSet <> Nil Then
-			    Header.Caption = Self.mSet.Label
-			  Else
-			    Header.Caption = "No Selection"
-			  End If
-			  
+			  Self.Settings.ItemSet = Value
 			  Self.UpdateEntryList()
 			End Set
 		#tag EndSetter
@@ -628,8 +677,26 @@ End
 		  
 		  Self.mSet.Constructor(NewSet)
 		  Self.UpdateStatus()
-		  Self.Header.Caption = Self.mSet.Label
 		  RaiseEvent Updated()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Settings
+	#tag Event
+		Sub Resized()
+		  Dim ListTop As Integer = Me.Top + Me.Height
+		  If Self.EntryList.Top = ListTop Then
+		    Return
+		  End If
+		  
+		  Dim Diff As Integer = ListTop - Self.EntryList.Top
+		  Self.EntryList.Top = Self.EntryList.Top + Diff
+		  Self.EntryList.Height = Self.EntryList.Height - Diff
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Updated()
+		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
 #tag EndEvents

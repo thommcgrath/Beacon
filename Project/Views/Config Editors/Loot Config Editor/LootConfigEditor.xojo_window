@@ -162,7 +162,7 @@ Begin ConfigEditor LootConfigEditor
       Value           =   0
       Visible         =   True
       Width           =   451
-      Begin BeaconEditor Editor
+      Begin LootSourceEditor Editor
          AcceptFocus     =   False
          AcceptTabs      =   True
          AutoDeactivate  =   True
