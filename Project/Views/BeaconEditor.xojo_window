@@ -293,95 +293,6 @@ Begin BeaconContainer BeaconEditor
       Visible         =   True
       Width           =   250
    End
-   Begin DisclosureTriangle DisclosureTriangle1
-      AcceptFocus     =   False
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Facing          =   0
-      Height          =   18
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   2
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   43
-      Transparent     =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   18
-   End
-   Begin Label SettingsLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   18
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   11
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Settings"
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   43
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   219
-   End
-   Begin FadedSeparator FadedSeparator2
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   12
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   63
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
-   End
    Begin FadedSeparator FadedSeparator3
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -408,6 +319,35 @@ Begin BeaconContainer BeaconEditor
       Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin LootSourceSettingsContainer LootSourceSettingsContainer1
+      AcceptFocus     =   False
+      AcceptTabs      =   True
+      AutoDeactivate  =   True
+      BackColor       =   &cFFFFFF00
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      HasBackColor    =   False
+      Height          =   23
+      HelpTag         =   ""
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   41
+      Transparent     =   True
+      UseFocusRing    =   False
       Visible         =   True
       Width           =   250
    End
@@ -882,6 +822,7 @@ End
 		    Self.Header.Simulate.Enabled = False
 		    Self.Simulator.Clear()
 		  End If
+		  Self.LootSourceSettingsContainer1.LootSources = Values
 		  Self.RebuildSetList()
 		End Sub
 	#tag EndMethod
@@ -1332,6 +1273,8 @@ End
 		  SetList.Width = NewSize
 		  Simulator.Width = NewSize
 		  Status.Width = NewSize
+		  LootSourceSettingsContainer1.Width = NewSize
+		  FadedSeparator3.Width = NewSize
 		  Panel.Left = FadedSeparator1.Left + FadedSeparator1.Width
 		  Panel.Width = Self.Width - (Panel.Left)
 		End Sub
@@ -1400,6 +1343,25 @@ End
 	#tag Event
 		Sub ShouldClose()
 		  Self.SimulatorVisible = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LootSourceSettingsContainer1
+	#tag Event
+		Sub Resized()
+		  Dim ListTop As Integer = Me.Top + Me.Height
+		  If Self.SetList.Top = ListTop Then
+		    Return
+		  End If
+		  
+		  Dim Diff As Integer = ListTop - Self.SetList.Top
+		  Self.SetList.Top = Self.SetList.Top + Diff
+		  Self.SetList.Height = Self.SetList.Height - Diff
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Changed()
+		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
 #tag EndEvents

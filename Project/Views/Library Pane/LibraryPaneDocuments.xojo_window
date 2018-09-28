@@ -44,7 +44,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   199
+      Height          =   198
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -70,7 +70,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   101
+      Top             =   102
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
@@ -143,6 +143,35 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   40
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   300
+   End
+   Begin FadedSeparator FadedSeparator1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   101
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True

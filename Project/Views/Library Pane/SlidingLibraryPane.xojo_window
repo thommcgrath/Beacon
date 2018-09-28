@@ -48,7 +48,7 @@ Begin ContainerControl SlidingLibraryPane
       Transparent     =   False
       Value           =   2
       Visible         =   True
-      Width           =   259
+      Width           =   258
       Begin LibraryPaneDocuments DocumentsView
          AcceptFocus     =   False
          AcceptTabs      =   True
@@ -79,7 +79,7 @@ Begin ContainerControl SlidingLibraryPane
          UseFocusRing    =   False
          View            =   0
          Visible         =   True
-         Width           =   259
+         Width           =   258
       End
       Begin LibraryPanePresets PresetsView
          AcceptFocus     =   False
@@ -110,7 +110,7 @@ Begin ContainerControl SlidingLibraryPane
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   259
+         Width           =   258
       End
       Begin LibraryPaneEngrams EngramsView
          AcceptFocus     =   False
@@ -141,7 +141,7 @@ Begin ContainerControl SlidingLibraryPane
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   259
+         Width           =   258
       End
       Begin LibraryPaneTools ToolsView
          AcceptFocus     =   False
@@ -172,7 +172,7 @@ Begin ContainerControl SlidingLibraryPane
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   259
+         Width           =   258
       End
       Begin LibraryPaneSearch SearchView
          AcceptFocus     =   False
@@ -203,7 +203,7 @@ Begin ContainerControl SlidingLibraryPane
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   259
+         Width           =   258
       End
    End
    Begin Shelf ViewShelf
@@ -267,7 +267,8 @@ End
 		  G.FillRect(0, 0, G.Width - 1, G.Height)
 		  
 		  G.ForeColor = SystemColors.SeparatorColor
-		  G.FillRect(G.Width - 1, 0, 1, G.Height)
+		  G.FillRect(Self.Views.Width, 0, 1, G.Height)
+		  G.FillRect(Self.ViewShelf.Left + Self.ViewShelf.Width, 0, 1, G.Height)
 		End Sub
 	#tag EndEvent
 
@@ -384,6 +385,9 @@ End
 		Private mOpened As Boolean
 	#tag EndProperty
 
+
+	#tag Constant, Name = CollapseDistance, Type = Double, Dynamic = False, Default = \"259", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = PaneDocuments, Type = Double, Dynamic = False, Default = \"0", Scope = Public
 	#tag EndConstant
@@ -508,7 +512,7 @@ End
 	#tag Event
 		Sub Change()
 		  If Me.SelectedItem = Nil Then
-		    RaiseEvent ChangePosition(Self.Views.Width * -1)
+		    RaiseEvent ChangePosition(Self.CollapseDistance * -1)
 		    Self.mOpened = False
 		    Return
 		  End If
@@ -527,7 +531,7 @@ End
 		  End Select
 		  
 		  If Self.mOpened = False Then
-		    RaiseEvent ChangePosition(Self.Views.Width)
+		    RaiseEvent ChangePosition(Self.CollapseDistance)
 		    Self.mOpened = True
 		  End If
 		End Sub

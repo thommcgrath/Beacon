@@ -132,7 +132,7 @@ Inherits ControlCanvas
 		    LeftPos = LeftPos + TabWidth
 		    G.ClearRect(LeftPos, 0, 1, G.Height - 1)
 		    G.ForeColor = SystemColors.SeparatorColor
-		    G.FillRect(LeftPos, 0, 1, G.Height - 1)
+		    G.FillRect(LeftPos, 0, 1, G.Height)
 		    LeftPos = LeftPos + 1
 		  Next
 		  

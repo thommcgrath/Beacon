@@ -75,7 +75,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   260
+      Height          =   259
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -101,7 +101,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   40
+      Top             =   41
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
@@ -109,6 +109,35 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       Width           =   300
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin FadedSeparator FadedSeparator1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   40
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   300
    End
 End
 #tag EndWindow
