@@ -149,7 +149,6 @@ Window=DocumentSettingsView;Views/DocumentSetup/DocumentSettingsView.xojo_window
 Window=MainWindow;Views/MainWindow.xojo_window;&h00000000392627FF;&h0000000008A387FF;false
 Window=DashboardPane;Views/DashboardPane.xojo_window;&h00000000112B07FF;&h0000000008A387FF;false
 Folder=Library Pane;Views/Library Pane;&h000000000CC70FFF;&h0000000008A387FF;false
-Window=LibraryPane;Views/Library Pane/LibraryPane.xojo_window;&h0000000052257FFF;&h000000000CC70FFF;false
 Window=SlidingLibraryPane;Views/Library Pane/SlidingLibraryPane.xojo_window;&h000000003EC067FF;&h000000000CC70FFF;false
 Class=LibrarySubview;Views/Library Pane/LibrarySubview.xojo_code;&h0000000008BF0FFF;&h000000000CC70FFF;false
 Window=LibraryPaneDocuments;Views/Library Pane/LibraryPaneDocuments.xojo_window;&h000000006BA367FF;&h000000000CC70FFF;false

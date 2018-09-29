@@ -367,10 +367,10 @@ End
 		Sub NewDocument(Document As Beacon.Document = Nil)
 		  If Document = Nil Then
 		    Document = New Beacon.Document
-		  End If
-		  
-		  If Not DocumentSettingsSheet.Present(Self, Document) Then
-		    Return
+		    
+		    Static NewDocumentNumber As Integer = 1
+		    Document.Title = "Untitled Document " + NewDocumentNumber.ToText
+		    NewDocumentNumber = NewDocumentNumber + 1
 		  End If
 		  
 		  Self.OpenController(New Beacon.DocumentController(Document))
@@ -590,8 +590,9 @@ End
 			    Top = Top + Self.Switcher.Height
 			  End If
 			  
-			  Self.List.Top = Top
-			  Self.List.Height = Self.Height - Top
+			  Self.FadedSeparator1.Top = Top
+			  Self.List.Top = Self.FadedSeparator1.Top + Self.FadedSeparator1.Height
+			  Self.List.Height = Self.Height - Self.List.Top
 			End Set
 		#tag EndSetter
 		Private SwitcherVisible As Boolean
