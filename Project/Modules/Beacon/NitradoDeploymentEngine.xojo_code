@@ -129,6 +129,7 @@ Protected Class NitradoDeploymentEngine
 		  
 		  Try
 		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
+		    
 		    Dim Reply As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
 		    If Reply.HasKey("status") = False Or Reply.Value("status") <> "success" Then
 		      RaiseEvent ServersFound(Profiles)
@@ -150,7 +151,7 @@ Protected Class NitradoDeploymentEngine
 		      End If
 		      
 		      Dim ServerName As Text = Details.Value("name")
-		      If Service.Lookup("comment", "") <> "" Then
+		      If Service.Lookup("comment", Nil) <> Nil Then
 		        ServerName = Service.Value("comment") + " (" + ServerName + ")"
 		      End If
 		      
@@ -191,6 +192,7 @@ Protected Class NitradoDeploymentEngine
 		  
 		  Try
 		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
+		    
 		    Dim Reply As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
 		    Dim Data As Xojo.Core.Dictionary = Reply.Value("data")
 		    Dim GameServer As Xojo.Core.Dictionary = Data.Value("gameserver")
