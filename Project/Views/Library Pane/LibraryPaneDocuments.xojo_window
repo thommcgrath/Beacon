@@ -359,12 +359,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ImportFile(File As FolderItem)
-		  Dim Document As Beacon.Document = DocumentImportDialog.Present(File)
-		  If Document = Nil Then
-		    Return
-		  End If
-		  
-		  Self.NewDocument(Document)
+		  Call DocumentImportWindow.Present(AddressOf NewDocument, File)
 		End Sub
 	#tag EndMethod
 

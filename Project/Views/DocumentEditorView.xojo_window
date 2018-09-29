@@ -178,6 +178,15 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
+		    DocumentImportWindow(Self.mImportWindowRef.Value).Cancel
+		    Self.mImportWindowRef = Nil
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub EnableMenuItems()
 		  FileSaveAs.Enable
 		End Sub
@@ -210,6 +219,12 @@ End
 		  Self.Title = Controller.Name
 		  
 		  Self.Panels = New Dictionary
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CopyFromDocument(Document As Beacon.Document)
+		  Break
 		End Sub
 	#tag EndMethod
 
@@ -290,6 +305,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mImportWindowRef As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private Panels As Dictionary
 	#tag EndProperty
 
@@ -356,6 +375,18 @@ End
 		  Me.LeftItems.Append(ExportButton)
 		  Me.LeftItems.Append(DeployButton)
 		  Me.LeftItems.Append(PublishButton)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "ImportButton"
+		    If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
+		      DocumentImportWindow(Self.mImportWindowRef.Value).Show()
+		    Else
+		      Self.mImportWindowRef = New WeakRef(DocumentImportWindow.Present(AddressOf CopyFromDocument))
+		    End If
+		  End Select
 		End Sub
 	#tag EndEvent
 #tag EndEvents

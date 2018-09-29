@@ -1,11 +1,11 @@
 #tag Window
-Begin Window DocumentImportDialog
+Begin Window DocumentImportWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
-   Frame           =   1
+   Frame           =   0
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
@@ -21,7 +21,7 @@ Begin Window DocumentImportDialog
    MinHeight       =   64
    MinimizeButton  =   False
    MinWidth        =   64
-   Placement       =   1
+   Placement       =   2
    Resizeable      =   False
    Title           =   "Document Import"
    Visible         =   True
@@ -32,6 +32,7 @@ Begin Window DocumentImportDialog
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
@@ -44,6 +45,7 @@ Begin Window DocumentImportDialog
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      QuickCancel     =   False
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
@@ -59,19 +61,32 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Shared Function Present(File As FolderItem = Nil) As Beacon.Document
-		  Dim Win As New DocumentImportDialog
+		Sub Cancel()
+		  #Pragma Warning "This should probably be smarter"
+		  
+		  Self.Close
+		End Sub
+	#tag EndMethod
+
+	#tag DelegateDeclaration, Flags = &h0
+		Delegate Sub ImportFinishedDelegate(Document As Beacon.Document)
+	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h0
+		Shared Function Present(ImportCallback As ImportFinishedDelegate, File As FolderItem = Nil) As DocumentImportWindow
+		  Dim Win As New DocumentImportWindow
+		  Win.mImportCallback = ImportCallback
 		  If File <> Nil Then
 		    Win.DocumentImportView1.Import(File)
 		  End If
-		  Win.ShowModal()
-		  Return Win.mImportedDocument
+		  Win.Show
+		  Return Win
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mImportedDocument As Beacon.Document
+		Private mImportCallback As ImportFinishedDelegate
 	#tag EndProperty
 
 
@@ -80,12 +95,12 @@ End
 #tag Events DocumentImportView1
 	#tag Event
 		Sub DocumentImported(Document As Beacon.Document)
-		  Self.mImportedDocument = Document
+		  Self.mImportCallback.Invoke(Document)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub ShouldDismiss()
-		  Self.Hide
+		  Self.Close
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -239,11 +254,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="mImportedDocument"
-		Group="Behavior"
-		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinHeight"

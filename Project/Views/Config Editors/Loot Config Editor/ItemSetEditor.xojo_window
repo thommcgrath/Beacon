@@ -551,7 +551,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Self.Header.EditEntries.Enabled = Me.SelCount > 0
+		  Self.Header.EditEntry.Enabled = Me.SelCount > 0
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -587,7 +587,7 @@ End
 		  Dim AddButton As New BeaconToolbarItem("AddEntry", IconAdd)
 		  AddButton.HelpTag = "Add engrams to this item set."
 		  
-		  Dim EditButton As New BeaconToolbarItem("EditEntries", IconToolbarEdit, False)
+		  Dim EditButton As New BeaconToolbarItem("EditEntry", IconToolbarEdit, False)
 		  EditButton.HelpTag = "Edit the selected entries."
 		  
 		  Me.LeftItems.Append(AddButton)

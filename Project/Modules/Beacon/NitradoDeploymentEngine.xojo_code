@@ -149,8 +149,13 @@ Protected Class NitradoDeploymentEngine
 		        Continue
 		      End If
 		      
+		      Dim ServerName As Text = Details.Value("name")
+		      If Service.Lookup("comment", "") <> "" Then
+		        ServerName = Service.Value("comment") + " (" + ServerName + ")"
+		      End If
+		      
 		      Dim Profile As New Beacon.NitradoServerProfile
-		      Profile.Name = Details.Value("name")
+		      Profile.Name = ServerName
 		      Profile.Address = Details.Value("address")
 		      Profile.ServiceID = Service.Value("id")
 		      Profiles.Append(Profile)

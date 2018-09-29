@@ -63,6 +63,7 @@ Begin Window DocumentSettingsSheet
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   52
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -162,6 +163,7 @@ Begin Window DocumentSettingsSheet
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   86
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   537
@@ -192,6 +194,7 @@ Begin Window DocumentSettingsSheet
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   106
+         Transparent     =   False
          Underline       =   False
          Value           =   True
          Visible         =   True
@@ -224,6 +227,7 @@ Begin Window DocumentSettingsSheet
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   138
+         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -256,6 +260,7 @@ Begin Window DocumentSettingsSheet
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   138
+         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -288,6 +293,7 @@ Begin Window DocumentSettingsSheet
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   138
+         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -320,6 +326,7 @@ Begin Window DocumentSettingsSheet
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   170
+         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -352,6 +359,7 @@ Begin Window DocumentSettingsSheet
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   170
+         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -430,6 +438,7 @@ Begin Window DocumentSettingsSheet
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   222
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -507,6 +516,7 @@ Begin Window DocumentSettingsSheet
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   256
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -609,6 +619,7 @@ Begin Window DocumentSettingsSheet
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   325
+      Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
@@ -641,6 +652,7 @@ Begin Window DocumentSettingsSheet
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   357
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   100
@@ -672,6 +684,7 @@ Begin Window DocumentSettingsSheet
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   357
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -703,6 +716,7 @@ Begin Window DocumentSettingsSheet
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   357
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -731,6 +745,7 @@ Begin Window DocumentSettingsSheet
       TabStop         =   True
       TickStyle       =   "0"
       Top             =   290
+      Transparent     =   False
       Value           =   100
       Visible         =   True
       Width           =   230
@@ -807,6 +822,7 @@ Begin Window DocumentSettingsSheet
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   290
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -970,13 +986,13 @@ End
 #tag Events ImportButton
 	#tag Event
 		Sub Action()
-		  Dim ImportedDoc As Beacon.Document = DocumentImportDialog.Present
-		  If ImportedDoc = Nil Then
-		    Return
-		  End If
-		  
-		  Self.mImportedDocument = ImportedDoc
-		  Self.UpdateUIForDocument(ImportedDoc)
+		  ' Dim ImportedDoc As Beacon.Document = DocumentImportDialog.Present
+		  ' If ImportedDoc = Nil Then
+		  ' Return
+		  ' End If
+		  ' 
+		  ' Self.mImportedDocument = ImportedDoc
+		  ' Self.UpdateUIForDocument(ImportedDoc)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1178,11 +1194,6 @@ End
 		Visible=true
 		Group="Size"
 		InitialValue="32000"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="mDocument"
-		Group="Behavior"
 		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
