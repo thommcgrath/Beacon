@@ -493,7 +493,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   "###"
+      Mask            =   "####"
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -572,7 +572,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   "###"
+      Mask            =   "####"
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
