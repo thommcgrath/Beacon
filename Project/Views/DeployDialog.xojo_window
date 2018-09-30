@@ -46,6 +46,7 @@ Begin Window DeployDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   600
@@ -76,6 +77,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -107,6 +109,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -135,6 +138,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   194
+         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -164,6 +168,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   162
+         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -284,6 +289,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   52
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -318,6 +324,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   52
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   95
@@ -349,6 +356,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   84
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   95
@@ -380,6 +388,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   116
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   95
@@ -411,6 +420,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -442,6 +452,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -543,6 +554,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -574,6 +586,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -710,6 +723,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -768,6 +782,7 @@ Begin Window DeployDialog
          TabPanelIndex   =   3
          TabStop         =   True
          Top             =   123
+         Transparent     =   False
          Value           =   0
          Visible         =   True
          Width           =   560
@@ -791,6 +806,7 @@ Begin Window DeployDialog
          TabPanelIndex   =   5
          TabStop         =   True
          Top             =   123
+         Transparent     =   False
          Value           =   0
          Visible         =   True
          Width           =   560
@@ -819,6 +835,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   52
+         Transparent     =   False
          Underline       =   False
          Value           =   True
          Visible         =   True
@@ -883,6 +900,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   130
+         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -950,6 +968,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -981,6 +1000,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   226
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -1028,6 +1048,7 @@ Begin Window DeployDialog
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   52
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -1259,7 +1280,6 @@ End
 		      LootLines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Self.mDocument.DifficultyValue))
 		    End If
 		  Next
-		  LootLines.Append("SupplyCrateLootQualityMultiplier=" + Beacon.PrettyText(Self.mDocument.LootMultiplier))
 		  Sections.Value("/script/shootergame.shootergamemode") = LootLines
 		  
 		  Dim Chunks() As String

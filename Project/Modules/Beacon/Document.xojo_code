@@ -52,10 +52,9 @@ Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mIdentifier = Beacon.CreateUUID
-		  Self.mDifficultyValue = 4.0
 		  Self.mMapCompatibility = Beacon.Maps.TheIsland.Mask
-		  Self.mLootMultiplier = 1.0
 		  Self.mConfigGroups = New Xojo.Core.Dictionary
+		  Self.AddConfigGroup(New BeaconConfigs.Difficulty)
 		End Sub
 	#tag EndMethod
 
@@ -743,34 +742,13 @@ Implements Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mDifficultyValue
+			  Dim Difficulty As BeaconConfigs.Difficulty = Self.Difficulty
+			  If Difficulty <> Nil Then
+			    Return Difficulty.QualityMultiplier
+			  End If
 			End Get
 		#tag EndGetter
 		DifficultyValue As Double
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mDinoLevelSteps
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Value = Max(Value, 1)
-			  
-			  If Self.mDinoLevelSteps = Value Then
-			    Return
-			  End If
-			  
-			  Self.mDinoLevelSteps = Value
-			  Dim DiffValue, DiffOffset, DiffOverride As Double
-			  Beacon.ComputeDifficultySettings(Self.mMaxDinoLevel, Self.mDinoLevelSteps, DiffValue, DiffOffset, DiffOverride)
-			  Self.mDifficultyValue = DiffValue
-			  Self.mModified = True
-			End Set
-		#tag EndSetter
-		DinoLevelSteps As Integer
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -795,27 +773,6 @@ Implements Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mLootMultiplier
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Value = Max(Value, 0.1)
-			  
-			  If Self.mLootMultiplier = Value Then
-			    Return
-			  End If
-			  
-			  Self.mLootMultiplier = Value
-			  Self.mModified = True
-			End Set
-		#tag EndSetter
-		LootMultiplier As Double
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
 			  Return Self.mMapCompatibility
 			End Get
 		#tag EndGetter
@@ -828,30 +785,6 @@ Implements Beacon.DocumentItem
 		MapCompatibility As UInt64
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mMaxDinoLevel
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Value = Max(Value, 15)
-			  
-			  If Self.mMaxDinoLevel = Value Then
-			    Return
-			  End If
-			  
-			  Self.mMaxDinoLevel = Value
-			  Dim DiffValue, DiffOffset, DiffOverride As Double
-			  Beacon.ComputeDifficultySettings(Self.mMaxDinoLevel, Self.mDinoLevelSteps, DiffValue, DiffOffset, DiffOverride)
-			  Self.mDifficultyValue = DiffValue
-			  Self.mModified = True
-			End Set
-		#tag EndSetter
-		MaxDinoLevel As Integer
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private mConfigGroups As Xojo.Core.Dictionary
 	#tag EndProperty
@@ -862,14 +795,6 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mDescription As Text
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDifficultyValue As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDinoLevelSteps As Integer = 4
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -889,15 +814,7 @@ Implements Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLootMultiplier As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mMapCompatibility As UInt64
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMaxDinoLevel As Integer = 120
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

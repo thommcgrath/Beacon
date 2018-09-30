@@ -88,6 +88,7 @@ Begin Window ResolveIssuesDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   507
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -124,6 +125,7 @@ Begin Window ResolveIssuesDialog
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   False
+      RowCount        =   0
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -136,6 +138,7 @@ Begin Window ResolveIssuesDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   52
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -220,6 +223,7 @@ Begin Window ResolveIssuesDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   275
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -252,6 +256,7 @@ Begin Window ResolveIssuesDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   507
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   131

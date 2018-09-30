@@ -121,6 +121,7 @@ Begin BeaconWindow DocWindow
       HasBackColor    =   False
       Height          =   580
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   235
       LockBottom      =   True
@@ -169,6 +170,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -211,6 +213,7 @@ Begin BeaconWindow DocWindow
       Width           =   234
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -1064,11 +1067,6 @@ End
 		    End If
 		  Case "DeleteButton"
 		    Self.RemoveSelectedBeacons(True)
-		  Case "SettingsButton"
-		    If DocumentSetupSheet.Present(Self, Self.Doc) Then
-		      Self.ContentsChanged = Self.ContentsChanged Or Self.Doc.Modified
-		      Self.UpdateSourceList()
-		    End If
 		  Case "ErrorsButton"
 		    ResolveIssuesDialog.Present(Self, Self.Doc)
 		    Self.ScanForErrors()
