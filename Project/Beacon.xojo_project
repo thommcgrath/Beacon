@@ -305,6 +305,7 @@ Class=LootScale;Modules/BeaconConfigs/LootScale.xojo_code;&h000000007D0057FF;&h0
 Class=ConfigGroup;Modules/Beacon/ConfigGroup.xojo_code;&h0000000034F297FF;&h0000000055ADDFFF;false
 Class=ConfigValue;Modules/Beacon/ConfigValue.xojo_code;&h0000000001BF97FF;&h0000000055ADDFFF;false
 Class=LootDropIterator;Modules/BeaconConfigs/LootDropIterator.xojo_code;&h000000004E002FFF;&h0000000068EBAFFF;false
+Window=DifficultyConfigEditor;Views/Config Editors/DifficultyConfigEditor.xojo_window;&h0000000056F49FFF;&h00000000434D97FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

@@ -328,6 +328,11 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
+		  If Self.CurrentPanel <> Nil Then
+		    Self.CurrentPanel.Visible = False
+		    Self.CurrentPanel = Nil
+		  End If
+		  
 		  Dim Caption As String = Me.Caption
 		  If Caption = "" Then
 		    Self.PagePanel1.Value = 0
@@ -335,11 +340,6 @@ End
 		  End If
 		  
 		  If Self.Panels.HasKey(Caption) Then
-		    If Self.CurrentPanel <> Nil Then
-		      Self.CurrentPanel.Visible = False
-		      Self.CurrentPanel = Nil
-		    End If
-		    
 		    Self.CurrentPanel = Self.Panels.Value(Caption)
 		    Self.CurrentPanel.Visible = True
 		    Self.PagePanel1.Value = 1
@@ -350,6 +350,8 @@ End
 		  Select Case Caption
 		  Case "Loot Drops"
 		    Panel = New LootConfigEditor(Self.mController)
+		  Case "Difficulty"
+		    Panel = New DifficultyConfigEditor(Self.mController)
 		  End Select
 		  If Panel = Nil Then
 		    Self.PagePanel1.Value = 0

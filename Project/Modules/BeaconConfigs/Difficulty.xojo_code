@@ -41,9 +41,8 @@ Inherits Beacon.ConfigGroup
 		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  
-		  Dim DifficultyOffset As Double = Max(((Self.MaxDinoLevel / 30) - 0.5) / (Self.DinoLevelIncrements - 0.5), 0.01)
 		  Dim Options(1) As Beacon.ConfigValue
-		  Options(0) = New Beacon.ConfigValue(Beacon.SessionSettingsHeader, "DifficultyOffset", DifficultyOffset.PrettyText)
+		  Options(0) = New Beacon.ConfigValue(Beacon.SessionSettingsHeader, "DifficultyOffset", Self.DifficultyOffset.PrettyText)
 		  Options(1) = New Beacon.ConfigValue(Beacon.SessionSettingsHeader, "OverrideOfficialDifficulty", Self.DinoLevelIncrements.ToText)
 		  Return Options
 		End Function
@@ -65,6 +64,15 @@ Inherits Beacon.ConfigGroup
 		DifficultyOffset = Max(((MaxDinoLevel / 30) - 0.5) / (DinoLevelSteps - 0.5), 0.01)
 	#tag EndNote
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Max(((Self.MaxDinoLevel / 30) - 0.5) / (Self.DinoLevelIncrements - 0.5), 0.01)
+			End Get
+		#tag EndGetter
+		DifficultyOffset As Double
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
