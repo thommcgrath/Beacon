@@ -224,7 +224,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CopyFromDocument(Document As Beacon.Document)
-		  Break
+		  DocumentMergerWindow.Present(Self, Document, Self.Document)
 		End Sub
 	#tag EndMethod
 
@@ -319,9 +319,11 @@ End
 	#tag Event
 		Sub Open()
 		  Me.AddRow("Maps")
-		  Me.AddRow("Difficulty")
-		  Me.AddRow("Loot Drops")
-		  Me.AddRow("Loot Quality Scale")
+		  
+		  Dim Names() As Text = BeaconConfigs.AllConfigNames
+		  For Each Name As Text In Names
+		    Me.AddRow(Name)
+		  Next
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -386,6 +388,8 @@ End
 		    Else
 		      Self.mImportWindowRef = New WeakRef(DocumentImportWindow.Present(AddressOf CopyFromDocument))
 		    End If
+		  Case "ExportButton"
+		    DocumentExportWindow.Present(Self, Self.Document)
 		  End Select
 		End Sub
 	#tag EndEvent

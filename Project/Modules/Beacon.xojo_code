@@ -703,6 +703,12 @@ Protected Module Beacon
 	#tag EndProperty
 
 
+	#tag Constant, Name = SessionSettingsHeader, Type = Text, Dynamic = False, Default = \"SessionSettings", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ShooterGameHeader, Type = Text, Dynamic = False, Default = \"/script/shootergame.shootergamemode", Scope = Protected
+	#tag EndConstant
+
 	#tag Constant, Name = URLScheme, Type = Text, Dynamic = False, Default = \"beacon", Scope = Protected
 	#tag EndConstant
 

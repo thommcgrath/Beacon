@@ -58,7 +58,7 @@ Inherits Listbox
 		    Return True
 		  End If
 		  
-		  Dim IsChecked As Boolean = Self.CellType(Row, Column) = Listbox.TypeCheckbox Or Self.ColumnType(Column) = Listbox.TypeCheckbox
+		  Dim IsChecked As Boolean = Self.ColumnType(Column) = Listbox.TypeCheckbox Or Self.CellType(Row, Column) = Listbox.TypeCheckbox
 		  If IsChecked Then
 		    MaxDrawWidth = MaxDrawWidth - 20
 		  End If

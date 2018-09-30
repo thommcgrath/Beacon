@@ -51,18 +51,23 @@ Inherits ContainerControl
 		    End Try
 		  End If
 		  
+		  Dim OverrideOfficialDifficulty As Double = 5.0
 		  If DiscoveredData <> Nil And DiscoveredData.HasKey("Options") Then
-		    Document.DinoLevelSteps = Self.OverrideOfficialDifficultyFromDict(DiscoveredData.Value("Options"), ParsedData)
+		    OverrideOfficialDifficulty = Self.OverrideOfficialDifficultyFromDict(DiscoveredData.Value("Options"), ParsedData)
 		  Else
-		    Document.DinoLevelSteps = Self.OverrideOfficialDifficultyFromDict(ParsedData)
+		    OverrideOfficialDifficulty = Self.OverrideOfficialDifficultyFromDict(ParsedData)
 		  End If
 		  
+		  Dim DifficultyOffset As Double = 1.0
 		  Try
 		    If ParsedData.HasKey("DifficultyOffset") Then
-		      Document.MaxDinoLevel = Beacon.ComputeMaxDinoLevel(ParsedData.Value("DifficultyOffset"), Document.DinoLevelSteps)
+		      DifficultyOffset = ParsedData.Value("DifficultyOffset")
 		    End If
 		  Catch Err As TypeMismatchException
 		  End Try
+		  
+		  Dim DifficultyConfig As New BeaconConfigs.Difficulty(OverrideOfficialDifficulty, DifficultyOffset)
+		  Document.AddConfigGroup(DifficultyConfig)
 		  
 		  Dim Dicts() As Auto
 		  Try
@@ -72,15 +77,20 @@ Inherits ContainerControl
 		  End Try
 		  
 		  If ParsedData.HasKey("SupplyCrateLootQualityMultiplier") Then
-		    Document.LootMultiplier = ParsedData.Value("SupplyCrateLootQualityMultiplier")
+		    Dim ScaleConfig As New BeaconConfigs.LootScale(ParsedData.Value("SupplyCrateLootQualityMultiplier"))
+		    Document.AddConfigGroup(ScaleConfig)
 		  End If
 		  
+		  Dim LootDrops As New BeaconConfigs.LootDrops
 		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
 		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Document.DifficultyValue)
 		    If Source <> Nil Then
-		      Document.Add(Source)
+		      LootDrops.Append(Source)
 		    End If
 		  Next
+		  If LootDrops.UBound > -1 Then
+		    Document.AddConfigGroup(LootDrops)
+		  End If
 		  
 		  Return Document
 		End Function
@@ -165,6 +175,14 @@ Inherits ContainerControl
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="DoubleBuffer"
+			Visible=true
+			Group="Windows Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AcceptFocus"
 			Visible=true

@@ -3,15 +3,15 @@ Protected Class Document
 Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Add(LootSource As Beacon.LootSource)
-		  Dim Bound As Integer = Self.mLootSources.Ubound
-		  For I As Integer = 0 To Bound
-		    If Self.mLootSources(I) = LootSource Then
-		      Return
+		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
+		  If Drops <> Nil Then
+		    Dim Idx As Integer = Drops.IndexOf(LootSource)
+		    If Idx > -1 Then
+		      Drops(Idx) = LootSource
+		    Else
+		      Drops.Append(LootSource)
 		    End If
-		  Next
-		  Self.mLootSources.Append(LootSource)
-		  Beacon.Sort(Self.mLootSources)
-		  Self.mModified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -35,25 +35,60 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub AddConfigGroup(Group As Beacon.ConfigGroup)
+		  Self.mConfigGroups.Value(Group.GroupName) = Group
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigGroup(GroupName As Text) As Beacon.ConfigGroup
+		  If Self.mConfigGroups.HasKey(GroupName) Then
+		    Return Self.mConfigGroups.Value(GroupName)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mIdentifier = Beacon.CreateUUID
 		  Self.mDifficultyValue = 4.0
 		  Self.mMapCompatibility = Beacon.Maps.TheIsland.Mask
 		  Self.mLootMultiplier = 1.0
+		  Self.mConfigGroups = New Xojo.Core.Dictionary
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub ConsumeMissingEngrams(Engrams() As Beacon.Engram)
-		  For Each Source As Beacon.LootSource In Self.mLootSources
-		    Source.ConsumeMissingEngrams(Engrams)
-		  Next
+		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
+		  If Drops <> Nil Then
+		    For Each Source As Beacon.LootSource In Drops
+		      Source.ConsumeMissingEngrams(Engrams)
+		    Next
+		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Difficulty() As BeaconConfigs.Difficulty
+		  If Self.mConfigGroups.HasKey("Difficulty") Then
+		    Return Self.mConfigGroups.Value("Difficulty")
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function DocumentID() As Text
 		  Return Self.mIdentifier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Drops() As BeaconConfigs.LootDrops
+		  If Self.mConfigGroups.HasKey("Loot Drops") Then
+		    Return Self.mConfigGroups.Value("Loot Drops")
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -73,6 +108,81 @@ Implements Beacon.DocumentItem
 		    Return Nil
 		  End Try
 		  
+		  Dim Doc As New Beacon.Document
+		  Dim LootSources() As Auto
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
+		  Dim Version As Integer = 1
+		  Dim Dict As Xojo.Core.Dictionary
+		  If Info.FullName = "Xojo.Core.Dictionary" Then
+		    Dict = Parsed
+		    Version = Dict.Lookup("Version", 0)
+		  End If
+		  If Version < 3 Then
+		    Return FromTextLegacy(Parsed, Identity)
+		  End If
+		  
+		  // New config system
+		  If Dict.HasKey("Configs") Then
+		    Dim Groups As Xojo.Core.Dictionary = Dict.Value("Configs")
+		    For Each Entry As Xojo.Core.DictionaryEntry In Groups
+		      Dim GroupName As Text = Entry.Key
+		      Dim GroupData As Xojo.Core.Dictionary = Entry.Value
+		      Dim Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData)
+		      If Instance <> Nil Then
+		        Doc.mConfigGroups.Value(GroupName) = Instance
+		      End If
+		    Next
+		  End If
+		  
+		  If Dict.HasKey("Title") Then
+		    Doc.mTitle = Dict.Value("Title")
+		  End If
+		  If Dict.HasKey("Description") Then
+		    Doc.mDescription = Dict.Value("Description")
+		  End If
+		  If Dict.HasKey("Public") Then
+		    Doc.mIsPublic = Dict.Value("Public")
+		  End If
+		  If Dict.HasKey("Map") Then
+		    Doc.mMapCompatibility = Dict.Value("Map")
+		  ElseIf Dict.HasKey("MapPreference") Then
+		    Doc.mMapCompatibility = Dict.Value("MapPreference")
+		  Else
+		    Doc.mMapCompatibility = 0
+		  End If
+		  If Dict.HasKey("ConsoleModsOnly") Then
+		    Doc.ConsoleModsOnly = Dict.Value("ConsoleModsOnly")
+		  Else
+		    Doc.ConsoleModsOnly = False
+		  End If
+		  If Dict.HasKey("Secure") Then
+		    Dim SecureDict As Xojo.Core.Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
+		    If SecureDict <> Nil Then
+		      Doc.mLastSecureDict = Dict.Value("Secure")
+		      Doc.mLastSecureHash = Doc.mLastSecureDict.Value("Hash")
+		      
+		      Dim ServerDicts() As Auto = SecureDict.Value("Servers")
+		      For Each ServerDict As Xojo.Core.Dictionary In ServerDicts
+		        Dim Profile As Beacon.ServerProfile = Beacon.ServerProfile.FromDictionary(ServerDict)
+		        If Profile <> Nil Then
+		          Doc.mServerProfiles.Append(Profile)
+		        End If
+		      Next
+		      
+		      If SecureDict.HasKey("OAuth") Then
+		        Doc.mOAuthDicts = SecureDict.Value("OAuth")
+		      End If
+		    End If
+		  End If
+		  
+		  Doc.mModified = Version < Beacon.Document.DocumentVersion
+		  
+		  Return Doc
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function FromTextLegacy(Parsed As Auto, Identity As Beacon.Identity) As Beacon.Document
 		  Dim Doc As New Beacon.Document
 		  Dim LootSources() As Auto
 		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
@@ -105,19 +215,12 @@ Implements Beacon.DocumentItem
 		      Else
 		        Doc.mMapCompatibility = 0
 		      End If
-		      If Dict.HasKey("MaxDinoLevel") And Dict.HasKey("DinoLevelSteps") Then
-		        Doc.MaxDinoLevel = Dict.Value("MaxDinoLevel")
-		        Doc.DinoLevelSteps = Dict.Value("DinoLevelSteps")
-		      ElseIf Dict.HasKey("DifficultyValue") Then      
-		        Doc.MaxDinoLevel = Dict.Value("DifficultyValue") * 30
-		        Doc.DinoLevelSteps = 5
-		      Else
-		        Doc.MaxDinoLevel = 120
-		        Doc.DinoLevelSteps = 4
+		      Dim DifficultyConfig As New BeaconConfigs.Difficulty
+		      If Dict.HasKey("DifficultyValue") Then
+		        DifficultyConfig.MaxDinoLevel = Dict.Value("DifficultyValue") * 30
+		        DifficultyConfig.DinoLevelIncrements = 5
 		      End If
-		      If Dict.HasKey("LootMultiplier") Then
-		        Doc.LootMultiplier = Dict.Value("LootMultiplier")
-		      End If
+		      Doc.AddConfigGroup(DifficultyConfig)
 		      If Dict.HasKey("ConsoleModsOnly") Then
 		        Doc.ConsoleModsOnly = Dict.Value("ConsoleModsOnly")
 		      Else
@@ -188,36 +291,40 @@ Implements Beacon.DocumentItem
 		    // Will need this in a few lines
 		    Presets = Beacon.Data.Presets
 		  End If
-		  For Each LootSource As Xojo.Core.Dictionary In LootSources
-		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(LootSource)
-		    If Source <> Nil Then
-		      If Version < 2 Then
-		        // Match item set names to presets
-		        For Each Set As Beacon.ItemSet In Source
-		          For Each Preset As Beacon.Preset In Presets
-		            If Set.Label = Preset.Label Then
-		              // Here's a hack to make assigning a preset possible: save current entries
-		              Dim Entries() As Beacon.SetEntry
-		              For Each Entry As Beacon.SetEntry In Set
-		                Entries.Append(New Beacon.SetEntry(Entry))
-		              Next
-		              
-		              // Reconfigure
-		              Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.ConsoleModsOnly)
-		              
-		              // Now "deconfigure" it
-		              Redim Set(UBound(Entries))
-		              For I As Integer = 0 To UBound(Entries)
-		                Set(I) = Entries(I)
-		              Next
-		              Continue For Set
-		            End If
+		  If LootSources.Ubound > -1 Then
+		    Dim Drops As New BeaconConfigs.LootDrops
+		    For Each LootSource As Xojo.Core.Dictionary In LootSources
+		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(LootSource)
+		      If Source <> Nil Then
+		        If Version < 2 Then
+		          // Match item set names to presets
+		          For Each Set As Beacon.ItemSet In Source
+		            For Each Preset As Beacon.Preset In Presets
+		              If Set.Label = Preset.Label Then
+		                // Here's a hack to make assigning a preset possible: save current entries
+		                Dim Entries() As Beacon.SetEntry
+		                For Each Entry As Beacon.SetEntry In Set
+		                  Entries.Append(New Beacon.SetEntry(Entry))
+		                Next
+		                
+		                // Reconfigure
+		                Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.ConsoleModsOnly)
+		                
+		                // Now "deconfigure" it
+		                Redim Set(UBound(Entries))
+		                For I As Integer = 0 To UBound(Entries)
+		                  Set(I) = Entries(I)
+		                Next
+		                Continue For Set
+		              End If
+		            Next
 		          Next
-		        Next
+		        End If
+		        Drops.Append(Source)
 		      End If
-		      Doc.mLootSources.Append(Source)
-		    End If
-		  Next
+		    Next
+		    Doc.AddConfigGroup(Drops)
+		  End If
 		  
 		  Doc.mModified = Version < Beacon.Document.DocumentVersion
 		  
@@ -226,12 +333,17 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasConfigGroup(GroupName As Text) As Boolean
+		  Return Self.mConfigGroups.HasKey(GroupName)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function HasLootSource(LootSource As Beacon.LootSource) As Boolean
-		  For I As Integer = 0 To UBound(Self.mLootSources)
-		    If Self.mLootSources(I) = LootSource Then
-		      Return True
-		    End If
-		  Next
+		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
+		  If Drops <> Nil Then
+		    Return Drops.IndexOf(LootSource) > -1
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -243,6 +355,16 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ImplementedConfigs() As Beacon.ConfigGroup()
+		  Dim Groups() As Beacon.ConfigGroup
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
+		    Groups.Append(Entry.Value)
+		  Next
+		  Return Groups
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsValid() As Boolean
 		  If Self.mMapCompatibility = 0 Then
 		    Return False
@@ -250,36 +372,49 @@ Implements Beacon.DocumentItem
 		  If Self.DifficultyValue = -1 Then
 		    Return False
 		  End If
-		  For Each Source As Beacon.LootSource In Self.mLootSources
-		    If Not Self.SupportsLootSource(Source) Then
-		      Return False
-		    End If
-		    If Not Source.IsValid Then
-		      Return False
-		    End If
-		  Next
+		  
+		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
+		  If Drops <> Nil Then
+		    For Each Source As Beacon.LootSource In Drops
+		      If Not Self.SupportsLootSource(Source) Then
+		        Return False
+		      End If
+		      If Not Source.IsValid Then
+		        Return False
+		      End If
+		    Next
+		  End If
 		  Return True
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function LootSource(Index As Integer) As Beacon.LootSource
-		  Return Self.mLootSources(Index)
+		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
+		  If Drops <> Nil Then
+		    Return Drops(Index)
+		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function LootSourceCount() As UInteger
-		  Return Self.mLootSources.Ubound + 1
+		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
+		  If Drops <> Nil Then
+		    Return Drops.UBound + 1
+		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function LootSources() As Beacon.LootSourceCollection
 		  Dim Results As New Beacon.LootSourceCollection
-		  For Each LootSource As Beacon.LootSource In Self.mLootSources
-		    Results.Append(LootSource)
-		  Next
+		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
+		  If Drops <> Nil Then
+		    For Each LootSource As Beacon.LootSource In Drops
+		      Results.Append(LootSource)
+		    Next
+		  End If
 		  Return Results
 		End Function
 	#tag EndMethod
@@ -303,8 +438,9 @@ Implements Beacon.DocumentItem
 		    Return True
 		  End If
 		  
-		  For Each Source As Beacon.LootSource In Self.mLootSources
-		    If Source.Modified Then
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
+		    Dim Group As Beacon.ConfigGroup = Entry.Value
+		    If Group.Modified Then
 		      Return True
 		    End If
 		  Next
@@ -316,8 +452,9 @@ Implements Beacon.DocumentItem
 		  Self.mModified = Value
 		  
 		  If Not Value Then
-		    For Each Source As Beacon.LootSource In Self.mLootSources
-		      Source.Modified = False
+		    For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
+		      Dim Group As Beacon.ConfigGroup = Entry.Value
+		      Group.Modified = False
 		    Next
 		  End If
 		End Sub
@@ -419,21 +556,21 @@ Implements Beacon.DocumentItem
 		    Return
 		  End If
 		  
-		  For Each Source As Beacon.LootSource In Self.mLootSources
-		    Source.ReconfigurePresets(Self.mMapCompatibility, Self.ConsoleModsOnly)
-		  Next
+		  Dim Drops As BeaconConfigs.LootDrops
+		  If Drops <> Nil Then
+		    For Each Source As Beacon.LootSource In Drops
+		      Source.ReconfigurePresets(Self.mMapCompatibility, Self.ConsoleModsOnly)
+		    Next
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Remove(LootSource As Beacon.LootSource)
-		  For I As Integer = 0 To UBound(Self.mLootSources)
-		    If Self.mLootSources(I) = LootSource Then
-		      Self.mLootSources.Remove(I)
-		      Self.mModified = True
-		      Return
-		    End If
-		  Next
+		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
+		  If Drops <> Nil Then
+		    Self.Drops.Remove(LootSource)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -445,6 +582,21 @@ Implements Beacon.DocumentItem
 		      Return
 		    End If
 		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveConfigGroup(Group As Beacon.ConfigGroup)
+		  Self.RemoveConfigGroup(Group.GroupName)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveConfigGroup(GroupName As Text)
+		  If Self.mConfigGroups.HasKey(GroupName) Then
+		    Self.mConfigGroups.Remove(GroupName)
+		    Self.mModified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -491,26 +643,24 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function ToDictionary(Identity As Beacon.Identity) As Xojo.Core.Dictionary
-		  Dim LootSources() As Xojo.Core.Dictionary
-		  For Each LootSource As Beacon.LootSource In Self.mLootSources
-		    Dim Dict As Xojo.Core.Dictionary = LootSource.Export()
-		    If Dict <> Nil Then
-		      LootSources.Append(Dict)
-		    End If
-		  Next
-		  
 		  Dim Document As New Xojo.Core.Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
 		  Document.Value("Identifier") = Self.Identifier
-		  Document.Value("LootSources") = LootSources
 		  Document.Value("Title") = Self.Title
 		  Document.Value("Description") = Self.Description
 		  Document.Value("Public") = Self.IsPublic
 		  Document.Value("ConsoleModsOnly") = Self.ConsoleModsOnly
-		  Document.Value("MaxDinoLevel") = Self.MaxDinoLevel
-		  Document.Value("DinoLevelSteps") = Self.DinoLevelSteps
-		  Document.Value("DifficultyValue") = Self.DifficultyValue
-		  Document.Value("LootMultiplier") = Self.LootMultiplier
+		  
+		  Dim Groups As New Xojo.Core.Dictionary
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
+		    Dim Group As Beacon.ConfigGroup = Entry.Value
+		    Dim GroupData As Xojo.Core.Dictionary = Group.ToDictionary
+		    If GroupData = Nil Then
+		      GroupData = New Xojo.Core.Dictionary
+		    End If
+		    Groups.Value(Group.GroupName) = GroupData
+		  Next
+		  Document.Value("Configs") = Groups
 		  
 		  If Self.mMapCompatibility > 0 Then
 		    Document.Value("Map") = Self.mMapCompatibility
@@ -703,6 +853,10 @@ Implements Beacon.DocumentItem
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
+		Private mConfigGroups As Xojo.Core.Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mConsoleModsOnly As Boolean
 	#tag EndProperty
 
@@ -736,10 +890,6 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mLootMultiplier As Double
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mLootSources() As Beacon.LootSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -786,7 +936,7 @@ Implements Beacon.DocumentItem
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = DocumentVersion, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag Constant, Name = DocumentVersion, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 
@@ -863,6 +1013,11 @@ Implements Beacon.DocumentItem
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LootMultiplier"
+			Group="Behavior"
+			Type="Double"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
