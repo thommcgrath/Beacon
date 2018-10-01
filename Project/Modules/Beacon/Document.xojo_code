@@ -747,6 +747,8 @@ Implements Beacon.DocumentItem
 			  Dim Difficulty As BeaconConfigs.Difficulty = Self.Difficulty
 			  If Difficulty <> Nil Then
 			    Return Difficulty.QualityMultiplier
+			  Else
+			    Return -1
 			  End If
 			End Get
 		#tag EndGetter
@@ -782,6 +784,7 @@ Implements Beacon.DocumentItem
 			Set
 			  Dim Limit As UInt64 = Beacon.Maps.All.Mask
 			  Self.mMapCompatibility = Value And Limit
+			  Self.mModified = True
 			End Set
 		#tag EndSetter
 		MapCompatibility As UInt64
@@ -876,11 +879,6 @@ Implements Beacon.DocumentItem
 			Type="Double"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="DinoLevelSteps"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -905,11 +903,6 @@ Implements Beacon.DocumentItem
 			Type="UInt64"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="MaxDinoLevel"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
@@ -932,11 +925,6 @@ Implements Beacon.DocumentItem
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LootMultiplier"
-			Group="Behavior"
-			Type="Double"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

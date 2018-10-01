@@ -1,14 +1,23 @@
 #tag Class
 Protected Class ConfigEditor
 Inherits BeaconSubview
+	#tag Event
+		Sub Open()
+		  RaiseEvent Open
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h21
 		Private Sub Constructor()
-		  
+		  Self.SettingUp = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As Beacon.DocumentController)
+		  Self.Constructor()
 		  Self.mController = Controller
 		End Sub
 	#tag EndMethod
@@ -19,9 +28,30 @@ Inherits BeaconSubview
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function HelpContent() As String
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HelpTitle() As String
+		  
+		End Function
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Open()
+	#tag EndHook
+
 
 	#tag Property, Flags = &h21
 		Private mController As Beacon.DocumentController
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected SettingUp As Boolean
 	#tag EndProperty
 
 

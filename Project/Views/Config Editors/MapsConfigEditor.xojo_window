@@ -1,5 +1,5 @@
 #tag Window
-Begin ConfigEditor LootScaleConfigEditor
+Begin ConfigEditor MapsConfigEditor
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -10,7 +10,7 @@ Begin ConfigEditor LootScaleConfigEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   476
+   Height          =   472
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -25,24 +25,27 @@ Begin ConfigEditor LootScaleConfigEditor
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   732
-   Begin GroupBox HelpGroup
+   Width           =   750
+   Begin CheckBox MapCheckboxes
       AutoDeactivate  =   True
       Bold            =   False
-      Caption         =   "About This Setting"
+      Caption         =   "The Island"
+      DataField       =   ""
+      DataSource      =   ""
       Enabled         =   True
-      Height          =   436
+      Height          =   20
       HelpTag         =   ""
-      Index           =   -2147483648
+      Index           =   1
       InitialParent   =   ""
       Italic          =   False
-      Left            =   406
-      LockBottom      =   True
+      Left            =   20
+      LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
+      LockLeft        =   True
+      LockRight       =   False
       LockTop         =   True
       Scope           =   2
+      State           =   0
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
@@ -52,115 +55,174 @@ Begin ConfigEditor LootScaleConfigEditor
       Top             =   20
       Transparent     =   False
       Underline       =   False
+      Value           =   False
       Visible         =   True
-      Width           =   306
-      Begin Label HelpLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   380
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "HelpGroup"
-         Italic          =   False
-         Left            =   426
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   True
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "Loot scaling affects the quality of items found in lootable objects, such as drops, dino inventories, beaver dams, and artifact containers. Setting this value too high can produce loot that is uncraftable. Adjust this in small increments, if at all. Values between 100% and 125% are recommend.\n\nValues greater than 100% increase loot quality, values lower than 100% decrease loot quality.\n\nA word of caution: settings this value too high can produce loot that requires more than 65,535 of a single item to craft or repair. Ark cannot handle quantities so large, meaning the item will be uncraftable no matter how many inventory spaces are available."
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   56
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   266
-      End
+      Width           =   345
    End
-   Begin TextField LootScaleField
-      AcceptTabs      =   False
-      Alignment       =   2
+   Begin CheckBox MapCheckboxes
       AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
-      CueText         =   ""
+      Caption         =   "Scorched Earth"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      Format          =   ""
-      Height          =   22
+      Height          =   20
       HelpTag         =   ""
-      Index           =   -2147483648
+      Index           =   2
+      InitialParent   =   ""
       Italic          =   False
-      Left            =   159
-      LimitText       =   0
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
       Scope           =   2
+      State           =   0
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "100%"
-      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   52
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   345
+   End
+   Begin CheckBox MapCheckboxes
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Aberration"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   16
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      State           =   0
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   84
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   345
+   End
+   Begin CheckBox MapCheckboxes
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Extinction"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   32
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      State           =   0
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   116
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   345
+   End
+   Begin CheckBox MapCheckboxes
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "The Center"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   4
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   385
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      State           =   0
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      Value           =   False
       Visible         =   True
-      Width           =   80
+      Width           =   345
    End
-   Begin Slider ScaleSlider
+   Begin CheckBox MapCheckboxes
       AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Ragnarok"
+      DataField       =   ""
+      DataSource      =   ""
       Enabled         =   True
-      Height          =   23
+      Height          =   20
       HelpTag         =   ""
-      Index           =   -2147483648
+      Index           =   8
       InitialParent   =   ""
-      Left            =   20
-      LineStep        =   1
-      LiveScroll      =   True
+      Italic          =   False
+      Left            =   385
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
-      Maximum         =   200
-      Minimum         =   10
-      PageStep        =   20
       Scope           =   2
-      TabIndex        =   2
+      State           =   0
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      TickStyle       =   "0"
-      Top             =   54
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   52
       Transparent     =   False
-      Value           =   100
+      Underline       =   False
+      Value           =   False
       Visible         =   True
-      Width           =   365
+      Width           =   345
    End
 End
 #tag EndWindow
@@ -168,78 +230,54 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Dim Multiplier As Double = 1.0
-		  If Self.Document.HasConfigGroup(BeaconConfigs.LootScale.ConfigName) Then
-		    Self.mConfigGroup = BeaconConfigs.LootScale(Self.Document.ConfigGroup(BeaconConfigs.LootScale.ConfigName))
-		    Multiplier = Self.mConfigGroup.Multiplier
-		  End If
-		  
-		  Self.LootScaleField.Text = Str(Multiplier, "0%")
-		  Self.ScaleSlider.Value = Multiplier * 100
-		  Self.mSettingUp = False
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resize()
-		  Self.LootScaleField.Left = Self.ScaleSlider.Left + ((Self.ScaleSlider.Width - Self.LootScaleField.Width) / 2)
+		  Dim Maps() As Beacon.Map = Beacon.Maps.All
+		  For Each Map As Beacon.Map In Maps
+		    Dim Ctl As CheckBox = Self.MapCheckboxes(Map.Mask)
+		    If Ctl = Nil Then
+		      Continue
+		    End If
+		    
+		    Ctl.Value = Self.Document.SupportsMap(Map)
+		  Next
 		End Sub
 	#tag EndEvent
 
 
-	#tag Hook, Flags = &h0
-		Event Resized()
-	#tag EndHook
+	#tag Method, Flags = &h0
+		Function HelpContent() As String
+		  Return Self.HelpExplanation
+		End Function
+	#tag EndMethod
 
-	#tag Hook, Flags = &h0
-		Event Resizing()
-	#tag EndHook
+	#tag Method, Flags = &h0
+		Function HelpTitle() As String
+		  Return "About Maps"
+		End Function
+	#tag EndMethod
 
 
-	#tag Property, Flags = &h21
-		Private mConfigGroup As BeaconConfigs.LootScale
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSettingUp As Boolean = True
-	#tag EndProperty
+	#tag Constant, Name = HelpExplanation, Type = String, Dynamic = False, Default = \"Beacon will not change the map used on a server. Selecting the map your server uses only influences how Beacon populates Loot Item Sets from Presets. For administrators of clusters\x2C selecting multiple maps can administer multiple servers from a single file.", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events LootScaleField
+#tag Events MapCheckboxes
 	#tag Event
-		Sub TextChange()
-		  If Self.mSettingUp Then
+		Sub Action(index as Integer)
+		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
-		  Dim Value As Double = CDbl(Me.Text)
-		  If Value = 0 Then
-		    Return
-		  End If
-		  
-		  Self.mSettingUp = True
-		  If Self.mConfigGroup = Nil Then
-		    Self.mConfigGroup = New BeaconConfigs.LootScale(Value / 100)
-		    Self.Document.AddConfigGroup(Self.mConfigGroup)
+		  Self.SettingUp = True
+		  Dim MaskValue As Integer = Index
+		  If Me.Value Then
+		    Self.Document.MapCompatibility = Self.Document.MapCompatibility Or MaskValue
 		  Else
-		    Self.mConfigGroup.Multiplier = Value / 100
+		    Self.Document.MapCompatibility = Self.Document.MapCompatibility And Not MaskValue
 		  End If
-		  Self.ScaleSlider.Value = Self.mConfigGroup.Multiplier * 100
 		  Self.ContentsChanged = True
-		  Self.mSettingUp = False
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ScaleSlider
-	#tag Event
-		Sub ValueChanged()
-		  If Self.mSettingUp Then
-		    Return
-		  End If
-		  
-		  Self.LootScaleField.Text = Str(Me.Value, "-0") + "%"
+		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents

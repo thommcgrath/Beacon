@@ -253,11 +253,19 @@ End
 		  #Pragma Unused Sender
 		  
 		  Self.ContentsChanged = Self.Document.Modified
+		  Self.BeaconToolbar1.ExportButton.Enabled = Self.ReadyToExport
+		  Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToDeploy
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function ReadyToDeploy() As Boolean
+		  Return Self.Document <> Nil And Self.Document.IsValid And Self.Document.ServerProfileCount > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ReadyToExport() As Boolean
 		  Return Self.Document <> Nil And Self.Document.IsValid
 		End Function
 	#tag EndMethod
@@ -319,7 +327,8 @@ End
 #tag Events ConfigMenu
 	#tag Event
 		Sub Open()
-		  Me.AddRow("Maps")
+		  Me.AddRow("Maps", "maps")
+		  Me.AddRow("Deployment Servers", "deployments")
 		  
 		  Dim Names() As Text = BeaconConfigs.AllConfigNames
 		  For Each Name As Text In Names
@@ -351,6 +360,8 @@ End
 		  
 		  Dim Panel As ConfigEditor
 		  Select Case Tag
+		  Case "maps"
+		    Panel = New MapsConfigEditor(Self.mController)
 		  Case BeaconConfigs.LootDrops.ConfigName
 		    Panel = New LootConfigEditor(Self.mController)
 		  Case BeaconConfigs.Difficulty.ConfigName
@@ -376,7 +387,7 @@ End
 	#tag Event
 		Sub Open()
 		  Dim ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
-		  Dim ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToDeploy, "Save new config files…")
+		  Dim ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToExport, "Save new config files…")
 		  Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToDeploy, "Make config changes live.")
 		  Dim PublishButton As New BeaconToolbarItem("PublishButton", IconToolbarPublish, "Upload this document to the cloud.")
 		  
