@@ -354,6 +354,8 @@ End
 		    Panel = New LootConfigEditor(Self.mController)
 		  Case BeaconConfigs.Difficulty.ConfigName
 		    Panel = New DifficultyConfigEditor(Self.mController)
+		  Case BeaconConfigs.LootScale.ConfigName
+		    Panel = New LootScaleConfigEditor(Self.mController)
 		  End Select
 		  If Panel = Nil Then
 		    Self.PagePanel1.Value = 0
