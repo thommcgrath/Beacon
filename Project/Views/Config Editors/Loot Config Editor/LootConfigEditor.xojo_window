@@ -157,7 +157,6 @@ Begin ConfigEditor LootConfigEditor
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -176,7 +175,6 @@ Begin ConfigEditor LootConfigEditor
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -264,12 +262,6 @@ End
 		  Self.Editor.ConsoleSafe = Self.Document.ConsoleModsOnly
 		  Self.UpdateSourceList()
 		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Function ShouldSave() As Boolean
-		  
-		End Function
 	#tag EndEvent
 
 

@@ -45,9 +45,8 @@ Implements ObservationKit.Observable
 	#tag MenuHandler
 		Function FileSave() As Boolean Handles FileSave.Action
 			If Self.ContentsChanged Then
-			Call RaiseEvent ShouldSave
+			Return RaiseEvent ShouldSave
 			End If
-			Return True
 		End Function
 	#tag EndMenuHandler
 
@@ -311,6 +310,14 @@ Implements ObservationKit.Observable
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="DoubleBuffer"
+			Visible=true
+			Group="Windows Behavior"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AcceptFocus"
 			Visible=true

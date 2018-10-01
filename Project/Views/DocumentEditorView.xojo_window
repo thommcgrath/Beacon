@@ -199,6 +199,7 @@ End
 		  Else
 		    Self.SaveAs()
 		  End If
+		  Return True
 		End Function
 	#tag EndEvent
 
