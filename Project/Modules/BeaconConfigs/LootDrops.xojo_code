@@ -35,6 +35,12 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function ConfigName() As Text
+		  Return "LootDrops"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
 		  Dim DifficultyConfig As BeaconConfigs.Difficulty = SourceDocument.Difficulty
 		  If DifficultyConfig = Nil Then
@@ -55,12 +61,6 @@ Implements Xojo.Core.Iterable
 		  // Part of the Xojo.Core.Iterable interface.
 		  
 		  Return New BeaconConfigs.LootDropIterator(Self)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GroupName() As Text
-		  Return "Loot Drops"
 		End Function
 	#tag EndMethod
 

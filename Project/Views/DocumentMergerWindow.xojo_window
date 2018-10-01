@@ -201,8 +201,8 @@ End
 		  Win.mDestination = DestinationDocument
 		  Dim Enabled As Boolean
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Win.List.AddRow("", Config.GroupName)
-		    Win.List.CellCheck(Win.List.LastIndex, 0) = Not DestinationDocument.HasConfigGroup(Config.GroupName)
+		    Win.List.AddRow("", Language.LabelForConfig(Config))
+		    Win.List.CellCheck(Win.List.LastIndex, 0) = Not DestinationDocument.HasConfigGroup(Config.ConfigName)
 		    Win.List.RowTag(Win.List.LastIndex) = Config
 		    Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
 		  Next

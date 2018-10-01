@@ -36,7 +36,7 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub AddConfigGroup(Group As Beacon.ConfigGroup)
-		  Self.mConfigGroups.Value(Group.GroupName) = Group
+		  Self.mConfigGroups.Value(Group.ConfigName) = Group
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
@@ -71,8 +71,8 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Difficulty() As BeaconConfigs.Difficulty
-		  If Self.mConfigGroups.HasKey("Difficulty") Then
-		    Return Self.mConfigGroups.Value("Difficulty")
+		  If Self.mConfigGroups.HasKey(BeaconConfigs.Difficulty.ConfigName) Then
+		    Return Self.mConfigGroups.Value(BeaconConfigs.Difficulty.ConfigName)
 		  End If
 		End Function
 	#tag EndMethod
@@ -85,8 +85,8 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Drops() As BeaconConfigs.LootDrops
-		  If Self.mConfigGroups.HasKey("Loot Drops") Then
-		    Return Self.mConfigGroups.Value("Loot Drops")
+		  If Self.mConfigGroups.HasKey(BeaconConfigs.LootDrops.ConfigName) Then
+		    Return Self.mConfigGroups.Value(BeaconConfigs.LootDrops.ConfigName)
 		  End If
 		End Function
 	#tag EndMethod
@@ -586,7 +586,7 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub RemoveConfigGroup(Group As Beacon.ConfigGroup)
-		  Self.RemoveConfigGroup(Group.GroupName)
+		  Self.RemoveConfigGroup(Group.ConfigName)
 		End Sub
 	#tag EndMethod
 
@@ -657,7 +657,9 @@ Implements Beacon.DocumentItem
 		    If GroupData = Nil Then
 		      GroupData = New Xojo.Core.Dictionary
 		    End If
-		    Groups.Value(Group.GroupName) = GroupData
+		    
+		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Group)
+		    Groups.Value(Info.Name) = GroupData
 		  Next
 		  Document.Value("Configs") = Groups
 		  

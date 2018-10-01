@@ -8,6 +8,22 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ConfigName() As Text
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Self)
+		  Dim Methods() As Xojo.Introspection.MethodInfo = Info.Methods
+		  For Each Signature As Xojo.Introspection.MethodInfo In Methods
+		    If Signature.IsShared And Signature.Name = "ConfigName" And Signature.Parameters.Ubound = -1 And Signature.ReturnType.Name = "Text" Then
+		      Return Signature.Invoke(Self)
+		    End If
+		  Next
+		  
+		  Dim Err As New UnsupportedOperationException
+		  Err.Reason = "Class " + Info.FullName + " is missing its ConfigName() As Text shared method."
+		  Raise Err
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  
 		End Sub
@@ -31,14 +47,6 @@ Protected Class ConfigGroup
 		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
 		  Dim Values() As Beacon.ConfigValue
 		  Return Values
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GroupName() As Text
-		  Dim Err As New UnsupportedOperationException
-		  Err.Reason = "Unimplemented Beacon.ConfigGroup.GroupName method"
-		  Raise Err
 		End Function
 	#tag EndMethod
 

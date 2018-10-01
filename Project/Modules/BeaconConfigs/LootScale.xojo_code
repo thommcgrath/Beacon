@@ -17,6 +17,12 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
+		Shared Function ConfigName() As Text
+		  Return "LootScale"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Multiplier As Double)
 		  // Calling the overridden superclass constructor.
 		  Super.Constructor
@@ -31,12 +37,6 @@ Inherits Beacon.ConfigGroup
 		  Dim Values(0) As Beacon.ConfigValue
 		  Values(0) = New Beacon.ConfigValue(Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", Self.mMultiplier.PrettyText)
 		  Return Values
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GroupName() As Text
-		  Return "Loot Drop Quality Scale"
 		End Function
 	#tag EndMethod
 

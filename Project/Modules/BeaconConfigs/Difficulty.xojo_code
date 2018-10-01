@@ -31,6 +31,12 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function ConfigName() As Text
+		  Return "Difficulty"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(OverrideOfficialDifficulty As Double, DifficultyOffset As Double)
 		  Self.DinoLevelIncrements = Round(OverrideOfficialDifficulty)
 		  Self.MaxDinoLevel = Floor(((OverrideOfficialDifficulty * 30) * DifficultyOffset) / Self.DinoLevelIncrements) * Self.DinoLevelIncrements
@@ -45,12 +51,6 @@ Inherits Beacon.ConfigGroup
 		  Options(0) = New Beacon.ConfigValue(Beacon.SessionSettingsHeader, "DifficultyOffset", Self.DifficultyOffset.PrettyText)
 		  Options(1) = New Beacon.ConfigValue(Beacon.SessionSettingsHeader, "OverrideOfficialDifficulty", Self.DinoLevelIncrements.ToText)
 		  Return Options
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GroupName() As Text
-		  Return "Difficulty"
 		End Function
 	#tag EndMethod
 

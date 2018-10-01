@@ -322,8 +322,10 @@ End
 		  
 		  Dim Names() As Text = BeaconConfigs.AllConfigNames
 		  For Each Name As Text In Names
-		    Me.AddRow(Name)
+		    Me.AddRow(Language.LabelForConfig(Name), Name)
 		  Next
+		  
+		  Me.Sort
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -333,24 +335,24 @@ End
 		    Self.CurrentPanel = Nil
 		  End If
 		  
-		  Dim Caption As String = Me.Caption
-		  If Caption = "" Then
+		  Dim Tag As Variant = Me.Tag
+		  If Tag = Nil Then
 		    Self.PagePanel1.Value = 0
 		    Return
 		  End If
 		  
-		  If Self.Panels.HasKey(Caption) Then
-		    Self.CurrentPanel = Self.Panels.Value(Caption)
+		  If Self.Panels.HasKey(Tag) Then
+		    Self.CurrentPanel = Self.Panels.Value(Tag)
 		    Self.CurrentPanel.Visible = True
 		    Self.PagePanel1.Value = 1
 		    Return
 		  End If
 		  
 		  Dim Panel As ConfigEditor
-		  Select Case Caption
-		  Case "Loot Drops"
+		  Select Case Tag
+		  Case BeaconConfigs.LootDrops.ConfigName
 		    Panel = New LootConfigEditor(Self.mController)
-		  Case "Difficulty"
+		  Case BeaconConfigs.Difficulty.ConfigName
 		    Panel = New DifficultyConfigEditor(Self.mController)
 		  End Select
 		  If Panel = Nil Then
@@ -361,7 +363,7 @@ End
 		  AddHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
 		  Panel.EmbedWithinPanel(Self.PagePanel1, 1, 0, 0, PagePanel1.Width, PagePanel1.Height)
 		  Self.CurrentPanel = Panel
-		  Self.Panels.Value(Caption) = Panel
+		  Self.Panels.Value(Tag) = Panel
 		  Panel.Visible = True
 		  Self.PagePanel1.Value = 1
 		End Sub

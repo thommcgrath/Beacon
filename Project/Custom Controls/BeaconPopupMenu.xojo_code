@@ -95,8 +95,9 @@ Inherits ControlCanvas
 
 
 	#tag Method, Flags = &h0
-		Sub AddRow(ItemText As String)
+		Sub AddRow(ItemText As String, Tag As Variant = Nil)
 		  Self.mItems.Append(ItemText)
+		  Self.mTags.Append(Tag)
 		  Self.Invalidate
 		End Sub
 	#tag EndMethod
@@ -108,8 +109,9 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub InsertRow(BeforeIndex As Integer, ItemText As String)
+		Sub InsertRow(BeforeIndex As Integer, ItemText As String, Tag As Variant = Nil)
 		  Self.mItems.Insert(BeforeIndex, ItemText)
+		  Self.mTags.Insert(BeforeIndex, Tag)
 		  Self.Invalidate
 		End Sub
 	#tag EndMethod
@@ -117,6 +119,7 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h0
 		Sub RemoveRow(RowIndex As Integer)
 		  Self.mItems.Remove(RowIndex)
+		  Self.mTags.Remove(RowIndex)
 		  If Self.mListIndex > RowIndex Then
 		    Self.mListIndex = Self.mListIndex - 1
 		  ElseIf Self.mListIndex = RowIndex Then
@@ -144,6 +147,27 @@ Inherits ControlCanvas
 		    Self.mItems(RowIndex) = ItemText
 		    Self.Invalidate
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RowTag(RowIndex As Integer) As Variant
+		  Return Self.mTags(RowIndex)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RowTag(RowIndex As Integer, Assigns Tag As Variant)
+		  Self.mTags(RowIndex) = Tag
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Sort()
+		  Dim Caption As String = Self.Caption
+		  Self.mItems.SortWith(Self.mTags)
+		  Self.mListIndex = Self.mItems.IndexOf(Caption)
+		  Self.Invalidate
 		End Sub
 	#tag EndMethod
 
@@ -239,6 +263,28 @@ Inherits ControlCanvas
 	#tag Property, Flags = &h21
 		Private mSubclassHandlesMouse As Boolean
 	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mTags() As Variant
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mListIndex > -1 And Self.mListIndex <= Self.mTags.Ubound Then
+			    Return Self.mTags(Self.mListIndex)
+			  End If
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mListIndex > -1 And Self.mListIndex <= Self.mTags.Ubound Then
+			    Self.RowTag(Self.mListIndex) = Value
+			  End If
+			End Set
+		#tag EndSetter
+		Tag As Variant
+	#tag EndComputedProperty
 
 
 	#tag ViewBehavior

@@ -1,6 +1,25 @@
 #tag Module
 Protected Module Language
 	#tag Method, Flags = &h1
+		Protected Function LabelForConfig(Config As Beacon.ConfigGroup) As Text
+		  Return Language.LabelForConfig(Config.ConfigName)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function LabelForConfig(ConfigName As Text) As Text
+		  Select Case ConfigName
+		  Case BeaconConfigs.Difficulty.ConfigName
+		    Return "Difficulty"
+		  Case BeaconConfigs.LootDrops.ConfigName
+		    Return "Loot Drop Contents"
+		  Case BeaconConfigs.LootScale.ConfigName
+		    Return "Loot Quality Scaling"
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function LabelForQuality(Quality As Beacon.Quality, Abbreviated As Boolean = False) As String
 		  Select Case Quality.Key
 		  Case Beacon.Qualities.Tier1.Key
