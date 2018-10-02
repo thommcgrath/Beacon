@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconSubview DocumentEditorView
+Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -319,8 +319,20 @@ End
 		  
 		  If Not Self.mHelpDrawerOpen Then
 		    Self.HelpDrawer.Visible = False
-		    Self.BeaconToolbar1.HelpButton.Enabled = (Self.CurrentPanel <> Nil And Self.CurrentPanel.HelpContent <> "")
+		    Self.BeaconToolbar1.HelpButton.Enabled = (Self.CurrentPanel <> Nil And Self.HelpDrawer.Body <> "")
+		    Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
+		  // Part of the ObservationKit.Observer interface.
+		  
+		  Select Case Key
+		  Case "MinimumWidth", "MinimumHeight"
+		    Self.UpdateMinimumDimensions()
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -330,7 +342,9 @@ End
 		  
 		  Self.ContentsChanged = Self.Document.Modified
 		  Self.BeaconToolbar1.ExportButton.Enabled = Self.ReadyToExport
-		  Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToDeploy
+		  #if DeployEnabled
+		    Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToDeploy
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -368,6 +382,7 @@ End
 		  End If
 		  Self.mHelpDrawerOpen = True
 		  Self.BeaconToolbar1.HelpButton.Toggled = True
+		  Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth) + Self.HelpDrawer.Width
 		  
 		  If Self.mHelpDrawerAnimation <> Nil Then
 		    Self.mHelpDrawerAnimation.Cancel
@@ -409,6 +424,13 @@ End
 		  Self.HelpDrawer.Body = Body
 		  Self.HelpDrawer.DetailURL = DetailURL
 		  Self.BeaconToolbar1.HelpButton.Enabled = Self.mHelpDrawerOpen Or (Self.HelpDrawer.Body <> "")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateMinimumDimensions()
+		  Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth) + If(Self.mHelpDrawerOpen, Self.HelpDrawer.Width, 0)
+		  Self.MinimumHeight = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumHeight, Self.LocalMinHeight), Self.LocalMinHeight)
 		End Sub
 	#tag EndMethod
 
@@ -457,6 +479,12 @@ End
 	#tag Constant, Name = DeployEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = LocalMinHeight, Type = Double, Dynamic = False, Default = \"400", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = LocalMinWidth, Type = Double, Dynamic = False, Default = \"500", Scope = Private
+	#tag EndConstant
+
 
 #tag EndWindowCode
 
@@ -478,50 +506,65 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
+		  Dim Tag As Variant = Me.Tag
+		  Dim NewPanel As ConfigEditor
+		  Dim Embed As Boolean
+		  If Tag <> Nil And (Tag.Type = Variant.TypeString Or Tag.Type = Variant.TypeText) Then
+		    Self.UpdateHelpForConfig(Tag.StringValue)
+		    
+		    If Self.Panels.HasKey(Tag.StringValue) Then
+		      NewPanel = Self.Panels.Value(Tag.StringValue)
+		    Else
+		      Select Case Tag.StringValue
+		      Case "maps"
+		        NewPanel = New MapsConfigEditor(Self.mController)
+		      Case "deployments"
+		        NewPanel = New DeploymentsConfigEditor(Self.mController)
+		      Case BeaconConfigs.LootDrops.ConfigName
+		        NewPanel = New LootConfigEditor(Self.mController)
+		      Case BeaconConfigs.Difficulty.ConfigName
+		        NewPanel = New DifficultyConfigEditor(Self.mController)
+		      Case BeaconConfigs.LootScale.ConfigName
+		        NewPanel = New LootScaleConfigEditor(Self.mController)
+		      End Select
+		      If NewPanel <> Nil Then
+		        Self.Panels.Value(Tag.StringValue) = NewPanel
+		        Embed = True
+		      End If
+		    End If
+		  Else
+		    Self.UpdateHelpForConfig("")
+		  End If
+		  
+		  If Self.CurrentPanel = NewPanel Then
+		    Return
+		  End If
+		  
 		  If Self.CurrentPanel <> Nil Then
+		    Self.CurrentPanel.RemoveObserver(Self, "MinimumWidth")
+		    Self.CurrentPanel.RemoveObserver(Self, "MinimumHeight")
+		    Self.CurrentPanel.SwitchedFrom()
 		    Self.CurrentPanel.Visible = False
 		    Self.CurrentPanel = Nil
 		  End If
 		  
-		  Dim Tag As Variant = Me.Tag
-		  Self.UpdateHelpForConfig(Tag)
-		  If Tag = Nil Then
-		    Self.PagePanel1.Value = 0
-		    Return
-		  End If
+		  Self.CurrentPanel = NewPanel
 		  
-		  If Self.Panels.HasKey(Tag) Then
-		    Self.CurrentPanel = Self.Panels.Value(Tag)
-		    Self.CurrentPanel.Visible = True
+		  If Self.CurrentPanel <> Nil Then
+		    If Embed Then
+		      AddHandler Self.CurrentPanel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
+		      Self.CurrentPanel.EmbedWithinPanel(Self.PagePanel1, 1, 0, 0, Self.PagePanel1.Width, Self.PagePanel1.Height)
+		    End If
+		    Self.CurrentPanel.Visible = True  
+		    Self.CurrentPanel.SwitchedTo()
+		    Self.CurrentPanel.AddObserver(Self, "MinimumWidth")
+		    Self.CurrentPanel.AddObserver(Self, "MinimumHeight")
 		    Self.PagePanel1.Value = 1
-		    Return
-		  End If
-		  
-		  Dim Panel As ConfigEditor
-		  Select Case Tag
-		  Case "maps"
-		    Panel = New MapsConfigEditor(Self.mController)
-		  Case "deployments"
-		    Panel = New DeploymentsConfigEditor(Self.mController)
-		  Case BeaconConfigs.LootDrops.ConfigName
-		    Panel = New LootConfigEditor(Self.mController)
-		  Case BeaconConfigs.Difficulty.ConfigName
-		    Panel = New DifficultyConfigEditor(Self.mController)
-		  Case BeaconConfigs.LootScale.ConfigName
-		    Panel = New LootScaleConfigEditor(Self.mController)
-		  End Select  
-		  Self.UpdateHelpForConfig(Tag)
-		  If Panel = Nil Then
+		  Else
 		    Self.PagePanel1.Value = 0
-		    Return
 		  End If
 		  
-		  AddHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
-		  Panel.EmbedWithinPanel(Self.PagePanel1, 1, 0, 0, PagePanel1.Width, PagePanel1.Height)
-		  Self.CurrentPanel = Panel
-		  Self.Panels.Value(Tag) = Panel
-		  Panel.Visible = True
-		  Self.PagePanel1.Value = 1
+		  Self.UpdateMinimumDimensions()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -569,6 +612,20 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Behavior"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Behavior"
+		InitialValue="300"
+		Type="Integer"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
 		Group="Behavior"

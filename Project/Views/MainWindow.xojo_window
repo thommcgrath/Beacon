@@ -1,5 +1,5 @@
 #tag Window
-Begin Window MainWindow Implements AnimationKit.ValueAnimator
+Begin Window MainWindow Implements AnimationKit.ValueAnimator, ObservationKit.Observer
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -68,6 +68,8 @@ Begin Window MainWindow Implements AnimationKit.ValueAnimator
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   1
@@ -236,9 +238,6 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.MinWidth = Self.AbsoluteMinWidth
-		  Self.MinHeight = Self.AbsoluteMinHeight
-		  
 		  Dim Bounds As Xojo.Core.Rect = Preferences.MainWindowPosition
 		  If Bounds <> Nil Then
 		    // Find the best screen
@@ -275,8 +274,7 @@ End
 		    Self.Top = Top
 		  End If
 		  
-		  Dim SplitterPosition As Integer = Preferences.MainSplitterPosition
-		  Self.ResizeSplitter(SplitterPosition)
+		  Self.UpdateSizeForView(Self.DashboardPane1)
 		  
 		  Self.mOpened = True
 		End Sub
@@ -287,16 +285,6 @@ End
 		  If Self.mOpened Then
 		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
 		  End If
-		  
-		  Dim Value As Integer = Self.LibraryPane1.Width
-		  Self.ResizeSplitter(Value)
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resizing()
-		  Dim Value As Integer = Self.LibraryPane1.Width
-		  Self.ResizeSplitter(Value)
 		End Sub
 	#tag EndEvent
 
@@ -400,49 +388,38 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
+		  // Part of the ObservationKit.Observer interface.
+		  
+		  #Pragma Unused Source
+		  
+		  Select Case Key
+		  Case "MinimumWidth", "MinimumHeight"
+		    If Self.mCurrentView <> Nil Then
+		      Self.UpdateSizeForView(Self.mCurrentView)
+		    Else
+		      Self.UpdateSizeForView(Self.DashboardPane1)
+		    End If
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Presets() As LibraryPanePresets
 		  Return Self.LibraryPane1.PresetsPane
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub ResizeSplitter(ByRef NewSize As Integer)
-		  NewSize = Max(NewSize, Self.MinSplitterPosition)
-		  
-		  Dim View As BeaconSubview = Self.mCurrentView
-		  If View <> Nil Then
-		    NewSize = Min(NewSize, Self.Width - View.MinWidth)
-		  Else
-		    NewSize = Min(NewSize, Self.Width - 200)
-		  End If
-		  
-		  If LibraryPane1.Width = NewSize Then
-		    Return
-		  End If
-		  
-		  LibraryPane1.Width = NewSize
-		  Views.Left = NewSize
-		  Views.Width = Self.Width - Views.Left
-		  
-		  If Self.mOpened Then
-		    Preferences.MainSplitterPosition = NewSize
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub ShowView(View As BeaconSubview)
-		  If View = LibraryPane1.DocumentsPane Then
-		    Break
-		    Return
-		  End If
-		  
 		  If Self.mCurrentView = View Then
 		    Return
 		  End If
 		  
 		  If Self.mCurrentView <> Nil Then
 		    Self.mCurrentView.Visible = False
+		    Self.mCurrentView.RemoveObserver(Self, "MinimumHeight")
+		    Self.mCurrentView.RemoveObserver(Self, "MinimumWidth")
 		    Self.mCurrentView.SwitchedFrom()
 		  End If
 		  
@@ -452,7 +429,8 @@ End
 		    Self.Views.Value = 0
 		    Self.TabBar1.SelectedIndex = 0
 		    Self.UpdateSizeForView(DashboardPane1)
-		    DashboardPane1.SwitchedTo()
+		    Self.DashboardPane1.SwitchedTo()
+		    Self.UpdateSizeForView(Self.DashboardPane1)
 		    Self.Title = "Beacon"
 		    Return
 		  End If
@@ -483,6 +461,9 @@ End
 		  End If
 		  
 		  Self.mCurrentView.SwitchedTo()
+		  Self.UpdateSizeForView(Self.mCurrentView)
+		  Self.mCurrentView.AddObserver(Self, "MinimumHeight")
+		  Self.mCurrentView.AddObserver(Self, "MinimumWidth")
 		  Self.Views.Value = 1
 		End Sub
 	#tag EndMethod
@@ -503,14 +484,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateSizeForView(View As BeaconSubview)
-		  Self.MinWidth = Max(Self.MinSplitterPosition + View.MinWidth, Self.AbsoluteMinWidth)
-		  Self.MinHeight = Max(View.MinHeight, Self.AbsoluteMinHeight)
-		  If Self.Width < Self.MinWidth Then
-		    Self.Width = Self.MinWidth
-		  End If
-		  If Self.Height < Self.MinHeight Then
-		    Self.Height = Self.MinHeight
-		  End If
+		  Self.MinWidth = Max(View.MinimumWidth, Self.AbsoluteMinWidth) + Self.Views.Left
+		  Self.MinHeight = Max(View.MinimumHeight, Self.AbsoluteMinHeight) + Self.Views.Top
+		  Self.Width = Max(Self.Width, Self.MinWidth)
+		  Self.Height = Max(Self.Height, Self.MinHeight)
+		  
+		  System.DebugLog("Width: " + Str(Self.MinWidth) + ", Height: " + Str(Self.MinHeight))
 		End Sub
 	#tag EndMethod
 
@@ -625,11 +604,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag Events LibraryPane1
-	#tag Event
-		Sub ShouldResize(ByRef NewSize As Integer)
-		  Self.ResizeSplitter(NewSize)
-		End Sub
-	#tag EndEvent
 	#tag Event
 		Sub ShouldShowView(View As BeaconSubview)
 		  Self.ShowView(View)

@@ -68,6 +68,8 @@ Begin ContainerControl SlidingLibraryPane
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   1
@@ -100,6 +102,8 @@ Begin ContainerControl SlidingLibraryPane
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
@@ -131,6 +135,8 @@ Begin ContainerControl SlidingLibraryPane
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3
@@ -162,6 +168,8 @@ Begin ContainerControl SlidingLibraryPane
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   4
@@ -193,6 +201,8 @@ Begin ContainerControl SlidingLibraryPane
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   5

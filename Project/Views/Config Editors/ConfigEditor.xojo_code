@@ -28,24 +28,6 @@ Inherits BeaconSubview
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function HelpContent() As String
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HelpTitle() As String
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HelpURL() As String
-		  
-		End Function
-	#tag EndMethod
-
 
 	#tag Hook, Flags = &h0
 		Event Open()
@@ -62,6 +44,20 @@ Inherits BeaconSubview
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="MinimumWidth"
+			Visible=true
+			Group="Behavior"
+			InitialValue="400"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MinimumHeight"
+			Visible=true
+			Group="Behavior"
+			InitialValue="300"
+			Type="Integer"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"
 			Visible=true

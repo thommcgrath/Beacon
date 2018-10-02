@@ -130,6 +130,8 @@ Begin BeaconMultiview DeveloperWindow
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   1
@@ -162,6 +164,8 @@ Begin BeaconMultiview DeveloperWindow
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
@@ -194,6 +198,8 @@ Begin BeaconMultiview DeveloperWindow
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   4
@@ -226,6 +232,8 @@ Begin BeaconMultiview DeveloperWindow
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3

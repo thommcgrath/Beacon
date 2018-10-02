@@ -261,6 +261,8 @@ End
 		Sub Open()
 		  Self.Editor.ConsoleSafe = Self.Document.ConsoleModsOnly
 		  Self.UpdateSourceList()
+		  Self.MinimumWidth = 1000
+		  Self.MinimumHeight = 400
 		End Sub
 	#tag EndEvent
 
@@ -308,25 +310,6 @@ End
 		  
 		  Self.List.EnsureSelectionIsVisible()
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HelpContent() As String
-		  #Pragma Warning "Incomplete"
-		  Return Self.HelpExplanation
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HelpTitle() As String
-		  Return "Getting Started With Loot Drops"
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HelpURL() As String
-		  Return Beacon.WebURL("/read.php/96d0efc7-2e62-4ae4-9d9b-70cc890dc98e")
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -690,6 +673,20 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Behavior"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Behavior"
+		InitialValue="300"
+		Type="Integer"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
 		Visible=true
