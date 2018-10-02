@@ -310,6 +310,25 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function HelpContent() As String
+		  #Pragma Warning "Incomplete"
+		  Return Self.HelpExplanation
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HelpTitle() As String
+		  Return "Getting Started With Loot Drops"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HelpURL() As String
+		  Return Beacon.WebURL("/read.php/96d0efc7-2e62-4ae4-9d9b-70cc890dc98e")
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub RemoveSelectedBeacons(RequireConfirmation As Boolean)
 		  If Self.List.SelCount = 0 Then
@@ -418,6 +437,9 @@ End
 		Private mBlockSelectionChanged As Boolean
 	#tag EndProperty
 
+
+	#tag Constant, Name = HelpExplanation, Type = String, Dynamic = False, Default = \"Fill This In", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.beacon", Scope = Private
 	#tag EndConstant

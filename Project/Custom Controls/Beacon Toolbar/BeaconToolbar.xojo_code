@@ -208,9 +208,19 @@ Implements ObservationKit.Observer
 	#tag Method, Flags = &h21
 		Private Sub DrawButton(G As Graphics, Button As BeaconToolbarItem, Rect As REALbasic.Rect, Mode As ButtonModes, Highlighted As Boolean)
 		  If Button.Icon <> Nil Then
-		    Dim IconColor As Color = SystemColors.ControlTextColor
+		    Dim IconColor As Color
+		    If Button.Toggled Then
+		      IconColor = SystemColors.AlternateSelectedControlTextColor
+		    Else
+		      IconColor = SystemColors.ControlTextColor
+		    End If
 		    If Mode = ButtonModes.Disabled Then
 		      IconColor = IconColor.AtOpacity(0.25)
+		    End If
+		    
+		    If Button.Toggled Then
+		      G.ForeColor = SystemColors.SelectedContentBackgroundColor
+		      G.FillRoundRect(Rect.Left, Rect.Top, Rect.Width, Rect.Height, 4, 4)
 		    End If
 		    
 		    Dim Overlay As Picture

@@ -70,10 +70,12 @@ Inherits ControlCanvas
 		  G.FillRect(G.Width - InsetRight, InsetTop, InsetRight, G.Height - (InsetTop + InsetBottom))
 		  
 		  Dim Clip As Graphics = G.Clip(InsetLeft, InsetTop, G.Width - (InsetLeft + InsetRight), G.Height - (InsetTop + InsetBottom))
-		  Clip.ForeColor = SystemColors.UnderPageBackgroundColor
-		  Clip.FillRect(0, 0, Clip.Width, Clip.Height)
-		  Clip.ForeColor = SystemColors.ControlBackgroundColor
-		  Clip.FillRect(0, 0, Clip.Width, Clip.Height)
+		  #if false
+		    Clip.ForeColor = SystemColors.UnderPageBackgroundColor
+		    Clip.FillRect(0, 0, Clip.Width, Clip.Height)
+		    Clip.ForeColor = SystemColors.ControlBackgroundColor
+		    Clip.FillRect(0, 0, Clip.Width, Clip.Height)
+		  #endif
 		  
 		  Clip.TextFont = "System"
 		  Clip.TextSize = 0

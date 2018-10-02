@@ -230,6 +230,10 @@ Implements ObservationKit.Observable
 		Private mSubcaption As String
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mToggled As Boolean
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -260,8 +264,25 @@ Implements ObservationKit.Observable
 		Subcaption As String
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mToggled
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mToggled <> Value Then
+			    Self.mToggled = Value
+			    Self.NotifyObservers(Self.KeyChanged, Value)
+			  End If
+			End Set
+		#tag EndSetter
+		Toggled As Boolean
+	#tag EndComputedProperty
 
-	#tag Constant, Name = KeyChanged, Type = Text, Dynamic = False, Default = \"", Scope = Public
+
+	#tag Constant, Name = KeyChanged, Type = Text, Dynamic = False, Default = \"Changed", Scope = Public
 	#tag EndConstant
 
 
@@ -270,6 +291,7 @@ Implements ObservationKit.Observable
 			Name="Caption"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
@@ -316,6 +338,7 @@ Implements ObservationKit.Observable
 			Name="Subcaption"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

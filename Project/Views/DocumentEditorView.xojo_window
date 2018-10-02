@@ -274,6 +274,7 @@ End
 		    Return
 		  End If
 		  Self.mHelpDrawerOpen = False
+		  Self.BeaconToolbar1.HelpButton.Toggled = False
 		  
 		  If Self.mHelpDrawerAnimation <> Nil Then
 		    Self.mHelpDrawerAnimation.Cancel
@@ -366,6 +367,7 @@ End
 		    Return
 		  End If
 		  Self.mHelpDrawerOpen = True
+		  Self.BeaconToolbar1.HelpButton.Toggled = True
 		  
 		  If Self.mHelpDrawerAnimation <> Nil Then
 		    Self.mHelpDrawerAnimation.Cancel
@@ -489,6 +491,7 @@ End
 		  Select Case Tag
 		  Case "maps"
 		    Panel = New MapsConfigEditor(Self.mController)
+		  Case "deployments"
 		  Case BeaconConfigs.LootDrops.ConfigName
 		    Panel = New LootConfigEditor(Self.mController)
 		  Case BeaconConfigs.Difficulty.ConfigName
@@ -498,6 +501,10 @@ End
 		  End Select
 		  If Panel = Nil Then
 		    Self.PagePanel1.Value = 0
+		    Self.BeaconToolbar1.HelpButton.Enabled = Self.mHelpDrawerOpen
+		    Self.HelpDrawer.Title = ""
+		    Self.HelpDrawer.Body = ""
+		    Self.HelpDrawer.DetailURL = ""
 		    Return
 		  End If
 		  
@@ -522,7 +529,7 @@ End
 		  Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToDeploy, "Make config changes live.")
 		  Dim PublishButton As New BeaconToolbarItem("PublishButton", IconToolbarPublish, "Upload this document to the cloud.")
 		  
-		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarBack, False, "Show help panel.")
+		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel.")
 		  
 		  Me.LeftItems.Append(ImportButton)
 		  Me.LeftItems.Append(ExportButton)
