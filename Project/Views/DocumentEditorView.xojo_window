@@ -401,6 +401,17 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateHelpForConfig(ConfigName As String)
+		  Dim Title, Body, DetailURL As String
+		  Call LocalData.SharedInstance.GetConfigHelp(ConfigName, Title, Body, DetailURL)
+		  Self.HelpDrawer.Title = Title
+		  Self.HelpDrawer.Body = Body
+		  Self.HelpDrawer.DetailURL = DetailURL
+		  Self.BeaconToolbar1.HelpButton.Enabled = Self.mHelpDrawerOpen Or (Self.HelpDrawer.Body <> "")
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function URL() As Beacon.DocumentURL
 		  Return Self.mController.URL
@@ -467,22 +478,15 @@ End
 		  End If
 		  
 		  Dim Tag As Variant = Me.Tag
+		  Self.UpdateHelpForConfig(Tag)
 		  If Tag = Nil Then
 		    Self.PagePanel1.Value = 0
-		    Self.BeaconToolbar1.HelpButton.Enabled = Self.mHelpDrawerOpen
-		    Self.HelpDrawer.Title = ""
-		    Self.HelpDrawer.Body = ""
-		    Self.HelpDrawer.DetailURL = ""
 		    Return
 		  End If
 		  
 		  If Self.Panels.HasKey(Tag) Then
 		    Self.CurrentPanel = Self.Panels.Value(Tag)
 		    Self.CurrentPanel.Visible = True
-		    Self.BeaconToolbar1.HelpButton.Enabled = Self.mHelpDrawerOpen Or (Self.CurrentPanel.HelpContent <> "")
-		    Self.HelpDrawer.Title = Self.CurrentPanel.HelpTitle
-		    Self.HelpDrawer.Body = Self.CurrentPanel.HelpContent
-		    Self.HelpDrawer.DetailURL = Self.CurrentPanel.HelpURL
 		    Self.PagePanel1.Value = 1
 		    Return
 		  End If
@@ -498,23 +502,16 @@ End
 		    Panel = New DifficultyConfigEditor(Self.mController)
 		  Case BeaconConfigs.LootScale.ConfigName
 		    Panel = New LootScaleConfigEditor(Self.mController)
-		  End Select
+		  End Select  
+		  Self.UpdateHelpForConfig(Tag)
 		  If Panel = Nil Then
 		    Self.PagePanel1.Value = 0
-		    Self.BeaconToolbar1.HelpButton.Enabled = Self.mHelpDrawerOpen
-		    Self.HelpDrawer.Title = ""
-		    Self.HelpDrawer.Body = ""
-		    Self.HelpDrawer.DetailURL = ""
 		    Return
 		  End If
 		  
 		  AddHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
 		  Panel.EmbedWithinPanel(Self.PagePanel1, 1, 0, 0, PagePanel1.Width, PagePanel1.Height)
 		  Self.CurrentPanel = Panel
-		  Self.BeaconToolbar1.HelpButton.Enabled = Self.mHelpDrawerOpen Or (Self.CurrentPanel.HelpContent <> "")
-		  Self.HelpDrawer.Title = Self.CurrentPanel.HelpTitle
-		  Self.HelpDrawer.Body = Self.CurrentPanel.HelpContent
-		  Self.HelpDrawer.DetailURL = Self.CurrentPanel.HelpURL
 		  Self.Panels.Value(Tag) = Panel
 		  Panel.Visible = True
 		  Self.PagePanel1.Value = 1
@@ -559,8 +556,6 @@ End
 		  End Select
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events HelpDrawer
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

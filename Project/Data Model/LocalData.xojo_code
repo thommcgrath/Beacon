@@ -29,6 +29,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, pattern TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, detail_url TEXT NOT NULL);")
 		  
 		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX engrams_path_idx ON engrams(path);")
@@ -182,6 +183,21 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("DELETE FROM documents WHERE LOWER(hash) = LOWER(?1);", Document.Hash)
 		  Self.Commit()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetConfigHelp(ConfigName As String, ByRef Title As String, Body As String, DetailURL As String) As Boolean
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE LOWER(config_name) = LOWER(?1);", ConfigName)
+		  If Results.RecordCount <> 1 Then
+		    Return False
+		  End If
+		  
+		  Title = Results.Field("title").StringValue
+		  Body = Results.Field("body").StringValue
+		  DetailURL = If(Results.Field("detail_url").Value <> Nil, Results.Field("detail_url").StringValue, "")
+		  
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -519,6 +535,26 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.SQLExecute("INSERT INTO preset_modifiers (object_id, label, pattern, mod_id) VALUES (?1, ?2, ?3, ?4);", ObjectID, Label, Pattern, ModID)
 		      End If
 		    Next
+		    
+		    If ChangeDict.HasKey("help_topics") Then
+		      Dim HelpTopics() As Auto = ChangeDict.Value("help_topics")
+		      For Each Dict As Xojo.Core.Dictionary In HelpTopics
+		        Dim ConfigName As Text = Dict.Value("topic")
+		        Dim Title As Text = Dict.Value("title")
+		        Dim Body As Text = Dict.Value("body")
+		        Dim DetailURL As Text
+		        If Dict.Value("detail_url") <> Nil Then
+		          DetailURL = Dict.Value("detail_url")
+		        End If
+		        
+		        Dim Results As RecordSet = Self.SQLSelect("SELECT config_name FROM config_help WHERE LOWER(config_name) = LOWER(?1);", ConfigName)
+		        If Results.RecordCount = 1 Then
+		          Self.SQLExecute("UPDATE config_help SET title = ?2, body = ?3, detail_url = ?4 WHERE LOWER(config_name) = LOWER(?1);", ConfigName, Title, Body, DetailURL)
+		        Else
+		          Self.SQLExecute("INSERT INTO config_help (config_name, title, body, detail_url) VALUES (?1, ?2, ?3, ?4);", ConfigName, Title, Body, DetailURL)
+		        End If
+		      Next
+		    End If
 		    
 		    // Restore Indexes
 		    Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
