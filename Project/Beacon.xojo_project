@@ -310,6 +310,7 @@ Window=LootScaleConfigEditor;Views/Config Editors/LootScaleConfigEditor.xojo_win
 Window=MapsConfigEditor;Views/Config Editors/MapsConfigEditor.xojo_window;&h000000007432E7FF;&h00000000434D97FF;false
 Class=HelpDrawer;Custom Controls/HelpDrawer.xojo_code;&h0000000047B917FF;&h0000000030DCFFFF;false
 MultiImage=IconToolbarHelp;Icons/IconToolbarHelp.xojo_image;&h0000000014683FFF;&h0000000007F977FF;false
+Window=DeploymentsConfigEditor;Views/Config Editors/DeploymentsConfigEditor.xojo_window;&h0000000056A847FF;&h00000000434D97FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

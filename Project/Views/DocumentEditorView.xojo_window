@@ -454,13 +454,19 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = DeployEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
 #tag Events ConfigMenu
 	#tag Event
 		Sub Open()
 		  Me.AddRow("Maps", "maps")
-		  Me.AddRow("Deployment Servers", "deployments")
+		  #if DeployEnabled
+		    Me.AddRow("Deployment Servers", "deployments")
+		  #endif
 		  
 		  Dim Names() As Text = BeaconConfigs.AllConfigNames
 		  For Each Name As Text In Names
@@ -496,6 +502,7 @@ End
 		  Case "maps"
 		    Panel = New MapsConfigEditor(Self.mController)
 		  Case "deployments"
+		    Panel = New DeploymentsConfigEditor(Self.mController)
 		  Case BeaconConfigs.LootDrops.ConfigName
 		    Panel = New LootConfigEditor(Self.mController)
 		  Case BeaconConfigs.Difficulty.ConfigName
@@ -523,14 +530,18 @@ End
 		Sub Open()
 		  Dim ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
 		  Dim ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToExport, "Save new config files…")
-		  Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToDeploy, "Make config changes live.")
+		  #if DeployEnabled
+		    Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToDeploy, "Make config changes live.")
+		  #endif
 		  Dim PublishButton As New BeaconToolbarItem("PublishButton", IconToolbarPublish, "Upload this document to the cloud.")
 		  
 		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel.")
 		  
 		  Me.LeftItems.Append(ImportButton)
 		  Me.LeftItems.Append(ExportButton)
-		  Me.LeftItems.Append(DeployButton)
+		  #if DeployEnabled
+		    Me.LeftItems.Append(DeployButton)
+		  #endif
 		  Me.LeftItems.Append(PublishButton)
 		  
 		  Me.RightItems.Append(HelpButton)
