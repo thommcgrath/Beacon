@@ -50,7 +50,11 @@ Implements ObservationKit.Observable
 		Private Sub mPulseTimer_Action(Sender As Timer)
 		  #Pragma Unused Sender
 		  
-		  Self.NotifyObservers("PulseAmount", Self.PulseAmount)
+		  Dim Amount As Double = Self.PulseAmount
+		  If Self.mLastPulseAmount <> Amount Then
+		    Self.NotifyObservers("PulseAmount", Amount)
+		    Self.mLastPulseAmount = Amount
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -140,6 +144,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mIcon As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastPulseAmount As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -315,6 +323,16 @@ Implements ObservationKit.Observable
 			Name="Type"
 			Group="Behavior"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="NotificationColor"
+			Group="Behavior"
+			Type="ShelfItem.NotificationColors"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PulseAmount"
+			Group="Behavior"
+			Type="Double"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

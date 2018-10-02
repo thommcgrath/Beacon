@@ -607,6 +607,7 @@ End
 		    Else
 		      Self.ShowHelpDrawer()
 		    End If
+		  Case "PublishButton"
 		  End Select
 		End Sub
 	#tag EndEvent

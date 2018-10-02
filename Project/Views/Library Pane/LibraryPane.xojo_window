@@ -1,5 +1,5 @@
 #tag Window
-Begin ContainerControl SlidingLibraryPane
+Begin ContainerControl LibraryPane
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -39,14 +39,14 @@ Begin ContainerControl SlidingLibraryPane
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   5
+      PanelCount      =   7
       Panels          =   ""
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   258
       Begin LibraryPaneDocuments DocumentsView
@@ -72,7 +72,7 @@ Begin ContainerControl SlidingLibraryPane
          MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   1
+         TabPanelIndex   =   3
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
@@ -106,7 +106,7 @@ Begin ContainerControl SlidingLibraryPane
          MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   2
+         TabPanelIndex   =   4
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
@@ -139,7 +139,7 @@ Begin ContainerControl SlidingLibraryPane
          MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   3
+         TabPanelIndex   =   5
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
@@ -172,7 +172,7 @@ Begin ContainerControl SlidingLibraryPane
          MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   4
+         TabPanelIndex   =   6
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
@@ -205,9 +205,41 @@ Begin ContainerControl SlidingLibraryPane
          MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   5
+         TabPanelIndex   =   7
          TabStop         =   True
          ToolbarCaption  =   ""
+         ToolbarIcon     =   0
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   258
+      End
+      Begin LibraryPaneMenu MenuView
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   468
+         HelpTag         =   ""
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
          ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
@@ -316,6 +348,18 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MenuButton() As ShelfItem
+		  Return Self.mMenuButton
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MenuPane() As LibraryPaneMenu
+		  Return Self.MenuView
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function PresetsPane() As LibraryPanePresets
 		  Return Self.PresetsView
 		End Function
@@ -355,6 +399,8 @@ End
 	#tag Method, Flags = &h1
 		Protected Function ViewAtIndex(Index As Integer) As LibrarySubview
 		  Select Case Index
+		  Case Self.PaneMenu
+		    Return Self.MenuView
 		  Case Self.PaneDocuments
 		    Return Self.DocumentsView
 		  Case Self.PanePresets
@@ -392,6 +438,10 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mMenuButton As ShelfItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mOpened As Boolean
 	#tag EndProperty
 
@@ -399,19 +449,25 @@ End
 	#tag Constant, Name = CollapseDistance, Type = Double, Dynamic = False, Default = \"259", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PaneDocuments, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag Constant, Name = PaneBlank, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = PaneEngrams, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag Constant, Name = PaneDocuments, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = PanePresets, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag Constant, Name = PaneEngrams, Type = Double, Dynamic = False, Default = \"4", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = PaneSearch, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag Constant, Name = PaneMenu, Type = Double, Dynamic = False, Default = \"0", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = PaneTools, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag Constant, Name = PanePresets, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = PaneSearch, Type = Double, Dynamic = False, Default = \"6", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = PaneTools, Type = Double, Dynamic = False, Default = \"5", Scope = Public
 	#tag EndConstant
 
 
@@ -510,7 +566,9 @@ End
 #tag Events ViewShelf
 	#tag Event
 		Sub Open()
-		  Me.Add(IconMenu, "Menu", "menu")
+		  Self.mMenuButton = New ShelfItem(IconMenu, "Menu", "menu")
+		  
+		  Me.Add(Self.mMenuButton)
 		  Me.Add(ShelfItem.NewSpacer)
 		  Me.Add(IconDocuments, "Documents", "documents")
 		  Me.Add(IconPresets, "Presets", "presets")
@@ -528,6 +586,8 @@ End
 		  End If
 		  
 		  Select Case Me.SelectedItem.Tag
+		  Case "menu"
+		    Self.ShowPage(Self.PaneMenu)
 		  Case "documents"
 		    Self.ShowPage(Self.PaneDocuments)
 		  Case "presets"
