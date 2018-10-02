@@ -43,7 +43,7 @@ Begin ConfigEditor DifficultyConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   196
+      Left            =   216
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -86,7 +86,7 @@ Begin ConfigEditor DifficultyConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   196
+      Left            =   216
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -145,7 +145,7 @@ Begin ConfigEditor DifficultyConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   164
+      Width           =   184
    End
    Begin UITweaks.ResizedLabel DinoLevelIncrementsLabel
       AutoDeactivate  =   True
@@ -170,7 +170,7 @@ Begin ConfigEditor DifficultyConfigEditor
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Dino Level Increments:"
+      Text            =   "Creature Level Increments:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -180,7 +180,7 @@ Begin ConfigEditor DifficultyConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   164
+      Width           =   184
    End
    Begin GroupBox ReferenceValuesGroup
       AutoDeactivate  =   True
@@ -209,7 +209,7 @@ Begin ConfigEditor DifficultyConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   276
+      Width           =   296
       Begin UITweaks.ResizedTextField DifficultyOffsetField
          AcceptTabs      =   False
          Alignment       =   0
@@ -228,7 +228,7 @@ Begin ConfigEditor DifficultyConfigEditor
          Index           =   -2147483648
          InitialParent   =   "ReferenceValuesGroup"
          Italic          =   False
-         Left            =   196
+         Left            =   216
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -287,7 +287,7 @@ Begin ConfigEditor DifficultyConfigEditor
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   144
+         Width           =   164
       End
       Begin UITweaks.ResizedTextField DifficultyValueField
          AcceptTabs      =   False
@@ -307,7 +307,7 @@ Begin ConfigEditor DifficultyConfigEditor
          Index           =   -2147483648
          InitialParent   =   "ReferenceValuesGroup"
          Italic          =   False
-         Left            =   196
+         Left            =   216
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -366,7 +366,7 @@ Begin ConfigEditor DifficultyConfigEditor
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   144
+         Width           =   164
       End
       Begin UITweaks.ResizedTextField LootScaleField
          AcceptTabs      =   False
@@ -386,7 +386,7 @@ Begin ConfigEditor DifficultyConfigEditor
          Index           =   -2147483648
          InitialParent   =   "ReferenceValuesGroup"
          Italic          =   False
-         Left            =   196
+         Left            =   216
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -445,106 +445,7 @@ Begin ConfigEditor DifficultyConfigEditor
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   144
-      End
-   End
-   Begin GroupBox ExplanationGroup
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Understanding Difficulty Settings"
-      Enabled         =   True
-      Height          =   214
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   308
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   11
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   556
-      Begin LinkLabel DifficultyURLLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ExplanationGroup"
-         Italic          =   False
-         Left            =   328
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "https://ark.gamepedia.com/Difficulty"
-         TextAlign       =   0
-         TextColor       =   &c0000FF00
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   56
-         Transparent     =   False
-         Underline       =   True
-         Visible         =   True
-         Width           =   516
-      End
-      Begin Label DifficultyExplanationLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   126
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ExplanationGroup"
-         Italic          =   False
-         Left            =   328
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   True
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   1
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "The link above explains difficulty in great detail. The ""Reference Values"" to the left can be used to compare against the chart on that wiki page.\n\nBeacon automatically accounts for the ""Loot Scale"" provided by your difficulty settings when producing config commands for loot drops. This means a higher difficulty will NOT affect the quality of items found in Beacon-managed loot drops."
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   88
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   516
+         Width           =   164
       End
    End
 End
@@ -570,10 +471,32 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function HelpContent() As String
+		  Return Self.HelpExplanation
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HelpTitle() As String
+		  Return "Understanding Difficulty Settings"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HelpURL() As String
+		  Return "https://ark.gamepedia.com/Difficulty"
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mSettingUp As Boolean = True
 	#tag EndProperty
+
+
+	#tag Constant, Name = HelpExplanation, Type = String, Dynamic = False, Default = \"Difficulty in Ark controls dino levels and loot quality. Set Maximum Creature Level to the max level wild non-cave creatures you\'d like to find on your server. Creature Level Increments is used to set the spacing between wild creature levels. For example\x2C when set to 5\x2C wild creatures can be found at levels 5\x2C 10\x2C 15\x2C 20\x2C and so on. When set to 10\x2C wild creatures can be found at levels 10\x2C 20\x2C 30\x2C 40\x2C and so on.\n\nBe aware that lower increment numbers make it more difficult to find a maximum level creature. For example\x2C with a Maximum Creature Level of 150 and Creature Level Increments of 10\x2C there are only 15 possible levels to find in the wild. Reducing Creature Level Increments to 5 increases the number of possible wild levels to 30.\n\nIncreasing Maximum Creature Level also increases the loot quality. Unlike previous versions of Beacon\x2C loot drop qualities will not be adjusted for server difficulty.", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -615,13 +538,6 @@ End
 		    Self.FillReferenceFields(Self.Document.Difficulty)
 		    Self.ContentsChanged = Self.Document.Modified
 		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DifficultyURLLabel
-	#tag Event
-		Sub Action()
-		  ShowURL(Me.Text)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

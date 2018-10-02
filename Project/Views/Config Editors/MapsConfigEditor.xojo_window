@@ -57,7 +57,7 @@ Begin ConfigEditor MapsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      Width           =   345
+      Width           =   200
    End
    Begin CheckBox MapCheckboxes
       AutoDeactivate  =   True
@@ -90,7 +90,7 @@ Begin ConfigEditor MapsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      Width           =   345
+      Width           =   200
    End
    Begin CheckBox MapCheckboxes
       AutoDeactivate  =   True
@@ -123,7 +123,7 @@ Begin ConfigEditor MapsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      Width           =   345
+      Width           =   200
    End
    Begin CheckBox MapCheckboxes
       AutoDeactivate  =   True
@@ -156,7 +156,7 @@ Begin ConfigEditor MapsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      Width           =   345
+      Width           =   200
    End
    Begin CheckBox MapCheckboxes
       AutoDeactivate  =   True
@@ -170,7 +170,7 @@ Begin ConfigEditor MapsConfigEditor
       Index           =   4
       InitialParent   =   ""
       Italic          =   False
-      Left            =   385
+      Left            =   232
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -189,7 +189,7 @@ Begin ConfigEditor MapsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      Width           =   345
+      Width           =   200
    End
    Begin CheckBox MapCheckboxes
       AutoDeactivate  =   True
@@ -203,7 +203,7 @@ Begin ConfigEditor MapsConfigEditor
       Index           =   8
       InitialParent   =   ""
       Italic          =   False
-      Left            =   385
+      Left            =   232
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -222,7 +222,7 @@ Begin ConfigEditor MapsConfigEditor
       Underline       =   False
       Value           =   False
       Visible         =   True
-      Width           =   345
+      Width           =   200
    End
 End
 #tag EndWindow

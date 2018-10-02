@@ -40,6 +40,12 @@ Inherits BeaconSubview
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function HelpURL() As String
+		  
+		End Function
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event Open()

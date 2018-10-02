@@ -26,70 +26,6 @@ Begin ConfigEditor LootScaleConfigEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   732
-   Begin GroupBox HelpGroup
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "About This Setting"
-      Enabled         =   True
-      Height          =   436
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   406
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   False
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   306
-      Begin Label HelpLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   380
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "HelpGroup"
-         Italic          =   False
-         Left            =   426
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   True
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "Loot scaling affects the quality of items found in lootable objects, such as drops, dino inventories, beaver dams, and artifact containers. Setting this value too high can produce loot that is uncraftable. Adjust this in small increments, if at all. Values between 100% and 125% are recommend.\n\nValues greater than 100% increase loot quality, values lower than 100% decrease loot quality.\n\nA word of caution: settings this value too high can produce loot that requires more than 65,535 of a single item to craft or repair. Ark cannot handle quantities so large, meaning the item will be uncraftable no matter how many inventory spaces are available."
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   56
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   266
-      End
-   End
    Begin TextField LootScaleField
       AcceptTabs      =   False
       Alignment       =   2
@@ -107,7 +43,7 @@ Begin ConfigEditor LootScaleConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   159
+      Left            =   323
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -140,7 +76,7 @@ Begin ConfigEditor LootScaleConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   20
+      Left            =   69
       LineStep        =   1
       LiveScroll      =   True
       LockBottom      =   False
@@ -160,7 +96,7 @@ Begin ConfigEditor LootScaleConfigEditor
       Transparent     =   False
       Value           =   100
       Visible         =   True
-      Width           =   365
+      Width           =   595
    End
 End
 #tag EndWindow
@@ -187,6 +123,19 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Function HelpContent() As String
+		  Return Self.HelpExplanation
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HelpTitle() As String
+		  Return "Loot Scaling"
+		End Function
+	#tag EndMethod
+
+
 	#tag Hook, Flags = &h0
 		Event Resized()
 	#tag EndHook
@@ -203,6 +152,10 @@ End
 	#tag Property, Flags = &h21
 		Private mSettingUp As Boolean = True
 	#tag EndProperty
+
+
+	#tag Constant, Name = HelpExplanation, Type = String, Dynamic = False, Default = \"Loot scaling affects the quality of items found in lootable objects\x2C such as drops\x2C dino inventories\x2C beaver dams\x2C and artifact containers. Setting this value too high can produce loot that is uncraftable. Adjust this in small increments\x2C if at all. Values between 100% and 125% are recommend.\n\nValues greater than 100% increase loot quality\x2C values lower than 100% decrease loot quality.\n\nA word of caution: settings this value too high can produce loot that requires more than 65\x2C535 of a single item to craft or repair. Ark cannot handle quantities so large\x2C meaning the item will be uncraftable no matter how many inventory spaces are available.", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode

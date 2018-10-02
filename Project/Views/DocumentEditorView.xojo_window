@@ -173,6 +173,39 @@ Begin BeaconSubview DocumentEditorView
       Visible         =   True
       Width           =   625
    End
+   Begin HelpDrawer HelpDrawer
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Body            =   ""
+      Borders         =   8
+      DetailURL       =   ""
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   487
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   858
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Title           =   ""
+      Top             =   41
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   False
+      Width           =   300
+   End
 End
 #tag EndWindow
 
@@ -236,6 +269,37 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub HideHelpDrawer()
+		  If Not Self.mHelpDrawerOpen Then
+		    Return
+		  End If
+		  Self.mHelpDrawerOpen = False
+		  
+		  If Self.mHelpDrawerAnimation <> Nil Then
+		    Self.mHelpDrawerAnimation.Cancel
+		    Self.mHelpDrawerAnimation = Nil
+		  End If
+		  If Self.mPagesAnimation <> Nil Then
+		    Self.mPagesAnimation.Cancel
+		    Self.mPagesAnimation = Nil
+		  End If
+		  
+		  Self.mHelpDrawerAnimation = New AnimationKit.MoveTask(Self.HelpDrawer)
+		  Self.mHelpDrawerAnimation.Left = Self.Width
+		  Self.mHelpDrawerAnimation.DurationInSeconds = 0.15
+		  Self.mHelpDrawerAnimation.Curve = AnimationKit.Curve.CreateEaseOut
+		  AddHandler Self.mHelpDrawerAnimation.Completed, WeakAddressOf Self.mHelpDrawerAnimation_Completed
+		  Self.mHelpDrawerAnimation.Run
+		  
+		  Self.mPagesAnimation = New AnimationKit.MoveTask(Self.PagePanel1)
+		  Self.mPagesAnimation.Width = Self.Width
+		  Self.mPagesAnimation.DurationInSeconds = 0.15
+		  Self.mPagesAnimation.Curve = AnimationKit.Curve.CreateEaseOut
+		  Self.mPagesAnimation.Run
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mController_WriteError(Sender As Beacon.DocumentController)
 		  Break
 		End Sub
@@ -245,6 +309,17 @@ End
 		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
 		  Self.ContentsChanged = Sender.Document.Modified
 		  LocalData.SharedInstance.RememberDocument(Sender)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mHelpDrawerAnimation_Completed(Sender As AnimationKit.MoveTask)
+		  #Pragma Unused Sender
+		  
+		  If Not Self.mHelpDrawerOpen Then
+		    Self.HelpDrawer.Visible = False
+		    Self.BeaconToolbar1.HelpButton.Enabled = (Self.CurrentPanel <> Nil And Self.CurrentPanel.HelpContent <> "")
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -285,6 +360,38 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub ShowHelpDrawer()
+		  If Self.mHelpDrawerOpen Then
+		    Return
+		  End If
+		  Self.mHelpDrawerOpen = True
+		  
+		  If Self.mHelpDrawerAnimation <> Nil Then
+		    Self.mHelpDrawerAnimation.Cancel
+		    Self.mHelpDrawerAnimation = Nil
+		  End If
+		  If Self.mPagesAnimation <> Nil Then
+		    Self.mPagesAnimation.Cancel
+		    Self.mPagesAnimation = Nil
+		  End If
+		  
+		  Self.HelpDrawer.Visible = True
+		  
+		  Self.mHelpDrawerAnimation = New AnimationKit.MoveTask(Self.HelpDrawer)
+		  Self.mHelpDrawerAnimation.Left = Self.Width - Self.HelpDrawer.Width
+		  Self.mHelpDrawerAnimation.DurationInSeconds = 0.15
+		  Self.mHelpDrawerAnimation.Curve = AnimationKit.Curve.CreateEaseOut
+		  Self.mHelpDrawerAnimation.Run
+		  
+		  Self.mPagesAnimation = New AnimationKit.MoveTask(Self.PagePanel1)
+		  Self.mPagesAnimation.Width = Self.Width - Self.HelpDrawer.Width
+		  Self.mPagesAnimation.DurationInSeconds = 0.15
+		  Self.mPagesAnimation.Curve = AnimationKit.Curve.CreateEaseOut
+		  Self.mPagesAnimation.Run
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub StartDeploy()
 		  DeployDialog.Present(Self, Self.Document)
@@ -314,7 +421,19 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mHelpDrawerAnimation As AnimationKit.MoveTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHelpDrawerOpen As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mImportWindowRef As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPagesAnimation As AnimationKit.MoveTask
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -348,12 +467,20 @@ End
 		  Dim Tag As Variant = Me.Tag
 		  If Tag = Nil Then
 		    Self.PagePanel1.Value = 0
+		    Self.BeaconToolbar1.HelpButton.Enabled = Self.mHelpDrawerOpen
+		    Self.HelpDrawer.Title = ""
+		    Self.HelpDrawer.Body = ""
+		    Self.HelpDrawer.DetailURL = ""
 		    Return
 		  End If
 		  
 		  If Self.Panels.HasKey(Tag) Then
 		    Self.CurrentPanel = Self.Panels.Value(Tag)
 		    Self.CurrentPanel.Visible = True
+		    Self.BeaconToolbar1.HelpButton.Enabled = Self.mHelpDrawerOpen Or (Self.CurrentPanel.HelpContent <> "")
+		    Self.HelpDrawer.Title = Self.CurrentPanel.HelpTitle
+		    Self.HelpDrawer.Body = Self.CurrentPanel.HelpContent
+		    Self.HelpDrawer.DetailURL = Self.CurrentPanel.HelpURL
 		    Self.PagePanel1.Value = 1
 		    Return
 		  End If
@@ -377,6 +504,10 @@ End
 		  AddHandler Panel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
 		  Panel.EmbedWithinPanel(Self.PagePanel1, 1, 0, 0, PagePanel1.Width, PagePanel1.Height)
 		  Self.CurrentPanel = Panel
+		  Self.BeaconToolbar1.HelpButton.Enabled = Self.mHelpDrawerOpen Or (Self.CurrentPanel.HelpContent <> "")
+		  Self.HelpDrawer.Title = Self.CurrentPanel.HelpTitle
+		  Self.HelpDrawer.Body = Self.CurrentPanel.HelpContent
+		  Self.HelpDrawer.DetailURL = Self.CurrentPanel.HelpURL
 		  Self.Panels.Value(Tag) = Panel
 		  Panel.Visible = True
 		  Self.PagePanel1.Value = 1
@@ -391,10 +522,14 @@ End
 		  Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToDeploy, "Make config changes live.")
 		  Dim PublishButton As New BeaconToolbarItem("PublishButton", IconToolbarPublish, "Upload this document to the cloud.")
 		  
+		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarBack, False, "Show help panel.")
+		  
 		  Me.LeftItems.Append(ImportButton)
 		  Me.LeftItems.Append(ExportButton)
 		  Me.LeftItems.Append(DeployButton)
 		  Me.LeftItems.Append(PublishButton)
+		  
+		  Me.RightItems.Append(HelpButton)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -408,9 +543,17 @@ End
 		    End If
 		  Case "ExportButton"
 		    DocumentExportWindow.Present(Self, Self.Document)
+		  Case "HelpButton"
+		    If Self.mHelpDrawerOpen Then
+		      Self.HideHelpDrawer()
+		    Else
+		      Self.ShowHelpDrawer()
+		    End If
 		  End Select
 		End Sub
 	#tag EndEvent
+#tag EndEvents
+#tag Events HelpDrawer
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
