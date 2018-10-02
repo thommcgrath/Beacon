@@ -1,6 +1,7 @@
 #tag Class
 Protected Class Shelf
 Inherits ControlCanvas
+Implements ObservationKit.Observer
 	#tag Event
 		Sub Activate()
 		  RaiseEvent Activate
@@ -189,6 +190,45 @@ Inherits ControlCanvas
 		    Dim Icon As Picture = BeaconUI.IconWithColor(Self.mItems(I).Icon, IconColor)
 		    G.DrawPicture(Icon, IconRect.Left, IconRect.Top, IconRect.Width, IconRect.Height, 0, 0, Icon.Width, Icon.Height)
 		    
+		    If Self.mItems(I).NotificationColor <> ShelfItem.NotificationColors.None Then
+		      Dim PulseColor As Color
+		      If Self.mSelectedIndex = I Then
+		        PulseColor = SystemColors.AlternateSelectedControlTextColor
+		      Else
+		        Select Case Self.mItems(I).NotificationColor
+		        Case ShelfItem.NotificationColors.Blue
+		          PulseColor = SystemColors.SystemBlueColor
+		        Case ShelfItem.NotificationColors.Brown
+		          PulseColor = SystemColors.SystemBrownColor
+		        Case ShelfItem.NotificationColors.Gray
+		          PulseColor = SystemColors.SystemGrayColor
+		        Case ShelfItem.NotificationColors.Green
+		          PulseColor = SystemColors.SystemGreenColor
+		        Case ShelfItem.NotificationColors.Orange
+		          PulseColor = SystemColors.SystemOrangeColor
+		        Case ShelfItem.NotificationColors.Pink
+		          PulseColor = SystemColors.SystemPinkColor
+		        Case ShelfItem.NotificationColors.Purple
+		          PulseColor = SystemColors.SystemPurpleColor
+		        Case ShelfItem.NotificationColors.Red
+		          PulseColor = SystemColors.SystemRedColor
+		        Case ShelfItem.NotificationColors.Yellow
+		          PulseColor = SystemColors.SystemYellowColor
+		        End Select
+		      End If
+		      
+		      Dim PulseAmount As Double = Self.mItems(I).PulseAmount
+		      Dim DotRect As New BeaconUI.Rect(IconRect.Right - Self.NotificationDotSize, IconRect.Top, Self.NotificationDotSize, Self.NotificationDotSize)
+		      
+		      G.ForeColor = PulseColor
+		      G.FillOval(DotRect.Left, DotRect.Top, DotRect.Width, DotRect.Height)
+		      If PulseAmount > 0 Then
+		        Dim PulseSize As Double = Self.NotificationDotSize + ((Self.NotificationDotSize * 2) * PulseAmount)
+		        G.ForeColor = PulseColor.AtOpacity(1.0 - PulseAmount)
+		        G.DrawOval(DotRect.Left - ((PulseSize - Self.NotificationDotSize) / 2), DotRect.Top - ((PulseSize - Self.NotificationDotSize) / 2), PulseSize, PulseSize)
+		      End If
+		    End If
+		    
 		    If Self.DrawCaptions Then
 		      Dim Caption As String = Self.mItems(I).Caption
 		      Dim CaptionY As Double = IconRect.Bottom + CellSpacing + Self.TextHeight
@@ -220,6 +260,7 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h0
 		Sub Add(Item As ShelfItem)
 		  Self.mItems.Append(Item)
+		  Item.AddObserver(Self, "PulseAmount")
 		  Self.Invalidate
 		End Sub
 	#tag EndMethod
@@ -231,7 +272,19 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
+		  // Part of the ObservationKit.Observer interface.
+		  
+		  Select Case Key
+		  Case "PulseAmount"
+		    Self.Invalidate
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
+		  Self.mItems(Index).RemoveObserver(Self, "PulseAmount")
 		  Self.mItems.Remove(Index)
 		  Self.Invalidate
 		End Sub
@@ -369,6 +422,9 @@ Inherits ControlCanvas
 
 
 	#tag Constant, Name = IconSize, Type = Double, Dynamic = False, Default = \"24", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = NotificationDotSize, Type = Double, Dynamic = False, Default = \"6", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = TextHeight, Type = Double, Dynamic = False, Default = \"7", Scope = Private
