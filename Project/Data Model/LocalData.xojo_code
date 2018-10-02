@@ -60,6 +60,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If Self.mUpdater = Nil Then
 		    Self.mUpdater = New Xojo.Net.HTTPSocket
 		    Self.mUpdater.ValidateCertificates = True
+		    Self.mUpdater.RequestHeader("Cache-Control") = "no-cache"
 		    AddHandler Self.mUpdater.PageReceived, WeakAddressOf Self.mUpdater_PageReceived
 		    AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
 		  End If
@@ -186,7 +187,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetConfigHelp(ConfigName As String, ByRef Title As String, Body As String, DetailURL As String) As Boolean
+		Function GetConfigHelp(ConfigName As String, ByRef Title As String, ByRef Body As String, ByRef DetailURL As String) As Boolean
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE LOWER(config_name) = LOWER(?1);", ConfigName)
 		  If Results.RecordCount <> 1 Then
 		    Return False
