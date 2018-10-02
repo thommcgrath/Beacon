@@ -18,10 +18,12 @@ $arr = array(
 	'engrams' => BeaconEngram::GetAll($min_version, $since),
 	'creatures' => BeaconCreature::GetAll($min_version, $since),
 	'diets' => BeaconDiet::GetAll($min_version, $since),
+	'help_topics' => BeaconHelpTopic::GetAll($since),
 	'expired_records' => BeaconObject::Deletions($min_version, $since)
 );
 
 header('Content-Type: application/json');
+header('Cache-Control: no-cache');
 echo json_encode($arr, JSON_PRETTY_PRINT);
 
 ?>

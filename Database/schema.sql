@@ -384,3 +384,23 @@ GRANT SELECT ON TABLE articles TO thezaz_website;
 CREATE OR REPLACE VIEW search_contents AS (SELECT article_id AS id, title, body, setweight(to_tsvector(title), 'A') || ' ' || setweight(to_tsvector(body), 'B') AS lexemes, 'Article' AS type FROM articles) UNION (SELECT object_id AS id, label AS title, '' AS body, setweight(to_tsvector(label), 'A') AS lexemes, 'Object' AS type FROM objects WHERE objects.tableoid::regclass IN ('engrams', 'creatures', 'loot_sources')) UNION (SELECT mod_id AS id, name AS title, '' AS body, setweight(to_tsvector(name), 'C') AS lexemes, 'Mod' AS type FROM mods WHERE confirmed = TRUE) UNION (SELECT document_id, title, description AS body, setweight(to_tsvector(title), 'A') || ' ' || setweight(to_tsvector(description), 'B') AS lexemes, 'Document' AS type FROM documents WHERE published = 'Approved');
 GRANT SELECT ON TABLE search_contents TO thezaz_website;
 -- End Search
+
+-- Config Help Topics
+CREATE TABLE help_topics (
+	config_name CITEXT NOT NULL PRIMARY KEY,
+	title TEXT NOT NULL,
+	body TEXT NOT NULL,
+	detail_url TEXT NOT NULL DEFAULT '',
+	last_update TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP(0)
+);
+GRANT SELECT ON TABLE help_topics TO thezaz_website;
+
+CREATE OR REPLACE FUNCTION help_topics_update_trigger () RETURNS TRIGGER AS $$
+BEGIN
+	NEW.last_update = CURRENT_TIMESTAMP(0);
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER help_topics_before_update_trigger BEFORE INSERT OR UPDATE ON help_topics FOR EACH ROW EXECUTE PROCEDURE help_topics_update_trigger();
+-- End Config Help Topics

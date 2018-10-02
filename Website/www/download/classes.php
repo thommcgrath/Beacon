@@ -20,6 +20,7 @@ if ($min_version > 33) {
 		'preset_modifiers' => BeaconPresetModifier::GetAll($min_version, $since),
 		'creatures' => BeaconCreature::GetAll($min_version, $since),
 		'diets' => BeaconDiet::GetAll($min_version, $since),
+		'help_topics' => BeaconHelpTopic::GetAll($since),
 		'mods' => BeaconMod::GetLive(),
 		'deletions' => BeaconObject::Deletions($min_version, $since)
 	);
@@ -84,7 +85,7 @@ if ($min_version > 33) {
 	}
 }
 
-$results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(last_update) AS stamp FROM objects WHERE min_version <= $1) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1)) AS merged;", $min_version);
+$results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(last_update) AS stamp FROM objects WHERE min_version <= $1) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics)) AS merged;", $min_version);
 $last_database_update = new DateTime($results->Field("stamp"), new DateTimeZone('UTC'));
 
 $values['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
@@ -98,6 +99,7 @@ $hash = md5($body);
 header('Content-Type: application/json');
 header('Content-Disposition: attachment; filename="BeaconData' . $last_database_update->format('YmdHis') . '.json"');
 header('Content-MD5: ' . $hash);
+header('Cache-Control: no-cache');
 echo $body;
 exit;
 
