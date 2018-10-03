@@ -15,6 +15,7 @@ Protected Class UpdateChecker
 		  
 		  Self.mSilent = Silent
 		  Self.mChecking = True
+		  Self.mSocket.RequestHeader("Cache-Control") = "no-cache"
 		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?build=" + App.NonReleaseVersion.ToText))
 		End Sub
 	#tag EndMethod
@@ -73,6 +74,19 @@ Protected Class UpdateChecker
 		    End If
 		    Return
 		  End Try
+		  
+		  If Dict.HasKey("notices") Then
+		    Dim Notices() As Auto = Dict.Value("notices")
+		    Dict.Remove("notices")
+		    
+		    For Each Notice As Xojo.Core.Dictionary In Notices
+		      Dim Notification As New Beacon.UserNotification(Notice.Value("message"))
+		      Notification.SecondaryMessage = Notice.Value("secondary_message")
+		      Notification.ActionURL = Notice.Value("action_url")
+		      Notification.DoNotResurrect = True
+		      LocalData.SharedInstance.SaveNotification(Notification)
+		    Next
+		  End If
 		  
 		  If Dict.Count = 0 Then
 		    // No update

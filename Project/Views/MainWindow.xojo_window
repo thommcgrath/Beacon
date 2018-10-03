@@ -1,5 +1,5 @@
 #tag Window
-Begin Window MainWindow Implements AnimationKit.ValueAnimator,ObservationKit.Observer
+Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationKit.Observer
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -44,7 +44,6 @@ Begin Window MainWindow Implements AnimationKit.ValueAnimator,ObservationKit.Obs
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   25
       Transparent     =   False
       Value           =   0
@@ -62,7 +61,6 @@ Begin Window MainWindow Implements AnimationKit.ValueAnimator,ObservationKit.Obs
          HasBackColor    =   False
          Height          =   375
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   41
          LockBottom      =   True
@@ -157,7 +155,6 @@ Begin Window MainWindow Implements AnimationKit.ValueAnimator,ObservationKit.Obs
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   -259
       LockBottom      =   True

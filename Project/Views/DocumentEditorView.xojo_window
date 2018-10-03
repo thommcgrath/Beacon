@@ -44,6 +44,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -302,7 +303,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mController_WriteError(Sender As Beacon.DocumentController)
-		  Break
+		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save to the cloud!")
+		  Notification.UserData = New Xojo.Core.Dictionary
+		  Notification.UserData.Value("DocumentID") = Sender.Document.DocumentID
+		  Notification.UserData.Value("DocumentURL") = Sender.URL
+		  LocalData.SharedInstance.SaveNotification(Notification)
 		End Sub
 	#tag EndMethod
 

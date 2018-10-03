@@ -64,7 +64,7 @@ Inherits Window
 		  If MenuItem <> Nil Then
 		    Self.mWindowMenuItem = MenuItem
 		    
-		    MainMenuBar.Child("WindowMenu").Child("UntitledSeparator4").Visible = True
+		    MainMenuBar.Child("WindowMenu").Child("UntitledSeparator3").Visible = True
 		    MainMenuBar.Child("WindowMenu").Append(MenuItem)
 		  End If
 		  

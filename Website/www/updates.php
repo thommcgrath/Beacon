@@ -1,6 +1,7 @@
 <?php
 
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+header('Cache-Control: no-cache');
 
 $current_build = 0;
 if (isset($_GET['build'])) {
@@ -15,9 +16,29 @@ if (isset($_GET['html'])) {
 }
 
 $database = BeaconCommon::Database();
+$notices = array();
+if ($html_mode === false) {
+	$results = $database->Query('SELECT message, secondary_message, action_url FROM client_notices WHERE (min_version IS NULL OR min_version <= $1) AND (max_version IS NULL OR max_version >= $1) ORDER BY last_update DESC LIMIT 5;', $current_build);
+	while (!$results->EOF()) {
+		$notices[] = array(
+			'message' => $results->Field('message'),
+			'secondary_message' => $results->Field('secondary_message'),
+			'action_url' => $results->Field('action_url')
+		);
+		$results->MoveNext();
+	}
+}
+
 $results = $database->Query('SELECT * FROM updates WHERE build_number > $1 ORDER BY build_number DESC;', $current_build);
 if ($results->RecordCount() == 0) {
-	echo '{}';
+	if ($html_mode) {
+		echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Beacon Update</title></head><body><h1>No update</h1></body></html>';
+	} else {
+		$values = array(
+			'notices' => $notices
+		);
+		echo json_encode($values, JSON_PRETTY_PRINT);
+	}
 	exit;
 }
 
@@ -31,7 +52,8 @@ $values = array(
 	'win' => array(
 		'url' => $results->Field('win_url'),
 		'signature' => $results->Field('win_signature')
-	)
+	),
+	'notices' => $notices
 );
 
 $markdown = '';

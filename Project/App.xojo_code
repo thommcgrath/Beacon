@@ -514,6 +514,8 @@ Inherits Application
 		      DeveloperWindow.SharedWindow.ShowPage(3)
 		    Case "shownewsletterprompt"
 		      SubscribeDialog.Present()
+		    Case "checkforupdate"
+		      Self.CheckForUpdates(False)
 		    Else
 		      Break
 		    End Select
@@ -735,11 +737,13 @@ Inherits Application
 		  Data.Value("Signature") = Signature.ToText
 		  
 		  Dim Notification As New Beacon.UserNotification("Beacon " + Version.ToText + " is now available!")
-		  Notification.ActionURL = "beacon://showupdate?notification_id=" + Notification.Identifier
+		  Notification.ActionURL = "beacon://action/checkforupdate"
 		  Notification.UserData = Data
 		  Notification.DoNotResurrect = True
 		  
 		  Beacon.Data.SaveNotification(Notification)
+		  
+		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
 

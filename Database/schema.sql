@@ -412,3 +412,16 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER help_topics_before_update_trigger BEFORE INSERT OR UPDATE ON help_topics FOR EACH ROW EXECUTE PROCEDURE help_topics_update_trigger();
 -- End Config Help Topics
+
+-- Client Notices
+CREATE TABLE client_notices (
+	notice_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+	message TEXT NOT NULL,
+	secondary_message TEXT NOT NULL,
+	action_url TEXT NOT NULL,
+	min_version INTEGER,
+	max_version INTEGER,
+	last_update TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0)
+);
+GRANT SELECT ON TABLE client_notices TO thezaz_website;
+-- End Client Notices
