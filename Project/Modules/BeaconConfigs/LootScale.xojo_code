@@ -31,6 +31,18 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, DiscoveredData As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.LootScale
+		  #Pragma Unused DiscoveredData
+		  #Pragma Unused MapCompatibility
+		  #Pragma Unused QualityMultiplier
+		  
+		  If ParsedData.HasKey("SupplyCrateLootQualityMultiplier") Then
+		    Return New BeaconConfigs.LootScale(ParsedData.Value("SupplyCrateLootQualityMultiplier"))
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  
@@ -103,9 +115,9 @@ Inherits Beacon.ConfigGroup
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mMultiplier"
+			Name="Multiplier"
 			Group="Behavior"
-			Type="Integer"
+			Type="Double"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

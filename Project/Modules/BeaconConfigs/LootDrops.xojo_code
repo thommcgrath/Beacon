@@ -41,6 +41,31 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, DiscoveredData As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.LootDrops
+		  #Pragma Unused DiscoveredData
+		  #Pragma Unused MapCompatibility
+		  
+		  Dim Dicts() As Auto
+		  Try
+		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
+		  Catch Err As TypeMismatchException
+		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
+		  End Try
+		  
+		  Dim LootDrops As New BeaconConfigs.LootDrops
+		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
+		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, QualityMultiplier)
+		    If Source <> Nil Then
+		      LootDrops.Append(Source)
+		    End If
+		  Next
+		  If LootDrops.UBound > -1 Then
+		    Return LootDrops
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
 		  Dim DifficultyConfig As BeaconConfigs.Difficulty = SourceDocument.Difficulty
 		  If DifficultyConfig = Nil Then
@@ -170,11 +195,6 @@ Implements Xojo.Core.Iterable
 			Name="Modified"
 			Group="Behavior"
 			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mSources()"
-			Group="Behavior"
-			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

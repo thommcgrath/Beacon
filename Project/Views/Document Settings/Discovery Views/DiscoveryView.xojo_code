@@ -51,13 +51,13 @@ Inherits ContainerControl
 		    End Try
 		  End If
 		  
+		  // Handle difficulty differently than every other config, because it's a required parameter for the others
 		  Dim OverrideOfficialDifficulty As Double = 5.0
 		  If DiscoveredData <> Nil And DiscoveredData.HasKey("Options") Then
 		    OverrideOfficialDifficulty = Self.OverrideOfficialDifficultyFromDict(DiscoveredData.Value("Options"), ParsedData)
 		  Else
 		    OverrideOfficialDifficulty = Self.OverrideOfficialDifficultyFromDict(ParsedData)
 		  End If
-		  
 		  Dim DifficultyOffset As Double = 1.0
 		  Try
 		    If ParsedData.HasKey("DifficultyOffset") Then
@@ -65,32 +65,33 @@ Inherits ContainerControl
 		    End If
 		  Catch Err As TypeMismatchException
 		  End Try
-		  
 		  Dim DifficultyConfig As New BeaconConfigs.Difficulty(OverrideOfficialDifficulty, DifficultyOffset)
 		  Document.AddConfigGroup(DifficultyConfig)
 		  
-		  Dim Dicts() As Auto
-		  Try
-		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
-		  Catch Err As TypeMismatchException
-		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
-		  End Try
-		  
-		  If ParsedData.HasKey("SupplyCrateLootQualityMultiplier") Then
-		    Dim ScaleConfig As New BeaconConfigs.LootScale(ParsedData.Value("SupplyCrateLootQualityMultiplier"))
-		    Document.AddConfigGroup(ScaleConfig)
-		  End If
-		  
-		  Dim LootDrops As New BeaconConfigs.LootDrops
-		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
-		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Document.DifficultyValue)
-		    If Source <> Nil Then
-		      LootDrops.Append(Source)
+		  Dim ConfigNames() As Text = BeaconConfigs.AllConfigNames()
+		  For Each ConfigName As Text In ConfigNames
+		    If ConfigName = BeaconConfigs.Difficulty.ConfigName Then
+		      // Difficulty is a special case
+		      Continue For ConfigName
 		    End If
+		    
+		    Dim ConfigInfo As Xojo.Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(ConfigName)
+		    Dim Methods() As Xojo.Introspection.MethodInfo = ConfigInfo.Methods
+		    For Each Signature As Xojo.Introspection.MethodInfo In Methods
+		      If Signature.IsShared And Signature.Name = "FromImport" And Signature.Parameters.Ubound = 3 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
+		        Dim Params(3) As Auto
+		        Params(0) = ParsedData
+		        Params(1) = DiscoveredData
+		        Params(2) = Document.MapCompatibility
+		        Params(3) = DifficultyConfig.QualityMultiplier
+		        Dim Group As Beacon.ConfigGroup = Signature.Invoke(Nil, Params)
+		        If Group <> Nil Then
+		          Document.AddConfigGroup(Group)
+		        End If
+		        Continue For ConfigName
+		      End If
+		    Next
 		  Next
-		  If LootDrops.UBound > -1 Then
-		    Document.AddConfigGroup(LootDrops)
-		  End If
 		  
 		  Return Document
 		End Function

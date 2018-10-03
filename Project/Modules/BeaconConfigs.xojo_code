@@ -4,9 +4,9 @@ Protected Module BeaconConfigs
 		Protected Function AllConfigNames(Human As Boolean = False) As Text()
 		  Static Names() As Text
 		  If Names.Ubound = -1 Then
+		    Names.Append(BeaconConfigs.Difficulty.ConfigName)
 		    Names.Append(BeaconConfigs.LootDrops.ConfigName)
 		    Names.Append(BeaconConfigs.LootScale.ConfigName)
-		    Names.Append(BeaconConfigs.Difficulty.ConfigName)
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As Text
