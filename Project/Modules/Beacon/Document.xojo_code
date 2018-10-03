@@ -185,7 +185,7 @@ Implements Beacon.DocumentItem
 		    End If
 		  End If
 		  
-		  Doc.mModified = Version < Beacon.Document.DocumentVersion
+		  Doc.Modified = Version < Beacon.Document.DocumentVersion
 		  
 		  Return Doc
 		End Function

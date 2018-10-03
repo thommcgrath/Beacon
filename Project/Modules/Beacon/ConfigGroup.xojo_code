@@ -51,6 +51,18 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Modified() As Boolean
+		  Return Self.mModified
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Modified(Assigns Value As Boolean)
+		  Self.mModified = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ToDictionary() As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
 		  RaiseEvent WriteDictionary(Dict)
@@ -68,8 +80,8 @@ Protected Class ConfigGroup
 	#tag EndHook
 
 
-	#tag Property, Flags = &h0
-		Modified As Boolean
+	#tag Property, Flags = &h21
+		Private mModified As Boolean
 	#tag EndProperty
 
 
@@ -108,7 +120,7 @@ Protected Class ConfigGroup
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Modified"
+			Name="mModified"
 			Group="Behavior"
 			Type="Boolean"
 		#tag EndViewProperty

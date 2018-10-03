@@ -108,6 +108,32 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Modified() As Boolean
+		  If Super.Modified Then
+		    Return True
+		  End If
+		  
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    If Source.Modified Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Modified(Assigns Value As Boolean)
+		  Super.Modified = Value
+		  
+		  If Not Value Then
+		    For Each Source As Beacon.LootSource In Self.mSources
+		      Source.Modified = False
+		    Next
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Operator_Redim(NewUBound As Integer)
 		  If NewUBound <> Self.mSources.Ubound Then
 		    Redim Self.mSources(NewUBound)

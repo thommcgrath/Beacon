@@ -40,6 +40,7 @@ Inherits Beacon.ConfigGroup
 		Sub Constructor(OverrideOfficialDifficulty As Double, DifficultyOffset As Double)
 		  Self.DinoLevelIncrements = Round(OverrideOfficialDifficulty)
 		  Self.MaxDinoLevel = Floor(((OverrideOfficialDifficulty * 30) * DifficultyOffset) / Self.DinoLevelIncrements) * Self.DinoLevelIncrements
+		  Self.Modified = False
 		End Sub
 	#tag EndMethod
 
@@ -193,6 +194,11 @@ Inherits Beacon.ConfigGroup
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="QualityMultiplier"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BaseArbitraryQuality"
 			Group="Behavior"
 			Type="Double"
 		#tag EndViewProperty
