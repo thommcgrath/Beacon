@@ -30,6 +30,12 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Sub CloseLibrary()
+		  RaiseEvent ShouldCloseLibrary
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function DiscardView(View As BeaconSubview) As Boolean
 		  If View = Nil Or RaiseEvent ShouldDiscardView(View) Then
 		    Self.CleanupClosedViews()
@@ -72,6 +78,10 @@ Inherits BeaconSubview
 
 
 	#tag Hook, Flags = &h0
+		Event ShouldCloseLibrary()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event ShouldDiscardView(View As BeaconSubview) As Boolean
 	#tag EndHook
 
@@ -86,6 +96,20 @@ Inherits BeaconSubview
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="MinimumWidth"
+			Visible=true
+			Group="Behavior"
+			InitialValue="400"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MinimumHeight"
+			Visible=true
+			Group="Behavior"
+			InitialValue="300"
+			Type="Integer"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"
 			Visible=true

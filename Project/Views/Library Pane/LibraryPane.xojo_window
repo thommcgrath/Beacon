@@ -46,7 +46,7 @@ Begin ContainerControl LibraryPane
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   5
       Visible         =   True
       Width           =   258
       Begin LibraryPaneDocuments DocumentsView
@@ -240,6 +240,7 @@ Begin ContainerControl LibraryPane
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
+         ToolbarCaption  =   ""
          ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
@@ -490,6 +491,11 @@ End
 		  Self.ViewShelf.SelectedItem = Nil
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub ShouldCloseLibrary()
+		  Self.Dismiss()
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events PresetsView
 	#tag Event
@@ -508,6 +514,11 @@ End
 		  Return RaiseEvent ShouldDiscardView(View)
 		End Function
 	#tag EndEvent
+	#tag Event
+		Sub ShouldCloseLibrary()
+		  Self.Dismiss()
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events EngramsView
 	#tag Event
@@ -524,6 +535,11 @@ End
 		Sub ShouldShowView(View As BeaconSubview)
 		  RaiseEvent ShouldShowView(View)
 		  Self.ViewShelf.SelectedItem = Nil
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCloseLibrary()
+		  Self.Dismiss()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -544,6 +560,11 @@ End
 		  Self.ViewShelf.SelectedItem = Nil
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub ShouldCloseLibrary()
+		  Self.Dismiss()
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events SearchView
 	#tag Event
@@ -560,6 +581,18 @@ End
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
 		  RaiseEvent ShouldResize(NewSize)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ShouldCloseLibrary()
+		  Self.Dismiss()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MenuView
+	#tag Event
+		Sub ShouldCloseLibrary()
+		  Self.Dismiss()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -287,7 +287,7 @@ Inherits Application
 
 	#tag MenuHandler
 		Function HelpAdminSpawnCodes() As Boolean Handles HelpAdminSpawnCodes.Action
-			ShowURL(Beacon.WebURL("/spawn/"))
+			Self.ShowSpawnCodes()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -301,14 +301,14 @@ Inherits Application
 
 	#tag MenuHandler
 		Function HelpMakeADonation() As Boolean Handles HelpMakeADonation.Action
-			ShowURL(Beacon.WebURL("/donate.php"))
+			Self.ShowDonation()
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function HelpReleaseNotes() As Boolean Handles HelpReleaseNotes.Action
-			ShowURL(Beacon.WebURL("/history.php#build" + Self.NonReleaseVersion.ToText(Xojo.Core.Locale.Raw, "0")))
+			Self.ShowReleaseNotes()
 			Return True
 			
 		End Function
@@ -316,7 +316,7 @@ Inherits Application
 
 	#tag MenuHandler
 		Function HelpReportAProblem() As Boolean Handles HelpReportAProblem.Action
-			Beacon.ReportAProblem()
+			Self.ShowBugReporter()
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -813,6 +813,30 @@ Inherits Application
 		    End If
 		  #endif
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowBugReporter()
+		  ShowURL(Beacon.WebURL("/reportaproblem.php"))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowDonation()
+		  ShowURL(Beacon.WebURL("/donate.php"))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowReleaseNotes()
+		  ShowURL(Beacon.WebURL("/history.php#build" + Self.NonReleaseVersion.ToText(Xojo.Core.Locale.Raw, "0")))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowSpawnCodes()
+		  ShowURL(Beacon.WebURL("/spawn/"))
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

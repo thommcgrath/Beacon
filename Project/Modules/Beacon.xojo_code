@@ -589,25 +589,6 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ReportAProblem()
-		  Dim URL As Text = Beacon.WebURL("/reportaproblem.php")
-		  
-		  #if TargetiOS
-		    Declare Function NSClassFromString Lib "Foundation" (Name As CFStringRef) As Ptr
-		    Declare Function sharedApplication Lib "UIKit" Selector "sharedApplication" (Obj As Ptr) As Ptr
-		    Declare Function URLWithString Lib "Foundation" Selector "URLWithString:" (ID As Ptr, URLString As CFStringRef ) As Ptr
-		    Declare Function openURL Lib "UIKit" Selector "openURL:" (ID As Ptr, NSURL As Ptr) As Boolean
-		    
-		    Dim SharedApp As Ptr = sharedApplication(NSClassFromString("UIApplication"))
-		    Dim NSURL As Ptr = URLWithString(NSClassFromString("NSURL"), URL)
-		    Call openURL(SharedApp, NSURL)
-		  #else
-		    ShowURL(URL)
-		  #endif
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Function ShiftLeft(Value As UInt64, NumBits As UInt64) As UInt64
 		  // It is insane that I need to implement this method manually.
 		  

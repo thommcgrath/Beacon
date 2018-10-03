@@ -180,6 +180,7 @@ Begin BeaconWindow AboutWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
+      ShowAsLink      =   True
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True

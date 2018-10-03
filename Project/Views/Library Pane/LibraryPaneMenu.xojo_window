@@ -1,5 +1,5 @@
 #tag Window
-Begin LibrarySubview LibraryPaneMenu
+Begin LibrarySubview LibraryPaneMenu Implements NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -26,12 +26,171 @@ Begin LibrarySubview LibraryPaneMenu
    UseFocusRing    =   False
    Visible         =   True
    Width           =   300
+   Begin LinkLabel Labels
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   0
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      ShowAsLink      =   True
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Untitled"
+      TextAlign       =   0
+      TextColor       =   &c0000FF00
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Transparent     =   False
+      Underline       =   True
+      Visible         =   True
+      Width           =   260
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Close()
+		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineTokenChanged, Preferences.Notification_OnlineStateChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
+		  Self.RebuildMenu()
+		  NotificationKit.Watch(Self, Preferences.Notification_OnlineTokenChanged, Preferences.Notification_OnlineStateChanged)
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case Preferences.Notification_OnlineTokenChanged, Preferences.Notification_OnlineStateChanged
+		    Self.RebuildMenu()
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub RebuildMenu()
+		  Dim Links() As Pair
+		  Links.Append("Check for Updates" : "beacon://checkforupdates")
+		  Links.Append("Release Notes" : "beacon://releasenotes")
+		  Links.Append(Nil)
+		  
+		  If Not Preferences.OnlineEnabled Then
+		    Links.Append("Enable Cloud && Community" : "beacon://enableonline")
+		  Else
+		    If App.Identity.LoginKey = "" Then
+		      Links.Append("Sign In" : "beacon://signin")
+		    Else
+		      Links.Append("Logged in as " + App.Identity.LoginKey : "")
+		      Links.Append("Manage Account" : "beacon://showaccount")
+		    End If
+		  End If
+		  Links.Append(Nil)
+		  
+		  Links.Append("Admin Spawn Codes" : "beacon://spawncodes")
+		  Links.Append("Report a Problem" : "beacon://reportproblem")
+		  Links.Append("Make a Donation" : "beacon://makedonation")
+		  
+		  #if Not TargetWin32
+		    Links.Append(Nil)
+		    Links.Append(App.kFileQuit : "beacon://exit")
+		  #endif
+		  
+		  Self.SetContents(Links)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SetContents(Links() As Pair)
+		  For I As Integer = Self.mLabelsBound DownTo Links.Ubound + 1
+		    If Self.Labels(I) <> Nil Then
+		      Self.Labels(I).Close
+		    End If
+		  Next
+		  Self.mLabelsBound = Min(Links.Ubound, Self.mLabelsBound)
+		  
+		  For I As Integer = 0 To Links.Ubound
+		    Dim LastBottom As Integer = 20
+		    If I > 0 Then
+		      LastBottom = Self.Labels(I - 1).Top + Self.Labels(I - 1).Height
+		    End If
+		    
+		    If I > Self.mLabelsBound Then
+		      Dim NewLabel As New Labels
+		      Self.mLabelsBound = NewLabel.Index
+		    End If
+		    
+		    Self.Labels(I).Top = LastBottom
+		    Self.Labels(I).Height = 20
+		    Self.Labels(I).Visible = Links(I) <> Nil And Links(I).Left <> ""
+		    Self.Labels(I).Text = If(Links(I) <> Nil, Links(I).Left, "")
+		    Self.Labels(I).ShowAsLink = If(Links(I) <> Nil, Links(I).Right <> "", False)
+		    Self.Labels(I).URL = If(Links(I) <> Nil, Links(I).Right, "")
+		  Next
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mLabelsBound As Integer
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
+#tag Events Labels
+	#tag Event
+		Sub Action(index as Integer)
+		  Select Case Self.Labels(Index).URL
+		  Case "beacon://checkforupdates"
+		    App.CheckForUpdates(False)
+		  Case "beacon://releasenotes"
+		    App.ShowReleaseNotes()
+		  Case "beacon://enableonline"
+		    Dim WelcomeWindow As New UserWelcomeWindow(False)
+		    WelcomeWindow.Show()
+		  Case "beacon://signin"
+		    Dim WelcomeWindow As New UserWelcomeWindow(True)
+		    WelcomeWindow.Show()
+		  Case "beacon://showaccount"
+		    ShowURL(Beacon.WebURL("/account/?session_id=" + Preferences.OnlineToken))
+		  Case "beacon://spawncodes"
+		    App.ShowSpawnCodes()
+		  Case "beacon://reportproblem"
+		    App.ShowBugReporter()
+		  Case "beacon://makedonation"
+		    App.ShowDonation()
+		  Case "beacon://exit"
+		    Quit
+		  End Select
+		  
+		  Self.CloseLibrary()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="MinimumWidth"

@@ -64,13 +64,20 @@ End
 	#tag Event
 		Sub Open()
 		  Self.mBaseURL = Beacon.WebURL("inapp/")
-		  Dim File As String = "welcome.php"
+		  Dim Fields() As Text
 		  If Self.mLoginOnly Then
-		    File = File + "?login_only=true"
+		    Fields.Append("login_only=true")
 		  Else
 		    Preferences.OnlineEnabled = False
 		  End If
-		  Self.ContentView.LoadURL(Self.mBaseURL + File)
+		  If SystemColors.IsDarkMode Then
+		    Fields.Append("dark")
+		  End If
+		  Dim Path As String = Self.mBaseURL + "welcome.php"
+		  If Fields.Ubound > -1 Then
+		    Path = Path + "?" + Text.Join(Fields, "&")
+		  End If
+		  Self.ContentView.LoadURL(Path)
 		End Sub
 	#tag EndEvent
 

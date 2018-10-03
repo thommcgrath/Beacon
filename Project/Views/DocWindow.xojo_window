@@ -599,7 +599,7 @@ End
 		    
 		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self)
 		    If Choice = Dialog.ActionButton Then
-		      Beacon.ReportAProblem()
+		      App.ShowBugReporter()
 		    End If
 		    Return
 		  End If
