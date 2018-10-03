@@ -512,6 +512,8 @@ Inherits Application
 		      DeveloperWindow.SharedWindow.ShowPage(2)
 		    Case "showapibuilder"
 		      DeveloperWindow.SharedWindow.ShowPage(3)
+		    Case "shownewsletterprompt"
+		      SubscribeDialog.Present()
 		    Else
 		      Break
 		    End Select
@@ -588,11 +590,19 @@ Inherits Application
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_NewsletterPrompt()
-		  If Not Preferences.HasShownSubscribeDialog Then
-		    SubscribeDialog.Present()
-		  Else
-		    Self.NextLaunchQueueTask()
+		  If Preferences.HasShownSubscribeDialog Then
+		    Return
 		  End If
+		  
+		  Dim Notification As New Beacon.UserNotification("Welcome to Beacon!")
+		  Notification.SecondaryMessage = "Beacon has an announcement list used to inform users of important updates and changes. Click here to sign up."
+		  Notification.ActionURL = "beacon://action/shownewsletterprompt"
+		  Notification.DoNotResurrect = True
+		  
+		  LocalData.SharedInstance.SaveNotification(Notification)
+		  Preferences.HasShownSubscribeDialog = True
+		  
+		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
 

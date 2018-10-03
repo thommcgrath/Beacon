@@ -17,7 +17,7 @@ Protected Class UserNotification
 	#tag Method, Flags = &h0
 		Function Identifier() As Text
 		  Dim Raw As Text = Self.Message + Self.SecondaryMessage + Self.ActionURL
-		  Return Beacon.EncodeHex(Xojo.Crypto.SHA1(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Raw.Lowercase)))
+		  Return Beacon.EncodeHex(Xojo.Crypto.SHA1(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Raw.Lowercase))).Lowercase
 		End Function
 	#tag EndMethod
 

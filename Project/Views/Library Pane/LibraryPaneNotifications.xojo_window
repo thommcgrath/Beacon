@@ -169,10 +169,8 @@ End
 		    Pos = Pos + NotificationRect.Height
 		    If Pos > 0 And Pos < G.Height And Self.mNotifications(I).Read = False Then
 		      // The entire notification is visible and should be marked as read
-		      #if Not DebugBuild
-		        Self.mNotifications(I).Read = True
-		        LocalData.SharedInstance.SaveNotification(Self.mNotifications(I))
-		      #endif
+		      Self.mNotifications(I).Read = True
+		      LocalData.SharedInstance.SaveNotification(Self.mNotifications(I))
 		    End If
 		    If DrawBottomBorder Then
 		      G.ForeColor = SystemColors.SeparatorColor
@@ -348,12 +346,7 @@ End
 		  
 		  If Self.mDownRect.Contains(X, Y) Then
 		    Dim OldUnreadCount As Integer = Self.UnreadCount
-		    If Self.mPressedOnClose Then
-		      LocalData.SharedInstance.DeleteNotification(Self.mNotifications(Self.mDownIndex))
-		      Self.mNotifications.Remove(Self.mDownIndex)
-		      Self.mCloseRects.Remove(Self.mDownIndex)
-		      Self.mNotificationRects.Remove(Self.mDownIndex)
-		    Else
+		    If Not Self.mPressedOnClose Then
 		      Dim URL As Text = Self.mNotifications(Self.mDownIndex).ActionURL
 		      If Beacon.IsBeaconURL(URL) Then
 		        Call App.HandleURL(URL, True)
@@ -365,6 +358,14 @@ End
 		        LocalData.SharedInstance.SaveNotification(Notification)
 		      End If
 		    End If
+		    
+		    // Clicking a notification dismisses it
+		    LocalData.SharedInstance.DeleteNotification(Self.mNotifications(Self.mDownIndex))
+		    Self.mNotifications.Remove(Self.mDownIndex)
+		    Self.mCloseRects.Remove(Self.mDownIndex)
+		    Self.mNotificationRects.Remove(Self.mDownIndex)
+		    
+		    // Update counts. Painting should handle this, but just in case.
 		    Dim NewUnreadCount As Integer = Self.UnreadCount
 		    If OldUnreadCount <> NewUnreadCount Then
 		      RaiseEvent UnreadCountChanged(NewUnreadCount)

@@ -133,6 +133,7 @@ Begin Window SubscribeDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   120
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -175,6 +176,7 @@ Begin Window SubscribeDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   154
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -217,6 +219,7 @@ Begin Window SubscribeDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   188
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -424,6 +427,7 @@ Begin Window SubscribeDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   230
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   90
@@ -455,6 +459,7 @@ Begin Window SubscribeDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   230
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   90
@@ -486,11 +491,13 @@ Begin Window SubscribeDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   230
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   110
    End
    Begin Xojo.Net.HTTPSocket SubscribeSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -516,8 +523,6 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present()
-		  Preferences.HasShownSubscribeDialog = True
-		  
 		  Dim Win As New SubscribeDialog
 		  Win.Show
 		End Sub
