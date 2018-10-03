@@ -349,6 +349,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function ReadyForCloud() As Boolean
+		  Return (Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeCloud And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeWeb)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function ReadyToDeploy() As Boolean
 		  Return Self.Document <> Nil And Self.Document.IsValid And Self.Document.ServerProfileCount > 0
 		End Function
@@ -576,7 +582,7 @@ End
 		  #if DeployEnabled
 		    Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToDeploy, "Make config changes live.")
 		  #endif
-		  Dim PublishButton As New BeaconToolbarItem("PublishButton", IconToolbarPublish, "Upload this document to the cloud.")
+		  Dim PublishButton As New BeaconToolbarItem("PublishButton", IconToolbarPublish, Self.ReadyForCloud, "Upload this document to the cloud.")
 		  
 		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel.")
 		  
