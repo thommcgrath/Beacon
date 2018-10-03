@@ -350,6 +350,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ReadyForCloud() As Boolean
+		  If Not Preferences.OnlineEnabled Then
+		    Return False
+		  End If
+		  
 		  Return (Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeCloud And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeWeb)
 		End Function
 	#tag EndMethod
@@ -368,6 +372,11 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SaveAs()
+		  If Self.ReadyForCloud And DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController) Then
+		    Self.Title = Self.mController.Name
+		    Return
+		  End If
+		  
 		  Dim Dialog As New SaveAsDialog
 		  Dialog.SuggestedFileName = Self.mController.Name + BeaconFileTypes.BeaconDocument.PrimaryExtension
 		  Dialog.Filter = BeaconFileTypes.BeaconDocument
@@ -582,7 +591,6 @@ End
 		  #if DeployEnabled
 		    Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToDeploy, "Make config changes live.")
 		  #endif
-		  Dim PublishButton As New BeaconToolbarItem("PublishButton", IconToolbarPublish, Self.ReadyForCloud, "Upload this document to the cloud.")
 		  
 		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel.")
 		  
@@ -591,7 +599,6 @@ End
 		  #if DeployEnabled
 		    Me.LeftItems.Append(DeployButton)
 		  #endif
-		  Me.LeftItems.Append(PublishButton)
 		  
 		  Me.RightItems.Append(HelpButton)
 		End Sub
@@ -613,7 +620,6 @@ End
 		    Else
 		      Self.ShowHelpDrawer()
 		    End If
-		  Case "PublishButton"
 		  End Select
 		End Sub
 	#tag EndEvent

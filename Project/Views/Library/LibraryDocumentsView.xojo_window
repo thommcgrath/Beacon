@@ -6,6 +6,7 @@ Begin BeaconSubview LibraryDocumentsView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -59,7 +60,7 @@ Begin BeaconSubview LibraryDocumentsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
-      Transparent     =   "False"
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   172
@@ -108,7 +109,7 @@ Begin BeaconSubview LibraryDocumentsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   60
-      Transparent     =   "False"
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -143,7 +144,7 @@ Begin BeaconSubview LibraryDocumentsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
-      Transparent     =   "False"
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -175,7 +176,7 @@ Begin BeaconSubview LibraryDocumentsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
-      Transparent     =   "False"
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -207,7 +208,7 @@ Begin BeaconSubview LibraryDocumentsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
-      Transparent     =   "False"
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -239,7 +240,7 @@ Begin BeaconSubview LibraryDocumentsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
-      Transparent     =   "False"
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -264,7 +265,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Details
 		  
 		  If Success Then
@@ -277,7 +278,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentsList(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		Private Sub APICallback_DocumentsList(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Message
 		  
 		  If Not Success Then
@@ -432,6 +433,28 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Behavior"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Behavior"
+		InitialValue="300"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

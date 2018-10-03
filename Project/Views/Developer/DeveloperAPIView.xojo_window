@@ -6,6 +6,7 @@ Begin BeaconSubview DeveloperAPIView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -62,6 +63,7 @@ Begin BeaconSubview DeveloperAPIView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -94,6 +96,7 @@ Begin BeaconSubview DeveloperAPIView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   54
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   133
@@ -140,6 +143,7 @@ Begin BeaconSubview DeveloperAPIView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   86
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -172,6 +176,7 @@ Begin BeaconSubview DeveloperAPIView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   198
+      Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
@@ -204,6 +209,7 @@ Begin BeaconSubview DeveloperAPIView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   230
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   133
@@ -250,6 +256,7 @@ Begin BeaconSubview DeveloperAPIView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   262
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -457,6 +464,7 @@ Begin BeaconSubview DeveloperAPIView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   230
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   72
@@ -498,6 +506,7 @@ Begin BeaconSubview DeveloperAPIView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   164
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -543,11 +552,12 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DoNothing(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		Private Sub APICallback_DoNothing(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Success
 		  #Pragma Unused Message
 		  #Pragma Unused Details
 		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
 		End Sub
 	#tag EndMethod
 
@@ -729,6 +739,28 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Behavior"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Behavior"
+		InitialValue="300"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

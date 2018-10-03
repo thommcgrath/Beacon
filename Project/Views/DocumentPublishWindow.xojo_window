@@ -23,15 +23,15 @@ Begin Window DocumentPublishWindow
    MinWidth        =   64
    Placement       =   1
    Resizeable      =   True
-   Title           =   "Publish"
+   Title           =   "Save to Cloud"
    Visible         =   True
-   Width           =   500
+   Width           =   550
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
       Cancel          =   False
-      Caption         =   "Publish"
+      Caption         =   "Save"
       Default         =   True
       Enabled         =   False
       Height          =   20
@@ -39,7 +39,7 @@ Begin Window DocumentPublishWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   400
+      Left            =   450
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -53,6 +53,7 @@ Begin Window DocumentPublishWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   300
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -70,7 +71,7 @@ Begin Window DocumentPublishWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   308
+      Left            =   358
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -84,6 +85,7 @@ Begin Window DocumentPublishWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   300
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -111,7 +113,7 @@ Begin Window DocumentPublishWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Publish Document"
+      Text            =   "Save to Cloud"
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -121,42 +123,7 @@ Begin Window DocumentPublishWindow
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   460
-   End
-   Begin Label ExplanationLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   36
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   True
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Share Beacon documents online! Other Beacon users will be able to browse and load documents for deployment to other servers."
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   52
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   460
+      Width           =   510
    End
    Begin UITweaks.ResizedTextField TitleField
       AcceptTabs      =   False
@@ -194,11 +161,12 @@ Begin Window DocumentPublishWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   100
+      Top             =   52
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   370
+      Width           =   420
    End
    Begin Label TitleLabel
       AutoDeactivate  =   True
@@ -229,7 +197,7 @@ Begin Window DocumentPublishWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   101
+      Top             =   53
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -247,7 +215,7 @@ Begin Window DocumentPublishWindow
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   122
+      Height          =   73
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -276,11 +244,12 @@ Begin Window DocumentPublishWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   134
+      Top             =   459
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   370
+      Width           =   271
    End
    Begin Label DescriptionLabel
       AutoDeactivate  =   True
@@ -311,7 +280,7 @@ Begin Window DocumentPublishWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   135
+      Top             =   460
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -335,46 +304,113 @@ Begin Window DocumentPublishWindow
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   304
+      Transparent     =   False
       Visible         =   False
       Width           =   16
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
       TabPanelIndex   =   0
    End
-   Begin CheckBox PublicCheck
+   Begin GroupBox GroupBox1
       AutoDeactivate  =   True
       Bold            =   False
-      Caption         =   "List this document publicly in the document browser"
-      DataField       =   ""
-      DataSource      =   ""
+      Caption         =   "Privacy"
       Enabled         =   True
-      Height          =   20
+      Height          =   202
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
       Left            =   110
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
-      Scope           =   2
-      State           =   0
-      TabIndex        =   9
+      Scope           =   0
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   268
+      Top             =   86
+      Transparent     =   False
       Underline       =   False
-      Value           =   False
       Visible         =   True
-      Width           =   370
+      Width           =   420
+      Begin CheckBox PublicCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "List this document publicly in the document browser"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "GroupBox1"
+         Italic          =   False
+         Left            =   130
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         State           =   0
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   189
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   380
+      End
+      Begin Label ExplanationLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   55
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "GroupBox1"
+         Italic          =   False
+         Left            =   130
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   True
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   1
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "Share Beacon documents online! Other Beacon users will be able to browse and load documents for deployment to other servers."
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   122
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   380
+      End
    End
 End
 #tag EndWindow
@@ -388,7 +424,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentPost(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		Private Sub APICallback_DocumentPost(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Details
 		  
 		  If Not Success Then

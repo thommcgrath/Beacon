@@ -283,6 +283,7 @@ MultiImage=IconModified;Icons/IconModified.xojo_image;&h000000000BC93FFF;&h00000
 Window=DocumentEditorView;Views/DocumentEditorView.xojo_window;&h0000000033F01FFF;&h0000000008A387FF;false
 Window=DocumentMergerWindow;Views/DocumentMergerWindow.xojo_window;&h000000001D19AFFF;&h0000000008A387FF;false
 Window=DocumentExportWindow;Views/DocumentExportWindow.xojo_window;&h000000007D6EA7FF;&h0000000008A387FF;false
+Window=DocumentSaveToCloudWindow;Views/DocumentSaveToCloudWindow.xojo_window;&h000000002FBD5FFF;&h0000000008A387FF;false
 Folder=Config Editors;Views/Config Editors;&h00000000434D97FF;&h0000000008A387FF;false
 Class=ConfigEditor;Views/Config Editors/ConfigEditor.xojo_code;&h000000005966B7FF;&h00000000434D97FF;false
 Class=BeaconPopupMenu;Custom Controls/BeaconPopupMenu.xojo_code;&h0000000004074FFF;&h0000000030DCFFFF;false

@@ -95,8 +95,8 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub InvokeCallback(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
-		  Self.mCallback.Invoke(Success, Message, Details, HTTPStatus)
+		Sub InvokeCallback(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		  Self.mCallback.Invoke(Success, Message, Details, HTTPStatus, RawReply)
 		  Self.mCallback = Nil
 		End Sub
 	#tag EndMethod
@@ -120,7 +120,7 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ReplyCallback(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		Delegate Sub ReplyCallback(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0

@@ -53,6 +53,7 @@ Begin Window DeveloperModSettingsDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   153
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -84,6 +85,7 @@ Begin Window DeveloperModSettingsDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   153
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -160,6 +162,7 @@ Begin Window DeveloperModSettingsDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   52
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -253,6 +256,7 @@ Begin Window DeveloperModSettingsDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   157
+      Transparent     =   False
       Visible         =   False
       Width           =   16
    End
@@ -268,7 +272,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub APICallback_SaveMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		Private Sub APICallback_SaveMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Details
 		  
 		  If Success Then

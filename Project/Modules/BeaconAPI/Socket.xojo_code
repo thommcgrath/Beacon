@@ -57,7 +57,7 @@ Protected Class Socket
 		Private Sub Socket_Error(Sender As Xojo.Net.HTTPSocket, Err As RuntimeException)
 		  #Pragma Unused Sender
 		  
-		  Self.ActiveRequest.InvokeCallback(False, Err.Reason, Nil, 0)
+		  Self.ActiveRequest.InvokeCallback(False, Err.Reason, Nil, 0, Nil)
 		  Self.ActiveRequest = Nil
 		  Xojo.Core.Timer.CallLater(50, WeakAddressOf Self.AdvanceQueue)
 		End Sub
@@ -85,12 +85,12 @@ Protected Class Socket
 		  End If
 		  
 		  If HTTPStatus = 200 Then
-		    Self.ActiveRequest.InvokeCallback(True, "", Details, HTTPStatus)
+		    Self.ActiveRequest.InvokeCallback(True, "", Details, HTTPStatus, Content)
 		  Else
 		    Dim Dict As Xojo.Core.Dictionary = Details
 		    Dim Message As Text = Dict.Lookup("message", "")
 		    Details = Dict.Lookup("details", Nil)
-		    Self.ActiveRequest.InvokeCallback(False, Message, Details, HTTPStatus)
+		    Self.ActiveRequest.InvokeCallback(False, Message, Details, HTTPStatus, Content)
 		  End If
 		  
 		  Self.ActiveRequest = Nil

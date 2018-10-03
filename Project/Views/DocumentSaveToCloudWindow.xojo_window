@@ -1,31 +1,31 @@
 #tag Window
-Begin Window DeveloperAddModDialog
+Begin Window DocumentSaveToCloudWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
-   CloseButton     =   True
+   CloseButton     =   False
    Compatibility   =   ""
    Composite       =   False
    Frame           =   8
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   192
+   Height          =   142
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
    MaxHeight       =   32000
-   MaximizeButton  =   True
+   MaximizeButton  =   False
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
    MinHeight       =   64
-   MinimizeButton  =   True
+   MinimizeButton  =   False
    MinWidth        =   64
    Placement       =   1
-   Resizeable      =   True
-   Title           =   "Register Mod"
+   Resizeable      =   False
+   Title           =   "Save to Cloud"
    Visible         =   True
-   Width           =   520
+   Width           =   600
    Begin Label MessageLabel
       AutoDeactivate  =   True
       Bold            =   True
@@ -49,54 +49,19 @@ Begin Window DeveloperAddModDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Register Mod"
+      Text            =   "Save to Beacon Cloud"
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
-      Transparent     =   True
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   480
+      Width           =   560
    End
-   Begin Label ExplanationLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   54
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   True
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Register your mod with Beacon here to add support for your custom items. You will be given a confirmation code which should be added to your mod page temporarily to prove you are the owner of the mod."
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   52
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   480
-   End
-   Begin UITweaks.ResizedTextField ModIDField
+   Begin UITweaks.ResizedTextField TitleField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
@@ -104,7 +69,7 @@ Begin Window DeveloperAddModDialog
       BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True
-      CueText         =   "Mod ID or URL"
+      CueText         =   ""
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
@@ -113,7 +78,7 @@ Begin Window DeveloperAddModDialog
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   20
+      Left            =   147
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -124,7 +89,7 @@ Begin Window DeveloperAddModDialog
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -132,40 +97,75 @@ Begin Window DeveloperAddModDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   118
+      Top             =   60
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   480
+      Width           =   433
+   End
+   Begin UITweaks.ResizedLabel TitleLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Document Name:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   60
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   115
    End
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
       Cancel          =   False
-      Caption         =   "OK"
+      Caption         =   "Save"
       Default         =   True
-      Enabled         =   False
+      Enabled         =   True
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   420
+      Left            =   500
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   152
+      Top             =   102
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -184,32 +184,38 @@ Begin Window DeveloperAddModDialog
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   328
+      Left            =   408
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   152
+      Top             =   102
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
    End
-   Begin ProgressWheel Spinner
+   Begin UITweaks.ResizedPushButton SaveLocalButton
       AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Save to Computer"
+      Default         =   False
       Enabled         =   True
-      Height          =   16
+      Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
+      Italic          =   False
       Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
@@ -220,146 +226,142 @@ Begin Window DeveloperAddModDialog
       TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   156
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   102
       Transparent     =   False
-      Visible         =   False
-      Width           =   16
-   End
-   Begin BeaconAPI.Socket Socket
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   0
-      TabPanelIndex   =   0
+      Underline       =   False
+      Visible         =   True
+      Width           =   140
    End
 End
 #tag EndWindow
 
 #tag WindowCode
-	#tag Method, Flags = &h21
-		Private Sub APICallback_RegisterMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Details
-		  
-		  If Success Then
-		    Self.mRegistered = True
-		    Self.Hide
-		    
-		    Return
-		  End If
-		  
-		  Dim Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Mod was not registered"
-		  Dialog.Explanation = Message
-		  Call Dialog.ShowModal()
+	#tag Event
+		Sub Open()
+		  Self.SwapButtons()
 		End Sub
-	#tag EndMethod
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window) As Boolean
-		  Dim Win As New DeveloperAddModDialog
-		  Win.SwapButtons()
+		Shared Function Present(Parent As Window, Controller As Beacon.DocumentController) As Boolean
+		  Dim Win As New DocumentSaveToCloudWindow
+		  Win.mController = Controller
+		  Win.TitleField.Text = Controller.Name
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Dim Success As Boolean = Win.mRegistered
+		  
+		  Dim ShowSaveLocal As Boolean = Win.mShowSaveLocal
 		  Win.Close
-		  Return Success
+		  
+		  Return Not ShowSaveLocal
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mRegistered As Boolean
+		Private mController As Beacon.DocumentController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mShowSaveLocal As Boolean
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
-#tag Events ModIDField
-	#tag Event
-		Sub TextChange()
-		  ActionButton.Enabled = Trim(Me.Text) <> ""
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim ModID As String = Trim(ModIDField.Text)
-		  If Left(ModID, 4) = "http" Then
-		    Dim Regex As New Regex
-		    Regex.SearchPattern = "id=(\d+)"
-		    
-		    Dim Matches As RegexMatch = Regex.Search(ModID)
-		    If Matches = Nil Then
-		      MsgBox("This url does not appear to be a steam workshop url")
-		      Return
-		    End If
-		    
-		    ModID = Matches.SubExpressionString(1)
-		  End If
-		  
-		  Dim Dict As New Xojo.Core.Dictionary
-		  Dict.Value("mod_id") = ModID.ToText
-		  Dim Payload As Text = Xojo.Data.GenerateJSON(Dict)
-		  
-		  Dim Request As New BeaconAPI.Request("mod.php", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
-		  Request.Sign(App.Identity)
-		  Self.Socket.Start(Request)
+		  Dim NewURL As Text = Beacon.DocumentURL.TypeCloud + "://" + BeaconAPI.URL("/document.php/" + Self.mController.Document.DocumentID).Mid(8)
+		  Self.mController.Document.Title = Self.TitleField.Text.ToText
+		  Self.mController.SaveAs(NewURL, App.Identity)
+		  Self.mShowSaveLocal = False
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.mRegistered = False
+		  Self.mShowSaveLocal = False
 		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Socket
+#tag Events SaveLocalButton
 	#tag Event
-		Sub WorkStarted()
-		  Spinner.Visible = True
-		  ActionButton.Enabled = False
-		  ModIDField.Enabled = False
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub WorkCompleted()
-		  Spinner.Visible = False
-		  ActionButton.Enabled = True
-		  ModIDField.Enabled = True
+		Sub Action()
+		  Self.mShowSaveLocal = True
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
-		Name="BackColor"
+		Name="Name"
 		Visible=true
-		Group="Background"
-		InitialValue="&hFFFFFF"
-		Type="Color"
+		Group="ID"
+		Type="String"
+		EditorType="String"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Backdrop"
+		Name="Interfaces"
 		Visible=true
-		Group="Background"
-		Type="Picture"
-		EditorType="Picture"
+		Group="ID"
+		Type="String"
+		EditorType="String"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="CloseButton"
+		Name="Super"
 		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
+		Group="ID"
+		Type="String"
+		EditorType="String"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Composite"
-		Group="OS X (Carbon)"
-		InitialValue="False"
-		Type="Boolean"
+		Name="Width"
+		Visible=true
+		Group="Size"
+		InitialValue="600"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Height"
+		Visible=true
+		Group="Size"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinWidth"
+		Visible=true
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="64"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaxWidth"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaxHeight"
+		Visible=true
+		Group="Size"
+		InitialValue="32000"
+		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Frame"
@@ -383,9 +385,41 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="FullScreen"
-		Group="Behavior"
-		InitialValue="False"
+		Name="Title"
+		Visible=true
+		Group="Frame"
+		InitialValue="Untitled"
+		Type="String"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="CloseButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Resizeable"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MaximizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimizeButton"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
 	#tag EndViewProperty
@@ -398,17 +432,15 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="HasBackColor"
-		Visible=true
-		Group="Background"
+		Name="Composite"
+		Group="OS X (Carbon)"
 		InitialValue="False"
 		Type="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Height"
-		Visible=true
-		Group="Size"
-		InitialValue="400"
+		Name="MacProcID"
+		Group="OS X (Carbon)"
+		InitialValue="0"
 		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
@@ -418,93 +450,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Interfaces"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LiveResize"
-		Visible=true
-		Group="Behavior"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MacProcID"
-		Group="OS X (Carbon)"
-		InitialValue="0"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaximizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MaxWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="32000"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBar"
-		Visible=true
-		Group="Menus"
-		Type="MenuBar"
-		EditorType="MenuBar"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MenuBarVisible"
-		Visible=true
-		Group="Deprecated"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinHeight"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinimizeButton"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MinWidth"
-		Visible=true
-		Group="Size"
-		InitialValue="64"
-		Type="Integer"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Name"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Placement"
@@ -522,28 +467,6 @@ End
 		#tag EndEnumValues
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Resizeable"
-		Visible=true
-		Group="Frame"
-		InitialValue="True"
-		Type="Boolean"
-		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Super"
-		Visible=true
-		Group="ID"
-		Type="String"
-		EditorType="String"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="Title"
-		Visible=true
-		Group="Frame"
-		InitialValue="Untitled"
-		Type="String"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Visible"
 		Visible=true
 		Group="Behavior"
@@ -552,10 +475,53 @@ End
 		EditorType="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="Width"
+		Name="LiveResize"
+		Group="Behavior"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="FullScreen"
+		Group="Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="HasBackColor"
 		Visible=true
-		Group="Size"
-		InitialValue="600"
-		Type="Integer"
+		Group="Background"
+		InitialValue="False"
+		Type="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="BackColor"
+		Visible=true
+		Group="Background"
+		InitialValue="&hFFFFFF"
+		Type="Color"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Backdrop"
+		Visible=true
+		Group="Background"
+		Type="Picture"
+		EditorType="Picture"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MenuBar"
+		Visible=true
+		Group="Menus"
+		Type="MenuBar"
+		EditorType="MenuBar"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MenuBarVisible"
+		Visible=true
+		Group="Deprecated"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType="Boolean"
 	#tag EndViewProperty
 #tag EndViewBehavior

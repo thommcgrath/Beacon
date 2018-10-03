@@ -121,6 +121,11 @@ Implements Beacon.DocumentItem
 		  If Info.FullName = "Xojo.Core.Dictionary" Then
 		    Dict = Parsed
 		    Version = Dict.Lookup("Version", 0)
+		    If Dict.HasKey("Identifier") Then
+		      Doc.mIdentifier = Dict.Value("Identifier")
+		    Else
+		      Doc.mIdentifier = Beacon.CreateUUID
+		    End If
 		  End If
 		  If Version < 3 Then
 		    Return FromTextLegacy(Parsed, Identity)

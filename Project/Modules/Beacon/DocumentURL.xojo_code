@@ -179,6 +179,12 @@ Protected Class DocumentURL
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function WithScheme(NewScheme As Text) As Beacon.DocumentURL
+		  Return NewScheme + Self.mOriginalURL.Mid(Self.mScheme.Length)
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mHash As Text

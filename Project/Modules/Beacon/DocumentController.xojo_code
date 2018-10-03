@@ -1,9 +1,10 @@
 #tag Class
 Protected Class DocumentController
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Message
 		  #Pragma Unused Details
+		  #Pragma Unused RawReply
 		  
 		  If Success Then
 		    RaiseEvent DeleteSuccess
@@ -14,18 +15,18 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentDownload(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		Private Sub APICallback_DocumentDownload(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  // Reminder: this will happen on the main thread
 		  #Pragma Unused Message
+		  #Pragma Unused Details
 		  
 		  If Not Success Then
 		    Self.mBusy = False
 		    Return
 		  End If
 		  
-		  Dim Binary As Xojo.Core.MemoryBlock = Details
 		  Try
-		    Self.mTextContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Binary)
+		    Self.mTextContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(RawReply)
 		  Catch Err As RuntimeException
 		    Self.mBusy = False
 		  End Try
@@ -33,9 +34,10 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentUpload(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		Private Sub APICallback_DocumentUpload(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Message
 		  #Pragma Unused Details
+		  #Pragma Unused RawReply
 		  
 		  If Success Then
 		    Self.mDocument.Modified = False
@@ -120,6 +122,7 @@ Protected Class DocumentController
 		  Case Beacon.DocumentURL.TypeCloud
 		    Dim Request As New BeaconAPI.Request("https://" + Self.mDocumentURL.Path, "DELETE", AddressOf APICallback_DocumentDelete)
 		    Request.Sign(App.Identity)
+		    Self.CheckAPISocket()
 		    Self.mAPISocket.Start(Request)
 		  Case Beacon.DocumentURL.TypeLocal
 		    Dim File As New Beacon.FolderItem(Self.mDocumentURL.Path)
@@ -379,7 +382,7 @@ Protected Class DocumentController
 		  Case Beacon.DocumentURL.TypeCloud
 		    Self.CheckAPISocket()
 		    
-		    Dim Body As Text = Xojo.Data.GenerateJSON(Self.mDocument.ToDictionary(App.Identity))
+		    Dim Body As Text = Xojo.Data.GenerateJSON(Self.mDocument.ToDictionary(WithIdentity))
 		    Dim Request As New BeaconAPI.Request("https://" + Self.mDocumentURL.Path, "POST", Body, "application/json", AddressOf APICallback_DocumentUpload)
 		    Request.Sign(WithIdentity)
 		    Self.mAPISocket.Start(Request)

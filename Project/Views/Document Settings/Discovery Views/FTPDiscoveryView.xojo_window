@@ -6,6 +6,7 @@ Begin DiscoveryView FTPDiscoveryView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -43,7 +44,9 @@ Begin DiscoveryView FTPDiscoveryView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
+      Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   600
@@ -74,6 +77,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   312
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -105,6 +109,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   312
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -147,6 +152,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   278
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -225,6 +231,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   244
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -303,6 +310,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   210
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -381,6 +389,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   176
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -459,6 +468,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   142
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -558,6 +568,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   52
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   560
@@ -614,7 +625,9 @@ Begin DiscoveryView FTPDiscoveryView
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
+         TabStop         =   True
          Top             =   189
+         Transparent     =   False
          Value           =   0
          Visible         =   True
          Width           =   560
@@ -656,12 +669,14 @@ Begin DiscoveryView FTPDiscoveryView
       End
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -701,7 +716,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_Discovery(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		Private Sub APICallback_Discovery(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  If Not Success Then
 		    Self.ShowAlert("Unable to connect to server", "Server said '" + Message + "'")
 		    Self.PagePanel1.Value = 0
@@ -740,7 +755,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DownloadConfigFile(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer)
+		Private Sub APICallback_DownloadConfigFile(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  // GameUserSettings.ini will come first
 		  
 		  If Success Then
@@ -918,6 +933,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true
