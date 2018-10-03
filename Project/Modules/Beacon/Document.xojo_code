@@ -3,14 +3,12 @@ Protected Class Document
 Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Add(LootSource As Beacon.LootSource)
-		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
-		  If Drops <> Nil Then
-		    Dim Idx As Integer = Drops.IndexOf(LootSource)
-		    If Idx > -1 Then
-		      Drops(Idx) = LootSource
-		    Else
-		      Drops.Append(LootSource)
-		    End If
+		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops(True)
+		  Dim Idx As Integer = Drops.IndexOf(LootSource)
+		  If Idx > -1 Then
+		    Drops(Idx) = LootSource
+		  Else
+		    Drops.Append(LootSource)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -42,9 +40,17 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigGroup(GroupName As Text) As Beacon.ConfigGroup
+		Function ConfigGroup(GroupName As Text, Create As Boolean = False) As Beacon.ConfigGroup
 		  If Self.mConfigGroups.HasKey(GroupName) Then
 		    Return Self.mConfigGroups.Value(GroupName)
+		  End If
+		  
+		  If Create Then
+		    Dim Group As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName)
+		    If Group <> Nil Then
+		      Self.AddConfigGroup(Group)
+		    End If
+		    Return Group
 		  End If
 		End Function
 	#tag EndMethod
@@ -55,6 +61,7 @@ Implements Beacon.DocumentItem
 		  Self.mMapCompatibility = Beacon.Maps.TheIsland.Mask
 		  Self.mConfigGroups = New Xojo.Core.Dictionary
 		  Self.AddConfigGroup(New BeaconConfigs.Difficulty)
+		  Self.mModified = False
 		End Sub
 	#tag EndMethod
 
@@ -71,9 +78,7 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Difficulty() As BeaconConfigs.Difficulty
-		  If Self.mConfigGroups.HasKey(BeaconConfigs.Difficulty.ConfigName) Then
-		    Return Self.mConfigGroups.Value(BeaconConfigs.Difficulty.ConfigName)
-		  End If
+		  Return BeaconConfigs.Difficulty(Self.ConfigGroup(BeaconConfigs.Difficulty.ConfigName, True))
 		End Function
 	#tag EndMethod
 
@@ -84,9 +89,10 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Drops() As BeaconConfigs.LootDrops
-		  If Self.mConfigGroups.HasKey(BeaconConfigs.LootDrops.ConfigName) Then
-		    Return Self.mConfigGroups.Value(BeaconConfigs.LootDrops.ConfigName)
+		Function Drops(Create As Boolean = False) As BeaconConfigs.LootDrops
+		  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(BeaconConfigs.LootDrops.ConfigName, Create)
+		  If Group <> Nil Then
+		    Return BeaconConfigs.LootDrops(Group)
 		  End If
 		End Function
 	#tag EndMethod
@@ -450,7 +456,7 @@ Implements Beacon.DocumentItem
 		Sub Modified(Assigns Value As Boolean)
 		  Self.mModified = Value
 		  
-		  If Not Value Then
+		  If Value = False Then
 		    For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
 		      Dim Group As Beacon.ConfigGroup = Entry.Value
 		      Group.Modified = False

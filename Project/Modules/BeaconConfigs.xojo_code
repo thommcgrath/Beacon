@@ -25,7 +25,7 @@ Protected Module BeaconConfigs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateInstance(GroupName As Text, GroupData As Xojo.Core.Dictionary) As Beacon.ConfigGroup
+		Protected Function CreateInstance(GroupName As Text, GroupData As Xojo.Core.Dictionary = Nil) As Beacon.ConfigGroup
 		  Dim Info As Xojo.Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
 		  If Info = Nil Or Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then
 		    Return Nil
@@ -34,10 +34,16 @@ Protected Module BeaconConfigs
 		  Dim Constructors() As Xojo.Introspection.ConstructorInfo = Info.Constructors
 		  For Each Signature As Xojo.Introspection.ConstructorInfo In Constructors
 		    Dim Params() As Xojo.Introspection.ParameterInfo = Signature.Parameters
-		    If Params.Ubound = 0 And Params(0).IsByRef = False And Params(0).ParameterType.FullName = "Xojo.Core.Dictionary" Then
-		      Dim Values(0) As Auto
-		      Values(0) = GroupData
-		      Return Signature.Invoke(Values)
+		    If GroupData <> Nil Then
+		      If Params.Ubound = 0 And Params(0).IsByRef = False And Params(0).ParameterType.FullName = "Xojo.Core.Dictionary" Then
+		        Dim Values(0) As Auto
+		        Values(0) = GroupData
+		        Return Signature.Invoke(Values)
+		      End If
+		    Else
+		      If Params.Ubound = -1 Then
+		        Return Signature.Invoke()
+		      End If
 		    End If
 		  Next
 		End Function

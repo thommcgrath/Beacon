@@ -370,6 +370,7 @@ End
 		    
 		    Static NewDocumentNumber As Integer = 1
 		    Document.Title = "Untitled Document " + NewDocumentNumber.ToText
+		    Document.Modified = False
 		    NewDocumentNumber = NewDocumentNumber + 1
 		  End If
 		  
