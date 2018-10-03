@@ -727,6 +727,7 @@ Inherits Application
 		  Dim Notification As New Beacon.UserNotification("Beacon " + Version.ToText + " is now available!")
 		  Notification.ActionURL = "beacon://showupdate?notification_id=" + Notification.Identifier
 		  Notification.UserData = Data
+		  Notification.DoNotResurrect = True
 		  
 		  Beacon.Data.SaveNotification(Notification)
 		End Sub

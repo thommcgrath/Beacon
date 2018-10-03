@@ -30,7 +30,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE custom_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, pattern TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, detail_url TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT);")
+		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
 		  
 		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX engrams_path_idx ON engrams(path);")
@@ -174,7 +174,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
+		  Self.SQLExecute("UPDATE notifications SET deleted = 1 WHERE notification_id = ?1;", Notification.Identifier)
 		  Self.Commit()
 		End Sub
 	#tag EndMethod
@@ -304,10 +304,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Function GetNotifications() As Beacon.UserNotification()
 		  Dim Notifications() As Beacon.UserNotification
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT * FROM notifications ORDER BY moment DESC;")
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT * FROM notifications WHERE deleted = 0 ORDER BY moment DESC;")
 		  While Not Results.EOF
 		    Dim Notification As New Beacon.UserNotification
-		    Notification.Identifier = Results.Field("notification_id").StringValue.ToText
 		    Notification.Message = Results.Field("message").StringValue.ToText
 		    Notification.SecondaryMessage = Results.Field("secondary_message").StringValue.ToText
 		    Notification.ActionURL = Results.Field("action_url").StringValue.ToText
@@ -1011,9 +1010,15 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Self.BeginTransaction()
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT notification_id FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
-		  Dim IsNew As Boolean = Results.RecordCount = 1
-		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.ToText, If(Notification.Read, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Xojo.Data.GenerateJSON(Notification.UserData), "{}"))
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT deleted FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
+		  Dim Deleted As Boolean = Results.RecordCount = 1 And Results.Field("deleted").BooleanValue = True
+		  If Deleted And Notification.DoNotResurrect Then
+		    Self.Rollback()
+		    Return
+		  End If
+		  
+		  Dim IsNew As Boolean = Results.RecordCount = 0 Or Deleted
+		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.ToText, If(Notification.Read, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Xojo.Data.GenerateJSON(Notification.UserData), "{}"))
 		  Self.Commit()
 		  
 		  If IsNew Then

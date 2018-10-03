@@ -273,6 +273,7 @@ Begin ContainerControl LibraryPane
          TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
+         ToolbarCaption  =   ""
          ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
