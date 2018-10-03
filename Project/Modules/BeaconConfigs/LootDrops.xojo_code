@@ -74,7 +74,7 @@ Implements Xojo.Core.Iterable
 		  
 		  Dim Values() As Beacon.ConfigValue
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Dim TextValue As Text = Source.TextValue(DifficultyConfig.QualityMultiplier)
+		    Dim TextValue As Text = Source.TextValue(DifficultyConfig)
 		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", TextValue))
 		  Next
 		  Return Values

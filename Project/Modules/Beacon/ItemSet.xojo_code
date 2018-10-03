@@ -273,7 +273,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Sets() As Beacon.ItemSet, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean, DifficultyValue As Double) As Text
+		Shared Function Join(Sets() As Beacon.ItemSet, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As Text
 		  Dim SumSetWeights As Double
 		  For Each Set As Beacon.ItemSet In Sets
 		    SumSetWeights = SumSetWeights + Set.Weight
@@ -281,7 +281,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  Dim Values() As Text
 		  For Each Set As Beacon.ItemSet In Sets
-		    Values.Append(Set.TextValue(Multipliers, SumSetWeights, UseBlueprints, DifficultyValue))
+		    Values.Append(Set.TextValue(Multipliers, SumSetWeights, UseBlueprints, Difficulty))
 		  Next
 		  
 		  Return Text.Join(Values, Separator)
@@ -450,7 +450,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range, SumSetWeights As Double, UseBlueprints As Boolean, DifficultyValue As Double) As Text
+		Function TextValue(Multipliers As Beacon.Range, SumSetWeights As Double, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As Text
 		  Dim SetWeight As Integer = Xojo.Math.Round((Self.mSetWeight / SumSetWeights * 1000))
 		  Dim MinItems As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMinNumItems, Self.Count), 0)
 		  Dim MaxItems As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMaxNumItems, Self.Count), 0)
@@ -462,7 +462,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Values.Append("NumItemsPower=" + Self.mNumItemsPower.PrettyText)
 		  Values.Append("SetWeight=" + SetWeight.ToText)
 		  Values.Append("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "true", "false"))
-		  Values.Append("ItemEntries=(" + Beacon.SetEntry.Join(Self.mEntries, ",", Multipliers, UseBlueprints, DifficultyValue) + ")")
+		  Values.Append("ItemEntries=(" + Beacon.SetEntry.Join(Self.mEntries, ",", Multipliers, UseBlueprints, Difficulty) + ")")
 		  Return "(" + Text.Join(Values, ",") + ")"
 		End Function
 	#tag EndMethod

@@ -389,14 +389,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Join(Entries() As Beacon.SetEntry, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean, DifficultyValue As Double) As Text
+		Shared Function Join(Entries() As Beacon.SetEntry, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As Text
 		  Dim Values() As Text
 		  Dim SumEntryWeights As Double
 		  For Each Entry As Beacon.SetEntry In Entries
 		    SumEntryWeights = SumEntryWeights + Entry.Weight
 		  Next
 		  For Each Entry As Beacon.SetEntry In Entries
-		    Values.Append(Entry.TextValue(Multipliers, SumEntryWeights, UseBlueprints, DifficultyValue))
+		    Values.Append(Entry.TextValue(Multipliers, SumEntryWeights, UseBlueprints, Difficulty))
 		  Next
 		  Return Text.Join(Values, Separator)
 		End Function
@@ -547,7 +547,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range, SumEntryWeights As Double, UseBlueprints As Boolean, DifficultyValue As Double) As Text
+		Function TextValue(Multipliers As Beacon.Range, SumEntryWeights As Double, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As Text
 		  Dim Paths(), Weights(), Classes() As Text
 		  Redim Paths(UBound(Self.mOptions))
 		  Redim Weights(UBound(Self.mOptions))
@@ -563,8 +563,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Weights(I) = RelativeWeight.ToText
 		  Next
 		  
-		  Dim MinQuality As Double = Self.mMinQuality.Value(Multipliers.Min, DifficultyValue)
-		  Dim MaxQuality As Double = Self.mMaxQuality.Value(Multipliers.Max, DifficultyValue)
+		  Dim MinQuality As Double = Self.mMinQuality.Value(Multipliers.Min, Difficulty)
+		  Dim MaxQuality As Double = Self.mMaxQuality.Value(Multipliers.Max, Difficulty)
 		  Dim Chance As Double = if(Self.CanBeBlueprint, Self.mChanceToBeBlueprint, 0)
 		  Dim EntryWeight As Integer = Xojo.Math.Round((Self.mWeight / SumEntryWeights) * 1000)
 		  

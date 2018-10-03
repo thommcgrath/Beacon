@@ -44,7 +44,6 @@ Begin Window DeployDialog
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -780,7 +779,6 @@ Begin Window DeployDialog
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
-         TabStop         =   True
          Top             =   123
          Transparent     =   False
          Value           =   0
@@ -804,7 +802,6 @@ Begin Window DeployDialog
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   5
-         TabStop         =   True
          Top             =   123
          Transparent     =   False
          Value           =   0
@@ -1056,14 +1053,12 @@ Begin Window DeployDialog
       End
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Timer CopyPasteWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -1277,7 +1272,7 @@ End
 		  Dim LootSources() As Beacon.LootSource = Self.mDocument.LootSources
 		  For Each LootSource As Beacon.LootSource In LootSources
 		    If Self.mDocument.SupportsLootSource(LootSource) Then
-		      LootLines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Self.mDocument.DifficultyValue))
+		      LootLines.Append("ConfigOverrideSupplyCrateItems=" + LootSource.TextValue(Self.mDocument.Difficulty))
 		    End If
 		  Next
 		  Sections.Value("/script/shootergame.shootergamemode") = LootLines

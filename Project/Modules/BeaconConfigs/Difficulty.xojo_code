@@ -55,15 +55,25 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 
-	#tag Note, Name = Formula
+	#tag Note, Name = Source
+		https://forums.unrealengine.com/development-discussion/modding/ark-survival-evolved/93237-tutorial-understanding-arbitrary-item-quality
 		
-		MaxDinoLevel = Max(MaxDinoLevel, 15)
-		DinoLevelSteps = Max(DinoLevelSteps, 1)
-		DifficultyValue = MaxDinoLevel / 30 
-		OverrideOfficialDifficulty = DinoLevelSteps
-		DifficultyOffset = Max(((MaxDinoLevel / 30) - 0.5) / (DinoLevelSteps - 0.5), 0.01)
 	#tag EndNote
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Dim DifficultyOffset As Double = Min(Self.DifficultyOffset, 1.0)
+			  If DifficultyOffset <= 0 Then
+			    DifficultyOffset = 1
+			  End If
+			  
+			  Return 0.75 + (DifficultyOffset * 1.75)
+			End Get
+		#tag EndGetter
+		BaseArbitraryQuality As Double
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -170,6 +180,21 @@ Inherits Beacon.ConfigGroup
 			Name="MaxDinoLevel"
 			Group="Behavior"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DifficultyOffset"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DinoLevelIncrements"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="QualityMultiplier"
+			Group="Behavior"
+			Type="Double"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

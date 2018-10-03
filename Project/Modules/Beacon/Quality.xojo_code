@@ -36,10 +36,9 @@ Protected Class Quality
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Value(CrateQualityMultiplier As Double, DifficultyValue As Double) As Double
+		Function Value(CrateQualityMultiplier As Double, Difficulty As BeaconConfigs.Difficulty) As Double
 		  Dim CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
-		  Dim Multiplier As Double = CrateArbitraryQuality * DifficultyValue
-		  Return Self.mBaseValue / Multiplier
+		  Return Self.mBaseValue / (Difficulty.BaseArbitraryQuality * CrateArbitraryQuality)
 		End Function
 	#tag EndMethod
 
