@@ -1,5 +1,5 @@
 #tag Window
-Begin ContainerControl LibraryPane
+Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -319,6 +319,13 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  NotificationKit.Ignore(Self, Self.Notification_CloseDrawer, Self.Notification_ShowPane)
+		  RaiseEvent Close
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub EnableMenuItems()
 		  Self.CurrentView.EnableMenuItems()
 		End Sub
@@ -334,6 +341,7 @@ End
 		Sub Open()
 		  Self.CurrentView.SwitchedTo()
 		  RaiseEvent Open
+		  NotificationKit.Watch(Self, Self.Notification_CloseDrawer, Self.Notification_ShowPane)
 		End Sub
 	#tag EndEvent
 
@@ -401,6 +409,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case Self.Notification_CloseDrawer
+		    Self.Dismiss
+		  Case Self.Notification_ShowPane
+		    Dim Pane As Integer = Notification.UserData
+		    Self.ShowPage(Pane)
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function PresetsPane() As LibraryPanePresets
 		  Return Self.PresetsView
 		End Function
@@ -414,19 +436,34 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowPage(Index As Integer, UserData As Auto = Nil)
-		  If Self.Views.Value = Index Or Index = -1 Then
+		  If Self.ViewShelf.SelectedIndex <> Index Then
+		    Self.ViewShelf.SelectedIndex = Index
+		  End If
+		  
+		  If Index = -1 Then
+		    If Self.mOpened Then
+		      RaiseEvent ChangePosition(Self.CollapseDistance * -1)
+		      Self.mOpened = False
+		    End If
 		    Return
 		  End If
 		  
-		  Dim OldPage As LibrarySubview = Self.CurrentView
-		  If OldPage <> Nil Then
-		    OldPage.SwitchedFrom()
+		  If Self.Views.Value <> Index Then
+		    Dim OldPage As LibrarySubview = Self.CurrentView
+		    If OldPage <> Nil Then
+		      OldPage.SwitchedFrom()
+		    End If
+		    
+		    Dim NewPage As LibrarySubview = Self.ViewAtIndex(Index)
+		    If NewPage <> Nil Then
+		      Self.Views.Value = Index
+		      NewPage.SwitchedTo(UserData)
+		    End If
 		  End If
 		  
-		  Dim NewPage As LibrarySubview = Self.ViewAtIndex(Index)
-		  If NewPage <> Nil Then  
-		    Self.Views.Value = Index
-		    NewPage.SwitchedTo(UserData)
+		  If Not Self.mOpened Then
+		    RaiseEvent ChangePosition(Self.CollapseDistance)
+		    Self.mOpened = True
 		  End If
 		End Sub
 	#tag EndMethod
@@ -464,6 +501,10 @@ End
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event Close()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
 
@@ -498,6 +539,12 @@ End
 
 
 	#tag Constant, Name = CollapseDistance, Type = Double, Dynamic = False, Default = \"259", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_CloseDrawer, Type = Text, Dynamic = False, Default = \"Close Library Drawer", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_ShowPane, Type = Text, Dynamic = False, Default = \"Show Library Pane", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PaneBlank, Type = Double, Dynamic = False, Default = \"2", Scope = Public
@@ -681,8 +728,7 @@ End
 	#tag Event
 		Sub Change()
 		  If Me.SelectedItem = Nil Then
-		    RaiseEvent ChangePosition(Self.CollapseDistance * -1)
-		    Self.mOpened = False
+		    Self.ShowPage(-1)
 		    Return
 		  End If
 		  
@@ -701,12 +747,9 @@ End
 		    Self.ShowPage(Self.PaneTools)
 		  Case "search"
 		    Self.ShowPage(Self.PaneSearch)
+		  Else
+		    Self.ShowPage(-1)
 		  End Select
-		  
-		  If Self.mOpened = False Then
-		    RaiseEvent ChangePosition(Self.CollapseDistance)
-		    Self.mOpened = True
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

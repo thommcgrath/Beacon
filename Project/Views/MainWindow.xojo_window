@@ -298,28 +298,28 @@ End
 
 	#tag MenuHandler
 		Function ViewDocuments() As Boolean Handles ViewDocuments.Action
-			Self.ShowView(Self.LibraryPane1.DocumentsPane)
+			Self.LibraryPane1.ShowPage(LibraryPane.PaneDocuments)
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewEngrams() As Boolean Handles ViewEngrams.Action
-			Self.ShowView(Self.LibraryPane1.EngramsPane)
+			Self.LibraryPane1.ShowPage(LibraryPane.PaneEngrams)
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewPresets() As Boolean Handles ViewPresets.Action
-			Self.ShowView(Self.LibraryPane1.PresetsPane)
+			Self.LibraryPane1.ShowPage(LibraryPane.PanePresets)
 			Return True
 		End Function
 	#tag EndMenuHandler
 
 	#tag MenuHandler
 		Function ViewSearch() As Boolean Handles ViewSearch.Action
-			Self.ShowView(Self.LibraryPane1.SearchPane)
+			Self.LibraryPane1.ShowPage(LibraryPane.PaneSearch)
 			Return True
 			
 		End Function
@@ -327,7 +327,7 @@ End
 
 	#tag MenuHandler
 		Function ViewTools() As Boolean Handles ViewTools.Action
-			Self.ShowView(Self.LibraryPane1.ToolsPane)
+			Self.LibraryPane1.ShowPage(LibraryPane.PaneTools)
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -480,6 +480,12 @@ End
 		  End If
 		  Self.TabBar1.Invalidate
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Tools() As LibraryPaneTools
+		  Return Self.LibraryPane1.ToolsPane
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

@@ -253,6 +253,7 @@ Begin BeaconSubview DashboardPane
       Top             =   320
       Transparent     =   True
       Underline       =   True
+      URL             =   ""
       Visible         =   True
       Width           =   350
    End

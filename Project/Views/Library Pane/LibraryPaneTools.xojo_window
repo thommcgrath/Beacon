@@ -186,6 +186,46 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ShowAPIBuilder()
+		  Dim View As BeaconSubview = Self.View("APIBuilderView")
+		  If View = Nil Then
+		    View = New APIBuilderView
+		  End If
+		  Self.ShowView(View)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowAPIGuide()
+		  Dim View As BeaconSubview = Self.View("APIGuideView")
+		  If View = Nil Then
+		    View = New APIGuideView
+		  End If
+		  Self.ShowView(View)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowIdentity()
+		  Dim View As BeaconSubview = Self.View("IdentityView")
+		  If View = Nil Then
+		    View = New IdentityView
+		  End If
+		  Self.ShowView(View)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowMods()
+		  Dim View As BeaconSubview = Self.View("ModsView")
+		  If View = Nil Then
+		    View = New ModsView
+		  End If
+		  Self.ShowView(View)
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event ShouldResize(ByRef NewSize As Integer)
@@ -204,29 +244,13 @@ End
 		  Dim Item As String = Me.Cell(Me.ListIndex, 0)
 		  Select Case Item
 		  Case "API Guide"
-		    Dim View As BeaconSubview = Self.View("APIGuideView")
-		    If View = Nil Then
-		      View = New APIGuideView
-		    End If
-		    Self.ShowView(View)
+		    Self.ShowAPIGuide()
 		  Case "Identity"
-		    Dim View As BeaconSubview = Self.View("IdentityView")
-		    If View = Nil Then
-		      View = New IdentityView
-		    End If
-		    Self.ShowView(View)
+		    Self.ShowIdentity()
 		  Case "API Builder"
-		    Dim View As BeaconSubview = Self.View("APIBuilderView")
-		    If View = Nil Then
-		      View = New APIBuilderView
-		    End If
-		    Self.ShowView(View)
+		    Self.ShowAPIBuilder()
 		  Case "Mods"
-		    Dim View As BeaconSubview = Self.View("ModsView")
-		    If View = Nil Then
-		      View = New ModsView
-		    End If
-		    Self.ShowView(View)
+		    Self.ShowMods()
 		  End Select
 		End Sub
 	#tag EndEvent

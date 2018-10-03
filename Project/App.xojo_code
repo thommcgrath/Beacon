@@ -499,19 +499,19 @@ Inherits Application
 		    
 		    Select Case Instructions
 		    Case "showdocuments"
-		      LibraryWindow.SharedWindow.ShowPage(0)
+		      NotificationKit.Post(LibraryPane.Notification_ShowPane, LibraryPane.PaneDocuments)
 		    Case "showpresets"
-		      LibraryWindow.SharedWindow.ShowPage(1)
+		      NotificationKit.Post(LibraryPane.Notification_ShowPane, LibraryPane.PanePresets)
 		    Case "showengrams"
-		      LibraryWindow.SharedWindow.ShowPage(2)
+		      NotificationKit.Post(LibraryPane.Notification_ShowPane, LibraryPane.PaneEngrams)
 		    Case "showmods"
-		      DeveloperWindow.SharedWindow.ShowPage(0)
+		      MainWindow.Tools.ShowMods()
 		    Case "showidentity"
-		      DeveloperWindow.SharedWindow.ShowPage(1)
+		      MainWindow.Tools.ShowIdentity()
 		    Case "showguide"
-		      DeveloperWindow.SharedWindow.ShowPage(2)
+		      MainWindow.Tools.ShowAPIGuide()
 		    Case "showapibuilder"
-		      DeveloperWindow.SharedWindow.ShowPage(3)
+		      MainWindow.Tools.ShowAPIBuilder()
 		    Case "shownewsletterprompt"
 		      SubscribeDialog.Present()
 		    Case "checkforupdate"
