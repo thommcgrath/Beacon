@@ -30,6 +30,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE custom_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, pattern TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, detail_url TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT);")
 		  
 		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX engrams_path_idx ON engrams(path);")
@@ -167,6 +168,18 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub DeleteNotification(Notification As Beacon.UserNotification)
+		  If Notification = Nil Then
+		    Return
+		  End If
+		  
+		  Self.BeginTransaction()
+		  Self.SQLExecute("DELETE FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
+		  Self.Commit()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Destructor()
 		  NotificationKit.Ignore(Self, "Beacon.Document.TitleChanged")
 		End Sub
@@ -285,6 +298,26 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Catch Err As UnsupportedOperationException
 		    Return Nil
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetNotifications() As Beacon.UserNotification()
+		  Dim Notifications() As Beacon.UserNotification
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT * FROM notifications ORDER BY moment DESC;")
+		  While Not Results.EOF
+		    Dim Notification As New Beacon.UserNotification
+		    Notification.Identifier = Results.Field("notification_id").StringValue.ToText
+		    Notification.Message = Results.Field("message").StringValue.ToText
+		    Notification.SecondaryMessage = Results.Field("secondary_message").StringValue.ToText
+		    Notification.ActionURL = Results.Field("action_url").StringValue.ToText
+		    Notification.Read = Results.Field("read").BooleanValue
+		    Notification.Timestamp = Self.TextToDate(Results.Field("moment").StringValue.ToText)
+		    Notifications.Append(Notification)
+		    
+		    Results.MoveNext
+		  Wend
+		  Return Notifications
 		End Function
 	#tag EndMethod
 
@@ -971,6 +1004,24 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub SaveNotification(Notification As Beacon.UserNotification)
+		  If Notification = Nil Then
+		    Return
+		  End If
+		  
+		  Self.BeginTransaction()
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT notification_id FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
+		  Dim IsNew As Boolean = Results.RecordCount = 1
+		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification, message, secondary_message, moment, read, action_url) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.ToText, If(Notification.Read, 1, 0), Notification.ActionURL)
+		  Self.Commit()
+		  
+		  If IsNew Then
+		    NotificationKit.Post(Self.Notification_NewAppNotification, Notification)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SavePreset(Preset As Beacon.Preset)
 		  Self.SavePreset(Preset, True)
 		End Sub
@@ -1279,6 +1330,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 
 	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT path\x2C label\x2C availability\x2C can_blueprint\x2C mods.console_safe\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_NewAppNotification, Type = Text, Dynamic = False, Default = \"New App Notification", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"6", Scope = Private
