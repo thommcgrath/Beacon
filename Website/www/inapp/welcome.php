@@ -6,6 +6,7 @@
 		<meta name="viewport" content="width=400">
 		<link href="/assets/css/main.css" rel="stylesheet" media="all" type="text/css">
 		<link href="/inapp/welcome.css" rel="stylesheet" media="all" type="text/css">
+		<?php if (isset($_GET['dark'])) { ?><link href="/inapp/welcome-dark.css" rel="stylesheet" media="all" type="text/css"><?php } ?>
 		<script type="text/javascript">var login_only = <?php echo (empty($_GET['login_only']) == false && boolval($_GET['login_only']) == true) ? 'true' : 'false'; ?>;</script>
 		<script src="/inapp/welcome.js"></script>
 	</head>
@@ -58,7 +59,7 @@
 			<p><button id="password_cancel_button">Cancel</button></p>
 		</div>
 		<div id="page_loading">
-			<p><img id="loading_spinner" src="/assets/images/spinner.svg" width="64"></p>
+			<p><img id="loading_spinner" src="/assets/images/spinner<?php if (isset($_GET['dark'])) { echo '-white'; } ?>.svg" width="64"></p>
 		</div>
 		<div id="overlay"></div>
 		<div id="dialog">
