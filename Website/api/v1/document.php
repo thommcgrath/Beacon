@@ -113,10 +113,6 @@ case 'GET':
 case 'PUT':
 case 'POST':
 	BeaconAPI::Authorize();
-	if ($document_id !== null) {
-		BeaconAPI::ReplyError('Do not specify a class when saving documents.');
-	}
-	
 	if (BeaconAPI::ContentType() !== 'application/json') {
 		BeaconAPI::ReplyError('Send a JSON payload');
 	}
@@ -125,17 +121,25 @@ case 'POST':
 	if (BeaconCommon::IsAssoc($payload)) {
 		// single
 		$items = array($payload);
+		$single_mode = true;
 	} else {
 		// multiple
+		if ($document_id !== null) {
+			BeaconAPI::ReplyError('Do not specify a class when saving multiple documents.');
+		}
 		$items = $payload;
+		$single_mode = false;
 	}
 	
 	$documents = array();
 	$database->BeginTransaction();
 	foreach ($items as $document) {
-		if (!BeaconCommon::HasAllKeys($document, 'Description', 'Identifier', 'Title', 'LootSources')) {
+		if (!BeaconCommon::HasAllKeys($document, 'Version', 'Identifier')) {
 			$database->Rollback();
 			BeaconAPI::ReplyError('Not all keys are present.', $document);
+		}
+		if ($single_mode && is_null(BeaconAPI::ObjectID()) == false && strtolower($document['Identifier']) !== strtolower(BeaconAPI::ObjectID())) {
+			BeaconAPI::ReplyError('Document UUID of ' . strtolower($document['Identifier']) . ' in content does not match the resource UUID of ' . strtolower(BeaconAPI::ObjectID()) . '.');
 		}
 		
 		$document_id = $document['Identifier'];
@@ -158,7 +162,7 @@ case 'POST':
 		$results = $database->Query('SELECT published FROM documents WHERE document_id = $1;', $document_id);
 		$current_status = $results->Field('published');
 		$new_status = $current_status;
-		$wants_publish = boolval($document['Public']) == true;
+		$wants_publish = BeaconCommon::HasAllKeys($document, 'Description', 'Title', 'Public') && boolval($document['Public']) == true;
 		if ($wants_publish) {
 			if ($current_status == BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED_PRIVATE) {
 				$new_status = BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED;
