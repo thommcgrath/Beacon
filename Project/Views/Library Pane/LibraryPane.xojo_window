@@ -39,14 +39,14 @@ Begin ContainerControl LibraryPane
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   7
+      PanelCount      =   8
       Panels          =   ""
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   5
+      Value           =   1
       Visible         =   True
       Width           =   258
       Begin LibraryPaneDocuments DocumentsView
@@ -72,7 +72,7 @@ Begin ContainerControl LibraryPane
          MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   3
+         TabPanelIndex   =   4
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
@@ -106,7 +106,7 @@ Begin ContainerControl LibraryPane
          MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   4
+         TabPanelIndex   =   5
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
@@ -139,7 +139,7 @@ Begin ContainerControl LibraryPane
          MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   5
+         TabPanelIndex   =   6
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
@@ -172,7 +172,7 @@ Begin ContainerControl LibraryPane
          MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   6
+         TabPanelIndex   =   7
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
@@ -205,7 +205,7 @@ Begin ContainerControl LibraryPane
          MinimumWidth    =   400
          Scope           =   2
          TabIndex        =   0
-         TabPanelIndex   =   7
+         TabPanelIndex   =   8
          TabStop         =   True
          ToolbarCaption  =   ""
          ToolbarIcon     =   0
@@ -241,6 +241,38 @@ Begin ContainerControl LibraryPane
          TabPanelIndex   =   1
          TabStop         =   True
          ToolbarCaption  =   ""
+         ToolbarIcon     =   0
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   258
+      End
+      Begin LibraryPaneNotifications NotificationsView
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   468
+         HelpTag         =   ""
+         InitialParent   =   "Views"
+         Left            =   0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
          ToolbarIcon     =   0
          Top             =   0
          Transparent     =   True
@@ -315,6 +347,13 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mMenuButton = New ShelfItem(IconMenu, "Menu", "menu")
+		  Self.mNotificationsButton = New ShelfItem(IconNotifications, "Notifications", "notifications")
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CurrentPage() As Integer
@@ -402,6 +441,8 @@ End
 		  Select Case Index
 		  Case Self.PaneMenu
 		    Return Self.MenuView
+		  Case Self.PaneNotifications
+		    Return Self.NotificationsView
 		  Case Self.PaneDocuments
 		    Return Self.DocumentsView
 		  Case Self.PanePresets
@@ -439,7 +480,15 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mCachedUnreadCount As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mMenuButton As ShelfItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNotificationsButton As ShelfItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -450,25 +499,28 @@ End
 	#tag Constant, Name = CollapseDistance, Type = Double, Dynamic = False, Default = \"259", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = PaneBlank, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag Constant, Name = PaneBlank, Type = Double, Dynamic = False, Default = \"2", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = PaneDocuments, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag Constant, Name = PaneDocuments, Type = Double, Dynamic = False, Default = \"3", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = PaneEngrams, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag Constant, Name = PaneEngrams, Type = Double, Dynamic = False, Default = \"5", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = PaneMenu, Type = Double, Dynamic = False, Default = \"0", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = PanePresets, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag Constant, Name = PaneNotifications, Type = Double, Dynamic = False, Default = \"1", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = PaneSearch, Type = Double, Dynamic = False, Default = \"6", Scope = Public
+	#tag Constant, Name = PanePresets, Type = Double, Dynamic = False, Default = \"4", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = PaneTools, Type = Double, Dynamic = False, Default = \"5", Scope = Public
+	#tag Constant, Name = PaneSearch, Type = Double, Dynamic = False, Default = \"7", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = PaneTools, Type = Double, Dynamic = False, Default = \"6", Scope = Public
 	#tag EndConstant
 
 
@@ -596,12 +648,27 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events NotificationsView
+	#tag Event
+		Sub ShouldCloseLibrary()
+		  Self.Dismiss()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub UnreadCountChanged(UnreadCount As Integer)
+		  If UnreadCount > 0 Then
+		    Self.mNotificationsButton.NotificationColor = ShelfItem.NotificationColors.Red
+		  Else
+		    Self.mNotificationsButton.NotificationColor = ShelfItem.NotificationColors.None
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ViewShelf
 	#tag Event
 		Sub Open()
-		  Self.mMenuButton = New ShelfItem(IconMenu, "Menu", "menu")
-		  
 		  Me.Add(Self.mMenuButton)
+		  Me.Add(Self.mNotificationsButton)
 		  Me.Add(ShelfItem.NewSpacer)
 		  Me.Add(IconDocuments, "Documents", "documents")
 		  Me.Add(IconPresets, "Presets", "presets")
@@ -621,6 +688,8 @@ End
 		  Select Case Me.SelectedItem.Tag
 		  Case "menu"
 		    Self.ShowPage(Self.PaneMenu)
+		  Case "notifications"
+		    Self.ShowPage(Self.PaneNotifications)
 		  Case "documents"
 		    Self.ShowPage(Self.PaneDocuments)
 		  Case "presets"

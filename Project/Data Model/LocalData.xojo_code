@@ -313,6 +313,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Notification.ActionURL = Results.Field("action_url").StringValue.ToText
 		    Notification.Read = Results.Field("read").BooleanValue
 		    Notification.Timestamp = Self.TextToDate(Results.Field("moment").StringValue.ToText)
+		    Notification.UserData = Xojo.Data.ParseJSON(Results.Field("user_data").StringValue.ToText)
 		    Notifications.Append(Notification)
 		    
 		    Results.MoveNext
@@ -1012,7 +1013,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.BeginTransaction()
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT notification_id FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
 		  Dim IsNew As Boolean = Results.RecordCount = 1
-		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification, message, secondary_message, moment, read, action_url) VALUES (?1, ?2, ?3, ?4, ?5, ?6);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.ToText, If(Notification.Read, 1, 0), Notification.ActionURL)
+		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.ToText, If(Notification.Read, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Xojo.Data.GenerateJSON(Notification.UserData), "{}"))
 		  Self.Commit()
 		  
 		  If IsNew Then

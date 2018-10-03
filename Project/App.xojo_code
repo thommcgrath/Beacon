@@ -115,15 +115,6 @@ Inherits Application
 		  
 		  BeaconUI.RegisterSheetPositionHandler()
 		  
-		  #if DebugBuild
-		    Dim DifficultyValue, DifficultyOffset, OverrideOfficialDifficulty As Double
-		    Beacon.ComputeDifficultySettings(300, 10, DifficultyValue, DifficultyOffset, OverrideOfficialDifficulty)
-		    Beacon.ComputeDifficultySettings(120, 4, DifficultyValue, DifficultyOffset, OverrideOfficialDifficulty)
-		    Beacon.ComputeDifficultySettings(100, 1, DifficultyValue, DifficultyOffset, OverrideOfficialDifficulty)
-		    Beacon.ComputeDifficultySettings(350, 10, DifficultyValue, DifficultyOffset, OverrideOfficialDifficulty)
-		    Beacon.ComputeDifficultySettings(15, 4, DifficultyValue, DifficultyOffset, OverrideOfficialDifficulty)
-		  #endif
-		  
 		  Self.AutoQuit = True
 		End Sub
 	#tag EndEvent
@@ -727,7 +718,17 @@ Inherits Application
 		Private Sub mUpdateChecker_UpdateAvailable(Sender As UpdateChecker, Version As String, Notes As String, URL As String, Signature As String)
 		  #Pragma Unused Sender
 		  
-		  UpdateWindow.Present(Version, Notes, URL, Signature)
+		  Dim Data As New Xojo.Core.Dictionary
+		  Data.Value("Version") = Version.ToText
+		  Data.Value("Notes") = Notes.ToText
+		  Data.Value("Download") = URL.ToText
+		  Data.Value("Signature") = Signature.ToText
+		  
+		  Dim Notification As New Beacon.UserNotification("Beacon " + Version.ToText + " is now available!")
+		  Notification.ActionURL = "beacon://showupdate?notification_id=" + Notification.Identifier
+		  Notification.UserData = Data
+		  
+		  Beacon.Data.SaveNotification(Notification)
 		End Sub
 	#tag EndMethod
 
