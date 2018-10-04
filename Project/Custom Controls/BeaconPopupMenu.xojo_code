@@ -75,14 +75,12 @@ Inherits ControlCanvas
 		  Dim DropDownIcon As Picture = BeaconUI.IconWithColor(IconDropdown, DropdownColor)
 		  G.DrawPicture(DropDownIcon, (ControlLeft + ControlWidth) - (DropDownIcon.Width + 4), ControlTop + ((ControlHeight - DropDownIcon.Height) / 2))
 		  
-		  If Self.mListIndex > -1 And Self.mListIndex <= Self.mItems.Ubound Then
-		    Dim CaptionSpace As Double = ControlWidth - (DropDownIcon.Width + 12)
-		    Dim CaptionLeft As Double = ControlLeft + 4
-		    Dim CaptionBottom As Double = ControlTop + (ControlHeight / 2) + (G.CapHeight / 2)
-		    
-		    G.ForeColor = CaptionColor
-		    G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, CaptionSpace, True)
-		  End If
+		  Dim CaptionSpace As Double = ControlWidth - (DropDownIcon.Width + 12)
+		  Dim CaptionLeft As Double = ControlLeft + 4
+		  Dim CaptionBottom As Double = ControlTop + (ControlHeight / 2) + (G.CapHeight / 2)
+		  
+		  G.ForeColor = CaptionColor
+		  G.DrawString(Self.Caption, CaptionLeft, CaptionBottom, CaptionSpace, True)
 		  
 		  If Self.mPressed Then
 		    G.ForeColor = &c00000080
@@ -194,14 +192,18 @@ Inherits ControlCanvas
 			Get
 			  If Self.mListIndex > -1 And Self.mListIndex <= Self.mItems.Ubound Then
 			    Return Self.mItems(Self.mListIndex)
+			  Else
+			    Return Self.mNoSelectionCaption
 			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mListIndex > -1 And Self.mListIndex <= Self.mItems.Ubound Then
-			    Self.Row(Self.mListIndex) = Value
+			  Dim Idx As Integer = Self.IndexOf(Value)
+			  If Idx = -1 Then
+			    Self.mNoSelectionCaption = Value
 			  End If
+			  Self.ListIndex = Idx
 			End Set
 		#tag EndSetter
 		Caption As String
@@ -254,6 +256,10 @@ Inherits ControlCanvas
 
 	#tag Property, Flags = &h21
 		Private mListIndex As Integer = -1
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNoSelectionCaption As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -484,6 +490,7 @@ Inherits ControlCanvas
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Caption"
+			Visible=true
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"

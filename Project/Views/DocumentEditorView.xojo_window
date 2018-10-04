@@ -114,7 +114,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   ""
+      Caption         =   "Config Types"
       Count           =   0
       DoubleBuffer    =   False
       Enabled         =   True
