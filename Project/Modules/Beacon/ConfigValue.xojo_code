@@ -42,6 +42,20 @@ Protected Class ConfigValue
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Dim Idx As Integer = Self.mKey.IndexOf("[")
+			  If Idx = -1 Then
+			    Return Self.mKey
+			  Else
+			    Return Self.mKey.Left(Idx)
+			  End If
+			End Get
+		#tag EndGetter
+		SimplifiedKey As Text
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mValue
 			End Get
 		#tag EndGetter
@@ -90,6 +104,11 @@ Protected Class ConfigValue
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Value"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Header"
 			Group="Behavior"
 			Type="Text"
 		#tag EndViewProperty

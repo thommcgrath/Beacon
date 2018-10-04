@@ -589,6 +589,103 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function RewriteIniContent(InitialContent As Text, NewConfigs As Xojo.Core.Dictionary) As Text
+		  // First, normalize line endings
+		  Dim CR As Text = Text.FromUnicodeCodepoint(13)
+		  Dim LF As Text = Text.FromUnicodeCodepoint(10)
+		  Dim EOL As Text = CR + LF
+		  InitialContent = InitialContent.ReplaceAll(CR + LF, CR)
+		  InitialContent = InitialContent.ReplaceAll(LF, CR)
+		  InitialContent = InitialContent.ReplaceAll(CR, EOL)
+		  
+		  // Organize are existing content
+		  Dim Lines() As Text = InitialContent.Split(EOL)
+		  Dim Configs As New Xojo.Core.Dictionary
+		  Dim LastGroupHeader As Text
+		  For I As Integer = 0 To Lines.Ubound
+		    Dim Line As Text = Lines(I).Trim
+		    If Line.Length = 0 Then
+		      Continue
+		    End If
+		    
+		    If Line.BeginsWith("[") And Line.EndsWith("]") Then
+		      // This is a group header
+		      LastGroupHeader = Line.Mid(1, Line.Length - 2)
+		      Continue
+		    End If
+		    
+		    Dim SectionDict As Xojo.Core.Dictionary
+		    If Configs.HasKey(LastGroupHeader) Then
+		      SectionDict = Configs.Value(LastGroupHeader)
+		    Else
+		      SectionDict = New Xojo.Core.Dictionary
+		    End If
+		    
+		    Dim KeyPos As Integer = Line.IndexOf("=")
+		    If KeyPos = -1 Then
+		      Continue
+		    End If
+		    
+		    Dim Key As Text = Line.Left(KeyPos)
+		    Dim ModifierPos As Integer = Key.IndexOf("[")
+		    If ModifierPos > -1 Then
+		      Key = Key.Left(ModifierPos)
+		    End If
+		    
+		    Dim ConfigLines() As Text
+		    If SectionDict.HasKey(Key) Then
+		      ConfigLines = SectionDict.Value(Key)
+		    End If
+		    ConfigLines.Append(Line)
+		    SectionDict.Value(Key) = ConfigLines
+		    Configs.Value(LastGroupHeader) = SectionDict
+		  Next
+		  
+		  // Replace old content with new content. Add sections if necessary. Preserve unrelated content.
+		  For Each Entry As Xojo.Core.DictionaryEntry In NewConfigs
+		    Dim SectionHeader As Text = Entry.Key
+		    Dim NewSection As Xojo.Core.Dictionary = Entry.Value
+		    
+		    Dim Section As Xojo.Core.Dictionary
+		    If Configs.HasKey(SectionHeader) Then
+		      Section = Configs.Value(SectionHeader)
+		    Else
+		      Configs.Value(SectionHeader) = NewSection
+		      Continue
+		    End If
+		    
+		    For Each ConfigPair As Xojo.Core.DictionaryEntry In NewSection
+		      Dim Key As Text = ConfigPair.Key
+		      Dim NewLines() As Text = ConfigPair.Value
+		      Section.Value(Key) = NewLines
+		    Next
+		    
+		    Configs.Value(SectionHeader) = Section
+		  Next
+		  
+		  // Build an ini file
+		  Dim NewLines() As Text
+		  For Each Entry As Xojo.Core.DictionaryEntry In Configs
+		    Dim Header As Text = Entry.Key
+		    If NewLines.Ubound > -1 Then
+		      NewLines.Append("")
+		    End If
+		    NewLines.Append("[" + Header + "]")
+		    
+		    Dim Section As Xojo.Core.Dictionary = Entry.Value
+		    For Each SectionEntry As Xojo.Core.DictionaryEntry In Section
+		      Dim Values() As Text = SectionEntry.Value
+		      For Each Line As Text In Values
+		        NewLines.Append(Line)
+		      Next
+		    Next
+		  Next
+		  
+		  Return Text.Join(NewLines, EOL)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ShiftLeft(Value As UInt64, NumBits As UInt64) As UInt64
 		  // It is insane that I need to implement this method manually.
 		  
@@ -683,6 +780,12 @@ Protected Module Beacon
 		Private mDataSource As Beacon.DataSource
 	#tag EndProperty
 
+
+	#tag Constant, Name = RewriteModeGameIni, Type = Text, Dynamic = False, Default = \"Game.ini", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = RewriteModeGameUserSettingsIni, Type = Text, Dynamic = False, Default = \"GameUserSettings.ini", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = SessionSettingsHeader, Type = Text, Dynamic = False, Default = \"SessionSettings", Scope = Protected
 	#tag EndConstant

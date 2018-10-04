@@ -114,20 +114,20 @@ Begin Window DocumentExportWindow
       Visible         =   True
       Width           =   638
    End
-   Begin PushButton ActionButton
+   Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
       Cancel          =   False
       Caption         =   "Finished"
-      Default         =   True
+      Default         =   False
       Enabled         =   True
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   800
+      Left            =   784
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   False
@@ -144,7 +144,7 @@ Begin Window DocumentExportWindow
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   80
+      Width           =   96
    End
    Begin TextArea ContentArea
       AcceptTabs      =   False
@@ -194,10 +194,193 @@ Begin Window DocumentExportWindow
       Visible         =   True
       Width           =   638
    End
+   Begin UITweaks.ResizedPushButton SaveButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Save As…"
+      Default         =   False
+      Enabled         =   False
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   350
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   460
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   96
+   End
+   Begin UITweaks.ResizedPushButton CopyButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Copy All"
+      Default         =   False
+      Enabled         =   False
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   242
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   460
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   96
+   End
+   Begin UITweaks.ResizedPushButton RewriteButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Rewrite Clipboard"
+      Default         =   False
+      Enabled         =   False
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   458
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   460
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   140
+   End
+   Begin Timer ClipboardWatcher
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Mode            =   2
+      Period          =   1000
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Method, Flags = &h21
+		Private Sub CheckClipboard()
+		  If Self.FileList.ListIndex = -1 Then
+		    If Self.RewriteButton.Enabled Then
+		      Self.RewriteButton.Enabled = False
+		    End If
+		    If Self.RewriteButton.Caption <> "Rewrite Clipboard" Then
+		      Self.RewriteButton.Caption = "Rewrite Clipboard"
+		    End If
+		    Return
+		  End If
+		  
+		  Dim SelectedConfig As String = Self.FileList.Cell(Self.FileList.ListIndex, 0)
+		  If SelectedConfig = "Command Line Options" Then
+		    If Self.RewriteButton.Enabled Then
+		      Self.RewriteButton.Enabled = False
+		    End If
+		    If Self.RewriteButton.Caption <> "Rewrite Clipboard" Then
+		      Self.RewriteButton.Caption = "Rewrite Clipboard"
+		    End If
+		    Return
+		  End If
+		  
+		  Dim Board As New Clipboard
+		  If Board.TextAvailable = False Or ReplaceLineEndings(Board.Text, EndOfLine) = Self.ContentArea.Text Then
+		    If Self.RewriteButton.Enabled Then
+		      Self.RewriteButton.Enabled = False
+		    End If
+		    If Self.RewriteButton.Caption <> "Rewrite Clipboard" Then
+		      Self.RewriteButton.Caption = "Rewrite Clipboard"
+		    End If
+		    Return
+		  End If
+		  
+		  Dim SearchingFor As String
+		  Select Case SelectedConfig
+		  Case Beacon.RewriteModeGameIni
+		    SearchingFor = "[" + Beacon.ShooterGameHeader + "]"
+		  Case Beacon.RewriteModeGameUserSettingsIni
+		    SearchingFor = "[" + Beacon.SessionSettingsHeader + "]"
+		  Else
+		    If Self.RewriteButton.Enabled Then
+		      Self.RewriteButton.Enabled = False
+		    End If
+		    If Self.RewriteButton.Caption <> "Rewrite Clipboard" Then
+		      Self.RewriteButton.Caption = "Rewrite Clipboard"
+		    End If
+		    Return
+		  End Select
+		  
+		  If Board.Text.InStr(SearchingFor) <= 0 Then
+		    If Self.RewriteButton.Enabled Then
+		      Self.RewriteButton.Enabled = False
+		    End If
+		    If Self.RewriteButton.Caption <> "Rewrite Clipboard" Then
+		      Self.RewriteButton.Caption = "Rewrite Clipboard"
+		    End If
+		    Return
+		  End If
+		  
+		  If EncodeHex(Crypto.MD5(Board.Text)) = Self.mLastRewrittenHash Then
+		    If Self.RewriteButton.Enabled Then
+		      Self.RewriteButton.Enabled = False
+		    End If
+		    If Self.RewriteButton.Caption <> "Ready for Paste" Then
+		      Self.RewriteButton.Caption = "Ready for Paste"
+		    End If
+		    Return
+		  End If
+		  
+		  If Not Self.RewriteButton.Enabled Then
+		    Self.RewriteButton.Enabled = True
+		  End If
+		  If Self.RewriteButton.Caption <> "Rewrite Clipboard" Then
+		    Self.RewriteButton.Caption = "Rewrite Clipboard"
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, Document As Beacon.Document)
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
@@ -225,24 +408,46 @@ End
 		    Values = Config.GameIniValues(Document)
 		    If Values <> Nil Then
 		      For Each Value As Beacon.ConfigValue In Values
-		        Dim Arr() As Text
+		        Dim SimplifiedKey As Text = Value.SimplifiedKey
+		        
+		        Dim Section As Xojo.Core.Dictionary
 		        If GameIniHeaders.HasKey(Value.Header) Then
-		          Arr = GameIniHeaders.Value(Value.Header)
+		          Section = GameIniHeaders.Value(Value.Header)
+		        Else
+		          Section = New Xojo.Core.Dictionary
+		        End If
+		        
+		        Dim Arr() As Text
+		        If Section.HasKey(SimplifiedKey) Then
+		          Arr = Section.Value(SimplifiedKey)
 		        End If
 		        Arr.Append(Value.Key + "=" + Value.Value)
-		        GameIniHeaders.Value(Value.Header) = Arr
+		        Section.Value(SimplifiedKey) = Arr
+		        
+		        GameIniHeaders.Value(Value.Header) = Section
 		      Next
 		    End If
 		    
 		    Values = Config.GameUserSettingsIniValues(Document)
 		    If Values <> Nil Then
 		      For Each Value As Beacon.ConfigValue In Values
-		        Dim Arr() As Text
+		        Dim SimplifiedKey As Text = Value.SimplifiedKey
+		        
+		        Dim Section As Xojo.Core.Dictionary
 		        If GameUserSettingsIniHeaders.HasKey(Value.Header) Then
-		          Arr = GameUserSettingsIniHeaders.Value(Value.Header)
+		          Section = GameUserSettingsIniHeaders.Value(Value.Header)
+		        Else
+		          Section = New Xojo.Core.Dictionary
+		        End If
+		        
+		        Dim Arr() As Text
+		        If Section.HasKey(SimplifiedKey) Then
+		          Arr = Section.Value(SimplifiedKey)
 		        End If
 		        Arr.Append(Value.Key + "=" + Value.Value)
-		        GameUserSettingsIniHeaders.Value(Value.Header) = Arr
+		        Section.Value(SimplifiedKey) = Arr
+		        
+		        GameUserSettingsIniHeaders.Value(Value.Header) = Section
 		      Next
 		    End If
 		  Next
@@ -257,17 +462,30 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub RestoreCopyButton()
+		  Self.CopyButton.Caption = "Copy All"
+		  Self.CopyButton.Enabled = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RestoreRewriteButton()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Setup()
 		  If Self.mCommandLineConfigs.Count > 0 Then
 		    Self.FileList.AddRow("Command Line Options")
 		  End If
 		  
 		  If Self.mGameUserSettingsConfigs.Count > 0 Then
-		    Self.FileList.AddRow("GameUserSettings.ini")
+		    Self.FileList.AddRow(Beacon.RewriteModeGameUserSettingsIni)
 		  End If
 		  
 		  If Self.mGameIniConfigs.Count > 0 Then
-		    Self.FileList.AddRow("Game.ini")
+		    Self.FileList.AddRow(Beacon.RewriteModeGameIni)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -285,14 +503,26 @@ End
 		Private mGameUserSettingsConfigs As Xojo.Core.Dictionary
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mLastRewrittenHash As String
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
 #tag Events FileList
 	#tag Event
 		Sub Change()
+		  Xojo.Core.Timer.CancelCall(WeakAddressOf RestoreCopyButton)
+		  Xojo.Core.Timer.CancelCall(WeakAddressOf RestoreRewriteButton)
+		  
+		  Self.CopyButton.Enabled = Me.ListIndex > -1
+		  Self.CopyButton.Caption = "Copy All"
+		  
 		  If Me.ListIndex = -1 Then
+		    Self.SaveButton.Enabled = False
 		    Self.ContentArea.Text = ""
+		    Self.CheckClipboard()
 		    Return
 		  End If
 		  
@@ -309,6 +539,8 @@ End
 		        Self.ContentArea.Text = Self.ContentArea.Text + " -" + Command
 		      Next
 		    End If
+		    Self.SaveButton.Enabled = False
+		    Self.CheckClipboard()
 		    Return
 		  End If
 		  
@@ -319,24 +551,13 @@ End
 		    Configs = Self.mGameIniConfigs
 		  Else
 		    Self.ContentArea.Text = ""
+		    Self.CheckClipboard()
 		    Return
 		  End If
 		  
-		  Dim Lines() As String
-		  For Each Entry As Xojo.Core.DictionaryEntry In Configs
-		    Dim Header As Text = Entry.Key
-		    Dim Values() As Text = Entry.Value
-		    
-		    If Lines.Ubound > -1 Then
-		      Lines.Append("")
-		    End If
-		    Lines.Append("[" + Header + "]")
-		    For Each Line As Text In Values
-		      Lines.Append(Line)
-		    Next
-		  Next
-		  
-		  Self.ContentArea.Text = Join(Lines, EndOfLine)
+		  Self.SaveButton.Enabled = True
+		  Self.ContentArea.Text = ReplaceLineEndings(Beacon.RewriteIniContent("", Configs), EndOfLine)
+		  Self.CheckClipboard()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -344,6 +565,82 @@ End
 	#tag Event
 		Sub Action()
 		  Self.Close()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SaveButton
+	#tag Event
+		Sub Action()
+		  Dim ConfigFilename As String = Self.FileList.Cell(Self.FileList.ListIndex, 0)
+		  
+		  Dim Dialog As New SaveAsDialog
+		  Dialog.Filter = BeaconFileTypes.IniFile
+		  Dialog.SuggestedFileName = ConfigFilename
+		  
+		  Dim File As FolderItem = Dialog.ShowModal()
+		  If File <> Nil Then
+		    Dim Content As String
+		    If File.Exists Then
+		      Dim InStream As TextInputStream = TextInputStream.Open(File)
+		      Content = InStream.ReadAll(Encodings.UTF8)
+		      InStream.Close
+		      
+		      Dim Configs As Xojo.Core.Dictionary
+		      Select Case ConfigFilename
+		      Case Beacon.RewriteModeGameIni
+		        Configs = Self.mGameIniConfigs
+		      Case Beacon.RewriteModeGameUserSettingsIni
+		        Configs = Self.mGameUserSettingsConfigs
+		      End Select
+		      Content = Beacon.RewriteIniContent(Content.ToText, Configs)
+		    Else
+		      Content = Self.ContentArea.Text
+		    End If
+		    
+		    Dim OutStream As TextOutputStream = TextOutputStream.Create(File)
+		    OutStream.Write(Content)
+		    OutStream.Close
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events CopyButton
+	#tag Event
+		Sub Action()
+		  Dim Board As New Clipboard
+		  Board.Text = Self.ContentArea.Text
+		  Me.Caption = "Copied!"
+		  Me.Enabled = False
+		  Xojo.Core.Timer.CallLater(2000, WeakAddressOf RestoreCopyButton)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RewriteButton
+	#tag Event
+		Sub Action()
+		  Dim SelectedConfig As String = Self.FileList.Cell(Self.FileList.ListIndex, 0)
+		  Dim Configs As Xojo.Core.Dictionary
+		  Select Case SelectedConfig
+		  Case Beacon.RewriteModeGameIni
+		    Configs = Self.mGameIniConfigs
+		  Case Beacon.RewriteModeGameUserSettingsIni
+		    Configs = Self.mGameUserSettingsConfigs
+		  Else
+		    Configs = New Xojo.Core.Dictionary
+		  End Select
+		  
+		  Dim Board As New Clipboard
+		  Board.Text = Beacon.RewriteIniContent(Board.Text.ToText, Configs)
+		  Self.mLastRewrittenHash = EncodeHex(MD5(Board.Text))
+		  Self.RewriteButton.Enabled = False
+		  Self.RewriteButton.Caption = "Ready for Paste"
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ClipboardWatcher
+	#tag Event
+		Sub Action()
+		  Self.CheckClipboard()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
