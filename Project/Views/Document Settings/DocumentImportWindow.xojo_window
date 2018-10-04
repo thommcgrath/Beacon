@@ -69,13 +69,14 @@ End
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ImportFinishedDelegate(Document As Beacon.Document)
+		Delegate Sub ImportFinishedDelegate(Document As Beacon . Document)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
-		Shared Function Present(ImportCallback As ImportFinishedDelegate, File As FolderItem = Nil) As DocumentImportWindow
+		Shared Function Present(ImportCallback As ImportFinishedDelegate, DestinationDocument As Beacon.Document, File As FolderItem = Nil) As DocumentImportWindow
 		  Dim Win As New DocumentImportWindow
 		  Win.mImportCallback = ImportCallback
+		  Win.DocumentImportView1.PullValuesFromDocument(DestinationDocument) // Give discovery views a change to get stuff like oauth keys
 		  If File <> Nil Then
 		    Win.DocumentImportView1.Import(File)
 		  End If

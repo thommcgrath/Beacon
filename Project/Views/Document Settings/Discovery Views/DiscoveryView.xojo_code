@@ -136,6 +136,12 @@ Inherits ContainerControl
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub PullValuesFromDocument(Document As Beacon.Document)
+		  RaiseEvent GetValuesFromDocument(Document)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub ShouldCancel()
 		  RaiseEvent ShouldCancel()
@@ -155,6 +161,10 @@ Inherits ContainerControl
 
 	#tag Hook, Flags = &h0
 		Event Finished(Document As Beacon.Document)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GetValuesFromDocument(Document As Beacon.Document)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

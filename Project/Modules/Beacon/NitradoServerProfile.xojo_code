@@ -26,6 +26,12 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function OAuthProvider() As Text
+		  Return "Nitrado"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function SupportsCapability(Capability As Beacon.ServerProfile.Capabilities) As Boolean
 		  Select Case Capability
 		  Case Beacon.ServerProfile.Capabilities.DiscoverServer

@@ -257,8 +257,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub CopyFromDocument(Document As Beacon.Document)
-		  DocumentMergerWindow.Present(Self, Document, Self.Document)
+		Private Sub CopyFromDocument(SourceDocument As Auto)
+		  DocumentMergerWindow.Present(Self, SourceDocument, Self.Document)
 		End Sub
 	#tag EndMethod
 
@@ -297,6 +297,12 @@ End
 		  Self.mPagesAnimation.DurationInSeconds = 0.15
 		  Self.mPagesAnimation.Curve = AnimationKit.Curve.CreateEaseOut
 		  Self.mPagesAnimation.Run
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ImportCallback(Document As Beacon.Document)
+		  Xojo.Core.Timer.CallLater(1, WeakAddressOf CopyFromDocument, Document)
 		End Sub
 	#tag EndMethod
 
@@ -622,7 +628,7 @@ End
 		    If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
 		      DocumentImportWindow(Self.mImportWindowRef.Value).Show()
 		    Else
-		      Self.mImportWindowRef = New WeakRef(DocumentImportWindow.Present(AddressOf CopyFromDocument))
+		      Self.mImportWindowRef = New WeakRef(DocumentImportWindow.Present(AddressOf ImportCallback, Self.Document))
 		    End If
 		  Case "ExportButton"
 		    DocumentExportWindow.Present(Self, Self.Document)

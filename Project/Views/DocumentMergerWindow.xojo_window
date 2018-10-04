@@ -199,11 +199,18 @@ End
 		  
 		  Dim Win As New DocumentMergerWindow
 		  Win.mDestination = DestinationDocument
+		  Win.mSource = SourceDocument
 		  Dim Enabled As Boolean
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    Win.List.AddRow("", Language.LabelForConfig(Config))
 		    Win.List.CellCheck(Win.List.LastIndex, 0) = Not DestinationDocument.HasConfigGroup(Config.ConfigName)
 		    Win.List.RowTag(Win.List.LastIndex) = Config
+		    Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
+		  Next
+		  For I As Integer = 0 To SourceDocument.ServerProfileCount - 1
+		    Win.List.AddRow("", "Server Profile: " + SourceDocument.ServerProfile(I).Name)
+		    Win.List.CellCheck(Win.List.LastIndex, 0) = True
+		    Win.List.RowTag(Win.List.LastIndex) = SourceDocument.ServerProfile(I)
 		    Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
 		  Next
 		  Win.ActionButton.Enabled = Enabled
@@ -215,6 +222,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mDestination As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSource As Beacon.Document
 	#tag EndProperty
 
 
@@ -243,12 +254,25 @@ End
 	#tag Event
 		Sub Action()
 		  For I As Integer = 0 To Self.List.ListCount - 1
-		    If Not Self.List.CellCheck(I, 0) Then
+		    If Not Self.List.CellCheck(I, 0) Or Self.List.RowTag(I) = Nil Then
 		      Continue
 		    End If
 		    
-		    Dim Config As Beacon.ConfigGroup = Self.List.RowTag(I)
-		    Self.mDestination.AddConfigGroup(Config)
+		    Select Case Self.List.RowTag(I)
+		    Case IsA Beacon.ConfigGroup
+		      Dim Config As Beacon.ConfigGroup = Self.List.RowTag(I)
+		      Self.mDestination.AddConfigGroup(Config)
+		    Case IsA Beacon.ServerProfile
+		      Dim Profile As Beacon.ServerProfile = Self.List.RowTag(I)
+		      Self.mDestination.Add(Profile)
+		      
+		      If Profile.OAuthProvider <> "" Then
+		        Dim OAuthData As Xojo.Core.Dictionary = Self.mSource.OAuthData(Profile.OAuthProvider)
+		        If OAuthData <> Nil Then
+		          Self.mDestination.OAuthData(Profile.OAuthProvider) = OAuthData
+		        End If
+		      End If
+		    End Select
 		  Next
 		  Self.Close
 		End Sub

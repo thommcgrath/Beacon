@@ -392,6 +392,12 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub GetValuesFromDocument(Document As Beacon.Document)
+		  Self.AuthClient.AuthData = Document.OAuthData("Nitrado")
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  OAuthProviders.SetupNitrado(Self.AuthClient)
 		  Self.SwapButtons()

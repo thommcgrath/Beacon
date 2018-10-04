@@ -353,6 +353,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub PullValuesFromDocument(Document As Beacon.Document)
+		  Self.FTPDiscoveryView1.PullValuesFromDocument(Document)
+		  Self.LocalDiscoveryView1.PullValuesFromDocument(Document)
+		  Self.NitradoDiscoveryView1.PullValuesFromDocument(Document)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Reset()
 		  If Self.Views.Value <> 0 Then
 		    Self.Views.Value = 0

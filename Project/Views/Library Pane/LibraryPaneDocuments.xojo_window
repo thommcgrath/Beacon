@@ -359,7 +359,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ImportFile(File As FolderItem)
-		  Call DocumentImportWindow.Present(AddressOf NewDocument, File)
+		  Call DocumentImportWindow.Present(AddressOf NewDocument, New Beacon.Document, File)
 		End Sub
 	#tag EndMethod
 

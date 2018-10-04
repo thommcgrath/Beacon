@@ -45,7 +45,7 @@ Implements Xojo.Core.Iterable
 		  #Pragma Unused DiscoveredData
 		  #Pragma Unused MapCompatibility
 		  
-		  If Not ParsedData.Value("ConfigOverrideSupplyCrateItems") Then
+		  If Not ParsedData.HasKey("ConfigOverrideSupplyCrateItems") Then
 		    Return Nil
 		  End If
 		  
