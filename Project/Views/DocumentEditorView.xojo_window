@@ -314,6 +314,7 @@ End
 		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
 		  Self.ContentsChanged = Sender.Document.Modified
 		  Self.Title = Self.mController.Name
+		  Self.BeaconToolbar1.ShareButton.Enabled = (Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud)
 		  LocalData.SharedInstance.RememberDocument(Sender)
 		End Sub
 	#tag EndMethod
@@ -598,6 +599,7 @@ End
 		  #if DeployEnabled
 		    Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToDeploy, "Make config changes live.")
 		  #endif
+		  Dim ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud, "Copy link to this document")
 		  
 		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel.")
 		  
@@ -606,6 +608,7 @@ End
 		  #if DeployEnabled
 		    Me.LeftItems.Append(DeployButton)
 		  #endif
+		  Me.LeftItems.Append(ShareButton)
 		  
 		  Me.RightItems.Append(HelpButton)
 		End Sub
@@ -627,6 +630,12 @@ End
 		    Else
 		      Self.ShowHelpDrawer()
 		    End If
+		  Case "ShareButton"
+		    Dim Board As New Clipboard
+		    Board.Text = Self.mController.URL.WithScheme(Beacon.DocumentURL.TypeWeb)
+		    
+		    Dim Notification As New Beacon.UserNotification("Link to " + Self.mController.Name + " has been copied to the clipboard.")
+		    LocalData.SharedInstance.SaveNotification(Notification)
 		  End Select
 		End Sub
 	#tag EndEvent
