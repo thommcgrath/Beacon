@@ -199,7 +199,7 @@ Protected Class NitradoDeploymentEngine
 		    Dim GameSpecific As Xojo.Core.Dictionary = GameServer.Value("game_specific")
 		    
 		    If Profile.ConfigPath = "" Then
-		      Profile.ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config"
+		      Profile.ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
 		    End If
 		    
 		    Dim Settings As Xojo.Core.Dictionary = GameServer.Value("settings")

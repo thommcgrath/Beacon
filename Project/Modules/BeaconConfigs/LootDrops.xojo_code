@@ -45,6 +45,10 @@ Implements Xojo.Core.Iterable
 		  #Pragma Unused DiscoveredData
 		  #Pragma Unused MapCompatibility
 		  
+		  If Not ParsedData.Value("ConfigOverrideSupplyCrateItems") Then
+		    Return Nil
+		  End If
+		  
 		  Dim Dicts() As Auto
 		  Try
 		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
@@ -216,11 +220,6 @@ Implements Xojo.Core.Iterable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Modified"
-			Group="Behavior"
-			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
