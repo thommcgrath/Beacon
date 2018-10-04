@@ -26,7 +26,7 @@ Inherits Beacon.ConfigGroup
 		Sub Constructor(Multiplier As Double)
 		  // Calling the overridden superclass constructor.
 		  Super.Constructor
-		  Self.mMultiplier = Multiplier
+		  Self.Multiplier = Multiplier
 		End Sub
 	#tag EndMethod
 
@@ -108,11 +108,6 @@ Inherits Beacon.ConfigGroup
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Modified"
-			Group="Behavior"
-			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Multiplier"

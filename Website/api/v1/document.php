@@ -142,6 +142,11 @@ case 'POST':
 			BeaconAPI::ReplyError('Document UUID of ' . strtolower($document['Identifier']) . ' in content does not match the resource UUID of ' . strtolower(BeaconAPI::ObjectID()) . '.');
 		}
 		
+		$document_version = intval($document['Version']);
+		if ($document_version < 2) {
+			BeaconAPI::ReplyError('Version 1 documents are no longer not accepted.');
+		}
+		
 		$document_id = $document['Identifier'];
 		$contents = json_encode($document);
 		
@@ -162,7 +167,20 @@ case 'POST':
 		$results = $database->Query('SELECT published FROM documents WHERE document_id = $1;', $document_id);
 		$current_status = $results->Field('published');
 		$new_status = $current_status;
-		$wants_publish = BeaconCommon::HasAllKeys($document, 'Description', 'Title', 'Public') && boolval($document['Public']) == true;
+		if ($document_version >= 3) {
+			if (isset($document['Configs']['Metadata'])) {
+				$metadata = $document['Configs']['Metadata'];
+				$wants_publish = BeaconCommon::HasAllKeys($metadata, 'Description', 'Title', 'Public') && boolval($metadata['Public']) == true;
+				$document_title = $metadata['Title'];
+				$document_description = $metadata['Description'];
+			} else {
+				$wants_publish = false;
+			}
+		} else {
+			$wants_publish = BeaconCommon::HasAllKeys($document, 'Description', 'Title', 'Public') && boolval($document['Public']) == true;
+			$document_title = $document['Title'];
+			$document_description = $document['Description'];
+		}
 		if ($wants_publish) {
 			if ($current_status == BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED_PRIVATE) {
 				$new_status = BeaconDocumentMetadata::PUBLISH_STATUS_APPROVED;
@@ -173,8 +191,8 @@ case 'POST':
 					'text' => 'Request to publish document',
 					'attachments' => array(
 						array(
-							'title' => $document['Title'],
-							'text' => $document['Description'],
+							'title' => $document_title,
+							'text' => $document_description,
 							'fallback' => 'Unable to show response buttons.',
 							'callback_id' => 'publish_document:' . $document_id,
 							'actions' => array(

@@ -23,6 +23,12 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Controller() As Beacon.DocumentController
+		  Return Self.mController
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Document() As Beacon.Document
 		  Return Self.mController.Document
 		End Function

@@ -7,6 +7,7 @@ Protected Module BeaconConfigs
 		    Names.Append(BeaconConfigs.Difficulty.ConfigName)
 		    Names.Append(BeaconConfigs.LootDrops.ConfigName)
 		    Names.Append(BeaconConfigs.LootScale.ConfigName)
+		    Names.Append(BeaconConfigs.Metadata.ConfigName)
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As Text
@@ -58,6 +59,8 @@ Protected Module BeaconConfigs
 		    Return GetTypeInfo(BeaconConfigs.LootDrops)
 		  Case BeaconConfigs.LootScale.ConfigName
 		    Return GetTypeInfo(BeaconConfigs.LootScale)
+		  Case BeaconConfigs.Metadata.ConfigName
+		    Return GetTypeInfo(BeaconConfigs.Metadata)
 		  End Select
 		End Function
 	#tag EndMethod

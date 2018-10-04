@@ -144,15 +144,6 @@ Implements Beacon.DocumentItem
 		    Next
 		  End If
 		  
-		  If Dict.HasKey("Title") Then
-		    Doc.mTitle = Dict.Value("Title")
-		  End If
-		  If Dict.HasKey("Description") Then
-		    Doc.mDescription = Dict.Value("Description")
-		  End If
-		  If Dict.HasKey("Public") Then
-		    Doc.mIsPublic = Dict.Value("Public")
-		  End If
 		  If Dict.HasKey("Map") Then
 		    Doc.mMapCompatibility = Dict.Value("Map")
 		  ElseIf Dict.HasKey("MapPreference") Then
@@ -210,13 +201,13 @@ Implements Beacon.DocumentItem
 		      Version = Dict.Lookup("Version", 0)
 		      
 		      If Dict.HasKey("Title") Then
-		        Doc.mTitle = Dict.Value("Title")
+		        Doc.Title = Dict.Value("Title")
 		      End If
 		      If Dict.HasKey("Description") Then
-		        Doc.mDescription = Dict.Value("Description")
+		        Doc.Description = Dict.Value("Description")
 		      End If
 		      If Dict.HasKey("Public") Then
-		        Doc.mIsPublic = Dict.Value("Public")
+		        Doc.IsPublic = Dict.Value("Public")
 		      End If
 		      If Dict.HasKey("Map") Then
 		        Doc.mMapCompatibility = Dict.Value("Map")
@@ -656,9 +647,6 @@ Implements Beacon.DocumentItem
 		  Dim Document As New Xojo.Core.Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
 		  Document.Value("Identifier") = Self.Identifier
-		  Document.Value("Title") = Self.Title
-		  Document.Value("Description") = Self.Description
-		  Document.Value("Public") = Self.IsPublic
 		  Document.Value("ConsoleModsOnly") = Self.ConsoleModsOnly
 		  
 		  Dim Groups As New Xojo.Core.Dictionary
@@ -736,17 +724,16 @@ Implements Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mDescription
+			  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(BeaconConfigs.Metadata.ConfigName)
+			  If Group <> Nil Then
+			    Return BeaconConfigs.Metadata(Group).Description
+			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mDescription.Compare(Value, Text.CompareCaseSensitive) = 0 Then
-			    Return
-			  End If
-			  
-			  Self.mDescription = Value
-			  Self.mModified = True
+			  Dim Metadata As BeaconConfigs.Metadata = BeaconConfigs.Metadata(Self.ConfigGroup(BeaconConfigs.Metadata.ConfigName, True))
+			  Metadata.Description = Value
 			End Set
 		#tag EndSetter
 		Description As Text
@@ -769,17 +756,16 @@ Implements Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mIsPublic
+			  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(BeaconConfigs.Metadata.ConfigName)
+			  If Group <> Nil Then
+			    Return BeaconConfigs.Metadata(Group).IsPublic
+			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mIsPublic = Value Then
-			    Return
-			  End If
-			  
-			  Self.mIsPublic = Value
-			  Self.mModified = True
+			  Dim Metadata As BeaconConfigs.Metadata = BeaconConfigs.Metadata(Self.ConfigGroup(BeaconConfigs.Metadata.ConfigName, True))
+			  Metadata.IsPublic = Value
 			End Set
 		#tag EndSetter
 		IsPublic As Boolean
@@ -810,15 +796,7 @@ Implements Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDescription As Text
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mIdentifier As Text
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mIsPublic As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -845,24 +823,19 @@ Implements Beacon.DocumentItem
 		Private mServerProfiles() As Beacon.ServerProfile
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mTitle As Text
-	#tag EndProperty
-
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mTitle
+			  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(BeaconConfigs.Metadata.ConfigName)
+			  If Group <> Nil Then
+			    Return BeaconConfigs.Metadata(Group).Title
+			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.mTitle.Compare(Value, Text.CompareCaseSensitive) = 0 Then
-			    Return
-			  End If
-			  
-			  Self.mTitle = Value
-			  Self.mModified = True
+			  Dim Metadata As BeaconConfigs.Metadata = BeaconConfigs.Metadata(Self.ConfigGroup(BeaconConfigs.Metadata.ConfigName, True))
+			  Metadata.Title = Value
 			End Set
 		#tag EndSetter
 		Title As Text

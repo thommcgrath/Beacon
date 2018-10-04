@@ -85,18 +85,20 @@ BEGIN
 		END IF;
 	END IF;
 	IF p_update_meta = TRUE THEN
-		NEW.title = coalesce(NEW.contents->>'Title', 'Untitled Document');
-		NEW.description = coalesce(NEW.contents->>'Description', '');
 		NEW.map = coalesce((NEW.contents->>'Map')::integer, 1);
 		NEW.console_safe = TRUE;
 		p_console_safe_known = FALSE;
 		IF coalesce((NEW.contents->>'Version')::numeric, 2) = 3 THEN
+			NEW.title = coalesce(NEW.contents->'Configs'->'Metadata'->>'Title', 'Untitled Document');
+			NEW.description = coalesce(NEW.contents->'Configs'->'Metadata'->>'Description', '');
 			NEW.difficulty = coalesce((NEW.contents->'Configs'->'Difficulty'->>'MaxDinoLevel')::numeric, 150) / 30;
 			FOR p_rec IN SELECT DISTINCT mods.console_safe FROM (SELECT DISTINCT jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(NEW.contents->'Configs'->'LootDrops'->'Contents')->'ItemSets')->'ItemEntries')->'Items')->>'Path' AS path) AS items LEFT JOIN (engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id)) ON (items.path = engrams.path) LOOP
 				NEW.console_safe = NEW.console_safe AND coalesce(p_rec.console_safe, FALSE);
 				p_console_safe_known = TRUE;
 			END LOOP;
 		ELSE
+			NEW.title = coalesce(NEW.contents->>'Title', 'Untitled Document');
+			NEW.description = coalesce(NEW.contents->>'Description', '');
 			NEW.difficulty = coalesce((NEW.contents->>'DifficultyValue')::numeric, 4.0);
 			FOR p_rec IN SELECT DISTINCT mods.console_safe FROM (SELECT DISTINCT jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(NEW.contents->'LootSources')->'ItemSets')->'ItemEntries')->'Items')->>'Path' AS path) AS items LEFT JOIN (engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id)) ON (items.path = engrams.path) LOOP
 				NEW.console_safe = NEW.console_safe AND coalesce(p_rec.console_safe, FALSE);

@@ -44,7 +44,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -314,6 +313,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
 		  Self.ContentsChanged = Sender.Document.Modified
+		  Self.Title = Self.mController.Name
 		  LocalData.SharedInstance.RememberDocument(Sender)
 		End Sub
 	#tag EndMethod
@@ -546,6 +546,8 @@ End
 		        NewPanel = New DifficultyConfigEditor(Self.mController)
 		      Case BeaconConfigs.LootScale.ConfigName
 		        NewPanel = New LootScaleConfigEditor(Self.mController)
+		      Case BeaconConfigs.Metadata.ConfigName
+		        NewPanel = New MetaDataConfigEditor(Self.mController)
 		      End Select
 		      If NewPanel <> Nil Then
 		        Self.Panels.Value(Tag.StringValue) = NewPanel
