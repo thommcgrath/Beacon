@@ -32,6 +32,33 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.ServerProfile) As Integer
+		  If Other = Nil Then
+		    Return 1
+		  End If
+		  
+		  If Not (Other IsA Beacon.NitradoServerProfile) Then
+		    Return Super.Operator_Compare(Other)
+		  End If
+		  
+		  Dim OtherServiceID As Integer = Beacon.NitradoServerProfile(Other).ServiceID
+		  If Self.ServiceID > OtherServiceID Then
+		    Return 1
+		  ElseIf Self.ServiceID < OtherServiceID Then
+		    Return -1
+		  Else
+		    Return 0
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SecondaryName() As Text
+		  Return Self.Address
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function SupportsCapability(Capability As Beacon.ServerProfile.Capabilities) As Boolean
 		  Select Case Capability
 		  Case Beacon.ServerProfile.Capabilities.DiscoverServer
@@ -46,28 +73,85 @@ Inherits Beacon.ServerProfile
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SupportsRestart() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
 
-	#tag Property, Flags = &h0
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mAddress
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mAddress.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
+			    Self.mAddress = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
 		Address As Text
-	#tag EndProperty
+	#tag EndComputedProperty
 
-	#tag Property, Flags = &h0
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mConfigPath
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mConfigPath.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
+			    Self.mConfigPath = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
 		ConfigPath As Text
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mAddress As Text
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		ServiceID As Integer
+	#tag Property, Flags = &h21
+		Private mConfigPath As Text
 	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mServiceID As Integer
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mServiceID
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mServiceID <> Value Then
+			    Self.mServiceID = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		ServiceID As Integer
+	#tag EndComputedProperty
 
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="Address"
+			Name="mAddress"
 			Group="Behavior"
 			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ConfigPath"
+			Name="mConfigPath"
 			Group="Behavior"
 			Type="Text"
 		#tag EndViewProperty
@@ -92,7 +176,7 @@ Inherits Beacon.ServerProfile
 			Type="String"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ServiceID"
+			Name="mServiceID"
 			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty

@@ -172,7 +172,6 @@ Protected Class OAuth2Client
 		    Return False
 		  End If
 		  
-		  System.DebugLog("Authenticated")
 		  Return True
 		End Function
 	#tag EndMethod

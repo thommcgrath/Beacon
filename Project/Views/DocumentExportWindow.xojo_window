@@ -291,6 +291,7 @@ Begin Window DocumentExportWindow
       Width           =   140
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -341,7 +342,7 @@ End
 		  Case Beacon.RewriteModeGameIni
 		    SearchingFor = "[" + Beacon.ShooterGameHeader + "]"
 		  Case Beacon.RewriteModeGameUserSettingsIni
-		    SearchingFor = "[" + Beacon.SessionSettingsHeader + "]"
+		    SearchingFor = "[" + Beacon.ServerSettingsHeader + "]"
 		  Else
 		    If Self.RewriteButton.Enabled Then
 		      Self.RewriteButton.Enabled = False
@@ -405,51 +406,8 @@ End
 		      Next
 		    End If
 		    
-		    Values = Config.GameIniValues(Document)
-		    If Values <> Nil Then
-		      For Each Value As Beacon.ConfigValue In Values
-		        Dim SimplifiedKey As Text = Value.SimplifiedKey
-		        
-		        Dim Section As Xojo.Core.Dictionary
-		        If GameIniHeaders.HasKey(Value.Header) Then
-		          Section = GameIniHeaders.Value(Value.Header)
-		        Else
-		          Section = New Xojo.Core.Dictionary
-		        End If
-		        
-		        Dim Arr() As Text
-		        If Section.HasKey(SimplifiedKey) Then
-		          Arr = Section.Value(SimplifiedKey)
-		        End If
-		        Arr.Append(Value.Key + "=" + Value.Value)
-		        Section.Value(SimplifiedKey) = Arr
-		        
-		        GameIniHeaders.Value(Value.Header) = Section
-		      Next
-		    End If
-		    
-		    Values = Config.GameUserSettingsIniValues(Document)
-		    If Values <> Nil Then
-		      For Each Value As Beacon.ConfigValue In Values
-		        Dim SimplifiedKey As Text = Value.SimplifiedKey
-		        
-		        Dim Section As Xojo.Core.Dictionary
-		        If GameUserSettingsIniHeaders.HasKey(Value.Header) Then
-		          Section = GameUserSettingsIniHeaders.Value(Value.Header)
-		        Else
-		          Section = New Xojo.Core.Dictionary
-		        End If
-		        
-		        Dim Arr() As Text
-		        If Section.HasKey(SimplifiedKey) Then
-		          Arr = Section.Value(SimplifiedKey)
-		        End If
-		        Arr.Append(Value.Key + "=" + Value.Value)
-		        Section.Value(SimplifiedKey) = Arr
-		        
-		        GameUserSettingsIniHeaders.Value(Value.Header) = Section
-		      Next
-		    End If
+		    Beacon.ConfigValue.FillConfigDict(GameIniHeaders, Config.GameIniValues(Document))
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniHeaders, Config.GameUserSettingsIniValues(Document))
 		  Next
 		  
 		  Dim Win As New DocumentExportWindow

@@ -1,43 +1,34 @@
 #tag Class
 Protected Class ServerProfile
 	#tag Method, Flags = &h0
-		Sub Authenticate(Document As Beacon.Document)
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Clone() As Beacon.ServerProfile
 		  Return Beacon.ServerProfile.FromDictionary(Self.ToDictionary())
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor()
+	#tag Method, Flags = &h1
+		Protected Sub Constructor()
 		  Dim Err As New UnsupportedOperationException
 		  Err.Reason = "Do not instantiate this class, only its subclasses."
 		  Raise Err
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Sub Constructor(Dict As Xojo.Core.Dictionary)
-		  RaiseEvent ReadFromDictionary(Dict)
-		  
-		  If Not Dict.HasAllKeys("Name", "Profile ID") Then
+	#tag Method, Flags = &h0
+		Sub Constructor(Dict As Xojo.Core.Dictionary)
+		  If Not Dict.HasAllKeys("Name", "Profile ID", "Enabled") Then
 		    Dim Err As New KeyNotFoundException
 		    Err.Reason = "Incomplete server profile"
 		    Raise Err
 		  End If
 		  
-		  Self.mName = Dict.Value("Name")
+		  Self.Name = Dict.Value("Name")
+		  Self.Enabled = Dict.Value("Enabled")
 		  Self.mProfileID = Dict.Value("Profile ID")
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Discover()
 		  
+		  RaiseEvent ReadFromDictionary(Dict)
+		  
+		  Self.Modified = False
 		End Sub
 	#tag EndMethod
 
@@ -50,34 +41,14 @@ Protected Class ServerProfile
 		    Return Nil
 		  End If
 		  
-		  Dim Info As Xojo.Introspection.TypeInfo
 		  Dim Provider As Text = Dict.Value("Provider")
 		  Select Case Provider
 		  Case "Nitrado"
-		    Info = GetTypeInfo(Beacon.NitradoServerProfile)
+		    Return New Beacon.NitradoServerProfile(Dict)
 		  Case "FTP"
-		    Info = GetTypeInfo(Beacon.FTPServerProfile)
+		    Return New Beacon.FTPServerProfile(Dict)
 		  End Select
-		  If Info = Nil Then
-		    Return Nil
-		  End If
-		  
-		  Dim Constructors() As Xojo.Introspection.ConstructorInfo = Info.Constructors
-		  For Each Imp As Xojo.Introspection.ConstructorInfo In Constructors
-		    Dim Params() As Xojo.Introspection.ParameterInfo = Imp.Parameters
-		    If Imp.IsProtected = True And Params.Ubound = 0 And Params(0).IsByRef = False And Params(0).ParameterType.FullName = "Xojo.Core.Dictionary" Then
-		      Dim Values(0) As Auto
-		      Values(0) = Dict
-		      Return Imp.Invoke(Values)
-		    End If
-		  Next
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ListServers(Document As Beacon.Document)
-		  
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -95,7 +66,7 @@ Protected Class ServerProfile
 		  If Other.ProfileID = Self.ProfileID Then
 		    Return 0
 		  Else
-		    Return Self.mName.Compare(Other.mName)
+		    Return Self.Name.Compare(Other.Name)
 		  End If
 		End Function
 	#tag EndMethod
@@ -110,7 +81,19 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SecondaryName() As Text
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function SupportsCapability(Capability As Beacon.ServerProfile.Capabilities) As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SupportsRestart() As Boolean
 		  Return False
 		End Function
 	#tag EndMethod
@@ -124,8 +107,9 @@ Protected Class ServerProfile
 		    Err.Reason = "No provider was set in Beacon.ServerProfile.WriteToDictionary"
 		    Raise Err
 		  End If
-		  Dict.Value("Name") = Self.mName
+		  Dict.Value("Name") = Self.Name
 		  Dict.Value("Profile ID") = Self.ProfileID // Do not call mProfileID here in order to force generation
+		  Dict.Value("Enabled") = Self.Enabled
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -140,8 +124,33 @@ Protected Class ServerProfile
 	#tag EndHook
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mEnabled
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mEnabled <> Value Then
+			    Self.mEnabled = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		Enabled As Boolean
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mEnabled As Boolean
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mName As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		Modified As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -158,6 +167,7 @@ Protected Class ServerProfile
 			Set
 			  If Self.mName.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
 			    Self.mName = Value
+			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
@@ -189,7 +199,7 @@ Protected Class ServerProfile
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Name"
+			Name="mName"
 			Visible=true
 			Group="ID"
 			Type="String"

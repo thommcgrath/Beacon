@@ -787,7 +787,7 @@ Protected Module Beacon
 	#tag Constant, Name = RewriteModeGameUserSettingsIni, Type = Text, Dynamic = False, Default = \"GameUserSettings.ini", Scope = Protected
 	#tag EndConstant
 
-	#tag Constant, Name = SessionSettingsHeader, Type = Text, Dynamic = False, Default = \"SessionSettings", Scope = Protected
+	#tag Constant, Name = ServerSettingsHeader, Type = Text, Dynamic = False, Default = \"ServerSettings", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = ShooterGameHeader, Type = Text, Dynamic = False, Default = \"/script/shootergame.shootergamemode", Scope = Protected

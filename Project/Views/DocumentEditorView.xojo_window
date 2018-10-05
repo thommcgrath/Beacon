@@ -44,6 +44,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -485,6 +486,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDeployWindow As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mHelpDrawerAnimation As AnimationKit.MoveTask
 	#tag EndProperty
 
@@ -505,7 +510,7 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = DeployEnabled, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
+	#tag Constant, Name = DeployEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = LocalMinHeight, Type = Double, Dynamic = False, Default = \"400", Scope = Private
@@ -644,6 +649,16 @@ End
 		    
 		    Dim Notification As New Beacon.UserNotification("Link to " + Self.mController.Name + " has been copied to the clipboard.")
 		    LocalData.SharedInstance.SaveNotification(Notification)
+		  Case "DeployButton"
+		    If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DocumentDeployWindow Then
+		      DocumentDeployWindow(Self.mDeployWindow.Value).Show()
+		    Else
+		      Dim Win As DocumentDeployWindow = DocumentDeployWindow.Create(Self.Document)
+		      If Win <> Nil Then
+		        Self.mDeployWindow = New WeakRef(Win)
+		        Win.Show()
+		      End If
+		    End If
 		  End Select
 		End Sub
 	#tag EndEvent

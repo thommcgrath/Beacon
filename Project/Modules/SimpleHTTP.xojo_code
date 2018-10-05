@@ -57,8 +57,23 @@ Protected Module SimpleHTTP
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub Post(URL As Text, Fields As Xojo.Core.Dictionary, Handler As SimpleHTTP.ResponseCallback, Tag As Auto, Headers As Xojo.Core.Dictionary = Nil)
+		  Dim Parts() As Text
+		  For Each Entry As Xojo.Core.DictionaryEntry In Fields
+		    Dim Key As Text = Entry.Key
+		    Dim Value As Text = Entry.Value
+		    
+		    Parts.Append(Beacon.EncodeURLComponent(Key) + "=" + Beacon.EncodeURLComponent(Value))
+		  Next
+		  
+		  Dim Content As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Text.Join(Parts, "&"))
+		  Post(URL, "application/x-www-form-urlencoded", Content, Handler, Tag, Headers)
+		End Sub
+	#tag EndMethod
+
 	#tag DelegateDeclaration, Flags = &h1
-		Protected Delegate Sub ResponseCallback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Protected Delegate Sub ResponseCallback(URL As Text, Status As Integer, Content As Xojo . Core . MemoryBlock, Tag As Auto)
 	#tag EndDelegateDeclaration
 
 

@@ -32,8 +32,8 @@ Begin BeaconSubview APIGuideView
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "API Guide"
-      CaptionEnabled  =   True
-      CaptionIsButton =   False
+      CaptionEnabled  =   "True"
+      CaptionIsButton =   "False"
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
@@ -130,6 +130,20 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Behavior"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Behavior"
+		InitialValue="300"
+		Type="Integer"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
 		Visible=true

@@ -208,6 +208,11 @@ End
 		    Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
 		  Next
 		  For I As Integer = 0 To SourceDocument.ServerProfileCount - 1
+		    For X As Integer = 0 To DestinationDocument.ServerProfileCount - 1
+		      If DestinationDocument.ServerProfile(X) = SourceDocument.ServerProfile(I) Then
+		        Continue For I
+		      End If
+		    Next
 		    Win.List.AddRow("", "Server Profile: " + SourceDocument.ServerProfile(I).Name)
 		    Win.List.CellCheck(Win.List.LastIndex, 0) = True
 		    Win.List.RowTag(Win.List.LastIndex) = SourceDocument.ServerProfile(I)
@@ -238,7 +243,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
+		Sub CellAction(row As Integer, column As Integer)
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Me.CellCheck(I, 0) Then
 		      Self.ActionButton.Enabled = True

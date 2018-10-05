@@ -21,7 +21,7 @@ Inherits Listbox
 		  Clip.ForeColor = SystemColors.ControlBackgroundColor
 		  Clip.FillRect(0, 0, Clip.Width, Clip.Height)
 		  
-		  Dim BackgroundColor, TextColor As Color
+		  Dim BackgroundColor, TextColor, SecondaryTextColor As Color
 		  Dim IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
 		  If RowSelected Then
 		    If IsHighlighted Then
@@ -31,9 +31,11 @@ Inherits Listbox
 		      BackgroundColor = SystemColors.UnemphasizedSelectedContentBackgroundColor
 		      TextColor = SystemColors.UnemphasizedSelectedTextColor
 		    End If
+		    SecondaryTextColor = TextColor
 		  Else
 		    BackgroundColor = If(Row Mod 2 = 0, SystemColors.ListEvenRowColor, SystemColors.ListOddRowColor)
 		    TextColor = If(RowInvalid, SystemColors.SystemRedColor, SystemColors.TextColor)
+		    SecondaryTextColor = If(RowInvalid, TextColor, SystemColors.SecondaryLabelColor)
 		  End If
 		  
 		  Clip.ForeColor = BackgroundColor
@@ -97,7 +99,7 @@ Inherits Listbox
 		    Dim LinePosition As Integer = Round(DrawTop + LineHeight)
 		    
 		    If Not CellTextPaint(Clip, Row, Column, Lines(I), TextColor, DrawLeft, LinePosition, IsHighlighted) Then
-		      Clip.ForeColor = TextColor
+		      Clip.ForeColor = If(I = 0, TextColor, SecondaryTextColor)
 		      Clip.DrawString(Lines(I), DrawLeft, LinePosition, MaxDrawWidth, True)
 		    End If
 		    

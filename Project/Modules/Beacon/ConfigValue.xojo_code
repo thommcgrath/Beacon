@@ -8,6 +8,34 @@ Protected Class ConfigValue
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Shared Sub FillConfigDict(Dict As Xojo.Core.Dictionary, Values() As Beacon.ConfigValue)
+		  If Values = Nil Then
+		    Return
+		  End If
+		  
+		  For Each Value As Beacon.ConfigValue In Values
+		    Dim SimplifiedKey As Text = Value.SimplifiedKey
+		    
+		    Dim Section As Xojo.Core.Dictionary
+		    If Dict.HasKey(Value.Header) Then
+		      Section = Dict.Value(Value.Header)
+		    Else
+		      Section = New Xojo.Core.Dictionary
+		    End If
+		    
+		    Dim Arr() As Text
+		    If Section.HasKey(SimplifiedKey) Then
+		      Arr = Section.Value(SimplifiedKey)
+		    End If
+		    Arr.Append(Value.Key + "=" + Value.Value)
+		    Section.Value(SimplifiedKey) = Arr
+		    
+		    Dict.Value(Value.Header) = Section
+		  Next
+		End Sub
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -109,6 +137,11 @@ Protected Class ConfigValue
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Header"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SimplifiedKey"
 			Group="Behavior"
 			Type="Text"
 		#tag EndViewProperty

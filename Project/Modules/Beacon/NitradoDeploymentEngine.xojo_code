@@ -171,12 +171,9 @@ Protected Class NitradoDeploymentEngine
 
 	#tag Method, Flags = &h0
 		Sub LookupServer(Profile As Beacon.NitradoServerProfile, AccessToken As Text)
-		  If Profile = Nil Or AccessToken = "" Then
-		    Break
-		    Return
-		  End If
-		  
-		  Dim URL As Text = "https://api.nitrado.net/services/" + Profile.ServiceID.ToText + "/gameservers?access_token=" + Beacon.EncodeURLComponent(AccessToken)
+		  Dim URL As Text = "https://api.nitrado.net/services/" + Profile.ServiceID.ToText + "/gameservers"//?access_token=" + Beacon.EncodeURLComponent(AccessToken)
+		  Dim Headers As New Xojo.Core.Dictionary
+		  Headers.Value("Authorization") = "Bearer " + AccessToken
 		  SimpleHTTP.Get(URL, AddressOf LookupServer_Callback, Profile)
 		End Sub
 	#tag EndMethod

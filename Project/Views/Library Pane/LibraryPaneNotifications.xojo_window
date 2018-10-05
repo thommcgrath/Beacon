@@ -326,7 +326,7 @@ End
 		  End If
 		  
 		  If Self.mDownRect.Contains(X, Y) Then
-		     If Self.mPressed = False Then
+		    If Self.mPressed = False Then
 		      Self.mPressed = True
 		      Self.Invalidate
 		    End If

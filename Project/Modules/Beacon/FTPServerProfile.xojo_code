@@ -38,6 +38,32 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.ServerProfile) As Integer
+		  If Other = Nil Then
+		    Return 1
+		  End If
+		  
+		  If Not (Other IsA Beacon.FTPServerProfile) Then
+		    Return Super.Operator_Compare(Other)
+		  End If
+		  
+		  Return Self.ServerID.Compare(Beacon.FTPServerProfile(Other).ServerID, Text.CompareCaseSensitive)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SecondaryName() As Text
+		  Return Self.Username + "@" + Self.Host + ":" + Self.Port.ToText
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ServerID() As Text
+		  Return Self.mUsername.Lowercase + "@" + Self.mHost.Lowercase + If(Self.mGameIniPath.BeginsWith("/"), "", "/") + Self.mGameIniPath
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function SupportsCapability(Capability As Beacon.ServerProfile.Capabilities) As Boolean
 		  Select Case Capability
 		  Case Beacon.ServerProfile.Capabilities.DiscoverServer
@@ -63,6 +89,7 @@ Inherits Beacon.ServerProfile
 			Set
 			  If Self.mGameIniPath.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
 			    Self.mGameIniPath = Value
+			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
@@ -78,7 +105,8 @@ Inherits Beacon.ServerProfile
 		#tag Setter
 			Set
 			  If Self.mGameUserSettingsIniPath.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
-			    Self.mGameUserSettingsIniPath = Value
+			    Self.mGameUserSettingsIniPath = Value  
+			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
@@ -94,7 +122,8 @@ Inherits Beacon.ServerProfile
 		#tag Setter
 			Set
 			  If Self.mHost.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
-			    Self.mHost = Value
+			    Self.mHost = Value  
+			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
@@ -134,7 +163,8 @@ Inherits Beacon.ServerProfile
 		#tag Setter
 			Set
 			  If Self.mPassword.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
-			    Self.mPassword = Value
+			    Self.mPassword = Value  
+			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
@@ -156,7 +186,8 @@ Inherits Beacon.ServerProfile
 			    Value = 21
 			  End If
 			  If Self.mPort <> Value Then
-			    Self.mPort = Value
+			    Self.mPort = Value  
+			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
@@ -172,7 +203,8 @@ Inherits Beacon.ServerProfile
 		#tag Setter
 			Set
 			  If Self.mUsername.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
-			    Self.mUsername = Value
+			    Self.mUsername = Value  
+			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter

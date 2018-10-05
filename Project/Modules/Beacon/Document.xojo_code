@@ -445,6 +445,12 @@ Implements Beacon.DocumentItem
 		      Return True
 		    End If
 		  Next
+		  
+		  For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
+		    If Profile.Modified Then
+		      Return True
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
@@ -456,6 +462,10 @@ Implements Beacon.DocumentItem
 		    For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
 		      Dim Group As Beacon.ConfigGroup = Entry.Value
 		      Group.Modified = False
+		    Next
+		    
+		    For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
+		      Profile.Modified = False
 		    Next
 		  End If
 		End Sub
@@ -480,7 +490,16 @@ Implements Beacon.DocumentItem
 		      Self.mModified = True
 		    End If
 		  Else
-		    Self.mOAuthDicts.Value(Provider) = Beacon.Clone(Dict)
+		    If Self.mOAuthDicts.HasKey(Provider) Then
+		      // Need to compare
+		      Dim OldJSON As Text = Xojo.Data.GenerateJSON(Self.mOAuthDicts.Value(Provider))
+		      Dim NewJSON As Text = Xojo.Data.GenerateJSON(Dict)
+		      If OldJSON = NewJSON Then
+		        Return
+		      End If
+		    End If
+		    
+		    Self.mOAuthDicts.Value(Provider) = Beacon.Clone(Dict)  
 		    Self.mModified = True
 		  End If
 		End Sub

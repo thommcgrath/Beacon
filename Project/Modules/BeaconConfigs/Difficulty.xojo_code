@@ -49,8 +49,8 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  Dim Options(1) As Beacon.ConfigValue
-		  Options(0) = New Beacon.ConfigValue(Beacon.SessionSettingsHeader, "DifficultyOffset", Self.DifficultyOffset.PrettyText)
-		  Options(1) = New Beacon.ConfigValue(Beacon.SessionSettingsHeader, "OverrideOfficialDifficulty", Self.DinoLevelIncrements.ToText)
+		  Options(0) = New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", Self.DifficultyOffset.PrettyText)
+		  Options(1) = New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.DinoLevelIncrements.ToText)
 		  Return Options
 		End Function
 	#tag EndMethod
@@ -171,11 +171,6 @@ Inherits Beacon.ConfigGroup
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Modified"
-			Group="Behavior"
-			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MaxDinoLevel"
