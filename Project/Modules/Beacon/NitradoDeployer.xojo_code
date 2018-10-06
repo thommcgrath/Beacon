@@ -7,6 +7,11 @@ Implements Beacon.Deployer
 		  Self.mGameIniDict = GameIniDict
 		  Self.mGameUserSettingsIniDict = GameUserSettingsIniDict
 		  
+		  Dim SessionSettingsValues() As Text = Array("SessionName=" + Self.mServerName)
+		  Dim SessionSettings As New Xojo.Core.Dictionary
+		  SessionSettings.Value("SessionName") = SessionSettingsValues
+		  Self.mGameUserSettingsIniDict.Value("SessionSettings") = SessionSettings
+		  
 		  // First, look up the server details to determine what needs to be done next
 		  Self.mStatus = "Getting server status…"
 		  Dim Headers As New Xojo.Core.Dictionary

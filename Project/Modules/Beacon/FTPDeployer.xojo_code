@@ -10,6 +10,11 @@ Implements Beacon.Deployer
 		  Self.mGameIniDict = GameIniDict
 		  Self.mGameUserSettingsIniDict = GameUserSettingsIniDict
 		  
+		  Dim SessionSettingsValues() As Text = Array("SessionName=" + Self.mProfile.Name)
+		  Dim SessionSettings As New Xojo.Core.Dictionary
+		  SessionSettings.Value("SessionName") = SessionSettingsValues
+		  Self.mGameUserSettingsIniDict.Value("SessionSettings") = SessionSettings
+		  
 		  Self.DownloadGameIni()
 		End Sub
 	#tag EndMethod

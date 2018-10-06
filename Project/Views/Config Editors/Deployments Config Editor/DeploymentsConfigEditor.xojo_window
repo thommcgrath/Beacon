@@ -30,13 +30,13 @@ Begin ConfigEditor DeploymentsConfigEditor
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
-      Border          =   True
+      Border          =   False
       ColumnCount     =   1
       ColumnsResizable=   False
       ColumnWidths    =   ""
       DataField       =   ""
       DataSource      =   ""
-      DefaultRowHeight=   -1
+      DefaultRowHeight=   40
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -44,14 +44,14 @@ Begin ConfigEditor DeploymentsConfigEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   508
+      Height          =   465
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
       Italic          =   False
-      Left            =   -1
+      Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -69,21 +69,214 @@ Begin ConfigEditor DeploymentsConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   -1
+      Top             =   41
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      UseFocusRing    =   False
       Visible         =   True
-      Width           =   300
+      Width           =   299
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin FadedSeparator FadedSeparator1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   506
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   299
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   0
+      ScrollSpeed     =   20
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
+   End
+   Begin FadedSeparator FadedSeparator2
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   0
+      ScrollSpeed     =   20
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   40
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   299
+   End
+   Begin BeaconToolbar Header
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Caption         =   "Servers"
+      Enabled         =   True
+      Height          =   40
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Resizer         =   "0"
+      Scope           =   0
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   299
    End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
+		    Dim Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
+		    
+		    Self.ServerList.AddRow(Profile.Name + EndOfLine + Profile.SecondaryName)
+		    Self.ServerList.RowTag(Self.ServerList.LastIndex) = Profile
+		  Next
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Controller As Beacon.DocumentController)
+		  Self.mViews = New Xojo.Core.Dictionary
+		  Super.Constructor(Controller)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub View_ContentsChanged(Sender As DeployContainer)
+		  Self.ContentsChanged = Sender.ContentsChanged
+		End Sub
+	#tag EndMethod
+
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mCurrentProfileID
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mCurrentProfileID = Value Then
+			    Return
+			  End If
+			  
+			  If Self.mCurrentProfileID <> "" Then
+			    Dim View As DeployContainer = Self.mViews.Value(Self.mCurrentProfileID)
+			    View.Visible = False
+			    Self.mCurrentProfileID = ""
+			  End If
+			  
+			  If Not Self.mViews.HasKey(Value) Then
+			    Return
+			  End If
+			  
+			  Dim View As DeployContainer = Self.mViews.Value(Value)
+			  View.Visible = True
+			  Self.mCurrentProfileID = Value
+			End Set
+		#tag EndSetter
+		CurrentProfileID As Text
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.mViews.HasKey(Self.mCurrentProfileID) Then
+			    Return DeployContainer(Self.mViews.Value(Self.mCurrentProfileID))
+			  End If
+			End Get
+		#tag EndGetter
+		CurrentView As DeployContainer
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mCurrentProfileID As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mViews As Xojo.Core.Dictionary
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
+#tag Events ServerList
+	#tag Event
+		Sub Change()
+		  If Me.ListIndex = -1 Then
+		    Self.CurrentProfileID = ""
+		    Return
+		  End If
+		  
+		  Dim Profile As Beacon.ServerProfile = Me.RowTag(Me.ListIndex)
+		  Dim ProfileID As Text = Profile.ProfileID
+		  If Not Self.mViews.HasKey(ProfileID) Then
+		    // Create the view
+		    Dim View As DeployContainer
+		    Select Case Profile
+		    Case IsA Beacon.NitradoServerProfile
+		      View = New NitradoDeploymentView(Self.Document, Profile)
+		    Case IsA Beacon.FTPServerProfile
+		      
+		    Else
+		      Self.CurrentProfileID = ""
+		      Return
+		    End Select
+		    
+		    View.EmbedWithin(Self, FadedSeparator1.Left + FadedSeparator1.Width, FadedSeparator1.Top, Self.Width - (FadedSeparator1.Left + FadedSeparator1.Width), FadedSeparator1.Height)
+		    AddHandler View.ContentsChanged, WeakAddressOf View_ContentsChanged
+		    Self.mViews.Value(ProfileID) = View
+		  End If
+		  Self.CurrentProfileID = ProfileID
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="MinimumWidth"
@@ -296,5 +489,10 @@ End
 		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="CurrentProfileID"
+		Group="Behavior"
+		Type="Text"
 	#tag EndViewProperty
 #tag EndViewBehavior

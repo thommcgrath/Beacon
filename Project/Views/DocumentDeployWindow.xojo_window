@@ -502,7 +502,7 @@ End
 		    Next
 		    
 		    For Each Deployer As Beacon.Deployer In Self.mDeployers
-		      Deployer.Begin(Self.mCommandLineOptions, Self.mGameIniOptions, Self.mGameUserSettingsIniOptions)
+		      Deployer.Begin(Self.mCommandLineOptions, Beacon.Clone(Self.mGameIniOptions), Beacon.Clone(Self.mGameUserSettingsIniOptions))
 		    Next
 		    
 		    Self.DeployingWatchTimer.Mode = Timer.ModeMultiple

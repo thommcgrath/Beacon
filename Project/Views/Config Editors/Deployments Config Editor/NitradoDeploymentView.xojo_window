@@ -26,12 +26,6 @@ Begin DeployContainer NitradoDeploymentView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   600
-   Begin Beacon.NitradoDeploymentEngine Engine
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
    Begin Beacon.OAuth2Client Auth
       Index           =   -2147483648
       LockedInPosition=   False
@@ -44,7 +38,9 @@ Begin DeployContainer NitradoDeploymentView
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Untitled"
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -62,6 +58,7 @@ Begin DeployContainer NitradoDeploymentView
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   600
@@ -95,50 +92,7 @@ Begin DeployContainer NitradoDeploymentView
       Visible         =   True
       Width           =   600
    End
-   Begin UITweaks.ResizedTextField TextField1
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   142
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   61
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   438
-   End
-   Begin Label Label1
+   Begin UITweaks.ResizedLabel ServerStatusLabel
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
@@ -161,7 +115,7 @@ Begin DeployContainer NitradoDeploymentView
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Server Name:"
+      Text            =   "Server Status:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -173,6 +127,49 @@ Begin DeployContainer NitradoDeploymentView
       Visible         =   True
       Width           =   110
    End
+   Begin Timer RefreshTimer
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Mode            =   0
+      Period          =   5000
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
+   Begin UITweaks.ResizedLabel ServerStatusField
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   142
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Checking…"
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   61
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   438
+   End
 End
 #tag EndWindow
 
@@ -181,9 +178,79 @@ End
 		Sub Open()
 		  OAuthProviders.SetupNitrado(Self.Auth)
 		  Self.Auth.AuthData = Self.Document.OAuthData("Nitrado")
+		  Self.Auth.Authenticate
+		  
+		  Self.Controls.Caption = Self.mProfile.Name
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Sub Callback_ServerStatus(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  Select Case Status
+		  Case 401
+		    Self.ShowAlert("Nitrado API Error", "You are not authorized to query this server.")
+		    Return
+		  Case 429
+		    Self.ShowAlert("Nitrado API Error", "Rate limit has been exceeded.")
+		    Return
+		  Case 503
+		    Self.ShowAlert("Nitrado API Error", "Nitrado is currently offline for maintenace.")
+		    Return
+		  End Select
+		  
+		  Try
+		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
+		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
+		    Dim GameServer As Xojo.Core.Dictionary = Data.Value("gameserver")
+		    
+		    Dim ServerStatus As Text = GameServer.Value("status")
+		    Dim Started, Enabled As Boolean
+		    Select Case ServerStatus
+		    Case "started"
+		      Self.ServerStatusField.Text = "Running"
+		      Started = True
+		      Enabled = True
+		    Case "stopped"
+		      Self.ServerStatusField.Text = "Stopped"
+		      Started = False
+		      Enabled = True
+		    Case "stopping"
+		      Self.ServerStatusField.Text = "Stopping"
+		      Started = True
+		      Enabled = False
+		    Case "restarting"
+		      Self.ServerStatusField.Text = "Restarting"
+		      Started = False
+		      Enabled = False
+		    Case "suspended"
+		      Self.ServerStatusField.Text = "Suspended"
+		      Started = False
+		      Enabled = False
+		    Case "guardian_locked"
+		      Self.ServerStatusField.Text = "Locked by Guardian"
+		      Started = False
+		      Enabled = False
+		    Case "gs_installation"
+		      Self.ServerStatusField.Text = "Switching games"
+		      Started = False
+		      Enabled = False
+		    Case "backup_restore"
+		      Self.ServerStatusField.Text = "Restoring from backup"
+		      Started = False
+		      Enabled = False
+		    Case "backup_creation"
+		      Self.ServerStatusField.Text = "Creating backup"
+		      Started = False
+		      Enabled = False
+		    End Select
+		  Catch Err As RuntimeException
+		  End Try
+		  
+		  Self.RefreshTimer.Mode = Timer.ModeSingle
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Document As Beacon.Document, Profile As Beacon.ServerProfile)
@@ -199,6 +266,15 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub RefreshServerStatus()
+		  Dim Headers As New Xojo.Core.Dictionary
+		  Headers.Value("Authorization") = "Bearer " + Self.Auth.AccessToken
+		  
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
+		End Sub
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mProfile As Beacon.NitradoServerProfile
@@ -211,12 +287,20 @@ End
 	#tag Event
 		Sub Authenticated()
 		  Self.Document.OAuthData("Nitrado") = Me.AuthData
+		  Self.RefreshServerStatus()
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Function ShowURL(URL As Text) As Beacon.WebView
 		  Return MiniBrowser.ShowURL(URL)
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events RefreshTimer
+	#tag Event
+		Sub Action()
+		  Self.RefreshServerStatus()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
