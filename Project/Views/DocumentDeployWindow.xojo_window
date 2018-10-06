@@ -46,7 +46,7 @@ Begin Window DocumentDeployWindow
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin Label ServerSelectionMessageLabel
@@ -271,7 +271,7 @@ Begin Window DocumentDeployWindow
          Visible         =   True
          Width           =   560
       End
-      Begin PushButton FinishedButton
+      Begin UITweaks.ResizedPushButton FinishedButton
          AutoDeactivate  =   True
          Bold            =   False
          ButtonStyle     =   "0"
@@ -356,6 +356,73 @@ Begin Window DocumentDeployWindow
          _ScrollOffset   =   0
          _ScrollWidth    =   -1
       End
+      Begin UITweaks.ResizedPushButton DeployingCancelButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   True
+         Caption         =   "Cancel"
+         Default         =   False
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   500
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   360
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin Label FinishedReportLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   280
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   True
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "All servers updated successfully."
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   60
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
    End
    Begin Beacon.OAuth2Client Auth
       Index           =   -2147483648
@@ -367,7 +434,7 @@ Begin Window DocumentDeployWindow
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
-      Period          =   250
+      Period          =   100
       Scope           =   2
       TabPanelIndex   =   0
    End
@@ -419,12 +486,19 @@ End
 		        Continue
 		      End If
 		      
-		      If Profile IsA Beacon.NitradoServerProfile Then
-		        Dim Deployer As New Beacon.NitradoDeployer(Beacon.NitradoServerProfile(Profile), Self.mDocument.OAuthData(Profile.OAuthProvider))
-		        Self.DeployingList.AddRow(Profile.Name + EndOfLine + Deployer.Status)
-		        Self.DeployingList.RowTag(DeployingList.LastIndex) = Deployer
-		        Self.mDeployers.Append(Deployer)
-		      End If
+		      Dim Deployer As Beacon.Deployer
+		      Select Case Profile
+		      Case IsA Beacon.NitradoServerProfile
+		        Deployer = New Beacon.NitradoDeployer(Profile.Name, Beacon.NitradoServerProfile(Profile).ServiceID, Self.mDocument.OAuthData(Profile.OAuthProvider))
+		      Case IsA Beacon.FTPServerProfile
+		        Deployer = New Beacon.FTPDeployer(Beacon.FTPServerProfile(Profile), App.Identity)
+		      Else
+		        Continue
+		      End Select
+		      
+		      Self.mDeployers.Append(Deployer)
+		      Self.DeployingList.AddRow(Deployer.Name + EndOfLine + Deployer.Status)
+		      Self.DeployingList.RowTag(DeployingList.LastIndex) = Deployer
 		    Next
 		    
 		    For Each Deployer As Beacon.Deployer In Self.mDeployers
@@ -474,6 +548,38 @@ End
 		  
 		  Return New DocumentDeployWindow(Document)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowResults()
+		  Dim Report() As String
+		  Dim SuccessCount, TotalCount As Integer
+		  For Each Deployer As Beacon.Deployer In Self.mDeployers
+		    If Deployer.Errored Then
+		      Report.Append(Deployer.Status)
+		    Else
+		      SuccessCount = SuccessCount + 1
+		      Report.Append(Deployer.Name + ": Finished successfully. " + If(Deployer.ServerIsStarting, "The server is starting up now.", "You may start the server when you are ready."))
+		    End If
+		  Next
+		  TotalCount = Self.mDeployers.Ubound + 1
+		  
+		  If SuccessCount = 0 Then
+		    If TotalCount = 1 Then
+		      Report.Insert(0, "The deployment did not succeed!")
+		    Else
+		      Report.Insert(0, "No server completed the deployment successfully!")
+		    End If
+		  ElseIf SuccessCount = 1 And TotalCount = 1 Then
+		    Report(0) = "The deployment finished successfully. " + If(Self.mDeployers(0).ServerIsStarting, "The server is starting up now.", "You may start the server when you are ready.")
+		  Else
+		    Report.Insert(0, "Some servers successfully updated, but there were errors.")
+		  End If
+		  
+		  Self.FinishedReportLabel.Text = Join(Report, EndOfLine)
+		  
+		  Self.Pages.Value = Self.PageFinished
+		End Sub
 	#tag EndMethod
 
 
@@ -615,6 +721,26 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events DeployingCancelButton
+	#tag Event
+		Sub Action()
+		  Dim AnyFinished As Boolean
+		  
+		  For Each Deployer As Beacon.Deployer In Self.mDeployers
+		    If Deployer.Finished Then
+		      AnyFinished = True
+		    End If
+		    Deployer.Cancel
+		  Next
+		  
+		  If AnyFinished Then
+		    Self.ShowResults()
+		  Else
+		    Self.Close
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events Auth
 	#tag Event
 		Sub Authenticated()
@@ -643,12 +769,12 @@ End
 		  Next
 		  
 		  If Finished Then
-		    Self.Pages.Value = Self.PageFinished
+		    Self.ShowResults()
 		    Me.Mode = Timer.ModeOff
 		  Else
 		    For I As Integer = 0 To Self.DeployingList.ListCount - 1
 		      Dim Deployer As Beacon.Deployer = Self.DeployingList.RowTag(I)
-		      Self.DeployingList.Cell(I, 0) = NthField(Self.DeployingList.Cell(I, 0), EndOfLine, 1) + EndOfLine + Deployer.Status
+		      Self.DeployingList.Cell(I, 0) = Deployer.Name + EndOfLine + Deployer.Status
 		    Next
 		  End If
 		End Sub

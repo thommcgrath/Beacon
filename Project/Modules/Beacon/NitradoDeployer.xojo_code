@@ -17,7 +17,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  If Self.CheckError(Status) Then
+		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
 		  
@@ -47,7 +47,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  If Self.CheckError(Status) Then
+		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
 		  
@@ -64,7 +64,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameUserSettingsIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  If Self.CheckError(Status) Then
+		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
 		  
@@ -94,7 +94,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameUserSettingsIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  If Self.CheckError(Status) Then
+		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
 		  
@@ -111,7 +111,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_EnableExpertMode(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  If Self.CheckError(Status) Then
+		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
 		  
@@ -135,7 +135,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_ServerStart(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  If Self.CheckError(Status) Then
+		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
 		  
@@ -161,7 +161,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_ServerStatus(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  If Self.CheckError(Status) Then
+		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
 		  
@@ -212,7 +212,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_ServerStop(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  If Self.CheckError(Status) Then
+		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
 		  
@@ -237,7 +237,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_SetNextCommandLineParam(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  If Self.CheckError(Status) Then
+		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
 		  
@@ -262,7 +262,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_UploadGameIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  If Self.CheckError(Status) Then
+		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
 		  
@@ -297,7 +297,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_UploadGameIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  If Self.CheckError(Status) Then
+		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
 		  
@@ -312,7 +312,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_UploadGameUserSettingsIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  If Self.CheckError(Status) Then
+		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
 		  
@@ -347,7 +347,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_UploadGameUserSettingsIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  If Self.CheckError(Status) Then
+		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
 		  
@@ -357,6 +357,13 @@ Implements Beacon.Deployer
 		    Self.mErrored = True
 		    Self.mStatus = "Error: Could not upload GameUserSettings.ini, server said " + Status.ToText
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Cancel()
+		  Xojo.Core.Timer.CancelCall(WeakAddressOf UploadGameIni)
+		  Self.mCancelled = True
 		End Sub
 	#tag EndMethod
 
@@ -381,10 +388,9 @@ Implements Beacon.Deployer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Profile As Beacon.NitradoServerProfile, OAuthData As Xojo.Core.Dictionary)
-		  Self.mEngine = New Beacon.NitradoDeploymentEngine
-		  Self.mServiceID = Profile.ServiceID
-		  Self.mConfigPath = Profile.ConfigPath
+		Sub Constructor(ServerName As Text, ServiceID As Integer, OAuthData As Xojo.Core.Dictionary)
+		  Self.mServerName = ServerName
+		  Self.mServiceID = ServiceID
 		  Self.mAccessToken = OAuthData.Value("Access Token")
 		End Sub
 	#tag EndMethod
@@ -458,6 +464,18 @@ Implements Beacon.Deployer
 	#tag Method, Flags = &h0
 		Function Finished() As Boolean
 		  Return Self.mFinished
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Name() As Text
+		  Return Self.mServerName
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ServerIsStarting() As Boolean
+		  Return Self.mStartOnFinish
 		End Function
 	#tag EndMethod
 
@@ -614,6 +632,10 @@ Implements Beacon.Deployer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCancelled As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mCommandLineChanges() As Beacon.ConfigValue
 	#tag EndProperty
 
@@ -623,10 +645,6 @@ Implements Beacon.Deployer
 
 	#tag Property, Flags = &h21
 		Private mConfigPath As Text
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mEngine As Beacon.NitradoDeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -655,6 +673,10 @@ Implements Beacon.Deployer
 
 	#tag Property, Flags = &h21
 		Private mGameUserSettingsIniOriginal As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mServerName As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

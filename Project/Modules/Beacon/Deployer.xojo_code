@@ -7,7 +7,31 @@ Protected Interface Deployer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Cancel()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Errored() As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Finished() As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Name() As Text
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ServerIsStarting() As Boolean
 		  
 		End Function
 	#tag EndMethod

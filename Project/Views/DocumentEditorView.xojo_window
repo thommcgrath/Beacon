@@ -44,7 +44,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -211,6 +210,12 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Activate()
+		  Self.ContentsChanged = Self.Document.Modified
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub Close()
 		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
