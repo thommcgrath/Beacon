@@ -69,49 +69,6 @@ Begin ConfigEditor DifficultyConfigEditor
       Visible         =   True
       Width           =   80
    End
-   Begin UITweaks.ResizedTextField DinoLevelIncrementsField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   216
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   54
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   80
-   End
    Begin UITweaks.ResizedLabel MaxDinoLevelLabel
       AutoDeactivate  =   True
       Bold            =   False
@@ -147,41 +104,6 @@ Begin ConfigEditor DifficultyConfigEditor
       Visible         =   True
       Width           =   184
    End
-   Begin UITweaks.ResizedLabel DinoLevelIncrementsLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Creature Level Increments:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   54
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   184
-   End
    Begin GroupBox ReferenceValuesGroup
       AutoDeactivate  =   True
       Bold            =   False
@@ -205,7 +127,7 @@ Begin ConfigEditor DifficultyConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   54
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -247,7 +169,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   192
+         Top             =   158
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -283,7 +205,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   192
+         Top             =   158
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -326,7 +248,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   158
+         Top             =   124
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -362,7 +284,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   158
+         Top             =   124
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -405,7 +327,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   124
+         Top             =   90
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -441,7 +363,7 @@ Begin ConfigEditor DifficultyConfigEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   124
+         Top             =   90
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -456,7 +378,6 @@ End
 		Sub Open()
 		  Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
 		  Self.MaxDinoLevelField.Text = Str(Difficulty.MaxDinoLevel, "0")
-		  Self.DinoLevelIncrementsField.Text = Str(Difficulty.DinoLevelIncrements, "0")
 		  Self.FillReferenceFields(Difficulty)
 		  Self.mSettingUp = False
 		End Sub
@@ -465,8 +386,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub FillReferenceFields(Difficulty As BeaconConfigs.Difficulty)
-		  Self.LootScaleField.Text = Str(Difficulty.QualityMultiplier, "0%")
-		  Self.DifficultyValueField.Text = Str(Difficulty.QualityMultiplier, "0.0")
+		  Self.LootScaleField.Text = Str(Difficulty.DifficultyValue, "0%")
+		  Self.DifficultyValueField.Text = Str(Difficulty.DifficultyValue, "0.0")
 		  Self.DifficultyOffsetField.Text = Difficulty.DifficultyOffset.PrettyText
 		End Sub
 	#tag EndMethod
@@ -521,27 +442,21 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events DinoLevelIncrementsField
-	#tag Event
-		Sub TextChange()
-		  If Self.mSettingUp Then
-		    Return
-		  End If
-		  
-		  Dim Value As Integer = Val(Me.Text)
-		  If Value <= 0 Then
-		    Return
-		  End If
-		  
-		  If Self.Document.Difficulty.DinoLevelIncrements <> Value Then
-		    Self.Document.Difficulty.DinoLevelIncrements = Value
-		    Self.FillReferenceFields(Self.Document.Difficulty)
-		    Self.ContentsChanged = Self.Document.Modified
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Behavior"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Behavior"
+		InitialValue="300"
+		Type="Integer"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
 		Group="Behavior"

@@ -219,7 +219,6 @@ Implements Beacon.DocumentItem
 		      Dim DifficultyConfig As New BeaconConfigs.Difficulty
 		      If Dict.HasKey("DifficultyValue") Then
 		        DifficultyConfig.MaxDinoLevel = Dict.Value("DifficultyValue") * 30
-		        DifficultyConfig.DinoLevelIncrements = 5
 		      End If
 		      Doc.AddConfigGroup(DifficultyConfig)
 		      If Dict.HasKey("ConsoleModsOnly") Then
@@ -763,7 +762,7 @@ Implements Beacon.DocumentItem
 			Get
 			  Dim Difficulty As BeaconConfigs.Difficulty = Self.Difficulty
 			  If Difficulty <> Nil Then
-			    Return Difficulty.QualityMultiplier
+			    Return Difficulty.DifficultyValue
 			  Else
 			    Return -1
 			  End If

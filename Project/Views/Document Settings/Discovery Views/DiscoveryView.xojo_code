@@ -83,7 +83,7 @@ Inherits ContainerControl
 		        Params(0) = ParsedData
 		        Params(1) = DiscoveredData
 		        Params(2) = Document.MapCompatibility
-		        Params(3) = DifficultyConfig.QualityMultiplier
+		        Params(3) = DifficultyConfig.DifficultyValue
 		        Dim Group As Beacon.ConfigGroup = Signature.Invoke(Nil, Params)
 		        If Group <> Nil Then
 		          Document.AddConfigGroup(Group)
