@@ -1,9 +1,9 @@
 #tag Class
-Protected Class FTPDeployer
-Implements Beacon.Deployer
+Protected Class FTPDeploymentEngine
+Implements Beacon.DeploymentEngine
 	#tag Method, Flags = &h0
 		Sub Begin(CommandLineOptions() As Beacon.ConfigValue, GameIniDict As Xojo.Core.Dictionary, GameUserSettingsIniDict As Xojo.Core.Dictionary)
-		  // Part of the Beacon.Deployer interface.
+		  // Part of the Beacon.DeploymentEngine interface.
 		  
 		  #Pragma Unused CommandLineOptions
 		  
@@ -166,7 +166,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h0
 		Function Finished() As Boolean
-		  // Part of the Beacon.Deployer interface.
+		  // Part of the Beacon.DeploymentEngine interface.
 		  
 		  Return Self.mFinished
 		End Function
@@ -210,7 +210,7 @@ Implements Beacon.Deployer
 
 	#tag Method, Flags = &h0
 		Function Status() As Text
-		  // Part of the Beacon.Deployer interface.
+		  // Part of the Beacon.DeploymentEngine interface.
 		  
 		  Return Self.mStatus
 		End Function

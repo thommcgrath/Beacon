@@ -1,6 +1,6 @@
 #tag Class
-Protected Class NitradoDeployer
-Implements Beacon.Deployer
+Protected Class NitradoDeploymentEngine
+Implements Beacon.DeploymentEngine
 	#tag Method, Flags = &h0
 		Sub Begin(CommandLineOptions() As Beacon.ConfigValue, GameIniDict As Xojo.Core.Dictionary, GameUserSettingsIniDict As Xojo.Core.Dictionary)
 		  Self.mCommandLineOptions = CommandLineOptions

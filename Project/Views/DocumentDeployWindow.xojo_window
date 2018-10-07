@@ -44,6 +44,7 @@ Begin Window DocumentDeployWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -425,12 +426,14 @@ Begin Window DocumentDeployWindow
       End
    End
    Begin Beacon.OAuth2Client Auth
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Timer DeployingWatchTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -486,23 +489,23 @@ End
 		        Continue
 		      End If
 		      
-		      Dim Deployer As Beacon.Deployer
+		      Dim DeploymentEngine As Beacon.DeploymentEngine
 		      Select Case Profile
 		      Case IsA Beacon.NitradoServerProfile
-		        Deployer = New Beacon.NitradoDeployer(Profile.Name, Beacon.NitradoServerProfile(Profile).ServiceID, Self.mDocument.OAuthData(Profile.OAuthProvider))
+		        DeploymentEngine = New Beacon.NitradoDeploymentEngine(Profile.Name, Beacon.NitradoServerProfile(Profile).ServiceID, Self.mDocument.OAuthData(Profile.OAuthProvider))
 		      Case IsA Beacon.FTPServerProfile
-		        Deployer = New Beacon.FTPDeployer(Beacon.FTPServerProfile(Profile), App.Identity)
+		        DeploymentEngine = New Beacon.FTPDeploymentEngine(Beacon.FTPServerProfile(Profile), App.Identity)
 		      Else
 		        Continue
 		      End Select
 		      
-		      Self.mDeployers.Append(Deployer)
-		      Self.DeployingList.AddRow(Deployer.Name + EndOfLine + Deployer.Status)
-		      Self.DeployingList.RowTag(DeployingList.LastIndex) = Deployer
+		      Self.mDeploymentEngines.Append(DeploymentEngine)
+		      Self.DeployingList.AddRow(DeploymentEngine.Name + EndOfLine + DeploymentEngine.Status)
+		      Self.DeployingList.RowTag(DeployingList.LastIndex) = DeploymentEngine
 		    Next
 		    
-		    For Each Deployer As Beacon.Deployer In Self.mDeployers
-		      Deployer.Begin(Self.mCommandLineOptions, Beacon.Clone(Self.mGameIniOptions), Beacon.Clone(Self.mGameUserSettingsIniOptions))
+		    For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
+		      DeploymentEngine.Begin(Self.mCommandLineOptions, Beacon.Clone(Self.mGameIniOptions), Beacon.Clone(Self.mGameUserSettingsIniOptions))
 		    Next
 		    
 		    Self.DeployingWatchTimer.Mode = Timer.ModeMultiple
@@ -554,15 +557,15 @@ End
 		Private Sub ShowResults()
 		  Dim Report() As String
 		  Dim SuccessCount, TotalCount As Integer
-		  For Each Deployer As Beacon.Deployer In Self.mDeployers
-		    If Deployer.Errored Then
-		      Report.Append(Deployer.Status)
+		  For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
+		    If DeploymentEngine.Errored Then
+		      Report.Append(DeploymentEngine.Status)
 		    Else
 		      SuccessCount = SuccessCount + 1
-		      Report.Append(Deployer.Name + ": Finished successfully. " + If(Deployer.ServerIsStarting, "The server is starting up now.", "You may start the server when you are ready."))
+		      Report.Append(DeploymentEngine.Name + ": Finished successfully. " + If(DeploymentEngine.ServerIsStarting, "The server is starting up now.", "You may start the server when you are ready."))
 		    End If
 		  Next
-		  TotalCount = Self.mDeployers.Ubound + 1
+		  TotalCount = Self.mDeploymentEngines.Ubound + 1
 		  
 		  If SuccessCount = 0 Then
 		    If TotalCount = 1 Then
@@ -571,7 +574,7 @@ End
 		      Report.Insert(0, "No server completed the deployment successfully!")
 		    End If
 		  ElseIf SuccessCount = 1 And TotalCount = 1 Then
-		    Report(0) = "The deployment finished successfully. " + If(Self.mDeployers(0).ServerIsStarting, "The server is starting up now.", "You may start the server when you are ready.")
+		    Report(0) = "The deployment finished successfully. " + If(Self.mDeploymentEngines(0).ServerIsStarting, "The server is starting up now.", "You may start the server when you are ready.")
 		  Else
 		    Report.Insert(0, "Some servers successfully updated, but there were errors.")
 		  End If
@@ -592,7 +595,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDeployers() As Beacon.Deployer
+		Private mDeploymentEngines() As Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -726,11 +729,11 @@ End
 		Sub Action()
 		  Dim AnyFinished As Boolean
 		  
-		  For Each Deployer As Beacon.Deployer In Self.mDeployers
-		    If Deployer.Finished Then
+		  For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
+		    If DeploymentEngine.Finished Then
 		      AnyFinished = True
 		    End If
-		    Deployer.Cancel
+		    DeploymentEngine.Cancel
 		  Next
 		  
 		  If AnyFinished Then
@@ -764,8 +767,8 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Finished As Boolean = True
-		  For Each Deployer As Beacon.Deployer In Self.mDeployers
-		    Finished = Finished And Deployer.Finished
+		  For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
+		    Finished = Finished And DeploymentEngine.Finished
 		  Next
 		  
 		  If Finished Then
@@ -773,8 +776,8 @@ End
 		    Me.Mode = Timer.ModeOff
 		  Else
 		    For I As Integer = 0 To Self.DeployingList.ListCount - 1
-		      Dim Deployer As Beacon.Deployer = Self.DeployingList.RowTag(I)
-		      Self.DeployingList.Cell(I, 0) = Deployer.Name + EndOfLine + Deployer.Status
+		      Dim DeploymentEngine As Beacon.DeploymentEngine = Self.DeployingList.RowTag(I)
+		      Self.DeployingList.Cell(I, 0) = DeploymentEngine.Name + EndOfLine + DeploymentEngine.Status
 		    Next
 		  End If
 		End Sub
