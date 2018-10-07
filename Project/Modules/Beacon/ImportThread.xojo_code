@@ -57,17 +57,6 @@ Inherits Beacon.Thread
 		      Else
 		        Self.mParsedData.Value(Key) = Value
 		      End If
-		      
-		      #if false
-		        Dim Dict As Xojo.Core.Dictionary = Value
-		        If Dict.HasKey("ConfigOverrideSupplyCrateItems") Then
-		          Dim LootSource As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(Dict.Value("ConfigOverrideSupplyCrateItems"), Self.Document.DifficultyValue)
-		          If LootSource <> Nil Then
-		            LootSource.NumItemSetsPower = 1.0
-		            Self.Document.Add(LootSource)
-		          End If
-		        End If
-		      #endif
 		    Catch Stop As Beacon.ThreadStopException
 		      Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Off
 		      Return
@@ -309,6 +298,11 @@ Inherits Beacon.Thread
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="State"
+			Group="Behavior"
+			Type="Beacon.Thread.States"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -337,11 +331,6 @@ Inherits Beacon.Thread
 			Name="StackSize"
 			Group="Behavior"
 			Type="UInteger"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="State"
-			Group="Behavior"
-			Type="Beacon.Thread.States"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

@@ -31,8 +31,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, DiscoveredData As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.LootScale
-		  #Pragma Unused DiscoveredData
+		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.LootScale
+		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused QualityMultiplier
 		  

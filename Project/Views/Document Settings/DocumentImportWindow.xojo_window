@@ -69,7 +69,7 @@ End
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ImportFinishedDelegate(Document As Beacon . Document)
+		Delegate Sub ImportFinishedDelegate(Documents() As Beacon.Document)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
@@ -95,11 +95,6 @@ End
 
 #tag Events DocumentImportView1
 	#tag Event
-		Sub DocumentImported(Document As Beacon.Document)
-		  Self.mImportCallback.Invoke(Document)
-		End Sub
-	#tag EndEvent
-	#tag Event
 		Sub ShouldDismiss()
 		  Self.Close
 		End Sub
@@ -109,6 +104,11 @@ End
 		  If Self.Height <> Height Then
 		    Self.Height = Height
 		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DocumentsImported(Documents() As Beacon.Document)
+		  Self.mImportCallback.Invoke(Documents)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

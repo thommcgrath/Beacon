@@ -20,83 +20,6 @@ Inherits ContainerControl
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function CreateDocumentFromImport(ParsedData As Xojo.Core.Dictionary, DiscoveredData As Xojo.Core.Dictionary) As Beacon.Document
-		  Dim Document As New Beacon.Document
-		  
-		  If DiscoveredData <> Nil And DiscoveredData.HasKey("Maps") Then
-		    Dim Maps() As Auto = DiscoveredData.Value("Maps")
-		    Document.MapCompatibility = 0
-		    For Each Map As Text In Maps
-		      Select Case Map
-		      Case "ScorchedEarth_P"
-		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.ScorchedEarth.Mask
-		      Case "Aberration_P"
-		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.Aberration.Mask
-		      Case "TheCenter"
-		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.TheCenter.Mask
-		      Case "Ragnarok"
-		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.Ragnarok.Mask
-		      Else
-		        // Unofficial maps will be tagged as The Island
-		        Document.MapCompatibility = Document.MapCompatibility Or Beacon.Maps.TheIsland.Mask
-		      End Select
-		    Next
-		  End If
-		  
-		  If ParsedData.HasKey("SessionName") Then
-		    Try
-		      Document.Title = ParsedData.Value("SessionName")
-		    Catch Err As TypeMismatchException
-		    End Try
-		  End If
-		  
-		  // Handle difficulty differently than every other config, because it's a required parameter for the others
-		  Dim OverrideOfficialDifficulty As Double = 5.0
-		  If DiscoveredData <> Nil And DiscoveredData.HasKey("Options") Then
-		    OverrideOfficialDifficulty = Self.OverrideOfficialDifficultyFromDict(DiscoveredData.Value("Options"), ParsedData)
-		  Else
-		    OverrideOfficialDifficulty = Self.OverrideOfficialDifficultyFromDict(ParsedData)
-		  End If
-		  Dim DifficultyOffset As Double = 1.0
-		  Try
-		    If ParsedData.HasKey("DifficultyOffset") Then
-		      DifficultyOffset = ParsedData.Value("DifficultyOffset")
-		    End If
-		  Catch Err As TypeMismatchException
-		  End Try
-		  Dim DifficultyConfig As New BeaconConfigs.Difficulty(OverrideOfficialDifficulty, DifficultyOffset)
-		  Document.AddConfigGroup(DifficultyConfig)
-		  
-		  Dim ConfigNames() As Text = BeaconConfigs.AllConfigNames()
-		  For Each ConfigName As Text In ConfigNames
-		    If ConfigName = BeaconConfigs.Difficulty.ConfigName Then
-		      // Difficulty is a special case
-		      Continue For ConfigName
-		    End If
-		    
-		    Dim ConfigInfo As Xojo.Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(ConfigName)
-		    Dim Methods() As Xojo.Introspection.MethodInfo = ConfigInfo.Methods
-		    For Each Signature As Xojo.Introspection.MethodInfo In Methods
-		      If Signature.IsShared And Signature.Name = "FromImport" And Signature.Parameters.Ubound = 3 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
-		        Dim Params(3) As Auto
-		        Params(0) = ParsedData
-		        Params(1) = DiscoveredData
-		        Params(2) = Document.MapCompatibility
-		        Params(3) = DifficultyConfig.DifficultyValue
-		        Dim Group As Beacon.ConfigGroup = Signature.Invoke(Nil, Params)
-		        If Group <> Nil Then
-		          Document.AddConfigGroup(Group)
-		        End If
-		        Continue For ConfigName
-		      End If
-		    Next
-		  Next
-		  
-		  Return Document
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function DesiredHeight() As Integer
 		  Return Self.mDesiredHeight
@@ -112,30 +35,6 @@ Inherits ContainerControl
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function OverrideOfficialDifficultyFromDict(ParamArray Dicts() As Xojo.Core.Dictionary) As Double
-		  For Each Dict As Xojo.Core.Dictionary In Dicts
-		    If Not Dict.HasKey("OverrideOfficialDifficulty") Then
-		      Continue
-		    End If
-		    
-		    Dim Value As Auto = Dict.Value("OverrideOfficialDifficulty")
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		    Try
-		      Select Case Info.Name
-		      Case "Text"
-		        Return Double.FromText(Value)
-		      Case "Int32", "Int64", "Double"
-		        Return Value
-		      End Select
-		    Catch Err As TypeMismatchException
-		    End Try
-		  Next
-		  
-		  Return 4.0
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub PullValuesFromDocument(Document As Beacon.Document)
 		  RaiseEvent GetValuesFromDocument(Document)
@@ -149,8 +48,14 @@ Inherits ContainerControl
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ShouldFinish(Document As Beacon.Document)
-		  RaiseEvent Finished(Document)
+		Protected Sub ShouldFinish(Engines() As Beacon.DiscoveryEngine)
+		  Self.ShouldFinish(Engines, "", Nil)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub ShouldFinish(Engines() As Beacon.DiscoveryEngine, OAuthProvider As Text, OAuthData As Xojo.Core.Dictionary)
+		  RaiseEvent Finished(Engines, OAuthProvider, OAuthData)
 		End Sub
 	#tag EndMethod
 
@@ -160,7 +65,7 @@ Inherits ContainerControl
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Finished(Document As Beacon.Document)
+		Event Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As Text, OAuthData As Xojo.Core.Dictionary)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

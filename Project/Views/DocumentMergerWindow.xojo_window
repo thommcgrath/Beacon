@@ -190,33 +190,42 @@ End
 
 
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window, SourceDocument As Beacon.Document, DestinationDocument As Beacon.Document)
-		  Dim Configs() As Beacon.ConfigGroup = SourceDocument.ImplementedConfigs
-		  If Configs.Ubound = -1 Then
-		    Parent.ShowAlert("No configs to import", "Beacon was unable to find any config content that can be imported.")
-		    Return
-		  End If
+		Shared Sub Present(Parent As Window, SourceDocuments() As Beacon.Document, DestinationDocument As Beacon.Document)
+		  Dim OAuthData As New Xojo.Core.Dictionary
+		  For Each Document As Beacon.Document In SourceDocuments
+		    For I As Integer = 0 To Document.ServerProfileCount - 1
+		      Dim Profile As Beacon.ServerProfile = Document.ServerProfile(I)
+		      If Profile.OAuthProvider <> "" Then
+		        OAuthData.Value(Profile.OAuthProvider) = Document.OAuthData(Profile.OAuthProvider)
+		      End If
+		    Next
+		  Next
 		  
 		  Dim Win As New DocumentMergerWindow
 		  Win.mDestination = DestinationDocument
-		  Win.mSource = SourceDocument
+		  Win.mOAuthData = OAuthData
 		  Dim Enabled As Boolean
-		  For Each Config As Beacon.ConfigGroup In Configs
-		    Win.List.AddRow("", Language.LabelForConfig(Config))
-		    Win.List.CellCheck(Win.List.LastIndex, 0) = Not DestinationDocument.HasConfigGroup(Config.ConfigName)
-		    Win.List.RowTag(Win.List.LastIndex) = Config
-		    Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
-		  Next
-		  For I As Integer = 0 To SourceDocument.ServerProfileCount - 1
-		    For X As Integer = 0 To DestinationDocument.ServerProfileCount - 1
-		      If DestinationDocument.ServerProfile(X) = SourceDocument.ServerProfile(I) Then
-		        Continue For I
-		      End If
+		  Dim UsePrefixes As Boolean = SourceDocuments.Ubound > 0
+		  For Each Document As Beacon.Document In SourceDocuments
+		    Dim Prefix As String = If(UsePrefixes, Document.Title + ": ", "")
+		    Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
+		    For Each Config As Beacon.ConfigGroup In Configs
+		      Win.List.AddRow("", Prefix + Language.LabelForConfig(Config))
+		      Win.List.CellCheck(Win.List.LastIndex, 0) = UsePrefixes = False And Not DestinationDocument.HasConfigGroup(Config.ConfigName)
+		      Win.List.RowTag(Win.List.LastIndex) = Config
+		      Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
 		    Next
-		    Win.List.AddRow("", "Server Profile: " + SourceDocument.ServerProfile(I).Name)
-		    Win.List.CellCheck(Win.List.LastIndex, 0) = True
-		    Win.List.RowTag(Win.List.LastIndex) = SourceDocument.ServerProfile(I)
-		    Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
+		    For I As Integer = 0 To Document.ServerProfileCount - 1
+		      For X As Integer = 0 To DestinationDocument.ServerProfileCount - 1
+		        If DestinationDocument.ServerProfile(X) = Document.ServerProfile(I) Then
+		          Continue For I
+		        End If
+		      Next
+		      Win.List.AddRow("", "Server Profile: " + Document.ServerProfile(I).Name)
+		      Win.List.CellCheck(Win.List.LastIndex, 0) = True
+		      Win.List.RowTag(Win.List.LastIndex) = Document.ServerProfile(I)
+		      Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
+		    Next
 		  Next
 		  Win.ActionButton.Enabled = Enabled
 		  
@@ -230,7 +239,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSource As Beacon.Document
+		Private mOAuthData As Xojo.Core.Dictionary
 	#tag EndProperty
 
 
@@ -271,8 +280,8 @@ End
 		      Dim Profile As Beacon.ServerProfile = Self.List.RowTag(I)
 		      Self.mDestination.Add(Profile)
 		      
-		      If Profile.OAuthProvider <> "" Then
-		        Dim OAuthData As Xojo.Core.Dictionary = Self.mSource.OAuthData(Profile.OAuthProvider)
+		      If Profile.OAuthProvider <> "" And Self.mOAuthData.HasKey(Profile.OAuthProvider) Then
+		        Dim OAuthData As Xojo.Core.Dictionary = Self.mOAuthData.Value(Profile.OAuthProvider)
 		        If OAuthData <> Nil Then
 		          Self.mDestination.OAuthData(Profile.OAuthProvider) = OAuthData
 		        End If

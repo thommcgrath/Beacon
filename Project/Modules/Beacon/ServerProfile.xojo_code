@@ -160,7 +160,11 @@ Protected Class ServerProfile
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mName
+			  If Self.mName <> "" Then
+			    Return Self.mName
+			  Else
+			    Return Self.SecondaryName
+			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -185,6 +189,12 @@ Protected Class ServerProfile
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Index"
 			Visible=true
 			Group="ID"
@@ -199,12 +209,6 @@ Protected Class ServerProfile
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mName"
-			Visible=true
-			Group="ID"
-			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
@@ -216,6 +220,16 @@ Protected Class ServerProfile
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Enabled"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Modified"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

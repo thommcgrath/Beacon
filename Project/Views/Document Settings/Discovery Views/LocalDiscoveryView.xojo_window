@@ -6,6 +6,7 @@ Begin DiscoveryView LocalDiscoveryView
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    Compatibility   =   ""
+   DoubleBuffer    =   False
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
@@ -25,325 +26,6 @@ Begin DiscoveryView LocalDiscoveryView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   600
-   Begin PagePanel PagePanel1
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   396
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      PanelCount      =   2
-      Panels          =   ""
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      Top             =   0
-      Value           =   0
-      Visible         =   True
-      Width           =   600
-      Begin Label SetupMessageLabel
-         AutoDeactivate  =   True
-         Bold            =   True
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Simple Config Import"
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   20
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   560
-      End
-      Begin GroupBox ExplanationGroup
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   ""
-         Enabled         =   True
-         Height          =   78
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   7
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   52
-         Underline       =   False
-         Visible         =   True
-         Width           =   560
-         Begin Label ExplanationLabel
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   38
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "ExplanationGroup"
-            Italic          =   False
-            Left            =   40
-            LockBottom      =   True
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   True
-            LockTop         =   True
-            Multiline       =   True
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   0
-            TabPanelIndex   =   1
-            TabStop         =   True
-            Text            =   "Paste the contents of your Game.ini and/or GameUserSettings.ini files here. Only one file is required, but Beacon can do a better job with both files."
-            TextAlign       =   0
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   72
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   520
-         End
-      End
-      Begin UITweaks.ResizedPushButton ActionButton
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   False
-         Caption         =   "Next"
-         Default         =   True
-         Enabled         =   False
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   500
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   False
-         Scope           =   2
-         TabIndex        =   8
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   356
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedPushButton CancelButton
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   True
-         Caption         =   "Cancel"
-         Default         =   False
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   408
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   False
-         LockRight       =   True
-         LockTop         =   False
-         Scope           =   2
-         TabIndex        =   9
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   356
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin PushButton ChooseFileButton
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   False
-         Caption         =   "Select File"
-         Default         =   False
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   False
-         Scope           =   2
-         TabIndex        =   10
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   356
-         Underline       =   False
-         Visible         =   True
-         Width           =   93
-      End
-      Begin TextArea ConfigArea
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   True
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   202
-         HelpTag         =   ""
-         HideSelection   =   True
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   20
-         LimitText       =   0
-         LineHeight      =   0.0
-         LineSpacing     =   1.0
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   ""
-         Multiline       =   True
-         ReadOnly        =   False
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollbarVertical=   True
-         Styled          =   True
-         TabIndex        =   11
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   142
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   560
-      End
-      Begin Label ImportingLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Parsing Config…"
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   172
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   560
-      End
-      Begin ProgressBar ImportingProgress
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Maximum         =   0
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   2
-         Top             =   204
-         Value           =   0
-         Visible         =   True
-         Width           =   560
-      End
-   End
    Begin Timer TextChangeTimer
       Index           =   -2147483648
       LockedInPosition=   False
@@ -352,14 +34,249 @@ Begin DiscoveryView LocalDiscoveryView
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin Beacon.ImportThread Importer
+   Begin Label SetupMessageLabel
+      AutoDeactivate  =   True
+      Bold            =   True
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
       Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
       LockedInPosition=   False
-      Priority        =   0
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
       Scope           =   2
-      StackSize       =   ""
-      State           =   ""
+      Selectable      =   False
+      TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Simple Config Import"
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   560
+   End
+   Begin GroupBox ExplanationGroup
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   ""
+      Enabled         =   True
+      Height          =   78
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   52
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   560
+      Begin Label ExplanationLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   38
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ExplanationGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   True
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "Paste the contents of your Game.ini and/or GameUserSettings.ini files here. Only one file is required, but Beacon can do a better job with both files."
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   72
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   520
+      End
+   End
+   Begin TextArea ConfigArea
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   True
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   202
+      HelpTag         =   ""
+      HideSelection   =   True
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LimitText       =   0
+      LineHeight      =   0.0
+      LineSpacing     =   1.0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   ""
+      Multiline       =   True
+      ReadOnly        =   False
+      Scope           =   2
+      ScrollbarHorizontal=   False
+      ScrollbarVertical=   True
+      Styled          =   True
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   142
+      Transparent     =   False
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   560
+   End
+   Begin UITweaks.ResizedPushButton ActionButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Next"
+      Default         =   True
+      Enabled         =   False
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   500
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   356
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedPushButton CancelButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   True
+      Caption         =   "Cancel"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   408
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   356
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin PushButton ChooseFileButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Select File"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   356
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   93
    End
 End
 #tag EndWindow
@@ -368,7 +285,6 @@ End
 	#tag Event
 		Sub Begin()
 		  Self.DesiredHeight = 400
-		  Self.PagePanel1.Value = 0
 		  Self.ConfigArea.Text = ""
 		End Sub
 	#tag EndEvent
@@ -377,17 +293,6 @@ End
 		Sub Open()
 		  RaiseEvent Open
 		  Self.SwapButtons()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resize()
-		  Dim ContentHeight As Integer = ImportingLabel.Height + 12 + ImportingProgress.Height
-		  Dim AvailableHeight As Integer = Self.Height - 40
-		  
-		  Dim ContentTop As Integer = 20 + ((AvailableHeight - ContentHeight) / 2)
-		  ImportingLabel.Top = ContentTop
-		  ImportingProgress.Top = ContentTop + ImportingLabel.Height + 12
 		End Sub
 	#tag EndEvent
 
@@ -493,16 +398,31 @@ End
 
 #tag EndWindowCode
 
+#tag Events TextChangeTimer
+	#tag Event
+		Sub Action()
+		  Self.mCurrentConfigType = Self.DetectConfigType(Self.ConfigArea.Text)
+		  Self.ActionButton.Enabled = Self.mCurrentConfigType <> ConfigFileType.Other
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConfigArea
+	#tag Event
+		Sub TextChange()
+		  If Self.TextChangeTimer.Mode = Timer.ModeSingle Then
+		    Self.TextChangeTimer.Reset
+		    Self.TextChangeTimer.Period = 500
+		  End If
+		  Self.TextChangeTimer.Mode = Timer.ModeSingle
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Self.PagePanel1.Value = 1
-		  Self.DesiredHeight = 92
-		  Self.ImportingProgress.Maximum = 500
-		  
-		  Self.Importer.Clear
-		  Self.Importer.AddContent(Self.ConfigArea.Text.ToText)
-		  Self.Importer.Run
+		  Dim Engines(0) As Beacon.DiscoveryEngine
+		  Engines(0) = New Beacon.LocalDiscoveryEngine(Self.ConfigArea.Text.ToText)
+		  Self.ShouldFinish(Engines)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -536,49 +456,15 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ConfigArea
-	#tag Event
-		Sub TextChange()
-		  If Self.TextChangeTimer.Mode = Timer.ModeSingle Then
-		    Self.TextChangeTimer.Reset
-		    Self.TextChangeTimer.Period = 500
-		  End If
-		  Self.TextChangeTimer.Mode = Timer.ModeSingle
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events TextChangeTimer
-	#tag Event
-		Sub Action()
-		  Self.mCurrentConfigType = Self.DetectConfigType(Self.ConfigArea.Text)
-		  Self.ActionButton.Enabled = Self.mCurrentConfigType <> ConfigFileType.Other
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Importer
-	#tag Event
-		Sub UpdateUI()
-		  Dim Value As Integer = Self.ImportingProgress.Maximum * Me.Progress
-		  If Self.ImportingProgress.Value <> Value Then
-		    Self.ImportingProgress.Value = Value
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Finished(ParsedData As Xojo.Core.Dictionary)
-		  #Pragma Warning "Does not setup a local deployment target."
-		  
-		  Dim Document As Beacon.Document = Self.CreateDocumentFromImport(ParsedData, Nil)
-		  
-		  If Document.Title = "" Then
-		    Document.Title = "Single Player Loot"
-		  End If
-		  
-		  Self.ShouldFinish(Document)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="DoubleBuffer"
+		Visible=true
+		Group="Windows Behavior"
+		InitialValue="False"
+		Type="Boolean"
+		EditorType="Boolean"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="AcceptFocus"
 		Visible=true

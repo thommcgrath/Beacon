@@ -204,7 +204,7 @@ Implements Beacon.DiscoveryEngine
 		  
 		  Dim FilePath As Text = Self.mProfile.ConfigPath + "/GameUserSettings.ini"
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -242,6 +242,18 @@ Implements Beacon.DiscoveryEngine
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Name() As Text
+		  Return Self.mProfile.Name
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Profile() As Beacon.ServerProfile
+		  Return Self.mProfile
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub SetError(Err As RuntimeException)
 		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Err)
@@ -264,6 +276,12 @@ Implements Beacon.DiscoveryEngine
 		  Self.mErrored = True
 		  Self.mFinished = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Status() As Text
+		  Return Self.mStatus
+		End Function
 	#tag EndMethod
 
 

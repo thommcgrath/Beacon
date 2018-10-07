@@ -63,8 +63,8 @@ Implements Beacon.DiscoveryEngine
 		  
 		  Self.mStatus = "Downloading config files…"
 		  
-		  Self.mGameIniPath = Dict.Value("Game.ini")
-		  Self.mGameUserSettingsIniPath = Dict.Value("GameUserSettings.ini")
+		  Self.mProfile.GameIniPath = Dict.Value("Game.ini")
+		  Self.mProfile.GameUserSettingsIniPath = Dict.Value("GameUserSettings.ini")
 		  
 		  Self.DownloadGameIni()
 		End Sub
@@ -126,20 +126,21 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h0
 		Function CommandLineOptions() As Xojo.Core.DIctionary
-		  Return New Xojo.Core.Dictionary
+		  Return Self.mCommandLineOptions
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Profile As Beacon.FTPServerProfile, Identity As Beacon.Identity)
+		Sub Constructor(Profile As Beacon.FTPServerProfile, InitialPath As Text, Identity As Beacon.Identity)
 		  Self.mProfile = Profile
+		  Self.mInitialPath = InitialPath
 		  Self.mIdentity = Identity
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub DiscoverServer()
-		  Dim URL As Text = "ftp.php/discover?" + Self.BuildFTPParameters()
+		  Dim URL As Text = "ftp.php/discover?" + Self.BuildFTPParameters(Self.mInitialPath)
 		  Dim DiscoveryRequest As New BeaconAPI.Request(URL, "GET", WeakAddressOf Callback_DiscoverServer)
 		  DiscoveryRequest.Sign(Self.mIdentity)
 		  BeaconAPI.Send(DiscoveryRequest)
@@ -148,7 +149,7 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub DownloadGameIni()
-		  Dim SettingsRequest As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mGameIniPath), "GET", WeakAddressOf Callback_DownloadGameIni)
+		  Dim SettingsRequest As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameIniPath), "GET", WeakAddressOf Callback_DownloadGameIni)
 		  SettingsRequest.Sign(Self.mIdentity)
 		  BeaconAPI.Send(SettingsRequest)
 		End Sub
@@ -156,7 +157,7 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub DownloadGameUserSettingsIni()
-		  Dim SettingsRequest As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mGameUserSettingsIniPath), "GET", WeakAddressOf Callback_DownloadGameUserSettingsIni)
+		  Dim SettingsRequest As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), "GET", WeakAddressOf Callback_DownloadGameUserSettingsIni)
 		  SettingsRequest.Sign(Self.mIdentity)
 		  BeaconAPI.Send(SettingsRequest)
 		End Sub
@@ -164,25 +165,37 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h0
 		Function Errored() As Boolean
-		  
+		  Return Self.mErrored
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Finished() As Boolean
-		  
+		  Return Self.mFinished
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IniContent() As Text
-		  
+		  Return Self.mIniContent
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Map() As UInt64
 		  Return Self.mMap
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Name() As Text
+		  Return Self.mProfile.Name
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Profile() As Beacon.ServerProfile
+		  Return Self.mProfile
 		End Function
 	#tag EndMethod
 
@@ -210,6 +223,12 @@ Implements Beacon.DiscoveryEngine
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Status() As Text
+		  Return Self.mStatus
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mCommandLineOptions As Xojo.Core.Dictionary
@@ -224,19 +243,15 @@ Implements Beacon.DiscoveryEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniPath As Text
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniPath As Text
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mIdentity As Beacon.Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mIniContent As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mInitialPath As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -1,58 +1,88 @@
-#tag Interface
-Protected Interface DiscoveryEngine
+#tag Class
+Protected Class LocalDiscoveryEngine
+Implements Beacon.DiscoveryEngine
 	#tag Method, Flags = &h0
 		Sub Begin()
+		  // Part of the Beacon.DiscoveryEngine interface.
+		  
 		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function CommandLineOptions() As Xojo.Core.DIctionary
+		  // Part of the Beacon.DiscoveryEngine interface.
 		  
+		  Return New Xojo.Core.Dictionary
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Content As Text)
+		  Self.mIniContent = Content
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Errored() As Boolean
+		  // Part of the Beacon.DiscoveryEngine interface.
 		  
+		  Return False
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Finished() As Boolean
+		  // Part of the Beacon.DiscoveryEngine interface.
 		  
+		  Return True
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IniContent() As Text
+		  // Part of the Beacon.DiscoveryEngine interface.
 		  
+		  Return Self.mIniContent
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Map() As UInt64
+		  // Part of the Beacon.DiscoveryEngine interface.
 		  
+		  Return Beacon.Maps.TheIsland
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Name() As Text
-		  
+		  Return "Local Content"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Profile() As Beacon.ServerProfile
-		  
+		  Return Nil
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Status() As Text
-		  
+		  Return "Finished"
 		End Function
 	#tag EndMethod
+
+
+	#tag Note, Name = Dummy
+		This is basically a dummy class to help with organization
+		
+	#tag EndNote
+
+
+	#tag Property, Flags = &h21
+		Private mIniContent As Text
+	#tag EndProperty
 
 
 	#tag ViewBehavior
@@ -90,5 +120,5 @@ Protected Interface DiscoveryEngine
 			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior
-End Interface
-#tag EndInterface
+End Class
+#tag EndClass

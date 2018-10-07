@@ -263,8 +263,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub CopyFromDocument(SourceDocument As Auto)
-		  DocumentMergerWindow.Present(Self, SourceDocument, Self.Document)
+		Private Sub CopyFromDocuments(SourceDocuments As Auto)
+		  Dim Documents() As Beacon.Document = SourceDocuments
+		  DocumentMergerWindow.Present(Self, Documents, Self.Document)
 		End Sub
 	#tag EndMethod
 
@@ -307,8 +308,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ImportCallback(Document As Beacon.Document)
-		  Xojo.Core.Timer.CallLater(1, WeakAddressOf CopyFromDocument, Document)
+		Private Sub ImportCallback(Documents() As Beacon.Document)
+		  Xojo.Core.Timer.CallLater(1, WeakAddressOf CopyFromDocuments, Documents)
 		End Sub
 	#tag EndMethod
 

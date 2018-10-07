@@ -291,72 +291,8 @@ Begin DiscoveryView NitradoDiscoveryView
          Visible         =   True
          Width           =   80
       End
-      Begin ProgressBar ImportingProgress
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Maximum         =   0
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   3
-         Top             =   206
-         Transparent     =   False
-         Value           =   0
-         Visible         =   True
-         Width           =   560
-      End
-      Begin Label ImportingLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "PagePanel1"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   1
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "Downloading Required Files…"
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   174
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   560
-      End
    End
    Begin Beacon.OAuth2Client AuthClient
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
-   Begin Beacon.NitradoDeploymentEngine DeployEngine
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -368,15 +304,6 @@ Begin DiscoveryView NitradoDiscoveryView
       Mode            =   0
       Period          =   1000
       Scope           =   2
-      TabPanelIndex   =   0
-   End
-   Begin Beacon.ImportThread Importer
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Priority        =   0
-      Scope           =   2
-      StackSize       =   ""
-      State           =   ""
       TabPanelIndex   =   0
    End
 End
@@ -402,6 +329,7 @@ End
 		  OAuthProviders.SetupNitrado(Self.AuthClient)
 		  Self.SwapButtons()
 		  RaiseEvent Open
+		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent
 
@@ -416,11 +344,83 @@ End
 		  
 		  AvailableHeight = Self.Height - 40
 		  ContentTop = 20 + ((AvailableHeight - ContentHeight) / 2)
-		  ImportingLabel.Top = ContentTop
-		  ImportingProgress.Top = ContentTop + ImportingLabel.Height + 12
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Sub Callback_ListServers(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  Select Case Status
+		  Case 401
+		    Self.ShowAlert("Nitrado API Error", "Authorization failed.")
+		    Self.ShouldCancel()
+		    Return
+		  Case 429
+		    Self.ShowAlert("Nitrado API Error", "The rate limit has been exceeded.")
+		    Self.ShouldCancel()
+		    Return
+		  Case 503
+		    Self.ShowAlert("Nitrado API Error", "Nitrado is currently offline for maintenance. Please try again later.")
+		    Self.ShouldCancel()
+		    Return
+		  Case 200
+		    // Good
+		  Else
+		    Self.ShowAlert("Nitrado API Error", "An unexpected error with the Nitrado API occurred. HTTP status " + Status.ToText + " was returned.")
+		    Self.ShouldCancel()
+		    Return
+		  End Select
+		  
+		  Try
+		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
+		    
+		    Dim Reply As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    If Reply.HasKey("status") = False Or Reply.Value("status") <> "success" Then
+		      Self.ShowAlert("Nitrado API Error", "The request to list services was not successful.")
+		      Self.ShouldCancel()
+		      Return
+		    End If
+		    
+		    Self.List.DeleteAllRows
+		    
+		    Dim Data As Xojo.Core.Dictionary = Reply.Value("data")
+		    Dim Services() As Auto = Data.Value("services")
+		    For Each Service As Xojo.Core.Dictionary In Services
+		      Dim Type As Text = Service.Value("type")
+		      If Type <> "gameserver" Then
+		        Continue
+		      End If
+		      
+		      Dim Details As Xojo.Core.Dictionary = Service.Value("details")
+		      Dim Game As Text = Details.Value("game")
+		      If Not Game.BeginsWith("Ark: Survival Evolved") Then
+		        Continue
+		      End If
+		      
+		      Dim ServerName As Text = Details.Value("name")
+		      If Service.Lookup("comment", Nil) <> Nil Then
+		        ServerName = Service.Value("comment")
+		      End If
+		      
+		      Dim Profile As New Beacon.NitradoServerProfile
+		      Profile.Name = ServerName
+		      Profile.Address = Details.Value("address")
+		      Profile.ServiceID = Service.Value("id")
+		      
+		      Self.List.AddRow("", Profile.Name, Profile.Address)
+		      Self.List.RowTag(Self.List.LastIndex) = Profile
+		    Next
+		    
+		    Self.List.Sort
+		    Self.DesiredHeight = 400
+		    Self.PagePanel1.Value = 1
+		  Catch Err As RuntimeException
+		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Err)
+		    Self.ShowAlert("Nitrado API Error", "The Nitrado API responded in an unexpected manner. An unhandled " + Info.FullName + " was encountered.")
+		    Self.ShouldCancel()
+		  End Try
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub CheckActionEnabled()
@@ -432,6 +432,16 @@ End
 		  Next
 		  
 		  Self.ListActionButton.Enabled = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ListServers()
+		  Dim Headers As New Xojo.Core.Dictionary
+		  Headers.Value("Authorization") = "Bearer " + Self.AuthClient.AccessToken
+		  
+		  Dim URL As Text = "https://api.nitrado.net/services"
+		  SimpleHTTP.Get(URL, AddressOf Callback_ListServers, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -477,28 +487,23 @@ End
 #tag Events ListActionButton
 	#tag Event
 		Sub Action()
-		  Self.DesiredHeight = 92
-		  Self.PagePanel1.Value = 3
-		  
-		  Self.mSelectedServers = New Xojo.Core.Dictionary
-		  
+		  Dim Engines() As Beacon.NitradoDiscoveryEngine
 		  For I As Integer = 0 To Self.List.ListCount - 1
 		    If Not Self.List.CellCheck(I, 0) Then
 		      Continue
 		    End If
 		    
 		    Dim Profile As Beacon.NitradoServerProfile = Self.List.RowTag(I)
-		    Self.mSelectedServers.Value(Profile) = New Xojo.Core.Dictionary
-		    
-		    Self.DeployEngine.LookupServer(Profile, Self.AuthClient.AccessToken)
+		    Engines.Append(New Beacon.NitradoDiscoveryEngine(Profile, Self.AuthClient.AccessToken))
 		  Next
+		  Self.ShouldFinish(Engines, "Nitrado", Self.AuthClient.AuthData)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events AuthClient
 	#tag Event
 		Sub Authenticated()
-		  Self.DeployEngine.ListServers(Me.AccessToken)
+		  Self.ListServers()
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -513,123 +518,10 @@ End
 		End Function
 	#tag EndEvent
 #tag EndEvents
-#tag Events DeployEngine
-	#tag Event
-		Sub ServersFound(Servers() As Beacon.NitradoServerProfile)
-		  If Servers.Ubound = -1 Then
-		    Self.ShowAlert("No servers found", "Looks like Beacon couldn't find any servers accessible from your account.")
-		    Self.ShouldCancel()
-		    Return
-		  End If
-		  
-		  Self.List.DeleteAllRows
-		  
-		  For Each Server As Beacon.NitradoServerProfile In Servers
-		    Self.List.AddRow("", Server.Name, Server.Address)
-		    Self.List.RowTag(Self.List.LastIndex) = Server
-		  Next
-		  Self.List.Sort
-		  
-		  Self.DesiredHeight = 400
-		  Self.PagePanel1.Value = 1
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ServerDetails(Profile As Beacon.NitradoServerProfile, Map As Beacon.Map, DifficultyValue As Double)
-		  If Map = Nil Then
-		    Break
-		    Self.ShowAlert("Unable to lookup server details", Profile.Name + " did not reply correctly.")
-		    Self.ShouldCancel()
-		    Return
-		  End If
-		  
-		  Dim ServerDict As Xojo.Core.Dictionary = Self.mSelectedServers.Value(Profile)
-		  ServerDict.Value("Map") = Map
-		  ServerDict.Value("Difficulty") = DifficultyValue
-		  Self.mSelectedServers.Value(Profile) = ServerDict
-		  
-		  Me.DownloadGameIni(Profile, Self.AuthClient.AccessToken)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub GameIniContent(Profile As Beacon.NitradoServerProfile, Content As Xojo.Core.MemoryBlock)
-		  If Content = Nil Then
-		    Break
-		    Self.ShowAlert("Unable to retrieve Game.ini", Profile.Name + " did not reply correctly.")
-		    Self.ShouldCancel()
-		    Return
-		  End If
-		  
-		  Dim ServerDict As Xojo.Core.Dictionary = Self.mSelectedServers.Value(Profile)
-		  ServerDict.Value("Game.ini") = Content
-		  ServerDict.Value("Finished") = True
-		  Self.mSelectedServers.Value(Profile) = ServerDict
-		  
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedServers
-		    Dim Dict As Xojo.Core.Dictionary = Entry.Value
-		    If Dict.HasKey("Finished") = False Or Dict.Value("Finished") = False Then
-		      Return
-		    End If
-		  Next
-		  
-		  // Everything has been downloaded
-		  
-		  Self.Importer.Clear
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedServers
-		    Dim Dict As Xojo.Core.Dictionary = Entry.Value
-		    Self.Importer.AddContent(Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Dict.Value("Game.ini")))
-		  Next
-		  Self.Importer.Run
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events LookupStartTimer
 	#tag Event
 		Sub Action()
 		  Self.AuthClient.Authenticate()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events Importer
-	#tag Event
-		Sub UpdateUI()
-		  If ImportingProgress.Maximum = 0 Then
-		    ImportingLabel.Text = "Parsing Config…"
-		    ImportingProgress.Maximum = 500
-		  End If
-		  ImportingProgress.Value = ImportingProgress.Maximum * Me.Progress
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Finished(ParsedData As Xojo.Core.Dictionary)
-		  #Pragma Warning "Does not parse difficulty"
-		  
-		  Dim Document As Beacon.Document = Self.CreateDocumentFromImport(ParsedData, Nil)
-		  
-		  Dim MapMask As UInt64
-		  Dim Profiles() As Beacon.NitradoServerProfile
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedServers
-		    Dim Profile As Beacon.NitradoServerProfile = Entry.Key
-		    Dim Dict As Xojo.Core.Dictionary = Entry.Value
-		    
-		    Profiles.Append(Profile)
-		    MapMask = MapMask Or Beacon.Map(Dict.Value("Map")).Mask
-		  Next
-		  
-		  Document.OAuthData("Nitrado") = Self.AuthClient.AuthData
-		  Document.MapCompatibility = MapMask
-		  
-		  If Profiles.Ubound = 0 Then
-		    Document.Title = Profiles(0).Name
-		  Else
-		    Document.Title = "Nitrado Cluster"
-		  End If
-		  
-		  For Each Profile As Beacon.NitradoServerProfile In Profiles
-		    Document.Add(Profile)
-		  Next
-		  
-		  Self.ShouldFinish(Document)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

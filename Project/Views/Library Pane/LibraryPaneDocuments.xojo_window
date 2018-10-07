@@ -80,6 +80,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -359,7 +360,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ImportFile(File As FolderItem)
-		  Call DocumentImportWindow.Present(AddressOf NewDocument, New Beacon.Document, File)
+		  Call DocumentImportWindow.Present(AddressOf NewDocuments, New Beacon.Document, File)
 		End Sub
 	#tag EndMethod
 
@@ -375,6 +376,14 @@ End
 		  End If
 		  
 		  Self.OpenController(New Beacon.DocumentController(Document))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NewDocuments(Documents() As Beacon.Document)
+		  For Each Document As Beacon.Document In Documents
+		    Self.NewDocument(Document)
+		  Next
 		End Sub
 	#tag EndMethod
 
