@@ -533,7 +533,7 @@ End
 		Sub Open()
 		  Me.AddRow("Maps", "maps")
 		  #if DeployEnabled
-		    Me.AddRow("Server Profiles", "deployments")
+		    Me.AddRow("Servers", "deployments")
 		  #endif
 		  
 		  Dim Names() As Text = BeaconConfigs.AllConfigNames

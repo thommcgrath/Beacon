@@ -26,7 +26,7 @@ Begin ConfigEditor DeploymentsConfigEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   856
-   Begin Listbox ServerList
+   Begin BeaconListbox ServerList
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
@@ -58,6 +58,7 @@ Begin ConfigEditor DeploymentsConfigEditor
       LockRight       =   False
       LockTop         =   True
       RequiresSelection=   False
+      RowCount        =   0
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
@@ -142,7 +143,9 @@ Begin ConfigEditor DeploymentsConfigEditor
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Servers"
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -160,6 +163,7 @@ Begin ConfigEditor DeploymentsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   299
@@ -274,6 +278,35 @@ End
 		    Self.mViews.Value(ProfileID) = View
 		  End If
 		  Self.CurrentProfileID = ProfileID
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  Dim SelCount As Integer = Me.SelCount
+		  If SelCount = 0 Then
+		    Return
+		  End If
+		  
+		  If Warn Then
+		    Dim Subject As String = If(SelCount = 1, "server", "servers")
+		    Dim DemonstrativeAdjective As String = If(SelCount = 1, "this", "these " + SelCount.ToText)
+		    If Not Self.ShowConfirm("Are you sure you want to delete " + DemonstrativeAdjective + " " + Subject + "?", "The " + Subject + " can be added again later using the ""Import"" feature next to the ""Config Type"" menu.", "Delete", "Cancel") Then
+		      Return
+		    End If
+		  End If
+		  
+		  For I As Integer = 0 To Me.ListCount - 1
+		    If Me.Selected(I) Then
+		      Dim Profile As Beacon.ServerProfile = Me.RowTag(I)
+		      Self.Document.Remove(Profile)
+		      Me.RemoveRow(I)
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -598,6 +598,7 @@ Implements Beacon.DocumentItem
 		  For I As Integer = 0 To Self.mServerProfiles.Ubound
 		    If Self.mServerProfiles(I) = Profile Then
 		      Self.mServerProfiles.Remove(I)
+		      Self.Modified = True
 		      Return
 		    End If
 		  Next

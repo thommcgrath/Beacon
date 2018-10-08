@@ -221,7 +221,7 @@ End
 		          Continue For I
 		        End If
 		      Next
-		      Win.List.AddRow("", "Server Profile: " + Document.ServerProfile(I).Name)
+		      Win.List.AddRow("", "Server: " + Document.ServerProfile(I).Name)
 		      Win.List.CellCheck(Win.List.LastIndex, 0) = True
 		      Win.List.RowTag(Win.List.LastIndex) = Document.ServerProfile(I)
 		      Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
