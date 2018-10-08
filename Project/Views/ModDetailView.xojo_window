@@ -252,7 +252,7 @@ Begin BeaconContainer ModDetailView
          Visible         =   True
          Width           =   340
       End
-      Begin Listbox EngramList
+      Begin BeaconListbox EngramList
          AutoDeactivate  =   True
          AutoHideScrollbars=   True
          Bold            =   False
