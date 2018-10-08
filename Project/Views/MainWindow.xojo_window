@@ -44,7 +44,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   25
       Transparent     =   False
       Value           =   0
@@ -62,7 +61,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          HasBackColor    =   False
          Height          =   375
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   41
          LockBottom      =   True
@@ -157,7 +155,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   -259
       LockBottom      =   True
@@ -525,6 +522,14 @@ End
 		Private mSubviews(-1) As BeaconSubview
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mTabBarAnimation As AnimationKit.MoveTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mViewsAnimation As AnimationKit.MoveTask
+	#tag EndProperty
+
 
 	#tag Constant, Name = AbsoluteMinHeight, Type = Double, Dynamic = False, Default = \"468", Scope = Private
 	#tag EndConstant
@@ -628,29 +633,51 @@ End
 		    Self.mLibraryPaneAnimation = Nil
 		  End If
 		  
-		  If Self.mOverlayFillAnimation <> Nil Then
-		    Self.mOverlayFillAnimation.Cancel
-		    Self.mOverlayFillAnimation = Nil
-		  End If
-		  
 		  Self.mLibraryPaneAnimation = New AnimationKit.MoveTask(Me)
-		  
-		  If Difference > 0 Then
-		    Self.OverlayCanvas.Visible = True
-		    Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.35)
-		  Else
-		    Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.0)
-		    AddHandler Self.mOverlayFillAnimation.Completed, WeakAddressOf mOverlayFillAnimation_Completed
-		  End If
-		  
 		  Self.mLibraryPaneAnimation.Left = Me.Left + Difference
 		  Self.mLibraryPaneAnimation.Curve = AnimationKit.Curve.CreateEaseOut
 		  Self.mLibraryPaneAnimation.DurationInSeconds = 0.12
 		  Self.mLibraryPaneAnimation.Run
 		  
-		  Self.mOverlayFillAnimation.Curve = Self.mLibraryPaneAnimation.Curve
-		  Self.mOverlayFillAnimation.DurationInSeconds = Self.mLibraryPaneAnimation.DurationInSeconds
-		  Self.mOverlayFillAnimation.Run
+		  #if TargetMacOS
+		    If Self.mOverlayFillAnimation <> Nil Then
+		      Self.mOverlayFillAnimation.Cancel
+		      Self.mOverlayFillAnimation = Nil
+		    End If
+		    
+		    If Difference > 0 Then
+		      Self.OverlayCanvas.Visible = True
+		      Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.35)
+		    Else
+		      Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.0)
+		      AddHandler Self.mOverlayFillAnimation.Completed, WeakAddressOf mOverlayFillAnimation_Completed
+		    End If
+		    
+		    Self.mOverlayFillAnimation.Curve = Self.mLibraryPaneAnimation.Curve
+		    Self.mOverlayFillAnimation.DurationInSeconds = Self.mLibraryPaneAnimation.DurationInSeconds
+		    Self.mOverlayFillAnimation.Run
+		  #else
+		    If Self.mTabBarAnimation <> Nil Then
+		      Self.mTabBarAnimation.Cancel
+		      Self.mTabBarAnimation = Nil
+		    End If
+		    If Self.mViewsAnimation <> Nil Then
+		      Self.mViewsAnimation.Cancel
+		      Self.mViewsAnimation = Nil
+		    End If
+		    
+		    Self.mTabBarAnimation = New AnimationKit.MoveTask(Self.TabBar1)
+		    Self.mTabBarAnimation.Left = Self.mLibraryPaneAnimation.Left + Self.mLibraryPaneAnimation.Width
+		    Self.mTabBarAnimation.Curve = Self.mLibraryPaneAnimation.Curve
+		    Self.mTabBarAnimation.DurationInSeconds = Self.mLibraryPaneAnimation.DurationInSeconds
+		    Self.mTabBarAnimation.Run
+		    
+		    Self.mViewsAnimation = New AnimationKit.MoveTask(Self.Views)
+		    Self.mViewsAnimation.Left = Self.mTabBarAnimation.Left
+		    Self.mViewsAnimation.Curve = Self.mLibraryPaneAnimation.Curve
+		    Self.mViewsAnimation.DurationInSeconds = Self.mLibraryPaneAnimation.DurationInSeconds
+		    Self.mViewsAnimation.Run
+		  #endif
 		End Sub
 	#tag EndEvent
 #tag EndEvents
