@@ -182,6 +182,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub Destructor()
 		  NotificationKit.Ignore(Self, "Beacon.Document.TitleChanged")
+		  
+		  Self.SQLExecute("PRAGMA optimize;")
 		End Sub
 	#tag EndMethod
 
@@ -595,6 +597,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("CREATE UNIQUE INDEX engrams_path_idx ON engrams(path);")
 		    Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		    Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
+		    
+		    // Cleanup
+		    Self.SQLExecute("VACUUM")
 		    
 		    Self.Variable("sync_time") = PayloadTimestamp.ToText()
 		    Self.Commit()
