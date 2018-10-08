@@ -262,6 +262,16 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub CreatePreset(ItemSet As Beacon.ItemSet)
+		  #if DebugBuild
+		    #Pragma Warning "Does not create preset"
+		  #else
+		    #Pragma Error "Does not create preset"
+		  #endif
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub DeleteSelected()
 		  If List.SelCount = 0 Then
@@ -352,6 +362,16 @@ End
 		    View = New PresetEditorView(Preset)
 		  End If
 		  Self.ShowView(View)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenPreset(File As FolderItem)
+		  #if DebugBuild
+		    #Pragma Warning "Does not open preset"
+		  #else
+		    #Pragma Error "Does not open preset"
+		  #endif
 		End Sub
 	#tag EndMethod
 

@@ -27,6 +27,7 @@ Begin DiscoveryView LocalDiscoveryView
    Visible         =   True
    Width           =   600
    Begin Timer TextChangeTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0

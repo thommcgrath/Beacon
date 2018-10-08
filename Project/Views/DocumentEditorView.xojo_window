@@ -501,13 +501,6 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub StartDeploy()
-		  DeployDialog.Present(Self, Self.Document)
-		  Self.ContentsChanged = Self.ContentsChanged Or Self.Document.Modified
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub UpdateHelpForConfig(ConfigName As String)
 		  Dim Title, Body, DetailURL As String

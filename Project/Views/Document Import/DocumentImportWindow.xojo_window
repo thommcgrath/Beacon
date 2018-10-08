@@ -38,6 +38,7 @@ Begin Window DocumentImportWindow
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -69,7 +70,7 @@ End
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ImportFinishedDelegate(Documents() As Beacon.Document)
+		Delegate Sub ImportFinishedDelegate(Documents() As Beacon . Document)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0

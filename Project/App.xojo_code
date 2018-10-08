@@ -136,14 +136,6 @@ Inherits Application
 		      Dim Content As Text = File.Read(Xojo.Core.TextEncoding.UTF8)
 		      
 		      If LocalData.SharedInstance.Import(Content) Then
-		        // Imported
-		        For I As Integer = 0 To WindowCount - 1
-		          If Window(I) IsA AboutWindow Then
-		            AboutWindow(Window(I)).Update()
-		            Exit For I
-		          End If
-		        Next
-		        
 		        Dim LastSync As Xojo.Core.Date = LocalData.SharedInstance.LastSync
 		        
 		        Dim Dialog As New MessageDialog
@@ -168,7 +160,7 @@ Inherits Application
 		  
 		  If File.IsType(BeaconFileTypes.BeaconPreset) Then
 		    Self.AddToRecentDocuments(File)
-		    PresetWindow.Present(File)
+		    MainWindow.Presets.OpenPreset(File)
 		    Return
 		  End If
 		  
@@ -217,21 +209,7 @@ Inherits Application
 			
 			Dim File As Beacon.FolderItem = Dialog.ShowModal
 			If File <> Nil Then
-			If File.IsType(BeaconFileTypes.BeaconPreset) Then
-			Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
-			If Preset <> Nil Then
-			Beacon.Data.SavePreset(Preset)
-			LibraryWindow.ShowPreset(Preset)
-			Else
-			Dim Alert As New MessageDialog
-			Alert.Title = ""
-			Alert.Message = "Unable to import preset"
-			Alert.Explanation = "Sorry about that. The file may not be correctly formatted."
-			Call Alert.ShowModal
-			End If
-			Else
 			Self.OpenDocument(File)
-			End If
 			End If
 			
 			Return True
