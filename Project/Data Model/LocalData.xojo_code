@@ -601,12 +601,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.Variable("sync_time") = PayloadTimestamp.ToText()
 		    Self.Commit()
 		    
-		    // Cleanup
-		    Self.SQLExecute("VACUUM")
-		    
 		    If ReloadPresets Then
 		      Self.LoadPresets()
 		    End If
+		    
+		    NotificationKit.Post(Self.Notification_DatabaseUpdated, Self.LastSync)
 		    
 		    App.Log("Imported classes. Engrams date is " + PayloadTimestamp.ToText())
 		    
@@ -1342,6 +1341,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 
 	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT path\x2C label\x2C availability\x2C can_blueprint\x2C mods.console_safe\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_DatabaseUpdated, Type = Text, Dynamic = False, Default = \"Database Updated", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_NewAppNotification, Type = Text, Dynamic = False, Default = \"New App Notification", Scope = Public

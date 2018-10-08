@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconSubview DashboardPane
+Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -326,6 +326,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  NotificationKit.Ignore(Self, LocalData.Notification_DatabaseUpdated)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.ToolbarIcon = IconHome
 		  Self.ToolbarCaption = "Home"
@@ -335,6 +341,8 @@ End
 		  
 		  Self.MinHeight = EmptyToolbar.Height + Self.mMainGroup.Height + Self.mCopyrightGroup.Height + 60
 		  Self.MinWidth = Max(Self.mMainGroup.Width, Self.mCopyrightGroup.Width) + 40
+		  
+		  NotificationKit.Watch(Self, LocalData.Notification_DatabaseUpdated)
 		End Sub
 	#tag EndEvent
 
@@ -378,6 +386,25 @@ End
 		Function DashboardURL() As Text
 		  Return Beacon.WebURL("/inapp/dashboard.php/" + Beacon.EncodeURLComponent(Preferences.OnlineToken) + "?build=" + App.NonReleaseVersion.ToText)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case LocalData.Notification_DatabaseUpdated
+		    Dim LastSync As Xojo.Core.Date = Notification.UserData
+		    If LastSync = Nil Then
+		      LastSync = LocalData.SharedInstance.LastSync
+		    End If
+		    If LastSync = Nil Then
+		      Self.SyncLabel.Text = "No engram data available"
+		    Else
+		      Self.SyncLabel.Text = "Engrams updated " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC"
+		    End If
+		  End Select
+		End Sub
 	#tag EndMethod
 
 
