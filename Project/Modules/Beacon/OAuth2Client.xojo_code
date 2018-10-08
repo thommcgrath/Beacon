@@ -55,15 +55,7 @@ Protected Class OAuth2Client
 		  QueryParams.Value("refresh_token") = Self.mRefreshToken
 		  QueryParams.Value("redirect_uri") = Self.RedirectURI
 		  
-		  Dim TextArray() As Text
-		  For Each Entry As Xojo.Core.DictionaryEntry In QueryParams
-		    TextArray.Append(Beacon.EncodeURLComponent(Entry.Key) + "=" + Beacon.EncodeURLComponent(Entry.Value))
-		  Next
-		  Dim TextContent As Text = Text.Join(TextArray, "&")
-		  Dim Content As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(TextContent, False)
-		  Dim ContentType As Text = "application/x-www-form-urlencoded"
-		  
-		  SimpleHTTP.Post(Self.mEndpoint + "/auth", ContentType, Content, AddressOf Refresh_Callback, Nil)
+		  SimpleHTTP.Post(Self.mEndpoint + "/token", QueryParams, AddressOf Refresh_Callback, Nil)
 		End Sub
 	#tag EndMethod
 
@@ -140,15 +132,7 @@ Protected Class OAuth2Client
 		  QueryParams.Value("code") = Code
 		  QueryParams.Value("redirect_uri") = Self.RedirectURI
 		  
-		  Dim TextArray() As Text
-		  For Each Entry As Xojo.Core.DictionaryEntry In QueryParams
-		    TextArray.Append(Beacon.EncodeURLComponent(Entry.Key) + "=" + Beacon.EncodeURLComponent(Entry.Value))
-		  Next
-		  Dim TextContent As Text = Text.Join(TextArray, "&")
-		  Dim Content As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(TextContent, False)
-		  Dim ContentType As Text = "application/x-www-form-urlencoded"
-		  
-		  SimpleHTTP.Post(Self.mEndPoint + "/token", ContentType, Content, AddressOf Authorization_Callback, Nil)
+		  SimpleHTTP.Post(Self.mEndPoint + "/token", QueryParams, AddressOf Authorization_Callback, Nil)
 		  
 		  Return True
 		End Function
