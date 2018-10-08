@@ -290,6 +290,19 @@ End
 
 
 	#tag MenuHandler
+		Function FileClose() As Boolean Handles FileClose.Action
+			If Self.mCurrentView = Nil Then
+			Self.Close
+			Return True
+			End If
+			
+			Call Self.DiscardView(Self.mCurrentView)
+			
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function ViewDashboard() As Boolean Handles ViewDashboard.Action
 			Self.ShowView(Self.DashboardPane1)
 			Return True
