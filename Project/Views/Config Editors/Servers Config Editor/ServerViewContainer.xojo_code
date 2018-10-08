@@ -1,32 +1,6 @@
 #tag Class
-Protected Class DeployContainer
+Protected Class ServerViewContainer
 Inherits BeaconSubview
-	#tag Method, Flags = &h0
-		Sub Constructor(Document As Beacon.Document, Profile As Beacon.ServerProfile)
-		  Self.mDocument = Document
-		  
-		  If Profile = Nil Then
-		    Dim Err As New UnsupportedOperationException
-		    Err.Reason = "No profile provided"
-		    Raise Err
-		  End If
-		  
-		  // Subclasses will need to override to check for a specific type of profile and save it
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function Document() As Beacon.Document
-		  Return Self.mDocument
-		End Function
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mDocument As Beacon.Document
-	#tag EndProperty
-
-
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="ToolbarCaption"

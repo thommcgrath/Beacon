@@ -1,5 +1,5 @@
 #tag Window
-Begin ConfigEditor DeploymentsConfigEditor
+Begin ConfigEditor ServersConfigEditor
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -97,7 +97,7 @@ Begin ConfigEditor DeploymentsConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Scope           =   0
+      Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -126,7 +126,7 @@ Begin ConfigEditor DeploymentsConfigEditor
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Scope           =   0
+      Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -157,7 +157,7 @@ Begin ConfigEditor DeploymentsConfigEditor
       LockRight       =   False
       LockTop         =   True
       Resizer         =   "0"
-      Scope           =   0
+      Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   3
       TabPanelIndex   =   0
@@ -223,7 +223,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub View_ContentsChanged(Sender As DeployContainer)
+		Private Sub View_ContentsChanged(Sender As ServerViewContainer)
 		  Self.ContentsChanged = Sender.ContentsChanged
 		  
 		  For I As Integer = 0 To Self.ServerList.ListCount - 1
@@ -250,7 +250,7 @@ End
 			  End If
 			  
 			  If Self.mCurrentProfileID <> "" Then
-			    Dim View As DeployContainer = Self.mViews.Value(Self.mCurrentProfileID)
+			    Dim View As ServerViewContainer = Self.mViews.Value(Self.mCurrentProfileID)
 			    View.Visible = False
 			    Self.mCurrentProfileID = ""
 			  End If
@@ -259,7 +259,7 @@ End
 			    Return
 			  End If
 			  
-			  Dim View As DeployContainer = Self.mViews.Value(Value)
+			  Dim View As ServerViewContainer = Self.mViews.Value(Value)
 			  View.Visible = True
 			  Self.mCurrentProfileID = Value
 			End Set
@@ -271,11 +271,11 @@ End
 		#tag Getter
 			Get
 			  If Self.mViews.HasKey(Self.mCurrentProfileID) Then
-			    Return DeployContainer(Self.mViews.Value(Self.mCurrentProfileID))
+			    Return ServerViewContainer(Self.mViews.Value(Self.mCurrentProfileID))
 			  End If
 			End Get
 		#tag EndGetter
-		CurrentView As DeployContainer
+		CurrentView As ServerViewContainer
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -301,12 +301,12 @@ End
 		  Dim ProfileID As Text = Profile.ProfileID
 		  If Not Self.mViews.HasKey(ProfileID) Then
 		    // Create the view
-		    Dim View As DeployContainer
+		    Dim View As ServerViewContainer
 		    Select Case Profile
 		    Case IsA Beacon.NitradoServerProfile
-		      View = New NitradoDeploymentView(Self.Document, Profile)
+		      View = New NitradoServerView(Self.Document, Beacon.NitradoServerProfile(Profile))
 		    Case IsA Beacon.FTPServerProfile
-		      
+		      View = New FTPServerView(Beacon.FTPServerProfile(Profile))
 		    Else
 		      Self.CurrentProfileID = ""
 		      Return
@@ -347,7 +347,7 @@ End
 		          Self.CurrentProfileID = ""
 		        End If
 		        
-		        Dim Panel As DeployContainer = Self.mViews.Value(Profile.ProfileID)
+		        Dim Panel As ServerViewContainer = Self.mViews.Value(Profile.ProfileID)
 		        Panel.Close
 		        Self.mViews.Remove(Profile.ProfileID)
 		      End If

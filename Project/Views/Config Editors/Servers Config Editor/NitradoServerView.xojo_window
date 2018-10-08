@@ -1,5 +1,5 @@
 #tag Window
-Begin DeployContainer NitradoDeploymentView
+Begin ServerViewContainer NitradoServerView
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -265,7 +265,7 @@ Begin DeployContainer NitradoDeploymentView
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Server Status:"
+      Text            =   "Server Name:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -284,7 +284,7 @@ End
 	#tag Event
 		Sub Open()
 		  OAuthProviders.SetupNitrado(Self.Auth)
-		  Self.Auth.AuthData = Self.Document.OAuthData("Nitrado")
+		  Self.Auth.AuthData = Self.mDocument.OAuthData("Nitrado")
 		  Self.Auth.Authenticate
 		  
 		  Self.Controls.Caption = Self.mProfile.Name
@@ -394,16 +394,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Document As Beacon.Document, Profile As Beacon.ServerProfile)
-		  Super.Constructor(Document, Profile)
-		  
-		  If Not Profile IsA Beacon.NitradoServerProfile Then
-		    Dim Err As New UnsupportedOperationException
-		    Err.Reason = "Profile is not a Nitrado server profile."
-		    Raise Err
-		  End If
-		  
-		  Self.mProfile = Beacon.NitradoServerProfile(Profile)
+		Sub Constructor(Document As Beacon.Document, Profile As Beacon.NitradoServerProfile)
+		  Self.mDocument = Document
+		  Self.mProfile = Profile
 		End Sub
 	#tag EndMethod
 
@@ -418,6 +411,10 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mDocument As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mProfile As Beacon.NitradoServerProfile
 	#tag EndProperty
 
@@ -427,7 +424,7 @@ End
 #tag Events Auth
 	#tag Event
 		Sub Authenticated()
-		  Self.Document.OAuthData("Nitrado") = Me.AuthData
+		  Self.mDocument.OAuthData("Nitrado") = Me.AuthData
 		  Self.RefreshServerStatus()
 		End Sub
 	#tag EndEvent
@@ -479,6 +476,7 @@ End
 	#tag Event
 		Sub TextChange()
 		  Self.mProfile.Name = Me.Text.ToText
+		  Self.Controls.Caption = Me.Text
 		  Self.ContentsChanged = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent

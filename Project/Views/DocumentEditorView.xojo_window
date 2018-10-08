@@ -44,6 +44,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -571,7 +572,7 @@ End
 		      Case "maps"
 		        NewPanel = New MapsConfigEditor(Self.mController)
 		      Case "deployments"
-		        NewPanel = New DeploymentsConfigEditor(Self.mController)
+		        NewPanel = New ServersConfigEditor(Self.mController)
 		      Case BeaconConfigs.LootDrops.ConfigName
 		        NewPanel = New LootConfigEditor(Self.mController)
 		      Case BeaconConfigs.Difficulty.ConfigName
