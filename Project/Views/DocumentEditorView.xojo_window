@@ -44,7 +44,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -229,6 +228,14 @@ End
 	#tag Event
 		Sub EnableMenuItems()
 		  FileSaveAs.Enable
+		  
+		  If Self.ReadyToDeploy Then
+		    FileDeploy.Enable
+		  End If
+		  
+		  If Self.ReadyToExport Then
+		    FileExport.Enable
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -245,12 +252,48 @@ End
 
 
 	#tag MenuHandler
+		Function FileDeploy() As Boolean Handles FileDeploy.Action
+			Self.BeginDeploy()
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function FileExport() As Boolean Handles FileExport.Action
+			Self.BeginExport()
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
 			Call Self.SaveAs()
 			Return True
 		End Function
 	#tag EndMenuHandler
 
+
+	#tag Method, Flags = &h21
+		Private Sub BeginDeploy()
+		  If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DocumentDeployWindow Then
+		    DocumentDeployWindow(Self.mDeployWindow.Value).Show()
+		  Else
+		    Dim Win As DocumentDeployWindow = DocumentDeployWindow.Create(Self.Document)
+		    If Win <> Nil Then
+		      Self.mDeployWindow = New WeakRef(Win)
+		      Win.Show()
+		    End If
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub BeginExport()
+		  DocumentExportWindow.Present(Self, Self.Document)
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As Beacon.DocumentController)
@@ -655,7 +698,7 @@ End
 		      Self.mImportWindowRef = New WeakRef(DocumentImportWindow.Present(AddressOf ImportCallback, Self.Document))
 		    End If
 		  Case "ExportButton"
-		    DocumentExportWindow.Present(Self, Self.Document)
+		    Self.BeginExport()
 		  Case "HelpButton"
 		    If Self.mHelpDrawerOpen Then
 		      Self.HideHelpDrawer()
@@ -669,15 +712,7 @@ End
 		    Dim Notification As New Beacon.UserNotification("Link to " + Self.mController.Name + " has been copied to the clipboard.")
 		    LocalData.SharedInstance.SaveNotification(Notification)
 		  Case "DeployButton"
-		    If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DocumentDeployWindow Then
-		      DocumentDeployWindow(Self.mDeployWindow.Value).Show()
-		    Else
-		      Dim Win As DocumentDeployWindow = DocumentDeployWindow.Create(Self.Document)
-		      If Win <> Nil Then
-		        Self.mDeployWindow = New WeakRef(Win)
-		        Win.Show()
-		      End If
-		    End If
+		    Self.BeginDeploy()
 		  End Select
 		End Sub
 	#tag EndEvent

@@ -90,7 +90,21 @@ Begin Menu MainMenuBar
          AutoEnable = False
          Visible = True
       End
+      Begin MenuItem UntitledSeparator4
+         SpecialMenu = 0
+         Text = "-"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
       Begin MenuItem FileExport
+         SpecialMenu = 0
+         Text = "Export…"
+         Index = -2147483648
+         AutoEnable = False
+         Visible = True
+      End
+      Begin MenuItem FileDeploy
          SpecialMenu = 0
          Text = "Deploy…"
          Index = -2147483648
@@ -187,23 +201,6 @@ Begin Menu MainMenuBar
          Index = -2147483648
          ShortcutKey = "A"
          Shortcut = "Cmd+A"
-         MenuModifier = True
-         AutoEnable = True
-         Visible = True
-      End
-      Begin MenuItem UntitledSeparator8
-         SpecialMenu = 0
-         Text = "-"
-         Index = -2147483648
-         AutoEnable = True
-         Visible = True
-      End
-      Begin PrefsMenuItem EditPreferences
-         SpecialMenu = 0
-         Text = "Preferences…"
-         Index = -2147483648
-         ShortcutKey = ","
-         Shortcut = "Cmd+,"
          MenuModifier = True
          AutoEnable = True
          Visible = True
@@ -352,27 +349,6 @@ Begin Menu MainMenuBar
          Text = "Rebuild Item Sets from Presets"
          Index = -2147483648
          PCAltKey = True
-         AutoEnable = False
-         Visible = True
-      End
-      Begin MenuItem UntitledSeparator2
-         SpecialMenu = 0
-         Text = "-"
-         Index = -2147483648
-         AutoEnable = True
-         Visible = True
-      End
-      Begin MenuItem DocumentPublishDocument
-         SpecialMenu = 0
-         Text = "Publish Document…"
-         Index = -2147483648
-         AutoEnable = False
-         Visible = True
-      End
-      Begin MenuItem DocumentUnpublishDocument
-         SpecialMenu = 0
-         Text = "Unpublish Document"
-         Index = -2147483648
          AutoEnable = False
          Visible = True
       End

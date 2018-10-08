@@ -59,6 +59,7 @@ Begin LibrarySubview LibraryPaneMenu Implements NotificationKit.Receiver
       Top             =   20
       Transparent     =   False
       Underline       =   True
+      URL             =   ""
       Visible         =   True
       Width           =   260
    End
@@ -113,11 +114,6 @@ End
 		  Links.Append("Admin Spawn Codes" : "beacon://spawncodes")
 		  Links.Append("Report a Problem" : "beacon://reportproblem")
 		  Links.Append("Make a Donation" : "beacon://makedonation")
-		  
-		  #if Not TargetWin32
-		    Links.Append(Nil)
-		    Links.Append(App.kFileQuit : "beacon://exit")
-		  #endif
 		  
 		  Self.SetContents(Links)
 		End Sub

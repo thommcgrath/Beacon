@@ -211,14 +211,6 @@ Inherits Application
 
 
 	#tag MenuHandler
-		Function EditPreferences() As Boolean Handles EditPreferences.Action
-			PreferencesWindow.Show
-			Return True
-			
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
 			Dim Dialog As New OpenDialog
 			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.JsonFile
@@ -269,9 +261,7 @@ Inherits Application
 
 	#tag MenuHandler
 		Function HelpAboutBeacon() As Boolean Handles HelpAboutBeacon.Action
-			If Self.mIdentity <> Nil Then
 			MainWindow.ShowView(Nil)
-			End If
 			Return True
 		End Function
 	#tag EndMenuHandler
@@ -308,21 +298,6 @@ Inherits Application
 	#tag MenuHandler
 		Function HelpReportAProblem() As Boolean Handles HelpReportAProblem.Action
 			Self.ShowBugReporter()
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
-		Function WindowDeveloperTools() As Boolean Handles WindowDeveloperTools.Action
-			DeveloperWindow.SharedWindow.Show()
-			Return True
-			
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
-		Function WindowLibrary() As Boolean Handles WindowLibrary.Action
-			LibraryWindow.SharedWindow.Show()
 			Return True
 		End Function
 	#tag EndMenuHandler

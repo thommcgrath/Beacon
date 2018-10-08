@@ -16,7 +16,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    MaxHeight       =   32000
    MaximizeButton  =   True
    MaxWidth        =   32000
-   MenuBar         =   0
+   MenuBar         =   817604607
    MenuBarVisible  =   True
    MinHeight       =   400
    MinimizeButton  =   True
