@@ -191,17 +191,9 @@ End
 		    Return
 		  End If
 		  
-		  Select Case Status
-		  Case 401
-		    Self.ShowAlert("Nitrado API Error", "You are not authorized to query this server.")
+		  If Self.CheckError(Status) Then
 		    Return
-		  Case 429
-		    Self.ShowAlert("Nitrado API Error", "Rate limit has been exceeded.")
-		    Return
-		  Case 503
-		    Self.ShowAlert("Nitrado API Error", "Nitrado is currently offline for maintenace.")
-		    Return
-		  End Select
+		  End If
 		  
 		  Try
 		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
@@ -249,11 +241,47 @@ End
 		      Started = False
 		      Enabled = False
 		    End Select
+		    
+		    Self.Controls.PowerButton.Enabled = Enabled
+		    Self.Controls.PowerButton.Toggled = Started
+		    Self.Controls.PowerButton.HelpTag = If(Started, "Stop the server.", "Start the server.")
 		  Catch Err As RuntimeException
 		  End Try
 		  
 		  Self.RefreshTimer.Mode = Timer.ModeSingle
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Callback_ServerToggle(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  If Self.Closed Then
+		    Return
+		  End If
+		  
+		  If Self.CheckError(Status) Then
+		    Return
+		  End If
+		  
+		  // Doesn't really matter, just refresh
+		  Self.RefreshTimer.Reset
+		  Self.RefreshServerStatus()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CheckError(Status As Integer) As Boolean
+		  Select Case Status
+		  Case 401
+		    Self.ShowAlert("Nitrado API Error", "You are not authorized to query this server.")
+		    Return True
+		  Case 429
+		    Self.ShowAlert("Nitrado API Error", "Rate limit has been exceeded.")
+		    Return True
+		  Case 503
+		    Self.ShowAlert("Nitrado API Error", "Nitrado is currently offline for maintenace.")
+		    Return True
+		  End Select
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -298,6 +326,37 @@ End
 		Function ShowURL(URL As Text) As Beacon.WebView
 		  Return MiniBrowser.ShowURL(URL)
 		End Function
+	#tag EndEvent
+#tag EndEvents
+#tag Events Controls
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "PowerButton"
+		    Dim Headers As New Xojo.Core.Dictionary
+		    Headers.Value("Authorization") = "Bearer " + Self.Auth.AccessToken
+		    
+		    If Item.Toggled Then
+		      Dim FormData As New Xojo.Core.Dictionary
+		      FormData.Value("message") = "Server stopped by Beacon (https://beaconapp.cc)"
+		      FormData.Value("stop_message") = "Server is now stopping."
+		      
+		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/stop", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
+		    Else
+		      Dim FormData As New Xojo.Core.Dictionary
+		      FormData.Value("message") = "Server started by Beacon (https://beaconapp.cc)"
+		      
+		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/restart", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
+		    End If
+		    
+		    Item.Enabled = False
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.LeftItems.Append(New BeaconToolbarItem("PowerButton", IconToolbarPower, False, "Start or stop the server."))
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events RefreshTimer

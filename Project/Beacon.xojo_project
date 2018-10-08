@@ -328,6 +328,7 @@ Class=NitradoDeploymentEngine;Modules/Beacon/NitradoDeploymentEngine.xojo_code;&
 Class=NitradoDiscoveryEngine;Modules/Beacon/NitradoDiscoveryEngine.xojo_code;&h00000000237D0FFF;&h0000000055ADDFFF;false
 Interface=DiscoveryEngine;Modules/Beacon/DiscoveryEngine.xojo_code;&h000000000F3ACFFF;&h0000000055ADDFFF;false
 Class=FTPDiscoveryEngine;Modules/Beacon/FTPDiscoveryEngine.xojo_code;&h0000000011FA6FFF;&h0000000055ADDFFF;false
+MultiImage=IconToolbarPower;Icons/IconToolbarPower.xojo_image;&h000000002B09C7FF;&h0000000007F977FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0
