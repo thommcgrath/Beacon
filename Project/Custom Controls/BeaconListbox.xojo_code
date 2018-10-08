@@ -243,7 +243,7 @@ Inherits Listbox
 	#tag Event
 		Sub Open()
 		  Self.TextFont = "SmallSystem"
-		  Self.DefaultRowHeight = Max(22, Self.DefaultRowHeight)
+		  Self.DefaultRowHeight = Max(26, Self.DefaultRowHeight)
 		  
 		  RaiseEvent Open
 		  
@@ -522,6 +522,105 @@ Inherits Listbox
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="Index"
+			Visible=true
+			Group="ID"
+			InitialValue="-2147483648"
+			Type="Integer"
+			EditorType="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Name"
+			Visible=true
+			Group="ID"
+			Type="String"
+			EditorType="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Super"
+			Visible=true
+			Group="ID"
+			Type="String"
+			EditorType="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Height"
+			Visible=true
+			Group="Position"
+			InitialValue="100"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="InitialParent"
+			Group="Position"
+			Type="String"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Left"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockBottom"
+			Visible=true
+			Group="Position"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockLeft"
+			Visible=true
+			Group="Position"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockRight"
+			Visible=true
+			Group="Position"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LockTop"
+			Visible=true
+			Group="Position"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabIndex"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabPanelIndex"
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="TabStop"
+			Visible=true
+			Group="Position"
+			InitialValue="True"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Top"
+			Visible=true
+			Group="Position"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Width"
+			Visible=true
+			Group="Position"
+			InitialValue="100"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="Transparent"
 			Visible=true
 			Group="Appearance"
@@ -534,19 +633,6 @@ Inherits Listbox
 			Visible=true
 			Group="Appearance"
 			InitialValue="True"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="AutoHideScrollbars"
-			Visible=true
-			Group="Behavior"
-			InitialValue="True"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Bold"
-			Visible=true
-			Group="Font"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -564,12 +650,6 @@ Inherits Listbox
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ColumnsResizable"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="ColumnWidths"
 			Visible=true
 			Group="Appearance"
@@ -577,24 +657,10 @@ Inherits Listbox
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="DataField"
-			Visible=true
-			Group="Database Binding"
-			Type="String"
-			EditorType="DataField"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="DataSource"
-			Visible=true
-			Group="Database Binding"
-			Type="String"
-			EditorType="DataSource"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="DefaultRowHeight"
 			Visible=true
 			Group="Appearance"
-			InitialValue="22"
+			InitialValue="26"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -602,18 +668,6 @@ Inherits Listbox
 			Visible=true
 			Group="Appearance"
 			InitialValue="True"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EnableDrag"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="EnableDragReorder"
-			Visible=true
-			Group="Behavior"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -662,13 +716,6 @@ Inherits Listbox
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Height"
-			Visible=true
-			Group="Position"
-			InitialValue="100"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="HelpTag"
 			Visible=true
 			Group="Appearance"
@@ -676,85 +723,11 @@ Inherits Listbox
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Hierarchical"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Index"
-			Visible=true
-			Group="ID"
-			InitialValue="-2147483648"
-			Type="Integer"
-			EditorType="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="InitialParent"
-			Group="Position"
-			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="InitialValue"
 			Visible=true
 			Group="Appearance"
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Italic"
-			Visible=true
-			Group="Font"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockBottom"
-			Visible=true
-			Group="Position"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockLeft"
-			Visible=true
-			Group="Position"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockRight"
-			Visible=true
-			Group="Position"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LockTop"
-			Visible=true
-			Group="Position"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Name"
-			Visible=true
-			Group="ID"
-			Type="String"
-			EditorType="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="RequiresSelection"
-			Visible=true
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="RowCount"
-			Group="Behavior"
-			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ScrollbarHorizontal"
@@ -770,18 +743,6 @@ Inherits Listbox
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="SelectionType"
-			Visible=true
-			Group="Behavior"
-			InitialValue="0"
-			Type="Integer"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Single"
-				"1 - Multiple"
-			#tag EndEnumValues
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="ShowDropIndicator"
 			Visible=true
 			Group="Appearance"
@@ -789,30 +750,41 @@ Inherits Listbox
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Super"
+			Name="UseFocusRing"
 			Visible=true
-			Group="ID"
-			Type="String"
-			EditorType="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabIndex"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabPanelIndex"
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="TabStop"
-			Visible=true
-			Group="Position"
+			Group="Appearance"
 			InitialValue="True"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Visible"
+			Visible=true
+			Group="Appearance"
+			InitialValue="True"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_ScrollOffset"
+			Group="Appearance"
+			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="_ScrollWidth"
+			Group="Appearance"
+			InitialValue="-1"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Bold"
+			Visible=true
+			Group="Font"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Italic"
+			Visible=true
+			Group="Font"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -845,50 +817,78 @@ Inherits Listbox
 			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Top"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Underline"
 			Visible=true
 			Group="Font"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="UseFocusRing"
+			Name="DataField"
 			Visible=true
-			Group="Appearance"
+			Group="Database Binding"
+			Type="String"
+			EditorType="DataField"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DataSource"
+			Visible=true
+			Group="Database Binding"
+			Type="String"
+			EditorType="DataSource"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="AutoHideScrollbars"
+			Visible=true
+			Group="Behavior"
 			InitialValue="True"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Visible"
+			Name="ColumnsResizable"
 			Visible=true
-			Group="Appearance"
-			InitialValue="True"
+			Group="Behavior"
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Width"
+			Name="EnableDrag"
 			Visible=true
-			Group="Position"
-			InitialValue="100"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EnableDragReorder"
+			Visible=true
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Hierarchical"
+			Visible=true
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RequiresSelection"
+			Visible=true
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="RowCount"
+			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="_ScrollOffset"
-			Group="Appearance"
+			Name="SelectionType"
+			Visible=true
+			Group="Behavior"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="_ScrollWidth"
-			Group="Appearance"
-			InitialValue="-1"
-			Type="Integer"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Single"
+				"1 - Multiple"
+			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
