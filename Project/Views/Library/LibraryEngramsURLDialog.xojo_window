@@ -53,6 +53,7 @@ Begin Window LibraryEngramsURLDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   86
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -84,6 +85,7 @@ Begin Window LibraryEngramsURLDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   86
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -160,6 +162,7 @@ Begin Window LibraryEngramsURLDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   52
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -183,11 +186,11 @@ Begin Window LibraryEngramsURLDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   90
+      Transparent     =   False
       Visible         =   False
       Width           =   16
    End
    Begin Xojo.Net.HTTPSocket Downloader
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

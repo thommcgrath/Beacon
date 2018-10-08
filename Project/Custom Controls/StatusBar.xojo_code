@@ -3,6 +3,9 @@ Protected Class StatusBar
 Inherits ControlCanvas
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
 		  If Not Self.mClickable Then
 		    Return True
 		  End If

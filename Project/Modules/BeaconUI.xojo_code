@@ -314,12 +314,6 @@ Protected Module BeaconUI
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Sub RecallPosition(Extends Win As Window, Key As Text)
-		  // Do nothing
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Sub RegisterSheetPositionHandler()
 		  #if TargetCocoa
@@ -335,12 +329,6 @@ Protected Module BeaconUI
 		      End If
 		    End If
 		  #endif
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Sub SavePosition(Extends Win As Window, Key As Text)
-		  // Do Nothing
 		End Sub
 	#tag EndMethod
 

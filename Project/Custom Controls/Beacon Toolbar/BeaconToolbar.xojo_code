@@ -207,6 +207,8 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h21
 		Private Sub DrawButton(G As Graphics, Button As BeaconToolbarItem, Rect As REALbasic.Rect, Mode As ButtonModes, Highlighted As Boolean)
+		  #Pragma Unused Highlighted
+		  
 		  If Button.Icon <> Nil Then
 		    Dim IconColor As Color
 		    If Button.Toggled Then
@@ -425,18 +427,11 @@ Implements ObservationKit.Observer
 		  
 		  If Self.Caption <> "" Then
 		    Dim Caption As String = Self.Caption.NthField(EndOfLine, 1)
-		    Dim Subcaption As String = Self.Caption.NthField(EndOfLine, 2)
 		    
-		    Dim CaptionSize, SubcaptionSize As Double = 0
-		    If Subcaption <> "" Then
-		      CaptionSize = 11
-		      SubcaptionSize = 8
-		    End If
+		    Dim CaptionSize As Double = 0
 		    
 		    G.TextSize = CaptionSize
 		    Dim CaptionWidth As Integer = Ceil(G.StringWidth(Caption))
-		    G.TextSize = SubcaptionSize
-		    Dim SubcaptionWidth As Integer = Ceil(G.StringWidth(Subcaption))
 		    
 		    CaptionWidth = Min(CaptionWidth, ContentRect.Width)
 		    Dim CaptionLeft As Integer = ContentRect.Left + ((ContentRect.Width - CaptionWidth) / 2)

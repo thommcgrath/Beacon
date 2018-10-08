@@ -63,21 +63,6 @@ Inherits Beacon.ServerProfile
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Shared Function SupportsCapability(Capability As Beacon.ServerProfile.Capabilities) As Boolean
-		  Select Case Capability
-		  Case Beacon.ServerProfile.Capabilities.DiscoverServer
-		    Return True
-		  Case Beacon.ServerProfile.Capabilities.ListSevers
-		    Return False
-		  Case Beacon.ServerProfile.Capabilities.RestartServer
-		    Return False
-		  Case Beacon.ServerProfile.Capabilities.UpdateConfig
-		    Return True
-		  End Select
-		End Function
-	#tag EndMethod
-
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -105,7 +90,7 @@ Inherits Beacon.ServerProfile
 		#tag Setter
 			Set
 			  If Self.mGameUserSettingsIniPath.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
-			    Self.mGameUserSettingsIniPath = Value  
+			    Self.mGameUserSettingsIniPath = Value
 			    Self.Modified = True
 			  End If
 			End Set
@@ -122,7 +107,7 @@ Inherits Beacon.ServerProfile
 		#tag Setter
 			Set
 			  If Self.mHost.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
-			    Self.mHost = Value  
+			    Self.mHost = Value
 			    Self.Modified = True
 			  End If
 			End Set
@@ -163,7 +148,7 @@ Inherits Beacon.ServerProfile
 		#tag Setter
 			Set
 			  If Self.mPassword.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
-			    Self.mPassword = Value  
+			    Self.mPassword = Value
 			    Self.Modified = True
 			  End If
 			End Set
@@ -186,7 +171,7 @@ Inherits Beacon.ServerProfile
 			    Value = 21
 			  End If
 			  If Self.mPort <> Value Then
-			    Self.mPort = Value  
+			    Self.mPort = Value
 			    Self.Modified = True
 			  End If
 			End Set
@@ -203,7 +188,7 @@ Inherits Beacon.ServerProfile
 		#tag Setter
 			Set
 			  If Self.mUsername.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
-			    Self.mUsername = Value  
+			    Self.mUsername = Value
 			    Self.Modified = True
 			  End If
 			End Set
@@ -213,6 +198,16 @@ Inherits Beacon.ServerProfile
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Enabled"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Modified"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="GameIniPath"
 			Group="Behavior"

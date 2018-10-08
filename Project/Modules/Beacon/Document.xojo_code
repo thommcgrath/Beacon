@@ -98,13 +98,6 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Beacon.Document.ToDictionary" )  Function Export(Identity As Beacon.Identity) As Xojo.Core.Dictionary
-		  // Legacy alias
-		  Return Self.ToDictionary(Identity)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function FromText(Contents As Text, Identity As Beacon.Identity) As Beacon.Document
 		  Dim Parsed As Auto
 		  Try
@@ -114,7 +107,6 @@ Implements Beacon.DocumentItem
 		  End Try
 		  
 		  Dim Doc As New Beacon.Document
-		  Dim LootSources() As Auto
 		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
 		  Dim Version As Integer = 1
 		  Dim Dict As Xojo.Core.Dictionary
@@ -344,13 +336,6 @@ Implements Beacon.DocumentItem
 		  If Drops <> Nil Then
 		    Return Drops.IndexOf(LootSource) > -1
 		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Beacon.Document.DocumentID" )  Function Identifier() As Text
-		  // Legacy alias
-		  Return Self.mIdentifier
 		End Function
 	#tag EndMethod
 
@@ -665,7 +650,7 @@ Implements Beacon.DocumentItem
 		Function ToDictionary(Identity As Beacon.Identity) As Xojo.Core.Dictionary
 		  Dim Document As New Xojo.Core.Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
-		  Document.Value("Identifier") = Self.Identifier
+		  Document.Value("Identifier") = Self.DocumentID
 		  Document.Value("ConsoleModsOnly") = Self.ConsoleModsOnly
 		  
 		  Dim Groups As New Xojo.Core.Dictionary

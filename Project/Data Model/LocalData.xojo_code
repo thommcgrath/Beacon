@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LocalData
-Implements Beacon.DataSource,NotificationKit.Receiver
+Implements Beacon.DataSource
 	#tag Method, Flags = &h21
 		Private Sub BeginTransaction()
 		  Self.mLock.Enter
@@ -181,8 +181,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  NotificationKit.Ignore(Self, "Beacon.Document.TitleChanged")
-		  
 		  Self.SQLExecute("PRAGMA optimize;")
 		End Sub
 	#tag EndMethod
@@ -838,12 +836,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Call Self.Import(TextContent)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
-		  // Part of the NotificationKit.Receiver interface.
 		End Sub
 	#tag EndMethod
 

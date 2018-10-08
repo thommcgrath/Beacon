@@ -87,12 +87,6 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function SupportsCapability(Capability As Beacon.ServerProfile.Capabilities) As Boolean
-		  Return False
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function SupportsRestart() As Boolean
 		  Return False
 		End Function
@@ -177,14 +171,6 @@ Protected Class ServerProfile
 		#tag EndSetter
 		Name As Text
 	#tag EndComputedProperty
-
-
-	#tag Enum, Name = Capabilities, Type = Integer, Flags = &h0
-		ListSevers = 1
-		  DiscoverServer = 2
-		  UpdateConfig = 4
-		RestartServer = 6
-	#tag EndEnum
 
 
 	#tag ViewBehavior

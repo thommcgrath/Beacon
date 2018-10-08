@@ -3,6 +3,8 @@ Protected Class LogoFillCanvas
 Inherits ControlCanvas
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
 		  G.TextSize = 24
 		  
 		  Dim ForeColor As Color = SystemColors.TertiaryLabelColor

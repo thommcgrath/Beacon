@@ -44,6 +44,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -61,6 +62,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -95,6 +97,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -128,6 +131,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -161,6 +165,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -194,6 +199,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -227,6 +233,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -260,6 +267,7 @@ Begin ContainerControl LibraryPane Implements NotificationKit.Receiver
          HasBackColor    =   False
          Height          =   468
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -333,6 +341,9 @@ End
 
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
 		  Return True
 		End Function
 	#tag EndEvent
@@ -347,6 +358,8 @@ End
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
 		  G.ForeColor = SystemColors.ControlBackgroundColor
 		  G.FillRect(0, 0, G.Width - 1, G.Height)
 		  

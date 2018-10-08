@@ -27,6 +27,7 @@ Begin ServerViewContainer NitradoServerView
    Visible         =   True
    Width           =   600
    Begin Beacon.OAuth2Client Auth
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -128,6 +129,7 @@ Begin ServerViewContainer NitradoServerView
       Width           =   110
    End
    Begin Timer RefreshTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -296,6 +298,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_ServerStatus(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.Closed Then
 		    Return
 		  End If
@@ -363,6 +368,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_ServerToggle(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Content
+		  #Pragma Unused Tag
+		  
 		  If Self.Closed Then
 		    Return
 		  End If

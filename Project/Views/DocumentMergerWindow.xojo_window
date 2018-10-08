@@ -269,6 +269,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
+		  #Pragma Unused Row
+		  #Pragma Unused Column
+		  
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Me.CellCheck(I, 0) Then
 		      Self.ActionButton.Enabled = True

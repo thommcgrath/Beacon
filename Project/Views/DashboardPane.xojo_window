@@ -436,6 +436,8 @@ End
 #tag Events LogoCanvas
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
 		  G.DrawPicture(LogoColor, 0, 0)
 		End Sub
 	#tag EndEvent
@@ -462,6 +464,8 @@ End
 #tag Events TitleCanvas
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
 		  G.DrawPicture(BeaconUI.IconWithColor(BeaconText,SystemColors.LabelColor), 0, 0)
 		End Sub
 	#tag EndEvent

@@ -44,6 +44,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -405,6 +406,9 @@ End
 	#tag Method, Flags = &h0
 		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
 		  // Part of the ObservationKit.Observer interface.
+		  
+		  #Pragma Unused Source
+		  #Pragma Unused Value
 		  
 		  Select Case Key
 		  Case "MinimumWidth", "MinimumHeight"

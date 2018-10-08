@@ -101,6 +101,7 @@ Begin LibrarySubview LibraryPaneSearch
       Width           =   280
    End
    Begin Timer SearchTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -109,6 +110,7 @@ Begin LibrarySubview LibraryPaneSearch
       TabPanelIndex   =   0
    End
    Begin Xojo.Net.HTTPSocket SearchSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -157,6 +159,8 @@ End
 
 	#tag Event
 		Sub Shown(UserData As Auto = Nil)
+		  #Pragma Unused UserData
+		  
 		  Self.SearchField.SetFocus()
 		  Self.SearchField.SelectAll()
 		End Sub
@@ -169,7 +173,6 @@ End
 		  Dim SmallFontSizePoints As Double = FontSizePoints * 0.8
 		  
 		  Dim Type As Text = Dict.Lookup("type", "")
-		  Dim URL As Text = Dict.Lookup("url", "")
 		  Dim Title As Text = Dict.Lookup("title", "")
 		  Dim Summary As Text = Dict.Lookup("summary", "")
 		  
@@ -351,6 +354,8 @@ End
 #tag Events SearchSocket
 	#tag Event
 		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
+		  #Pragma Unused URL
+		  
 		  Self.Reset()
 		  
 		  If HTTPStatus < 200 Or HTTPStatus >= 300 Then
@@ -389,6 +394,8 @@ End
 #tag Events Area
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
 		  G.ForeColor = SystemColors.LabelColor
 		  
 		  If Self.mResultDicts.Ubound = -1 Then
@@ -421,6 +428,11 @@ End
 	#tag EndEvent
 	#tag Event
 		Function MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Integer, PixelsY As Integer, WheelData As BeaconUI.ScrollEvent) As Boolean
+		  #Pragma Unused MouseX
+		  #Pragma Unused MouseY
+		  #Pragma Unused PixelsX
+		  #Pragma Unused WheelData
+		  
 		  Dim ScrollMax As Integer = Max(Self.mContentHeight - Self.Height, 0)
 		  Self.mScrollPosition = Min(Max(Self.mScrollPosition + PixelsY, 0), ScrollMax)
 		  Me.Invalidate()

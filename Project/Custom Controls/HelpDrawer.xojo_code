@@ -36,6 +36,11 @@ Inherits ControlCanvas
 
 	#tag Event
 		Function MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Integer, PixelsY As Integer, WheelData As BeaconUI.ScrollEvent) As Boolean
+		  #Pragma Unused MouseX
+		  #Pragma Unused MouseY
+		  #Pragma Unused PixelsX
+		  #Pragma Unused WheelData
+		  
 		  If PixelsY <> 0 Then
 		    Self.mScrollPosition = Self.mScrollPosition + PixelsY
 		    Self.Invalidate

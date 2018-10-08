@@ -208,6 +208,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub APICallback_CloudDocumentsList(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Message
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
 		  
 		  If Not Success Then
 		    Return
@@ -235,6 +237,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub APICallback_CommunityDocumentsList(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Message
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
 		  
 		  If Not Success Then
 		    Return
@@ -260,6 +264,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Details
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
 		  
 		  If Success Then
 		    If Self.View = Self.ViewCloudDocuments Then
@@ -278,7 +284,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Controller_DeleteError(Sender As Beacon.DocumentController)
-		  Break
+		  #if DebugBuild
+		    #Pragma Unused Sender
+		    #Pragma Warning "Does not handle delete error"
+		  #else
+		    #Pragma Error "Does not handle delete error"
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -304,6 +315,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Controller_Loaded(Sender As Beacon.DocumentController, Document As Beacon.Document)
+		  #Pragma Unused Document
+		  
 		  If Self.mProgress <> Nil Then
 		    Self.mProgress.Close
 		    Self.mProgress = Nil
@@ -393,8 +406,7 @@ End
 		  
 		  Select Case Notification.Name
 		  Case "Beacon.Document.TitleChanged"
-		    Dim Document As Beacon.Document = Notification.UserData
-		    Break
+		    Self.UpdateDocumentsList()
 		  Case Preferences.Notification_OnlineStateChanged
 		    Self.SwitcherVisible = Preferences.OnlineEnabled
 		  End Select

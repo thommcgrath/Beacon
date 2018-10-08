@@ -124,6 +124,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub DocumentComplete(URL as String)
+		  #Pragma Unused URL
+		  
 		  Header.BackButton.Enabled = Me.CanGoBack
 		  Header.ForwardButton.Enabled = Me.CanGoForward
 		End Sub

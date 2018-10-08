@@ -59,21 +59,6 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function SupportsCapability(Capability As Beacon.ServerProfile.Capabilities) As Boolean
-		  Select Case Capability
-		  Case Beacon.ServerProfile.Capabilities.DiscoverServer
-		    Return True
-		  Case Beacon.ServerProfile.Capabilities.ListSevers
-		    Return True
-		  Case Beacon.ServerProfile.Capabilities.RestartServer
-		    Return False
-		  Case Beacon.ServerProfile.Capabilities.UpdateConfig
-		    Return True
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function SupportsRestart() As Boolean
 		  Return True
 		End Function
@@ -146,14 +131,14 @@ Inherits Beacon.ServerProfile
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="mAddress"
+			Name="Enabled"
 			Group="Behavior"
-			Type="Text"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mConfigPath"
+			Name="Modified"
 			Group="Behavior"
-			Type="Text"
+			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
@@ -176,11 +161,6 @@ Inherits Beacon.ServerProfile
 			Type="String"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mServiceID"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
@@ -191,6 +171,21 @@ Inherits Beacon.ServerProfile
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Address"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ConfigPath"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ServiceID"
+			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior

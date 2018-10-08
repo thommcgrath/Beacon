@@ -2,6 +2,8 @@
 Protected Class ConfigGroup
 	#tag Method, Flags = &h0
 		Function CommandLineOptions(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
+		  #Pragma Unused SourceDocument
+		  
 		  Dim Values() As Beacon.ConfigValue
 		  Return Values
 		End Function
@@ -38,6 +40,8 @@ Protected Class ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
+		  #Pragma Unused SourceDocument
+		  
 		  Dim Values() As Beacon.ConfigValue
 		  Return Values
 		End Function
@@ -45,6 +49,8 @@ Protected Class ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
+		  #Pragma Unused SourceDocument
+		  
 		  Dim Values() As Beacon.ConfigValue
 		  Return Values
 		End Function
@@ -118,11 +124,6 @@ Protected Class ConfigGroup
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mModified"
-			Group="Behavior"
-			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

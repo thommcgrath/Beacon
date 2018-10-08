@@ -87,6 +87,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub APICallback_CreateSession(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Message
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
 		  
 		  If Success Then
 		    Try
@@ -114,6 +116,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_GetCurrentUser(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
+		  
 		  If Success Then
 		    Dim Dict As Xojo.Core.Dictionary = Details
 		    Dim Identity As Beacon.Identity = Beacon.Identity.FromUserDictionary(Dict, Self.mUserPassword.ToText)
@@ -158,6 +163,8 @@ End
 		  #Pragma Unused Success
 		  #Pragma Unused Message
 		  #Pragma Unused Details
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
 		  
 		  Self.Close()
 		End Sub
@@ -165,6 +172,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
+		  
 		  Try
 		    If Success = False And Details IsA Xojo.Core.Dictionary Then
 		      Dim Dict As Xojo.Core.Dictionary = Details

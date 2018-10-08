@@ -284,6 +284,7 @@ Begin BeaconContainer ModDetailView
          LockRight       =   True
          LockTop         =   True
          RequiresSelection=   False
+         RowCount        =   0
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
@@ -478,6 +479,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ConfirmMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
+		  
 		  If Success Then
 		    Self.CurrentMod.Constructor(Details)
 		    If Self.CurrentMod.Confirmed Then
@@ -497,6 +501,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub APICallback_EngramsDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Details
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
 		  
 		  If Not Success Then
 		    Panel.Value = PageEngrams
@@ -516,6 +522,8 @@ End
 		Private Sub APICallback_EngramsLoad(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Success
 		  #Pragma Unused Message
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
 		  
 		  Self.mEngramSets.Value(Self.CurrentMod.ModID) = New BeaconAPI.EngramSet(Details)
 		  Self.ShowCurrentEngrams()
@@ -526,6 +534,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub APICallback_EngramsPost(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Details
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
 		  
 		  If Not Success Then
 		    Panel.Value = PageEngrams

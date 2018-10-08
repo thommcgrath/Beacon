@@ -133,6 +133,7 @@ Begin Window DeveloperImportURLDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   118
+      Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -165,6 +166,7 @@ Begin Window DeveloperImportURLDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   152
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -196,6 +198,7 @@ Begin Window DeveloperImportURLDialog
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   152
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -218,11 +221,11 @@ Begin Window DeveloperImportURLDialog
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   156
+      Transparent     =   False
       Visible         =   False
       Width           =   16
    End
    Begin Xojo.Net.HTTPSocket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

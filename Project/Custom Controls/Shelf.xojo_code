@@ -275,6 +275,9 @@ Implements ObservationKit.Observer
 		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
 		  // Part of the ObservationKit.Observer interface.
 		  
+		  #Pragma Unused Source
+		  #Pragma Unused Value
+		  
 		  Select Case Key
 		  Case "PulseAmount"
 		    Self.Invalidate

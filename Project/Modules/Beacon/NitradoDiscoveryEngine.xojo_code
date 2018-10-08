@@ -9,6 +9,9 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -38,6 +41,9 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -55,6 +61,9 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameUserSettingsIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -84,6 +93,9 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameUserSettingsIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -108,6 +120,9 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_GetServerStatus(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.CheckError(Status) Then
 		    Return
 		  End If

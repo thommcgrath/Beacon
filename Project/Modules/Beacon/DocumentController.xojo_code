@@ -4,6 +4,7 @@ Protected Class DocumentController
 		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Message
 		  #Pragma Unused Details
+		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
 		  
 		  If Success Then
@@ -19,6 +20,7 @@ Protected Class DocumentController
 		  // Reminder: this will happen on the main thread
 		  #Pragma Unused Message
 		  #Pragma Unused Details
+		  #Pragma Unused HTTPStatus
 		  
 		  If Not Success Then
 		    Self.mBusy = False
@@ -37,6 +39,7 @@ Protected Class DocumentController
 		Private Sub APICallback_DocumentUpload(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Message
 		  #Pragma Unused Details
+		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
 		  
 		  If Success Then
@@ -176,6 +179,7 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h21
 		Private Sub mAPISocket_WorkProgress(Sender As BeaconAPI.Socket, Request As BeaconAPI.Request, BytesReceived As Int64, BytesTotal As Int64)
+		  #Pragma Unused Sender
 		  #Pragma Unused Request
 		  
 		  RaiseEvent LoadProgress(BytesReceived, BytesTotal)

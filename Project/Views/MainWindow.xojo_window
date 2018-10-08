@@ -44,6 +44,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   25
       Transparent     =   False
       Value           =   0
@@ -61,6 +62,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          HasBackColor    =   False
          Height          =   375
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   41
          LockBottom      =   True
@@ -155,6 +157,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   -259
       LockBottom      =   True
@@ -178,6 +181,8 @@ End
 #tag WindowCode
 	#tag Event
 		Function CancelClose(appQuitting as Boolean) As Boolean
+		  #Pragma Unused AppQuitting
+		  
 		  Dim ModifiedViews() As BeaconSubview
 		  
 		  For Each View As BeaconSubview In Self.mSubviews
@@ -396,6 +401,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mOverlayFillAnimation_Completed(Sender As AnimationKit.ValueTask)
+		  #Pragma Unused Sender
+		  
 		  Self.OverlayCanvas.Visible = False
 		End Sub
 	#tag EndMethod
@@ -405,6 +412,7 @@ End
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source
+		  #Pragma Unused Value
 		  
 		  Select Case Key
 		  Case "MinimumWidth", "MinimumHeight"
@@ -600,6 +608,9 @@ End
 #tag Events OverlayCanvas
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
 		  Return True
 		End Function
 	#tag EndEvent

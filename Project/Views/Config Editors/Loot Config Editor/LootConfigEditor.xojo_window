@@ -528,6 +528,7 @@ End
 	#tag Event
 		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 		  #Pragma Unused BackgroundColor
+		  #Pragma Unused IsHighlighted
 		  
 		  If Row >= Me.ListCount Then
 		    Return

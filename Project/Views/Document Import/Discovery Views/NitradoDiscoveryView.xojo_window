@@ -354,6 +354,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_ListServers(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  Select Case Status
 		  Case 401
 		    Self.ShowAlert("Nitrado API Error", "Authorization failed.")
@@ -477,6 +480,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
+		  #Pragma Unused Row
+		  #Pragma Unused Column
+		  
 		  Self.CheckActionEnabled()
 		End Sub
 	#tag EndEvent

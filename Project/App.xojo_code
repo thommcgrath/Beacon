@@ -300,6 +300,8 @@ Inherits Application
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_CreateSession(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		  #Pragma Unused Message
+		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
 		  
 		  If Not Success Then
@@ -322,6 +324,8 @@ Inherits Application
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_GetCurrentUser(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		  #Pragma Unused Message
+		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
 		  
 		  If Success Then

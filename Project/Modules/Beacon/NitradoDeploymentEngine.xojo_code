@@ -22,6 +22,9 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -52,6 +55,9 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -69,6 +75,9 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameUserSettingsIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -99,6 +108,9 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameUserSettingsIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -116,6 +128,9 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_EnableExpertMode(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -140,6 +155,9 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_ServerStart(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -166,6 +184,9 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_ServerStatus(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -217,6 +238,9 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_ServerStop(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -242,6 +266,9 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_SetNextCommandLineParam(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -267,6 +294,9 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_UploadGameIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -302,6 +332,10 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_UploadGameIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Content
+		  #Pragma Unused Tag
+		  
 		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -317,6 +351,9 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_UploadGameUserSettingsIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If
@@ -352,6 +389,10 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_UploadGameUserSettingsIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Content
+		  #Pragma Unused Tag
+		  
 		  If Self.mCancelled Or Self.CheckError(Status) Then
 		    Return
 		  End If

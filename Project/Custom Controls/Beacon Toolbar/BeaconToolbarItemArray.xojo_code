@@ -110,6 +110,8 @@ Implements Xojo.Core.Iterable,ObservationKit.Observable,ObservationKit.Observer
 		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
 		  // Part of the ObservationKit.Observer interface.
 		  
+		  #Pragma Unused Source
+		  
 		  Self.NotifyObservers(Key, Value)
 		End Sub
 	#tag EndMethod

@@ -265,6 +265,7 @@ End
 	#tag Method, Flags = &h0
 		Sub CreatePreset(ItemSet As Beacon.ItemSet)
 		  #if DebugBuild
+		    #Pragma Unused ItemSet
 		    #Pragma Warning "Does not create preset"
 		  #else
 		    #Pragma Error "Does not create preset"
@@ -368,6 +369,7 @@ End
 	#tag Method, Flags = &h0
 		Sub OpenPreset(File As FolderItem)
 		  #if DebugBuild
+		    #Pragma Unused File
 		    #Pragma Warning "Does not open preset"
 		  #else
 		    #Pragma Error "Does not open preset"

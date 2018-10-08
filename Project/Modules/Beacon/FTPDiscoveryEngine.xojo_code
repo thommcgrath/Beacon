@@ -23,6 +23,9 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DiscoverServer(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
+		  
 		  If Not Success Then
 		    Self.SetError(Message)
 		    Return
@@ -299,11 +302,6 @@ Implements Beacon.DiscoveryEngine
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mProfile"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior

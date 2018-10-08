@@ -601,6 +601,7 @@ End
 		  #Pragma Unused Message
 		  #Pragma Unused Details
 		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
 		End Sub
 	#tag EndMethod
 

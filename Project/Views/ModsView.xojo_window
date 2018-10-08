@@ -204,6 +204,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DeleteMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Details
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
 		  
 		  If Success Then
 		    Self.RefreshMods
@@ -216,6 +218,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ListMods(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
+		  
 		  If Not Success Then
 		    MsgBox("Unable to load mods: " + Message)
 		    Return

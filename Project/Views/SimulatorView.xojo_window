@@ -257,6 +257,8 @@ End
 #tag Events Header
 	#tag Event
 		Sub ResizerDragged(DeltaX As Integer, DeltaY As Integer)
+		  #Pragma Unused DeltaX
+		  
 		  Dim NewSize As Integer = Self.Height - DeltaY
 		  RaiseEvent ShouldResize(NewSize)
 		End Sub
