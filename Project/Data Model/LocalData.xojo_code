@@ -598,11 +598,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		    Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		    
+		    Self.Variable("sync_time") = PayloadTimestamp.ToText()
+		    Self.Commit()
+		    
 		    // Cleanup
 		    Self.SQLExecute("VACUUM")
 		    
-		    Self.Variable("sync_time") = PayloadTimestamp.ToText()
-		    Self.Commit()
 		    If ReloadPresets Then
 		      Self.LoadPresets()
 		    End If
