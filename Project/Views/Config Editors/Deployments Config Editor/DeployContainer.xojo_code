@@ -2,12 +2,6 @@
 Protected Class DeployContainer
 Inherits BeaconSubview
 	#tag Method, Flags = &h0
-		Function BeginDeploy() As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor(Document As Beacon.Document, Profile As Beacon.ServerProfile)
 		  Self.mDocument = Document
 		  
@@ -24,30 +18,6 @@ Inherits BeaconSubview
 	#tag Method, Flags = &h1
 		Protected Function Document() As Beacon.Document
 		  Return Self.mDocument
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ReadyForDeploy() As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function RestartServer() As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function StartServer() As Boolean
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function StopServer() As Boolean
-		  
 		End Function
 	#tag EndMethod
 
