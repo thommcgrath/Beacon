@@ -237,9 +237,7 @@ Inherits Label
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="TextColor"
-			Visible=true
 			Group="Appearance"
-			InitialValue="&h0000FF"
 			Type="Color"
 		#tag EndViewProperty
 		#tag ViewProperty
@@ -332,6 +330,7 @@ Inherits Label
 			Name="URL"
 			Group="Behavior"
 			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

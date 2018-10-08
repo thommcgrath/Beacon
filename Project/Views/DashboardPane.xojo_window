@@ -220,43 +220,6 @@ Begin BeaconSubview DashboardPane
       Visible         =   True
       Width           =   350
    End
-   Begin LinkLabel WebsiteLink
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   229
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      ShowAsLink      =   True
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "https://beaconapp.cc/"
-      TextAlign       =   1
-      TextColor       =   &c0000FF00
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   320
-      Transparent     =   True
-      Underline       =   True
-      URL             =   ""
-      Visible         =   True
-      Width           =   350
-   End
    Begin Label SyncLabel
       AutoDeactivate  =   True
       Bold            =   False
@@ -320,6 +283,43 @@ Begin BeaconSubview DashboardPane
       UseFocusRing    =   True
       Visible         =   True
       Width           =   145
+   End
+   Begin LinkLabel WebsiteLink
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   229
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      ShowAsLink      =   True
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "https://beaconapp.cc/"
+      TextAlign       =   1
+      TextColor       =   &c0000FF00
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   330
+      Transparent     =   True
+      Underline       =   True
+      URL             =   ""
+      Visible         =   True
+      Width           =   350
    End
 End
 #tag EndWindow
@@ -420,18 +420,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events WebsiteLink
-	#tag Event
-		Sub Open()
-		  Me.Text = Beacon.WebURL()
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action()
-		  ShowURL(Me.Text)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events SyncLabel
 	#tag Event
 		Sub Open()
@@ -448,6 +436,18 @@ End
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  G.DrawPicture(BeaconUI.IconWithColor(BeaconText,SystemColors.LabelColor), 0, 0)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events WebsiteLink
+	#tag Event
+		Sub Open()
+		  Me.Text = Beacon.WebURL()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action()
+		  ShowURL(Me.Text)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
