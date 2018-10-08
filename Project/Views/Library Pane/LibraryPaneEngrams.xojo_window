@@ -74,7 +74,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   64
+      Left            =   55
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -91,7 +91,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   173
+      Width           =   190
    End
    Begin UITweaks.ResizedPushButton ImportClipboardButton
       AutoDeactivate  =   True
@@ -106,7 +106,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   64
+      Left            =   55
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -123,7 +123,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   173
+      Width           =   190
    End
    Begin UITweaks.ResizedPushButton ImportFileButton
       AutoDeactivate  =   True
@@ -138,7 +138,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   64
+      Left            =   55
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -155,7 +155,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   173
+      Width           =   190
    End
    Begin UITweaks.ResizedPushButton ManageEngramsButton
       AutoDeactivate  =   True
@@ -170,7 +170,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   64
+      Left            =   55
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -187,7 +187,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   173
+      Width           =   190
    End
    Begin BeaconToolbar Header
       AcceptFocus     =   False
