@@ -221,7 +221,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ObtainToken()
-		  Dim Request As New BeaconAPI.Request("session.php", "POST", "", "text/plain", AddressOf APICallback_CreateSession)
+		  Dim Request As New BeaconAPI.Request("session.php", "POST", New Xojo.Core.Dictionary, AddressOf APICallback_CreateSession)
 		  Request.Sign(App.Identity)
 		  BeaconAPI.Send(Request)
 		End Sub

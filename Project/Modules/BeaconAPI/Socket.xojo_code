@@ -12,7 +12,16 @@ Protected Class Socket
 		  
 		  Self.ActiveRequest = Request
 		  
-		  Self.Socket.ClearRequestHeaders()
+		  #if TargetWin32
+		    // The socket does not reset itself correctly on Windows, so create a new one
+		    Self.Socket = New Xojo.Net.HTTPSocket
+		    Self.Socket.ValidateCertificates = True
+		    AddHandler Self.Socket.Error, WeakAddressOf Socket_Error
+		    AddHandler Self.Socket.PageReceived, WeakAddressOf Socket_PageReceived
+		    AddHandler Self.Socket.ReceiveProgress, WeakAddressOf Socket_ReceiveProgress
+		  #else
+		    Self.Socket.ClearRequestHeaders()
+		  #endif
 		  
 		  Dim URL As Text = Request.URL
 		  If Request.Authenticated Then
