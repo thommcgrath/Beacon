@@ -46,9 +46,20 @@ Inherits Label
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Open()
+		  Self.ShowAsLink = Self.ShowAsLink
+		  RaiseEvent Open
+		End Sub
+	#tag EndEvent
+
 
 	#tag Hook, Flags = &h0
 		Event Action()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Open()
 	#tag EndHook
 
 
