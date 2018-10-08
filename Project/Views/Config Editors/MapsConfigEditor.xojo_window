@@ -229,7 +229,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub SetupUI()
 		  Dim Maps() As Beacon.Map = Beacon.Maps.All
 		  For Each Map As Beacon.Map In Maps
 		    Dim Ctl As CheckBox = Self.MapCheckboxes(Map.Mask)
@@ -241,23 +241,6 @@ End
 		  Next
 		End Sub
 	#tag EndEvent
-
-
-	#tag Method, Flags = &h0
-		Function HelpContent() As String
-		  Return Self.HelpExplanation
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HelpTitle() As String
-		  Return "About Maps"
-		End Function
-	#tag EndMethod
-
-
-	#tag Constant, Name = HelpExplanation, Type = String, Dynamic = False, Default = \"Beacon will not change the map used on a server. Selecting the map your server uses only influences how Beacon populates Loot Item Sets from Presets. For administrators of clusters\x2C selecting multiple maps can administer multiple servers from a single file.", Scope = Private
-	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -282,6 +265,20 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Behavior"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Behavior"
+		InitialValue="300"
+		Type="Integer"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
 		Group="Behavior"

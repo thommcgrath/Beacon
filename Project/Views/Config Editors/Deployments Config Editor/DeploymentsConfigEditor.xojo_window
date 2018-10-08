@@ -183,6 +183,37 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub SetupUI()
+		  Dim SelectedProfiles() As Beacon.ServerProfile
+		  For I As Integer = 0 To Self.ServerList.RowCount - 1
+		    If Self.ServerList.Selected(I) Then
+		      SelectedProfiles.Append(Self.ServerList.RowTag(I))
+		    End If
+		  Next
+		  
+		  Self.ServerList.RowCount = Self.Document.ServerProfileCount
+		  
+		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
+		    Dim Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
+		    
+		    // Don't use IndexOf as it doesn't utilize Operator_Compare
+		    Dim Selected As Boolean
+		    For X As Integer = 0 To SelectedProfiles.Ubound
+		      If SelectedProfiles(X) = Profile Then
+		        Selected = True
+		        SelectedProfiles.Remove(X)
+		        Exit For X
+		      End If
+		    Next
+		    
+		    Self.ServerList.RowTag(I) = Profile
+		    Self.ServerList.Cell(I, 0) = Profile.Name + EndOfLine + Profile.SecondaryName
+		    Self.ServerList.Selected(I) = Selected
+		  Next
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As Beacon.DocumentController)
@@ -194,6 +225,14 @@ End
 	#tag Method, Flags = &h21
 		Private Sub View_ContentsChanged(Sender As DeployContainer)
 		  Self.ContentsChanged = Sender.ContentsChanged
+		  
+		  For I As Integer = 0 To Self.ServerList.ListCount - 1
+		    Dim Profile As Beacon.ServerProfile = Self.ServerList.RowTag(I)
+		    Dim Status As String = Profile.Name + EndOfLine + Profile.SecondaryName
+		    If Self.ServerList.Cell(I, 0) <> Status Then
+		      Self.ServerList.Cell(I, 0) = Status
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -303,7 +342,17 @@ End
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Me.Selected(I) Then
 		      Dim Profile As Beacon.ServerProfile = Me.RowTag(I)
+		      If Self.mViews.HasKey(Profile.ProfileID) Then
+		        If Self.CurrentProfileID = Profile.ProfileID Then
+		          Self.CurrentProfileID = ""
+		        End If
+		        
+		        Dim Panel As DeployContainer = Self.mViews.Value(Profile.ProfileID)
+		        Panel.Close
+		        Self.mViews.Remove(Profile.ProfileID)
+		      End If
 		      Self.Document.Remove(Profile)
+		      Self.ContentsChanged = True
 		      Me.RemoveRow(I)
 		    End If
 		  Next

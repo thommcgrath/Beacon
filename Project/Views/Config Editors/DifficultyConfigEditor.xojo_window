@@ -375,11 +375,10 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub SetupUI()
 		  Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
 		  Self.MaxDinoLevelField.Text = Str(Difficulty.MaxDinoLevel, "0")
 		  Self.FillReferenceFields(Difficulty)
-		  Self.mSettingUp = False
 		End Sub
 	#tag EndEvent
 
@@ -392,40 +391,13 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function HelpContent() As String
-		  Return Self.HelpExplanation
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HelpTitle() As String
-		  Return "Understanding Difficulty Settings"
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HelpURL() As String
-		  Return "https://ark.gamepedia.com/Difficulty"
-		End Function
-	#tag EndMethod
-
-
-	#tag Property, Flags = &h21
-		Private mSettingUp As Boolean = True
-	#tag EndProperty
-
-
-	#tag Constant, Name = HelpExplanation, Type = String, Dynamic = False, Default = \"Difficulty in Ark controls dino levels and loot quality. Set Maximum Creature Level to the max level wild non-cave creatures you\'d like to find on your server. Creature Level Increments is used to set the spacing between wild creature levels. For example\x2C when set to 5\x2C wild creatures can be found at levels 5\x2C 10\x2C 15\x2C 20\x2C and so on. When set to 10\x2C wild creatures can be found at levels 10\x2C 20\x2C 30\x2C 40\x2C and so on.\n\nBe aware that lower increment numbers make it more difficult to find a maximum level creature. For example\x2C with a Maximum Creature Level of 150 and Creature Level Increments of 10\x2C there are only 15 possible levels to find in the wild. Reducing Creature Level Increments to 5 increases the number of possible wild levels to 30.\n\nIncreasing Maximum Creature Level also increases the loot quality. Unlike previous versions of Beacon\x2C loot drop qualities will not be adjusted for server difficulty.", Scope = Private
-	#tag EndConstant
-
 
 #tag EndWindowCode
 
 #tag Events MaxDinoLevelField
 	#tag Event
 		Sub TextChange()
-		  If Self.mSettingUp Then
+		  If Self.SettingUp Then
 		    Return
 		  End If
 		  

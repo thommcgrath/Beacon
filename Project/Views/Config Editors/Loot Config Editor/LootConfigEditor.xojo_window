@@ -261,10 +261,15 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.Editor.ConsoleSafe = Self.Document.ConsoleModsOnly
-		  Self.UpdateSourceList()
 		  Self.MinimumWidth = 1000
 		  Self.MinimumHeight = 400
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub SetupUI()
+		  Self.Editor.ConsoleSafe = Self.Document.ConsoleModsOnly
+		  Self.UpdateSourceList()
 		End Sub
 	#tag EndEvent
 

@@ -189,8 +189,12 @@ End
 	#tag EndEvent
 
 
+	#tag DelegateDeclaration, Flags = &h0
+		Delegate Sub MergeFinishedCallback()
+	#tag EndDelegateDeclaration
+
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window, SourceDocuments() As Beacon.Document, DestinationDocument As Beacon.Document)
+		Shared Sub Present(Parent As Window, SourceDocuments() As Beacon.Document, DestinationDocument As Beacon.Document, Callback As MergeFinishedCallback = Nil)
 		  Dim OAuthData As New Xojo.Core.Dictionary
 		  For Each Document As Beacon.Document In SourceDocuments
 		    For I As Integer = 0 To Document.ServerProfileCount - 1
@@ -204,6 +208,7 @@ End
 		  Dim Win As New DocumentMergerWindow
 		  Win.mDestination = DestinationDocument
 		  Win.mOAuthData = OAuthData
+		  Win.mCallback = Callback
 		  Dim Enabled As Boolean
 		  Dim UsePrefixes As Boolean = SourceDocuments.Ubound > 0
 		  For Each Document As Beacon.Document In SourceDocuments
@@ -233,6 +238,17 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub TriggerCallback()
+		  Self.mCallback.Invoke()
+		  Self.Close
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mCallback As MergeFinishedCallback
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mDestination As Beacon.Document
@@ -288,7 +304,13 @@ End
 		      End If
 		    End Select
 		  Next
-		  Self.Close
+		  
+		  If Self.mCallback <> Nil Then
+		    Xojo.Core.Timer.CallLater(100, WeakAddressOf TriggerCallback)
+		    Self.Hide
+		  Else
+		    Self.Close
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

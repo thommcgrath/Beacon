@@ -4,6 +4,8 @@ Inherits BeaconSubview
 	#tag Event
 		Sub Open()
 		  RaiseEvent Open
+		  Self.SettingUp = True
+		  RaiseEvent SetupUI
 		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
@@ -34,9 +36,22 @@ Inherits BeaconSubview
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ImportFinished()
+		  Dim Value As Boolean = Self.SettingUp
+		  Self.SettingUp = True
+		  RaiseEvent SetupUI
+		  Self.SettingUp = Value
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event SetupUI()
 	#tag EndHook
 
 

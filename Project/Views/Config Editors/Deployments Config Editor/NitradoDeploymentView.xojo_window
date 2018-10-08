@@ -187,6 +187,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_ServerStatus(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  If Self.Closed Then
+		    Return
+		  End If
+		  
 		  Select Case Status
 		  Case 401
 		    Self.ShowAlert("Nitrado API Error", "You are not authorized to query this server.")
@@ -304,6 +308,31 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="ToolbarCaption"
+		Group="Behavior"
+		Type="String"
+		EditorType="MultiLineEditor"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="ToolbarIcon"
+		Group="Behavior"
+		Type="Picture"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Behavior"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Behavior"
+		InitialValue="300"
+		Type="Integer"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true

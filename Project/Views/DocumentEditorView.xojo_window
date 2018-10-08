@@ -265,7 +265,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub CopyFromDocuments(SourceDocuments As Auto)
 		  Dim Documents() As Beacon.Document = SourceDocuments
-		  DocumentMergerWindow.Present(Self, Documents, Self.Document)
+		  DocumentMergerWindow.Present(Self, Documents, Self.Document, WeakAddressOf MergeCallback)
 		End Sub
 	#tag EndMethod
 
@@ -331,6 +331,18 @@ End
 		  Self.Title = Self.mController.Name
 		  Self.BeaconToolbar1.ShareButton.Enabled = (Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud)
 		  LocalData.SharedInstance.RememberDocument(Sender)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub MergeCallback()
+		  Dim Keys() As Variant = Self.Panels.Keys
+		  For Each Key As Variant In Keys
+		    Dim Panel As ConfigEditor = Self.Panels.Value(Key)
+		    If Panel <> Nil Then
+		      Panel.ImportFinished()
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 

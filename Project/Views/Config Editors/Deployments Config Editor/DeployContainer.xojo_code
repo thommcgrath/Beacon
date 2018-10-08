@@ -1,6 +1,6 @@
 #tag Class
 Protected Class DeployContainer
-Inherits ContainerControl
+Inherits BeaconSubview
 	#tag Method, Flags = &h0
 		Function BeginDeploy() As Boolean
 		  
@@ -58,6 +58,31 @@ Inherits ContainerControl
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="ToolbarCaption"
+			Group="Behavior"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ToolbarIcon"
+			Group="Behavior"
+			Type="Picture"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MinimumWidth"
+			Visible=true
+			Group="Behavior"
+			InitialValue="400"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MinimumHeight"
+			Visible=true
+			Group="Behavior"
+			InitialValue="300"
+			Type="Integer"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true

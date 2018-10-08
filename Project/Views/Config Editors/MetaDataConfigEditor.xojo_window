@@ -225,7 +225,7 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub SetupUI()
 		  Self.TitleField.Text = Self.Document.Title
 		  Self.DescriptionArea.Text = Self.Document.Description
 		  Self.PublicFileCheckbox.Value = Self.Document.IsPublic

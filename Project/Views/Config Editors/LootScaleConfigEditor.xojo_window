@@ -103,7 +103,13 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Open()
+		Sub Resize()
+		  Self.LootScaleField.Left = Self.ScaleSlider.Left + ((Self.ScaleSlider.Width - Self.LootScaleField.Width) / 2)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub SetupUI()
 		  Dim Multiplier As Double = 1.0
 		  If Self.Document.HasConfigGroup(BeaconConfigs.LootScale.ConfigName) Then
 		    Self.mConfigGroup = BeaconConfigs.LootScale(Self.Document.ConfigGroup(BeaconConfigs.LootScale.ConfigName))
@@ -112,28 +118,8 @@ End
 		  
 		  Self.LootScaleField.Text = Str(Multiplier, "0%")
 		  Self.ScaleSlider.Value = Multiplier * 100
-		  Self.mSettingUp = False
 		End Sub
 	#tag EndEvent
-
-	#tag Event
-		Sub Resize()
-		  Self.LootScaleField.Left = Self.ScaleSlider.Left + ((Self.ScaleSlider.Width - Self.LootScaleField.Width) / 2)
-		End Sub
-	#tag EndEvent
-
-
-	#tag Method, Flags = &h0
-		Function HelpContent() As String
-		  Return Self.HelpExplanation
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function HelpTitle() As String
-		  Return "Loot Scaling"
-		End Function
-	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
@@ -149,21 +135,13 @@ End
 		Private mConfigGroup As BeaconConfigs.LootScale
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mSettingUp As Boolean = True
-	#tag EndProperty
-
-
-	#tag Constant, Name = HelpExplanation, Type = String, Dynamic = False, Default = \"Loot scaling affects the quality of items found in lootable objects\x2C such as drops\x2C dino inventories\x2C beaver dams\x2C and artifact containers. Setting this value too high can produce loot that is uncraftable. Adjust this in small increments\x2C if at all. Values between 100% and 125% are recommend.\n\nValues greater than 100% increase loot quality\x2C values lower than 100% decrease loot quality.\n\nA word of caution: settings this value too high can produce loot that requires more than 65\x2C535 of a single item to craft or repair. Ark cannot handle quantities so large\x2C meaning the item will be uncraftable no matter how many inventory spaces are available.", Scope = Private
-	#tag EndConstant
-
 
 #tag EndWindowCode
 
 #tag Events LootScaleField
 	#tag Event
 		Sub TextChange()
-		  If Self.mSettingUp Then
+		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
@@ -172,7 +150,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.mSettingUp = True
+		  Self.SettingUp = True
 		  If Self.mConfigGroup = Nil Then
 		    Self.mConfigGroup = New BeaconConfigs.LootScale(Value / 100)
 		    Self.Document.AddConfigGroup(Self.mConfigGroup)
@@ -181,14 +159,14 @@ End
 		  End If
 		  Self.ScaleSlider.Value = Self.mConfigGroup.Multiplier * 100
 		  Self.ContentsChanged = True
-		  Self.mSettingUp = False
+		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ScaleSlider
 	#tag Event
 		Sub ValueChanged()
-		  If Self.mSettingUp Then
+		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
@@ -197,6 +175,20 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Behavior"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Behavior"
+		InitialValue="300"
+		Type="Integer"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
 		Group="Behavior"
