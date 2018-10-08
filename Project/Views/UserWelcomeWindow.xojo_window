@@ -70,9 +70,11 @@ End
 		  Else
 		    Preferences.OnlineEnabled = False
 		  End If
-		  If SystemColors.IsDarkMode Then
-		    Fields.Append("dark")
-		  End If
+		  #if false
+		    If SystemColors.IsDarkMode Then
+		      Fields.Append("dark")
+		    End If
+		  #endif
 		  Dim Path As String = Self.mBaseURL + "welcome.php"
 		  If Fields.Ubound > -1 Then
 		    Path = Path + "?" + Text.Join(Fields, "&")
