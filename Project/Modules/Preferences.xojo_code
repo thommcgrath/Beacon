@@ -12,8 +12,28 @@ Protected Module Preferences
 		Function RecentDocuments() As Text()
 		  Init
 		  
-		  Dim StoredData() As Auto
-		  StoredData = mManager.AutoValue("Documents", StoredData)
+		  // When used with a freshly parsed file, the return type will be Auto()
+		  // Once the array is updated, the local copy will return Text()
+		  
+		  Dim Temp As Auto = mManager.AutoValue("Documents")
+		  Dim StoredData() As Text
+		  If Temp <> Nil Then
+		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Temp)
+		    If Info.Name = "Text()" Then
+		      StoredData = Temp
+		    ElseIf Info.Name = "Text" Then
+		      StoredData.Append(Temp)
+		    ElseIf Info.Name = "Auto()" Then
+		      Dim Arr() As Auto
+		      For Each Item As Auto In Arr
+		        Try
+		          StoredData.Append(Item)
+		        Catch Err As TypeMismatchException
+		          Continue
+		        End Try
+		      Next
+		    End If
+		  End If
 		  
 		  Dim Values() As Text
 		  For Each Value As Text In StoredData
@@ -254,6 +274,16 @@ Protected Module Preferences
 			Group="Behavior"
 			InitialValue="&c000000"
 			Type="Color"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SimulatorSize"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="SimulatorVisible"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

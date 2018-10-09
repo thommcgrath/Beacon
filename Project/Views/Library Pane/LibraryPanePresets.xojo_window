@@ -386,12 +386,13 @@ End
 
 	#tag Method, Flags = &h0
 		Sub OpenPreset(File As FolderItem)
-		  #if DebugBuild
-		    #Pragma Unused File
-		    #Pragma Warning "Does not open preset"
-		  #else
-		    #Pragma Error "Does not open preset"
-		  #endif
+		  Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
+		  If Preset = Nil Then
+		    Self.ShowAlert("Unable to open preset file", "The file may be damaged or a newer format.")
+		    Return
+		  End If
+		  
+		  Self.OpenPreset(Preset)
 		End Sub
 	#tag EndMethod
 
