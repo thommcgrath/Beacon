@@ -44,8 +44,8 @@ Begin Window LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
+      Transparent     =   False
       Value           =   2
       Visible         =   True
       Width           =   550
@@ -76,6 +76,7 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   360
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -107,6 +108,7 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   360
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -191,6 +193,7 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   54
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -225,6 +228,7 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   360
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   160
@@ -291,6 +295,7 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   360
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -322,6 +327,7 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   360
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -353,6 +359,7 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   360
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -384,6 +391,7 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   360
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -625,6 +633,7 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   122
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   260
@@ -667,6 +676,7 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   188
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -710,6 +720,7 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   154
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -753,6 +764,7 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   88
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -796,6 +808,7 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   54
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -838,7 +851,8 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   86
+         Top             =   54
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -873,7 +887,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   86
+         Top             =   54
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -916,7 +930,8 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   120
+         Top             =   88
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -951,7 +966,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   120
+         Top             =   88
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -983,7 +998,8 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   154
+         Top             =   122
+         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -1007,7 +1023,7 @@ Begin Window LootSourceWizard
          GridLinesVertical=   0
          HasHeading      =   False
          HeadingIndex    =   1
-         Height          =   130
+         Height          =   162
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -1033,7 +1049,8 @@ Begin Window LootSourceWizard
          TextFont        =   "SmallSystem"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   186
+         Top             =   154
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -1070,7 +1087,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   186
+         Top             =   154
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -1103,103 +1120,11 @@ Begin Window LootSourceWizard
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   328
+         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
          Width           =   394
-      End
-      Begin RadioButton CustomizeModeReplaceRadio
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Replace all contents"
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   136
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   11
-         TabPanelIndex   =   3
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   54
-         Underline       =   False
-         Value           =   True
-         Visible         =   True
-         Width           =   174
-      End
-      Begin RadioButton CustomizeModeAppendRadio
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Add to default contents"
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   322
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   12
-         TabPanelIndex   =   3
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   54
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   174
-      End
-      Begin UITweaks.ResizedLabel CustomizeModeLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   13
-         TabPanelIndex   =   3
-         TabStop         =   True
-         Text            =   "Mode:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   53
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   104
       End
    End
 End
@@ -1359,8 +1284,6 @@ End
 		    CustomizeMinSetsField.Text = Format(Self.mEditing.MinItemSets, "-0")
 		    CustomizeMaxSetsField.Text = Format(Self.mEditing.MaxItemSets, "-0")
 		    CustomizePreventDuplicatesCheck.Value = Self.mEditing.SetsRandomWithoutReplacement
-		    CustomizeModeAppendRadio.Value = Self.mEditing.AppendMode
-		    CustomizeModeReplaceRadio.Value = Not CustomizeModeAppendRadio.Value
 		    
 		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets()
 		    
@@ -1531,7 +1454,7 @@ End
 		  Self.mEditing.MinItemSets = CDbl(CustomizeMinSetsField.Text)
 		  Self.mEditing.MaxItemSets = CDbl(CustomizeMaxSetsField.Text)
 		  Self.mEditing.SetsRandomWithoutReplacement = CustomizePreventDuplicatesCheck.Value
-		  Self.mEditing.AppendMode = CustomizeModeAppendRadio.Value
+		  Self.mEditing.AppendMode = False
 		  
 		  For I As Integer = 0 To CustomizePresetsList.ListCount - 1
 		    Dim Preset As Beacon.Preset = CustomizePresetsList.RowTag(I)
@@ -1635,32 +1558,6 @@ End
 	#tag Event
 		Sub Open()
 		  Me.ColumnType(0) = ListBox.TypeCheckbox
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CustomizeModeReplaceRadio
-	#tag Event
-		Sub Action()
-		  If Me.Value Then
-		    Self.CustomizeMinSetsField.Enabled = True
-		    Self.CustomizeMaxSetsField.Enabled = True
-		    Self.CustomizePreventDuplicatesCheck.Enabled = True
-		    Self.CustomizeMinSetsLabel.Enabled = True
-		    Self.CustomizeMaxSetsLabel.Enabled = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events CustomizeModeAppendRadio
-	#tag Event
-		Sub Action()
-		  If Me.Value Then
-		    Self.CustomizeMinSetsField.Enabled = False
-		    Self.CustomizeMaxSetsField.Enabled = False
-		    Self.CustomizePreventDuplicatesCheck.Enabled = False
-		    Self.CustomizeMinSetsLabel.Enabled = False
-		    Self.CustomizeMaxSetsLabel.Enabled = False
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
