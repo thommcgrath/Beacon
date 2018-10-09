@@ -23,6 +23,10 @@ Inherits Beacon.Thread
 		  Dim Lines() As Text = Content.Split(CR)
 		  Self.mCharactersTotal = Self.mCharactersTotal + Lines.Ubound + 1 // To account for the trailing CR characters we're adding
 		  For Each Line As Text In Lines
+		    If Self.mCancelled Then
+		      Return
+		    End If
+		    
 		    If Line.Length = 0 Or Line.Left(1) = ";" Then
 		      Self.mCharactersProcessed = Self.mCharactersProcessed + Line.Length + 1
 		      Self.Invalidate
@@ -118,6 +122,12 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Cancel()
+		  Self.mCancelled = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Clear()
 		  Self.mContent = ""
 		  Self.mFinished = False
@@ -146,6 +156,10 @@ Inherits Beacon.Thread
 		  Dim Parser As New Beacon.ConfigParser
 		  Dim Value As Auto
 		  For Each Char As Text In Content.Characters
+		    If Self.mCancelled Then
+		      Return Nil
+		    End If
+		    
 		    If Parser.AddCharacter(Char) Then
 		      Value = Parser.Value
 		      Exit
@@ -270,6 +284,10 @@ Inherits Beacon.Thread
 		Event UpdateUI()
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private mCancelled As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCharactersProcessed As Integer
