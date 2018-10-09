@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Beacon"
-#define MyAppVersion "1.0.0b25"
+#define MyAppVersion "1.0.0b26"
 #define MyAppPublisher "The ZAZ Studios"
 #define MyAppURL "https://beaconapp.cc/"
 #define MyAppExeName "Beacon.exe"
@@ -27,19 +27,18 @@ Compression=lzma
 SolidCompression=yes
 MinVersion=6.1.7601
 ChangesAssociations=yes
+ArchitecturesAllowed=x64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\Beacon.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\Beacon Libs\*"; DestDir: "{app}\Libs"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\Beacon Resources\*"; DestDir: "{app}\Resources"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\Project\Builds - Beacon.xojo_project\OS X 64 bit\Beacon.app\Contents\Resources\Classes.json"; DestDir: "{app}\Resources"; Flags: ignoreversion
-Source: "..\..\Artwork\BeaconDocument.ico"; DestDir: "{app}\Resources"; Flags: ignoreversion
-Source: "..\..\Artwork\BeaconIdentity.ico"; DestDir: "{app}\Resources"; Flags: ignoreversion
-Source: "..\..\Artwork\BeaconPreset.ico"; DestDir: "{app}\Resources"; Flags: ignoreversion
-Source: "Files\VC_redist.x86.exe"; DestDir: "{tmp}"
+Source: "..\..\Project\Builds - Beacon.xojo_project\Windows 64 bit\Beacon\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\Project\Builds - Beacon.xojo_project\OS X 64 bit\Beacon.app\Contents\Resources\Classes.json"; DestDir: "{app}\Beacon Resources"; Flags: ignoreversion
+Source: "..\..\Artwork\BeaconDocument.ico"; DestDir: "{app}\Beacon Resources"; Flags: ignoreversion
+Source: "..\..\Artwork\BeaconIdentity.ico"; DestDir: "{app}\Beacon Resources"; Flags: ignoreversion
+Source: "..\..\Artwork\BeaconPreset.ico"; DestDir: "{app}\Beacon Resources"; Flags: ignoreversion
+Source: "Files\VC_redist.x64.exe"; DestDir: "{tmp}"
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -48,7 +47,7 @@ Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; Flags: createvalueifdoesntexist; OnlyBelowVersion: 6.3
-Root: HKLM; Subkey: "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; Flags: createvalueifdoesntexist; Check: IsWin64; OnlyBelowVersion: 6.3
+Root: HKLM; Subkey: "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; Flags: createvalueifdoesntexist; OnlyBelowVersion: 6.3
 
 Root: HKCR; Subkey: ".beacon"; ValueData: "BeaconDocument"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "BeaconDocument"; ValueData: "{#MyAppName} Document"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
@@ -72,4 +71,4 @@ Root: HKCR; Subkey: "beacon\shell\open\command"; ValueType: "string"; ValueData:
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 32-bit runtime..."; Flags: waituntilterminated
+Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 64-bit runtime..."; Flags: waituntilterminated
