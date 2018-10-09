@@ -173,6 +173,12 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
+		Private Function Document() As Beacon.Document
+		  Return RaiseEvent GetDocument()
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub EditSelectedEntries(Prefilter As String = "")
 		  Dim Sources() As Beacon.SetEntry
 		  For I As Integer = 0 To EntryList.ListCount - 1
@@ -183,7 +189,7 @@ End
 		    Sources.Append(EntryList.RowTag(I))
 		  Next
 		  
-		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.ConsoleSafe, Sources, Prefilter)
+		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.ConsoleModsOnly, Sources, Prefilter)
 		  If Entries = Nil Then
 		    Return
 		  End If
@@ -339,13 +345,13 @@ End
 
 
 	#tag Hook, Flags = &h0
+		Event GetDocument() As Beacon.Document
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Updated()
 	#tag EndHook
 
-
-	#tag Property, Flags = &h0
-		ConsoleSafe As Boolean
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSet As Beacon.ItemSet
@@ -583,7 +589,7 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEntry"
-		    Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.ConsoleSafe)
+		    Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.ConsoleModsOnly)
 		    If Entries = Nil Then
 		      Return
 		    End If
@@ -676,11 +682,6 @@ End
 		Group="Background"
 		Type="Picture"
 		EditorType="Picture"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ConsoleSafe"
-		Group="Behavior"
-		Type="Boolean"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Enabled"

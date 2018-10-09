@@ -157,10 +157,9 @@ Begin ConfigEditor LootConfigEditor
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   451
       Begin LootSourceEditor Editor
@@ -169,14 +168,12 @@ Begin ConfigEditor LootConfigEditor
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         ConsoleSafe     =   False
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -184,7 +181,6 @@ Begin ConfigEditor LootConfigEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         MapMask         =   ""
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   2
@@ -268,7 +264,6 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Self.Editor.ConsoleSafe = Self.Document.ConsoleModsOnly
 		  Self.UpdateSourceList()
 		End Sub
 	#tag EndEvent
@@ -470,7 +465,6 @@ End
 		  Next
 		  Self.mBlockSelectionChanged = False
 		  
-		  Editor.MapMask = Self.Document.MapCompatibility
 		  Editor.Sources = Selection
 		  If Selection.Ubound = -1 Then
 		    Panel.Value = 0
@@ -728,6 +722,11 @@ End
 		    Self.AddLootSource(LootSource)
 		  End If
 		End Sub
+	#tag EndEvent
+	#tag Event
+		Function GetDocument() As Beacon.Document
+		  Return Self.Document
+		End Function
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior

@@ -80,7 +80,6 @@ Begin BeaconContainer LootSourceEditor
       _ScrollWidth    =   -1
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -138,10 +137,9 @@ Begin BeaconContainer LootSourceEditor
       Scope           =   2
       TabIndex        =   6
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   347
       Begin ItemSetEditor Editor
@@ -150,14 +148,12 @@ Begin BeaconContainer LootSourceEditor
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
-         ConsoleSafe     =   False
          DoubleBuffer    =   False
          Enabled         =   False
          EraseBackground =   True
          HasBackColor    =   False
          Height          =   464
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -247,7 +243,6 @@ Begin BeaconContainer LootSourceEditor
       HasBackColor    =   False
       Height          =   183
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -306,7 +301,6 @@ Begin BeaconContainer LootSourceEditor
       HasBackColor    =   False
       Height          =   23
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -405,7 +399,7 @@ End
 		    Dim Names() As String
 		    Dim Items() As Beacon.Preset
 		    For Each Preset As Beacon.Preset In Arr
-		      If Preset.ValidForMask(Self.MapMask) Then
+		      If Preset.ValidForMask(Self.Document.MapCompatibility) Then
 		        Names.Append(Preset.Label)
 		        Items.Append(Preset)
 		      End If
@@ -440,6 +434,12 @@ End
 		    Self.ImportProgress = Nil
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function Document() As Beacon.Document
+		  Return RaiseEvent GetDocument
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -512,7 +512,7 @@ End
 		  
 		  Dim Added As Boolean
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Source, Self.MapMask, Self.ConsoleSafe)
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Source, Self.Document.MapCompatibility, Self.Document.ConsoleModsOnly)
 		    If Source.IndexOf(Set) = -1 Then
 		      Source.Append(Set)
 		      Added = True
@@ -543,8 +543,6 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Import(Content As String, Source As String)
-		  #Pragma Warning "This does not respect the document difficulty"
-		  
 		  Self.ImportProgress = New ImporterWindow
 		  Self.ImportProgress.Source = Source
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
@@ -777,6 +775,10 @@ End
 
 
 	#tag Hook, Flags = &h0
+		Event GetDocument() As Beacon.Document
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event PresentLootSourceEditor(Source As Beacon.LootSource)
 	#tag EndHook
 
@@ -785,31 +787,8 @@ End
 	#tag EndHook
 
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mConsoleSafe
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Self.mConsoleSafe = Value
-			  Self.Editor.ConsoleSafe = Value
-			End Set
-		#tag EndSetter
-		ConsoleSafe As Boolean
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private ImportProgress As ImporterWindow
-	#tag EndProperty
-
-	#tag Property, Flags = &h0
-		MapMask As UInt64
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mConsoleSafe As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1066,7 +1045,7 @@ End
 		        For Each Source As Beacon.LootSource In Self.mSources
 		          Dim OriginalHash As Text = Set.Hash
 		          Dim NewSet As Beacon.ItemSet = New Beacon.ItemSet(Set)
-		          NewSet.ReconfigureWithPreset(Preset, Source, Self.MapMask, Self.ConsoleSafe)
+		          NewSet.ReconfigureWithPreset(Preset, Source, Self.Document.MapCompatibility, Self.Document.ConsoleModsOnly)
 		          If NewSet.Hash = OriginalHash Then
 		            Continue
 		          End If
@@ -1132,11 +1111,11 @@ End
 		    Dicts.Append(ParsedData.Value("ConfigOverrideSupplyCrateItems"))
 		  End Try
 		  
-		  #Pragma Warning "Does not account for quality multiplier"
+		  Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
 		  
 		  Dim SourceLootSources() As Beacon.LootSource
 		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
-		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, 5.0)
+		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty.DifficultyValue)
 		    If Source <> Nil Then
 		      SourceLootSources.Append(Source)
 		    End If
@@ -1257,6 +1236,11 @@ End
 		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function GetDocument() As Beacon.Document
+		  Return Self.Document
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag Events Simulator
 	#tag Event
@@ -1347,11 +1331,6 @@ End
 		EditorType="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="ConsoleSafe"
-		Group="Behavior"
-		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="Enabled"
 		Visible=true
 		Group="Appearance"
@@ -1421,11 +1400,6 @@ End
 		Visible=true
 		Group="Position"
 		Type="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="MapMask"
-		Group="Behavior"
-		Type="UInt64"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
