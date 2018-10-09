@@ -192,20 +192,24 @@ Inherits Listbox
 
 	#tag Event
 		Function ContextualMenuAction(hitItem as MenuItem) As Boolean
-		  Select Case HitItem.Tag
-		  Case "cut"
-		    Self.DoCut()
-		  Case "copy"
-		    Self.DoCopy()
-		  Case "paste"
-		    Self.DoPaste()
-		  Case "clear"
-		    Self.DoClear()
-		  Else
-		    Return ContextualMenuAction(HitItem)
-		  End Select
+		  If HitItem.Tag <> Nil And HitItem.Tag.Type = Variant.TypeString Then
+		    Select Case HitItem.Tag
+		    Case "cut"
+		      Self.DoCut()
+		      Return True
+		    Case "copy"
+		      Self.DoCopy()
+		      Return True
+		    Case "paste"
+		      Self.DoPaste()
+		      Return True
+		    Case "clear"
+		      Self.DoClear()
+		      Return True
+		    End Select
+		  End If
 		  
-		  Return True
+		  Return ContextualMenuAction(HitItem)
 		End Function
 	#tag EndEvent
 
