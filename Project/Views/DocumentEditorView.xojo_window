@@ -489,7 +489,15 @@ End
 		    Return
 		  End If
 		  
+		  If Self.Title.BeginsWith("Untitled Document") Then
+		    Dim Filename As Text = File.Name.ToText
+		    If Filename.EndsWith(".beacon") Then
+		      Filename = Filename.Left(Filename.Length - 7).Trim
+		    End If
+		    Self.Document.Title = Filename
+		  End If
 		  Self.mController.SaveAs(Beacon.DocumentURL.TypeLocal + "://" + File.NativePath.ToText, App.Identity)
+		  Self.Title = Self.mController.Name
 		End Sub
 	#tag EndMethod
 
