@@ -1030,8 +1030,26 @@ End
 		  
 		  Select Case HitItem.Name
 		  Case "createpreset"
-		    If UBound(Targets) = 0 Then
-		      MainWindow.Presets.CreatePreset(Targets(0))
+		    If Targets.Ubound = 0 Then
+		      Dim Target As Beacon.ItemSet = Targets(0)
+		      Dim NewPreset As Beacon.Preset = MainWindow.Presets.CreatePreset(Target)
+		      Dim Updated As Boolean
+		      If NewPreset <> Nil Then
+		        For Each Source As Beacon.LootSource In Self.mSources
+		          Dim Idx As Integer = Source.IndexOf(Target)
+		          If Idx > -1 Then
+		            Dim NewSet As New Beacon.ItemSet(Target)
+		            NewSet.ReconfigureWithPreset(NewPreset, Source, Self.Document)
+		            Source(Idx) = NewSet
+		            Updated = True
+		          End If
+		        Next
+		        
+		        If Updated Then
+		          Self.RebuildSetList()
+		          RaiseEvent Updated
+		        End If
+		      End If
 		    End If
 		  Case "reconfigure"
 		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets
@@ -1045,7 +1063,7 @@ End
 		        For Each Source As Beacon.LootSource In Self.mSources
 		          Dim OriginalHash As Text = Set.Hash
 		          Dim NewSet As Beacon.ItemSet = New Beacon.ItemSet(Set)
-		          NewSet.ReconfigureWithPreset(Preset, Source, Self.Document.MapCompatibility, Self.Document.ConsoleModsOnly)
+		          NewSet.ReconfigureWithPreset(Preset, Source, Self.Document)
 		          If NewSet.Hash = OriginalHash Then
 		            Continue
 		          End If

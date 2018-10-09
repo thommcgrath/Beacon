@@ -263,14 +263,32 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CreatePreset(ItemSet As Beacon.ItemSet)
-		  #if DebugBuild
-		    #Pragma Unused ItemSet
-		    #Pragma Warning "Does not create preset"
-		  #else
-		    #Pragma Error "Does not create preset"
-		  #endif
-		End Sub
+		Function CreatePreset(ItemSet As Beacon.ItemSet) As Beacon.Preset
+		  Dim Preset As Beacon.MutablePreset
+		  If ItemSet.SourcePresetID <> "" Then
+		    Dim SourcePreset As Beacon.Preset = LocalData.SharedInstance.GetPreset(ItemSet.SourcePresetID)
+		    If SourcePreset <> Nil Then
+		      Preset = New Beacon.MutablePreset(SourcePreset)
+		    End If
+		  End If
+		  If Preset = Nil Then
+		    Preset = New Beacon.MutablePreset()
+		  End If
+		  
+		  Preset.Label = ItemSet.Label
+		  Preset.MinItems = ItemSet.MinNumItems
+		  Preset.MaxItems = ItemSet.MaxNumItems
+		  
+		  Redim Preset(-1)
+		  For Each Entry As Beacon.SetEntry In ItemSet
+		    Preset.Append(New Beacon.PresetEntry(Entry))
+		  Next
+		  
+		  Beacon.Data.SavePreset(Preset)
+		  Self.UpdatePresets(Preset)
+		  Self.OpenPreset(Preset)
+		  Return Preset
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
