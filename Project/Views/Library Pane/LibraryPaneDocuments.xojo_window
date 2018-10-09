@@ -283,13 +283,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Controller_DeleteError(Sender As Beacon.DocumentController)
-		  #if DebugBuild
-		    #Pragma Unused Sender
-		    #Pragma Warning "Does not handle delete error"
-		  #else
-		    #Pragma Error "Does not handle delete error"
-		  #endif
+		Private Sub Controller_DeleteError(Sender As Beacon.DocumentController, Reason As Text)
+		  Dim Notification As New Beacon.UserNotification("The document " + Sender.Name + " could not be deleted.")
+		  Notification.SecondaryMessage = Reason
+		  Notification.UserData = New Xojo.Core.Dictionary
+		  Notification.UserData.Value("DocumentID") = Sender.Document.DocumentID
+		  Notification.UserData.Value("DocumentURL") = Sender.URL
+		  Notification.UserData.Value("Reason") = Reason
+		  LocalData.SharedInstance.SaveNotification(Notification)
 		End Sub
 	#tag EndMethod
 

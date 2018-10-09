@@ -2,7 +2,6 @@
 Protected Class DocumentController
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Message
 		  #Pragma Unused Details
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
@@ -10,7 +9,7 @@ Protected Class DocumentController
 		  If Success Then
 		    RaiseEvent DeleteSuccess
 		  Else
-		    RaiseEvent DeleteError
+		    RaiseEvent DeleteError(Message)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -116,7 +115,7 @@ Protected Class DocumentController
 	#tag Method, Flags = &h0
 		Sub Delete()
 		  If Not Self.CanWrite Then
-		    RaiseEvent DeleteError
+		    RaiseEvent DeleteError("Document is not writable")
 		    Return
 		  End If
 		  
@@ -127,22 +126,28 @@ Protected Class DocumentController
 		    Self.CheckAPISocket()
 		    Self.mAPISocket.Start(Request)
 		  Case Beacon.DocumentURL.TypeLocal
-		    Dim File As New Beacon.FolderItem(Self.mDocumentURL.Path)
-		    If File.Exists Then
-		      File.Delete  
+		    Try
+		      Dim File As New Beacon.FolderItem(Self.mDocumentURL.Path)
+		      If File.Exists Then
+		        File.Delete  
+		      End If
 		      RaiseEvent DeleteSuccess
-		    Else
-		      RaiseEvent DeleteError
-		    End If
+		    Catch Err As RuntimeException
+		      RaiseEvent DeleteError(Err.Explanation)
+		    End Try
 		  Case Beacon.DocumentURL.TypeTransient
 		    Dim Path As Text = Self.mDocumentURL.URL.Mid(Beacon.DocumentURL.TypeTransient.Length + 3)
-		    Dim File As Beacon.FolderItem = Beacon.FolderItem.Temporary.Child(Path + BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText)
-		    If File.Exists Then
-		      File.Delete
-		    End If
-		    RaiseEvent DeleteSuccess
+		    Try
+		      Dim File As Beacon.FolderItem = Beacon.FolderItem.Temporary.Child(Path + BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText)
+		      If File.Exists Then
+		        File.Delete
+		      End If
+		      RaiseEvent DeleteSuccess
+		    Catch Err As RuntimeException
+		      RaiseEvent DeleteError(Err.Explanation)
+		    End Try
 		  Else
-		    RaiseEvent DeleteError
+		    RaiseEvent DeleteError("Unknown storage scheme " + Self.mDocumentURL.Scheme)
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -401,7 +406,7 @@ Protected Class DocumentController
 
 
 	#tag Hook, Flags = &h0
-		Event DeleteError()
+		Event DeleteError(Reason As Text)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

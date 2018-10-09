@@ -65,6 +65,11 @@ Protected Class FolderItem
 		    DeepDelete(File.Item(I))
 		  Next
 		  File.Delete
+		  
+		  Dim Err As IOException = ErrorCodeToException(File.LastErrorCode)
+		  If Err <> Nil Then
+		    Raise Err
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -90,6 +95,11 @@ Protected Class FolderItem
 		      Self.DeepDelete(Self.mLegacySource)
 		    Else
 		      Self.mLegacySource.Delete
+		      
+		      Dim Err As IOException = Self.ErrorCodeToException(Self.mLegacySource.LastErrorCode)
+		      If Err <> Nil Then
+		        Raise Err
+		      End If
 		    End If
 		  #endif
 		End Sub
@@ -110,6 +120,34 @@ Protected Class FolderItem
 		  #else
 		    Return Self.mLegacySource.DisplayName.ToText
 		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function ErrorCodeToException(Code As Integer) As IOException
+		  If Code = Global.FolderItem.NoError Then
+		    Return Nil
+		  End If
+		  
+		  Dim Err As New IOException
+		  Err.ErrorNumber = Code
+		  Select Case Code
+		  Case Global.FolderItem.DestDoesNotExistError
+		    Err.Reason = "The destination does not exist"
+		  Case Global.FolderItem.FileNotFound
+		    Err.Reason = "File not found"
+		  Case Global.FolderItem.AccessDenied
+		    Err.Reason = "Permission denied"
+		  Case Global.FolderItem.NotEnoughMemory
+		    Err.Reason = "Out of memory"
+		  Case Global.FolderItem.FileInUse
+		    Err.Reason = "File is in use"
+		  Case Global.FolderItem.InvalidName
+		    Err.Reason = "Filename is invalid"
+		  Else
+		    Err.Reason = "Other error #" + Code.ToText
+		  End Select
+		  Return Err
 		End Function
 	#tag EndMethod
 
