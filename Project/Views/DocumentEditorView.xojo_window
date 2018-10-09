@@ -379,13 +379,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mController_WriteError(Sender As Beacon.DocumentController)
-		  #Pragma Warning "This isn't automatically a cloud error"
-		  
-		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save to the cloud!")
+		Private Sub mController_WriteError(Sender As Beacon.DocumentController, Reason As Text)
+		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!")
+		  Notification.SecondaryMessage = Reason
 		  Notification.UserData = New Xojo.Core.Dictionary
 		  Notification.UserData.Value("DocumentID") = Sender.Document.DocumentID
 		  Notification.UserData.Value("DocumentURL") = Sender.URL
+		  Notification.UserData.Value("Reason") = Reason
 		  LocalData.SharedInstance.SaveNotification(Notification)
 		End Sub
 	#tag EndMethod

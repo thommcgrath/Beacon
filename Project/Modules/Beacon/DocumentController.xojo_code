@@ -37,7 +37,6 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DocumentUpload(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Message
 		  #Pragma Unused Details
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
@@ -46,7 +45,7 @@ Protected Class DocumentController
 		    Self.mDocument.Modified = False
 		    RaiseEvent WriteSuccess
 		  Else
-		    RaiseEvent WriteError
+		    RaiseEvent WriteError(Message)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -347,18 +346,6 @@ Protected Class DocumentController
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub TriggerWriteError()
-		  RaiseEvent WriteError()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub TriggerWriteSuccess()
-		  RaiseEvent WriteSuccess()
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function URL() As DocumentURL
 		  Return Self.mDocumentURL
@@ -369,9 +356,23 @@ Protected Class DocumentController
 		Private Sub Writer_Finished(Sender As Beacon.JSONWriter)
 		  If Sender.Success Then
 		    Self.mDocument.Modified = False
-		    Xojo.Core.Timer.CallLater(1, AddressOf TriggerWriteSuccess)
+		    RaiseEvent WriteSuccess()
 		  Else
-		    Xojo.Core.Timer.CallLater(1, AddressOf TriggerWriteError)
+		    Dim Reason As Text
+		    Dim Err As RuntimeException = Sender.Error
+		    If Err <> Nil Then
+		      If Err.Reason <> "" Then
+		        Reason = Err.Reason
+		      ElseIf Err.Message <> "" Then
+		        Reason = Err.Message.ToText
+		      Else
+		        Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Err)
+		        Reason = Info.Name + " from JSONWriter"
+		      End If
+		    Else
+		      Reason = "Unknown JSONWriter error"
+		    End If
+		    RaiseEvent WriteError(Reason)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -420,7 +421,7 @@ Protected Class DocumentController
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event WriteError()
+		Event WriteError(Reason As Text)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -157,6 +157,7 @@ Begin ConfigEditor LootConfigEditor
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -175,6 +176,7 @@ Begin ConfigEditor LootConfigEditor
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -680,14 +682,6 @@ End
 		      Sources.Append(Beacon.LootSource.ImportFromBeacon(Dict))
 		    Next
 		    Self.AddLootSources(Sources)
-		  ElseIf Board.TextAvailable Then
-		    Dim Contents As String = Board.Text
-		    If Left(Contents, 30) = "ConfigOverrideSupplyCrateItems" Then
-		      #Pragma Warning "Need to implement clipboard paste"
-		      #if Not DebugBuild
-		        Self.Import(Contents, "Clipboard")
-		      #endif
-		    End If
 		  End If
 		End Sub
 	#tag EndEvent

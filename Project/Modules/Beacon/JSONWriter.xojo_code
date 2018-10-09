@@ -12,14 +12,14 @@ Inherits Beacon.Thread
 		  Try
 		    Self.mSuccess = Self.WriteSynchronous(Self.mSource, Self.mDestination)
 		  Catch Err As RuntimeException
-		    
+		    Self.mError = Err
 		  End Try
 		  #if Not TargetiOS
 		    Self.mLock.Leave
 		  #endif
 		  Self.mFinished = True
 		  Self.mRunning = False
-		  RaiseEvent Finished
+		  Xojo.Core.Timer.CallLater(1, AddressOf RaiseFinished)
 		End Sub
 	#tag EndEvent
 
@@ -96,6 +96,12 @@ Inherits Beacon.Thread
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub RaiseFinished()
+		  RaiseEvent Finished
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
 		Shared Function WriteSynchronous(Source As Xojo.Core.Dictionary, File As Beacon.FolderItem) As Boolean
 		  // Prepare
@@ -120,6 +126,15 @@ Inherits Beacon.Thread
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return Self.mError
+			End Get
+		#tag EndGetter
+		Error As RuntimeException
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mFinished
 			End Get
 		#tag EndGetter
@@ -128,6 +143,10 @@ Inherits Beacon.Thread
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
 		Private mDestination As Beacon.FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mError As RuntimeException
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
