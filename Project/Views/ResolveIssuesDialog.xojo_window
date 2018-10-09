@@ -261,110 +261,102 @@ Begin Window ResolveIssuesDialog
       Visible         =   True
       Width           =   131
    End
+   Begin UITweaks.ResizedPushButton GoToButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Go To Issue"
+      Default         =   False
+      Enabled         =   False
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   383
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   507
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   105
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  For Each Issue As String In Self.Issues
-		    IssuesList.AddRow(Issue)
-		  Next
+		  Self.UpdateUI()
+		  Self.GoToButton.Visible = (Self.GoToIssueHandler <> Nil)
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Document As Beacon.Document, Issues() As String)
+		Private Sub Constructor(Document As Beacon.Document, Issues() As Beacon.Issue, Handler As ResolveIssuesDialog.GoToIssueCallback)
 		  Self.Issues = Issues
 		  Self.Document = Document
+		  Self.GoToIssueHandler = Handler
 		  Super.Constructor()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function DescribeIssues(Document As Beacon.Document) As String()
-		  Dim Issues As New Dictionary
+		Private Shared Function DescribeIssues(Document As Beacon.Document) As Beacon.Issue()
+		  Dim DocumentIssues() As Beacon.Issue
 		  
-		  If Document.Maps.Ubound = -1 Then
-		    Issues.Value("No map is selected. Press the gear icon below the loot sources list to select maps.") = True
-		  End If
-		  If Document.DifficultyValue = -1 Then
-		    Issues.Value("Difficulty is not set. Press the gear icon below the loot sources list to set difficulty.") = True
+		  If Document.IsValid Then
+		    Return DocumentIssues
 		  End If
 		  
-		  Dim EmptyOptionsCount As Integer
-		  For Each Source As Beacon.LootSource In Document.LootSources
-		    If Document.SupportsLootSource(Source) Then
-		      Issues.Value("Loot source " + Source.Label + " is not supported by the selected maps.") = True
-		    End If
-		    
-		    If Source.IsValid Then
-		      Continue
-		    End If
-		    
-		    If Source.Count < Source.RequiredItemSets Then
-		      Issues.Value("Loot source " + Source.Label + " needs at least " + Str(Source.RequiredItemSets, "-0") + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.") = True
-		    Else
-		      For Each Set As Beacon.ItemSet In Source
-		        If Set.IsValid Then
-		          Continue
-		        End If
-		        
-		        If Set.Count = 0 Then
-		          Issues.Value("Item set " + Set.Label + " of loot source " + Source.Label + " is empty.") = True
-		        Else
-		          For Each Entry As Beacon.SetEntry In Set
-		            If Entry.IsValid Then
-		              Continue
-		            End If
-		            
-		            If Entry.Count = 0 Then
-		              EmptyOptionsCount = EmptyOptionsCount + 1
-		            Else
-		              For Each Option As Beacon.SetEntryOption In Entry
-		                If Option.IsValid Then
-		                  Continue
-		                End If
-		                
-		                If Option.Engram = Nil Then
-		                  EmptyOptionsCount = EmptyOptionsCount + 1
-		                Else
-		                  Issues.Value("Beacon does not know the blueprint for " + Option.Engram.ClassString + ".") = True
-		                End If
-		              Next
-		            End If
-		          Next
-		        End If
-		      Next
-		    End If
+		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
+		  For Each Config As Beacon.ConfigGroup In Configs
+		    Dim Issues() As Beacon.Issue = Config.Issues(Document)
+		    For Each Issue As Beacon.Issue In Issues
+		      DocumentIssues.Append(Issue)
+		    Next
 		  Next
 		  
-		  If EmptyOptionsCount = 1 Then
-		    Issues.Value("A set entry has no engrams selected.") = True
-		  ElseIf EmptyOptionsCount > 1 Then
-		    Issues.Value(Str(EmptyOptionsCount, "-0") + " set entries have no engrams selected.") = True
-		  End If
-		  
-		  Dim Keys() As Variant = Issues.Keys
-		  Dim List() As String
-		  For Each Key As String In Keys
-		    List.Append(Key)
-		  Next
-		  List.Sort
-		  Return List
+		  Return DocumentIssues
 		End Function
 	#tag EndMethod
 
+	#tag DelegateDeclaration, Flags = &h0
+		Delegate Sub GoToIssueCallback(Issue As Beacon.Issue)
+	#tag EndDelegateDeclaration
+
 	#tag Method, Flags = &h0
-		Shared Sub Present(Parent As Window, Document As Beacon.Document)
-		  Dim Issues() As String = ResolveIssuesDialog.DescribeIssues(Document)
-		  If UBound(Issues) = -1 Then
+		Shared Sub Present(Parent As Window, Document As Beacon.Document, Handler As ResolveIssuesDialog.GoToIssueCallback = Nil)
+		  Dim Issues() As Beacon.Issue = DescribeIssues(Document)
+		  If Issues.Ubound = -1 Then
 		    Return
 		  End If
 		  
-		  Dim Win As New ResolveIssuesDialog(Document, Issues)
+		  Dim Win As New ResolveIssuesDialog(Document, Issues, Handler)
 		  Win.ShowModalWithin(Parent.TrueWindow)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateUI()
+		  Self.IssuesList.DeleteAllRows
+		  For Each Issue As Beacon.Issue In Self.Issues
+		    Self.IssuesList.AddRow(Issue.Description)
+		    Self.IssuesList.RowTag(Self.IssuesList.LastIndex) = Issue
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -374,7 +366,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Issues() As String
+		Private GoToIssueHandler As ResolveIssuesDialog.GoToIssueCallback
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private Issues() As Beacon.Issue
 	#tag EndProperty
 
 
@@ -384,6 +380,13 @@ End
 	#tag Event
 		Sub Action()
 		  Self.Close
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events IssuesList
+	#tag Event
+		Sub Change()
+		  Self.GoToButton.Enabled = Self.GoToIssueHandler <> Nil And Me.ListIndex > -1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -397,30 +400,41 @@ End
 #tag Events ExtractButton
 	#tag Event
 		Sub Action()
-		  Dim Content As String = BlueprintsField.Text
-		  Dim Engrams() As Beacon.Engram = Beacon.PullEngramsFromText(Content)
-		  Self.Document.ConsumeMissingEngrams(Engrams)
+		  Dim Content As Text = BlueprintsField.Text.ToText
+		  Dim Configs() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
+		  For Each Config As Beacon.ConfigGroup In Configs
+		    Config.TryToResolveIssues(Content)
+		  Next
 		  
-		  // Once extracted
-		  Dim OriginalIssueCount As Integer = UBound(Self.Issues)
-		  Self.Issues = Self.DescribeIssues(Self.Document)
-		  Dim NewIssueCount As Integer = UBound(Self.Issues)
-		  If UBound(Self.Issues) = -1 Then
-		    Self.ShowAlert("All blueprints found", "Great, all blueprints are now known and all problems are resolved.")
+		  Dim Issues() As Beacon.Issue = Self.DescribeIssues(Self.Document)
+		  If Issues.Ubound = -1 Then
+		    BeaconUI.ShowAlert("All issues resolved.", "Great! All issues have been resolved.")
 		    Self.Close
 		    Return
 		  End If
 		  
-		  If OriginalIssueCount = NewIssueCount Then
-		    Self.ShowAlert("No blueprints found", "Sorry, the spawn codes provided did not resolve any of the blueprint problems.")
+		  If Issues.Ubound = Self.Issues.Ubound Then
+		    BeaconUI.ShowAlert("No issues resolved.", "The text provided did not resolve any issues.")
 		  Else
-		    Self.ShowAlert("Some blueprints found", "Some problems were resolved, but there are still others that will need attention.")
+		    BeaconUI.ShowAlert("Some issues resolved.", "The text successfully resolved some issues, but not all of them.")
 		  End If
 		  
-		  IssuesList.DeleteAllRows
-		  For Each Issue As String In Self.Issues
-		    IssuesList.AddRow(Issue)
-		  Next
+		  Self.Issues = Issues
+		  Self.UpdateUI
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GoToButton
+	#tag Event
+		Sub Action()
+		  If Self.IssuesList.ListIndex = -1 Or Self.GoToIssueHandler = Nil Then
+		    Return
+		  End If
+		  
+		  Dim Issue As Beacon.Issue = Self.IssuesList.RowTag(Self.IssuesList.ListIndex)
+		  Self.Hide()
+		  Self.GoToIssueHandler.Invoke(Issue)
+		  Self.Close()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

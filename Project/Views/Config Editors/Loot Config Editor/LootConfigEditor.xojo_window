@@ -157,7 +157,6 @@ Begin ConfigEditor LootConfigEditor
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -176,7 +175,6 @@ Begin ConfigEditor LootConfigEditor
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -273,6 +271,46 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub ShowIssue(Issue As Beacon.Issue)
+		  If Issue.UserData = Nil Then
+		    Return
+		  End If
+		  
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Issue.UserData)
+		  Select Case Info.FullName
+		  Case "Beacon.LootSource"
+		    Dim Source As Beacon.LootSource = Issue.UserData
+		    Call Self.GoToChild(Source)
+		  Case "Xojo.Core.Dictionary"
+		    Dim Dict As Xojo.Core.Dictionary = Issue.UserData
+		    Dim Source As Beacon.LootSource
+		    Dim Set As Beacon.ItemSet
+		    Dim Entry As Beacon.SetEntry
+		    Dim Option As Beacon.SetEntryOption
+		    If Dict.HasKey("LootSource") Then
+		      Source = Dict.Value("LootSource")
+		      If Dict.HasKey("ItemSet") Then
+		        Set = Dict.Value("ItemSet")
+		        If Dict.HasKey("Entry") Then
+		          Entry = Dict.Value("Entry")
+		          If Dict.HasKey("Option") Then
+		            Option = Dict.Value("Option")
+		          End If
+		        End If
+		      End If
+		    End If
+		    Call Self.GoToChild(Source, Set, Entry, Option)
+		  Case "Beacon.ItemSet"
+		    
+		  Case "Beacon.SetEntry"
+		    
+		  Case "Beacon.SetEntryOption"
+		    
+		  End Select
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Sub AddLootSource(LootSource As Beacon.LootSource)
@@ -317,6 +355,24 @@ End
 		  
 		  Self.List.EnsureSelectionIsVisible()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GoToChild(Source As Beacon.LootSource, ItemSet As Beacon.ItemSet = Nil, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Boolean
+		  For I As Integer = 0 To Self.List.ListCount - 1
+		    If Self.List.RowTag(I) = Source Then
+		      Self.List.ListIndex = I
+		      Self.List.EnsureSelectionIsVisible()
+		      If ItemSet <> Nil Then
+		        Return Self.Editor.GoToChild(ItemSet, Entry, Option)
+		      Else
+		        Return True
+		      End If
+		    End If
+		  Next
+		  Self.List.ListIndex = -1
+		  Return False
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

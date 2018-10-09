@@ -44,7 +44,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -321,6 +320,27 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub GoToIssue(Issue As Beacon.Issue)
+		  If Issue = Nil Then
+		    Return
+		  End If
+		  
+		  Dim ConfigName As Text = Issue.ConfigName
+		  For I As Integer = 0 To Self.ConfigMenu.Count - 1
+		    If Self.ConfigMenu.RowTag(I) = ConfigName Then
+		      Self.ConfigMenu.ListIndex = I
+		      Exit For I
+		    End If
+		  Next
+		  
+		  Dim View As ConfigEditor = Self.CurrentPanel
+		  If View <> Nil Then
+		    View.GoToIssue(Issue)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub HideHelpDrawer()
 		  If Not Self.mHelpDrawerOpen Then
 		    Return
@@ -426,6 +446,8 @@ End
 		  #if DeployEnabled
 		    Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToDeploy
 		  #endif
+		  
+		  Self.BeaconToolbar1.IssuesButton.Enabled = Not Self.Document.IsValid
 		End Sub
 	#tag EndMethod
 
@@ -502,6 +524,13 @@ End
 		  Self.mPagesAnimation.DurationInSeconds = 0.15
 		  Self.mPagesAnimation.Curve = AnimationKit.Curve.CreateEaseOut
 		  Self.mPagesAnimation.Run
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowIssues()
+		  ResolveIssuesDialog.Present(Self, Self.Document, AddressOf GoToIssue)
+		  Self.ContentsChanged = Self.Document.Modified
 		End Sub
 	#tag EndMethod
 
@@ -674,6 +703,8 @@ End
 		  Dim ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud, "Copy link to this document")
 		  
 		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel.")
+		  Dim IssuesButton As New BeaconToolbarItem("IssuesButton", IconToolbarIssues, Not Self.Document.IsValid, "Show document issues.")
+		  IssuesButton.IconColor = BeaconToolbarItem.IconColors.Red
 		  
 		  Me.LeftItems.Append(ImportButton)
 		  Me.LeftItems.Append(ExportButton)
@@ -681,6 +712,7 @@ End
 		    Me.LeftItems.Append(DeployButton)
 		  #endif
 		  Me.LeftItems.Append(ShareButton)
+		  Me.LeftItems.Append(IssuesButton)
 		  
 		  Me.RightItems.Append(HelpButton)
 		End Sub
@@ -710,6 +742,8 @@ End
 		    LocalData.SharedInstance.SaveNotification(Notification)
 		  Case "DeployButton"
 		    Self.BeginDeploy()
+		  Case "IssuesButton"
+		    Self.ShowIssues()
 		  End Select
 		End Sub
 	#tag EndEvent

@@ -210,18 +210,43 @@ Implements ObservationKit.Observer
 		  #Pragma Unused Highlighted
 		  
 		  If Button.Icon <> Nil Then
+		    Dim UseAccent As Boolean = True
+		    Dim AccentColor As Color
+		    Select Case Button.IconColor
+		    Case BeaconToolbarItem.IconColors.Blue
+		      AccentColor = SystemColors.SystemBlueColor
+		    Case BeaconToolbarItem.IconColors.Brown
+		      AccentColor = SystemColors.SystemBrownColor
+		    Case BeaconToolbarItem.IconColors.Gray
+		      AccentColor = SystemColors.SystemGrayColor
+		    Case BeaconToolbarItem.IconColors.Green
+		      AccentColor = SystemColors.SystemGreenColor
+		    Case BeaconToolbarItem.IconColors.Orange
+		      AccentColor = SystemColors.SystemOrangeColor
+		    Case BeaconToolbarItem.IconColors.Pink
+		      AccentColor = SystemColors.SystemPinkColor
+		    Case BeaconToolbarItem.IconColors.Purple
+		      AccentColor = SystemColors.SystemPurpleColor
+		    Case BeaconToolbarItem.IconColors.Red
+		      AccentColor = SystemColors.SystemRedColor
+		    Case BeaconToolbarItem.IconColors.Yellow
+		      AccentColor = SystemColors.SystemYellowColor
+		    Else
+		      UseAccent = False
+		    End Select
+		    
 		    Dim IconColor As Color
 		    If Button.Toggled Then
 		      IconColor = SystemColors.AlternateSelectedControlTextColor
 		    Else
-		      IconColor = SystemColors.ControlTextColor
+		      IconColor = If(UseAccent And Button.Enabled, AccentColor, SystemColors.ControlTextColor)
 		    End If
 		    If Mode = ButtonModes.Disabled Then
 		      IconColor = IconColor.AtOpacity(0.25)
 		    End If
 		    
 		    If Button.Toggled Then
-		      G.ForeColor = SystemColors.SelectedContentBackgroundColor
+		      G.ForeColor = If(UseAccent, AccentColor, SystemColors.SelectedContentBackgroundColor)
 		      G.FillRoundRect(Rect.Left, Rect.Top, Rect.Width, Rect.Height, 4, 4)
 		    End If
 		    

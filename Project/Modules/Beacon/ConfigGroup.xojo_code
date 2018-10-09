@@ -57,6 +57,15 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Issues(Document As Beacon.Document) As Beacon.Issue()
+		  #Pragma Unused Document
+		  
+		  Dim Arr() As Beacon.Issue
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  Return Self.mModified
 		End Function
@@ -74,6 +83,12 @@ Protected Class ConfigGroup
 		  RaiseEvent WriteDictionary(Dict)
 		  Return Dict
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub TryToResolveIssues(InputContent As Text)
+		  #Pragma Unused InputContent
+		End Sub
 	#tag EndMethod
 
 

@@ -37,6 +37,12 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub GoToIssue(Issue As Beacon.Issue)
+		  RaiseEvent ShowIssue(Issue)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ImportFinished()
 		  Dim Value As Boolean = Self.SettingUp
 		  Self.SettingUp = True
@@ -52,6 +58,10 @@ Inherits BeaconSubview
 
 	#tag Hook, Flags = &h0
 		Event SetupUI()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ShowIssue(Issue As Beacon.Issue)
 	#tag EndHook
 
 

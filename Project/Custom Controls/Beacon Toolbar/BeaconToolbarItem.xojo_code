@@ -198,6 +198,23 @@ Implements ObservationKit.Observable
 		Icon As Picture
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mIconColor
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mIconColor <> Value Then
+			    Self.mIconColor = Value
+			    Self.NotifyObservers(Self.KeyChanged, Value)
+			  End If
+			End Set
+		#tag EndSetter
+		IconColor As BeaconToolbarItem.IconColors
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mCaption As String
 	#tag EndProperty
@@ -216,6 +233,10 @@ Implements ObservationKit.Observable
 
 	#tag Property, Flags = &h21
 		Private mIcon As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIconColor As BeaconToolbarItem.IconColors
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -286,6 +307,20 @@ Implements ObservationKit.Observable
 	#tag EndConstant
 
 
+	#tag Enum, Name = IconColors, Type = Integer, Flags = &h0
+		Standard
+		  Blue
+		  Brown
+		  Gray
+		  Green
+		  Orange
+		  Pink
+		  Purple
+		  Red
+		Yellow
+	#tag EndEnum
+
+
 	#tag ViewBehavior
 		#tag ViewProperty
 			Name="Caption"
@@ -352,6 +387,11 @@ Implements ObservationKit.Observable
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Toggled"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

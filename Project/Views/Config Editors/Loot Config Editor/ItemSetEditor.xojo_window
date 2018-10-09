@@ -173,7 +173,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub EditSelectedEntries()
+		Private Sub EditSelectedEntries(Prefilter As String = "")
 		  Dim Sources() As Beacon.SetEntry
 		  For I As Integer = 0 To EntryList.ListCount - 1
 		    If Not EntryList.Selected(I) Then
@@ -183,7 +183,7 @@ End
 		    Sources.Append(EntryList.RowTag(I))
 		  Next
 		  
-		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.ConsoleSafe, Sources)
+		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.ConsoleSafe, Sources, Prefilter)
 		  If Entries = Nil Then
 		    Return
 		  End If
@@ -203,6 +203,23 @@ End
 		Sub EnableMenuItems()
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GoToChild(Entry As Beacon.SetEntry, Option As Beacon.SetEntryOption = Nil) As Boolean
+		  For I As Integer = 0 To Self.EntryList.ListCount - 1
+		    If Self.EntryList.RowTag(I) = Entry Then
+		      Self.EntryList.ListIndex = I
+		      Self.EntryList.EnsureSelectionIsVisible()
+		      If Option <> Nil And Option.Engram <> Nil Then
+		        Self.EditSelectedEntries(Option.Engram.ClassString)
+		      End If
+		      Return True
+		    End If
+		  Next
+		  Self.EntryList.ListIndex = -1
+		  Return False
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

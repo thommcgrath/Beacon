@@ -478,6 +478,24 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GoToChild(ItemSet As Beacon.ItemSet, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Boolean
+		  For I As Integer = 0 To Self.SetList.ListCount - 1
+		    If Self.SetList.RowTag(I) = ItemSet Then
+		      Self.SetList.ListIndex = I
+		      Self.SetList.EnsureSelectionIsVisible()
+		      If Entry <> Nil Then
+		        Return Self.Editor.GoToChild(Entry, Option)
+		      Else
+		        Return True
+		      End If
+		    End If
+		  Next
+		  Self.SetList.ListIndex = -1
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function HandlePresetMenu(Sender As MenuItem) As Boolean
 		  Dim SelectedPreset As Beacon.Preset = Sender.Tag

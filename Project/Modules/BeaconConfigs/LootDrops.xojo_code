@@ -34,6 +34,23 @@ Implements Xojo.Core.Iterable
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function AssembleLocationDict(Source As Beacon.LootSource, ItemSet As Beacon.ItemSet = Nil, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Xojo.Core.Dictionary
+		  Dim Dict As New Xojo.Core.Dictionary
+		  Dict.Value("LootSource") = Source
+		  If ItemSet <> Nil Then
+		    Dict.Value("ItemSet") = ItemSet
+		    If Entry <> Nil Then
+		      Dict.Value("Entry") = Entry
+		      If Option <> Nil Then
+		        Dict.Value("Option") = Option
+		      End If
+		    End If
+		  End If
+		  Return Dict
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Shared Function ConfigName() As Text
 		  Return "LootDrops"
@@ -112,6 +129,61 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Issues(Document As Beacon.Document) As Beacon.Issue()
+		  Dim Issues() As Beacon.Issue
+		  Dim ConfigName As Text = "LootDrops"
+		  
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    If Not Document.SupportsLootSource(Source) Then
+		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " is not supported by the selected maps.", Source))
+		    End If
+		    
+		    If Source.IsValid Then
+		      Continue
+		    End If
+		    
+		    If Source.Count < Source.RequiredItemSets Then
+		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " +Source.RequiredItemSets.ToText + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.", Source))
+		    Else
+		      For Each Set As Beacon.ItemSet In Source
+		        If Set.IsValid Then
+		          Continue
+		        End If
+		        
+		        If Set.Count = 0 Then
+		          Issues.Append(New Beacon.Issue(ConfigName, "Item set " + Set.Label + " of loot source " + Source.Label + " is empty.", Self.AssembleLocationDict(Source, Set)))
+		        Else
+		          For Each Entry As Beacon.SetEntry In Set
+		            If Entry.IsValid Then
+		              Continue
+		            End If
+		            
+		            If Entry.Count = 0 Then
+		              Issues.Append(New Beacon.Issue(ConfigName, "An entry in item set " + Set.Label + " of loot source " + Source.Label + " has no engrams selected.", Self.AssembleLocationDict(Source, Set, Entry)))
+		            Else
+		              For Each Option As Beacon.SetEntryOption In Entry
+		                If Option.IsValid Then
+		                  Continue
+		                End If
+		                
+		                If Option.Engram = Nil Then
+		                  Issues.Append(New Beacon.Issue(ConfigName, "The engram is missing for an option of an entry in " + Set.Label + " of loot source " + Source.Label + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		                Else
+		                  Issues.Append(New Beacon.Issue(ConfigName, "Beacon does not know the blueprint for " + Option.Engram.ClassString + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		                End If
+		              Next
+		            End If
+		          Next
+		        End If
+		      Next
+		    End If
+		  Next
+		  
+		  Return Issues
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  If Super.Modified Then
 		    Return True
@@ -172,6 +244,17 @@ Implements Xojo.Core.Iterable
 		Sub Remove(Index As Integer)
 		  Self.mSources.Remove(Index)
 		  Self.Modified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub TryToResolveIssues(InputContent As Text)
+		  Super.TryToResolveIssues(InputContent)
+		  
+		  Dim Engrams() As Beacon.Engram = Beacon.PullEngramsFromText(InputContent)
+		  For Each Source As Beacon.LootSource In Self
+		    Source.ConsumeMissingEngrams(Engrams)
+		  Next
 		End Sub
 	#tag EndMethod
 

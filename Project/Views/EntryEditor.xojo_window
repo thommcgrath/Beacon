@@ -50,6 +50,7 @@ Begin Window EntryEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   380
@@ -91,6 +92,7 @@ Begin Window EntryEditor
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   56
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -141,6 +143,7 @@ Begin Window EntryEditor
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   90
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -175,6 +178,7 @@ Begin Window EntryEditor
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   442
+         Transparent     =   False
          Underline       =   False
          Value           =   False
          Visible         =   True
@@ -205,6 +209,7 @@ Begin Window EntryEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   468
@@ -214,12 +219,12 @@ Begin Window EntryEditor
          AutoDeactivate  =   True
          BackColor       =   &cFFFFFF00
          Backdrop        =   0
+         DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
          Height          =   209
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   422
          LockBottom      =   True
@@ -262,6 +267,7 @@ Begin Window EntryEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   277
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   468
@@ -310,6 +316,7 @@ Begin Window EntryEditor
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   313
+         Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
@@ -344,6 +351,7 @@ Begin Window EntryEditor
          TextSize        =   0.0
          TextUnit        =   0
          Top             =   442
+         Transparent     =   False
          Underline       =   False
          Visible         =   True
          Width           =   80
@@ -376,6 +384,7 @@ Begin Window EntryEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   494
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -407,6 +416,7 @@ Begin Window EntryEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   494
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -447,7 +457,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, ConsoleSafe As Boolean, Sources() As Beacon.SetEntry = Nil) As Beacon.SetEntry()
+		Shared Function Present(Parent As Window, ConsoleSafe As Boolean, Sources() As Beacon.SetEntry = Nil, Prefilter As String = "") As Beacon.SetEntry()
 		  If Sources <> Nil And UBound(Sources) > 0 Then
 		    // Need to use the multi-edit window
 		    Return EntryMultiEditor.Present(Parent, Sources)
@@ -461,7 +471,7 @@ End
 		  End If
 		  
 		  Win.EntryPropertiesEditor1.Setup(Win.mOriginalEntry) // This is ok to be nil
-		  Win.SetupUI()
+		  Win.SetupUI(Prefilter)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
 		  Dim Entries() As Beacon.SetEntry = Win.mCreatedEntries
@@ -537,14 +547,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetupUI()
+		Private Sub SetupUI(Prefilter As String = "")
 		  If Self.mOriginalEntry <> Nil Then
 		    For Each Option As Beacon.SetEntryOption In Self.mOriginalEntry
 		      Self.mSelectedEngrams.Value(Option.Engram.Path) = Option
 		    Next
 		  End If
 		  
-		  Self.Search("")
+		  Self.Search(Prefilter)
 		  SingleEntryCheck.Value = Self.mSelectedEngrams.Count > 1
 		  
 		  For I As Integer = 0 To EngramList.ListCount - 1
