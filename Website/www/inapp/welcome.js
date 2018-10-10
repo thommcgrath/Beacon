@@ -135,13 +135,12 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		var email = document.getElementById('login_email_field').value.trim();
 		var password = document.getElementById('login_password_field').value;
 		
-		if (email === '' || password.length <= 8) {
+		if (email === '' || password.length < 8) {
 			dialog.show('Incomplete Login', 'Email must not be blank and password have at least 8 characters.');
 			return false;
 		}
 		
-		document.getElementById('page_login').style.display = 'none';
-		document.getElementById('page_loading').style.display = 'block';
+		show_page('loading');
 		
 		request.start('POST', 'https://api.' + window.location.hostname + '/v1/session.php', function(obj) {
 			window.location = 'beacon://set_user_token?token=' + encodeURIComponent(obj.session_id) + '&password=' + encodeURIComponent(password);

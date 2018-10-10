@@ -149,6 +149,11 @@ function SaveUser(array $values, string &$message) {
 				return BeaconUser::GetByUserID($user_id);
 			} elseif (strtolower($authenticated_user->LoginKey()) == strtolower($values['login_key'])) {
 				// user wants to merge an account into their own - need to prove ownership
+				if (is_null($user)) {
+					$message = 'Target user does not exist.';
+					return null;
+				}
+				
 				if (is_null($user->LoginKey()) == false) {
 					$message = 'Target user already has a password.';
 					return null;
