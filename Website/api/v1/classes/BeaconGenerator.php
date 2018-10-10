@@ -24,7 +24,16 @@ class BeaconGenerator {
 	
 	public function Generate(string $input = '') {
 		$contents = $this->document->Content();
-		$loot_sources_json = $contents['LootSources'];
+		$version = $contents['Version'];
+		if ($version >= 3) {
+			if (isset($contents['Configs']['LootDrops']['Contents'])) {
+				$loot_sources_json = $contents['Configs']['LootDrops']['Contents'];
+			} else {
+				$loot_sources_json = array();
+			}
+		} else {
+			$loot_sources_json = $contents['LootSources'];
+		}
 		$new_lines = array(
 			sprintf('SupplyCrateLootQualityMultiplier=%F', $this->quality_scale)
 		);
