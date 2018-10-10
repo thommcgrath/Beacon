@@ -105,8 +105,9 @@ End
 		    If App.Identity.LoginKey = "" Then
 		      Links.Append("Sign In" : "beacon://signin")
 		    Else
-		      Links.Append("Logged in as " + App.Identity.LoginKey : "")
+		      Links.Append(App.Identity.LoginKey : "")
 		      Links.Append("Manage Account" : "beacon://showaccount")
+		      Links.Append("Sign Out" : "beacon://signout")
 		    End If
 		  End If
 		  Links.Append(Nil)
@@ -121,12 +122,26 @@ End
 
 	#tag Method, Flags = &h0
 		Sub SetContents(Links() As Pair)
-		  For I As Integer = Self.mLabelsBound DownTo Links.Ubound + 1
+		  If Self.mLabelsBound = Links.Ubound Then
+		    // Possibly unchanged
+		    Dim Changed As Boolean
+		    For I As Integer = 0 To Links.Ubound
+		      If If(Links(I) <> Nil, Links(I).Left, "") <> Self.Labels(I).Text And If(Links(I) <> Nil, Links(I).Right, "") <> Self.Labels(I).URL Then
+		        Changed = True
+		        Exit For I
+		      End If
+		    Next
+		    If Not Changed Then
+		      Return
+		    End If
+		  End If
+		  
+		  For I As Integer = Self.mLabelsBound DownTo 1
 		    If Self.Labels(I) <> Nil Then
 		      Self.Labels(I).Close
 		    End If
 		  Next
-		  Self.mLabelsBound = Min(Links.Ubound, Self.mLabelsBound)
+		  Self.mLabelsBound = 0
 		  
 		  For I As Integer = 0 To Links.Ubound
 		    Dim LastBottom As Integer = 20
@@ -141,6 +156,8 @@ End
 		    
 		    Self.Labels(I).Top = LastBottom
 		    Self.Labels(I).Height = 20
+		    Self.Labels(I).Left = 20
+		    Self.Labels(I).Width = Self.Width - 40
 		    Self.Labels(I).Visible = Links(I) <> Nil And Links(I).Left <> ""
 		    Self.Labels(I).Text = If(Links(I) <> Nil, Links(I).Left, "")
 		    Self.Labels(I).ShowAsLink = If(Links(I) <> Nil, Links(I).Right <> "", False)
@@ -160,17 +177,19 @@ End
 #tag Events Labels
 	#tag Event
 		Sub Action(index as Integer)
-		  Select Case Self.Labels(Index).URL
+		  Dim URL As String = Self.Labels(Index).URL
+		  
+		  Select Case URL
 		  Case "beacon://checkforupdates"
 		    App.CheckForUpdates(False)
 		  Case "beacon://releasenotes"
 		    App.ShowReleaseNotes()
 		  Case "beacon://enableonline"
 		    Dim WelcomeWindow As New UserWelcomeWindow(False)
-		    WelcomeWindow.Show()
+		    WelcomeWindow.ShowModal()
 		  Case "beacon://signin"
 		    Dim WelcomeWindow As New UserWelcomeWindow(True)
-		    WelcomeWindow.Show()
+		    WelcomeWindow.ShowModal()
 		  Case "beacon://showaccount"
 		    ShowURL(Beacon.WebURL("/account/?session_id=" + Preferences.OnlineToken))
 		  Case "beacon://spawncodes"
@@ -181,6 +200,19 @@ End
 		    App.ShowDonation()
 		  Case "beacon://exit"
 		    Quit
+		  Case "beacon://signout"
+		    Preferences.OnlineEnabled = False
+		    Preferences.OnlineToken = ""
+		    App.Identity = Nil
+		    Self.RebuildMenu()
+		    Dim WelcomeWindow As New UserWelcomeWindow(False)
+		    WelcomeWindow.ShowModal()
+		  Else
+		    If Beacon.IsBeaconURL(URL) Then
+		      Call App.HandleURL(URL, True)
+		    Else
+		      ShowURL(URL)
+		    End If
 		  End Select
 		  
 		  Self.CloseLibrary()

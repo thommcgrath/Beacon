@@ -96,6 +96,10 @@ Protected Class Socket
 		  If HTTPStatus = 200 Then
 		    Self.ActiveRequest.InvokeCallback(True, "", Details, HTTPStatus, Content)
 		  Else
+		    If HTTPStatus = 401 Or HTTPStatus = 403 Then
+		      NotificationKit.Post(Self.Notification_Unauthorized, Self.ActiveRequest)
+		    End If
+		    
 		    Dim Dict As Xojo.Core.Dictionary = Details
 		    Dim Message As Text = Dict.Lookup("message", "")
 		    Details = Dict.Lookup("details", Nil)
@@ -176,6 +180,10 @@ Protected Class Socket
 	#tag Property, Flags = &h21
 		Private Socket As Xojo.Net.HTTPSocket
 	#tag EndProperty
+
+
+	#tag Constant, Name = Notification_Unauthorized, Type = Text, Dynamic = False, Default = \"Beacon API Unauthorized", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

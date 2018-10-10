@@ -80,7 +80,6 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -184,7 +183,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineStateChanged)
+		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineStateChanged, App.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
@@ -199,7 +198,7 @@ End
 		  Self.ToolbarIcon = IconDocuments
 		  Self.ToolbarCaption = "Documents"
 		  
-		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged)
+		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged, App.Notification_IdentityChanged)
 		  Self.SwitcherVisible = Preferences.OnlineEnabled
 		End Sub
 	#tag EndEvent
@@ -211,22 +210,21 @@ End
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
 		  
-		  If Not Success Then
-		    Return
-		  End If
-		  
-		  Dim Dicts() As Auto = Details
 		  For I As Integer = Self.mDocuments.Ubound DownTo 0
 		    If Self.mDocuments(I).Scheme = Beacon.DocumentURL.TypeCloud Then
 		      Self.mDocuments.Remove(I)
 		    End If
 		  Next
-		  For Each Dict As Xojo.Core.Dictionary In Dicts
-		    Dim Document As New BeaconAPI.Document(Dict)
-		    Dim URL As Text = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Mid(Document.ResourceURL.IndexOf("://") + 3)
-		    
-		    Self.mDocuments.Append(URL)
-		  Next
+		  
+		  If Success Then
+		    Dim Dicts() As Auto = Details
+		    For Each Dict As Xojo.Core.Dictionary In Dicts
+		      Dim Document As New BeaconAPI.Document(Dict)
+		      Dim URL As Text = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Mid(Document.ResourceURL.IndexOf("://") + 3)
+		      
+		      Self.mDocuments.Append(URL)
+		    Next
+		  End If
 		  
 		  If Self.View = Self.ViewCloudDocuments Then
 		    Self.UpdateDocumentsList()
@@ -408,6 +406,10 @@ End
 		  Select Case Notification.Name
 		  Case "Beacon.Document.TitleChanged"
 		    Self.UpdateDocumentsList()
+		  Case App.Notification_IdentityChanged
+		    If Self.View = Self.ViewCloudDocuments Then
+		      Self.UpdateCloudDocuments()
+		    End If
 		  Case Preferences.Notification_OnlineStateChanged
 		    Self.SwitcherVisible = Preferences.OnlineEnabled
 		  End Select
@@ -495,12 +497,20 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateCloudDocuments()
-		  Dim Params As New Xojo.Core.Dictionary
-		  Params.Value("user_id") = App.Identity.Identifier
-		  
-		  Dim Request As New BeaconAPI.Request("document.php", "GET", Params, AddressOf APICallback_CloudDocumentsList)
-		  Request.Sign(App.Identity)
-		  Self.APISocket.Start(Request)
+		  If App.Identity <> Nil Then
+		    Dim Params As New Xojo.Core.Dictionary
+		    Params.Value("user_id") = App.Identity.Identifier
+		    
+		    Dim Request As New BeaconAPI.Request("document.php", "GET", Params, AddressOf APICallback_CloudDocumentsList)
+		    Request.Sign(App.Identity)
+		    Self.APISocket.Start(Request)
+		  Else
+		    For I As Integer = Self.mDocuments.Ubound DownTo 0
+		      If Self.mDocuments(I).Scheme = Beacon.DocumentURL.TypeCloud Then
+		        Self.mDocuments.Remove(I)
+		      End If
+		    Next
+		  End If
 		  
 		  If Self.View = Self.ViewCloudDocuments Then
 		    Self.UpdateDocumentsList()

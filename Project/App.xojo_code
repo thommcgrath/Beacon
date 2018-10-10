@@ -1,6 +1,7 @@
 #tag Class
 Protected Class App
 Inherits Application
+Implements NotificationKit.Receiver
 	#tag Event
 		Sub Close()
 		  If Self.mMutex <> Nil Then
@@ -89,6 +90,8 @@ Inherits Application
 		    UntitledSeparator6.Visible = False
 		  #endif
 		  Self.RebuildRecentMenu()
+		  
+		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized)
 		  
 		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
 		  If IdentityFile.Exists Then
@@ -375,7 +378,7 @@ Inherits Application
 		  If Preferences.OnlineEnabled = False Then
 		    If Not Silent Then
 		      Dim WelcomeWindow As New UserWelcomeWindow
-		      WelcomeWindow.Show()
+		      WelcomeWindow.ShowModal()
 		    End If
 		    Return
 		  End If
@@ -528,11 +531,16 @@ Inherits Application
 	#tag Method, Flags = &h0
 		Sub Identity(Assigns Value As Beacon.Identity)
 		  Dim OriginalUIColor As Color = BeaconUI.PrimaryColor()
+		  Dim OriginalID As Text = If(Self.mIdentity <> Nil, Self.mIdentity.Identifier, "")
 		  Self.mIdentity = Value
 		  Self.WriteIdentity()
 		  Dim NewUIColor As Color = BeaconUI.PrimaryColor()
 		  If OriginalUIColor <> NewUIColor Then
 		    NotificationKit.Post("UI Color Changed", New BeaconUI.ColorProfile(NewUIColor))
+		  End If
+		  Dim NewID As Text = If(Self.mIdentity <> Nil, Self.mIdentity.Identifier, "")
+		  If NewID <> OriginalID Then
+		    NotificationKit.Post(Notification_IdentityChanged, Value)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -569,7 +577,7 @@ Inherits Application
 		Private Sub LaunchQueue_PrivacyCheck()
 		  If Self.mIdentity = Nil Then
 		    Dim WelcomeWindow As New UserWelcomeWindow
-		    WelcomeWindow.Show()
+		    WelcomeWindow.ShowModal()
 		  Else
 		    Self.NextLaunchQueueTask()
 		  End If
@@ -717,6 +725,17 @@ Inherits Application
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case BeaconAPI.Socket.Notification_Unauthorized
+		    Preferences.OnlineToken = ""
+		  End Select
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub RebuildRecentMenu()
 		  While FileOpenRecent.Count > 0
@@ -819,8 +838,12 @@ Inherits Application
 	#tag Method, Flags = &h21
 		Private Sub WriteIdentity()
 		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
-		  Dim Writer As New Beacon.JSONWriter(Self.mIdentity.Export, IdentityFile)
-		  Writer.Run
+		  If Self.mIdentity <> Nil Then
+		    Dim Writer As New Beacon.JSONWriter(Self.mIdentity.Export, IdentityFile)
+		    Writer.Run
+		  Else
+		    IdentityFile.Delete
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -870,6 +893,9 @@ Inherits Application
 	#tag Constant, Name = kFileQuitShortcut, Type = String, Dynamic = False, Default = \"", Scope = Public
 		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"Cmd+Q"
 		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"Ctrl+Q"
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_IdentityChanged, Type = Text, Dynamic = False, Default = \"Identity Changed", Scope = Public
 	#tag EndConstant
 
 
