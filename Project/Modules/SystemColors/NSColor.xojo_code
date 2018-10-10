@@ -3,10 +3,13 @@ Private Class NSColor
 	#tag Method, Flags = &h0
 		Function ColorValue() As Color
 		  #if TargetMacOS
+		    Declare Function GetGenericRGBColorSpace Lib CocoaLib Selector "deviceRGBColorSpace" (Target As Ptr) As Ptr
+		    Declare Function ColorUsingColorSpace Lib CocoaLib Selector "colorUsingColorSpace:" (Target As Ptr, ColorSpace As Ptr) As Ptr
 		    Declare Sub GetRGBValues Lib CocoaLib Selector "getRed:green:blue:alpha:" (Target As Ptr, ByRef Red As CGFloat, ByRef Green As CGFloat, ByRef Blue As CGFloat, ByRef Alpha As CGFloat)
-		    Declare Function ColorUsingColorSpaceName Lib CocoaLib Selector "colorUsingColorSpaceName:" (Target As Ptr, ColorSpaceName As CFStringRef) As Ptr
 		    
-		    Dim Handle As Ptr = ColorUsingColorSpaceName(Self.mHandle, "NSDeviceRGBColorSpace")
+		    Dim NSColorSpace As Ptr = objc_getClass("NSColorSpace")
+		    Dim ColorSpace As Ptr = GetGenericRGBColorSpace(NSColorSpace)
+		    Dim Handle As Ptr = ColorUsingColorSpace(Self.mHandle, ColorSpace)
 		    If Handle = Nil Then
 		      Return &cFB02FE00
 		    End If
