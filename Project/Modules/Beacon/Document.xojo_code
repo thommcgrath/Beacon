@@ -28,6 +28,7 @@ Implements Beacon.DocumentItem
 		  Next
 		  
 		  Self.mServerProfiles.Append(Profile.Clone)
+		  Self.ConsoleModsOnly = Self.ConsoleModsOnly Or Profile.IsConsole
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod

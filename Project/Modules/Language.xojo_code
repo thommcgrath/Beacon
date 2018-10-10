@@ -16,7 +16,7 @@ Protected Module Language
 		  Case BeaconConfigs.LootScale.ConfigName
 		    Return "Loot Quality Scaling"
 		  Case BeaconConfigs.Metadata.ConfigName
-		    Return "Filename and Sharing"
+		    Return "Document Properties"
 		  End Select
 		End Function
 	#tag EndMethod

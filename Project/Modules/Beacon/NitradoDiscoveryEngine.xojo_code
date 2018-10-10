@@ -156,6 +156,8 @@ Implements Beacon.DiscoveryEngine
 		      Self.mMap = Beacon.Maps.TheIsland
 		    End Select
 		    
+		    Self.mProfile.GameShortcode = GameServer.Value("game")
+		    
 		    Self.DownloadGameIni()
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)

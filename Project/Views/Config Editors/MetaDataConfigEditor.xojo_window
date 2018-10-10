@@ -116,7 +116,7 @@ Begin ConfigEditor MetaDataConfigEditor
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   182
+      Height          =   236
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -125,7 +125,7 @@ Begin ConfigEditor MetaDataConfigEditor
       LimitText       =   0
       LineHeight      =   0.0
       LineSpacing     =   1.0
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
@@ -200,11 +200,11 @@ Begin ConfigEditor MetaDataConfigEditor
       InitialParent   =   ""
       Italic          =   False
       Left            =   132
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
-      LockTop         =   True
+      LockTop         =   False
       Scope           =   2
       State           =   0
       TabIndex        =   4
@@ -213,7 +213,40 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   248
+      Top             =   334
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   476
+   End
+   Begin CheckBox ConsoleSafeEngramsCheckbox
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Show only ""console safe"" engrams"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   132
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      State           =   0
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   302
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -228,8 +261,16 @@ End
 		Sub SetupUI()
 		  Self.TitleField.Text = Self.Document.Title
 		  Self.DescriptionArea.Text = Self.Document.Description
+		  Self.ConsoleSafeEngramsCheckbox.Value = Self.Document.ConsoleModsOnly
 		  Self.PublicFileCheckbox.Value = Self.Document.IsPublic
-		  Self.PublicFileCheckbox.Visible = (Self.Controller.URL.Scheme = Beacon.DocumentURL.TypeCloud)
+		  Self.PublicFileCheckbox.Enabled = (Self.Controller.URL.Scheme = Beacon.DocumentURL.TypeCloud)
+		  
+		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
+		    If Self.Document.ServerProfile(I).IsConsole Then
+		      Self.ConsoleSafeEngramsCheckbox.Caption = Self.ConsoleSafeEngramsCheckbox.Caption + " (Recommended)"
+		      Exit For I
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 
@@ -275,6 +316,20 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Document.IsPublic = Me.Value
+		  Self.ContentsChanged = True
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ConsoleSafeEngramsCheckbox
+	#tag Event
+		Sub Action()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.Document.ConsoleModsOnly = Me.Value
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
 		End Sub

@@ -25,6 +25,7 @@ Protected Class ServerProfile
 		  Self.Name = Dict.Value("Name")
 		  Self.Enabled = Dict.Value("Enabled")
 		  Self.mProfileID = Dict.Value("Profile ID")
+		  Self.mPlatform = Dict.Lookup("Platform", Self.PlatformUnknown)
 		  
 		  RaiseEvent ReadFromDictionary(Dict)
 		  
@@ -72,6 +73,21 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Platform() As UInteger
+		  Return Self.mPlatform
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub Platform(Assigns Value As UInteger)
+		  If Self.mPlatform <> Value Then
+		    Self.mPlatform = Value
+		    Self.Modified = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ProfileID() As Text
 		  If Self.mProfileID = "" Then
 		    Self.mProfileID = Beacon.CreateUUID
@@ -104,6 +120,7 @@ Protected Class ServerProfile
 		  Dict.Value("Name") = Self.Name
 		  Dict.Value("Profile ID") = Self.ProfileID // Do not call mProfileID here in order to force generation
 		  Dict.Value("Enabled") = Self.Enabled
+		  Dict.Value("Platform") = Self.mPlatform
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -135,6 +152,15 @@ Protected Class ServerProfile
 		Enabled As Boolean
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mPlatform = Beacon.ServerProfile.PlatformXbox Or Self.mPlatform = Beacon.ServerProfile.PlatformPlayStation Or Self.mPlatform = Beacon.ServerProfile.PlatformSwitch
+			End Get
+		#tag EndGetter
+		IsConsole As Boolean
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mEnabled As Boolean
 	#tag EndProperty
@@ -145,6 +171,10 @@ Protected Class ServerProfile
 
 	#tag Property, Flags = &h0
 		Modified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPlatform As UInteger
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -171,6 +201,22 @@ Protected Class ServerProfile
 		#tag EndSetter
 		Name As Text
 	#tag EndComputedProperty
+
+
+	#tag Constant, Name = PlatformPC, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformPlayStation, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformSwitch, Type = Double, Dynamic = False, Default = \"4", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformUnknown, Type = Double, Dynamic = False, Default = \"0", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = PlatformXbox, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior

@@ -226,7 +226,7 @@ End
 		          Continue For I
 		        End If
 		      Next
-		      Win.List.AddRow("", "Server: " + Document.ServerProfile(I).Name)
+		      Win.List.AddRow("", "Server Link: " + Document.ServerProfile(I).Name)
 		      Win.List.CellCheck(Win.List.LastIndex, 0) = True
 		      Win.List.RowTag(Win.List.LastIndex) = Document.ServerProfile(I)
 		      Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
@@ -286,6 +286,8 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
+		  Dim PreviousConsoleSafe As Boolean = Self.mDestination.ConsoleModsOnly
+		  
 		  For I As Integer = 0 To Self.List.ListCount - 1
 		    If Not Self.List.CellCheck(I, 0) Or Self.List.RowTag(I) = Nil Then
 		      Continue
@@ -307,6 +309,12 @@ End
 		      End If
 		    End Select
 		  Next
+		  
+		  If Self.mDestination.ConsoleModsOnly And PreviousConsoleSafe = False Then
+		    Dim Notification As New Beacon.UserNotification("""Show only 'console safe' engrams"" has been enabled for document """ + Self.mDestination.Title + """ because a console server was linked.")
+		    Notification.SecondaryMessage = "This setting can be disabled using the """ + Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName) + """ config group."
+		    LocalData.SharedInstance.SaveNotification(Notification)
+		  End If
 		  
 		  If Self.mCallback <> Nil Then
 		    Xojo.Core.Timer.CallLater(100, WeakAddressOf TriggerCallback)

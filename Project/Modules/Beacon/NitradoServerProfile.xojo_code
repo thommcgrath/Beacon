@@ -6,6 +6,7 @@ Inherits Beacon.ServerProfile
 		  Self.Address = Dict.Value("Address")
 		  Self.ServiceID = Dict.Value("Service ID")
 		  Self.ConfigPath = Dict.Value("Path")
+		  Self.GameShortcode = Dict.Lookup("NitradoGameCode", "")
 		End Sub
 	#tag EndEvent
 
@@ -15,6 +16,7 @@ Inherits Beacon.ServerProfile
 		  Dict.Value("Service ID") = Self.ServiceID
 		  Dict.Value("Path") = Self.ConfigPath
 		  Dict.Value("Provider") = "Nitrado"
+		  Dict.Value("NitradoGameCode") = Self.GameShortcode
 		End Sub
 	#tag EndEvent
 
@@ -99,6 +101,38 @@ Inherits Beacon.ServerProfile
 		ConfigPath As Text
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mShortcode
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mShortcode = Value Then
+			    Return
+			  End If
+			  
+			  Self.mShortcode = Value
+			  Self.Modified = True
+			  
+			  Select Case Value
+			  Case "arkse"
+			    Self.Platform = Beacon.ServerProfile.PlatformPC
+			  Case "arkxb"
+			    Self.Platform = Beacon.ServerProfile.PlatformXbox
+			  Case "arkps"
+			    Self.Platform = Beacon.ServerProfile.PlatformPlayStation
+			  Case "arksw" // Complete guess
+			    Self.Platform = Beacon.ServerProfile.PlatformSwitch
+			  Else
+			    Self.Platform = Beacon.ServerProfile.PlatformUnknown
+			  End Select
+			End Set
+		#tag EndSetter
+		GameShortcode As Text
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mAddress As Text
 	#tag EndProperty
@@ -109,6 +143,10 @@ Inherits Beacon.ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mServiceID As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mShortcode As Text
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
