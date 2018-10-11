@@ -1,45 +1,9 @@
-var dialog = {
-	show: function(message, explanation) {
-		var overlay = document.getElementById('overlay');
-		var dialog_frame = document.getElementById('dialog');
-		var dialog_message = document.getElementById('dialog_message');
-		var dialog_explanation = document.getElementById('dialog_explanation');
-		var dialog_action_button = document.getElementById('dialog_action_button');
-		if (overlay && dialog && dialog_message && dialog_explanation && dialog_action_button) {
-			overlay.className = 'exist';
-			dialog_frame.className = 'exist';
-			setTimeout(function() {
-				overlay.className = 'exist visible';
-				dialog_frame.className = 'exist visible';
-			}, 1);
-			
-			dialog_message.innerText = message;
-			dialog_explanation.innerText = explanation;
-			dialog_action_button.addEventListener('click', function(event) {
-				dialog.hide();
-			});
-		}
-	},
-	hide: function () {
-		var overlay = document.getElementById('overlay');
-		var dialog_frame = document.getElementById('dialog');
-		if (overlay && dialog_frame) {
-			overlay.className = 'exist';
-			dialog_frame.className = 'exist';
-			setTimeout(function() {
-				overlay.className = '';
-				dialog_frame.className = '';
-			}, 200);
-		}
-	}
-};
-
 document.addEventListener('DOMContentLoaded', function(event) {
 	var known_vulnerable_password = '';
 	var current_page = 'intro';
 	var show_page = function(to_page) {
-		document.getElementById('page_' + current_page).style.display = 'none';
-		document.getElementById('page_' + to_page).style.display = 'block';
+		document.getElementById('login_page_' + current_page).style.display = 'none';
+		document.getElementById('login_page_' + to_page).style.display = 'block';
 		current_page = to_page;
 	};
 	
@@ -53,56 +17,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		}
 	};
 	
-	var cancel_function = function(event) {
-		if (login_only) {
-			if (current_page == 'login') {
-				window.location = 'beacon://dismiss_me';
-			} else {
-				show_page('login');
-				focus_first(['login_email_field', 'login_password_field', 'login_action_button']);
-			}
-		} else {
-			show_page('intro');
-		}
-	};
-	
-	if (login_only) {
-		show_page('login');
-		focus_first(['login_email_field', 'login_password_field', 'login_action_button']);
-	}
-	
-	document.getElementById('welcome_continue_button').addEventListener('click', function(event) {
-		show_page('loading');
-		
-		window.location = 'beacon://set_user_privacy?action=anonymous';
-	});
-	
-	document.getElementById('welcome_login_button').addEventListener('click', function(event) {
-		show_page('login');
-		focus_first(['login_email_field', 'login_password_field', 'login_action_button']);
-	});
-	
-	document.getElementById('welcome_decline_button').addEventListener('click', function(event) {
-		show_page('loading');
-		
-		window.location = 'beacon://set_user_privacy?action=full';
-	});
-	
-	document.getElementById('login_cancel_button').addEventListener('click', cancel_function);
-	
-	document.getElementById('login_recover_button').addEventListener('click', function(event) {
-		show_page('recover');
-		document.getElementById('recover_email_field').value = document.getElementById('login_email_field').value;
-		focus_first(['recover_email_field', 'recover_action_button']);
-	});
-	
-	document.getElementById('recover_cancel_button').addEventListener('click', cancel_function);
-	
-	document.getElementById('verify_cancel_button').addEventListener('click', cancel_function);
-	
-	document.getElementById('password_cancel_button').addEventListener('click', cancel_function);
-	
-	document.getElementById('login_form').addEventListener('submit', function(event) {
+	document.getElementById('login_form_intro').addEventListener('submit', function(event) {
 		event.preventDefault();
 		
 		var email = document.getElementById('login_email_field').value.trim();
@@ -116,9 +31,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		show_page('loading');
 		
 		request.start('POST', 'https://api.' + window.location.hostname + '/v1/session.php', function(obj) {
-			window.location = 'beacon://set_user_token?token=' + encodeURIComponent(obj.session_id) + '&password=' + encodeURIComponent(password);
+			window.location = '/account/auth.php?session_id=' + encodeURIComponent(obj.session_id) + '&return=' + encodeURIComponent(document.getElementById('login_return_field').value);
 		}, function(http_status) {
-			show_page('login');
+			show_page('intro');
 			
 			switch (http_status) {
 			case 401:
@@ -133,10 +48,21 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		return false;
 	});
 	
-	document.getElementById('recover_form').addEventListener('submit', function(event) {
+	document.getElementById('login_recover_button').addEventListener('click', function(event) {
 		event.preventDefault();
-		show_page('loading');
-		
+		show_page('recover');
+		focus_first(['recover_email_field']);
+		return false;
+	});
+	
+	document.getElementById('recover_cancel_button').addEventListener('click', function(event) {
+		event.preventDefault();
+		show_page('intro');
+		return false;
+	});
+	
+	document.getElementById('login_recover_form').addEventListener('submit', function(event) {
+		event.preventDefault();
 		var email = document.getElementById('recover_email_field').value.trim();
 		request.start('GET', '/inapp/email.php?email=' + encodeURIComponent(email), function(obj) {
 			if (obj.verified) {
@@ -152,9 +78,16 @@ document.addEventListener('DOMContentLoaded', function(event) {
 			show_page('recover');
 			dialog.show('Unable to continue', 'There was a ' + http_status + ' error while trying to send the verification email.');
 		});
+		return false;
 	});
 	
-	document.getElementById('verify_form').addEventListener('submit', function(event) {
+	document.getElementById('verify_cancel_button').addEventListener('click', function(event) {
+		event.preventDefault();
+		show_page('intro');
+		return false;
+	});
+	
+	document.getElementById('login_verify_form').addEventListener('submit', function(event) {
 		event.preventDefault();
 		show_page('loading');
 		
@@ -178,7 +111,13 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		});
 	});
 	
-	document.getElementById('password_form').addEventListener('submit', function(event) {
+	document.getElementById('password_cancel_button').addEventListener('click', function(event) {
+		event.preventDefault();
+		show_page('intro');
+		return false;
+	});
+	
+	document.getElementById('login_password_form').addEventListener('submit', function(event) {
 		event.preventDefault();
 		
 		var email = document.getElementById('password_email_field').value.trim();
@@ -201,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 			url += '&allow_vulnerable=true';
 		}
 		request.start('GET', url, function(obj) {
-			window.location = 'beacon://set_user_token?token=' + encodeURIComponent(obj.session_id) + '&password=' + encodeURIComponent(password);
+			window.location = '/account/auth.php?session_id=' + encodeURIComponent(obj.session_id) + '&return=' + encodeURIComponent(document.getElementById('login_return_field').value);
 		}, function(http_status, content) {
 			show_page('password');
 			

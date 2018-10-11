@@ -7,12 +7,14 @@ if (stripos($return_uri, '://') === false) {
 	$return_uri = BeaconCommon::AbsoluteURL($return_uri);
 }
 
-if (isset($_GET['session'])) {
-	$session_id = $_GET['session'];
+if (isset($_GET['session_id'])) {
+	$session_id = $_GET['session_id'];
 	$session = BeaconSession::GetBySessionID($session_id);
 	if ($session !== null) {
 		$session->SendCookie();
 	}
+} else {
+	BeaconSession::RemoveCookie();
 }
 
 BeaconCommon::Redirect($return_uri);

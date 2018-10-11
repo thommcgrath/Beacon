@@ -94,5 +94,13 @@ if (!BeaconTemplate::IsHTML()) {
 				</footer>
 			</div>
 		</div>
+		<div id="overlay"></div>
+		<div id="dialog">
+			<div id="dialog_inner">
+				<p id="dialog_message">Message</p>
+				<p id="dialog_explanation">Explanation</p>
+				<p id="dialog_buttons"><button id="dialog_action_button">Ok</button></p>
+			</div>
+		</div>
 	</body>
 </html>

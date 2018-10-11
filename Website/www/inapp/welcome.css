@@ -16,16 +16,6 @@ body {
 	display: block;
 }
 
-#overlay {
-	background-color: rgba(0, 0, 0, 0.0);
-	display: none;
-	position: fixed;
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	bottom: 0px;
-}
-
 .explanation {
 	font-size: 0.9em;
 	color: #404040;

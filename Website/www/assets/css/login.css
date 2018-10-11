@@ -1,0 +1,152 @@
+body {
+	background-color: #713a9a;
+	color: #ffffff;
+}
+
+a {
+	color: #92caf7;
+}
+
+a:active {
+	color: #ff5f4f;
+}
+
+a:visited {
+	color: #cb7cf2;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+input[type="tel"],
+input[type="search"],
+input[type="number"],
+textarea {
+	background-color: rgba(255, 255, 255, 0.15);
+	border-color: rgba(255, 255, 255, 0.3);
+	box-shadow: none;
+	text-shadow: none;
+	color: #ffffff;
+	vertical-align: middle;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="tel"]:focus,
+input[type="search"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+	background-color: rgba(255, 255, 255, 1.0);
+	border-color: #532b72;
+	color: #000000;
+}
+
+input[type="text"]::placeholder,
+input[type="password"]::placeholder,
+input[type="email"]::placeholder,
+input[type="url"]::placeholder,
+input[type="tel"]::placeholder,
+input[type="search"]::placeholder,
+input[type="number"]::placeholder,
+textarea::placeholder {
+	color: rgba(255, 255, 255, 0.6);
+}
+
+input[type="text"]:focus::placeholder,
+input[type="password"]:focus::placeholder,
+input[type="email"]:focus::placeholder,
+input[type="url"]:focus::placeholder,
+input[type="tel"]:focus::placeholder,
+input[type="search"]:focus::placeholder,
+input[type="number"]:focus::placeholder,
+textarea:focus::placeholder {
+	color: rgba(0, 0, 0, 0.5);
+}
+
+#login_header {
+	text-align: center;
+}
+
+#login_container {
+	width: 460px;
+	margin-top: 40px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 40px;
+	text-align: center;
+}
+
+/* !Buttons */
+
+@keyframes default_button {
+	50% { background-color: rgba(255, 255, 255, 0.3); }
+}
+
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+a.button {
+	background-color: rgba(255, 255, 255, 0.15);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	text-shadow: none;
+	box-shadow: none;
+}
+
+button:enabled:active,
+input[type="button"]:enabled:active,
+input[type="submit"]:enabled:active,
+input[type="reset"]:enabled:active,
+a.button:active {
+	background-color: rgba(0, 0, 0, 0.5);
+	color: rgba(255, 255, 255, 0.5);
+}
+
+a.button:hover {
+	text-decoration: none;
+}
+
+button:disabled,
+input[type="button"]:disabled,
+input[type="submit"]:disabled,
+input[type="reset"]:disabled,
+a.button:disabled {
+	cursor: default;
+	opacity: 0.25;
+}
+
+input[type="submit"] {
+	animation: default_button 2s infinite;
+}
+
+input[type="submit"]:enabled:active {
+	animation: none;
+}
+
+#login_page_loading,
+#login_page_recover,
+#login_page_verify,
+#login_page_password {
+	display: none;
+}
+
+.button_row * {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+#dialog {
+	color: #ffffff;
+	background-color: #403050;
+	border-color: #685b74;
+}
+
+@supports (-webkit-backdrop-filter: blur(15px)) {
+	#dialog {
+		background-color: rgba(255, 255, 255, 0.1);
+		border-color: rgba(255, 255, 255, 0.3);
+	}
+}

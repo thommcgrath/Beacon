@@ -189,7 +189,7 @@ class BeaconDocumentMetadata implements JsonSerializable {
 		$document->download_count = intval($results->Field('download_count'));
 		$document->last_updated = new DateTime($results->Field('last_update'));
 		$document->user_id = $results->Field('user_id');
-		$document->published = boolval($results->Field('published'));
+		$document->published = $results->Field('published');
 		$document->map_mask = intval($results->Field('map'));
 		$document->difficulty_value = floatval($results->Field('difficulty'));
 		$document->console_safe = boolval($results->Field('console_safe'));

@@ -66,6 +66,10 @@ class BeaconSession implements JsonSerializable {
 		setcookie(self::COOKIE_NAME, $this->session_id, $this->Expiration()->getTimestamp(), '/', 'beaconapp.cc', true, true);
 	}
 	
+	public static function RemoveCookie() {
+		setcookie(self::COOKIE_NAME, '', 0, '/', 'beaconapp.cc', true, true);
+	}
+	
 	public static function GetFromCookie() {
 		if (isset($_COOKIE[self::COOKIE_NAME])) {
 			return self::GetBySessionID($_COOKIE[self::COOKIE_NAME]);

@@ -57,6 +57,27 @@ abstract class BeaconTemplate {
 		self::$header_lines[] = '<link href="' . htmlentities($url) . '" type="text/css" rel="stylesheet">';
 	}
 	
+	public static function StartScript() {
+		ob_start();
+	}
+	
+	public static function FinishScript() {
+		$content = trim(ob_get_contents());
+		ob_end_clean();
+		
+		$lines = explode("\n", $content);
+		self::$header_lines[] = '<script nonce="' . $_SERVER['CSP_NONCE'] . '">';
+		foreach ($lines as $line) {
+			if (substr($line, 0, 8) == '<script ' || substr($line, 0, 8) == '<script>' || $line == '</script>') {
+				continue;
+			}
+			
+			self::$header_lines[] = $line;
+		}
+		self::$header_lines[] = '</script>';
+		
+	}
+	
 	public static function IsHTML() {
 		if (php_sapi_name() == "cli") {
 			return false;

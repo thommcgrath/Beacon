@@ -222,6 +222,10 @@ code {
 	background-color: #c27c0e;
 }
 
+div.small_section {
+	max-width: 400px;
+}
+
 /* !Buttons */
 
 @keyframes default_button {
@@ -245,7 +249,6 @@ a.button {
 	display: inline-block;
 	font-family: inherit;
 	font-size: 1.0em;
-	margin: 6px;
 	padding: 0.5em 0.8em;
 	text-align: center;
 	text-decoration: none;
@@ -255,6 +258,34 @@ a.button {
 	transition-timing-function: ease-out;
 	vertical-align: middle;
 	white-space: nowrap;
+}
+
+button+button,
+button+input[type="button"],
+button+input[type="submit"],
+button+input[type="reset"],
+button+a.button,
+input[type="button"]+button,
+input[type="button"]+input[type="button"],
+input[type="button"]+input[type="submit"],
+input[type="button"]+input[type="reset"],
+input[type="button"]+a.button,
+input[type="submit"]+button,
+input[type="submit"]+input[type="button"],
+input[type="submit"]+input[type="submit"],
+input[type="submit"]+input[type="reset"],
+input[type="submit"]+a.button,
+input[type="reset"]+button,
+input[type="reset"]+input[type="button"],
+input[type="reset"]+input[type="submit"],
+input[type="reset"]+input[type="reset"],
+input[type="reset"]+a.button,
+a.button+button,
+a.button+input[type="button"],
+a.button+input[type="submit"],
+a.button+input[type="reset"],
+a.button+a.button {
+	margin-left: 12px;
 }
 
 button:enabled:active,
@@ -935,6 +966,93 @@ div.triple_column div.column {
 
 #pagenav-older {
 	text-align: left;
+}
+
+/* !Dialog */
+
+#overlay {
+	display: none;
+	position: fixed;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	transition-duration: 0.15s;
+	transition-timing-function: ease-out;
+	transition-property: background-color, -webkit-backdrop-filter;
+	z-index: 102;
+	background-color: rgba(0, 0, 0, 0.0);
+	-webkit-backdrop-filter: blur(0px);
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+#overlay.exist {
+	display: block;
+}
+
+#overlay.visible {
+	-webkit-backdrop-filter: blur(5px);
+	background-color: rgba(0, 0, 0, 0.6);
+}
+
+#dialog {
+	display: none;
+	position: fixed;
+	top: 30%;
+	left: 0px;
+	right: 0px;
+	background-color: #e6e6e6;
+	z-index: 103;
+	opacity: 0;
+	transition-duration: 0.15s;
+	transition-timing-function: ease-out;
+	transition-property: opacity;
+	transition-delay: 0s;
+	box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+	border-top: 1px solid #ffffff;
+	border-bottom: 1px solid #ffffff;
+	color: #000000;
+}
+
+#dialog_inner {
+	width: 300px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+@supports (-webkit-backdrop-filter: blur(15px)) {
+	#dialog {
+		background-color: rgba(255, 255, 255, 0.9);
+		border-color: rgba(255, 255, 255, 0.5);
+		-webkit-backdrop-filter: blur(15px);
+	}
+}
+
+#dialog.exist {
+	display: block;
+}
+
+#dialog.visible {
+	opacity: 1;
+	transition-delay: 0.2s;
+}
+
+#dialog p {
+	margin: 20px;
+}
+
+#dialog_message {
+	font-weight: 600;
+	text-align: left;
+}
+
+#dialog_explanation {
+	text-align: left;
+	font-size: smaller;
+}
+
+#dialog_buttons {
+	text-align: center;
 }
 
 /* !Large Screens */
