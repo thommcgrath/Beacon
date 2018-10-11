@@ -3,8 +3,6 @@ Protected Class BeaconListbox
 Inherits Listbox
 	#tag Event
 		Function CellBackgroundPaint(g As Graphics, row As Integer, column As Integer) As Boolean
-		  Const UseTransparentDrawing = False
-		  
 		  #Pragma Unused Column
 		  
 		  Dim ColumnWidth As Integer = Self.Column(Column).WidthActual
@@ -20,30 +18,20 @@ Inherits Listbox
 		  Dim Clip As Graphics = G.Clip(0, 0, ColumnWidth, RowHeight)
 		  
 		  // Need to fill with color first so translucent system colors can apply correctly
-		  If Self.Transparent And UseTransparentDrawing Then
-		    #if TargetWin32
-		      Clip.ForeColor = FillColor
+		  #if TargetMacOS
+		    Dim OSMajor, OSMinor As Integer
+		    Call System.Gestalt("sys1", OSMajor)
+		    Call System.Gestalt("sys2", OSMinor)
+		    If OSMajor >= 10 and OSMinor >= 14 Then
+		      Clip.ClearRect(0, 0, Clip.Width, Clip.Height)
+		    Else
+		      Clip.ForeColor = SystemColors.UnderPageBackgroundColor
 		      Clip.FillRect(0, 0, Clip.Width, Clip.Height)
-		    #else
-		      Dim RowPos As Integer = ((Row - Self.ScrollPosition) * Self.DefaultRowHeight) + If(Self.HasHeading, Self.HeaderHeight - 1, 0) + If(Self.Border, 1, 0)
-		      Dim ColumnPos As Integer = If(Self.Border, 1, 0)
-		      For I As Integer = 0 To Column - 1
-		        Dim PreviousColumn As Integer = I
-		        ColumnPos = ColumnPos + Self.Column(PreviousColumn).WidthActual
-		      Next
-		      
-		      Dim Rect As CGRect
-		      Rect.X = ColumnPos
-		      Rect.Y = Me.Height - RowPos - G.Height
-		      Rect.W = G.Width
-		      Rect.H = G.Height
-		      Declare Sub CGContextClearRect Lib "Cocoa" (Context As Ptr, Rect As CGRect)
-		      CGContextClearRect(Ptr(G.Handle(Graphics.HandleTypeCGContextRef)), Rect)
-		    #endif
-		  Else
-		    Clip.ForeColor = SystemColors.ControlBackgroundColor
+		    End If
+		  #else
+		    Clip.ForeColor = SystemColors.UnderPageBackgroundColor
 		    Clip.FillRect(0, 0, Clip.Width, Clip.Height)
-		  End If
+		  #endif
 		  
 		  Dim BackgroundColor, TextColor, SecondaryTextColor As Color
 		  Dim IsHighlighted As Boolean = Self.Highlighted And Self.Window.Focus = Self
