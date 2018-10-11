@@ -19,7 +19,7 @@
 		<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
 		<meta name="theme-color" content="#713a9a">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<script src="/assets/scripts/main.js"></script>
+		<script src="/assets/scripts/common.js"></script>
 		<script src="/assets/scripts/login.js"></script>
 	</head>
 	<body>

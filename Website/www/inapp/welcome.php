@@ -8,6 +8,7 @@
 		<link href="/inapp/welcome.css" rel="stylesheet" media="all" type="text/css">
 		<?php if (isset($_GET['dark'])) { ?><link href="/inapp/welcome-dark.css" rel="stylesheet" media="all" type="text/css"><?php } ?>
 		<script type="text/javascript">var login_only = <?php echo (empty($_GET['login_only']) == false && boolval($_GET['login_only']) == true) ? 'true' : 'false'; ?>;</script>
+		<script src="/assets/scripts/common.js"></script>
 		<script src="/inapp/welcome.js"></script>
 	</head>
 	<body>
