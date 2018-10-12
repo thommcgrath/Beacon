@@ -441,12 +441,13 @@ End
 		Private Sub Panel_ContentsChanged(Sender As ConfigEditor)
 		  #Pragma Unused Sender
 		  
+		  Self.ToolbarCaption = Self.mController.Name
+		  Self.Title = Self.mController.Name
 		  Self.ContentsChanged = Self.Document.Modified
 		  Self.BeaconToolbar1.ExportButton.Enabled = Self.ReadyToExport
 		  #if DeployEnabled
 		    Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToDeploy
 		  #endif
-		  
 		  Self.BeaconToolbar1.IssuesButton.Enabled = Not Self.Document.IsValid
 		End Sub
 	#tag EndMethod
@@ -477,6 +478,7 @@ End
 		Private Sub SaveAs()
 		  If Self.ReadyForCloud And DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController) Then
 		    Self.Title = Self.mController.Name
+		    Self.ToolbarCaption = Self.mController.Name
 		    Return
 		  End If
 		  
@@ -489,7 +491,7 @@ End
 		    Return
 		  End If
 		  
-		  If Self.Title.BeginsWith("Untitled Document") Then
+		  If Self.Document.Title.BeginsWith("Untitled Document") Then
 		    Dim Filename As Text = File.Name.ToText
 		    If Filename.EndsWith(".beacon") Then
 		      Filename = Filename.Left(Filename.Length - 7).Trim
@@ -498,6 +500,7 @@ End
 		  End If
 		  Self.mController.SaveAs(Beacon.DocumentURL.TypeLocal + "://" + File.NativePath.ToText, App.Identity)
 		  Self.Title = Self.mController.Name
+		  Self.ToolbarCaption = Self.mController.Name
 		End Sub
 	#tag EndMethod
 

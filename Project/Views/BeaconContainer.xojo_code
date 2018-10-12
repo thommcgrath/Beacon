@@ -13,6 +13,8 @@ Inherits ContainerControl
 		    Self.Transparent = Not Self.DoubleBuffer
 		    Self.EraseBackground = Not Self.DoubleBuffer
 		  #endif
+		  
+		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
 

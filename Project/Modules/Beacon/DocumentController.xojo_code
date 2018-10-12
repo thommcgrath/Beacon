@@ -301,7 +301,11 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h0
 		Function Name() As Text
-		  Return Self.mDocumentURL.Name
+		  If Self.mDocument <> Nil Then
+		    Return Self.mDocument.Title
+		  Else
+		    Return Self.mDocumentURL.Name
+		  End If
 		End Function
 	#tag EndMethod
 
