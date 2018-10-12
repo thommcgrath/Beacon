@@ -26,7 +26,7 @@ Begin ConfigEditor LootScaleConfigEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   732
-   Begin TextField LootScaleField
+   Begin UITweaks.ResizedTextField LootScaleField
       AcceptTabs      =   False
       Alignment       =   2
       AutoDeactivate  =   True

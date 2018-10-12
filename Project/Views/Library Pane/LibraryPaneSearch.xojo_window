@@ -57,7 +57,7 @@ Begin LibrarySubview LibraryPaneSearch
       Visible         =   True
       Width           =   300
    End
-   Begin TextField SearchField
+   Begin UITweaks.ResizedTextField SearchField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True

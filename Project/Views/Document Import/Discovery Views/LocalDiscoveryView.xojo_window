@@ -246,7 +246,7 @@ Begin DiscoveryView LocalDiscoveryView
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton ChooseFileButton
+   Begin UITweaks.ResizedPushButton ChooseFileButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"

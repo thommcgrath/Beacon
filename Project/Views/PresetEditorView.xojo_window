@@ -85,7 +85,7 @@ Begin BeaconSubview PresetEditorView
       Top             =   53
       Transparent     =   False
       Underline       =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   700
       Begin BeaconListbox ContentsList
@@ -703,7 +703,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   267
          End
-         Begin TextField AdjustQualityField
+         Begin UITweaks.ResizedTextField AdjustQualityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -782,7 +782,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   197
          End
-         Begin TextField AdjustQuantityField
+         Begin UITweaks.ResizedTextField AdjustQuantityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -931,7 +931,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   267
          End
-         Begin TextField AdjustQualityField
+         Begin UITweaks.ResizedTextField AdjustQualityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -1010,7 +1010,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   197
          End
-         Begin TextField AdjustQuantityField
+         Begin UITweaks.ResizedTextField AdjustQuantityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -1054,7 +1054,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   60
          End
-         Begin TextField AdjustQualityField
+         Begin UITweaks.ResizedTextField AdjustQualityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -1133,7 +1133,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   197
          End
-         Begin TextField AdjustQuantityField
+         Begin UITweaks.ResizedTextField AdjustQuantityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -1177,7 +1177,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   60
          End
-         Begin TextField AdjustQualityField
+         Begin UITweaks.ResizedTextField AdjustQualityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
@@ -1256,7 +1256,7 @@ Begin BeaconSubview PresetEditorView
             Visible         =   True
             Width           =   197
          End
-         Begin TextField AdjustQuantityField
+         Begin UITweaks.ResizedTextField AdjustQuantityField
             AcceptTabs      =   False
             Alignment       =   2
             AutoDeactivate  =   True
