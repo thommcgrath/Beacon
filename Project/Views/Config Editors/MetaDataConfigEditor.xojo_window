@@ -92,7 +92,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Filename:"
+      Text            =   "Title:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
