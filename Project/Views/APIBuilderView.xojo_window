@@ -32,14 +32,9 @@ Begin BeaconSubview APIBuilderView
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "API Builder"
-      CaptionEnabled  =   "True"
-      CaptionIsButton =   "False"
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasBottomBorder =   "True"
-      HasResizer      =   "False"
-      HasTopBorder    =   "False"
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -82,7 +77,7 @@ Begin BeaconSubview APIBuilderView
       LockTop         =   True
       Scope           =   2
       State           =   0
-      TabIndex        =   1
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -128,7 +123,7 @@ Begin BeaconSubview APIBuilderView
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   True
-      TabIndex        =   2
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -163,7 +158,7 @@ Begin BeaconSubview APIBuilderView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   3
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Body:"
@@ -198,7 +193,7 @@ Begin BeaconSubview APIBuilderView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -243,7 +238,7 @@ Begin BeaconSubview APIBuilderView
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   True
-      TabIndex        =   5
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -278,7 +273,7 @@ Begin BeaconSubview APIBuilderView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Code:"
@@ -321,7 +316,7 @@ Begin BeaconSubview APIBuilderView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -356,7 +351,7 @@ Begin BeaconSubview APIBuilderView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   8
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Content Type:"
@@ -391,7 +386,7 @@ Begin BeaconSubview APIBuilderView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -458,7 +453,7 @@ Begin BeaconSubview APIBuilderView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   11
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Method:"
@@ -493,7 +488,7 @@ Begin BeaconSubview APIBuilderView
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -533,7 +528,7 @@ Begin BeaconSubview APIBuilderView
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -568,7 +563,7 @@ Begin BeaconSubview APIBuilderView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   14
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Path:"

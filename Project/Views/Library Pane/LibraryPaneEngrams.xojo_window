@@ -46,7 +46,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Multiline       =   True
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   0
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Beacon supports mod content! Find the list of admin spawn codes for the mod. Then press ""Import from URL"" to pull them from a web page, ""Import from Clipboard"" if you've copied them, or ""Import from File"" if you have them in a file on your computer."
@@ -81,7 +81,7 @@ Begin LibrarySubview LibraryPaneEngrams
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -113,7 +113,7 @@ Begin LibrarySubview LibraryPaneEngrams
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -145,7 +145,7 @@ Begin LibrarySubview LibraryPaneEngrams
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -177,7 +177,7 @@ Begin LibrarySubview LibraryPaneEngrams
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -211,7 +211,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Resizer         =   "0"
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   5
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -221,7 +221,6 @@ Begin LibrarySubview LibraryPaneEngrams
       Width           =   300
    End
    Begin Timer ClipboardWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2

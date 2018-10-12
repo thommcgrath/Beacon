@@ -79,7 +79,7 @@ Begin ConfigEditor MapsConfigEditor
       LockTop         =   True
       Scope           =   2
       State           =   0
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -112,7 +112,7 @@ Begin ConfigEditor MapsConfigEditor
       LockTop         =   True
       Scope           =   2
       State           =   0
-      TabIndex        =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -145,7 +145,7 @@ Begin ConfigEditor MapsConfigEditor
       LockTop         =   True
       Scope           =   2
       State           =   0
-      TabIndex        =   3
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -178,7 +178,7 @@ Begin ConfigEditor MapsConfigEditor
       LockTop         =   True
       Scope           =   2
       State           =   0
-      TabIndex        =   4
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -211,7 +211,7 @@ Begin ConfigEditor MapsConfigEditor
       LockTop         =   True
       Scope           =   2
       State           =   0
-      TabIndex        =   5
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"

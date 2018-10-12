@@ -131,7 +131,7 @@ Begin ConfigEditor LootConfigEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   41
-      Transparent     =   False
+      Transparent     =   True
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -155,7 +155,7 @@ Begin ConfigEditor LootConfigEditor
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
@@ -212,7 +212,7 @@ Begin ConfigEditor LootConfigEditor
          LockTop         =   True
          Scope           =   0
          ScrollSpeed     =   20
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   0
@@ -242,7 +242,7 @@ Begin ConfigEditor LootConfigEditor
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   6
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   40

@@ -54,7 +54,7 @@ Begin ConfigEditor MetaDataConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -89,7 +89,7 @@ Begin ConfigEditor MetaDataConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Filename:"
@@ -137,7 +137,7 @@ Begin ConfigEditor MetaDataConfigEditor
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   True
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -172,7 +172,7 @@ Begin ConfigEditor MetaDataConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Description:"
@@ -207,7 +207,7 @@ Begin ConfigEditor MetaDataConfigEditor
       LockTop         =   False
       Scope           =   2
       State           =   0
-      TabIndex        =   4
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -240,7 +240,7 @@ Begin ConfigEditor MetaDataConfigEditor
       LockTop         =   False
       Scope           =   2
       State           =   0
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"

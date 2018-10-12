@@ -64,7 +64,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       ScrollBarVertical=   True
       SelectionType   =   1
       ShowDropIndicator=   False
-      TabIndex        =   1
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -107,7 +107,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       Resizer         =   "0"
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   2
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -139,7 +139,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       RequiresSelection=   True
       Scope           =   0
       ScrollSpeed     =   20
-      TabIndex        =   0
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   40
@@ -168,7 +168,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   101

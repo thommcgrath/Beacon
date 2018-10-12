@@ -81,7 +81,7 @@ Begin Window ResolveIssuesDialog
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -281,7 +281,7 @@ Begin Window ResolveIssuesDialog
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -335,7 +335,7 @@ End
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub GoToIssueCallback(Issue As Beacon.Issue)
+		Delegate Sub GoToIssueCallback(Issue As Beacon . Issue)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0

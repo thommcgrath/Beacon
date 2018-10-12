@@ -46,13 +46,14 @@ Begin Window ImporterWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   84
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -75,6 +76,7 @@ Begin Window ImporterWindow
       TabIndex        =   1
       TabPanelIndex   =   0
       Top             =   52
+      Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   360
@@ -211,11 +213,6 @@ End
 		EditorType="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="BeaconCount"
-		Group="Behavior"
-		Type="UInteger"
-	#tag EndViewProperty
-	#tag ViewProperty
 		Name="CloseButton"
 		Visible=true
 		Group="Frame"
@@ -301,11 +298,6 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="LootSourcesProcessed"
-		Group="Behavior"
-		Type="UInteger"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MacProcID"
@@ -435,5 +427,10 @@ End
 		Group="Size"
 		InitialValue="600"
 		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		Type="Double"
 	#tag EndViewProperty
 #tag EndViewBehavior

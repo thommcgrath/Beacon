@@ -44,7 +44,6 @@ Begin Window DocumentDeployWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -158,7 +157,7 @@ Begin Window DocumentDeployWindow
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -190,7 +189,7 @@ Begin Window DocumentDeployWindow
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -292,7 +291,7 @@ Begin Window DocumentDeployWindow
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
@@ -409,7 +408,7 @@ Begin Window DocumentDeployWindow
          Multiline       =   True
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   2
+         TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "All servers updated successfully."
@@ -426,14 +425,12 @@ Begin Window DocumentDeployWindow
       End
    End
    Begin Beacon.OAuth2Client Auth
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Timer DeployingWatchTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0

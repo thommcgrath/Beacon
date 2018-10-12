@@ -64,7 +64,7 @@ Begin BeaconContainer SimulatorView
       ScrollBarVertical=   True
       SelectionType   =   0
       ShowDropIndicator=   False
-      TabIndex        =   1
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -101,7 +101,7 @@ Begin BeaconContainer SimulatorView
       Resizer         =   "2"
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   1
@@ -130,7 +130,7 @@ Begin BeaconContainer SimulatorView
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   3
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -159,7 +159,7 @@ Begin BeaconContainer SimulatorView
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   41

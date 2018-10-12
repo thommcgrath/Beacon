@@ -42,9 +42,8 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   25
       Transparent     =   False
       Value           =   0
@@ -62,7 +61,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          HasBackColor    =   False
          Height          =   375
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   41
          LockBottom      =   True
@@ -107,7 +105,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Scope           =   2
       ScrollSpeed     =   20
       SelectedIndex   =   0
-      TabIndex        =   5
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -136,7 +134,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   445
@@ -157,7 +155,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   -259
       LockBottom      =   True

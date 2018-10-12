@@ -32,14 +32,9 @@ Begin BeaconSubview IdentityView
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Identity"
-      CaptionEnabled  =   True
-      CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasBottomBorder =   "True"
-      HasResizer      =   "False"
-      HasTopBorder    =   "False"
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -79,7 +74,7 @@ Begin BeaconSubview IdentityView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -159,7 +154,7 @@ Begin BeaconSubview IdentityView
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   True
-      TabIndex        =   3
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -194,7 +189,7 @@ Begin BeaconSubview IdentityView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Private Key:"
@@ -277,7 +272,7 @@ Begin BeaconSubview IdentityView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Public Key:"
@@ -293,7 +288,6 @@ Begin BeaconSubview IdentityView
       Width           =   80
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -327,7 +321,7 @@ Begin BeaconSubview IdentityView
       Password        =   False
       ReadOnly        =   True
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -362,7 +356,7 @@ Begin BeaconSubview IdentityView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   10
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "User ID:"
@@ -479,6 +473,20 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Behavior"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Behavior"
+		InitialValue="300"
+		Type="Integer"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
 		Visible=true

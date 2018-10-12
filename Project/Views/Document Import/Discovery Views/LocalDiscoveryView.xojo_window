@@ -27,7 +27,6 @@ Begin DiscoveryView LocalDiscoveryView
    Visible         =   True
    Width           =   600
    Begin Timer TextChangeTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -55,7 +54,7 @@ Begin DiscoveryView LocalDiscoveryView
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Simple Config Import"
@@ -87,7 +86,7 @@ Begin DiscoveryView LocalDiscoveryView
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -168,7 +167,7 @@ Begin DiscoveryView LocalDiscoveryView
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   True
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -203,7 +202,7 @@ Begin DiscoveryView LocalDiscoveryView
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -235,7 +234,7 @@ Begin DiscoveryView LocalDiscoveryView
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -267,7 +266,7 @@ Begin DiscoveryView LocalDiscoveryView
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"

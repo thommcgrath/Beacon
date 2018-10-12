@@ -42,7 +42,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   3
       TabPanelIndex   =   0
       Top             =   41
       Transparent     =   False
@@ -133,7 +133,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   3
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   9
@@ -164,7 +164,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Resizer         =   "0"
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -196,7 +196,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Title           =   ""

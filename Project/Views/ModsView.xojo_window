@@ -27,7 +27,6 @@ Begin BeaconSubview ModsView
    Visible         =   False
    Width           =   1100
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -127,7 +126,6 @@ Begin BeaconSubview ModsView
       HasBackColor    =   False
       Height          =   419
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   236
       LockBottom      =   True
@@ -151,14 +149,9 @@ Begin BeaconSubview ModsView
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Mods"
-      CaptionEnabled  =   "True"
-      CaptionIsButton =   "False"
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasBottomBorder =   "True"
-      HasResizer      =   "True"
-      HasTopBorder    =   "False"
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -172,7 +165,7 @@ Begin BeaconSubview ModsView
       Resizer         =   ""
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   5
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0

@@ -95,7 +95,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       ScrollBarVertical=   True
       SelectionType   =   1
       ShowDropIndicator=   False
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "SmallSystem"
@@ -130,7 +130,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   40

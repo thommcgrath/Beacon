@@ -46,7 +46,7 @@ Begin ContainerControl DocumentImportView
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   4
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin RadioButton SourceRadio
@@ -66,7 +66,7 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -99,7 +99,7 @@ Begin ContainerControl DocumentImportView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Select Import Source"
@@ -380,7 +380,7 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   3
          TabPanelIndex   =   5
          TabStop         =   True
          TextFont        =   "System"
@@ -430,7 +430,7 @@ Begin ContainerControl DocumentImportView
          ScrollBarVertical=   True
          SelectionType   =   0
          ShowDropIndicator=   False
-         TabIndex        =   2
+         TabIndex        =   1
          TabPanelIndex   =   5
          TabStop         =   True
          TextFont        =   "System"
@@ -465,7 +465,7 @@ Begin ContainerControl DocumentImportView
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   2
          TabPanelIndex   =   5
          TabStop         =   True
          TextFont        =   "System"

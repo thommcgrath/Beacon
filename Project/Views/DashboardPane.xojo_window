@@ -48,7 +48,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Resizer         =   ""
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -77,7 +77,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -109,7 +109,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -141,7 +141,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   4
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   53
@@ -205,7 +205,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "© 2016-2018 Thom McGrath, All Rights Reserved."
@@ -240,7 +240,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Engrams Updated Y"
@@ -275,7 +275,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   10
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   193
@@ -305,7 +305,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Scope           =   2
       Selectable      =   False
       ShowAsLink      =   True
-      TabIndex        =   11
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "https://beaconapp.cc/"

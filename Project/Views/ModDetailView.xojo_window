@@ -44,7 +44,6 @@ Begin BeaconContainer ModDetailView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   3
@@ -79,7 +78,7 @@ Begin BeaconContainer ModDetailView
          Password        =   False
          ReadOnly        =   True
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   ""
@@ -114,7 +113,7 @@ Begin BeaconContainer ModDetailView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   2
+         TabIndex        =   3
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
@@ -146,7 +145,7 @@ Begin BeaconContainer ModDetailView
          Multiline       =   True
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
          Text            =   "You have not yet confirmed ownership of this mod. To so do, please copy the value below and insert it anywhere on the mod's Steam page. Then press the ""Confirm Ownership"" button below. Once confirmed, the text can be removed from your Steam page."
@@ -181,7 +180,7 @@ Begin BeaconContainer ModDetailView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   4
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
@@ -213,7 +212,7 @@ Begin BeaconContainer ModDetailView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "No Mod Selected"
@@ -243,9 +242,8 @@ Begin BeaconContainer ModDetailView
          LockTop         =   True
          Maximum         =   0
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   True
          Top             =   199
          Transparent     =   False
          Value           =   0
@@ -290,7 +288,7 @@ Begin BeaconContainer ModDetailView
          ScrollBarVertical=   True
          SelectionType   =   1
          ShowDropIndicator=   False
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   4
          TabStop         =   True
          TextFont        =   "System"
@@ -311,13 +309,9 @@ Begin BeaconContainer ModDetailView
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Mod Detail"
-         CaptionEnabled  =   "True"
-         CaptionIsButton =   "False"
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasBottomBorder =   "True"
-         HasTopBorder    =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -331,7 +325,7 @@ Begin BeaconContainer ModDetailView
          Resizer         =   ""
          Scope           =   2
          ScrollSpeed     =   20
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   4
          TabStop         =   True
          Top             =   0
@@ -346,13 +340,9 @@ Begin BeaconContainer ModDetailView
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "No Mod Selected"
-         CaptionEnabled  =   "True"
-         CaptionIsButton =   "False"
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasBottomBorder =   "True"
-         HasTopBorder    =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -366,7 +356,7 @@ Begin BeaconContainer ModDetailView
          Resizer         =   ""
          Scope           =   2
          ScrollSpeed     =   20
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   0
@@ -381,13 +371,9 @@ Begin BeaconContainer ModDetailView
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Mod Detail"
-         CaptionEnabled  =   "True"
-         CaptionIsButton =   "False"
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasBottomBorder =   "True"
-         HasTopBorder    =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -401,7 +387,7 @@ Begin BeaconContainer ModDetailView
          Resizer         =   ""
          Scope           =   2
          ScrollSpeed     =   20
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   0
@@ -416,13 +402,9 @@ Begin BeaconContainer ModDetailView
          AutoDeactivate  =   True
          Backdrop        =   0
          Caption         =   "Untitled"
-         CaptionEnabled  =   "True"
-         CaptionIsButton =   "False"
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         HasBottomBorder =   "True"
-         HasTopBorder    =   "False"
          Height          =   41
          HelpTag         =   ""
          Index           =   -2147483648
@@ -436,7 +418,7 @@ Begin BeaconContainer ModDetailView
          Resizer         =   ""
          Scope           =   2
          ScrollSpeed     =   20
-         TabIndex        =   4
+         TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
          Top             =   0
@@ -447,7 +429,6 @@ Begin BeaconContainer ModDetailView
       End
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2

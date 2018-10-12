@@ -54,7 +54,7 @@ Begin ConfigEditor LootScaleConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "100%"
@@ -88,7 +88,7 @@ Begin ConfigEditor LootScaleConfigEditor
       Minimum         =   10
       PageStep        =   20
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       TickStyle       =   "0"

@@ -71,7 +71,7 @@ Begin ContainerControl LootSourceSettingsContainer
       LockTop         =   False
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   1
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   105
@@ -100,7 +100,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Settings"
@@ -178,7 +178,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Item Sets:"
@@ -256,7 +256,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Item Sets:"
@@ -291,7 +291,7 @@ Begin ContainerControl LootSourceSettingsContainer
       LockTop         =   True
       Scope           =   2
       State           =   0
-      TabIndex        =   7
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "SmallSystem"

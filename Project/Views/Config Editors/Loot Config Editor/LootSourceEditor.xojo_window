@@ -64,7 +64,7 @@ Begin BeaconContainer LootSourceEditor
       ScrollBarVertical=   True
       SelectionType   =   1
       ShowDropIndicator=   False
-      TabIndex        =   3
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -110,7 +110,7 @@ Begin BeaconContainer LootSourceEditor
       Resizer         =   "1"
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   5
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -135,7 +135,7 @@ Begin BeaconContainer LootSourceEditor
       PanelCount      =   2
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
@@ -192,7 +192,7 @@ Begin BeaconContainer LootSourceEditor
          LockTop         =   True
          Scope           =   2
          ScrollSpeed     =   20
-         TabIndex        =   1
+         TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   0
@@ -222,7 +222,7 @@ Begin BeaconContainer LootSourceEditor
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   7
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -251,7 +251,7 @@ Begin BeaconContainer LootSourceEditor
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   281
@@ -280,7 +280,7 @@ Begin BeaconContainer LootSourceEditor
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   13
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   40
@@ -309,7 +309,7 @@ Begin BeaconContainer LootSourceEditor
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   14
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   41

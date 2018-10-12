@@ -64,7 +64,7 @@ Begin BeaconContainer ItemSetEditor
       ScrollBarVertical=   True
       SelectionType   =   1
       ShowDropIndicator=   False
-      TabIndex        =   13
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -101,7 +101,7 @@ Begin BeaconContainer ItemSetEditor
       Resizer         =   ""
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   15
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -130,7 +130,7 @@ Begin BeaconContainer ItemSetEditor
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   17
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   40
@@ -159,7 +159,7 @@ Begin BeaconContainer ItemSetEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   18
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   41

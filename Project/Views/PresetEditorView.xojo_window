@@ -32,13 +32,9 @@ Begin BeaconSubview PresetEditorView
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Preset"
-      CaptionEnabled  =   False
-      CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasBottomBorder =   "True"
-      HasTopBorder    =   "False"
       Height          =   41
       HelpTag         =   ""
       Index           =   -2147483648
@@ -130,7 +126,7 @@ Begin BeaconSubview PresetEditorView
          ScrollBarVertical=   True
          SelectionType   =   1
          ShowDropIndicator=   False
-         TabIndex        =   0
+         TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "SmallSystem"
@@ -165,7 +161,7 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          TextFont        =   "System"
@@ -197,7 +193,7 @@ Begin BeaconSubview PresetEditorView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   4
+         TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Map Filter:"
@@ -232,7 +228,7 @@ Begin BeaconSubview PresetEditorView
          Multiline       =   True
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   5
+         TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Checking the box next to a quantity or quality will allow the values to be adjusted by the values on the settings tab."
@@ -276,7 +272,7 @@ Begin BeaconSubview PresetEditorView
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   1
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -320,7 +316,7 @@ Begin BeaconSubview PresetEditorView
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   3
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -355,7 +351,7 @@ Begin BeaconSubview PresetEditorView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   2
+         TabIndex        =   0
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Name:"
@@ -390,7 +386,7 @@ Begin BeaconSubview PresetEditorView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   3
+         TabIndex        =   2
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Grouping:"
@@ -504,7 +500,7 @@ Begin BeaconSubview PresetEditorView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   6
+         TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "items, but not more than"
@@ -548,7 +544,7 @@ Begin BeaconSubview PresetEditorView
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   7
+         TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -583,7 +579,7 @@ Begin BeaconSubview PresetEditorView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   8
+         TabIndex        =   10
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "items."
@@ -613,7 +609,7 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   9
+         TabIndex        =   6
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   159
@@ -636,7 +632,7 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
          Top             =   159
@@ -661,7 +657,7 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   True
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   12
+         TabIndex        =   11
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -885,7 +881,7 @@ Begin BeaconSubview PresetEditorView
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   5
+            TabIndex        =   8
             TabPanelIndex   =   2
             TabStop         =   True
             Text            =   "In cave crates, improve qualities by"
@@ -920,7 +916,7 @@ Begin BeaconSubview PresetEditorView
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   6
+            TabIndex        =   12
             TabPanelIndex   =   2
             TabStop         =   True
             Text            =   "In sea && desert crates, improve qualities by"
@@ -964,7 +960,7 @@ Begin BeaconSubview PresetEditorView
             Password        =   False
             ReadOnly        =   False
             Scope           =   2
-            TabIndex        =   7
+            TabIndex        =   5
             TabPanelIndex   =   2
             TabStop         =   True
             Text            =   ""
@@ -999,7 +995,7 @@ Begin BeaconSubview PresetEditorView
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   8
+            TabIndex        =   6
             TabPanelIndex   =   2
             TabStop         =   True
             Text            =   "tiers and multiply quantities by"
@@ -1043,7 +1039,7 @@ Begin BeaconSubview PresetEditorView
             Password        =   False
             ReadOnly        =   False
             Scope           =   2
-            TabIndex        =   9
+            TabIndex        =   7
             TabPanelIndex   =   2
             TabStop         =   True
             Text            =   ""
@@ -1087,7 +1083,7 @@ Begin BeaconSubview PresetEditorView
             Password        =   False
             ReadOnly        =   False
             Scope           =   2
-            TabIndex        =   10
+            TabIndex        =   9
             TabPanelIndex   =   2
             TabStop         =   True
             Text            =   ""
@@ -1122,7 +1118,7 @@ Begin BeaconSubview PresetEditorView
             Multiline       =   False
             Scope           =   2
             Selectable      =   False
-            TabIndex        =   11
+            TabIndex        =   10
             TabPanelIndex   =   2
             TabStop         =   True
             Text            =   "tiers and multiply quantities by"
@@ -1166,7 +1162,7 @@ Begin BeaconSubview PresetEditorView
             Password        =   False
             ReadOnly        =   False
             Scope           =   2
-            TabIndex        =   12
+            TabIndex        =   11
             TabPanelIndex   =   2
             TabStop         =   True
             Text            =   ""
@@ -2047,6 +2043,20 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Behavior"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Behavior"
+		InitialValue="300"
+		Type="Integer"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
 		Visible=true

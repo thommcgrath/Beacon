@@ -288,7 +288,7 @@ Begin Window LootSourceWizard
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   14
+         TabIndex        =   12
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -320,7 +320,7 @@ Begin Window LootSourceWizard
          LockRight       =   True
          LockTop         =   False
          Scope           =   2
-         TabIndex        =   13
+         TabIndex        =   11
          TabPanelIndex   =   2
          TabStop         =   True
          TextFont        =   "System"
@@ -451,7 +451,7 @@ Begin Window LootSourceWizard
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   11
+         TabIndex        =   9
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Max Multiplier:"
@@ -486,7 +486,7 @@ Begin Window LootSourceWizard
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   9
+         TabIndex        =   7
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   "Min Multiplier:"
@@ -667,7 +667,7 @@ Begin Window LootSourceWizard
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   12
+         TabIndex        =   10
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""
@@ -711,7 +711,7 @@ Begin Window LootSourceWizard
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   8
          TabPanelIndex   =   2
          TabStop         =   True
          Text            =   ""

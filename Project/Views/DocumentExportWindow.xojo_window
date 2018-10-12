@@ -71,7 +71,7 @@ Begin Window DocumentExportWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   0
-      Transparent     =   False
+      Transparent     =   True
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -134,7 +134,7 @@ Begin Window DocumentExportWindow
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -179,7 +179,7 @@ Begin Window DocumentExportWindow
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   True
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -246,7 +246,7 @@ Begin Window DocumentExportWindow
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -278,7 +278,7 @@ Begin Window DocumentExportWindow
       LockRight       =   False
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -291,7 +291,6 @@ Begin Window DocumentExportWindow
       Width           =   140
    End
    Begin Timer ClipboardWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2

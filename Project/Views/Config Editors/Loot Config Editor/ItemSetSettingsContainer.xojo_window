@@ -71,7 +71,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockTop         =   False
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   1
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   153
@@ -100,7 +100,7 @@ Begin ContainerControl ItemSetSettingsContainer
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Settings"
@@ -178,7 +178,7 @@ Begin ContainerControl ItemSetSettingsContainer
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Name:"
@@ -213,7 +213,7 @@ Begin ContainerControl ItemSetSettingsContainer
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   5
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Min Entries:"
@@ -248,7 +248,7 @@ Begin ContainerControl ItemSetSettingsContainer
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Max Entries:"
@@ -283,7 +283,7 @@ Begin ContainerControl ItemSetSettingsContainer
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Weight:"
@@ -318,7 +318,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockTop         =   True
       Scope           =   2
       State           =   0
-      TabIndex        =   8
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "SmallSystem"
@@ -359,7 +359,7 @@ Begin ContainerControl ItemSetSettingsContainer
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -402,7 +402,7 @@ Begin ContainerControl ItemSetSettingsContainer
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -498,7 +498,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   80
@@ -521,7 +521,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   14
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   56

@@ -134,7 +134,7 @@ Begin Window DocumentMergerWindow
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -166,7 +166,7 @@ Begin Window DocumentMergerWindow
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"

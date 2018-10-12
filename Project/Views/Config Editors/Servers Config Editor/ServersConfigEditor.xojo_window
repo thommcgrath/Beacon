@@ -64,7 +64,7 @@ Begin ConfigEditor ServersConfigEditor
       ScrollBarVertical=   True
       SelectionType   =   0
       ShowDropIndicator=   False
-      TabIndex        =   0
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -159,7 +159,7 @@ Begin ConfigEditor ServersConfigEditor
       Resizer         =   "0"
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   3
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0

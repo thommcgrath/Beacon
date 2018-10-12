@@ -89,7 +89,7 @@ Begin Window DocumentSaveToCloudWindow
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -124,7 +124,7 @@ Begin Window DocumentSaveToCloudWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Document Name:"
@@ -159,7 +159,7 @@ Begin Window DocumentSaveToCloudWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -223,7 +223,7 @@ Begin Window DocumentSaveToCloudWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
