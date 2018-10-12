@@ -71,7 +71,7 @@ Begin BeaconContainer ItemSetEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   64
-      Transparent     =   False
+      Transparent     =   True
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True

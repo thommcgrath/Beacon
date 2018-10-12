@@ -22,7 +22,7 @@ Inherits Listbox
 		    Dim OSMajor, OSMinor As Integer
 		    Call System.Gestalt("sys1", OSMajor)
 		    Call System.Gestalt("sys2", OSMinor)
-		    If OSMajor >= 10 and OSMinor >= 14 Then
+		    If Self.Transparent And OSMajor >= 10 And OSMinor >= 14 Then
 		      Clip.ClearRect(0, 0, Clip.Width, Clip.Height)
 		    Else
 		      Clip.ForeColor = SystemColors.UnderPageBackgroundColor
