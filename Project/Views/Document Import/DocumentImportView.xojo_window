@@ -212,7 +212,7 @@ Begin ContainerControl DocumentImportView
          ButtonStyle     =   "0"
          Cancel          =   False
          Caption         =   "Continue"
-         Default         =   True
+         Default         =   False
          Enabled         =   False
          Height          =   20
          HelpTag         =   ""
@@ -755,6 +755,7 @@ End
 	#tag Event
 		Sub Action(index as Integer)
 		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value
+		  SourceActionButton.Default = SourceActionButton.Enabled
 		End Sub
 	#tag EndEvent
 #tag EndEvents

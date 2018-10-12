@@ -43,7 +43,7 @@ Begin ConfigEditor DifficultyConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   216
+      Left            =   231
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -102,14 +102,14 @@ Begin ConfigEditor DifficultyConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   184
+      Width           =   199
    End
    Begin GroupBox ReferenceValuesGroup
       AutoDeactivate  =   True
       Bold            =   False
       Caption         =   "Reference Values"
       Enabled         =   True
-      Height          =   146
+      Height          =   180
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -131,7 +131,7 @@ Begin ConfigEditor DifficultyConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   296
+      Width           =   311
       Begin UITweaks.ResizedTextField DifficultyOffsetField
          AcceptTabs      =   False
          Alignment       =   0
@@ -150,7 +150,7 @@ Begin ConfigEditor DifficultyConfigEditor
          Index           =   -2147483648
          InitialParent   =   "ReferenceValuesGroup"
          Italic          =   False
-         Left            =   216
+         Left            =   231
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -209,7 +209,7 @@ Begin ConfigEditor DifficultyConfigEditor
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   164
+         Width           =   179
       End
       Begin UITweaks.ResizedTextField DifficultyValueField
          AcceptTabs      =   False
@@ -229,7 +229,7 @@ Begin ConfigEditor DifficultyConfigEditor
          Index           =   -2147483648
          InitialParent   =   "ReferenceValuesGroup"
          Italic          =   False
-         Left            =   216
+         Left            =   231
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -288,7 +288,7 @@ Begin ConfigEditor DifficultyConfigEditor
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   164
+         Width           =   179
       End
       Begin UITweaks.ResizedTextField LootScaleField
          AcceptTabs      =   False
@@ -308,7 +308,7 @@ Begin ConfigEditor DifficultyConfigEditor
          Index           =   -2147483648
          InitialParent   =   "ReferenceValuesGroup"
          Italic          =   False
-         Left            =   216
+         Left            =   231
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -367,7 +367,86 @@ Begin ConfigEditor DifficultyConfigEditor
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   164
+         Width           =   179
+      End
+      Begin UITweaks.ResizedTextField OverrideOfficialDifficultyField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ReferenceValuesGroup"
+         Italic          =   False
+         Left            =   231
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Mask            =   ""
+         Password        =   False
+         ReadOnly        =   True
+         Scope           =   2
+         TabIndex        =   6
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   192
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedLabel OverrideOfficialDifficultyLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ReferenceValuesGroup"
+         Italic          =   False
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   7
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Text            =   "Override Official Difficulty:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   192
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   179
       End
    End
 End
@@ -388,6 +467,7 @@ End
 		  Self.LootScaleField.Text = Str(Difficulty.DifficultyValue, "0%")
 		  Self.DifficultyValueField.Text = Str(Difficulty.DifficultyValue, "0.0")
 		  Self.DifficultyOffsetField.Text = Difficulty.DifficultyOffset.PrettyText
+		  Self.OverrideOfficialDifficultyField.Text = Difficulty.OverrideOfficialDifficulty.PrettyText
 		End Sub
 	#tag EndMethod
 

@@ -223,7 +223,7 @@ Begin ConfigEditor MetaDataConfigEditor
    Begin CheckBox ConsoleSafeEngramsCheckbox
       AutoDeactivate  =   True
       Bold            =   False
-      Caption         =   "Show only ""console safe"" engrams"
+      Caption         =   "Show only console-safe engrams"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True

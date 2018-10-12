@@ -311,7 +311,7 @@ End
 		  Next
 		  
 		  If Self.mDestination.ConsoleModsOnly And PreviousConsoleSafe = False Then
-		    Dim Notification As New Beacon.UserNotification("""Show only 'console safe' engrams"" has been enabled for document """ + Self.mDestination.Title + """ because a console server was linked.")
+		    Dim Notification As New Beacon.UserNotification("""Show only console-safe engrams"" has been enabled for document """ + Self.mDestination.Title + """ because a console server was linked.")
 		    Notification.SecondaryMessage = "This setting can be disabled using the """ + Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName) + """ config group."
 		    LocalData.SharedInstance.SaveNotification(Notification)
 		  End If
