@@ -46,10 +46,6 @@ Protected Module BeaconEncryption
 		  Header.Length = Data.Size
 		  Header.Checksum = Beacon.CRC32(Data)
 		  
-		  System.DebugLog("Checksum is " + Header.Checksum.ToText)
-		  System.DebugLog("Checksum by MBS is " + CRC_32OfStrMBS(Beacon.ConvertMemoryBlock(Data)).ToText)
-		  System.DebugLog("Header is " + Beacon.EncodeHex(Header))
-		  
 		  Dim Output As New Xojo.Core.MutableMemoryBlock(0)
 		  Output.Append(Header)
 		  
