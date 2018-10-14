@@ -358,6 +358,49 @@ End
 		  Next
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
+		  Dim BackupsRoot As Beacon.FolderItem = App.ApplicationSupport.Child("Backups")
+		  
+		  Dim RowIndex As Integer = Me.RowFromXY(X, Y)
+		  If RowIndex = -1 Then
+		    Base.Append(New MenuItem("Config Backups", BackupsRoot))
+		    Return True
+		  End If
+		  
+		  Try
+		    Dim Profile As Beacon.ServerProfile = Me.RowTag(RowIndex)
+		    Dim Folder As Beacon.FolderItem = BackupsRoot.Child(Beacon.FolderItem.SanitizeFilename(Profile.Name))
+		    Base.Append(New MenuItem("Config Backups", Folder))
+		  Catch Err As RuntimeException
+		    Dim Item As New MenuItem("Config Backups", BackupsRoot)
+		    Item.Enabled = False
+		    Base.Append(Item)
+		  End Try
+		  
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
+		  Select Case HitItem.Text
+		  Case "Config Backups"
+		    Dim Folder As Beacon.FolderItem = HitItem.Tag
+		    If Folder = Nil Then
+		      Return True
+		    End If
+		    If Not Folder.Exists Then
+		      Folder.CreateAsFolder
+		    End If
+		    #if TargetDesktop
+		      Dim Item As FolderItem = Folder
+		      Item.Launch
+		    #endif
+		  End Select
+		  
+		  Return True
+		End Function
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty

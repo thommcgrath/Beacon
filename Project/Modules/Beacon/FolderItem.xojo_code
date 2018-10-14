@@ -305,6 +305,15 @@ Protected Class FolderItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function SanitizeFilename(Filename As Text) As Text
+		  Filename = Filename.ReplaceAll("/", "-")
+		  Filename = Filename.ReplaceAll("\", "-")
+		  Filename = Filename.ReplaceAll(":", "-")
+		  Return Filename
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Temporary() As Beacon.FolderItem
 		  Dim Item As Beacon.FolderItem
 		  #if TargetiOS

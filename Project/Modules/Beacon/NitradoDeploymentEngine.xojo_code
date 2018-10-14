@@ -2,6 +2,18 @@
 Protected Class NitradoDeploymentEngine
 Implements Beacon.DeploymentEngine
 	#tag Method, Flags = &h0
+		Function BackupGameIni() As Text
+		  Return Self.mGameIniOriginal
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BackupGameUserSettingsIni() As Text
+		  Return Self.mGameUserSettingsIniOriginal
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Begin(CommandLineOptions() As Beacon.ConfigValue, GameIniDict As Xojo.Core.Dictionary, GameUserSettingsIniDict As Xojo.Core.Dictionary)
 		  Self.mCommandLineOptions = CommandLineOptions
 		  Self.mGameIniDict = GameIniDict

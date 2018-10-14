@@ -1,6 +1,18 @@
 #tag Interface
 Protected Interface DeploymentEngine
 	#tag Method, Flags = &h0
+		Function BackupGameIni() As Text
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BackupGameUserSettingsIni() As Text
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Begin(CommandLineOptions() As Beacon.ConfigValue, GameIniDict As Xojo.Core.Dictionary, GameUserSettingsIniDict As Xojo.Core.Dictionary)
 		  
 		End Sub

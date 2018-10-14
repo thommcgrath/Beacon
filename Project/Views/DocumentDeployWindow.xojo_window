@@ -527,6 +527,42 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub Backup(Engine As Beacon.DeploymentEngine, Folder As Beacon.FolderItem, Label As Text)
+		  If Engine.Errored Then
+		    Return
+		  End If
+		  
+		  Dim ServerFolder As Beacon.FolderItem = Folder.Child(Beacon.FolderItem.SanitizeFilename(Engine.Name))
+		  
+		  Dim GameIniContent As Text = Engine.BackupGameIni.Trim
+		  Dim GameUserSettingsIniContent As Text = Engine.BackupGameUserSettingsIni.Trim
+		  If GameIniContent = "" And GameUserSettingsIniContent = "" Then
+		    Return
+		  End If
+		  
+		  If Not ServerFolder.Exists Then
+		    ServerFolder.CreateAsFolder
+		  End If
+		  
+		  Dim Subfolder As Beacon.FolderItem = ServerFolder.Child(Label)
+		  Dim Counter As Integer = 1
+		  While Subfolder.Exists
+		    Subfolder = ServerFolder.Child(Label + "-" + Counter.ToText)
+		    Counter = Counter + 1
+		  Wend
+		  
+		  Subfolder.CreateAsFolder
+		  
+		  If GameIniContent <> "" Then
+		    Subfolder.Child("Game.ini").Write(GameIniContent, Xojo.Core.TextEncoding.UTF8)
+		  End If
+		  If GameUserSettingsIniContent <> "" Then
+		    Subfolder.Child("GameUserSettings.ini").Write(GameUserSettingsIniContent, Xojo.Core.TextEncoding.UTF8)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Constructor()
 		  Super.Constructor()
 		End Sub
@@ -769,6 +805,19 @@ End
 		  Next
 		  
 		  If Finished Then
+		    Dim BackupsFolder As Beacon.FolderItem = App.ApplicationSupport.Child("Backups")
+		    If Not BackupsFolder.Exists Then
+		      BackupsFolder.CreateAsFolder
+		    End If
+		    
+		    Dim Now As New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970, New Xojo.Core.TimeZone(0))
+		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Current
+		    Dim BackupLabel As Text = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + "." + Now.Minute.ToText(Locale, "00") + "." + Now.Second.ToText(Locale, "00") + " GMT"
+		    
+		    For Each Engine As Beacon.DeploymentEngine In Self.mDeploymentEngines
+		      Self.Backup(Engine, BackupsFolder, BackupLabel)
+		    Next
+		    
 		    Self.ShowResults()
 		    Me.Mode = Timer.ModeOff
 		  Else
