@@ -44,7 +44,6 @@ Begin Window DocumentDeployWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -426,14 +425,13 @@ Begin Window DocumentDeployWindow
       End
    End
    Begin Beacon.OAuth2Client Auth
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
+      Provider        =   ""
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Timer DeployingWatchTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -594,7 +592,7 @@ End
 		  Dim SuccessCount, TotalCount As Integer
 		  For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
 		    If DeploymentEngine.Errored Then
-		      Report.Append(DeploymentEngine.Status)
+		      Report.Append(DeploymentEngine.Name + ": " + DeploymentEngine.Status)
 		    Else
 		      SuccessCount = SuccessCount + 1
 		      Report.Append(DeploymentEngine.Name + ": Finished successfully. " + If(DeploymentEngine.ServerIsStarting, "The server is starting up now.", "You may start the server when you are ready."))
