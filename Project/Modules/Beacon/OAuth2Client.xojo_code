@@ -55,25 +55,7 @@ Protected Class OAuth2Client
 		  QueryParams.Value("refresh_token") = Self.mRefreshToken
 		  QueryParams.Value("redirect_uri") = Self.RedirectURI
 		  
-		  SimpleHTTP.Post(Self.mEndpoint + "/token", QueryParams, AddressOf Refresh_Callback, Nil)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Authorization_Callback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
-		  #Pragma Unused URL
-		  #Pragma Unused Tag
-		  
-		  If Status <> 200 Then
-		    RaiseEvent AuthenticationError
-		    Return
-		  End If
-		  
-		  If Self.ReceivedToken(Content) Then
-		    RaiseEvent Authenticated
-		  Else
-		    RaiseEvent AuthenticationError
-		  End If
+		  SimpleHTTP.Post(Self.mEndpoint, QueryParams, AddressOf Refresh_Callback, Nil)
 		End Sub
 	#tag EndMethod
 
@@ -94,9 +76,23 @@ Protected Class OAuth2Client
 		    Self.mBrowser = Nil
 		  End If
 		  
-		  Dim Code, State As Text
+		  Dim AccessToken, RefreshToken As Text
+		  Dim Expires As UInteger
 		  
-		  Dim QueryString As Text = URL.Mid(6)
+		  Dim QueryPos As Integer = URL.IndexOf("?")
+		  If QueryPos = -1 Then
+		    RaiseEvent AuthenticationError
+		    Return True
+		  End If
+		  
+		  Dim Path As Text = URL.Left(QueryPos)
+		  If Path <> "oauth/" + Self.mProvider Then
+		    Break
+		    RaiseEvent AuthenticationError
+		    Return True
+		  End If
+		  
+		  Dim QueryString As Text = URL.Mid(QueryPos + 1)
 		  Dim Parts() As Text = QueryString.Split("&")
 		  For Each Part As Text In Parts
 		    Dim Idx As Integer = Part.IndexOf("=")
@@ -108,51 +104,59 @@ Protected Class OAuth2Client
 		    Dim Value As Text = Beacon.DecodeURLComponent(Part.Mid(Idx + 1))
 		    
 		    Select Case Key
-		    Case "code"
-		      Code = Value
-		    Case "state"
-		      State = Value
+		    Case "access_token"
+		      AccessToken = Value
+		    Case "refresh_token"
+		      RefreshToken = Value
+		    Case "expires_in"
+		      Expires = UInteger.FromText(Value)
 		    Else
 		      Break
 		    End Select
 		  Next
 		  
-		  If State <> Self.mAuthState Then
-		    // Problem
-		    Self.mAuthState = ""
+		  If AccessToken = "" Or RefreshToken = "" Or Expires = 0 Then
+		    RaiseEvent AuthenticationError
 		    Return True
 		  End If
 		  
-		  Self.mAuthState = ""
+		  Self.mAccessToken = AccessToken
+		  Self.mRefreshToken = RefreshToken
+		  Self.mExpiration = New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970 + Expires, New Xojo.Core.TimeZone(0))
 		  
-		  Dim QueryParams As New Xojo.Core.Dictionary
-		  QueryParams.Value("grant_type") = "authorization_code"
-		  QueryParams.Value("client_id") = Self.mClientID
-		  QueryParams.Value("client_secret") = Self.mClientSecret
-		  QueryParams.Value("code") = Code
-		  QueryParams.Value("redirect_uri") = Self.RedirectURI
-		  
-		  SimpleHTTP.Post(Self.mEndPoint + "/token", QueryParams, AddressOf Authorization_Callback, Nil)
+		  RaiseEvent Authenticated
 		  
 		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function AuthURL() As Text
+		  Return Beacon.WebURL("/oauth/").Replace("https://", "https://api.")
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function IsAuthenticated() As Boolean
 		  If Self.mAccessToken = "" Then
-		    System.DebugLog("Not authenticated because token is empty")
+		    #If DebugBuild
+		      System.DebugLog("Not authenticated because token is empty")
+		    #EndIf
 		    Return False
 		  End If
 		  
 		  If Self.mExpiration = Nil Then
-		    System.DebugLog("Not authenticated because expiration is missing")
+		    #If DebugBuild
+		      System.DebugLog("Not authenticated because expiration is missing")
+		    #EndIf
 		    Return False
 		  End If
 		  
 		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
 		  If Self.mExpiration.SecondsFrom1970 <= Now.SecondsFrom1970 Then
-		    System.DebugLog("Not authenticated because expiration has passed")
+		    #If DebugBuild
+		      System.DebugLog("Not authenticated because expiration has passed")
+		    #EndIf
 		    Return False
 		  End If
 		  
@@ -162,8 +166,7 @@ Protected Class OAuth2Client
 
 	#tag Method, Flags = &h21
 		Private Sub NewAuthorization()
-		  Self.mAuthState = Beacon.CreateUUID
-		  Dim URL As Text = Self.mEndpoint + "/auth?redirect_uri=" + Beacon.EncodeURLComponent(Self.RedirectURI) + "&client_id=" + Beacon.EncodeURLComponent(Self.mClientID) + "&response_type=code&scope=service&state=" + Beacon.EncodeURLComponent(Self.mAuthState)
+		  Dim URL As Text = Self.AuthURL + "?provider=" + Beacon.EncodeURLComponent(Self.mProvider)
 		  Dim Browser As Beacon.WebView = RaiseEvent ShowURL(URL)
 		  If Browser = Nil Then
 		    Return
@@ -174,22 +177,8 @@ Protected Class OAuth2Client
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ReceivedToken(Content As Xojo.Core.MemoryBlock) As Boolean
-		  Dim Dict As Xojo.Core.Dictionary
-		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dict = Xojo.Data.ParseJSON(TextContent)
-		    
-		    Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
-		    
-		    Self.mAccessToken = Dict.Value("access_token")
-		    Self.mRefreshToken = Dict.Value("refresh_token")
-		    Self.mExpiration = New Xojo.Core.Date(Now.SecondsFrom1970 + Dict.Value("expires_in"), New Xojo.Core.TimeZone(0))
-		    
-		    Return True
-		  Catch Err As RuntimeException
-		    Return False
-		  End Try
+		Private Function RedirectURI() As Text
+		  Return Self.AuthURL() + "callback.php"
 		End Function
 	#tag EndMethod
 
@@ -203,19 +192,19 @@ Protected Class OAuth2Client
 		    Return
 		  End If
 		  
-		  If Self.ReceivedToken(Content) Then
+		  Dim Dict As Xojo.Core.Dictionary
+		  Try
+		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
+		    Dict = Xojo.Data.ParseJSON(TextContent)
+		    
+		    Self.mAccessToken = Dict.Value("access_token")
+		    Self.mRefreshToken = Dict.Value("refresh_token")
+		    Self.mExpiration = New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970 + Dict.Value("expires_in"), New Xojo.Core.TimeZone(0))
+		    
 		    RaiseEvent Authenticated
-		  Else
+		  Catch Err As RuntimeException
 		    RaiseEvent AuthenticationError
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Setup(Endpoint As Text, ClientID As Text, ClientSecret As Text)
-		  Self.mEndpoint = Endpoint
-		  Self.mClientID = ClientID
-		  Self.mClientSecret = ClientSecret
+		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -250,10 +239,6 @@ Protected Class OAuth2Client
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mClientSecret As Text
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mEndpoint As Text
 	#tag EndProperty
 
@@ -262,11 +247,41 @@ Protected Class OAuth2Client
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mProvider As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mRefreshToken As Text
 	#tag EndProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mProvider
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mProvider = Value Then
+			    Return
+			  End If
+			  
+			  Select Case Value
+			  Case Self.ProviderNitrado
+			    Self.mEndpoint = "https://oauth.nitrado.net/oauth/v2/token"
+			    Self.mClientID = "222_mh7VoS9vLQn_jgE6UPZ8MXVlPNMdDhwblQP2kFHffnL7gy2h2rbdj5XWnmUm"
+			  Else
+			    Return
+			  End Select
+			  
+			  Self.mProvider = Value
+			End Set
+		#tag EndSetter
+		Provider As Text
+	#tag EndComputedProperty
 
-	#tag Constant, Name = RedirectURI, Type = Text, Dynamic = False, Default = \"https://app.beaconapp.cc/oauth", Scope = Private
+
+	#tag Constant, Name = ProviderNitrado, Type = Text, Dynamic = False, Default = \"Nitrado", Scope = Public
 	#tag EndConstant
 
 

@@ -44,6 +44,7 @@ Begin Window DocumentDeployWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -425,12 +426,14 @@ Begin Window DocumentDeployWindow
       End
    End
    Begin Beacon.OAuth2Client Auth
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Timer DeployingWatchTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -512,14 +515,13 @@ End
 		  Dim Provider As Text = Self.mOAuthQueue(0)
 		  Self.mOAuthQueue.Remove(0)
 		  
-		  Select Case Provider
-		  Case "Nitrado"
-		    OAuthProviders.SetupNitrado(Self.Auth)
-		    Self.Auth.AuthData = Self.mDocument.OAuthData(Provider)
-		  Else
+		  Self.Auth.Provider = Provider
+		  If Self.Auth.Provider <> Provider Then
 		    Self.ShowAlert("This version of Beacon does not support " + Provider + " servers.", "This probably means an upgrade is available.")
 		    Return
-		  End Select
+		  End If
+		  
+		  Self.Auth.AuthData = Self.mDocument.OAuthData(Provider)
 		  
 		  Self.mCurrentProvider = Provider
 		  Self.Auth.Authenticate()

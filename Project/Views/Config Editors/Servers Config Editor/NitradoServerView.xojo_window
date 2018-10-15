@@ -27,6 +27,7 @@ Begin ServerViewContainer NitradoServerView
    Visible         =   True
    Width           =   600
    Begin Beacon.OAuth2Client Auth
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -128,6 +129,7 @@ Begin ServerViewContainer NitradoServerView
       Width           =   110
    End
    Begin Timer RefreshTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -283,7 +285,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  OAuthProviders.SetupNitrado(Self.Auth)
+		  Self.Auth.Provider = Beacon.OAuth2Client.ProviderNitrado
 		  Self.Auth.AuthData = Self.mDocument.OAuthData("Nitrado")
 		  Self.Auth.Authenticate
 		  

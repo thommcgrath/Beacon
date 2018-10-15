@@ -198,7 +198,6 @@ Module=SimpleHTTP;Modules/SimpleHTTP.xojo_code;&h0000000003F8BFFF;&h000000001444
 Class=SimpleHTTPSocket;Modules/SimpleHTTP/SimpleHTTPSocket.xojo_code;&h000000001E84C7FF;&h0000000003F8BFFF;false
 Interface=WebView;Modules/Beacon/WebView.xojo_code;&h000000006FB37FFF;&h0000000055ADDFFF;false
 Class=OAuth2Client;Modules/Beacon/OAuth2Client.xojo_code;&h000000004BC4F7FF;&h0000000055ADDFFF;false
-Module=OAuthProviders;Modules/OAuthProviders.xojo_code;&h000000006FFE6FFF;&h000000001444B7FF;false
 Class=DiscoveryView;Views/Document Import/Discovery Views/DiscoveryView.xojo_code;&h00000000381F57FF;&h0000000020AC2FFF;false
 Window=NitradoDiscoveryView;Views/Document Import/Discovery Views/NitradoDiscoveryView.xojo_window;&h000000007617CFFF;&h0000000020AC2FFF;false
 Window=FTPDiscoveryView;Views/Document Import/Discovery Views/FTPDiscoveryView.xojo_window;&h000000001681EFFF;&h0000000020AC2FFF;false
