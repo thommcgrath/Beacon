@@ -60,7 +60,7 @@ class BeaconGenerator {
 			$sets = array();
 			$total_weight = $this->SumOfItemSetWeights($json['ItemSets']);
 			foreach ($json['ItemSets'] as $item_set) {
-				$sets[] = $this->RenderItemSet($item_set, $total_weight);
+				$sets[] = $this->RenderItemSet($definition, $item_set, $total_weight);
 			}
 			
 			$keys = array(
@@ -145,7 +145,7 @@ class BeaconGenerator {
 		return $sum;
 	}
 	
-	protected function QualityTagToValue(string $tag) {
+	protected function QualityTagToValue(string $tag, float $crate_quality_multiplier) {
 		$raw_value = 0;
 		switch ($tag) {
 		case 'Tier2':
@@ -174,10 +174,16 @@ class BeaconGenerator {
 			break;
 		}
 		
-		return $raw_value / $this->difficulty_value;
+		$crate_arbitrary_quality = $crate_quality_multiplier + (($crate_quality_multiplier - 1) * 0.2);
+		$difficulty_offset = min(($this->difficulty_value - 0.5) / (ceil($this->difficulty_value) - 0.5), 1.0);
+		if ($difficulty_offset <= 0) {
+			$difficulty_offset = 1.0;
+		}
+		$base_arbitrary_quality = 0.75 + ($difficulty_offset * 1.75);
+		return $raw_value / ($base_arbitrary_quality * $crate_arbitrary_quality);
 	}
 	
-	protected function RenderItemSet(array $set, float $weight_total) {
+	protected function RenderItemSet(BeaconLootSource $source, array $set, float $weight_total) {
 		$random_without_replacement = boolval($set['bItemsRandomWithoutReplacement']);
 		$name = $set['Label'];
 		$entries = $set['ItemEntries'];
@@ -189,7 +195,7 @@ class BeaconGenerator {
 		$entries_weight_sum = $this->SumOfEntryWeights($entries);
 		$children = array();
 		foreach ($entries as $entry) {
-			$children[] = $this->RenderEntry($entry, $entries_weight_sum);
+			$children[] = $this->RenderEntry($source, $entry, $entries_weight_sum);
 		}
 		
 		$keys = array(
@@ -205,7 +211,7 @@ class BeaconGenerator {
 		return '(' . implode(',', $keys) . ')';
 	}
 	
-	protected function RenderEntry(array $entry, float $weight_total) {
+	protected function RenderEntry(BeaconLootSource $source, array $entry, float $weight_total) {
 		$blueprint_chance = floatval($entry['ChanceToBeBlueprintOverride']);
 		$local_weight = floatval($entry['EntryWeight']);
 		$relative_weight = round(($local_weight / $weight_total) * 1000);
@@ -232,8 +238,8 @@ class BeaconGenerator {
 			sprintf('MaxQuantity=%u', $max_quantity),
 			sprintf('bForceBlueprint=%s', $blueprint_chance >= 1 ? 'true' : 'false'),
 			sprintf('ChanceToBeBlueprintOverride=%F', $blueprint_chance),
-			sprintf('MinQuality=%F', $this->QualityTagToValue($min_quality_tag)),
-			sprintf('MaxQuality=%F', $this->QualityTagToValue($max_quality_tag)),
+			sprintf('MinQuality=%F', $this->QualityTagToValue($min_quality_tag, $source->MultiplierMin())),
+			sprintf('MaxQuality=%F', $this->QualityTagToValue($max_quality_tag, $source->MultiplierMax())),
 			sprintf('ItemClassStrings=(%s)', implode(',', $classes)),
 			sprintf('ItemsWeights=(%s)', implode(',', $relative_weights))
 		);
