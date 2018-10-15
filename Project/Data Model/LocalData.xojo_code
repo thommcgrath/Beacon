@@ -72,11 +72,6 @@ Implements Beacon.DataSource
 	#tag Method, Flags = &h0
 		Function ClassesURL() As Text
 		  Dim Version As Integer = App.NonReleaseVersion
-		  #if Not DebugBuild
-		    #Pragma Error "Check build numbers online"
-		  #else
-		    Version = Version + 1
-		  #endif
 		  
 		  Dim LastSync As String = Self.Variable("sync_time")
 		  Dim CheckURL As Text = Beacon.WebURL("/download/classes.php?version=" + Version.ToText)
