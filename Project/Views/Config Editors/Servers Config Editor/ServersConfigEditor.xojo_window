@@ -364,16 +364,16 @@ End
 		  
 		  Dim RowIndex As Integer = Me.RowFromXY(X, Y)
 		  If RowIndex = -1 Then
-		    Base.Append(New MenuItem("Config Backups", BackupsRoot))
+		    Base.Append(New MenuItem("Show Config Backups", BackupsRoot))
 		    Return True
 		  End If
 		  
 		  Try
 		    Dim Profile As Beacon.ServerProfile = Me.RowTag(RowIndex)
 		    Dim Folder As Beacon.FolderItem = BackupsRoot.Child(Beacon.FolderItem.SanitizeFilename(Profile.Name))
-		    Base.Append(New MenuItem("Config Backups", Folder))
+		    Base.Append(New MenuItem("Show Config Backups", Folder))
 		  Catch Err As RuntimeException
-		    Dim Item As New MenuItem("Config Backups", BackupsRoot)
+		    Dim Item As New MenuItem("Show Config Backups", BackupsRoot)
 		    Item.Enabled = False
 		    Base.Append(Item)
 		  End Try
@@ -384,7 +384,7 @@ End
 	#tag Event
 		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
 		  Select Case HitItem.Text
-		  Case "Config Backups"
+		  Case "Show Config Backups"
 		    Dim Folder As Beacon.FolderItem = HitItem.Tag
 		    If Folder = Nil Then
 		      Return True
