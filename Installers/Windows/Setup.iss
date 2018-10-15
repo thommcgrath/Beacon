@@ -28,9 +28,13 @@ SolidCompression=yes
 MinVersion=6.1.7601
 ChangesAssociations=yes
 ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
+
+[InstallDelete]
+Type: filesandordirs; Name: "{pf32}\Beacon";
 
 [Files]
 Source: "..\..\Project\Builds - Beacon.xojo_project\Windows 64 bit\Beacon\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
