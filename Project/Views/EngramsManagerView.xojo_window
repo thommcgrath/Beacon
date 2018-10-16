@@ -152,7 +152,6 @@ End
 	#tag Event
 		Sub Open()
 		  Self.RebuildList()
-		  Self.ToolbarIcon = IconEngrams
 		  Self.ToolbarCaption = "My Engrams"
 		  NotificationKit.Watch(Self, "Engram Import Complete")
 		End Sub

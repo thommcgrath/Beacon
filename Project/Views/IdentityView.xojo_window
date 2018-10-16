@@ -407,7 +407,6 @@ End
 	#tag Event
 		Sub Open()
 		  Self.ToolbarCaption = "Identity"
-		  Self.ToolbarIcon = IconIdentity
 		  Self.UpdateUI(App.Identity)
 		End Sub
 	#tag EndEvent

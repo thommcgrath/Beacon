@@ -80,6 +80,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -195,7 +196,6 @@ End
 		    Self.UpdateCommunityDocuments()
 		  #endif
 		  
-		  Self.ToolbarIcon = IconDocuments
 		  Self.ToolbarCaption = "Documents"
 		  
 		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged, App.Notification_IdentityChanged)

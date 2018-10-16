@@ -302,7 +302,6 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.ToolbarIcon = IconHome
 		  Self.ToolbarCaption = "Home"
 		  
 		  Self.mMainGroup = New ControlGroup(LogoCanvas, TitleCanvas, VersionLabel, NewFileButton, OpenFileButton, SyncLabel, WebsiteLink)

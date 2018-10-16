@@ -101,6 +101,7 @@ Begin LibrarySubview LibraryPaneSearch
       Width           =   280
    End
    Begin Timer SearchTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -109,6 +110,7 @@ Begin LibrarySubview LibraryPaneSearch
       TabPanelIndex   =   0
    End
    Begin Xojo.Net.HTTPSocket SearchSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -151,7 +153,6 @@ End
 	#tag Event
 		Sub Open()
 		  Self.ToolbarCaption = "Search"
-		  Self.ToolbarIcon = IconSearch
 		End Sub
 	#tag EndEvent
 

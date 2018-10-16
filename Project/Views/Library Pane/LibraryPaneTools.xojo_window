@@ -151,7 +151,6 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.ToolbarIcon = IconTools
 		  Self.ToolbarCaption = "Tools"
 		  
 		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged)

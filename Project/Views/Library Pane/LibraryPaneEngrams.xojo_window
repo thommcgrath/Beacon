@@ -221,6 +221,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Width           =   300
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -234,7 +235,6 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.ToolbarIcon = IconEngrams
 		  Self.ToolbarCaption = "Engrams"
 		End Sub
 	#tag EndEvent

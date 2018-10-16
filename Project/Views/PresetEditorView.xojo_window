@@ -1351,7 +1351,6 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.ToolbarIcon = IconPresets
 		  Self.UpdateUI()
 		End Sub
 	#tag EndEvent

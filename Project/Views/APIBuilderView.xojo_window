@@ -614,7 +614,6 @@ End
 	#tag Event
 		Sub Open()
 		  Self.ToolbarCaption = "API Builder"
-		  Self.ToolbarIcon = IconAPI
 		End Sub
 	#tag EndEvent
 

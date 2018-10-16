@@ -294,10 +294,6 @@ Implements ObservationKit.Observable
 		Private mToolbarCaption As String
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mToolbarIcon As Picture
-	#tag EndProperty
-
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -319,25 +315,6 @@ Implements ObservationKit.Observable
 			End Set
 		#tag EndSetter
 		ToolbarCaption As String
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  If Self.mToolbarIcon <> Nil Then
-			    Return Self.mToolbarIcon
-			  Else
-			    Return IconGenericView
-			  End If
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Self.mToolbarIcon = Value
-			  Self.NotifyObservers("ToolbarIcon", Value)
-			End Set
-		#tag EndSetter
-		ToolbarIcon As Picture
 	#tag EndComputedProperty
 
 

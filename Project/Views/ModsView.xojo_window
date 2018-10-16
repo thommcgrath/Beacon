@@ -239,7 +239,6 @@ End
 	#tag Event
 		Sub Open()
 		  Self.ToolbarCaption = "Mods"
-		  Self.ToolbarIcon = IconMods
 		End Sub
 	#tag EndEvent
 
