@@ -76,7 +76,7 @@ if ($min_version > 33) {
 		$values['presets']['additions'][] = array(
 			'id' => $preset->ObjectID(),
 			'label' => $preset->Label(),
-			'contents' => $preset->Contents()
+			'contents' => $preset->Contents(true)
 		);
 	}
 	$deleted_presets = BeaconPreset::Deletions($min_version, $since);
