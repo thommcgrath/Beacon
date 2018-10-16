@@ -48,15 +48,15 @@ Implements NotificationKit.Receiver
 
 	#tag Event
 		Sub Open()
-		  #if TargetMacOS
+		  #If TargetMacOS
 		    Self.Log("Beacon " + Str(Self.NonReleaseVersion, "-0") + " for Mac.")
-		  #elseif TargetWin32
+		  #ElseIf TargetWin32
 		    Self.Log("Beacon " + Str(Self.NonReleaseVersion, "-0") + " for Windows.")
-		  #endif
+		  #EndIf
 		  
 		  Dim Lock As New Mutex("com.thezaz.beacon")
 		  If Not Lock.TryEnter Then
-		    #if TargetWin32
+		    #If TargetWin32
 		      Dim StartTime As Double = Microseconds
 		      Dim PushSocket As New IPCSocket
 		      PushSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
@@ -71,25 +71,25 @@ Implements NotificationKit.Receiver
 		        Loop
 		        PushSocket.Close
 		      End If
-		    #endif
+		    #EndIf
 		    
 		    Quit
 		    Return
 		  Else
 		    Self.mMutex = Lock
-		    #if TargetWin32
+		    #If TargetWin32
 		      Self.mHandoffSocket = New IPCSocket
 		      Self.mHandoffSocket.Path = Self.ApplicationSupport.Child("ipc").NativePath
 		      AddHandler Self.mHandoffSocket.DataAvailable, WeakAddressOf Self.mHandoffSocket_DataAvailable
 		      AddHandler Self.mHandoffSocket.Error, WeakAddressOf Self.mHandoffSocket_Error
 		      Self.mHandoffSocket.Listen
-		    #endif
+		    #EndIf
 		  End If
 		  
-		  #if TargetMacOS
+		  #If TargetMacOS
 		    UntitledSeparator6.Visible = False
-		  #endif
-		  Self.RebuildRecentMenu()
+		  #EndIf
+		  Self.RebuildRecentMenu
 		  
 		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized)
 		  
@@ -110,13 +110,14 @@ Implements NotificationKit.Receiver
 		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_RequestUser)
 		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_CheckUpdates)
 		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_NewsletterPrompt)
-		  Self.NextLaunchQueueTask()
+		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_GettingStarted)
+		  Self.NextLaunchQueueTask
 		  
-		  #if TargetWin32
+		  #If TargetWin32
 		    Self.HandleCommandLineData(System.CommandLine, True)
-		  #endif
+		  #EndIf
 		  
-		  BeaconUI.RegisterSheetPositionHandler()
+		  BeaconUI.RegisterSheetPositionHandler
 		  
 		  Self.AutoQuit = True
 		End Sub
@@ -556,8 +557,22 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_GettingStarted()
+		  Dim Notification As New Beacon.UserNotification("How about a nice tutorial video?")
+		  Notification.SecondaryMessage = "Click here to watch a video for first-time users of Beacon, or just to get a better understanding of how loot works."
+		  Notification.ActionURL = Beacon.WebURL("/help/gettingstarted.php")
+		  Notification.DoNotResurrect = True
+		  
+		  LocalData.SharedInstance.SaveNotification(Notification)
+		  
+		  Self.NextLaunchQueueTask
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_NewsletterPrompt()
 		  If Preferences.HasShownSubscribeDialog Then
+		    Self.NextLaunchQueueTask
 		    Return
 		  End If
 		  
