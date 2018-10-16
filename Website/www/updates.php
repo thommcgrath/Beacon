@@ -15,17 +15,21 @@ if (isset($_GET['html'])) {
 	header('Content-Type: application/json');
 }
 
+$include_notices = $current_build > 33;
+
 $database = BeaconCommon::Database();
-$notices = array();
-if ($html_mode === false) {
-	$results = $database->Query('SELECT message, secondary_message, action_url FROM client_notices WHERE (min_version IS NULL OR min_version <= $1) AND (max_version IS NULL OR max_version >= $1) ORDER BY last_update DESC LIMIT 5;', $current_build);
-	while (!$results->EOF()) {
-		$notices[] = array(
-			'message' => $results->Field('message'),
-			'secondary_message' => $results->Field('secondary_message'),
-			'action_url' => $results->Field('action_url')
-		);
-		$results->MoveNext();
+if ($include_notices) {
+	$notices = array();
+	if ($html_mode === false) {
+		$results = $database->Query('SELECT message, secondary_message, action_url FROM client_notices WHERE (min_version IS NULL OR min_version <= $1) AND (max_version IS NULL OR max_version >= $1) ORDER BY last_update DESC LIMIT 5;', $current_build);
+		while (!$results->EOF()) {
+			$notices[] = array(
+				'message' => $results->Field('message'),
+				'secondary_message' => $results->Field('secondary_message'),
+				'action_url' => $results->Field('action_url')
+			);
+			$results->MoveNext();
+		}
 	}
 }
 
@@ -33,11 +37,13 @@ $results = $database->Query('SELECT * FROM updates WHERE build_number > $1 ORDER
 if ($results->RecordCount() == 0) {
 	if ($html_mode) {
 		echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Beacon Update</title></head><body><h1>No update</h1></body></html>';
-	} else {
+	} elseif ($include_notices) {
 		$values = array(
 			'notices' => $notices
 		);
 		echo json_encode($values, JSON_PRETTY_PRINT);
+	} else {
+		echo '{}';
 	}
 	exit;
 }
@@ -52,9 +58,11 @@ $values = array(
 	'win' => array(
 		'url' => $results->Field('win_url'),
 		'signature' => $results->Field('win_signature')
-	),
-	'notices' => $notices
+	)
 );
+if ($include_notices) {
+	$values['notices'] = $notices;
+}
 
 $markdown = '';
 while (!$results->EOF()) {

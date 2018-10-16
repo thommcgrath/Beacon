@@ -1,6 +1,7 @@
 <?php
 	
 header('Content-Type: application/json');
+header('Cache-Control: no-cache');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, DELETE, PUT');
 header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Authorization, Origin, Accept');

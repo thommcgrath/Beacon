@@ -13,7 +13,7 @@ $database = BeaconCommon::Database();
 
 switch ($method) {
 case 'GET':
-	if ($workshop_id === null) {
+	if (is_null($workshop_id)) {
 		$mods = BeaconMod::GetAll($user_id);
 		BeaconAPI::ReplySuccess($mods);
 	} else {

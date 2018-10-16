@@ -216,7 +216,7 @@ function SaveUser(array $values, string &$message) {
 	} else {
 		// wants to save an anonymous user
 		if (is_null($user) == false) {
-			$message = 'User ' . $user_id . 'already exists.';
+			$message = 'User ' . $user_id . ' already exists.';
 			return null;
 		}
 		if (array_key_exists('public_key', $values) == false) {
