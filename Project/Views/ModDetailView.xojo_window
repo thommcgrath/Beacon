@@ -46,7 +46,7 @@ Begin BeaconContainer ModDetailView
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   3
+      Value           =   1
       Visible         =   True
       Width           =   864
       Begin UITweaks.ResizedTextField ConfirmField
@@ -312,7 +312,7 @@ Begin BeaconContainer ModDetailView
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   False
-         Height          =   41
+         Height          =   40
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
@@ -433,6 +433,35 @@ Begin BeaconContainer ModDetailView
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+   End
+   Begin FadedSeparator HeaderSeparator
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   40
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   864
    End
 End
 #tag EndWindow

@@ -77,7 +77,7 @@ Begin BeaconSubview ModsView
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   41
-      Transparent     =   False
+      Transparent     =   True
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
@@ -93,7 +93,7 @@ Begin BeaconSubview ModsView
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   419
+      Height          =   379
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -108,7 +108,7 @@ Begin BeaconSubview ModsView
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   0
+      Top             =   40
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -152,7 +152,7 @@ Begin BeaconSubview ModsView
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      Height          =   41
+      Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -162,7 +162,7 @@ Begin BeaconSubview ModsView
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Resizer         =   ""
+      Resizer         =   "1"
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   0
@@ -173,6 +173,64 @@ Begin BeaconSubview ModsView
       UseFocusRing    =   True
       Visible         =   True
       Width           =   235
+   End
+   Begin FadedSeparator HeaderSeparator
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   40
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   235
+   End
+   Begin ControlCanvas DividerCap
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   40
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   235
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
    End
 End
 #tag EndWindow
@@ -318,9 +376,21 @@ End
 		  
 		  Me.Width = NewSize
 		  ModList.Width = NewSize
+		  HeaderSeparator.Width = NewSize
 		  Divider.Left = Me.Left + Me.Width
+		  DividerCap.Left = Me.Left + Me.Width
 		  ModView.Left = Divider.Left + Divider.Width
 		  ModView.Width = Self.Width - ModView.Left
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DividerCap
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
+		  Dim Icon As Picture = BeaconUI.IconWithColor(ImgToolbarDivider, SystemColors.SeparatorColor)
+		  G.DrawPicture(Icon, 0, 0)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
