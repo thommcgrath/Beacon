@@ -369,6 +369,7 @@ Implements Beacon.Countable
 		  Next
 		  
 		  Dim Dict As New Xojo.Core.Dictionary
+		  Dict.Value("Version") = 2
 		  Dict.Value("ID") = Self.PresetID
 		  Dict.Value("Label") = Self.Label
 		  Dict.Value("Grouping") = Self.Grouping
