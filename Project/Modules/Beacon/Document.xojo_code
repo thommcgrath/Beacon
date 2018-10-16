@@ -49,6 +49,7 @@ Implements Beacon.DocumentItem
 		  If Create Then
 		    Dim Group As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName)
 		    If Group <> Nil Then
+		      Group.IsImplicit = True
 		      Self.AddConfigGroup(Group)
 		    End If
 		    Return Group
@@ -62,6 +63,7 @@ Implements Beacon.DocumentItem
 		  Self.mMapCompatibility = Beacon.Maps.TheIsland.Mask
 		  Self.mConfigGroups = New Xojo.Core.Dictionary
 		  Self.AddConfigGroup(New BeaconConfigs.Difficulty)
+		  Self.Difficulty.IsImplicit = True
 		  Self.mModified = False
 		End Sub
 	#tag EndMethod
@@ -79,7 +81,8 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Difficulty() As BeaconConfigs.Difficulty
-		  Return BeaconConfigs.Difficulty(Self.ConfigGroup(BeaconConfigs.Difficulty.ConfigName, True))
+		  Static GroupName As Text = BeaconConfigs.Difficulty.ConfigName
+		  Return BeaconConfigs.Difficulty(Self.ConfigGroup(GroupName, True))
 		End Function
 	#tag EndMethod
 
@@ -91,7 +94,8 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Drops(Create As Boolean = False) As BeaconConfigs.LootDrops
-		  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(BeaconConfigs.LootDrops.ConfigName, Create)
+		  Static GroupName As Text = BeaconConfigs.LootDrops.ConfigName
+		  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(GroupName, Create)
 		  If Group <> Nil Then
 		    Return BeaconConfigs.LootDrops(Group)
 		  End If
@@ -419,6 +423,16 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Metadata(Create As Boolean = False) As BeaconConfigs.Metadata
+		  Static GroupName As Text = BeaconConfigs.Metadata.ConfigName
+		  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(GroupName, Create)
+		  If Group <> Nil Then
+		    Return BeaconConfigs.Metadata(Group)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Modified() As Boolean
 		  If Self.mModified Then
 		    Return True
@@ -729,16 +743,15 @@ Implements Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(BeaconConfigs.Metadata.ConfigName)
-			  If Group <> Nil Then
-			    Return BeaconConfigs.Metadata(Group).Description
+			  Dim Metadata As BeaconConfigs.Metadata = Self.Metadata
+			  If Metadata <> Nil Then
+			    Return Metadata.Description
 			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Metadata As BeaconConfigs.Metadata = BeaconConfigs.Metadata(Self.ConfigGroup(BeaconConfigs.Metadata.ConfigName, True))
-			  Metadata.Description = Value
+			  Self.Metadata(True).Description = Value
 			End Set
 		#tag EndSetter
 		Description As Text
@@ -761,16 +774,15 @@ Implements Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(BeaconConfigs.Metadata.ConfigName)
-			  If Group <> Nil Then
-			    Return BeaconConfigs.Metadata(Group).IsPublic
+			  Dim Metadata As BeaconConfigs.Metadata = Self.Metadata
+			  If Metadata <> Nil Then
+			    Return Metadata.IsPublic
 			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Metadata As BeaconConfigs.Metadata = BeaconConfigs.Metadata(Self.ConfigGroup(BeaconConfigs.Metadata.ConfigName, True))
-			  Metadata.IsPublic = Value
+			  Self.Metadata(True).IsPublic = Value
 			End Set
 		#tag EndSetter
 		IsPublic As Boolean
@@ -831,16 +843,15 @@ Implements Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Dim Group As Beacon.ConfigGroup = Self.ConfigGroup(BeaconConfigs.Metadata.ConfigName)
-			  If Group <> Nil Then
-			    Return BeaconConfigs.Metadata(Group).Title
+			  Dim Metadata As BeaconConfigs.Metadata = Self.Metadata
+			  If Metadata <> Nil Then
+			    Return Metadata.Title
 			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim Metadata As BeaconConfigs.Metadata = BeaconConfigs.Metadata(Self.ConfigGroup(BeaconConfigs.Metadata.ConfigName, True))
-			  Metadata.Title = Value
+			  Self.Metadata(True).Title = Value
 			End Set
 		#tag EndSetter
 		Title As Text

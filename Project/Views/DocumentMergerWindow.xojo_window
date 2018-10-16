@@ -215,8 +215,9 @@ End
 		    Dim Prefix As String = If(UsePrefixes, Document.Title + ": ", "")
 		    Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		    For Each Config As Beacon.ConfigGroup In Configs
+		      Dim CurrentConfig As Beacon.ConfigGroup = DestinationDocument.ConfigGroup(Config.ConfigName)
 		      Win.List.AddRow("", Prefix + Language.LabelForConfig(Config))
-		      Win.List.CellCheck(Win.List.LastIndex, 0) = UsePrefixes = False And Not DestinationDocument.HasConfigGroup(Config.ConfigName)
+		      Win.List.CellCheck(Win.List.LastIndex, 0) = UsePrefixes = False And (CurrentConfig = Nil Or CurrentConfig.IsImplicit)
 		      Win.List.RowTag(Win.List.LastIndex) = Config
 		      Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
 		    Next

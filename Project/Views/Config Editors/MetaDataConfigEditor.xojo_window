@@ -286,6 +286,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Document.Title = Trim(Me.Text).ToText
+		  Self.Document.Metadata.IsImplicit = False
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
 		End Sub
@@ -302,6 +303,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Document.Description = Trim(Me.Text).ToText
+		  Self.Document.Metadata.IsImplicit = False
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
 		End Sub
@@ -316,6 +318,7 @@ End
 		  
 		  Self.SettingUp = True
 		  Self.Document.IsPublic = Me.Value
+		  Self.Document.Metadata.IsImplicit = False
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
 		End Sub

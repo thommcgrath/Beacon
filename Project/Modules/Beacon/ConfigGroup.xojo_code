@@ -33,7 +33,8 @@ Protected Class ConfigGroup
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Xojo.Core.Dictionary)
-		  Self.Constructor()
+		  Self.Constructor
+		  Self.mIsImplicit = Source.Lookup("Implicit", False)
 		  RaiseEvent ReadDictionary(Source)
 		End Sub
 	#tag EndMethod
@@ -80,6 +81,7 @@ Protected Class ConfigGroup
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
+		  Dict.Value("Implicit") = Self.mIsImplicit
 		  RaiseEvent WriteDictionary(Dict)
 		  Return Dict
 		End Function
@@ -100,6 +102,27 @@ Protected Class ConfigGroup
 		Event WriteDictionary(Dict As Xojo.Core.DIctionary)
 	#tag EndHook
 
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mIsImplicit
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mIsImplicit <> Value Then
+			    Self.mIsImplicit = Value
+			    Self.mModified = True
+			  End If
+			End Set
+		#tag EndSetter
+		IsImplicit As Boolean
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private mIsImplicit As Boolean
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mModified As Boolean

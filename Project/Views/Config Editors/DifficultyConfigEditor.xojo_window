@@ -488,6 +488,7 @@ End
 		  
 		  If Self.Document.Difficulty.MaxDinoLevel <> Value Then
 		    Self.Document.Difficulty.MaxDinoLevel = Value
+		    Self.Document.Difficulty.IsImplicit = False
 		    Self.FillReferenceFields(Self.Document.Difficulty)
 		    Self.ContentsChanged = Self.Document.Modified
 		  End If

@@ -91,6 +91,7 @@ Implements Xojo.Core.Iterable
 		  Dim DifficultyConfig As BeaconConfigs.Difficulty = SourceDocument.Difficulty
 		  If DifficultyConfig = Nil Then
 		    DifficultyConfig = New BeaconConfigs.Difficulty
+		    DifficultyConfig.IsImplicit = True
 		  End If
 		  
 		  Dim Values() As Beacon.ConfigValue
