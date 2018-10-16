@@ -26,37 +26,6 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
    UseFocusRing    =   False
    Visible         =   True
    Width           =   808
-   Begin BeaconToolbar EmptyToolbar
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      Caption         =   "Welcome to Beacon"
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   41
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Resizer         =   ""
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   0
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   808
-   End
    Begin UITweaks.ResizedPushButton NewFileButton
       AutoDeactivate  =   True
       Bold            =   False
@@ -339,7 +308,7 @@ End
 		  Self.mMainGroup = New ControlGroup(LogoCanvas, TitleCanvas, VersionLabel, NewFileButton, OpenFileButton, SyncLabel, WebsiteLink)
 		  Self.mCopyrightGroup = New ControlGroup(CopyrightLabel)
 		  
-		  Self.MinHeight = EmptyToolbar.Height + Self.mMainGroup.Height + Self.mCopyrightGroup.Height + 60
+		  Self.MinHeight = Self.mMainGroup.Height + Self.mCopyrightGroup.Height + 100
 		  Self.MinWidth = Max(Self.mMainGroup.Width, Self.mCopyrightGroup.Width) + 40
 		  
 		  NotificationKit.Watch(Self, LocalData.Notification_DatabaseUpdated)
@@ -357,7 +326,7 @@ End
 		  End If
 		  
 		  If Self.mMainGroup <> Nil Then
-		    Dim AvailableTop As Integer = Self.EmptyToolbar.Top + Self.EmptyToolbar.Height + 20
+		    Dim AvailableTop As Integer = 60
 		    Dim AvailableBottom As Integer
 		    If Self.mCopyrightGroup <> Nil Then
 		      AvailableBottom = Self.mCopyrightGroup.Top - 20

@@ -32,15 +32,10 @@ Begin BeaconSubview EngramsManagerView Implements NotificationKit.Receiver
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "My Engrams"
-      CaptionEnabled  =   True
-      CaptionIsButton =   False
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
-      HasBottomBorder =   "True"
-      HasResizer      =   "False"
-      HasTopBorder    =   "False"
-      Height          =   41
+      Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -114,6 +109,35 @@ Begin BeaconSubview EngramsManagerView Implements NotificationKit.Receiver
       Width           =   594
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin FadedSeparator HeaderSeparator
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   40
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   594
    End
 End
 #tag EndWindow
@@ -398,6 +422,20 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="MinimumWidth"
+		Visible=true
+		Group="Behavior"
+		InitialValue="400"
+		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MinimumHeight"
+		Visible=true
+		Group="Behavior"
+		InitialValue="300"
+		Type="Integer"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="DoubleBuffer"
 		Visible=true

@@ -198,11 +198,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub ShowAPIGuide()
-		  Dim View As BeaconSubview = Self.View("APIGuideView")
-		  If View = Nil Then
-		    View = New APIGuideView
-		  End If
-		  Self.ShowView(View)
+		  ShowURL(BeaconAPI.URL)
 		End Sub
 	#tag EndMethod
 
