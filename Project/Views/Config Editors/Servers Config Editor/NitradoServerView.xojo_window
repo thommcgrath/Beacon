@@ -360,6 +360,10 @@ End
 		    Self.Controls.PowerButton.Toggled = Started
 		    Self.Controls.PowerButton.HelpTag = If(Started, "Stop the server.", "Start the server.")
 		  Catch Err As RuntimeException
+		    Self.Controls.PowerButton.Enabled = False
+		    Self.Controls.PowerButton.Toggled = False
+		    Self.Controls.PowerButton.HelpTag = "Server state unknown. Cannot start or stop."
+		    Self.ServerStatusField.Text = "Unknown"
 		  End Try
 		  
 		  Self.RefreshTimer.Mode = Timer.ModeSingle
