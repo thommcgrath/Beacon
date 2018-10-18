@@ -43,15 +43,17 @@ Source: "..\..\Artwork\BeaconDocument.ico"; DestDir: "{app}\Beacon Resources"; F
 Source: "..\..\Artwork\BeaconIdentity.ico"; DestDir: "{app}\Beacon Resources"; Flags: ignoreversion
 Source: "..\..\Artwork\BeaconPreset.ico"; DestDir: "{app}\Beacon Resources"; Flags: ignoreversion
 Source: "Files\VC_redist.x64.exe"; DestDir: "{tmp}"
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "Files\windows6.1-kb3140245-x64.msu"; DestDir: "{tmp}"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
 
 [Registry]
-Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; Flags: createvalueifdoesntexist; OnlyBelowVersion: 6.3
-Root: HKLM; Subkey: "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; Flags: createvalueifdoesntexist; OnlyBelowVersion: 6.3
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; OnlyBelowVersion: 6.2
+Root: HKLM; Subkey: "SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp"; ValueType: dword; ValueName: "DefaultSecureProtocols"; ValueData: 2560; OnlyBelowVersion: 6.2
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Client"; ValueType: dword; ValueName: "DisabledByDefault"; ValueData: 0; OnlyBelowVersion: 6.2
+Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client"; ValueType: dword; ValueName: "DisabledByDefault"; ValueData: 0; OnlyBelowVersion: 6.2
 
 Root: HKCR; Subkey: ".beacon"; ValueData: "BeaconDocument"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "BeaconDocument"; ValueData: "{#MyAppName} Document"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
@@ -76,3 +78,40 @@ Root: HKCR; Subkey: "beacon\shell\open\command"; ValueType: "string"; ValueData:
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 64-bit runtime..."; Flags: waituntilterminated
+Filename: "wusa.exe"; Parameters: "{tmp}\windows6.1-kb3140245-x64.msu /quiet /norestart"; StatusMsg: "Installing KB3140245..."; Flags: waituntilterminated; OnlyBelowVersion: 6.2; Check: IsKBNeeded('KB3140245')
+
+[Code]
+var
+  RestartRequired: Boolean;
+
+function IsKBNeeded(KB: string): Boolean;
+var
+  WbemLocator: Variant;
+  WbemServices: Variant;
+  WQLQuery: string;
+  WbemObjectSet: Variant;
+begin
+  WbemLocator := CreateOleObject('WbemScripting.SWbemLocator');
+  WbemServices := WbemLocator.ConnectServer('', 'root\CIMV2');
+
+  WQLQuery := 'select * from Win32_QuickFixEngineering where HotFixID = ''' + KB + '''';
+
+  WbemObjectSet := WbemServices.ExecQuery(WQLQuery);
+  Result := (VarIsNull(WbemObjectSet)) or (WbemObjectSet.Count = 0);
+end;
+
+function InitializeSetup(): Boolean;
+begin
+  RestartRequired := IsKBNeeded('KB3140245');
+  Result := True;
+  if RestartRequired then begin
+	  if not MsgBox('A restart will be required when finished. Continue?', mbConfirmation, MB_YESNO) = IDYES then begin
+	    Result := False;
+	  end;
+  end;
+end;
+
+function NeedRestart(): Boolean;
+begin
+  Result := RestartRequired;
+end;
