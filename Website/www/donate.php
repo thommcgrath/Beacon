@@ -40,7 +40,7 @@ BeaconTemplate::AddHeaderLine('<script src="https://checkout.stripe.com/checkout
 BeaconTemplate::SetTitle('Make a Donation');
 
 ?><h1>Make a Donation</h1>
-<p>Three options for supporting the project:</p>
+<p>Five options for supporting the project:</p>
 <div class="triple_column">
 	<div class="column text-center">
 		<p><a href="https://www.patreon.com/thommcgrath"><img src="/assets/images/patreon-color.svg" height="50"></a></p>
@@ -49,7 +49,8 @@ BeaconTemplate::SetTitle('Make a Donation');
 	</div>
 	<div class="column text-center">
 		<p><img src="/assets/images/stripe-color.svg" height="50"></p><p>Make a fast and easy one-time donation of any amount using a credit card.</p>
-		<p><input id="stripe_amount_field" type="text" placeholder="Amount" name="amount"><br><button id="stripe_donate_button">Make a Donation</button></p>
+		<p><input id="stripe_amount_field" type="text" placeholder="Amount" name="amount"></p>
+		<p><button id="stripe_donate_button">Make a Donation</button></p>
 		<form id="stripe_checkout_form" action="" method="POST">
 			<input type="hidden" name="stripe_key" id="stripe_public_key" value="<?php echo BeaconCommon::GetGlobal('Stripe_Public_Key'); ?>">
 			<input type="hidden" name="token" id="stripe_token_field" value="">
@@ -61,5 +62,17 @@ BeaconTemplate::SetTitle('Make a Donation');
 		<p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZX4EE4YTSP9LS"><img src="/assets/images/paypal-color.svg" height="50"></a></p>
 		<p>Make a one-time or monthly donation of any amount using a PayPal account or credit card.</p>
 		<p><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZX4EE4YTSP9LS" class="button">Make a Donation</a></p>
+	</div>
+</div>
+<div class="double_column smaller">
+	<div class="column text-center">
+		<p>Donate Bitcoin</p>
+		<p><img src="/assets/images/qr_btc.svg" width="100" height="100"></p>
+		<p>3LCGQrM16ezQCcGYtuSzh2UbXBBjwXv9Pd</p>
+	</div>
+	<div class="column text-center">
+		<p>Donate Ethereum</p>
+		<p><img src="/assets/images/qr_eth.svg" width="100" height="100"></p>
+		<p>0xcfd3f54019123def95e664d7b3810cb6e6119330</p>
 	</div>
 </div>

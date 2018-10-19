@@ -924,8 +924,9 @@ div.article + div.article {
 	padding-top: 1.6em;
 }
 
-/* !Triple Column */
+/* !Double Column & Triple Column */
 
+div.double_column,
 div.triple_column {
 	display: table;
 	width: 100%;
@@ -933,6 +934,7 @@ div.triple_column {
 	border-collapse: separate;
 }
 
+div.double_column div.column,
 div.triple_column div.column {
 	display: table-row;
 	width: 100%;
@@ -1110,6 +1112,11 @@ div.triple_column div.column {
 	
 	#main {
 		padding: 15px;
+	}
+	
+	div.double_column div.column {
+		display: table-cell;
+		width: 50%;
 	}
 	
 	div.triple_column div.column {
