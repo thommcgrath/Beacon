@@ -57,7 +57,7 @@ Private Class NSColor
 
 	#tag Method, Flags = &h0
 		Shared Function GetSystemColor(SelectorName As String) As SystemColors.NSColor
-		  #if TargetMacOS
+		  #If TargetMacOS
 		    Dim NSColor As Ptr = objc_getClass("NSColor")
 		    
 		    If Not RespondsToSelector(NSColor, NSSelectorFromString(SelectorName)) Then
@@ -199,6 +199,12 @@ Private Class NSColor
 		    Case "systemYellowColor"
 		      Declare Function systemYellowColor Lib CocoaLib Selector "systemYellowColor" (Target As Ptr) As Ptr
 		      Handle = systemYellowColor(NSColor)
+		    Case "alternateSelectedControlColor"
+		      Declare Function alternateSelectedControlColor Lib CocoaLib Selector "alternateSelectedControlColor" (Target As Ptr) As Ptr
+		      Handle = alternateSelectedControlColor(NSColor)
+		    Case "secondarySelectedControlColor"
+		      Declare Function secondarySelectedControlColor Lib CocoaLib Selector "secondarySelectedControlColor" (Target As Ptr) As Ptr
+		      Handle = secondarySelectedControlColor(NSColor)
 		    End Select
 		    
 		    If Handle = Nil Then
