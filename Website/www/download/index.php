@@ -19,7 +19,7 @@ define('MODE_NA', 0);
 define('MODE_MAC', 1);
 define('MODE_WIN', 2);
 
-$mac_label = 'Download for macOS 10.9.5+';
+$mac_label = 'Download for macOS 10.10+';
 $win_label = 'Download for Windows 7 SP1+';
 
 $mode = MODE_NA;
