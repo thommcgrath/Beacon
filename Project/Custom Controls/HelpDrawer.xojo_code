@@ -116,9 +116,9 @@ Inherits ControlCanvas
 		    Dim CaptionLeft As Double = ButtonLeft + 20
 		    Dim CaptionBaseline As Double = ButtonTop + ((ButtonHeight / 2) + (Clip.CapHeight / 2))
 		    
-		    Clip.ForeColor = SystemColors.ControlColor
+		    Clip.ForeColor = SystemColors.ControlTextColor.AtOpacity(0.1)
 		    Clip.FillRoundRect(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight, 6, 6)
-		    Clip.ForeColor = SystemColors.GridColor
+		    Clip.ForeColor = SystemColors.ControlTextColor.AtOpacity(0.5)
 		    Clip.DrawRoundRect(ButtonLeft, ButtonTop, ButtonWidth, ButtonHeight, 6, 6)
 		    Clip.ForeColor = SystemColors.ControlTextColor
 		    Clip.DrawString("More Details", CaptionLeft, CaptionBaseline)
