@@ -400,7 +400,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub HandleCommandLineData(Data As String, URLOnly As Boolean)
-		  Dim Char, BreakChar, Arg as string
+		  Dim Char, BreakChar, Arg As String
 		  Dim Args() As String
 		  
 		  BreakChar = " "
@@ -552,7 +552,11 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_CheckUpdates()
-		  Self.CheckForUpdates(True)
+		  If Preferences.OnlineEnabled Then
+		    Self.CheckForUpdates(True)
+		  Else
+		    Self.NextLaunchQueueTask()
+		  End If
 		End Sub
 	#tag EndMethod
 

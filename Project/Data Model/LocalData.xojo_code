@@ -1002,18 +1002,19 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Self.BeginTransaction()
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT deleted FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT deleted, read FROM notifications WHERE notification_id = ?1;", Notification.Identifier)
 		  Dim Deleted As Boolean = Results.RecordCount = 1 And Results.Field("deleted").BooleanValue = True
-		  If Deleted And Notification.DoNotResurrect Then
-		    Self.Rollback()
+		  Dim Read As Boolean = Results.RecordCount = 1 And Results.Field("read").BooleanValue
+		  If Notification.DoNotResurrect And (Deleted Or Read)  Then
+		    Self.Rollback
 		    Return
 		  End If
 		  
-		  Dim IsNew As Boolean = Results.RecordCount = 0 Or Deleted
+		  Dim Notify As Boolean = Results.RecordCount = 0 Or Deleted Or Read
 		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.ToText, If(Notification.Read, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Xojo.Data.GenerateJSON(Notification.UserData), "{}"))
-		  Self.Commit()
+		  Self.Commit
 		  
-		  If IsNew Then
+		  If Notify Then
 		    NotificationKit.Post(Self.Notification_NewAppNotification, Notification)
 		  End If
 		End Sub
