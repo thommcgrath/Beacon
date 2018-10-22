@@ -138,17 +138,7 @@ Implements NotificationKit.Receiver
 		  If File.IsType(BeaconFileTypes.JsonFile) Then
 		    Try
 		      Dim Content As Text = File.Read(Xojo.Core.TextEncoding.UTF8)
-		      
-		      If LocalData.SharedInstance.Import(Content) Then
-		        Dim LastSync As Xojo.Core.Date = LocalData.SharedInstance.LastSync
-		        
-		        Dim Dialog As New MessageDialog
-		        Dialog.Title = ""
-		        Dialog.Message = "Engram database has been updated"
-		        Dialog.Explanation = "Engrams, loot sources, and presets are now current as of " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC."
-		        Call Dialog.ShowModal
-		        Return
-		      End If
+		      LocalData.SharedInstance.Import(Content)
 		    Catch Err As RuntimeException
 		      
 		    End Try
@@ -365,15 +355,11 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub CheckForUpdates(Silent As Boolean)
-		  If Preferences.OnlineEnabled = False Then
-		    If Not Silent Then
-		      Dim WelcomeWindow As New UserWelcomeWindow
-		      WelcomeWindow.ShowModal()
-		    End If
-		    Return
-		  End If
-		  
 		  If Silent Then
+		    If Not Preferences.OnlineEnabled Then
+		      Return
+		    End If
+		    
 		    If Self.mUpdateChecker = Nil Then
 		      Self.mUpdateChecker = New UpdateChecker
 		      AddHandler Self.mUpdateChecker.UpdateAvailable, WeakAddressOf Self.mUpdateChecker_UpdateAvailable
@@ -382,9 +368,24 @@ Implements NotificationKit.Receiver
 		    
 		    Self.mUpdateChecker.Check(False)
 		  Else
-		    UpdateWindow.Present()
+		    If Self.GetOnlinePermission() Then
+		      UpdateWindow.Present()
+		    End If
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function GetOnlinePermission() As Boolean
+		  If Self.mIdentity <> Nil And Preferences.OnlineEnabled Then
+		    Return True
+		  End If
+		  
+		  Dim WelcomeWindow As New UserWelcomeWindow
+		  WelcomeWindow.ShowModal()
+		  
+		  Return Preferences.OnlineEnabled
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -500,6 +501,11 @@ Implements NotificationKit.Receiver
 		      SubscribeDialog.Present()
 		    Case "checkforupdate"
 		      Self.CheckForUpdates(False)
+		    Case "checkforengrams"
+		      If Self.GetOnlinePermission() Then
+		        EngramsUpdateWindow.ShowIfNecessary()
+		        LocalData.SharedInstance.CheckForEngramUpdates
+		      End If
 		    Else
 		      Break
 		    End Select

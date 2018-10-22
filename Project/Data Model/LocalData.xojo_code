@@ -402,7 +402,22 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Import(Content As Text) As Boolean
+		Sub Import(Content As Text)
+		  Self.mPendingImports.Append(Content)
+		  
+		  If Self.mImportThread = Nil Then
+		    Self.mImportThread = New Thread
+		    AddHandler Self.mImportThread.Run, WeakAddressOf Self.mImportThread_Run
+		  End If
+		  
+		  If Self.mImportThread.State = Thread.NotRunning Then
+		    Self.mImportThread.Run
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ImportInner(Content As Text) As Boolean
 		  Dim ChangeDict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content)
 		  
 		  Dim RequiredKeys() As Text = Array("mods", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
@@ -598,8 +613,6 @@ Implements Beacon.DataSource
 		      Self.LoadPresets()
 		    End If
 		    
-		    NotificationKit.Post(Self.Notification_DatabaseUpdated, Self.LastSync)
-		    
 		    App.Log("Imported classes. Engrams date is " + PayloadTimestamp.ToText())
 		    
 		    Return True
@@ -622,7 +635,7 @@ Implements Beacon.DataSource
 		    Dim Content As String = Stream.ReadAll(Encodings.UTF8)
 		    Stream.Close
 		    
-		    Call Self.Import(Content.ToText)
+		    Self.Import(Content.ToText)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -804,10 +817,41 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub mImportThread_Run(Sender As Thread)
+		  #Pragma Unused Sender
+		  
+		  If Self.mPendingImports.Ubound = -1 Then
+		    Return
+		  End If
+		  
+		  Dim SyncOriginal As Xojo.Core.Date = Self.LastSync
+		  Dim Success As Boolean
+		  For I As Integer = 0 To Self.mPendingImports.Ubound
+		    Dim Content As Text = Self.mPendingImports(I)
+		    Self.mPendingImports.Remove(I)
+		    
+		    Success = Self.ImportInner(Content) Or Success
+		  Next
+		  Dim SyncNew As Xojo.Core.Date = Self.LastSync
+		  
+		  If SyncOriginal <> SyncNew Then
+		    NotificationKit.Post(Self.Notification_DatabaseUpdated, SyncNew)
+		  End If
+		  
+		  If Success Then
+		    NotificationKit.Post(Self.Notification_ImportSuccess, SyncNew)
+		  Else
+		    NotificationKit.Post(Self.Notification_ImportFailed, SyncNew)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mUpdater_Error(Sender As Xojo.Net.HTTPSocket, Error As RuntimeException)
 		  #Pragma Unused Sender
 		  
 		  App.Log("Engram check error: " + Error.Reason)
+		  NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
 		End Sub
 	#tag EndMethod
 
@@ -818,6 +862,7 @@ Implements Beacon.DataSource
 		  
 		  If HTTPStatus <> 200 Then
 		    App.Log("Engram update returned HTTP " + Str(HTTPStatus, "-0"))
+		    NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
 		    Return
 		  End If
 		  
@@ -827,10 +872,11 @@ Implements Beacon.DataSource
 		  
 		  If ComputedHash <> ExpectedHash Then
 		    App.Log("Engram update hash mismatch. Expected " + ExpectedHash + ", computed " + ComputedHash + ".")
+		    NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
 		    Return
 		  End If
 		  
-		  Call Self.Import(TextContent)
+		  Self.Import(TextContent)
 		End Sub
 	#tag EndMethod
 
@@ -1126,7 +1172,9 @@ Implements Beacon.DataSource
 		    If Results.Field("source_count").IntegerValue = 0 Then
 		      mInstance.ImportLocalClasses()
 		    End If
-		    mInstance.CheckForEngramUpdates()
+		    If Preferences.OnlineEnabled Then
+		      mInstance.CheckForEngramUpdates()
+		    End If
 		  End If
 		  Return mInstance
 		End Function
@@ -1308,11 +1356,19 @@ Implements Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mImportThread As Thread
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private Shared mInstance As LocalData
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mLock As CriticalSection
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPendingImports() As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1332,6 +1388,12 @@ Implements Beacon.DataSource
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_DatabaseUpdated, Type = Text, Dynamic = False, Default = \"Database Updated", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_ImportFailed, Type = Text, Dynamic = False, Default = \"Import Failed", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_ImportSuccess, Type = Text, Dynamic = False, Default = \"Import Success", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_NewAppNotification, Type = Text, Dynamic = False, Default = \"New App Notification", Scope = Public

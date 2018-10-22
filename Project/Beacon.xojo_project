@@ -284,6 +284,7 @@ Window=FTPServerView;Views/Config Editors/Servers Config Editor/FTPServerView.xo
 MultiImage=IconToolbarIssues;Icons/IconToolbarIssues.xojo_image;&h0000000071B90FFF;&h0000000007F977FF;false
 Class=Issue;Modules/Beacon/Issue.xojo_code;&h00000000770437FF;&h0000000055ADDFFF;false
 Window=ExceptionWindow;Views/ExceptionWindow.xojo_window;&h00000000202847FF;&h0000000008A387FF;false
+Window=EngramsUpdateWindow;Views/EngramsUpdateWindow.xojo_window;&h00000000625DF7FF;&h0000000008A387FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

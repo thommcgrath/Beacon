@@ -95,7 +95,8 @@ End
 	#tag Method, Flags = &h1
 		Protected Sub RebuildMenu()
 		  Dim Links() As Pair
-		  Links.Append("Check for Updates" : "beacon://checkforupdates")
+		  Links.Append("Check for Updates" : "beacon://action/checkforupdate")
+		  Links.Append("Update Engrams" : "beacon://action/checkforengrams")
 		  Links.Append("Release Notes" : "beacon://releasenotes")
 		  Links.Append(Nil)
 		  
@@ -180,8 +181,6 @@ End
 		  Dim URL As String = Self.Labels(Index).URL
 		  
 		  Select Case URL
-		  Case "beacon://checkforupdates"
-		    App.CheckForUpdates(False)
 		  Case "beacon://releasenotes"
 		    App.ShowReleaseNotes()
 		  Case "beacon://enableonline"
@@ -239,11 +238,6 @@ End
 		Group="Behavior"
 		Type="String"
 		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarIcon"
-		Group="Behavior"
-		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
