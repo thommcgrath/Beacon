@@ -143,7 +143,7 @@ BEGIN
 			DELETE FROM mods WHERE workshop_id = NEW.workshop_id AND mod_id != NEW.mod_id;
 		END IF;
 	END IF;
-	
+
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -427,3 +427,30 @@ CREATE TABLE client_notices (
 );
 GRANT SELECT ON TABLE client_notices TO thezaz_website;
 -- End Client Notices
+
+-- Exception Reporting
+CREATE TABLE exceptions (
+	exception_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+	exception_hash HEX NOT NULL,
+	exception_type CITEXT NOT NULL CHECK (TRIM(both FROM exception_type) != ''),
+	build INTEGER NOT NULL CHECK (build >= 34),
+	reason CITEXT NOT NULL,
+	location CITEXT NOT NULL,
+	trace CITEXT NOT NULL,
+	solution_details TEXT,
+	solution_min_build INTEGER,
+	CHECK((solution_details IS NULL AND solution_min_build IS NULL) OR (solution_details IS NOT NULL AND solution_min_build >= 34))
+);
+GRANT SELECT, INSERT ON exceptions TO thezaz_website;
+CREATE UNIQUE INDEX exceptions_exception_hash_build_uidx ON exceptions (exception_hash, build);
+
+CREATE TABLE exception_comments (
+	comment_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+	exception_hash HEX NOT NULL,
+	build INTEGER NOT NULL,
+	comments TEXT NOT NULL,
+	date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (exception_hash, build) REFERENCES exceptions (exception_hash, build) ON DELETE CASCADE ON UPDATE CASCADE
+);
+GRANT INSERT ON exception_comments TO thezaz_website;
+-- End Exception Reporting

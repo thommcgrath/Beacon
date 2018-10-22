@@ -188,20 +188,9 @@ Implements NotificationKit.Receiver
 
 	#tag Event
 		Function UnhandledException(error As RuntimeException) As Boolean
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Error)
-		  Dim Stack() As Xojo.Core.StackFrame = Error.CallStack
-		  Dim Location As String = "Unknown"
-		  If UBound(Stack) >= 0 Then
-		    Location = Stack(0).Name
-		  End If
-		  Dim Reason As String = Error.Reason
-		  If Reason = "" Then
-		    Reason = Error.Message
-		  End If
+		  Self.HandleException(Error)
 		  
-		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": " + Reason)
-		  
-		  Return False
+		  Return True
 		End Function
 	#tag EndEvent
 
@@ -439,6 +428,40 @@ Implements NotificationKit.Receiver
 		        Self.OpenDocument(File)
 		      End If
 		    End If
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub HandleException(Error As RuntimeException)
+		  If Error IsA EndException Then
+		    Return
+		  End If
+		  
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Error)
+		  Dim Stack() As Xojo.Core.StackFrame = Error.CallStack
+		  Dim Location As String = "Unknown"
+		  If UBound(Stack) >= 0 Then
+		    Location = Stack(0).Name
+		  End If
+		  Dim Reason As String = Error.Reason
+		  If Reason = "" Then
+		    Reason = Error.Message
+		  End If
+		  
+		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": " + Reason)
+		  
+		  Dim Dict As New Xojo.Core.Dictionary
+		  Dict.Value("Object") = Error
+		  Dict.Value("Reason") = Error.Explanation
+		  Dict.Value("Location") = Location.ToText
+		  Dict.Value("Type") = Info.FullName
+		  Dict.Value("Trace") = Error.CallStack
+		  
+		  If Self.CurrentThread = Nil Then
+		    Self.PresentException(Dict)
+		  Else
+		    Xojo.Core.Timer.CallLater(1, AddressOf PresentException, Dict)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -756,6 +779,12 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub PresentException(Details As Auto)
+		  ExceptionWindow.Present(Details)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub RebuildRecentMenu()
 		  While FileOpenRecent.Count > 0
 		    FileOpenRecent.Remove(0)
@@ -831,8 +860,13 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowBugReporter()
-		  ShowURL(Beacon.WebURL("/reportaproblem.php"))
+		Sub ShowBugReporter(ExceptionHash As Text = "")
+		  Dim Path As Text = "/reportaproblem.php?build=" + Self.NonReleaseVersion.ToText
+		  If ExceptionHash <> "" Then
+		    Path = Path + "&exception=" + ExceptionHash
+		  End If
+		  
+		  ShowURL(Beacon.WebURL(Path))
 		End Sub
 	#tag EndMethod
 

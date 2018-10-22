@@ -283,6 +283,7 @@ MultiImage=IconToolbarPower;Icons/IconToolbarPower.xojo_image;&h000000002B09C7FF
 Window=FTPServerView;Views/Config Editors/Servers Config Editor/FTPServerView.xojo_window;&h00000000408ED7FF;&h000000002E7F7FFF;false
 MultiImage=IconToolbarIssues;Icons/IconToolbarIssues.xojo_image;&h0000000071B90FFF;&h0000000007F977FF;false
 Class=Issue;Modules/Beacon/Issue.xojo_code;&h00000000770437FF;&h0000000055ADDFFF;false
+Window=ExceptionWindow;Views/ExceptionWindow.xojo_window;&h00000000202847FF;&h0000000008A387FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

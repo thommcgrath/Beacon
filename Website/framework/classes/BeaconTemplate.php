@@ -75,7 +75,26 @@ abstract class BeaconTemplate {
 			self::$header_lines[] = $line;
 		}
 		self::$header_lines[] = '</script>';
+	}
+	
+	public static function StartStyles() {
+		ob_start();
+	}
+	
+	public static function FinishStyles() {
+		$content = trim(ob_get_contents());
+		ob_end_clean();
 		
+		$lines = explode("\n", $content);
+		self::$header_lines[] = '<style type="text/css" nonce="' . $_SERVER['CSP_NONCE'] . '">';
+		foreach ($lines as $line) {
+			if (substr($line, 0, 7) == '<style ' || substr($line, 0, 7) == '<style>' || $line == '</style>') {
+				continue;
+			}
+			
+			self::$header_lines[] = $line;
+		}
+		self::$header_lines[] = '</style>';
 	}
 	
 	public static function IsHTML() {
