@@ -16,11 +16,8 @@ case 'GET':
 			exit;
 		}
 		
-		if (is_null($results->Field('solution_details'))) {
-			$title = 'Unhandled Error ' . substr($exception_hash, 0, 6) . ' in build ' . $build;
-			$body = 'Error ID: ' . $exception_hash . "\n\n";
-			$github_url = 'https://github.com/thommcgrath/Beacon/issues/new?title=' . urlencode($title) . '&body=' . urlencode($body);
-			
+		$force_view = isset($_GET['action']) && strtolower($_GET['action']) == 'view';
+		if (is_null($results->Field('solution_details')) && $force_view == false) {
 			BeaconTemplate::StartStyles();
 			?><style type="text/css">
 			
@@ -58,61 +55,67 @@ case 'GET':
 			exit;
 		}
 		
+		$details_only = is_null($results->Field('solution_details'));
+		
 		echo '<h1>Error Report</h1>';
-		echo '<h2>Solution</h2>';
-		if (intval($results->Field('solution_min_build')) > $build) {
-			$build_details = $database->Query('SELECT build_display, mac_url, win_url FROM updates WHERE build_number = $1;', $results->Field('solution_min_build'));
-			if ($build_details->RecordCount() == 1) {
-				$url = BeaconCommon::IsMacOS() ? $build_details->Field('mac_url') : $build_details->Field('win_url');
-				echo '<p>Update to <a href="' . htmlentities($url) . '">Beacon ' . htmlentities($build_details->Field('build_display')) . '</a> to fix this problem.</p>';
-			} else {
-				echo '<p>This problem will be resolved in a future update.</p>';
+		if ($details_only == false) {
+			echo '<h2>Solution</h2>';
+			if (intval($results->Field('solution_min_build')) > $build) {
+				$build_details = $database->Query('SELECT build_display, mac_url, win_url FROM updates WHERE build_number = $1;', $results->Field('solution_min_build'));
+				if ($build_details->RecordCount() == 1) {
+					$url = BeaconCommon::IsMacOS() ? $build_details->Field('mac_url') : $build_details->Field('win_url');
+					echo '<p>Update to <a href="' . htmlentities($url) . '">Beacon ' . htmlentities($build_details->Field('build_display')) . '</a> to fix this problem.</p>';
+				} else {
+					echo '<p>This problem will be resolved in a future update.</p>';
+				}
 			}
-		}
-		
-		$parser = new Parsedown();
-		$html = $parser->text($results->Field('solution_details'));
-		$html = str_replace('<table>', '<table class="generic">', $html);
-		echo $html;
-		
-		BeaconTemplate::StartScript();
-		?><script>
-		
-		document.addEventListener('DOMContentLoaded', function() {
-			var link = document.getElementById('show_technical_details');
-			link.addEventListener('click', function(event) {
-				event.preventDefault();
-				
-				link.style.display = 'none';
-				document.getElementById('technical_details').style.display = 'block';
-				
-				return false;
+			
+			$parser = new Parsedown();
+			$html = $parser->text($results->Field('solution_details'));
+			$html = str_replace('<table>', '<table class="generic">', $html);
+			echo $html;
+			
+			BeaconTemplate::StartScript();
+			?><script>
+			
+			document.addEventListener('DOMContentLoaded', function() {
+				var link = document.getElementById('show_technical_details');
+				link.addEventListener('click', function(event) {
+					event.preventDefault();
+					
+					link.style.display = 'none';
+					document.getElementById('technical_details').style.display = 'block';
+					
+					return false;
+				});
 			});
-		});
-		
-		</script><?php
-		BeaconTemplate::FinishScript();
-		BeaconTemplate::StartStyles();
-		?><style>
-		
-		#technical_details {
-			border: 1px solid rgba(0, 0, 0, 0.1);
-			background-color: rgba(255, 255, 255, 0.1);
-			padding: 20px;
-			font-size: smaller;
-			display: none;
+			
+			</script><?php
+			BeaconTemplate::FinishScript();
+			
+			BeaconTemplate::StartStyles();
+			?><style>
+			
+			#technical_details {
+				border: 1px solid rgba(0, 0, 0, 0.1);
+				background-color: rgba(255, 255, 255, 0.1);
+				padding: 20px;
+				font-size: smaller;
+				display: none;
+			}
+			
+			#show_technical_details {
+				font-size: smaller;
+			}
+			
+			</style><?php
+			BeaconTemplate::FinishStyles();
+			
+			echo '<p><a href="" id="show_technical_details">Show Technical Details</a></p>';
+			echo '<div id="technical_details">';
 		}
 		
-		#show_technical_details {
-			font-size: smaller;
-		}
-		
-		</style><?php
-		BeaconTemplate::FinishStyles();
-		
-		echo '<p><a href="" id="show_technical_details">Show Technical Details</a></p>';
-		echo '<div id="technical_details">';
-		echo '<h3>Technical Details</h3>';
+		echo '<h2>Technical Details</h2>';
 		echo '<p><strong>Type</strong>: ' . htmlentities($results->Field('exception_type')) . '<br>';
 		echo '<strong>Location</strong>: ' . htmlentities($results->Field('location')) . '<br>';
 		echo '<strong>Reason</strong>: ' . htmlentities($results->Field('reason')) . '</p>';
@@ -123,7 +126,10 @@ case 'GET':
 			echo '<li>' . htmlentities($line) . '</li>';
 		}
 		echo '</ol>';
-		echo '</div>';
+		
+		if ($details_only == false) {
+			echo '</div>';
+		}
 	} else {
 		BeaconCommon::Redirect('https://github.com/thommcgrath/Beacon/issues', true);
 	}
@@ -139,6 +145,25 @@ case 'POST':
 			$database->BeginTransaction();
 			$database->Query('INSERT INTO exception_comments (exception_hash, build, comments) VALUES ($1, $2, $3);', $hash, $build, $comments);
 			$database->Commit();
+			
+			$details_url = BeaconCommon::AbsoluteURL('/' . basename(__FILE__) . '?exception=' . urlencode($hash) . '&build=' . urlencode($build) . '&action=view');
+			$arr = array(
+				'attachments' => array(
+					array(
+						'title' => 'New exception comment',
+						'text' => $comments,
+						'actions' => array(
+							array(
+								'type' => 'button',
+								'text' => 'View Exception',
+								'url' => $details_url
+							)
+						)
+					)
+				)
+			);
+			
+			BeaconCommon::PostSlackRaw(json_encode($arr));
 		} catch (Exception $e) {
 			// Likely some sort of tomfoolery, just pretend all is well.
 		}
@@ -193,6 +218,26 @@ case 'POST':
 		$database->BeginTransaction();
 		$database->Query('INSERT INTO exceptions (exception_hash, build, exception_type, location, reason, trace) VALUES ($1, $2, $3, $4, $5, $6);', $hash, $build, $type, $location, $reason, $trace);
 		$database->Commit();
+		
+		$details_url = BeaconCommon::AbsoluteURL('/' . basename(__FILE__) . '?exception=' . urlencode($hash) . '&build=' . urlencode($build) . '&action=view');
+		
+		$arr = array(
+			'attachments' => array(
+				array(
+					'title' => 'New ' . $type . ' in ' . $location . ' reported',
+					'text' => $reason,
+					'actions' => array(
+						array(
+							'type' => 'button',
+							'text' => 'View Details',
+							'url' => $details_url
+						)
+					)
+				)
+			)
+		);
+		
+		BeaconCommon::PostSlackRaw(json_encode($arr));
 	}
 	
 	if ($results->RecordCount() == 0 || is_null($results->Field('solution_min_build'))) {
