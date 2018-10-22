@@ -676,6 +676,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Reporter_Callback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
 		  If Status <> 200 Then
 		    Self.Pages.Value = Self.PageNoSolution
 		    Return
