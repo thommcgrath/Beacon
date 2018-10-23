@@ -6,6 +6,7 @@
 #define MyAppPublisher "The ZAZ Studios"
 #define MyAppURL "https://beaconapp.cc/"
 #define MyAppExeName "Beacon.exe"
+#define MyAppResources "Beacon Resources"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -38,10 +39,10 @@ Type: filesandordirs; Name: "{pf32}\Beacon";
 
 [Files]
 Source: "..\..\Project\Builds - Beacon.xojo_project\Windows 64 bit\Beacon\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\Project\Builds - Beacon.xojo_project\OS X 64 bit\Beacon.app\Contents\Resources\Classes.json"; DestDir: "{app}\Beacon Resources"; Flags: ignoreversion
-Source: "..\..\Artwork\BeaconDocument.ico"; DestDir: "{app}\Beacon Resources"; Flags: ignoreversion
-Source: "..\..\Artwork\BeaconIdentity.ico"; DestDir: "{app}\Beacon Resources"; Flags: ignoreversion
-Source: "..\..\Artwork\BeaconPreset.ico"; DestDir: "{app}\Beacon Resources"; Flags: ignoreversion
+Source: "..\..\Project\Builds - Beacon.xojo_project\OS X 64 bit\Beacon.app\Contents\Resources\Classes.json"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
+Source: "..\..\Artwork\BeaconDocument.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
+Source: "..\..\Artwork\BeaconIdentity.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
+Source: "..\..\Artwork\BeaconPreset.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 Source: "Files\VC_redist.x64.exe"; DestDir: "{tmp}"
 Source: "Files\windows6.1-kb3140245-x64.msu"; DestDir: "{tmp}"
 
@@ -57,17 +58,17 @@ Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL
 
 Root: HKCR; Subkey: ".beacon"; ValueData: "BeaconDocument"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "BeaconDocument"; ValueData: "{#MyAppName} Document"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconDocument\DefaultIcon"; ValueData: "{app}\Resources\BeaconDocument.ico,0"; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconDocument\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconDocument.ico,0"; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "BeaconDocument\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
 Root: HKCR; Subkey: ".beaconidentity"; ValueData: "BeaconIdentity"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "BeaconIdentity"; ValueData: "{#MyAppName} Identity"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconIdentity\DefaultIcon"; ValueData: "{app}\Resources\BeaconIdentity.ico,0"; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconIdentity\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconIdentity.ico,0"; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "BeaconIdentity\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
 Root: HKCR; Subkey: ".beaconpreset"; ValueData: "BeaconPreset"; Flags: uninsdeletevalue; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "BeaconPreset"; ValueData: "{#MyAppName} Preset"; Flags: uninsdeletekey; ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "BeaconPreset\DefaultIcon"; ValueData: "{app}\Resources\BeaconPreset.ico,0"; ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "BeaconPreset\DefaultIcon"; ValueData: "{app}\{#MyAppResources}\BeaconPreset.ico,0"; ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "BeaconPreset\shell\open\command"; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; ValueType: string; ValueName: ""
 
 Root: HKCR; Subkey: "beacon"; ValueType: "string"; ValueData: "URL:Beacon"; Flags: uninsdeletekey
