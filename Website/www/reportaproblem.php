@@ -2,6 +2,8 @@
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
+header('Cache-Control: no-cache');
+
 $method = strtoupper($_SERVER['REQUEST_METHOD']);
 switch ($method) {
 case 'GET':
