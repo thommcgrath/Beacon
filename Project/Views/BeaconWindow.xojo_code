@@ -106,11 +106,31 @@ Inherits Window
 	#tag EndMenuHandler
 
 
+	#tag Method, Flags = &h0
+		Sub BringToFront()
+		  #if TargetMacOS
+		    Declare Function NSClassFromString Lib "Cocoa" (ClassName As CFStringRef) As Ptr
+		    Declare Function SharedApplication Lib "Cocoa" Selector "sharedApplication" (Target As Ptr) As Ptr
+		    Declare Sub ActivateIgnoringOtherApps Lib "Cocoa" Selector "activateIgnoringOtherApps:" (Target As Ptr, Flag As Boolean)
+		    
+		    Dim SharedApp As Ptr = SharedApplication(NSClassFromString("NSApplication"))
+		    ActivateIgnoringOtherApps(SharedApp, True)
+		  #elseif TargetWin32
+		    Declare Function BringWindowToTop Lib "User32" (Target As Int32) As Boolean
+		    Call BringWindowToTop(Self.Handle)
+		  #else
+		    #Pragma Error "No code to bring a window to foreground on this platform."
+		  #endif
+		  
+		  Self.Show()
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function mWindowMenuItem_Action(Sender As MenuItem) As Boolean
 		  #Pragma Unused Sender
 		  
-		  Self.Show()
+		  Self.BringToFront()
 		  Return True
 		End Function
 	#tag EndMethod

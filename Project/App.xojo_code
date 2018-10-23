@@ -147,16 +147,19 @@ Implements NotificationKit.Receiver
 		  
 		  If File.IsType(BeaconFileTypes.BeaconPreset) Then
 		    Self.AddToRecentDocuments(File)
+		    MainWindow.BringToFront()
 		    MainWindow.Presets.OpenPreset(File)
 		    Return
 		  End If
 		  
 		  If File.IsType(BeaconFileTypes.IniFile) Then
+		    MainWindow.BringToFront()
 		    MainWindow.Documents.ImportFile(File)
 		    Return
 		  End If
 		  
 		  If File.IsType(BeaconFileTypes.BeaconDocument) Then
+		    MainWindow.BringToFront()
 		    MainWindow.Documents.OpenFile(File)
 		    Return
 		  End If
