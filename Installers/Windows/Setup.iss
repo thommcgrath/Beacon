@@ -102,10 +102,10 @@ end;
 
 function InitializeSetup(): Boolean;
 begin
-  RestartRequired := IsKBNeeded('KB3140245');
+  RestartRequired := (GetWindowsVersion < $06020000) And IsKBNeeded('KB3140245');
   Result := True;
   if RestartRequired then begin
-	  if not MsgBox('A restart will be required when finished. Continue?', mbConfirmation, MB_YESNO) = IDYES then begin
+	  if MsgBox('A restart will be required when finished. Continue?', mbConfirmation, MB_YESNO) = IDNO then begin
 	    Result := False;
 	  end;
   end;
