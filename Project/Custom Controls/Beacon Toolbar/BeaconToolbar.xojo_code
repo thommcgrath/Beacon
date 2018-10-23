@@ -125,24 +125,22 @@ Implements ObservationKit.Observer
 
 	#tag Event
 		Sub MouseMove(X As Integer, Y As Integer)
-		  If Self.mResizerRect = Nil Then
-		    Return
-		  End If
-		  
 		  Dim Point As New REALbasic.Point(X, Y)
-		  #if BeaconUI.CursorsEnabled
-		    If Self.mResizerRect.Contains(Point) Then
-		      If Self.mResizerStyle = ResizerTypes.Horizontal Then
-		        Self.MouseCursor = System.Cursors.SplitterEastWest
-		      ElseIf Self.mResizerStyle = ResizerTypes.Vertical Then
-		        Self.MouseCursor = System.Cursors.SplitterNorthSouth
-		      End If
-		    Else
-		      Self.MouseCursor = Nil
-		    End If
-		  #endif
-		  
 		  Self.HoverItem = Self.ItemAtPoint(Point)
+		  
+		  If Self.mResizerRect <> Nil Then
+		    #if BeaconUI.CursorsEnabled
+		      If Self.mResizerRect.Contains(Point) Then
+		        If Self.mResizerStyle = ResizerTypes.Horizontal Then
+		          Self.MouseCursor = System.Cursors.SplitterEastWest
+		        ElseIf Self.mResizerStyle = ResizerTypes.Vertical Then
+		          Self.MouseCursor = System.Cursors.SplitterNorthSouth
+		        End If
+		      Else
+		        Self.MouseCursor = Nil
+		      End If
+		    #endif
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -283,7 +281,7 @@ Implements ObservationKit.Observer
 		  Xojo.Core.Timer.CancelCall(AddressOf ShowHoverTooltip)
 		  
 		  If Item <> Nil And Item.HelpTag <> "" Then
-		    Xojo.Core.Timer.CallLater(2000, AddressOf ShowHoverTooltip)
+		    Xojo.Core.Timer.CallLater(1000, AddressOf ShowHoverTooltip)
 		  End If
 		End Sub
 	#tag EndMethod
