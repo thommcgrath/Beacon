@@ -2,7 +2,11 @@
 Protected Class UpdateChecker
 	#tag Method, Flags = &h0
 		Sub Cancel()
-		  Self.mSocket.Disconnect
+		  If Self.mSocket <> Nil Then
+		    Self.mSocket.Disconnect
+		    Self.mSocket = Nil
+		  End If
+		  
 		  Self.mChecking = False
 		End Sub
 	#tag EndMethod
@@ -15,18 +19,14 @@ Protected Class UpdateChecker
 		  
 		  Self.mSilent = Silent
 		  Self.mChecking = True
-		  Self.mSocket.RequestHeader("Cache-Control") = "no-cache"
-		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?build=" + App.NonReleaseVersion.ToText))
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor()
+		  
 		  Self.mSocket = New Xojo.Net.HTTPSocket
 		  Self.mSocket.ValidateCertificates = True
 		  AddHandler Self.mSocket.Error, WeakAddressOf Self.mSocket_Error
 		  AddHandler Self.mSocket.HeadersReceived, WeakAddressOf Self.mSocket_HeadersReceived
 		  AddHandler Self.mSocket.PageReceived, WeakAddressOf Self.mSocket_PageReceived
+		  Self.mSocket.RequestHeader("Cache-Control") = "no-cache"
+		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?build=" + App.NonReleaseVersion.ToText))
 		End Sub
 	#tag EndMethod
 
@@ -34,6 +34,10 @@ Protected Class UpdateChecker
 		Private Sub mSocket_Error(Sender As Xojo.Net.HTTPSocket, Error As RuntimeException)
 		  Sender.Disconnect
 		  Self.mChecking = False
+		  
+		  If Self.mSocket <> Nil Then
+		    Self.mSocket = Nil
+		  End If
 		  
 		  If Not Self.mSilent Then
 		    RaiseEvent CheckError(Error.Reason)
@@ -61,6 +65,10 @@ Protected Class UpdateChecker
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  #Pragma Unused HTTPStatus
+		  
+		  If Self.mSocket <> Nil Then
+		    Self.mSocket = Nil
+		  End If
 		  
 		  Self.mChecking = False
 		  
@@ -130,9 +138,6 @@ Protected Class UpdateChecker
 		  Dim Stream As BinaryStream = BinaryStream.Open(File, False)
 		  Dim Contents As MemoryBlock = Stream.Read(Stream.Length)
 		  Stream.Close
-		  
-		  Dim Hash As String = EncodeHex(Crypto.MD5(Contents))
-		  System.DebugLog("Hash is " + Hash)
 		  
 		  Return Crypto.RSAVerifySignature(Contents, DecodeHex(Signature), PublicKey)
 		End Function
