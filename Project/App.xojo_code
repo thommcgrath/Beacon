@@ -142,13 +142,6 @@ Implements NotificationKit.Receiver
 		    Catch Err As RuntimeException
 		      
 		    End Try
-		    
-		    Dim Dialog As New MessageDialog
-		    Dialog.Title = ""
-		    Dialog.Message = "Unable to import engram data"
-		    Dialog.Explanation = "Sorry about that. The file may not be correctly formatted."
-		    Call Dialog.ShowModal
-		    
 		    Return
 		  End If
 		  
