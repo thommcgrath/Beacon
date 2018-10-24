@@ -179,6 +179,7 @@ End
 		Shared Sub ShowIfNecessary()
 		  Dim Win As New EngramsUpdateWindow
 		  // Do not show it, the timer will do that
+		  #Pragma Unused Win
 		End Sub
 	#tag EndMethod
 

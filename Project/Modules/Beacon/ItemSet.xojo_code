@@ -79,8 +79,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Shared Function FromPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Mask As UInt64, ConsoleSafe As Boolean) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
 		  Set.Label = Preset.Label
-		  Set.MinNumItems = Preset.MinItems
-		  Set.MaxNumItems = Preset.MaxItems
 		  // Weight is intentionally skipped, as that is relative to the source, no reason for a preset to alter that.
 		  Set.mSourcePresetID = Preset.PresetID
 		  
@@ -115,6 +113,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    
 		    Set.Append(New Beacon.SetEntry(Entry))
 		  Next
+		  
+		  Set.MinNumItems = Preset.MinItems
+		  Set.MaxNumItems = Preset.MaxItems
 		  
 		  Set.mModified = False
 		  Return Set
@@ -154,12 +155,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Xojo.Core.Dictionary) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
-		  If Dict.HasKey("MinNumItems") Then
-		    Set.MinNumItems = Dict.Value("MinNumItems")
-		  End If
-		  If Dict.HasKey("MaxNumItems") Then
-		    Set.MaxNumItems = Dict.Value("MaxNumItems")
-		  End If
 		  If Dict.HasKey("NumItemsPower") Then
 		    Set.NumItemsPower = Dict.Value("NumItemsPower")
 		  End If
@@ -192,6 +187,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    End If
 		  Next
 		  
+		  If Dict.HasKey("MinNumItems") Then
+		    Set.MinNumItems = Dict.Value("MinNumItems")
+		  End If
+		  If Dict.HasKey("MaxNumItems") Then
+		    Set.MaxNumItems = Dict.Value("MaxNumItems")
+		  End If
+		  
 		  If Dict.HasKey("SourcePresetID") Then
 		    Set.mSourcePresetID = Dict.Value("SourcePresetID")
 		  End If
@@ -204,12 +206,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range, DifficultyValue As Double) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
-		  If Dict.HasKey("MinNumItems") Then
-		    Set.MinNumItems = Dict.Value("MinNumItems")
-		  End If
-		  If Dict.HasKey("MaxNumItems") Then
-		    Set.MaxNumItems = Dict.Value("MaxNumItems")
-		  End If
 		  If Dict.HasKey("NumItemsPower") Then
 		    Set.NumItemsPower = Dict.Value("NumItemsPower")
 		  End If
@@ -233,6 +229,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Set.Append(Entry)
 		    End If
 		  Next
+		  
+		  If Dict.HasKey("MinNumItems") Then
+		    Set.MinNumItems = Dict.Value("MinNumItems")
+		  End If
+		  If Dict.HasKey("MaxNumItems") Then
+		    Set.MaxNumItems = Dict.Value("MaxNumItems")
+		  End If
 		  
 		  If Dict.HasKey("SourcePresetID") Then
 		    Set.mSourcePresetID = Dict.Value("SourcePresetID")
@@ -452,13 +455,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function TextValue(Multipliers As Beacon.Range, SumSetWeights As Double, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As Text
 		  Dim SetWeight As Integer = Xojo.Math.Round((Self.mSetWeight / SumSetWeights * 1000))
-		  Dim MinItems As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMinNumItems, Self.Count), 0)
-		  Dim MaxItems As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMaxNumItems, Self.Count), 0)
 		  
 		  Dim Values() As Text
 		  Values.Append("SetName=""" + Self.Label + """")
-		  Values.Append("MinNumItems=" + MinItems.ToText)
-		  Values.Append("MaxNumItems=" + MaxItems.ToText)
+		  Values.Append("MinNumItems=" + Self.MinNumItems.ToText)
+		  Values.Append("MaxNumItems=" + Self.MaxNumItems.ToText)
 		  Values.Append("NumItemsPower=" + Self.mNumItemsPower.PrettyText)
 		  Values.Append("SetWeight=" + SetWeight.ToText)
 		  Values.Append("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "true", "false"))
@@ -519,7 +520,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mMaxNumItems
+			  Return Min(Max(Self.mMaxNumItems, Self.mMinNumItems), Self.Count)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -543,7 +544,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mMinNumItems
+			  Return Max(Min(Self.mMinNumItems, Self.mMaxNumItems, Self.Count), 1)
 			End Get
 		#tag EndGetter
 		#tag Setter

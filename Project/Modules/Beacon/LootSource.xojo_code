@@ -573,11 +573,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  If Self.mAppendMode Then
 		    Values.Append("bAppendItemSets=true")
 		  Else
-		    Dim MinItemSets As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMinItemSets, Self.Count), 0)
-		    Dim MaxItemSets As UInteger = Xojo.Math.Max(Xojo.Math.Min(Self.mMaxItemSets, Self.Count), 0)
-		    
-		    Values.Append("MinItemSets=" + MinItemSets.ToText)
-		    Values.Append("MaxItemSets=" + MaxItemSets.ToText)
+		    Values.Append("MinItemSets=" + Self.MinItemSets.ToText)
+		    Values.Append("MaxItemSets=" + Self.MaxItemSets.ToText)
 		    Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.PrettyText)
 		    Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
 		  End If
@@ -640,12 +637,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Max(Min(Self.mMaxItemSets, Self.Count), Max(Self.mMinItemSets, 1))
+			  Return Min(Max(Self.mMaxItemSets, Self.mMinItemSets), Self.Count)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Max(Min(Value, Self.Count), Self.mMinItemSets, 1)
+			  Value = Max(Value, 1)
 			  If Self.mMaxItemSets = Value Then
 			    Return
 			  End If
@@ -664,12 +661,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Min(Max(Self.mMinItemSets, 1), Self.mMaxItemSets, Self.Count)
+			  Return Max(Min(Self.mMinItemSets, Self.mMaxItemSets, Self.Count), 1)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Max(Min(Value, Self.mMaxItemSets, Self.Count), 1)
+			  Value = Max(Value, 1)
 			  If Self.mMinItemSets = Value Then
 			    Return
 			  End If

@@ -576,8 +576,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Values.Append("ItemClassStrings=(" + Text.Join(Classes, ",") + ")")
 		  End If
 		  Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
-		  Values.Append("MinQuantity=" + Self.mMinQuantity.ToText)
-		  Values.Append("MaxQuantity=" + Self.mMaxQuantity.ToText)
+		  Values.Append("MinQuantity=" + Self.MinQuantity.ToText)
+		  Values.Append("MaxQuantity=" + Self.MaxQuantity.ToText)
 		  Values.Append("MinQuality=" + MinQuality.PrettyText)
 		  Values.Append("MaxQuality=" + MaxQuality.PrettyText)
 		  
@@ -664,7 +664,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mMaxQuantity
+			  Return Min(Max(Self.mMaxQuantity, Self.mMinQuantity), Self.Count)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -707,7 +707,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mMinQuantity
+			  Return Max(Min(Self.mMinQuantity, Self.mMaxQuantity, Self.Count), 1)
 			End Get
 		#tag EndGetter
 		#tag Setter
