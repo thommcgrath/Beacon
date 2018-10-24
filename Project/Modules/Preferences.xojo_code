@@ -1,5 +1,27 @@
 #tag Module
 Protected Module Preferences
+	#tag Method, Flags = &h1
+		Protected Sub AddToRecentDocuments(URL As Beacon.DocumentURL)
+		  If URL.Scheme = Beacon.DocumentURL.TypeTransient Then
+		    Return
+		  End If
+		  
+		  Dim Recents() As Beacon.DocumentURL = RecentDocuments
+		  For I As Integer = Recents.Ubound DownTo 0
+		    If Recents(I) = URL Then
+		      Recents.Remove(I)
+		    End If
+		  Next
+		  Recents.Insert(0, URL)
+		  
+		  While Recents.Ubound > 19
+		    Recents.Remove(20)
+		  Wend
+		  
+		  RecentDocuments = Recents
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Init()
 		  If mManager = Nil Then
@@ -9,7 +31,7 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function RecentDocuments() As Text()
+		Function RecentDocuments() As Beacon.DocumentURL()
 		  Init
 		  
 		  // When used with a freshly parsed file, the return type will be Auto()
@@ -24,7 +46,7 @@ Protected Module Preferences
 		    ElseIf Info.Name = "Text" Then
 		      StoredData.Append(Temp)
 		    ElseIf Info.Name = "Auto()" Then
-		      Dim Arr() As Auto
+		      Dim Arr() As Auto = Temp
 		      For Each Item As Auto In Arr
 		        Try
 		          StoredData.Append(Item)
@@ -35,18 +57,25 @@ Protected Module Preferences
 		    End If
 		  End If
 		  
-		  Dim Values() As Text
+		  Dim Values() As Beacon.DocumentURL
 		  For Each Value As Text In StoredData
-		    Values.Append(Value)
+		    Values.Append(New Beacon.DocumentURL(Value))
 		  Next
 		  Return Values
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RecentDocuments(Assigns Values() As Text)
+		Sub RecentDocuments(Assigns Values() As Beacon.DocumentURL)
+		  Dim URLs() As Text
+		  Redim URLs(Values.Ubound)
+		  For I As Integer = 0 To Values.Ubound
+		    URLs(I) = Values(I).URL
+		  Next
+		  
 		  Init
-		  mManager.AutoValue("Documents") = Values
+		  mManager.AutoValue("Documents") = URLs
+		  NotificationKit.Post(Notification_RecentsChanged, Values)
 		End Sub
 	#tag EndMethod
 
@@ -212,6 +241,9 @@ Protected Module Preferences
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_OnlineTokenChanged, Type = Text, Dynamic = False, Default = \"Online Token Changed", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_RecentsChanged, Type = Text, Dynamic = False, Default = \"Recent Documents Changed", Scope = Protected
 	#tag EndConstant
 
 

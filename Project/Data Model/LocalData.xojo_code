@@ -22,7 +22,6 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("PRAGMA journal_mode = WAL;")
 		  
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE documents (hash TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, url TEXT NOT NULL, last_used TIMESTAMP);")
 		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, console_safe INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, kind TEXT NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, required_item_sets INTEGER NOT NULL, icon BLOB NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, can_blueprint INTEGER NOT NULL);")
@@ -177,20 +176,6 @@ Implements Beacon.DataSource
 	#tag Method, Flags = &h0
 		Sub Destructor()
 		  Self.SQLExecute("PRAGMA optimize;")
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ForgetDocument(Document As Beacon.DocumentController)
-		  Self.ForgetDocument(Document.URL)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ForgetDocument(Document As Beacon.DocumentURL)
-		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM documents WHERE LOWER(hash) = LOWER(?1);", Document.Hash)
-		  Self.Commit()
 		End Sub
 	#tag EndMethod
 
@@ -689,26 +674,6 @@ Implements Beacon.DataSource
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function LocalDocuments() As Beacon.DocumentURL()
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT url FROM documents ORDER BY last_used DESC;")
-		  Dim Documents() As Beacon.DocumentURL
-		  While Not Results.EOF
-		    Dim URL As Beacon.DocumentURL
-		    Try
-		      URL = Results.Field("url").StringValue.ToText
-		    Catch Err As RuntimeException
-		      Results.MoveNext
-		      Continue
-		    End Try
-		    
-		    Documents.Append(URL)
-		    Results.MoveNext
-		  Wend
-		  Return Documents
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub MigrateData(Source As FolderItem, FromSchemaVersion As Integer)
 		  If Not Self.mBase.AttachDatabase(Source, "legacy") Then
@@ -948,29 +913,6 @@ Implements Beacon.DataSource
 		  Wend
 		  Return Sources
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RememberDocument(Document As Beacon.DocumentController)
-		  Self.RememberDocument(Document.URL)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RememberDocument(Document As Beacon.DocumentURL)
-		  If Document.Scheme <> Beacon.DocumentURL.TypeLocal Then
-		    Return
-		  End If
-		  
-		  Self.BeginTransaction()
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT hash FROM documents WHERE LOWER(hash) = LOWER(?1);", Document.Hash)
-		  If Results.RecordCount = 0 Then
-		    Self.SQLExecute("INSERT INTO documents (hash, name, url, last_used) VALUES (LOWER(?1), ?2, ?3, CURRENT_TIMESTAMP);", Document.Hash, Document.Name, Document.URL)
-		  Else
-		    Self.SQLExecute("UPDATE documents SET name = ?2, url = ?3, last_used = CURRENT_TIMESTAMP WHERE LOWER(hash) = LOWER(?1);", Document.Hash, Document.Name, Document.URL)
-		  End If
-		  Self.Commit()
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

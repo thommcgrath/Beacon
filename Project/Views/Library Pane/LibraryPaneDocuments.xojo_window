@@ -80,7 +80,6 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -184,7 +183,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineStateChanged, App.Notification_IdentityChanged)
+		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineStateChanged, App.Notification_IdentityChanged, Preferences.Notification_RecentsChanged)
 		End Sub
 	#tag EndEvent
 
@@ -198,7 +197,7 @@ End
 		  
 		  Self.ToolbarCaption = "Documents"
 		  
-		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged, App.Notification_IdentityChanged)
+		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged, App.Notification_IdentityChanged, Preferences.Notification_RecentsChanged)
 		  Self.SwitcherVisible = Preferences.OnlineEnabled
 		End Sub
 	#tag EndEvent
@@ -210,19 +209,14 @@ End
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
 		  
-		  For I As Integer = Self.mDocuments.Ubound DownTo 0
-		    If Self.mDocuments(I).Scheme = Beacon.DocumentURL.TypeCloud Then
-		      Self.mDocuments.Remove(I)
-		    End If
-		  Next
+		  Redim Self.mCloudDocuments(-1)
 		  
 		  If Success Then
 		    Dim Dicts() As Auto = Details
 		    For Each Dict As Xojo.Core.Dictionary In Dicts
 		      Dim Document As New BeaconAPI.Document(Dict)
 		      Dim URL As Text = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Mid(Document.ResourceURL.IndexOf("://") + 3)
-		      
-		      Self.mDocuments.Append(URL)
+		      Self.mCloudDocuments.Append(URL)
 		    Next
 		  End If
 		  
@@ -238,20 +232,15 @@ End
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
 		  
-		  If Not Success Then
-		    Return
-		  End If
+		  Redim Self.mCommunityDocuments(-1)
 		  
-		  Dim Dicts() As Auto = Details
-		  For I As Integer = Self.mDocuments.Ubound DownTo 0
-		    If Self.mDocuments(I).Scheme = Beacon.DocumentURL.TypeWeb Then
-		      Self.mDocuments.Remove(I)
-		    End If
-		  Next
-		  For Each Dict As Xojo.Core.Dictionary In Dicts
-		    Dim Document As New BeaconAPI.Document(Dict)
-		    Self.mDocuments.Append(Document.ResourceURL)
-		  Next
+		  If Success Then
+		    Dim Dicts() As Auto = Details
+		    For Each Dict As Xojo.Core.Dictionary In Dicts
+		      Dim Document As New BeaconAPI.Document(Dict)
+		      Self.mCommunityDocuments.Append(Document.ResourceURL)
+		    Next
+		  End If
 		  
 		  If Self.View = Self.ViewCommunityDocuments Then
 		    Self.UpdateDocumentsList()
@@ -260,33 +249,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Success Then
-		    If Self.View = Self.ViewCloudDocuments Then
-		      Self.UpdateDocumentsList()
-		    End If
-		    Return
-		  End If
-		  
-		  If Self.View = Self.ViewCloudDocuments Then
-		    Self.UpdateCloudDocuments()
-		  End If
-		  
-		  Self.ShowAlert("Cloud document was not deleted", Message)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub Controller_DeleteError(Sender As Beacon.DocumentController, Reason As Text)
 		  Dim Notification As New Beacon.UserNotification("The document " + Sender.Name + " could not be deleted.")
 		  Notification.SecondaryMessage = Reason
 		  Notification.UserData = New Xojo.Core.Dictionary
-		  Notification.UserData.Value("DocumentID") = Sender.Document.DocumentID
-		  Notification.UserData.Value("DocumentURL") = Sender.URL
+		  Notification.UserData.Value("DocumentID") = If(Sender.Document <> Nil, Sender.Document.DocumentID, "")
+		  Notification.UserData.Value("DocumentURL") = Sender.URL.URL // To force convert to text
 		  Notification.UserData.Value("Reason") = Reason
 		  LocalData.SharedInstance.SaveNotification(Notification)
 		End Sub
@@ -302,13 +270,31 @@ End
 		    End If
 		  Next
 		  
-		  For I As Integer = Self.mDocuments.Ubound DownTo 0
-		    If Self.mDocuments(I) = URL Then
-		      Self.mDocuments.Remove(I)
+		  Select Case URL.Scheme
+		  Case Beacon.DocumentURL.TypeCloud
+		    For I As Integer = Self.mCloudDocuments.Ubound DownTo 0
+		      If Self.mCloudDocuments(I) = URL Then
+		        Self.mCloudDocuments.Remove(I)
+		        Exit For I
+		      End If
+		    Next
+		  Case Beacon.DocumentURL.TypeWeb
+		    For I As Integer = Self.mCommunityDocuments.Ubound DownTo 0
+		      If Self.mCommunityDocuments(I) = URL Then
+		        Self.mCommunityDocuments.Remove(I)
+		        Exit For I
+		      End If
+		    Next
+		  End Select
+		  
+		  Dim Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
+		  For I As Integer = Recents.Ubound DownTo 0
+		    If Recents(I) = URL Then
+		      Recents.Remove(I)
+		      Exit For I
 		    End If
 		  Next
-		  
-		  LocalData.SharedInstance.ForgetDocument(URL)
+		  Preferences.RecentDocuments = Recents // Will trigger a notification, which updates the list
 		End Sub
 	#tag EndMethod
 
@@ -344,12 +330,23 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Controller_LoadError(Sender As Beacon.DocumentController)
-		  If Sender.URL.Scheme = Beacon.DocumentURL.TypeLocal Then
-		    LocalData.SharedInstance.ForgetDocument(Sender)
-		    Self.UpdateDocumentsList()
-		  End If
+		  Dim RecentIdx As Integer = -1
+		  Dim Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
+		  For I As Integer = 0 To Recents.Ubound
+		    If Recents(I) = Sender.URL Then
+		      RecentIdx = I
+		      Exit For I
+		    End If
+		  Next
 		  
-		  Self.ShowAlert("Unable to load " + Sender.Name, "The document may no longer exist so it has been removed from this list.")
+		  If RecentIdx > -1 Then
+		    If Self.ShowConfirm("Unable to load """ + Sender.Name + """", "The document could not be loaded. It may have been deleted. Would you like to remove it from the recent documents list?", "Remove", "Keep") Then
+		      Recents.Remove(RecentIdx)
+		      Preferences.RecentDocuments = Recents
+		    End If
+		  Else
+		    Self.ShowAlert("Unable to load """ + Sender.Name + """", "The document could not be loaded. It may have been deleted.")
+		  End If
 		  
 		  If Self.mProgress <> Nil Then
 		    Self.mProgress.Close
@@ -360,13 +357,22 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Controller_LoadProgress(Sender As Beacon.DocumentController, BytesReceived As Int64, BytesTotal As Int64)
+		  #Pragma Unused Sender
+		  
+		  If Self.mProgress <> Nil Then
+		    Self.mProgress.Progress = BytesReceived / BytesTotal
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Controller_LoadStarted(Sender As Beacon.DocumentController)
 		  If Self.mProgress = Nil Then
 		    Self.mProgress = New DocumentDownloadWindow
 		    Self.mProgress.URL = Sender.URL
+		    Self.mProgress.Progress = -1
 		    Self.mProgress.ShowWithin(Self.TrueWindow)
 		  End If
-		  
-		  Self.mProgress.Progress = BytesReceived / BytesTotal
 		End Sub
 	#tag EndMethod
 
@@ -404,7 +410,7 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case "Beacon.Document.TitleChanged"
+		  Case "Beacon.Document.TitleChanged", Preferences.Notification_RecentsChanged
 		    Self.UpdateDocumentsList()
 		  Case App.Notification_IdentityChanged
 		    If Self.View = Self.ViewCloudDocuments Then
@@ -425,12 +431,13 @@ End
 		    Return
 		  End If
 		  
-		  //Self.mDocuments.Append(URL)
-		  
 		  AddHandler Controller.Loaded, WeakAddressOf Controller_Loaded
 		  AddHandler Controller.LoadError, WeakAddressOf Controller_LoadError
 		  AddHandler Controller.LoadProgress, WeakAddressOf Controller_LoadProgress
+		  AddHandler Controller.LoadStarted, WeakAddressOf Controller_LoadStarted
 		  Controller.Load(App.Identity)
+		  
+		  Preferences.AddToRecentDocuments(URL)
 		End Sub
 	#tag EndMethod
 
@@ -438,8 +445,6 @@ End
 		Sub OpenFile(File As FolderItem)
 		  Dim URL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
 		  Self.OpenController(New Beacon.DocumentController(URL))
-		  LocalData.SharedInstance.RememberDocument(URL)
-		  Self.UpdateLocalDocuments()
 		End Sub
 	#tag EndMethod
 
@@ -505,11 +510,7 @@ End
 		    Request.Sign(App.Identity)
 		    Self.APISocket.Start(Request)
 		  Else
-		    For I As Integer = Self.mDocuments.Ubound DownTo 0
-		      If Self.mDocuments(I).Scheme = Beacon.DocumentURL.TypeCloud Then
-		        Self.mDocuments.Remove(I)
-		      End If
-		    Next
+		    Redim Self.mCloudDocuments(-1)
 		  End If
 		  
 		  If Self.View = Self.ViewCloudDocuments Then
@@ -536,11 +537,14 @@ End
 		Private Sub UpdateDocumentsList()
 		  Dim View As Integer = Self.Switcher.SelectedIndex
 		  Dim Documents() As Beacon.DocumentURL
-		  For Each Document As Beacon.DocumentURL In Self.mDocuments
-		    If (View = Self.ViewRecentDocuments And (Document.Scheme = Beacon.DocumentURL.TypeLocal Or Document.Scheme = Beacon.DocumentURL.TypeTransient)) Or (View = Self.ViewCloudDocuments And Document.Scheme = Beacon.DocumentURL.TypeCloud) Or (View = Self.ViewCommunityDocuments And Document.Scheme = Beacon.DocumentURL.TypeWeb) Then
-		      Documents.Append(Document)
-		    End If
-		  Next
+		  Select Case View
+		  Case Self.ViewRecentDocuments
+		    Documents = Preferences.RecentDocuments
+		  Case Self.ViewCloudDocuments
+		    Documents = Self.mCloudDocuments
+		  Case Self.ViewCommunityDocuments
+		    Documents = Self.mCommunityDocuments
+		  End Select
 		  
 		  Dim RowBound As Integer = Self.List.ListCount - 1
 		  Dim SelectedURLs() As Text
@@ -562,35 +566,6 @@ End
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub UpdateLocalDocuments()
-		  Dim Documents() As Beacon.DocumentURL = LocalData.SharedInstance.LocalDocuments
-		  If Documents.Ubound = -1 Then
-		    Dim Files() As FolderItem = App.RecentDocuments
-		    For Each File As FolderItem In Files
-		      If File <> Nil And File.Exists Then
-		        Dim URL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
-		        LocalData.SharedInstance.RememberDocument(URL)
-		        Documents.Append(URL)
-		      End If
-		    Next
-		  End If
-		  
-		  For I As Integer = Self.mDocuments.Ubound DownTo 0
-		    If Self.mDocuments(I).Scheme = Beacon.DocumentURL.TypeLocal Then
-		      Self.mDocuments.Remove(I)
-		    End If
-		  Next
-		  For I As Integer = 0 To Documents.Ubound
-		    Self.mDocuments.Append(Documents(I))
-		  Next
-		  
-		  If Self.View = Self.ViewRecentDocuments Then
-		    Self.UpdateDocumentsList()
-		  End If
-		End Sub
-	#tag EndMethod
-
 
 	#tag Hook, Flags = &h0
 		Event ShouldResize(ByRef NewSize As Integer)
@@ -598,7 +573,11 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mDocuments() As Beacon.DocumentURL
+		Private mCloudDocuments() As Beacon.DocumentURL
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCommunityDocuments() As Beacon.DocumentURL
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -644,12 +623,12 @@ End
 			  End If
 			  
 			  Select Case Value
-			  Case Self.ViewRecentDocuments
-			    Self.UpdateLocalDocuments()
 			  Case Self.ViewCloudDocuments
 			    Self.UpdateCloudDocuments()
 			  Case Self.ViewCommunityDocuments
 			    Self.UpdateCommunityDocuments()
+			  Else
+			    Self.UpdateDocumentsList()
 			  End Select
 			End Set
 		#tag EndSetter
@@ -700,18 +679,22 @@ End
 		    Return False
 		  End If
 		  
-		  For I As Integer = Me.ListCount - 1 DownTo 0
-		    If Not Me.Selected(I) Then
-		      Continue For I
-		    End If
+		  If Self.View = Self.ViewRecentDocuments Then
+		    Return True
+		  Else
+		    For I As Integer = Me.ListCount - 1 DownTo 0
+		      If Not Me.Selected(I) Then
+		        Continue For I
+		      End If
+		      
+		      Dim Controller As New Beacon.DocumentController(Beacon.DocumentURL(Me.RowTag(I)))
+		      If Not Controller.CanWrite Then
+		        Return False
+		      End If
+		    Next
 		    
-		    Dim Controller As New Beacon.DocumentController(Beacon.DocumentURL(Me.RowTag(I)))
-		    If Not Controller.CanWrite Then
-		      Return False
-		    End If
-		  Next
-		  
-		  Return True
+		    Return True
+		  End If
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -719,6 +702,30 @@ End
 		  // Temporary and local can be deleted directly
 		  // User cloud can be deleted via api
 		  // Community cloud cannot be deleted
+		  
+		  If Self.View = Self.ViewRecentDocuments Then
+		    // Not deleting something, just removing from the list
+		    Dim Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
+		    Dim Changed As Boolean
+		    For I As Integer = Me.ListCount - 1 DownTo 0
+		      If Not Me.Selected(I) Then
+		        Continue For I
+		      End If
+		      
+		      Dim SelectedURL As Beacon.DocumentURL = Me.RowTag(I)
+		      For X As Integer = Recents.Ubound DownTo 0
+		        If Recents(X) = SelectedURL Then
+		          Changed = True
+		          Recents.Remove(X)
+		          Continue For I
+		        End If
+		      Next
+		    Next
+		    If Changed Then
+		      Preferences.RecentDocuments = Recents
+		    End If
+		    Return
+		  End If
 		  
 		  Dim Controllers() As Beacon.DocumentController
 		  For I As Integer = Me.ListCount - 1 DownTo 0
@@ -973,11 +980,6 @@ End
 		Group="Behavior"
 		Type="String"
 		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarIcon"
-		Group="Behavior"
-		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"

@@ -33,7 +33,11 @@ Protected Class FolderItem
 		  #if TargetiOS
 		    Self.mSource = New Xojo.IO.FolderItem(FromPath)
 		  #else
-		    Self.mLegacySource = GetFolderItem(FromPath, Global.FolderItem.PathTypeNative)
+		    If FromPath.BeginsWith("file://") Then
+		      Self.mLegacySource = GetFolderItem(FromPath, Global.FolderItem.PathTypeURL)
+		    Else
+		      Self.mLegacySource = GetFolderItem(FromPath, Global.FolderItem.PathTypeNative)
+		    End If
 		  #endif
 		End Sub
 	#tag EndMethod
@@ -170,6 +174,18 @@ Protected Class FolderItem
 		  
 		  Dim Parts() As Text = Name.Split(".")
 		  Return Parts(Parts.Ubound)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function FromSaveInfo(SaveInfo As Text) As Beacon.FolderItem
+		  #if TargetiOS
+		    Return Nil
+		  #else
+		    Dim StringValue As String = Beacon.ConvertMemoryBlock(Beacon.DecodeBase64(SaveInfo))
+		    Dim File As Global.FolderItem = Volume(0).GetRelative(StringValue)
+		    Return File
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -314,6 +330,17 @@ Protected Class FolderItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SaveInfo() As Text
+		  #if TargetiOS
+		    Return ""
+		  #else
+		    Dim SaveInfo As Global.MemoryBlock = Self.mLegacySource.GetSaveInfo(Nil)
+		    Return Beacon.EncodeBase64(Beacon.ConvertMemoryBlock(SaveInfo))
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function Temporary() As Beacon.FolderItem
 		  Dim Item As Beacon.FolderItem
 		  #if TargetiOS
@@ -323,6 +350,16 @@ Protected Class FolderItem
 		  #endif
 		  Item.mIsTemporary = True
 		  Return Item
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function URLPath() As Text
+		  #if TargetiOS
+		    Return Self.mSource.URLPath
+		  #else
+		    Return Self.mLegacySource.URLPath.ToText
+		  #endif
 		End Function
 	#tag EndMethod
 

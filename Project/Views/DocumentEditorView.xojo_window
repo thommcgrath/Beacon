@@ -383,8 +383,8 @@ End
 		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!")
 		  Notification.SecondaryMessage = Reason
 		  Notification.UserData = New Xojo.Core.Dictionary
-		  Notification.UserData.Value("DocumentID") = Sender.Document.DocumentID
-		  Notification.UserData.Value("DocumentURL") = Sender.URL
+		  Notification.UserData.Value("DocumentID") = If(Sender.Document <> Nil, Sender.Document.DocumentID, "")
+		  Notification.UserData.Value("DocumentURL") = Sender.URL.URL // To force convert to text
 		  Notification.UserData.Value("Reason") = Reason
 		  LocalData.SharedInstance.SaveNotification(Notification)
 		End Sub
@@ -395,7 +395,8 @@ End
 		  Self.ContentsChanged = Sender.Document.Modified
 		  Self.Title = Self.mController.Name
 		  Self.BeaconToolbar1.ShareButton.Enabled = (Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud)
-		  LocalData.SharedInstance.RememberDocument(Sender)
+		  
+		  Preferences.AddToRecentDocuments(Self.mController.URL)
 		End Sub
 	#tag EndMethod
 
@@ -453,16 +454,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function ReadyForCloud() As Boolean
-		  If Not Preferences.OnlineEnabled Then
-		    Return False
-		  End If
-		  
-		  Return (Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeCloud And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeWeb)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Function ReadyToDeploy() As Boolean
 		  Return Self.Document <> Nil And Self.Document.IsValid And Self.Document.ServerProfileCount > 0
 		End Function
@@ -476,7 +467,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SaveAs()
-		  If Self.ReadyForCloud And DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController) Then
+		  If DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController) Then
 		    Self.Title = Self.mController.Name
 		    Self.ToolbarCaption = Self.mController.Name
 		    Return
@@ -498,7 +489,7 @@ End
 		    End If
 		    Self.Document.Title = Filename
 		  End If
-		  Self.mController.SaveAs(Beacon.DocumentURL.TypeLocal + "://" + File.NativePath.ToText, App.Identity)
+		  Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(File), App.Identity)
 		  Self.Title = Self.mController.Name
 		  Self.ToolbarCaption = Self.mController.Name
 		End Sub

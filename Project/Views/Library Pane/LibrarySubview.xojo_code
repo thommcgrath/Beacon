@@ -14,17 +14,24 @@ Inherits BeaconSubview
 		  End If
 		  
 		  Dim ViewsToRemove() As Text
+		  Dim ViewsToAdd() As BeaconSubview
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mViews
 		    Dim ID As Text = Entry.Key
 		    Dim View As BeaconSubview = Entry.Value
 		    
 		    If View = Nil Or View.Closed Then
 		      ViewsToRemove.Append(ID)
+		    ElseIf View.ViewID <> ID Then
+		      ViewsToRemove.Append(ID)
+		      ViewsToAdd.Append(View)
 		    End If
 		  Next
 		  
 		  For Each ID As Text In ViewsToRemove
 		    Self.mViews.Remove(ID)
+		  Next
+		  For Each View As BeaconSubview In ViewsToAdd
+		    Self.mViews.Value(View.ViewID) = View
 		  Next
 		End Sub
 	#tag EndMethod
@@ -267,11 +274,6 @@ Inherits BeaconSubview
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ToolbarIcon"
-			Group="Behavior"
-			Type="Picture"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

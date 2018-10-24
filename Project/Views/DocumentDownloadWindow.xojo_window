@@ -53,6 +53,7 @@ Begin Window DocumentDownloadWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   116
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -79,6 +80,7 @@ Begin Window DocumentDownloadWindow
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Downloading…"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -113,6 +115,7 @@ Begin Window DocumentDownloadWindow
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "???"
       TextAlign       =   0
       TextColor       =   &c00000000
@@ -143,6 +146,7 @@ Begin Window DocumentDownloadWindow
       TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   84
+      Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   560
@@ -162,6 +166,10 @@ End
 		Private mCancelled As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mDocumentURL As Beacon.DocumentURL
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -176,7 +184,7 @@ End
 			Set
 			  Dim Amount, Maximum As Integer
 			  
-			  If Value < 0 Then  
+			  If Value < 0 Then
 			    Maximum = 0
 			    Amount = 0
 			  Else
@@ -198,15 +206,38 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.URLLabel.Text.ToText
+			  Return Self.mDocumentURL
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.URLLabel.Text = Value
+			  If Self.mDocumentURL = Value Then
+			    Return
+			  End If
+			  
+			  Self.mDocumentURL = Value
+			  
+			  Self.URLLabel.Text = Self.mDocumentURL
+			  
+			  Select Case Self.mDocumentURL.Scheme
+			  Case Beacon.DocumentURL.TypeLocal
+			    Try
+			      Dim File As New Beacon.FolderItem(Self.mDocumentURL.Path)
+			      Self.URLLabel.Text = File.Path
+			    Catch Err As RuntimeException
+			      Self.URLLabel.Text = Self.mDocumentURL.Path
+			    End Try
+			    Self.MessageLabel.Text = "Loading " + Self.mDocumentURL.Name + "…"
+			  Case Beacon.DocumentURL.TypeWeb
+			    Self.URLLabel.Text = Self.mDocumentURL.Path
+			    Self.MessageLabel.Text = "Downloading " + Self.mDocumentURL.Name + "…"
+			  Else
+			    Self.URLLabel.Text = Self.mDocumentURL.Path
+			    Self.MessageLabel.Text = "Loading " + Self.mDocumentURL.Name + "…"
+			  End Select
 			End Set
 		#tag EndSetter
-		URL As Text
+		URL As Beacon.DocumentURL
 	#tag EndComputedProperty
 
 
@@ -444,5 +475,15 @@ End
 		Group="Size"
 		InitialValue="600"
 		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		Type="Double"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="URL"
+		Group="Behavior"
+		Type="Text"
 	#tag EndViewProperty
 #tag EndViewBehavior

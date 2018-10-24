@@ -4,9 +4,25 @@ Protected Class DocumentURL
 		Sub Constructor(URL As Text)
 		  Dim Pos As Integer = URL.IndexOf("://")
 		  If Pos = -1 Then
-		    Dim Err As New UnsupportedFormatException
-		    Err.Reason = "Unable to determine scheme from URL " + URL
-		    Raise Err
+		    #if Not TargetIOS
+		      // Try as Xojo SaveInfo
+		      Try
+		        Dim StringValue As String = URL
+		        Dim File As Global.FolderItem = Volume(0).GetRelative(DecodeBase64(StringValue))
+		        If File <> Nil Then
+		          URL = URLForFile(File)
+		          Pos = URL.IndexOf("://")
+		        End If
+		      Catch Err As RuntimeException
+		        
+		      End Try
+		    #endif
+		    
+		    If Pos = -1 Then
+		      Dim Err As New UnsupportedFormatException
+		      Err.Reason = "Unable to determine scheme from URL " + URL
+		      Raise Err
+		    End If
 		  End If
 		  
 		  Self.mOriginalURL = URL
@@ -90,7 +106,7 @@ Protected Class DocumentURL
 		    End If
 		  End If
 		  
-		  Return Name
+		  Return Beacon.DecodeURLComponent(Name)
 		End Function
 	#tag EndMethod
 
@@ -157,7 +173,7 @@ Protected Class DocumentURL
 
 	#tag Method, Flags = &h0
 		Function Path() As Text
-		  Return Self.mPath
+		  Return Self.mScheme + "://" + Self.mPath
 		End Function
 	#tag EndMethod
 
@@ -175,7 +191,16 @@ Protected Class DocumentURL
 
 	#tag Method, Flags = &h0
 		Shared Function URLForFile(File As Beacon.FolderItem) As Beacon.DocumentURL
-		  Return TypeLocal + "://" + File.Path
+		  Dim Path As Text = File.URLPath
+		  #if TargetMacOS
+		    Dim SaveInfo As Text = File.SaveInfo
+		    If Path.IndexOf("?") = -1 Then
+		      Path = Path + "?saveinfo=" + Beacon.EncodeURLComponent(SaveInfo)
+		    Else
+		      Path = Path + "&saveinfo=" + Beacon.EncodeURLComponent(SaveInfo)
+		    End If
+		  #endif
+		  Return Path
 		End Function
 	#tag EndMethod
 

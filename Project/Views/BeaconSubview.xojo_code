@@ -498,11 +498,6 @@ Implements ObservationKit.Observable
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ToolbarIcon"
-			Group="Behavior"
-			Type="Picture"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Transparent"
 			Visible=true
 			Group="Behavior"

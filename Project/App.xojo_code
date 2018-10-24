@@ -91,7 +91,7 @@ Implements NotificationKit.Receiver
 		  #EndIf
 		  Self.RebuildRecentMenu
 		  
-		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized)
+		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged)
 		  
 		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
 		  If IdentityFile.Exists Then
@@ -146,7 +146,6 @@ Implements NotificationKit.Receiver
 		  End If
 		  
 		  If File.IsType(BeaconFileTypes.BeaconPreset) Then
-		    Self.AddToRecentDocuments(File)
 		    MainWindow.BringToFront()
 		    MainWindow.Presets.OpenPreset(File)
 		    Return
@@ -259,23 +258,6 @@ Implements NotificationKit.Receiver
 		End Function
 	#tag EndMenuHandler
 
-
-	#tag Method, Flags = &h0
-		Sub AddToRecentDocuments(File As FolderItem)
-		  Dim Hash As String = EncodeHex(Crypto.MD5(File.NativePath))
-		  Dim Documents() As FolderItem = Self.RecentDocuments
-		  For I As Integer = Documents.Ubound DownTo 0
-		    If EncodeHex(Crypto.MD5(Documents(I).NativePath)) = Hash Then
-		      Documents.Remove(I)
-		    End If
-		  Next
-		  Documents.Insert(0, File)
-		  While Documents.Ubound > 9
-		    Documents.Remove(Documents.Ubound)
-		  Wend
-		  Self.RecentDocuments = Documents
-		End Sub
-	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_CreateSession(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
@@ -709,20 +691,16 @@ Implements NotificationKit.Receiver
 		Private Function mOpenRecent_ClearMenu(Sender As MenuItem) As Boolean
 		  #Pragma Unused Sender
 		  
-		  Dim Documents() As FolderItem
-		  Self.RecentDocuments = Documents
+		  Dim Documents() As Beacon.DocumentURL
+		  Preferences.RecentDocuments = Documents
 		  Return True
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function mOpenRecent_OpenFile(Sender As MenuItem) As Boolean
-		  Dim File As FolderItem = Sender.Tag
-		  If File <> Nil And File.Exists Then
-		    Self.OpenDocument(File)
-		  Else
-		    BeaconUI.ShowAlert("File not found.", "Sorry, the file may have been deleted.")
-		  End If
+		  Dim Document As Beacon.DocumentURL = Sender.Tag
+		  MainWindow.Documents.OpenURL(Document)
 		  Return True
 		End Function
 	#tag EndMethod
@@ -776,6 +754,8 @@ Implements NotificationKit.Receiver
 		  Select Case Notification.Name
 		  Case BeaconAPI.Socket.Notification_Unauthorized
 		    Preferences.OnlineToken = ""
+		  Case Preferences.Notification_RecentsChanged
+		    Self.RebuildRecentMenu()
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -792,9 +772,9 @@ Implements NotificationKit.Receiver
 		    FileOpenRecent.Remove(0)
 		  Wend
 		  
-		  Dim Documents() As FolderItem = Self.RecentDocuments()
-		  For Each Document As FolderItem In Documents
-		    Dim Item As New MenuItem(Document.DisplayName)
+		  Dim Documents() As Beacon.DocumentURL = Preferences.RecentDocuments
+		  For Each Document As Beacon.DocumentURL In Documents
+		    Dim Item As New MenuItem(Document.Name)
 		    Item.Tag = Document
 		    Item.Enable
 		    AddHandler Item.Action, WeakAddressOf mOpenRecent_OpenFile
@@ -812,36 +792,6 @@ Implements NotificationKit.Receiver
 		    Item.Enabled = False
 		    FileOpenRecent.Append(Item)
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function RecentDocuments() As FolderItem()
-		  Dim SaveData() As Text = Preferences.RecentDocuments
-		  
-		  Dim Documents() As FolderItem
-		  For Each Data As Text In SaveData
-		    Dim File As FolderItem = GetFolderItem(DecodeBase64(Data), FolderItem.PathTypeNative)
-		    If File <> Nil Then
-		      Documents.Append(File)
-		    End If
-		  Next
-		  
-		  Return Documents
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RecentDocuments(Assigns Documents() As FolderItem)
-		  Dim SaveData() As Text
-		  For Each Document As FolderItem In Documents
-		    If Document <> Nil And Document.Exists Then
-		      Dim Data As String = Document.GetSaveInfo(Nil)
-		      SaveData.Append(EncodeBase64(Data, 0).ToText)
-		    End If
-		  Next
-		  Preferences.RecentDocuments = SaveData
-		  Self.RebuildRecentMenu()
 		End Sub
 	#tag EndMethod
 

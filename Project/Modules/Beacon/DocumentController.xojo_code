@@ -121,7 +121,7 @@ Protected Class DocumentController
 		  
 		  Select Case Self.mDocumentURL.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
-		    Dim Request As New BeaconAPI.Request("https://" + Self.mDocumentURL.Path, "DELETE", AddressOf APICallback_DocumentDelete)
+		    Dim Request As New BeaconAPI.Request(Self.mDocumentURL.WithScheme("https"), "DELETE", AddressOf APICallback_DocumentDelete)
 		    Request.Sign(App.Identity)
 		    Self.CheckAPISocket()
 		    Self.mAPISocket.Start(Request)
@@ -172,6 +172,8 @@ Protected Class DocumentController
 		  Self.mBusy = True
 		  Self.mIdentity = WithIdentity
 		  Self.mLoadThread.Run
+		  
+		  Xojo.Core.Timer.CallLater(1500, WeakAddressOf TriggerLoadStarted)
 		End Sub
 	#tag EndMethod
 
@@ -197,7 +199,7 @@ Protected Class DocumentController
 		    // authenticated api request
 		    Self.CheckAPISocket()
 		    
-		    Dim Request As New BeaconAPI.Request("https://" + Self.mDocumentURL.Path, "GET", WeakAddressOf APICallback_DocumentDownload)
+		    Dim Request As New BeaconAPI.Request(Self.mDocumentURL.WithScheme("https"), "GET", WeakAddressOf APICallback_DocumentDownload)
 		    Request.Sign(Self.mIdentity)
 		    Self.mAPISocket.Start(Request)
 		  Case Beacon.DocumentURL.TypeWeb
@@ -211,12 +213,17 @@ Protected Class DocumentController
 		    Try
 		      File = New Beacon.FolderItem(Self.mDocumentURL.Path)
 		    Catch Err As RuntimeException
-		      Self.mBusy = False
-		      Xojo.Core.Timer.CallLater(1, AddressOf TriggerLoadError)
-		      Return
+		         
 		    End Try
 		    
-		    If Not File.Exists Then
+		    If (File = Nil Or File.Exists = False) And Self.mDocumentURL.HasParam("saveinfo") Then
+		      File = Beacon.FolderItem.FromSaveInfo(Self.mDocumentURL.Param("saveinfo"))
+		      If File <> Nil And File.Exists Then
+		        Self.mDocumentURL = Beacon.DocumentURL.URLForFile(File)
+		      End If
+		    End If
+		    
+		    If File = Nil Or File.Exists = False Then
 		      Self.mBusy = False
 		      Xojo.Core.Timer.CallLater(1, AddressOf TriggerLoadError)
 		      Return
@@ -255,6 +262,10 @@ Protected Class DocumentController
 		  If Document = Nil Then
 		    Xojo.Core.Timer.CallLater(1, AddressOf TriggerLoadError)
 		    Return
+		  End If
+		  
+		  If Document.Title.Trim = "" Then
+		    Document.Title = Self.Name
 		  End If
 		  
 		  Self.mDocument = Document
@@ -345,12 +356,22 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h21
 		Private Sub TriggerLoadError()
+		  Xojo.Core.Timer.CancelCall(WeakAddressOf TriggerLoadStarted)
+		  
 		  RaiseEvent LoadError()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub TriggerLoadStarted()
+		  RaiseEvent LoadStarted()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub TriggerLoadSuccess()
+		  Xojo.Core.Timer.CancelCall(WeakAddressOf TriggerLoadStarted)
+		  
 		  RaiseEvent Loaded(Self.mDocument)
 		End Sub
 	#tag EndMethod
@@ -397,7 +418,7 @@ Protected Class DocumentController
 		    Self.CheckAPISocket()
 		    
 		    Dim Body As Text = Xojo.Data.GenerateJSON(Self.mDocument.ToDictionary(WithIdentity))
-		    Dim Request As New BeaconAPI.Request("https://" + Self.mDocumentURL.Path, "POST", Body, "application/json", AddressOf APICallback_DocumentUpload)
+		    Dim Request As New BeaconAPI.Request(Self.mDocumentURL.WithScheme("https"), "POST", Body, "application/json", AddressOf APICallback_DocumentUpload)
 		    Request.Sign(WithIdentity)
 		    Self.mAPISocket.Start(Request)
 		  Case Beacon.DocumentURL.TypeLocal
@@ -427,6 +448,10 @@ Protected Class DocumentController
 
 	#tag Hook, Flags = &h0
 		Event LoadProgress(BytesReceived As Int64, BytesTotal As Int64)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event LoadStarted()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
