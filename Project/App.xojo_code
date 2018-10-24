@@ -840,6 +840,24 @@ Implements NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Terminate(ReturnCode As Integer)
+		  #if TargetMacOS
+		    Declare Sub HardTerminate Lib "System" Alias "exit" (Code As Integer)
+		    HardTerminate(ReturnCode)
+		  #elseif TargetWin32
+		    Declare Sub TerminateProcess Lib "Kernel32" (Handle As Integer, ExitCode As Integer)
+		    Declare Function GetCurrentProcessId Lib "Kernel32" () As Integer
+		    Declare Function OpenProcess Lib "Kernel32" (Access As Integer, InheritHandle As Boolean, ProcessId As Integer ) As Integer
+		    Declare Sub CloseHandle Lib "Kernel32" (Handle As Integer)
+		    
+		    Dim Handle As Integer = OpenProcess(&h1, False, GetCurrentProcessId())
+		    TerminateProcess(Handle, ReturnCode)
+		    CloseHandle(Handle) // In theory, should never get called
+		  #endif
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub WriteIdentity()
 		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)

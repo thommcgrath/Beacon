@@ -132,7 +132,7 @@ Begin Window ExceptionWindow
       Cancel          =   False
       Caption         =   "Quit"
       Default         =   False
-      Enabled         =   True
+      Enabled         =   False
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -293,7 +293,7 @@ Begin Window ExceptionWindow
       TabPanelIndex   =   0
       Top             =   103
       Transparent     =   False
-      Value           =   2
+      Value           =   0
       Visible         =   True
       Width           =   474
       Begin Label CheckingLabel
@@ -755,7 +755,14 @@ End
 #tag Events QuitButton
 	#tag Event
 		Sub Action()
-		  Quit
+		  App.Terminate(0)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Pages
+	#tag Event
+		Sub Change()
+		  Self.QuitButton.Enabled = Me.Value <> Self.PageStart
 		End Sub
 	#tag EndEvent
 #tag EndEvents
