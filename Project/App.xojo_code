@@ -846,14 +846,8 @@ Implements NotificationKit.Receiver
 		    Declare Sub HardTerminate Lib "System" Alias "exit" (Code As Integer)
 		    HardTerminate(ReturnCode)
 		  #elseif TargetWin32
-		    Declare Sub TerminateProcess Lib "Kernel32" (Handle As Integer, ExitCode As Integer)
-		    Declare Function GetCurrentProcessId Lib "Kernel32" () As Integer
-		    Declare Function OpenProcess Lib "Kernel32" (Access As Integer, InheritHandle As Boolean, ProcessId As Integer ) As Integer
-		    Declare Sub CloseHandle Lib "Kernel32" (Handle As Integer)
-		    
-		    Dim Handle As Integer = OpenProcess(&h1, False, GetCurrentProcessId())
-		    TerminateProcess(Handle, ReturnCode)
-		    CloseHandle(Handle) // In theory, should never get called
+		    Declare Sub ExitProcess Lib "Kernel32" (uExitCode As UInt32)
+		    ExitProcess(ReturnCode)
 		  #endif
 		End Sub
 	#tag EndMethod
