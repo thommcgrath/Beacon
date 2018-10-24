@@ -355,7 +355,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      Mask            =   "####"
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -398,7 +398,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      Mask            =   "####"
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -441,7 +441,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      Mask            =   "####"
       Password        =   False
       ReadOnly        =   False
       Scope           =   2

@@ -175,6 +175,22 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    LootSource = New Beacon.LootSource(MutableSource)
 		  End If
 		  
+		  Dim Children() As Auto
+		  If Dict.HasKey("ItemSets") Then
+		    Children = Dict.Value("ItemSets")
+		  Else
+		    Children = Dict.Value("Items")
+		  End If
+		  Dim AddedHashes As New Xojo.Core.Dictionary
+		  For Each Child As Xojo.Core.Dictionary In Children
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Child)
+		    Dim Hash As Text = Set.Hash
+		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
+		      LootSource.Append(Set)
+		      AddedHashes.Value(Hash) = True
+		    End If
+		  Next
+		  
 		  If Dict.HasKey("MaxItemSets") Then
 		    LootSource.MaxItemSets = Dict.Value("MaxItemSets")
 		  End If
@@ -192,23 +208,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  If Dict.HasKey("AppendMode") Then
 		    LootSource.AppendMode = Dict.Value("AppendMode")
 		  End If
-		  
-		  Dim Children() As Auto
-		  If Dict.HasKey("ItemSets") Then
-		    Children = Dict.Value("ItemSets")
-		  Else
-		    Children = Dict.Value("Items")
-		  End If
-		  
-		  Dim AddedHashes As New Xojo.Core.Dictionary
-		  For Each Child As Xojo.Core.Dictionary In Children
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Child)
-		    Dim Hash As Text = Set.Hash
-		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
-		      LootSource.Append(Set)
-		      AddedHashes.Value(Hash) = True
-		    End If
-		  Next
 		  
 		  LootSource.mModified = False
 		  Return LootSource
@@ -241,6 +240,20 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    LootSource = New Beacon.LootSource(MutableSource)
 		  End If
 		  
+		  Dim Children() As Auto
+		  If Dict.HasKey("ItemSets") Then
+		    Children = Dict.Value("ItemSets")
+		  End If
+		  Dim AddedHashes As New Xojo.Core.Dictionary
+		  For Each Child As Xojo.Core.Dictionary In Children
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromConfig(Child, LootSource.Multipliers, DifficultyValue)
+		    Dim Hash As Text = Set.Hash
+		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
+		      LootSource.Append(Set)
+		      AddedHashes.Value(Hash) = True
+		    End If
+		  Next
+		  
 		  If Dict.HasKey("MaxItemSets") Then
 		    LootSource.MaxItemSets = Dict.Value("MaxItemSets")
 		  End If
@@ -256,21 +269,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  If Dict.HasKey("bAppendItemSets") Then
 		    LootSource.AppendMode = Dict.Value("bAppendItemSets")
 		  End If
-		  
-		  Dim Children() As Auto
-		  If Dict.HasKey("ItemSets") Then
-		    Children = Dict.Value("ItemSets")
-		  End If
-		  
-		  Dim AddedHashes As New Xojo.Core.Dictionary
-		  For Each Child As Xojo.Core.Dictionary In Children
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromConfig(Child, LootSource.Multipliers, DifficultyValue)
-		    Dim Hash As Text = Set.Hash
-		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
-		      LootSource.Append(Set)
-		      AddedHashes.Value(Hash) = True
-		    End If
-		  Next
 		  
 		  LootSource.mModified = False
 		  Return LootSource
@@ -642,12 +640,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mMaxItemSets
+			  Return Max(Min(Self.mMaxItemSets, Self.Count), Max(Self.mMinItemSets, 1))
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Max(Value, 1)
+			  Value = Max(Min(Value, Self.Count), Self.mMinItemSets, 1)
 			  If Self.mMaxItemSets = Value Then
 			    Return
 			  End If
@@ -666,12 +664,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mMinItemSets
+			  Return Min(Max(Self.mMinItemSets, 1), Self.mMaxItemSets, Self.Count)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Max(Value, 1)
+			  Value = Max(Min(Value, Self.mMaxItemSets, Self.Count), 1)
 			  If Self.mMinItemSets = Value Then
 			    Return
 			  End If

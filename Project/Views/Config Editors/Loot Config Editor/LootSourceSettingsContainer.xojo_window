@@ -115,7 +115,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Visible         =   True
       Width           =   219
    End
-   Begin UITweaks.ResizedTextField MinItemSetsField
+   Begin RangeField MinItemSetsField
       AcceptTabs      =   False
       Alignment       =   2
       AutoDeactivate  =   True
@@ -139,7 +139,7 @@ Begin ContainerControl LootSourceSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      Mask            =   "####"
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -155,6 +155,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      Value           =   0
       Visible         =   True
       Width           =   50
    End
@@ -193,7 +194,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Visible         =   True
       Width           =   85
    End
-   Begin UITweaks.ResizedTextField MaxItemSetsField
+   Begin RangeField MaxItemSetsField
       AcceptTabs      =   False
       Alignment       =   2
       AutoDeactivate  =   True
@@ -217,7 +218,7 @@ Begin ContainerControl LootSourceSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   ""
+      Mask            =   "####"
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -233,6 +234,7 @@ Begin ContainerControl LootSourceSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      Value           =   0
       Visible         =   True
       Width           =   50
    End
@@ -304,6 +306,52 @@ Begin ContainerControl LootSourceSettingsContainer
       Visible         =   True
       Width           =   210
    End
+   Begin UpDownArrows MinItemSetsStepper
+      AcceptFocus     =   False
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   167
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   32
+      Transparent     =   False
+      Visible         =   True
+      Width           =   13
+   End
+   Begin UpDownArrows MaxItemSetsStepper
+      AcceptFocus     =   False
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   167
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   56
+      Transparent     =   False
+      Visible         =   True
+      Width           =   13
+   End
 End
 #tag EndWindow
 
@@ -315,6 +363,60 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h21
+		Private Function CurrentMaximum() As Integer
+		  Dim Value As Integer
+		  If Self.MaxItemSetsField.Text = "" Then
+		    Dim Sources() As Beacon.LootSource = Self.LootSources
+		    If Sources.Ubound = -1 Then
+		      Return 1
+		    End If
+		    
+		    For I As Integer = 0 To Sources.Ubound
+		      Value = Max(Value, Sources(I).MaxItemSets)
+		    Next
+		  Else
+		    Value = Val(Self.MaxItemSetsField.Text)
+		  End If
+		  Return Min(Value, Self.EffectiveMaximum())
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function CurrentMinimum() As Integer
+		  Dim Value As Integer
+		  If Self.MinItemSetsField.Text = "" Then
+		    Dim Sources() As Beacon.LootSource = Self.LootSources
+		    If Sources.Ubound = -1 Then
+		      Return 1
+		    End If
+		    
+		    Value = Sources(0).MinItemSets
+		    For I As Integer = 1 To Sources.Ubound
+		      Value = Min(Value, Sources(I).MinItemSets)
+		    Next
+		  Else
+		    Value = Val(Self.MinItemSetsField.Text)
+		  End If
+		  Return Value
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function EffectiveMaximum() As Integer
+		  Dim Sources() As Beacon.LootSource = Self.LootSources
+		  If Sources.Ubound = -1 Then
+		    Return 9999
+		  End If
+		  
+		  Dim Value As Integer
+		  For I As Integer = 0 To Sources.Ubound
+		    Value = Max(Value, Sources(I).Count)
+		  Next
+		  Return Value
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function LootSources() As Beacon.LootSource()
@@ -431,6 +533,27 @@ End
 		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function AllowContents(Value As String) As Boolean
+		  If Value.Trim = "" And Self.mSources.Ubound > 0 Then
+		    Return True
+		  End If
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
+		  MinValue = 1
+		  MaxValue = Self.CurrentMaximum
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub RangeError(DesiredValue As Integer, NewValue As Integer)
+		  #Pragma Unused DesiredValue
+		  #Pragma Unused NewValue
+		  
+		  Beep
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events MaxItemSetsField
 	#tag Event
@@ -451,6 +574,27 @@ End
 		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Function AllowContents(Value As String) As Boolean
+		  If Value.Trim = "" And Self.mSources.Ubound > 0 Then
+		    Return True
+		  End If
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
+		  MinValue = Self.CurrentMinimum
+		  MaxValue = Self.EffectiveMaximum
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub RangeError(DesiredValue As Integer, NewValue As Integer)
+		  #Pragma Unused DesiredValue
+		  #Pragma Unused NewValue
+		  
+		  Beep
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events NoDuplicatesCheck
 	#tag Event
@@ -465,6 +609,46 @@ End
 		  Next
 		  
 		  RaiseEvent Changed
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MinItemSetsStepper
+	#tag Event
+		Sub Down()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Self.MinItemSetsField.Value = Self.MinItemSetsField.Value - 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Up()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Self.MinItemSetsField.Value = Self.MinItemSetsField.Value + 1
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MaxItemSetsStepper
+	#tag Event
+		Sub Down()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Self.MaxItemSetsField.Value = Self.MaxItemSetsField.Value - 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Up()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Self.MaxItemSetsField.Value = Self.MaxItemSetsField.Value + 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents

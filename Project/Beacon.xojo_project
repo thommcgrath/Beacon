@@ -285,6 +285,7 @@ MultiImage=IconToolbarIssues;Icons/IconToolbarIssues.xojo_image;&h0000000071B90F
 Class=Issue;Modules/Beacon/Issue.xojo_code;&h00000000770437FF;&h0000000055ADDFFF;false
 Window=ExceptionWindow;Views/ExceptionWindow.xojo_window;&h00000000202847FF;&h0000000008A387FF;false
 Window=EngramsUpdateWindow;Views/EngramsUpdateWindow.xojo_window;&h00000000625DF7FF;&h0000000008A387FF;false
+Class=RangeField;Custom Controls/RangeField.xojo_code;&h00000000306F6FFF;&h0000000030DCFFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0
