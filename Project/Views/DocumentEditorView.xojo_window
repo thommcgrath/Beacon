@@ -240,6 +240,21 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub Open()
+		  If Self.mController.Document <> Nil Then
+		    Dim DocumentID As Text = Self.mController.Document.DocumentID
+		    Dim ConfigName As Text = Preferences.LastUsedConfigName(DocumentID)
+		    For I As Integer = 0 To Self.ConfigMenu.Count - 1
+		      If Self.ConfigMenu.RowTag(I) = ConfigName Then
+		        Self.ConfigMenu.ListIndex = I
+		        Exit For I
+		      End If
+		    Next
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function ShouldSave() As Boolean
 		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeTransient Then
 		    Self.mController.Save(App.Identity)
@@ -635,6 +650,10 @@ End
 		  Dim Embed As Boolean
 		  If Tag <> Nil And (Tag.Type = Variant.TypeString Or Tag.Type = Variant.TypeText) Then
 		    Self.UpdateHelpForConfig(Tag.StringValue)
+		    
+		    If Self.mController.Document <> Nil Then
+		      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Tag.StringValue.ToText
+		    End If
 		    
 		    If Self.Panels.HasKey(Tag.StringValue) Then
 		      NewPanel = Self.Panels.Value(Tag.StringValue)

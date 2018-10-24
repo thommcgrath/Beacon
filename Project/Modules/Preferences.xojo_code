@@ -30,6 +30,25 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function LastUsedConfigName(DocumentID As Text) As Text
+		  Dim Dict As Xojo.Core.Dictionary = mManager.AutoValue("Last Used Config", New Xojo.Core.Dictionary)
+		  If Dict.HasKey(DocumentID) Then
+		    Return Dict.Value(DocumentID)
+		  Else
+		    Return BeaconConfigs.LootDrops.ConfigName
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub LastUsedConfigName(DocumentID As Text, Assigns ConfigName As Text)
+		  Dim Dict As Xojo.Core.Dictionary = mManager.AutoValue("Last Used Config", New Xojo.Core.Dictionary)
+		  Dict.Value(DocumentID) = ConfigName
+		  mManager.AutoValue("Last Used Config") = Dict
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function RecentDocuments() As Beacon.DocumentURL()
 		  Init
