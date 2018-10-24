@@ -88,17 +88,7 @@ Protected Class DocumentURL
 		  
 		  If Name = "" Then
 		    // Get the last path component
-		    Dim Components() As Text
-		    #if TargetWin32
-		      If Self.mScheme = Self.TypeLocal Then
-		        Components = Self.Path.Split("\")
-		      Else
-		        Components = Self.Path.Split("/")
-		      End If
-		    #else
-		      Components = Self.Path.Split("/")
-		    #endif
-		    
+		    Dim Components() As Text = Self.Path.Split("/")
 		    Name = Components(Components.Ubound)
 		    
 		    If Name.EndsWith(".beacon") Then
