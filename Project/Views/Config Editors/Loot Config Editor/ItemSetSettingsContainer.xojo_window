@@ -331,7 +331,7 @@ Begin ContainerControl ItemSetSettingsContainer
       Visible         =   True
       Width           =   179
    End
-   Begin UITweaks.ResizedTextField MinEntriesField
+   Begin RangeField MinEntriesField
       AcceptTabs      =   False
       Alignment       =   2
       AutoDeactivate  =   True
@@ -371,10 +371,11 @@ Begin ContainerControl ItemSetSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      Value           =   0
       Visible         =   True
       Width           =   50
    End
-   Begin UITweaks.ResizedTextField MaxEntriesField
+   Begin RangeField MaxEntriesField
       AcceptTabs      =   False
       Alignment       =   2
       AutoDeactivate  =   True
@@ -414,10 +415,11 @@ Begin ContainerControl ItemSetSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      Value           =   0
       Visible         =   True
       Width           =   50
    End
-   Begin UITweaks.ResizedTextField WeightField
+   Begin RangeField WeightField
       AcceptTabs      =   False
       Alignment       =   2
       AutoDeactivate  =   True
@@ -457,6 +459,7 @@ Begin ContainerControl ItemSetSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      Value           =   0
       Visible         =   True
       Width           =   50
    End
@@ -609,9 +612,9 @@ End
 			  If Value <> Nil Then
 			    Self.mItemSetRef = New WeakRef(Value)
 			    Self.NameField.Text = Value.Label
-			    Self.MinEntriesField.Text = Str(Value.MinNumItems, "-0")
-			    Self.MaxEntriesField.Text = Str(Value.MaxNumItems, "-0")
-			    Self.WeightField.Text = Str(Round(Value.Weight * Self.WeightScale), "-0")
+			    Self.MinEntriesField.Value = Value.MinNumItems
+			    Self.MaxEntriesField.Value = Value.MaxNumItems
+			    Self.WeightField.Value = Round(Value.Weight * Self.WeightScale)
 			    Self.PreventDuplicatesCheck.Value = Value.ItemsRandomWithoutReplacement
 			  Else
 			    Self.mItemSetRef = Nil
@@ -705,17 +708,17 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub LostFocus()
-		  If Self.mSettingUp Or Self.ItemSet = Nil Then
-		    Return
-		  End If
+		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
+		  MinValue = 1
+		  MaxValue = If(Self.ItemSet <> Nil, Self.ItemSet.MaxNumItems, 1)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub RangeError(DesiredValue As Integer, NewValue As Integer)
+		  #Pragma Unused DesiredValue
+		  #Pragma Unused NewValue
 		  
-		  Dim CorrectValue As String = Str(Self.ItemSet.MinNumItems, "-0")
-		  If Me.Text <> CorrectValue Then
-		    Self.mSettingUp = True
-		    Me.Text = CorrectValue
-		    Self.mSettingUp = False
-		  End If
+		  Beep
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -736,17 +739,22 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub LostFocus()
-		  If Self.mSettingUp Or Self.ItemSet = Nil Then
-		    Return
+		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
+		  If Self.ItemSet <> Nil Then
+		    MinValue = Self.ItemSet.MinNumItems
+		    MaxValue = Self.ItemSet.Count
+		  Else
+		    MinValue = 1
+		    MaxValue = 1
 		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub RangeError(DesiredValue As Integer, NewValue As Integer)
+		  #Pragma Unused DesiredValue
+		  #Pragma Unused NewValue
 		  
-		  Dim CorrectValue As String = Str(Self.ItemSet.MaxNumItems, "-0")
-		  If Me.Text <> CorrectValue Then
-		    Self.mSettingUp = True
-		    Me.Text = CorrectValue
-		    Self.mSettingUp = False
-		  End If
+		  Beep
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -767,17 +775,17 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub LostFocus()
-		  If Self.mSettingUp Or Self.ItemSet = Nil Then
-		    Return
-		  End If
+		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
+		  MinValue = 1
+		  MaxValue = 1000
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub RangeError(DesiredValue As Integer, NewValue As Integer)
+		  #Pragma Unused DesiredValue
+		  #Pragma Unused NewValue
 		  
-		  Dim CorrectValue As String = Str(Round(Self.ItemSet.Weight * Self.WeightScale), "-0")
-		  If Me.Text <> CorrectValue Then
-		    Self.mSettingUp = True
-		    Me.Text = CorrectValue
-		    Self.mSettingUp = False
-		  End If
+		  Beep
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -788,8 +796,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim NewWeight As Integer = Max((Self.ItemSet.Weight * Self.WeightScale) - (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100)), 1)
-		  Self.WeightField.Text = Str(NewWeight, "-0")
+		  Self.WeightField.Value = Self.WeightField.Value - (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100))
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -798,8 +805,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim NewWeight As Integer = Min((Self.ItemSet.Weight * Self.WeightScale) + (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100)), Self.WeightScale)
-		  Self.WeightField.Text = Str(NewWeight, "-0")
+		  Self.WeightField.Value = Self.WeightField.Value + (If(Keyboard.AsyncShiftKey, 5, 1) * (Self.WeightScale / 100))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -810,13 +816,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim NewMaximum As Integer = Max(Self.ItemSet.MaxNumItems - 1, Self.ItemSet.MinNumItems)
-		  If NewMaximum = Self.ItemSet.MaxNumItems Then
-		    Beep
-		    Return
-		  End If
-		  
-		  Self.MaxEntriesField.Text = Str(NewMaximum, "-0")
+		  Self.MaxEntriesField.Value = Self.MaxEntriesField.Value - 1
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -825,13 +825,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim NewMaximum As Integer = Min(Self.ItemSet.MaxNumItems + 1, Self.ItemSet.Count)
-		  If NewMaximum = Self.ItemSet.MaxNumItems Then
-		    Beep
-		    Return
-		  End If
-		  
-		  Self.MaxEntriesField.Text = Str(NewMaximum, "-0")
+		  Self.MaxEntriesField.Value = Self.MaxEntriesField.Value + 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -842,13 +836,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim NewMinimum As Integer = Max(Self.ItemSet.MinNumItems - 1, 1)
-		  If NewMinimum = Self.ItemSet.MinNumItems Then
-		    Beep
-		    Return
-		  End If
-		  
-		  Self.MinEntriesField.Text = Str(NewMinimum, "-0")
+		  Self.MinEntriesField.Value = Self.MinEntriesField.Value - 1
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -857,13 +845,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim NewMinimum As Integer = Min(Self.ItemSet.MinNumItems + 1, Self.ItemSet.MaxNumItems)
-		  If NewMinimum = Self.ItemSet.MinNumItems Then
-		    Beep
-		    Return
-		  End If
-		  
-		  Self.MinEntriesField.Text = Str(NewMinimum, "-0")
+		  Self.MinEntriesField.Value = Self.MinEntriesField.Value + 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
