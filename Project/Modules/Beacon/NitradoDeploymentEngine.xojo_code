@@ -679,7 +679,7 @@ Implements Beacon.DeploymentEngine
 		  Dim MillisecondsWaited As Double = (Microseconds - Self.mServerStopTime) * 0.001
 		  Dim MillisecondsRemaining As Double = Max(MillisecondsToWait - MillisecondsWaited, 0)
 		  
-		  Self.mStatus = "Waiting for server to stop…"
+		  Self.mStatus = "Waiting 3 minutes per Nitrado recommendations…"
 		  Xojo.Core.Timer.CallLater(MillisecondsRemaining, WeakAddressOf UploadGameIni)
 		End Sub
 	#tag EndMethod
