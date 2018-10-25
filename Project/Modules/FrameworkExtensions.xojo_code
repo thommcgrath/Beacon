@@ -13,6 +13,39 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DoubleValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto) As Double
+		  Dim Value As Auto = Dict.Value(Key)
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		  Select Case Info.FullName
+		  Case "Text"
+		    Dim TextValue As Text = Value
+		    If TextValue = "" Then
+		      Return 0
+		    Else
+		      Return Double.FromText(TextValue)
+		    End If
+		  Case "Double"
+		    Dim DoubleValue As Double = Value
+		    Return DoubleValue
+		  Case "Single"
+		    Dim SingleValue As Single = Value
+		    Return SingleValue
+		  Case "Int8", "Int16", "Int32", "Int64"
+		    Dim IntegerValue As Int64 = Value
+		    Return IntegerValue
+		  Case "UInt8", "UInt16", "UInt32", "UInt64"
+		    Dim UIntegerValue As UInt64 = Value
+		    Return UIntegerValue
+		  Else
+		    Break
+		  End Select
+		  
+		  Exception Err As TypeMismatchException
+		    Return 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function EndsWith(Extends Source As String, Other As String) As Boolean
 		  Return Right(Source, Len(Other)) = Other
 		End Function

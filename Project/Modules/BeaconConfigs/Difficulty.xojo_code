@@ -33,8 +33,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(OverrideOfficialDifficulty As Double, DifficultyOffset As Double)
-		  Self.MaxDinoLevel = Round((OverrideOfficialDifficulty * 30) * DifficultyOffset)
+		Sub Constructor(DifficultyValue As Double)
+		  Self.DifficultyValue = DifficultyValue
 		  Self.Modified = False
 		End Sub
 	#tag EndMethod
@@ -47,6 +47,16 @@ Inherits Beacon.ConfigGroup
 		  Options(0) = New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", Self.DifficultyOffset.PrettyText)
 		  Options(1) = New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(1))
 		  Return Options
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Levels() As Integer()
+		  Dim Results() As Integer
+		  For I As Integer = 1 To 30
+		    Results.Append(Floor(Self.DifficultyValue * I))
+		  Next
+		  Return Results
 		End Function
 	#tag EndMethod
 
@@ -74,7 +84,7 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Max(((Self.MaxDinoLevel / 30) - 0.5) / (Self.OverrideOfficialDifficulty - 0.5), 0.01)
+			  Return 1.0
 			End Get
 		#tag EndGetter
 		DifficultyOffset As Double
@@ -83,9 +93,18 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.DifficultyOffset * (Self.OverrideOfficialDifficulty - 0.5) + 0.5
+			  Return Self.mMaxDinoLevel / 30
 			End Get
 		#tag EndGetter
+		#tag Setter
+			Set
+			  Dim MaxLevel As Integer = Floor(Value * 30)
+			  If Self.mMaxDinoLevel <> MaxLevel Then
+			    Self.mMaxDinoLevel = MaxLevel
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
 		DifficultyValue As Double
 	#tag EndComputedProperty
 
@@ -113,7 +132,7 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Ceil(Self.mMaxDinoLevel / 30)
+			  Return Self.DifficultyValue
 			End Get
 		#tag EndGetter
 		OverrideOfficialDifficulty As Double
@@ -121,6 +140,11 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="IsImplicit"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
@@ -165,17 +189,17 @@ Inherits Beacon.ConfigGroup
 			Type="Double"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="DinoLevelIncrements"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="QualityMultiplier"
+			Name="BaseArbitraryQuality"
 			Group="Behavior"
 			Type="Double"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="BaseArbitraryQuality"
+			Name="DifficultyValue"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="OverrideOfficialDifficulty"
 			Group="Behavior"
 			Type="Double"
 		#tag EndViewProperty

@@ -44,6 +44,7 @@ Begin ContainerControl DocumentImportView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -250,6 +251,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -279,6 +281,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -308,6 +311,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -479,6 +483,7 @@ Begin ContainerControl DocumentImportView
       End
    End
    Begin Timer DiscoveryWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -578,26 +583,23 @@ End
 		    Next
 		    DifficultyScale = DifficultyTotal / (Maps.Ubound + 1)
 		    
-		    Dim OverrideOfficialDifficulty As Double
-		    If CommandLineOptions.HasKey("OverrideOfficialDifficulty") Then
-		      Dim TextValue As Text = CommandLineOptions.Value("OverrideOfficialDifficulty")
-		      OverrideOfficialDifficulty = Double.FromText(TextValue)
-		    ElseIf ParsedData.HasKey("OverrideOfficialDifficulty") Then
-		      OverrideOfficialDifficulty = ParsedData.Value("OverrideOfficialDifficulty")
+		    Dim DifficultyValue As Double
+		    If CommandLineOptions.HasKey("OverrideOfficialDifficulty") And CommandLineOptions.DoubleValue("OverrideOfficialDifficulty") > 0 Then
+		      DifficultyValue = CommandLineOptions.DoubleValue("OverrideOfficialDifficulty")
+		    ElseIf ParsedData.HasKey("OverrideOfficialDifficulty") And ParsedData.DoubleValue("OverrideOfficialDifficulty") > 0 Then
+		      DifficultyValue = ParsedData.DoubleValue("OverrideOfficialDifficulty")
 		    Else
-		      OverrideOfficialDifficulty = DifficultyScale
-		    End If
-		    
-		    Dim DifficultyOffset As Double
-		    If ParsedData.HasKey("DifficultyOffset") Then
-		      DifficultyOffset = ParsedData.Value("DifficultyOffset")
-		    Else
-		      DifficultyOffset = 1.0
+		      Dim DifficultyOffset As Double
+		      If ParsedData.HasKey("DifficultyOffset") Then
+		        DifficultyValue = ParsedData.DoubleValue("DifficultyOffset") * (DifficultyScale - 0.5) + 0.5
+		      Else
+		        DifficultyValue = DifficultyScale
+		      End If
 		    End If
 		    
 		    Dim Document As New Beacon.Document
 		    Document.MapCompatibility = Engine.Map
-		    Document.AddConfigGroup(New BeaconConfigs.Difficulty(OverrideOfficialDifficulty, DifficultyOffset))
+		    Document.AddConfigGroup(New BeaconConfigs.Difficulty(DifficultyValue))
 		    
 		    If Self.mOAuthData <> Nil And Self.mOAuthProvider <> "" Then
 		      Document.OAuthData(Self.mOAuthProvider) = Self.mOAuthData
