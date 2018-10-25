@@ -9,11 +9,6 @@ Inherits BeaconSubview
 			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="ToolbarIcon"
-			Group="Behavior"
-			Type="Picture"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="MinimumWidth"
 			Visible=true
 			Group="Behavior"

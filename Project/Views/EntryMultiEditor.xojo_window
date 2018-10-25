@@ -32,11 +32,13 @@ Begin Window EntryMultiEditor
       AutoDeactivate  =   True
       BackColor       =   &cFFFFFF00
       Backdrop        =   0
+      DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
       HasBackColor    =   False
       Height          =   209
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   10
       LockBottom      =   True
@@ -81,6 +83,7 @@ Begin Window EntryMultiEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   221
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -112,6 +115,7 @@ Begin Window EntryMultiEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   221
+      Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   80

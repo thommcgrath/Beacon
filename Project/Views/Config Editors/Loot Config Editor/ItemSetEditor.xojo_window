@@ -99,6 +99,7 @@ Begin BeaconContainer ItemSetEditor
       LockRight       =   True
       LockTop         =   True
       Resizer         =   ""
+      ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   0

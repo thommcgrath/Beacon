@@ -22,25 +22,6 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub Open()
-		  RaiseEvent Open
-		  RaiseEvent Resize
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resized()
-		  RaiseEvent Resize
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resizing()
-		  RaiseEvent Resize
-		End Sub
-	#tag EndEvent
-
 
 	#tag MenuHandler
 		Function FileSave() As Boolean Handles FileSave.Action
@@ -218,15 +199,7 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Open()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
 		Event OwnerModifiedHook()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event Resize()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

@@ -46,6 +46,7 @@ Begin BeaconSubview IdentityView
       LockRight       =   True
       LockTop         =   True
       Resizer         =   ""
+      ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   0
@@ -288,6 +289,7 @@ Begin BeaconSubview IdentityView
       Width           =   80
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -671,11 +673,6 @@ End
 		Group="Behavior"
 		Type="String"
 		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarIcon"
-		Group="Behavior"
-		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"

@@ -32,7 +32,9 @@ Begin ServerViewContainer FTPServerView
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Untitled"
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -44,12 +46,14 @@ Begin ServerViewContainer FTPServerView
       LockRight       =   True
       LockTop         =   True
       Resizer         =   "0"
+      ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   600
@@ -724,11 +728,6 @@ End
 		Group="Behavior"
 		Type="String"
 		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarIcon"
-		Group="Behavior"
-		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"

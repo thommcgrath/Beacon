@@ -209,6 +209,7 @@ Begin LibrarySubview LibraryPaneEngrams
       LockRight       =   True
       LockTop         =   True
       Resizer         =   "0"
+      ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   0
@@ -531,11 +532,6 @@ End
 		Group="Behavior"
 		Type="String"
 		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarIcon"
-		Group="Behavior"
-		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"

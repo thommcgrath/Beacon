@@ -80,6 +80,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -105,6 +106,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       Resizer         =   "0"
+      ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   0

@@ -108,6 +108,7 @@ Begin BeaconContainer LootSourceEditor
       LockRight       =   False
       LockTop         =   True
       Resizer         =   "1"
+      ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   0
@@ -331,6 +332,18 @@ End
 		    Self.Simulator.Top = Self.Height
 		  End If
 		  Self.SetList.Height = Self.Simulator.Top - Self.SetList.Top
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  If Initial Then
+		    Self.SetListWidth(Preferences.ItemSetsSplitterPosition)
+		  Else
+		    Self.SetListWidth(Self.Header.Width)
+		  End If
+		  
+		  Self.Header.ResizerEnabled = Self.Width > Self.MinimumWidth
 		End Sub
 	#tag EndEvent
 
@@ -680,6 +693,30 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SetListWidth(NewSize As Integer)
+		  If Self.Width < Self.MinimumWidth Then
+		    // Don't compute anything
+		    Return
+		  End If
+		  
+		  Dim AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
+		  Dim ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - Self.EditorMinWidth)
+		  Dim EditorWidth As Integer = AvailableSpace - ListWidth
+		  
+		  Self.Header.Width = ListWidth
+		  Self.FadedSeparator1.Left = ListWidth
+		  Self.SetList.Width = ListWidth
+		  Self.Simulator.Width = ListWidth
+		  Self.LootSourceSettingsContainer1.Width = ListWidth
+		  Self.FadedSeparator3.Width = ListWidth
+		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
+		  Self.Panel.Width = EditorWidth
+		  
+		  Preferences.ItemSetsSplitterPosition = ListWidth
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ShowNewSet()
 		  Self.AddSet(New Beacon.ItemSet)
 		  RaiseEvent Updated()
@@ -812,7 +849,16 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = EditorMinWidth, Type = Double, Dynamic = False, Default = \"498", Scope = Public
+	#tag EndConstant
+
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.itemset", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = MinimumWidth, Type = Double, Dynamic = False, Default = \"749", Scope = Public
 	#tag EndConstant
 
 
@@ -1211,16 +1257,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
-		  NewSize = Max(NewSize, 250)
-		  
-		  Me.Width = NewSize
-		  FadedSeparator1.Left = NewSize
-		  SetList.Width = NewSize
-		  Simulator.Width = NewSize
-		  LootSourceSettingsContainer1.Width = NewSize
-		  FadedSeparator3.Width = NewSize
-		  Panel.Left = FadedSeparator1.Left + FadedSeparator1.Width
-		  Panel.Width = Self.Width - (Panel.Left)
+		  Self.SetListWidth(NewSize)
+		  NewSize = Self.Header.Width
 		End Sub
 	#tag EndEvent
 #tag EndEvents

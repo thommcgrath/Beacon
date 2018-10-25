@@ -15,6 +15,23 @@ Inherits ContainerControl
 		  #endif
 		  
 		  Self.SwapButtons()
+		  
+		  RaiseEvent Resize(Self.mFirstResize)
+		  Self.mFirstResize = False
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resized()
+		  RaiseEvent Resize(Self.mFirstResize)
+		  Self.mFirstResize = False
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resizing()
+		  RaiseEvent Resize(Self.mFirstResize)
+		  Self.mFirstResize = False
 		End Sub
 	#tag EndEvent
 
@@ -22,6 +39,15 @@ Inherits ContainerControl
 	#tag Hook, Flags = &h0
 		Event Open()
 	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Resize(Initial As Boolean)
+	#tag EndHook
+
+
+	#tag Property, Flags = &h21
+		Private mFirstResize As Boolean = True
+	#tag EndProperty
 
 
 	#tag ViewBehavior

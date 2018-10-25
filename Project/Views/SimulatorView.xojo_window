@@ -99,6 +99,7 @@ Begin BeaconContainer SimulatorView
       LockRight       =   True
       LockTop         =   True
       Resizer         =   "2"
+      ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   1

@@ -135,6 +135,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.IntegerValue("Item Sets Splitter Position", 250)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Item Sets Splitter Position") = Value
+			End Set
+		#tag EndSetter
+		ItemSetsSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.RectValue("Main Window Size", Nil)
 			End Get
 		#tag EndGetter
@@ -227,7 +243,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Sources Splitter Position", 300)
+			  Return mManager.IntegerValue("Sources Splitter Position", 250)
 			End Get
 		#tag EndGetter
 		#tag Setter

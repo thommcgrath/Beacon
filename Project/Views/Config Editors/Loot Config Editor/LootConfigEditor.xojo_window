@@ -46,6 +46,7 @@ Begin ConfigEditor LootConfigEditor
       LockRight       =   False
       LockTop         =   True
       Resizer         =   "1"
+      ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   0
@@ -257,16 +258,17 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.MinimumWidth = Self.FadedSeparator1.Width + Self.ListMinWidth + Self.EditorReservedSpace
+		  Self.MinimumWidth = Self.FadedSeparator1.Width + Self.ListMinWidth + LootSourceEditor.MinimumWidth
 		  Self.MinimumHeight = 400
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Resize()
-		  If Self.mFirstResize Then
+		Sub Resize(Initial As Boolean)
+		  If Initial Then
 		    Self.SetListWidth(Preferences.SourcesSplitterPosition)
-		    Self.mFirstResize = True
+		  Else
+		    Self.SetListWidth(Self.Header.Width)
 		  End If
 		  
 		  Self.Header.ResizerEnabled = Self.Width > Self.MinimumWidth
@@ -420,8 +422,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetListWidth(NewSize As Integer)
+		  If Self.Width < Self.MinimumWidth Then
+		    // Don't compute anything
+		    Return
+		  End If
+		  
 		  Dim AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
-		  Dim ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - Self.EditorReservedSpace)
+		  Dim ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - LootSourceEditor.MinimumWidth)
 		  Dim EditorWidth As Integer = AvailableSpace - ListWidth
 		  
 		  Self.Header.Width = ListWidth
@@ -507,13 +514,6 @@ End
 		Private mBlockSelectionChanged As Boolean
 	#tag EndProperty
 
-	#tag Property, Flags = &h21
-		Private mFirstResize As Boolean = True
-	#tag EndProperty
-
-
-	#tag Constant, Name = EditorReservedSpace, Type = Double, Dynamic = False, Default = \"749", Scope = Private
-	#tag EndConstant
 
 	#tag Constant, Name = HelpExplanation, Type = String, Dynamic = False, Default = \"Fill This In", Scope = Private
 	#tag EndConstant

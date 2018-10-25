@@ -323,6 +323,7 @@ Begin BeaconContainer ModDetailView
          LockRight       =   True
          LockTop         =   True
          Resizer         =   ""
+         ResizerEnabled  =   False
          Scope           =   2
          ScrollSpeed     =   20
          TabIndex        =   0
@@ -354,6 +355,7 @@ Begin BeaconContainer ModDetailView
          LockRight       =   True
          LockTop         =   True
          Resizer         =   ""
+         ResizerEnabled  =   False
          Scope           =   2
          ScrollSpeed     =   20
          TabIndex        =   0
@@ -385,6 +387,7 @@ Begin BeaconContainer ModDetailView
          LockRight       =   True
          LockTop         =   True
          Resizer         =   ""
+         ResizerEnabled  =   False
          Scope           =   2
          ScrollSpeed     =   20
          TabIndex        =   0
@@ -416,6 +419,7 @@ Begin BeaconContainer ModDetailView
          LockRight       =   True
          LockTop         =   True
          Resizer         =   ""
+         ResizerEnabled  =   False
          Scope           =   2
          ScrollSpeed     =   20
          TabIndex        =   0
@@ -469,20 +473,28 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.Resize()
 		  Self.mEngramSets = New Xojo.Core.Dictionary
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub Resized()
-		  Self.Resize()
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resizing()
-		  Self.Resize()
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
+		  ConfirmField.Left = Panel.Left + ((Panel.Width - ConfirmField.Width) / 2)
+		  ConfirmExplanation.Left = ConfirmField.Left
+		  CopyButton.Left = Panel.Left + ((Panel.Width - (CopyButton.Width + 12 + ConfirmButton.Width)) / 2)
+		  ConfirmButton.Left = CopyButton.Left + CopyButton.Width + 12
+		  
+		  ConfirmField.Top = Panel.Top + ((Panel.Height - ConfirmField.Height) / 2)
+		  ConfirmExplanation.Top = ConfirmField.Top - (12 + ConfirmExplanation.Height)
+		  CopyButton.Top = ConfirmField.Top + ConfirmField.Height + 12
+		  ConfirmButton.Top = CopyButton.Top
+		  
+		  NoSelectionLabel.Top = Panel.Top + ((Panel.Height - NoSelectionLabel.Height) / 2)
+		  
+		  LoadingIndicator.Top = Panel.Top + ((Panel.Height - LoadingIndicator.Height) / 2)
+		  LoadingIndicator.Left = Panel.Left + ((Panel.Width - LoadingIndicator.Width) / 2)
 		End Sub
 	#tag EndEvent
 
@@ -649,25 +661,6 @@ End
 		  End If
 		  
 		  Self.ShowAlert("Nothing to publish", "Sorry about that, it seems like the publish button should not be enabled.")
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Resize()
-		  ConfirmField.Left = Panel.Left + ((Panel.Width - ConfirmField.Width) / 2)
-		  ConfirmExplanation.Left = ConfirmField.Left
-		  CopyButton.Left = Panel.Left + ((Panel.Width - (CopyButton.Width + 12 + ConfirmButton.Width)) / 2)
-		  ConfirmButton.Left = CopyButton.Left + CopyButton.Width + 12
-		  
-		  ConfirmField.Top = Panel.Top + ((Panel.Height - ConfirmField.Height) / 2)
-		  ConfirmExplanation.Top = ConfirmField.Top - (12 + ConfirmExplanation.Height)
-		  CopyButton.Top = ConfirmField.Top + ConfirmField.Height + 12
-		  ConfirmButton.Top = CopyButton.Top
-		  
-		  NoSelectionLabel.Top = Panel.Top + ((Panel.Height - NoSelectionLabel.Height) / 2)
-		  
-		  LoadingIndicator.Top = Panel.Top + ((Panel.Height - LoadingIndicator.Height) / 2)
-		  LoadingIndicator.Left = Panel.Left + ((Panel.Width - LoadingIndicator.Width) / 2)
 		End Sub
 	#tag EndMethod
 

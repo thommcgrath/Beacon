@@ -315,7 +315,9 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Resize()
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
 		  If Self.mCopyrightGroup <> Nil Then
 		    Dim Left As Integer = (Self.Width - Self.mCopyrightGroup.Width) / 2
 		    Dim Top As Integer = Self.Height - (Self.mCopyrightGroup.Height + 20)
@@ -621,11 +623,6 @@ End
 		Group="Behavior"
 		Type="String"
 		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarIcon"
-		Group="Behavior"
-		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"

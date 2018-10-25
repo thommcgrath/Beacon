@@ -103,7 +103,9 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub Resize()
+		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
 		  Self.LootScaleField.Left = Self.ScaleSlider.Left + ((Self.ScaleSlider.Width - Self.LootScaleField.Width) / 2)
 		End Sub
 	#tag EndEvent
@@ -194,11 +196,6 @@ End
 		Group="Behavior"
 		Type="String"
 		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarIcon"
-		Group="Behavior"
-		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
