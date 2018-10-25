@@ -135,22 +135,6 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.IntegerValue("Main Splitter Position", 300)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Init
-			  mManager.IntegerValue("Main Splitter Position") = Value
-			End Set
-		#tag EndSetter
-		MainSplitterPosition As Integer
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Init
 			  Return mManager.RectValue("Main Window Size", Nil)
 			End Get
 		#tag EndGetter
@@ -243,6 +227,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.IntegerValue("Sources Splitter Position", 300)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Sources Splitter Position") = Value
+			End Set
+		#tag EndSetter
+		SourcesSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.ColorValue("UI Color", BeaconUI.DefaultPrimaryColor)
 			End Get
 		#tag EndGetter
@@ -287,7 +287,7 @@ Protected Module Preferences
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="MainSplitterPosition"
+			Name="SourcesSplitterPosition"
 			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty

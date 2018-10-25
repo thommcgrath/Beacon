@@ -159,7 +159,7 @@ Begin ConfigEditor LootConfigEditor
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   451
       Begin LootSourceEditor Editor
@@ -210,7 +210,7 @@ Begin ConfigEditor LootConfigEditor
          LockLeft        =   True
          LockRight       =   True
          LockTop         =   True
-         Scope           =   0
+         Scope           =   2
          ScrollSpeed     =   20
          TabIndex        =   0
          TabPanelIndex   =   1
@@ -257,8 +257,17 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.MinimumWidth = 1000
+		  Self.MinimumWidth = Self.FadedSeparator1.Width + Self.ListMinWidth + Self.EditorReservedSpace
 		  Self.MinimumHeight = 400
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize()
+		  If Self.mFirstResize Then
+		    Self.SetListWidth(Preferences.SourcesSplitterPosition)
+		    Self.mFirstResize = True
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -408,6 +417,23 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub SetListWidth(NewSize As Integer)
+		  Dim AvailableSpace As Integer = Self.Width - Self.FadedSeparator1.Width
+		  Dim ListWidth As Integer = Min(Max(NewSize, Self.ListMinWidth), AvailableSpace - Self.EditorReservedSpace)
+		  Dim EditorWidth As Integer = AvailableSpace - ListWidth
+		  
+		  Self.Header.Width = ListWidth
+		  Self.FadedSeparator1.Left = ListWidth
+		  Self.List.Width = ListWidth
+		  Self.FadedSeparator2.Width = ListWidth
+		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
+		  Self.Panel.Width = EditorWidth
+		  
+		  Preferences.SourcesSplitterPosition = ListWidth
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ShowAddLootSource()
 		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self.TrueWindow, Self.Document)
 		  If LootSource <> Nil Then
@@ -479,11 +505,21 @@ End
 		Private mBlockSelectionChanged As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mFirstResize As Boolean = True
+	#tag EndProperty
+
+
+	#tag Constant, Name = EditorReservedSpace, Type = Double, Dynamic = False, Default = \"749", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = HelpExplanation, Type = String, Dynamic = False, Default = \"Fill This In", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.beacon", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ListMinWidth, Type = Double, Dynamic = False, Default = \"250", Scope = Public
 	#tag EndConstant
 
 
@@ -509,15 +545,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
-		  NewSize = Max(NewSize, 250)
-		  
-		  Me.Width = NewSize
-		  FadedSeparator1.Left = NewSize
-		  List.Width = NewSize
-		  FadedSeparator2.Width = NewSize
-		  Panel.Left = FadedSeparator1.Left + FadedSeparator1.Width
-		  Panel.Width = Self.Width - (Panel.Left)
-		  
+		  Self.SetListWidth(NewSize)
+		  NewSize = Me.Width
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -900,11 +929,6 @@ End
 		Group="Behavior"
 		Type="String"
 		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarIcon"
-		Group="Behavior"
-		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"
