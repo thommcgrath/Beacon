@@ -29,7 +29,7 @@ Implements ObservationKit.Observer
 		  Tooltip.Hide
 		  Xojo.Core.Timer.CancelCall(AddressOf ShowHoverTooltip)
 		  
-		  If Self.mResizerRect <> Nil And Self.mResizerRect.Contains(Point) Then
+		  If Self.mResizerEnabled And Self.mResizerRect <> Nil And Self.mResizerRect.Contains(Point) Then
 		    Self.mResizing = True
 		    RaiseEvent ResizeStarted()
 		    If Self.mResizerStyle = ResizerTypes.Horizontal Then
@@ -381,33 +381,28 @@ Implements ObservationKit.Observer
 		  Dim ContentRect As New REALbasic.Rect(CellPadding, CellPadding, G.Width - (CellPadding * 2), G.Height - (CellPadding * 2))
 		  
 		  If Self.mResizerStyle <> ResizerTypes.None Then
-		    Const ResizerStripes = 3
-		    Dim ResizerHeight As Integer = 12
+		    Dim ResizeIcon As Picture
+		    Select Case Self.mResizerStyle
+		    Case ResizerTypes.Horizontal
+		      ResizeIcon = IconToolbarHResize
+		    Case ResizerTypes.Vertical
+		      ResizeIcon = IconToolbarVResize
+		    End Select
 		    
-		    Dim ResizerWidth As Integer = (ResizerStripes * 2) + (ResizerStripes - 1)
-		    If Self.mResizerStyle = ResizerTypes.Vertical Then
-		      Dim Temp as Integer = ResizerHeight
-		      ResizerHeight = ResizerWidth
-		      ResizerWidth = Temp
-		    End If
-		    
-		    ContentRect.Right = ContentRect.Right - (CellPadding + ResizerWidth)
+		    ContentRect.Right = ContentRect.Right - (CellPadding + ResizeIcon.Width)
 		    
 		    Dim ResizerLeft As Integer = ContentRect.Right + CellPadding
-		    Dim ResizerTop As Integer = (G.Height - ResizerHeight) / 2
+		    Dim ResizerTop As Integer = (G.Height - ResizeIcon.Height) / 2
 		    
 		    Self.mResizerRect = New REALbasic.Rect(ResizerLeft, 0, G.Width - ResizerLeft, G.Height)
 		    
-		    G.ForeColor = SystemColors.LabelColor
-		    For I As Integer = 1 To ResizerStripes
-		      If Self.mResizerStyle = ResizerTypes.Vertical Then
-		        Dim Y As Integer = ResizerTop + ((I - 1) * 3)
-		        G.DrawLine(ResizerLeft, Y, ResizerLeft + ResizerWidth, Y)
-		      Else
-		        Dim X As Integer = ResizerLeft + ((I - 1) * 3)
-		        G.DrawLine(X, ResizerTop, X, ResizerTop + ResizerHeight)
-		      End If
-		    Next
+		    Dim ResizeColor As Color = SystemColors.LabelColor
+		    If Not Self.ResizerEnabled Then
+		      ResizeColor = ResizeColor.AtOpacity(0.25)
+		    End If
+		    
+		    ResizeIcon = BeaconUI.IconWithColor(ResizeIcon, ResizeColor)
+		    G.DrawPicture(ResizeIcon, ResizerLeft, ResizerTop)
 		  Else
 		    Self.mResizerRect = Nil
 		  End If
@@ -593,6 +588,10 @@ Implements ObservationKit.Observer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mResizerEnabled As Boolean = True
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mResizerRect As REALbasic.Rect
 	#tag EndProperty
 
@@ -627,6 +626,23 @@ Implements ObservationKit.Observer
 			End Set
 		#tag EndSetter
 		Resizer As BeaconToolbar.ResizerTypes
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mResizerEnabled
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mResizerEnabled <> Value Then
+			    Self.mResizerEnabled = Value
+			    Self.Invalidate
+			  End If
+			End Set
+		#tag EndSetter
+		ResizerEnabled As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -849,6 +865,13 @@ Implements ObservationKit.Observer
 			Group="Behavior"
 			Type="Boolean"
 			EditorType="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ResizerEnabled"
+			Visible=true
+			Group="Behavior"
+			InitialValue="True"
+			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

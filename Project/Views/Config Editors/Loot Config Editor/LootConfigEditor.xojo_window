@@ -268,6 +268,8 @@ End
 		    Self.SetListWidth(Preferences.SourcesSplitterPosition)
 		    Self.mFirstResize = True
 		  End If
+		  
+		  Self.Header.ResizerEnabled = Self.Width > Self.MinimumWidth
 		End Sub
 	#tag EndEvent
 
