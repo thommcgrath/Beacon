@@ -8,6 +8,8 @@ if (is_null($session)) {
 	exit;
 }
 
+header('Cache-Control: no-cache');
+
 $user = BeaconUser::GetByUserID($session->UserID());
 BeaconTemplate::SetTitle('Account: ' . $user->LoginKey());
 

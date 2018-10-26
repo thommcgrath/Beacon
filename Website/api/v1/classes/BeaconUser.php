@@ -141,6 +141,10 @@ class BeaconUser implements JsonSerializable {
 			$this->private_key_iterations = $iterations;
 			$this->private_key = $encrypted_private_key;
 			
+			$changes['private_key'] = $this->private_key;
+			$changes['private_key_salt'] = $this->private_key_salt;
+			$changes['private_key_iterations'] = $this->private_key_iterations;
+			
 			return true;
 		} catch (Exception $e) {
 			return false;
