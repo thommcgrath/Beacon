@@ -334,17 +334,22 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h0
 		Sub ShowAlert(Extends Win As Window, Message As String, Explanation As String)
-		  Win = Win.TrueWindow
+		  If Win = Nil Then
+		    ShowAlert(Message, Explanation)
+		    Return
+		  Else
+		    Win = Win.TrueWindow
+		  End If
 		  
 		  Dim Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = Message
 		  Dialog.Explanation = Explanation
 		  
-		  If Win.Frame = Window.FrameTypeSheet Then
+		  If Win = Nil Or Win.Frame = Window.FrameTypeSheet Then
 		    Call Dialog.ShowModal()
 		  Else
-		    Call Dialog.ShowModalWithin(Win.TrueWindow)
+		    Call Dialog.ShowModalWithin(Win)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -361,7 +366,11 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h0
 		Function ShowConfirm(Extends Win As Window, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
-		  Win = Win.TrueWindow
+		  If Win = Nil Then
+		    Return ShowConfirm(Message, Explanation, ActionCaption, CancelCaption)
+		  Else
+		    Win = Win.TrueWindow
+		  End If
 		  
 		  Dim Dialog As New MessageDialog
 		  Dialog.Title = ""
@@ -371,10 +380,10 @@ Protected Module BeaconUI
 		  Dialog.CancelButton.Caption = CancelCaption
 		  Dialog.CancelButton.Visible = True
 		  
-		  If Win.Frame = Window.FrameTypeSheet Then
+		  If Win = Nil Or Win.Frame = Window.FrameTypeSheet Then
 		    Return Dialog.ShowModal() = Dialog.ActionButton
 		  Else
-		    Return Dialog.ShowModalWithin(Win.TrueWindow) = Dialog.ActionButton
+		    Return Dialog.ShowModalWithin(Win) = Dialog.ActionButton
 		  End If
 		End Function
 	#tag EndMethod
