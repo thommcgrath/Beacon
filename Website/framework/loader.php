@@ -45,13 +45,7 @@ spl_autoload_register(function($class_name) {
 	header('Content-Security-Policy: ' . $policy);
 	header('X-Content-Security-Policy: ' . $policy);
 	header('X-WebKit-CSP: ' . $policy);
-	
-	if (BeaconCommon::InProduction()) {
-		$ttl = 604800;
-	} else {
-		$ttl = 0;
-	}
-	header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + $ttl));
+	header('Cache-Control: no-cache');
 })();
 
 require($_SERVER['FRAMEWORK_DIR'] . '/config.php');
