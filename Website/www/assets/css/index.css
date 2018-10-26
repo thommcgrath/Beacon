@@ -10,6 +10,41 @@
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
+	background-size: contain;
+	height: 0px;
+}
+
+#hero.mac {
+	background-image: url(/assets/images/hero-mac.png);
+	padding-top: calc(714 / 1212 * 100%);
+}
+
+#hero.windows {
+	background-image: url(/assets/images/hero-windows.png);
+	padding-top: calc(706 / 1376 * 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+	#hero.mac {
+		background-image: url(/assets/images/hero-mac-dark.png);
+	}
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+	#hero.mac {
+		background-image: url(/assets/images/hero-mac@2x.png);
+	}
+
+	#hero.windows {
+		background-image: url(/assets/images/hero-windows@2x.png);
+		padding-top: calc(1459 / 2804 * 100%);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		#hero.mac {
+			background-image: url(/assets/images/hero-mac-dark@2x.png);
+		}
+	}
 }
 
 .frontpage-left,
@@ -72,31 +107,31 @@ img.landing-icon {
 	.frontpage-right {
 		min-height: 100px;
 	}
-	
+
 	.frontpage-left h1,
 	.frontpage-left p {
 		margin-left: 120px;
 	}
-	
-	
+
+
 	.frontpage-right h1,
 	.frontpage-right p {
 		margin-right: 120px;
 	}
-	
+
 	.frontpage-left img.landing-icon {
 		margin-right: 20px;
 	}
-	
+
 	.frontpage-right img.landing-icon {
 		margin-left: 20px;
 	}
-	
+
 	img.landing-icon {
 		height: 100px;
 		margin-bottom: 10px;
 	}
-	
+
 	#index_container {
 		max-width: 800px;
 	}

@@ -58,7 +58,7 @@ if (!BeaconTemplate::IsHTML()) {
 					<ul>
 						<?php
 						
-						$article_ids = array('96d0efc7-2e62-4ae4-9d9b-70cc890dc98e', '78cf1d4c-2368-4d24-ab73-00ba80a85fd7');
+						$article_ids = array('96d0efc7-2e62-4ae4-9d9b-70cc890dc98e');
 						foreach ($article_ids as $article_id) {
 							$article = BeaconArticleMetadata::GetByArticleID($article_id);
 							echo '<li><a href="/read.php/' . $article->ArticleID() . '">' . htmlentities($article->Title()) . '</a></li>';

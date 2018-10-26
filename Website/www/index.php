@@ -6,12 +6,17 @@ BeaconTemplate::AddHeaderLine('<meta name="description" content="Using Ark\'s Co
 
 $hero_suffix = BeaconCommon::IsWindows() ? 'windows' : 'mac';
 
+$database = BeaconCommon::Database();
+$results = $database->Query('SELECT COUNT(object_id) AS loot_source_count FROM loot_sources;');
+$loot_source_count = $results->Field('loot_source_count');
+$rounded = floor($loot_source_count / 5) * 5;
+
 ?><div id="index_container">
-	<div id="hero_container"><img id="hero" src="/assets/images/hero-<?php echo $hero_suffix; ?>.png" srcset="/assets/images/hero-<?php echo $hero_suffix; ?>.png 1x, /assets/images/hero-<?php echo $hero_suffix; ?>@2x.png 2x"></div>
+	<div id="hero_container"><img id="hero" class="<?php echo $hero_suffix; ?>" src="/assets/images/spacer.png"></div>
 	<div class="frontpage-left">
 		<img src="/assets/images/landing-beacon.svg" class="landing-icon" height="60">
 		<h1>Customize Any Loot Source</h1>
-		<p>Beacon knows of over 100 official loot sources for the maps The Island, Scorched Earth, Aberration, The Center, and Ragnarok, including boss drops and artifact crates. Users of custom maps with custom loot sources are not out of luck either, because Beacon allows custom loot source definitions.</p>
+		<p>Beacon knows of over <?php echo $rounded; ?> official loot sources for the maps The Island, Scorched Earth, Aberration, The Center, and Ragnarok, including boss drops and artifact crates. Users of custom maps with custom loot sources are not out of luck either, because Beacon allows custom loot source definitions.</p>
 	</div>
 	<div class="frontpage-right">
 		<img src="/assets/images/landing-database.svg" class="landing-icon" height="60">
