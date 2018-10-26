@@ -294,17 +294,21 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Function ItemAtPoint(Point As REALbasic.Point) As BeaconToolbarItem
-		  For I As Integer = 0 To Self.mLeftItems.UBound
-		    If Self.mLeftItems(I).Rect.Contains(Point) Then
-		      Return Self.mLeftItems(I)
-		    End If
-		  Next
+		  If Self.mLeftItems <> Nil Then
+		    For I As Integer = 0 To Self.mLeftItems.UBound
+		      If Self.mLeftItems(I) <> Nil And Self.mLeftItems(I).Rect.Contains(Point) Then
+		        Return Self.mLeftItems(I)
+		      End If
+		    Next
+		  End If
 		  
-		  For I As Integer = 0 To Self.mRightItems.UBound
-		    If Self.mRightItems(I).Rect.Contains(Point) Then
-		      Return Self.mRightItems(I)
-		    End If
-		  Next
+		  If Self.mRightItems <> Nil Then
+		    For I As Integer = 0 To Self.mRightItems.UBound
+		      If Self.mRightItems(I) <> Nil And Self.mRightItems(I).Rect.Contains(Point) Then
+		        Return Self.mRightItems(I)
+		      End If
+		    Next
+		  End If
 		End Function
 	#tag EndMethod
 
