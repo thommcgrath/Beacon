@@ -56,11 +56,11 @@ if ($user->ChangePassword($current_password, $password) == false) {
 	echo json_encode(array('message' => 'There was an error updating authentication parameters.'), JSON_PRETTY_PRINT);
 	exit;
 }
-/*if ($user->Commit() == false) {
+if ($user->Commit() == false) {
 	http_response_code(500);
 	echo json_encode(array('message' => 'There was an error saving the user.'), JSON_PRETTY_PRINT);
 	exit;
-}*/
+}
 
 $response = array();
 
