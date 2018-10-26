@@ -664,7 +664,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Min(Max(Self.mMaxQuantity, Self.mMinQuantity), Self.Count)
+			  Return Max(Self.mMaxQuantity, Self.mMinQuantity)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -707,7 +707,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Max(Min(Self.mMinQuantity, Self.mMaxQuantity, Self.Count), 1)
+			  Return Min(Max(Self.mMinQuantity, 1), Self.mMaxQuantity)
 			End Get
 		#tag EndGetter
 		#tag Setter
