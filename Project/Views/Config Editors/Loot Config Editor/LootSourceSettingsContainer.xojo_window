@@ -366,7 +366,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function CurrentMaximum() As Integer
-		  Dim Value As Integer
+		  Dim Value As Integer = 1
 		  If Self.MaxItemSetsField.Text = "" Then
 		    Dim Sources() As Beacon.LootSource = Self.LootSources
 		    If Sources.Ubound = -1 Then
@@ -385,14 +385,14 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function CurrentMinimum() As Integer
-		  Dim Value As Integer
+		  Dim Value As Integer = 1
 		  If Self.MinItemSetsField.Text = "" Then
 		    Dim Sources() As Beacon.LootSource = Self.LootSources
 		    If Sources.Ubound = -1 Then
 		      Return 1
 		    End If
 		    
-		    Value = Sources(0).MinItemSets
+		    Value = Min(Sources(0).MinItemSets, 1)
 		    For I As Integer = 1 To Sources.Ubound
 		      Value = Min(Value, Sources(I).MinItemSets)
 		    Next
@@ -410,7 +410,7 @@ End
 		    Return 9999
 		  End If
 		  
-		  Dim Value As Integer
+		  Dim Value As Integer = 1
 		  For I As Integer = 0 To Sources.Ubound
 		    Value = Max(Value, Sources(I).Count)
 		  Next
