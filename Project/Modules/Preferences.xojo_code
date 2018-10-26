@@ -78,7 +78,11 @@ Protected Module Preferences
 		  
 		  Dim Values() As Beacon.DocumentURL
 		  For Each Value As Text In StoredData
-		    Values.Append(New Beacon.DocumentURL(Value))
+		    Try
+		      Values.Append(New Beacon.DocumentURL(Value))
+		    Catch Err As RuntimeException
+		      
+		    End Try
 		  Next
 		  Return Values
 		End Function
