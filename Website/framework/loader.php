@@ -34,7 +34,7 @@ spl_autoload_register(function($class_name) {
 	$policy = 'default-src \'self\' https://*.beaconapp.cc https://*.stripe.com \'nonce-' . $_SERVER['CSP_NONCE'] . '\'; child-src \'self\' https://www.youtube-nocookie.com;';
 	if (isset($_SERVER['HTTP_USER_AGENT']) && (preg_match('/Edge\/\d+/', $_SERVER['HTTP_USER_AGENT']) === 1)) {
 		// Edge treats SVG style info in the page context incorrect, so we need unsafe-inline
-		$policy .= ' style-src \'self\' \'unsafe-inline\'';
+		$policy .= ' style-src \'self\' \'unsafe-inline\';';
 	}
 	$policy .= ' upgrade-insecure-requests; block-all-mixed-content; sandbox allow-forms allow-same-origin allow-scripts;';
 	header('X-Frame-Options: SAMEORIGIN');
