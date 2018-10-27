@@ -44,7 +44,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -675,6 +674,8 @@ End
 		        NewPanel = New LootScaleConfigEditor(Self.mController)
 		      Case BeaconConfigs.Metadata.ConfigName
 		        NewPanel = New MetaDataConfigEditor(Self.mController)
+		      Case BeaconConfigs.ExperienceCurves.ConfigName
+		        NewPanel = New ExperienceCurvesConfigEditor(Self.mController)
 		      End Select
 		      If NewPanel <> Nil Then
 		        Self.Panels.Value(Tag.StringValue) = NewPanel

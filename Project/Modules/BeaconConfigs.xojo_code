@@ -8,6 +8,7 @@ Protected Module BeaconConfigs
 		    Names.Append(BeaconConfigs.LootDrops.ConfigName)
 		    Names.Append(BeaconConfigs.LootScale.ConfigName)
 		    Names.Append(BeaconConfigs.Metadata.ConfigName)
+		    Names.Append(BeaconConfigs.ExperienceCurves.ConfigName)
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As Text
@@ -61,6 +62,8 @@ Protected Module BeaconConfigs
 		    Return GetTypeInfo(BeaconConfigs.LootScale)
 		  Case BeaconConfigs.Metadata.ConfigName
 		    Return GetTypeInfo(BeaconConfigs.Metadata)
+		  Case BeaconConfigs.ExperienceCurves.ConfigName
+		    Return GetTypeInfo(BeaconConfigs.ExperienceCurves)
 		  End Select
 		End Function
 	#tag EndMethod

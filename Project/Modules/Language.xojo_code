@@ -17,6 +17,8 @@ Protected Module Language
 		    Return "Loot Quality Scaling"
 		  Case BeaconConfigs.Metadata.ConfigName
 		    Return "Document Properties"
+		  Case BeaconConfigs.ExperienceCurves.ConfigName
+		    Return "Player and Tame Levels"
 		  End Select
 		End Function
 	#tag EndMethod
