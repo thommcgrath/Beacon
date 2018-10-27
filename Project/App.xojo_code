@@ -419,8 +419,12 @@ Implements NotificationKit.Receiver
 		  
 		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Error)
 		  Dim Stack() As Xojo.Core.StackFrame = Error.CallStack
+		  While Stack.Ubound >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
+		    Stack.Remove(0)
+		  Wend
+		  
 		  Dim Location As String = "Unknown"
-		  If UBound(Stack) >= 0 Then
+		  If Stack.Ubound >= 0 Then
 		    Location = Stack(0).Name
 		  End If
 		  Dim Reason As String = Error.Reason
