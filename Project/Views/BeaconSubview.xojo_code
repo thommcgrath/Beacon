@@ -22,6 +22,13 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Open()
+		  Self.Progress = Self.ProgressNone
+		  RaiseEvent Open
+		End Sub
+	#tag EndEvent
+
 
 	#tag MenuHandler
 		Function FileSave() As Boolean Handles FileSave.Action
@@ -100,12 +107,6 @@ Implements ObservationKit.Observable
 		    Return True
 		  End Select
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Self.mProgress = Self.ProgressNone
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -202,6 +203,10 @@ Implements ObservationKit.Observable
 
 	#tag Hook, Flags = &h0
 		Event Hidden()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event Open()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
