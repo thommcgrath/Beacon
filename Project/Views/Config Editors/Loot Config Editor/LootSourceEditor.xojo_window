@@ -1290,6 +1290,10 @@ End
 		  Self.mSorting = False
 		  
 		  RaiseEvent Updated
+		  
+		  If Self.SimulatorVisible Then
+		    Self.Simulator.Simulate(Self.mSources(0))
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1337,6 +1341,10 @@ End
 	#tag Event
 		Sub Changed()
 		  RaiseEvent Updated
+		  
+		  If Self.SimulatorVisible Then
+		    Self.Simulator.Simulate(Self.mSources(0))
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

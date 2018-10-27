@@ -8,6 +8,24 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Sub ComputeSimulationFigures(Pool() As Beacon.SetEntry, WeightScale As Integer, ByRef WeightSum As Double, ByRef Weights() As Double, ByRef WeightLookup As Xojo.Core.Dictionary)
+		  Redim Weights(-1)
+		  WeightLookup = New Xojo.Core.Dictionary
+		  WeightSum = 0
+		  
+		  For Each Entry As Beacon.SetEntry In Pool
+		    If Entry.Weight = 0 Then
+		      Continue
+		    End If
+		    WeightSum = WeightSum + Entry.Weight
+		    Weights.Append(WeightSum * WeightScale)
+		    WeightLookup.Value(WeightSum * WeightScale) = Entry
+		  Next
+		  Weights.Sort
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mMinNumItems = 1
@@ -389,8 +407,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  
 		  Dim NumEntries As Integer = Self.Count
-		  Dim MinEntries As Integer = Xojo.Math.Max(Xojo.Math.Min(Self.MinNumItems, NumEntries), 1)
-		  Dim MaxEntries As Integer = Xojo.Math.Max(Xojo.Math.Min(Self.MaxNumItems, NumEntries), MinEntries)
+		  Dim MinEntries As Integer = Self.MinNumItems
+		  Dim MaxEntries As Integer = Self.MaxNumItems
 		  
 		  Dim SelectedEntries() As Beacon.SetEntry
 		  If NumEntries = MinEntries And MinEntries = MaxEntries Then
@@ -399,22 +417,25 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      SelectedEntries.Append(Entry)
 		    Next
 		  Else
-		    Dim WeightLookup As New Xojo.Core.Dictionary
-		    Dim Sum, Weights() As Double
-		    For Each Entry As Beacon.SetEntry In Self.mEntries
-		      If Entry.Weight = 0 Then
-		        Continue
-		      End If
-		      Sum = Sum + Entry.Weight
-		      Weights.Append(Sum * 100000)
-		      WeightLookup.Value(Sum * 100000) = Entry
+		    Const WeightScale = 100000
+		    Dim Pool() As Beacon.SetEntry
+		    Redim Pool(Self.mEntries.Ubound)
+		    For I As Integer = 0 To Self.mEntries.Ubound
+		      Pool(I) = New Beacon.SetEntry(Self.mEntries(I))
 		    Next
-		    Weights.Sort
 		    
+		    Dim RecomputeFigures As Boolean = True
 		    Dim ChooseEntries As Integer = Xojo.Math.RandomInt(MinEntries, MaxEntries)
+		    Dim WeightSum, Weights() As Double
+		    Dim WeightLookup As Xojo.Core.Dictionary
 		    For I As Integer = 1 To ChooseEntries
+		      If RecomputeFigures Then
+		        Self.ComputeSimulationFigures(Pool, WeightScale, WeightSum, Weights, WeightLookup)
+		        RecomputeFigures = False
+		      End If
+		      
 		      Do
-		        Dim Decision As Double = Xojo.Math.RandomInt(100000, 100000 + (Sum * 100000)) - 100000
+		        Dim Decision As Double = Xojo.Math.RandomInt(WeightScale, WeightScale + (WeightSum * WeightScale)) - WeightScale
 		        Dim SelectedEntry As Beacon.SetEntry
 		        
 		        For X As Integer = 0 To Weights.Ubound
@@ -430,6 +451,15 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        End If
 		        
 		        SelectedEntries.Append(SelectedEntry)
+		        If Self.ItemsRandomWithoutReplacement Then
+		          For X As Integer = 0 To Pool.Ubound
+		            If Pool(X) = SelectedEntry Then
+		              Pool.Remove(X)
+		              Exit For X
+		            End If
+		          Next
+		          RecomputeFigures = True
+		        End If
 		        
 		        Exit
 		      Loop
