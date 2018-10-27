@@ -63,10 +63,9 @@ case 'GET':
 		if ($details_only == false) {
 			echo '<h2>Solution</h2>';
 			if (intval($results->Field('solution_min_build')) > $build) {
-				$build_details = $database->Query('SELECT build_display, mac_url, win_url FROM updates WHERE build_number = $1;', $results->Field('solution_min_build'));
+				$build_details = $database->Query('SELECT build_display FROM updates WHERE build_number >= $1 ORDER BY build_number ASC LIMIT 1;', $results->Field('solution_min_build'));
 				if ($build_details->RecordCount() == 1) {
-					$url = BeaconCommon::IsMacOS() ? $build_details->Field('mac_url') : $build_details->Field('win_url');
-					echo '<p>Update to <a href="' . htmlentities($url) . '">Beacon ' . htmlentities($build_details->Field('build_display')) . '</a> to fix this problem.</p>';
+					echo '<p>Update to <a href="https://github.com/thommcgrath/Beacon/releases">Beacon ' . htmlentities($build_details->Field('build_display')) . '</a> (or newer) to fix this problem.</p>';
 				} else {
 					echo '<p>This problem will be resolved in a future update.</p>';
 				}
