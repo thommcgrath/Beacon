@@ -105,6 +105,21 @@ Protected Class Curve
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Point(Index As Integer) As Xojo.Core.Point
+		  Select Case Index
+		  Case 0
+		    Return Self.C0
+		  Case 1
+		    Return Self.C1
+		  Case 2
+		    Return Self.C2
+		  Case 3
+		    Return Self.C3
+		  End Select
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private C0 As Xojo.Core.Point

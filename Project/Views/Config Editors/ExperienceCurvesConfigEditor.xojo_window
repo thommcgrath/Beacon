@@ -10,7 +10,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   300
+   Height          =   370
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -25,7 +25,36 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   300
+   Width           =   510
+   Begin ControlCanvas Canvas1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   200
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   0
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   20
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   200
+   End
 End
 #tag EndWindow
 
@@ -33,14 +62,61 @@ End
 	#tag Event
 		Sub Open()
 		  If Not Self.Document.HasConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName) Then
-		    Self.Document.AddConfigGroup(New BeaconConfigs.ExperienceCurves)
+		    Self.mConfig = New BeaconConfigs.ExperienceCurves
+		    Self.Document.AddConfigGroup(Self.mConfig)
+		  Else
+		    Dim Config As Beacon.ConfigGroup = Self.Document.ConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName)
+		    Self.mConfig = BeaconConfigs.ExperienceCurves(Config)
 		  End If
 		End Sub
 	#tag EndEvent
 
 
+	#tag Property, Flags = &h21
+		Private mConfig As BeaconConfigs.ExperienceCurves
+	#tag EndProperty
+
+
 #tag EndWindowCode
 
+#tag Events Canvas1
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  Dim Curve As Beacon.Curve = Self.mConfig.PlayerCurve
+		  
+		  G.ForeColor = SystemColors.UnderPageBackgroundColor
+		  G.FillRect(0, 0, G.Width, G.Height)
+		  G.ForeColor = SystemColors.QuaternaryLabelColor
+		  G.DrawRect(9, 9, G.Width - 18, G.Height - 18)
+		  
+		  Dim Clip As Graphics = G.Clip(10, 10, G.Width - 20, G.Height - 20)
+		  
+		  Dim Shape As New CurveShape
+		  Shape.X = 0
+		  Shape.X2 = Clip.Width
+		  Shape.Y = Clip.Height
+		  Shape.Y2 = 0
+		  
+		  Shape.ControlX(0) = Curve.Point(1).X * Clip.Width
+		  Shape.ControlY(0) = Clip.Height - (Curve.Point(1).Y * Clip.Height)
+		  Shape.ControlX(1) = Curve.Point(2).X * Clip.Width
+		  Shape.ControlY(1) = Clip.Height - (Curve.Point(2).Y * Clip.Height)
+		  Shape.Order = 2
+		  
+		  Shape.FillColor = SystemColors.LabelColor
+		  Shape.BorderColor = SystemColors.LabelColor
+		  
+		  Clip.DrawObject(Shape)
+		  
+		  // Could the eval code be wrong?
+		  Clip.ForeColor = SystemColors.LabelColor
+		  For X As Integer = 0 To Clip.Width - 1
+		    Dim YValue As Integer = Round(Curve.Evaluate(X / (Clip.Width - 1), 0.0, 1.0) * Clip.Height)
+		    Clip.DrawLine(X, Clip.Height - YValue, X, Clip.Height - YValue)
+		  Next
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
 		Name="MinimumWidth"
