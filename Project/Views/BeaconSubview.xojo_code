@@ -103,6 +103,12 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mProgress = Self.ProgressNone
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub EnableMenuItems()
 		  If Self.ContentsChanged Then
 		    FileSave.Enable
@@ -264,8 +270,35 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mProgress As Double = ProgressNone
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mToolbarCaption As String
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mProgress
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value < Self.ProgressNone Then
+			    Value = Self.ProgressNone
+			  ElseIf Value > 1.0 Then
+			    Value = Self.ProgressIndeterminate
+			  End If
+			  
+			  If Self.mProgress <> Value Then
+			    Self.mProgress = Value
+			    Self.NotifyObservers("BeaconSubview.Progress", Value)
+			  End If
+			End Set
+		#tag EndSetter
+		Progress As Double
+	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -289,6 +322,13 @@ Implements ObservationKit.Observable
 		#tag EndSetter
 		ToolbarCaption As String
 	#tag EndComputedProperty
+
+
+	#tag Constant, Name = ProgressIndeterminate, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ProgressNone, Type = Double, Dynamic = False, Default = \"-1", Scope = Public
+	#tag EndConstant
 
 
 	#tag ViewBehavior
@@ -491,6 +531,12 @@ Implements ObservationKit.Observable
 			Group="Behavior"
 			InitialValue="300"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Progress"
+			Group="Behavior"
+			InitialValue="ProgressNone"
+			Type="Double"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"

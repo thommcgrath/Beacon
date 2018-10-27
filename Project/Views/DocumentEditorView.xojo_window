@@ -44,7 +44,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -397,6 +396,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mController_WriteError(Sender As Beacon.DocumentController, Reason As Text)
+		  Self.Progress = BeaconSubview.ProgressNone
+		  
 		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!")
 		  Notification.SecondaryMessage = Reason
 		  Notification.UserData = New Xojo.Core.Dictionary
@@ -415,6 +416,7 @@ End
 		    Self.BeaconToolbar1.ShareButton.Enabled = (Sender.URL.Scheme = Beacon.DocumentURL.TypeCloud)
 		  End If
 		  
+		  Self.Progress = BeaconSubview.ProgressNone
 		  Preferences.AddToRecentDocuments(Sender.URL)
 		End Sub
 	#tag EndMethod
@@ -489,6 +491,7 @@ End
 		  If DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController) Then
 		    Self.Title = Self.mController.Name
 		    Self.ToolbarCaption = Self.mController.Name
+		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		    Return
 		  End If
 		  
@@ -511,6 +514,7 @@ End
 		  Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(File), App.Identity)
 		  Self.Title = Self.mController.Name
 		  Self.ToolbarCaption = Self.mController.Name
+		  Self.Progress = BeaconSubview.ProgressIndeterminate
 		End Sub
 	#tag EndMethod
 
