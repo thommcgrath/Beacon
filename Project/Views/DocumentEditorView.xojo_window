@@ -409,11 +409,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
-		  Self.ContentsChanged = Sender.Document.Modified
-		  Self.Title = Self.mController.Name
-		  Self.BeaconToolbar1.ShareButton.Enabled = (Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud)
+		  If Not Self.Closed Then
+		    Self.ContentsChanged = Sender.Document.Modified
+		    Self.Title = Sender.Name
+		    Self.BeaconToolbar1.ShareButton.Enabled = (Sender.URL.Scheme = Beacon.DocumentURL.TypeCloud)
+		  End If
 		  
-		  Preferences.AddToRecentDocuments(Self.mController.URL)
+		  Preferences.AddToRecentDocuments(Sender.URL)
 		End Sub
 	#tag EndMethod
 
@@ -433,7 +435,7 @@ End
 		Private Sub mHelpDrawerAnimation_Completed(Sender As AnimationKit.MoveTask)
 		  #Pragma Unused Sender
 		  
-		  If Not Self.mHelpDrawerOpen Then
+		  If Self.Closed = False And Self.mHelpDrawerOpen = False Then
 		    Self.HelpDrawer.Visible = False
 		    Self.BeaconToolbar1.HelpButton.Enabled = (Self.CurrentPanel <> Nil And Self.HelpDrawer.Body <> "")
 		    Self.MinimumWidth = If(Self.CurrentPanel <> Nil, Max(Self.CurrentPanel.MinimumWidth, Self.LocalMinWidth), Self.LocalMinWidth)
