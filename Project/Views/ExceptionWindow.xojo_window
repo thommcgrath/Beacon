@@ -565,7 +565,7 @@ Begin Window ExceptionWindow
          Bold            =   False
          ButtonStyle     =   "0"
          Cancel          =   False
-         Caption         =   "Report Now"
+         Caption         =   "Add Comments"
          Default         =   False
          Enabled         =   True
          Height          =   20
