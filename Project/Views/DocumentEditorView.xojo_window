@@ -207,6 +207,14 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Visible         =   False
       Width           =   300
    End
+   Begin Timer AutosaveTimer
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Mode            =   2
+      Period          =   60000
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -297,10 +305,31 @@ End
 
 
 	#tag Method, Flags = &h21
+		Private Sub Autosave()
+		  If Not Self.Document.Modified Then
+		    Return
+		  End If
+		  
+		  Dim AutosaveFolder As FolderItem = App.ApplicationSupport.Child("Autosave")
+		  If Not AutosaveFolder.Exists Then
+		    AutosaveFolder.CreateAsFolder
+		  End If
+		  
+		  Dim File As FolderItem = AutosaveFolder.Child(Self.Document.DocumentID + BeaconFileTypes.BeaconDocument.PrimaryExtension)
+		  Self.mController.SaveACopy(Beacon.DocumentURL.URLForFile(File), App.Identity)
+		  Self.Progress = BeaconSubview.ProgressIndeterminate
+		  
+		  Self.AutosaveTimer.Reset
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub BeginDeploy()
 		  If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DocumentDeployWindow Then
 		    DocumentDeployWindow(Self.mDeployWindow.Value).Show()
 		  Else
+		    Self.Autosave()
+		    
 		    Dim Win As DocumentDeployWindow = DocumentDeployWindow.Create(Self.Document)
 		    If Win <> Nil Then
 		      Self.mDeployWindow = New WeakRef(Win)
@@ -312,6 +341,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginExport()
+		  Self.Autosave()
+		  
 		  DocumentExportWindow.Present(Self, Self.Document)
 		End Sub
 	#tag EndMethod
@@ -784,7 +815,20 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events AutosaveTimer
+	#tag Event
+		Sub Action()
+		  Self.Autosave()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

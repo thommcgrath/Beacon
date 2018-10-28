@@ -40,8 +40,12 @@ Protected Class DocumentController
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
 		  
+		  Self.mBusy = False
+		  
 		  If Success Then
-		    Self.mDocument.Modified = False
+		    If Self.mClearModifiedOnWrite Then
+		      Self.mDocument.Modified = False
+		    End If
 		    RaiseEvent WriteSuccess
 		  Else
 		    RaiseEvent WriteError(Message)
@@ -213,7 +217,7 @@ Protected Class DocumentController
 		    Try
 		      File = New Beacon.FolderItem(Self.mDocumentURL.Path)
 		    Catch Err As RuntimeException
-		         
+		      
 		    End Try
 		    
 		    If (File = Nil Or File.Exists = False) And Self.mDocumentURL.HasParam("saveinfo") Then
@@ -322,33 +326,37 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h0
 		Sub Save(WithIdentity As Beacon.Identity)
-		  If Not Self.Loaded Then
+		  If Self.mBusy Or Self.Loaded = False Then
 		    Return
 		  End If
 		  
 		  If Self.mDocument.Title <> "" Then
 		    Self.mDocumentURL.Name = Self.mDocument.Title
 		  End If
-		  Self.WriteTo(Self.mDocumentURL, WithIdentity)
+		  Self.WriteTo(Self.mDocumentURL, WithIdentity, True)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub SaveACopy(Destination As Beacon.DocumentURL, WithIdentity As Beacon.Identity)
 		  // Like Save As, but the destination is not saved
-		  If Not Self.Loaded Then
+		  If Self.mBusy Or Self.Loaded = False Then
 		    Return
 		  End If
 		  
 		  If Self.mDocument.Title <> "" Then
 		    Destination.Name = Self.mDocument.Title
 		  End If
-		  Self.WriteTo(Destination, WithIdentity)
+		  Self.WriteTo(Destination, WithIdentity, False)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub SaveAs(Destination As Beacon.DocumentURL, WithIdentity As Beacon.Identity)
+		  If Self.mBusy Or Self.Loaded = False Then
+		    Return
+		  End If
+		  
 		  Self.mDocumentURL = Destination
 		  Self.Save(WithIdentity)
 		End Sub
@@ -384,8 +392,12 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h21
 		Private Sub Writer_Finished(Sender As Beacon.JSONWriter)
+		  Self.mBusy = False
+		  
 		  If Sender.Success Then
-		    Self.mDocument.Modified = False
+		    If Self.mClearModifiedOnWrite Then
+		      Self.mDocument.Modified = False
+		    End If
 		    RaiseEvent WriteSuccess()
 		  Else
 		    Dim Reason As Text
@@ -408,10 +420,13 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub WriteTo(Destination As Beacon.DocumentURL, WithIdentity As Beacon.Identity)
-		  If Not (Self.Loaded And Self.CanWrite) Then
+		Private Sub WriteTo(Destination As Beacon.DocumentURL, WithIdentity As Beacon.Identity, ClearModified As Boolean)
+		  If Self.mBusy Or (Self.Loaded And Self.CanWrite) = False Then
 		    Return
 		  End If
+		  
+		  Self.mBusy = True
+		  Self.mClearModifiedOnWrite = ClearModified
 		  
 		  Select Case Destination.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
@@ -469,6 +484,10 @@ Protected Class DocumentController
 
 	#tag Property, Flags = &h21
 		Private mBusy As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mClearModifiedOnWrite As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
