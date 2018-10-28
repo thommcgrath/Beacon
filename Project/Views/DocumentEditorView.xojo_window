@@ -431,6 +431,8 @@ End
 		      Panel.ImportFinished()
 		    End If
 		  Next
+		  
+		  Self.Panel_ContentsChanged(Nil)
 		End Sub
 	#tag EndMethod
 
