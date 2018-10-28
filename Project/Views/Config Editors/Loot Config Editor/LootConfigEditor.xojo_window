@@ -257,6 +257,20 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub EnableMenuItems()
+		  DocumentAddBeacon.Enable
+		  
+		  If Self.List.SelCount > 0 Then
+		    DocumentDuplicateBeacon.Enable
+		    DocumentRemoveBeacon.Enable
+		    DocumentRebuildPresets.Enable
+		    
+		    Self.Editor.EnableMenuItems()
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.MinimumWidth = Self.FadedSeparator1.Width + Self.ListMinWidth + LootSourceEditor.MinimumWidth
 		  Self.MinimumHeight = 400
@@ -320,6 +334,40 @@ End
 		  End Select
 		End Sub
 	#tag EndEvent
+
+
+	#tag MenuHandler
+		Function DocumentAddBeacon() As Boolean Handles DocumentAddBeacon.Action
+			Self.ShowAddLootSource()
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function DocumentDuplicateBeacon() As Boolean Handles DocumentDuplicateBeacon.Action
+			Self.ShowDuplicateSelectedLootSource()
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function DocumentRebuildPresets() As Boolean Handles DocumentRebuildPresets.Action
+			Self.Document.ReconfigurePresets()
+			Self.UpdateSourceList()
+			Self.ContentsChanged = Self.ContentsChanged Or Self.Document.Modified
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
+		Function DocumentRemoveBeacon() As Boolean Handles DocumentRemoveBeacon.Action
+			Self.RemoveSelectedBeacons(True)
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h21

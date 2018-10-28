@@ -237,6 +237,10 @@ End
 		  If Self.ReadyToExport Then
 		    FileExport.Enable
 		  End If
+		  
+		  If Self.CurrentPanel <> Nil Then
+		    Self.CurrentPanel.EnableMenuItems()
+		  End If
 		End Sub
 	#tag EndEvent
 

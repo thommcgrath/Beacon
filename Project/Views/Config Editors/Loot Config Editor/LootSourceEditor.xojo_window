@@ -324,6 +324,15 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub EnableMenuItems()
+		  Self.BuildPresetMenu(DocumentAddItemSet)
+		  If Self.SetList.SelCount > 0 Then
+		    DocumentRemoveItemSet.Enable
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.Simulator.Height = Preferences.SimulatorSize
 		  If Self.SimulatorVisible Then
@@ -407,6 +416,8 @@ End
 		  AddHandler EmptySetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		  Parent.Append(EmptySetItem)
 		  
+		  Dim HasTarget As Boolean = Self.mSources.Ubound > -1
+		  
 		  For Each Group As Text In GroupNames
 		    Dim Arr() As Beacon.Preset = Groups.Value(Group)
 		    Dim Names() As String
@@ -431,6 +442,7 @@ End
 		    
 		    For Each Preset As Beacon.Preset In Items
 		      Dim PresetItem As New MenuItem(Preset.Label, Preset)
+		      PresetItem.Enabled = HasTarget
 		      AddHandler PresetItem.Action, WeakAddressOf Self.HandlePresetMenu
 		      Parent.Append(PresetItem)
 		    Next
