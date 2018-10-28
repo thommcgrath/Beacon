@@ -104,6 +104,7 @@ Implements ObservationKit.Observable
 		  Case Dialog.CancelButton
 		    Return False
 		  Case Dialog.AlternateActionButton
+		    RaiseEvent CleanupDiscardedChanges()
 		    Return True
 		  End Select
 		End Function
@@ -188,6 +189,10 @@ Implements ObservationKit.Observable
 		End Function
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event CleanupDiscardedChanges()
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event Close()

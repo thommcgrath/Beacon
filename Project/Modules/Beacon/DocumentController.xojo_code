@@ -163,6 +163,13 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Document(Assigns Replacement As Beacon.Document)
+		  Self.mDocument = Replacement
+		  Self.mLoaded = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Load(WithIdentity As Beacon.Identity)
 		  If Self.Loaded Then
 		    RaiseEvent Loaded(Self.mDocument)
@@ -421,7 +428,7 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h21
 		Private Sub WriteTo(Destination As Beacon.DocumentURL, WithIdentity As Beacon.Identity, ClearModified As Boolean)
-		  If Self.mBusy Or (Self.Loaded And Self.CanWrite) = False Then
+		  If Self.mBusy Or Self.Loaded = False Or Destination.Scheme = Beacon.DocumentURL.TypeWeb Then
 		    Return
 		  End If
 		  

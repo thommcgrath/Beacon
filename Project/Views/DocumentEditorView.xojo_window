@@ -226,6 +226,12 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub CleanupDiscardedChanges()
+		  Self.CleanupAutosave()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Close()
 		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
 		    DocumentImportWindow(Self.mImportWindowRef.Value).Cancel
@@ -264,6 +270,13 @@ End
 		        Exit For I
 		      End If
 		    Next
+		    
+		    Dim File As FolderItem = Self.AutosaveFile(False)
+		    If File.Exists Then
+		      Dim Controller As New Beacon.DocumentController(Beacon.DocumentURL.URLForFile(File))
+		      AddHandler Controller.Loaded, WeakAddressOf mAutosaveController_Loaded
+		      Controller.Load(App.Identity)
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
@@ -310,17 +323,34 @@ End
 		    Return
 		  End If
 		  
-		  Dim AutosaveFolder As FolderItem = App.ApplicationSupport.Child("Autosave")
-		  If Not AutosaveFolder.Exists Then
-		    AutosaveFolder.CreateAsFolder
+		  Dim File As FolderItem = Self.AutosaveFile(True)
+		  If File <> Nil Then
+		    Self.mController.SaveACopy(Beacon.DocumentURL.URLForFile(File), App.Identity)
+		    Self.Progress = BeaconSubview.ProgressIndeterminate
+		    Self.AutosaveTimer.Reset
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function AutosaveFile(CreateFolder As Boolean = False) As FolderItem
+		  If Self.Document = Nil Then
+		    Return Nil
 		  End If
 		  
-		  Dim File As FolderItem = AutosaveFolder.Child(Self.Document.DocumentID + BeaconFileTypes.BeaconDocument.PrimaryExtension)
-		  Self.mController.SaveACopy(Beacon.DocumentURL.URLForFile(File), App.Identity)
-		  Self.Progress = BeaconSubview.ProgressIndeterminate
-		  
-		  Self.AutosaveTimer.Reset
-		End Sub
+		  Dim Folder As FolderItem = App.ApplicationSupport.Child("Autosave")
+		  If Folder = Nil Then
+		    Return Nil
+		  End If
+		  If Not Folder.Exists Then
+		    If CreateFolder Then
+		      Folder.CreateAsFolder
+		    Else
+		      Return Nil
+		    End If
+		  End If
+		  Return Folder.Child(Self.Document.DocumentID + BeaconFileTypes.BeaconDocument.PrimaryExtension)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -344,6 +374,15 @@ End
 		  Self.Autosave()
 		  
 		  DocumentExportWindow.Present(Self, Self.Document)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CleanupAutosave()
+		  Dim AutosaveFile As FolderItem = Self.AutosaveFile()
+		  If AutosaveFile <> Nil And AutosaveFile.Exists Then
+		    AutosaveFile.Delete
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -431,6 +470,33 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub mAutosaveController_Loaded(Sender As Beacon.DocumentController, Document As Beacon.Document)
+		  #Pragma Unused Sender
+		  
+		  If Self.Document = Nil Then
+		    Return
+		  End If
+		  
+		  If Document.LastSaved <= Self.Document.LastSaved Then
+		    Self.CleanupAutosave()
+		    Return
+		  End If
+		  
+		  If Self.ShowConfirm("Beacon found unsaved changes to this file. Would you like to restore them now?", "This can happen if there was an error before your document was saved. If you do not restore the unsaved changes now, they will be discarded.", "Restore", "Cancel") Then
+		    Document.Modified = True
+		    Self.ContentsChanged = True
+		    Self.mController.Document = Document
+		    Dim Index As Integer = Self.ConfigMenu.ListIndex
+		    Self.ConfigMenu.ListIndex = -1
+		    Self.Panels = New Dictionary
+		    Self.ConfigMenu.ListIndex = Index
+		  Else
+		    Self.CleanupAutosave()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mController_WriteError(Sender As Beacon.DocumentController, Reason As Text)
 		  Self.Progress = BeaconSubview.ProgressNone
 		  
@@ -454,6 +520,11 @@ End
 		  
 		  Self.Progress = BeaconSubview.ProgressNone
 		  Preferences.AddToRecentDocuments(Sender.URL)
+		  
+		  If Not Sender.Document.Modified Then
+		    // Safe to cleanup the autosave
+		    Self.CleanupAutosave()
+		  End If
 		End Sub
 	#tag EndMethod
 
