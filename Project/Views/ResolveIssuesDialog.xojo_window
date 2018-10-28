@@ -322,11 +322,15 @@ End
 		    Return DocumentIssues
 		  End If
 		  
+		  Dim UniqueIssues As New Xojo.Core.Dictionary
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    Dim Issues() As Beacon.Issue = Config.Issues(Document)
 		    For Each Issue As Beacon.Issue In Issues
-		      DocumentIssues.Append(Issue)
+		      If Not UniqueIssues.HasKey(Issue.Description) Then
+		        DocumentIssues.Append(Issue)
+		        UniqueIssues.Value(Issue.Description) = Issue
+		      End If
 		    Next
 		  Next
 		  
