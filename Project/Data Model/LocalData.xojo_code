@@ -21,6 +21,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("PRAGMA foreign_keys = ON;")
 		  Self.SQLExecute("PRAGMA journal_mode = WAL;")
 		  
+		  Self.BeginTransaction()
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, console_safe INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, kind TEXT NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, required_item_sets INTEGER NOT NULL, icon BLOB NOT NULL);")
@@ -37,6 +38,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		  
 		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe) VALUES (?1, ?2, ?3);", Self.UserModID, "User Custom", False)
+		  Self.Commit()
 		  
 		  Self.mBase.UserVersion = Self.SchemaVersion
 		End Sub
@@ -105,13 +107,15 @@ Implements Beacon.DataSource
 		  Self.mEngramCache = New Dictionary
 		  Self.mLock = New CriticalSection
 		  
-		  Dim LegacyFile As FolderItem = App.ApplicationSupport.Child("Beacon.sqlite")
+		  Dim AppSupport As FolderItem = App.ApplicationSupport
+		  
+		  Dim LegacyFile As FolderItem = AppSupport.Child("Beacon.sqlite")
 		  If LegacyFile.Exists Then
 		    LegacyFile.Delete
 		  End If
 		  
 		  Self.mBase = New SQLiteDatabase
-		  Self.mBase.DatabaseFile = App.ApplicationSupport.Child("Library.sqlite")
+		  Self.mBase.DatabaseFile = AppSupport.Child("Library.sqlite")
 		  
 		  If Self.mBase.DatabaseFile.Exists Then
 		    If Not Self.mBase.Connect Then
@@ -126,9 +130,59 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Dim CurrentSchemaVersion As Integer = Self.mBase.UserVersion
+		  Dim MigrateFile As FolderItem
 		  If CurrentSchemaVersion <> Self.SchemaVersion Then
 		    Self.mBase.Close
-		    Self.mBase.DatabaseFile.MoveFileTo(App.ApplicationSupport.Child("Library " + Str(CurrentSchemaVersion, "-0") + ".sqlite"))
+		    
+		    Dim BackupsFolder As FolderItem = AppSupport.Child("Old Libraries")
+		    If Not BackupsFolder.Exists Then
+		      BackupsFolder.CreateAsFolder
+		    End If
+		    
+		    // Relocate the current library
+		    Do
+		      Dim Counter As Integer = 1
+		      Dim Destination As FolderItem = BackupsFolder.Child("Library " + Str(CurrentSchemaVersion, "-0") + If(Counter > 1, "-" + Str(Counter, "-0"), "") + ".sqlite")
+		      If Destination.Exists Then
+		        Counter = Counter + 1
+		        Continue
+		      End If
+		      Self.mBase.DatabaseFile.MoveFileTo(Destination)
+		      MigrateFile = Destination
+		    Loop Until True
+		    
+		    // See if there is already a library, such as if the user went switched backward and forward between versions
+		    Dim SearchFolders(1) As FolderItem
+		    SearchFolders(0) = BackupsFolder
+		    SearchFolders(1) = AppSupport
+		    Dim SearchPrefix As String = "Library " + Str(Self.SchemaVersion, "-0")
+		    Dim SearchSuffix As String = ".sqlite"
+		    For Each SearchFolder As FolderItem In SearchFolders
+		      Dim Candidates() As FolderItem
+		      Dim Versions() As Integer
+		      For I As Integer = 1 To SearchFolder.Count
+		        Dim Filename As String = SearchFolder.Item(I).Name
+		        If Filename = SearchPrefix + SearchSuffix Then
+		          Candidates.Append(SearchFolder.Item(I))
+		          Versions.Append(1)
+		        ElseIf Filename.BeginsWith(SearchPrefix) And Filename.EndsWith(SearchSuffix) Then
+		          Candidates.Append(SearchFolder.Item(I))
+		          Versions.Append(Val(Filename.Mid(SearchPrefix.Length + 2, Filename.Length - (SearchPrefix.Length + SearchSuffix.Length))))
+		        End If
+		      Next
+		      
+		      If Candidates.Ubound > -1 Then
+		        Versions.SortWith(Candidates)
+		        
+		        Dim RestoreFile As FolderItem = Candidates(Candidates.Ubound)
+		        RestoreFile.MoveFileTo(AppSupport.Child("Library.sqlite"))
+		        
+		        Self.mBase = New SQLiteDatabase
+		        Self.mBase.DatabaseFile = AppSupport.Child("Library.sqlite")
+		        Call Self.mBase.Connect
+		        Return
+		      End If
+		    Next
 		    
 		    Self.mBase = New SQLiteDatabase
 		    Self.mBase.DatabaseFile = App.ApplicationSupport.Child("Library.sqlite")
@@ -136,8 +190,8 @@ Implements Beacon.DataSource
 		    Self.BuildSchema()
 		  End If
 		  
-		  If CurrentSchemaVersion < Self.SchemaVersion Then
-		    Self.MigrateData(App.ApplicationSupport.Child("Library " + Str(CurrentSchemaVersion, "-0") + ".sqlite"), CurrentSchemaVersion)
+		  If MigrateFile <> Nil And MigrateFile.Exists And CurrentSchemaVersion < Self.SchemaVersion Then
+		    Self.MigrateData(MigrateFile, CurrentSchemaVersion)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -742,7 +796,6 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Self.mBase.DetachDatabase("legacy")
-		  Source.Delete
 		  
 		  If FromSchemaVersion <= 2 Then
 		    Dim SupportFolder As FolderItem = App.ApplicationSupport
