@@ -350,7 +350,7 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mDownRect.Contains(X, Y) Then
+		  If Self.mDownRect <> Nil And Self.mDownIndex <= Self.mNotifications.Ubound And Self.mDownRect.Contains(X, Y) Then
 		    Dim OldUnreadCount As Integer = Self.UnreadCount
 		    If Not Self.mPressedOnClose Then
 		      Dim URL As Text = Self.mNotifications(Self.mDownIndex).ActionURL
@@ -377,6 +377,7 @@ End
 		      RaiseEvent UnreadCountChanged(NewUnreadCount)
 		    End If
 		  End If
+		  
 		  Self.mPressed = False
 		  Self.mDownRect = Nil
 		  Self.mDownIndex = -1
