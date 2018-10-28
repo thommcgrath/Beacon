@@ -739,6 +739,23 @@ End
 		  Return Not Source.IsValid
 		End Function
 	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  For I As Integer = 0 To Me.ListCount - 1
+		    If Not Me.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim Source As Beacon.LootSource = Me.RowTag(I)
+		    Dim Edited As Beacon.LootSource = LootSourceWizard.PresentEdit(Self.TrueWindow, Self.Document, Source)
+		    If Edited <> Nil Then
+		      Self.AddLootSource(Edited)
+		    End If
+		    
+		    Return
+		  Next
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events Editor
 	#tag Event
