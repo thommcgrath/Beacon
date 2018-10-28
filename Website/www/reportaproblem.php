@@ -71,8 +71,17 @@ case 'GET':
 				}
 			}
 			
+			$solution_details = $results->Field('solution_details');
+			if (BeaconCommon::IsMacOS()) {
+				$solution_details = str_replace('<<appsupport>>', '~/Library/Application Support/The ZAZ/Beacon', $solution_details);
+				$solution_details = str_replace('<<pathseparator>>', '/', $solution_details);
+			} else {
+				$solution_details = str_replace('<<appsupport>>', '%AppData%\The ZAZ\Beacon', $solution_details);
+				$solution_details = str_replace('<<pathseparator>>', '\\', $solution_details);
+			}
+			
 			$parser = new Parsedown();
-			$html = $parser->text($results->Field('solution_details'));
+			$html = $parser->text($solution_details);
 			$html = str_replace('<table>', '<table class="generic">', $html);
 			echo $html;
 			
