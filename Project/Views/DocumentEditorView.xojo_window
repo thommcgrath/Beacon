@@ -597,33 +597,34 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SaveAs()
-		  If DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController) Then
+		  Select Case DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController)
+		  Case DocumentSaveToCloudWindow.StateSaved
 		    Self.Title = Self.mController.Name
 		    Self.ToolbarCaption = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
-		    Return
-		  End If
-		  
-		  Dim Dialog As New SaveAsDialog
-		  Dialog.SuggestedFileName = Self.mController.Name + BeaconFileTypes.BeaconDocument.PrimaryExtension
-		  Dialog.Filter = BeaconFileTypes.BeaconDocument
-		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
-		  If File = Nil Then
-		    Return
-		  End If
-		  
-		  If Self.Document.Title.BeginsWith("Untitled Document") Then
-		    Dim Filename As Text = File.Name.ToText
-		    If Filename.EndsWith(".beacon") Then
-		      Filename = Filename.Left(Filename.Length - 7).Trim
+		  Case DocumentSaveToCloudWindow.StateSaveLocal
+		    Dim Dialog As New SaveAsDialog
+		    Dialog.SuggestedFileName = Self.mController.Name + BeaconFileTypes.BeaconDocument.PrimaryExtension
+		    Dialog.Filter = BeaconFileTypes.BeaconDocument
+		    
+		    Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    If File = Nil Then
+		      Return
 		    End If
-		    Self.Document.Title = Filename
-		  End If
-		  Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(File), App.Identity)
-		  Self.Title = Self.mController.Name
-		  Self.ToolbarCaption = Self.mController.Name
-		  Self.Progress = BeaconSubview.ProgressIndeterminate
+		    
+		    If Self.Document.Title.BeginsWith("Untitled Document") Then
+		      Dim Filename As Text = File.Name.ToText
+		      Dim Extension As Text = BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText
+		      If Filename.EndsWith(Extension) Then
+		        Filename = Filename.Left(Filename.Length - Extension.Length).Trim
+		      End If
+		      Self.Document.Title = Filename
+		    End If
+		    Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(File), App.Identity)
+		    Self.Title = Self.mController.Name
+		    Self.ToolbarCaption = Self.mController.Name
+		    Self.Progress = BeaconSubview.ProgressIndeterminate
+		  End Select
 		End Sub
 	#tag EndMethod
 
