@@ -173,6 +173,25 @@ Implements Beacon.DocumentItem
 		    End If
 		  End If
 		  
+		  If Dict.HasKey("Timestamp") Then
+		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
+		    Dim TextValue As Text = Dict.Value("Timestamp")
+		    Dim Year, Month, Day, Hour, Minute, Second As Integer
+		    Year = Integer.FromText(TextValue.Mid(0, 4), Locale)
+		    Month = Integer.FromText(TextValue.Mid(5, 2), Locale)
+		    Day = Integer.FromText(TextValue.Mid(8, 2), Locale)
+		    Hour = Integer.FromText(TextValue.Mid(11, 2), Locale)
+		    Minute = Integer.FromText(TextValue.Mid(14, 2), Locale)
+		    Second = Integer.FromText(TextValue.Mid(17, 2), Locale)
+		    Dim GMTOffset As Double = 0
+		    
+		    #if TargetiOS
+		      Doc.mLastSaved = New Xojo.Core.Date(Year, Month, Day, Hour, Minute, Second, 0, New Xojo.Core.TimeZone(GMTOffset))
+		    #else
+		      Doc.mLastSavedLegacy = New Global.Date(Year, Month, Day, Hour, Minute, Second, GMTOffset)
+		    #endif
+		  End If
+		  
 		  Doc.Modified = Version < Beacon.Document.DocumentVersion
 		  
 		  Return Doc
@@ -378,6 +397,18 @@ Implements Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function LastSaved() As Global.Date
+		  Return Self.mLastSavedLegacy
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
+		Function LastSaved() As Xojo.Core.Date
+		  Return Self.mLastSaved
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function LootSource(Index As Integer) As Beacon.LootSource
 		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
@@ -511,13 +542,6 @@ Implements Beacon.DocumentItem
 		  End If
 		  
 		  Return Self.mIdentifier.Compare(Other.mIdentifier)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "Beacon.Document.FromText" )  Shared Function Read(Contents As Text, Identity As Beacon.Identity) As Beacon.Document
-		  // Legacy alias
-		  Return Beacon.Document.FromText(Contents, Identity)
 		End Function
 	#tag EndMethod
 
@@ -668,6 +692,16 @@ Implements Beacon.DocumentItem
 		  Document.Value("Identifier") = Self.DocumentID
 		  Document.Value("ConsoleModsOnly") = Self.ConsoleModsOnly
 		  
+		  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
+		  #if TargetiOS
+		    Dim Now As New Xojo.Core.Date(Xojo.Core.Date.Now, New Xojo.Core.TimeZone(0))
+		    Document.Value("Timestamp") = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + ":" + Now.Minute.ToText(Locale, "00") + ":" + Now.Second.ToText(Locale, "00")
+		  #else
+		    Dim Now As New Global.Date
+		    Now.GMTOffset = 0
+		    Document.Value("Timestamp") = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + ":" + Now.Minute.ToText(Locale, "00") + ":" + Now.Second.ToText(Locale, "00")
+		  #endif
+		  
 		  Dim Groups As New Xojo.Core.Dictionary
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
 		    Dim Group As Beacon.ConfigGroup = Entry.Value
@@ -814,6 +848,14 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mIdentifier As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
+		Private mLastSaved As Xojo.Core.Date
+	#tag EndProperty
+
+	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Private mLastSavedLegacy As Global.Date
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

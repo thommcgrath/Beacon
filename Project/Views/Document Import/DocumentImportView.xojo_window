@@ -589,7 +589,6 @@ End
 		    ElseIf ParsedData.HasKey("OverrideOfficialDifficulty") And ParsedData.DoubleValue("OverrideOfficialDifficulty") > 0 Then
 		      DifficultyValue = ParsedData.DoubleValue("OverrideOfficialDifficulty")
 		    Else
-		      Dim DifficultyOffset As Double
 		      If ParsedData.HasKey("DifficultyOffset") Then
 		        DifficultyValue = ParsedData.DoubleValue("DifficultyOffset") * (DifficultyScale - 0.5) + 0.5
 		      Else

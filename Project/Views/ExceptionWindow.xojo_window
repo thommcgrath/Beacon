@@ -293,7 +293,7 @@ Begin Window ExceptionWindow
       TabPanelIndex   =   0
       Top             =   103
       Transparent     =   False
-      Value           =   0
+      Value           =   3
       Visible         =   True
       Width           =   474
       Begin Label CheckingLabel
@@ -565,7 +565,7 @@ Begin Window ExceptionWindow
          Bold            =   False
          ButtonStyle     =   "0"
          Cancel          =   False
-         Caption         =   "Report Now"
+         Caption         =   "Add Comments"
          Default         =   False
          Enabled         =   True
          Height          =   20
@@ -573,7 +573,7 @@ Begin Window ExceptionWindow
          Index           =   -2147483648
          InitialParent   =   "Pages"
          Italic          =   False
-         Left            =   287
+         Left            =   281
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -590,7 +590,7 @@ Begin Window ExceptionWindow
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   110
+         Width           =   121
       End
       Begin Label ErrorIDLabel
          AutoDeactivate  =   True

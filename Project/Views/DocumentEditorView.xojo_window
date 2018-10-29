@@ -207,6 +207,14 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Visible         =   False
       Width           =   300
    End
+   Begin Timer AutosaveTimer
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Mode            =   2
+      Period          =   60000
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -214,6 +222,12 @@ End
 	#tag Event
 		Sub Activate()
 		  Self.ContentsChanged = Self.Document.Modified
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub CleanupDiscardedChanges()
+		  Self.CleanupAutosave()
 		End Sub
 	#tag EndEvent
 
@@ -237,6 +251,10 @@ End
 		  If Self.ReadyToExport Then
 		    FileExport.Enable
 		  End If
+		  
+		  If Self.CurrentPanel <> Nil Then
+		    Self.CurrentPanel.EnableMenuItems()
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -246,11 +264,19 @@ End
 		    Dim DocumentID As Text = Self.mController.Document.DocumentID
 		    Dim ConfigName As Text = Preferences.LastUsedConfigName(DocumentID)
 		    For I As Integer = 0 To Self.ConfigMenu.Count - 1
-		      If Self.ConfigMenu.RowTag(I) = ConfigName Then
+		      Dim Tag As Variant = Self.ConfigMenu.RowTag(I)
+		      If Tag.Type = Variant.TypeText And Tag.TextValue = ConfigName Then
 		        Self.ConfigMenu.ListIndex = I
 		        Exit For I
 		      End If
 		    Next
+		    
+		    Dim File As FolderItem = Self.AutosaveFile(False)
+		    If File.Exists Then
+		      Dim Controller As New Beacon.DocumentController(Beacon.DocumentURL.URLForFile(File))
+		      AddHandler Controller.Loaded, WeakAddressOf mAutosaveController_Loaded
+		      Controller.Load(App.Identity)
+		    End If
 		  End If
 		End Sub
 	#tag EndEvent
@@ -292,10 +318,48 @@ End
 
 
 	#tag Method, Flags = &h21
+		Private Sub Autosave()
+		  If Not Self.Document.Modified Then
+		    Return
+		  End If
+		  
+		  Dim File As FolderItem = Self.AutosaveFile(True)
+		  If File <> Nil Then
+		    Self.mController.SaveACopy(Beacon.DocumentURL.URLForFile(File), App.Identity)
+		    Self.Progress = BeaconSubview.ProgressIndeterminate
+		    Self.AutosaveTimer.Reset
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function AutosaveFile(CreateFolder As Boolean = False) As FolderItem
+		  If Self.Document = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Dim Folder As FolderItem = App.ApplicationSupport.Child("Autosave")
+		  If Folder = Nil Then
+		    Return Nil
+		  End If
+		  If Not Folder.Exists Then
+		    If CreateFolder Then
+		      Folder.CreateAsFolder
+		    Else
+		      Return Nil
+		    End If
+		  End If
+		  Return Folder.Child(Self.Document.DocumentID + BeaconFileTypes.BeaconDocument.PrimaryExtension)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub BeginDeploy()
 		  If Self.mDeployWindow <> Nil And Self.mDeployWindow.Value <> Nil And Self.mDeployWindow.Value IsA DocumentDeployWindow Then
 		    DocumentDeployWindow(Self.mDeployWindow.Value).Show()
 		  Else
+		    Self.Autosave()
+		    
 		    Dim Win As DocumentDeployWindow = DocumentDeployWindow.Create(Self.Document)
 		    If Win <> Nil Then
 		      Self.mDeployWindow = New WeakRef(Win)
@@ -307,7 +371,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub BeginExport()
+		  Self.Autosave()
+		  
 		  DocumentExportWindow.Present(Self, Self.Document)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CleanupAutosave()
+		  Dim AutosaveFile As FolderItem = Self.AutosaveFile()
+		  If AutosaveFile <> Nil And AutosaveFile.Exists Then
+		    AutosaveFile.Delete
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -395,7 +470,36 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub mAutosaveController_Loaded(Sender As Beacon.DocumentController, Document As Beacon.Document)
+		  #Pragma Unused Sender
+		  
+		  If Self.Document = Nil Then
+		    Return
+		  End If
+		  
+		  If Document.LastSaved <= Self.Document.LastSaved Then
+		    Self.CleanupAutosave()
+		    Return
+		  End If
+		  
+		  If Self.ShowConfirm("Beacon found unsaved changes to this file. Would you like to restore them now?", "This can happen if there was an error before your document was saved. If you do not restore the unsaved changes now, they will be discarded.", "Restore", "Cancel") Then
+		    Document.Modified = True
+		    Self.ContentsChanged = True
+		    Self.mController.Document = Document
+		    Dim Index As Integer = Self.ConfigMenu.ListIndex
+		    Self.ConfigMenu.ListIndex = -1
+		    Self.Panels = New Dictionary
+		    Self.ConfigMenu.ListIndex = Index
+		  Else
+		    Self.CleanupAutosave()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub mController_WriteError(Sender As Beacon.DocumentController, Reason As Text)
+		  Self.Progress = BeaconSubview.ProgressNone
+		  
 		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!")
 		  Notification.SecondaryMessage = Reason
 		  Notification.UserData = New Xojo.Core.Dictionary
@@ -414,7 +518,13 @@ End
 		    Self.BeaconToolbar1.ShareButton.Enabled = (Sender.URL.Scheme = Beacon.DocumentURL.TypeCloud)
 		  End If
 		  
+		  Self.Progress = BeaconSubview.ProgressNone
 		  Preferences.AddToRecentDocuments(Sender.URL)
+		  
+		  If Not Sender.Document.Modified Then
+		    // Safe to cleanup the autosave
+		    Self.CleanupAutosave()
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -427,6 +537,8 @@ End
 		      Panel.ImportFinished()
 		    End If
 		  Next
+		  
+		  Self.Panel_ContentsChanged(Nil)
 		End Sub
 	#tag EndMethod
 
@@ -485,31 +597,34 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SaveAs()
-		  If DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController) Then
+		  Select Case DocumentSaveToCloudWindow.Present(Self.TrueWindow, Self.mController)
+		  Case DocumentSaveToCloudWindow.StateSaved
 		    Self.Title = Self.mController.Name
 		    Self.ToolbarCaption = Self.mController.Name
-		    Return
-		  End If
-		  
-		  Dim Dialog As New SaveAsDialog
-		  Dialog.SuggestedFileName = Self.mController.Name + BeaconFileTypes.BeaconDocument.PrimaryExtension
-		  Dialog.Filter = BeaconFileTypes.BeaconDocument
-		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
-		  If File = Nil Then
-		    Return
-		  End If
-		  
-		  If Self.Document.Title.BeginsWith("Untitled Document") Then
-		    Dim Filename As Text = File.Name.ToText
-		    If Filename.EndsWith(".beacon") Then
-		      Filename = Filename.Left(Filename.Length - 7).Trim
+		    Self.Progress = BeaconSubview.ProgressIndeterminate
+		  Case DocumentSaveToCloudWindow.StateSaveLocal
+		    Dim Dialog As New SaveAsDialog
+		    Dialog.SuggestedFileName = Self.mController.Name + BeaconFileTypes.BeaconDocument.PrimaryExtension
+		    Dialog.Filter = BeaconFileTypes.BeaconDocument
+		    
+		    Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    If File = Nil Then
+		      Return
 		    End If
-		    Self.Document.Title = Filename
-		  End If
-		  Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(File), App.Identity)
-		  Self.Title = Self.mController.Name
-		  Self.ToolbarCaption = Self.mController.Name
+		    
+		    If Self.Document.Title.BeginsWith("Untitled Document") Then
+		      Dim Filename As Text = File.Name.ToText
+		      Dim Extension As Text = BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText
+		      If Filename.EndsWith(Extension) Then
+		        Filename = Filename.Left(Filename.Length - Extension.Length).Trim
+		      End If
+		      Self.Document.Title = Filename
+		    End If
+		    Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(File), App.Identity)
+		    Self.Title = Self.mController.Name
+		    Self.ToolbarCaption = Self.mController.Name
+		    Self.Progress = BeaconSubview.ProgressIndeterminate
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -774,7 +889,20 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events AutosaveTimer
+	#tag Event
+		Sub Action()
+		  Self.Autosave()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

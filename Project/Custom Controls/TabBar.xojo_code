@@ -1,6 +1,7 @@
 #tag Class
 Protected Class TabBar
 Inherits ControlCanvas
+Implements ObservationKit.Observer
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  Dim Point As New REALbasic.Point(X, Y)
@@ -77,11 +78,6 @@ Inherits ControlCanvas
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  ' G.ForeColor = SystemColors.ControlBackgroundColor
-		  ' G.FillRect(0, 0, G.Width, G.Height - 1)
-		  ' G.ForeColor = SystemColors.SeparatorColor
-		  ' G.FillRect(0, G.Height - 1, G.Width, 1)
-		  
 		  Dim Count As Integer = Self.Count
 		  Dim MaxTotalTabWidth As Integer = (Count * Self.MaxTabWidth) + (Count - 1)
 		  Dim TabInsideWidth As Integer = Self.MaxTabWidth
@@ -90,6 +86,8 @@ Inherits ControlCanvas
 		    TabInsideWidth = Floor((G.Width - (Count - 1)) / Count)
 		    Remainder = G.Width - ((Count * TabInsideWidth) + (Count - 1))
 		  End If
+		  
+		  Dim IndeterminatePattern As Picture
 		  
 		  Dim LeftPos As Integer = 0
 		  For I As Integer = 0 To Count - 1
@@ -129,6 +127,37 @@ Inherits ControlCanvas
 		    Self.mCloseBoxes(I) = CloseRect
 		    Self.mTabRects(I) = New REALbasic.Rect(LeftPos, 0, TabWidth, G.Height)
 		    
+		    If View.Progress <> BeaconSubview.ProgressNone Then
+		      Dim Progress As Graphics = G.Clip(Self.mTabRects(I).Left, Self.mTabRects(I).Top, Self.mTabRects(I).Width, Self.ProgressHeight)
+		      
+		      Dim ProgressBackColor As Color = SystemColors.QuaternaryLabelColor
+		      Progress.ForeColor = ProgressBackColor
+		      Progress.FillRect(0, 0, Progress.Width, Progress.Height)
+		      
+		      If View.Progress = BeaconSubview.ProgressIndeterminate Then
+		        // This is the tricky animated one
+		        If IndeterminatePattern = Nil Then
+		          IndeterminatePattern = BeaconUI.IconWithColor(IconTabIndeterminatePattern, SystemColors.SelectedContentBackgroundColor)
+		        End If
+		        
+		        If Microseconds - Self.mLastCycleTime > Self.IndeterminateCyclePeriod Then
+		          Self.mLastCycleTime = Microseconds
+		        End If
+		        Dim CycleProgress As Double = (Microseconds - Self.mLastCycleTime) / Self.IndeterminateCyclePeriod
+		        Dim CycleOffset As Integer = IndeterminatePattern.Width * CycleProgress
+		        
+		        For X As Integer = IndeterminatePattern.Width * -1 To Progress.Width Step IndeterminatePattern.Width
+		          Progress.DrawPicture(IndeterminatePattern, X + CycleOffset, 0)
+		        Next
+		        
+		        Xojo.Core.Timer.CallLater(10, WeakAddressOf Self.UpdateIndeterminate)
+		      Else
+		        Dim FillWidth As Integer = Self.mTabRects(I).Width * View.Progress
+		        Progress.ForeColor = SystemColors.SelectedContentBackgroundColor
+		        Progress.FillRect(0, 0, FillWidth, Progress.Height)
+		      End If
+		    End If
+		    
 		    LeftPos = LeftPos + TabWidth
 		    G.ClearRect(LeftPos, 0, 1, G.Height - 1)
 		    G.ForeColor = SystemColors.SeparatorColor
@@ -143,6 +172,12 @@ Inherits ControlCanvas
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  Xojo.Core.Timer.CancelCall(WeakAddressOf Self.UpdateIndeterminate)
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub DrawTabCell(G As Graphics, View As BeaconSubview, BoxState As CloseBoxState, ByRef CloseRect As REALbasic.Rect)
@@ -207,6 +242,26 @@ Inherits ControlCanvas
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
+		  // Part of the ObservationKit.Observer interface.
+		  
+		  #Pragma Unused Source
+		  #Pragma Unused Value
+		  
+		  Select Case Key
+		  Case "BeaconSubview.Progress"
+		    Self.Invalidate
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateIndeterminate()
+		  Self.Invalidate
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event ShouldDismissView(ViewIndex As Integer)
@@ -231,6 +286,14 @@ Inherits ControlCanvas
 			Set
 			  If Self.mCount <> Value Then
 			    Self.mCount = Value
+			    
+			    Dim OldBound As Integer = Self.mTabRects.Ubound
+			    Dim NewBound As Integer = Value - 1
+			    For I As Integer = OldBound + 1 To NewBound
+			      Dim View As BeaconSubview = RaiseEvent ViewAtIndex(I)
+			      View.AddObserver(Self, "BeaconSubview.Progress")
+			    Next
+			    
 			    Redim Self.mTabRects(Value - 1)
 			    Redim Self.mCloseBoxes(Value - 1)
 			    Self.SelectedIndex = Self.SelectedIndex
@@ -251,6 +314,10 @@ Inherits ControlCanvas
 
 	#tag Property, Flags = &h21
 		Private mHoverRect As REALbasic.Rect
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastCycleTime As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -284,7 +351,13 @@ Inherits ControlCanvas
 	#tag EndComputedProperty
 
 
+	#tag Constant, Name = IndeterminateCyclePeriod, Type = Double, Dynamic = False, Default = \"1000000", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = MaxTabWidth, Type = Double, Dynamic = False, Default = \"200", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ProgressHeight, Type = Double, Dynamic = False, Default = \"3", Scope = Private
 	#tag EndConstant
 
 

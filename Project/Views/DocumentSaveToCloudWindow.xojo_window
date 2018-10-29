@@ -247,16 +247,16 @@ End
 
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Controller As Beacon.DocumentController) As Boolean
+		Shared Function Present(Parent As Window, Controller As Beacon.DocumentController) As Integer
 		  Dim Win As New DocumentSaveToCloudWindow
 		  Win.mController = Controller
 		  Win.TitleField.Text = Controller.Name
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  
-		  Dim ShowSaveLocal As Boolean = Win.mShowSaveLocal
+		  Dim State As Integer = Win.mResponseState
 		  Win.Close
 		  
-		  Return Not ShowSaveLocal
+		  Return State
 		End Function
 	#tag EndMethod
 
@@ -266,8 +266,18 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mShowSaveLocal As Boolean
+		Private mResponseState As Integer
 	#tag EndProperty
+
+
+	#tag Constant, Name = StateCancelled, Type = Double, Dynamic = False, Default = \"2", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = StateSaved, Type = Double, Dynamic = False, Default = \"1", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = StateSaveLocal, Type = Double, Dynamic = False, Default = \"3", Scope = Public
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -278,7 +288,7 @@ End
 		  Dim NewURL As Text = Beacon.DocumentURL.TypeCloud + "://" + BeaconAPI.URL("/document.php/" + Self.mController.Document.DocumentID).Mid(8)
 		  Self.mController.Document.Title = Self.TitleField.Text.ToText
 		  Self.mController.SaveAs(NewURL, App.Identity)
-		  Self.mShowSaveLocal = False
+		  Self.mResponseState = Self.StateSaved
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -286,7 +296,7 @@ End
 #tag Events CancelButton
 	#tag Event
 		Sub Action()
-		  Self.mShowSaveLocal = False
+		  Self.mResponseState = Self.StateCancelled
 		  Self.Hide
 		End Sub
 	#tag EndEvent
@@ -294,7 +304,7 @@ End
 #tag Events SaveLocalButton
 	#tag Event
 		Sub Action()
-		  Self.mShowSaveLocal = True
+		  Self.mResponseState = Self.StateSaveLocal
 		  Self.Hide
 		End Sub
 	#tag EndEvent

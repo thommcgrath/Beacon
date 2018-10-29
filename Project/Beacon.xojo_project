@@ -288,6 +288,7 @@ Window=EngramsUpdateWindow;Views/EngramsUpdateWindow.xojo_window;&h00000000625DF
 Class=RangeField;Custom Controls/RangeField.xojo_code;&h00000000306F6FFF;&h0000000030DCFFFF;false
 MultiImage=IconToolbarHResize;Icons/IconToolbarHResize.xojo_image;&h0000000072A357FF;&h0000000007F977FF;false
 MultiImage=IconToolbarVResize;Icons/IconToolbarVResize.xojo_image;&h000000000F6DF7FF;&h0000000007F977FF;false
+MultiImage=IconTabIndeterminatePattern;Icons/IconTabIndeterminatePattern.xojo_image;&h00000000591B8FFF;&h0000000007F977FF;false
 Class=ExperienceCurves;Modules/BeaconConfigs/ExperienceCurves.xojo_code;&h000000000D898FFF;&h0000000068EBAFFF;false
 Class=Curve;Modules/Beacon/Curve.xojo_code;&h00000000057E8FFF;&h0000000055ADDFFF;false
 Window=ExperienceCurvesConfigEditor;Views/Config Editors/ExperienceCurvesConfigEditor.xojo_window;&h00000000343557FF;&h00000000434D97FF;false
