@@ -55,6 +55,262 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Visible         =   True
       Width           =   200
    End
+   Begin Slider CurveSlider
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   23
+      HelpTag         =   ""
+      Index           =   0
+      InitialParent   =   ""
+      Left            =   232
+      LineStep        =   1
+      LiveScroll      =   True
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Maximum         =   100
+      Minimum         =   0
+      PageStep        =   20
+      Scope           =   2
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TickStyle       =   "0"
+      Top             =   20
+      Transparent     =   False
+      Value           =   100
+      Visible         =   True
+      Width           =   200
+   End
+   Begin Slider CurveSlider
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   23
+      HelpTag         =   ""
+      Index           =   1
+      InitialParent   =   ""
+      Left            =   232
+      LineStep        =   1
+      LiveScroll      =   True
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Maximum         =   100
+      Minimum         =   0
+      PageStep        =   20
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TickStyle       =   "0"
+      Top             =   55
+      Transparent     =   False
+      Value           =   0
+      Visible         =   True
+      Width           =   200
+   End
+   Begin Slider CurveSlider
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   23
+      HelpTag         =   ""
+      Index           =   2
+      InitialParent   =   ""
+      Left            =   232
+      LineStep        =   1
+      LiveScroll      =   True
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Maximum         =   100
+      Minimum         =   0
+      PageStep        =   20
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TickStyle       =   "0"
+      Top             =   90
+      Transparent     =   False
+      Value           =   100
+      Visible         =   True
+      Width           =   200
+   End
+   Begin Slider CurveSlider
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   23
+      HelpTag         =   ""
+      Index           =   3
+      InitialParent   =   ""
+      Left            =   232
+      LineStep        =   1
+      LiveScroll      =   True
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Maximum         =   100
+      Minimum         =   0
+      PageStep        =   20
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TickStyle       =   "0"
+      Top             =   125
+      Transparent     =   False
+      Value           =   0
+      Visible         =   True
+      Width           =   200
+   End
+   Begin Label Label1
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   444
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "X1"
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   46
+   End
+   Begin Label Label2
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   444
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Y1"
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   55
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   46
+   End
+   Begin Label Label3
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   444
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "X2"
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   90
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   46
+   End
+   Begin Label Label4
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   444
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Y2"
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   125
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   46
+   End
 End
 #tag EndWindow
 
@@ -109,15 +365,38 @@ End
 		  Clip.DrawObject(Shape)
 		  
 		  // Could the eval code be wrong?
-		  Clip.ForeColor = SystemColors.LabelColor
-		  For X As Integer = 0 To Clip.Width - 1
-		    Dim YValue As Integer = Round(Curve.Evaluate(X / (Clip.Width - 1), 0.0, 1.0) * Clip.Height)
-		    Clip.DrawLine(X, Clip.Height - YValue, X, Clip.Height - YValue)
+		  Clip.ForeColor = SystemColors.SystemRedColor
+		  Dim Rect As New Xojo.Core.Rect(0, 0, Clip.Width, Clip.Height)
+		  For I As Integer = 1 To 1000
+		    Dim Time As Double = (I - 1) / 999
+		    Dim Point As Xojo.Core.Point = Curve.Evaluate(Time, Rect)
+		    Clip.DrawLine(Point.X, Clip.Height - Point.Y, Point.X, Clip.Height - Point.Y)
+		  Next
+		  
+		  Clip.ForeColor = SystemColors.SystemBlueColor
+		  For XValue As Integer = 0 To Clip.Width - 1
+		    Dim YValue As Integer = Round(Curve.Evaluate(XValue / (Clip.Width - 1), 0.0, Clip.Height))
+		    Clip.DrawLine(XValue, Clip.Height - YValue, XValue, Clip.Height - YValue)
 		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events CurveSlider
+	#tag Event
+		Sub ValueChanged(index as Integer)
+		  Dim Curve As New Beacon.Curve(CurveSlider(0).Value / CurveSlider(0).Maximum, CurveSlider(1).Value / CurveSlider(1).Maximum, CurveSlider(2).Value / CurveSlider(2).Maximum, CurveSlider(3).Value / CurveSlider(3).Maximum)
+		  Self.mConfig.PlayerCurve = Curve
+		  Self.Canvas1.Invalidate
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
