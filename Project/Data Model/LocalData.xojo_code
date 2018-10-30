@@ -847,7 +847,7 @@ Implements Beacon.DataSource
 		    Commands.Append("INSERT INTO preset_modifiers SELECT * FROM legacy.preset_modifiers")
 		  End If
 		  
-		  // Ark Variables
+		  // Game Variables
 		  If FromSchemaVersion >= 7 Then
 		    Commands.Append("INSERT INTO game_variables SELECT * FROM legacy.game_variables;")
 		  End If
