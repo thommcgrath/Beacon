@@ -549,305 +549,6 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Visible         =   True
       Width           =   115
    End
-   Begin GroupBox AscensionGroup
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Ascension"
-      Enabled         =   True
-      Height          =   178
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   232
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   124
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   298
-      Begin UITweaks.ResizedTextField HardCapField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "AscensionGroup"
-         Italic          =   False
-         Left            =   379
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   True
-         Scope           =   2
-         TabIndex        =   4
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   226
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedLabel HardCapLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "AscensionGroup"
-         Italic          =   False
-         Left            =   252
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   3
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "Hard Level Cap:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   226
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   115
-      End
-      Begin UITweaks.ResizedTextField TotalExperienceField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "AscensionGroup"
-         Italic          =   False
-         Left            =   379
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   True
-         Scope           =   2
-         TabIndex        =   6
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   260
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   131
-      End
-      Begin UITweaks.ResizedLabel TotalExperienceLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "AscensionGroup"
-         Italic          =   False
-         Left            =   252
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   5
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "Total Experience:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   260
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   115
-      End
-      Begin CheckBox IsAscendedCheckbox
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Max Level Is Ascended"
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "AscensionGroup"
-         Italic          =   False
-         Left            =   252
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         State           =   0
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   160
-         Transparent     =   False
-         Underline       =   False
-         Value           =   False
-         Visible         =   True
-         Width           =   258
-      End
-      Begin UITweaks.ResizedTextField SoftCapField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "AscensionGroup"
-         Italic          =   False
-         Left            =   379
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   True
-         Scope           =   2
-         TabIndex        =   2
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   192
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedLabel SoftCapLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "AscensionGroup"
-         Italic          =   False
-         Left            =   252
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   1
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "Soft Level Cap:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   192
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   115
-      End
-   End
    Begin BeaconListbox LevelsList
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
@@ -893,13 +594,92 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   56
-      Transparent     =   True
+      Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      UseFocusRing    =   False
       Visible         =   True
       Width           =   188
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin UITweaks.ResizedTextField SoftCapField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   379
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   124
+      Transparent     =   False
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedLabel SoftCapLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   252
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Soft Level Cap:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   124
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   115
    End
 End
 #tag EndWindow
@@ -1022,15 +802,12 @@ End
 		    If SkipField <> Self.MaxExperienceField Then
 		      Self.MaxExperienceField.Text = Format(Self.mConfig.PlayerMaxExperience, "0,")
 		    End If
-		    
 		    Self.SoftCapField.Text = Format(Self.mConfig.PlayerSoftLevelCap, "0,")
-		    Self.HardCapField.Text = Format(Self.mConfig.PlayerHardLevelCap, "0,")
-		    Self.TotalExperienceField.Text = Format(Self.mConfig.PlayerTotalExperience, "0, ")
-		    Self.IsAscendedCheckbox.Value = Self.mConfig.PlayerLevelCapIsAscended
 		    
-		    Self.FillLevelsList(Self.mConfig.PlayerHardLevelCap, Self.mConfig.PlayerTotalExperience, Self.mConfig.PlayerCurve)
+		    Self.FillLevelsList(Self.mConfig.PlayerLevelCap, Self.mConfig.PlayerMaxExperience, Self.mConfig.PlayerCurve)
 		    
-		    Self.AscensionGroup.Visible = True
+		    Self.SoftCapField.Visible = True
+		    Self.SoftCapLabel.Visible = True
 		  Else
 		    If SkipField <> Self.MaxLevelField Then
 		      Self.MaxLevelField.Text = Format(Self.mConfig.DinoLevelCap, "0,")
@@ -1041,7 +818,8 @@ End
 		    
 		    Self.FillLevelsList(Self.mConfig.DinoLevelCap, Self.mConfig.DinoMaxExperience, Self.mConfig.DinoCurve)
 		    
-		    Self.AscensionGroup.Visible = False
+		    Self.SoftCapField.Visible = False
+		    Self.SoftCapLabel.Visible = False
 		  End If
 		  
 		  Self.SettingUp = WasSettingUp
@@ -1152,21 +930,6 @@ End
 	#tag Event
 		Sub LostFocus()
 		  Self.RefreshUI
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events IsAscendedCheckbox
-	#tag Event
-		Sub Action()
-		  If Self.SettingUp Then
-		    Return
-		  End If
-		  
-		  Self.mConfig.PlayerLevelCapIsAscended = Me.Value
-		  Self.ContentsChanged = True
-		  Self.SettingUp = True
-		  Self.RefreshUI
-		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents

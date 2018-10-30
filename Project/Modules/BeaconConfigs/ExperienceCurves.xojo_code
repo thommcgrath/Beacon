@@ -26,7 +26,6 @@ Inherits Beacon.ConfigGroup
 		  Self.mPlayerLevelCap = Dict.Value("Player Level Cap")
 		  Self.mPlayerMaxExperience = Dict.Value("Player Max Experience")
 		  Self.mPlayerCurve = PlayerCurve
-		  Self.mPlayerLevelCapIsAscended = Dict.Value("Player Level Cap Is Ascended")
 		End Sub
 	#tag EndEvent
 
@@ -39,7 +38,6 @@ Inherits Beacon.ConfigGroup
 		  Dict.Value("Player Level Cap") = Self.mPlayerLevelCap
 		  Dict.Value("Player Max Experience") = Self.mPlayerMaxExperience
 		  Dict.Value("Player Curve") = Self.mPlayerCurve.Export
-		  Dict.Value("Player Level Cap Is Ascended") = Self.mPlayerLevelCapIsAscended
 		End Sub
 	#tag EndEvent
 
@@ -54,29 +52,20 @@ Inherits Beacon.ConfigGroup
 		Sub Constructor()
 		  Super.Constructor()
 		  
-		  Self.DinoCurve = New Beacon.Curve(0.9999, 0.0001, 0.9999, 0.0001)
+		  Self.DinoCurve = New Beacon.Curve(1, 0, 1, 0)
 		  Self.DinoLevelCap = 73
 		  Self.DinoMaxExperience = 3550000
 		  
-		  Self.PlayerCurve = New Beacon.Curve(0.9999, 0.0001, 0.9999, 0.0001)
-		  Self.PlayerLevelCap = 105
-		  Self.PlayerLevelCapIsAscended = False
-		  Self.PlayerMaxExperience = 4098538
+		  Self.PlayerCurve = New Beacon.Curve(1, 0, 1, 0)
+		  Self.PlayerLevelCap = 135
+		  Self.PlayerMaxExperience = 53373536
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  Dim MaxLevel As UInteger
-		  If Self.PlayerLevelCapIsAscended Then
-		    MaxLevel = Self.PlayerLevelCap
-		  Else
-		    MaxLevel = Self.PlayerLevelCap + AscensionLevels
-		  End If
-		  
-		  Dim EndLevel As UInteger = Self.PlayerLevelCap
+		  Dim MaxLevel As UInteger = Self.PlayerLevelCap
 		  Dim MaxXP As UInteger = Self.PlayerMaxExperience
-		  Dim TrueMaxXP As UInteger = Round(Self.PlayerCurve.Evaluate(MaxLevel / EndLevel, 0, MaxXP))
 		  
 		  // Index 0 is level 2!
 		  // Index 150 is level 152
@@ -85,42 +74,28 @@ Inherits Beacon.ConfigGroup
 		  Dim Chunks() As Text
 		  For Index As Integer = 0 To MaxLevel - 2
 		    Dim Level As Integer = Index + 2
-		    Dim XP As UInteger = Round(Self.PlayerCurve.Evaluate((Level - 1) / (EndLevel - 1), 0, MaxXP))
+		    Dim XP As UInteger = Round(Self.PlayerCurve.Evaluate((Level - 1) / (MaxLevel - 1), 0, MaxXP))
 		    Chunks.Append("ExperiencePointsForLevel[" + Index.ToText + "]=" + XP.ToText)
 		  Next
 		  
 		  Dim Values() As Beacon.ConfigValue
 		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Text.Join(Chunks, ",") + ")"))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsPlayer", TrueMaxXP.ToText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsPlayer", MaxXP.ToText))
 		  
 		  Redim Chunks(-1)
 		  MaxLevel = Self.DinoLevelCap
-		  EndLevel = MaxLevel
 		  MaxXP = Self.DinoMaxExperience
-		  TrueMaxXP = MaxXP
 		  
 		  For Index As Integer = 0 To MaxLevel - 2
 		    Dim Level As Integer = Index + 2
-		    Dim XP As UInteger = Round(Self.DinoCurve.Evaluate((Level - 1) / (EndLevel - 1), 0, MaxXP))
+		    Dim XP As UInteger = Round(Self.DinoCurve.Evaluate((Level - 1) / (MaxLevel - 1), 0, MaxXP))
 		    Chunks.Append("ExperiencePointsForLevel[" + Index.ToText + "]=" + XP.ToText)
 		  Next
 		  
 		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Text.Join(Chunks, ",") + ")"))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsDino", Self.DinoMaxExperience.ToText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsDino", MaxXP.ToText))
 		  
 		  Return Values
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function PlayerExperienceForLevel(Level As Integer) As Integer
-		  Dim Percent As Double
-		  If Self.PlayerLevelCapIsAscended Then
-		    Percent = (Level - 1) / (Self.PlayerHardLevelCap - 1)
-		  Else
-		    Percent = (Level - 1) / (Self.PlayerSoftLevelCap - 1)
-		  End If
-		  Return Max(Round(Self.PlayerCurve.Evaluate(Percent, 0, Self.PlayerMaxExperience)), Self.PlayerMaxExperience)
 		End Function
 	#tag EndMethod
 
@@ -197,10 +172,6 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPlayerLevelCapIsAscended As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mPlayerMaxExperience As UInteger
 	#tag EndProperty
 
@@ -224,19 +195,6 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Self.PlayerLevelCapIsAscended Then
-			    Return Self.PlayerLevelCap
-			  Else
-			    Return Self.PlayerLevelCap + Self.AscensionLevels
-			  End If
-			End Get
-		#tag EndGetter
-		PlayerHardLevelCap As Integer
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
 			  Return Self.mPlayerLevelCap
 			End Get
 		#tag EndGetter
@@ -249,23 +207,6 @@ Inherits Beacon.ConfigGroup
 			End Set
 		#tag EndSetter
 		PlayerLevelCap As UInteger
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mPlayerLevelCapIsAscended
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mPlayerLevelCapIsAscended <> Value Then
-			    Self.mPlayerLevelCapIsAscended = Value
-			    Self.Modified = True
-			  End If
-			End Set
-		#tag EndSetter
-		PlayerLevelCapIsAscended As Boolean
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -288,23 +229,10 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Self.PlayerLevelCapIsAscended Then
-			    Return Self.PlayerLevelCap - Self.AscensionLevels
-			  Else
-			    Return Self.PlayerLevelCap
-			  End If
+			  Return Self.PlayerLevelCap - Self.AscensionLevels
 			End Get
 		#tag EndGetter
 		PlayerSoftLevelCap As Integer
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.PlayerExperienceForLevel(Self.PlayerHardLevelCap)
-			End Get
-		#tag EndGetter
-		PlayerTotalExperience As Integer
 	#tag EndComputedProperty
 
 
@@ -375,6 +303,21 @@ Inherits Beacon.ConfigGroup
 			Name="PlayerMaxExperience"
 			Group="Behavior"
 			Type="UInteger"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PlayerHardLevelCap"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PlayerSoftLevelCap"
+			Group="Behavior"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PlayerTotalExperience"
+			Group="Behavior"
+			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
