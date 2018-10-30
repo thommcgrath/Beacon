@@ -1,6 +1,18 @@
 #tag Interface
 Protected Interface DataSource
 	#tag Method, Flags = &h0
+		Function GetBooleanVariable(Key As Text) As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetDoubleVariable(Key As Text) As Double
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetEngramByClass(ClassString As Text) As Beacon.Engram
 		  
 		End Function
@@ -8,6 +20,12 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Function GetEngramByPath(Path As Text) As Beacon.Engram
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetIntegerVariable(Key As Text) As Integer
 		  
 		End Function
 	#tag EndMethod
@@ -26,6 +44,12 @@ Protected Interface DataSource
 
 	#tag Method, Flags = &h0
 		Function GetPresetModifier(ModifierID As Text) As Beacon.PresetModifier
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetTextVariable(Key As Text) As Text
 		  
 		End Function
 	#tag EndMethod

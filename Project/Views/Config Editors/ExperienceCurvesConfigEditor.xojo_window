@@ -25,7 +25,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   750
+   Width           =   710
    Begin BezierCurveDesigner CurveEditor
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -376,7 +376,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Height          =   24
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   283
+      Left            =   264
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -410,7 +410,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   379
+      Left            =   359
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -447,7 +447,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   252
+      Left            =   232
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -488,7 +488,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   379
+      Left            =   359
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -525,7 +525,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   252
+      Left            =   232
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -574,7 +574,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       InitialParent   =   ""
       InitialValue    =   ""
       Italic          =   False
-      Left            =   542
+      Left            =   502
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -620,7 +620,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   379
+      Left            =   359
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -657,7 +657,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   252
+      Left            =   232
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -687,7 +687,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.MinimumWidth = 750
+		  Self.MinimumWidth = 710
 		  Self.MinimumHeight = 368
 		  
 		  If Not Self.Document.HasConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName) Then

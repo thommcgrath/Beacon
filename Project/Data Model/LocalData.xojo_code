@@ -31,6 +31,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, pattern TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE ark_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  
 		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX engrams_path_idx ON engrams(path);")
@@ -234,6 +235,17 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetBooleanVariable(Key As Text) As Boolean
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM ark_variables WHERE key = ?1;", Key)
+		  If Results.RecordCount = 1 Then
+		    Return Results.Field("value").BooleanValue
+		  Else
+		    Return False
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetConfigHelp(ConfigName As String, ByRef Title As String, ByRef Body As String, ByRef DetailURL As String) As Boolean
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE LOWER(config_name) = LOWER(?1);", ConfigName)
 		  If Results.RecordCount <> 1 Then
@@ -264,6 +276,17 @@ Implements Beacon.DataSource
 		  Catch Err As UnsupportedOperationException
 		    Return Nil
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetDoubleVariable(Key As Text) As Double
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM ark_variables WHERE key = ?1;", Key)
+		  If Results.RecordCount = 1 Then
+		    Return Results.Field("value").DoubleValue
+		  Else
+		    Return 0.0
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -314,6 +337,17 @@ Implements Beacon.DataSource
 		  Catch Err As UnsupportedOperationException
 		    Return Nil
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetIntegerVariable(Key As Text) As Integer
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM ark_variables WHERE key = ?1;", Key)
+		  If Results.RecordCount = 1 Then
+		    Return Results.Field("value").IntegerValue
+		  Else
+		    Return 0
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -377,6 +411,25 @@ Implements Beacon.DataSource
 		  Dict.Value("Pattern") = Results.Field("pattern").StringValue.ToText
 		  Dict.Value("Label") = Results.Field("label").StringValue.ToText
 		  Return Beacon.PresetModifier.FromDictionary(Dict)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetTextVariable(Key As Text) As Text
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM ark_variables WHERE key = ?1;", Key)
+		  If Results.RecordCount = 1 Then
+		    Dim StringValue As String = Results.Field("value").StringValue
+		    If StringValue.Encoding = Nil Then
+		      If Encodings.UTF8.IsValidData(StringValue) Then
+		        StringValue = StringValue.DefineEncoding(Encodings.UTF8)
+		      Else
+		        Return ""
+		      End If
+		    End If
+		    Return StringValue.ToText
+		  Else
+		    Return ""
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -738,6 +791,11 @@ Implements Beacon.DataSource
 		  Dim MigrateLegacyCustomEngrams As Boolean = FromSchemaVersion <= 5
 		  Dim Commands() As String
 		  
+		  // Mods
+		  If FromSchemaVersion >= 6 Then
+		    Commands.Append("INSERT INTO mods SELECT * FROM legacy.mods WHERE mod_id != '" + Self.UserModID + "';")
+		  End If
+		  
 		  // Loot Sources
 		  If FromSchemaVersion >= 6 Then
 		    Commands.Append("INSERT INTO loot_sources SELECT * FROM legacy.loot_sources;")
@@ -756,6 +814,11 @@ Implements Beacon.DataSource
 		  // Official Presets
 		  If FromSchemaVersion >= 6 Then
 		    Commands.Append("INSERT INTO official_presets SELECT * FROM legacy.official_presets;")
+		  End If
+		  
+		  // Ark Variables
+		  If FromSchemaVersion >= 7 Then
+		    Commands.Append("INSERT INTO ark_variables SELECT * FROM legacy.ark_variables;")
 		  End If
 		  
 		  // Custom Presets
@@ -1394,7 +1457,7 @@ Implements Beacon.DataSource
 	#tag Constant, Name = Notification_NewAppNotification, Type = Text, Dynamic = False, Default = \"New App Notification", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"7", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = UserModID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Public

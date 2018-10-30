@@ -43,6 +43,12 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
+		Function AscensionLevels() As Integer
+		  Return Beacon.Data.GetIntegerVariable("Ascension Levels")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function ConfigName() As Text
 		  Return "ExperienceCurves"
 		End Function
@@ -53,13 +59,37 @@ Inherits Beacon.ConfigGroup
 		  Super.Constructor()
 		  
 		  Self.DinoCurve = New Beacon.Curve(1, 0, 1, 0)
-		  Self.DinoLevelCap = 73
-		  Self.DinoMaxExperience = 3550000
+		  Self.DinoLevelCap = Self.DefaultDinoLevelCap//73
+		  Self.DinoMaxExperience = Self.DefaultDinoMaxExperience//3550000
 		  
 		  Self.PlayerCurve = New Beacon.Curve(1, 0, 1, 0)
-		  Self.PlayerLevelCap = 135
-		  Self.PlayerMaxExperience = 53373536
+		  Self.PlayerLevelCap = Self.DefaultPlayerLevelCap//135
+		  Self.PlayerMaxExperience = Self.DefaultPlayerMaxExperience//53373536
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DefaultDinoLevelCap() As Integer
+		  Return Beacon.Data.GetIntegerVariable("Dino Level Cap")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DefaultDinoMaxExperience() As Integer
+		  Return Beacon.Data.GetIntegerVariable("Dino Max Experience")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DefaultPlayerLevelCap() As Integer
+		  Return Beacon.Data.GetIntegerVariable("Player Level Cap")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DefaultPlayerMaxExperience() As Integer
+		  Return Beacon.Data.GetIntegerVariable("Player Max Experience")
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -234,10 +264,6 @@ Inherits Beacon.ConfigGroup
 		#tag EndGetter
 		PlayerSoftLevelCap As Integer
 	#tag EndComputedProperty
-
-
-	#tag Constant, Name = AscensionLevels, Type = Double, Dynamic = False, Default = \"30", Scope = Public
-	#tag EndConstant
 
 
 	#tag ViewBehavior
