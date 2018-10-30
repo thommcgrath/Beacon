@@ -82,12 +82,17 @@ Inherits ControlCanvas
 
 	#tag Event
 		Sub MouseUp(X As Integer, Y As Integer)
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
 		  // Nothing to do
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
 		  G.ForeColor = SystemColors.ControlBackgroundColor
 		  G.FillRect(1, 1, G.Width - 2, G.Height - 2)
 		  

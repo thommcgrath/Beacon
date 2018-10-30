@@ -388,6 +388,7 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       SelectionType   =   0
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   20
       Transparent     =   False
       Visible         =   True
@@ -877,6 +878,8 @@ End
 #tag Events ViewSwitch
 	#tag Event
 		Sub Action(itemIndex as integer)
+		  #Pragma Unused ItemIndex
+		  
 		  Dim Curve As Beacon.Curve = Self.CurrentCurve
 		  If Curve = Nil Then
 		    Return

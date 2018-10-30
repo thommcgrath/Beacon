@@ -94,6 +94,8 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
+		  #Pragma Unused SourceDocument
+		  
 		  Dim MaxLevel As UInteger = Self.PlayerLevelCap
 		  Dim MaxXP As UInteger = Self.PlayerMaxExperience
 		  
@@ -321,27 +323,12 @@ Inherits Beacon.ConfigGroup
 			Type="UInteger"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="PlayerLevelCapIsAscended"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="PlayerMaxExperience"
 			Group="Behavior"
 			Type="UInteger"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="PlayerHardLevelCap"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="PlayerSoftLevelCap"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="PlayerTotalExperience"
 			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
