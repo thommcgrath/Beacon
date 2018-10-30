@@ -144,7 +144,7 @@ Implements Beacon.DiscoveryEngine
 	#tag Method, Flags = &h21
 		Private Sub DiscoverServer()
 		  Dim URL As Text = "ftp.php/discover?" + Self.BuildFTPParameters(Self.mInitialPath)
-		  Dim DiscoveryRequest As New BeaconAPI.Request(URL, "GET", WeakAddressOf Callback_DiscoverServer)
+		  Dim DiscoveryRequest As New BeaconAPI.Request(URL, "GET", AddressOf Callback_DiscoverServer)
 		  DiscoveryRequest.Sign(Self.mIdentity)
 		  BeaconAPI.Send(DiscoveryRequest)
 		End Sub
@@ -152,7 +152,7 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub DownloadGameIni()
-		  Dim SettingsRequest As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameIniPath), "GET", WeakAddressOf Callback_DownloadGameIni)
+		  Dim SettingsRequest As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameIniPath), "GET", AddressOf Callback_DownloadGameIni)
 		  SettingsRequest.Sign(Self.mIdentity)
 		  BeaconAPI.Send(SettingsRequest)
 		End Sub
@@ -160,7 +160,7 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub DownloadGameUserSettingsIni()
-		  Dim SettingsRequest As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), "GET", WeakAddressOf Callback_DownloadGameUserSettingsIni)
+		  Dim SettingsRequest As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), "GET", AddressOf Callback_DownloadGameUserSettingsIni)
 		  SettingsRequest.Sign(Self.mIdentity)
 		  BeaconAPI.Send(SettingsRequest)
 		End Sub
