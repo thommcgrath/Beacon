@@ -31,7 +31,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, pattern TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE ark_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  
 		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX engrams_path_idx ON engrams(path);")
@@ -237,7 +237,7 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetBooleanVariable(Key As Text) As Boolean
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM ark_variables WHERE key = ?1;", Key)
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
 		    Return Results.Field("value").BooleanValue
 		  Else
@@ -282,7 +282,7 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetDoubleVariable(Key As Text) As Double
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM ark_variables WHERE key = ?1;", Key)
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
 		    Return Results.Field("value").DoubleValue
 		  Else
@@ -343,7 +343,7 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetIntegerVariable(Key As Text) As Integer
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM ark_variables WHERE key = ?1;", Key)
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
 		    Return Results.Field("value").IntegerValue
 		  Else
@@ -417,7 +417,7 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetTextVariable(Key As Text) As Text
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM ark_variables WHERE key = ?1;", Key)
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
 		    Dim StringValue As String = Results.Field("value").StringValue
 		    If StringValue.Encoding = Nil Then
@@ -693,6 +693,21 @@ Implements Beacon.DataSource
 		      Next
 		    End If
 		    
+		    If ChangeDict.HasKey("game_variables") Then
+		      Dim HelpTopics() As Auto = ChangeDict.Value("game_variables")
+		      For Each Dict As Xojo.Core.Dictionary In HelpTopics
+		        Dim Key As Text = Dict.Value("key")
+		        Dim Value As Text = Dict.Value("value")
+		        
+		        Dim Results As RecordSet = Self.SQLSelect("SELECT key FROM game_variables WHERE key = ?1;", Key)
+		        If Results.RecordCount = 1 Then
+		          Self.SQLExecute("UPDATE game_variables SET value = ?2 WHERE key = ?1;", Key, Value)
+		        Else
+		          Self.SQLExecute("INSERT INTO game_variables (key, value) VALUES (?1, ?2);", Key, Value)
+		        End If
+		      Next
+		    End If
+		    
 		    // Restore Indexes
 		    Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		    Self.SQLExecute("CREATE UNIQUE INDEX engrams_path_idx ON engrams(path);")
@@ -834,7 +849,7 @@ Implements Beacon.DataSource
 		  
 		  // Ark Variables
 		  If FromSchemaVersion >= 7 Then
-		    Commands.Append("INSERT INTO ark_variables SELECT * FROM legacy.ark_variables;")
+		    Commands.Append("INSERT INTO game_variables SELECT * FROM legacy.game_variables;")
 		  End If
 		  
 		  // Custom Presets

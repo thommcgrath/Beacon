@@ -405,14 +405,14 @@ CREATE TABLE help_topics (
 );
 GRANT SELECT ON TABLE help_topics TO thezaz_website;
 
-CREATE OR REPLACE FUNCTION help_topics_update_trigger () RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION generic_update_trigger () RETURNS TRIGGER AS $$
 BEGIN
 	NEW.last_update = CURRENT_TIMESTAMP(0);
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER help_topics_before_update_trigger BEFORE INSERT OR UPDATE ON help_topics FOR EACH ROW EXECUTE PROCEDURE help_topics_update_trigger();
+CREATE TRIGGER help_topics_before_update_trigger BEFORE INSERT OR UPDATE ON help_topics FOR EACH ROW EXECUTE PROCEDURE generic_update_trigger();
 -- End Config Help Topics
 
 -- Client Notices
@@ -426,6 +426,8 @@ CREATE TABLE client_notices (
 	last_update TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP(0)
 );
 GRANT SELECT ON TABLE client_notices TO thezaz_website;
+
+CREATE TRIGGER client_notices_before_update_trigger BEFORE INSERT OR UPDATE ON client_notices FOR EACH ROW EXECUTE PROCEDURE generic_update_trigger();
 -- End Client Notices
 
 -- Exception Reporting
@@ -454,3 +456,14 @@ CREATE TABLE exception_comments (
 );
 GRANT INSERT ON exception_comments TO thezaz_website;
 -- End Exception Reporting
+
+-- Game Variables
+CREATE TABLE game_variables (
+	key TEXT NOT NULL PRIMARY KEY,
+	value TEXT NOT NULL,
+	last_update TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+GRANT SELECT ON game_variables TO thezaz_website;
+
+CREATE TRIGGER game_variables_before_update_trigger BEFORE INSERT OR UPDATE ON game_variables FOR EACH ROW EXECUTE PROCEDURE generic_update_trigger();
+-- End Game Variables
