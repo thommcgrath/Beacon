@@ -67,8 +67,6 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  Const AscensionLevels = 30
-		  
 		  Dim MaxLevel As UInteger
 		  If Self.PlayerLevelCapIsAscended Then
 		    MaxLevel = Self.PlayerLevelCap
@@ -111,6 +109,18 @@ Inherits Beacon.ConfigGroup
 		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsDino", Self.DinoMaxExperience.ToText))
 		  
 		  Return Values
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function PlayerExperienceForLevel(Level As Integer) As Integer
+		  Dim Percent As Double
+		  If Self.PlayerLevelCapIsAscended Then
+		    Percent = (Level - 1) / (Self.PlayerHardLevelCap - 1)
+		  Else
+		    Percent = (Level - 1) / (Self.PlayerSoftLevelCap - 1)
+		  End If
+		  Return Max(Round(Self.PlayerCurve.Evaluate(Percent, 0, Self.PlayerMaxExperience)), Self.PlayerMaxExperience)
 		End Function
 	#tag EndMethod
 
@@ -214,6 +224,19 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  If Self.PlayerLevelCapIsAscended Then
+			    Return Self.PlayerLevelCap
+			  Else
+			    Return Self.PlayerLevelCap + Self.AscensionLevels
+			  End If
+			End Get
+		#tag EndGetter
+		PlayerHardLevelCap As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Return Self.mPlayerLevelCap
 			End Get
 		#tag EndGetter
@@ -262,6 +285,32 @@ Inherits Beacon.ConfigGroup
 		PlayerMaxExperience As UInteger
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  If Self.PlayerLevelCapIsAscended Then
+			    Return Self.PlayerLevelCap - Self.AscensionLevels
+			  Else
+			    Return Self.PlayerLevelCap
+			  End If
+			End Get
+		#tag EndGetter
+		PlayerSoftLevelCap As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.PlayerExperienceForLevel(Self.PlayerHardLevelCap)
+			End Get
+		#tag EndGetter
+		PlayerTotalExperience As Integer
+	#tag EndComputedProperty
+
+
+	#tag Constant, Name = AscensionLevels, Type = Double, Dynamic = False, Default = \"30", Scope = Public
+	#tag EndConstant
+
 
 	#tag ViewBehavior
 		#tag ViewProperty
@@ -301,6 +350,31 @@ Inherits Beacon.ConfigGroup
 			Name="IsImplicit"
 			Group="Behavior"
 			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DinoLevelCap"
+			Group="Behavior"
+			Type="UInteger"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DinoMaxExperience"
+			Group="Behavior"
+			Type="UInteger"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PlayerLevelCap"
+			Group="Behavior"
+			Type="UInteger"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PlayerLevelCapIsAscended"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="PlayerMaxExperience"
+			Group="Behavior"
+			Type="UInteger"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
