@@ -141,8 +141,8 @@ Implements Beacon.DataSource
 		    End If
 		    
 		    // Relocate the current library
+		    Dim Counter As Integer = 1
 		    Do
-		      Dim Counter As Integer = 1
 		      Dim Destination As FolderItem = BackupsFolder.Child("Library " + Str(CurrentSchemaVersion, "-0") + If(Counter > 1, "-" + Str(Counter, "-0"), "") + ".sqlite")
 		      If Destination.Exists Then
 		        Counter = Counter + 1
@@ -150,7 +150,8 @@ Implements Beacon.DataSource
 		      End If
 		      Self.mBase.DatabaseFile.MoveFileTo(Destination)
 		      MigrateFile = Destination
-		    Loop Until True
+		      Exit
+		    Loop
 		    
 		    // See if there is already a library, such as if the user went switched backward and forward between versions
 		    Dim SearchFolders(1) As FolderItem
@@ -814,6 +815,21 @@ Implements Beacon.DataSource
 		  // Official Presets
 		  If FromSchemaVersion >= 6 Then
 		    Commands.Append("INSERT INTO official_presets SELECT * FROM legacy.official_presets;")
+		  End If
+		  
+		  // Notifications
+		  If FromSchemaVersion >= 6 Then
+		    Commands.Append("INSERT INTO notifications SELECT * FROM legacy.notifications;")
+		  End If
+		  
+		  // Config Help
+		  If FromSchemaVersion >= 6 Then
+		    Commands.Append("INSERT INTO config_help SELECT * FROM legacy.config_help;")
+		  End If
+		  
+		  // Preset Modifiers
+		  If FromSchemaVersion >= 6 Then
+		    Commands.Append("INSERT INTO preset_modifiers SELECT * FROM legacy.preset_modifiers")
 		  End If
 		  
 		  // Ark Variables
