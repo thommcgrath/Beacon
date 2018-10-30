@@ -189,6 +189,12 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  Xojo.Core.Timer.CancelCall(WeakAddressOf TriggerCallback)
+		End Sub
+	#tag EndMethod
+
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Sub MergeFinishedCallback()
 	#tag EndDelegateDeclaration
