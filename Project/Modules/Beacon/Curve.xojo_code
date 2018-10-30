@@ -7,30 +7,6 @@ Protected Class Curve
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function B0(XValue As Double) As Double
-		  Return XValue * XValue * XValue
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function B1(XValue As Double) As Double
-		  Return 3 * XValue * XValue * (1 - XValue)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function B2(XValue As Double) As Double
-		  Return 3 * XValue * (1 - XValue) * (1 - XValue)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function B3(XValue As Double) As Double
-		  Return (1 - XValue) * (1 - XValue) * (1 - XValue)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Creates an uninteresting linear curve
@@ -55,7 +31,7 @@ Protected Class Curve
 
 	#tag Method, Flags = &h1
 		Protected Shared Function CubicRoot(Value As Double) As Double
-		  Return If(Value < 0, ((1 - Value)^(1/3)) * -1, Value^(1/3))
+		  Return If(Value < 0, ((Value * -1)^(1/3)) * -1, Value^(1/3))
 		End Function
 	#tag EndMethod
 
@@ -95,13 +71,18 @@ Protected Class Curve
 
 	#tag Method, Flags = &h1
 		Protected Function FindRoots(XValue As Double) As Double()
-		  Dim PA3 As Double = 3 * Self.C0.X
-		  Dim PB3 As Double = 3 * Self.C1.X
-		  Dim PC3 As Double = 3 * Self.C2.X
-		  Dim A As Double = (Self.C0.X * -1) + PB3 - PC3 + Self.C3.X
+		  Dim PA As Double = Self.C0.X
+		  Dim PB As Double = Self.C1.X
+		  Dim PC As Double = Self.C2.X
+		  Dim PD As Double = Self.C3.X
+		  
+		  Dim PA3 As Double = 3 * PA
+		  Dim PB3 As Double = 3 * PB
+		  Dim PC3 As Double = 3 * PC
+		  Dim A As Double = (PA * -1) + PB3 - PC3 + PD
 		  Dim B As Double = PA3 - (2 * PB3) + PC3
 		  Dim C As Double = (PA3 * -1) + PC3
-		  Dim D As Double = Self.C0.X - XValue
+		  Dim D As Double = PA - XValue
 		  
 		  If Self.Approximately(A, 0) Then
 		    // This is not a cubic curve
@@ -113,9 +94,8 @@ Protected Class Curve
 		        Return Results
 		      End If
 		      
-		      Dim Results(1) As Double
-		      Results(0) = D * -1
-		      Results(1) = C
+		      Dim Results(0) As Double
+		      Results(0) = D * -1 / C
 		      Return Results
 		    End If
 		    
@@ -153,12 +133,12 @@ Protected Class Curve
 		    Dim Results(2) As Double
 		    Results(0) = T1 * Xojo.Math.Cos(Phi / 3) - B3
 		    Results(1) = T1 * Xojo.Math.Cos((Phi + TAU) / 3) - B3
-		    Results(2) = T1 * Xojo.Math.Cos((Phi + 2 * TAU) / 2) - B3
+		    Results(2) = T1 * Xojo.Math.Cos((Phi + 2 * TAU) / 3) - B3
 		    Return Results
 		  ElseIf Discriminant = 0 Then
 		    U1 = If(Q2 < 0, Self.CubicRoot(Q2 * -1), Self.CubicRoot(Q2) * -1)
 		    Dim Results(1) As Double
-		    Results(0) = 2 * U1 * B3
+		    Results(0) = 2 * U1 - B3
 		    Results(1) = (U1 * -1) - B3
 		    Return Results
 		  Else
