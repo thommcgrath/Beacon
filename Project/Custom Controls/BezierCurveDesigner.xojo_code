@@ -3,7 +3,7 @@ Protected Class BezierCurveDesigner
 Inherits ControlCanvas
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Dim Point As New BeaconUI.Point(X, Y)
+		  Dim Point As New Xojo.Core.Point(X, Y)
 		  
 		  If Self.mHandle1Rect <> Nil And Self.mHandle1Rect.Contains(Point) Then
 		    Self.mHandle1DownPoint = Point
@@ -32,7 +32,7 @@ Inherits ControlCanvas
 		    If DeltaX = 0 And DeltaY = 0 Then
 		      Return
 		    End If
-		    Self.mHandle1DownPoint = New BeaconUI.Point(X, Y)
+		    Self.mHandle1DownPoint = New Xojo.Core.Point(X, Y)
 		    
 		    Dim Point1 As Xojo.Core.Point = Self.Curve.Point(1)
 		    Dim Point2 As Xojo.Core.Point = Self.Curve.Point(2)
@@ -45,7 +45,7 @@ Inherits ControlCanvas
 		    If DeltaX = 0 And DeltaY = 0 Then
 		      Return
 		    End If
-		    Self.mHandle2DownPoint = New BeaconUI.Point(X, Y)
+		    Self.mHandle2DownPoint = New Xojo.Core.Point(X, Y)
 		    
 		    Dim Point1 As Xojo.Core.Point = Self.Curve.Point(1)
 		    Dim Point2 As Xojo.Core.Point = Self.Curve.Point(2)
@@ -58,13 +58,24 @@ Inherits ControlCanvas
 
 	#tag Event
 		Sub MouseMove(X As Integer, Y As Integer)
-		  #if BeaconUI.CursorsEnabled
-		    Dim Point As New BeaconUI.Point(X, Y)
-		    If (Self.mHandle1Rect <> Nil And Self.mHandle1Rect.Contains(Point)) Or (Self.mHandle2Rect <> Nil And Self.mHandle2Rect.Contains(Point)) Then
+		  Dim Point As New Xojo.Core.Point(X, Y)
+		  If (Self.mHandle1Rect <> Nil And Self.mHandle1Rect.Contains(Point)) Or (Self.mHandle2Rect <> Nil And Self.mHandle2Rect.Contains(Point)) Then
+		    #if BeaconUI.CursorsEnabled
 		      Self.MouseCursor = System.Cursors.ArrowAllDirections
-		    Else
+		    #endif
+		    #if Self.ShowCrosshair
+		      Self.mHoverPoint = Nil
+		    #endif
+		  Else
+		    #if BeaconUI.CursorsEnabled
 		      Self.MouseCursor = Nil
-		    End If
+		    #endif
+		    #if Self.ShowCrosshair
+		      Self.mHoverPoint = Point
+		    #endif
+		  End If
+		  #if Self.ShowCrosshair
+		    Self.Invalidate
 		  #endif
 		End Sub
 	#tag EndEvent
@@ -86,7 +97,7 @@ Inherits ControlCanvas
 		  G.TextFont = "SmallSystem"
 		  G.TextSize = 0
 		  
-		  Dim Viewport As BeaconUI.Rect = Self.Viewport
+		  Dim Viewport As Xojo.Core.Rect = Self.Viewport
 		  
 		  Dim YLegend As New StringShape
 		  YLegend.Text = "Level"
@@ -116,13 +127,35 @@ Inherits ControlCanvas
 		  
 		  Dim Clip As Graphics = G.Clip(Viewport.Left, Viewport.Top, Viewport.Width, Viewport.Height)
 		  If Self.Curve <> Nil Then
-		    #if false
-		      Clip.ForeColor = SystemColors.TertiaryLabelColor
-		      For X As Integer = 0 To Clip.Width
-		        Dim Y As Integer = Round(Self.Curve.Evaluate(X / Clip.Width, 0, Clip.Height, 100))
-		        Clip.DrawLine(X, Clip.Height, X, Clip.Height - Y)
-		      Next
+		    #if Self.ShowCrosshair
+		      If Self.mHoverPoint <> Nil And Viewport.Contains(Self.mHoverPoint) Then
+		        Dim Localized As Xojo.Core.Point = Viewport.Localize(Self.mHoverPoint)
+		        
+		        #if false
+		          Dim Time As Double = Localized.X / Viewport.Width
+		          Dim Intersect As Xojo.Core.Point = Self.Curve.Evaluate(Time, Viewport.Localize(Viewport))
+		        #endif
+		        Dim X As Integer = Localized.X
+		        Dim Y As Integer = Self.Curve.Evaluate(X / Viewport.Width, 0, Viewport.Width)
+		        
+		        Dim YLine As New CurveShape
+		        YLine.X = 0
+		        YLine.Y = Clip.Height - Y
+		        YLine.X2 = Viewport.Right
+		        YLine.Y2 = Clip.Height - Y
+		        YLine.BorderColor = SystemColors.TertiaryLabelColor
+		        Clip.DrawObject(YLine)
+		        
+		        Dim XLine As New CurveShape
+		        XLine.X = X
+		        XLine.Y = 0
+		        XLine.X2 = X
+		        XLine.Y2 = Viewport.Bottom
+		        XLine.BorderColor = YLine.BorderColor
+		        Clip.DrawObject(XLine)
+		      End If
 		    #endif
+		    
 		    
 		    Dim Path1 As New CurveShape
 		    Path1.X = 0
@@ -162,8 +195,8 @@ Inherits ControlCanvas
 		    Handle1.BorderColor = Path1.BorderColor
 		    Handle1.Border = 100
 		    G.DrawObject(Handle1, Viewport.Left, Viewport.Top)
-		    Self.mHandle1Rect = New BeaconUI.Rect(Handle1.X - Floor(Handle1.Width / 2), Handle1.Y - Floor(Handle1.Height / 2), Handle1.Width, Handle1.Height)
-		    Self.mHandle1Rect.Offset(Viewport.Left, Viewport.Top)
+		    Self.mHandle1Rect = New Xojo.Core.Rect(Handle1.X - Floor(Handle1.Width / 2), Handle1.Y - Floor(Handle1.Height / 2), Handle1.Width, Handle1.Height)
+		    Self.mHandle1Rect = Self.mHandle1Rect.Offset(Viewport.Left, Viewport.Top)
 		    
 		    Dim Handle2 As New OvalShape
 		    Handle2.X = Path2.X2
@@ -175,8 +208,8 @@ Inherits ControlCanvas
 		    Handle2.Border = Handle1.Border
 		    G.DrawObject(Handle2, Viewport.Left, Viewport.Top)
 		    
-		    Self.mHandle2Rect = New BeaconUI.Rect(Handle2.X - Floor(Handle2.Width / 2), Handle2.Y - Floor(Handle2.Height / 2), Handle2.Width, Handle2.Height)
-		    Self.mHandle2Rect.Offset(Viewport.Left, Viewport.Top)
+		    Self.mHandle2Rect = New Xojo.Core.Rect(Handle2.X - Floor(Handle2.Width / 2), Handle2.Y - Floor(Handle2.Height / 2), Handle2.Width, Handle2.Height)
+		    Self.mHandle2Rect = Self.mHandle2Rect.Offset(Viewport.Left, Viewport.Top)
 		  Else
 		    Self.mHandle1Rect = Nil
 		    Self.mHandle2Rect = Nil
@@ -186,13 +219,13 @@ Inherits ControlCanvas
 
 
 	#tag Method, Flags = &h21
-		Private Function Viewport() As BeaconUI.Rect
+		Private Function Viewport() As Xojo.Core.Rect
 		  Const LeftGutter = 21
 		  Const TopGutter = 11
 		  Const BottomGutter = 21
 		  Const RightGutter = 11
 		  
-		  Return New BeaconUI.Rect(LeftGutter, TopGutter, Self.Width - (LeftGutter + RightGutter), Self.Height - (TopGutter + BottomGutter))
+		  Return New Xojo.Core.Rect(LeftGutter, TopGutter, Self.Width - (LeftGutter + RightGutter), Self.Height - (TopGutter + BottomGutter))
 		End Function
 	#tag EndMethod
 
@@ -225,20 +258,28 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHandle1DownPoint As BeaconUI.Point
+		Private mHandle1DownPoint As Xojo.Core.Point
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHandle1Rect As BeaconUI.Rect
+		Private mHandle1Rect As Xojo.Core.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHandle2DownPoint As BeaconUI.Point
+		Private mHandle2DownPoint As Xojo.Core.Point
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHandle2Rect As BeaconUI.Rect
+		Private mHandle2Rect As Xojo.Core.Rect
 	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHoverPoint As Xojo.Core.Point
+	#tag EndProperty
+
+
+	#tag Constant, Name = ShowCrosshair, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
+	#tag EndConstant
 
 
 	#tag ViewBehavior

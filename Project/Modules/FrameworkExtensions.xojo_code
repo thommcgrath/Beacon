@@ -82,6 +82,18 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Localize(Extends Rect As Xojo.Core.Rect, Point As Xojo.Core.Point) As Xojo.Core.Point
+		  Return New Xojo.Core.Point(Point.X - Rect.Origin.X, Point.Y - Rect.Origin.Y)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Localize(Extends Rect As Xojo.Core.Rect, OtherRect As Xojo.Core.Rect) As Xojo.Core.Rect
+		  Return New Xojo.Core.Rect(Rect.Localize(OtherRect.Origin), OtherRect.Size)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SubString(Extends Source As String, Start As Integer, Length As Integer = -1) As String
 		  If Length = -1 Then
 		    Return Mid(Source, Start - 1)
