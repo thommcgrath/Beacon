@@ -824,7 +824,7 @@ Implements Beacon.DataSource
 		  
 		  // Variables
 		  If FromSchemaVersion >= 6 Then
-		    Commands.Append("INSERT INTO variables SELECT * FROM legacy.variables;")
+		    Commands.Append("INSERT INTO variables SELECT * FROM legacy.variables WHERE LOWER(legacy.variables.key) != 'sync_time';")
 		  End If
 		  
 		  // Official Presets
