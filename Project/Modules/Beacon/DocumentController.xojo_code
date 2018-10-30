@@ -157,6 +157,12 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Destructor()
+		  Xojo.Core.Timer.CancelCall(WeakAddressOf TriggerLoadStarted)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Document() As Beacon.Document
 		  Return Self.mDocument
 		End Function
@@ -210,7 +216,7 @@ Protected Class DocumentController
 		    // authenticated api request
 		    Self.CheckAPISocket()
 		    
-		    Dim Request As New BeaconAPI.Request(Self.mDocumentURL.WithScheme("https"), "GET", WeakAddressOf APICallback_DocumentDownload)
+		    Dim Request As New BeaconAPI.Request(Self.mDocumentURL.WithScheme("https"), "GET", AddressOf APICallback_DocumentDownload)
 		    Request.Sign(Self.mIdentity)
 		    Self.mAPISocket.Start(Request)
 		  Case Beacon.DocumentURL.TypeWeb
@@ -345,17 +351,20 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveACopy(Destination As Beacon.DocumentURL, WithIdentity As Beacon.Identity)
+		Function SaveACopy(Destination As Beacon.DocumentURL, WithIdentity As Beacon.Identity) As Beacon.DocumentController
 		  // Like Save As, but the destination is not saved
-		  If Self.mBusy Or Self.Loaded = False Then
-		    Return
+		  If Self.Loaded = False Then
+		    Return Nil
 		  End If
 		  
+		  Dim Controller As New Beacon.DocumentController(Self.mDocument)
+		  Controller.mDocumentURL = Destination
 		  If Self.mDocument.Title <> "" Then
 		    Destination.Name = Self.mDocument.Title
 		  End If
-		  Self.WriteTo(Destination, WithIdentity, False)
-		End Sub
+		  Controller.WriteTo(Destination, WithIdentity, False)
+		  Return Controller
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
