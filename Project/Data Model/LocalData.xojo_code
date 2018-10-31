@@ -1,6 +1,42 @@
 #tag Class
 Protected Class LocalData
 Implements Beacon.DataSource
+	#tag Method, Flags = &h0
+		Sub AddPresetModifier(Modifier As Beacon.PresetModifier)
+		  Self.BeginTransaction()
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT mod_id FROM preset_modifiers WHERE object_id = ?1;", Modifier.ModifierID)
+		  If Results.RecordCount = 1 Then
+		    If Results.Field("mod_id").StringValue = Self.UserModID Then
+		      Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3 WHERE object_id = ?1;", Modifier.ModifierID, Modifier.Label, Modifier.Pattern)
+		    End If
+		  Else
+		    Self.SQLExecute("INSERT INTO preset_modifiers (object_id, mod_id, label, pattern) VALUES (?1, ?2, ?3, ?4);", Modifier.ModifierID, Self.UserModID, Modifier.Label, Modifier.Pattern)
+		  End If
+		  Self.Commit()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function AllPresetModifiers() As Beacon.PresetModifier()
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers ORDER BY label;")
+		  Dim Modifiers() As Beacon.PresetModifier
+		  While Not Results.EOF
+		    Dim Dict As New Xojo.Core.Dictionary
+		    Dict.Value("ModifierID") = Results.Field("object_id").StringValue.ToText
+		    Dict.Value("Pattern") = Results.Field("pattern").StringValue.ToText
+		    Dict.Value("Label") = Results.Field("label").StringValue.ToText
+		    
+		    Dim Modifier As Beacon.PresetModifier = Beacon.PresetModifier.FromDictionary(Dict)
+		    If Modifier <> Nil Then
+		      Modifiers.Append(Modifier)
+		    End If
+		    
+		    Results.MoveNext
+		  Wend
+		  Return Modifiers
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub BeginTransaction()
 		  Self.mLock.Enter

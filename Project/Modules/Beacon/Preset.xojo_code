@@ -2,6 +2,16 @@
 Protected Class Preset
 Implements Beacon.Countable
 	#tag Method, Flags = &h0
+		Function ActiveModifierIDs() As Text()
+		  Dim IDs() As Text
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mModifierValues
+		    IDs.Append(Entry.Key)
+		  Next
+		  Return IDs
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mLabel = "Untitled Preset"
 		  Self.mGrouping = "Miscellaneous"
@@ -26,11 +36,6 @@ Implements Beacon.Countable
 		  For Each Entry As Xojo.Core.DictionaryEntry In Source.mModifierValues
 		    Dim Dict As Xojo.Core.Dictionary = Entry.Value
 		    Self.mModifierValues.Value(Entry.Key) = Beacon.Clone(Dict)
-		  Next
-		  
-		  Redim Self.mModifiers(Source.mModifiers.Ubound)
-		  For I As Integer = 0 To Source.mModifiers.Ubound
-		    Self.mModifiers(I) = New Beacon.PresetModifier(Source.mModifiers(I))
 		  Next
 		  
 		  Redim Self.mContents(UBound(Source.mContents))
@@ -108,7 +113,7 @@ Implements Beacon.Countable
 		      If Modifier = Nil Then
 		        Modifier = Beacon.PresetModifier.FromDictionary(Definition)
 		        If Modifier <> Nil Then
-		          Preset.mModifiers.Append(Modifier)
+		          Beacon.Data.AddPresetModifier(Modifier)
 		        End If
 		      End If
 		    Next
@@ -119,9 +124,13 @@ Implements Beacon.Countable
 		    For Each Set As Xojo.Core.DictionaryEntry In Modifiers
 		      Dim Item As Xojo.Core.Dictionary = Set.Value
 		      Dim ModifierID As Text = Set.Key
-		      Dim Quality As Integer = Item.Lookup("Quality", 1)
+		      Dim Quality As Integer = Item.Lookup("Quality", 0)
 		      Dim Quantity As Double = Item.Lookup("Quantity", 1.0)
 		      Dim IDs() As Text
+		      
+		      If Quality = 0 And Quantity = 1 Then
+		        Continue
+		      End If
 		      
 		      Select Case ModifierID
 		      Case "Standard"
@@ -355,14 +364,6 @@ Implements Beacon.Countable
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mModifierValues
 		    Dim ModifierID As Text = Entry.Key
 		    Dim Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
-		    If Modifier = Nil Then
-		      For I As Integer = 0 To Self.mModifiers.Ubound
-		        If Self.mModifiers(I).ModifierID = ModifierID Then
-		          Modifier = Self.mModifiers(I)
-		          Exit For I
-		        End If
-		      Next
-		    End If
 		    If Modifier <> Nil Then
 		      Definitions.Append(Modifier.ToDictionary)
 		    End If
@@ -433,10 +434,6 @@ Implements Beacon.Countable
 
 	#tag Property, Flags = &h1
 		Protected mMinItems As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mModifiers() As Beacon.PresetModifier
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

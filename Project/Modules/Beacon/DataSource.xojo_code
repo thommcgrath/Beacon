@@ -1,6 +1,18 @@
 #tag Interface
 Protected Interface DataSource
 	#tag Method, Flags = &h0
+		Sub AddPresetModifier(Modifier As Beacon.PresetModifier)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function AllPresetModifiers() As Beacon.PresetModifier()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetBooleanVariable(Key As Text) As Boolean
 		  
 		End Function

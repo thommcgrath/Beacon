@@ -31,7 +31,7 @@ Begin BeaconSubview PresetEditorView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   "Preset"
+      Caption         =   ""
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
@@ -43,7 +43,7 @@ Begin BeaconSubview PresetEditorView
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
       Resizer         =   ""
       ResizerEnabled  =   True
@@ -52,1256 +52,11 @@ Begin BeaconSubview PresetEditorView
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   0
+      Top             =   10
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   740
-   End
-   Begin TabPanel Panel
-      AutoDeactivate  =   True
-      Bold            =   False
-      Enabled         =   True
-      Height          =   483
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Panels          =   ""
-      Scope           =   2
-      SmallTabs       =   False
-      TabDefinition   =   "Contents\rSettings"
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   53
-      Transparent     =   False
-      Underline       =   False
-      Value           =   1
-      Visible         =   True
-      Width           =   700
-      Begin BeaconListbox ContentsList
-         AutoDeactivate  =   True
-         AutoHideScrollbars=   True
-         Bold            =   False
-         Border          =   True
-         ColumnCount     =   4
-         ColumnsResizable=   False
-         ColumnWidths    =   "30,*,100,120"
-         DataField       =   ""
-         DataSource      =   ""
-         DefaultRowHeight=   22
-         Enabled         =   True
-         EnableDrag      =   False
-         EnableDragReorder=   False
-         GridLinesHorizontal=   0
-         GridLinesVertical=   0
-         HasHeading      =   True
-         HeadingIndex    =   "#ColumnDescription"
-         Height          =   351
-         HelpTag         =   ""
-         Hierarchical    =   False
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         InitialValue    =   " 	Engram	Quantity	Quality"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         RequiresSelection=   False
-         RowCount        =   0
-         Scope           =   2
-         ScrollbarHorizontal=   False
-         ScrollBarVertical=   True
-         SelectionType   =   1
-         ShowDropIndicator=   False
-         TabIndex        =   2
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   123
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   660
-         _ScrollOffset   =   0
-         _ScrollWidth    =   -1
-      End
-      Begin UITweaks.ResizedPopupMenu MapFilterMenu
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         InitialValue    =   "All\nThe Island\nScorched Earth\nAbberation\nThe Center\nRagnarok"
-         Italic          =   False
-         Left            =   126
-         ListIndex       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   92
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   139
-      End
-      Begin UITweaks.ResizedLabel MapFilterLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Map Filter:"
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   92
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   74
-      End
-      Begin Label LockExplanationLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   30
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   277
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   False
-         Multiline       =   True
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   3
-         TabPanelIndex   =   1
-         TabStop         =   True
-         Text            =   "Checking the box next to a quantity or quality will allow the values to be adjusted by the values on the settings tab."
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "SmallSystem"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   486
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   423
-      End
-      Begin UITweaks.ResizedTextField NameField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   152
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   1
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   91
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   548
-      End
-      Begin UITweaks.ResizedTextField GroupingField
-         AcceptTabs      =   False
-         Alignment       =   0
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   152
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   3
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   125
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   548
-      End
-      Begin Label NameLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Name:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   91
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   100
-      End
-      Begin Label GroupingLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   2
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Grouping:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   125
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   100
-      End
-      Begin Label ItemRangeLabel1
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   4
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Select at least"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   159
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   100
-      End
-      Begin UITweaks.ResizedTextField MinItemsField
-         AcceptTabs      =   False
-         Alignment       =   2
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   152
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   5
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   159
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   60
-      End
-      Begin Label ItemRangeLabel2
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   237
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   7
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "items, but not more than"
-         TextAlign       =   1
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   159
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   160
-      End
-      Begin UITweaks.ResizedTextField MaxItemsField
-         AcceptTabs      =   False
-         Alignment       =   2
-         AutoDeactivate  =   True
-         AutomaticallyCheckSpelling=   False
-         BackColor       =   &cFFFFFF00
-         Bold            =   False
-         Border          =   True
-         CueText         =   ""
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Format          =   ""
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   409
-         LimitText       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Mask            =   ""
-         Password        =   False
-         ReadOnly        =   False
-         Scope           =   2
-         TabIndex        =   8
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   ""
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   159
-         Transparent     =   False
-         Underline       =   False
-         UseFocusRing    =   True
-         Visible         =   True
-         Width           =   60
-      End
-      Begin Label ItemRangeLabel3
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   22
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   494
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   10
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "items."
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   159
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   174
-      End
-      Begin UpDownArrows MinItemsStepper
-         AcceptFocus     =   False
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   23
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   212
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   6
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Top             =   159
-         Transparent     =   False
-         Visible         =   True
-         Width           =   13
-      End
-      Begin UpDownArrows MaxItemsStepper
-         AcceptFocus     =   False
-         AutoDeactivate  =   True
-         Enabled         =   True
-         Height          =   23
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Left            =   469
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   9
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Top             =   159
-         Transparent     =   False
-         Visible         =   True
-         Width           =   13
-      End
-      Begin GroupBox AdjustmentsGroup
-         AutoDeactivate  =   True
-         Bold            =   False
-         Caption         =   "Adjustments"
-         Enabled         =   True
-         Height          =   180
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   11
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   201
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   660
-         Begin UITweaks.ResizedLabel StandardMultipliersLabel1
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   60
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   0
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   "In standard beacons, improve qualities by"
-            TextAlign       =   2
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   237
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   267
-         End
-         Begin UITweaks.ResizedTextField AdjustQualityField
-            AcceptTabs      =   False
-            Alignment       =   2
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   0
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   339
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   1
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   237
-            Transparent     =   False
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   60
-         End
-         Begin UITweaks.ResizedLabel StandardMultipliersLabel2
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   411
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   2
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   "tiers and multiply quantities by"
-            TextAlign       =   1
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   237
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   197
-         End
-         Begin UITweaks.ResizedTextField AdjustQuantityField
-            AcceptTabs      =   False
-            Alignment       =   2
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   0
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   620
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   3
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   237
-            Transparent     =   False
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   60
-         End
-         Begin UITweaks.ResizedLabel BonusMultipliersLabel1
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   60
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   4
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   "In bonus beacons, improve qualities by"
-            TextAlign       =   2
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   271
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   267
-         End
-         Begin UITweaks.ResizedLabel CaveMultipliersLabel1
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   60
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   8
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   "In cave crates, improve qualities by"
-            TextAlign       =   2
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   305
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   267
-         End
-         Begin UITweaks.ResizedLabel SeaMultipliersLabel1
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   60
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   12
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   "In sea && desert crates, improve qualities by"
-            TextAlign       =   2
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   339
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   267
-         End
-         Begin UITweaks.ResizedTextField AdjustQualityField
-            AcceptTabs      =   False
-            Alignment       =   2
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   1
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   339
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   5
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   271
-            Transparent     =   False
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   60
-         End
-         Begin UITweaks.ResizedLabel BonusMultipliersLabel2
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   411
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   6
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   "tiers and multiply quantities by"
-            TextAlign       =   1
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   271
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   197
-         End
-         Begin UITweaks.ResizedTextField AdjustQuantityField
-            AcceptTabs      =   False
-            Alignment       =   2
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   1
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   620
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   7
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   271
-            Transparent     =   False
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   60
-         End
-         Begin UITweaks.ResizedTextField AdjustQualityField
-            AcceptTabs      =   False
-            Alignment       =   2
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   2
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   339
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   9
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   305
-            Transparent     =   False
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   60
-         End
-         Begin UITweaks.ResizedLabel CaveMultipliersLabel2
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   411
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   10
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   "tiers and multiply quantities by"
-            TextAlign       =   1
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   305
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   197
-         End
-         Begin UITweaks.ResizedTextField AdjustQuantityField
-            AcceptTabs      =   False
-            Alignment       =   2
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   2
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   620
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   11
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   305
-            Transparent     =   False
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   60
-         End
-         Begin UITweaks.ResizedTextField AdjustQualityField
-            AcceptTabs      =   False
-            Alignment       =   2
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   3
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   339
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   13
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   339
-            Transparent     =   False
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   60
-         End
-         Begin UITweaks.ResizedLabel SeaMultipliersLabel2
-            AutoDeactivate  =   True
-            Bold            =   False
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   -2147483648
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   411
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Multiline       =   False
-            Scope           =   2
-            Selectable      =   False
-            TabIndex        =   14
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   "tiers and multiply quantities by"
-            TextAlign       =   1
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   339
-            Transparent     =   True
-            Underline       =   False
-            Visible         =   True
-            Width           =   197
-         End
-         Begin UITweaks.ResizedTextField AdjustQuantityField
-            AcceptTabs      =   False
-            Alignment       =   2
-            AutoDeactivate  =   True
-            AutomaticallyCheckSpelling=   False
-            BackColor       =   &cFFFFFF00
-            Bold            =   False
-            Border          =   True
-            CueText         =   ""
-            DataField       =   ""
-            DataSource      =   ""
-            Enabled         =   True
-            Format          =   ""
-            Height          =   22
-            HelpTag         =   ""
-            Index           =   3
-            InitialParent   =   "AdjustmentsGroup"
-            Italic          =   False
-            Left            =   620
-            LimitText       =   0
-            LockBottom      =   False
-            LockedInPosition=   False
-            LockLeft        =   True
-            LockRight       =   False
-            LockTop         =   True
-            Mask            =   ""
-            Password        =   False
-            ReadOnly        =   False
-            Scope           =   2
-            TabIndex        =   15
-            TabPanelIndex   =   2
-            TabStop         =   True
-            Text            =   ""
-            TextColor       =   &c00000000
-            TextFont        =   "System"
-            TextSize        =   0.0
-            TextUnit        =   0
-            Top             =   339
-            Transparent     =   False
-            Underline       =   False
-            UseFocusRing    =   True
-            Visible         =   True
-            Width           =   60
-         End
-      End
+      Width           =   200
    End
    Begin FadedSeparator HeaderSeparator
       AcceptFocus     =   False
@@ -1326,11 +81,684 @@ Begin BeaconSubview PresetEditorView
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   40
+      Top             =   60
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
       Width           =   740
+   End
+   Begin Shelf ViewSelector
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DrawCaptions    =   True
+      Enabled         =   True
+      Height          =   60
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   200
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RequiresSelection=   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   340
+   End
+   Begin PagePanel Pages
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   495
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      PanelCount      =   3
+      Panels          =   ""
+      Scope           =   2
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      Top             =   61
+      Transparent     =   False
+      Value           =   2
+      Visible         =   True
+      Width           =   740
+      BeginSegmented SegmentedControl MapSelector
+         Enabled         =   True
+         Height          =   24
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   40
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         MacControlStyle =   0
+         Scope           =   2
+         Segments        =   "The Island\n\nFalse\rScorched Earth\n\nFalse\rAberration\n\nFalse\rExtinction\n\nFalse\rThe Center\n\nFalse\rRagnarok\n\nFalse"
+         SelectionType   =   1
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         Top             =   81
+         Transparent     =   False
+         Visible         =   True
+         Width           =   660
+      End
+      Begin BeaconListbox ContentsList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   4
+         ColumnsResizable=   False
+         ColumnWidths    =   "30,*,100,120"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   22
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   "#ColumnDescription"
+         Height          =   379
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   " 	Engram	Quantity	Quality"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         RowCount        =   0
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionType   =   1
+         ShowDropIndicator=   False
+         TabIndex        =   1
+         TabPanelIndex   =   2
+         TabStop         =   True
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   125
+         Transparent     =   True
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   700
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin Label LockExplanationLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Checking the box next to a quantity or quality will allow the values to be adjusted by modifiers."
+         TextAlign       =   1
+         TextColor       =   &c00000000
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   516
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   700
+      End
+      Begin UpDownArrows MaxItemsStepper
+         AcceptFocus     =   False
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   23
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   192
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   183
+         Transparent     =   False
+         Visible         =   True
+         Width           =   13
+      End
+      Begin UpDownArrows MinItemsStepper
+         AcceptFocus     =   False
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   23
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Left            =   192
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   149
+         Transparent     =   False
+         Visible         =   True
+         Width           =   13
+      End
+      Begin UITweaks.ResizedTextField MaxItemsField
+         AcceptTabs      =   False
+         Alignment       =   2
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   132
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Mask            =   ""
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   183
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   60
+      End
+      Begin UITweaks.ResizedLabel MaxItemsLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   4
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Max Items:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   183
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   100
+      End
+      Begin UITweaks.ResizedTextField MinItemsField
+         AcceptTabs      =   False
+         Alignment       =   2
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   132
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Mask            =   ""
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   149
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   60
+      End
+      Begin UITweaks.ResizedLabel MinItemsLabels
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   6
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Min Items:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   149
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   100
+      End
+      Begin Label GroupingLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   7
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Grouping:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   115
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   100
+      End
+      Begin Label NameLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   8
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Name:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   81
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   100
+      End
+      Begin UITweaks.ResizedTextField GroupingField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   132
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Mask            =   ""
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   9
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   115
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   588
+      End
+      Begin UITweaks.ResizedTextField NameField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   132
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Mask            =   ""
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   10
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   81
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   588
+      End
+      Begin BeaconListbox ModifiersList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   3
+         ColumnsResizable=   False
+         ColumnWidths    =   "50%,25%,25%"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   -1
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   True
+         HeadingIndex    =   -1
+         Height          =   415
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         InitialValue    =   "Group	Quality Change	Quantity Multiplier"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         RowCount        =   0
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionType   =   1
+         ShowDropIndicator=   False
+         TabIndex        =   17
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   121
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   700
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
+      Begin UITweaks.ResizedPushButton AddModifierButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Add Modifier"
+         Default         =   False
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   18
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   81
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   114
+      End
+      Begin UITweaks.ResizedPushButton EditModifierButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Edit"
+         Default         =   False
+         Enabled         =   False
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   154
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   19
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   81
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedPushButton DeleteModifierButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Delete"
+         Default         =   False
+         Enabled         =   False
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   False
+         Left            =   246
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   20
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   81
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
    End
 End
 #tag EndWindow
@@ -1353,6 +781,12 @@ End
 	#tag Event
 		Sub Open()
 		  Self.UpdateUI()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Resize(Initial As Boolean)
+		  Self.MapSelector.Left = Self.ContentsList.Left + ((Self.ContentsList.Width - Self.MapSelector.Width) / 2)
 		End Sub
 	#tag EndEvent
 
@@ -1397,9 +831,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub AddEntriesToList(Entries() As Beacon.PresetEntry)
+		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
 		  For Each Entry As Beacon.PresetEntry In Entries
 		    Self.ContentsList.AddRow("")
-		    Self.PutEntryInRow(Entry, Self.ContentsList.LastIndex)
+		    Self.PutEntryInRow(Entry, Self.ContentsList.LastIndex, Maps)
 		  Next
 		  Self.ContentsList.Sort
 		  Self.UpdateMinAndMaxFields
@@ -1460,6 +895,7 @@ End
 		    Return
 		  End If
 		  
+		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
 		  For Each NewEntry As Beacon.SetEntry In NewEntries
 		    Dim OriginalEntry As Beacon.PresetEntry
 		    Dim OriginalIndex As Integer = -1
@@ -1484,7 +920,7 @@ End
 		    
 		    For I As Integer = 0 To ContentsList.ListCount - 1
 		      If Beacon.PresetEntry(ContentsList.RowTag(I)).UniqueID = OriginalEntry.UniqueID Then
-		        Self.PutEntryInRow(Item, I)
+		        Self.PutEntryInRow(Item, I, Maps)
 		        Exit For I
 		      End If
 		    Next
@@ -1498,9 +934,26 @@ End
 	#tag Method, Flags = &h21
 		Private Function FilteredMaps() As Beacon.Map()
 		  Dim Maps() As Beacon.Map
-		  If MapFilterMenu.ListIndex > -1 Then
-		    Maps = MapFilterMenu.RowTag(MapFilterMenu.ListIndex)
-		  End If
+		  For I As Integer = 0 To Self.MapSelector.Items.UBound
+		    Dim Cell As SegmentedControlItem = Self.MapSelector.Items(I)
+		    If Not Cell.Selected Then
+		      Continue
+		    End If
+		    Select Case I
+		    Case 0
+		      Maps.Append(Beacon.Maps.TheIsland)
+		    Case 1
+		      Maps.Append(Beacon.Maps.ScorchedEarth)
+		    Case 2
+		      Maps.Append(Beacon.Maps.Aberration)
+		    Case 3
+		      Maps.Append(Beacon.Maps.Extinction)
+		    Case 4
+		      Maps.Append(Beacon.Maps.TheCenter)
+		    Case 5
+		      Maps.Append(Beacon.Maps.Ragnarok)
+		    End Select
+		  Next
 		  Return Maps
 		End Function
 	#tag EndMethod
@@ -1518,13 +971,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PutEntryInRow(Entry As Beacon.PresetEntry, Index As Integer, SelectIt As Boolean = False)
+		Private Sub PutEntryInRow(Entry As Beacon.PresetEntry, Index As Integer, Maps() As Beacon.Map, SelectIt As Boolean = False)
 		  If Index = -1 Then
 		    Self.ContentsList.AddRow("")
 		    Index = Self.ContentsList.LastIndex
 		  End If
 		  
-		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
 		  Dim MapsValid, MapsInvalid As Integer
 		  For Each Map As Beacon.Map In Maps
 		    If Entry.ValidForMap(Map) Then
@@ -1564,7 +1016,6 @@ End
 		    Writer.Run
 		  End If
 		  Self.ContentsChanged = False
-		  Self.Header.Caption = Self.mPreset.Label
 		  NotificationKit.Post("Preset Saved", Self.mPreset)
 		End Sub
 	#tag EndMethod
@@ -1588,9 +1039,10 @@ End
 		    Return
 		  End If
 		  Self.ContentsList.ListIndex = -1
+		  Dim Maps() As Beacon.Map = Self.FilteredMaps
 		  For Each Entry As Beacon.SetEntry In Entries
 		    Dim Item As New Beacon.PresetEntry(Entry)
-		    Self.PutEntryInRow(Item, -1, True)
+		    Self.PutEntryInRow(Item, -1, Maps, True)
 		    Self.mPreset.Append(Item)
 		    Self.ContentsChanged = True
 		  Next
@@ -1615,14 +1067,21 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
-		  Self.Header.Caption = Self.mPreset.Label
 		  Self.ToolbarCaption = Self.mPreset.Label
 		  Self.mUpdating = True
 		  Self.ContentsChanged = False
-		  Self.MapFilterMenu.ListIndex = 0
 		  
+		  Dim Mask As UInt64 = Preferences.LastPresetMapFilter
+		  Self.MapSelector.Items(0).Selected = (Mask And Beacon.Maps.TheIsland.Mask) = Beacon.Maps.TheIsland.Mask
+		  Self.MapSelector.Items(1).Selected = (Mask And Beacon.Maps.ScorchedEarth.Mask) = Beacon.Maps.ScorchedEarth.Mask
+		  Self.MapSelector.Items(2).Selected = (Mask And Beacon.Maps.Aberration.Mask) = Beacon.Maps.Aberration.Mask
+		  Self.MapSelector.Items(3).Selected = (Mask And Beacon.Maps.Extinction.Mask) = Beacon.Maps.Extinction.Mask
+		  Self.MapSelector.Items(4).Selected = (Mask And Beacon.Maps.TheCenter.Mask) = Beacon.Maps.TheCenter.Mask
+		  Self.MapSelector.Items(5).Selected = (Mask And Beacon.Maps.Ragnarok.Mask) = Beacon.Maps.Ragnarok.Mask
+		  
+		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
 		  For Each Entry As Beacon.PresetEntry In Self.mPreset
-		    Self.PutEntryInRow(Entry, -1)
+		    Self.PutEntryInRow(Entry, -1, Maps)
 		  Next
 		  Self.ContentsList.Sort
 		  
@@ -1630,20 +1089,27 @@ End
 		  Self.GroupingField.Text = Self.mPreset.Grouping
 		  Self.UpdateMinAndMaxFields
 		  
-		  Dim Kinds() As Beacon.LootSource.Kinds
-		  Kinds.Append(Beacon.LootSource.Kinds.Standard)
-		  Kinds.Append(Beacon.LootSource.Kinds.Bonus)
-		  Kinds.Append(Beacon.LootSource.Kinds.Cave)
-		  Kinds.Append(Beacon.LootSource.Kinds.Sea)
-		  
-		  For Each Kind As Beacon.LootSource.Kinds In Kinds
-		    Dim Index As Integer = CType(Kind, Integer)
-		    If Self.AdjustQualityField(Index) <> Nil Then
-		      Self.AdjustQualityField(Index).Text = Str(Self.mPreset.QualityModifier(Kind), "-0")
+		  Dim AppliedModifiers() As Text = Self.mPreset.ActiveModifierIDs
+		  Dim Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.AllPresetModifiers
+		  Self.ModifiersList.DeleteAllRows()
+		  For Each Modifier As Beacon.PresetModifier In Modifiers
+		    If AppliedModifiers.IndexOf(Modifier.ModifierID) = -1 Then
+		      Continue
 		    End If
-		    If Self.AdjustQuantityField(Index) <> Nil Then
-		      Self.AdjustQuantityField(Index).Text = Str(Self.mPreset.QuantityMultiplier(Kind), "-0")
+		    
+		    Dim QuantityMultiplier As Double = Self.mPreset.QuantityMultiplier(Modifier)
+		    Dim QualityModifier As Integer = Self.mPreset.QualityModifier(Modifier)
+		    
+		    Dim QuantityLabel As Text = "x " + QuantityMultiplier.ToText(Xojo.Core.Locale.Current)
+		    Dim QualityLabel As Text
+		    If QualityModifier = 0 Then
+		      QualityLabel = "No Change"
+		    Else
+		      QualityLabel = QualityModifier.ToText(Xojo.Core.Locale.Current, "+0;-0") + " Tier" + If(Xojo.Math.Abs(QualityModifier) <> 1, "s", "")
 		    End If
+		    
+		    Self.ModifiersList.AddRow(Modifier.Label, QualityLabel, QuantityLabel)
+		    Self.ModifiersList.RowTag(Self.ModifiersList.LastIndex) = Modifier.ModifierID
 		  Next
 		  
 		  Self.mUpdating = False
@@ -1712,10 +1178,47 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events Panel
+#tag Events ViewSelector
 	#tag Event
 		Sub Open()
-		  Me.FixTabFont
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.Add(IconPresetSettings, "General", "settings")
+		  Me.Add(IconPresetContents, "Contents", "contents")
+		  Me.Add(IconPresetModifiers, "Modifiers", "modifiers")
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.SelectedIndex = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Self.Pages.Value = Me.SelectedIndex - 1
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MapSelector
+	#tag Event
+		Sub Open()
+		  Me.Width = (Me.Items.UBound + 1) * 110 // Because the design-time size is not being respected
+		  Me.ResizeCells
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action(itemIndex as integer)
+		  If Self.mUpdating = True Then
+		    Return
+		  End If
+		  
+		  Self.mUpdating = True
+		  
+		  Dim Maps() As Beacon.Map = Self.FilteredMaps
+		  Preferences.LastPresetMapFilter = Maps.Mask
+		  
+		  For I As Integer = ContentsList.ListCount - 1 DownTo 0
+		    Dim Entry As Beacon.PresetEntry = ContentsList.RowTag(I)
+		    Self.PutEntryInRow(Entry, I, Maps, ContentsList.Selected(I))
+		  Next
+		  
+		  Self.mUpdating = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1864,11 +1367,12 @@ End
 		    Next
 		    Me.ListIndex = -1
 		    
+		    Dim SelectedMaps() As Beacon.Map = Self.FilteredMaps()
 		    For Each Entry As Xojo.Core.DictionaryEntry In NewEntries
 		      Dim Item As Beacon.PresetEntry = Entry.Value
 		      Item.RespectQualityModifier = False
 		      Item.RespectQuantityMultiplier = False
-		      Self.PutEntryInRow(Item, -1, True)
+		      Self.PutEntryInRow(Item, -1, SelectedMaps, True)
 		      Self.mPreset.Append(Item)
 		    Next
 		    
@@ -1905,87 +1409,27 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events MapFilterMenu
+#tag Events MaxItemsStepper
 	#tag Event
-		Sub Open()
-		  Me.DeleteAllRows()
-		  
-		  Dim Maps() As Beacon.Map = Beacon.Maps.All
-		  Me.AddRow("All", Maps)
-		  For Each Map As Beacon.Map In Maps
-		    Dim Arr(0) As Beacon.Map = Array(Map)
-		    Me.AddRow(Map.Name, Arr)
-		  Next
-		  
-		  Me.ListIndex = -1
+		Sub Down()
+		  Self.MaxItemsField.Text = Str(CDbl(Self.MaxItemsField.Text) - 1, "-0")
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Change()
-		  If Self.mUpdating = True Then
-		    Return
-		  End If
-		  
-		  Self.mUpdating = True
-		  For I As Integer = ContentsList.ListCount - 1 DownTo 0
-		    Dim Entry As Beacon.PresetEntry = ContentsList.RowTag(I)
-		    Self.PutEntryInRow(Entry, I, ContentsList.Selected(I))
-		  Next
-		  Self.mUpdating = False
+		Sub Up()
+		  Self.MaxItemsField.Text = Str(CDbl(Self.MaxItemsField.Text) + 1, "-0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events NameField
+#tag Events MinItemsStepper
 	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating Then
-		    Return
-		  End If
-		  
-		  Dim Value As String = Trim(Me.Text)
-		  If Value <> "" And StrComp(Self.mPreset.Label, Value, 0) <> 0 Then
-		    Self.mPreset.Label = Value.ToText
-		    Self.ContentsChanged = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events GroupingField
-	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating Then
-		    Return
-		  End If
-		  
-		  Dim Value As String = Trim(Me.Text)
-		  If Value <> "" And StrComp(Self.mPreset.Grouping, Value, 0) <> 0 Then
-		    Self.mPreset.Grouping = Value.ToText
-		    Self.ContentsChanged = True
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MinItemsField
-	#tag Event
-		Sub TextChange()
-		  If Self.mUpdating Then
-		    Return
-		  End If
-		  
-		  Dim Value As Integer = Min(Max(CDbl(Me.Text), 1), Self.mPreset.MaxItems, Self.mPreset.Count)
-		  If Self.mPreset.MinItems <> Value Then
-		    Self.mPreset.MinItems = Value
-		    Self.ContentsChanged = True
-		  End If
-		  
-		  If Self.Window.Focus <> Me Then
-		    Me.Text = Str(Self.mPreset.MinItems, "-0")
-		  End If
+		Sub Down()
+		  Self.MinItemsField.Text = Str(CDbl(Self.MinItemsField.Text) - 1, "-0")
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub LostFocus()
-		  Me.Text = Str(Self.mPreset.MinItems, "-0")
+		Sub Up()
+		  Self.MinItemsField.Text = Str(CDbl(Self.MinItemsField.Text) + 1, "-0")
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -2013,65 +1457,91 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events MinItemsStepper
+#tag Events MinItemsField
 	#tag Event
-		Sub Down()
-		  Self.MinItemsField.Text = Str(CDbl(Self.MinItemsField.Text) - 1, "-0")
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Up()
-		  Self.MinItemsField.Text = Str(CDbl(Self.MinItemsField.Text) + 1, "-0")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MaxItemsStepper
-	#tag Event
-		Sub Down()
-		  Self.MaxItemsField.Text = Str(CDbl(Self.MaxItemsField.Text) - 1, "-0")
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Up()
-		  Self.MaxItemsField.Text = Str(CDbl(Self.MaxItemsField.Text) + 1, "-0")
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events AdjustQualityField
-	#tag Event
-		Sub TextChange(index as Integer)
+		Sub TextChange()
 		  If Self.mUpdating Then
 		    Return
 		  End If
 		  
-		  Dim Kind As Beacon.LootSource.Kinds = CType(Index, Beacon.LootSource.Kinds)
-		  Dim Value As Integer = CDbl(Me.Text)
+		  Dim Value As Integer = Min(Max(CDbl(Me.Text), 1), Self.mPreset.MaxItems, Self.mPreset.Count)
+		  If Self.mPreset.MinItems <> Value Then
+		    Self.mPreset.MinItems = Value
+		    Self.ContentsChanged = True
+		  End If
 		  
-		  If Self.mPreset.QualityModifier(Kind) <> Value Then
-		    Self.mPreset.QualityModifier(Kind) = Value
+		  If Self.Window.Focus <> Me Then
+		    Me.Text = Str(Self.mPreset.MinItems, "-0")
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub LostFocus()
+		  Me.Text = Str(Self.mPreset.MinItems, "-0")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events GroupingField
+	#tag Event
+		Sub TextChange()
+		  If Self.mUpdating Then
+		    Return
+		  End If
+		  
+		  Dim Value As String = Trim(Me.Text)
+		  If Value <> "" And StrComp(Self.mPreset.Grouping, Value, 0) <> 0 Then
+		    Self.mPreset.Grouping = Value.ToText
 		    Self.ContentsChanged = True
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AdjustQuantityField
+#tag Events NameField
 	#tag Event
-		Sub TextChange(index as Integer)
+		Sub TextChange()
 		  If Self.mUpdating Then
 		    Return
 		  End If
 		  
-		  Dim Kind As Beacon.LootSource.Kinds = CType(Index, Beacon.LootSource.Kinds)
-		  Dim Value As Integer = CDbl(Me.Text)
-		  
-		  If Self.mPreset.QuantityMultiplier(Kind) <> Value Then
-		    Self.mPreset.QuantityMultiplier(Kind) = Value
+		  Dim Value As String = Trim(Me.Text)
+		  If Value <> "" And StrComp(Self.mPreset.Label, Value, 0) <> 0 Then
+		    Self.mPreset.Label = Value.ToText
 		    Self.ContentsChanged = True
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ModifiersList
+	#tag Event
+		Sub Change()
+		  EditModifierButton.Enabled = Me.SelCount = 1
+		  DeleteModifierButton.Enabled = Me.SelCount > 0
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events DeleteModifierButton
+	#tag Event
+		Sub Action()
+		  For I As Integer = Self.ModifiersList.ListCount - 1 DownTo 0
+		    If Not Self.ModifiersList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim ModifierID As Text = Self.ModifiersList.RowTag(I)
+		    Self.mPreset.ClearModifier(ModifierID)
+		    Self.ModifiersList.RemoveRow(I)
+		    Self.ContentsChanged = True
+		  Next
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

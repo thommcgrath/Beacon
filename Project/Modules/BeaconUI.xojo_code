@@ -333,6 +333,25 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ResizeCells(Extends Target As SegmentedControl)
+		  Dim CellCount As Integer = Target.Items.UBound + 1
+		  Dim AvailableWidth As Integer = Target.Width - (CellCount * 2)
+		  Dim BaseCellWidth As Integer = Floor(AvailableWidth / CellCount)
+		  Dim Remainder As Integer = AvailableWidth - (BaseCellWidth * CellCount)
+		  
+		  For I As Integer = 0 To Target.Items.UBound
+		    Dim CellWidth As Integer = BaseCellWidth
+		    If I < Remainder Then
+		      CellWidth = CellWidth + 1
+		    End If
+		    
+		    Dim Cell As SegmentedControlItem = Target.Items(I)
+		    Cell.Width = CellWidth
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ShowAlert(Extends Win As Window, Message As String, Explanation As String)
 		  If Win = Nil Then
 		    ShowAlert(Message, Explanation)

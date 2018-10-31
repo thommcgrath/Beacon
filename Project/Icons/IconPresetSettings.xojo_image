@@ -1,0 +1,46 @@
+#tag MultiImage
+Image IconPresetSettings
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAGqAAAAAAGqAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8WSWNvblByZXNldFNldHRpbmdzLnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFEvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkljb25QcmVzZXRTZXR0aW5ncy5wbmcAAA4ALgAWAEkAYwBvAG4AUAByAGUAcwBlAHQAUwBlAHQAdABpAG4AZwBzAC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBPVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvSWNvblByZXNldFNldHRpbmdzLnBuZwAAEwABLwAAFQACABL//wAAAAAAAAAA
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconPresetSettings.png
+		PartialPath = ..\Icons\IconPresetSettings.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 24.00
+			Orientation = Any
+			Platform = 15
+			PPI = 72
+			VSize = 24.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAG0AAAAAAG0AAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8ZSWNvblByZXNldFNldHRpbmdzQDJ4LnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFQvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkljb25QcmVzZXRTZXR0aW5nc0AyeC5wbmcADgA0ABkASQBjAG8AbgBQAHIAZQBzAGUAdABTAGUAdAB0AGkAbgBnAHMAQAAyAHgALgBwAG4AZwAPABoADABNAGEAYwBpAG4AdABvAHMAaAAgAEgARAASAFJVc2Vycy90aG9tbWNncmF0aC9Eb2N1bWVudHMvVGhlIFpBWiBTb3VyY2VzL0JlYWNvbi9JY29ucy9JY29uUHJlc2V0U2V0dGluZ3NAMngucG5nABMAAS8AABUAAgAS//8AAAAAAAAAAA==
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconPresetSettings@2x.png
+		PartialPath = ..\Icons\IconPresetSettings@2x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 24.00
+			Orientation = Any
+			Platform = 15
+			PPI = 144
+			VSize = 24.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAG0AAAAAAG0AAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8ZSWNvblByZXNldFNldHRpbmdzQDN4LnBuZwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFQvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkljb25QcmVzZXRTZXR0aW5nc0AzeC5wbmcADgA0ABkASQBjAG8AbgBQAHIAZQBzAGUAdABTAGUAdAB0AGkAbgBnAHMAQAAzAHgALgBwAG4AZwAPABoADABNAGEAYwBpAG4AdABvAHMAaAAgAEgARAASAFJVc2Vycy90aG9tbWNncmF0aC9Eb2N1bWVudHMvVGhlIFpBWiBTb3VyY2VzL0JlYWNvbi9JY29ucy9JY29uUHJlc2V0U2V0dGluZ3NAM3gucG5nABMAAS8AABUAAgAS//8AAAAAAAAAAA==
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconPresetSettings@3x.png
+		PartialPath = ..\Icons\IconPresetSettings@3x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 24.00
+			Orientation = Any
+			Platform = 15
+			PPI = 216
+			VSize = 24.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+End Image
+#tag EndMultiImage

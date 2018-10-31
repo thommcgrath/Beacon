@@ -155,6 +155,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.IntegerValue("Last Preset Map Filter", Beacon.Maps.All.Mask)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Last Preset Map Filter") = Value
+			End Set
+		#tag EndSetter
+		LastPresetMapFilter As UInt64
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.RectValue("Main Window Size", Nil)
 			End Get
 		#tag EndGetter
@@ -355,6 +371,11 @@ Protected Module Preferences
 			Name="SimulatorVisible"
 			Group="Behavior"
 			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ItemSetsSplitterPosition"
+			Group="Behavior"
+			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module
