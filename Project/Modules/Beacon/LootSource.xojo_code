@@ -77,6 +77,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Sub Constructor(Source As Beacon.LootSource)
 		  Self.Constructor()
 		  
+		  If Source = Nil Then
+		    Dim Err As NilObjectException
+		    Err.Reason = "Cannot clone a nil loot source"
+		    Raise Err
+		  End If
+		  
 		  Redim Self.mSets(UBound(Source.mSets))
 		  
 		  Self.mMaxItemSets = Source.mMaxItemSets
