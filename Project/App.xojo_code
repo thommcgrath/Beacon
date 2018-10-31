@@ -318,6 +318,23 @@ Implements NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function AutosaveFolder(Create As Boolean = False) As FolderItem
+		  Dim Folder As FolderItem = Self.ApplicationSupport.Child("Autosave")
+		  If Folder = Nil Then
+		    Return Nil
+		  End If
+		  If Not Folder.Exists Then
+		    If Create Then
+		      Folder.CreateAsFolder
+		    Else
+		      Return Nil
+		    End If
+		  End If
+		  Return Folder
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub CheckFolder(Folder As FolderItem)
 		  If Folder.Exists Then
