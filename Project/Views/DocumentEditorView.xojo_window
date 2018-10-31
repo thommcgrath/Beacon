@@ -285,7 +285,8 @@ End
 
 	#tag Event
 		Function ShouldSave() As Boolean
-		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeTransient Then
+		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeTransient Then  
+		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		    Self.mController.Save(App.Identity)
 		  Else
 		    Self.SaveAs()
@@ -498,7 +499,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub mController_WriteError(Sender As Beacon.DocumentController, Reason As Text)
-		  Self.Progress = BeaconSubview.ProgressNone
+		  If Not Self.Closed Then
+		    Self.Progress = BeaconSubview.ProgressNone
+		  End If
 		  
 		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!")
 		  Notification.SecondaryMessage = Reason
@@ -513,15 +516,15 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
 		  If Not Self.Closed Then
-		    Self.ContentsChanged = Sender.Document.Modified
+		    Self.ContentsChanged = Sender.Document <> Nil And Sender.Document.Modified
 		    Self.Title = Sender.Name
 		    Self.BeaconToolbar1.ShareButton.Enabled = (Sender.URL.Scheme = Beacon.DocumentURL.TypeCloud)
+		    Self.Progress = BeaconSubview.ProgressNone
 		  End If
 		  
-		  Self.Progress = BeaconSubview.ProgressNone
 		  Preferences.AddToRecentDocuments(Sender.URL)
 		  
-		  If Not Sender.Document.Modified Then
+		  If Self.Document = Nil Or Sender.Document.Modified = False Then
 		    // Safe to cleanup the autosave
 		    Self.CleanupAutosave()
 		  End If
