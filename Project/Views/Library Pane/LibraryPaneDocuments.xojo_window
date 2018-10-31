@@ -620,6 +620,10 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.Closed Then
+			    Return
+			  End If
+			  
 			  If Self.Switcher.SelectedIndex <> Value Then
 			    Self.Switcher.SelectedIndex = Value
 			  End If
