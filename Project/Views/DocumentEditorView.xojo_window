@@ -44,6 +44,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -208,6 +209,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Width           =   300
    End
    Begin Timer AutosaveTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -324,9 +326,7 @@ End
 		  End If
 		  
 		  Dim File As FolderItem = Self.AutosaveFile(True)
-		  If File <> Nil Then
-		    Self.mController.SaveACopy(Beacon.DocumentURL.URLForFile(File), App.Identity)
-		    Self.Progress = BeaconSubview.ProgressIndeterminate
+		  If File <> Nil And Self.mController.SaveACopy(Beacon.DocumentURL.URLForFile(File), App.Identity) <> Nil Then
 		    Self.AutosaveTimer.Reset
 		  End If
 		End Sub

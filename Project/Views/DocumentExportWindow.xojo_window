@@ -382,6 +382,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Destructor()
+		  Xojo.Core.Timer.CancelCall(WeakAddressOf RestoreCopyButton)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, Document As Beacon.Document)
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		  Dim GameIniHeaders As New Xojo.Core.Dictionary

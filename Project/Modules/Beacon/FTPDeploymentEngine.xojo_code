@@ -149,7 +149,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Self.mStatus = "Downloading Game.ini…"
 		  
-		  Dim Request As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameIniPath), "GET", WeakAddressOf Callback_DownloadGameIni)
+		  Dim Request As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameIniPath), "GET", AddressOf Callback_DownloadGameIni)
 		  Request.Sign(Self.mIdentity)
 		  Self.mSocket.Start(Request)
 		End Sub
@@ -164,7 +164,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Self.mStatus = "Downloading GameUserSettings.ini…"
 		  
-		  Dim Request As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), "GET", WeakAddressOf Callback_DownloadGameUserSettingsIni)
+		  Dim Request As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), "GET", AddressOf Callback_DownloadGameUserSettingsIni)
 		  Request.Sign(Self.mIdentity)
 		  Self.mSocket.Start(Request)
 		End Sub
@@ -238,7 +238,7 @@ Implements Beacon.DeploymentEngine
 		  Self.mStatus = "Uploading Game.ini"
 		  
 		  Dim Content As Text = Beacon.RewriteIniContent(Self.mGameIniOriginal, Self.mGameIniDict)
-		  Dim Request As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameIniPath), "POST", Content, "text/plain", WeakAddressOf Callback_UploadGameIni)
+		  Dim Request As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameIniPath), "POST", Content, "text/plain", AddressOf Callback_UploadGameIni)
 		  Request.Sign(App.Identity)
 		  Self.mSocket.Start(Request)
 		End Sub
@@ -255,7 +255,7 @@ Implements Beacon.DeploymentEngine
 		  Self.mStatus = "Uploading GameUserSettings.ini"
 		  
 		  Dim Content As Text = Beacon.RewriteIniContent(Self.mGameUserSettingsIniOriginal, Self.mGameUserSettingsIniDict)
-		  Dim Request As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), "POST", Content, "text/plain", WeakAddressOf Callback_UploadGameUserSettingsIni)
+		  Dim Request As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), "POST", Content, "text/plain", AddressOf Callback_UploadGameUserSettingsIni)
 		  Request.Sign(App.Identity)
 		  Self.mSocket.Start(Request)
 		End Sub

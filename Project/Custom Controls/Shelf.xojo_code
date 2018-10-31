@@ -272,6 +272,12 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Destructor()
+		  Xojo.Core.Timer.CancelCall(WeakAddressOf ShowHoverToolTip)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
 		  // Part of the ObservationKit.Observer interface.
 		  
