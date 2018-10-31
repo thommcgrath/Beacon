@@ -80,7 +80,6 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -191,16 +190,27 @@ End
 
 	#tag Event
 		Sub Open()
-		  #if false
-		    Self.UpdateLocalDocuments()
-		    Self.UpdateCloudDocuments()
-		    Self.UpdateCommunityDocuments()
-		  #endif
-		  
 		  Self.ToolbarCaption = "Documents"
 		  
 		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged, App.Notification_IdentityChanged, Preferences.Notification_RecentsChanged)
 		  Self.SwitcherVisible = Preferences.OnlineEnabled
+		  
+		  Dim AutosaveFolder As FolderItem = App.AutosaveFolder()
+		  If AutosaveFolder <> Nil Then
+		    For I As Integer = 1 To AutosaveFolder.Count
+		      Dim File As FolderItem = AutosaveFolder.Item(I)
+		      If Not File.Name.EndsWith(BeaconFileTypes.BeaconDocument.PrimaryExtension) Then
+		        Continue
+		      End If
+		      
+		      Dim FileURL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
+		      App.Log("Attempting to restore autosave " + FileURL.URL)
+		      
+		      Dim Controller As New Beacon.DocumentController(FileURL)
+		      AddHandler Controller.Loaded, AddressOf AutosaveController_Loaded
+		      Controller.Load(App.Identity)
+		    Next
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -247,6 +257,17 @@ End
 		  If Self.View = Self.ViewCommunityDocuments Then
 		    Self.UpdateDocumentsList()
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub AutosaveController_Loaded(Sender As Beacon.DocumentController, Document As Beacon.Document)
+		  RemoveHandler Sender.Loaded, AddressOf AutosaveController_Loaded
+		  
+		  // Create a modified transient document
+		  Document.Modified = True
+		  Dim Controller As New Beacon.DocumentController(Document)
+		  Self.OpenController(Controller)
 		End Sub
 	#tag EndMethod
 
@@ -620,6 +641,10 @@ End
 		#tag EndGetter
 		#tag Setter
 			Set
+			  If Self.Closed Then
+			    Return
+			  End If
+			  
 			  If Self.Switcher.SelectedIndex <> Value Then
 			    Self.Switcher.SelectedIndex = Value
 			  End If
@@ -812,6 +837,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

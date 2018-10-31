@@ -93,8 +93,9 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Sub CheckForEngramUpdates()
-		  Dim CheckURL As Text = Self.ClassesURL()
-		  App.Log("Checking for engram updates from " + CheckURL)
+		  If Self.mCheckingForUpdates Then
+		    Return
+		  End If
 		  
 		  If Self.mUpdater = Nil Then
 		    Self.mUpdater = New Xojo.Net.HTTPSocket
@@ -103,6 +104,10 @@ Implements Beacon.DataSource
 		    AddHandler Self.mUpdater.PageReceived, WeakAddressOf Self.mUpdater_PageReceived
 		    AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
 		  End If
+		  
+		  Self.mCheckingForUpdates = True
+		  Dim CheckURL As Text = Self.ClassesURL()
+		  App.Log("Checking for engram updates from " + CheckURL)
 		  Self.mUpdater.Send("GET", CheckURL)
 		End Sub
 	#tag EndMethod
@@ -1003,6 +1008,8 @@ Implements Beacon.DataSource
 		  
 		  App.Log("Engram check error: " + Error.Reason)
 		  NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
+		  
+		  Self.mCheckingForUpdates = False
 		End Sub
 	#tag EndMethod
 
@@ -1028,6 +1035,8 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Self.Import(TextContent)
+		  
+		  Self.mCheckingForUpdates = False
 		End Sub
 	#tag EndMethod
 
@@ -1455,7 +1464,7 @@ Implements Beacon.DataSource
 		    Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM variables WHERE LOWER(key) = LOWER(?1);", Key)
 		    If Results.RecordCount = 1 Then
 		      Return Results.Field("value").StringValue
-		    End If 
+		    End If
 		  Catch Err As RuntimeException
 		    Return ""
 		  End Try
@@ -1477,6 +1486,10 @@ Implements Beacon.DataSource
 
 	#tag Property, Flags = &h21
 		Private mBase As SQLiteDatabase
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCheckingForUpdates As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

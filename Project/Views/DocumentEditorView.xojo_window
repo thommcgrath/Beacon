@@ -44,7 +44,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -209,7 +208,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Width           =   300
    End
    Begin Timer AutosaveTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -272,20 +270,14 @@ End
 		        Exit For I
 		      End If
 		    Next
-		    
-		    Dim File As FolderItem = Self.AutosaveFile(False)
-		    If File.Exists Then
-		      Dim Controller As New Beacon.DocumentController(Beacon.DocumentURL.URLForFile(File))
-		      AddHandler Controller.Loaded, WeakAddressOf mAutosaveController_Loaded
-		      Controller.Load(App.Identity)
-		    End If
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Function ShouldSave() As Boolean
-		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeTransient Then
+		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeTransient Then  
+		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		    Self.mController.Save(App.Identity)
 		  Else
 		    Self.SaveAs()
@@ -338,16 +330,9 @@ End
 		    Return Nil
 		  End If
 		  
-		  Dim Folder As FolderItem = App.ApplicationSupport.Child("Autosave")
+		  Dim Folder As FolderItem = App.AutosaveFolder(CreateFolder)
 		  If Folder = Nil Then
 		    Return Nil
-		  End If
-		  If Not Folder.Exists Then
-		    If CreateFolder Then
-		      Folder.CreateAsFolder
-		    Else
-		      Return Nil
-		    End If
 		  End If
 		  Return Folder.Child(Self.Document.DocumentID + BeaconFileTypes.BeaconDocument.PrimaryExtension)
 		End Function
@@ -470,35 +455,10 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mAutosaveController_Loaded(Sender As Beacon.DocumentController, Document As Beacon.Document)
-		  #Pragma Unused Sender
-		  
-		  If Self.Document = Nil Then
-		    Return
-		  End If
-		  
-		  If Document.LastSaved <= Self.Document.LastSaved Then
-		    Self.CleanupAutosave()
-		    Return
-		  End If
-		  
-		  If Self.ShowConfirm("Beacon found unsaved changes to this file. Would you like to restore them now?", "This can happen if there was an error before your document was saved. If you do not restore the unsaved changes now, they will be discarded.", "Restore", "Cancel") Then
-		    Document.Modified = True
-		    Self.ContentsChanged = True
-		    Self.mController.Document = Document
-		    Dim Index As Integer = Self.ConfigMenu.ListIndex
-		    Self.ConfigMenu.ListIndex = -1
-		    Self.Panels = New Dictionary
-		    Self.ConfigMenu.ListIndex = Index
-		  Else
-		    Self.CleanupAutosave()
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub mController_WriteError(Sender As Beacon.DocumentController, Reason As Text)
-		  Self.Progress = BeaconSubview.ProgressNone
+		  If Not Self.Closed Then
+		    Self.Progress = BeaconSubview.ProgressNone
+		  End If
 		  
 		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!")
 		  Notification.SecondaryMessage = Reason
@@ -513,15 +473,15 @@ End
 	#tag Method, Flags = &h21
 		Private Sub mController_WriteSuccess(Sender As Beacon.DocumentController)
 		  If Not Self.Closed Then
-		    Self.ContentsChanged = Sender.Document.Modified
+		    Self.ContentsChanged = Sender.Document <> Nil And Sender.Document.Modified
 		    Self.Title = Sender.Name
 		    Self.BeaconToolbar1.ShareButton.Enabled = (Sender.URL.Scheme = Beacon.DocumentURL.TypeCloud)
+		    Self.Progress = BeaconSubview.ProgressNone
 		  End If
 		  
-		  Self.Progress = BeaconSubview.ProgressNone
 		  Preferences.AddToRecentDocuments(Sender.URL)
 		  
-		  If Not Sender.Document.Modified Then
+		  If Self.Document = Nil Or Sender.Document.Modified = False Then
 		    // Safe to cleanup the autosave
 		    Self.CleanupAutosave()
 		  End If
@@ -538,6 +498,7 @@ End
 		    End If
 		  Next
 		  
+		  Self.Autosave()
 		  Self.Panel_ContentsChanged(Nil)
 		End Sub
 	#tag EndMethod

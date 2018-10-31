@@ -411,7 +411,7 @@ Protected Class DocumentController
 		  Self.mBusy = False
 		  
 		  If Sender.Success Then
-		    If Self.mClearModifiedOnWrite Then
+		    If Self.mClearModifiedOnWrite And Self.mDocument <> Nil Then
 		      Self.mDocument.Modified = False
 		    End If
 		    RaiseEvent WriteSuccess()
