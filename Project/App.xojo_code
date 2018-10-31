@@ -649,14 +649,24 @@ Implements NotificationKit.Receiver
 		  
 		  Self.mLogLock.Enter
 		  
+		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
+		  Dim DetailedMessage As String = Now.ToText + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Chr(9) + Message
+		  
 		  #if DebugBuild
-		    System.DebugLog(Message)
+		    System.DebugLog(DetailedMessage)
 		  #else
-		    Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
-		    Dim LogFile As FolderItem = Self.ApplicationSupport.Child("Events.log")
-		    Dim Stream As TextOutputStream = TextOutputStream.Append(LogFile)
-		    Stream.WriteLine(Now.ToText + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Chr(9) + Message)
-		    Stream.Close
+		    Try
+		      Self.mQueuedLogMessages.Append(DetailedMessage)
+		      
+		      Dim LogFile As FolderItem = Self.ApplicationSupport.Child("Events.log")
+		      Dim Stream As TextOutputStream = TextOutputStream.Append(LogFile)
+		      While Self.mQueuedLogMessages.Ubound > -1
+		        Stream.WriteLine(Self.mQueuedLogMessages(0))
+		        Self.mQueuedLogMessages.Remove(0)
+		      Wend
+		      Stream.Close
+		    Catch Err As IOException
+		    End Try
 		  #endif
 		  
 		  Self.mLogLock.Leave
@@ -895,6 +905,10 @@ Implements NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mMutex As Mutex
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mQueuedLogMessages() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
