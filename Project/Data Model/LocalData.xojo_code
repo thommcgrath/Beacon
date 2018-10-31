@@ -805,9 +805,12 @@ Implements Beacon.DataSource
 	#tag Method, Flags = &h0
 		Sub LoadPresets()
 		  Redim Self.mPresets(-1)
+		  Self.BeginTransaction()
+		  Self.SQLExecute("DELETE FROM preset_modifiers WHERE mod_id = ?1;", Self.UserModID) // Loading the presets will refill all the needed custom modifiers
 		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM official_presets WHERE LOWER(object_id) NOT IN (SELECT LOWER(object_id) FROM custom_presets)"), Beacon.Preset.Types.BuiltIn)
 		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM custom_presets WHERE LOWER(object_id) IN (SELECT LOWER(object_id) FROM official_presets)"), Beacon.Preset.Types.CustomizedBuiltIn)
 		  Self.LoadPresets(Self.SQLSelect("SELECT object_id, contents FROM custom_presets WHERE LOWER(object_id) NOT IN (SELECT LOWER(object_id) FROM official_presets)"), Beacon.Preset.Types.Custom)
+		  Self.Commit()
 		End Sub
 	#tag EndMethod
 

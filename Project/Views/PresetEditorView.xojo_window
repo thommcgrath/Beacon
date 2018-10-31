@@ -49,7 +49,7 @@ Begin BeaconSubview PresetEditorView
       ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   0
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   10
@@ -107,7 +107,7 @@ Begin BeaconSubview PresetEditorView
       RequiresSelection=   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   3
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
@@ -131,7 +131,7 @@ Begin BeaconSubview PresetEditorView
       PanelCount      =   3
       Panels          =   ""
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   3
       TabPanelIndex   =   0
       Top             =   61
       Transparent     =   False
@@ -263,7 +263,7 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   0
+         TabIndex        =   9
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   183
@@ -286,7 +286,7 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   1
+         TabIndex        =   6
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   149
@@ -323,7 +323,7 @@ Begin BeaconSubview PresetEditorView
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   3
+         TabIndex        =   8
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
@@ -358,7 +358,7 @@ Begin BeaconSubview PresetEditorView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   4
+         TabIndex        =   7
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Max Items:"
@@ -437,7 +437,7 @@ Begin BeaconSubview PresetEditorView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   6
+         TabIndex        =   4
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Min Items:"
@@ -472,7 +472,7 @@ Begin BeaconSubview PresetEditorView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   7
+         TabIndex        =   2
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Grouping:"
@@ -507,7 +507,7 @@ Begin BeaconSubview PresetEditorView
          Multiline       =   False
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   8
+         TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Name:"
@@ -551,7 +551,7 @@ Begin BeaconSubview PresetEditorView
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   9
+         TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
@@ -595,7 +595,7 @@ Begin BeaconSubview PresetEditorView
          Password        =   False
          ReadOnly        =   False
          Scope           =   2
-         TabIndex        =   10
+         TabIndex        =   1
          TabPanelIndex   =   1
          TabStop         =   True
          Text            =   ""
@@ -648,7 +648,7 @@ Begin BeaconSubview PresetEditorView
          ScrollBarVertical=   True
          SelectionType   =   1
          ShowDropIndicator=   False
-         TabIndex        =   17
+         TabIndex        =   3
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
@@ -683,7 +683,7 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   18
+         TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
@@ -715,7 +715,7 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   19
+         TabIndex        =   1
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
@@ -747,7 +747,7 @@ Begin BeaconSubview PresetEditorView
          LockRight       =   False
          LockTop         =   True
          Scope           =   2
-         TabIndex        =   20
+         TabIndex        =   2
          TabPanelIndex   =   3
          TabStop         =   True
          TextFont        =   "System"
@@ -1049,6 +1049,19 @@ End
 		  Self.ContentsList.Sort
 		  Self.ContentsList.EnsureSelectionIsVisible
 		  Self.UpdateMinAndMaxFields
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowModifierEditor(Edit As Boolean)
+		  Dim EditID As Text
+		  If Edit And Self.ModifiersList.SelCount = 1 Then
+		    EditID = Self.ModifiersList.RowTag(Self.ModifiersList.ListIndex)
+		  End If
+		  If PresetModifierEditor.Present(Self, Self.mPreset, EditID) Then
+		    Self.UpdateUI
+		    Self.ContentsChanged = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -1516,6 +1529,25 @@ End
 		Sub Change()
 		  EditModifierButton.Enabled = Me.SelCount = 1
 		  DeleteModifierButton.Enabled = Me.SelCount > 0
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  Self.ShowModifierEditor(True)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AddModifierButton
+	#tag Event
+		Sub Action()
+		  Self.ShowModifierEditor(False)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EditModifierButton
+	#tag Event
+		Sub Action()
+		  Self.ShowModifierEditor(True)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

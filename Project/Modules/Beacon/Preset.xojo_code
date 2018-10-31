@@ -276,7 +276,7 @@ Implements Beacon.Countable
 		Function QualityModifier(Kind As Beacon.LootSource.Kinds) As Integer
 		  Dim IDs() As Text = Self.SourceKindToModifierID(Kind)
 		  If IDs.Ubound = -1 Then
-		    Return 1
+		    Return 0
 		  End If
 		  Return Self.QualityModifier(IDs(0))
 		End Function
@@ -291,11 +291,11 @@ Implements Beacon.Countable
 	#tag Method, Flags = &h0
 		Function QualityModifier(ModifierID As Text) As Integer
 		  If Self.mModifierValues = Nil Then
-		    Return 1
+		    Return 0
 		  End If
 		  
 		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
-		  Return Dict.Lookup("Quality", 1)
+		  Return Dict.Lookup("Quality", 0)
 		End Function
 	#tag EndMethod
 
