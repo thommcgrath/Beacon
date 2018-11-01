@@ -36,9 +36,9 @@
 				Begin IDEScriptBuildStep Sign , AppliesTo = 0
 					Dim App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
 					Call DoShellCommand("xattr -clr " + App)
-					Call DoShellCommand("codesign -f --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" -s 'Developer ID Application: Thom McGrath' " + App + "/Contents/Frameworks/*.dylib")
-					Call DoShellCommand("codesign -f --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" -s 'Developer ID Application: Thom McGrath' " + App + "/Contents/Frameworks/*.framework")
-					Call DoShellCommand("codesign -f --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" -s 'Developer ID Application: Thom McGrath' " + App)
+					Call DoShellCommand("codesign -f --options runtime --deep --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" -s 'Developer ID Application: Thom McGrath' " + App + "/Contents/Frameworks/*.dylib")
+					Call DoShellCommand("codesign -f --options runtime --deep --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" -s 'Developer ID Application: Thom McGrath' " + App + "/Contents/Frameworks/*.framework")
+					Call DoShellCommand("codesign -f --options runtime --deep --entitlements ""${PROJECT_PATH}/../Installers/Mac/entitlements.plist"" -s 'Developer ID Application: Thom McGrath' " + App)
 				End
 			End
 			Begin BuildStepList Windows

@@ -229,8 +229,8 @@ Protected Class DocumentController
 		    Dim Success As Boolean
 		    Try
 		      Dim File As Beacon.FolderItem
-		      If Self.mDocumentURL.HasParam("bookmark") Then
-		        File = Beacon.FolderItem.FromSaveInfo(Self.mDocumentURL.Param("bookmark"))
+		      If Self.mDocumentURL.HasParam("saveinfo") Then
+		        File = Beacon.FolderItem.FromSaveInfo(Self.mDocumentURL.Param("saveinfo"))
 		      Else
 		        File = New Beacon.FolderItem(Self.mDocumentURL.Path)
 		      End If

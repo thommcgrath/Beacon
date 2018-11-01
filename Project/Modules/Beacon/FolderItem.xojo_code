@@ -193,7 +193,7 @@ Protected Class FolderItem
 		Shared Function FromSaveInfo(SaveInfo As Text) As Beacon.FolderItem
 		  #if TargetiOS
 		    Return Nil
-		  #else
+		  #elseif TargetMacOS
 		    Declare Function objc_getClass Lib "Cocoa" (ClassName As CString) As Ptr
 		    Declare Function URLByResolvingBookmarkData Lib "Cocoa" Selector "URLByResolvingBookmarkData:options:relativeToURL:bookmarkDataIsStale:error:" (Target As Ptr, BookmarkData As Ptr, Options As UInt32, RelativeURL As Ptr, IsStale As Boolean, ByRef Error As Ptr) As Ptr
 		    Declare Function DataWithBytes Lib "Cocoa" Selector "initWithBytes:length:" (Target As Ptr, Bytes As Ptr, Length As UInteger) As Ptr
@@ -221,6 +221,10 @@ Protected Class FolderItem
 		      Declare Function ErrorDescription Lib "Cocoa" Selector "localizedDescription" (Target As Ptr) As CFStringRef
 		      App.Log("Unable to resolve saveinfo for: " + Str(ErrorCode(ErrorRef)) + " " + ErrorDescription(ErrorRef))
 		    End If
+		  #else
+		    Dim StringValue As String = Beacon.ConvertMemoryBlock(Beacon.DecodeBase64(SaveInfo))
+		    Dim File As Global.FolderItem = Volume(0).GetRelative(StringValue)
+		    Return File
 		  #endif
 		End Function
 	#tag EndMethod
@@ -369,7 +373,7 @@ Protected Class FolderItem
 		Function SaveInfo() As Text
 		  #if TargetiOS
 		    Return ""
-		  #else
+		  #elseif TargetMacOS
 		    Declare Function objc_getClass Lib "Cocoa" (ClassName As CString) As Ptr
 		    Declare Function URLWithString Lib "Cocoa" Selector "URLWithString:" (Target As Ptr, URLString As CFStringRef) As Ptr
 		    Declare Function BookmarkDataWithOptions Lib "Cocoa" Selector "bookmarkDataWithOptions:includingResourceValuesForKeys:relativeToURL:error:" (Target As Ptr, Options as UInt32, ResourceValuesKeys As Ptr, RelativeURL As Ptr, ByRef Error As Ptr) As Ptr
@@ -391,6 +395,9 @@ Protected Class FolderItem
 		        App.Log("Unable to get saveinfo for " + Self.mLegacySource.NativePath + ": " + Str(ErrorCode(ErrorRef)) + " " + ErrorDescription(ErrorRef))
 		      End If
 		    End If
+		  #else
+		    Dim SaveInfo As Global.MemoryBlock = Self.mLegacySource.GetSaveInfo(Nil)
+		    Return Beacon.EncodeBase64(Beacon.ConvertMemoryBlock(SaveInfo))
 		  #endif
 		End Function
 	#tag EndMethod
