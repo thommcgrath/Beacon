@@ -160,7 +160,7 @@ Begin ConfigEditor LootConfigEditor
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   451
       Begin LootSourceEditor Editor
@@ -345,7 +345,7 @@ End
 
 	#tag MenuHandler
 		Function DocumentDuplicateBeacon() As Boolean Handles DocumentDuplicateBeacon.Action
-			Self.ShowDuplicateSelectedLootSource()
+			Self.ShowAddLootSource(True)
 			Return True
 			
 		End Function
@@ -491,23 +491,32 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ShowAddLootSource()
-		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentAdd(Self.TrueWindow, Self.Document)
-		  If LootSource <> Nil Then
-		    Self.AddLootSource(LootSource)
-		    Self.Focus = Self.List
+		Private Sub ShowAddLootSource(DuplicateSelected As Boolean = False)
+		  If DuplicateSelected And Self.List.SelCount <> 1 Then
+		    Return
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub ShowDuplicateSelectedLootSource()
-		  If List.SelCount = 1 Then
-		    Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentDuplicate(Self.TrueWindow, Self.Document, List.RowTag(List.ListIndex))
-		    If LootSource <> Nil Then
-		      Self.AddLootSource(LootSource)
-		      Self.Focus = Self.List
-		    End If
+		  
+		  Dim CurrentSources() As Beacon.LootSource = Self.Document.LootSources
+		  Dim Map As New Xojo.Core.Dictionary
+		  For Each Source As Beacon.LootSource In CurrentSources
+		    Map.Value(Source.ClassString) = True
+		  Next
+		  
+		  Dim DuplicateSource As Beacon.LootSource
+		  If DuplicateSelected Then
+		    DuplicateSource = Self.List.RowTag(Self.List.ListIndex)
+		  End If
+		  
+		  If LootSourceWizard.Preset(Self, Self.Document, DuplicateSource, DuplicateSelected) Then
+		    CurrentSources = Self.Document.LootSources
+		    Dim NewSources() As Beacon.LootSource
+		    For Each Source As Beacon.LootSource In CurrentSources
+		      If Not Map.HasKey(Source.ClassString) Then
+		        NewSources.Append(Source)
+		      End If
+		    Next
+		    Self.UpdateSourceList(NewSources)
+		    Self.Focus = Self.List
 		  End If
 		End Sub
 	#tag EndMethod
@@ -605,7 +614,7 @@ End
 		  Case "AddSource"
 		    Self.ShowAddLootSource()
 		  Case "Duplicate"
-		    Self.ShowDuplicateSelectedLootSource()
+		    Self.ShowAddLootSource(True)
 		  Case "Rebuild"
 		    Self.Document.ReconfigurePresets()
 		    Self.UpdateSourceList()
@@ -794,10 +803,9 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Source As Beacon.LootSource = Me.RowTag(I)
-		    Dim Edited As Beacon.LootSource = LootSourceWizard.PresentEdit(Self.TrueWindow, Self.Document, Source)
-		    If Edited <> Nil Then
-		      Self.AddLootSource(Edited)
+		    If LootSourceWizard.Preset(Self, Self.Document, Me.RowTag(I)) Then
+		      Self.UpdateSourceList()
+		      Self.ContentsChanged = True
 		    End If
 		    
 		    Return
@@ -813,9 +821,9 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PresentLootSourceEditor(Source As Beacon.LootSource)
-		  Dim LootSource As Beacon.LootSource = LootSourceWizard.PresentEdit(Self.TrueWindow, Self.Document, Source)
-		  If LootSource <> Nil Then
-		    Self.AddLootSource(LootSource)
+		  If LootSourceWizard.Preset(Self, Self.Document, Source) Then
+		    Self.UpdateSourceList()
+		    Self.ContentsChanged = True
 		  End If
 		End Sub
 	#tag EndEvent
@@ -826,6 +834,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

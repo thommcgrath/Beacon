@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Beacon"
-#define MyAppVersion "1.0.0b27"
+#define MyAppVersion "1.0.0"
 #define MyAppPublisher "The ZAZ Studios"
 #define MyAppURL "https://beaconapp.cc/"
 #define MyAppExeName "Beacon.exe"

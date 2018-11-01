@@ -226,27 +226,28 @@ Protected Class DocumentController
 		    Self.mSocket.Send("GET", Self.mDocumentURL.URL)
 		  Case Beacon.DocumentURL.TypeLocal
 		    // just a local file
-		    Dim File As Beacon.FolderItem
+		    Dim Success As Boolean
 		    Try
-		      File = New Beacon.FolderItem(Self.mDocumentURL.Path)
+		      Dim File As Beacon.FolderItem
+		      If Self.mDocumentURL.HasParam("saveinfo") Then
+		        File = Beacon.FolderItem.FromSaveInfo(Self.mDocumentURL.Param("saveinfo"))
+		      Else
+		        File = New Beacon.FolderItem(Self.mDocumentURL.Path)
+		      End If
+		      If File <> Nil And File.Exists Then
+		        Self.mTextContent = File.Read(Xojo.Core.TextEncoding.UTF8)
+		        Self.mFileRef = File // Just to keep the security scoped bookmark open
+		        Success = True
+		      End If
 		    Catch Err As RuntimeException
 		      
 		    End Try
 		    
-		    If (File = Nil Or File.Exists = False) And Self.mDocumentURL.HasParam("saveinfo") Then
-		      File = Beacon.FolderItem.FromSaveInfo(Self.mDocumentURL.Param("saveinfo"))
-		      If File <> Nil And File.Exists Then
-		        Self.mDocumentURL = Beacon.DocumentURL.URLForFile(File)
-		      End If
-		    End If
-		    
-		    If File = Nil Or File.Exists = False Then
+		    If Not Success Then
 		      Self.mBusy = False
 		      Xojo.Core.Timer.CallLater(1, AddressOf TriggerLoadError)
 		      Return
 		    End If
-		    
-		    Self.mTextContent = File.Read(Xojo.Core.TextEncoding.UTF8)
 		  Case Beacon.DocumentURL.TypeTransient
 		    // just a local file stored in the the temp directory
 		    Dim File As Beacon.FolderItem = Beacon.FolderItem.Temporary.Child(Self.mDocumentURL.Path + BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText)
@@ -512,6 +513,10 @@ Protected Class DocumentController
 
 	#tag Property, Flags = &h21
 		Private mDocumentURL As Beacon.DocumentURL
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFileRef As Beacon.FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
