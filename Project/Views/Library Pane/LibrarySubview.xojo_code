@@ -7,8 +7,8 @@ Inherits BeaconSubview
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub CleanupClosedViews()
+	#tag Method, Flags = &h0
+		Sub CleanupClosedViews()
 		  If Self.mViews = Nil Then
 		    Return
 		  End If
@@ -103,6 +103,12 @@ Inherits BeaconSubview
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Progress"
+			Group="Behavior"
+			InitialValue="ProgressNone"
+			Type="Double"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinimumWidth"
 			Visible=true

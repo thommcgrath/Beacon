@@ -185,9 +185,9 @@ Protected Class DocumentURL
 		  #if TargetMacOS
 		    Dim SaveInfo As Text = File.SaveInfo
 		    If Path.IndexOf("?") = -1 Then
-		      Path = Path + "?saveinfo=" + Beacon.EncodeURLComponent(SaveInfo)
+		      Path = Path + "?bookmark=" + Beacon.EncodeURLComponent(SaveInfo)
 		    Else
-		      Path = Path + "&saveinfo=" + Beacon.EncodeURLComponent(SaveInfo)
+		      Path = Path + "&bookmark=" + Beacon.EncodeURLComponent(SaveInfo)
 		    End If
 		  #endif
 		  Return Path
