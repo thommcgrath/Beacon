@@ -37,7 +37,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused QualityMultiplier
 		  
 		  If ParsedData.HasKey("SupplyCrateLootQualityMultiplier") Then
-		    Return New BeaconConfigs.LootScale(ParsedData.Value("SupplyCrateLootQualityMultiplier"))
+		    Return New BeaconConfigs.LootScale(ParsedData.DoubleValue("SupplyCrateLootQualityMultiplier"))
 		  End If
 		End Function
 	#tag EndMethod
