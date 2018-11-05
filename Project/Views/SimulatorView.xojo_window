@@ -188,11 +188,19 @@ End
 		    Return
 		  End If
 		  
+		  Static LootSourceInfo, ItemSetInfo As Xojo.Introspection.TypeInfo
+		  If LootSourceInfo = Nil Then
+		    LootSourceInfo = GetTypeInfo(Beacon.LootSource)
+		  End If
+		  If ItemSetInfo = Nil Then
+		    ItemSetInfo = GetTypeInfo(Beacon.ItemSet)
+		  End If
+		  
 		  Dim Selections() As Beacon.SimulatedSelection
 		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Self.mTarget)
-		  If Info.FullName = "Beacon.LootSource" Then
+		  If Info.IsSubclassOf(LootSourceInfo) Then
 		    Selections = Beacon.LootSource(Self.mTarget).Simulate()
-		  ElseIf Info.FullName = "Beacon.ItemSet" Then
+		  ElseIf Info.IsSubclassOf(ItemSetInfo) Then
 		    Selections = Beacon.ItemSet(Self.mTarget).Simulate()
 		  Else
 		    Return
