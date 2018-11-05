@@ -28,7 +28,7 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h0
 		Function CapHeight(Extends G As Graphics) As Double
-		  #if TargetCocoa
+		  #if TargetMacOS
 		    Declare Function objc_getClass Lib "Cocoa.framework" (ClassName As CString) As Ptr
 		    Dim NSFont As Ptr = objc_getClass("NSFont")
 		    If NSFont = Nil Then
@@ -41,42 +41,22 @@ Protected Module BeaconUI
 		    Dim FontObject As Ptr
 		    If G.TextFont = "SmallSystem" And G.TextSize = 0 Then
 		      If G.Bold Then
-		        #if Target64Bit
-		          Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "boldSystemFontOfSize:" (Target As Ptr, Size As Double) As Ptr
-		        #else
-		          Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "boldSystemFontOfSize:" (Target As Ptr, Size As Single) As Ptr
-		        #endif
+		        Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "boldSystemFontOfSize:" (Target As Ptr, Size As CGFloat) As Ptr
 		        FontObject = SystemFontOfSize(NSFont,11)
 		      Else
-		        #if Target64Bit
-		          Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "systemFontOfSize:" (Target As Ptr, Size As Double) As Ptr
-		        #else
-		          Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "systemFontOfSize:" (Target As Ptr, Size As Single) As Ptr
-		        #endif
+		        Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "systemFontOfSize:" (Target As Ptr, Size As CGFloat) As Ptr
 		        FontObject = SystemFontOfSize(NSFont,11)
 		      End If
 		    ElseIf G.TextFont = "System" Or G.TextFont = "SmallSystem" Then
 		      If G.Bold Then
-		        #if Target64Bit
-		          Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "boldSystemFontOfSize:" (Target As Ptr, Size As Double) As Ptr
-		        #else
-		          Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "boldSystemFontOfSize:" (Target As Ptr, Size As Single) As Ptr
-		        #endif
+		        Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "boldSystemFontOfSize:" (Target As Ptr, Size As CGFloat) As Ptr
 		        FontObject = SystemFontOfSize(NSFont,G.TextSize)
 		      Else
-		        #if Target64Bit
-		          Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "systemFontOfSize:" (Target As Ptr, Size As Double) As Ptr
-		        #else
-		          Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "systemFontOfSize:" (Target As Ptr, Size As Single) As Ptr
-		        #endif
+		        Declare Function SystemFontOfSize Lib "Cocoa.framework" Selector "systemFontOfSize:" (Target As Ptr, Size As CGFloat) As Ptr
 		        FontObject = SystemFontOfSize(NSFont,G.TextSize)
 		      End If
 		    Else
-		      #if Target64Bit
-		        Declare Function FontWithName Lib "Cocoa.framework" Selector "fontWithName:size:" (Target As Ptr, FontName As CFStringRef, Size As Double) As Ptr
-		      #else
-		        Declare Function FontWithName Lib "Cocoa.framework" Selector "fontWithName:size:" (Target As Ptr, FontName As CFStringRef, Size As Single) As Ptr
-		      #endif
+		      Declare Function FontWithName Lib "Cocoa.framework" Selector "fontWithName:size:" (Target As Ptr, FontName As CFStringRef, Size As CGFloat) As Ptr
 		      FontObject = FontWithName(NSFont,G.TextFont,G.TextSize)
 		    End If
 		    
@@ -87,16 +67,10 @@ Protected Module BeaconUI
 		      Return G.TextAscent * 0.8
 		    End If
 		    
-		    #if Target64Bit
-		      Declare Function GetCapHeight Lib "Cocoa.framework" Selector "capHeight" (Target As Ptr) As Double
-		    #else
-		      Declare Function GetCapHeight Lib "Cocoa.framework" Selector "capHeight" (Target As Ptr) As Single
-		    #endif
+		    Declare Function GetCapHeight Lib "Cocoa.framework" Selector "capHeight" (Target As Ptr) As CGFloat
 		    Return GetCapHeight(FontObject)
 		  #elseif TargetWin32
 		    Return G.TextAscent * 0.75
-		  #elseif TargetCarbon
-		    Return G.TextAscent * 0.80
 		  #else
 		    Return G.TextAscent
 		  #endif
