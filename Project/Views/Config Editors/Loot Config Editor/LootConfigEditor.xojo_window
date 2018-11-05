@@ -105,7 +105,7 @@ Begin ConfigEditor LootConfigEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   395
+      Height          =   374
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -160,7 +160,7 @@ Begin ConfigEditor LootConfigEditor
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   451
       Begin LootSourceEditor Editor
@@ -201,7 +201,7 @@ Begin ConfigEditor LootConfigEditor
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
-         Height          =   436
+         Height          =   415
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
@@ -217,6 +217,37 @@ Begin ConfigEditor LootConfigEditor
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   451
+      End
+      Begin StatusBar NoSelectionStatusBar
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Borders         =   1
+         Caption         =   ""
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   21
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   415
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
@@ -247,6 +278,37 @@ Begin ConfigEditor LootConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   40
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   250
+   End
+   Begin StatusBar StatusBar1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Borders         =   1
+      Caption         =   ""
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   21
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   415
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -483,6 +545,7 @@ End
 		  Self.FadedSeparator1.Left = ListWidth
 		  Self.List.Width = ListWidth
 		  Self.FadedSeparator2.Width = ListWidth
+		  Self.StatusBar1.Width = ListWidth
 		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
 		  Self.Panel.Width = EditorWidth
 		  
@@ -563,6 +626,21 @@ End
 		  Else
 		    Panel.Value = 1
 		  End If
+		  
+		  Self.UpdateStatus()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatus()
+		  Dim TotalCount As UInteger = Self.List.RowCount
+		  Dim SelectedCount As UInteger = Self.List.SelCount
+		  
+		  Dim Caption As String = Format(TotalCount, "0,") + " " + If(TotalCount = 1, "Loot Source", "Loot Sources")
+		  If SelectedCount > 0 Then
+		    Caption = Format(SelectedCount, "0,") + " of " + Caption + " Selected"
+		  End If
+		  Self.StatusBar1.Caption = Caption
 		End Sub
 	#tag EndMethod
 
@@ -788,6 +866,8 @@ End
 		  Else
 		    Panel.Value = 1
 		  End If
+		  
+		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
 	#tag Event

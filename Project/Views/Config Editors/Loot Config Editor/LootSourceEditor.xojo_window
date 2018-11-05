@@ -140,7 +140,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   347
       Begin ItemSetEditor Editor
@@ -181,7 +181,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
-         Height          =   464
+         Height          =   443
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
@@ -197,6 +197,37 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   347
+      End
+      Begin StatusBar NoSelectionStatusBar
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Borders         =   1
+         Caption         =   ""
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   21
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   443
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True

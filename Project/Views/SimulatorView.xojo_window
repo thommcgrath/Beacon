@@ -44,7 +44,7 @@ Begin BeaconContainer SimulatorView
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   158
+      Height          =   137
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -169,6 +169,37 @@ Begin BeaconContainer SimulatorView
       Visible         =   True
       Width           =   250
    End
+   Begin StatusBar StatusBar1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Borders         =   1
+      Caption         =   ""
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   21
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   179
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   250
+   End
 End
 #tag EndWindow
 
@@ -221,6 +252,8 @@ End
 		    Dim Quantity As Integer = Item.Value
 		    List.AddRow(Str(Quantity, "0") + "x " + Description)
 		  Next
+		  
+		  Self.StatusBar1.Caption = Format(List.ListCount, "0,") + " item" + If(List.ListCount = 1, "", "s")
 		End Sub
 	#tag EndMethod
 
