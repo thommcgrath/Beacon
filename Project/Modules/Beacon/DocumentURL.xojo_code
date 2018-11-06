@@ -184,10 +184,12 @@ Protected Class DocumentURL
 		  Dim Path As Text = File.URLPath
 		  #if TargetMacOS
 		    Dim SaveInfo As Text = File.SaveInfo
-		    If Path.IndexOf("?") = -1 Then
-		      Path = Path + "?saveinfo=" + Beacon.EncodeURLComponent(SaveInfo)
-		    Else
-		      Path = Path + "&saveinfo=" + Beacon.EncodeURLComponent(SaveInfo)
+		    If SaveInfo <> "" Then
+		      If Path.IndexOf("?") = -1 Then
+		        Path = Path + "?saveinfo=" + Beacon.EncodeURLComponent(SaveInfo)
+		      Else
+		        Path = Path + "&saveinfo=" + Beacon.EncodeURLComponent(SaveInfo)
+		      End If
 		    End If
 		  #endif
 		  Return Path

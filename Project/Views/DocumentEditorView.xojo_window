@@ -265,7 +265,7 @@ End
 		    Dim ConfigName As Text = Preferences.LastUsedConfigName(DocumentID)
 		    For I As Integer = 0 To Self.ConfigMenu.Count - 1
 		      Dim Tag As Variant = Self.ConfigMenu.RowTag(I)
-		      If Tag.Type = Variant.TypeText And Tag.TextValue = ConfigName Then
+		      If (Tag.Type = Variant.TypeText And Tag.TextValue = ConfigName) Or (Tag.Type = Variant.TypeString And Tag.StringValue = ConfigName) Then
 		        Self.ConfigMenu.ListIndex = I
 		        Exit For I
 		      End If

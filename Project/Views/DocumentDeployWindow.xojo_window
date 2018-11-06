@@ -46,7 +46,7 @@ Begin Window DocumentDeployWindow
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   600
       Begin Label ServerSelectionMessageLabel
@@ -151,11 +151,11 @@ Begin Window DocumentDeployWindow
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   500
-         LockBottom      =   False
+         LockBottom      =   True
          LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
          Scope           =   2
          TabIndex        =   3
          TabPanelIndex   =   1
@@ -183,11 +183,11 @@ Begin Window DocumentDeployWindow
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   408
-         LockBottom      =   False
+         LockBottom      =   True
          LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   1
@@ -370,11 +370,11 @@ Begin Window DocumentDeployWindow
          InitialParent   =   "Pages"
          Italic          =   False
          Left            =   500
-         LockBottom      =   False
+         LockBottom      =   True
          LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
          Scope           =   2
          TabIndex        =   2
          TabPanelIndex   =   2

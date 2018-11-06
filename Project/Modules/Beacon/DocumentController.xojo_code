@@ -408,13 +408,17 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Writer_Finished(Sender As Beacon.JSONWriter)
+		Private Sub Writer_Finished(Sender As Beacon.JSONWriter, Destination As Beacon.FolderItem)
 		  Self.mBusy = False
 		  
 		  If Sender.Success Then
 		    If Self.mClearModifiedOnWrite And Self.mDocument <> Nil Then
 		      Self.mDocument.Modified = False
 		    End If
+		    
+		    // Update the document url to regenerate saveinfo/bookmarks
+		    Self.mDocumentURL = Beacon.DocumentURL.URLForFile(Destination)
+		    
 		    RaiseEvent WriteSuccess()
 		  Else
 		    Dim Reason As Text
