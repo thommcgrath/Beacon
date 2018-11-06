@@ -20,7 +20,7 @@ Begin Window DocumentExportWindow
    MenuBarVisible  =   True
    MinHeight       =   400
    MinimizeButton  =   False
-   MinWidth        =   800
+   MinWidth        =   848
    Placement       =   1
    Resizeable      =   True
    Title           =   "Export"
@@ -258,12 +258,12 @@ Begin Window DocumentExportWindow
       Visible         =   True
       Width           =   96
    End
-   Begin UITweaks.ResizedPushButton RewriteButton
+   Begin UITweaks.ResizedPushButton RewriteClipboardButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
       Cancel          =   False
-      Caption         =   "Rewrite Clipboard"
+      Caption         =   "Update Clipboard"
       Default         =   False
       Enabled         =   False
       Height          =   20
@@ -271,7 +271,7 @@ Begin Window DocumentExportWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   458
+      Left            =   580
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -298,6 +298,38 @@ Begin Window DocumentExportWindow
       Scope           =   2
       TabPanelIndex   =   0
    End
+   Begin UITweaks.ResizedPushButton RewriteFileButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Update File…"
+      Default         =   False
+      Enabled         =   False
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   458
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   460
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   110
+   End
 End
 #tag EndWindow
 
@@ -305,33 +337,33 @@ End
 	#tag Method, Flags = &h21
 		Private Sub CheckClipboard()
 		  If Self.FileList.ListIndex = -1 Then
-		    If Self.RewriteButton.Enabled Then
-		      Self.RewriteButton.Enabled = False
+		    If Self.RewriteClipboardButton.Enabled Then
+		      Self.RewriteClipboardButton.Enabled = False
 		    End If
-		    If Self.RewriteButton.Caption <> "Rewrite Clipboard" Then
-		      Self.RewriteButton.Caption = "Rewrite Clipboard"
+		    If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
+		      Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
 		    End If
 		    Return
 		  End If
 		  
 		  Dim SelectedConfig As String = Self.FileList.Cell(Self.FileList.ListIndex, 0)
 		  If SelectedConfig = "Command Line Options" Then
-		    If Self.RewriteButton.Enabled Then
-		      Self.RewriteButton.Enabled = False
+		    If Self.RewriteClipboardButton.Enabled Then
+		      Self.RewriteClipboardButton.Enabled = False
 		    End If
-		    If Self.RewriteButton.Caption <> "Rewrite Clipboard" Then
-		      Self.RewriteButton.Caption = "Rewrite Clipboard"
+		    If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
+		      Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
 		    End If
 		    Return
 		  End If
 		  
 		  Dim Board As New Clipboard
 		  If Board.TextAvailable = False Or ReplaceLineEndings(Board.Text, EndOfLine) = Self.ContentArea.Text Then
-		    If Self.RewriteButton.Enabled Then
-		      Self.RewriteButton.Enabled = False
+		    If Self.RewriteClipboardButton.Enabled Then
+		      Self.RewriteClipboardButton.Enabled = False
 		    End If
-		    If Self.RewriteButton.Caption <> "Rewrite Clipboard" Then
-		      Self.RewriteButton.Caption = "Rewrite Clipboard"
+		    If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
+		      Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
 		    End If
 		    Return
 		  End If
@@ -343,40 +375,40 @@ End
 		  Case Beacon.RewriteModeGameUserSettingsIni
 		    SearchingFor = "[" + Beacon.ServerSettingsHeader + "]"
 		  Else
-		    If Self.RewriteButton.Enabled Then
-		      Self.RewriteButton.Enabled = False
+		    If Self.RewriteClipboardButton.Enabled Then
+		      Self.RewriteClipboardButton.Enabled = False
 		    End If
-		    If Self.RewriteButton.Caption <> "Rewrite Clipboard" Then
-		      Self.RewriteButton.Caption = "Rewrite Clipboard"
+		    If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
+		      Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
 		    End If
 		    Return
 		  End Select
 		  
 		  If Board.Text.InStr(SearchingFor) <= 0 Then
-		    If Self.RewriteButton.Enabled Then
-		      Self.RewriteButton.Enabled = False
+		    If Self.RewriteClipboardButton.Enabled Then
+		      Self.RewriteClipboardButton.Enabled = False
 		    End If
-		    If Self.RewriteButton.Caption <> "Rewrite Clipboard" Then
-		      Self.RewriteButton.Caption = "Rewrite Clipboard"
+		    If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
+		      Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
 		    End If
 		    Return
 		  End If
 		  
 		  If EncodeHex(Crypto.MD5(Board.Text)) = Self.mLastRewrittenHash Then
-		    If Self.RewriteButton.Enabled Then
-		      Self.RewriteButton.Enabled = False
+		    If Self.RewriteClipboardButton.Enabled Then
+		      Self.RewriteClipboardButton.Enabled = False
 		    End If
-		    If Self.RewriteButton.Caption <> "Ready for Paste" Then
-		      Self.RewriteButton.Caption = "Ready for Paste"
+		    If Self.RewriteClipboardButton.Caption <> "Ready for Paste" Then
+		      Self.RewriteClipboardButton.Caption = "Ready for Paste"
 		    End If
 		    Return
 		  End If
 		  
-		  If Not Self.RewriteButton.Enabled Then
-		    Self.RewriteButton.Enabled = True
+		  If Not Self.RewriteClipboardButton.Enabled Then
+		    Self.RewriteClipboardButton.Enabled = True
 		  End If
-		  If Self.RewriteButton.Caption <> "Rewrite Clipboard" Then
-		    Self.RewriteButton.Caption = "Rewrite Clipboard"
+		  If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
+		    Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
 		  End If
 		End Sub
 	#tag EndMethod
@@ -432,7 +464,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub RestoreRewriteButton()
+		Private Sub RestoreRewriteClipboardButton()
 		  
 		End Sub
 	#tag EndMethod
@@ -477,13 +509,14 @@ End
 	#tag Event
 		Sub Change()
 		  Xojo.Core.Timer.CancelCall(WeakAddressOf RestoreCopyButton)
-		  Xojo.Core.Timer.CancelCall(WeakAddressOf RestoreRewriteButton)
+		  Xojo.Core.Timer.CancelCall(WeakAddressOf RestoreRewriteClipboardButton)
 		  
 		  Self.CopyButton.Enabled = Me.ListIndex > -1
 		  Self.CopyButton.Caption = "Copy All"
 		  
 		  If Me.ListIndex = -1 Then
 		    Self.SaveButton.Enabled = False
+		    Self.RewriteFileButton.Enabled = False
 		    Self.ContentArea.Text = ""
 		    Self.CheckClipboard()
 		    Return
@@ -503,6 +536,7 @@ End
 		      Next
 		    End If
 		    Self.SaveButton.Enabled = False
+		    Self.RewriteFileButton.Enabled = False
 		    Self.CheckClipboard()
 		    Return
 		  End If
@@ -519,6 +553,7 @@ End
 		  End If
 		  
 		  Self.SaveButton.Enabled = True
+		  Self.RewriteFileButton.Enabled = True
 		  Self.ContentArea.Text = ReplaceLineEndings(Beacon.RewriteIniContent("", Configs), EndOfLine)
 		  Self.CheckClipboard()
 		End Sub
@@ -541,29 +576,24 @@ End
 		  Dialog.SuggestedFileName = ConfigFilename
 		  
 		  Dim File As FolderItem = Dialog.ShowModal()
-		  If File <> Nil Then
-		    Dim Content As String
-		    If File.Exists Then
-		      Dim InStream As TextInputStream = TextInputStream.Open(File)
-		      Content = InStream.ReadAll(Encodings.UTF8)
-		      InStream.Close
-		      
-		      Dim Configs As Xojo.Core.Dictionary
-		      Select Case ConfigFilename
-		      Case Beacon.RewriteModeGameIni
-		        Configs = Self.mGameIniConfigs
-		      Case Beacon.RewriteModeGameUserSettingsIni
-		        Configs = Self.mGameUserSettingsConfigs
-		      End Select
-		      Content = Beacon.RewriteIniContent(Content.ToText, Configs)
-		    Else
-		      Content = Self.ContentArea.Text
-		    End If
-		    
+		  If File = Nil Or Not File.Exists Then
+		    Return
+		  End If
+		  
+		  If Not File.IsWriteable Then
+		    Self.ShowAlert("File " + File.DisplayName + " is not writable.", "The file may be locked or you may not have permission to edit the file.")
+		    Return
+		  End If
+		  
+		  Dim Content As String = Self.ContentArea.Text
+		  Try
 		    Dim OutStream As TextOutputStream = TextOutputStream.Create(File)
 		    OutStream.Write(Content)
 		    OutStream.Close
-		  End If
+		  Catch Err As IOException
+		    Self.ShowAlert("Unable to write to " + File.DisplayName, "Check file permissions and disk space.")
+		    Return
+		  End Try
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -578,7 +608,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events RewriteButton
+#tag Events RewriteClipboardButton
 	#tag Event
 		Sub Action()
 		  Dim SelectedConfig As String = Self.FileList.Cell(Self.FileList.ListIndex, 0)
@@ -595,8 +625,8 @@ End
 		  Dim Board As New Clipboard
 		  Board.Text = Beacon.RewriteIniContent(Board.Text.ToText, Configs)
 		  Self.mLastRewrittenHash = EncodeHex(MD5(Board.Text))
-		  Self.RewriteButton.Enabled = False
-		  Self.RewriteButton.Caption = "Ready for Paste"
+		  Self.RewriteClipboardButton.Enabled = False
+		  Self.RewriteClipboardButton.Caption = "Ready for Paste"
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -604,6 +634,57 @@ End
 	#tag Event
 		Sub Action()
 		  Self.CheckClipboard()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events RewriteFileButton
+	#tag Event
+		Sub Action()
+		  Dim ConfigFilename As String = Self.FileList.Cell(Self.FileList.ListIndex, 0)
+		  
+		  Dim Dialog As New OpenDialog
+		  Dialog.Filter = BeaconFileTypes.IniFile
+		  Dialog.SuggestedFileName = ConfigFilename
+		  Dialog.ActionButtonCaption = "Update"
+		  
+		  Dim File As FolderItem = Dialog.ShowModal()
+		  If File = Nil Or Not File.Exists Then
+		    Return
+		  End If
+		  
+		  If Not File.IsWriteable Then
+		    Self.ShowAlert("File " + File.DisplayName + " is not writable.", "The file may be locked or you may not have permission to edit the file.")
+		    Return
+		  End If
+		  
+		  Dim Content As String
+		  
+		  Try
+		    Dim InStream As TextInputStream = TextInputStream.Open(File)
+		    Content = InStream.ReadAll(Encodings.UTF8)
+		    InStream.Close
+		  Catch Err As IOException
+		    Self.ShowAlert("Unable to open " + File.DisplayName, "Beacon was unable to read the current content of the file to rewriting. The file has not been changed.")
+		    Return
+		  End Try
+		  
+		  Dim Configs As Xojo.Core.Dictionary
+		  Select Case ConfigFilename
+		  Case Beacon.RewriteModeGameIni
+		    Configs = Self.mGameIniConfigs
+		  Case Beacon.RewriteModeGameUserSettingsIni
+		    Configs = Self.mGameUserSettingsConfigs
+		  End Select
+		  Content = Beacon.RewriteIniContent(Content.ToText, Configs)
+		  
+		  Try
+		    Dim OutStream As TextOutputStream = TextOutputStream.Create(File)
+		    OutStream.Write(Content)
+		    OutStream.Close
+		  Catch Err As IOException
+		    Self.ShowAlert("Unable to write to " + File.DisplayName, "Check file permissions and disk space.")
+		    Return
+		  End Try
 		End Sub
 	#tag EndEvent
 #tag EndEvents
