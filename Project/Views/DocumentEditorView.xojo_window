@@ -305,6 +305,7 @@ End
 
 	#tag MenuHandler
 		Function FileSaveAs() As Boolean Handles FileSaveAs.Action
+			Self.Document.NewIdentifier()
 			Call Self.SaveAs()
 			Return True
 		End Function

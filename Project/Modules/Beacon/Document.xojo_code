@@ -502,6 +502,13 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub NewIdentifier()
+		  Self.mIdentifier = Beacon.CreateUUID
+		  Self.mModified = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function OAuthData(Provider As Text) As Xojo.Core.Dictionary
 		  If Self.mOAuthDicts <> Nil And Self.mOAuthDicts.HasKey(Provider) Then
 		    Return Beacon.Clone(Self.mOAuthDicts.Value(Provider))

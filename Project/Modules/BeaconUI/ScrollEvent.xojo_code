@@ -15,13 +15,8 @@ Protected Class ScrollEvent
 		      Declare Function GetCurrentEvent Lib "Cocoa.framework" Selector "currentEvent" (Target As Ptr) As Ptr
 		      Declare Function RespondsToSelector Lib "Cocoa.framework" Selector "respondsToSelector:" (Target As Ptr, Sel As Ptr) As Boolean
 		      Declare Function HasPreciseScrollingDeltas Lib "Cocoa.framework" Selector "hasPreciseScrollingDeltas" (Target As Ptr) As Boolean
-		      #if Target64Bit
-		        Declare Function ScrollingDeltaX Lib "Cocoa.framework" Selector "scrollingDeltaX" (Target As Ptr) As Double
-		        Declare Function ScrollingDeltaY Lib "Cocoa.framework" Selector "scrollingDeltaY" (Target As Ptr) As Double
-		      #else
-		        Declare Function ScrollingDeltaX Lib "Cocoa.framework" Selector "scrollingDeltaX" (Target As Ptr) As Single
-		        Declare Function ScrollingDeltaY Lib "Cocoa.framework" Selector "scrollingDeltaY" (Target As Ptr) As Single
-		      #endif
+		      Declare Function ScrollingDeltaX Lib "Cocoa.framework" Selector "scrollingDeltaX" (Target As Ptr) As CGFloat
+		      Declare Function ScrollingDeltaY Lib "Cocoa.framework" Selector "scrollingDeltaY" (Target As Ptr) As CGFloat
 		      Declare Function GetMomentumPhase Lib "Cocoa.framework" Selector "momentumPhase" (Target As Ptr) As Integer
 		      Declare Function GetPhase Lib "Cocoa.framework" Selector "phase" (Target As Ptr) As Integer
 		      

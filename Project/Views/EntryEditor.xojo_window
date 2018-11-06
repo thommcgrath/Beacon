@@ -96,7 +96,7 @@ Begin Window EntryEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   340
+         Width           =   312
       End
       Begin BeaconListbox EngramList
          AutoDeactivate  =   True
@@ -184,6 +184,28 @@ Begin Window EntryEditor
          Visible         =   True
          Width           =   340
       End
+      Begin ProgressWheel SearchSpinner
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   16
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "EngramsGroup"
+         Left            =   364
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   3
+         TabPanelIndex   =   0
+         TabStop         =   True
+         Top             =   59
+         Transparent     =   False
+         Visible         =   True
+         Width           =   16
+      End
    End
    Begin GroupBox SettingsGroup
       AutoDeactivate  =   True
@@ -225,7 +247,6 @@ Begin Window EntryEditor
          HasBackColor    =   False
          Height          =   209
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   422
          LockBottom      =   True
@@ -422,6 +443,14 @@ Begin Window EntryEditor
       Visible         =   True
       Width           =   80
    End
+   Begin Beacon.EngramSearcherThread EngramSearcher
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   "0"
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -432,6 +461,7 @@ End
 		  
 		  Self.Width = Max(PreferredSize.Width, Self.MinWidth)
 		  Self.Height = Max(PreferredSize.Height, Self.MinHeight)
+		  Self.SearchSpinnerVisible = False
 		  
 		  Self.SwapButtons()
 		End Sub
@@ -454,6 +484,27 @@ End
 		Sub Constructor()
 		  Self.mSelectedEngrams = New Xojo.Core.Dictionary
 		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ListUnknownEngrams()
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedEngrams
+		    Dim Path As Text = Entry.Key
+		    Dim Option As Beacon.SetEntryOption = Entry.Value
+		    
+		    Dim Idx As Integer = Self.mEngramRowIndexes.Lookup(Path, -1)
+		    If Idx = -1 Then
+		      Dim WeightValue As Double = Option.Weight * 100
+		      Dim Weight As String = WeightValue.PrettyText
+		      
+		      EngramList.AddRow("", Option.Engram.Label, Option.Engram.ModName, Weight)
+		      EngramList.RowTag(EngramList.LastIndex) = Option.Engram
+		      Self.mEngramRowIndexes.Value(Path) = EngramList.LastIndex
+		      Idx = EngramList.LastIndex
+		      EngramList.CellCheck(Idx, Self.ColumnIncluded) = True
+		    End If
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -495,7 +546,7 @@ End
 		  EngramList.DeleteAllRows
 		  
 		  Dim PerfectMatch As Boolean
-		  Dim Indexes As New Xojo.Core.Dictionary
+		  Self.mEngramRowIndexes = New Xojo.Core.Dictionary
 		  For Each Engram As Beacon.Engram In Engrams
 		    Dim Weight As String = ""
 		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
@@ -505,7 +556,7 @@ End
 		    
 		    EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
 		    EngramList.RowTag(EngramList.LastIndex) = Engram
-		    Indexes.Value(Engram.Path) = EngramList.LastIndex
+		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.LastIndex
 		    EngramList.CellCheck(EngramList.LastIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
 		    If Engram.Path = SearchText Or Engram.Label = SearchText Then
 		      PerfectMatch = True
@@ -513,37 +564,11 @@ End
 		  Next
 		  
 		  If Not PerfectMatch Then
-		    Dim ParsedEngrams() As Beacon.Engram = Beacon.PullEngramsFromText(SearchText)
-		    For Each Engram As Beacon.Engram In ParsedEngrams
-		      Dim Weight As String = ""
-		      If Self.mSelectedEngrams.HasKey(Engram.Path) Then
-		        Dim WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.Path)).Weight * 100
-		        Weight = WeightValue.PrettyText
-		      End If
-		      
-		      EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
-		      EngramList.RowTag(EngramList.LastIndex) = Engram
-		      Indexes.Value(Engram.Path) = EngramList.LastIndex
-		      EngramList.CellCheck(EngramList.LastIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
-		    Next
-		  End If
-		  
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedEngrams
-		    Dim Path As Text = Entry.Key
-		    Dim Option As Beacon.SetEntryOption = Entry.Value
-		    
-		    Dim Idx As Integer = Indexes.Lookup(Path, -1)
-		    If Idx = -1 Then
-		      Dim WeightValue As Double = Option.Weight * 100
-		      Dim Weight As String = WeightValue.PrettyText
-		      
-		      EngramList.AddRow("", Option.Engram.Label, Option.Engram.ModName, Weight)
-		      EngramList.RowTag(EngramList.LastIndex) = Option.Engram
-		      Indexes.Value(Path) = EngramList.LastIndex
-		      Idx = EngramList.LastIndex
-		      EngramList.CellCheck(Idx, Self.ColumnIncluded) = True
-		    End If
-		  Next
+		    Self.EngramSearcher.Search(SearchText, False)
+		  Else
+		    Self.EngramSearcher.Cancel()
+		  End If  
+		  Self.ListUnknownEngrams()
 		End Sub
 	#tag EndMethod
 
@@ -634,6 +659,10 @@ End
 		Private mCreatedEntries() As Beacon.SetEntry
 	#tag EndProperty
 
+	#tag Property, Flags = &h0
+		mEngramRowIndexes As Xojo.Core.Dictionary
+	#tag EndProperty
+
 	#tag Property, Flags = &h21
 		Private mOriginalEntry As Beacon.SetEntry
 	#tag EndProperty
@@ -641,6 +670,30 @@ End
 	#tag Property, Flags = &h21
 		Private mSelectedEngrams As Xojo.Core.Dictionary
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Return Self.SearchSpinner.Visible
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.SearchSpinner.Visible = Value Then
+			    Return
+			  End If
+			  
+			  Self.SearchSpinner.Visible = Value
+			  
+			  If Value Then
+			    Self.FilterField.Width = (Self.SearchSpinner.Left - 12) - Self.FilterField.Left
+			  Else
+			    Self.FilterField.Width = Self.EngramList.Width
+			  End If
+			End Set
+		#tag EndSetter
+		Private SearchSpinnerVisible As Boolean
+	#tag EndComputedProperty
 
 
 	#tag Constant, Name = ColumnIncluded, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -815,6 +868,39 @@ End
 	#tag Event
 		Sub Action()
 		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events EngramSearcher
+	#tag Event
+		Sub Finished()
+		  Self.SearchSpinnerVisible = False
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.SearchSpinnerVisible = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub EngramsFound()
+		  Dim ParsedEngrams() As Beacon.Engram = Me.Engrams(True)
+		  For Each Engram As Beacon.Engram In ParsedEngrams
+		    #if DebugBuild
+		      System.DebugLog("Found engram " + Engram.Path)
+		    #endif
+		    Dim Weight As String = ""
+		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
+		      Dim WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.Path)).Weight * 100
+		      Weight = WeightValue.PrettyText
+		    End If
+		    
+		    EngramList.AddRow("", Engram.Label, Engram.ModName, Weight)
+		    EngramList.RowTag(EngramList.LastIndex) = Engram
+		    Self.mEngramRowIndexes.Value(Engram.Path) = EngramList.LastIndex
+		    EngramList.CellCheck(EngramList.LastIndex, Self.ColumnIncluded) = Self.mSelectedEngrams.HasKey(Engram.Path)
+		  Next
+		  Self.ListUnknownEngrams()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

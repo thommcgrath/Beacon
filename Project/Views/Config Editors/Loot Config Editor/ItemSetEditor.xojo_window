@@ -44,7 +44,7 @@ Begin BeaconContainer ItemSetEditor
       GridLinesVertical=   1
       HasHeading      =   True
       HeadingIndex    =   0
-      Height          =   364
+      Height          =   343
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -166,6 +166,37 @@ Begin BeaconContainer ItemSetEditor
       Top             =   41
       Transparent     =   True
       UseFocusRing    =   False
+      Visible         =   True
+      Width           =   560
+   End
+   Begin StatusBar StatusBar1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Borders         =   1
+      Caption         =   ""
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   21
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   407
+      Transparent     =   True
+      UseFocusRing    =   True
       Visible         =   True
       Width           =   560
    End
@@ -335,12 +366,27 @@ End
 		  If ScrollToSelection Then
 		    EntryList.EnsureSelectionIsVisible()
 		  End If
+		  
+		  Self.UpdateStatus()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEntryList(ParamArray SelectEntries() As Beacon.SetEntry)
 		  Self.UpdateEntryList(SelectEntries)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatus()
+		  Dim TotalCount As UInteger = Self.EntryList.RowCount
+		  Dim SelectedCount As UInteger = Self.EntryList.SelCount
+		  
+		  Dim Caption As String = Format(TotalCount, "0,") + " " + If(TotalCount = 1, "Item Set Entry", "Item Set Entries")
+		  If SelectedCount > 0 Then
+		    Caption = Format(SelectedCount, "0,") + " of " + Caption + " Selected"
+		  End If
+		  Self.StatusBar1.Caption = Caption
 		End Sub
 	#tag EndMethod
 
@@ -576,6 +622,7 @@ End
 	#tag Event
 		Sub Change()
 		  Self.Header.EditEntry.Enabled = Me.SelCount > 0
+		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
 	#tag Event

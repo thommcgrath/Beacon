@@ -467,6 +467,14 @@ Begin BeaconContainer ModDetailView
       Visible         =   True
       Width           =   864
    End
+   Begin Beacon.EngramSearcherThread Searcher
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   "0"
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -620,33 +628,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ImportText(Contents As String)
-		  Dim Engrams() As Beacon.Engram = Beacon.PullEngramsFromText(Contents)
-		  If UBound(Engrams) = -1 Then
-		    Self.ShowAlert("Nothing to import", "Sorry, Beacon has tried to find classes to import, but nothing was found.")
-		    Return
-		  End If
-		  
-		  Dim Set As BeaconAPI.EngramSet = Self.EngramSet
-		  Dim CurrentEngrams() As BeaconAPI.Engram = Set.ActiveEngrams
-		  Dim EngramDict As New Xojo.Core.Dictionary
-		  For Each Engram As BeaconAPI.Engram In CurrentEngrams
-		    EngramDict.Value(Engram.Path) = True
-		  Next
-		  
-		  For Each Engram As Beacon.Engram In Engrams
-		    If EngramDict.HasKey(Engram.Path) Then
-		      Continue
-		    End If
-		    
-		    Dim APIEngram As New BeaconAPI.Engram(Engram)
-		    APIEngram.ModID = Self.mCurrentMod.ModID
-		    Set.Add(APIEngram)
-		    EngramList.AddRow("")
-		    Self.ShowEngramInRow(EngramList.LastIndex, APIEngram)
-		    EngramDict.Value(Engram.Path) = True
-		  Next
-		  
-		  Header.PublishButton.Enabled = Set.Modified
+		  Self.Searcher.Search(Contents)
 		End Sub
 	#tag EndMethod
 
@@ -754,6 +736,15 @@ End
 		  End If
 		End Sub
 	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event ImportFinished()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ImportStarted()
+	#tag EndHook
 
 
 	#tag ComputedProperty, Flags = &h0
@@ -940,6 +931,49 @@ End
 		  
 		  Me.RightItems.Append(New BeaconToolbarItem("ImportFileButton", IconToolbarFile, "Import engrams from file."))
 		  Me.RightItems.Append(New BeaconToolbarItem("ImportURLButton", IconToolbarLink, "Import engrams from url."))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Searcher
+	#tag Event
+		Sub Finished()
+		  RaiseEvent ImportFinished
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  RaiseEvent ImportStarted
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub EngramsFound()
+		  Dim Engrams() As Beacon.Engram = Me.Engrams(True)
+		  
+		  If Engrams.Ubound = -1 Then
+		    Return
+		  End If
+		  
+		  Dim Set As BeaconAPI.EngramSet = Self.EngramSet
+		  Dim CurrentEngrams() As BeaconAPI.Engram = Set.ActiveEngrams
+		  Dim EngramDict As New Xojo.Core.Dictionary
+		  For Each Engram As BeaconAPI.Engram In CurrentEngrams
+		    EngramDict.Value(Engram.Path) = True
+		  Next
+		  
+		  For Each Engram As Beacon.Engram In Engrams
+		    If EngramDict.HasKey(Engram.Path) Then
+		      Continue
+		    End If
+		    
+		    Dim APIEngram As New BeaconAPI.Engram(Engram)
+		    APIEngram.ModID = Self.mCurrentMod.ModID
+		    Set.Add(APIEngram)
+		    EngramList.AddRow("")
+		    Self.ShowEngramInRow(EngramList.LastIndex, APIEngram)
+		    EngramDict.Value(Engram.Path) = True
+		  Next
+		  
+		  Header.PublishButton.Enabled = Set.Modified
 		End Sub
 	#tag EndEvent
 #tag EndEvents

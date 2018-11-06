@@ -2,57 +2,10 @@
 Protected Class StatusBar
 Inherits ControlCanvas
 	#tag Event
-		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  #Pragma Unused X
-		  #Pragma Unused Y
-		  
-		  If Not Self.mClickable Then
-		    Return True
-		  End If
-		  
-		  Self.mDrawPressed = True
-		  Self.Invalidate
-		  
-		  Return True
-		End Function
-	#tag EndEvent
-
-	#tag Event
-		Sub MouseDrag(X As Integer, Y As Integer)
-		  If Not Self.mClickable Then
-		    Return
-		  End If
-		  
-		  Dim Pressed As Boolean = X >= 0 And X <= Self.Width And Y >= 0 And Y <= Self.Height
-		  If Self.mDrawPressed <> Pressed Then
-		    Self.mDrawPressed = Pressed
-		    Self.Invalidate
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub MouseUp(X As Integer, Y As Integer)
-		  If Not Self.mClickable Then
-		    Return
-		  End If
-		  
-		  Dim Pressed As Boolean = X >= 0 And X <= Self.Width And Y >= 0 And Y <= Self.Height
-		  If Pressed Then
-		    RaiseEvent Action
-		  End If
-		  If Self.mDrawPressed <> False Then
-		    Self.mDrawPressed = False
-		    Self.Invalidate
-		  End If
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.ForeColor = Self.ColorProfile.BorderColor
+		  G.ForeColor = SystemColors.SeparatorColor
 		  G.FillRect(0, 0, G.Width, G.Height)
 		  
 		  Dim ContentLeft As Integer = 0
@@ -73,51 +26,20 @@ Inherits ControlCanvas
 		    ContentRight = ContentRight - 1
 		  End If
 		  
-		  Dim BackgroundColor As Color = Self.ColorProfile.BackgroundColor
-		  Dim ForegroundColor As Color = Self.ColorProfile.ForegroundColor
-		  Dim ShadowColor As Color = Self.ColorProfile.ShadowColor
-		  
-		  If Self.mDrawPressed Then
-		    BackgroundColor = BackgroundColor.Darker(0.5)
-		    ForegroundColor = ForegroundColor.Darker(0.5)
-		    ShadowColor = ShadowColor.Darker(0.5)
-		  End If
-		  
 		  Dim Clip As Graphics = G.Clip(ContentLeft, ContentTop, ContentRight - ContentLeft, ContentBottom - ContentTop)
-		  Clip.ForeColor = BackgroundColor
-		  Clip.FillRect(0, 0, Clip.Width, Clip.Height)
-		  
+		  Clip.ClearRect(0, 0, Clip.Width, Clip.Height)
 		  Clip.TextFont = "SmallSystem"
 		  Clip.TextSize = 0
 		  
-		  Dim CaptionLeft As Integer = 4
-		  Dim CaptionSpace As Integer = Clip.Width - (CaptionLeft * 2)
-		  If Self.Clickable Then
-		    CaptionSpace = CaptionSpace - (IconEdit.Width + CaptionLeft)
-		  End If
-		  Dim CaptionBottom As Integer = Round((Clip.Height / 2) + (Clip.CapHeight / 2))
+		  Dim CaptionSpace As Double = Clip.Width - 10
+		  Dim CaptionWidth As Double = Min(CaptionSpace, Clip.StringWidth(Self.Caption))
+		  Dim CaptionLeft As Double = (CaptionSpace - CaptionWidth) / 2
+		  Dim CaptionBottom As Double = (Clip.Height / 2) + (Clip.CapHeight / 2)
 		  
-		  Clip.ForeColor = ShadowColor
-		  Clip.DrawString(Self.mCaption, CaptionLeft, CaptionBottom + 1, CaptionSpace, True)
-		  Clip.ForeColor = ForegroundColor
+		  Clip.ForeColor = SystemColors.LabelColor
 		  Clip.DrawString(Self.mCaption, CaptionLeft, CaptionBottom, CaptionSpace, True)
-		  
-		  If Self.Clickable Then
-		    Dim ForeIcon As Picture = BeaconUI.IconWithColor(IconEdit, ForegroundColor)
-		    Dim ShadowIcon As Picture = BeaconUI.IconWithColor(IconEdit, ShadowColor)
-		    Dim IconLeft As Integer = Clip.Width - (CaptionLeft + ForeIcon.Width)
-		    Dim IconTop As Integer = (Clip.Height - ForeIcon.Height) / 2
-		    
-		    Clip.DrawPicture(ShadowIcon, IconLeft, IconTop + 1)
-		    Clip.DrawPicture(ForeIcon, IconLeft, IconTop)
-		  End If
 		End Sub
 	#tag EndEvent
-
-
-	#tag Hook, Flags = &h0
-		Event Action()
-	#tag EndHook
 
 
 	#tag ComputedProperty, Flags = &h0
@@ -157,37 +79,12 @@ Inherits ControlCanvas
 		Caption As String
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mClickable
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mClickable <> Value Then
-			    Self.mClickable = Value
-			    Self.Invalidate
-			  End If
-			End Set
-		#tag EndSetter
-		Clickable As Boolean
-	#tag EndComputedProperty
-
 	#tag Property, Flags = &h21
 		Private mBorders As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mCaption As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mClickable As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mDrawPressed As Boolean
 	#tag EndProperty
 
 
@@ -231,13 +128,6 @@ Inherits ControlCanvas
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Clickable"
-			Visible=true
-			Group="Behavior"
-			InitialValue="False"
-			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="DoubleBuffer"

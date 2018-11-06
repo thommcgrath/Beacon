@@ -1,20 +1,7 @@
 #tag Module
 Protected Module FrameworkExtensions
-	#tag Method, Flags = &h0
-		Function BeginsWith(Extends Source As String, Other As String) As Boolean
-		  Return Left(Source, Len(Other)) = Other
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Characters(Extends Source As String) As String()
-		  Return Split(Source, "")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function DoubleValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto) As Double
-		  Dim Value As Auto = Dict.Value(Key)
+	#tag Method, Flags = &h21
+		Private Function AutoToDouble(Value As Auto, ResolveWithFirst As Boolean = False) As Double
 		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
 		  Select Case Info.FullName
 		  Case "Text"
@@ -36,12 +23,46 @@ Protected Module FrameworkExtensions
 		  Case "UInt8", "UInt16", "UInt32", "UInt64"
 		    Dim UIntegerValue As UInt64 = Value
 		    Return UIntegerValue
+		  Case "Auto()"
+		    Dim Arr() As Auto = Value
+		    Dim Possibles() As Double
+		    For Each Possible As Auto In Arr
+		      Dim Decoded As Double = AutoToDouble(Possible, ResolveWithFirst)
+		      Possibles.Append(Decoded)
+		    Next
+		    If Possibles.Ubound = -1 Then
+		      Return 0
+		    End If
+		    If ResolveWithFirst Then
+		      Return Possibles(0)
+		    Else
+		      Return Possibles(Possibles.Ubound)
+		    End If
 		  Else
 		    Break
 		  End Select
 		  
 		  Exception Err As TypeMismatchException
 		    Return 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BeginsWith(Extends Source As String, Other As String) As Boolean
+		  Return Left(Source, Len(Other)) = Other
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Characters(Extends Source As String) As String()
+		  Return Split(Source, "")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DoubleValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto, ResolveWithFirst As Boolean = False) As Double
+		  Dim Value As Auto = Dict.Value(Key)
+		  Return AutoToDouble(Value, ResolveWithFirst)
 		End Function
 	#tag EndMethod
 

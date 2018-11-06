@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconContainer LootSourceEditor
+Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -44,7 +44,7 @@ Begin BeaconContainer LootSourceEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   217
+      Height          =   196
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -140,7 +140,7 @@ Begin BeaconContainer LootSourceEditor
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   347
       Begin ItemSetEditor Editor
@@ -181,7 +181,7 @@ Begin BeaconContainer LootSourceEditor
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
-         Height          =   464
+         Height          =   443
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Panel"
@@ -197,6 +197,37 @@ Begin BeaconContainer LootSourceEditor
          TabPanelIndex   =   1
          TabStop         =   True
          Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   347
+      End
+      Begin StatusBar NoSelectionStatusBar
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Borders         =   1
+         Caption         =   ""
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   21
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   443
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
@@ -319,6 +350,37 @@ Begin BeaconContainer LootSourceEditor
       Visible         =   True
       Width           =   250
    End
+   Begin StatusBar StatusBar1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Borders         =   1
+      Caption         =   ""
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   21
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   260
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   250
+   End
 End
 #tag EndWindow
 
@@ -336,11 +398,11 @@ End
 		Sub Open()
 		  Self.Simulator.Height = Preferences.SimulatorSize
 		  If Self.SimulatorVisible Then
-		    Self.Simulator.Top = Self.Height - Self.Simulator.Height
+		    Self.SimulatorPosition = Self.Height - Self.Simulator.Height
 		  Else
-		    Self.Simulator.Top = Self.Height
+		    Self.SimulatorPosition = Self.Height
 		  End If
-		  Self.SetList.Height = Self.Simulator.Top - Self.SetList.Top
+		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
 
@@ -386,6 +448,17 @@ End
 		    Self.mSorting = False
 		    RaiseEvent Updated
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AnimationStep(Identifier As Text, Value As Double)
+		  // Part of the AnimationKit.ValueAnimator interface.
+		  
+		  Select Case Identifier
+		  Case "simulator position"
+		    Self.SimulatorPosition = Round(Value)
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -597,7 +670,7 @@ End
 		  // Find sets that are common to all sources
 		  Dim Sets As New Dictionary
 		  Dim Weights As New Dictionary
-		  Dim MatchWeight As Integer = UBound(Self.mSources) + 1
+		  Dim MatchWeight As Integer = Self.mSources.Ubound + 1
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    For Each Set As Beacon.ItemSet In Source
@@ -616,6 +689,9 @@ End
 		    End If
 		  Next
 		  
+		  Self.mTotalSetCount = Sets.Count
+		  Self.mVisibleSetCount = CommonSets.Ubound + 1
+		  
 		  SetList.DeleteAllRows
 		  For Each Set As Beacon.ItemSet In CommonSets
 		    SetList.AddRow(Set.Label)
@@ -626,29 +702,34 @@ End
 		  SetList.Sort
 		  Self.mSorting = False
 		  
-		  If UBound(Self.mSources) > -1 Then
-		    Dim DuplicatesState As CheckBox.CheckedStates = if(Self.mSources(0).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
-		    Dim Label As Text = Self.mSources(0).Label
-		    Dim MinSets As Integer = Self.mSources(0).MinItemSets
-		    Dim MaxSets As Integer = Self.mSources(0).MaxItemSets
-		    
-		    For I As Integer = 1 To UBound(Self.mSources)
-		      MinSets = Min(MinSets, Self.mSources(I).MinItemSets)
-		      MaxSets = Max(MaxSets, Self.mSources(I).MaxItemSets)
+		  #if false
+		    If Self.mSources.Ubound > -1 Then
+		      Dim DuplicatesState As CheckBox.CheckedStates = if(Self.mSources(0).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
+		      Dim Label As Text = Self.mSources(0).Label
+		      Dim MinSets As Integer = Self.mSources(0).MinItemSets
+		      Dim MaxSets As Integer = Self.mSources(0).MaxItemSets
 		      
-		      If Self.mSources(I).Label <> Label Then
-		        Label = ""
-		      End If
-		      
-		      Dim State As CheckBox.CheckedStates = if(Self.mSources(I).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
-		      If State <> DuplicatesState Then
-		        DuplicatesState = CheckBox.CheckedStates.Indeterminate
-		      End If
-		    Next
-		  End If
+		      For I As Integer = 1 To Self.mSources.Ubound
+		        MinSets = Min(MinSets, Self.mSources(I).MinItemSets)
+		        MaxSets = Max(MaxSets, Self.mSources(I).MaxItemSets)
+		        
+		        If Self.mSources(I).Label <> Label Then
+		          Label = ""
+		        End If
+		        
+		        Dim State As CheckBox.CheckedStates = if(Self.mSources(I).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
+		        If State <> DuplicatesState Then
+		          DuplicatesState = CheckBox.CheckedStates.Indeterminate
+		        End If
+		      Next
+		    End If
+		  #endif
 		  
-		  Self.Simulator.Simulate()
+		  If Self.SimulatorVisible Then
+		    Self.Simulator.Simulate()
+		  End If
 		  Self.mUpdating = False
+		  Self.UpdateStatus()
 		End Sub
 	#tag EndMethod
 
@@ -721,6 +802,7 @@ End
 		  Self.Simulator.Width = ListWidth
 		  Self.LootSourceSettingsContainer1.Width = ListWidth
 		  Self.FadedSeparator3.Width = ListWidth
+		  Self.StatusBar1.Width = ListWidth
 		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
 		  Self.Panel.Width = EditorWidth
 		  
@@ -734,6 +816,23 @@ End
 		  RaiseEvent Updated()
 		  Self.Editor.ShowSettings(True)
 		  Self.Editor.SetFocus()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SimulatorPosition() As Integer
+		  Return Self.Simulator.Top
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SimulatorPosition(Assigns Pos As Integer)
+		  // This does not save the position in preferences, it is only for coordinating
+		  // the size and position of controls
+		  
+		  Self.Simulator.Top = Pos
+		  Self.StatusBar1.Top = Pos - Self.StatusBar1.Height
+		  Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
 		End Sub
 	#tag EndMethod
 
@@ -751,42 +850,27 @@ End
 		  
 		  Preferences.SimulatorVisible = Value
 		  
-		  Dim SimulatorTop As Integer
-		  
+		  Dim NewPosition As Integer
 		  If Value Then
-		    SimulatorTop = Self.Height - Preferences.SimulatorSize
+		    NewPosition = Self.Height - Preferences.SimulatorSize
 		  Else
-		    SimulatorTop = Self.Height
+		    NewPosition = Self.Height
 		  End If
 		  
 		  If Not Animated Then
-		    Self.Simulator.Top = SimulatorTop
-		    Self.SetList.Height = SimulatorTop - Self.SetList.Top
+		    Self.SimulatorPosition = NewPosition
 		    Return
 		  End If
 		  
 		  Dim Curve As AnimationKit.Curve = AnimationKit.Curve.CreateEaseOut
 		  Dim Duration As Double = 0.15
 		  
-		  If Self.mSetListTask <> Nil Then
-		    Self.mSetListTask.Cancel
-		    Self.mSetListTask = Nil
-		  End If
-		  
 		  If Self.mSimulatorTask <> Nil Then
 		    Self.mSimulatorTask.Cancel
 		    Self.mSimulatorTask = Nil
 		  End If
 		  
-		  Self.mSetListTask = New AnimationKit.MoveTask(Self.SetList)
-		  Self.mSetListTask.Height = SimulatorTop - Self.SetList.Top
-		  Self.mSetListTask.DurationInSeconds = Duration
-		  Self.mSetListTask.Curve = Curve
-		  Self.mSetListTask.Run
-		  
-		  Self.mSimulatorTask = New AnimationKit.MoveTask(Self.Simulator)
-		  Self.mSimulatorTask.Top = SimulatorTop
-		  Self.mSimulatorTask.Height = Preferences.SimulatorSize
+		  Self.mSimulatorTask = New AnimationKit.ValueTask(Self, "simulator position", Self.SimulatorPosition, NewPosition)
 		  Self.mSimulatorTask.DurationInSeconds = Duration
 		  Self.mSimulatorTask.Curve = Curve
 		  Self.mSimulatorTask.Run
@@ -822,6 +906,27 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateStatus()
+		  If Self.mUpdating Then
+		    Return
+		  End If
+		  
+		  Dim HiddenSetCount As Integer = Self.mTotalSetCount - Self.mVisibleSetCount
+		  Dim Caption As String
+		  If Self.SetList.SelCount > 0 Then
+		    Caption = Format(Self.SetList.SelCount, "0") + " of " + Str(Self.mVisibleSetCount, "0") + " Item " + If(Self.mVisibleSetCount = 1, "Set", "Sets") + " Selected"
+		  Else
+		    Caption = Str(Self.mVisibleSetCount, "0") + " Item " + If(Self.mVisibleSetCount = 1, "Set", "Sets")
+		  End If
+		  If HiddenSetCount > 0 Then
+		    Caption = Caption + ", " + Str(HiddenSetCount, "0") + " Item " + If(HiddenSetCount = 1, "Set", "Sets") + " Hidden"
+		  End If
+		  
+		  Self.StatusBar1.Caption = Caption
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event GetDocument() As Beacon.Document
@@ -841,11 +946,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSetListTask As AnimationKit.MoveTask
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSimulatorTask As AnimationKit.MoveTask
+		Private mSimulatorTask As AnimationKit.ValueTask
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -857,7 +958,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mTotalSetCount As UInteger
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mUpdating As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mVisibleSetCount As UInteger
 	#tag EndProperty
 
 
@@ -892,6 +1001,8 @@ End
 		    Editor.Set = Nil
 		    Panel.Value = 0
 		  End If
+		  
+		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
 	#tag Event
