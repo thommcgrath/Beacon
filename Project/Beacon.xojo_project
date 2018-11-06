@@ -298,6 +298,7 @@ MultiImage=IconPresetSettings;Icons/IconPresetSettings.xojo_image;&h0000000040EA
 MultiImage=IconPresetContents;Icons/IconPresetContents.xojo_image;&h00000000716B07FF;&h0000000007F977FF;false
 MultiImage=IconPresetModifiers;Icons/IconPresetModifiers.xojo_image;&h000000002CE05FFF;&h0000000007F977FF;false
 Window=PresetModifierEditor;Views/PresetModifierEditor.xojo_window;&h0000000046904FFF;&h0000000008A387FF;false
+Class=TaskQueue;Modules/Beacon/TaskQueue.xojo_code;&h000000000CDCE7FF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=0

@@ -531,6 +531,27 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ReplaceLineEndings(Extends Source As Text, ReplaceWith As Text) As Text
+		  Return Beacon.ReplaceLineEndings(Source, ReplaceWith)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ReplaceLineEndings(Source As Text, ReplaceWith As Text) As Text
+		  #if Not TargetiOS
+		    Return REALbasic.ReplaceLineEndings(Source, ReplaceWith).ToText
+		  #else
+		    Dim CR As Text = Text.FromUnicodeCodepoint(13)
+		    Dim LR As Text = Text.FromUnicodeCodepoint(10)
+		    
+		    Source = Source.ReplaceAll(CR + LF, CR)
+		    Source = Source.ReplaceAll(LF, CR)
+		    Return Source.ReplaceAll(CR, ReplaceWith)
+		  #endif
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function RewriteIniContent(InitialContent As Text, NewConfigs As Xojo.Core.Dictionary) As Text
 		  // First, normalize line endings

@@ -1,6 +1,18 @@
 #tag Class
 Protected Class NitradoDeploymentEngine
+Inherits Beacon.TaskQueue
 Implements Beacon.DeploymentEngine
+	#tag Event
+		Sub Finished()
+		  Self.ClearTasks()
+		  Self.mFinished = True
+		  Self.mErrored = False
+		  Self.mStatus = "Finished"
+		  RaiseEvent Finished()
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h0
 		Function BackupGameIni() As Text
 		  Return Self.mGameIniOriginal
@@ -24,11 +36,7 @@ Implements Beacon.DeploymentEngine
 		  SessionSettings.Value("SessionName") = SessionSettingsValues
 		  Self.mGameUserSettingsIniDict.Value("SessionSettings") = SessionSettings
 		  
-		  // First, look up the server details to determine what needs to be done next
-		  Self.mStatus = "Getting server status…"
-		  Dim Headers As New Xojo.Core.Dictionary
-		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
+		  Self.RunNextTask()
 		End Sub
 	#tag EndMethod
 
@@ -77,7 +85,7 @@ Implements Beacon.DeploymentEngine
 		  Try
 		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True) // Yes, allow lossy here
 		    Self.mGameIniOriginal = TextContent
-		    Self.DownloadGameUserSettingsIni
+		    Self.RunNextTask()
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)
 		    Return
@@ -130,11 +138,102 @@ Implements Beacon.DeploymentEngine
 		  Try
 		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True) // Yes, allow lossy here
 		    Self.mGameUserSettingsIniOriginal = TextContent
-		    Self.WaitForServerStop()
+		    Self.RunNextTask()
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)
 		    Return
 		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Callback_DownloadLogFile(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
+		  If Self.mCancelled Then
+		    Return
+		  End If
+		  
+		  // If the log file cannot be downloaded for any reason, assume a stop time of now
+		  
+		  If Self.CheckError(Status) Then
+		    Self.mServerStopTime = Xojo.Core.Date.Now
+		    Self.RunNextTask()
+		    Return
+		  End If
+		  
+		  Try
+		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
+		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    
+		    If Response.Value("status") <> "success" Then
+		      Self.mServerStopTime = Xojo.Core.Date.Now
+		      Self.RunNextTask()
+		      Return
+		    End If
+		    
+		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
+		    Dim TokenDict As Xojo.Core.Dictionary = Data.Value("token")
+		    
+		    Dim Headers As New Xojo.Core.Dictionary
+		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
+		    
+		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadLogFile_Content, Nil, Headers)
+		  Catch Err As RuntimeException
+		    Self.mServerStopTime = Xojo.Core.Date.Now
+		    Self.RunNextTask()
+		    Return
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Callback_DownloadLogFile_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
+		  If Self.mCancelled Then
+		    Return
+		  End If
+		  
+		  If Self.CheckError(Status) Then
+		    Self.mServerStopTime = Xojo.Core.Date.Now
+		    Self.RunNextTask()
+		    Return
+		  End If
+		  
+		  Try
+		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True) // Yes, allow lossy here
+		    Dim Lines() As Text = TextContent.ReplaceLineEndings(Text.FromUnicodeCodepoint(10)).Split(Text.FromUnicodeCodepoint(10))
+		    Dim TimestampFound As Boolean
+		    For I As Integer = Lines.Ubound DownTo 0
+		      Dim Line As Text = Lines(I)
+		      If Line.IndexOf("Log file closed") = -1 Then
+		        Continue
+		      End If
+		      
+		      Dim Year As Integer = Integer.FromText(Line.Mid(1, 4))
+		      Dim Month As Integer = Integer.FromText(Line.Mid(6, 2))
+		      Dim Day As Integer = Integer.FromText(Line.Mid(9, 2))
+		      Dim Hour As Integer = Integer.FromText(Line.Mid(12, 2))
+		      Dim Minute As Integer = Integer.FromText(Line.Mid(15, 2))
+		      Dim Second As Integer = Integer.FromText(Line.Mid(18, 2))
+		      Dim Nanosecond As Integer = (Integer.FromText(Line.Mid(21, 3)) / 1000) * 1000000000
+		      
+		      Self.mServerStopTime = New Xojo.Core.Date(Year, Month, Day, Hour, Minute, Second, Nanosecond, New Xojo.Core.TimeZone(0))
+		      TimestampFound = True
+		      Exit For I
+		    Next
+		    
+		    If Not TimestampFound Then
+		      Self.mServerStopTime = Xojo.Core.Date.Now
+		    End If
+		  Catch Err As RuntimeException
+		    Self.mServerStopTime = Xojo.Core.Date.Now
+		  End Try
+		  
+		  Self.RunNextTask()
 		End Sub
 	#tag EndMethod
 
@@ -157,7 +256,7 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Self.SetNextCommandLineParam()
+		    Self.RunNextTask()
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)
 		    Return
@@ -184,9 +283,7 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Self.mFinished = True
-		    Self.mErrored = False
-		    Self.mStatus = "Finished"
+		    Self.RunNextTask()
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)
 		    Return
@@ -209,38 +306,57 @@ Implements Beacon.DeploymentEngine
 		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
 		    Dim GameServer As Xojo.Core.Dictionary = Data.Value("gameserver")
 		    
-		    Dim ServerStatus As Text = GameServer.Value("status")
-		    Self.mStartOnFinish = ServerStatus = "started"
-		    
-		    Dim Settings As Xojo.Core.Dictionary = GameServer.Value("settings")
-		    Dim GeneralSettings As Xojo.Core.Dictionary = Settings.Value("general")
-		    Self.mExpertMode = GeneralSettings.Value("expertMode") = "true"
-		    
-		    Dim StartParams As Xojo.Core.Dictionary = Settings.Value("start-param")
-		    For Each ConfigValue As Beacon.ConfigValue In Self.mCommandLineOptions
-		      Dim Key As Text = ConfigValue.Key
-		      Dim Value As Text = ConfigValue.Value
+		    Self.mServerStatus = GameServer.Value("status")
+		    Select Case Self.mServerStatus
+		    Case "started"
+		      // Stop
+		      Self.mStartOnFinish = True
+		      Self.StopServer()
+		    Case "starting"
+		      // Wait
+		      Self.mStartOnFinish = True
+		      Xojo.Core.Timer.CallLater(5000, AddressOf WatchStatusForStop)
+		    Case "stopping"
+		      // Wait
+		      Xojo.Core.Timer.CallLater(5000, AddressOf WatchStatusForStop)
+		    Case "stopped"
+		      // Ok to continue
+		      Dim Settings As Xojo.Core.Dictionary = GameServer.Value("settings")
+		      Dim GeneralSettings As Xojo.Core.Dictionary = Settings.Value("general")
+		      Self.mExpertMode = GeneralSettings.Value("expertMode") = "true"
 		      
-		      If Not StartParams.HasKey(Key) Then
-		        Continue
+		      Dim StartParams As Xojo.Core.Dictionary = Settings.Value("start-param")
+		      For Each ConfigValue As Beacon.ConfigValue In Self.mCommandLineOptions
+		        Dim Key As Text = ConfigValue.Key
+		        Dim Value As Text = ConfigValue.Value
+		        
+		        If Not StartParams.HasKey(Key) Then
+		          Continue
+		        End If
+		        
+		        If StartParams.Value(Key) <> Value Then
+		          Self.mCommandLineChanges.Append(ConfigValue)
+		        End If
+		      Next
+		      
+		      If Self.mCommandLineChanges.Ubound = -1 And Self.mGameIniDict.Count = 0 And Self.mGameUserSettingsIniDict.Count = 0 Then
+		        // Nothing to do
+		        Self.mStatus = "Finished, no changes were necessary."
+		        Self.mFinished = True
+		        Return
 		      End If
 		      
-		      If StartParams.Value(Key) <> Value Then
-		        Self.mCommandLineChanges.Append(ConfigValue)
-		      End If
-		    Next
-		    
-		    If Self.mCommandLineChanges.Ubound = -1 And Self.mGameIniDict.Count = 0 And Self.mGameUserSettingsIniDict.Count = 0 Then
-		      // Nothing to do
-		      Self.mStatus = "Finished, no changes were necessary."
+		      Dim GameSpecific As Xojo.Core.Dictionary = GameServer.Value("game_specific")
+		      Self.mLogFilePath = GameSpecific.Value("path") + "ShooterGame/Saved/Logs/ShooterGame.log"
+		      Self.mConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
+		      
+		      Self.RunNextTask()
+		    Else
+		      Self.mErrored = True
+		      Self.mStatus = "Unexpected server status: " + Self.mServerStatus
 		      Self.mFinished = True
 		      Return
-		    End If
-		    
-		    Dim GameSpecific As Xojo.Core.Dictionary = GameServer.Value("game_specific")
-		    Self.mConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
-		    
-		    Self.StopServer()
+		    End Select
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)
 		    Return
@@ -267,8 +383,7 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Self.mServerStopTime = Microseconds
-		    Self.EnableExpertMode()
+		    Self.WatchStatusForStop()
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)
 		    Return
@@ -353,7 +468,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  If Status < 400 Then
-		    Self.UploadGameUserSettingsIni()
+		    Self.RunNextTask()
 		  Else
 		    Self.mErrored = True
 		    Self.mStatus = "Error: Could not upload Game.ini, server said " + Status.ToText
@@ -410,7 +525,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  If Status < 400 Then
-		    Self.StartServer()
+		    Self.RunNextTask()
 		  Else
 		    Self.mErrored = True
 		    Self.mStatus = "Error: Could not upload GameUserSettings.ini, server said " + Status.ToText
@@ -420,7 +535,8 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h0
 		Sub Cancel()
-		  Xojo.Core.Timer.CancelCall(WeakAddressOf UploadGameIni)
+		  Xojo.Core.Timer.CancelCall(AddressOf WaitNitradoIdle)
+		  Xojo.Core.Timer.CancelCall(AddressOf WatchStatusForStop)
 		  Self.mCancelled = True
 		End Sub
 	#tag EndMethod
@@ -450,6 +566,8 @@ Implements Beacon.DeploymentEngine
 		  Self.mServerName = ServerName
 		  Self.mServiceID = ServiceID
 		  Self.mAccessToken = OAuthData.Value("Access Token")
+		  
+		  Self.AppendTask(AddressOf WatchStatusForStop, AddressOf DownloadLogFile, AddressOf WaitNitradoIdle, AddressOf EnableExpertMode, AddressOf SetNextCommandLineParam, AddressOf DownloadGameIni, AddressOf DownloadGameUserSettingsIni, AddressOf UploadGameIni, AddressOf UploadGameUserSettingsIni, AddressOf StartServer)
 		End Sub
 	#tag EndMethod
 
@@ -457,7 +575,7 @@ Implements Beacon.DeploymentEngine
 		Private Sub DownloadGameIni()
 		  If Self.mGameIniDict.Count = 0 Then
 		    // Skip
-		    Self.DownloadGameUserSettingsIni()
+		    Self.RunNextTask()
 		    Return
 		  End If
 		  
@@ -476,7 +594,7 @@ Implements Beacon.DeploymentEngine
 		Private Sub DownloadGameUserSettingsIni()
 		  If Self.mGameUserSettingsIniDict.Count = 0 Then
 		    // Skip
-		    Self.WaitForServerStop()
+		    Self.RunNextTask()
 		    Return
 		  End If
 		  
@@ -492,10 +610,21 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub DownloadLogFile()
+		  Self.mStatus = "Downloading Log File…"
+		  
+		  Dim Headers As New Xojo.Core.Dictionary
+		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
+		  
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(Self.mLogFilePath), AddressOf Callback_DownloadLogFile, Nil, Headers)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub EnableExpertMode()
 		  If Self.mExpertMode Then
 		    // Nothing to disable
-		    Self.SetNextCommandLineParam()
+		    Self.RunNextTask()
 		    Return
 		  End If
 		  
@@ -559,7 +688,7 @@ Implements Beacon.DeploymentEngine
 		Private Sub SetNextCommandLineParam()
 		  If Self.mCommandLineChanges.Ubound = -1 Then
 		    // Move on
-		    Self.DownloadGameIni()
+		    Self.RunNextTask()
 		    Return
 		  End If
 		  
@@ -580,9 +709,7 @@ Implements Beacon.DeploymentEngine
 	#tag Method, Flags = &h21
 		Private Sub StartServer()
 		  If Not Self.mStartOnFinish Then
-		    Self.mFinished = True
-		    Self.mErrored = False
-		    Self.mStatus = "Finished"
+		    Self.RunNextTask()
 		    Return
 		  End If
 		  
@@ -606,11 +733,6 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub StopServer()
-		  If Not Self.mStartOnFinish Then
-		    Self.EnableExpertMode()
-		    Return
-		  End If
-		  
 		  Self.mStatus = "Stopping server…"
 		  
 		  Dim Headers As New Xojo.Core.Dictionary
@@ -628,7 +750,7 @@ Implements Beacon.DeploymentEngine
 		Private Sub UploadGameIni()
 		  If Self.mGameIniDict.Count = 0 Then
 		    // Skip
-		    Self.UploadGameUserSettingsIni()
+		    Self.RunNextTask()
 		    Return
 		  End If
 		  
@@ -649,7 +771,7 @@ Implements Beacon.DeploymentEngine
 		Private Sub UploadGameUserSettingsIni()
 		  If Self.mGameUserSettingsIniDict.Count = 0 Then
 		    // Skip
-		    Self.StartServer()
+		    Self.RunNextTask()
 		    Return
 		  End If
 		  
@@ -667,22 +789,39 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub WaitForServerStop()
-		  If Self.mServerStopTime = 0 Then
-		    // Put files on the server
-		    Self.UploadGameIni()
+		Private Sub WaitNitradoIdle()
+		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
+		  Dim SecondsToWait As Double = 180 - (Now.SecondsFrom1970 - Self.mServerStopTime.SecondsFrom1970)
+		  If SecondsToWait < 10 Then // Don't need to be THAT precise
+		    Self.RunNextTask()
 		    Return
 		  End If
 		  
-		  Const MillisecondsToWait = 180000
+		  Dim ResumeTime As Xojo.Core.Date = Now + New Xojo.Core.DateInterval(0, 0, 0, 0, 0, Floor(SecondsToWait), (SecondsToWait - Floor(SecondsToWait)) * 1000000000)
 		  
-		  Dim MillisecondsWaited As Double = (Microseconds - Self.mServerStopTime) * 0.001
-		  Dim MillisecondsRemaining As Double = Max(MillisecondsToWait - MillisecondsWaited, 0)
-		  
-		  Self.mStatus = "Waiting 3 minutes per Nitrado recommendations…"
-		  Xojo.Core.Timer.CallLater(MillisecondsRemaining, WeakAddressOf UploadGameIni)
+		  Self.mStatus = "Waiting per Nitrado recommendations. Will resume at " + ResumeTime.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.None, Xojo.Core.Date.FormatStyles.Medium) + "…"
+		  Xojo.Core.Timer.CallLater(SecondsToWait * 1000, AddressOf WaitNitradoIdle)
 		End Sub
 	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub WatchStatusForStop()
+		  If Self.mServerStatus = "" Then
+		    Self.mStatus = "Getting server status…"
+		  Else
+		    Self.mStatus = "Stopping server…"
+		  End If
+		  
+		  Dim Headers As New Xojo.Core.Dictionary
+		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
+		End Sub
+	#tag EndMethod
+
+
+	#tag Hook, Flags = &h0
+		Event Finished()
+	#tag EndHook
 
 
 	#tag Property, Flags = &h21
@@ -734,11 +873,19 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLogFilePath As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mServerName As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mServerStopTime As Double
+		Private mServerStatus As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mServerStopTime As Xojo.Core.Date
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
