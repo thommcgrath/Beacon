@@ -27,7 +27,6 @@ Begin BeaconSubview ModsView
    Visible         =   False
    Width           =   1100
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -127,7 +126,6 @@ Begin BeaconSubview ModsView
       HasBackColor    =   False
       Height          =   419
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   236
       LockBottom      =   True
@@ -334,6 +332,18 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ModView
+	#tag Event
+		Sub ImportFinished()
+		  Self.Progress = BeaconSubview.ProgressNone
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub ImportStarted()
+		  Self.Progress = BeaconSubview.ProgressIndeterminate
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events Header
 	#tag Event
 		Sub Action(Item As BeaconToolbarItem)
@@ -397,6 +407,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

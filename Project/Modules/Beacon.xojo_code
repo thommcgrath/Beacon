@@ -531,63 +531,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Protected Function PullEngramsFromText(Contents As String) As Beacon.Engram()
-		  // Only available on the desktop
-		  
-		  Dim Engrams() As Beacon.Engram
-		  
-		  Dim Regex As New Regex
-		  Regex.SearchPattern = "(Blueprint['""](/Game/[^\<\>\:'""\\\|\?\*]+)['""])|(BlueprintGeneratedClass['""](/Game/[^\<\>\:'""\\\|\?\*]+)_C['""])|(cheat giveitem ['""](/Game/[^\<\>\:'""\\\|\?\*]+)['""])"
-		  
-		  Dim Match As RegexMatch = Regex.Search(Contents)
-		  Dim Paths As New Dictionary
-		  Do
-		    If Match = Nil Then
-		      Continue
-		    End If
-		    
-		    Dim Path As String
-		    If Match.SubExpressionString(2) <> "" Then
-		      Path = Match.SubExpressionString(2)
-		    ElseIf Match.SubExpressionString(4) <> "" Then
-		      Path = Match.SubExpressionString(4)
-		    ElseIf Match.SubExpressionString(6) <> "" Then
-		      Path = Match.SubExpressionString(6)
-		    Else
-		      Continue
-		    End If
-		    
-		    Paths.Value(Path) = True
-		    
-		    Match = Regex.Search
-		  Loop Until Match Is Nil
-		  
-		  If Paths.Count = 0 Then
-		    Return Engrams
-		  End If
-		  
-		  Regex = New Regex
-		  Regex.SearchPattern = "([A-Z])"
-		  Regex.ReplacementPattern = " \1"
-		  Regex.Options.ReplaceAllMatches = True
-		  Regex.Options.CaseSensitive = True
-		  
-		  Dim Keys() As Variant = Paths.Keys
-		  For Each Key As String In Keys
-		    Dim Path As Text = Key.ToText
-		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
-		    If Engram = Nil Then
-		      Engram = Beacon.Engram.CreateUnknownEngram(Path)
-		    End If
-		    
-		    Engrams.Append(Engram)
-		  Next
-		  
-		  Return Engrams
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function RewriteIniContent(InitialContent As Text, NewConfigs As Xojo.Core.Dictionary) As Text
 		  // First, normalize line endings

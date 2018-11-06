@@ -222,7 +222,6 @@ Begin LibrarySubview LibraryPaneEngrams
       Width           =   300
    End
    Begin Timer ClipboardWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -241,50 +240,15 @@ End
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h0
-		Shared Function Import(Contents As String) As String()
-		  Dim Engrams() As Beacon.Engram
-		  
-		  Try
-		    Engrams = Beacon.Engram.ParseCSV(Contents.ToText)
-		  Catch Err As RuntimeException
-		    // Probably not a csv
-		    Engrams = Beacon.PullEngramsFromText(Contents)
-		  End Try
-		  
-		  Dim ImportedCount, SkippedCount As Integer
-		  For Each Engram As Beacon.Engram In Engrams
-		    If LocalData.SharedInstance.SaveEngram(Engram, False) Then
-		      ImportedCount = ImportedCount + 1
-		    Else
-		      SkippedCount = SkippedCount + 1
-		    End If
-		  Next
-		  
-		  Dim Messages() As String
-		  If ImportedCount = 1 Then
-		    Messages.Append("1 engram was added.")
-		  ElseIf ImportedCount > 1 Then
-		    Messages.Append(Str(ImportedCount, "-0") + " engrams were added.")
-		  End If
-		  If SkippedCount = 1 Then
-		    Messages.Append("1 engram was skipped because it already exists in the database.")
-		  ElseIf SkippedCount > 1 Then
-		    Messages.Append(Str(SkippedCount, "-0") + " engrams were skipped because they already exist in the database.")
-		  End If
-		  If ImportedCount = 0 And SkippedCount = 0 Then
-		    Messages.Append("No engrams were found to import.")
-		  End If
-		  
-		  NotificationKit.Post("Engram Import Complete", Nil)
-		  Return Messages
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub ImportWithDialog(Contents As String)
-		  Dim Messages() As String = Self.Import(Contents)
-		  Self.ShowAlert("Import complete", Join(Messages, " "))
+		  Dim View As BeaconSubview = Self.View("EngramsManagerView")
+		  If View = Nil Then
+		    View = New EngramsManagerView()
+		  End If
+		  Self.ShowView(View)
+		  
+		  EngramsManagerView(View).ImportText(Contents)
 		End Sub
 	#tag EndMethod
 
@@ -362,6 +326,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

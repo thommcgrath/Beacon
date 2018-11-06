@@ -248,14 +248,30 @@ Implements Xojo.Core.Iterable
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub Searcher_EngramsFound(Sender As Beacon.EngramSearcherThread)
+		  Dim Engrams() As Beacon.Engram = Sender.Engrams(True)
+		  For Each Source As Beacon.LootSource In Self
+		    Source.ConsumeMissingEngrams(Engrams)
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Searcher_Finished(Sender As Beacon.EngramSearcherThread)
+		  RemoveHandler Sender.Finished, AddressOf Searcher_Finished
+		  RemoveHandler Sender.EngramsFound, AddressOf Searcher_EngramsFound
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub TryToResolveIssues(InputContent As Text)
 		  Super.TryToResolveIssues(InputContent)
 		  
-		  Dim Engrams() As Beacon.Engram = Beacon.PullEngramsFromText(InputContent)
-		  For Each Source As Beacon.LootSource In Self
-		    Source.ConsumeMissingEngrams(Engrams)
-		  Next
+		  Dim Searcher As New Beacon.EngramSearcherThread
+		  AddHandler Searcher.EngramsFound, AddressOf Searcher_EngramsFound
+		  AddHandler Searcher.Finished, AddressOf Searcher_Finished
+		  Searcher.Search(InputContent, False)
 		End Sub
 	#tag EndMethod
 
@@ -272,6 +288,11 @@ Implements Xojo.Core.Iterable
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="IsImplicit"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true

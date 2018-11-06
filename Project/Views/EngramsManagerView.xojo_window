@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconSubview EngramsManagerView Implements NotificationKit.Receiver
+Begin BeaconSubview EngramsManagerView
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -140,21 +140,22 @@ Begin BeaconSubview EngramsManagerView Implements NotificationKit.Receiver
       Visible         =   True
       Width           =   594
    End
+   Begin Beacon.EngramSearcherThread Searcher
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   "0"
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
-		Sub Close()
-		  NotificationKit.Ignore(Self, "Engram Import Complete")
-		End Sub
-	#tag EndEvent
-
-	#tag Event
 		Sub Open()
 		  Self.RebuildList()
 		  Self.ToolbarCaption = "My Engrams"
-		  NotificationKit.Watch(Self, "Engram Import Complete")
 		End Sub
 	#tag EndEvent
 
@@ -210,13 +211,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
-		  // Part of the NotificationKit.Receiver interface.
-		  
-		  Select Case Notification.Name
-		  Case "Engram Import Complete"
-		    Self.RebuildList()
-		  End Select
+		Sub ImportText(Content As String)
+		  Self.Searcher.Search(Content)
 		End Sub
 	#tag EndMethod
 
@@ -270,6 +266,11 @@ End
 		  List.RowTag(Index) = Engram
 		End Sub
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mProgress As Integer
+	#tag EndProperty
 
 
 	#tag Constant, Name = ColumnAberration, Type = Double, Dynamic = False, Default = \"6", Scope = Private
@@ -415,13 +416,57 @@ End
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.TextAvailable Then
-		    Dim Messages() As String = LibraryPaneEngrams.Import(Board.Text)
-		    Self.ShowAlert("Import complete", Join(Messages, " "))
+		    Self.ImportText(Board.Text)
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events Searcher
+	#tag Event
+		Sub Finished()
+		  Self.Progress = BeaconSubview.ProgressNone
+		  
+		  Dim Engrams() As Beacon.Engram = Me.Engrams(True)
+		  Dim ImportedCount, SkippedCount As Integer
+		  For Each Engram As Beacon.Engram In Engrams
+		    If LocalData.SharedInstance.SaveEngram(Engram, False) Then
+		      ImportedCount = ImportedCount + 1
+		    Else
+		      SkippedCount = SkippedCount + 1
+		    End If
+		  Next
+		  
+		  Self.RebuildList()
+		  
+		  Dim Messages() As String
+		  If ImportedCount = 1 Then
+		    Messages.Append("1 engram was added.")
+		  ElseIf ImportedCount > 1 Then
+		    Messages.Append(Str(ImportedCount, "-0") + " engrams were added.")
+		  End If
+		  If SkippedCount = 1 Then
+		    Messages.Append("1 engram was skipped because it already exists in the database.")
+		  ElseIf SkippedCount > 1 Then
+		    Messages.Append(Str(SkippedCount, "-0") + " engrams were skipped because they already exist in the database.")
+		  End If
+		  If ImportedCount = 0 And SkippedCount = 0 Then
+		    Messages.Append("No engrams were found to import.")
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.Progress = BeaconSubview.ProgressIndeterminate
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
