@@ -98,7 +98,7 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h21
 		Private Sub RaiseFinished()
-		  RaiseEvent Finished
+		  RaiseEvent Finished(Self.mDestination)
 		End Sub
 	#tag EndMethod
 
@@ -119,7 +119,7 @@ Inherits Beacon.Thread
 
 
 	#tag Hook, Flags = &h0
-		Event Finished()
+		Event Finished(Destination As Beacon.FolderItem)
 	#tag EndHook
 
 
