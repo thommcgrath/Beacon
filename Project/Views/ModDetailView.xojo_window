@@ -46,7 +46,7 @@ Begin BeaconContainer ModDetailView
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   3
       Visible         =   True
       Width           =   864
       Begin UITweaks.ResizedTextField ConfirmField
@@ -255,9 +255,9 @@ Begin BeaconContainer ModDetailView
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   False
-         ColumnCount     =   8
+         ColumnCount     =   9
          ColumnsResizable=   False
-         ColumnWidths    =   "*,*,100,75,75,75,75,75"
+         ColumnWidths    =   "*,*,100,75,75,75,75,75,75"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
@@ -273,7 +273,7 @@ Begin BeaconContainer ModDetailView
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Center	Ragnarok	Aberration"
+         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Center	Ragnarok	Aberration	Extinction"
          Italic          =   False
          Left            =   0
          LockBottom      =   True
@@ -473,6 +473,7 @@ Begin BeaconContainer ModDetailView
       Priority        =   5
       Scope           =   2
       StackSize       =   "0"
+      State           =   ""
       TabPanelIndex   =   0
    End
 End
@@ -705,6 +706,7 @@ End
 		  EngramList.CellCheck(Index, 5) = Engram.ValidForMap(Beacon.Maps.TheCenter)
 		  EngramList.CellCheck(Index, 6) = Engram.ValidForMap(Beacon.Maps.Ragnarok)
 		  EngramList.CellCheck(Index, 7) = Engram.ValidForMap(Beacon.Maps.Aberration)
+		  EngramList.CellCheck(Index, 8) = Engram.ValidForMap(Beacon.Maps.Extinction)
 		  
 		  EngramList.RowTag(Index) = Engram
 		End Sub
@@ -851,6 +853,7 @@ End
 		  Me.ColumnType(5) = Listbox.TypeCheckbox
 		  Me.ColumnType(6) = Listbox.TypeCheckbox
 		  Me.ColumnType(7) = Listbox.TypeCheckbox
+		  Me.ColumnType(8) = Listbox.TypeCheckbox
 		  
 		  Me.ColumnAlignment(2) = Listbox.AlignCenter
 		  Me.ColumnAlignment(3) = Listbox.AlignCenter
@@ -858,6 +861,7 @@ End
 		  Me.ColumnAlignment(5) = Listbox.AlignCenter
 		  Me.ColumnAlignment(6) = Listbox.AlignCenter
 		  Me.ColumnAlignment(7) = Listbox.AlignCenter
+		  Me.ColumnAlignment(8) = Listbox.AlignCenter
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -881,6 +885,8 @@ End
 		    Engram.ValidForMap(Beacon.Maps.Ragnarok) = Me.CellCheck(Row, Column)
 		  Case 7
 		    Engram.ValidForMap(Beacon.Maps.Aberration) = Me.CellCheck(Row, Column)
+		  Case 8
+		    Engram.ValidForMap(Beacon.Maps.Extinction) = Me.CellCheck(Row, Column)
 		  End Select
 		  
 		  Self.EngramSet.Add(Engram)

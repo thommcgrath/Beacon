@@ -142,6 +142,9 @@ case 'POST':
 				if (($key === 'abberation') || ($key === 'aberration')) {
 					$availability = $availability | BeaconMaps::Aberration;
 				}
+				if ($key === 'extinction') {
+					$availability = $availability | BeaconMaps::Extinction;
+				}
 			}
 		}
 		if ($availability === 0) {
