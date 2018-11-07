@@ -105,6 +105,8 @@ Protected Class Engram
 		      Map = Beacon.Maps.Ragnarok
 		    Case "abberation", "aberration"
 		      Map = Beacon.Maps.Aberration
+		    Case "extinction"
+		      Map = Beacon.Maps.Extinction
 		    End Select
 		    If Map <> Nil Then
 		      Self.ValidForMap(Map) = True
