@@ -340,6 +340,11 @@ CREATE TABLE creature_engrams (
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE creature_engrams TO thezaz_website;
 -- End Creature Engrams
 
+-- Computed Engram Availabilities
+-- Use like SELECT object_id, bit_or(availability) FROM computed_engram_availabilities GROUP BY object_id;
+CREATE VIEW computed_engram_availabilities AS SELECT engrams.object_id, engrams.class_string, creatures.availability FROM creature_engrams, creatures, engrams WHERE creature_engrams.creature_id = creatures.object_id AND creature_engrams.engram_id = engrams.object_id;
+GRANT SELECT ON TABLE computed_engram_availabilities TO thezaz_website;
+
 -- Presets
 CREATE TABLE presets (
 	PRIMARY KEY (object_id),
