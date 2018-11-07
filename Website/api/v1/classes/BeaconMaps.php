@@ -6,6 +6,7 @@ abstract class BeaconMaps {
 	const TheCenter = 4;
 	const Ragnarok = 8;
 	const Aberration = 16;
+	const Extinction = 32;
 	
 	public static function All() {
 		return self::TheIsland | self::ScorchedEarth | self::TheCenter | self::Ragnarok | self::Aberration;
@@ -28,6 +29,9 @@ abstract class BeaconMaps {
 		if (($mask & self::Ragnarok) == self::Ragnarok) {
 			$names[] = 'Ragnarok';
 		}
+		if (($mask & self::Extinction) == self::Extinction) {
+			$names[] = 'Extinction';
+		}
 		return $names;
 	}
 	
@@ -43,6 +47,8 @@ abstract class BeaconMaps {
 			return self::TheCenter;
 		case 'Ragnarok':
 			return self::Ragnarok;
+		case 'Extinction':
+			return self::Extinction;
 		default:
 			return 0;
 		}
