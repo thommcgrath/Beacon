@@ -18,6 +18,9 @@ Protected Class Engram
 		  If Self.ValidForMap(Beacon.Maps.Aberration) Then
 		    Environments.Append("Aberration")
 		  End If
+		  If Self.ValidForMap(Beacon.Maps.Extinction) Then
+		    Environments.Append("Extinction")
+		  End If
 		  
 		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("path") = Self.Path
@@ -49,9 +52,10 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.Engram)
-		  Self.mPath = Source.Path
+		  Self.CanBeBlueprint = Source.CanBeBlueprint
 		  Self.Label = Source.Label
 		  Self.mAvailability = Source.Availability
+		  Self.mPath = Source.Path
 		  Self.mID = Beacon.CreateUUID
 		End Sub
 	#tag EndMethod
