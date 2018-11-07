@@ -267,7 +267,7 @@ Begin BeaconContainer ModDetailView
          GridLinesHorizontal=   0
          GridLinesVertical=   0
          HasHeading      =   True
-         HeadingIndex    =   -1
+         HeadingIndex    =   1
          Height          =   378
          HelpTag         =   ""
          Hierarchical    =   False
@@ -586,6 +586,12 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.mStates = New Dictionary
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function DeletePendingEngrams() As Boolean
 		  Dim DeletedEngrams() As BeaconAPI.Engram = Self.EngramSet.EngramsToDelete
@@ -655,6 +661,52 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub RestoreListState()
+		  If Self.mCurrentMod = Nil Then
+		    Return
+		  End If
+		  
+		  Dim ModID As String = Self.mCurrentMod.ModID
+		  If Not Self.mStates.HasKey(ModID) Then
+		    Return
+		  End If
+		  
+		  Dim Dict As Dictionary = Self.mStates.Value(ModID)
+		  
+		  Dim Selected() As String = Dict.Value("Selected")
+		  For I As Integer = 0 To Self.EngramList.ListCount - 1
+		    Dim Engram As BeaconAPI.Engram = Self.EngramList.RowTag(I)
+		    Self.EngramList.Selected(I) = Selected.IndexOf(Engram.ID) > -1
+		  Next
+		  
+		  Self.EngramList.ScrollPosition = Dict.Value("Position")
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SaveListState()
+		  If Self.mCurrentMod = Nil Then
+		    Return
+		  End If
+		  
+		  Dim Selected() As String
+		  For I As Integer = 0 To Self.EngramList.ListCount - 1
+		    Dim Engram As BeaconAPI.Engram = Self.EngramList.RowTag(I)
+		    If Self.EngramList.Selected(I) Then
+		      Selected.Append(Engram.ID)
+		    End If
+		  Next
+		  
+		  Dim ModID As String = Self.mCurrentMod.ModID
+		  
+		  Dim Dict As New Dictionary
+		  Dict.Value("Position") = Self.EngramList.ScrollPosition
+		  Dict.Value("Selected") = Selected
+		  Self.mStates.Value(ModID) = Dict
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function SavePendingEngrams() As Boolean
 		  Dim NewEngrams() As BeaconAPI.Engram = Self.EngramSet.EngramsToSave
 		  If UBound(NewEngrams) = -1 Then
@@ -679,7 +731,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowCurrentEngrams()
-		  EngramList.DeleteAllRows
+		  Self.EngramList.DeleteAllRows
 		  
 		  If Self.mCurrentMod = Nil Or Self.mEngramSets.HasKey(Self.mCurrentMod.ModID) = False Then
 		    Return
@@ -688,11 +740,13 @@ End
 		  Dim EngramSet As BeaconAPI.EngramSet = Self.mEngramSets.Value(Self.mCurrentMod.ModID)
 		  Dim Engrams() As BeaconAPI.Engram = EngramSet.ActiveEngrams
 		  For Each Engram As BeaconAPI.Engram In Engrams
-		    EngramList.AddRow("")
-		    Self.ShowEngramInRow(EngramList.LastIndex, Engram)
+		    Self.EngramList.AddRow("")
+		    Self.ShowEngramInRow(Self.EngramList.LastIndex, Engram)
 		  Next
+		  Self.EngramList.Sort
+		  Self.RestoreListState()
 		  
-		  Header.PublishButton.Enabled = EngramSet.Modified
+		  Self.Header.PublishButton.Enabled = EngramSet.Modified
 		End Sub
 	#tag EndMethod
 
@@ -764,6 +818,7 @@ End
 			  Xojo.Core.Timer.CancelCall(AddressOf RestoreCopyButton)
 			  Self.RestoreCopyButton()
 			  
+			  Self.SaveListState()
 			  Self.mCurrentMod = Value
 			  
 			  If Self.mCurrentMod = Nil Then
@@ -801,6 +856,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mEngramSets As Xojo.Core.Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mStates As Dictionary
 	#tag EndProperty
 
 
