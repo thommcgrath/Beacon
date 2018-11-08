@@ -44,7 +44,6 @@ Begin DiscoveryView NitradoDiscoveryView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -134,7 +133,6 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
-         TabStop         =   True
          Top             =   222
          Transparent     =   False
          Value           =   0
@@ -295,14 +293,13 @@ Begin DiscoveryView NitradoDiscoveryView
       End
    End
    Begin Beacon.OAuth2Client AuthClient
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
+      Provider        =   ""
       Scope           =   2
       TabPanelIndex   =   0
    End
    Begin Timer LookupStartTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -463,6 +460,13 @@ End
 	#tag EndProperty
 
 
+	#tag Structure, Name = MacVersionInfo, Flags = &h21, Attributes = \"StructureAlignment \x3D 1"
+		MajorVersion As Integer
+		  MinorVersion As Integer
+		BugVersion As Integer
+	#tag EndStructure
+
+
 #tag EndWindowCode
 
 #tag Events FindingCancelButton
@@ -524,6 +528,19 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ShowURL(URL As Text) As Beacon.WebView
+		  #if TargetMacOS
+		    Declare Function NSClassFromString Lib "Cocoa" (ClassName As CFStringRef) As Ptr
+		    Declare Function GetProcessInfo Lib "Cocoa" Selector "processInfo" (Target As Ptr) As Ptr
+		    Declare Function OperatingSystemVersion Lib "AppKit" Selector "operatingSystemVersion" (Target As Ptr) As MacVersionInfo
+		    
+		    Dim Info As Ptr = GetProcessInfo(NSClassFromString("NSProcessInfo"))
+		    Dim Version As MacVersionInfo = OperatingSystemVersion(Info)
+		    Dim ComboVersion As Integer = Val(Str(Version.MajorVersion, "000") + Str(Version.MinorVersion, "000") + Str(Version.BugVersion, "000"))
+		    If ComboVersion < 10012000 Then
+		      Return Nil
+		    End If
+		  #endif
+		  
 		  Return MiniBrowser.ShowURL(URL)
 		End Function
 	#tag EndEvent

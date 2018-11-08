@@ -22,6 +22,7 @@ $provider = strtolower($_GET['provider']);
 $auth_state = BeaconCommon::GenerateUUID();
 $_SESSION['OAUTH_PROVIDER'] = $provider;
 $_SESSION['OAUTH_AUTH_STATE'] = $auth_state;
+$_SESSION['OAUTH_REQUESTID'] = isset($_GET['requestid']) ? $_GET['requestid'] : '';
 
 $redirect_uri = 'https://' . $_SERVER['HTTP_HOST'] . '/oauth/callback.php';
 switch ($provider) {

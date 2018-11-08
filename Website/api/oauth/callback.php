@@ -53,9 +53,38 @@ $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 curl_close($curl);
 
 if ($status == 200) {
+	$requestid = $_SESSION['OAUTH_REQUESTID'];
 	$response = json_decode($response, true);
 	$forward_to = 'beacon://oauth/' . urlencode($_SESSION['OAUTH_PROVIDER']) . '?access_token=' . urlencode($response['access_token']) . '&refresh_token=' . urlencode($response['refresh_token']) . '&expires_in=' . urlencode($response['expires_in']);
-	BeaconCommon::Redirect($forward_to);
+	unset($_SESSION['OAUTH_REQUESTID'], $_SESSION['OAUTH_AUTH_STATE'], $_SESSION['OAUTH_PROVIDER']);
+	
+	if ($requestid != '') {
+		$forward_to = $forward_to . '&requestid=' . urlencode($requestid);
+		header('Content-Type: text/html');
+		?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Redirecting to Beacon</title>
+		<meta http-equiv="refresh" content="2; URL='<?php echo htmlentities($forward_to); ?>'">
+		<style type="text/css">
+		
+		body {
+			font-family: sans-serif;
+		}
+		
+		</style>
+	</head>
+	<body>
+		<h1>Redirecting to Beacon…</h1>
+		<p class="text-center">Sending you back to Beacon. If that doesn't happen shortly, try <a href="<?php echo htmlentities($forward_to); ?>">clicking here</a>. You can close this window when you're done.</p>
+	</body>
+</html>
+		<?php
+	} else {
+		BeaconCommon::Redirect($forward_to);
+	}
 } else {
 	http_response_code($status);
 	header('Content-Type: application/json');
