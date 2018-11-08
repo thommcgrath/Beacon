@@ -21,7 +21,7 @@ $database = BeaconCommon::Database();
 if ($include_notices) {
 	$notices = array();
 	if ($html_mode === false) {
-		$results = $database->Query('SELECT message, secondary_message, action_url FROM client_notices WHERE (min_version IS NULL OR min_version <= $1) AND (max_version IS NULL OR max_version >= $1) ORDER BY last_update DESC LIMIT 5;', $current_build);
+		$results = $database->Query('SELECT message, secondary_message, action_url FROM client_notices WHERE (min_version IS NULL OR min_version <= $1) AND (max_version IS NULL OR max_version >= $1) AND last_update > CURRENT_TIMESTAMP - \'3 weeks\'::INTERVAL ORDER BY last_update DESC LIMIT 5;', $current_build);
 		while (!$results->EOF()) {
 			$notices[] = array(
 				'message' => $results->Field('message'),
