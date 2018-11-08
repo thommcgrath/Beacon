@@ -9,7 +9,7 @@ abstract class BeaconMaps {
 	const Extinction = 32;
 	
 	public static function All() {
-		return self::TheIsland | self::ScorchedEarth | self::TheCenter | self::Ragnarok | self::Aberration;
+		return self::TheIsland | self::ScorchedEarth | self::TheCenter | self::Ragnarok | self::Aberration | self::Extinction;
 	}
 	
 	public static function Names(int $mask) {

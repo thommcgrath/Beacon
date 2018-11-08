@@ -472,6 +472,10 @@ Implements NotificationKit.Receiver
 		    Return False
 		  End If
 		  
+		  If Beacon.OAuth2Client.HandleURL(URL.ToText) Then
+		    Return True
+		  End If
+		  
 		  If URL.Left(7) = "action/" Then
 		    Dim Instructions As String = Mid(URL, 8)
 		    Dim ParamsPos As Integer = InStr(Instructions, "?") - 1
@@ -508,9 +512,6 @@ Implements NotificationKit.Receiver
 		    Else
 		      Break
 		    End Select
-		  ElseIf URL.Left(6) = "oauth?" Then
-		    // Do nothing
-		    Return False
 		  Else
 		    Dim LegacyURL As Text = "thezaz.com/beacon/documents.php/"
 		    Dim TextURL As Text = URL.ToText

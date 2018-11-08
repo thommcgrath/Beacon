@@ -95,7 +95,7 @@ function PrepareCreatureTable(BeaconCreature $creature, array &$properties) {
 		PrepareBlueprintTable($creature, $properties);
 	}
 	
-	if ($creature->Tamable()) {
+	/*if ($creature->Tamable()) {
 		$taming_diet = $creature->TamingDiet();
 		$tamed_diet = $creature->TamedDiet();
 		$preferred_food = BeaconObject::GetByObjectID($taming_diet[0]);
@@ -110,7 +110,7 @@ function PrepareCreatureTable(BeaconCreature $creature, array &$properties) {
 	
 	$properties['Rideable'] = $creature->Rideable() ? 'Yes' : 'No';
 	$properties['Carryable'] = $creature->Carryable() ? 'Yes' : 'No';
-	$properties['Breedable'] = $creature->Breedable() ? 'Yes' : 'No';
+	$properties['Breedable'] = $creature->Breedable() ? 'Yes' : 'No';*/
 }
 
 function PrepareEngramTable(BeaconEngram $engram, array &$properties) {

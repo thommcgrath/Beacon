@@ -137,6 +137,46 @@ Protected Class OAuth2Client
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Destructor()
+		  If Self.References <> Nil And Self.mRequestID <> "" And Self.References.HasKey(Self.mRequestID) Then
+		    Self.References.Remove(Self.mRequestID)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function HandleURL(URL As Text) As Boolean
+		  If Not URL.BeginsWith("oauth/") Then
+		    Return False
+		  End If
+		  
+		  If References = Nil Then
+		    // Because it is an oauth url, return true because we are the correct recipient
+		    Return True
+		  End If
+		  
+		  Dim StartPos As Integer = URL.IndexOf("&requestid=")
+		  If StartPos = -1 Then
+		    Return True
+		  End If
+		  StartPos = StartPos + 11
+		  
+		  Dim EndPos As Integer = URL.IndexOf(StartPos, "&")
+		  If EndPos = -1 Then
+		    EndPos = URL.Length
+		  End If
+		  
+		  Dim RequestID As Text = Beacon.DecodeURLComponent(URL.Mid(StartPos, EndPos - StartPos))
+		  If References.HasKey(RequestID) Then
+		    Dim Ref As Xojo.Core.WeakRef = References.Value(RequestID)
+		    Call OAuth2Client(Ref.Value).Authorization_Handler(URL)
+		  End If
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsAuthenticated() As Boolean
 		  If Self.mAccessToken = "" Then
 		    #If DebugBuild
@@ -169,6 +209,15 @@ Protected Class OAuth2Client
 		  Dim URL As Text = Self.AuthURL + "?provider=" + Beacon.EncodeURLComponent(Self.mProvider)
 		  Dim Browser As Beacon.WebView = RaiseEvent ShowURL(URL)
 		  If Browser = Nil Then
+		    If Self.References = Nil Then
+		      Self.References = New Xojo.Core.Dictionary
+		    End If
+		    
+		    Self.mRequestID = Beacon.CreateUUID
+		    Dim Ref As Xojo.Core.WeakRef = Xojo.Core.WeakRef.Create(Self)
+		    Self.References.Value(Self.mRequestID) = Ref
+		    
+		    ShowURL(URL + "&requestid=" + Beacon.EncodeURLComponent(Self.mRequestID))
 		    Return
 		  End If
 		  Browser.URLHandler = AddressOf Authorization_Handler
@@ -254,6 +303,10 @@ Protected Class OAuth2Client
 		Private mRefreshToken As Text
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mRequestID As Text
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -279,6 +332,10 @@ Protected Class OAuth2Client
 		#tag EndSetter
 		Provider As Text
 	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
+		Private Shared References As Xojo.Core.Dictionary
+	#tag EndProperty
 
 
 	#tag Constant, Name = ProviderNitrado, Type = Text, Dynamic = False, Default = \"Nitrado", Scope = Public
@@ -318,6 +375,11 @@ Protected Class OAuth2Client
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Provider"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
