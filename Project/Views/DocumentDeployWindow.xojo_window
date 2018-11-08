@@ -46,7 +46,7 @@ Begin Window DocumentDeployWindow
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   600
       Begin Label ServerSelectionMessageLabel
@@ -481,6 +481,10 @@ End
 		    // Move to the next step
 		    Self.DeployingList.DeleteAllRows
 		    
+		    Dim Now As New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970, New Xojo.Core.TimeZone(0))
+		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Current
+		    Self.mDeployLabel = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + "." + Now.Minute.ToText(Locale, "00") + "." + Now.Second.ToText(Locale, "00") + " GMT"
+		    
 		    For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
 		      Dim Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
 		      If Not Profile.Enabled Then
@@ -503,7 +507,7 @@ End
 		    Next
 		    
 		    For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
-		      DeploymentEngine.Begin(Self.mCommandLineOptions, Beacon.Clone(Self.mGameIniOptions), Beacon.Clone(Self.mGameUserSettingsIniOptions))
+		      DeploymentEngine.Begin(Self.mDeployLabel, Self.mCommandLineOptions, Beacon.Clone(Self.mGameIniOptions), Beacon.Clone(Self.mGameUserSettingsIniOptions))
 		    Next
 		    
 		    Self.DeployingWatchTimer.Mode = Timer.ModeMultiple
@@ -527,7 +531,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Backup(Engine As Beacon.DeploymentEngine, Folder As Beacon.FolderItem, Label As Text)
+		Private Sub Backup(Engine As Beacon.DeploymentEngine, Folder As Beacon.FolderItem)
 		  If Engine.Errored Then
 		    Return
 		  End If
@@ -544,10 +548,10 @@ End
 		    ServerFolder.CreateAsFolder
 		  End If
 		  
-		  Dim Subfolder As Beacon.FolderItem = ServerFolder.Child(Label)
+		  Dim Subfolder As Beacon.FolderItem = ServerFolder.Child(Self.mDeployLabel)
 		  Dim Counter As Integer = 1
 		  While Subfolder.Exists
-		    Subfolder = ServerFolder.Child(Label + "-" + Counter.ToText)
+		    Subfolder = ServerFolder.Child(Self.mDeployLabel + "-" + Counter.ToText)
 		    Counter = Counter + 1
 		  Wend
 		  
@@ -625,6 +629,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mCurrentProvider As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDeployLabel As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -810,12 +818,8 @@ End
 		      BackupsFolder.CreateAsFolder
 		    End If
 		    
-		    Dim Now As New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970, New Xojo.Core.TimeZone(0))
-		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Current
-		    Dim BackupLabel As Text = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + "." + Now.Minute.ToText(Locale, "00") + "." + Now.Second.ToText(Locale, "00") + " GMT"
-		    
 		    For Each Engine As Beacon.DeploymentEngine In Self.mDeploymentEngines
-		      Self.Backup(Engine, BackupsFolder, BackupLabel)
+		      Self.Backup(Engine, BackupsFolder)
 		    Next
 		    
 		    Self.ShowResults()

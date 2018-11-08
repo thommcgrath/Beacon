@@ -26,7 +26,8 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(CommandLineOptions() As Beacon.ConfigValue, GameIniDict As Xojo.Core.Dictionary, GameUserSettingsIniDict As Xojo.Core.Dictionary)
+		Sub Begin(Label As Text, CommandLineOptions() As Beacon.ConfigValue, GameIniDict As Xojo.Core.Dictionary, GameUserSettingsIniDict As Xojo.Core.Dictionary)
+		  Self.mLabel = Label
 		  Self.mCommandLineOptions = CommandLineOptions
 		  Self.mGameIniDict = GameIniDict
 		  Self.mGameUserSettingsIniDict = GameUserSettingsIniDict
@@ -253,6 +254,33 @@ Implements Beacon.DeploymentEngine
 		    If Response.Value("status") <> "success" Then
 		      Self.mErrored = True
 		      Self.mStatus = "Error: Could not enable expert mode."
+		      Return
+		    End If
+		    
+		    Self.RunNextTask()
+		  Catch Err As RuntimeException
+		    Self.SetError(Err)
+		    Return
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Callback_MakeConfigBackup(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Tag
+		  
+		  If Self.mCancelled Or Self.CheckError(Status) Then
+		    Return
+		  End If
+		  
+		  Try
+		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
+		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    
+		    If Response.Value("status") <> "success" Then
+		      Self.mErrored = True
+		      Self.mStatus = "Error: Could not backup current settings."
 		      Return
 		    End If
 		    
@@ -567,7 +595,7 @@ Implements Beacon.DeploymentEngine
 		  Self.mServiceID = ServiceID
 		  Self.mAccessToken = OAuthData.Value("Access Token")
 		  
-		  Self.AppendTask(AddressOf WatchStatusForStop, AddressOf DownloadLogFile, AddressOf WaitNitradoIdle, AddressOf EnableExpertMode, AddressOf SetNextCommandLineParam, AddressOf DownloadGameIni, AddressOf DownloadGameUserSettingsIni, AddressOf UploadGameIni, AddressOf UploadGameUserSettingsIni, AddressOf StartServer)
+		  Self.AppendTask(AddressOf WatchStatusForStop, AddressOf DownloadLogFile, AddressOf WaitNitradoIdle, AddressOf MakeConfigBackup, AddressOf EnableExpertMode, AddressOf SetNextCommandLineParam, AddressOf DownloadGameIni, AddressOf DownloadGameUserSettingsIni, AddressOf UploadGameIni, AddressOf UploadGameUserSettingsIni, AddressOf StartServer)
 		End Sub
 	#tag EndMethod
 
@@ -652,6 +680,20 @@ Implements Beacon.DeploymentEngine
 		Function Finished() As Boolean
 		  Return Self.mFinished
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub MakeConfigBackup()
+		  Self.mStatus = "Making config backup…"
+		  
+		  Dim Headers As New Xojo.Core.Dictionary
+		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
+		  
+		  Dim FormData As New Xojo.Core.Dictionary
+		  FormData.Value("name") = "Beacon " + Self.mLabel
+		  
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers/settings/sets", FormData, AddressOf Callback_MakeConfigBackup, Nil, Headers)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -870,6 +912,10 @@ Implements Beacon.DeploymentEngine
 
 	#tag Property, Flags = &h21
 		Private mGameUserSettingsIniOriginal As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLabel As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

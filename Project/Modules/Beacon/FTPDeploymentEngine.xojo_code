@@ -14,10 +14,11 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(CommandLineOptions() As Beacon.ConfigValue, GameIniDict As Xojo.Core.Dictionary, GameUserSettingsIniDict As Xojo.Core.Dictionary)
+		Sub Begin(Label As Text, CommandLineOptions() As Beacon.ConfigValue, GameIniDict As Xojo.Core.Dictionary, GameUserSettingsIniDict As Xojo.Core.Dictionary)
 		  // Part of the Beacon.DeploymentEngine interface.
 		  
 		  #Pragma Unused CommandLineOptions
+		  #Pragma Unused Label
 		  
 		  Self.mGameIniDict = GameIniDict
 		  Self.mGameUserSettingsIniDict = GameUserSettingsIniDict
