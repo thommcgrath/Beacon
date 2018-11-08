@@ -18,9 +18,9 @@ Begin Window DocumentMergerWindow
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   64
+   MinHeight       =   400
    MinimizeButton  =   False
-   MinWidth        =   64
+   MinWidth        =   600
    Placement       =   1
    Resizeable      =   False
    Title           =   "Import From Document"
@@ -211,6 +211,23 @@ End
 		    Next
 		  Next
 		  
+		  Dim MapMask As UInt64
+		  For Each Document As Beacon.Document In SourceDocuments
+		    MapMask = MapMask Or Document.MapCompatibility
+		  Next
+		  Dim NewMaps() As Beacon.Map = Beacon.Maps.ForMask(MapMask)
+		  For I As Integer = NewMaps.Ubound DownTo 0
+		    If DestinationDocument.SupportsMap(NewMaps(I)) Then
+		      NewMaps.Remove(I)
+		    End If
+		  Next
+		  Dim OldMaps() As Beacon.Map = DestinationDocument.Maps
+		  For I As Integer = OldMaps.Ubound DownTo 0
+		    If OldMaps(I).Matches(MapMask) Then
+		      OldMaps.Remove(I)
+		    End If
+		  Next
+		  
 		  Dim Win As New DocumentMergerWindow
 		  Win.mDestination = DestinationDocument
 		  Win.mOAuthData = OAuthData
@@ -238,6 +255,18 @@ End
 		      Win.List.RowTag(Win.List.LastIndex) = Document.ServerProfile(I)
 		      Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
 		    Next
+		  Next
+		  For Each Map As Beacon.Map In NewMaps
+		    Win.List.AddRow("", "Add Map: " + Map.Name)
+		    Win.List.CellCheck(Win.List.LastIndex, 0) = True
+		    Win.List.RowTag(Win.List.LastIndex) = "Map+" + Str(Map.Mask)
+		    Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
+		  Next
+		  For Each Map As Beacon.Map In OldMaps
+		    Win.List.AddRow("", "Remove Map: " + Map.Name)
+		    Win.List.CellCheck(Win.List.LastIndex, 0) = True
+		    Win.List.RowTag(Win.List.LastIndex) = "Map-" + Str(Map.Mask)
+		    Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
 		  Next
 		  Win.ActionButton.Enabled = Enabled
 		  
@@ -300,18 +329,33 @@ End
 		      Continue
 		    End If
 		    
-		    Select Case Self.List.RowTag(I)
-		    Case IsA Beacon.ConfigGroup
-		      Dim Config As Beacon.ConfigGroup = Self.List.RowTag(I)
-		      Self.mDestination.AddConfigGroup(Config)
-		    Case IsA Beacon.ServerProfile
-		      Dim Profile As Beacon.ServerProfile = Self.List.RowTag(I)
-		      Self.mDestination.Add(Profile)
-		      
-		      If Profile.OAuthProvider <> "" And Self.mOAuthData.HasKey(Profile.OAuthProvider) Then
-		        Dim OAuthData As Xojo.Core.Dictionary = Self.mOAuthData.Value(Profile.OAuthProvider)
-		        If OAuthData <> Nil Then
-		          Self.mDestination.OAuthData(Profile.OAuthProvider) = OAuthData
+		    Dim Tag As Variant = Self.List.RowTag(I)
+		    Select Case Tag.Type
+		    Case Variant.TypeObject
+		      Select Case Tag
+		      Case IsA Beacon.ConfigGroup
+		        Dim Config As Beacon.ConfigGroup = Self.List.RowTag(I)
+		        Self.mDestination.AddConfigGroup(Config)
+		      Case IsA Beacon.ServerProfile
+		        Dim Profile As Beacon.ServerProfile = Self.List.RowTag(I)
+		        Self.mDestination.Add(Profile)
+		        
+		        If Profile.OAuthProvider <> "" And Self.mOAuthData.HasKey(Profile.OAuthProvider) Then
+		          Dim OAuthData As Xojo.Core.Dictionary = Self.mOAuthData.Value(Profile.OAuthProvider)
+		          If OAuthData <> Nil Then
+		            Self.mDestination.OAuthData(Profile.OAuthProvider) = OAuthData
+		          End If
+		        End If
+		      End Select
+		    Case Variant.TypeString
+		      Dim StringValue As String = Tag.StringValue
+		      If StringValue.BeginsWith("Map") Then
+		        Dim Operator As String = StringValue.Mid(4, 1)
+		        Dim Mask As UInt64 = Val(StringValue.Mid(5))
+		        If Operator = "+" Then
+		          Self.mDestination.MapCompatibility = Self.mDestination.MapCompatibility Or Mask
+		        Else
+		          Self.mDestination.MapCompatibility = Self.mDestination.MapCompatibility And Not Mask
 		        End If
 		      End If
 		    End Select
