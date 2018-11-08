@@ -68,13 +68,7 @@ if ($status == 200) {
 		<meta charset="UTF-8">
 		<title>Redirecting to Beacon</title>
 		<meta http-equiv="refresh" content="2; URL='<?php echo htmlentities($forward_to); ?>'">
-		<style type="text/css">
-		
-		body {
-			font-family: sans-serif;
-		}
-		
-		</style>
+		<link href="main.css" type="text/css" rel="stylesheet">
 	</head>
 	<body>
 		<h1>Redirecting to Beacon…</h1>
