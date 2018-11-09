@@ -39,6 +39,8 @@ Protected Class Quality
 		Function Value(CrateQualityMultiplier As Double, Difficulty As BeaconConfigs.Difficulty) As Double
 		  Dim CrateArbitraryQuality As Double = CrateQualityMultiplier + ((CrateQualityMultiplier - 1) * 0.2)
 		  Return Self.mBaseValue / (Difficulty.BaseArbitraryQuality * CrateArbitraryQuality)
+		  
+		  // Todo: Self.mBaseValue / (Difficulty.BaseArbitraryQuality * CrateArbitraryQuality) / RatingValueMultiplier
 		End Function
 	#tag EndMethod
 
@@ -50,6 +52,22 @@ Protected Class Quality
 	#tag Property, Flags = &h21
 		Private mKey As Text
 	#tag EndProperty
+
+
+	#tag Constant, Name = RatingValueMultiplierArmor, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RatingValueMultiplierDurability, Type = Double, Dynamic = False, Default = \"0.65", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RatingValueMultiplierOther, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RatingValueMultiplierSaddles, Type = Double, Dynamic = False, Default = \"1.55", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RatingValueMultiplierWeapons, Type = Double, Dynamic = False, Default = \"1.025", Scope = Private
+	#tag EndConstant
 
 
 	#tag ViewBehavior
