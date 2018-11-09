@@ -42,8 +42,10 @@ Protected Module Language
 		    Return If(Abbreviated, QualityTier8Abbreviated, QualityTier8)
 		  Case Beacon.Qualities.Tier9.Key
 		    Return If(Abbreviated, QualityTier9Abbreviated, QualityTier9)
+		  Case Beacon.Qualities.Tier10.Key
+		    Return If(Abbreviated, QualityTier10Abbreviated, QualityTier10)
 		  Else
-		    Return ""
+		    Return Quality.BaseValue.PrettyText(2)
 		  End Select
 		End Function
 	#tag EndMethod
@@ -62,6 +64,12 @@ Protected Module Language
 	#tag EndConstant
 
 	#tag Constant, Name = QualityTier1, Type = String, Dynamic = False, Default = \"Primitive", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = QualityTier10, Type = String, Dynamic = False, Default = \"Perfected", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = QualityTier10Abbreviated, Type = String, Dynamic = False, Default = \"Perf", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = QualityTier1Abbreviated, Type = String, Dynamic = False, Default = \"Prim", Scope = Protected
