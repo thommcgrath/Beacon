@@ -7,7 +7,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Composite       =   True
    Frame           =   0
    FullScreen      =   False
-   FullScreenButton=   False
+   FullScreenButton=   True
    HasBackColor    =   False
    Height          =   400
    ImplicitInstance=   True
@@ -44,7 +44,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   25
       Transparent     =   False
       Value           =   0
@@ -62,7 +61,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          HasBackColor    =   False
          Height          =   375
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   41
          LockBottom      =   True
@@ -78,7 +76,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          TabPanelIndex   =   1
          TabStop         =   True
          ToolbarCaption  =   ""
-         ToolbarIcon     =   "0"
          Top             =   25
          Transparent     =   True
          UseFocusRing    =   False
@@ -158,7 +155,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   -259
       LockBottom      =   True
@@ -237,7 +233,7 @@ End
 	#tag Event
 		Sub Moved()
 		  If Self.mOpened Then
-		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
+		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Self.Bounds.Left, Self.Bounds.Top, Self.Bounds.Width, Self.Bounds.Height)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -273,11 +269,7 @@ End
 		    Dim Height As Integer = Min(Max(Bounds.Height, Self.MinHeight), Self.MaxHeight, AvailableBounds.Height)
 		    Dim Left As Integer = Min(Max(Bounds.Left, AvailableBounds.Left), AvailableBounds.Right - Width)
 		    Dim Top As Integer = Min(Max(Bounds.Top, AvailableBounds.Top), AvailableBounds.Bottom - Height)
-		    
-		    Self.Width = Width
-		    Self.Height = Height
-		    Self.Left = Left
-		    Self.Top = Top
+		    Self.Bounds = New REALbasic.Rect(Left, Top, Width, Height)
 		  End If
 		  
 		  Self.UpdateSizeForView(Self.DashboardPane1)
@@ -289,7 +281,7 @@ End
 	#tag Event
 		Sub Resized()
 		  If Self.mOpened Then
-		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
+		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Self.Bounds.Left, Self.Bounds.Top, Self.Bounds.Width, Self.Bounds.Height)
 		  End If
 		End Sub
 	#tag EndEvent
