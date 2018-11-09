@@ -49,6 +49,7 @@ if [ "${STATUS}" = "success" ]; then
 	xcrun stapler staple -v "${OUTPUT}/${APPNAME}.dmg";
 else
 	echo "Disk image was not notarized, status is ${STATUS}.";
+	echo "See 'xcrun altool --notarization-info \"${REQUESTUUID}\" --username \"${APPLEID}\" --password @keychain:\"App Notarization\" --asc-provider \"${TEAMID}\"'";
 	exit 1;
 fi;
 

@@ -244,6 +244,13 @@ Implements NotificationKit.Receiver
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function HelpOpenDataFolder() As Boolean Handles HelpOpenDataFolder.Action
+			Self.ShowFile(Self.ApplicationSupport)
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function HelpReleaseNotes() As Boolean Handles HelpReleaseNotes.Action
 			Self.ShowReleaseNotes()
 			Return True
@@ -857,6 +864,23 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub ShowDonation()
 		  ShowURL(Beacon.WebURL("/donate.php"))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ShowFile(File As FolderItem)
+		  #if TargetMacOS
+		    Declare Function objc_getClass Lib "Cocoa" (ClassName As CString) As Ptr
+		    Declare Function GetSharedWorkspace Lib "Cocoa" Selector "sharedWorkspace" (Target As Ptr) As Ptr
+		    Declare Sub SelectFile Lib "Cocoa" Selector "selectFile:inFileViewerRootedAtPath:" (Target As Ptr, Path As CFStringRef, RootPath As CFStringRef)
+		    
+		    Dim Workspace As Ptr = GetSharedWorkspace(objc_getClass("NSWorkspace"))
+		    If Workspace <> Nil Then
+		      SelectFile(Workspace, File.NativePath, "")
+		    End If
+		  #else
+		    File.Launch
+		  #endif
 		End Sub
 	#tag EndMethod
 
