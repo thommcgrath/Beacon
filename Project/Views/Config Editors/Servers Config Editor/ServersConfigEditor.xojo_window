@@ -393,10 +393,7 @@ End
 		    If Not Folder.Exists Then
 		      Folder.CreateAsFolder
 		    End If
-		    #if TargetDesktop
-		      Dim Item As FolderItem = Folder
-		      Item.Launch
-		    #endif
+		    App.ShowFile(Folder)
 		  End Select
 		  
 		  Return True
@@ -404,6 +401,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

@@ -446,6 +446,13 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin MenuItem HelpOpenDataFolder
+         SpecialMenu = 0
+         Text = "Open Data Folder"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
    End
 End
 #tag EndMenu
