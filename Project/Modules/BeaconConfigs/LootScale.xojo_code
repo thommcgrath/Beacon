@@ -3,6 +3,12 @@ Protected Class LootScale
 Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary)
+		  If Dict.Lookup("App Version", 40) < Self.DiscardBeforeVersion Then
+		    App.Log("Discarding loot scale config because saved version " + App.NonReleaseVersion.ToText + " < " + Self.DiscardBeforeVersion.ToText + ".")
+		    Self.mMultiplier = 1.0
+		    Return
+		  End If
+		  
 		  If Dict.HasKey("Multiplier") Then
 		    Self.mMultiplier = Dict.Value("Multiplier")
 		  End If
@@ -12,6 +18,7 @@ Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub WriteDictionary(Dict As Xojo.Core.DIctionary)
 		  Dict.Value("Multiplier") = Self.mMultiplier
+		  Dict.Value("App Version") = App.NonReleaseVersion
 		End Sub
 	#tag EndEvent
 
@@ -75,7 +82,16 @@ Inherits Beacon.ConfigGroup
 	#tag EndComputedProperty
 
 
+	#tag Constant, Name = DiscardBeforeVersion, Type = Double, Dynamic = False, Default = \"40", Scope = Private
+	#tag EndConstant
+
+
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="IsImplicit"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
