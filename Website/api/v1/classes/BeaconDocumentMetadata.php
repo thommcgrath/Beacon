@@ -18,6 +18,7 @@ class BeaconDocumentMetadata implements JsonSerializable {
 	protected $map_mask = 0;
 	protected $difficulty_value = 0;
 	protected $console_safe = true;
+	protected $version = 2;
 	
 	public function DocumentID() {
 		return $this->document_id;
@@ -69,7 +70,11 @@ class BeaconDocumentMetadata implements JsonSerializable {
 	
 	public function LookupRequiredMods() {
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT DISTINCT mods.mod_id FROM (SELECT DISTINCT jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(contents->\'LootSources\')->\'ItemSets\')->\'ItemEntries\')->\'Items\')->>\'Path\' AS path FROM documents WHERE document_id = $1) AS items LEFT JOIN (engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id)) ON (items.path = engrams.path);', $this->document_id);
+		if ($this->version >= 3) {
+			$results = $database->Query('SELECT DISTINCT mods.mod_id FROM (SELECT DISTINCT jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(contents->\'Configs\'->\'LootDrops\'->\'Contents\')->\'ItemSets\')->\'ItemEntries\')->\'Items\')->>\'Path\' AS path FROM documents WHERE document_id = $1) AS items LEFT JOIN (engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id)) ON (items.path = engrams.path);', $this->document_id);
+		} else {
+			$results = $database->Query('SELECT DISTINCT mods.mod_id FROM (SELECT DISTINCT jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(jsonb_array_elements(contents->\'LootSources\')->\'ItemSets\')->\'ItemEntries\')->\'Items\')->>\'Path\' AS path FROM documents WHERE document_id = $1) AS items LEFT JOIN (engrams INNER JOIN mods ON (engrams.mod_id = mods.mod_id)) ON (items.path = engrams.path);', $this->document_id);
+		}
 		$mods = array();
 		while (!$results->EOF()) {
 			$mod_id = $results->Field('mod_id');
@@ -193,6 +198,7 @@ class BeaconDocumentMetadata implements JsonSerializable {
 		$document->map_mask = intval($results->Field('map'));
 		$document->difficulty_value = floatval($results->Field('difficulty'));
 		$document->console_safe = boolval($results->Field('console_safe'));
+		$document->version = intval($results->Field('document_version'));
 		return $document;
 	}
 	
@@ -226,7 +232,8 @@ class BeaconDocumentMetadata implements JsonSerializable {
 			'published',
 			'map',
 			'difficulty',
-			'console_safe'
+			'console_safe',
+			'coalesce((contents->>\'Version\')::numeric, 2) AS document_version'
 		);
 	}
 	
