@@ -44,6 +44,7 @@ Begin Window LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -1092,7 +1093,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub BuildSourceList()
 		  Dim CurrentSources() As Beacon.LootSource = Self.mDocument.LootSources
-		  Dim AllowedLootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.mDocument.ConsoleModsOnly)
+		  Dim AllowedLootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.mDocument.ConsoleModsOnly, Preferences.ShowExperimentalLootSources)
 		  Dim Mask As UInt64 = Self.mDocument.MapCompatibility
 		  For X As Integer = AllowedLootSources.Ubound DownTo 0
 		    If Not AllowedLootSources(X).ValidForMask(Mask) Then

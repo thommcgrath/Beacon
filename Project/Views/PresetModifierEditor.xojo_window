@@ -691,7 +691,7 @@ End
 	#tag Event
 		Sub TextChange()
 		  Dim Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Text.ToText)
-		  Dim Sources() As Beacon.LootSource = LocalData.SharedInstance.SearchForLootSources("", False)
+		  Dim Sources() As Beacon.LootSource = LocalData.SharedInstance.SearchForLootSources("", False, Preferences.ShowExperimentalLootSources)
 		  Dim Matches() As Beacon.LootSource = Modifier.Matches(Sources)
 		  
 		  Self.MatchesList.DeleteAllRows()

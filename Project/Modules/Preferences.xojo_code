@@ -230,6 +230,15 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
+			  Return False
+			End Get
+		#tag EndGetter
+		ShowExperimentalLootSources As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
 			  Init
 			  Return mManager.IntegerValue("Simulator Size", 200)
 			End Get
@@ -376,6 +385,11 @@ Protected Module Preferences
 			Name="ItemSetsSplitterPosition"
 			Group="Behavior"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LastPresetMapFilter"
+			Group="Behavior"
+			Type="UInt64"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

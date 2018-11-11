@@ -1291,7 +1291,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForLootSources(SearchText As Text, ConsoleSafe As Boolean) As Beacon.LootSource()
+		Function SearchForLootSources(SearchText As Text, ConsoleSafe As Boolean, IncludeExperimental As Boolean) As Beacon.LootSource()
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Dim Sources() As Beacon.LootSource
@@ -1303,6 +1303,9 @@ Implements Beacon.DataSource
 		    End If
 		    If SearchText <> "" Then
 		      Clauses.Append("LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1)")
+		    End If
+		    If Not IncludeExperimental Then
+		      Clauses.Append("experimental = 0")
 		    End If
 		    
 		    Dim SQL As String = "SELECT class_string, label, availability, multiplier_min, multiplier_max, uicolor, sort_order, required_item_sets, experimental, notes, mods.console_safe, mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"

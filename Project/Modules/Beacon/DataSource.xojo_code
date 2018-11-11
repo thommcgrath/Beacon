@@ -109,7 +109,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForLootSources(SearchText As Text, ConsoleSafe As Boolean) As Beacon.LootSource()
+		Function SearchForLootSources(SearchText As Text, ConsoleSafe As Boolean, IncludeExperimental As Boolean) As Beacon.LootSource()
 		  
 		End Function
 	#tag EndMethod

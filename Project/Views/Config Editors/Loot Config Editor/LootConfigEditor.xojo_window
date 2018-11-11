@@ -704,7 +704,7 @@ End
 		Sub BuildMenu(Item As BeaconToolbarItem, Menu As MenuItem)
 		  Select Case Item.Name
 		  Case "AddSource"
-		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Document.ConsoleModsOnly)
+		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Document.ConsoleModsOnly, Preferences.ShowExperimentalLootSources)
 		    For I As Integer = LootSources.Ubound DownTo 0
 		      If Self.Document.HasLootSource(LootSources(I)) Then
 		        LootSources.Remove(I)
