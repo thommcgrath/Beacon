@@ -538,7 +538,7 @@ Implements Beacon.DataSource
 		Private Function ImportInner(Content As Text) As Boolean
 		  Dim ChangeDict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content)
 		  
-		  Dim RequiredKeys() As Text = Array("mods", "loor_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
+		  Dim RequiredKeys() As Text = Array("mods", "loot_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
 		  For Each RequiredKey As Text In RequiredKeys
 		    If Not ChangeDict.HasKey(RequiredKey) Then
 		      App.Log("Cannot import classes because key '" + RequiredKey + "' is missing.")
@@ -547,8 +547,8 @@ Implements Beacon.DataSource
 		  Next
 		  
 		  Dim FileVersion As Integer = ChangeDict.Value("beacon_version")
-		  If FileVersion < 3 Then
-		    App.Log("Cannot import classes because file format is too old.")
+		  If FileVersion <> 4 Then
+		    App.Log("Cannot import classes because file format is not correct for this version. Get correct classes from " + Self.ClassesURL())
 		    Return False
 		  End If
 		  
@@ -631,7 +631,7 @@ Implements Beacon.DataSource
 		    Dim LootSourceIcons() As Auto = ChangeDict.Value("loot_source_icons")
 		    For Each Dict As Xojo.Core.Dictionary In LootSourceIcons
 		      Dim IconID As Text = Dict.Value("id")
-		      Dim IconData As Xojo.Core.MemoryBlock = Beacon.DecodeBase64(Dict.Value("data"))
+		      Dim IconData As Xojo.Core.MemoryBlock = Beacon.DecodeBase64(Dict.Value("icon_data"))
 		      
 		      IconID = IconID.Lowercase
 		      
@@ -671,7 +671,7 @@ Implements Beacon.DataSource
 		        If Results.RecordCount = 1 Then
 		          Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", Results.Field("object_id").StringValue)
 		        End If
-		        Self.SQLExecute("INSERT INTO loot_sources (object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, kind, uicolor, sort_order, required_item_sets, icon, experimental, notes) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14);", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, RequiredItemSets, IconID, Experimental, Notes)
+		        Self.SQLExecute("INSERT INTO loot_sources (object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, uicolor, sort_order, required_item_sets, icon, experimental, notes) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14);", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, RequiredItemSets, IconID, Experimental, Notes)
 		      End If
 		    Next
 		    
@@ -1305,7 +1305,7 @@ Implements Beacon.DataSource
 		      Clauses.Append("LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1)")
 		    End If
 		    
-		    Dim SQL As String = "SELECT class_string, label, kind, availability, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort_order, required_item_sets, mods.console_safe, mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
+		    Dim SQL As String = "SELECT class_string, label, availability, multiplier_min, multiplier_max, uicolor, sort_order, required_item_sets, experimental, notes, mods.console_safe, mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
 		    If Clauses.Ubound > -1 Then
 		      SQL = SQL + " WHERE " + Join(Clauses, " AND ")
 		    End If

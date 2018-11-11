@@ -12,7 +12,7 @@ $min_version = array_key_exists('version', $_GET) ? intval($_GET['version']) : 0
 $database = BeaconCommon::Database();
 
 if ($min_version >= 41) {
-	$beacon_version = 3;
+	$beacon_version = 4;
 	$values = array(
 		'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
 		'loot_source_icons' => BeaconLootSourceIcon::GetAll($min_version, $since),
