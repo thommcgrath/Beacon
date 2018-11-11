@@ -109,39 +109,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Visible         =   True
       Width           =   858
    End
-   Begin BeaconPopupMenu ConfigMenu
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      Caption         =   "Config Types"
-      Count           =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      LastIndex       =   0
-      Left            =   9
-      ListIndex       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   9
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   215
-   End
    Begin BeaconToolbar BeaconToolbar1
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -215,6 +182,38 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabPanelIndex   =   0
    End
+   Begin UITweaks.ResizedPopupMenu ConfigMenu
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   9
+      ListIndex       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   10
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   215
+   End
 End
 #tag EndWindow
 
@@ -263,7 +262,7 @@ End
 		  If Self.mController.Document <> Nil Then
 		    Dim DocumentID As Text = Self.mController.Document.DocumentID
 		    Dim ConfigName As Text = Preferences.LastUsedConfigName(DocumentID)
-		    For I As Integer = 0 To Self.ConfigMenu.Count - 1
+		    For I As Integer = 0 To Self.ConfigMenu.ListCount - 1
 		      Dim Tag As Variant = Self.ConfigMenu.RowTag(I)
 		      If (Tag.Type = Variant.TypeText And Tag.TextValue = ConfigName) Or (Tag.Type = Variant.TypeString And Tag.StringValue = ConfigName) Then
 		        Self.ConfigMenu.ListIndex = I
@@ -403,7 +402,7 @@ End
 		  End If
 		  
 		  Dim ConfigName As Text = Issue.ConfigName
-		  For I As Integer = 0 To Self.ConfigMenu.Count - 1
+		  For I As Integer = 0 To Self.ConfigMenu.ListCount - 1
 		    If Self.ConfigMenu.RowTag(I) = ConfigName Then
 		      Self.ConfigMenu.ListIndex = I
 		      Exit For I
@@ -707,25 +706,99 @@ End
 
 #tag EndWindowCode
 
+#tag Events BeaconToolbar1
+	#tag Event
+		Sub Open()
+		  Dim ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
+		  Dim ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToExport, "Save new config files…")
+		  #if DeployEnabled
+		    Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToDeploy, "Make config changes live")
+		  #endif
+		  Dim ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud, "Copy link to this document")
+		  
+		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel")
+		  Dim IssuesButton As New BeaconToolbarItem("IssuesButton", IconToolbarIssues, Not Self.Document.IsValid, "Show document issues")
+		  IssuesButton.IconColor = BeaconToolbarItem.IconColors.Red
+		  
+		  Me.LeftItems.Append(ImportButton)
+		  Me.LeftItems.Append(ExportButton)
+		  #if DeployEnabled
+		    Me.LeftItems.Append(DeployButton)
+		  #endif
+		  Me.LeftItems.Append(ShareButton)
+		  Me.LeftItems.Append(IssuesButton)
+		  
+		  Me.RightItems.Append(HelpButton)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "ImportButton"
+		    If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
+		      DocumentImportWindow(Self.mImportWindowRef.Value).Show()
+		    Else
+		      Self.mImportWindowRef = New WeakRef(DocumentImportWindow.Present(AddressOf ImportCallback, Self.Document))
+		    End If
+		  Case "ExportButton"
+		    Self.BeginExport()
+		  Case "HelpButton"
+		    If Self.mHelpDrawerOpen Then
+		      Self.HideHelpDrawer()
+		    Else
+		      Self.ShowHelpDrawer()
+		    End If
+		  Case "ShareButton"
+		    Dim Board As New Clipboard
+		    Board.Text = Self.mController.URL.WithScheme(Beacon.DocumentURL.TypeWeb)
+		    
+		    Dim Notification As New Beacon.UserNotification("Link to " + Self.mController.Name + " has been copied to the clipboard.")
+		    LocalData.SharedInstance.SaveNotification(Notification)
+		  Case "DeployButton"
+		    Self.BeginDeploy()
+		  Case "IssuesButton"
+		    Self.ShowIssues()
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AutosaveTimer
+	#tag Event
+		Sub Action()
+		  Self.Autosave()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ConfigMenu
 	#tag Event
 		Sub Open()
-		  Me.AddRow("Maps", "maps")
+		  Dim Labels(), Tags() As Text
+		  Labels.Append("Maps")
+		  Tags.Append("maps")
 		  #if DeployEnabled
-		    Me.AddRow("Servers", "deployments")
+		    Labels.Append("Servers")
+		    Tags.Append("deployments")
 		  #endif
 		  
 		  Dim Names() As Text = BeaconConfigs.AllConfigNames
 		  For Each Name As Text In Names
-		    Me.AddRow(Language.LabelForConfig(Name), Name)
+		    Labels.Append(Language.LabelForConfig(Name))
+		    Tags.Append(Name)
 		  Next
 		  
-		  Me.Sort
+		  Labels.SortWith(Tags)
+		  
+		  For I As Integer = 0 To Labels.Ubound
+		    Me.AddRow(Labels(I), Tags(I))
+		  Next
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  Dim Tag As Variant = Me.Tag
+		  Dim Tag As Variant
+		  If Me.ListIndex > -1 Then
+		    Tag = Me.RowTag(Me.ListIndex)
+		  End If
 		  Dim NewPanel As ConfigEditor
 		  Dim Embed As Boolean
 		  If Tag <> Nil And (Tag.Type = Variant.TypeString Or Tag.Type = Variant.TypeText) Then
@@ -794,69 +867,6 @@ End
 		  End If
 		  
 		  Self.UpdateMinimumDimensions()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events BeaconToolbar1
-	#tag Event
-		Sub Open()
-		  Dim ImportButton As New BeaconToolbarItem("ImportButton", IconToolbarImport, "Import config files…")
-		  Dim ExportButton As New BeaconToolbarItem("ExportButton", IconToolbarExport, Self.ReadyToExport, "Save new config files…")
-		  #if DeployEnabled
-		    Dim DeployButton As New BeaconToolbarItem("DeployButton", IconToolbarDeploy, Self.ReadyToDeploy, "Make config changes live")
-		  #endif
-		  Dim ShareButton As New BeaconToolbarItem("ShareButton", IconToolbarShare, Self.mController.URL.Scheme = Beacon.DocumentURL.TypeCloud, "Copy link to this document")
-		  
-		  Dim HelpButton As New BeaconToolbarItem("HelpButton", IconToolbarHelp, False, "Toggle help panel")
-		  Dim IssuesButton As New BeaconToolbarItem("IssuesButton", IconToolbarIssues, Not Self.Document.IsValid, "Show document issues")
-		  IssuesButton.IconColor = BeaconToolbarItem.IconColors.Red
-		  
-		  Me.LeftItems.Append(ImportButton)
-		  Me.LeftItems.Append(ExportButton)
-		  #if DeployEnabled
-		    Me.LeftItems.Append(DeployButton)
-		  #endif
-		  Me.LeftItems.Append(ShareButton)
-		  Me.LeftItems.Append(IssuesButton)
-		  
-		  Me.RightItems.Append(HelpButton)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "ImportButton"
-		    If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
-		      DocumentImportWindow(Self.mImportWindowRef.Value).Show()
-		    Else
-		      Self.mImportWindowRef = New WeakRef(DocumentImportWindow.Present(AddressOf ImportCallback, Self.Document))
-		    End If
-		  Case "ExportButton"
-		    Self.BeginExport()
-		  Case "HelpButton"
-		    If Self.mHelpDrawerOpen Then
-		      Self.HideHelpDrawer()
-		    Else
-		      Self.ShowHelpDrawer()
-		    End If
-		  Case "ShareButton"
-		    Dim Board As New Clipboard
-		    Board.Text = Self.mController.URL.WithScheme(Beacon.DocumentURL.TypeWeb)
-		    
-		    Dim Notification As New Beacon.UserNotification("Link to " + Self.mController.Name + " has been copied to the clipboard.")
-		    LocalData.SharedInstance.SaveNotification(Notification)
-		  Case "DeployButton"
-		    Self.BeginDeploy()
-		  Case "IssuesButton"
-		    Self.ShowIssues()
-		  End Select
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events AutosaveTimer
-	#tag Event
-		Sub Action()
-		  Self.Autosave()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
