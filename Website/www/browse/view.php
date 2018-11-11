@@ -75,7 +75,7 @@ if (count($map_names) >= 3) {
 </div>
 <h3>Download</h3>
 <div class="indent">
-	<p><a href="<?php echo $document->ResourceURL(); ?>">Download original document</a> or <a href="<?php echo str_replace('https://', 'beacon://', $document->ResourceURL()); ?>">Open document in Beacon</a></p>
+	<p><a href="<?php echo $document->ResourceURL(); ?>" rel="nofollow">Download original document</a> or <a href="<?php echo str_replace('https://', 'beacon://', $document->ResourceURL()); ?>" rel="nofollow">Open document in Beacon</a></p>
 </div>
 <h3>Create Game.ini</h3>
 <div class="indent">
