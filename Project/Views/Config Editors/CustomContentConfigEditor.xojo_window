@@ -10,7 +10,7 @@ Begin ConfigEditor CustomContentConfigEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   300
+   Height          =   382
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -25,7 +25,7 @@ Begin ConfigEditor CustomContentConfigEditor
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   300
+   Width           =   608
    Begin Shelf Switcher
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -56,7 +56,7 @@ Begin ConfigEditor CustomContentConfigEditor
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   300
+      Width           =   608
    End
    Begin TextArea ConfigArea
       AcceptTabs      =   False
@@ -70,7 +70,7 @@ Begin ConfigEditor CustomContentConfigEditor
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   199
+      Height          =   249
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -104,7 +104,7 @@ Begin ConfigEditor CustomContentConfigEditor
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   260
+      Width           =   568
    End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
@@ -133,7 +133,42 @@ Begin ConfigEditor CustomContentConfigEditor
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   300
+      Width           =   608
+   End
+   Begin Label WarningLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Careful, this data is stored in your file unencrypted. Remove admin passwords before sharing."
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   342
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   568
    End
 End
 #tag EndWindow

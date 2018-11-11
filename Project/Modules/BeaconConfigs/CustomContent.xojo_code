@@ -68,6 +68,14 @@ Inherits Beacon.ConfigGroup
 		Sub GameUserSettingsIniContent(SupportedConfigs As Xojo.Core.Dictionary = Nil, Assigns Value As Text)
 		  If SupportedConfigs <> Nil Then
 		    Dim ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Value, SupportedConfigs)
+		    
+		    // Do not copy passwords
+		    For I As Integer = ConfigValues.Ubound DownTo 0
+		      If ConfigValues(I).Header = "ServerSettings" And (ConfigValues(I).Key = "ServerAdminPassword" Or ConfigValues(I).Key = "ServerPassword") Then
+		        ConfigValues.Remove(I)
+		      End If
+		    Next
+		    
 		    Dim ConfigDict As New Xojo.Core.Dictionary
 		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
 		    Value = Beacon.RewriteIniContent("", ConfigDict)
@@ -161,6 +169,11 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="IsImplicit"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
