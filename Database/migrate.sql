@@ -41,3 +41,12 @@ CREATE TRIGGER loot_source_icons_after_delete_trigger AFTER DELETE ON loot_sourc
 CREATE TRIGGER loot_sources_before_insert_trigger BEFORE INSERT ON loot_sources FOR EACH ROW EXECUTE PROCEDURE object_insert_trigger();
 CREATE TRIGGER loot_sources_before_update_trigger BEFORE UPDATE ON loot_sources FOR EACH ROW EXECUTE PROCEDURE object_update_trigger();
 CREATE TRIGGER loot_sources_after_delete_trigger AFTER DELETE ON loot_sources FOR EACH ROW EXECUTE PROCEDURE object_delete_trigger();
+
+CREATE TABLE game_variables (
+	key TEXT NOT NULL PRIMARY KEY,
+	value TEXT NOT NULL,
+	last_update TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+GRANT SELECT ON game_variables TO thezaz_website;
+
+CREATE TRIGGER game_variables_before_update_trigger BEFORE INSERT OR UPDATE ON game_variables FOR EACH ROW EXECUTE PROCEDURE generic_update_trigger();

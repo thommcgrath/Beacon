@@ -9,6 +9,10 @@ class BeaconLootSourceIcon extends BeaconObject {
 		return $columns;
 	}
 	
+	protected static function TableName() {
+		return 'loot_source_icons';
+	}
+	
 	protected function GetColumnValue(string $column) {
 		switch ($column) {
 		case 'icon_data':
@@ -23,7 +27,7 @@ class BeaconLootSourceIcon extends BeaconObject {
 		if ($obj === null) {
 			return null;
 		}
-		$obj->icon_data = hex2bin($row->Field('icon_data'));
+		$obj->icon_data = $row->Field('icon_data');
 		return $obj;
 	}
 	
@@ -31,6 +35,14 @@ class BeaconLootSourceIcon extends BeaconObject {
 		$json = parent::jsonSerialize();
 		$json['icon_data'] = base64_encode($this->icon_data);
 		return $json;
+	}
+	
+	public function IconData(bool $base64 = true) {
+		if ($base64) {
+			return base64_encode($this->icon_data);
+		} else {
+			return $this->icon_data;
+		}
 	}
 }
 

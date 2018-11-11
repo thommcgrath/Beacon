@@ -11,7 +11,22 @@ $min_version = array_key_exists('version', $_GET) ? intval($_GET['version']) : 0
 
 $database = BeaconCommon::Database();
 
-if ($min_version > 33) {
+if ($min_version >= 41) {
+	$beacon_version = 3;
+	$values = array(
+		'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
+		'loot_source_icons' => BeaconLootSourceIcon::GetAll($min_version, $since),
+		'engrams' => BeaconEngram::GetAll($min_version, $since),
+		'presets' => BeaconPreset::GetAll($min_version, $since),
+		'preset_modifiers' => BeaconPresetModifier::GetAll($min_version, $since),
+		'creatures' => BeaconCreature::GetAll($min_version, $since),
+		'diets' => BeaconDiet::GetAll($min_version, $since),
+		'help_topics' => BeaconHelpTopic::GetAll($since),
+		'game_variables' => BeaconGameVariable::GetAll($since),
+		'mods' => BeaconMod::GetLive(),
+		'deletions' => BeaconObject::Deletions($min_version, $since)
+	);
+} elseif ($min_version > 33) {
 	$beacon_version = 3;
 	$values = array(
 		'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
@@ -22,41 +37,37 @@ if ($min_version > 33) {
 		'diets' => BeaconDiet::GetAll($min_version, $since),
 		'help_topics' => BeaconHelpTopic::GetAll($since),
 		'game_variables' => BeaconGameVariable::GetAll($since),
-		'loot_source_icons' => BeaconLootSourceIcon::GetAll($min_version, $since),
 		'mods' => BeaconMod::GetLive(),
 		'deletions' => BeaconObject::Deletions($min_version, $since)
 	);
 	
-	if ($min_version < 41) {
-		$loot_sources = $values['loot_sources'];
-		$icons = $values['loot_source_icons'];
-		unset($values['loot_source_icons']);
-		
-		$converted_loot_sources = array();
-		foreach ($loot_sources as $loot_source) {
-			$arr = $loot_source->jsonSerialize();
-			$icon_id = $arr['icon'];
-			$changed = false;
-			foreach ($icons as $icon) {
-				if ($icon['object_id'] == $icon_id) {
-					$arr['icon'] = $icon['icon_data'];
-					$changed = true;
-					break;
-				}
-			}
-			if ($changed) {
-				$arr['kind'] = 'Standard';
-				unset($arr['experimental'], $arr['notes']);
-				$converted_loot_sources = $arr;
-			}
-		}
-		$values['loot_sources'] = $converted_loot_sources;
+	$icons = BeaconLootSourceIcon::GetAll();
+	$icon_map = array();
+	foreach ($icons as $icon) {
+		$icon_map[$icon->ObjectID()] = $icon->IconData(true);
 	}
+	
+	$loot_sources = $values['loot_sources'];
+	$converted_loot_sources = array();
+	foreach ($loot_sources as $loot_source) {
+		$arr = $loot_source->jsonSerialize();
+		$arr['icon'] = $icon_map[$arr['icon']];
+		$arr['kind'] = 'Standard';
+		unset($arr['experimental'], $arr['notes']);
+		$converted_loot_sources[] = $arr;
+	}
+	$values['loot_sources'] = $converted_loot_sources;
 } else {
 	// legacy style
 	
 	$values = array();
 	$beacon_version = 2;
+	
+	$icons = BeaconLootSourceIcon::GetAll();
+	$icon_map = array();
+	foreach ($icons as $icon) {
+		$icon_map[$icon->ObjectID()] = bin2hex($icon->IconData(false));
+	}
 	
 	$values['loot_sources'] = array('additions' => array(), 'removals' => array());
 	$loot_sources = BeaconLootSource::GetAll($min_version, $since);
@@ -64,13 +75,13 @@ if ($min_version > 33) {
 		$values['loot_sources']['additions'][] = array(
 			'class' => $loot_source->ClassString(),
 			'label' => $loot_source->Label(),
-			'kind' => $loot_source->Kind(),
+			'kind' => 'Standard',
 			'mask' => $loot_source->Availability() & 3,
 			'availability' => $loot_source->Availability(),
 			'mult_min' => $loot_source->MultiplierMin(),
 			'mult_max' => $loot_source->MultiplierMax(),
 			'uicolor' => $loot_source->UIColor(),
-			'icon_hex' => bin2hex($loot_source->Icon()),
+			'icon_hex' => $icon_map[$loot_source->IconID()],
 			'sort' => $loot_source->SortOrder(),
 			'version' => $loot_source->MinVersion(),
 			'use_blueprints' => 0

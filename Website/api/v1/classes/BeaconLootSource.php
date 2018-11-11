@@ -19,7 +19,7 @@ class BeaconLootSource extends BeaconBlueprint {
 		$columns[] = 'sort';
 		$columns[] = 'required_item_sets';
 		$columns[] = 'experimental';
-		$columns[] = 'notes'
+		$columns[] = 'notes';
 		return $columns;
 	}
 	
