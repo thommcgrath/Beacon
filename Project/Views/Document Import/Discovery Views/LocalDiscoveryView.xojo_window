@@ -303,6 +303,7 @@ Begin DiscoveryView LocalDiscoveryView
       Width           =   560
    End
    Begin ClipboardWatcher Watcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -545,18 +546,16 @@ End
 #tag Events ConfigArea
 	#tag Event
 		Sub TextChange()
-		  Self.ActionButton.Enabled = Self.mGameIniContent.Len > 0 Or Self.mGameUserSettingsIniContent.Len > 0
-		  
-		  If Self.mSettingUp Then
-		    Return
+		  If Not Self.mSettingUp Then
+		    Select Case Self.Switcher.SelectedIndex
+		    Case Self.GameIniIndex
+		      Self.mGameIniContent = Me.Text.Trim
+		    Case Self.GameUserSettingsIniIndex
+		      Self.mGameUserSettingsIniContent = Me.Text.Trim
+		    End Select
 		  End If
 		  
-		  Select Case Self.Switcher.SelectedIndex
-		  Case Self.GameIniIndex
-		    Self.mGameIniContent = Me.Text.Trim
-		  Case Self.GameUserSettingsIniIndex
-		    Self.mGameUserSettingsIniContent = Me.Text.Trim
-		  End Select
+		  Self.ActionButton.Enabled = Self.mGameIniContent.Len > 0 Or Self.mGameUserSettingsIniContent.Len > 0
 		End Sub
 	#tag EndEvent
 	#tag Event
