@@ -682,8 +682,8 @@ End
 #tag Events QualityField
 	#tag Event
 		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
-		  MinValue = -9
-		  MaxValue = 9
+		  MinValue = -10
+		  MaxValue = 10
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -973,10 +973,5 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="mCancelled"
-		Group="Behavior"
-		Type="Integer"
 	#tag EndViewProperty
 #tag EndViewBehavior

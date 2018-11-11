@@ -126,24 +126,15 @@ Implements Beacon.Countable
 		      Dim ModifierID As Text = Set.Key
 		      Dim Quality As Integer = Item.Lookup("Quality", 0)
 		      Dim Quantity As Double = Item.Lookup("Quantity", 1.0)
-		      Dim IDs() As Text
 		      
 		      If Quality = 0 And Quantity = 1 Then
 		        Continue
 		      End If
 		      
-		      Select Case ModifierID
-		      Case "Standard"
-		        IDs = SourceKindToModifierID(Beacon.LootSource.Kinds.Standard)
-		      Case "Bonus"
-		        IDs = SourceKindToModifierID(Beacon.LootSource.Kinds.Bonus)
-		      Case "Cave"
-		        IDs = SourceKindToModifierID(Beacon.LootSource.Kinds.Cave)
-		      Case "Sea"
-		        IDs = SourceKindToModifierID(Beacon.LootSource.Kinds.Sea)
-		      Else
+		      Dim IDs() As Text = SourceKindToModifierID(ModifierID)
+		      If IDs.Ubound = -1 Then
 		        IDs.Append(ModifierID)
-		      End Select
+		      End If
 		      
 		      For Each ID As Text In IDs
 		        Dim ModifierDict As New Xojo.Core.Dictionary
@@ -273,16 +264,6 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function QualityModifier(Kind As Beacon.LootSource.Kinds) As Integer
-		  Dim IDs() As Text = Self.SourceKindToModifierID(Kind)
-		  If IDs.Ubound = -1 Then
-		    Return 0
-		  End If
-		  Return Self.QualityModifier(IDs(0))
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function QualityModifier(Modifier As Beacon.PresetModifier) As Integer
 		  Return Self.QualityModifier(Modifier.ModifierID)
 		End Function
@@ -296,16 +277,6 @@ Implements Beacon.Countable
 		  
 		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
 		  Return Dict.Lookup("Quality", 0)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function QuantityMultiplier(Kind As Beacon.LootSource.Kinds) As Double
-		  Dim IDs() As Text = Self.SourceKindToModifierID(Kind)
-		  If IDs.Ubound = -1 Then
-		    Return 1.0
-		  End If
-		  Return Self.QuantityMultiplier(IDs(0))
 		End Function
 	#tag EndMethod
 
@@ -327,18 +298,18 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Shared Function SourceKindToModifierID(Kind As Beacon.LootSource.Kinds) As Text()
+		Protected Shared Function SourceKindToModifierID(Kind As Text) As Text()
 		  Dim IDs() As Text
 		  Select Case Kind
-		  Case Beacon.LootSource.Kinds.Bonus
+		  Case "Bonus"
 		    IDs.Append(Beacon.PresetModifier.BonusCratesID)
 		    IDs.Append(Beacon.PresetModifier.AberrationSurfaceBonusCratesID)
-		  Case Beacon.LootSource.Kinds.Cave
+		  Case "Cave"
 		    IDs.Append(Beacon.PresetModifier.CaveCratesID)
-		  Case Beacon.LootSource.Kinds.Sea
+		  Case "Sea"
 		    IDs.Append(Beacon.PresetModifier.DeepSeaCratesID)
 		    IDs.Append(Beacon.PresetModifier.OpenDesertCratesID)
-		  Case Beacon.LootSource.Kinds.Standard
+		  Case "Standard"
 		    IDs.Append(Beacon.PresetModifier.BasicCratesID)
 		    IDs.Append(Beacon.PresetModifier.AberrationSurfaceCratesID)
 		    IDs.Append(Beacon.PresetModifier.BossesID)

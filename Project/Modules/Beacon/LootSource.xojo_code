@@ -92,7 +92,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mClassString = Source.mClassString
 		  Self.mLabel = Source.mLabel
 		  Self.mMultipliers = New Beacon.Range(Source.mMultipliers.Min, Source.mMultipliers.Max)
-		  Self.mKind = Source.mKind
 		  Self.mAvailability = Source.mAvailability
 		  Self.mIsOfficial = Source.mIsOfficial
 		  Self.mUIColor = Source.mUIColor
@@ -121,6 +120,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Experimental() As Boolean
+		  Return Self.mExperimental
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Export() As Xojo.Core.Dictionary
 		  Dim Children() As Xojo.Core.Dictionary
 		  For Each Set As Beacon.ItemSet In Self.mSets
@@ -135,7 +140,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("bSetsRandomWithoutReplacement") = Self.SetsRandomWithoutReplacement
 		  Keys.Value("SupplyCrateClassString") = Self.ClassString
 		  Keys.Value("Availability") = Self.mAvailability
-		  Keys.Value("Kind") = Self.KindToText(Self.mKind)
 		  Keys.Value("Multiplier_Min") = Self.Multipliers.Min
 		  Keys.Value("Multiplier_Max") = Self.Multipliers.Max
 		  Keys.Value("UIColor") = Self.mUIColor.Red.ToHex(2) + Self.mUIColor.Green.ToHex(2) + Self.mUIColor.Blue.ToHex(2) + Self.mUIColor.Alpha.ToHex(2)
@@ -144,6 +148,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("UseBlueprints") = Self.mUseBlueprints
 		  Keys.Value("RequiredItemSets") = Self.RequiredItemSets
 		  Keys.Value("AppendMode") = Self.mAppendMode
+		  Keys.Value("Experimental") = Self.mExperimental
+		  Keys.Value("Notes") = Self.mNotes
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -190,12 +196,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim MutableSource As New Beacon.MutableLootSource(ClassString, False)
 		    MutableSource.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
 		    MutableSource.Availability = Beacon.Maps.All.Mask
-		    MutableSource.Kind = Beacon.LootSource.TextToKind(Dict.Lookup("Kind", "Standard"))
 		    MutableSource.UIColor = Color.RGBA(Integer.FromHex(UIColor.Mid(0, 2)), Integer.FromHex(UIColor.Mid(2, 2)), Integer.FromHex(UIColor.Mid(4, 2)), Integer.FromHex(UIColor.Mid(6, 2)))
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
 		    MutableSource.Label = Dict.Lookup("Label", ClassString)
 		    MutableSource.UseBlueprints = Dict.Lookup("UseBlueprints", False)
 		    MutableSource.RequiredItemSets = Dict.Lookup("RequiredItemSets", 1)
+		    MutableSource.Experimental = Dict.Lookup("Experimental", False)
+		    MutableSource.Notes = Dict.Lookup("Notes", "")
 		    LootSource = New Beacon.LootSource(MutableSource)
 		  End If
 		  
@@ -255,12 +262,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim MutableSource As New Beacon.MutableLootSource(ClassString, False)
 		    MutableSource.Multipliers = New Beacon.Range(Dict.Lookup("Multiplier_Min", 1), Dict.Lookup("Multiplier_Max", 1))
 		    MutableSource.Availability = Beacon.Maps.All.Mask
-		    MutableSource.Kind = Beacon.LootSource.TextToKind(Dict.Lookup("Kind", "Standard"))
 		    MutableSource.UIColor = Color.RGBA(Integer.FromHex(UIColor.Mid(0, 2)), Integer.FromHex(UIColor.Mid(2, 2)), Integer.FromHex(UIColor.Mid(4, 2)), Integer.FromHex(UIColor.Mid(6, 2)))
 		    MutableSource.SortValue = Dict.Lookup("SortValue", 99)
 		    MutableSource.Label = Dict.Lookup("Label", ClassString)
 		    MutableSource.UseBlueprints = Dict.Lookup("UseBlueprints", False)
 		    MutableSource.RequiredItemSets = Dict.Lookup("RequiredItemSets", 1)
+		    MutableSource.Experimental = Dict.Lookup("Experimental", False)
+		    MutableSource.Notes = Dict.Lookup("Notes", "")
 		    LootSource = New Beacon.LootSource(MutableSource)
 		  End If
 		  
@@ -335,35 +343,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Kind() As Beacon.LootSource.Kinds
-		  Return Self.mKind
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function KindToText(Kind As Beacon.LootSource.Kinds) As Text
-		  Select Case Kind
-		  Case Beacon.LootSource.Kinds.Standard
-		    Return "Standard"
-		  Case Beacon.LootSource.Kinds.Bonus
-		    Return "Bonus"
-		  Case Beacon.LootSource.Kinds.Cave
-		    Return "Cave"
-		  Case Beacon.LootSource.Kinds.Sea
-		    Return "Sea"
-		  Case Beacon.LootSource.Kinds.BossSpider
-		    Return "BossSpider"
-		  Case Beacon.LootSource.Kinds.BossGorilla
-		    Return "BossGorilla"
-		  Case Beacon.LootSource.Kinds.BossDragon
-		    Return "BossDragon"
-		  Case Beacon.LootSource.Kinds.BossManticore
-		    Return "BossManticore"
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Label() As Text
 		  If Self.mLabel <> "" Then
 		    Return Self.mLabel
@@ -426,6 +405,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function Multipliers() As Beacon.Range
 		  Return Self.mMultipliers
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Notes() As Text
+		  Return Self.mNotes
 		End Function
 	#tag EndMethod
 
@@ -571,31 +556,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function TextToKind(Kind As Text) As Beacon.LootSource.Kinds
-		  Select Case Kind
-		  Case "Standard"
-		    Return Beacon.LootSource.Kinds.Standard
-		  Case "Bonus"
-		    Return Beacon.LootSource.Kinds.Bonus
-		  Case "Cave"
-		    Return Beacon.LootSource.Kinds.Cave
-		  Case "Sea"
-		    Return Beacon.LootSource.Kinds.Sea
-		  Case "BossSpider"
-		    Return Beacon.LootSource.Kinds.BossSpider
-		  Case "BossGorilla"
-		    Return Beacon.LootSource.Kinds.BossGorilla
-		  Case "BossDragon"
-		    Return Beacon.LootSource.Kinds.BossDragon
-		  Case "BossManticore"
-		    Return Beacon.LootSource.Kinds.BossManticore
-		  Else
-		    Return Beacon.LootSource.Kinds.Standard
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function TextValue(Difficulty As BeaconConfigs.Difficulty) As Text
 		  Dim Values() As Text
 		  
@@ -694,6 +654,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Protected mClassString As Text
 	#tag EndProperty
 
+	#tag Property, Flags = &h1
+		Protected mExperimental As Boolean
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -719,10 +683,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mKind As Beacon.LootSource.Kinds
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
 		Protected mLabel As Text
 	#tag EndProperty
 
@@ -740,6 +700,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Property, Flags = &h1
 		Protected mMultipliers As Beacon.Range
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mNotes As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -808,18 +772,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		#tag EndSetter
 		SetsRandomWithoutReplacement As Boolean
 	#tag EndComputedProperty
-
-
-	#tag Enum, Name = Kinds, Type = Integer, Flags = &h0
-		Standard
-		  Bonus
-		  Cave
-		  Sea
-		  BossSpider
-		  BossGorilla
-		  BossDragon
-		BossManticore
-	#tag EndEnum
 
 
 	#tag ViewBehavior

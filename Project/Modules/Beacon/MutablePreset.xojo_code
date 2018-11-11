@@ -82,15 +82,6 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub QualityModifier(Kind As Beacon.LootSource.Kinds, Assigns Value As Integer)
-		  Dim IDs() As Text = Self.SourceKindToModifierID(Kind)
-		  For Each ID As Text In IDs
-		    Self.QualityModifier(ID) = Value
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub QualityModifier(Modifier As Beacon.PresetModifier, Assigns Value As Integer)
 		  Self.QualityModifier(Modifier.ModifierID) = Value
 		End Sub
@@ -105,15 +96,6 @@ Inherits Beacon.Preset
 		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
 		  Dict.Value("Quality") = Value
 		  Self.mModifierValues.Value(ModifierID) = Dict
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub QuantityMultiplier(Kind As Beacon.LootSource.Kinds, Assigns Value As Double)
-		  Dim IDs() As Text = Self.SourceKindToModifierID(Kind)
-		  For Each ID As Text In IDs
-		    Self.QuantityMultiplier(ID) = Value
-		  Next
 		End Sub
 	#tag EndMethod
 

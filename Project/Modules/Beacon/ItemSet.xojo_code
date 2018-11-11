@@ -100,8 +100,17 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  // Weight is intentionally skipped, as that is relative to the source, no reason for a preset to alter that.
 		  Set.mSourcePresetID = Preset.PresetID
 		  
-		  Dim QuantityMultiplier As Double = Preset.QuantityMultiplier(ForLootSource.Kind)
-		  Dim QualityModifier As Integer = Preset.QualityModifier(ForLootSource.Kind)
+		  Dim ActiveModifiers() As Text = Preset.ActiveModifierIDs
+		  Dim QuantityMultipliers() As Double
+		  Dim QualityModifiers() As Integer
+		  For Each ModifierID As Text In ActiveModifiers
+		    Dim Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
+		    If Modifier.Matches(ForLootSource) Then
+		      QuantityMultipliers.Append(Preset.QuantityMultiplier(ModifierID))
+		      QualityModifiers.Append(Preset.QualityModifier(ModifierID))
+		    End If
+		  Next
+		  
 		  Dim Qualities() As Beacon.Quality = Beacon.Qualities.All
 		  
 		  For Each Entry As Beacon.PresetEntry In Preset
@@ -109,25 +118,37 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Continue
 		    End If
 		    
-		    Dim EntryQuantityMultiplier As Double = If(Entry.RespectQuantityMultiplier, QuantityMultiplier, 1)
-		    Dim EntryQualityModifier As Integer = If(Entry.RespectQualityModifier, QualityModifier, 0)
+		    If Entry.RespectQualityModifier Then
+		      Dim MinQualityIndex, MaxQualityIndex As Integer
+		      For I As Integer = 0 To Qualities.Ubound
+		        If Qualities(I) = Entry.MinQuality Then
+		          MinQualityIndex = I
+		        End If
+		        If Qualities(I) = Entry.MaxQuality Then
+		          MaxQualityIndex = I
+		        End If
+		      Next
+		      
+		      For Each Modifier As Integer In QualityModifiers
+		        MinQualityIndex = MinQualityIndex + Modifier
+		        MaxQualityIndex = MaxQualityIndex + Modifier
+		      Next
+		      MinQualityIndex = Max(Min(MinQualityIndex, Qualities.Ubound), 0)
+		      MaxQualityIndex = Max(Min(MaxQualityIndex, Qualities.Ubound), 0)
+		      Entry.MinQuality = Qualities(MinQualityIndex)
+		      Entry.MaxQuality = Qualities(MaxQualityIndex)
+		    End If
 		    
-		    Dim MinQualityIndex, MaxQualityIndex As Integer
-		    For I As Integer = 0 To UBound(Qualities)
-		      If Qualities(I) = Entry.MinQuality Then
-		        MinQualityIndex = I
-		      End If
-		      If Qualities(I) = Entry.MaxQuality Then
-		        MaxQualityIndex = I
-		      End If
-		    Next
-		    MinQualityIndex = Max(Min(MinQualityIndex + EntryQualityModifier, UBound(Qualities)), 0)
-		    MaxQualityIndex = Max(Min(MaxQualityIndex + EntryQualityModifier, UBound(Qualities)), 0)
-		    
-		    Entry.MinQuantity = Round(Entry.MinQuantity * EntryQuantityMultiplier)
-		    Entry.MaxQuantity = Round(Entry.MaxQuantity * EntryQuantityMultiplier)
-		    Entry.MinQuality = Qualities(MinQualityIndex)
-		    Entry.MaxQuality = Qualities(MaxQualityIndex)
+		    If Entry.RespectQuantityMultiplier Then
+		      Dim MinQuantityRaw As Double = Entry.MinQuantity
+		      Dim MaxQuantityRaw As Double = Entry.MaxQuantity
+		      For Each Multiplier As Double In QuantityMultipliers
+		        MinQuantityRaw = MinQuantityRaw * Multiplier
+		        MaxQuantityRaw = MaxQuantityRaw * Multiplier
+		      Next
+		      Entry.MinQuantity = Round(MinQuantityRaw)
+		      Entry.MaxQuantity = Round(MaxQuantityRaw)
+		    End If
 		    
 		    Set.Append(New Beacon.SetEntry(Entry))
 		  Next

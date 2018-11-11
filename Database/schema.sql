@@ -239,19 +239,30 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE deletions TO thezaz_website;
 -- End Core Object Structure
 
 -- Loot Sources: All the lootable objects that Beacon can customize
+CREATE TABLE loot_source_icons (
+	PRIMARY KEY (object_id),
+	FOREIGN KEY (mod_id) REFERENCES mods(mod_id) ON DELETE CASCADE ON UPDATE CASCADE,
+	icon_data BYTEA NOT NULL
+) INHERITS (objects);
+GRANT SELECT ON TABLE loot_source_icons TO thezaz_website;
+CREATE TRIGGER loot_source_icons_before_insert_trigger BEFORE INSERT ON loot_source_icons FOR EACH ROW EXECUTE PROCEDURE object_insert_trigger();
+CREATE TRIGGER loot_source_icons_before_update_trigger BEFORE UPDATE ON loot_source_icons FOR EACH ROW EXECUTE PROCEDURE object_update_trigger();
+CREATE TRIGGER loot_source_icons_after_delete_trigger AFTER DELETE ON loot_source_icons FOR EACH ROW EXECUTE PROCEDURE object_delete_trigger();
+
 CREATE TABLE loot_sources (
 	PRIMARY KEY (object_id),
 	FOREIGN KEY (mod_id) REFERENCES mods(mod_id) ON DELETE CASCADE ON UPDATE CASCADE,
 	path CITEXT NOT NULL UNIQUE,
 	class_string CITEXT NOT NULL,
 	availability INTEGER NOT NULL,
-	kind loot_source_kind NOT NULL,
 	multiplier_min NUMERIC(6,4) NOT NULL,
 	multiplier_max NUMERIC(6,4) NOT NULL,
 	uicolor TEXT NOT NULL CHECK (uicolor ~* '^[0-9a-fA-F]{8}$'),
-	icon BYTEA NOT NULL,
+	icon UUID NOT NULL REFERENCES loot_source_icons(object_id) ON UPDATE CASCADE ON DELETE RESTRICT,
 	sort INTEGER NOT NULL UNIQUE,
 	required_item_sets INTEGER NOT NULL DEFAULT 1,
+	experimental BOOLEAN NOT NULL DEFAULT FALSE,
+	notes TEXT NOT NULL DEFAULT '',
 	CHECK (class_string LIKE '%_C')
 ) INHERITS (objects);
 GRANT SELECT ON TABLE loot_sources TO thezaz_website;

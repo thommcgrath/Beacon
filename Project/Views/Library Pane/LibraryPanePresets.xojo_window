@@ -207,14 +207,11 @@ End
 		  Clone.Grouping = Source.Grouping
 		  Clone.MaxItems = Source.MaxItems
 		  Clone.MinItems = Source.MinItems
-		  Clone.QualityModifier(Beacon.LootSource.Kinds.Standard) = Source.QualityModifier(Beacon.LootSource.Kinds.Standard)
-		  Clone.QualityModifier(Beacon.LootSource.Kinds.Bonus) = Source.QualityModifier(Beacon.LootSource.Kinds.Bonus)
-		  Clone.QualityModifier(Beacon.LootSource.Kinds.Cave) = Source.QualityModifier(Beacon.LootSource.Kinds.Cave)
-		  Clone.QualityModifier(Beacon.LootSource.Kinds.Sea) = Source.QualityModifier(Beacon.LootSource.Kinds.Sea)
-		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Standard) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Standard)
-		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Bonus)
-		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Cave) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Cave)
-		  Clone.QuantityMultiplier(Beacon.LootSource.Kinds.Sea) = Source.QuantityMultiplier(Beacon.LootSource.Kinds.Sea)
+		  Dim Modifiers() As Text = Clone.ActiveModifierIDs
+		  For Each ModifierID As Text In Modifiers
+		    Clone.QualityModifier(ModifierID) = Source.QualityModifier(ModifierID)
+		    Clone.QuantityMultiplier(ModifierID) = Source.QuantityMultiplier(ModifierID)
+		  Next
 		  For Each Entry As Beacon.PresetEntry In Source
 		    Clone.Append(New Beacon.PresetEntry(Entry))
 		  Next
@@ -582,6 +579,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

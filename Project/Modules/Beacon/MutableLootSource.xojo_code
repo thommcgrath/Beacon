@@ -22,14 +22,14 @@ Inherits Beacon.LootSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub IsOfficial(Assigns Value As Boolean)
-		  Self.mIsOfficial = Value
+		Sub Experimental(Assigns Value As Boolean)
+		  Self.mExperimental = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Kind(Assigns Value As Beacon.LootSource.Kinds)
-		  Self.mKind = Value
+		Sub IsOfficial(Assigns Value As Boolean)
+		  Self.mIsOfficial = Value
 		End Sub
 	#tag EndMethod
 
@@ -42,6 +42,12 @@ Inherits Beacon.LootSource
 	#tag Method, Flags = &h0
 		Sub Multipliers(Assigns Value As Beacon.Range)
 		  Self.mMultipliers = New Beacon.Range(Value.Min, Value.Max)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Notes(Assigns Value As Text)
+		  Self.mNotes = Value
 		End Sub
 	#tag EndMethod
 
@@ -81,6 +87,11 @@ Inherits Beacon.LootSource
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="AppendMode"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true

@@ -46,7 +46,7 @@ Begin Window LootSourceWizard
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   550
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -460,7 +460,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   188
+         Top             =   156
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -495,7 +495,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   154
+         Top             =   122
          Transparent     =   True
          Underline       =   False
          Visible         =   True
@@ -571,73 +571,6 @@ Begin Window LootSourceWizard
          Visible         =   True
          Width           =   104
       End
-      Begin UITweaks.ResizedLabel DefineKindLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         Italic          =   False
-         Left            =   20
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Multiline       =   False
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   5
-         TabPanelIndex   =   2
-         TabStop         =   True
-         Text            =   "Kind:"
-         TextAlign       =   2
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   122
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   104
-      End
-      Begin UITweaks.ResizedPopupMenu DefineKindMenu
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "Panel"
-         InitialValue    =   ""
-         Italic          =   False
-         Left            =   136
-         ListIndex       =   0
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   6
-         TabPanelIndex   =   2
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   122
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   260
-      End
       Begin UITweaks.ResizedTextField DefineMaxMultiplierField
          AcceptTabs      =   False
          Alignment       =   0
@@ -675,7 +608,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   188
+         Top             =   156
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -719,7 +652,7 @@ Begin Window LootSourceWizard
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   154
+         Top             =   122
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -1275,7 +1208,6 @@ End
 		    Self.DefineNameField.Text = FieldSource.Label
 		    Self.DefineMinMultiplierField.Text = Format(FieldSource.Multipliers.Min, "0.0000")
 		    Self.DefineMaxMultiplierField.Text = Format(FieldSource.Multipliers.Max, "0.0000")
-		    Self.DefineKindMenu.SelectByTag(FieldSource.Kind)
 		  End If
 		  
 		  Self.Panel.Value = Self.PaneDefine
@@ -1322,8 +1254,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events Panel
-#tag EndEvents
 #tag Events SelectionActionButton
 	#tag Event
 		Sub Action()
@@ -1419,11 +1349,6 @@ End
 		      Return
 		    End If
 		    
-		    If Self.DefineKindMenu.ListIndex = -1 Then
-		      Self.ShowAlert("No kind selected", "Don't worry much about getting this one right, the loot source kind only affects how Beacon decides which preset multipliers to use.")
-		      Return
-		    End If
-		    
 		    Dim MinMultiplier As Double = CDbl(Self.DefineMinMultiplierField.Text)
 		    Dim MaxMultiplier As Double = CDbl(Self.DefineMaxMultiplierField.Text)
 		    If MinMultiplier <= 0 Or MaxMultiplier <= 0 Then
@@ -1433,7 +1358,6 @@ End
 		    
 		    Destination = New Beacon.MutableLootSource(ClassString, False)
 		    Destination.Label = Label
-		    Destination.Kind = CType(Self.DefineKindMenu.RowTag(Self.DefineKindMenu.ListIndex), Beacon.LootSource.Kinds)
 		    Destination.Availability = Self.mDocument.MapCompatibility
 		    Destination.Multipliers = New Beacon.Range(MinMultiplier, MaxMultiplier)
 		    Destination.IsOfficial = False
@@ -1529,29 +1453,6 @@ End
 		  End If
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events DefineKindMenu
-	#tag Event
-		Sub Open()
-		  Me.AddRow(Language.LootSourceKindStandard)
-		  Me.AddRow(Language.LootSourceKindBonus)
-		  Me.AddRow(Language.LootSourceKindCave)
-		  Me.AddRow(Language.LootSourceKindSea)
-		  
-		  Me.RowTag(0) = Beacon.LootSource.Kinds.Standard
-		  Me.RowTag(1) = Beacon.LootSource.Kinds.Bonus
-		  Me.RowTag(2) = Beacon.LootSource.Kinds.Cave
-		  Me.RowTag(3) = Beacon.LootSource.Kinds.Sea
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events DefineMaxMultiplierField
-#tag EndEvents
-#tag Events DefineMinMultiplierField
-#tag EndEvents
-#tag Events DefineNameField
-#tag EndEvents
-#tag Events DefineClassField
 #tag EndEvents
 #tag Events CustomizePresetsList
 	#tag Event

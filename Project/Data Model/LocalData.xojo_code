@@ -60,7 +60,8 @@ Implements Beacon.DataSource
 		  Self.BeginTransaction()
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, console_safe INTEGER NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, kind TEXT NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, required_item_sets INTEGER NOT NULL, icon BLOB NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE loot_source_icons (icon_id TEXT NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, required_item_sets INTEGER NOT NULL, icon TEXT NOT NULL REFERENCES icon_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, can_blueprint INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
@@ -341,7 +342,7 @@ Implements Beacon.DataSource
 		      ClassString = ClassString + "_C"
 		    End If
 		    
-		    Dim RS As RecordSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(class_string) = LOWER(?1);", ClassString)
+		    Dim RS As RecordSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
 		    If RS.RecordCount = 0 Then
 		      Return Nil
 		    End If
@@ -366,7 +367,7 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Try
-		    Dim RS As RecordSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(path) = LOWER(?1);", Path)
+		    Dim RS As RecordSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
 		    If RS.RecordCount = 0 Then
 		      Return Nil
 		    End If
@@ -398,7 +399,7 @@ Implements Beacon.DataSource
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Try
-		    Dim Results As RecordSet = Self.SQLSelect("SELECT class_string, label, kind, availability, multiplier_min, multiplier_max, uicolor, hex(icon) AS icon_hex, sort_order, required_item_sets FROM loot_sources WHERE LOWER(class_string) = LOWER(?1);", ClassString)
+		    Dim Results As RecordSet = Self.SQLSelect("SELECT class_string, label, availability, multiplier_min, multiplier_max, uicolor, sort_order, required_item_sets, experimental, notes FROM loot_sources WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
 		    If Results.RecordCount = 0 Then
 		      Return Nil
 		    End If
@@ -477,29 +478,12 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function IconForLootSource(Source As Beacon.LootSource, HighlightColor As Color) As Picture
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT icon FROM loot_sources WHERE class_string = ?1;", Source.ClassString)
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT loot_source_icons.icon_data FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.class_string = ?1;", Source.ClassString)
 		  Dim SpriteSheet As Picture
 		  If Results.RecordCount = 1 Then
-		    SpriteSheet = Results.Field("icon").PictureValue
+		    SpriteSheet = Results.Field("icon_data").PictureValue
 		  Else
-		    Select Case Source.Kind
-		    Case Beacon.LootSource.Kinds.Bonus
-		      SpriteSheet = IconLootBonus
-		    Case Beacon.LootSource.Kinds.BossDragon
-		      SpriteSheet = IconLootDragon
-		    Case Beacon.LootSource.Kinds.BossGorilla
-		      SpriteSheet = IconLootGorilla
-		    Case Beacon.LootSource.Kinds.BossManticore
-		      SpriteSheet = IconLootManticore
-		    Case Beacon.LootSource.Kinds.BossSpider
-		      SpriteSheet = IconLootSpider
-		    Case Beacon.LootSource.Kinds.Cave
-		      SpriteSheet = IconLootCave
-		    Case Beacon.LootSource.Kinds.Sea
-		      SpriteSheet = IconLootSea
-		    Else
-		      SpriteSheet = IconLootStandard
-		    End Select
+		    SpriteSheet = IconLootStandard
 		  End If
 		  
 		  Dim Height As Integer = (SpriteSheet.Height / 2) / 3
@@ -554,7 +538,7 @@ Implements Beacon.DataSource
 		Private Function ImportInner(Content As Text) As Boolean
 		  Dim ChangeDict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content)
 		  
-		  Dim RequiredKeys() As Text = Array("mods", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
+		  Dim RequiredKeys() As Text = Array("mods", "loor_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
 		  For Each RequiredKey As Text In RequiredKeys
 		    If Not ChangeDict.HasKey(RequiredKey) Then
 		      App.Log("Cannot import classes because key '" + RequiredKey + "' is missing.")
@@ -601,37 +585,62 @@ Implements Beacon.DataSource
 		      Dim ModName As Text = ModData.Value("name")
 		      Dim ConsoleSafe As Boolean = ModData.Value("console_safe")
 		      
-		      Dim Results As RecordSet = Self.SQLSelect("SELECT name, console_safe FROM mods WHERE LOWER(mod_id) = LOWER(?1);", ModID)
+		      ModID = ModID.Lowercase
+		      
+		      Dim Results As RecordSet = Self.SQLSelect("SELECT name, console_safe FROM mods WHERE mod_id = ?1;", ModID)
 		      If Results.RecordCount = 1 Then
 		        If ModName.Compare(Results.Field("name").StringValue.ToText, Text.CompareCaseSensitive) <> 0 Or ConsoleSafe <> Results.Field("console_safe").BooleanValue Then
-		          Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3 WHERE LOWER(mod_id) = LOWER(?1);", ModID, ModName, ConsoleSafe)
+		          Self.SQLExecute("UPDATE mods SET name = ?2, console_safe = ?3 WHERE mod_id = ?1;", ModID, ModName, ConsoleSafe)
 		        End If
 		      Else
-		        Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe) VALUES (LOWER(?1), ?2, ?3);", ModId, ModName, ConsoleSafe)
+		        Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe) VALUES (?1, ?2, ?3);", ModID, ModName, ConsoleSafe)
 		      End If
 		      
 		      RetainMods.Append(ModID)
 		    Next
 		    Dim ModResults As RecordSet = Self.SQLSelect("SELECT mod_id FROM mods;")
 		    While Not ModResults.EOF
-		      Dim ModID As Text = ModResults.Field("mod_id").StringValue.ToText
+		      Dim ModID As Text = ModResults.Field("mod_id").StringValue.ToText.Lowercase
 		      If RetainMods.IndexOf(ModID) = -1 Then
-		        Self.SQLExecute("DELETE FROM mods WHERE LOWER(mod_id) = LOWER(?1);", ModID)
+		        Self.SQLExecute("DELETE FROM mods WHERE mod_id = ?1;", ModID)
 		      End If
 		      ModResults.MoveNext
 		    Wend
 		    
+		    // When deleting, loot_source_icons must be done after loot_sources
 		    Dim Deletions() As Auto = ChangeDict.Value("deletions")
+		    Dim DeleteIcons() As Text
 		    For Each Deletion As Xojo.Core.Dictionary In Deletions
 		      Dim ObjectID As Text = Deletion.Value("object_id")
+		      ObjectID = ObjectID.Lowercase
 		      Select Case Deletion.Value("group")
 		      Case "loot_sources"
-		        Self.SQLExecute("DELETE FROM loot_sources WHERE LOWER(object_id) = LOWER(?1);", ObjectID)
+		        Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", ObjectID)
+		      Case "loot_source_icons"
+		        DeleteIcons.Append(ObjectID)
 		      Case "engrams"
-		        Self.SQLExecute("DELETE FROM engrams WHERE LOWER(object_id) = LOWER(?1);", ObjectID)
+		        Self.SQLExecute("DELETE FROM engrams WHERE object_id = ?1;", ObjectID)
 		      Case "presets"
-		        Self.SQLExecute("DELETE FROM official_presets WHERE LOWER(object_id) = LOWER(?1);", ObjectID)
+		        Self.SQLExecute("DELETE FROM official_presets WHERE object_id = ?1;", ObjectID)
 		      End Select
+		    Next
+		    For Each IconID As Text In DeleteIcons
+		      Self.SQLExecute("DELETE FROM loot_source_icons WHERE icon_id = ?1;", IconID)
+		    Next
+		    
+		    Dim LootSourceIcons() As Auto = ChangeDict.Value("loot_source_icons")
+		    For Each Dict As Xojo.Core.Dictionary In LootSourceIcons
+		      Dim IconID As Text = Dict.Value("id")
+		      Dim IconData As Xojo.Core.MemoryBlock = Beacon.DecodeBase64(Dict.Value("data"))
+		      
+		      IconID = IconID.Lowercase
+		      
+		      Dim Results As RecordSet = Self.SQLSelect("SELECT icon_id FROM loot_source_icons WHERE icon_id = ?1;")
+		      If Results.RecordCount = 1 Then
+		        Self.SQLExecute("UPDATE loot_source_icons SET icon_data = ?2 WHERE icon_id = ?1;", IconID, IconData)
+		      Else
+		        Self.SQLExecute("INSERT INTO loot_source_icons (icon_id, icon_data) VALUES (?1, ?2);", IconID, IconData)
+		      End If
 		    Next
 		    
 		    Dim LootSources() As Auto = ChangeDict.Value("loot_sources")
@@ -642,22 +651,27 @@ Implements Beacon.DataSource
 		      Dim Availability As Integer = Dict.Value("availability")
 		      Dim Path As Text = Dict.Value("path")
 		      Dim ClassString As Text = Dict.Value("class_string")
-		      Dim Kind As Text = Dict.Value("kind")
 		      Dim MultiplierMin As Double = Xojo.Core.Dictionary(Dict.Value("multipliers")).Value("min")
 		      Dim MultiplierMax As Double = Xojo.Core.Dictionary(Dict.Value("multipliers")).Value("max")
 		      Dim UIColor As Text = Dict.Value("ui_color")
 		      Dim SortOrder As Integer = Dict.Value("sort_order")
 		      Dim RequiredItemSets As Integer = Dict.Value("required_item_sets")
-		      Dim Icon As Xojo.Core.MemoryBlock = Beacon.DecodeBase64(Dict.Value("icon"))
+		      Dim Experimental As Boolean = Dict.Value("experimental")
+		      Dim Notes As Text = Dict.Value("notes")
+		      Dim IconID As Text = Dict.Value("icon")
 		      
-		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM loot_sources WHERE LOWER(object_id) = LOWER(?1) OR LOWER(path) = LOWER(?2);", ObjectID, Path)
+		      ObjectID = ObjectID.Lowercase
+		      ModID = ModID.Lowercase
+		      IconID = IconID.Lowercase
+		      
+		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM loot_sources WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
 		      If Results.RecordCount = 1 And ObjectID = Results.Field("object_id").StringValue Then
-		        Self.SQLExecute("UPDATE loot_sources SET mod_id = LOWER(?2), label = ?3, availability = ?4, path = ?5, class_string = ?6, multiplier_min = ?7, multiplier_max = ?8, kind = ?9, uicolor = ?10, sort_order = ?11, required_item_sets = ?12, icon = ?13 WHERE LOWER(object_id) = LOWER(?1);", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, Kind, UIColor, SortOrder, RequiredItemSets, Icon)
+		        Self.SQLExecute("UPDATE loot_sources SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, multiplier_min = ?7, multiplier_max = ?8, uicolor = ?9, sort_order = ?10, required_item_sets = ?11, icon = ?12, experimental = ?13, notes = ?14 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, RequiredItemSets, IconID, Experimental, Notes)
 		      Else
 		        If Results.RecordCount = 1 Then
 		          Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", Results.Field("object_id").StringValue)
 		        End If
-		        Self.SQLExecute("INSERT INTO loot_sources (object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, kind, uicolor, sort_order, required_item_sets, icon) VALUES (LOWER(?1), LOWER(?2), ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13);", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, Kind, UIColor, SortOrder, RequiredItemSets, Icon)
+		        Self.SQLExecute("INSERT INTO loot_sources (object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, kind, uicolor, sort_order, required_item_sets, icon, experimental, notes) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14);", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, RequiredItemSets, IconID, Experimental, Notes)
 		      End If
 		    Next
 		    
@@ -671,14 +685,17 @@ Implements Beacon.DataSource
 		      Dim ClassString As Text = Dict.Value("class_string")
 		      Dim CanBlueprint As Boolean = Dict.Value("can_blueprint")
 		      
-		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM engrams WHERE LOWER(object_id) = LOWER(?1) OR LOWER(path) = LOWER(?2);", ObjectID, Path)
+		      ObjectID = ObjectID.Lowercase
+		      ModID = ModID.Lowercase
+		      
+		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM engrams WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
 		      If Results.RecordCount = 1 And ObjectID = Results.Field("object_id").StringValue Then
-		        Self.SQLExecute("UPDATE engrams SET mod_id = LOWER(?2), label = ?3, availability = ?4, path = ?5, class_string = ?6, can_blueprint = ?7 WHERE LOWER(object_id) = LOWER(?1);", ObjectID, ModID, Label, Availability, Path, ClassString, CanBlueprint)
+		        Self.SQLExecute("UPDATE engrams SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, can_blueprint = ?7 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, CanBlueprint)
 		      Else
 		        If Results.RecordCount = 1 Then
 		          Self.SQLExecute("DELETE FROM engrams WHERE object_id = ?1;", Results.Field("object_id").StringValue)
 		        End If
-		        Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, can_blueprint) VALUES (LOWER(?1), LOWER(?2), ?3, ?4, ?5, ?6, ?7);", ObjectID, ModID, Label, Availability, Path, ClassString, CanBlueprint)
+		        Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, can_blueprint) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, ModID, Label, Availability, Path, ClassString, CanBlueprint)
 		      End If
 		    Next
 		    
@@ -689,12 +706,14 @@ Implements Beacon.DataSource
 		      Dim Label As Text = Dict.Value("label")
 		      Dim Contents As Text = Dict.Value("contents")
 		      
+		      ObjectID = ObjectID.Lowercase
+		      
 		      ReloadPresets = True
-		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM official_presets WHERE LOWER(object_id) = LOWER(?1);", ObjectID)
+		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM official_presets WHERE object_id = ?1;", ObjectID)
 		      If Results.RecordCount = 1 Then
-		        Self.SQLExecute("UPDATE official_presets SET label = ?2, contents = ?3 WHERE LOWER(object_id) = LOWER(?1);", ObjectID, Label, Contents)
+		        Self.SQLExecute("UPDATE official_presets SET label = ?2, contents = ?3 WHERE object_id = ?1;", ObjectID, Label, Contents)
 		      Else
-		        Self.SQLExecute("INSERT INTO official_presets (object_id, label, contents) VALUES (LOWER(?1), ?2, ?3);", ObjectID, Label, Contents)
+		        Self.SQLExecute("INSERT INTO official_presets (object_id, label, contents) VALUES (?1, ?2, ?3);", ObjectID, Label, Contents)
 		      End If
 		    Next
 		    
@@ -705,10 +724,12 @@ Implements Beacon.DataSource
 		      Dim Pattern As Text = Dict.Value("pattern")
 		      Dim ModID As Text = Xojo.Core.Dictionary(Dict.Value("mod")).Value("id")
 		      
+		      ObjectID = ObjectID.Lowercase
+		      
 		      ReloadPresets = True
-		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM preset_modifiers WHERE LOWER(object_id) = LOWER(?1);", ObjectID)
+		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM preset_modifiers WHERE object_id = ?1;", ObjectID)
 		      If Results.RecordCount = 1 Then
-		        Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3, mod_id = ?4 WHERE LOWER(object_id) = LOWER(?1);", ObjectID, Label, Pattern, ModID)
+		        Self.SQLExecute("UPDATE preset_modifiers SET label = ?2, pattern = ?3, mod_id = ?4 WHERE object_id = ?1;", ObjectID, Label, Pattern, ModID)
 		      Else
 		        Self.SQLExecute("INSERT INTO preset_modifiers (object_id, label, pattern, mod_id) VALUES (?1, ?2, ?3, ?4);", ObjectID, Label, Pattern, ModID)
 		      End If
@@ -725,9 +746,11 @@ Implements Beacon.DataSource
 		          DetailURL = Dict.Value("detail_url")
 		        End If
 		        
-		        Dim Results As RecordSet = Self.SQLSelect("SELECT config_name FROM config_help WHERE LOWER(config_name) = LOWER(?1);", ConfigName)
+		        ConfigName = ConfigName.Lowercase
+		        
+		        Dim Results As RecordSet = Self.SQLSelect("SELECT config_name FROM config_help WHERE config_name = ?1;", ConfigName)
 		        If Results.RecordCount = 1 Then
-		          Self.SQLExecute("UPDATE config_help SET title = ?2, body = ?3, detail_url = ?4 WHERE LOWER(config_name) = LOWER(?1);", ConfigName, Title, Body, DetailURL)
+		          Self.SQLExecute("UPDATE config_help SET title = ?2, body = ?3, detail_url = ?4 WHERE config_name = ?1;", ConfigName, Title, Body, DetailURL)
 		        Else
 		          Self.SQLExecute("INSERT INTO config_help (config_name, title, body, detail_url) VALUES (?1, ?2, ?3, ?4);", ConfigName, Title, Body, DetailURL)
 		        End If
@@ -857,7 +880,8 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  // Loot Sources
-		  If FromSchemaVersion >= 6 Then
+		  If FromSchemaVersion >= 8 Then  
+		    Commands.Append("INSERT INTO loot_source_icons SELECT * FROM legacy.loot_source_icons;")
 		    Commands.Append("INSERT INTO loot_sources SELECT * FROM legacy.loot_sources;")
 		  End If
 		  
@@ -1070,6 +1094,8 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h21
 		Private Shared Function RecordSetToLootSource(Results As RecordSet) As Beacon.LootSource()
+		  // class_string, label, availability, multiplier_min, multiplier_max, sort_order, required_item_sets, experimental, notes
+		  
 		  Dim Sources() As Beacon.LootSource
 		  While Not Results.EOF
 		    Dim HexColor As String = Results.Field("uicolor").StringValue
@@ -1096,13 +1122,14 @@ Implements Beacon.DataSource
 		    
 		    Dim Source As New Beacon.MutableLootSource(Results.Field("class_string").StringValue.ToText, True)
 		    Source.Label = Results.Field("label").StringValue.ToText
-		    Source.Kind = Beacon.LootSource.TextToKind(Results.Field("kind").StringValue.ToText)
 		    Source.Availability = Results.Field("availability").IntegerValue
 		    Source.Multipliers = New Beacon.Range(Results.Field("multiplier_min").DoubleValue, Results.Field("multiplier_max").DoubleValue)
 		    Source.UIColor = RGB(Integer.FromHex(RedHex.ToText), Integer.FromHex(GreenHex.ToText), Integer.FromHex(BlueHex.ToText), Integer.FromHex(AlphaHex.ToText))
 		    Source.SortValue = Results.Field("sort_order").IntegerValue
 		    Source.UseBlueprints = False
 		    Source.RequiredItemSets = Results.Field("required_item_sets").IntegerValue
+		    Source.Experimental = Results.Field("experimental").BooleanValue
+		    Source.Notes = Results.Field("notes").StringValue.ToText
 		    Sources.Append(New Beacon.LootSource(Source))
 		    Results.MoveNext
 		  Wend
@@ -1540,7 +1567,7 @@ Implements Beacon.DataSource
 	#tag Constant, Name = Notification_NewAppNotification, Type = Text, Dynamic = False, Default = \"New App Notification", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"7", Scope = Private
+	#tag Constant, Name = SchemaVersion, Type = Double, Dynamic = False, Default = \"8", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = UserModID, Type = String, Dynamic = False, Default = \"23ecf24c-377f-454b-ab2f-d9d8f31a5863", Scope = Public

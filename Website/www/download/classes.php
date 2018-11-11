@@ -22,9 +22,36 @@ if ($min_version > 33) {
 		'diets' => BeaconDiet::GetAll($min_version, $since),
 		'help_topics' => BeaconHelpTopic::GetAll($since),
 		'game_variables' => BeaconGameVariable::GetAll($since),
+		'loot_source_icons' => BeaconLootSourceIcon::GetAll($min_version, $since),
 		'mods' => BeaconMod::GetLive(),
 		'deletions' => BeaconObject::Deletions($min_version, $since)
 	);
+	
+	if ($min_version < 41) {
+		$loot_sources = $values['loot_sources'];
+		$icons = $values['loot_source_icons'];
+		unset($values['loot_source_icons']);
+		
+		$converted_loot_sources = array();
+		foreach ($loot_sources as $loot_source) {
+			$arr = $loot_source->jsonSerialize();
+			$icon_id = $arr['icon'];
+			$changed = false;
+			foreach ($icons as $icon) {
+				if ($icon['object_id'] == $icon_id) {
+					$arr['icon'] = $icon['icon_data'];
+					$changed = true;
+					break;
+				}
+			}
+			if ($changed) {
+				$arr['kind'] = 'Standard';
+				unset($arr['experimental'], $arr['notes']);
+				$converted_loot_sources = $arr;
+			}
+		}
+		$values['loot_sources'] = $converted_loot_sources;
+	}
 } else {
 	// legacy style
 	
