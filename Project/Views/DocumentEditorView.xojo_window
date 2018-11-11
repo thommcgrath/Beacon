@@ -753,6 +753,8 @@ End
 		        NewPanel = New MetaDataConfigEditor(Self.mController)
 		      Case BeaconConfigs.ExperienceCurves.ConfigName
 		        NewPanel = New ExperienceCurvesConfigEditor(Self.mController)
+		      Case BeaconConfigs.CustomContent.ConfigName
+		        NewPanel = New CustomContentConfigEditor(Self.mController)
 		      End Select
 		      If NewPanel <> Nil Then
 		        Self.Panels.Value(Tag.StringValue) = NewPanel

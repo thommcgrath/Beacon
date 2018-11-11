@@ -92,12 +92,15 @@ Begin BeaconSubview PresetEditorView
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      DoubleBuffer    =   False
       DrawCaptions    =   True
       Enabled         =   True
+      EraseBackground =   False
       Height          =   60
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
+      IsVertical      =   False
       Left            =   200
       LockBottom      =   False
       LockedInPosition=   False
@@ -111,6 +114,7 @@ Begin BeaconSubview PresetEditorView
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   340
@@ -786,6 +790,8 @@ End
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
+		  #Pragma unused Initial
+		  
 		  Self.MapSelector.Left = Self.ContentsList.Left + ((Self.ContentsList.Width - Self.MapSelector.Width) / 2)
 		End Sub
 	#tag EndEvent
@@ -1217,6 +1223,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Action(itemIndex as integer)
+		  #Pragma Unused itemIndex
+		  
 		  If Self.mUpdating = True Then
 		    Return
 		  End If

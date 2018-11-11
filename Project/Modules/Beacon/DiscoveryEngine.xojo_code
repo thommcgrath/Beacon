@@ -25,7 +25,13 @@ Protected Interface DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IniContent() As Text
+		Function GameIniContent() As Text
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameUserSettingsIniContent() As Text
 		  
 		End Function
 	#tag EndMethod

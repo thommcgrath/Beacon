@@ -19,6 +19,8 @@ Protected Module Language
 		    Return "Document Properties"
 		  Case BeaconConfigs.ExperienceCurves.ConfigName
 		    Return "Player and Tame Levels"
+		  Case BeaconConfigs.CustomContent.ConfigName
+		    Return "Custom Config Content"
 		  End Select
 		End Function
 	#tag EndMethod

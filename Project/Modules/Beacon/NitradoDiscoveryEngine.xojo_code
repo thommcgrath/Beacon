@@ -50,7 +50,7 @@ Implements Beacon.DiscoveryEngine
 		  
 		  Try
 		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True) // Yes, allow lossy here
-		    Self.mIniContent = TextContent.Trim
+		    Self.mGameIniContent = TextContent.Trim
 		    Self.DownloadGameUserSettingsIni
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)
@@ -102,11 +102,7 @@ Implements Beacon.DiscoveryEngine
 		  
 		  Try
 		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True) // Yes, allow lossy here
-		    If Self.mIniContent <> "" Then
-		      Self.mIniContent = Self.mIniContent + Text.FromUnicodeCodepoint(13) + TextContent.Trim
-		    Else
-		      Self.mIniContent = TextContent.Trim
-		    End If
+		    Self.mGameUserSettingsIniContent = TextContent.Trim
 		    
 		    Self.mStatus = "Finished"
 		    Self.mErrored = False
@@ -239,6 +235,18 @@ Implements Beacon.DiscoveryEngine
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GameIniContent() As Text
+		  Return Self.mGameIniContent
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameUserSettingsIniContent() As Text
+		  Return Self.mGameUserSettingsIniContent
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub GetServerStatus()
 		  Self.mStatus = "Getting server status…"
@@ -247,12 +255,6 @@ Implements Beacon.DiscoveryEngine
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers", AddressOf Callback_GetServerStatus, Nil, Headers)
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IniContent() As Text
-		  Return Self.mIniContent
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -321,7 +323,11 @@ Implements Beacon.DiscoveryEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mIniContent As Text
+		Private mGameIniContent As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameUserSettingsIniContent As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

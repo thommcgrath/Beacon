@@ -51,7 +51,7 @@ Begin Window DocumentExportWindow
       InitialParent   =   ""
       InitialValue    =   ""
       Italic          =   False
-      Left            =   0
+      Left            =   -1
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -70,7 +70,7 @@ Begin Window DocumentExportWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   0
+      Top             =   -1
       Transparent     =   True
       Underline       =   False
       UseFocusRing    =   False
@@ -427,6 +427,11 @@ End
 		  Dim CommandLineHeaders As New Xojo.Core.Dictionary
 		  
 		  For Each Config As Beacon.ConfigGroup In Configs
+		    // Hold the custom content until the end so we know what lines Beacon will produce
+		    If Config.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		      Continue
+		    End If
+		    
 		    Dim Values() As Beacon.ConfigValue = Config.CommandLineOptions(Document)
 		    If Values <> Nil Then
 		      For Each Value As Beacon.ConfigValue In Values
@@ -446,6 +451,14 @@ End
 		    Beacon.ConfigValue.FillConfigDict(GameIniHeaders, Config.GameIniValues(Document))
 		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniHeaders, Config.GameUserSettingsIniValues(Document))
 		  Next
+		  
+		  // Now process the custom content
+		  Dim CustomContent As BeaconConfigs.CustomContent
+		  If Document.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
+		    CustomContent = BeaconConfigs.CustomContent(Document.ConfigGroup(BeaconConfigs.CustomContent.ConfigName))
+		    Beacon.ConfigValue.FillConfigDict(GameIniHeaders, CustomContent.GameIniValues(Document, GameIniHeaders))
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniHeaders, CustomContent.GameUserSettingsIniValues(Document, GameUserSettingsIniHeaders))
+		  End If
 		  
 		  Dim Win As New DocumentExportWindow
 		  Win.mCommandLineConfigs = CommandLineHeaders

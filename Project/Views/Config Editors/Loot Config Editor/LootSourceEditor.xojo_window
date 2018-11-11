@@ -80,6 +80,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       _ScrollWidth    =   -1
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -138,6 +139,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -155,6 +157,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          HasBackColor    =   False
          Height          =   464
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -275,6 +278,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackColor    =   False
       Height          =   183
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -333,6 +337,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackColor    =   False
       Height          =   23
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -645,7 +650,8 @@ End
 		  Self.ImportProgress.Source = Source
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
 		  Self.ImportProgress.ShowWithin(Self.TrueWindow)
-		  Self.Importer.AddContent(Content.ToText)
+		  Self.Importer.Clear
+		  Self.Importer.GameIniContent = Content.ToText
 		  Self.Importer.Run
 		End Sub
 	#tag EndMethod

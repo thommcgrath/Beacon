@@ -26,14 +26,6 @@ Begin DiscoveryView LocalDiscoveryView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   600
-   Begin Timer TextChangeTimer
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Mode            =   0
-      Period          =   500
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
    Begin Label SetupMessageLabel
       AutoDeactivate  =   True
       Bold            =   True
@@ -58,80 +50,16 @@ Begin DiscoveryView LocalDiscoveryView
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Simple Config Import"
-      TextAlign       =   0
+      TextAlign       =   1
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   6
       Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   560
-   End
-   Begin GroupBox ExplanationGroup
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   ""
-      Enabled         =   True
-      Height          =   78
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   52
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   560
-      Begin Label ExplanationLabel
-         AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
-         Enabled         =   True
-         Height          =   38
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ExplanationGroup"
-         Italic          =   False
-         Left            =   40
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         Multiline       =   True
-         Scope           =   2
-         Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   0
-         TabStop         =   True
-         Text            =   "Paste the contents of your Game.ini and/or GameUserSettings.ini files here. Only one file is required, but Beacon can do a better job with both files."
-         TextAlign       =   0
-         TextColor       =   &c00000000
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   72
-         Transparent     =   True
-         Underline       =   False
-         Visible         =   True
-         Width           =   520
-      End
    End
    Begin TextArea ConfigArea
       AcceptTabs      =   False
@@ -145,7 +73,7 @@ Begin DiscoveryView LocalDiscoveryView
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   202
+      Height          =   193
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -175,7 +103,7 @@ Begin DiscoveryView LocalDiscoveryView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   142
+      Top             =   151
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -278,6 +206,110 @@ Begin DiscoveryView LocalDiscoveryView
       Visible         =   True
       Width           =   93
    End
+   Begin Shelf Switcher
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      DrawCaptions    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   60
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      IsVertical      =   False
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RequiresSelection=   True
+      Scope           =   0
+      ScrollSpeed     =   20
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   28
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   600
+   End
+   Begin FadedSeparator FadedSeparator1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   0
+      ScrollSpeed     =   20
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   88
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   600
+   End
+   Begin Label ExplanationLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   38
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   True
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Paste the contents of your Game.ini and/or GameUserSettings.ini files here. Only one file is required, but Beacon can do a better job with both files."
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   101
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   560
+   End
+   Begin ClipboardWatcher Watcher
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Mode            =   2
+      Period          =   500
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -307,61 +339,119 @@ End
 
 
 	#tag Method, Flags = &h0
-		Sub AddFile(File As FolderItem)
+		Sub AddFile(File As FolderItem, DetectSibling As Boolean = True)
 		  Dim Content As String = Self.ReadIniFile(File)
 		  If Content = "" Then
 		    Return
 		  End If
 		  
 		  Content  = Content.DefineEncoding(Encodings.UTF8)
+		  Dim Type As ConfigFileType = Self.DetectConfigType(Content)
+		  Self.SetSwitcherForType(Type)
 		  
-		  If Self.mCurrentConfigType <> ConfigFileType.Combo Then
-		    Dim Other As FolderItem
-		    Dim Type As ConfigFileType = Self.DetectConfigType(Content)
+		  If Self.ConfigArea.Text.Len <> 0 Then
+		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = "Would you like to replace the existing content, or add this file to it?"
 		    Select Case Type
-		    Case ConfigFileType.GameIni    
-		      Self.mGameIniFile = File
-		      If Self.mCurrentConfigType <> ConfigFileType.GameUserSettingsIni Then
-		        Other = File.Parent.Child("GameUserSettings.ini")
-		        Self.mGameUserSettingsFile = Other
-		      End If
-		    Case ConfigFileType.GameUserSettingsIni    
-		      Self.mGameUserSettingsFile = File
-		      If Self.mCurrentConfigType <> ConfigFileType.GameIni Then
-		        Other = File.Parent.Child("Game.ini")
-		        Self.mGameIniFile = Other
-		      End If
+		    Case ConfigFileType.GameIni
+		      Dialog.Explanation = "The selected file would replace or become added to your Game.ini content."
+		    Case ConfigFileType.GameUserSettingsIni
+		      Dialog.Explanation = "The selected file would replace or become added to your GameUserSettings.ini content."
+		    Case ConfigFileType.Other
+		      Dialog.Explanation = "Beacon was unable to determine which config file was selected."
 		    End Select
-		    If Other <> Nil And Other.Exists Then
-		      Dim AdditionalContent As String = Self.ReadIniFile(Other)
-		      If AdditionalContent <> "" Then
-		        Content = Content + EndOfLine + EndOfLine + AdditionalContent.DefineEncoding(Encodings.UTF8)
+		    Dialog.ActionButton.Caption = "Replace"
+		    Dialog.CancelButton.Visible = True
+		    Dialog.AlternateActionButton.Caption = "Add To"
+		    Dialog.AlternateActionButton.Visible = True
+		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		    
+		    Select Case Choice
+		    Case Dialog.ActionButton
+		      Self.ConfigArea.Text = Content.Trim
+		    Case Dialog.CancelButton
+		      Return
+		    Case Dialog.AlternateActionButton
+		      Self.ConfigArea.Text = Self.ConfigArea.Text + EndOfLine + Content.Trim
+		    End Select
+		  Else
+		    Self.ConfigArea.Text = Content.Trim
+		  End If
+		  
+		  If Not DetectSibling Then
+		    Return
+		  End If
+		  
+		  Dim OtherFilename As String
+		  Select Case Type
+		  Case ConfigFileType.GameIni
+		    OtherFilename = "GameUserSettings.ini"
+		  Case ConfigFileType.GameUserSettingsIni
+		    OtherFilename = "Game.ini"
+		  Else
+		    Return
+		  End Select
+		  
+		  Dim OtherFile As FolderItem = File.Parent.Child(OtherFilename)
+		  If OtherFile <> Nil And OtherFile.Exists Then
+		    Self.AddFile(OtherFile, False)
+		  End If
+		  
+		  #if false
+		    If Self.mCurrentConfigType <> ConfigFileType.Combo Then
+		      Dim Other As FolderItem
+		      Dim Type As ConfigFileType = Self.DetectConfigType(Content)
+		      Select Case Type
+		      Case ConfigFileType.GameIni    
+		        Self.mGameIniFile = File
+		        If Self.mCurrentConfigType <> ConfigFileType.GameUserSettingsIni Then
+		          Other = File.Parent.Child("GameUserSettings.ini")
+		          Self.mGameUserSettingsFile = Other
+		        End If
+		      Case ConfigFileType.GameUserSettingsIni    
+		        Self.mGameUserSettingsFile = File
+		        If Self.mCurrentConfigType <> ConfigFileType.GameIni Then
+		          Other = File.Parent.Child("Game.ini")
+		          Self.mGameIniFile = Other
+		        End If
+		      End Select
+		      If Other <> Nil And Other.Exists Then
+		        Dim AdditionalContent As String = Self.ReadIniFile(Other)
+		        If AdditionalContent <> "" Then
+		          Content = Content + EndOfLine + EndOfLine + AdditionalContent.DefineEncoding(Encodings.UTF8)
+		        End If
 		      End If
 		    End If
-		  End If
-		  
-		  If Self.ConfigArea.Text = "" Then
-		    Self.ConfigArea.Text = Content
-		  Else
-		    Self.ConfigArea.Text = Self.ConfigArea.Text.Trim + EndOfLine + EndOfLine + Content
-		  End If
+		    
+		    If Self.ConfigArea.Text = "" Then
+		      Self.ConfigArea.Text = Content
+		    Else
+		      Self.ConfigArea.Text = Self.ConfigArea.Text.Trim + EndOfLine + EndOfLine + Content
+		    End If
+		  #endif
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function DetectConfigType(Content As String) As ConfigFileType
+		Private Function DetectConfigType(Content As String, File As FolderItem = Nil) As ConfigFileType
 		  Dim GameIniPos As Integer = Content.InStr(Beacon.ShooterGameHeader)
 		  Dim SettingsIniPos As Integer = Content.InStr(Beacon.ServerSettingsHeader)
 		  
-		  If GameIniPos > 0 And SettingsIniPos > 0 Then
-		    Return ConfigFileType.Combo
-		  ElseIf GameIniPos > 0 Then
+		  If GameIniPos > 0 And SettingsIniPos = 0 Then
 		    Return ConfigFileType.GameIni
-		  ElseIf SettingsIniPos > 0 Then
+		  ElseIf SettingsIniPos > 0 And GameIniPos = 0 Then
 		    Return ConfigFileType.GameUserSettingsIni
-		  Else
-		    Return ConfigFileType.Other
+		  ElseIf File <> Nil Then
+		    Select Case File.Name
+		    Case "Game.ini"
+		      Return ConfigFileType.GameIni
+		    Case "GameUserSettings.ini"
+		      Return ConfigFileType.GameUserSettingsIni
+		    End Select
 		  End If
+		  
+		  Return ConfigFileType.Other
 		End Function
 	#tag EndMethod
 
@@ -378,11 +468,14 @@ End
 	#tag Method, Flags = &h21
 		Private Function ReadIniFile(File As FolderItem, Prompt As Boolean = True) As String
 		  Try
+		    #Pragma BreakOnExceptions False
 		    Dim Stream As TextInputStream = TextInputStream.Open(File)
+		    #Pragma BreakOnExceptions Default
 		    Dim Contents As String = Stream.ReadAll()
 		    Stream.Close
 		    Return Contents
 		  Catch Err As IOException
+		    #Pragma BreakOnExceptions Default
 		    If Prompt = False Or TargetMacOS = False Then
 		      Return ""
 		    End If
@@ -404,6 +497,16 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SetSwitcherForType(Type As ConfigFileType)
+		  If Type = ConfigFileType.GameIni And Self.Switcher.SelectedIndex <> Self.GameIniIndex Then
+		    Self.Switcher.SelectedIndex = Self.GameIniIndex
+		  ElseIf Type = ConfigFileType.GameUserSettingsIni And Self.Switcher.SelectedIndex <> Self.GameUserSettingsIniIndex Then
+		    Self.Switcher.SelectedIndex = Self.GameUserSettingsIniIndex
+		  End If
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event Open()
@@ -411,44 +514,49 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mCurrentConfigType As ConfigFileType
+		Private mGameIniContent As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniFile As FolderItem
+		Private mGameUserSettingsIniContent As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameUserSettingsFile As FolderItem
+		Private mSettingUp As Boolean
 	#tag EndProperty
+
+
+	#tag Constant, Name = GameIniIndex, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = GameUserSettingsIniIndex, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
 
 
 	#tag Enum, Name = ConfigFileType, Flags = &h21
 		Other
 		  GameIni
-		  GameUserSettingsIni
-		Combo
+		GameUserSettingsIni
 	#tag EndEnum
 
 
 #tag EndWindowCode
 
-#tag Events TextChangeTimer
-	#tag Event
-		Sub Action()
-		  Self.mCurrentConfigType = Self.DetectConfigType(Self.ConfigArea.Text)
-		  Self.ActionButton.Enabled = Self.mCurrentConfigType <> ConfigFileType.Other
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ConfigArea
 	#tag Event
 		Sub TextChange()
-		  If Self.TextChangeTimer.Mode = Timer.ModeSingle Then
-		    Self.TextChangeTimer.Reset
-		    Self.TextChangeTimer.Period = 500
+		  Self.ActionButton.Enabled = Self.mGameIniContent.Len > 0 Or Self.mGameUserSettingsIniContent.Len > 0
+		  
+		  If Self.mSettingUp Then
+		    Return
 		  End If
-		  Self.TextChangeTimer.Mode = Timer.ModeSingle
+		  
+		  Select Case Self.Switcher.SelectedIndex
+		  Case Self.GameIniIndex
+		    Self.mGameIniContent = Me.Text.Trim
+		  Case Self.GameUserSettingsIniIndex
+		    Self.mGameUserSettingsIniContent = Me.Text.Trim
+		  End Select
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -462,7 +570,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.LocalDiscoveryEngine(Self.ConfigArea.Text.ToText)
+		  Engines(0) = New Beacon.LocalDiscoveryEngine(Self.mGameIniContent.ToText, Self.mGameUserSettingsIniContent.ToText)
 		  Self.ShouldFinish(Engines)
 		End Sub
 	#tag EndEvent
@@ -477,23 +585,52 @@ End
 #tag Events ChooseFileButton
 	#tag Event
 		Sub Action()
-		  If Self.mCurrentConfigType = ConfigFileType.Combo And Self.ShowConfirm("Both files are already selected", "You can select another file if you really want to, but both Game.ini and GameUserSettings.ini files are already present.", "Add Another", "Cancel") = False Then
+		  If Self.mGameIniContent.Len > 0 And Self.mGameUserSettingsIniContent.Len > 0 And Self.ShowConfirm("Both files are already selected", "You can select another file if you really want to, but both Game.ini and GameUserSettings.ini files are already present.", "Add Another", "Cancel") = False Then
 		    Return
 		  End If
 		  
 		  Dim Dialog As New OpenDialog
-		  
-		  If Self.mCurrentConfigType = ConfigFileType.GameIni Then
-		    Dialog.SuggestedFileName = "GameUserSettings.ini"
-		  Else
-		    Dialog.SuggestedFileName = "Game.ini"
-		  End If
+		  Dialog.SuggestedFileName = If(Self.mGameIniContent.Len > 0, "GameUserSettings.ini", "Game.ini")
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  
 		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File <> Nil Then
 		    Self.AddFile(File)
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Switcher
+	#tag Event
+		Sub Open()
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.Add(IconGameUserSettingsIni, "GameUserSettings.ini", "gameusersettings.ini")
+		  Me.Add(IconGameIni, "Game.ini", "game.ini")
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.SelectedIndex = Self.GameUserSettingsIniIndex
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Dim SettingUp As Boolean = Self.mSettingUp
+		  Self.mSettingUp = True
+		  Select Case Me.SelectedIndex
+		  Case Self.GameIniIndex
+		    Self.ConfigArea.Text = Self.mGameIniContent
+		  Case Self.GameUserSettingsIniIndex
+		    Self.ConfigArea.Text = Self.mGameUserSettingsIniContent
+		  Else
+		    Self.ConfigArea.Text = ""
+		  End Select
+		  Self.mSettingUp = SettingUp
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Watcher
+	#tag Event
+		Sub ClipboardChanged(Content As String)
+		  Dim Type As ConfigFileType = Self.DetectConfigType(Content)
+		  Self.SetSwitcherForType(Type)
 		End Sub
 	#tag EndEvent
 #tag EndEvents

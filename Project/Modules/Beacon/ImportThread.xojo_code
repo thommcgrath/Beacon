@@ -3,24 +3,19 @@ Protected Class ImportThread
 Inherits Beacon.Thread
 	#tag Event
 		Sub Run()
-		  Static CR As Text = Text.FromUnicodeCodepoint(13)
-		  Static LF As Text = Text.FromUnicodeCodepoint(10)
-		  Static CRLF As Text = CR + LF
-		  
 		  Self.mFinished = False
 		  Self.Invalidate
 		  
+		  Dim LineEnding As Text = Self.LineEndingChar()
+		  
 		  // Normalize line endings
-		  Dim Content As Text = Self.mContent
-		  Self.mContent = ""
+		  Dim Content As Text = Beacon.ReplaceLineEndings(Self.mGameUserSettingsIniContent + LineEnding + Self.mGameIniContent, LineEnding)
 		  Self.mCharactersProcessed = 0
 		  Self.mCharactersTotal = Content.Length
-		  Content = Content.ReplaceAll(CRLF, CR)
-		  Content = Content.ReplaceAll(LF, CR)
 		  
 		  Self.mParsedData = New Xojo.Core.Dictionary
 		  
-		  Dim Lines() As Text = Content.Split(CR)
+		  Dim Lines() As Text = Content.Split(LineEnding)
 		  Self.mCharactersTotal = Self.mCharactersTotal + Lines.Ubound + 1 // To account for the trailing CR characters we're adding
 		  For Each Line As Text In Lines
 		    If Self.mCancelled Then
@@ -34,7 +29,7 @@ Inherits Beacon.Thread
 		    End If
 		    
 		    Try
-		      Dim Value As Auto = Self.Import(Line + CR)
+		      Dim Value As Auto = Self.Import(Line + LineEnding)
 		      If Value = Nil Then
 		        Continue
 		      End If
@@ -77,50 +72,6 @@ Inherits Beacon.Thread
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub AddContent(File As Global.FolderItem, Prepend As Boolean = False)
-		  If File = Nil Or File.Exists = False Then
-		    Return
-		  End If
-		  
-		  Dim Stream As Global.TextInputStream = Global.TextInputStream.Open(File)
-		  Dim Content As Text = Stream.ReadAll(Encodings.UTF8).ToText
-		  Stream.Close
-		  
-		  Self.AddContent(Content, Prepend)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub AddContent(Content As Text, Prepend As Boolean = False)
-		  If Self.State <> Beacon.Thread.States.NotRunning Then
-		    Dim Err As New RuntimeException
-		    Err.Reason = "Importer is already running"
-		    Raise Err
-		  End If
-		  
-		  If Prepend Then
-		    Self.mContent = Content + Text.FromUnicodeCodepoint(13) + Self.mContent
-		  Else
-		    Self.mContent = Self.mContent + Text.FromUnicodeCodepoint(13) + Content
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub AddContent(File As Xojo.IO.FolderItem, Prepend As Boolean = False)
-		  If File = Nil Or File.Exists = False Then
-		    Return
-		  End If
-		  
-		  Dim Stream As Xojo.IO.TextInputStream = Xojo.IO.TextInputStream.Open(File, Xojo.Core.TextEncoding.UTF8)
-		  Dim Content As Text = Stream.ReadAll
-		  Stream.Close
-		  
-		  Self.AddContent(Content, Prepend)
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub Cancel()
 		  Self.mCancelled = True
@@ -129,7 +80,8 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h0
 		Sub Clear()
-		  Self.mContent = ""
+		  Self.mGameIniContent = ""
+		  Self.mGameUserSettingsIniContent = ""
 		  Self.mFinished = False
 		End Sub
 	#tag EndMethod
@@ -182,6 +134,12 @@ Inherits Beacon.Thread
 		    Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Single
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function LineEndingChar() As Text
+		  Return Text.FromUnicodeCodepoint(10)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -285,6 +243,46 @@ Inherits Beacon.Thread
 	#tag EndHook
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mGameIniContent
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.State <> Beacon.Thread.States.NotRunning Then
+			    Dim Err As New RuntimeException
+			    Err.Reason = "Importer is already running"
+			    Raise Err
+			  End If
+			  
+			  Self.mGameIniContent = Value
+			End Set
+		#tag EndSetter
+		GameIniContent As Text
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mGameUserSettingsIniContent
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.State <> Beacon.Thread.States.NotRunning Then
+			    Dim Err As New RuntimeException
+			    Err.Reason = "Importer is already running"
+			    Raise Err
+			  End If
+			  
+			  Self.mGameUserSettingsIniContent = Value
+			End Set
+		#tag EndSetter
+		GameUserSettingsIniContent As Text
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mCancelled As Boolean
 	#tag EndProperty
@@ -298,11 +296,15 @@ Inherits Beacon.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mContent As Text
+		Private mFinished As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mFinished As Boolean
+		Private mGameIniContent As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameUserSettingsIniContent As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -362,6 +364,16 @@ Inherits Beacon.Thread
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GameIniContent"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GameUserSettingsIniContent"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

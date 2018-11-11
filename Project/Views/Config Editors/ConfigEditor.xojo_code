@@ -19,8 +19,8 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As Beacon.DocumentController)
-		  Self.Constructor()
 		  Self.mController = Controller
+		  Self.Constructor()
 		End Sub
 	#tag EndMethod
 
@@ -75,6 +75,12 @@ Inherits BeaconSubview
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Progress"
+			Group="Behavior"
+			InitialValue="ProgressNone"
+			Type="Double"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="MinimumWidth"
 			Visible=true
@@ -245,11 +251,6 @@ Inherits BeaconSubview
 			Group="Behavior"
 			Type="String"
 			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ToolbarIcon"
-			Group="Behavior"
-			Type="Picture"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Top"

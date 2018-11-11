@@ -87,7 +87,7 @@ Implements Beacon.DiscoveryEngine
 		    Dim Dict As Xojo.Core.Dictionary = Details
 		    
 		    Dim TextContent As Text = Dict.Value("content")
-		    Self.mIniContent = TextContent.Trim
+		    Self.mGameIniContent = TextContent.Trim
 		    
 		    Self.DownloadGameUserSettingsIni()
 		  Catch Err As RuntimeException
@@ -111,11 +111,7 @@ Implements Beacon.DiscoveryEngine
 		    Dim Dict As Xojo.Core.Dictionary = Details
 		    
 		    Dim TextContent As Text = Dict.Value("content")
-		    If Self.mIniContent = "" Then
-		      Self.mIniContent = TextContent.Trim
-		    Else
-		      Self.mIniContent = Self.mIniContent + Text.FromUnicodeCodepoint(13) + TextContent.Trim
-		    End If
+		    Self.mGameUserSettingsIniContent = TextContent.Trim
 		    
 		    Self.mFinished = True
 		    Self.mErrored = False
@@ -179,8 +175,14 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IniContent() As Text
-		  Return Self.mIniContent
+		Function GameIniContent() As Text
+		  Return Self.mGameIniContent
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameUserSettingsIniContent() As Text
+		  Return Self.mGameUserSettingsIniContent
 		End Function
 	#tag EndMethod
 
@@ -246,11 +248,15 @@ Implements Beacon.DiscoveryEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mIdentity As Beacon.Identity
+		Private mGameIniContent As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mIniContent As Text
+		Private mGameUserSettingsIniContent As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIdentity As Beacon.Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -463,6 +463,10 @@ End
 		  
 		  Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
 		  For Each Group As Beacon.ConfigGroup In Groups
+		    If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		      Continue
+		    End If
+		    
 		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument)
 		    For Each Option As Beacon.ConfigValue In Options
 		      Self.mCommandLineOptions.Append(Option)
@@ -471,6 +475,13 @@ End
 		    Beacon.ConfigValue.FillConfigDict(Self.mGameIniOptions, Group.GameIniValues(Self.mDocument))
 		    Beacon.ConfigValue.FillConfigDict(Self.mGameUserSettingsIniOptions, Group.GameUserSettingsIniValues(Self.mDocument))
 		  Next
+		  
+		  Dim CustomContent As BeaconConfigs.CustomContent
+		  If Self.mDocument.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
+		    CustomContent = BeaconConfigs.CustomContent(Self.mDocument.ConfigGroup(BeaconConfigs.CustomContent.ConfigName))
+		    Beacon.ConfigValue.FillConfigDict(Self.mGameIniOptions, CustomContent.GameIniValues(Self.mDocument, Self.mGameIniOptions))
+		    Beacon.ConfigValue.FillConfigDict(Self.mGameUserSettingsIniOptions, CustomContent.GameUserSettingsIniValues(Self.mDocument, Self.mGameUserSettingsIniOptions))
+		  End If
 		End Sub
 	#tag EndEvent
 

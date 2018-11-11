@@ -49,6 +49,8 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
+		  #Pragma Unused SourceDocument
+		  
 		  Dim Values() As Beacon.ConfigValue
 		  Values.Append(New Beacon.ConfigValue("SessionSettings", "SessionName", Self.mTitle))
 		  Return Values
@@ -121,6 +123,11 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="IsImplicit"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true

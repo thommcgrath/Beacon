@@ -44,7 +44,6 @@ Begin ContainerControl DocumentImportView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -251,7 +250,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -281,7 +279,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -311,7 +308,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -483,7 +479,6 @@ Begin ContainerControl DocumentImportView
       End
    End
    Begin Timer DiscoveryWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -614,8 +609,8 @@ End
 		    
 		    Dim ConfigNames() As Text = BeaconConfigs.AllConfigNames()
 		    For Each ConfigName As Text In ConfigNames
-		      If ConfigName = BeaconConfigs.Difficulty.ConfigName Then
-		        // Difficulty is a special case
+		      If ConfigName = BeaconConfigs.Difficulty.ConfigName Or ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		        // Difficulty and custom content area special
 		        Continue For ConfigName
 		      End If
 		      
@@ -636,6 +631,23 @@ End
 		        End If
 		      Next
 		    Next
+		    
+		    // Now figure out what configs we'll generate so CustomContent can figure out what NOT to capture.
+		    // Do not do this in the loop above to ensure all configs are loaded first, in case they rely on each other.
+		    Dim GameIniValues As New Xojo.Core.Dictionary
+		    Dim GameUserSettingsIniValues As New Xojo.Core.Dictionary
+		    Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
+		    For Each Config As Beacon.ConfigGroup In Configs
+		      Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document))
+		      Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document))
+		    Next
+		    
+		    Dim CustomContent As New BeaconConfigs.CustomContent
+		    CustomContent.GameIniContent(GameIniValues) = Sender.GameIniContent
+		    CustomContent.GameUserSettingsIniContent(GameUserSettingsIniValues) = Sender.GameUserSettingsIniContent
+		    If CustomContent.Modified Then
+		      Document.AddConfigGroup(CustomContent)
+		    End If
 		    
 		    Self.mDocuments(Idx) = Document
 		  Catch Err As RuntimeException
@@ -868,7 +880,8 @@ End
 		    If Engine.Finished And Not Engine.Errored Then
 		      If Self.mImporters(I) = Nil Then
 		        Dim Importer As New Beacon.ImportThread
-		        Importer.AddContent(Engine.IniContent)
+		        Importer.GameIniContent = Engine.GameIniContent
+		        Importer.GameUserSettingsIniContent = Engine.GameUserSettingsIniContent
 		        AddHandler Importer.Finished, WeakAddressOf Importer_Finished
 		        Importer.Run
 		        Self.mImporters(I) = Importer

@@ -18,8 +18,9 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Content As Text)
-		  Self.mIniContent = Content
+		Sub Constructor(GameIniContent As Text, GameUserSettingsIniContent As Text)
+		  Self.mGameIniContent = GameIniContent
+		  Self.mGameUserSettingsIniContent = GameUserSettingsIniContent
 		End Sub
 	#tag EndMethod
 
@@ -40,10 +41,18 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IniContent() As Text
+		Function GameIniContent() As Text
 		  // Part of the Beacon.DiscoveryEngine interface.
 		  
-		  Return Self.mIniContent
+		  Return Self.mGameIniContent
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GameUserSettingsIniContent() As Text
+		  // Part of the Beacon.DiscoveryEngine interface.
+		  
+		  Return Self.mGameUserSettingsIniContent
 		End Function
 	#tag EndMethod
 
@@ -81,7 +90,11 @@ Implements Beacon.DiscoveryEngine
 
 
 	#tag Property, Flags = &h21
-		Private mIniContent As Text
+		Private mGameIniContent As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameUserSettingsIniContent As Text
 	#tag EndProperty
 
 

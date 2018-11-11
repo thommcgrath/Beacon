@@ -2,6 +2,8 @@
 Private Class ConfigParser
 	#tag Method, Flags = &h0
 		Function AddCharacter(Char As Text) As Boolean
+		  Static LineEndingChar As Text = Beacon.ImportThread.LineEndingChar
+		  
 		  Self.ConsumedLastChar = True
 		  
 		  If Self.SubParser <> Nil Then
@@ -57,8 +59,8 @@ Private Class ConfigParser
 		      Redim Self.Buffer(-1)
 		      Self.Type = Self.TypePair
 		      Self.SubParser = New Beacon.ConfigParser(Self.Level) // Same level
-		    Case ")", ",", Text.FromUnicodeCodepoint(13)
-		      If Self.Level = 0 And Char <> Text.FromUnicodeCodepoint(13) Then
+		    Case ")", ",", LineEndingChar
+		      If Self.Level = 0 And Char <> LineEndingChar Then
 		        Self.Buffer.Append(Char)
 		      Else
 		        Self.ConsumedLastChar = False
@@ -73,7 +75,7 @@ Private Class ConfigParser
 		    End Select
 		  Case Self.TypeArray
 		    Select Case Char
-		    Case ")", Text.FromUnicodeCodepoint(13)
+		    Case ")", LineEndingChar
 		      Return True
 		    Case ","
 		      Self.SubParser = New Beacon.ConfigParser(Self.Level + 1)
