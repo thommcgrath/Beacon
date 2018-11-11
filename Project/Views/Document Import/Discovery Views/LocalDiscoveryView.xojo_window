@@ -290,8 +290,17 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub DropObject(obj As DragItem, action As Integer)
+		  #Pragma Unused Action
+		  Self.HandleDrop(Obj)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  RaiseEvent Open
+		  Self.AcceptFileDrop(BeaconFileTypes.IniFile)
+		  Self.ConfigArea.AcceptFileDrop(BeaconFileTypes.IniFile)
 		  Self.SwapButtons()
 		End Sub
 	#tag EndEvent
@@ -299,9 +308,12 @@ End
 
 	#tag Method, Flags = &h0
 		Sub AddFile(File As FolderItem)
-		  Dim Stream As TextInputStream = TextInputStream.Open(File)
-		  Dim Content As String = Stream.ReadAll(Encodings.UTF8).Trim
-		  Stream.Close
+		  Dim Content As String = Self.ReadIniFile(File)
+		  If Content = "" Then
+		    Return
+		  End If
+		  
+		  Content  = Content.DefineEncoding(Encodings.UTF8)
 		  
 		  If Self.mCurrentConfigType <> ConfigFileType.Combo Then
 		    Dim Other As FolderItem
@@ -321,9 +333,10 @@ End
 		      End If
 		    End Select
 		    If Other <> Nil And Other.Exists Then
-		      Stream = TextInputStream.Open(Other)
-		      Content = Content + EndOfLine + EndOfLine + Stream.ReadAll(Encodings.UTF8).Trim
-		      Stream.Close
+		      Dim AdditionalContent As String = Self.ReadIniFile(Other)
+		      If AdditionalContent <> "" Then
+		        Content = Content + EndOfLine + EndOfLine + AdditionalContent.DefineEncoding(Encodings.UTF8)
+		      End If
 		    End If
 		  End If
 		  
@@ -336,26 +349,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function DetectConfigType(File As FolderItem) As ConfigFileType
-		  If File = Nil Then
-		    Return ConfigFileType.Other
-		  End If
-		  
-		  Dim Stream As TextInputStream = TextInputStream.Open(File)
-		  Dim Content As String = Stream.ReadAll(Encodings.UTF8)
-		  Stream.Close
-		  
-		  Return DetectConfigType(Content)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Function DetectConfigType(Content As String) As ConfigFileType
-		  Const GameIniHeader = "[/Script/ShooterGame.ShooterGameMode]"
-		  Const GameUserSettingsIniHeader = "[/Script/ShooterGame.ShooterGameUserSettings]"
-		  
-		  Dim GameIniPos As Integer = Content.InStr(GameIniHeader)
-		  Dim SettingsIniPos As Integer = Content.InStr(GameUserSettingsIniHeader)
+		  Dim GameIniPos As Integer = Content.InStr(Beacon.ShooterGameHeader)
+		  Dim SettingsIniPos As Integer = Content.InStr(Beacon.ServerSettingsHeader)
 		  
 		  If GameIniPos > 0 And SettingsIniPos > 0 Then
 		    Return ConfigFileType.Combo
@@ -366,6 +362,45 @@ End
 		  Else
 		    Return ConfigFileType.Other
 		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub HandleDrop(Obj As DragItem)
+		  Do
+		    If Obj.FolderItemAvailable Then
+		      Self.AddFile(Obj.FolderItem)
+		    End If
+		  Loop Until Not Obj.NextItem
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ReadIniFile(File As FolderItem, Prompt As Boolean = True) As String
+		  Try
+		    Dim Stream As TextInputStream = TextInputStream.Open(File)
+		    Dim Contents As String = Stream.ReadAll()
+		    Stream.Close
+		    Return Contents
+		  Catch Err As IOException
+		    If Prompt = False Or TargetMacOS = False Then
+		      Return ""
+		    End If
+		    
+		    Dim Dialog As New OpenDialog
+		    Dialog.InitialDirectory = File.Parent
+		    Dialog.SuggestedFileName = File.Name
+		    Dialog.PromptText = "Select your " + File.Name + " file if you want to import it too"
+		    Dialog.ActionButtonCaption = "Import"
+		    Dialog.Filter = BeaconFileTypes.IniFile
+		    
+		    Dim Selected As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    If Selected = Nil Then
+		      Return ""
+		    End If
+		    
+		    Return Self.ReadIniFile(Selected, False)
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -416,6 +451,12 @@ End
 		  Self.TextChangeTimer.Mode = Timer.ModeSingle
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub DropObject(obj As DragItem, action As Integer)
+		  #Pragma Unused Action
+		  Self.HandleDrop(Obj)
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
@@ -449,7 +490,7 @@ End
 		  End If
 		  Dialog.Filter = BeaconFileTypes.IniFile
 		  
-		  Dim File As FolderItem = Dialog.ShowModal()
+		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File <> Nil Then
 		    Self.AddFile(File)
 		  End If
