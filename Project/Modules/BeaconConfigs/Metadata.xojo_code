@@ -47,6 +47,14 @@ Inherits Beacon.ConfigGroup
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
+		  Dim Values() As Beacon.ConfigValue
+		  Values.Append(New Beacon.ConfigValue("SessionSettings", "SessionName", Self.mTitle))
+		  Return Values
+		End Function
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
