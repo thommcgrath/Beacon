@@ -565,6 +565,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  Dim MinQuality As Double = Self.mMinQuality.Value(Multipliers.Min, Difficulty)
 		  Dim MaxQuality As Double = Self.mMaxQuality.Value(Multipliers.Max, Difficulty)
+		  If MinQuality > MaxQuality Then
+		    // This probably isn't a good thing. Use the min for both values.
+		    MaxQuality = MinQuality
+		  End If
+		  
 		  Dim Chance As Double = if(Self.CanBeBlueprint, Self.mChanceToBeBlueprint, 0)
 		  Dim EntryWeight As Integer = Xojo.Math.Round((Self.mWeight / SumEntryWeights) * 1000)
 		  
