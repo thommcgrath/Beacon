@@ -463,7 +463,7 @@ Implements NotificationKit.Receiver
 		  Dict.Value("Reason") = Error.Explanation
 		  Dict.Value("Location") = Location.ToText
 		  Dict.Value("Type") = Info.FullName
-		  Dict.Value("Trace") = Error.CallStack
+		  Dict.Value("Trace") = Stack
 		  
 		  If Self.CurrentThread = Nil Then
 		    Self.PresentException(Dict)

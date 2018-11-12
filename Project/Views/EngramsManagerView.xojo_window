@@ -63,9 +63,9 @@ Begin BeaconSubview EngramsManagerView
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   False
-      ColumnCount     =   7
+      ColumnCount     =   8
       ColumnsResizable=   False
-      ColumnWidths    =   "*,100,75,75,75,75,75"
+      ColumnWidths    =   "*,100,75,75,75,75,75,75"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
@@ -81,7 +81,7 @@ Begin BeaconSubview EngramsManagerView
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Label	Blueprintable	Island	Scorched	Center	Ragnarok	Aberration"
+      InitialValue    =   "Label	Blueprintable	Island	Scorched	Center	Ragnarok	Aberration	Extinction"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -146,6 +146,7 @@ Begin BeaconSubview EngramsManagerView
       Priority        =   5
       Scope           =   2
       StackSize       =   "0"
+      State           =   ""
       TabPanelIndex   =   0
    End
 End
@@ -263,6 +264,7 @@ End
 		  List.CellCheck(Index, Self.ColumnCenter) = Engram.ValidForMap(Beacon.Maps.TheCenter)
 		  List.CellCheck(Index, Self.ColumnRagnarok) = Engram.ValidForMap(Beacon.Maps.Ragnarok)
 		  List.CellCheck(Index, Self.ColumnAberration) = Engram.ValidForMap(Beacon.Maps.Aberration)
+		  List.CellCheck(Index, Self.ColumnExtinction) = Engram.ValidForMap(Beacon.Maps.Extinction)
 		  List.RowTag(Index) = Engram
 		End Sub
 	#tag EndMethod
@@ -273,13 +275,16 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = ColumnAberration, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag Constant, Name = ColumnAberration, Type = Double, Dynamic = False, Default = \"4", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnBlueprintable, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnCenter, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag Constant, Name = ColumnCenter, Type = Double, Dynamic = False, Default = \"6", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnExtinction, Type = Double, Dynamic = False, Default = \"5", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnIsland, Type = Double, Dynamic = False, Default = \"2", Scope = Private
@@ -288,7 +293,7 @@ End
 	#tag Constant, Name = ColumnLabel, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ColumnRagnarok, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag Constant, Name = ColumnRagnarok, Type = Double, Dynamic = False, Default = \"7", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnScorched, Type = Double, Dynamic = False, Default = \"3", Scope = Private
@@ -336,6 +341,7 @@ End
 		  Me.ColumnType(Self.ColumnCenter) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnRagnarok) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnAberration) = Listbox.TypeCheckbox
+		  Me.ColumnType(Self.ColumnExtinction) = Listbox.TypeCheckbox
 		  
 		  Me.ColumnAlignment(Self.ColumnBlueprintable) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnIsland) = Listbox.AlignCenter
@@ -343,6 +349,14 @@ End
 		  Me.ColumnAlignment(Self.ColumnCenter) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnRagnarok) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnAberration) = Listbox.AlignCenter
+		  Me.ColumnAlignment(Self.ColumnExtinction) = Listbox.AlignCenter
+		  
+		  Me.Heading(Self.ColumnIsland) = "Island"
+		  Me.Heading(Self.ColumnScorched) = "Scorched"
+		  Me.Heading(Self.ColumnCenter) = "Center"
+		  Me.Heading(Self.ColumnRagnarok) = "Ragnarok"
+		  Me.Heading(Self.ColumnAberration) = "Aberration"
+		  Me.Heading(Self.ColumnExtinction) = "Extinction"
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -364,6 +378,8 @@ End
 		    Editable.ValidForMap(Beacon.Maps.Ragnarok) = Me.CellCheck(Row, Column)
 		  Case Self.ColumnAberration
 		    Editable.ValidForMap(Beacon.Maps.Aberration) = Me.CellCheck(Row, Column)
+		  Case Self.ColumnExtinction
+		    Editable.ValidForMap(Beacon.Maps.Extinction) = Me.CellCheck(Row, Column)
 		  Else
 		    Return
 		  End Select
@@ -452,6 +468,8 @@ End
 		  If ImportedCount = 0 And SkippedCount = 0 Then
 		    Messages.Append("No engrams were found to import.")
 		  End If
+		  
+		  Self.ShowAlert("Engram import has finished", Join(Messages, " "))
 		End Sub
 	#tag EndEvent
 	#tag Event

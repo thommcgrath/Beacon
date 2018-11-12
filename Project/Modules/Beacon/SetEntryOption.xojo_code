@@ -54,9 +54,11 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Hash() As Text
-		  Dim Path As Text = Self.mEngram.Path
-		  If Path = "" Then
-		    Path = Self.mEngram.ClassString
+		  Dim Path As Text
+		  If Self.mEngram = Nil Then
+		    Path = ""
+		  Else
+		    Path = If(Self.mEngram.Path <> "", Self.mEngram.Path, Self.mEngram.ClassString)
 		  End If
 		  
 		  Return Beacon.MD5(Path.Lowercase + "@" + Self.mWeight.ToText(Xojo.Core.Locale.Raw, "0.0000")).Lowercase

@@ -293,6 +293,28 @@ Begin Window ResolveIssuesDialog
       Visible         =   True
       Width           =   105
    End
+   Begin ProgressWheel ResolutionSpinner
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   16
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   163
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Scope           =   2
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   509
+      Transparent     =   False
+      Visible         =   False
+      Width           =   16
+   End
 End
 #tag EndWindow
 
@@ -355,6 +377,40 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ResolvingFinished()
+		  Self.ConfigsWaitingToResolve = Self.ConfigsWaitingToResolve - 1
+		  
+		  If Self.ConfigsWaitingToResolve > 0 Then
+		    Return
+		  End If
+		  
+		  Dim Issues() As Beacon.Issue = Self.DescribeIssues(Self.Document)
+		  If Issues.Ubound = -1 Then
+		    BeaconUI.ShowAlert("All issues resolved.", "Great! All issues have been resolved.")
+		    Self.Close
+		    Return
+		  End If
+		  
+		  Dim SomeResolved As Boolean = Issues.Ubound < Self.Issues.Ubound
+		  
+		  Self.Issues = Issues
+		  Self.UpdateUI
+		  
+		  Self.ActionButton.Enabled = True
+		  Self.ExtractButton.Enabled = BlueprintsField.Text.Len > 0
+		  Self.ResolutionSpinner.Visible = False
+		  Self.GoToButton.Enabled = Self.GoToIssueHandler <> Nil And Self.IssuesList.ListIndex > -1
+		  Self.BlueprintsField.ReadOnly = False
+		  
+		  If SomeResolved Then
+		    BeaconUI.ShowAlert("Some issues resolved.", "The text successfully resolved some issues, but not all of them.")
+		  Else
+		    BeaconUI.ShowAlert("No issues resolved.", "The text provided did not resolve any issues.")
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
 		  Self.IssuesList.DeleteAllRows
 		  For Each Issue As Beacon.Issue In Self.Issues
@@ -364,6 +420,10 @@ End
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private ConfigsWaitingToResolve As Integer
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private Document As Beacon.Document
@@ -390,7 +450,7 @@ End
 #tag Events IssuesList
 	#tag Event
 		Sub Change()
-		  Self.GoToButton.Enabled = Self.GoToIssueHandler <> Nil And Me.ListIndex > -1
+		  Self.GoToButton.Enabled = ResolutionSpinner.Visible = False And Self.GoToIssueHandler <> Nil And Me.ListIndex > -1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -404,27 +464,19 @@ End
 #tag Events ExtractButton
 	#tag Event
 		Sub Action()
+		  ResolutionSpinner.Visible = True
+		  ActionButton.Enabled = False
+		  GoToButton.Enabled = False
+		  Me.Enabled = False
+		  BlueprintsField.ReadOnly = True
+		  
 		  Dim Content As Text = BlueprintsField.Text.ToText
 		  Dim Configs() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
+		  Dim Callback As Beacon.ConfigGroup.ResolveIssuesCallback = AddressOf ResolvingFinished
+		  Self.ConfigsWaitingToResolve = Configs.Ubound + 1
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Config.TryToResolveIssues(Content)
+		    Config.TryToResolveIssues(Content, Callback)
 		  Next
-		  
-		  Dim Issues() As Beacon.Issue = Self.DescribeIssues(Self.Document)
-		  If Issues.Ubound = -1 Then
-		    BeaconUI.ShowAlert("All issues resolved.", "Great! All issues have been resolved.")
-		    Self.Close
-		    Return
-		  End If
-		  
-		  If Issues.Ubound = Self.Issues.Ubound Then
-		    BeaconUI.ShowAlert("No issues resolved.", "The text provided did not resolve any issues.")
-		  Else
-		    BeaconUI.ShowAlert("Some issues resolved.", "The text successfully resolved some issues, but not all of them.")
-		  End If
-		  
-		  Self.Issues = Issues
-		  Self.UpdateUI
 		End Sub
 	#tag EndEvent
 #tag EndEvents
