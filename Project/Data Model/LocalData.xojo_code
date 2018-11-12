@@ -478,16 +478,37 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function IconForLootSource(Source As Beacon.LootSource, HighlightColor As Color) As Picture
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT loot_source_icons.icon_data FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.class_string = ?1;", Source.ClassString)
-		  Dim SpriteSheet As Picture
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.class_string = ?1;", Source.ClassString)
+		  Dim SpriteSheet, BadgeSheet As Picture
 		  If Results.RecordCount = 1 Then
 		    SpriteSheet = Results.Field("icon_data").PictureValue
+		    If Results.Field("experimental").BooleanValue Then
+		      BadgeSheet = IconExperimentalBadge
+		    End If
 		  Else
 		    SpriteSheet = IconLootStandard
 		  End If
 		  
 		  Dim Height As Integer = (SpriteSheet.Height / 2) / 3
 		  Dim Width As Integer = (SpriteSheet.Width / 2) / 3
+		  
+		  If BadgeSheet <> Nil Then
+		    Dim Badges As Picture = New Picture(BadgeSheet.Width, BadgeSheet.Height, 32)
+		    Badges.Graphics.ForeColor = &cFFFFFF
+		    Badges.Graphics.FillRect(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
+		    Badges.Mask.Graphics.DrawPicture(BadgeSheet, 0, 0)
+		    
+		    Dim Sprites As Picture = New Picture(SpriteSheet.Width, SpriteSheet.Height, 32)
+		    Sprites.Graphics.DrawPicture(SpriteSheet, 0, 0)
+		    Sprites.Graphics.DrawPicture(Badges.Piece(0, 0, Width, Height), 0, Height)
+		    Sprites.Graphics.DrawPicture(Badges.Piece(Width, 0, Width * 2, Height * 2), Width, Height * 2)
+		    Sprites.Graphics.DrawPicture(Badges.Piece(Width * 3, 0, Width * 3, Height * 3), Width * 3, Height * 3)
+		    Badges.Graphics.ForeColor = &c000000
+		    Badges.Graphics.FillRect(0, 0, Badges.Graphics.Width, Badges.Graphics.Height)
+		    Sprites.Graphics.DrawPicture(Badges, 0, 0)
+		    
+		    SpriteSheet = Sprites
+		  End If
 		  
 		  Dim Highlight1x As Picture = SpriteSheet.Piece(0, 0, Width, Height)
 		  Dim Highlight2x As Picture = SpriteSheet.Piece(Width, 0, Width * 2, Height * 2)
