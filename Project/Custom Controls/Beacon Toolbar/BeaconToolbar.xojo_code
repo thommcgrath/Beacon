@@ -296,19 +296,30 @@ Implements ObservationKit.Observer
 		Function ItemAtPoint(Point As REALbasic.Point) As BeaconToolbarItem
 		  If Self.mLeftItems <> Nil Then
 		    For I As Integer = 0 To Self.mLeftItems.UBound
-		      If Self.mLeftItems(I) <> Nil And Self.mLeftItems(I).Rect.Contains(Point) Then
-		        Return Self.mLeftItems(I)
-		      End If
+		      Try
+		        If Self.mLeftItems(I) <> Nil And Self.mLeftItems(I).Rect.Contains(Point) Then
+		          Return Self.mLeftItems(I)
+		        End If
+		      Catch Err As NilObjectException
+		        Continue
+		      End Try
 		    Next
 		  End If
 		  
 		  If Self.mRightItems <> Nil Then
 		    For I As Integer = 0 To Self.mRightItems.UBound
-		      If Self.mRightItems(I) <> Nil And Self.mRightItems(I).Rect.Contains(Point) Then
-		        Return Self.mRightItems(I)
-		      End If
+		      Try
+		        If Self.mRightItems(I) <> Nil And Self.mRightItems(I).Rect.Contains(Point) Then
+		          Return Self.mRightItems(I)
+		        End If
+		      Catch Err As NilObjectException
+		        Continue
+		      End Try
 		    Next
 		  End If
+		  
+		  Exception NOE As NilObjectException
+		    Return Nil
 		End Function
 	#tag EndMethod
 

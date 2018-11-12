@@ -2,7 +2,51 @@
 Protected Class ControlCanvas
 Inherits Canvas
 	#tag Event
+		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		  If Not Self.mPainted Then
+		    Return False
+		  End If
+		  
+		  Return MouseDown(X, Y)
+		End Function
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseEnter()
+		  If Not Self.mPainted Then
+		    Return
+		  End If
+		  
+		  RaiseEvent MouseEnter()
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseExit()
+		  If Not Self.mPainted Then
+		    Return
+		  End If
+		  
+		  RaiseEvent MouseExit
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub MouseMove(X As Integer, Y As Integer)
+		  If Not Self.mPainted Then
+		    Return
+		  End If
+		  
+		  RaiseEvent MouseMove(X, Y)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function MouseWheel(X As Integer, Y As Integer, deltaX as Integer, deltaY as Integer) As Boolean
+		  If Not Self.mPainted Then
+		    Return False
+		  End If
+		  
 		  Dim WheelData As New BeaconUI.ScrollEvent(Self.ScrollSpeed, DeltaX, DeltaY)
 		  Return MouseWheel(X, Y, WheelData.ScrollX, WheelData.ScrollY, WheelData)
 		End Function
@@ -39,6 +83,7 @@ Inherits Canvas
 		  End If
 		  
 		  RaiseEvent Paint(g, areas)
+		  Self.mPainted = True
 		End Sub
 	#tag EndEvent
 
@@ -95,6 +140,22 @@ Inherits Canvas
 
 
 	#tag Hook, Flags = &h0
+		Event MouseDown(X As Integer, Y As Integer) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event MouseEnter()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event MouseExit()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event MouseMove(X As Integer, Y As Integer)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Integer, PixelsY As Integer, WheelData As BeaconUI.ScrollEvent) As Boolean
 	#tag EndHook
 
@@ -109,6 +170,10 @@ Inherits Canvas
 
 	#tag Property, Flags = &h21
 		Private mColorProfile As BeaconUI.ColorProfile
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mPainted As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
