@@ -78,6 +78,10 @@ Protected Class ConfigGroup
 		End Sub
 	#tag EndMethod
 
+	#tag DelegateDeclaration, Flags = &h0
+		Delegate Sub ResolveIssuesCallback()
+	#tag EndDelegateDeclaration
+
 	#tag Method, Flags = &h0
 		Function ToDictionary() As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
@@ -88,8 +92,12 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub TryToResolveIssues(InputContent As Text)
+		Sub TryToResolveIssues(InputContent As Text, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
 		  #Pragma Unused InputContent
+		  
+		  If Callback <> Nil Then
+		    Callback.Invoke
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -162,6 +170,11 @@ Protected Class ConfigGroup
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsImplicit"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

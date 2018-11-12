@@ -261,12 +261,16 @@ Implements Xojo.Core.Iterable
 		Private Sub Searcher_Finished(Sender As Beacon.EngramSearcherThread)
 		  RemoveHandler Sender.Finished, AddressOf Searcher_Finished
 		  RemoveHandler Sender.EngramsFound, AddressOf Searcher_EngramsFound
+		  If Self.mResolveIssuesCallback <> Nil Then
+		    Self.mResolveIssuesCallback.Invoke
+		    Self.mResolveIssuesCallback = Nil
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub TryToResolveIssues(InputContent As Text)
-		  Super.TryToResolveIssues(InputContent)
+		Sub TryToResolveIssues(InputContent As Text, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
+		  Self.mResolveIssuesCallback = Callback
 		  
 		  Dim Searcher As New Beacon.EngramSearcherThread
 		  AddHandler Searcher.EngramsFound, AddressOf Searcher_EngramsFound
@@ -281,6 +285,10 @@ Implements Xojo.Core.Iterable
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mResolveIssuesCallback As Beacon.ConfigGroup.ResolveIssuesCallback
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mSources() As Beacon.LootSource
