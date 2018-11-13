@@ -401,6 +401,22 @@ Protected Class DocumentController
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UploadThread_Run(Sender As Beacon.Thread)
+		  Self.CheckAPISocket()
+		  
+		  Sender.LockUserData()
+		  Dim WithIdentity As Beacon.Identity = Sender.UserData
+		  
+		  Dim Body As Text = Xojo.Data.GenerateJSON(Self.mDocument.ToDictionary(WithIdentity))
+		  Dim Request As New BeaconAPI.Request(Self.mDocumentURL.WithScheme("https"), "POST", Body, "application/json", AddressOf APICallback_DocumentUpload)
+		  Request.Sign(WithIdentity)
+		  Sender.UnlockUserData()
+		  
+		  Self.mAPISocket.Start(Request)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function URL() As DocumentURL
 		  Return Self.mDocumentURL
@@ -451,12 +467,11 @@ Protected Class DocumentController
 		  
 		  Select Case Destination.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
-		    Self.CheckAPISocket()
-		    
-		    Dim Body As Text = Xojo.Data.GenerateJSON(Self.mDocument.ToDictionary(WithIdentity))
-		    Dim Request As New BeaconAPI.Request(Self.mDocumentURL.WithScheme("https"), "POST", Body, "application/json", AddressOf APICallback_DocumentUpload)
-		    Request.Sign(WithIdentity)
-		    Self.mAPISocket.Start(Request)
+		    Dim UploadThread As New Beacon.Thread
+		    UploadThread.Priority = Beacon.Thread.PriorityLow
+		    UploadThread.UserData = WithIdentity
+		    AddHandler UploadThread.Run, AddressOf UploadThread_Run
+		    UploadThread.Run
 		  Case Beacon.DocumentURL.TypeLocal
 		    Dim Writer As New Beacon.JSONWriter(Self.mDocument, WithIdentity, New Beacon.FolderItem(Destination.Path))
 		    AddHandler Writer.Finished, AddressOf Writer_Finished
