@@ -291,6 +291,7 @@ Begin Window DocumentExportWindow
       Width           =   140
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -576,11 +577,11 @@ End
 		  Dialog.SuggestedFileName = ConfigFilename
 		  
 		  Dim File As FolderItem = Dialog.ShowModal()
-		  If File = Nil Or Not File.Exists Then
+		  If File = Nil Then
 		    Return
 		  End If
 		  
-		  If Not File.IsWriteable Then
+		  If File.Exists And Not File.IsWriteable Then
 		    Self.ShowAlert("File " + File.DisplayName + " is not writable.", "The file may be locked or you may not have permission to edit the file.")
 		    Return
 		  End If
