@@ -415,11 +415,8 @@ End
 
 	#tag MenuHandler
 		Function DocumentRebuildPresets() As Boolean Handles DocumentRebuildPresets.Action
-			Self.Document.ReconfigurePresets()
-			Self.UpdateSourceList()
-			Self.ContentsChanged = Self.ContentsChanged Or Self.Document.Modified
+			Self.RebuildAllItemSets()
 			Return True
-			
 		End Function
 	#tag EndMenuHandler
 
@@ -493,6 +490,14 @@ End
 		  Self.List.ListIndex = -1
 		  Return False
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub RebuildAllItemSets()
+		  Self.Document.ReconfigurePresets()
+		  Self.UpdateSourceList()
+		  Self.ContentsChanged = Self.ContentsChanged Or Self.Document.Modified
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -627,6 +632,7 @@ End
 		    Panel.Value = 1
 		  End If
 		  
+		  Self.Header.Rebuild.Enabled = VisibleSources.Ubound > -1
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndMethod
@@ -694,9 +700,7 @@ End
 		  Case "Duplicate"
 		    Self.ShowAddLootSource(True)
 		  Case "Rebuild"
-		    Self.Document.ReconfigurePresets()
-		    Self.UpdateSourceList()
-		    Self.ContentsChanged = Self.ContentsChanged Or Self.Document.Modified
+		    Self.RebuildAllItemSets()
 		  End Select
 		End Sub
 	#tag EndEvent
