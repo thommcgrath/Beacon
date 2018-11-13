@@ -24,6 +24,17 @@ Protected Class Thread
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub LockUserData()
+		  #if Not TargetiOS
+		    If Self.mUserDataLock = Nil Then
+		      Self.mUserDataLock = New CriticalSection
+		    End If
+		    Self.mUserDataLock.Enter
+		  #endif
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Private Sub mThreadClassic_Run(Sender As Global.Thread)
 		  #Pragma Unused Sender
@@ -88,6 +99,16 @@ Protected Class Thread
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub UnlockUserData()
+		  #if Not TargetiOS
+		    If Self.mUserDataLock <> Nil Then
+		      Self.mUserDataLock.Leave
+		    End If
+		  #endif
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event Run()
@@ -104,6 +125,14 @@ Protected Class Thread
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Private mThreadClassic As Global.Thread
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUserData As Auto
+	#tag EndProperty
+
+	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Private mUserDataLock As CriticalSection
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -194,6 +223,22 @@ Protected Class Thread
 		State As Beacon.Thread.States
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mUserData
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Self.LockUserData()
+			  Self.mUserData = Value
+			  Self.UnlockUserData()
+			End Set
+		#tag EndSetter
+		UserData As Auto
+	#tag EndComputedProperty
+
 
 	#tag Constant, Name = PriorityHigh, Type = Double, Dynamic = False, Default = \"10", Scope = Public
 	#tag EndConstant
@@ -261,6 +306,11 @@ Protected Class Thread
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="State"
+			Group="Behavior"
+			Type="Beacon.Thread.States"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

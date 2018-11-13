@@ -70,6 +70,10 @@ Implements ObservationKit.Observable
 		End Sub
 	#tag EndMethod
 
+	#tag DelegateDeclaration, Flags = &h0
+		Delegate Sub BringToFrontDelegate(Sender As BeaconSubview)
+	#tag EndDelegateDeclaration
+
 	#tag Method, Flags = &h0
 		Function CanBeClosed() As Boolean
 		  Return True
@@ -83,9 +87,13 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfirmClose() As Boolean
+		Function ConfirmClose(Callback As BeaconSubview.BringToFrontDelegate) As Boolean
 		  If Not Self.ContentsChanged Then
 		    Return True
+		  End If
+		  
+		  If Callback <> Nil Then
+		    Callback.Invoke(Self)
 		  End If
 		  
 		  Dim Dialog As New MessageDialog

@@ -372,6 +372,21 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ConfirmClose(Callback As BeaconSubview.BringToFrontDelegate) As Boolean
+		  If Self.Progress <> BeaconSubview.ProgressNone Then
+		    If Callback <> Nil Then
+		      Callback.Invoke(Self)
+		    End If
+		    
+		    Self.ShowAlert(Self.Title + " cannot be closed right now because it is busy.", "Wait for the progress indicator at the top of the tab to go away before trying to close it.")
+		    Return False
+		  End If
+		  
+		  Return Super.ConfirmClose(Callback)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Controller As Beacon.DocumentController)
 		  Self.mController = Controller
 		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess

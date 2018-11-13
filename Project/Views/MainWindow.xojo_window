@@ -362,11 +362,8 @@ End
 		    Return False
 		  End If
 		  
-		  If View.ContentsChanged Then
-		    Self.ShowView(View)
-		    If Not View.ConfirmClose Then
-		      Return False
-		    End If
+		  If Not View.ConfirmClose(AddressOf ShowView) Then
+		    Return False
 		  End If
 		  
 		  If View = Self.mCurrentView Then

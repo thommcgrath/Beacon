@@ -222,7 +222,7 @@ case 'POST':
 	}
 	
 	$database = BeaconCommon::Database();
-	$results = $database->Query('SELECT solution_min_build FROM exceptions WHERE exception_hash = $1 AND build <= $2 ORDER BY build DESC LIMIT 1;', $hash, $build);
+	$results = $database->Query('SELECT solution_min_build FROM exceptions WHERE exception_hash = $1 AND build <= $2 AND (solution_min_build IS NULL OR solution_min_build > $2) ORDER BY build DESC LIMIT 1;', $hash, $build);
 	if ($results->RecordCount() == 0) {
 		// Record the exception
 		$database->BeginTransaction();
