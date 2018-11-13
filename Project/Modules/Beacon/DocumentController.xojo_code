@@ -458,7 +458,7 @@ Protected Class DocumentController
 		    Request.Sign(WithIdentity)
 		    Self.mAPISocket.Start(Request)
 		  Case Beacon.DocumentURL.TypeLocal
-		    Dim Writer As New Beacon.JSONWriter(Self.mDocument.ToDictionary(WithIdentity), New Beacon.FolderItem(Destination.Path))
+		    Dim Writer As New Beacon.JSONWriter(Self.mDocument, WithIdentity, New Beacon.FolderItem(Destination.Path))
 		    AddHandler Writer.Finished, AddressOf Writer_Finished
 		    Writer.Run
 		  End Select

@@ -10,10 +10,24 @@ Inherits Beacon.Thread
 		    Self.mLock.Enter
 		  #endif
 		  Try
-		    Self.mSuccess = Self.WriteSynchronous(Self.mSource, Self.mDestination)
+		    Dim Source As Xojo.Core.Dictionary
+		    If Self.mSource <> Nil Then
+		      Source = Self.mSource
+		    ElseIf Self.mSourceDocument <> Nil And Self.mSourceIdentity <> Nil Then
+		      Source = Self.mSourceDocument.ToDictionary(Self.mSourceIdentity)
+		    Else
+		      Dim Err As New NilObjectException
+		      Err.Reason = "No source dictionary or document."
+		      Raise Err
+		    End If
+		    
+		    Self.mSuccess = Self.WriteSynchronous(Source, Self.mDestination)
 		  Catch Err As RuntimeException
 		    Self.mError = Err
 		  End Try
+		  Self.mSource = Nil
+		  Self.mSourceDocument = Nil
+		  Self.mSourceIdentity = Nil
 		  #if Not TargetiOS
 		    Self.mLock.Leave
 		  #endif
@@ -24,14 +38,29 @@ Inherits Beacon.Thread
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
-		Sub Constructor(Source As Xojo.Core.Dictionary, Destination As Beacon.FolderItem)
+	#tag Method, Flags = &h21
+		Private Sub Constructor()
 		  Super.Constructor
-		  Self.mSource = Source
-		  Self.mDestination = Destination
 		  #if Not TargetiOS
 		    Self.mLock = New CriticalSection
 		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Document As Beacon.Document, Identity As Beacon.Identity, Destination As Beacon.FolderItem)
+		  Self.Constructor()
+		  Self.mSourceDocument = Document
+		  Self.mSourceIdentity = Identity
+		  Self.mDestination = Destination
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
+		Sub Constructor(Source As Xojo.Core.Dictionary, Destination As Beacon.FolderItem)
+		  Self.Constructor()
+		  Self.mSource = Source
+		  Self.mDestination = Destination
 		End Sub
 	#tag EndMethod
 
@@ -163,6 +192,14 @@ Inherits Beacon.Thread
 
 	#tag Property, Flags = &h21
 		Private mSource As Xojo.Core.Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSourceDocument As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSourceIdentity As Beacon.Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
