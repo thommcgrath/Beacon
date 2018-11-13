@@ -44,10 +44,9 @@ Begin Window LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   550
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -167,7 +166,7 @@ Begin Window LootSourceWizard
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   0
-         Height          =   294
+         Height          =   262
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -1060,6 +1059,39 @@ Begin Window LootSourceWizard
          Visible         =   True
          Width           =   394
       End
+      Begin CheckBox SelectionExperimentalCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Show Experimental Loot Sources"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         State           =   0
+         TabIndex        =   5
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   328
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   510
+      End
    End
 End
 #tag EndWindow
@@ -1067,6 +1099,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
+		  Self.SelectionExperimentalCheck.Value = Preferences.ShowExperimentalLootSources
 		  Self.BuildSourceList()
 		  
 		  If Self.mSource <> Nil Then
@@ -1111,12 +1144,26 @@ End
 		  Next
 		  Beacon.Sort(AllowedLootSources)
 		  
+		  Dim Selections() As Text
+		  For I As Integer = 0 To Self.SourceList.ListCount - 1
+		    If Not Self.SourceList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim Source As Beacon.LootSource = Self.SourceList.RowTag(I)
+		    Selections.Append(Source.ClassString)
+		  Next
+		  
+		  Dim ScrollPosition As Integer = Self.SourceList.ScrollPosition
+		  Self.SourceList.DeleteAllRows
+		  
 		  For Each Source As Beacon.LootSource In AllowedLootSources
 		    Self.SourceList.AddRow("", Source.Label)
 		    Self.SourceList.RowTag(Self.SourceList.LastIndex) = Source
+		    Self.SourceList.Selected(Self.SourceList.LastIndex) = Selections.IndexOf(Source.ClassString) > -1
 		  Next
-		  
 		  Self.SourceList.Sort
+		  Self.SourceList.ScrollPosition = ScrollPosition
 		End Sub
 	#tag EndMethod
 
@@ -1459,6 +1506,18 @@ End
 	#tag Event
 		Sub Open()
 		  Me.ColumnType(0) = ListBox.TypeCheckbox
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SelectionExperimentalCheck
+	#tag Event
+		Sub Action()
+		  If Preferences.ShowExperimentalLootSources = Me.Value Then
+		    Return
+		  End If
+		  
+		  Preferences.ShowExperimentalLootSources = Me.Value
+		  Self.BuildSourceList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

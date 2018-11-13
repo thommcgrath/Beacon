@@ -724,6 +724,12 @@ End
 		    For Each LootSource As Beacon.LootSource In LootSources
 		      Menu.Append(New MenuItem(LootSource.Label, LootSource))
 		    Next
+		    
+		    Menu.Append(New MenuItem(MenuItem.TextSeparator))
+		    
+		    Dim ExpItem As New MenuItem("Show Experimental Sources", "toggle_experimental")
+		    ExpItem.Checked = Preferences.ShowExperimentalLootSources
+		    Menu.Append(ExpItem)
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -735,9 +741,22 @@ End
 		      Return
 		    End If
 		    
-		    Dim Source As Beacon.LootSource = ChosenItem.Tag
-		    Self.AddLootSource(Source)
-		    Self.Focus = Self.List
+		    Dim Tag As Variant = ChosenItem.Tag
+		    If Tag = Nil Then
+		      Return
+		    End If
+		    
+		    If Tag.Type = Variant.TypeString Then
+		      Select Case Tag.StringValue
+		      Case "toggle_experimental"
+		        Preferences.ShowExperimentalLootSources = Not Preferences.ShowExperimentalLootSources
+		        Self.UpdateSourceList()
+		      End Select
+		    ElseIf Tag.Type = Variant.TypeObject And Tag.ObjectValue IsA Beacon.LootSource Then
+		      Dim Source As Beacon.LootSource = ChosenItem.Tag
+		      Self.AddLootSource(Source)
+		      Self.Focus = Self.List
+		    End If
 		  End Select
 		End Sub
 	#tag EndEvent

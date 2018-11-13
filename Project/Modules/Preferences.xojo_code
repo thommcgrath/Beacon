@@ -230,9 +230,19 @@ Protected Module Preferences
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return False
+			  Init
+			  Return mManager.BooleanValue("Show Experimental Sources", False)
 			End Get
 		#tag EndGetter
+		#tag Setter
+			Set
+			  If ShowExperimentalLootSources = Value Then
+			    Return
+			  End If
+			  
+			  mManager.BooleanValue("Show Experimental Sources") = Value
+			End Set
+		#tag EndSetter
 		ShowExperimentalLootSources As Boolean
 	#tag EndComputedProperty
 
@@ -390,6 +400,11 @@ Protected Module Preferences
 			Name="LastPresetMapFilter"
 			Group="Behavior"
 			Type="UInt64"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ShowExperimentalLootSources"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module
