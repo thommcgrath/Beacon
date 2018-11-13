@@ -98,6 +98,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mSortValue = Source.mSortValue
 		  Self.mUseBlueprints = Source.mUseBlueprints
 		  Self.mAppendMode = Source.mAppendMode
+		  Self.mExperimental = Source.mExperimental
+		  Self.mNotes = Source.mNotes
 		  
 		  For I As Integer = 0 To UBound(Source.mSets)
 		    Self.mSets(I) = New Beacon.ItemSet(Source.mSets(I))

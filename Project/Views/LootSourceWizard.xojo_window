@@ -158,7 +158,7 @@ Begin Window LootSourceWizard
          ColumnWidths    =   "30,*"
          DataField       =   ""
          DataSource      =   ""
-         DefaultRowHeight=   30
+         DefaultRowHeight=   34
          Enabled         =   True
          EnableDrag      =   False
          EnableDragReorder=   False
@@ -1158,7 +1158,11 @@ End
 		  Self.SourceList.DeleteAllRows
 		  
 		  For Each Source As Beacon.LootSource In AllowedLootSources
-		    Self.SourceList.AddRow("", Source.Label)
+		    Dim RowText As String = Source.Label
+		    If Source.Notes <> "" Then
+		      RowText = RowText + EndOfLine + Source.Notes
+		    End If
+		    Self.SourceList.AddRow("", RowText)
 		    Self.SourceList.RowTag(Self.SourceList.LastIndex) = Source
 		    Self.SourceList.Selected(Self.SourceList.LastIndex) = Selections.IndexOf(Source.ClassString) > -1
 		  Next

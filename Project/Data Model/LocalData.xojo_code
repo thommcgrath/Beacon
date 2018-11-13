@@ -478,15 +478,26 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function IconForLootSource(Source As Beacon.LootSource, HighlightColor As Color) As Picture
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.class_string = ?1;", Source.ClassString)
+		  Dim IconID As String
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT loot_source_icons.icon_id, loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.class_string = ?1;", Source.ClassString)
 		  Dim SpriteSheet, BadgeSheet As Picture
 		  If Results.RecordCount = 1 Then
 		    SpriteSheet = Results.Field("icon_data").PictureValue
 		    If Results.Field("experimental").BooleanValue Then
 		      BadgeSheet = IconExperimentalBadge
 		    End If
+		    IconID = Results.Field("icon_id").StringValue + Source.UIColor.Red.ToHex(2) + Source.UIColor.Green.ToHex(2) + Source.UIColor.Blue.ToHex(2) + Source.UIColor.Alpha.ToHex(2)
 		  Else
 		    SpriteSheet = IconLootStandard
+		    IconID = "3a1f5d12-0b50-4761-9f89-277492dc00e0FFFFFF00"
+		  End If
+		  IconID = IconID + HighlightColor.Red.ToHex(2) + HighlightColor.Green.ToHex(2) + HighlightColor.Blue.ToHex(2) + HighlightColor.Alpha.ToHex(2)
+		  
+		  If Self.IconCache = Nil Then
+		    Self.IconCache = New Dictionary
+		  End If
+		  If IconCache.HasKey(IconID) Then
+		    Return IconCache.Value(IconID)
 		  End If
 		  
 		  Dim Height As Integer = (SpriteSheet.Height / 2) / 3
@@ -536,7 +547,10 @@ Implements Beacon.DataSource
 		    
 		    Bitmaps.Append(Combined)
 		  Next
-		  Return New Picture(Width, Height, Bitmaps)
+		  
+		  Dim Icon As New Picture(Width, Height, Bitmaps)
+		  Self.IconCache.Value(IconID) = Icon
+		  Return Icon
 		End Function
 	#tag EndMethod
 
@@ -663,6 +677,9 @@ Implements Beacon.DataSource
 		        Self.SQLExecute("INSERT INTO loot_source_icons (icon_id, icon_data) VALUES (?1, ?2);", IconID, IconData)
 		      End If
 		    Next
+		    If LootSourceIcons.Ubound > -1 Then
+		      Self.IconCache = Nil
+		    End If
 		    
 		    Dim LootSources() As Auto = ChangeDict.Value("loot_sources")
 		    For Each Dict As Xojo.Core.Dictionary In LootSources
@@ -1534,6 +1551,10 @@ Implements Beacon.DataSource
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private Shared IconCache As Dictionary
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mBase As SQLiteDatabase
