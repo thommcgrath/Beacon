@@ -606,7 +606,7 @@ Implements Beacon.DocumentItem
 		    Return
 		  End If
 		  
-		  Dim Drops As BeaconConfigs.LootDrops
+		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
 		  If Drops <> Nil Then
 		    For Each Source As Beacon.LootSource In Drops
 		      Source.ReconfigurePresets(Self.mMapCompatibility, Self.ConsoleModsOnly)
