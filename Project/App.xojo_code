@@ -3,6 +3,12 @@ Protected Class App
 Inherits Application
 Implements NotificationKit.Receiver
 	#tag Event
+		Sub AppearanceChanged()
+		  NotificationKit.Post(Self.Notification_AppearanceChanged, Nil)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Close()
 		  If Self.mMutex <> Nil Then
 		    Self.mMutex.Leave
@@ -970,6 +976,9 @@ Implements NotificationKit.Receiver
 	#tag Constant, Name = kFileQuitShortcut, Type = String, Dynamic = False, Default = \"", Scope = Public
 		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"Cmd+Q"
 		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"Ctrl+Q"
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_AppearanceChanged, Type = Text, Dynamic = False, Default = \"Appearance Changed", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_IdentityChanged, Type = Text, Dynamic = False, Default = \"Identity Changed", Scope = Public

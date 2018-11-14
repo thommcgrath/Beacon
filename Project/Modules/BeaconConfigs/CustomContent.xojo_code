@@ -330,7 +330,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 
-	#tag Constant, Name = EncryptedTag, Type = Text, Dynamic = False, Default = \"$$BeaconEncrypted$$", Scope = Private
+	#tag Constant, Name = EncryptedTag, Type = Text, Dynamic = False, Default = \"$$BeaconEncrypted$$", Scope = Public
 	#tag EndConstant
 
 

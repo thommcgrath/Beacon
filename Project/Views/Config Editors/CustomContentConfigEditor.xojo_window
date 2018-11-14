@@ -1,5 +1,5 @@
 #tag Window
-Begin ConfigEditor CustomContentConfigEditor
+Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -40,7 +40,7 @@ Begin ConfigEditor CustomContentConfigEditor
       Index           =   -2147483648
       InitialParent   =   ""
       IsVertical      =   False
-      Left            =   0
+      Left            =   150
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -56,26 +56,26 @@ Begin ConfigEditor CustomContentConfigEditor
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   608
+      Width           =   308
    End
    Begin TextArea ConfigArea
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   True
+      AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       Bold            =   False
-      Border          =   True
+      Border          =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   249
+      Height          =   321
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
-      Left            =   20
+      Left            =   0
       LimitText       =   0
       LineHeight      =   0.0
       LineSpacing     =   1.0
@@ -99,12 +99,12 @@ Begin ConfigEditor CustomContentConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   81
+      Top             =   61
       Transparent     =   False
       Underline       =   False
-      UseFocusRing    =   True
+      UseFocusRing    =   False
       Visible         =   True
-      Width           =   568
+      Width           =   608
    End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
@@ -135,63 +135,197 @@ Begin ConfigEditor CustomContentConfigEditor
       Visible         =   True
       Width           =   608
    End
-   Begin Label WarningLabel
+   Begin BeaconToolbar LeftButtons
+      AcceptFocus     =   False
+      AcceptTabs      =   False
       AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
+      Backdrop        =   0
+      Caption         =   ""
       Enabled         =   True
-      Height          =   20
+      Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   True
+      Left            =   0
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Multiline       =   False
+      LockRight       =   False
+      LockTop         =   True
+      Resizer         =   "0"
+      ResizerEnabled  =   True
       Scope           =   2
-      Selectable      =   False
+      ScrollSpeed     =   20
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Careful, this data is stored in your file unencrypted. Remove admin passwords before sharing."
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   342
-      Transparent     =   False
-      Underline       =   False
+      Top             =   10
+      UseFocusRing    =   True
       Visible         =   True
-      Width           =   568
+      Width           =   150
    End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Close()
+		  NotificationKit.Ignore(Self, App.Notification_AppearanceChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Open()
+		  NotificationKit.Watch(Self, App.Notification_AppearanceChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub SetupUI()
+		  Self.mConfig = Nil
+		  Select Case Self.Switcher.SelectedIndex
+		  Case 1
+		    Self.ConfigArea.Text = Self.Config.GameUserSettingsIniContent
+		  Case 2
+		    Self.ConfigArea.Text = Self.Config.GameIniContent
+		  End Select
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h1
+		Protected Function Config() As BeaconConfigs.CustomContent
+		  If Self.mConfig = Nil Then
+		    Dim Document As Beacon.Document = Self.Document
+		    If Not Document.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
+		      Self.mConfig = New BeaconConfigs.CustomContent
+		      Document.AddConfigGroup(Self.mConfig)
+		    Else
+		      Dim Config As Beacon.ConfigGroup = Document.ConfigGroup(BeaconConfigs.CustomContent.ConfigName)
+		      Self.mConfig = BeaconConfigs.CustomContent(Config)
+		    End If
+		  End If
+		  Return Self.mConfig
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Sub Constructor(Controller As Beacon.DocumentController)
-		  Dim Document As Beacon.Document = Controller.Document
-		  If Not Document.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
-		    Self.mConfig = New BeaconConfigs.CustomContent
-		    Document.AddConfigGroup(Self.mConfig)
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case App.Notification_AppearanceChanged
+		    Self.UpdateTextColors()
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function SelectionIsEncrypted() As Boolean
+		  Return Self.ConfigArea.SelStart < Self.ConfigArea.Text.Len And Self.ConfigArea.StyledText.TextColor(Self.ConfigArea.SelStart, Max(Self.ConfigArea.SelLength, 1)) = SystemColors.SystemGreenColor
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ToggleEncryption()
+		  Dim Tag As String = BeaconConfigs.CustomContent.EncryptedTag
+		  Dim TagLen As Integer = Tag.Length
+		  Dim Source As String = Self.ConfigArea.Text
+		  
+		  If Self.SelectionIsEncrypted Then
+		    Dim StartPos As Integer = Self.ConfigArea.SelStart
+		    For I As Integer = StartPos DownTo TagLen
+		      If Source.Mid((I - TagLen) + 1, TagLen) = Tag Then
+		        StartPos = I
+		        Exit For I
+		      End If
+		    Next
+		    Dim EndPos As Integer = Source.IndexOf(StartPos, Tag)
+		    If EndPos = -1 Then
+		      Source = Source + Tag
+		      EndPos = Source.Length
+		    End If
+		    
+		    Dim ContentLen As Integer = EndPos - StartPos
+		    Dim Prefix As String = Source.Left(StartPos - TagLen)
+		    Dim Content As String = Source.Mid(StartPos + 1, ContentLen)
+		    Dim Suffix As String = Source.Mid(EndPos + TagLen + 1)
+		    
+		    Self.ConfigArea.Text = Prefix + Content + Suffix
+		    Self.ConfigArea.SelStart = Prefix.Length
+		    Self.ConfigArea.SelLength = Content.Length
 		  Else
-		    Dim Config As Beacon.ConfigGroup = Document.ConfigGroup(BeaconConfigs.CustomContent.ConfigName)
-		    Self.mConfig = BeaconConfigs.CustomContent(Config)
+		    Dim Start As Integer = Self.ConfigArea.SelStart
+		    Dim Length As Integer = Self.ConfigArea.SelLength
+		    Dim Prefix As String = Source.Left(Start)
+		    Dim Content As String = Source.Mid(Start + 1, Length)
+		    Dim Suffix As String = Source.Right(Source.Length - (Start + Length))
+		    
+		    Self.ConfigArea.Text = Prefix + Tag + Content + Tag + Suffix
+		    Self.ConfigArea.SelStart = Prefix.Length + TagLen
+		    Self.ConfigArea.SelLength = Content.Length
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateEncryptButton()
+		  If Self.LeftButtons.EncryptButton = Nil Then
+		    Return
 		  End If
 		  
-		  Super.Constructor(Controller)
+		  Dim Button As BeaconToolbarItem = Self.LeftButtons.EncryptButton
+		  If Self.SelectionIsEncrypted Then
+		    Button.HelpTag = "Convert the encrypted value to plain text."
+		    Button.Enabled = True
+		    Button.Icon = IconToolbarUnlock
+		  Else
+		    Button.HelpTag = "Encrypt the selected text when saving."
+		    Button.Enabled = Self.ConfigArea.SelLength > 0
+		    Button.Icon = IconToolbarLock
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateTextColors()
+		  Dim Pos As Integer
+		  Dim Source As String = Self.ConfigArea.Text
+		  Dim Tag As String = BeaconConfigs.CustomContent.EncryptedTag
+		  Dim TagLen As Integer = Tag.Length
+		  Self.ConfigArea.StyledText.TextColor(0, Source.Length) = SystemColors.LabelColor
+		  Self.ConfigArea.StyledText.Bold(0, Source.Length) = False
+		  Self.ConfigArea.StyledText.Italic(0, Source.Length) = False
+		  
+		  Do
+		    Pos = Source.IndexOf(Pos, Tag)
+		    If Pos = -1 Then
+		      Return
+		    End If
+		    
+		    Dim StartPos As Integer = Pos + TagLen
+		    Dim EndPos As Integer = Source.IndexOf(StartPos, Tag)
+		    If EndPos = -1 Then
+		      EndPos = Source.Length
+		    End If
+		    
+		    Self.ConfigArea.StyledText.TextColor(StartPos - TagLen, TagLen) = SystemColors.TertiaryLabelColor
+		    Self.ConfigArea.StyledText.Italic(StartPos - TagLen, TagLen) = True
+		    Self.ConfigArea.StyledText.TextColor(StartPos, EndPos - StartPos) = SystemColors.SystemGreenColor
+		    Self.ConfigArea.StyledText.Bold(StartPos, EndPos - StartPos) = True
+		    Self.ConfigArea.StyledText.TextColor(EndPos, Min(TagLen, Source.Length - EndPos)) = SystemColors.TertiaryLabelColor
+		    Self.ConfigArea.StyledText.Italic(EndPos, Min(TagLen, Source.Length - EndPos)) = True
+		    
+		    Pos = EndPos + TagLen
+		  Loop
+		  
+		  Self.UpdateEncryptButton()
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mConfig As BeaconConfigs.CustomContent
+		Attributes( Hidden ) Private mConfig As BeaconConfigs.CustomContent
 	#tag EndProperty
 
 
@@ -209,7 +343,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  If Self.mConfig = Nil Then
+		  If Self.Config = Nil Then
 		    Return
 		  End If
 		  
@@ -217,9 +351,9 @@ End
 		  Self.SettingUp = True
 		  Select Case Me.SelectedIndex
 		  Case 1
-		    Self.ConfigArea.Text = Self.mConfig.GameUserSettingsIniContent
+		    Self.ConfigArea.Text = Self.Config.GameUserSettingsIniContent
 		  Case 2
-		    Self.ConfigArea.Text = Self.mConfig.GameIniContent
+		    Self.ConfigArea.Text = Self.Config.GameIniContent
 		  End Select
 		  Self.SettingUp = SettingUp
 		End Sub
@@ -228,18 +362,40 @@ End
 #tag Events ConfigArea
 	#tag Event
 		Sub TextChange()
+		  Self.UpdateTextColors()
+		  
 		  If Self.SettingUp Then
 		    Return
 		  End If
 		  
 		  Select Case Self.Switcher.SelectedIndex
 		  Case 1
-		    Self.mConfig.GameUserSettingsIniContent = Me.Text.ToText
+		    Self.Config.GameUserSettingsIniContent = Me.Text.ToText
 		    Self.ContentsChanged = True
 		  Case 2
-		    Self.mConfig.GameIniContent = Me.Text.ToText
+		    Self.Config.GameIniContent = Me.Text.ToText
 		    Self.ContentsChanged = True
 		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub SelChange()
+		  Self.UpdateEncryptButton()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events LeftButtons
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "EncryptButton"
+		    Self.ToggleEncryption
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.LeftItems.Append(New BeaconToolbarItem("EncryptButton", IconToolbarLock, "Encrypt the selected text when saving."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

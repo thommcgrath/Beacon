@@ -85,7 +85,7 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IndexOf(Extends Source As String, Other As String, StartAt As Integer = 0) As Integer
+		Function IndexOf(Extends Source As String, StartAt As Integer = 0, Other As String) As Integer
 		  Return InStr(StartAt, Source, Other) - 1
 		End Function
 	#tag EndMethod
