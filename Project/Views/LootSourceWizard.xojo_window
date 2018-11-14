@@ -1342,13 +1342,14 @@ End
 		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 		  #Pragma Unused BackgroundColor
 		  #Pragma Unused IsHighlighted
+		  #Pragma Unused TextColor
 		  
 		  If Column <> 0 Or Row >= Me.ListCount Then
 		    Return
 		  End If
 		  
 		  Dim Source As Beacon.LootSource = Me.RowTag(Row)
-		  Dim Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 150))
+		  Dim Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
 		  Dim SpaceWidth As Integer = Me.Column(Column).WidthActual
 		  Dim SpaceHeight As Integer = Me.DefaultRowHeight
 		  

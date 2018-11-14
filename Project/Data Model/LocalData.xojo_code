@@ -477,28 +477,54 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IconForLootSource(Source As Beacon.LootSource, HighlightColor As Color) As Picture
+		Function IconForLootSource(Source As Beacon.LootSource, BackgroundColor As Color) As Picture
+		  Const IncludeExperimentalBadge = False
+		  
+		  // "Fix" background color to account for opacity. It's not perfect, but it's good.
+		  Dim BackgroundOpacity As Double = (255 - BackgroundColor.Alpha) / 255
+		  BackgroundColor = SystemColors.UnderPageBackgroundColor.BlendWith(RGB(BackgroundColor.Red, BackgroundColor.Green, BackgroundColor.Blue), BackgroundOpacity)
+		  
+		  Dim PrimaryColor, AccentColor As Color
 		  Dim IconID As String
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT loot_source_icons.icon_id, loot_source_icons.icon_data, loot_sources.experimental FROM loot_sources INNER JOIN loot_source_icons ON (loot_sources.icon = loot_source_icons.icon_id) WHERE loot_sources.class_string = ?1;", Source.ClassString)
 		  Dim SpriteSheet, BadgeSheet As Picture
 		  If Results.RecordCount = 1 Then
 		    SpriteSheet = Results.Field("icon_data").PictureValue
-		    If Results.Field("experimental").BooleanValue Then
+		    If IncludeExperimentalBadge And Results.Field("experimental").BooleanValue Then
 		      BadgeSheet = IconExperimentalBadge
+		      IconID = IconID + "exp"
 		    End If
-		    IconID = Results.Field("icon_id").StringValue + Source.UIColor.Red.ToHex(2) + Source.UIColor.Green.ToHex(2) + Source.UIColor.Blue.ToHex(2) + Source.UIColor.Alpha.ToHex(2)
+		    IconID = Results.Field("icon_id").StringValue
+		    PrimaryColor = Source.UIColor
 		  Else
 		    SpriteSheet = IconLootStandard
 		    IconID = "3a1f5d12-0b50-4761-9f89-277492dc00e0FFFFFF00"
+		    PrimaryColor = &cFFFFFF00
 		  End If
-		  IconID = IconID + HighlightColor.Red.ToHex(2) + HighlightColor.Green.ToHex(2) + HighlightColor.Blue.ToHex(2) + HighlightColor.Alpha.ToHex(2)
+		  AccentColor = BackgroundColor
 		  
+		  Select Case PrimaryColor
+		  Case &cFFF02A00
+		    PrimaryColor = SystemColors.SystemYellowColor
+		  Case &cE6BAFF00
+		    PrimaryColor = SystemColors.SystemPurpleColor
+		  Case &c00FF0000
+		    PrimaryColor = SystemColors.SystemGreenColor
+		  Case &cFFBABA00
+		    PrimaryColor = SystemColors.SystemRedColor
+		  Case &c88C8FF00
+		    PrimaryColor = SystemColors.SystemBlueColor
+		  End Select
+		  
+		  IconID = IconID + PrimaryColor.ToHex + BackgroundColor.ToHex
 		  If Self.IconCache = Nil Then
 		    Self.IconCache = New Dictionary
 		  End If
 		  If IconCache.HasKey(IconID) Then
 		    Return IconCache.Value(IconID)
 		  End If
+		  
+		  PrimaryColor = BeaconUI.FindContrastingColor(BackgroundColor, PrimaryColor)
 		  
 		  Dim Height As Integer = (SpriteSheet.Height / 2) / 3
 		  Dim Width As Integer = (SpriteSheet.Width / 2) / 3
@@ -531,8 +557,8 @@ Implements Beacon.DataSource
 		  Dim Color3x As Picture = SpriteSheet.Piece(Width * 3, Height * 3, Width * 3, Height * 3)
 		  Dim ColorMask As New Picture(Width, Height, Array(Color1x, Color2x, Color3x))
 		  
-		  Dim Highlight As Picture = HighlightMask.WithColor(HighlightColor)
-		  Dim Fill As Picture = ColorMask.WithColor(Source.UIColor)
+		  Dim Highlight As Picture = HighlightMask.WithColor(PrimaryColor)
+		  Dim Fill As Picture = ColorMask.WithColor(AccentColor)
 		  
 		  Dim Bitmaps() As Picture
 		  For Factor As Integer = 1 To 3

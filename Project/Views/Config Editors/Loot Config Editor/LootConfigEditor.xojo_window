@@ -97,7 +97,7 @@ Begin ConfigEditor LootConfigEditor
       ColumnWidths    =   "30,*"
       DataField       =   ""
       DataSource      =   ""
-      DefaultRowHeight=   30
+      DefaultRowHeight=   34
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
@@ -766,6 +766,7 @@ End
 		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
 		  #Pragma Unused BackgroundColor
 		  #Pragma Unused IsHighlighted
+		  #Pragma Unused TextColor
 		  
 		  If Row >= Me.ListCount Then
 		    Return
@@ -773,7 +774,7 @@ End
 		  
 		  If Column = 0 Then
 		    Dim Source As Beacon.LootSource = Me.RowTag(Row)
-		    Dim Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, RGB(TextColor.Red, TextColor.Green, TextColor.Blue, 150))
+		    Dim Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
 		    Dim SpaceWidth As Integer = Me.Column(Column).WidthActual
 		    Dim SpaceHeight As Integer = Me.DefaultRowHeight
 		    

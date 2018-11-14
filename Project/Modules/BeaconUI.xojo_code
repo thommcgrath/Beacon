@@ -87,6 +87,18 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ContrastAgainst(Extends LeftColor As Color, RightColor As Color) As Double
+		  Dim LeftLuminance As Double = LeftColor.Luminance
+		  Dim RightLuminance As Double = RightColor.Luminance
+		  If LeftLuminance > RightLuminance Then
+		    Return (LeftLuminance + 0.05) / (RightLuminance + 0.05)
+		  Else
+		    Return (RightLuminance + 0.05) / (LeftLuminance + 0.05)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function CreateWeightIndicator(OffsetPercent As Double, WeightPercent As Double, WidthInPoints As Integer, HeightInPoints As Integer, Scale As Double = 1.0) As Picture
 		  Dim Pic As New Picture(WidthInPoints * Scale, HeightInPoints * Scale)
 		  ' Pic.Graphics.ScaleX = Scale
@@ -140,6 +152,28 @@ Protected Module BeaconUI
 	#tag Method, Flags = &h0
 		Function Darker(Extends Source As Color, Percent As Double) As Color
 		  Return Color.HSV(Source.Hue, Source.Saturation, Source.Value * (1 - Percent))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function FindContrastingColor(BackgroundColor As Color, ForegroundColor As Color) As Color
+		  For Percent As Double = 0.0 To 1.0 Step 0.01
+		    Dim Darker As Color = ForegroundColor.Darker(Percent)
+		    Dim Lighter As Color = ForegroundColor.Lighter(Percent)
+		    If Darker.ContrastAgainst(BackgroundColor) >= 4.5 Then
+		      Return Darker
+		    ElseIf Lighter.ContrastAgainst(BackgroundColor) >= 4.5 Then
+		      Return Lighter
+		    End If
+		  Next
+		  
+		  Dim WhiteContrast As Double = BackgroundColor.ContrastAgainst(&cFFFFFF)
+		  Dim BlackContrast As Double = BackgroundColor.ContrastAgainst(&c000000)
+		  If WhiteContrast > BlackContrast Then
+		    Return &cFFFFFF
+		  Else
+		    Return &c000000
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -246,14 +280,15 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h0
 		Function Luminance(Extends Source As Color) As Double
-		  If Source.Red = Source.Green And Source.Green = Source.Blue Then
-		    Return Source.Red / 255
-		  End If
+		  Dim Red As Double = (Source.Red / 255)
+		  Dim Green As Double = (Source.Green / 255)
+		  Dim Blue As Double = (Source.Blue / 255)
 		  
-		  Dim Red As Double = (Source.Red / 255) ^ 2.2
-		  Dim Green As Double = (Source.Green / 255) ^ 2.2
-		  Dim Blue As Double = (Source.Blue / 255) ^ 2.2
-		  Return (0.2126 * Red) + (0.7151 * Green) + (0.0721 * Blue)
+		  Red = If(Red <= 0.03928, Red / 12.92, ((Red + 0.055) / 1.055) ^ 2.4)
+		  Green = If(Green <= 0.03928, Green / 12.92, ((Green + 0.055) / 1.055) ^ 2.4)
+		  Blue = If(Blue <= 0.03928, Blue / 12.92, ((Blue + 0.055) / 1.055) ^ 2.4)
+		  
+		  Return (0.2126 * Red) + (0.7152 * Green) + (0.0722 * Blue)
 		End Function
 	#tag EndMethod
 
