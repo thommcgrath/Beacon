@@ -696,7 +696,7 @@ Implements Beacon.DataSource
 		      
 		      IconID = IconID.Lowercase
 		      
-		      Dim Results As RecordSet = Self.SQLSelect("SELECT icon_id FROM loot_source_icons WHERE icon_id = ?1;")
+		      Dim Results As RecordSet = Self.SQLSelect("SELECT icon_id FROM loot_source_icons WHERE icon_id = ?1;", IconID)
 		      If Results.RecordCount = 1 Then
 		        Self.SQLExecute("UPDATE loot_source_icons SET icon_data = ?2 WHERE icon_id = ?1;", IconID, IconData)
 		      Else
