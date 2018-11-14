@@ -308,62 +308,49 @@ Protected Module BeaconUI
 
 	#tag Method, Flags = &h0
 		Sub ShowAlert(Extends Win As Window, Message As String, Explanation As String)
-		  If Win = Nil Then
-		    ShowAlert(Message, Explanation)
-		    Return
-		  Else
-		    Win = Win.TrueWindow
-		  End If
-		  
-		  Dim Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = Message
-		  Dialog.Explanation = Explanation
-		  
-		  If Win = Nil Or Win.Frame = Window.FrameTypeSheet Then
-		    Call Dialog.ShowModal()
-		  Else
-		    Call Dialog.ShowModalWithin(Win)
-		  End If
+		  ShowAlert(Win, Message, Explanation)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub ShowAlert(Message As String, Explanation As String)
+		Protected Sub ShowAlert(Win As Window = Nil, Message As String, Explanation As String)
+		  Try
+		    Win = Win.TrueWindow
+		  Catch Err As RuntimeException
+		    Win = Nil
+		  End Try
+		  
 		  Dim Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = Message
 		  Dialog.Explanation = Explanation
-		  Call Dialog.ShowModal()
+		  
+		  Try
+		    If Win = Nil Or Win.Frame = Window.FrameTypeSheet Then
+		      Call Dialog.ShowModal()
+		    Else
+		      Call Dialog.ShowModalWithin(Win)
+		    End If
+		  Catch Err As RuntimeException
+		    Call Dialog.ShowModal()
+		  End Try
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ShowConfirm(Extends Win As Window, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
-		  If Win = Nil Then
-		    Return ShowConfirm(Message, Explanation, ActionCaption, CancelCaption)
-		  Else
-		    Win = Win.TrueWindow
-		  End If
-		  
-		  Dim Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = Message
-		  Dialog.Explanation = Explanation
-		  Dialog.ActionButton.Caption = ActionCaption
-		  Dialog.CancelButton.Caption = CancelCaption
-		  Dialog.CancelButton.Visible = True
-		  
-		  If Win = Nil Or Win.Frame = Window.FrameTypeSheet Then
-		    Return Dialog.ShowModal() = Dialog.ActionButton
-		  Else
-		    Return Dialog.ShowModalWithin(Win) = Dialog.ActionButton
-		  End If
+		  Return ShowConfirm(Win, Message, Explanation, ActionCaption, CancelCaption)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ShowConfirm(Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
+		Protected Function ShowConfirm(Win As Window = Nil, Message As String, Explanation As String, ActionCaption As String, CancelCaption As String) As Boolean
+		  Try
+		    Win = Win.TrueWindow
+		  Catch Err As RuntimeException
+		    Win = Nil
+		  End Try
+		  
 		  Dim Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = Message
@@ -371,7 +358,16 @@ Protected Module BeaconUI
 		  Dialog.ActionButton.Caption = ActionCaption
 		  Dialog.CancelButton.Caption = CancelCaption
 		  Dialog.CancelButton.Visible = True
-		  Return Dialog.ShowModal() = Dialog.ActionButton
+		  
+		  Try
+		    If Win = Nil Or Win.Frame = Window.FrameTypeSheet Then
+		      Return Dialog.ShowModal() = Dialog.ActionButton
+		    Else
+		      Return Dialog.ShowModalWithin(Win) = Dialog.ActionButton
+		    End If
+		  Catch Err As RuntimeException
+		    Return Dialog.ShowModal() = Dialog.ActionButton
+		  End Try
 		End Function
 	#tag EndMethod
 
