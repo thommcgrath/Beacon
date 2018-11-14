@@ -2,7 +2,9 @@
 Protected Class ExperienceCurves
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary)
+		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		  #Pragma Unused Identity
+		  
 		  Dim DinoCurve As Beacon.Curve
 		  If Dict.HasKey("Dino Curve") Then
 		    DinoCurve = Beacon.Curve.Import(Dict.Value("Dino Curve"))
@@ -30,7 +32,9 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary)
+		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		  #Pragma Unused Identity
+		  
 		  Dict.Value("Dino Level Cap") = Self.mDinoLevelCap
 		  Dict.Value("Dino Max Experience") = Self.mDinoMaxExperience
 		  Dict.Value("Dino Curve") = Self.mDinoCurve.Export

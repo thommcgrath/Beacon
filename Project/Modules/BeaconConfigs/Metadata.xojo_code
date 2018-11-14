@@ -2,7 +2,9 @@
 Protected Class Metadata
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary)
+		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		  #Pragma Unused Identity
+		  
 		  If Dict.HasKey("Title") Then
 		    Self.Title = Dict.Value("Title")
 		  End If
@@ -16,7 +18,9 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary)
+		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		  #Pragma Unused Identity
+		  
 		  Dict.Value("Title") = Self.Title
 		  Dict.Value("Description") = Self.Description
 		  Dict.Value("Public") = Self.IsPublic

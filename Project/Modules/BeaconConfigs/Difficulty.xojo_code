@@ -2,7 +2,9 @@
 Protected Class Difficulty
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary)
+		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		  #Pragma Unused Identity
+		  
 		  If Dict.HasKey("MaxDinoLevel") Then
 		    Self.MaxDinoLevel = Dict.Value("MaxDinoLevel")
 		  End If
@@ -10,7 +12,9 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary)
+		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		  #Pragma Unused Identity
+		  
 		  Dict.Value("MaxDinoLevel") = Self.MaxDinoLevel
 		End Sub
 	#tag EndEvent

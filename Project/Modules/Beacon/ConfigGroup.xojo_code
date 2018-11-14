@@ -32,10 +32,10 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Xojo.Core.Dictionary)
+		Sub Constructor(Source As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  Self.Constructor
 		  Self.mIsImplicit = Source.Lookup("Implicit", False)
-		  RaiseEvent ReadDictionary(Source)
+		  RaiseEvent ReadDictionary(Source, Identity)
 		End Sub
 	#tag EndMethod
 
@@ -83,10 +83,10 @@ Protected Class ConfigGroup
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
-		Function ToDictionary() As Xojo.Core.Dictionary
+		Function ToDictionary(Identity As Beacon.Identity) As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("Implicit") = Self.mIsImplicit
-		  RaiseEvent WriteDictionary(Dict)
+		  RaiseEvent WriteDictionary(Dict, Identity)
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -103,11 +103,11 @@ Protected Class ConfigGroup
 
 
 	#tag Hook, Flags = &h0
-		Event ReadDictionary(Dict As Xojo.Core.Dictionary)
+		Event ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event WriteDictionary(Dict As Xojo.Core.DIctionary)
+		Event WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
 	#tag EndHook
 
 

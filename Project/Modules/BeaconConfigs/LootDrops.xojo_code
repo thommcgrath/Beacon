@@ -3,7 +3,9 @@ Protected Class LootDrops
 Inherits Beacon.ConfigGroup
 Implements Xojo.Core.Iterable
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary)
+		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		  #Pragma Unused Identity
+		  
 		  If Dict.HasKey("Contents") Then
 		    Dim Contents() As Auto = Dict.Value("Contents")
 		    For Each DropDict As Xojo.Core.Dictionary In Contents
@@ -17,7 +19,9 @@ Implements Xojo.Core.Iterable
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary)
+		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		  #Pragma Unused Identity
+		  
 		  Dim Contents() As Xojo.Core.Dictionary
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    Contents.Append(Source.Export)

@@ -2,16 +2,16 @@
 Protected Class CustomContent
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary)
-		  Self.mGameIniContent = Dict.Lookup("Game.ini", "")
-		  Self.mGameUserSettingsIniContent = Dict.Lookup("GameUserSettings.ini", "")
+		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		  Self.mGameIniContent = Self.ReadContent(Dict.Lookup("Game.ini", ""), Identity)
+		  Self.mGameUserSettingsIniContent = Self.ReadContent(Dict.Lookup("GameUserSettings.ini", ""), Identity)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary)
-		  Dict.Value("Game.ini") = Self.mGameIniContent
-		  Dict.Value("GameUserSettings.ini") = Self.mGameUserSettingsIniContent
+		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		  Dict.Value("Game.ini") = Self.WriteContent(Self.mGameIniContent, Identity)
+		  Dict.Value("GameUserSettings.ini") = Self.WriteContent(Self.mGameUserSettingsIniContent, Identity)
 		End Sub
 	#tag EndEvent
 
@@ -19,6 +19,99 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Shared Function ConfigName() As Text
 		  Return "CustomContent"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function Decrypt(Input As Text, Identity As Beacon.Identity) As Text
+		  Try
+		    Dim SecureDict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Input)
+		    If Not SecureDict.HasAllKeys("Key", "Vector", "Content", "Hash") Then
+		      Return ""
+		    End If
+		    
+		    Dim Key As Xojo.Core.MemoryBlock = Identity.Decrypt(Beacon.DecodeHex(SecureDict.Value("Key")))
+		    If Key = Nil Then
+		      Return ""
+		    End If
+		    
+		    Dim ExpectedHash As Text = SecureDict.Value("Hash")
+		    Dim Vector As Xojo.Core.MemoryBlock = Beacon.DecodeHex(SecureDict.Value("Vector"))
+		    Dim Encrypted As Xojo.Core.MemoryBlock = Beacon.DecodeHex(SecureDict.Value("Content"))
+		    
+		    #if Not TargetiOS
+		      Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
+		      AES.SetKey(CType(Key.Data, MemoryBlock).StringValue(0, Key.Size))
+		      AES.SetInitialVector(CType(Vector.Data, MemoryBlock).StringValue(0, Vector.Size))
+		      
+		      Dim Decrypted As String
+		      Try
+		        Decrypted = AES.DecryptCBC(CType(Encrypted.Data, MemoryBlock).StringValue(0, Encrypted.Size))
+		      Catch Err As RuntimeException
+		        Return ""
+		      End Try
+		      
+		      Dim ComputedHash As Text = Beacon.Hash(Decrypted)
+		      If ComputedHash <> ExpectedHash Then
+		        Return ""
+		      End If
+		      
+		      If Decrypted = "" Or Not Encodings.UTF8.IsValidData(Decrypted) Then
+		        Return ""
+		      End If
+		      Decrypted = Decrypted.DefineEncoding(Encodings.UTF8)
+		      
+		      Dim TextValue As Text = Decrypted.ToText
+		      If Self.mEncryptedValues = Nil Then
+		        Self.mEncryptedValues = New Xojo.Core.Dictionary
+		      End If
+		      Self.mEncryptedValues.Value(ComputedHash) = Input
+		      
+		      Return TextValue
+		    #else
+		      #Pragma Error "Not implemented"
+		    #endif
+		  Catch Err As RuntimeException
+		    Return ""
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function Encrypt(Input As Text, Identity As Beacon.Identity) As Text
+		  Try
+		    Dim Hash As Text = Beacon.Hash(Input)
+		    If Self.mEncryptedValues <> Nil And Self.mEncryptedValues.HasKey(Hash) Then
+		      Return Self.mEncryptedValues.Value(Hash)
+		    End If
+		    
+		    #if Not TargetiOS
+		      Dim AES As New M_Crypto.AES_MTC(AES_MTC.EncryptionBits.Bits256)
+		      Dim Key As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(128)
+		      Dim Vector As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)
+		      AES.SetKey(CType(Key.Data, MemoryBlock).StringValue(0, Key.Size))
+		      AES.SetInitialVector(CType(Vector.Data, MemoryBlock).StringValue(0, Vector.Size))
+		      Dim Encrypted As Global.MemoryBlock = AES.EncryptCBC(Input)
+		      
+		      Dim SecureDict As New Xojo.Core.Dictionary
+		      SecureDict.Value("Key") = Beacon.EncodeHex(Identity.Encrypt(Key))
+		      SecureDict.Value("Vector") = Beacon.EncodeHex(Vector)
+		      SecureDict.Value("Content") = Beacon.EncodeHex(Encrypted)
+		      SecureDict.Value("Hash") = Hash
+		      
+		      Dim TextValue As Text = Xojo.Data.GenerateJSON(SecureDict)
+		      If Self.mEncryptedValues = Nil Then
+		        Self.mEncryptedValues = New Xojo.Core.Dictionary
+		      End If
+		      Self.mEncryptedValues.Value(Hash) = TextValue
+		      
+		      Return TextValue
+		    #else
+		      #Pragma Error "Not implemented"
+		    #endIf
+		  Catch Err As RuntimeException
+		    Return ""
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -69,10 +162,11 @@ Inherits Beacon.ConfigGroup
 		  If SupportedConfigs <> Nil Then
 		    Dim ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Value, SupportedConfigs)
 		    
-		    // Do not copy passwords
+		    // Make sure passwords get encrypted on save
 		    For I As Integer = ConfigValues.Ubound DownTo 0
-		      If ConfigValues(I).Header = "ServerSettings" And (ConfigValues(I).Key = "ServerAdminPassword" Or ConfigValues(I).Key = "ServerPassword") Then
-		        ConfigValues.Remove(I)
+		      Dim ConfigValue As Beacon.ConfigValue = ConfigValues(I)
+		      If ConfigValue.Header = "ServerSettings" And (ConfigValue.Key = "ServerAdminPassword" Or ConfigValue.Key = "ServerPassword") And ConfigValue.Value <> "" Then
+		        ConfigValues(I) = New Beacon.ConfigValue(ConfigValue.Header, ConfigValue.Key, Self.EncryptedTag + ConfigValue.Value + Self.EncryptedTag)
 		      End If
 		    Next
 		    
@@ -119,6 +213,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Function IniValues(InitialHeader As Text, Source As Text, ExistingConfigs As Xojo.Core.Dictionary) As Beacon.ConfigValue()
+		  Source = Source.ReplaceAll(Self.EncryptedTag, "")
 		  Source = Source.ReplaceLineEndings(Text.FromUnicodeCodepoint(10))
 		  
 		  Dim Lines() As Text = Source.Split(Text.FromUnicodeCodepoint(10))
@@ -158,6 +253,73 @@ Inherits Beacon.ConfigGroup
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function ReadContent(Input As Text, Identity As Beacon.Identity) As Text
+		  Dim Pos As Integer
+		  Self.mEncryptedValues = New Xojo.Core.Dictionary
+		  
+		  Do
+		    Pos = Input.IndexOf(Pos, Self.EncryptedTag)
+		    If Pos = -1 Then
+		      Return Input
+		    End If
+		    
+		    Dim StartPos As Integer = Pos + Self.EncryptedTag.Length
+		    Dim EndPos As Integer = Input.IndexOf(StartPos, Self.EncryptedTag)
+		    If EndPos = -1 Then
+		      EndPos = Input.Length
+		    End If
+		    
+		    Dim Prefix As Text = Input.Left(StartPos)
+		    Dim Suffix As Text = Input.Right(Input.Length - EndPos)
+		    Dim EncryptedContent As Text = Input.Mid(StartPos, EndPos - StartPos)
+		    Dim DecryptedContent As Text = Self.Decrypt(EncryptedContent, Identity)
+		    
+		    If DecryptedContent = "" Then
+		      Prefix = Prefix.Left(Prefix.Length - Self.EncryptedTag.Length)
+		      Suffix = Suffix.Right(Suffix.Length - Self.EncryptedTag.Length)
+		      Input = Prefix + Suffix
+		      Pos = Prefix.Length
+		    Else
+		      Input = Prefix + DecryptedContent + Suffix
+		      Pos = Prefix.Length + DecryptedContent.Length + Self.EncryptedTag.Length
+		    End If
+		  Loop
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function WriteContent(Input As Text, Identity As Beacon.Identity) As Text
+		  Dim Pos As Integer
+		  
+		  Do
+		    Pos = Input.IndexOf(Pos, Self.EncryptedTag)
+		    If Pos = -1 Then
+		      Return Input
+		    End If
+		    
+		    Dim StartPos As Integer = Pos + Self.EncryptedTag.Length
+		    Dim EndPos As Integer = Input.IndexOf(StartPos, Self.EncryptedTag)
+		    If EndPos = -1 Then
+		      EndPos = Input.Length
+		    End If
+		    
+		    Dim Prefix As Text = Input.Left(StartPos)
+		    Dim Suffix As Text = Input.Right(Input.Length - EndPos)
+		    Dim DecryptedContent As Text = Input.Mid(StartPos, EndPos - StartPos)
+		    Dim DecryptedHash As Text = Beacon.Hash(DecryptedContent)
+		    Dim EncryptedContent As Text = Self.Encrypt(DecryptedContent, Identity)
+		    
+		    Input = Prefix + EncryptedContent + Suffix
+		    Pos = Prefix.Length + EncryptedContent.Length + Self.EncryptedTag.Length
+		  Loop
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mEncryptedValues As Xojo.Core.Dictionary
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mGameIniContent As Text
@@ -166,6 +328,10 @@ Inherits Beacon.ConfigGroup
 	#tag Property, Flags = &h21
 		Private mGameUserSettingsIniContent As Text
 	#tag EndProperty
+
+
+	#tag Constant, Name = EncryptedTag, Type = Text, Dynamic = False, Default = \"$$BeaconEncrypted$$", Scope = Private
+	#tag EndConstant
 
 
 	#tag ViewBehavior

@@ -134,7 +134,7 @@ Implements Beacon.DocumentItem
 		    For Each Entry As Xojo.Core.DictionaryEntry In Groups
 		      Dim GroupName As Text = Entry.Key
 		      Dim GroupData As Xojo.Core.Dictionary = Entry.Value
-		      Dim Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData)
+		      Dim Instance As Beacon.ConfigGroup = BeaconConfigs.CreateInstance(GroupName, GroupData, Identity)
 		      If Instance <> Nil Then
 		        Doc.mConfigGroups.Value(GroupName) = Instance
 		      End If
@@ -712,7 +712,7 @@ Implements Beacon.DocumentItem
 		  Dim Groups As New Xojo.Core.Dictionary
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
 		    Dim Group As Beacon.ConfigGroup = Entry.Value
-		    Dim GroupData As Xojo.Core.Dictionary = Group.ToDictionary
+		    Dim GroupData As Xojo.Core.Dictionary = Group.ToDictionary(Identity)
 		    If GroupData = Nil Then
 		      GroupData = New Xojo.Core.Dictionary
 		    End If
