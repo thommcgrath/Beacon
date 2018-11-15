@@ -1,7 +1,7 @@
 {
 	"Entries": [
 		{
-			"Availability": 10,
+			"Availability": 42,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -19,7 +19,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 10,
+			"Availability": 42,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -37,7 +37,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -148,7 +148,7 @@
 			"RespectQuantityMultiplier": false
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -166,7 +166,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -184,7 +184,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 16,
+			"Availability": 48,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -202,7 +202,61 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 32,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_TaxidermyBase_Small_C",
+					"Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Small.PrimalItemStructure_TaxidermyBase_Small",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 32,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_TaxidermyBase_Large_C",
+					"Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Large.PrimalItemStructure_TaxidermyBase_Large",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 32,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_DinoLeash_C",
+					"Path": "/Game/Extinction/Structures/DinoLeash/PrimalItemStructure_DinoLeash.PrimalItemStructure_DinoLeash",
+					"Weight": 0.5
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -220,7 +274,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -238,7 +292,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -256,7 +310,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -274,7 +328,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -292,7 +346,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -310,7 +364,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -328,7 +382,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -346,7 +400,135 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 32,
+			"ChanceToBeBlueprintOverride": 1.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_TaxidermyBase_Large_C",
+					"Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Large.PrimalItemStructure_TaxidermyBase_Large",
+					"Weight": 0.5
+				},
+				{
+					"Class": "PrimalItemStructure_TaxidermyBase_Medium_C",
+					"Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Medium.PrimalItemStructure_TaxidermyBase_Medium",
+					"Weight": 0.5
+				},
+				{
+					"Class": "PrimalItemStructure_TaxidermyBase_Small_C",
+					"Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Small.PrimalItemStructure_TaxidermyBase_Small",
+					"Weight": 0.5
+				},
+				{
+					"Class": "PrimalItemStructure_DinoLeash_C",
+					"Path": "/Game/Extinction/Structures/DinoLeash/PrimalItemStructure_DinoLeash.PrimalItemStructure_DinoLeash",
+					"Weight": 0.5
+				},
+				{
+					"Class": "PrimalItemStructure_AnvilBench_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_AnvilBench.PrimalItemStructure_AnvilBench",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_Bed_Simple_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bed_Simple.PrimalItemStructure_Bed_Simple",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_Bookshelf_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Bookshelf.PrimalItemStructure_Bookshelf",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_Campfire_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Campfire.PrimalItemStructure_Campfire",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_CompostBin_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CompostBin.PrimalItemStructure_CompostBin",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_CookingPot_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_CookingPot.PrimalItemStructure_CookingPot",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_FeedingTrough_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_FeedingTrough.PrimalItemStructure_FeedingTrough",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_Forge_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_Forge.PrimalItemStructure_Forge",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_MortarAndPestle_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_MortarAndPestle.PrimalItemStructure_MortarAndPestle",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_PreservingBin_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_PreservingBin.PrimalItemStructure_PreservingBin",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_SleepingBag_Hide_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_SleepingBag_Hide.PrimalItemStructure_SleepingBag_Hide",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_StandingTorch_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StandingTorch.PrimalItemStructure_StandingTorch",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_StorageBox_Large_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Large.PrimalItemStructure_StorageBox_Large",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_StorageBox_Small_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_StorageBox_Small.PrimalItemStructure_StorageBox_Small",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_WallTorch_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_WallTorch.PrimalItemStructure_WallTorch",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_FishBasket_C",
+					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Wooden/PrimalItemStructure_FishBasket.PrimalItemStructure_FishBasket",
+					"Weight": 0.5
+				},
+				{
+					"Class": "PrimalItemStructure_Vessel_C",
+					"Path": "/Game/ScorchedEarth/Structures/DesertFurnitureSet/Vessel/PrimalItemStructure_Vessel.PrimalItemStructure_Vessel",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_Tent_C",
+					"Path": "/Game/ScorchedEarth/Structures/Tent/PrimalItemStructure_Tent.PrimalItemStructure_Tent",
+					"Weight": 1.0
+				},
+				{
+					"Class": "PrimalItemStructure_WaterWell_C",
+					"Path": "/Game/ScorchedEarth/Structures/WaterWell/PrimalItemStructure_WaterWell.PrimalItemStructure_WaterWell",
+					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": false
+		},
+		{
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -364,7 +546,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -382,7 +564,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -390,6 +572,24 @@
 					"Class": "PrimalItemStructure_FeedingTrough_C",
 					"Path": "/Game/PrimalEarth/CoreBlueprints/Items/Structures/Misc/PrimalItemStructure_FeedingTrough.PrimalItemStructure_FeedingTrough",
 					"Weight": 1.0
+				}
+			],
+			"MaxQuality": "Tier1",
+			"MaxQuantity": 1,
+			"MinQuality": "Tier1",
+			"MinQuantity": 1,
+			"RespectQualityModifier": false,
+			"RespectQuantityMultiplier": true
+		},
+		{
+			"Availability": 32,
+			"ChanceToBeBlueprintOverride": 0.0,
+			"EntryWeight": 1.0,
+			"Items": [
+				{
+					"Class": "PrimalItemStructure_TaxidermyBase_Medium_C",
+					"Path": "/Game/Extinction/CoreBlueprints/Items/PrimalItemStructure_TaxidermyBase_Medium.PrimalItemStructure_TaxidermyBase_Medium",
+					"Weight": 0.5
 				}
 			],
 			"MaxQuality": "Tier1",
@@ -591,7 +791,7 @@
 			"RespectQuantityMultiplier": false
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -609,7 +809,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 10,
+			"Availability": 42,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -632,22 +832,90 @@
 	"Label": "Basic Furniture",
 	"Max": 4,
 	"Min": 1,
+	"Modifier Definitions": [
+		{
+			"Label": "Bonus Drops",
+			"ModifierID": "13299620-1aaa-43a7-9c44-42fc409ea7a1",
+			"Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d_Double)|(Level\\d\\d_Double)|(Level\\d\\d_Double_ScorchedEarth))_C$"
+		},
+		{
+			"Label": "Cave Crates",
+			"ModifierID": "22b6ba8a-dacb-4bda-945a-26b95d0ad0db",
+			"Pattern": "^SupplyCrate_((Dungeon_Aberration_Level\\d\\d)|(Cave_QualityTier\\d_ScorchedEarth)|(((UnderwaterCave)|(IceCave)|(Cave_Quality)|(SwampCave))Tier\\d))_C$"
+		},
+		{
+			"Label": "Open Desert Crate",
+			"ModifierID": "3910ae49-41bc-4307-b395-2c1bb44619b6",
+			"Pattern": "^SupplyCreate_OceanInstant_High_C$"
+		},
+		{
+			"Label": "Deep Sea Crate",
+			"ModifierID": "4ae8364b-4890-4a53-9d24-204ab5f00411",
+			"Pattern": "^SupplyCrate_OceanInstant_C$"
+		},
+		{
+			"Label": "Bosses",
+			"ModifierID": "4d70fee5-81c7-48f4-8a97-51057f7e6ac2",
+			"Pattern": "^DinoDropInventoryComponent_Boss(.+)_(.+)_C$"
+		},
+		{
+			"Label": "Artifact Crates",
+			"ModifierID": "87a001d7-5f3b-4d0e-8494-e00c4488e077",
+			"Pattern": "^ArtifactCrate_.+_C$"
+		},
+		{
+			"Label": "Aberration Surface Bonus Drops",
+			"ModifierID": "b9ea6922-3d19-4333-b2a6-3e518f24d62a",
+			"Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_double_C$"
+		},
+		{
+			"Label": "Aberration Surface Drops",
+			"ModifierID": "e3454afa-d47a-4f9f-9cd9-ceb0171317e4",
+			"Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_C$"
+		},
+		{
+			"Label": "Basic Drops",
+			"ModifierID": "e350c14c-a3a1-493a-bd5c-b34a530e45cb",
+			"Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d)|(Level\\d\\d)|(Level\\d\\d_ScorchedEarth))_C$"
+		}
+	],
 	"Modifiers": {
-		"Bonus": {
+		"13299620-1aaa-43a7-9c44-42fc409ea7a1": {
 			"Quality": 3,
 			"Quantity": 2.0
 		},
-		"Cave": {
+		"22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
 			"Quality": 6,
 			"Quantity": 1.0
 		},
-		"Sea": {
+		"3910ae49-41bc-4307-b395-2c1bb44619b6": {
 			"Quality": 6,
 			"Quantity": 1.0
 		},
-		"Standard": {
+		"4ae8364b-4890-4a53-9d24-204ab5f00411": {
+			"Quality": 6,
+			"Quantity": 1.0
+		},
+		"4d70fee5-81c7-48f4-8a97-51057f7e6ac2": {
+			"Quality": 0,
+			"Quantity": 1.0
+		},
+		"87a001d7-5f3b-4d0e-8494-e00c4488e077": {
+			"Quality": 0,
+			"Quantity": 1.0
+		},
+		"b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+			"Quality": 3,
+			"Quantity": 2.0
+		},
+		"e3454afa-d47a-4f9f-9cd9-ceb0171317e4": {
+			"Quality": 0,
+			"Quantity": 1.0
+		},
+		"e350c14c-a3a1-493a-bd5c-b34a530e45cb": {
 			"Quality": 0,
 			"Quantity": 1.0
 		}
-	}
+	},
+	"Version": 2
 }
