@@ -70,19 +70,19 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   321
+      Height          =   125
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
       Italic          =   False
-      Left            =   0
+      Left            =   -18
       LimitText       =   0
       LineHeight      =   0.0
       LineSpacing     =   1.0
-      LockBottom      =   True
+      LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   True
+      LockRight       =   False
       LockTop         =   True
       Mask            =   ""
       Multiline       =   True
@@ -99,12 +99,12 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   61
+      Top             =   -151
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
-      Width           =   608
+      Width           =   252
    End
    Begin FadedSeparator FadedSeparator1
       AcceptFocus     =   False
@@ -135,34 +135,26 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       Visible         =   True
       Width           =   608
    End
-   Begin BeaconToolbar LeftButtons
-      AcceptFocus     =   False
-      AcceptTabs      =   False
+   Begin CodeEditor CodeEditor1
       AutoDeactivate  =   True
-      Backdrop        =   0
-      Caption         =   ""
       Enabled         =   True
-      Height          =   40
+      Height          =   321
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
-      LockBottom      =   False
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
-      Resizer         =   "0"
-      ResizerEnabled  =   True
       Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   10
-      UseFocusRing    =   True
+      Top             =   61
       Visible         =   True
-      Width           =   150
+      Width           =   608
    End
 End
 #tag EndWindow
@@ -269,25 +261,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateEncryptButton()
-		  If Self.LeftButtons.EncryptButton = Nil Then
-		    Return
-		  End If
-		  
-		  Dim Button As BeaconToolbarItem = Self.LeftButtons.EncryptButton
-		  If Self.SelectionIsEncrypted Then
-		    Button.HelpTag = "Convert the encrypted value to plain text."
-		    Button.Enabled = True
-		    Button.Icon = IconToolbarUnlock
-		  Else
-		    Button.HelpTag = "Encrypt the selected text when saving."
-		    Button.Enabled = Self.ConfigArea.SelLength > 0
-		    Button.Icon = IconToolbarLock
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub UpdateTextColors()
 		  Dim Pos As Integer
 		  Dim Source As String = Self.ConfigArea.Text
@@ -318,8 +291,6 @@ End
 		    
 		    Pos = EndPos + TagLen
 		  Loop
-		  
-		  Self.UpdateEncryptButton()
 		End Sub
 	#tag EndMethod
 
@@ -363,6 +334,7 @@ End
 	#tag Event
 		Sub TextChange()
 		  Self.UpdateTextColors()
+		  Self.CodeEditor1.TextContent = Me.Text
 		  
 		  If Self.SettingUp Then
 		    Return
@@ -376,26 +348,6 @@ End
 		    Self.Config.GameIniContent = Me.Text.ToText
 		    Self.ContentsChanged = True
 		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub SelChange()
-		  Self.UpdateEncryptButton()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events LeftButtons
-	#tag Event
-		Sub Action(Item As BeaconToolbarItem)
-		  Select Case Item.Name
-		  Case "EncryptButton"
-		    Self.ToggleEncryption
-		  End Select
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("EncryptButton", IconToolbarLock, "Encrypt the selected text when saving."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
