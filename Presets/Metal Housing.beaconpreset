@@ -1,7 +1,7 @@
 {
 	"Entries": [
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -19,7 +19,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -37,7 +37,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -55,7 +55,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -73,7 +73,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -91,7 +91,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -109,7 +109,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -127,7 +127,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -145,7 +145,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 1.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -275,10 +275,10 @@
 			"MinQuality": "Tier1",
 			"MinQuantity": 1,
 			"RespectQualityModifier": false,
-			"RespectQuantityMultiplier": false
+			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -296,7 +296,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -314,7 +314,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -332,7 +332,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -350,7 +350,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -368,7 +368,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -386,7 +386,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -404,7 +404,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -422,7 +422,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -440,7 +440,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -458,7 +458,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -476,7 +476,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -494,7 +494,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -512,7 +512,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -530,7 +530,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -548,7 +548,7 @@
 			"RespectQuantityMultiplier": true
 		},
 		{
-			"Availability": 31,
+			"Availability": 63,
 			"ChanceToBeBlueprintOverride": 0.0,
 			"EntryWeight": 1.0,
 			"Items": [
@@ -571,22 +571,90 @@
 	"Label": "Metal Housing",
 	"Max": 6,
 	"Min": 2,
+	"Modifier Definitions": [
+		{
+			"Label": "Bonus Drops",
+			"ModifierID": "13299620-1aaa-43a7-9c44-42fc409ea7a1",
+			"Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d_Double)|(Level\\d\\d_Double)|(Level\\d\\d_Double_ScorchedEarth))_C$"
+		},
+		{
+			"Label": "Cave Crates",
+			"ModifierID": "22b6ba8a-dacb-4bda-945a-26b95d0ad0db",
+			"Pattern": "^SupplyCrate_((Dungeon_Aberration_Level\\d\\d)|(Cave_QualityTier\\d_ScorchedEarth)|(((UnderwaterCave)|(IceCave)|(Cave_Quality)|(SwampCave))Tier\\d))_C$"
+		},
+		{
+			"Label": "Open Desert Crate",
+			"ModifierID": "3910ae49-41bc-4307-b395-2c1bb44619b6",
+			"Pattern": "^SupplyCreate_OceanInstant_High_C$"
+		},
+		{
+			"Label": "Deep Sea Crate",
+			"ModifierID": "4ae8364b-4890-4a53-9d24-204ab5f00411",
+			"Pattern": "^SupplyCrate_OceanInstant_C$"
+		},
+		{
+			"Label": "Bosses",
+			"ModifierID": "4d70fee5-81c7-48f4-8a97-51057f7e6ac2",
+			"Pattern": "^DinoDropInventoryComponent_Boss(.+)_(.+)_C$"
+		},
+		{
+			"Label": "Artifact Crates",
+			"ModifierID": "87a001d7-5f3b-4d0e-8494-e00c4488e077",
+			"Pattern": "^ArtifactCrate_.+_C$"
+		},
+		{
+			"Label": "Aberration Surface Bonus Drops",
+			"ModifierID": "b9ea6922-3d19-4333-b2a6-3e518f24d62a",
+			"Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_double_C$"
+		},
+		{
+			"Label": "Aberration Surface Drops",
+			"ModifierID": "e3454afa-d47a-4f9f-9cd9-ceb0171317e4",
+			"Pattern": "^SupplyCrate_Level\\d\\d_Aberrant_Surface_C$"
+		},
+		{
+			"Label": "Basic Drops",
+			"ModifierID": "e350c14c-a3a1-493a-bd5c-b34a530e45cb",
+			"Pattern": "^SupplyCrate_((Cave_Aberration_Level\\d\\d)|(Level\\d\\d)|(Level\\d\\d_ScorchedEarth))_C$"
+		}
+	],
 	"Modifiers": {
-		"Bonus": {
+		"13299620-1aaa-43a7-9c44-42fc409ea7a1": {
 			"Quality": 0,
 			"Quantity": 2.0
 		},
-		"Cave": {
+		"22b6ba8a-dacb-4bda-945a-26b95d0ad0db": {
 			"Quality": 0,
 			"Quantity": 3.0
 		},
-		"Sea": {
+		"3910ae49-41bc-4307-b395-2c1bb44619b6": {
 			"Quality": 0,
 			"Quantity": 4.0
 		},
-		"Standard": {
+		"4ae8364b-4890-4a53-9d24-204ab5f00411": {
+			"Quality": 0,
+			"Quantity": 4.0
+		},
+		"4d70fee5-81c7-48f4-8a97-51057f7e6ac2": {
+			"Quality": 0,
+			"Quantity": 1.0
+		},
+		"87a001d7-5f3b-4d0e-8494-e00c4488e077": {
+			"Quality": 0,
+			"Quantity": 1.0
+		},
+		"b9ea6922-3d19-4333-b2a6-3e518f24d62a": {
+			"Quality": 0,
+			"Quantity": 2.0
+		},
+		"e3454afa-d47a-4f9f-9cd9-ceb0171317e4": {
+			"Quality": 0,
+			"Quantity": 1.0
+		},
+		"e350c14c-a3a1-493a-bd5c-b34a530e45cb": {
 			"Quality": 0,
 			"Quantity": 1.0
 		}
-	}
+	},
+	"Version": 2
 }
