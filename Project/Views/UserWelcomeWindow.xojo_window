@@ -75,7 +75,7 @@ End
 		  End If
 		  Dim Path As String = Self.mBaseURL + "welcome.php"
 		  If Fields.Ubound > -1 Then
-		    Path = Path + "?" + Text.Join(Fields, "&")
+		    Path = Path + "?" + Fields.Join("&")
 		  End If
 		  Self.ContentView.LoadURL(Path)
 		End Sub

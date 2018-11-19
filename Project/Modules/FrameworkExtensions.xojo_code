@@ -97,6 +97,22 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Join(Extends Source() As Text, Delimiter As Text) As Text
+		  #if TargetWin32
+		    // Thanks to bug <feedback://showreport?report_id=54183>
+		    Dim Arr() As String
+		    Redim Arr(Source.Ubound)
+		    For I As Integer = 0 To Source.Ubound
+		      Arr(I) = Source(I)
+		    Next
+		    Return Arr.Join(Delimiter).ToText
+		  #endif
+		  
+		  Return Text.Join(Source, Delimiter)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Length(Extends Source As String) As Integer
 		  Return Len(Source)
 		End Function

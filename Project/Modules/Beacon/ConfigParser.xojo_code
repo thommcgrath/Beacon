@@ -55,7 +55,7 @@ Private Class ConfigParser
 		        Self.Buffer.Append(Char)
 		      End If
 		    Case "="
-		      Self.Key = Text.Join(Self.Buffer, "").Trim
+		      Self.Key = Self.Buffer.Join("").Trim
 		      Redim Self.Buffer(-1)
 		      Self.Type = Self.TypePair
 		      Self.SubParser = New Beacon.ConfigParser(Self.Level) // Same level
@@ -64,7 +64,7 @@ Private Class ConfigParser
 		        Self.Buffer.Append(Char)
 		      Else
 		        Self.ConsumedLastChar = False
-		        Self.mValue = Text.Join(Self.Buffer, "")
+		        Self.mValue = Self.Buffer.Join("")
 		        Redim Self.Buffer(-1)
 		        Return True
 		      End If

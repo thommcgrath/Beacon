@@ -280,7 +280,7 @@ Protected Class PreferencesManager
 		    Dim Value As UInt8 = Block.UInt8Value(I)
 		    Chars.Append(Value.ToHex(2))
 		  Next
-		  Return Text.Join(Chars, "")
+		  Return Chars.Join("")
 		End Function
 	#tag EndMethod
 

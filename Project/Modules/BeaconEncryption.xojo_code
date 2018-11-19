@@ -79,7 +79,7 @@ Protected Module BeaconEncryption
 		  Lines.Remove(0)
 		  Lines.Remove(Lines.Ubound)
 		  
-		  Key = Text.Join(Lines, Text.FromUnicodeCodepoint(10))
+		  Key = Lines.Join(Text.FromUnicodeCodepoint(10))
 		  
 		  Dim Decoded As Xojo.Core.MemoryBlock = Beacon.DecodeBase64(Key)
 		  #Pragma BreakOnExceptions Off
@@ -108,7 +108,7 @@ Protected Module BeaconEncryption
 		  Lines.Remove(0)
 		  Lines.Remove(Lines.Ubound)
 		  
-		  Key = Text.Join(Lines, Text.FromUnicodeCodepoint(10))
+		  Key = Lines.Join(Text.FromUnicodeCodepoint(10))
 		  
 		  Dim Decoded As Xojo.Core.MemoryBlock = Beacon.DecodeBase64(Key)
 		  #Pragma BreakOnExceptions Off
@@ -133,7 +133,7 @@ Protected Module BeaconEncryption
 		    Lines.Append(Base64)
 		  End If
 		  Lines.Append("-----END PRIVATE KEY-----")
-		  Return Text.Join(Lines, Text.FromUnicodeCodepoint(10))
+		  Return Lines.Join(Text.FromUnicodeCodepoint(10))
 		End Function
 	#tag EndMethod
 
@@ -149,7 +149,7 @@ Protected Module BeaconEncryption
 		    Lines.Append(Base64)
 		  End If
 		  Lines.Append("-----END PUBLIC KEY-----")
-		  Return Text.Join(Lines, Text.FromUnicodeCodepoint(10))
+		  Return Lines.Join(Text.FromUnicodeCodepoint(10))
 		End Function
 	#tag EndMethod
 

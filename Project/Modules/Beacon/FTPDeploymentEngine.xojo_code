@@ -40,7 +40,7 @@ Implements Beacon.DeploymentEngine
 		  Parts(2) = "host=" + Beacon.EncodeURLComponent(Self.mProfile.Host)
 		  Parts(3) = "port=" + Beacon.EncodeURLComponent(Self.mProfile.Port.ToText)
 		  Parts(4) = "path=" + Beacon.EncodeURLComponent(File)
-		  Return Text.Join(Parts, "&")
+		  Return Parts.Join("&")
 		End Function
 	#tag EndMethod
 

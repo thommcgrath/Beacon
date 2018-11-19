@@ -291,6 +291,7 @@ Begin Window ExceptionWindow
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   103
       Transparent     =   False
       Value           =   3
@@ -348,6 +349,7 @@ Begin Window ExceptionWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Top             =   155
          Transparent     =   False
          Value           =   0
@@ -648,7 +650,7 @@ End
 		  Fields.Value("type") = Self.mExceptionDetails.Value("Type")
 		  Fields.Value("reason") = Self.mExceptionDetails.Value("Reason")
 		  Fields.Value("location") = Self.mExceptionDetails.Value("Location")
-		  Fields.Value("trace") = Text.Join(Lines, Text.FromUnicodeCodepoint(10))
+		  Fields.Value("trace") = Lines.Join(Text.FromUnicodeCodepoint(10))
 		  
 		  SimpleHTTP.Post(Beacon.WebURL("/reportaproblem.php"), Fields, AddressOf Reporter_Callback, Nil)
 		End Sub
@@ -664,7 +666,7 @@ End
 		    Lines.Append(Frame.Name)
 		  Next
 		  
-		  Dim HashContent As Text = Text.Join(Lines, Text.FromUnicodeCodepoint(10))
+		  Dim HashContent As Text = Lines.Join(Text.FromUnicodeCodepoint(10))
 		  Dim Hash As Text = Beacon.EncodeHex(Xojo.Crypto.SHA1(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(HashContent)))
 		  
 		  Dim Win As New ExceptionWindow

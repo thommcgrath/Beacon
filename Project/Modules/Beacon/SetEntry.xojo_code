@@ -33,7 +33,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Next
 		    Labels.Append("or " + Self.mOptions(UBound(Self.mOptions)).Engram.ClassString)
 		    
-		    Return Text.Join(Labels, ", ")
+		    Return Labels.Join(", ")
 		  End If
 		End Function
 	#tag EndMethod
@@ -205,7 +205,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim Format As Text = "0.000"
 		  
 		  Dim Parts(6) As Text
-		  Parts(0) = Beacon.MD5(Text.Join(Items, ",")).Lowercase
+		  Parts(0) = Beacon.MD5(Items.Join(",")).Lowercase
 		  Parts(1) = Self.ChanceToBeBlueprint.ToText(Locale, Format)
 		  Parts(2) = Self.MaxQuality.Key.Lowercase
 		  Parts(3) = Self.MaxQuantity.ToText(Locale, Format)
@@ -213,7 +213,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Parts(5) = Self.MinQuantity.ToText(Locale, Format)
 		  Parts(6) = Self.Weight.ToText(Locale, Format)
 		  
-		  Return Beacon.MD5(Text.Join(Parts, ",")).Lowercase
+		  Return Beacon.MD5(Parts.Join(",")).Lowercase
 		End Function
 	#tag EndMethod
 
@@ -398,7 +398,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  For Each Entry As Beacon.SetEntry In Entries
 		    Values.Append(Entry.TextValue(Multipliers, SumEntryWeights, UseBlueprints, Difficulty))
 		  Next
-		  Return Text.Join(Values, Separator)
+		  Return Values.Join(Separator)
 		End Function
 	#tag EndMethod
 
@@ -417,7 +417,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Next
 		    Labels.Append("or " + Self.mOptions(UBound(Self.mOptions)).Engram.Label)
 		    
-		    Return Text.Join(Labels, ", ")
+		    Return Labels.Join(", ")
 		  End If
 		End Function
 	#tag EndMethod
@@ -576,11 +576,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim Values() As Text
 		  Values.Append("EntryWeight=" + EntryWeight.ToText)
 		  If UseBlueprints Then
-		    Values.Append("Items=(" + Text.Join(Paths, ",") + ")")
+		    Values.Append("Items=(" + Paths.Join(",") + ")")
 		  Else
-		    Values.Append("ItemClassStrings=(" + Text.Join(Classes, ",") + ")")
+		    Values.Append("ItemClassStrings=(" + Classes.Join(",") + ")")
 		  End If
-		  Values.Append("ItemsWeights=(" + Text.Join(Weights, ",") + ")")
+		  Values.Append("ItemsWeights=(" + Weights.Join(",") + ")")
 		  Values.Append("MinQuantity=" + Self.MinQuantity.ToText)
 		  Values.Append("MaxQuantity=" + Self.MaxQuantity.ToText)
 		  Values.Append("MinQuality=" + MinQuality.PrettyText)
@@ -603,7 +603,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  //Values.Append("ChanceToActuallyGiveItem=" + InverseChance.PrettyText)
 		  Values.Append("ChanceToBeBlueprintOverride=" + Chance.PrettyText)
 		  
-		  Return "(" + Text.Join(Values, ",") + ")"
+		  Return "(" + Values.Join(",") + ")"
 		End Function
 	#tag EndMethod
 

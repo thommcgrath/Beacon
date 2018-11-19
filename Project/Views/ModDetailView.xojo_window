@@ -44,6 +44,7 @@ Begin BeaconContainer ModDetailView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   3
@@ -244,6 +245,7 @@ Begin BeaconContainer ModDetailView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
+         TabStop         =   True
          Top             =   199
          Transparent     =   False
          Value           =   0
@@ -433,6 +435,7 @@ Begin BeaconContainer ModDetailView
       End
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -468,6 +471,7 @@ Begin BeaconContainer ModDetailView
       Width           =   864
    End
    Begin Beacon.EngramSearcherThread Searcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -606,7 +610,7 @@ End
 		    UIDs.Append(Engram.UID)
 		  Next
 		  
-		  Dim Request As New BeaconAPI.Request("engram.php", "DELETE", Text.Join(UIDs, ","), "text/plain", AddressOf APICallback_EngramsDelete)
+		  Dim Request As New BeaconAPI.Request("engram.php", "DELETE", UIDs.Join(","), "text/plain", AddressOf APICallback_EngramsDelete)
 		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		  

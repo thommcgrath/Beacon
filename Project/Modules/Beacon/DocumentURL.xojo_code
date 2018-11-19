@@ -115,7 +115,7 @@ Protected Class DocumentURL
 		    Parts.Append(Beacon.EncodeURLComponent(Entry.Key) + "=" + Beacon.EncodeURLComponent(Entry.Value))
 		  Next
 		  
-		  Self.mQueryString = Text.Join(Parts, "&")
+		  Self.mQueryString = Parts.Join("&")
 		  
 		  Dim Pos As Integer = Self.mOriginalURL.IndexOf("?")
 		  If Pos > -1 Then

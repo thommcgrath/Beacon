@@ -158,6 +158,7 @@ Begin ConfigEditor LootConfigEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -175,6 +176,7 @@ Begin ConfigEditor LootConfigEditor
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -467,7 +469,7 @@ End
 		    Next
 		    
 		    Dim IgnoredCount As Integer = IgnoredSources.Ubound + 1
-		    Self.ShowAlert(IgnoredCount.ToText + if(IgnoredCount = 1, " loot source was", " loot sources were") + " not added because " + if(IgnoredCount = 1, "it is", "they are") + " not compatible with the selected maps.", "The following " + if(IgnoredCount = 1, "loot source was", "loot sources were") + " skipped: " + Text.Join(SourcesList, ", "))
+		    Self.ShowAlert(IgnoredCount.ToText + if(IgnoredCount = 1, " loot source was", " loot sources were") + " not added because " + if(IgnoredCount = 1, "it is", "they are") + " not compatible with the selected maps.", "The following " + if(IgnoredCount = 1, "loot source was", "loot sources were") + " skipped: " + SourcesList.Join(", "))
 		  End If
 		  
 		  Self.List.EnsureSelectionIsVisible()
@@ -832,7 +834,7 @@ End
 		  End If
 		  
 		  Board.AddRawData(RawData, Self.kClipboardType)
-		  Board.Text = Text.Join(Lines, Text.FromUnicodeCodepoint(10))
+		  Board.Text = Lines.Join(Text.FromUnicodeCodepoint(10))
 		End Sub
 	#tag EndEvent
 	#tag Event

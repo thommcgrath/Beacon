@@ -84,7 +84,7 @@ Protected Class Request
 		    Parts.Append(Beacon.EncodeURLComponent(Entry.Key) + "=" + Beacon.EncodeURLComponent(Entry.Value))
 		  Next
 		  
-		  Self.Constructor(Path, Method, Text.Join(Parts, "&"), "application/x-www-form-urlencoded", Callback)
+		  Self.Constructor(Path, Method, Parts.Join("&"), "application/x-www-form-urlencoded", Callback)
 		End Sub
 	#tag EndMethod
 
@@ -120,7 +120,7 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ReplyCallback(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		Delegate Sub ReplyCallback(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo . Core . MemoryBlock)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0

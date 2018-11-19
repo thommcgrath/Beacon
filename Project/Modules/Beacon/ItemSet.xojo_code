@@ -180,14 +180,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim Format As Text = "0.000"
 		  
 		  Dim Parts(5) As Text
-		  Parts(0) = Beacon.MD5(Text.Join(Entries, ",")).Lowercase
+		  Parts(0) = Beacon.MD5(Entries.Join(",")).Lowercase
 		  Parts(1) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
 		  Parts(2) = Self.MaxNumItems.ToText(Locale, Format)
 		  Parts(3) = Self.MinNumItems.ToText(Locale, Format)
 		  Parts(4) = Self.NumItemsPower.ToText(Locale, Format)
 		  Parts(5) = Self.Weight.ToText(Locale, Format)
 		  
-		  Return Beacon.MD5(Text.Join(Parts, ",")).Lowercase
+		  Return Beacon.MD5(Parts.Join(",")).Lowercase
 		End Function
 	#tag EndMethod
 
@@ -326,7 +326,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Values.Append(Set.TextValue(Multipliers, SumSetWeights, UseBlueprints, Difficulty))
 		  Next
 		  
-		  Return Text.Join(Values, Separator)
+		  Return Values.Join(Separator)
 		End Function
 	#tag EndMethod
 
@@ -515,7 +515,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Values.Append("SetWeight=" + SetWeight.ToText)
 		  Values.Append("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "true", "false"))
 		  Values.Append("ItemEntries=(" + Beacon.SetEntry.Join(Self.mEntries, ",", Multipliers, UseBlueprints, Difficulty) + ")")
-		  Return "(" + Text.Join(Values, ",") + ")"
+		  Return "(" + Values.Join(",") + ")"
 		End Function
 	#tag EndMethod
 

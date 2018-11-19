@@ -46,6 +46,7 @@ Begin BeaconSubview APIBuilderView
       LockRight       =   True
       LockTop         =   True
       Resizer         =   ""
+      ResizerEnabled  =   True
       Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   0
@@ -686,7 +687,7 @@ End
 		    Lines.Append(Request.Query)
 		  End If
 		  
-		  Return Text.Join(Lines, EOL)
+		  Return Lines.Join(EOL)
 		End Function
 	#tag EndMethod
 
@@ -754,7 +755,7 @@ End
 		  Lines.Append("$http_status = curl_getinfo($http, CURLINFO_HTTP_CODE);")
 		  Lines.Append("curl_close($http);")
 		  
-		  Return Text.Join(Lines, EOL)
+		  Return Lines.Join(EOL)
 		End Function
 	#tag EndMethod
 
@@ -806,6 +807,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
@@ -976,11 +983,6 @@ End
 		Group="Behavior"
 		Type="String"
 		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarIcon"
-		Group="Behavior"
-		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Top"

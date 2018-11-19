@@ -109,7 +109,7 @@ Protected Module Beacon
 		  Chars.Insert( 6, "-")
 		  Chars.Insert( 4, "-")
 		  
-		  Return Text.Join(Chars, "").Lowercase
+		  Return Chars.Join("").Lowercase
 		End Function
 	#tag EndMethod
 
@@ -175,7 +175,7 @@ Protected Module Beacon
 		          UnicodeMode = True
 		          HexChars.Remove(0)
 		        ElseIf (UnicodeMode = False And HexChars.Ubound = 1) Or (UnicodeMode = True And HexChars.Ubound = 3) Then
-		          Dim Encoded As Text = Text.Join(HexChars, "")
+		          Dim Encoded As Text = HexChars.Join("")
 		          Redim HexChars(-1)
 		          HexMode = False
 		          UnicodeMode = False
@@ -195,7 +195,7 @@ Protected Module Beacon
 		      
 		      Chars.Append(Character)
 		    Next
-		    Return Text.Join(Chars, "")
+		    Return Chars.Join("")
 		  #else
 		    Dim StringValue As String = Value
 		    StringValue = StringValue.ReplaceAll("+", " ")
@@ -272,7 +272,7 @@ Protected Module Beacon
 		      Output(UBound(Output) - I) = "="
 		    Next
 		    
-		    Return Text.Join(Output, "")
+		    Return Output.Join("")
 		  #else
 		    Return EncodeBase64(Beacon.ConvertMemoryBlock(Source), 0).ToText
 		  #endif
@@ -304,7 +304,7 @@ Protected Module Beacon
 		      Dim Value As UInt8 = Block.UInt8Value(I)
 		      Chars.Append(Value.ToHex(2))
 		    Next
-		    Return Text.Join(Chars, "")
+		    Return Chars.Join("")
 		  #else
 		    Return REALbasic.EncodeHex(Beacon.ConvertMemoryBlock(Block)).ToText
 		  #endif
@@ -323,7 +323,7 @@ Protected Module Beacon
 		        Encoded.Append(Text.FromUnicodeCodepoint(CodePoint))
 		      End Select
 		    Next
-		    Return Text.Join(Encoded, "")
+		    Return Encoded.Join("")
 		  #else
 		    Dim StringValue As String = Value
 		    Return EncodeURLComponent(StringValue).ReplaceAll(" ", "%20").ToText
@@ -422,7 +422,7 @@ Protected Module Beacon
 		  Else
 		    Dim Tail As Text = Names(UBound(Names))
 		    Names.Remove(UBound(Names))
-		    Return Text.Join(Names, ", ") + ", & " + Tail
+		    Return Names.Join(", ") + ", & " + Tail
 		  End If
 		End Function
 	#tag EndMethod
@@ -645,7 +645,7 @@ Protected Module Beacon
 		    Next
 		  Next
 		  
-		  Return Text.Join(NewLines, EOL)
+		  Return NewLines.Join(EOL)
 		End Function
 	#tag EndMethod
 

@@ -540,7 +540,7 @@ End
 		    Self.ContentArea.Text = "?listen"
 		    If Self.mCommandLineConfigs.HasKey("?") Then
 		      Dim Arr() As Text = Self.mCommandLineConfigs.Value("?")
-		      Self.ContentArea.Text = Self.ContentArea.Text + "?" + Text.Join(Arr, "?")
+		      Self.ContentArea.Text = Self.ContentArea.Text + "?" + Arr.Join("?")
 		    End If
 		    If Self.mCommandLineConfigs.HasKey("-") Then
 		      Dim Arr() As Text = Self.mCommandLineConfigs.Value("-")

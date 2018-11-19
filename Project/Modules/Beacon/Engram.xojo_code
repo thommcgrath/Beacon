@@ -72,17 +72,17 @@ Protected Class Engram
 		  Columns(3) = """Can Blueprint"""
 		  
 		  Dim Lines(0) As Text
-		  Lines(0) = Text.Join(Columns, ",")
+		  Lines(0) = Columns.Join(",")
 		  
 		  For Each Engram As Beacon.Engram In Engrams
 		    Columns(0) = """" + Engram.mPath + """"
 		    Columns(1) = """" + Engram.mLabel + """"
 		    Columns(2) = Engram.mAvailability.ToText
 		    Columns(3) = If(Engram.mCanBeBlueprint, "True", "False")
-		    Lines.Append(Text.Join(Columns, ","))
+		    Lines.Append(Columns.Join(","))
 		  Next
 		  
-		  Return Text.Join(Lines, Text.FromUnicodeCodepoint(13) + Text.FromUnicodeCodepoint(10))
+		  Return Lines.Join(Text.FromUnicodeCodepoint(13) + Text.FromUnicodeCodepoint(10))
 		End Function
 	#tag EndMethod
 
@@ -125,7 +125,7 @@ Protected Class Engram
 		    Parts.Remove(0)
 		    Parts.Remove(UBound(Parts))
 		    
-		    Self.mLabel = Self.MakeHumanReadableText(Text.Join(Parts, " "))
+		    Self.mLabel = Self.MakeHumanReadableText(Parts.Join(" "))
 		  End If
 		  
 		  Return Self.mLabel
@@ -145,7 +145,7 @@ Protected Class Engram
 		      Chars.Append(" ")
 		    End If
 		  Next
-		  Value = Text.Join(Chars, "")
+		  Value = Chars.Join("")
 		  
 		  While Value.IndexOf("  ") > -1
 		    Value = Value.ReplaceAll("  ", " ")

@@ -578,7 +578,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  
 		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mSets, ",", Self.mMultipliers, Self.mUseBlueprints, Difficulty) + ")")
-		  Return "(" + Text.Join(Values, ",") + ")"
+		  Return "(" + Values.Join(",") + ")"
 		End Function
 	#tag EndMethod
 

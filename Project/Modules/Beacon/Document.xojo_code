@@ -281,10 +281,10 @@ Implements Beacon.DocumentItem
 		              End If
 		            End If
 		            Components.Append("Game.ini")
-		            Profile.GameIniPath = Text.Join(Components, "/")
+		            Profile.GameIniPath = Components.Join("/")
 		            
 		            Components(Components.Ubound) = "GameUserSettings.ini"
-		            Profile.GameUserSettingsIniPath = Text.Join(Components, "/")
+		            Profile.GameUserSettingsIniPath = Components.Join("/")
 		            
 		            Doc.mServerProfiles.Append(Profile)
 		          End If

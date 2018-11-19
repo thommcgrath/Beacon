@@ -67,7 +67,7 @@ Protected Module SimpleHTTP
 		    Parts.Append(Beacon.EncodeURLComponent(Key) + "=" + Beacon.EncodeURLComponent(Value))
 		  Next
 		  
-		  Dim Content As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Text.Join(Parts, "&"))
+		  Dim Content As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Parts.Join("&"))
 		  Post(URL, "application/x-www-form-urlencoded", Content, Handler, Tag, Headers)
 		End Sub
 	#tag EndMethod

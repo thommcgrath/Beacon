@@ -115,7 +115,7 @@ Inherits Beacon.ConfigGroup
 		  Next
 		  
 		  Dim Values() As Beacon.ConfigValue
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Text.Join(Chunks, ",") + ")"))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
 		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsPlayer", MaxXP.ToText))
 		  
 		  Redim Chunks(-1)
@@ -128,7 +128,7 @@ Inherits Beacon.ConfigGroup
 		    Chunks.Append("ExperiencePointsForLevel[" + Index.ToText + "]=" + XP.ToText)
 		  Next
 		  
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Text.Join(Chunks, ",") + ")"))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
 		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsDino", MaxXP.ToText))
 		  
 		  Return Values

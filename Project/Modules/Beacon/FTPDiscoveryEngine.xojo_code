@@ -17,7 +17,7 @@ Implements Beacon.DiscoveryEngine
 		  If File <> "" Then
 		    Parts.Append("path=" + Beacon.EncodeURLComponent(File))
 		  End If
-		  Return Text.Join(Parts, "&")
+		  Return Parts.Join("&")
 		End Function
 	#tag EndMethod
 
