@@ -296,26 +296,30 @@ End
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
 		  For I As Integer = 0 To Self.mNotificationRects.Ubound
-		    If Self.mNotificationRects(I).Contains(X, Y) Then
-		      If Self.mCloseRects(I).Contains(X, Y) Then
-		        Self.mDownRect = Self.mCloseRects(I)
-		        Self.mPressedOnClose = True
-		        Self.mPressed = True
-		        Self.mDownIndex = I
-		      ElseIf Self.mNotifications(I).ActionURL <> "" Then
-		        Self.mDownRect = Self.mNotificationRects(I)
-		        Self.mPressedOnClose = False
-		        Self.mPressed = True
-		        Self.mDownIndex = I
-		      Else
-		        Self.mDownRect = Nil
-		        Self.mPressedOnClose = False
-		        Self.mPressed = False
-		        Self.mDownIndex = -1
+		    Try
+		      If Self.mNotificationRects(I).Contains(X, Y) Then
+		        If Self.mCloseRects(I).Contains(X, Y) Then
+		          Self.mDownRect = Self.mCloseRects(I)
+		          Self.mPressedOnClose = True
+		          Self.mPressed = True
+		          Self.mDownIndex = I
+		        ElseIf Self.mNotifications(I).ActionURL <> "" Then
+		          Self.mDownRect = Self.mNotificationRects(I)
+		          Self.mPressedOnClose = False
+		          Self.mPressed = True
+		          Self.mDownIndex = I
+		        Else
+		          Self.mDownRect = Nil
+		          Self.mPressedOnClose = False
+		          Self.mPressed = False
+		          Self.mDownIndex = -1
+		        End If
+		        Self.Invalidate
+		        Return True
 		      End If
-		      Self.Invalidate
-		      Return True
-		    End If
+		    Catch Err As RuntimeException
+		      // Just move to the next one
+		    End Try
 		  Next
 		  
 		  Self.mDownRect = Nil
@@ -331,7 +335,7 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mDownRect.Contains(X, Y) Then
+		  If Self.mDownRect <> Nil And Self.mDownRect.Contains(X, Y) Then
 		    If Self.mPressed = False Then
 		      Self.mPressed = True
 		      Self.Invalidate
@@ -350,33 +354,37 @@ End
 		    Return
 		  End If
 		  
-		  If Self.mDownRect <> Nil And Self.mDownIndex <= Self.mNotifications.Ubound And Self.mDownRect.Contains(X, Y) Then
-		    Dim OldUnreadCount As Integer = Self.UnreadCount
-		    If Not Self.mPressedOnClose Then
-		      Dim URL As Text = Self.mNotifications(Self.mDownIndex).ActionURL
-		      If Beacon.IsBeaconURL(URL) Then
-		        Call App.HandleURL(URL, True)
-		      ElseIf URL.BeginsWith("https://") Then
-		        ShowURL(URL)
-		      Else
-		        Dim Notification As New Beacon.UserNotification("Well this is embarrassing, but that notification is broken.")
-		        Notification.SecondaryMessage = "Beacon does not know what to do with the URL " + URL
-		        LocalData.SharedInstance.SaveNotification(Notification)
+		  Try
+		    If Self.mDownRect <> Nil And Self.mDownIndex <= Self.mNotifications.Ubound And Self.mDownRect.Contains(X, Y) Then
+		      Dim OldUnreadCount As Integer = Self.UnreadCount
+		      If Not Self.mPressedOnClose Then
+		        Dim URL As Text = Self.mNotifications(Self.mDownIndex).ActionURL
+		        If Beacon.IsBeaconURL(URL) Then
+		          Call App.HandleURL(URL, True)
+		        ElseIf URL.BeginsWith("https://") Then
+		          ShowURL(URL)
+		        Else
+		          Dim Notification As New Beacon.UserNotification("Well this is embarrassing, but that notification is broken.")
+		          Notification.SecondaryMessage = "Beacon does not know what to do with the URL " + URL
+		          LocalData.SharedInstance.SaveNotification(Notification)
+		        End If
+		      End If
+		      
+		      // Clicking a notification dismisses it
+		      LocalData.SharedInstance.DeleteNotification(Self.mNotifications(Self.mDownIndex))
+		      Self.mNotifications.Remove(Self.mDownIndex)
+		      Self.mCloseRects.Remove(Self.mDownIndex)
+		      Self.mNotificationRects.Remove(Self.mDownIndex)
+		      
+		      // Update counts. Painting should handle this, but just in case.
+		      Dim NewUnreadCount As Integer = Self.UnreadCount
+		      If OldUnreadCount <> NewUnreadCount Then
+		        RaiseEvent UnreadCountChanged(NewUnreadCount)
 		      End If
 		    End If
-		    
-		    // Clicking a notification dismisses it
-		    LocalData.SharedInstance.DeleteNotification(Self.mNotifications(Self.mDownIndex))
-		    Self.mNotifications.Remove(Self.mDownIndex)
-		    Self.mCloseRects.Remove(Self.mDownIndex)
-		    Self.mNotificationRects.Remove(Self.mDownIndex)
-		    
-		    // Update counts. Painting should handle this, but just in case.
-		    Dim NewUnreadCount As Integer = Self.UnreadCount
-		    If OldUnreadCount <> NewUnreadCount Then
-		      RaiseEvent UnreadCountChanged(NewUnreadCount)
-		    End If
-		  End If
+		  Catch Err As RuntimeException
+		    // Something stupid happens here, see c98692bf11365681a86986ee3beca03b16b30da9
+		  End Try
 		  
 		  Self.mPressed = False
 		  Self.mDownRect = Nil
