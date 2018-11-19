@@ -39,7 +39,7 @@ Begin ContainerControl DocumentImportView
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   5
+      PanelCount      =   6
       Panels          =   ""
       Scope           =   2
       TabIndex        =   0
@@ -200,7 +200,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   148
+         Top             =   180
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -232,7 +232,7 @@ Begin ContainerControl DocumentImportView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   148
+         Top             =   180
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -477,6 +477,188 @@ Begin ContainerControl DocumentImportView
          Visible         =   False
          Width           =   80
       End
+      Begin RadioButton SourceRadio
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Other Beacon document"
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   3
+         InitialParent   =   "Views"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   6
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   148
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin Label OtherDocsMessageLabel
+         AutoDeactivate  =   True
+         Bold            =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   6
+         TabStop         =   True
+         Text            =   "Import from Other Documents"
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   20
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin UITweaks.ResizedPushButton OtherDocsActionButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Continue"
+         Default         =   True
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Italic          =   False
+         Left            =   500
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   6
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   416
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedPushButton OtherDocsCancelButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   True
+         Caption         =   "Cancel"
+         Default         =   False
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         Italic          =   False
+         Left            =   408
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   6
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   416
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin BeaconListbox OtherDocsList
+         AutoDeactivate  =   True
+         AutoHideScrollbars=   True
+         Bold            =   False
+         Border          =   True
+         ColumnCount     =   2
+         ColumnsResizable=   False
+         ColumnWidths    =   "26,*"
+         DataField       =   ""
+         DataSource      =   ""
+         DefaultRowHeight=   26
+         Enabled         =   True
+         EnableDrag      =   False
+         EnableDragReorder=   False
+         GridLinesHorizontal=   0
+         GridLinesVertical=   0
+         HasHeading      =   False
+         HeadingIndex    =   1
+         Height          =   336
+         HelpTag         =   ""
+         Hierarchical    =   False
+         Index           =   -2147483648
+         InitialParent   =   "Views"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         RequiresSelection=   False
+         RowCount        =   0
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollBarVertical=   True
+         SelectionType   =   0
+         ShowDropIndicator=   False
+         TabIndex        =   3
+         TabPanelIndex   =   6
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   60
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   560
+         _ScrollOffset   =   0
+         _ScrollWidth    =   -1
+      End
    End
    Begin Timer DiscoveryWatcher
       Index           =   -2147483648
@@ -680,8 +862,16 @@ End
 		  If Self.Views.Value <> 0 Then
 		    Self.Views.Value = 0
 		  Else
-		    RaiseEvent ShouldResize(188)
+		    RaiseEvent ShouldResize(Self.SourcesPageHeight)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SetOtherDocuments(Documents() As Beacon.Document)
+		  Self.mOtherDocuments = Documents
+		  Self.SourceRadio(3).Enabled = Documents.Ubound > -1
+		  Self.SourceRadio(3).Caption = "Other Beacon Document" + If(Self.SourceRadio(3).Enabled, "", " (No Other Documents Open)")
 		End Sub
 	#tag EndMethod
 
@@ -720,6 +910,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mOtherDocuments() As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mParsedData() As Xojo.Core.Dictionary
 	#tag EndProperty
 
@@ -737,10 +931,19 @@ End
 	#tag Constant, Name = PageNitrado, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = PageOtherDocuments, Type = Double, Dynamic = False, Default = \"5", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageSources, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = PageStatus, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = SourcesPageHeight, Type = Double, Dynamic = False, Default = \"220", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = StatusPageHeight, Type = Double, Dynamic = False, Default = \"456", Scope = Private
 	#tag EndConstant
 
 
@@ -751,15 +954,15 @@ End
 		Sub Change()
 		  Select Case Me.Value
 		  Case Self.PageSources
-		    RaiseEvent ShouldResize(188)
+		    RaiseEvent ShouldResize(Self.SourcesPageHeight)
 		  Case Self.PageNitrado
 		    NitradoDiscoveryView1.Begin
 		  Case Self.PageFTP
 		    FTPDiscoveryView1.Begin
 		  Case Self.PageLocal
 		    LocalDiscoveryView1.Begin
-		  Case Self.PageStatus
-		    RaiseEvent ShouldResize(456)
+		  Case Self.PageStatus, Self.PageOtherDocuments
+		    RaiseEvent ShouldResize(Self.StatusPageHeight)
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -767,7 +970,7 @@ End
 #tag Events SourceRadio
 	#tag Event
 		Sub Action(index as Integer)
-		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value
+		  SourceActionButton.Enabled = SourceRadio(0).Value Or SourceRadio(1).Value Or SourceRadio(2).Value Or (SourceRadio(3).Value And SourceRadio(3).Enabled And Self.mOtherDocuments.Ubound > -1)
 		  SourceActionButton.Default = SourceActionButton.Enabled
 		End Sub
 	#tag EndEvent
@@ -784,11 +987,21 @@ End
 		Sub Action()
 		  Select Case True
 		  Case SourceRadio(0).Value
-		    Views.Value = 1
+		    Views.Value = Self.PageNitrado
 		  Case SourceRadio(1).Value
-		    Views.Value = 2
+		    Views.Value = Self.PageFTP
 		  Case SourceRadio(2).Value
-		    Views.Value = 3
+		    Views.Value = Self.PageLocal
+		  Case SourceRadio(3).Value
+		    OtherDocsList.DeleteAllRows
+		    OtherDocsList.ColumnType(0) = ListBox.TypeCheckbox
+		    For Each Doc As Beacon.Document In Self.mOtherDocuments
+		      OtherDocsList.AddRow("", Doc.Title)
+		      OtherDocsList.RowTag(OtherDocsList.LastIndex) = Doc
+		    Next
+		    OtherDocsList.Sort()
+		    OtherDocsActionButton.Enabled = False
+		    Views.Value = Self.PageOtherDocuments
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -864,6 +1077,48 @@ End
 		  Else
 		    Self.Reset()
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events OtherDocsActionButton
+	#tag Event
+		Sub Action()
+		  Redim Self.mDocuments(-1)
+		  For I As Integer = 0 To OtherDocsList.ListCount - 1
+		    If Not OtherDocsList.CellCheck(I, 0) Then
+		      Continue
+		    End If
+		    
+		    Dim Doc As Beacon.Document = OtherDocsList.RowTag(I)
+		    Self.mDocuments.Append(Doc)
+		  Next
+		  Self.Finish()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events OtherDocsCancelButton
+	#tag Event
+		Sub Action()
+		  Views.Value = Self.PageSources
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events OtherDocsList
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  If Column <> 0 Then
+		    Return
+		  End If
+		  
+		  Dim Enabled As Boolean
+		  For I As Integer = 0 To Me.ListCount - 1
+		    If Me.CellCheck(I, Column) Then
+		      Enabled = True
+		      Exit For I
+		    End If
+		  Next
+		  
+		  OtherDocsActionButton.Enabled = Enabled
 		End Sub
 	#tag EndEvent
 #tag EndEvents

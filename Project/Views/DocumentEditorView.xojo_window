@@ -388,6 +388,11 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As Beacon.DocumentController)
+		  If Self.mEditorRefs = Nil Then
+		    Self.mEditorRefs = New Dictionary
+		  End If
+		  Self.mEditorRefs.Value(Controller.Document.DocumentID) = New WeakRef(Self)
+		  
 		  Self.mController = Controller
 		  AddHandler Controller.WriteSuccess, WeakAddressOf mController_WriteSuccess
 		  AddHandler Controller.WriteError, WeakAddressOf mController_WriteError
@@ -401,6 +406,14 @@ End
 		Private Sub CopyFromDocuments(SourceDocuments As Auto)
 		  Dim Documents() As Beacon.Document = SourceDocuments
 		  DocumentMergerWindow.Present(Self, Documents, Self.Document, WeakAddressOf MergeCallback)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  If Self.mEditorRefs <> Nil And Self.mEditorRefs.HasKey(Self.mController.Document.DocumentID) Then
+		    Self.mEditorRefs.Remove(Self.mController.Document.DocumentID)
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -689,6 +702,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private Shared mEditorRefs As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mHelpDrawerAnimation As AnimationKit.MoveTask
 	#tag EndProperty
 
@@ -753,7 +770,15 @@ End
 		    If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
 		      DocumentImportWindow(Self.mImportWindowRef.Value).Show()
 		    Else
-		      Self.mImportWindowRef = New WeakRef(DocumentImportWindow.Present(AddressOf ImportCallback, Self.Document))
+		      Dim OtherDocuments() As Beacon.Document
+		      For I As Integer = 0 To Self.mEditorRefs.Count - 1
+		        Dim Key As Variant = Self.mEditorRefs.Key(I)
+		        Dim Ref As WeakRef = Self.mEditorRefs.Value(Key)
+		        If Ref <> Nil And Ref.Value <> Nil And Ref.Value IsA DocumentEditorView And DocumentEditorView(Ref.Value).Document.DocumentID <> Self.Document.DocumentID Then
+		          OtherDocuments.Append(DocumentEditorView(Ref.Value).Document)
+		        End If
+		      Next
+		      Self.mImportWindowRef = New WeakRef(DocumentImportWindow.Present(AddressOf ImportCallback, Self.Document, OtherDocuments))
 		    End If
 		  Case "ExportButton"
 		    Self.BeginExport()
