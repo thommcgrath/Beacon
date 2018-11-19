@@ -191,13 +191,12 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Self.mConfig = Nil
 		  Select Case Self.Switcher.SelectedIndex
 		  Case 1
-		    Self.ConfigArea.Text = Self.Config.GameUserSettingsIniContent
+		    Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
 		    Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
 		  Case 2
-		    Self.ConfigArea.Text = Self.Config.GameIniContent
+		    Self.ConfigArea.Text = Self.Config(False).GameIniContent
 		    Self.mGameIniState.ApplyTo(Self.ConfigArea)
 		  End Select
 		End Sub
@@ -205,18 +204,27 @@ End
 
 
 	#tag Method, Flags = &h1
-		Protected Function Config() As BeaconConfigs.CustomContent
-		  If Self.mConfig = Nil Then
-		    Dim Document As Beacon.Document = Self.Document
-		    If Not Document.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
-		      Self.mConfig = New BeaconConfigs.CustomContent
-		      Document.AddConfigGroup(Self.mConfig)
-		    Else
-		      Dim Config As Beacon.ConfigGroup = Document.ConfigGroup(BeaconConfigs.CustomContent.ConfigName)
-		      Self.mConfig = BeaconConfigs.CustomContent(Config)
-		    End If
+		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CustomContent
+		  Static ConfigName As Text = BeaconConfigs.CustomContent.ConfigName
+		  
+		  Dim Document As Beacon.Document = Self.Document
+		  Dim Config As BeaconConfigs.CustomContent
+		  
+		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
+		    Config = BeaconConfigs.CustomContent(Self.mConfigRef.Value)
+		  ElseIf Document.HasConfigGroup(ConfigName) Then
+		    Config = BeaconConfigs.CustomContent(Document.ConfigGroup(ConfigName))
+		    Self.mConfigRef = New WeakRef(Config)
+		  Else
+		    Config = New BeaconConfigs.CustomContent
+		    Self.mConfigRef = New WeakRef(Config)
 		  End If
-		  Return Self.mConfig
+		  
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
+		    Document.AddConfigGroup(Config)
+		  End If
+		  
+		  Return Config
 		End Function
 	#tag EndMethod
 
@@ -370,7 +378,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Attributes( Hidden ) Private mConfig As BeaconConfigs.CustomContent
+		Private mConfigRef As WeakRef
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -400,20 +408,16 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub Change()
-		  If Self.Config = Nil Then
-		    Return
-		  End If
-		  
 		  Dim SettingUp As Boolean = Self.SettingUp
 		  Self.SettingUp = True
 		  Select Case Me.SelectedIndex
 		  Case 1
 		    Self.mGameIniState = New TextAreaState(Self.ConfigArea)
-		    Self.ConfigArea.Text = Self.Config.GameUserSettingsIniContent
+		    Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
 		    Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
 		  Case 2
 		    Self.mGameUserSettingsIniState = New TextAreaState(Self.ConfigArea)
-		    Self.ConfigArea.Text = Self.Config.GameIniContent
+		    Self.ConfigArea.Text = Self.Config(False).GameIniContent
 		    Self.mGameIniState.ApplyTo(Self.ConfigArea)
 		  End Select
 		  Self.SettingUp = SettingUp
@@ -431,10 +435,10 @@ End
 		  
 		  Select Case Self.Switcher.SelectedIndex
 		  Case 1
-		    Self.Config.GameUserSettingsIniContent = Me.Text.ToText
+		    Self.Config(True).GameUserSettingsIniContent = Me.Text.ToText
 		    Self.ContentsChanged = True
 		  Case 2
-		    Self.Config.GameIniContent = Me.Text.ToText
+		    Self.Config(True).GameIniContent = Me.Text.ToText
 		    Self.ContentsChanged = True
 		  End Select
 		End Sub
