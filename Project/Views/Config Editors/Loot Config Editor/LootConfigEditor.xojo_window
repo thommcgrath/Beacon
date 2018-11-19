@@ -158,7 +158,6 @@ Begin ConfigEditor LootConfigEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -176,7 +175,6 @@ Begin ConfigEditor LootConfigEditor
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -711,6 +709,7 @@ End
 		  Select Case Item.Name
 		  Case "AddSource"
 		    Dim LootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.Document.ConsoleModsOnly, Preferences.ShowExperimentalLootSources)
+		    Dim HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.Document.ConsoleModsOnly)
 		    For I As Integer = LootSources.Ubound DownTo 0
 		      If Self.Document.HasLootSource(LootSources(I)) Then
 		        LootSources.Remove(I)
@@ -731,11 +730,13 @@ End
 		      Menu.Append(New MenuItem(LootSource.Label, LootSource))
 		    Next
 		    
-		    Menu.Append(New MenuItem(MenuItem.TextSeparator))
-		    
-		    Dim ExpItem As New MenuItem("Show Experimental Sources", "toggle_experimental")
-		    ExpItem.Checked = Preferences.ShowExperimentalLootSources
-		    Menu.Append(ExpItem)
+		    If HasExperimentalSources Then
+		      Menu.Append(New MenuItem(MenuItem.TextSeparator))
+		      
+		      Dim ExpItem As New MenuItem("Show Experimental Sources", "toggle_experimental")
+		      ExpItem.Checked = Preferences.ShowExperimentalLootSources
+		      Menu.Append(ExpItem)
+		    End If
 		  End Select
 		End Sub
 	#tag EndEvent

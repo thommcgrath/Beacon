@@ -1099,7 +1099,13 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.SelectionExperimentalCheck.Value = Preferences.ShowExperimentalLootSources
+		  Dim HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.mDocument.ConsoleModsOnly)
+		  If HasExperimentalSources Then
+		    Self.SelectionExperimentalCheck.Value = Preferences.ShowExperimentalLootSources
+		  Else
+		    Self.SelectionExperimentalCheck.Visible = False
+		    Self.SourceList.Height = (Self.SelectionExperimentalCheck.Top + Self.SelectionExperimentalCheck.Height) - Self.SourceList.Top
+		  End If
 		  Self.BuildSourceList()
 		  
 		  If Self.mSource <> Nil Then

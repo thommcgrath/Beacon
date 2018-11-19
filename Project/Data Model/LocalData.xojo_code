@@ -477,6 +477,24 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasExperimentalLootSources(ConsoleSafe As Boolean) As Boolean
+		  Try
+		    Dim Clauses(0) As String
+		    Clauses(0) = "experimental = 1"
+		    If ConsoleSafe Then
+		      Clauses.Append("mods.console_safe = 1")
+		    End If
+		    
+		    Dim SQL As String = "SELECT COUNT(loot_sources.object_id) FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id) WHERE " + Clauses.Join(" AND ") + ";"
+		    Dim Results As RecordSet = Self.SQLSelect(SQL)
+		    Return Results.IdxField(1).IntegerValue > 0
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IconForLootSource(Source As Beacon.LootSource, BackgroundColor As Color) As Picture
 		  Const IncludeExperimentalBadge = False
 		  
