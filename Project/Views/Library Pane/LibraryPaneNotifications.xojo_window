@@ -167,6 +167,7 @@ End
 		      End If
 		    End If
 		    
+		    ContentHeight = ContentHeight + NotificationRect.Height
 		    Pos = Pos + NotificationRect.Height
 		    If Pos > 0 And Pos < G.Height And Self.mNotifications(I).Read = False Then
 		      // The entire notification is visible and should be marked as read
@@ -177,8 +178,7 @@ End
 		      G.ForeColor = SystemColors.SeparatorColor
 		      G.FillRect(0, Pos, G.Width, 1)
 		      Pos = Pos + 1
-		    Else
-		      ContentHeight = Pos
+		      ContentHeight = ContentHeight + 1
 		    End If
 		  Next
 		  
@@ -386,6 +386,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
