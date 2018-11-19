@@ -10,6 +10,12 @@ Implements NotificationKit.Receiver
 
 	#tag Event
 		Sub Close()
+		  Try
+		    Self.UninstallTemporaryFont(Self.ResourcesFolder.Child("Fonts").Child("SourceCodePro").Child("SourceCodePro-Regular.otf"))
+		  Catch Err As RuntimeException
+		    // Whatever
+		  End Try
+		  
 		  If Self.mMutex <> Nil Then
 		    Self.mMutex.Leave
 		  End If
@@ -109,6 +115,12 @@ Implements NotificationKit.Receiver
 		    Dim Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
 		    Self.mIdentity = Identity
 		  End If
+		  
+		  Try
+		    Self.TemporarilyInstallFont(Self.ResourcesFolder.Child("Fonts").Child("SourceCodePro").Child("SourceCodePro-Regular.otf"))
+		  Catch Err As RuntimeException
+		    // Not critically important
+		  End Try
 		  
 		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_PrivacyCheck)
 		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_SetupDatabase)
@@ -902,6 +914,19 @@ Implements NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub TemporarilyInstallFont(File As FolderItem)
+		  #if TargetWin32
+		    Soft Declare Sub AddFontResourceExW Lib "Gdi32" (Filename As WString, Flags As Integer, Reserved As Integer)
+		    If System.IsFunctionAvailable("AddFontResourceExW", "Gdi32") Then
+		      AddFontResourceExW(File.NativePath, &h10, 0)
+		    End If
+		  #else
+		    #Pragma Unused File
+		  #endif
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Terminate(ReturnCode As Integer)
 		  #if TargetMacOS
@@ -910,6 +935,19 @@ Implements NotificationKit.Receiver
 		  #elseif TargetWin32
 		    Declare Sub ExitProcess Lib "Kernel32" (uExitCode As UInt32)
 		    ExitProcess(ReturnCode)
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UninstallTemporaryFont(File As FolderItem)
+		  #if TargetWin32
+		    Soft Declare Sub RemoveFontResourceExW Lib "Gdi32" (Filename As WString, Flags As Integer, Reserved As Integer)
+		    If System.IsFunctionAvailable("RemoveFontResourceExW", "Gdi32") Then
+		      RemoveFontResourceExW(File.NativePath, &h10, 0)
+		    End If
+		  #else
+		    #Pragma Unused File
 		  #endif
 		End Sub
 	#tag EndMethod

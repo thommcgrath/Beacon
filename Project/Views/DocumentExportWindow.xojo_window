@@ -178,13 +178,13 @@ Begin Window DocumentExportWindow
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
-      Styled          =   True
+      Styled          =   False
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
       TextColor       =   &c00000000
-      TextFont        =   "System"
+      TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   60
@@ -291,7 +291,6 @@ Begin Window DocumentExportWindow
       Width           =   140
    End
    Begin Timer ClipboardWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2

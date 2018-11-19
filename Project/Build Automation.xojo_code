@@ -9,8 +9,9 @@
 				Begin IDEScriptBuildStep UpdateInfoPlist , AppliesTo = 0
 					Dim App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""CFBundleURLTypes"" ""( { CFBundleURLName = Beacon; CFBundleTypeRole = Editor; CFBundleURLSchemes = (" + ConstantValue("Beacon.URLScheme") + "); } )""")
+					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""ATSApplicationFontsPath"" ""Fonts/""")
 				End
-				Begin CopyFilesBuildStep ReplaceIcons
+				Begin CopyFilesBuildStep CopyResourcesMac
 					AppliesTo = 0
 					Destination = 1
 					Subdirectory = 
@@ -18,6 +19,7 @@
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25Eb2N1bWVudC5pY25z
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25JZGVudGl0eS5pY25z
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25QcmVzZXQuaWNucw==
+					FolderItem = Li4vLi4vRm9udHMv
 				End
 				Begin CopyFilesBuildStep CopyMigration
 					AppliesTo = 2
@@ -43,6 +45,12 @@
 			End
 			Begin BuildStepList Windows
 				Begin BuildProjectStep Build
+				End
+				Begin CopyFilesBuildStep CopyResourcesWindows
+					AppliesTo = 0
+					Destination = 1
+					Subdirectory = 
+					FolderItem = Li4vLi4vRm9udHMv
 				End
 			End
 #tag EndBuildAutomation

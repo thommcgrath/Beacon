@@ -90,13 +90,13 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
-      Styled          =   True
+      Styled          =   False
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
       TextColor       =   &c00000000
-      TextFont        =   "System"
+      TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   61
@@ -141,7 +141,9 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   ""
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -160,6 +162,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   10
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   150
@@ -222,7 +225,17 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function SelectionIsEncrypted() As Boolean
-		  Return Self.ConfigArea.SelStart < Self.ConfigArea.Text.Len And Self.ConfigArea.StyledText.TextColor(Self.ConfigArea.SelStart, Max(Self.ConfigArea.SelLength, 1)) = SystemColors.SystemGreenColor
+		  If Self.ConfigArea.SelStart >= Self.ConfigArea.Text.Len Then
+		    Return False
+		  End If
+		  
+		  Dim StartPos As Integer = Self.ConfigArea.SelStart
+		  Dim EndPos As Integer = StartPos + Max(Self.ConfigArea.SelLength, 1)
+		  For Each Range As Beacon.Range In Self.mEncryptedRanges
+		    If StartPos >= Range.Min And EndPos <= Range.Max Then
+		      Return True
+		    End If
+		  Next
 		End Function
 	#tag EndMethod
 
@@ -289,13 +302,18 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateTextColors()
+		  Redim Self.mEncryptedRanges(-1)
+		  
 		  Dim Pos As Integer
 		  Dim Source As String = Self.ConfigArea.Text
 		  Dim Tag As String = BeaconConfigs.CustomContent.EncryptedTag
 		  Dim TagLen As Integer = Tag.Length
-		  Self.ConfigArea.StyledText.TextColor(0, Source.Length) = SystemColors.LabelColor
-		  Self.ConfigArea.StyledText.Bold(0, Source.Length) = False
-		  Self.ConfigArea.StyledText.Italic(0, Source.Length) = False
+		  Dim Styles As StyledText = Self.ConfigArea.StyledText
+		  If Styles <> Nil Then
+		    Styles.TextColor(0, Source.Length) = SystemColors.LabelColor
+		    Styles.Bold(0, Source.Length) = False
+		    Styles.Italic(0, Source.Length) = False
+		  End If
 		  
 		  Do
 		    Pos = Source.IndexOf(Pos, Tag)
@@ -309,12 +327,16 @@ End
 		      EndPos = Source.Length
 		    End If
 		    
-		    Self.ConfigArea.StyledText.TextColor(StartPos - TagLen, TagLen) = SystemColors.TertiaryLabelColor
-		    Self.ConfigArea.StyledText.Italic(StartPos - TagLen, TagLen) = True
-		    Self.ConfigArea.StyledText.TextColor(StartPos, EndPos - StartPos) = SystemColors.SystemGreenColor
-		    Self.ConfigArea.StyledText.Bold(StartPos, EndPos - StartPos) = True
-		    Self.ConfigArea.StyledText.TextColor(EndPos, Min(TagLen, Source.Length - EndPos)) = SystemColors.TertiaryLabelColor
-		    Self.ConfigArea.StyledText.Italic(EndPos, Min(TagLen, Source.Length - EndPos)) = True
+		    Self.mEncryptedRanges.Append(New Beacon.Range(StartPos, EndPos))
+		    
+		    If Styles <> Nil Then
+		      Styles.TextColor(StartPos - TagLen, TagLen) = SystemColors.TertiaryLabelColor
+		      Styles.Italic(StartPos - TagLen, TagLen) = True
+		      Styles.TextColor(StartPos, EndPos - StartPos) = SystemColors.SystemGreenColor
+		      Styles.Bold(StartPos, EndPos - StartPos) = True
+		      Styles.TextColor(EndPos, Min(TagLen, Source.Length - EndPos)) = SystemColors.TertiaryLabelColor
+		      Styles.Italic(EndPos, Min(TagLen, Source.Length - EndPos)) = True
+		    End If
 		    
 		    Pos = EndPos + TagLen
 		  Loop
@@ -326,6 +348,10 @@ End
 
 	#tag Property, Flags = &h21
 		Attributes( Hidden ) Private mConfig As BeaconConfigs.CustomContent
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mEncryptedRanges() As Beacon.Range
 	#tag EndProperty
 
 
