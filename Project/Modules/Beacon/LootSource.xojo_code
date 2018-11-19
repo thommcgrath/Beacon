@@ -334,13 +334,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsValid() As Boolean
+		Function IsValid(Document As Beacon.Document) As Boolean
 		  For Each Set As Beacon.ItemSet In Self.mSets
-		    If Not Set.IsValid Then
+		    If Not Set.IsValid(Document) Then
 		      Return False
 		    End If
 		  Next
-		  Return UBound(Self.mSets) > -1
+		  Return Self.mSets.Ubound > -1
 		End Function
 	#tag EndMethod
 

@@ -158,6 +158,7 @@ Begin ConfigEditor LootConfigEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -175,6 +176,7 @@ Begin ConfigEditor LootConfigEditor
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -821,7 +823,7 @@ End
 		    If Me.Selected(I) Then
 		      Dim Source As Beacon.LootSource = Me.RowTag(I)
 		      Dicts.Append(Source.Export)
-		      If Source.IsValid Then
+		      If Source.IsValid(Self.Document) Then
 		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue(Self.Document.Difficulty))
 		      End If
 		    End If
@@ -900,7 +902,7 @@ End
 	#tag Event
 		Function RowIsInvalid(Row As Integer) As Boolean
 		  Dim Source As Beacon.LootSource = Me.RowTag(Row)
-		  Return Not Source.IsValid
+		  Return Not Source.IsValid(Self.Document)
 		End Function
 	#tag EndEvent
 	#tag Event

@@ -378,13 +378,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsValid() As Boolean
+		Function IsValid(Document As Beacon.Document) As Boolean
 		  For Each Option As Beacon.SetEntryOption In Self.mOptions
-		    If Not Option.IsValid Then
+		    If Not Option.IsValid(Document) Then
 		      Return False
 		    End If
 		  Next
-		  Return UBound(Self.mOptions) > -1
+		  Return Self.mOptions.Ubound > -1
 		End Function
 	#tag EndMethod
 

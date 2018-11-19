@@ -80,7 +80,8 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       _ScrollWidth    =   -1
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
+      GameIniContent  =   ""
+      GameUserSettingsIniContent=   ""
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   0
@@ -139,7 +140,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -157,7 +157,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          HasBackColor    =   False
          Height          =   464
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -278,7 +277,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackColor    =   False
       Height          =   183
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -337,7 +335,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackColor    =   False
       Height          =   23
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -1278,7 +1275,7 @@ End
 	#tag Event
 		Function RowIsInvalid(Row As Integer) As Boolean
 		  Dim Set As Beacon.ItemSet = Me.RowTag(Row)
-		  Return Not Set.IsValid
+		  Return Not Set.IsValid(Self.Document)
 		End Function
 	#tag EndEvent
 #tag EndEvents

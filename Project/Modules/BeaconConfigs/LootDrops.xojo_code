@@ -143,7 +143,7 @@ Implements Xojo.Core.Iterable
 		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " is not supported by the selected maps.", Source))
 		    End If
 		    
-		    If Source.IsValid Then
+		    If Source.IsValid(Document) Then
 		      Continue
 		    End If
 		    
@@ -151,7 +151,7 @@ Implements Xojo.Core.Iterable
 		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " +Source.RequiredItemSets.ToText + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.", Source))
 		    Else
 		      For Each Set As Beacon.ItemSet In Source
-		        If Set.IsValid Then
+		        If Set.IsValid(Document) Then
 		          Continue
 		        End If
 		        
@@ -159,7 +159,7 @@ Implements Xojo.Core.Iterable
 		          Issues.Append(New Beacon.Issue(ConfigName, "Item set " + Set.Label + " of loot source " + Source.Label + " is empty.", Self.AssembleLocationDict(Source, Set)))
 		        Else
 		          For Each Entry As Beacon.SetEntry In Set
-		            If Entry.IsValid Then
+		            If Entry.IsValid(Document) Then
 		              Continue
 		            End If
 		            
@@ -167,12 +167,14 @@ Implements Xojo.Core.Iterable
 		              Issues.Append(New Beacon.Issue(ConfigName, "An entry in item set " + Set.Label + " of loot source " + Source.Label + " has no engrams selected.", Self.AssembleLocationDict(Source, Set, Entry)))
 		            Else
 		              For Each Option As Beacon.SetEntryOption In Entry
-		                If Option.IsValid Then
+		                If Option.IsValid(Document) Then
 		                  Continue
 		                End If
 		                
 		                If Option.Engram = Nil Then
 		                  Issues.Append(New Beacon.Issue(ConfigName, "The engram is missing for an option of an entry in " + Set.Label + " of loot source " + Source.Label + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		                ElseIf Option.Engram.ConsoleSafe = False And Document.ConsoleModsOnly Then
+		                  Issues.Append(New Beacon.Issue(ConfigName, Option.Engram.Label + " is not safe for consoles.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		                Else
 		                  Issues.Append(New Beacon.Issue(ConfigName, "Beacon does not know the blueprint for " + Option.Engram.ClassString + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		                End If
@@ -185,6 +187,21 @@ Implements Xojo.Core.Iterable
 		  Next
 		  
 		  Return Issues
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsValid(Document As Beacon.Document) As Boolean
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    If Not Document.SupportsLootSource(Source) Then
+		      Return False
+		    End If
+		    If Not Source.IsValid(Document) Then
+		      Return False
+		    End If
+		  Next
+		  
+		  Return Super.IsValid(Document)
 		End Function
 	#tag EndMethod
 

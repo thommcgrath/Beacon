@@ -96,8 +96,8 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsValid() As Boolean
-		  Return Self.mEngram <> Nil And Self.mEngram.IsValid
+		Function IsValid(Document As Beacon.Document) As Boolean
+		  Return Self.mEngram <> Nil And Self.mEngram.IsValid And (Document.ConsoleModsOnly = False Or Self.mEngram.ConsoleSafe)
 		End Function
 	#tag EndMethod
 

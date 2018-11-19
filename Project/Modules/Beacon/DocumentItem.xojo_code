@@ -7,7 +7,7 @@ Protected Interface DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsValid() As Boolean
+		Function IsValid(Document As Beacon.Document) As Boolean
 		  
 		End Function
 	#tag EndMethod

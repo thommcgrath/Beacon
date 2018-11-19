@@ -307,7 +307,6 @@ Inherits Beacon.ConfigGroup
 		    Dim Prefix As Text = Input.Left(StartPos)
 		    Dim Suffix As Text = Input.Right(Input.Length - EndPos)
 		    Dim DecryptedContent As Text = Input.Mid(StartPos, EndPos - StartPos)
-		    Dim DecryptedHash As Text = Beacon.Hash(DecryptedContent)
 		    Dim EncryptedContent As Text = Self.Encrypt(DecryptedContent, Identity)
 		    
 		    Input = Prefix + EncryptedContent + Suffix

@@ -152,6 +152,7 @@ Begin BeaconContainer ItemSetEditor
       HasBackColor    =   False
       Height          =   23
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -628,7 +629,7 @@ End
 	#tag Event
 		Function RowIsInvalid(Row As Integer) As Boolean
 		  Dim Entry As Beacon.SetEntry = Me.RowTag(Row)
-		  Return Not Entry.IsValid
+		  Return Not Entry.IsValid(Self.Document)
 		End Function
 	#tag EndEvent
 #tag EndEvents
