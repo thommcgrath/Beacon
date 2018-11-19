@@ -118,17 +118,37 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  Dim Multiplier As Double = 1.0
-		  If Self.Document.HasConfigGroup(BeaconConfigs.LootScale.ConfigName) Then
-		    Self.mConfigGroup = BeaconConfigs.LootScale(Self.Document.ConfigGroup(BeaconConfigs.LootScale.ConfigName))
-		    Multiplier = Self.mConfigGroup.Multiplier
-		  End If
-		  
+		  Dim Multiplier As Double = Self.Config(False).Multiplier
 		  Self.LootScaleField.Text = Str(Multiplier, "0%")
 		  Self.ScaleSlider.Value = Multiplier * 100
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h1
+		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.LootScale
+		  Static ConfigName As Text = BeaconConfigs.LootScale.ConfigName
+		  
+		  Dim Document As Beacon.Document = Self.Document
+		  Dim Config As BeaconConfigs.LootScale
+		  
+		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
+		    Config = BeaconConfigs.LootScale(Self.mConfigRef.Value)
+		  ElseIf Document.HasConfigGroup(ConfigName) Then
+		    Config = BeaconConfigs.LootScale(Document.ConfigGroup(ConfigName))
+		    Self.mConfigRef = New WeakRef(Config)
+		  Else
+		    Config = New BeaconConfigs.LootScale
+		    Self.mConfigRef = New WeakRef(Config)
+		  End If
+		  
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
+		    Document.AddConfigGroup(Config)
+		  End If
+		  
+		  Return Config
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function ConfigLabel() As Text
@@ -147,7 +167,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mConfigGroup As BeaconConfigs.LootScale
+		Private mConfigRef As WeakRef
 	#tag EndProperty
 
 
@@ -166,13 +186,8 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  If Self.mConfigGroup = Nil Then
-		    Self.mConfigGroup = New BeaconConfigs.LootScale(Value / 100)
-		    Self.Document.AddConfigGroup(Self.mConfigGroup)
-		  Else
-		    Self.mConfigGroup.Multiplier = Value / 100
-		  End If
-		  Self.ScaleSlider.Value = Self.mConfigGroup.Multiplier * 100
+		  Self.Config(True).Multiplier = Value / 100
+		  Self.ScaleSlider.Value = Self.Config(False).Multiplier * 100
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
 		End Sub
