@@ -189,8 +189,10 @@ End
 		  Select Case Self.Switcher.SelectedIndex
 		  Case 1
 		    Self.ConfigArea.Text = Self.Config.GameUserSettingsIniContent
+		    Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
 		  Case 2
 		    Self.ConfigArea.Text = Self.Config.GameIniContent
+		    Self.mGameIniState.ApplyTo(Self.ConfigArea)
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -210,6 +212,15 @@ End
 		  End If
 		  Return Self.mConfig
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Controller As Beacon.DocumentController)
+		  Self.mGameUserSettingsIniState = New TextAreaState
+		  Self.mGameIniState = New TextAreaState
+		  
+		  Super.Constructor(Controller)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -354,6 +365,14 @@ End
 		Private mEncryptedRanges() As Beacon.Range
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mGameIniState As TextAreaState
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mGameUserSettingsIniState As TextAreaState
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
@@ -377,9 +396,13 @@ End
 		  Self.SettingUp = True
 		  Select Case Me.SelectedIndex
 		  Case 1
+		    Self.mGameIniState = New TextAreaState(Self.ConfigArea)
 		    Self.ConfigArea.Text = Self.Config.GameUserSettingsIniContent
+		    Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
 		  Case 2
+		    Self.mGameUserSettingsIniState = New TextAreaState(Self.ConfigArea)
 		    Self.ConfigArea.Text = Self.Config.GameIniContent
+		    Self.mGameIniState.ApplyTo(Self.ConfigArea)
 		  End Select
 		  Self.SettingUp = SettingUp
 		End Sub
