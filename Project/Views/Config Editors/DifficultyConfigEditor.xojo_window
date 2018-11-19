@@ -454,6 +454,13 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub RestoreToDefault()
+		  Self.MaxDinoLevelField.Text = "150"
+		  Self.Document.Difficulty.IsImplicit = True
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub SetupUI()
 		  Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
 		  Self.MaxDinoLevelField.Text = Str(Difficulty.MaxDinoLevel, "0")
@@ -461,6 +468,12 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Function ConfigLabel() As Text
+		  Return Language.LabelForConfig(BeaconConfigs.Difficulty.ConfigName)
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub FillReferenceFields(Difficulty As BeaconConfigs.Difficulty)
@@ -496,6 +509,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

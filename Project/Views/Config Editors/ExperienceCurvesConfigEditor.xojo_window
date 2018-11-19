@@ -388,7 +388,6 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       SelectionType   =   0
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   20
       Transparent     =   False
       Visible         =   True
@@ -691,20 +690,8 @@ End
 		  Self.MinimumWidth = 710
 		  Self.MinimumHeight = 368
 		  
-		  If Not Self.Document.HasConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName) Then
-		    Self.mConfig = New BeaconConfigs.ExperienceCurves
-		    Self.Document.AddConfigGroup(Self.mConfig)
-		  Else
-		    Dim Config As Beacon.ConfigGroup = Self.Document.ConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName)
-		    Self.mConfig = BeaconConfigs.ExperienceCurves(Config)
-		  End If
-		  
 		  Self.LevelsList.ColumnAlignment(0) = ListBox.AlignRight
 		  Self.LevelsList.ColumnAlignment(1) = ListBox.AlignRight
-		  
-		  Self.CurveEditor.Curve = Self.mConfig.PlayerCurve
-		  Self.FillPointFields(Self.mConfig.PlayerCurve)
-		  Self.RefreshUI
 		End Sub
 	#tag EndEvent
 
@@ -716,13 +703,58 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub RestoreToDefault()
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.ExperienceCurves.ConfigName)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub SetupUI()
+		  Self.CurveEditor.Curve = Self.Config(False).PlayerCurve
+		  Self.FillPointFields(Self.CurveEditor.Curve)
+		  Self.RefreshUI
+		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h1
+		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.ExperienceCurves
+		  Static ConfigName As Text = BeaconConfigs.ExperienceCurves.ConfigName
+		  
+		  Dim Document As Beacon.Document = Self.Document
+		  Dim Config As BeaconConfigs.ExperienceCurves
+		  
+		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
+		    Config = BeaconConfigs.ExperienceCurves(Self.mConfigRef.Value)
+		  ElseIf Document.HasConfigGroup(ConfigName) Then
+		    Config = BeaconConfigs.ExperienceCurves(Document.ConfigGroup(ConfigName))
+		    Self.mConfigRef = New WeakRef(Config)
+		  Else
+		    Config = New BeaconConfigs.ExperienceCurves
+		    Self.mConfigRef = New WeakRef(Config)
+		  End If
+		  
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
+		    Document.AddConfigGroup(Config)
+		  End If
+		  
+		  Return Config
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigLabel() As Text
+		  Return Language.LabelForConfig(BeaconConfigs.ExperienceCurves.ConfigName)
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Function CurrentCurve() As Beacon.Curve
 		  If Self.ViewingPlayerStats Then
-		    Return Self.mConfig.PlayerCurve
+		    Return Self.Config(False).PlayerCurve
 		  Else
-		    Return Self.mConfig.DinoCurve
+		    Return Self.Config(False).DinoCurve
 		  End If
 		End Function
 	#tag EndMethod
@@ -730,9 +762,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub CurrentCurve(Assigns Curve As Beacon.Curve)
 		  If Self.ViewingPlayerStats Then
-		    Self.mConfig.PlayerCurve = Curve
+		    Self.Config(True).PlayerCurve = Curve
 		  Else
-		    Self.mConfig.DinoCurve = Curve
+		    Self.Config(True).DinoCurve = Curve
 		  End If
 		End Sub
 	#tag EndMethod
@@ -796,28 +828,29 @@ End
 		  Dim WasSettingUp As Boolean = Self.SettingUp
 		  Self.SettingUp = True
 		  
+		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
 		  If Self.ViewingPlayerStats Then
 		    If SkipField <> Self.MaxLevelField Then
-		      Self.MaxLevelField.Text = Format(Self.mConfig.PlayerLevelCap, "0,")
+		      Self.MaxLevelField.Text = Format(Config.PlayerLevelCap, "0,")
 		    End If
 		    If SkipField <> Self.MaxExperienceField Then
-		      Self.MaxExperienceField.Text = Format(Self.mConfig.PlayerMaxExperience, "0,")
+		      Self.MaxExperienceField.Text = Format(Config.PlayerMaxExperience, "0,")
 		    End If
-		    Self.SoftCapField.Text = Format(Self.mConfig.PlayerSoftLevelCap, "0,")
+		    Self.SoftCapField.Text = Format(Config.PlayerSoftLevelCap, "0,")
 		    
-		    Self.FillLevelsList(Self.mConfig.PlayerLevelCap, Self.mConfig.PlayerMaxExperience, Self.mConfig.PlayerCurve)
+		    Self.FillLevelsList(Config.PlayerLevelCap, Config.PlayerMaxExperience, Config.PlayerCurve)
 		    
 		    Self.SoftCapField.Visible = True
 		    Self.SoftCapLabel.Visible = True
 		  Else
 		    If SkipField <> Self.MaxLevelField Then
-		      Self.MaxLevelField.Text = Format(Self.mConfig.DinoLevelCap, "0,")
+		      Self.MaxLevelField.Text = Format(Config.DinoLevelCap, "0,")
 		    End If
 		    If SkipField <> Self.MaxExperienceField Then
-		      Self.MaxExperienceField.Text = Format(Self.mConfig.DinoMaxExperience, "0,")
+		      Self.MaxExperienceField.Text = Format(Config.DinoMaxExperience, "0,")
 		    End If
 		    
-		    Self.FillLevelsList(Self.mConfig.DinoLevelCap, Self.mConfig.DinoMaxExperience, Self.mConfig.DinoCurve)
+		    Self.FillLevelsList(Config.DinoLevelCap, Config.DinoMaxExperience, Config.DinoCurve)
 		    
 		    Self.SoftCapField.Visible = False
 		    Self.SoftCapLabel.Visible = False
@@ -835,7 +868,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mConfig As BeaconConfigs.ExperienceCurves
+		Private mConfigRef As WeakRef
 	#tag EndProperty
 
 
@@ -899,9 +932,9 @@ End
 		  
 		  Dim Value As Integer = CDbl(Me.Text)
 		  If Self.ViewingPlayerStats Then
-		    Self.mConfig.PlayerLevelCap = Value
+		    Self.Config(True).PlayerLevelCap = Value
 		  Else
-		    Self.mConfig.DinoLevelCap = Value
+		    Self.Config(True).DinoLevelCap = Value
 		  End If
 		  Self.ContentsChanged = True
 		  Self.RefreshUI(Me)
@@ -922,9 +955,9 @@ End
 		  
 		  Dim Value As Integer = CDbl(Me.Text)
 		  If Self.ViewingPlayerStats Then
-		    Self.mConfig.PlayerMaxExperience = Value
+		    Self.Config(True).PlayerMaxExperience = Value
 		  Else
-		    Self.mConfig.DinoMaxExperience = Value
+		    Self.Config(True).DinoMaxExperience = Value
 		  End If
 		  Self.ContentsChanged = True
 		  Self.RefreshUI(Me)

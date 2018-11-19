@@ -2,6 +2,15 @@
 Protected Class ConfigEditor
 Inherits BeaconSubview
 	#tag Event
+		Sub EnableMenuItems()
+		  DocumentRestoreConfigToDefault.Enable
+		  DocumentRestoreConfigToDefault.Text = "Restore """ + Self.ConfigLabel + """ to Default"
+		  
+		  RaiseEvent EnableMenuItems
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  RaiseEvent Open
 		  Self.SettingUp = True
@@ -10,6 +19,27 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndEvent
 
+
+	#tag MenuHandler
+		Function DocumentRestoreConfigToDefault() As Boolean Handles DocumentRestoreConfigToDefault.Action
+			If Self.ShowConfirm("Are you sure you want to restore """ + Self.ConfigLabel + """ to default settings?", "Wherever possible, this will remove the config options from your file completely, restoring settings to Ark's default values. You cannot undo this action.", "Restore", "Cancel") Then
+			RaiseEvent RestoreToDefault
+			Self.SettingUp = True
+			RaiseEvent SetupUI
+			Self.SettingUp = False
+			Self.ContentsChanged = True
+			End If
+			
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+
+	#tag Method, Flags = &h0
+		Function ConfigLabel() As Text
+		  
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor()
@@ -53,7 +83,15 @@ Inherits BeaconSubview
 
 
 	#tag Hook, Flags = &h0
+		Event EnableMenuItems()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event RestoreToDefault()
 	#tag EndHook
 
 	#tag Hook, Flags = &h0

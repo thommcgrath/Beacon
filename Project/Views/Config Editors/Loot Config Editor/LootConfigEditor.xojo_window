@@ -158,7 +158,6 @@ Begin ConfigEditor LootConfigEditor
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -176,7 +175,6 @@ Begin ConfigEditor LootConfigEditor
          HasBackColor    =   False
          Height          =   436
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -354,6 +352,12 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub RestoreToDefault()
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.LootDrops.ConfigName)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub SetupUI()
 		  Self.UpdateSourceList()
 		End Sub
@@ -474,6 +478,12 @@ End
 		  
 		  Self.List.EnsureSelectionIsVisible()
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigLabel() As Text
+		  Return Language.LabelForConfig(BeaconConfigs.LootDrops.ConfigName)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

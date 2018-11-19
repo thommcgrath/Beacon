@@ -258,6 +258,13 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub RestoreToDefault()
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.Metadata.ConfigName)
+		  Self.Document.ConsoleModsOnly = False
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub SetupUI()
 		  Self.TitleField.Text = Self.Document.Title
 		  Self.DescriptionArea.Text = Self.Document.Description
@@ -273,6 +280,13 @@ End
 		  Next
 		End Sub
 	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Function ConfigLabel() As Text
+		  Return Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName)
+		End Function
+	#tag EndMethod
 
 
 #tag EndWindowCode
@@ -339,6 +353,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

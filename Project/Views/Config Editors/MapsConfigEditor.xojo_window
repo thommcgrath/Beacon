@@ -229,6 +229,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub RestoreToDefault()
+		  Self.Document.MapCompatibility = Beacon.Maps.TheIsland.Mask
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub SetupUI()
 		  Dim Maps() As Beacon.Map = Beacon.Maps.All
 		  For Each Map As Beacon.Map In Maps
@@ -241,6 +247,13 @@ End
 		  Next
 		End Sub
 	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Function ConfigLabel() As Text
+		  Return "Maps"
+		End Function
+	#tag EndMethod
 
 
 #tag EndWindowCode
@@ -266,6 +279,12 @@ End
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
 		Group="Behavior"
@@ -284,11 +303,6 @@ End
 		Group="Behavior"
 		Type="String"
 		EditorType="MultiLineEditor"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ToolbarIcon"
-		Group="Behavior"
-		Type="Picture"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"

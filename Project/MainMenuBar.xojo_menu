@@ -287,6 +287,20 @@ Begin Menu MainMenuBar
       Index = -2147483648
       AutoEnable = True
       Visible = True
+      Begin MenuItem DocumentRestoreConfigToDefault
+         SpecialMenu = 0
+         Text = "Restore Config to Default"
+         Index = -2147483648
+         AutoEnable = False
+         Visible = True
+      End
+      Begin MenuItem UntitledSeparator2
+         SpecialMenu = 0
+         Text = "-"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
       Begin MenuItem DocumentAddBeacon
          SpecialMenu = 0
          Text = "Add Loot Source…"

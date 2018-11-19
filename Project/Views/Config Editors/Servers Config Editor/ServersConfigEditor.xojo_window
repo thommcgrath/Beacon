@@ -185,6 +185,14 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub RestoreToDefault()
+		  For I As Integer = Self.Document.ServerProfileCount - 1 DownTo 0
+		    Self.Document.Remove(Self.Document.ServerProfile(I))
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub SetupUI()
 		  Dim SelectedProfiles() As Beacon.ServerProfile
 		  For I As Integer = 0 To Self.ServerList.RowCount - 1
@@ -215,6 +223,12 @@ End
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Function ConfigLabel() As Text
+		  Return "Servers"
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As Beacon.DocumentController)

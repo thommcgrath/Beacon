@@ -111,6 +111,12 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub RestoreToDefault()
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.LootScale.ConfigName)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub SetupUI()
 		  Dim Multiplier As Double = 1.0
 		  If Self.Document.HasConfigGroup(BeaconConfigs.LootScale.ConfigName) Then
@@ -122,6 +128,13 @@ End
 		  Self.ScaleSlider.Value = Multiplier * 100
 		End Sub
 	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Function ConfigLabel() As Text
+		  Return Language.LabelForConfig(BeaconConfigs.LootScale.ConfigName)
+		End Function
+	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
@@ -177,6 +190,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

@@ -184,6 +184,12 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub RestoreToDefault()
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.CustomContent.ConfigName)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub SetupUI()
 		  Self.mConfig = Nil
 		  Select Case Self.Switcher.SelectedIndex
@@ -211,6 +217,12 @@ End
 		    End If
 		  End If
 		  Return Self.mConfig
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigLabel() As Text
+		  Return Language.LabelForConfig(BeaconConfigs.CustomContent.ConfigName)
 		End Function
 	#tag EndMethod
 

@@ -253,6 +253,8 @@ End
 		  
 		  If Self.CurrentPanel <> Nil Then
 		    Self.CurrentPanel.EnableMenuItems()
+		  Else
+		    DocumentRestoreConfigToDefault.Text = "Restore Config to Default"
 		  End If
 		End Sub
 	#tag EndEvent
