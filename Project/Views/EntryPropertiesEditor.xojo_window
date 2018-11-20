@@ -676,7 +676,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Maximum         =   100
+      Maximum         =   1000
       Minimum         =   0
       PageStep        =   25
       Scope           =   2
@@ -686,7 +686,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TickStyle       =   "0"
       Top             =   176
       Transparent     =   False
-      Value           =   25
+      Value           =   250
       Visible         =   True
       Width           =   139
    End
@@ -721,7 +721,7 @@ Begin BeaconContainer EntryPropertiesEditor
       TabIndex        =   19
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "25"
+      Text            =   "250"
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
@@ -836,7 +836,7 @@ End
 		      Entry.ChanceToBeBlueprint = ChanceSlider.Value / 100
 		    End If
 		    If EditWeightCheck.Value Then
-		      Entry.Weight = WeightSlider.Value / 100
+		      Entry.RawWeight = WeightSlider.Value
 		    End If
 		    If EditMaxQualityCheck.Value Then
 		      Entry.MaxQuality = MaxQuality
@@ -909,7 +909,7 @@ End
 		  For Each Entry As Beacon.SetEntry In Entries
 		    MinQuantities.Append(Entry.MinQuantity)
 		    MaxQuantities.Append(Entry.MaxQuantity)
-		    TotalWeight = TotalWeight + Entry.Weight
+		    TotalWeight = TotalWeight + Entry.RawWeight
 		    TotalChance = TotalChance + Entry.ChanceToBeBlueprint
 		    MinQualities.Append(Entry.MinQuality.BaseValue)
 		    MaxQualities.Append(Entry.MaxQuality.BaseValue)
@@ -925,7 +925,7 @@ End
 		  MinQuantityField.Text = Str(MinQuantities(0))
 		  MaxQuantityField.Text = Str(MaxQuantities(UBound(MaxQuantities)))
 		  If CanBeBlueprint Then
-		    ChanceSlider.Value = 100 * (TotalChance / (UBound(Entries) + 1))
+		    ChanceSlider.Value = TotalChance / (Entries.Ubound + 1)
 		    ChanceSlider.Enabled = True
 		    ChanceLabel.Enabled = True
 		    ChanceField.Enabled = True
@@ -938,8 +938,8 @@ End
 		    EditChanceCheck.Enabled = False
 		  End If
 		  MinQualityMenu.SelectByTag(MinQualities(0))
-		  MaxQualityMenu.SelectByTag(MaxQualities(UBound(MaxQualities)))
-		  WeightSlider.Value = 100 * (TotalWeight / (UBound(Entries) + 1))
+		  MaxQualityMenu.SelectByTag(MaxQualities(MaxQualities.Ubound))
+		  WeightSlider.Value = TotalWeight / (Entries.Ubound + 1)
 		  Self.mIgnoreChanges = False
 		  
 		  If UBound(Entries) > 0 Then

@@ -152,7 +152,6 @@ Begin BeaconContainer ItemSetEditor
       HasBackColor    =   False
       Height          =   23
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -348,7 +347,7 @@ End
 		      QuantityText = Entry.MinQuantity.ToText + " - " + Entry.MaxQuantity.ToText
 		    End If
 		    
-		    Dim FiguresText As String = Str(Round(Entry.Weight * 100), "0") + " wt"
+		    Dim FiguresText As String = Str(Round(Entry.RawWeight), "0") + " wt"
 		    If Entry.CanBeBlueprint Then
 		      FiguresText = FiguresText + ", " + Str(BlueprintChance, "0%") + " bp"
 		    End If
@@ -554,8 +553,8 @@ End
 		      Value2 = Entry2.MinQuality.BaseValue
 		    End If
 		  Case Self.ColumnFigures
-		    Value1 = Entry1.Weight
-		    Value2 = Entry2.Weight
+		    Value1 = Entry1.RawWeight
+		    Value2 = Entry2.RawWeight
 		  End Select
 		  
 		  If Value1 = Value2 Then

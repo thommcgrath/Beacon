@@ -15,10 +15,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  WeightSum = 0
 		  
 		  For Each Entry As Beacon.SetEntry In Pool
-		    If Entry.Weight = 0 Then
+		    If Entry.RawWeight = 0 Then
 		      Continue
 		    End If
-		    WeightSum = WeightSum + Entry.Weight
+		    WeightSum = WeightSum + Entry.RawWeight
 		    Weights.Append(WeightSum * WeightScale)
 		    WeightLookup.Value(WeightSum * WeightScale) = Entry
 		  Next
@@ -89,7 +89,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("MaxNumItems") = Self.MaxNumItems
 		  Keys.Value("MinNumItems") = Self.MinNumItems
 		  Keys.Value("NumItemsPower") = Self.NumItemsPower
-		  Keys.Value("RawWeight") = Self.RawWeight
+		  Keys.Value("Weight") = Self.RawWeight
 		  Keys.Value("SetWeight") = Self.RawWeight / 1000
 		  If Self.SourcePresetID <> "" Then
 		    Keys.Value("SourcePresetID") = Self.SourcePresetID
@@ -221,14 +221,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  If Dict.HasKey("NumItemsPower") Then
 		    Set.NumItemsPower = Dict.Value("NumItemsPower")
 		  End If
-		  If Dict.HasKey("RawWeight") Then
-		    Set.RawWeight = Dict.Value("RawWeight")
-		  ElseIf Dict.HasKey("SetWeight") Then
-		    // If you don't do it this way, Xojo reads it as an integer... wtf.
-		    Dim Percentage As Double = Dict.Value("SetWeight")
-		    Set.RawWeight = Percentage * 1000
-		  ElseIf Dict.HasKey("Weight") Then
+		  If Dict.HasKey("Weight") Then
 		    Set.RawWeight = Dict.Value("Weight")
+		  ElseIf Dict.HasKey("SetWeight") Then
+		    Set.RawWeight = Dict.Value("SetWeight") * 1000.0
 		  End If
 		  If Dict.HasKey("bItemsRandomWithoutReplacement") Then
 		    Set.ItemsRandomWithoutReplacement = Dict.Value("bItemsRandomWithoutReplacement")
@@ -436,7 +432,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function RelativeWeight(Index As Integer) As Double
-		  Return Self.mEntries(Index).Weight / Self.TotalWeight()
+		  Return Self.mEntries(Index).RawWeight / Self.TotalWeight()
 		End Function
 	#tag EndMethod
 
@@ -548,7 +544,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Function TotalWeight() As Double
 		  Dim Value As Double
 		  For Each Entry As Beacon.SetEntry In Self.mEntries
-		    Value = Value + Entry.Weight
+		    Value = Value + Entry.RawWeight
 		  Next
 		  Return Value
 		End Function

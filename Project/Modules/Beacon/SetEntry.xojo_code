@@ -57,7 +57,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mMinQuality = Beacon.Qualities.Tier1
 		  Self.mMaxQuality = Beacon.Qualities.Tier3
 		  Self.mChanceToBeBlueprint = 1.0
-		  Self.mWeight = 1
+		  Self.mWeight = 250
 		  Self.mUniqueID = ""
 		End Sub
 	#tag EndMethod
@@ -185,7 +185,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("MaxQuality") = Self.MaxQuality.Key
 		  Keys.Value("MinQuantity") = Self.MinQuantity
 		  Keys.Value("MaxQuantity") = Self.MaxQuantity
-		  Keys.Value("EntryWeight") = Self.Weight
+		  Keys.Value("Weight") = Self.RawWeight
+		  Keys.Value("EntryWeight") = Self.RawWeight / 1000
 		  Return Keys
 		End Function
 	#tag EndMethod
@@ -216,7 +217,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Parts(3) = Self.MaxQuantity.ToText(Locale, Format)
 		    Parts(4) = Self.MinQuality.Key.Lowercase
 		    Parts(5) = Self.MinQuantity.ToText(Locale, Format)
-		    Parts(6) = Self.Weight.ToText(Locale, Format)
+		    Parts(6) = Self.RawWeight.ToText(Locale, Format)
 		    
 		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
 		    Self.mLastHashTime = Microseconds
@@ -242,10 +243,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Xojo.Core.Dictionary) As Beacon.SetEntry
 		  Dim Entry As New Beacon.SetEntry
-		  If Dict.HasKey("EntryWeight") Then
-		    Entry.Weight = Dict.Value("EntryWeight")
-		  ElseIf Dict.HasKey("Weight") Then
-		    Entry.Weight = Dict.Value("Weight")
+		  If Dict.HasKey("Weight") Then
+		    Entry.RawWeight = Dict.Value("Weight")
+		  ElseIf Dict.HasKey("EntryWeight") Then
+		    Entry.RawWeight = Dict.Value("EntryWeight") * 1000.0
 		  End If
 		  If Dict.HasKey("MinQuality") Then
 		    Entry.MinQuality = Beacon.Qualities.ForKey(Dict.Value("MinQuality"))
@@ -277,7 +278,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range, DifficultyValue As Double) As Beacon.SetEntry
 		  Dim Entry As New Beacon.SetEntry
 		  If Dict.HasKey("EntryWeight") Then
-		    Entry.Weight = Dict.Value("EntryWeight")
+		    Entry.RawWeight = Dict.Value("EntryWeight")
 		  End If
 		  
 		  If Dict.HasKey("MinQuality") Then
@@ -413,12 +414,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Shared Function Join(Entries() As Beacon.SetEntry, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As Text
 		  Dim Values() As Text
-		  Dim SumEntryWeights As Double
 		  For Each Entry As Beacon.SetEntry In Entries
-		    SumEntryWeights = SumEntryWeights + Entry.Weight
-		  Next
-		  For Each Entry As Beacon.SetEntry In Entries
-		    Values.Append(Entry.TextValue(Multipliers, SumEntryWeights, UseBlueprints, Difficulty))
+		    Values.Append(Entry.TextValue(Multipliers, UseBlueprints, Difficulty))
 		  Next
 		  Return Values.Join(Separator)
 		End Function
@@ -573,7 +570,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range, SumEntryWeights As Double, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As Text
+		Function TextValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As Text
 		  Dim Paths(), Weights(), Classes() As Text
 		  Redim Paths(UBound(Self.mOptions))
 		  Redim Weights(UBound(Self.mOptions))
@@ -597,7 +594,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  
 		  Dim Chance As Double = if(Self.CanBeBlueprint, Self.mChanceToBeBlueprint, 0)
-		  Dim EntryWeight As Integer = Xojo.Math.Round((Self.mWeight / SumEntryWeights) * 1000)
+		  Dim EntryWeight As Integer = Self.mWeight
 		  
 		  Dim Values() As Text
 		  Values.Append("EntryWeight=" + EntryWeight.ToText)
@@ -807,7 +804,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Min(Max(Value, 0.0001), 1.0)
+			  Value = Max(Value, 0.0001)
 			  If Self.mWeight = Value Then
 			    Return
 			  End If
@@ -816,7 +813,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			  Self.Modified = True
 			End Set
 		#tag EndSetter
-		Weight As Double
+		RawWeight As Double
 	#tag EndComputedProperty
 
 
