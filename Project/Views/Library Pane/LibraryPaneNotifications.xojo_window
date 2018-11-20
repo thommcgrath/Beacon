@@ -135,7 +135,7 @@ End
 		    
 		    Dim Message As String = Self.mNotifications(I).Message
 		    Dim MessageHeight As Double = G.StringHeight(Message, CellWidth)
-		    Dim MessageBaseline As Double = Pos + CellPadding + G.CapHeight
+		    Dim MessageBaseline As Double = Pos + CellPadding + G.TextAscent
 		    G.ForeColor = SystemColors.LabelColor
 		    G.DrawString(Message, CellPadding, MessageBaseline, CellWidth, False)
 		    
@@ -144,10 +144,10 @@ End
 		    Dim SecondaryMessage As String = Self.mNotifications(I).SecondaryMessage
 		    If SecondaryMessage <> "" Then
 		      Dim SecondaryMessageHeight As Double = G.StringHeight(SecondaryMessage, CellWidth)
-		      Dim SecondaryMessageBaseline As Double = Pos + CellPadding + MessageHeight + (CellPadding / 2) + G.CapHeight
+		      Dim SecondaryMessageBaseline As Double = Pos + CellPadding + MessageHeight + (CellPadding / 2) + G.TextAscent
 		      G.ForeColor = SystemColors.SecondaryLabelColor
 		      G.DrawString(SecondaryMessage, CellPadding, SecondaryMessageBaseline, CellWidth, False)
-		      CellHeight = CellHeight + (CellPadding / 2) + SecondaryMessageHeight
+		      CellHeight = CellHeight + CellPadding + SecondaryMessageHeight
 		    End If
 		    
 		    Dim NotificationRect As New BeaconUI.Rect(0, Pos, G.Width, CellHeight)
