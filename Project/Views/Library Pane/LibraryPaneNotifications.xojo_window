@@ -122,6 +122,15 @@ End
 		  Const CellPadding = 10
 		  Const CloseHitBox = 20
 		  
+		  G.TextFont = "System"
+		  G.TextUnit = FontUnits.Point
+		  G.TextSize = 0
+		  
+		  // There seems to be an issue where G.TextHeight and G.StringHeight("A", 100) do not agree. So we'll need to counter that.
+		  Dim ExpectedLineHeight As Double = G.TextHeight
+		  Dim ComputedLineHeight As Double = G.StringHeight("A", 100)
+		  Dim DifferencePerLine As Double = ExpectedLineHeight - ComputedLineHeight
+		  
 		  Dim OldUnreadCount As Integer = Self.UnreadCount
 		  
 		  Dim CloseIcon As Picture
@@ -134,8 +143,10 @@ End
 		    Dim DrawBottomBorder As Boolean = I < Self.mNotifications.Ubound
 		    
 		    Dim Message As String = Self.mNotifications(I).Message
+		    Dim MessageTop As Double = Pos + CellPadding
 		    Dim MessageHeight As Double = G.StringHeight(Message, CellWidth)
-		    Dim MessageBaseline As Double = Pos + CellPadding + G.TextAscent
+		    MessageHeight = MessageHeight + ((MessageHeight / ComputedLineHeight) * DifferencePerLine)
+		    Dim MessageBaseline As Double = MessageTop + G.TextAscent
 		    G.ForeColor = SystemColors.LabelColor
 		    G.DrawString(Message, CellPadding, MessageBaseline, CellWidth, False)
 		    
@@ -143,11 +154,13 @@ End
 		    
 		    Dim SecondaryMessage As String = Self.mNotifications(I).SecondaryMessage
 		    If SecondaryMessage <> "" Then
+		      Dim SecondaryMessageTop As Double = MessageTop + MessageHeight + (CellPadding / 2)
 		      Dim SecondaryMessageHeight As Double = G.StringHeight(SecondaryMessage, CellWidth)
-		      Dim SecondaryMessageBaseline As Double = Pos + CellPadding + MessageHeight + (CellPadding / 2) + G.TextAscent
+		      SecondaryMessageHeight = SecondaryMessageHeight + ((SecondaryMessageHeight / ComputedLineHeight) * DifferencePerLine)
+		      Dim SecondaryMessageBaseline As Double = SecondaryMessageTop + G.TextAscent
 		      G.ForeColor = SystemColors.SecondaryLabelColor
 		      G.DrawString(SecondaryMessage, CellPadding, SecondaryMessageBaseline, CellWidth, False)
-		      CellHeight = CellHeight + CellPadding + SecondaryMessageHeight
+		      CellHeight = CellHeight + SecondaryMessageHeight + (CellPadding / 2)
 		    End If
 		    
 		    Dim NotificationRect As New BeaconUI.Rect(0, Pos, G.Width, CellHeight)
