@@ -94,7 +94,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Raise Err
 		  End If
 		  
-		  Redim Self.mSets(UBound(Source.mSets))
+		  Redim Self.mSets(Source.mSets.Ubound)
+		  Redim Self.mMandatoryItemSets(Source.mMandatoryItemSets.Ubound)
 		  
 		  Self.mMaxItemSets = Source.mMaxItemSets
 		  Self.mMinItemSets = Source.mMinItemSets
@@ -112,8 +113,12 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mExperimental = Source.mExperimental
 		  Self.mNotes = Source.mNotes
 		  
-		  For I As Integer = 0 To UBound(Source.mSets)
+		  For I As Integer = 0 To Source.mSets.Ubound
 		    Self.mSets(I) = New Beacon.ItemSet(Source.mSets(I))
+		  Next
+		  
+		  For I As Integer = 0 To Source.mMandatoryItemSets.Ubound
+		    Self.mMandatoryItemSets(I) = New Beacon.ItemSet(Source.mMandatoryItemSets(I))
 		  Next
 		End Sub
 	#tag EndMethod
@@ -144,6 +149,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  For Each Set As Beacon.ItemSet In Self.mSets
 		    Children.Append(Set.Export)
 		  Next
+		  
+		  // Mandatory item sets should not be part of this.
 		  
 		  Dim Keys As New Xojo.Core.Dictionary
 		  Keys.Value("ItemSets") = Children
@@ -377,6 +384,17 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MandatoryItemSets() As Beacon.ItemSet()
+		  Dim Arr() As Beacon.ItemSet
+		  Redim Arr(Self.mMandatoryItemSets.Ubound)
+		  For I As Integer = 0 To Self.mMandatoryItemSets.Ubound
+		    Arr(I) = New Beacon.ItemSet(Self.mMandatoryItemSets(I))
+		  Next
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Maps() As Beacon.Map()
 		  Dim AllMaps() As Beacon.Map = Beacon.Maps.All
 		  Dim AllowedMaps() As Beacon.Map
@@ -490,24 +508,31 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function Simulate() As Beacon.SimulatedSelection()
 		  Dim Selections() As Beacon.SimulatedSelection
-		  If Self.mSets.Ubound = -1 Then
+		  Dim NumSets As Integer = Self.mSets.Ubound + Self.mMandatoryItemSets.Ubound + 2
+		  If NumSets = 0 Then
 		    Return Selections
 		  End If
 		  
-		  Dim NumSets As Integer = Self.Count
-		  Dim MinSets As Integer = Self.MinItemSets
-		  Dim MaxSets As Integer = Self.MaxItemSets
+		  Dim MinSets As Integer = Min(Self.MinItemSets, Self.MaxItemSets)
+		  Dim MaxSets As Integer = Max(Self.MaxItemSets, Self.MinItemSets)
 		  
 		  Dim SelectedSets() As Beacon.ItemSet
-		  If NumSets = MinSets And MinSets = MaxSets Then
+		  If NumSets = MinSets And MinSets = MaxSets And Self.SetsRandomWithoutReplacement Then
 		    // All
-		    SelectedSets = Self.mSets
+		    For Each Set As Beacon.ItemSet In Self.mSets
+		      SelectedSets.Append(Set)
+		    Next
+		    For Each Set As Beacon.ItemSet In Self.mMandatoryItemSets
+		      SelectedSets.Append(Set)
+		    Next
 		  Else
 		    Const WeightScale = 100000
 		    Dim ItemSetPool() As Beacon.ItemSet
-		    Redim ItemSetPool(Self.mSets.Ubound)
 		    For I As Integer = 0 To Self.mSets.Ubound
-		      ItemSetPool(I) = New Beacon.ItemSet(Self.mSets(I))
+		      ItemSetPool.Append(Self.mSets(I))
+		    Next
+		    For I As Integer = 0 To Self.mMandatoryItemSets.Ubound
+		      ItemSetPool.Append(Self.mMandatoryItemSets(I))
 		    Next
 		    
 		    Dim RecomputeFigures As Boolean = True
@@ -515,6 +540,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim WeightSum, Weights() As Double
 		    Dim WeightLookup As Xojo.Core.Dictionary
 		    For I As Integer = 1 To ChooseSets
+		      If ItemSetPool.Ubound = -1 Then
+		        Exit For I
+		      End If
+		      
 		      If RecomputeFigures Then
 		        Self.ComputeSimulationFigures(ItemSetPool, WeightScale, WeightSum, Weights, WeightLookup)
 		        RecomputeFigures = False
@@ -588,7 +617,19 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
 		  End If
 		  
-		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Self.mSets, ",", Self.mMultipliers, Self.mUseBlueprints, Difficulty) + ")")
+		  Dim Sets() As Beacon.ItemSet
+		  If Self.mMandatoryItemSets.Ubound = -1 Then
+		    Sets = Self.mSets
+		  Else
+		    For Each Set As Beacon.ItemSet In Self.mSets
+		      Sets.Append(Set)
+		    Next
+		    For Each Set As Beacon.ItemSet In Self.mMandatoryItemSets
+		      Sets.Append(Set)
+		    Next
+		  End If
+		  
+		  Values.Append("ItemSets=(" + Beacon.ItemSet.Join(Sets, ",", Self.mMultipliers, Self.mUseBlueprints, Difficulty) + ")")
 		  Return "(" + Values.Join(",") + ")"
 		End Function
 	#tag EndMethod
@@ -646,12 +687,15 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Min(Max(Self.mMaxItemSets, Self.mMinItemSets), Max(Self.Count, 1))
+			  If Self.SetsRandomWithoutReplacement Then
+			    Return Min(Self.mMaxItemSets, Self.mSets.Ubound + Self.mMandatoryItemSets.Ubound + 2)
+			  Else
+			    Return Self.mMaxItemSets
+			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Max(Value, 1)
 			  If Self.mMaxItemSets = Value Then
 			    Return
 			  End If
@@ -674,12 +718,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Max(Min(Self.mMinItemSets, Self.mMaxItemSets, Self.Count), 1)
+			  Return Max(Self.mMinItemSets, 1)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Max(Value, 1)
 			  If Self.mMinItemSets = Value Then
 			    Return
 			  End If
@@ -697,6 +740,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Property, Flags = &h1
 		Protected mLabel As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mMandatoryItemSets() As Beacon.ItemSet
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

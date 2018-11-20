@@ -40,6 +40,15 @@ Inherits Beacon.LootSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub MandatoryItemSets(Assigns Sets() As Beacon.ItemSet)
+		  Redim Self.mMandatoryItemSets(Sets.Ubound)
+		  For I As Integer = 0 To Sets.Ubound
+		    Self.mMandatoryItemSets(I) = New Beacon.ItemSet(Sets(I))
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Multipliers(Assigns Value As Beacon.Range)
 		  Self.mMultipliers = New Beacon.Range(Value.Min, Value.Max)
 		End Sub

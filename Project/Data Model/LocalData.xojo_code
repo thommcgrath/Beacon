@@ -61,7 +61,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, console_safe INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_source_icons (icon_id TEXT NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
-		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, required_item_sets INTEGER NOT NULL, icon TEXT NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, icon TEXT NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}');")
 		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, can_blueprint INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
@@ -399,7 +399,7 @@ Implements Beacon.DataSource
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Try
-		    Dim Results As RecordSet = Self.SQLSelect("SELECT class_string, label, availability, multiplier_min, multiplier_max, uicolor, sort_order, required_item_sets, experimental, notes FROM loot_sources WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
+		    Dim Results As RecordSet = Self.SQLSelect("SELECT " + Self.LootSourcesSelectColumns + " FROM loot_sources WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
 		    If Results.RecordCount = 0 Then
 		      Return Nil
 		    End If
@@ -737,10 +737,10 @@ Implements Beacon.DataSource
 		      Dim MultiplierMax As Double = Xojo.Core.Dictionary(Dict.Value("multipliers")).Value("max")
 		      Dim UIColor As Text = Dict.Value("ui_color")
 		      Dim SortOrder As Integer = Dict.Value("sort_order")
-		      Dim RequiredItemSets As Integer = Dict.Value("required_item_sets")
 		      Dim Experimental As Boolean = Dict.Value("experimental")
 		      Dim Notes As Text = Dict.Value("notes")
 		      Dim IconID As Text = Dict.Value("icon")
+		      Dim Requirements As Text = Dict.Lookup("requirements", "{}")
 		      
 		      ObjectID = ObjectID.Lowercase
 		      ModID = ModID.Lowercase
@@ -748,12 +748,12 @@ Implements Beacon.DataSource
 		      
 		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM loot_sources WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
 		      If Results.RecordCount = 1 And ObjectID = Results.Field("object_id").StringValue Then
-		        Self.SQLExecute("UPDATE loot_sources SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, multiplier_min = ?7, multiplier_max = ?8, uicolor = ?9, sort_order = ?10, required_item_sets = ?11, icon = ?12, experimental = ?13, notes = ?14 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, RequiredItemSets, IconID, Experimental, Notes)
+		        Self.SQLExecute("UPDATE loot_sources SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, multiplier_min = ?7, multiplier_max = ?8, uicolor = ?9, sort_order = ?10, icon = ?11, experimental = ?12, notes = ?13, requirements = ?14 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID, Experimental, Notes, Requirements)
 		      Else
 		        If Results.RecordCount = 1 Then
 		          Self.SQLExecute("DELETE FROM loot_sources WHERE object_id = ?1;", Results.Field("object_id").StringValue)
 		        End If
-		        Self.SQLExecute("INSERT INTO loot_sources (object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, uicolor, sort_order, required_item_sets, icon, experimental, notes) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14);", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, RequiredItemSets, IconID, Experimental, Notes)
+		        Self.SQLExecute("INSERT INTO loot_sources (object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, uicolor, sort_order, icon, experimental, notes, requirements) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14);", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID, Experimental, Notes, Requirements)
 		      End If
 		    Next
 		    
@@ -1176,8 +1176,6 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h21
 		Private Shared Function RecordSetToLootSource(Results As RecordSet) As Beacon.LootSource()
-		  // class_string, label, availability, multiplier_min, multiplier_max, sort_order, required_item_sets, experimental, notes
-		  
 		  Dim Sources() As Beacon.LootSource
 		  While Not Results.EOF
 		    Dim HexColor As String = Results.Field("uicolor").StringValue
@@ -1202,6 +1200,15 @@ Implements Beacon.DataSource
 		      AlphaHex = Mid(HexColor, 7, 2)
 		    End If
 		    
+		    Dim Requirements As Xojo.Core.Dictionary
+		    #Pragma BreakOnExceptions Off
+		    Try
+		      Requirements = Xojo.Data.ParseJSON(Results.Field("requirements").StringValue.ToText)
+		    Catch Err As Xojo.Data.InvalidJSONException
+		      
+		    End Try
+		    #Pragma BreakOnExceptions Default
+		    
 		    Dim Source As New Beacon.MutableLootSource(Results.Field("class_string").StringValue.ToText, True)
 		    Source.Label = Results.Field("label").StringValue.ToText
 		    Source.Availability = Results.Field("availability").IntegerValue
@@ -1209,9 +1216,25 @@ Implements Beacon.DataSource
 		    Source.UIColor = RGB(Integer.FromHex(RedHex.ToText), Integer.FromHex(GreenHex.ToText), Integer.FromHex(BlueHex.ToText), Integer.FromHex(AlphaHex.ToText))
 		    Source.SortValue = Results.Field("sort_order").IntegerValue
 		    Source.UseBlueprints = False
-		    Source.RequiredItemSets = Results.Field("required_item_sets").IntegerValue
 		    Source.Experimental = Results.Field("experimental").BooleanValue
 		    Source.Notes = Results.Field("notes").StringValue.ToText
+		    
+		    If Requirements.HasKey("mandatory_item_sets") Then
+		      Dim SetDicts() As Auto = Requirements.Value("mandatory_item_sets")
+		      Dim Sets() As Beacon.ItemSet
+		      For Each Dict As Xojo.Core.Dictionary In SetDicts
+		        Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
+		        If Set <> Nil Then
+		          Sets.Append(Set)
+		        End If
+		      Next
+		      Source.MandatoryItemSets = Sets
+		    End If
+		    
+		    If Requirements.HasKey("min_item_sets") Then
+		      Source.RequiredItemSets = Requirements.Value("min_item_sets")
+		    End If
+		    
 		    Sources.Append(New Beacon.LootSource(Source))
 		    Results.MoveNext
 		  Wend
@@ -1390,7 +1413,7 @@ Implements Beacon.DataSource
 		      Clauses.Append("experimental = 0")
 		    End If
 		    
-		    Dim SQL As String = "SELECT class_string, label, availability, multiplier_min, multiplier_max, uicolor, sort_order, required_item_sets, experimental, notes, mods.console_safe, mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
+		    Dim SQL As String = "SELECT " + Self.LootSourcesSelectColumns + ", mods.console_safe, mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
 		    If Clauses.Ubound > -1 Then
 		      SQL = SQL + " WHERE " + Join(Clauses, " AND ")
 		    End If
@@ -1642,6 +1665,9 @@ Implements Beacon.DataSource
 
 
 	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT path\x2C label\x2C availability\x2C can_blueprint\x2C mods.console_safe\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"class_string\x2C label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_DatabaseUpdated, Type = Text, Dynamic = False, Default = \"Database Updated", Scope = Public

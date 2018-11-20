@@ -364,60 +364,6 @@ End
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Function CurrentMaximum() As Integer
-		  Dim Value As Integer = 1
-		  If Self.MaxItemSetsField.Text = "" Then
-		    Dim Sources() As Beacon.LootSource = Self.LootSources
-		    If Sources.Ubound = -1 Then
-		      Return 1
-		    End If
-		    
-		    For I As Integer = 0 To Sources.Ubound
-		      Value = Max(Value, Sources(I).MaxItemSets)
-		    Next
-		  Else
-		    Value = Val(Self.MaxItemSetsField.Text)
-		  End If
-		  Return Min(Value, Self.EffectiveMaximum())
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function CurrentMinimum() As Integer
-		  Dim Value As Integer = 1
-		  If Self.MinItemSetsField.Text = "" Then
-		    Dim Sources() As Beacon.LootSource = Self.LootSources
-		    If Sources.Ubound = -1 Then
-		      Return 1
-		    End If
-		    
-		    Value = Min(Sources(0).MinItemSets, 1)
-		    For I As Integer = 1 To Sources.Ubound
-		      Value = Min(Value, Sources(I).MinItemSets)
-		    Next
-		  Else
-		    Value = Val(Self.MinItemSetsField.Text)
-		  End If
-		  Return Value
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function EffectiveMaximum() As Integer
-		  Dim Sources() As Beacon.LootSource = Self.LootSources
-		  If Sources.Ubound = -1 Then
-		    Return 9999
-		  End If
-		  
-		  Dim Value As Integer = 1
-		  For I As Integer = 0 To Sources.Ubound
-		    Value = Max(Value, Sources(I).Count)
-		  Next
-		  Return Value
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function LootSources() As Beacon.LootSource()
 		  Dim Results() As Beacon.LootSource
@@ -543,7 +489,7 @@ End
 	#tag Event
 		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
 		  MinValue = 1
-		  MaxValue = Self.CurrentMaximum
+		  MaxValue = 9999
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -583,8 +529,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
-		  MinValue = Self.CurrentMinimum
-		  MaxValue = Self.EffectiveMaximum
+		  MinValue = 1
+		  MaxValue = 9999
 		End Sub
 	#tag EndEvent
 	#tag Event
