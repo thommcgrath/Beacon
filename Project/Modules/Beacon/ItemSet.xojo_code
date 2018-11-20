@@ -184,13 +184,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
 		    Dim Format As Text = "0.000"
 		    
-		    Dim Parts(5) As Text
+		    Dim Parts(6) As Text
 		    Parts(0) = Beacon.MD5(Entries.Join(",")).Lowercase
 		    Parts(1) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
 		    Parts(2) = Self.MaxNumItems.ToText(Locale, Format)
 		    Parts(3) = Self.MinNumItems.ToText(Locale, Format)
 		    Parts(4) = Self.NumItemsPower.ToText(Locale, Format)
 		    Parts(5) = Self.Weight.ToText(Locale, Format)
+		    Parts(6) = Self.Label.Lowercase
 		    
 		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
 		    Self.mLastHashTime = Microseconds

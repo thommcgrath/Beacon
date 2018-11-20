@@ -1,5 +1,27 @@
 #tag Module
 Protected Module FrameworkExtensions
+	#tag Method, Flags = &h0
+		Function AddSuffix(Extends Title As Text, Suffix As Text) As Text
+		  Dim Words() As Text = Title.Split(" ")
+		  If Words.Ubound >= 0 And Words(Words.Ubound) = Suffix Then
+		    Words.Append("2")
+		  ElseIf Words.Ubound >= 1 And Words(Words.Ubound - 1) = Suffix Then
+		    Dim CopyNum As Integer
+		    #Pragma BreakOnExceptions Off
+		    Try
+		      CopyNum = Integer.FromText(Words(Words.Ubound), Xojo.Core.Locale.Raw) + 1
+		      Words(Words.Ubound) = CopyNum.ToText(Xojo.Core.Locale.Raw, "0")
+		    Catch Err As RuntimeException
+		      Words.Append(Suffix)
+		    End Try
+		    #Pragma BreakOnExceptions Default
+		  Else
+		    Words.Append(Suffix)
+		  End If
+		  Return Words.Join(" ")
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function AutoToDouble(Value As Auto, ResolveWithFirst As Boolean = False) As Double
 		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)

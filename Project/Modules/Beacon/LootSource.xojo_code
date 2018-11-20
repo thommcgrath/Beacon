@@ -3,6 +3,17 @@ Protected Class LootSource
 Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Append(Item As Beacon.ItemSet)
+		  // Check for duplicates and rename if necessary.
+		  For I As Integer = 0 To Self.mSets.Ubound
+		    If Self.mSets(I) = Item Then
+		      Item.Label = Item.Label.AddSuffix("Copy")
+		      
+		      // Recurse so the check starts over
+		      Self.Append(Item)
+		      Return
+		    End If
+		  Next
+		  
 		  Self.mSets.Append(Item)
 		  Self.Modified = True
 		End Sub
