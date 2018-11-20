@@ -123,6 +123,22 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.BooleanValue("Has Shown Experimental Warning", False)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.BooleanValue("Has Shown Experimental Warning") = Value
+			End Set
+		#tag EndSetter
+		HasShownExperimentalWarning As Boolean
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.BooleanValue("Has Shown Subscribe Dialog", False)
 			End Get
 		#tag EndGetter

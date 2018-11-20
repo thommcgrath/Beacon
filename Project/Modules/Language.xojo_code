@@ -54,6 +54,28 @@ Protected Module Language
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function ReplacePlaceholders(Source As String, ParamArray Values() As String) As String
+		  For I As Integer = 0 To Values.Ubound
+		    Dim Placeholder As String = "?" + Str(I + 1, "0")
+		    Source = Source.ReplaceAll(Placeholder, Values(I))
+		  Next
+		  Return Source
+		End Function
+	#tag EndMethod
+
+
+	#tag Constant, Name = ExperimentalWarningActionCaption, Type = String, Dynamic = True, Default = \"Continue", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ExperimentalWarningCancelCaption, Type = String, Dynamic = True, Default = \"Cancel", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ExperimentalWarningExplanation, Type = String, Dynamic = True, Default = \"The \"\?1\" loot source is only partially supported by Beacon. Its behavior may be unpredictable\x2C both in terms of item quality and quantity. Are you sure you want to continue\?", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = ExperimentalWarningMessage, Type = String, Dynamic = True, Default = \"You are adding an experimental loot source.", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = LootSourceKindBonus, Type = String, Dynamic = True, Default = \"Bonus Beacon", Scope = Protected
 	#tag EndConstant

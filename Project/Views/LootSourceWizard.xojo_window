@@ -1323,6 +1323,15 @@ End
 		    End If
 		    
 		    Dim Source As Beacon.LootSource = SourceList.RowTag(I)
+		    
+		    If Source.Experimental And Not Preferences.HasShownExperimentalWarning Then
+		      If Self.ShowConfirm(Language.ExperimentalWarningMessage, Language.ReplacePlaceholders(Language.ExperimentalWarningExplanation, Source.Label), Language.ExperimentalWarningActionCaption, Language.ExperimentalWarningCancelCaption) Then
+		        Preferences.HasShownExperimentalWarning = True
+		      Else
+		        Return
+		      End If
+		    End If
+		    
 		    Self.mDestinations.Append(New Beacon.MutableLootSource(Source))
 		  Next
 		  

@@ -452,6 +452,17 @@ End
 		  Dim IgnoredSources() As Beacon.LootSource
 		  
 		  For Each Source As Beacon.LootSource In Sources
+		    If Source.Experimental And Not Preferences.HasShownExperimentalWarning Then
+		      If Self.ShowConfirm(Language.ExperimentalWarningMessage, Language.ReplacePlaceholders(Language.ExperimentalWarningExplanation, Source.Label), Language.ExperimentalWarningActionCaption, Language.ExperimentalWarningCancelCaption) Then
+		        Preferences.HasShownExperimentalWarning = True
+		        Exit
+		      Else
+		        Return
+		      End If
+		    End If
+		  Next
+		  
+		  For Each Source As Beacon.LootSource In Sources
 		    If Self.Document.HasLootSource(Source) Then
 		      Self.Document.Remove(Source)
 		    End If
