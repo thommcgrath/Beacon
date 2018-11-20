@@ -10,6 +10,7 @@ CREATE TABLE updates (
 	build_number INTEGER NOT NULL UNIQUE,
 	build_display TEXT NOT NULL,
 	notes TEXT NOT NULL,
+	preview TEXT NOT NULL DEFAULT '',
 	mac_url TEXT NOT NULL,
 	mac_signature CITEXT NOT NULL,
 	win_url TEXT NOT NULL,

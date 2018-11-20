@@ -115,6 +115,7 @@ Protected Class UpdateChecker
 		    
 		    Dim Version As Text = Dict.Value("version")
 		    Dim NotesHTML As Text = Dict.Value("notes")
+		    Dim PreviewText As Text = Dict.Lookup("preview", "")
 		    Dim Location As Xojo.Core.Dictionary
 		    #if TargetMacOS
 		      Location = Dict.Value("mac")
@@ -124,7 +125,7 @@ Protected Class UpdateChecker
 		    Dim PackageURL As Text = Location.Value("url")
 		    Dim Signature As Text = Location.Value("signature")
 		    
-		    RaiseEvent UpdateAvailable(Version, NotesHTML, PackageURL, Signature)
+		    RaiseEvent UpdateAvailable(Version, PreviewText, NotesHTML, PackageURL, Signature)
 		  Catch Err As KeyNotFoundException
 		    If Not Self.mSilent Then
 		      RaiseEvent CheckError("Invalid definition file.")
@@ -153,7 +154,7 @@ Protected Class UpdateChecker
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event UpdateAvailable(Version As String, Notes As String, URL As String, Signature As String)
+		Event UpdateAvailable(Version As String, PreviewText As String, Notes As String, URL As String, Signature As String)
 	#tag EndHook
 
 

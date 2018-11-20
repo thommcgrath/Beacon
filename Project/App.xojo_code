@@ -771,7 +771,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mUpdateChecker_UpdateAvailable(Sender As UpdateChecker, Version As String, Notes As String, URL As String, Signature As String)
+		Private Sub mUpdateChecker_UpdateAvailable(Sender As UpdateChecker, Version As String, PreviewText As String, Notes As String, URL As String, Signature As String)
 		  #Pragma Unused Sender
 		  
 		  Dim Data As New Xojo.Core.Dictionary
@@ -781,6 +781,7 @@ Implements NotificationKit.Receiver
 		  Data.Value("Signature") = Signature.ToText
 		  
 		  Dim Notification As New Beacon.UserNotification("Beacon " + Version.ToText + " is now available!")
+		  Notification.SecondaryMessage = PreviewText.ToText
 		  Notification.ActionURL = "beacon://action/checkforupdate"
 		  Notification.UserData = Data
 		  Notification.DoNotResurrect = True

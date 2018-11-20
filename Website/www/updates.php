@@ -51,6 +51,7 @@ if ($results->RecordCount() == 0) {
 $values = array(
 	'build' => intval($results->Field('build_number')),
 	'version' => $results->Field('build_display'),
+	'preview' => $results->Field('preview'),
 	'mac' => array(
 		'url' => $results->Field('mac_url'),
 		'signature' => $results->Field('mac_signature')

@@ -735,7 +735,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub UpdateAvailable(Version As String, Notes As String, URL As String, Signature As String)
+		Sub UpdateAvailable(Version As String, PreviewText As String, Notes As String, URL As String, Signature As String)
 		  Self.ShowResults(Version, Notes, URL, Signature)
 		End Sub
 	#tag EndEvent

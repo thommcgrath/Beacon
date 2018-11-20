@@ -50,3 +50,5 @@ CREATE TABLE game_variables (
 GRANT SELECT ON game_variables TO thezaz_website;
 
 CREATE TRIGGER game_variables_before_update_trigger BEFORE INSERT OR UPDATE ON game_variables FOR EACH ROW EXECUTE PROCEDURE generic_update_trigger();
+
+ALTER TABLE updates ADD COLUMN preview TEXT NOT NULL DEFAULT '';
