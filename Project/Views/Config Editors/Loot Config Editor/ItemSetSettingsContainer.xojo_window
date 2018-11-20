@@ -687,6 +687,8 @@ End
 		  End If
 		  
 		  Self.ItemSet.ItemsRandomWithoutReplacement = Me.Value
+		  Self.MaxEntriesField.CheckValue
+		  Self.MinEntriesField.CheckValue
 		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
@@ -742,7 +744,11 @@ End
 		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
 		  If Self.ItemSet <> Nil Then
 		    MinValue = Max(Self.ItemSet.MinNumItems, 1)
-		    MaxValue = Max(Self.ItemSet.Count, 1)
+		    If Self.ItemSet.ItemsRandomWithoutReplacement Then
+		      MaxValue = Max(Self.ItemSet.Count, 1)
+		    Else
+		      MaxValue = 9999
+		    End If
 		  Else
 		    MinValue = 1
 		    MaxValue = 1

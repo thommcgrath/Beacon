@@ -592,7 +592,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Min(Max(Self.mMaxNumItems, Self.mMinNumItems), Max(Self.Count, 1))
+			  If Self.ItemsRandomWithoutReplacement Then
+			    Return Min(Max(Self.mMaxNumItems, Self.mMinNumItems), Max(Self.Count, 1))
+			  Else
+			    Return Max(Self.mMaxNumItems, Self.mMinNumItems)
+			  End If
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -778,7 +782,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Weight"
+			Name="RawWeight"
 			Group="Behavior"
 			Type="Double"
 		#tag EndViewProperty
