@@ -31,7 +31,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mMinNumItems = 1
 		  Self.mMaxNumItems = 3
 		  Self.mNumItemsPower = 1
-		  Self.mSetWeight = 0.5
+		  Self.mSetWeight = 500
 		  Self.mItemsRandomWithoutReplacement = True
 		  Self.mLabel = "Untitled Item Set"
 		End Sub
@@ -89,7 +89,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("MaxNumItems") = Self.MaxNumItems
 		  Keys.Value("MinNumItems") = Self.MinNumItems
 		  Keys.Value("NumItemsPower") = Self.NumItemsPower
-		  Keys.Value("SetWeight") = Self.Weight
+		  Keys.Value("RawWeight") = Self.RawWeight
+		  Keys.Value("SetWeight") = Self.RawWeight / 1000
 		  If Self.SourcePresetID <> "" Then
 		    Keys.Value("SourcePresetID") = Self.SourcePresetID
 		  End If
@@ -190,7 +191,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Parts(2) = Self.MaxNumItems.ToText(Locale, Format)
 		    Parts(3) = Self.MinNumItems.ToText(Locale, Format)
 		    Parts(4) = Self.NumItemsPower.ToText(Locale, Format)
-		    Parts(5) = Self.Weight.ToText(Locale, Format)
+		    Parts(5) = Self.RawWeight.ToText(Locale, Format)
 		    Parts(6) = Self.Label.Lowercase
 		    
 		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
@@ -220,10 +221,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  If Dict.HasKey("NumItemsPower") Then
 		    Set.NumItemsPower = Dict.Value("NumItemsPower")
 		  End If
-		  If Dict.HasKey("SetWeight") Then
-		    Set.Weight = Dict.Value("SetWeight")
+		  If Dict.HasKey("RawWeight") Then
+		    Set.RawWeight = Dict.Value("RawWeight")
+		  ElseIf Dict.HasKey("SetWeight") Then
+		    // If you don't do it this way, Xojo reads it as an integer... wtf.
+		    Dim Percentage As Double = Dict.Value("SetWeight")
+		    Set.RawWeight = Percentage * 1000
 		  ElseIf Dict.HasKey("Weight") Then
-		    Set.Weight = Dict.Value("Weight")
+		    Set.RawWeight = Dict.Value("Weight")
 		  End If
 		  If Dict.HasKey("bItemsRandomWithoutReplacement") Then
 		    Set.ItemsRandomWithoutReplacement = Dict.Value("bItemsRandomWithoutReplacement")
@@ -272,7 +277,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Set.NumItemsPower = Dict.Value("NumItemsPower")
 		  End If
 		  If Dict.HasKey("SetWeight") Then
-		    Set.Weight = Dict.Value("SetWeight")
+		    Set.RawWeight = Dict.Value("SetWeight")
 		  End If
 		  If Dict.HasKey("bItemsRandomWithoutReplacement") Then
 		    Set.ItemsRandomWithoutReplacement = Dict.Value("bItemsRandomWithoutReplacement")
@@ -339,14 +344,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Shared Function Join(Sets() As Beacon.ItemSet, Separator As Text, Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As Text
-		  Dim SumSetWeights As Double
-		  For Each Set As Beacon.ItemSet In Sets
-		    SumSetWeights = SumSetWeights + Set.Weight
-		  Next
-		  
 		  Dim Values() As Text
 		  For Each Set As Beacon.ItemSet In Sets
-		    Values.Append(Set.TextValue(Multipliers, SumSetWeights, UseBlueprints, Difficulty))
+		    Values.Append(Set.TextValue(Multipliers, UseBlueprints, Difficulty))
 		  Next
 		  
 		  Return Values.Join(Separator)
@@ -531,15 +531,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Multipliers As Beacon.Range, SumSetWeights As Double, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As Text
-		  Dim SetWeight As Integer = Xojo.Math.Round((Self.mSetWeight / SumSetWeights * 1000))
-		  
+		Function TextValue(Multipliers As Beacon.Range, UseBlueprints As Boolean, Difficulty As BeaconConfigs.Difficulty) As Text
 		  Dim Values() As Text
 		  Values.Append("SetName=""" + Self.Label + """")
 		  Values.Append("MinNumItems=" + Self.MinNumItems.ToText)
 		  Values.Append("MaxNumItems=" + Self.MaxNumItems.ToText)
 		  Values.Append("NumItemsPower=" + Self.mNumItemsPower.PrettyText)
-		  Values.Append("SetWeight=" + SetWeight.ToText)
+		  Values.Append("SetWeight=" + Self.mSetWeight.PrettyText)
 		  Values.Append("bItemsRandomWithoutReplacement=" + if(Self.mItemsRandomWithoutReplacement, "true", "false"))
 		  Values.Append("ItemEntries=(" + Beacon.SetEntry.Join(Self.mEntries, ",", Multipliers, UseBlueprints, Difficulty) + ")")
 		  Return "(" + Values.Join(",") + ")"
@@ -711,7 +709,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Value = Min(Max(Value, 0.0001), 1.0)
+			  Value = Max(Value, 0.0001)
 			  If Self.mSetWeight = Value Then
 			    Return
 			  End If
@@ -720,7 +718,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			  Self.Modified = True
 			End Set
 		#tag EndSetter
-		Weight As Double
+		RawWeight As Double
 	#tag EndComputedProperty
 
 

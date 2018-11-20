@@ -736,6 +736,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub UpdateAvailable(Version As String, PreviewText As String, Notes As String, URL As String, Signature As String)
+		  #Pragma Unused PreviewText
+		  
 		  Self.ShowResults(Version, Notes, URL, Signature)
 		End Sub
 	#tag EndEvent

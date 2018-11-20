@@ -38,10 +38,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  WeightSum = 0
 		  
 		  For Each Set As Beacon.ItemSet In ItemSetPool
-		    If Set.Weight = 0 Then
+		    If Set.RawWeight = 0 Then
 		      Continue
 		    End If
-		    WeightSum = WeightSum + Set.Weight
+		    WeightSum = WeightSum + Set.RawWeight
 		    Weights.Append(WeightSum * WeightScale)
 		    WeightLookup.Value(WeightSum * WeightScale) = Set
 		  Next
@@ -56,14 +56,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Return
 		  End If
 		  
-		  TotalWeight = Self.mSets(0).Weight
-		  MinWeight = Self.mSets(0).Weight
-		  MaxWeight = Self.mSets(0).Weight
+		  TotalWeight = Self.mSets(0).RawWeight
+		  MinWeight = Self.mSets(0).RawWeight
+		  MaxWeight = Self.mSets(0).RawWeight
 		  
 		  For I As Integer = 1 To Self.mSets.Ubound
-		    TotalWeight = TotalWeight + Self.mSets(I).Weight
-		    MinWeight = Min(MinWeight, Self.mSets(I).Weight)
-		    MaxWeight = Max(MaxWeight, Self.mSets(I).Weight)
+		    TotalWeight = TotalWeight + Self.mSets(I).RawWeight
+		    MinWeight = Min(MinWeight, Self.mSets(I).RawWeight)
+		    MaxWeight = Max(MaxWeight, Self.mSets(I).RawWeight)
 		  Next
 		  
 		  AverageWeight = TotalWeight / NumSets

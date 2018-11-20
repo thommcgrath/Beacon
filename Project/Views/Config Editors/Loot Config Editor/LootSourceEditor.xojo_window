@@ -1026,11 +1026,6 @@ End
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
 		  Dim Dicts() As Xojo.Core.Dictionary
-		  Dim SumSetWeights As Double
-		  For I As Integer = 0 To Me.ListCount - 1
-		    Dim Set As Beacon.ItemSet = Me.RowTag(I)
-		    SumSetWeights = SumSetWeights + Set.Weight
-		  Next
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
@@ -1296,26 +1291,19 @@ End
 		    End If
 		  Case "copyconfig"
 		    Dim Multipliers As Beacon.Range
-		    Dim SumSetWeights As Double
 		    Dim UseBlueprints As Boolean
 		    Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
 		    If Self.mSources.Ubound = 0 Then
 		      Multipliers = Self.mSources(0).Multipliers
 		      UseBlueprints = Self.mSources(0).UseBlueprints
-		      For Each Set As Beacon.ItemSet In Self.mSources(0)
-		        SumSetWeights = SumSetWeights + Set.Weight
-		      Next
 		    Else
 		      Multipliers = New Beacon.Range(1, 1)
 		      UseBlueprints = False
-		      For Each Target As Beacon.ItemSet In Targets
-		        SumSetWeights = SumSetWeights + Target.Weight
-		      Next
 		    End If
 		    
 		    Dim Parts() As Text
 		    For Each Target As Beacon.ItemSet In Targets
-		      Parts.Append(Target.TextValue(Multipliers, SumSetWeights, UseBlueprints, Difficulty))
+		      Parts.Append(Target.TextValue(Multipliers, UseBlueprints, Difficulty))
 		    Next
 		    
 		    Dim Board As New Clipboard

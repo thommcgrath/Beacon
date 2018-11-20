@@ -614,7 +614,7 @@ End
 			    Self.NameField.Text = Value.Label
 			    Self.MinEntriesField.Value = Value.MinNumItems
 			    Self.MaxEntriesField.Value = Value.MaxNumItems
-			    Self.WeightField.Value = Round(Value.Weight * Self.WeightScale)
+			    Self.WeightField.Value = Value.RawWeight
 			    Self.PreventDuplicatesCheck.Value = Value.ItemsRandomWithoutReplacement
 			  Else
 			    Self.mItemSetRef = Nil
@@ -770,14 +770,14 @@ End
 		    Return
 		  End If
 		  
-		  Self.ItemSet.Weight = Value / Self.WeightScale
+		  Self.ItemSet.RawWeight = Value
 		  RaiseEvent Updated
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
 		  MinValue = 1
-		  MaxValue = 1000
+		  MaxValue = 1000000
 		End Sub
 	#tag EndEvent
 	#tag Event
