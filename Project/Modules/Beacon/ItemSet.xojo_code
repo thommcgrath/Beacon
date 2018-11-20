@@ -4,7 +4,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Append(Entry As Beacon.SetEntry)
 		  Self.mEntries.Append(Entry)
-		  Self.mModified = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -50,6 +50,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mSetWeight = Source.mSetWeight
 		  Self.mLabel = Source.mLabel
 		  Self.mSourcePresetID = Source.mSourcePresetID
+		  Self.mHash = Source.mHash
+		  Self.mLastSaveTime = Source.mLastSaveTime
+		  Self.mLastHashTime = Source.mLastHashTime
+		  Self.mLastModifiedTime = Source.mLastModifiedTime
 		  
 		  For I As Integer = 0 To UBound(Source.mEntries)
 		    Self.mEntries(I) = New Beacon.SetEntry(Source.mEntries(I))
@@ -156,7 +160,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Set.MinNumItems = Preset.MinItems
 		  Set.MaxNumItems = Preset.MaxItems
 		  
-		  Set.mModified = False
+		  Set.Modified = False
 		  Return Set
 		End Function
 	#tag EndMethod
@@ -169,25 +173,43 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Hash() As Text
-		  Dim Entries() As Text
-		  Redim Entries(UBound(Self.mEntries))
-		  For I As Integer = 0 To UBound(Entries)
-		    Entries(I) = Self.mEntries(I).Hash
+		  If Self.HashIsStale Then
+		    Dim Entries() As Text
+		    Redim Entries(UBound(Self.mEntries))
+		    For I As Integer = 0 To UBound(Entries)
+		      Entries(I) = Self.mEntries(I).Hash
+		    Next
+		    Entries.Sort
+		    
+		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
+		    Dim Format As Text = "0.000"
+		    
+		    Dim Parts(5) As Text
+		    Parts(0) = Beacon.MD5(Entries.Join(",")).Lowercase
+		    Parts(1) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
+		    Parts(2) = Self.MaxNumItems.ToText(Locale, Format)
+		    Parts(3) = Self.MinNumItems.ToText(Locale, Format)
+		    Parts(4) = Self.NumItemsPower.ToText(Locale, Format)
+		    Parts(5) = Self.Weight.ToText(Locale, Format)
+		    
+		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
+		    Self.mLastHashTime = Microseconds
+		  End If
+		  Return Self.mHash
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HashIsStale() As Boolean
+		  If Self.mLastHashTime < Self.mLastModifiedTime Then
+		    Return True
+		  End If
+		  
+		  For Each Entry As Beacon.SetEntry In Self.mEntries
+		    If Entry.HashIsStale Then
+		      Return True
+		    End If
 		  Next
-		  Entries.Sort
-		  
-		  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
-		  Dim Format As Text = "0.000"
-		  
-		  Dim Parts(5) As Text
-		  Parts(0) = Beacon.MD5(Entries.Join(",")).Lowercase
-		  Parts(1) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
-		  Parts(2) = Self.MaxNumItems.ToText(Locale, Format)
-		  Parts(3) = Self.MinNumItems.ToText(Locale, Format)
-		  Parts(4) = Self.NumItemsPower.ToText(Locale, Format)
-		  Parts(5) = Self.Weight.ToText(Locale, Format)
-		  
-		  Return Beacon.MD5(Parts.Join(",")).Lowercase
 		End Function
 	#tag EndMethod
 
@@ -237,7 +259,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Set.mSourcePresetID = Dict.Value("SourcePresetID")
 		  End If
 		  
-		  Set.mModified = False
+		  Set.Modified = False
 		  Return Set
 		End Function
 	#tag EndMethod
@@ -280,7 +302,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Set.mSourcePresetID = Dict.Value("SourcePresetID")
 		  End If
 		  
-		  Set.mModified = False
+		  Set.Modified = False
 		  Return Set
 		End Function
 	#tag EndMethod
@@ -299,7 +321,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Insert(Index As Integer, Entry As Beacon.SetEntry)
 		  Self.mEntries.Insert(Index, Entry)
-		  Self.mModified = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -332,7 +354,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
-		  If Self.mModified Then
+		  If Self.mLastModifiedTime > Self.mLastSaveTime Then
 		    Return True
 		  End If
 		  
@@ -346,7 +368,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
-		  Self.mModified = Value
+		  If Value = False Then
+		    Self.mLastSaveTime = Microseconds
+		  Else
+		    Self.mLastModifiedTime = Microseconds
+		  End If
 		  
 		  If Not Value Then
 		    For Each Entry As Beacon.SetEntry In Self.mEntries
@@ -372,7 +398,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Operator_Redim(Bound As Integer)
 		  Redim Self.mEntries(Bound)
-		  Self.mModified = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -385,7 +411,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Operator_Subscript(Index As Integer, Assigns Entry As Beacon.SetEntry)
 		  Self.mEntries(Index) = Entry
-		  Self.mModified = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -403,7 +429,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  Self.mEntries = Clone.mEntries
 		  Self.mSourcePresetID = Clone.mSourcePresetID
-		  Self.mModified = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -416,7 +442,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Remove(Index As Integer)
 		  Self.mEntries.Remove(Index)
-		  Self.mModified = True
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 
@@ -543,7 +569,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			  End If
 			  
 			  Self.mItemsRandomWithoutReplacement = Value
-			  Self.mModified = True
+			  Self.Modified = True
 			End Set
 		#tag EndSetter
 		ItemsRandomWithoutReplacement As Boolean
@@ -562,7 +588,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			  End If
 			  
 			  Self.mLabel = Value
-			  Self.mModified = True
+			  Self.Modified = True
 			End Set
 		#tag EndSetter
 		Label As Text
@@ -582,7 +608,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			  End If
 			  
 			  Self.mMaxNumItems = Value
-			  Self.mModified = True
+			  Self.Modified = True
 			End Set
 		#tag EndSetter
 		MaxNumItems As Integer
@@ -590,6 +616,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mEntries() As Beacon.SetEntry
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHash As Text
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -606,7 +636,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			  End If
 			  
 			  Self.mMinNumItems = Value
-			  Self.mModified = True
+			  Self.Modified = True
 			End Set
 		#tag EndSetter
 		MinNumItems As Integer
@@ -621,15 +651,23 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mLastHashTime As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastModifiedTime As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastSaveTime As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mMaxNumItems As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mMinNumItems As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mModified As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -658,7 +696,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			  End If
 			  
 			  Self.mNumItemsPower = Value
-			  Self.mModified = True
+			  Self.Modified = True
 			End Set
 		#tag EndSetter
 		NumItemsPower As Double
@@ -678,7 +716,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			  End If
 			  
 			  Self.mSetWeight = Value
-			  Self.mModified = True
+			  Self.Modified = True
 			End Set
 		#tag EndSetter
 		Weight As Double

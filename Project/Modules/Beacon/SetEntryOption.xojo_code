@@ -3,14 +3,19 @@ Protected Class SetEntryOption
 Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Sub Constructor(Engram As Beacon.Engram, Weight As Double)
-		  Self.mEngram = Engram
+		  Self.mEngram = New Beacon.Engram(Engram)
 		  Self.mWeight = Weight
+		  Self.mLastModifiedTime = Microseconds
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.SetEntryOption)
-		  Self.mEngram = Source.mEngram
+		  Self.mEngram = New Beacon.Engram(Source.mEngram)
+		  Self.mHash = Source.mHash
+		  Self.mLastHashTime = Source.mLastHashTime
+		  Self.mLastModifiedTime = Source.mLastModifiedTime
+		  Self.mLastSaveTime = Source.mLastSaveTime
 		  Self.mWeight = Source.mWeight
 		End Sub
 	#tag EndMethod
@@ -25,7 +30,7 @@ Implements Beacon.DocumentItem
 		  For Each Engram As Beacon.Engram In Engrams
 		    If Engram.ClassString = ClassString Then
 		      Self.mEngram = New Beacon.Engram(Engram)
-		      Self.mModified = True
+		      Self.mLastModifiedTime = Microseconds
 		      Return
 		    End If
 		  Next
@@ -34,7 +39,7 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Engram() As Beacon.Engram
-		  Return Self.mEngram
+		  Return New Beacon.Engram(Self.mEngram)
 		End Function
 	#tag EndMethod
 
@@ -54,14 +59,25 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Hash() As Text
-		  Dim Path As Text
-		  If Self.mEngram = Nil Then
-		    Path = ""
-		  Else
-		    Path = If(Self.mEngram.Path <> "", Self.mEngram.Path, Self.mEngram.ClassString)
+		  If Self.HashIsStale Then
+		    Dim Path As Text
+		    If Self.mEngram = Nil Then
+		      Path = ""
+		    Else
+		      Path = If(Self.mEngram.Path <> "", Self.mEngram.Path, Self.mEngram.ClassString)
+		    End If
+		    
+		    Self.mHash = Beacon.MD5(Path.Lowercase + "@" + Self.mWeight.ToText(Xojo.Core.Locale.Raw, "0.0000")).Lowercase
+		    Self.mLastHashTime = Microseconds
 		  End If
 		  
-		  Return Beacon.MD5(Path.Lowercase + "@" + Self.mWeight.ToText(Xojo.Core.Locale.Raw, "0.0000")).Lowercase
+		  Return Self.mHash
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function HashIsStale() As Boolean
+		  Return Self.mLastHashTime < Self.mLastModifiedTime
 		End Function
 	#tag EndMethod
 
@@ -91,7 +107,9 @@ Implements Beacon.DocumentItem
 		    Engram = BackupEngram
 		  End If
 		  
-		  Return New Beacon.SetEntryOption(Engram, Weight)
+		  Dim Option As New Beacon.SetEntryOption(Engram, Weight)
+		  Option.Modified = False
+		  Return Option
 		End Function
 	#tag EndMethod
 
@@ -103,13 +121,17 @@ Implements Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
-		  Return Self.mModified
+		  Return Self.mLastModifiedTime > Self.mLastSaveTime
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
-		  Self.mModified = Value
+		  If Value = False Then
+		    Self.mLastSaveTime = Microseconds
+		  Else
+		    Self.mLastModifiedTime = Microseconds
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -138,7 +160,19 @@ Implements Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModified As Boolean
+		Private mHash As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastHashTime As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastModifiedTime As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLastSaveTime As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
