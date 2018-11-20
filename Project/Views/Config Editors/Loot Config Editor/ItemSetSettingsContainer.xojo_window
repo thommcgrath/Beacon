@@ -712,7 +712,7 @@ End
 	#tag Event
 		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
 		  MinValue = 1
-		  MaxValue = If(Self.ItemSet <> Nil, Max(Self.ItemSet.MaxNumItems, 1), 1)
+		  MaxValue = 9999
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -742,17 +742,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
-		  If Self.ItemSet <> Nil Then
-		    MinValue = Max(Self.ItemSet.MinNumItems, 1)
-		    If Self.ItemSet.ItemsRandomWithoutReplacement Then
-		      MaxValue = Max(Self.ItemSet.Count, 1)
-		    Else
-		      MaxValue = 9999
-		    End If
-		  Else
-		    MinValue = 1
-		    MaxValue = 1
-		  End If
+		  MinValue = 1
+		  MaxValue = 9999
 		End Sub
 	#tag EndEvent
 	#tag Event

@@ -691,15 +691,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Self.SetsRandomWithoutReplacement Then
-			    If Self.AppendMode Then
-			      Return Min(Self.mMaxItemSets, Self.mSets.Ubound + 1)
-			    Else
-			      Return Min(Self.mMaxItemSets, Self.mSets.Ubound + Self.mMandatoryItemSets.Ubound + 2)
-			    End If
-			  Else
-			    Return Self.mMaxItemSets
-			  End If
+			  Return Max(Self.mMaxItemSets, 1)
 			End Get
 		#tag EndGetter
 		#tag Setter

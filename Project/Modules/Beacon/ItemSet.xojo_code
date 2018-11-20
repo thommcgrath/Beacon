@@ -451,11 +451,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  
 		  Dim NumEntries As Integer = Self.Count
-		  Dim MinEntries As Integer = Self.MinNumItems
-		  Dim MaxEntries As Integer = Self.MaxNumItems
+		  Dim MinEntries As Integer = Min(Self.MinNumItems, Self.MaxNumItems)
+		  Dim MaxEntries As Integer = Max(Self.MaxNumItems, Self.MinNumItems)
 		  
 		  Dim SelectedEntries() As Beacon.SetEntry
-		  If NumEntries = MinEntries And MinEntries = MaxEntries Then
+		  If NumEntries = MinEntries And MinEntries = MaxEntries And Self.ItemsRandomWithoutReplacement Then
 		    // All
 		    For Each Entry As Beacon.SetEntry In Self.mEntries
 		      SelectedEntries.Append(Entry)
@@ -473,6 +473,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Dim WeightSum, Weights() As Double
 		    Dim WeightLookup As Xojo.Core.Dictionary
 		    For I As Integer = 1 To ChooseEntries
+		      If Pool.Ubound = -1 Then
+		        Exit For I
+		      End If
+		      
 		      If RecomputeFigures Then
 		        Self.ComputeSimulationFigures(Pool, WeightScale, WeightSum, Weights, WeightLookup)
 		        RecomputeFigures = False
@@ -592,11 +596,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  If Self.ItemsRandomWithoutReplacement Then
-			    Return Min(Max(Self.mMaxNumItems, Self.mMinNumItems), Max(Self.Count, 1))
-			  Else
-			    Return Max(Self.mMaxNumItems, Self.mMinNumItems)
-			  End If
+			  Return Max(Self.mMaxNumItems, 1)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -624,7 +624,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Max(Min(Self.mMinNumItems, Self.mMaxNumItems, Self.Count), 1)
+			  Return Max(Self.mMinNumItems, 1)
 			End Get
 		#tag EndGetter
 		#tag Setter
