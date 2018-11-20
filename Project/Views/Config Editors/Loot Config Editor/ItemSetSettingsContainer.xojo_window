@@ -373,7 +373,7 @@ Begin ContainerControl ItemSetSettingsContainer
       UseFocusRing    =   True
       Value           =   0
       Visible         =   True
-      Width           =   50
+      Width           =   82
    End
    Begin RangeField MaxEntriesField
       AcceptTabs      =   False
@@ -417,7 +417,7 @@ Begin ContainerControl ItemSetSettingsContainer
       UseFocusRing    =   True
       Value           =   0
       Visible         =   True
-      Width           =   50
+      Width           =   82
    End
    Begin RangeField WeightField
       AcceptTabs      =   False
@@ -461,7 +461,7 @@ Begin ContainerControl ItemSetSettingsContainer
       UseFocusRing    =   True
       Value           =   0
       Visible         =   True
-      Width           =   50
+      Width           =   82
    End
    Begin UpDownArrows WeightStepper
       AcceptFocus     =   False
@@ -471,7 +471,7 @@ Begin ContainerControl ItemSetSettingsContainer
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   151
+      Left            =   183
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -494,7 +494,7 @@ Begin ContainerControl ItemSetSettingsContainer
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   151
+      Left            =   183
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -517,7 +517,7 @@ Begin ContainerControl ItemSetSettingsContainer
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   151
+      Left            =   183
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
