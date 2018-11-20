@@ -611,14 +611,18 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  If Self.mAppendMode Then
 		    Values.Append("bAppendItemSets=true")
 		  Else
-		    Values.Append("MinItemSets=" + Self.MinItemSets.ToText)
-		    Values.Append("MaxItemSets=" + Self.MaxItemSets.ToText)
+		    Dim MinSets As Integer = Min(Self.MinItemSets, Self.MaxItemSets)
+		    Dim MaxSets As Integer = Max(Self.MaxItemSets, Self.MinItemSets)
+		    
+		    Values.Append("MinItemSets=" + MinSets.ToText)
+		    Values.Append("MaxItemSets=" + MaxSets.ToText)
 		    Values.Append("NumItemSetsPower=" + Self.mNumItemSetsPower.PrettyText)
 		    Values.Append("bSetsRandomWithoutReplacement=" + if(Self.mSetsRandomWithoutReplacement, "true", "false"))
 		  End If
 		  
 		  Dim Sets() As Beacon.ItemSet
-		  If Self.mMandatoryItemSets.Ubound = -1 Then
+		  If Self.mMandatoryItemSets.Ubound = -1 Or Self.mAppendMode Then
+		    // Don't include the mandatory sets in append mode
 		    Sets = Self.mSets
 		  Else
 		    For Each Set As Beacon.ItemSet In Self.mSets
@@ -688,7 +692,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		#tag Getter
 			Get
 			  If Self.SetsRandomWithoutReplacement Then
-			    Return Min(Self.mMaxItemSets, Self.mSets.Ubound + Self.mMandatoryItemSets.Ubound + 2)
+			    If Self.AppendMode Then
+			      Return Min(Self.mMaxItemSets, Self.mSets.Ubound + 1)
+			    Else
+			      Return Min(Self.mMaxItemSets, Self.mSets.Ubound + Self.mMandatoryItemSets.Ubound + 2)
+			    End If
 			  Else
 			    Return Self.mMaxItemSets
 			  End If

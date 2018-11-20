@@ -10,7 +10,7 @@ Begin ContainerControl LootSourceSettingsContainer
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   106
+   Height          =   130
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -74,7 +74,7 @@ Begin ContainerControl LootSourceSettingsContainer
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   105
+      Top             =   129
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -352,6 +352,39 @@ Begin ContainerControl LootSourceSettingsContainer
       Visible         =   True
       Width           =   13
    End
+   Begin CheckBox AppendModeCheck
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Add Item Sets to Default"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   "When checked, the item sets are added to the default loot source contents. When unchecked, the item sets completely replace the loot source contents."
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      State           =   0
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   104
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   210
+   End
 End
 #tag EndWindow
 
@@ -386,10 +419,12 @@ End
 		    Self.MinItemSetsField.Text = ""
 		    Self.MaxItemSetsField.Text = ""
 		    Self.NoDuplicatesCheck.State = CheckBox.CheckedStates.Unchecked
+		    Self.AppendModeCheck.State = CheckBox.CheckedStates.Unchecked
 		  Else
 		    Dim CommonMinItemSets As Integer = Sources(0).MinItemSets
 		    Dim CommonMaxItemSets As Integer = Sources(0).MaxItemSets
 		    Dim CommonNoDuplicates As CheckBox.CheckedStates = If(Sources(0).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
+		    Dim CommonAppendMode As CheckBox.CheckedStates = If(Sources(0).AppendMode, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
 		    
 		    For I As Integer = 0 To Sources.Ubound
 		      Self.mSources(I) = New WeakRef(Sources(I))
@@ -403,11 +438,15 @@ End
 		      If If(Sources(I).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) <> CommonNoDuplicates Then
 		        CommonNoDuplicates = CheckBox.CheckedStates.Indeterminate
 		      End If
+		      If If(Sources(I).AppendMode, CheckBox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) <> CommonAppendMode Then
+		        CommonAppendMode = CheckBox.CheckedStates.Indeterminate
+		      End If
 		    Next
 		    
 		    Self.MinItemSetsField.Text = If(CommonMinItemSets > -1, Str(CommonMinItemSets, "-0"), "")
 		    Self.MaxItemSetsField.Text = If(CommonMaxItemSets > -1, Str(CommonMaxItemSets, "-0"), "")
 		    Self.NoDuplicatesCheck.State = CommonNoDuplicates
+		    Self.AppendModeCheck.State = CommonAppendMode
 		  End If
 		  Self.mSettingUp = False
 		End Sub
@@ -426,6 +465,7 @@ End
 		  Self.MinItemSetsField.Visible = Self.DisclosureTriangle1.Value
 		  Self.MinItemSetsLabel.Visible = Self.DisclosureTriangle1.Value
 		  Self.NoDuplicatesCheck.Visible = Self.DisclosureTriangle1.Value
+		  Self.AppendModeCheck.Visible = Self.DisclosureTriangle1.Value
 		End Sub
 	#tag EndMethod
 
@@ -447,7 +487,7 @@ End
 	#tag Constant, Name = CollapsedHeight, Type = Double, Dynamic = False, Default = \"23", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ExpandedHeight, Type = Double, Dynamic = False, Default = \"106", Scope = Private
+	#tag Constant, Name = ExpandedHeight, Type = Double, Dynamic = False, Default = \"130", Scope = Private
 	#tag EndConstant
 
 
@@ -595,6 +635,22 @@ End
 		  End If
 		  
 		  Self.MaxItemSetsField.Value = Self.MaxItemSetsField.Value + 1
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events AppendModeCheck
+	#tag Event
+		Sub Action()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Dim Sources() As Beacon.LootSource = Self.LootSources
+		  For I As Integer = 0 To Sources.Ubound
+		    Sources(I).AppendMode = Me.Value
+		  Next
+		  
+		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
 #tag EndEvents
