@@ -1189,6 +1189,20 @@ End
 		  End If
 		  Base.Append(ReconfigureItem)
 		  
+		  If Keyboard.OptionKey Then
+		    Base.Append(New MenuItem(MenuItem.TextSeparator))
+		    
+		    Dim CopyJSONItem As New MenuItem("Copy JSON", Targets)
+		    CopyJSONItem.Name = "copyjson"
+		    CopyJSONItem.Enabled = True
+		    Base.Append(CopyJSONItem)
+		    
+		    Dim CopyConfigItem As New MenuItem("Copy Config Part", Targets)
+		    CopyConfigItem.Name = "copyconfig"
+		    CopyConfigItem.Enabled = True
+		    Base.Append(CopyConfigItem)
+		  End If
+		  
 		  Return True
 		End Function
 	#tag EndEvent
@@ -1266,6 +1280,49 @@ End
 		    If UBound(Targets) > 0 Then
 		      // Editor will be disabled, so it won't be obvious something happened.
 		      Self.ShowAlert("Rebuild complete", "All selected item sets have been rebuilt according to their preset.")
+		    End If
+		  Case "copyjson"
+		    If Targets.Ubound = 0 Then
+		      Dim Dict As Xojo.Core.Dictionary = Targets(0).Export()
+		      Dim Board As New Clipboard
+		      Board.Text = Xojo.Data.GenerateJSON(Dict)
+		    Else
+		      Dim Arr() As Xojo.Core.Dictionary
+		      For Each Target As Beacon.ItemSet In Targets
+		        Arr.Append(Target.Export())
+		      Next
+		      Dim Board As New Clipboard
+		      Board.Text = Xojo.Data.GenerateJSON(Arr)
+		    End If
+		  Case "copyconfig"
+		    Dim Multipliers As Beacon.Range
+		    Dim SumSetWeights As Double
+		    Dim UseBlueprints As Boolean
+		    Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
+		    If Self.mSources.Ubound = 0 Then
+		      Multipliers = Self.mSources(0).Multipliers
+		      UseBlueprints = Self.mSources(0).UseBlueprints
+		      For Each Set As Beacon.ItemSet In Self.mSources(0)
+		        SumSetWeights = SumSetWeights + Set.Weight
+		      Next
+		    Else
+		      Multipliers = New Beacon.Range(1, 1)
+		      UseBlueprints = False
+		      For Each Target As Beacon.ItemSet In Targets
+		        SumSetWeights = SumSetWeights + Target.Weight
+		      Next
+		    End If
+		    
+		    Dim Parts() As Text
+		    For Each Target As Beacon.ItemSet In Targets
+		      Parts.Append(Target.TextValue(Multipliers, SumSetWeights, UseBlueprints, Difficulty))
+		    Next
+		    
+		    Dim Board As New Clipboard
+		    If Parts.Ubound = 0 Then
+		      Board.Text = Parts(0)
+		    Else
+		      Board.Text = "ItemSets=(" + Parts.Join(",") + ")"
 		    End If
 		  End Select
 		  
