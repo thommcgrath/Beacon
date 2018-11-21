@@ -11,6 +11,7 @@ CREATE TABLE updates (
 	build_display TEXT NOT NULL,
 	notes TEXT NOT NULL,
 	preview TEXT NOT NULL DEFAULT '',
+	stage INTEGER NOT NULL DEFAULT 0,
 	mac_url TEXT NOT NULL,
 	mac_signature CITEXT NOT NULL,
 	win_url TEXT NOT NULL,

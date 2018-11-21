@@ -3,9 +3,13 @@
 require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
 header('Cache-Control: no-cache');
 
+$stage = 3;
 $current_build = 0;
 if (isset($_GET['build'])) {
 	$current_build = intval($_GET['build']);
+}
+if (isset($_GET['stage'])) {
+	$stage = intval($_GET['stage']);
 }
 if (isset($_GET['html'])) {
 	$html_mode = true;
@@ -33,7 +37,7 @@ if ($include_notices) {
 	}
 }
 
-$results = $database->Query('SELECT * FROM updates WHERE build_number > $1 ORDER BY build_number DESC;', $current_build);
+$results = $database->Query('SELECT * FROM updates WHERE build_number > $1 AND stage >= $2 ORDER BY build_number DESC;', $current_build, $stage);
 if ($results->RecordCount() == 0) {
 	if ($html_mode) {
 		echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Beacon Update</title></head><body><h1>No update</h1></body></html>';

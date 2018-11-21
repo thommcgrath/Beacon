@@ -51,4 +51,9 @@ GRANT SELECT ON game_variables TO thezaz_website;
 
 CREATE TRIGGER game_variables_before_update_trigger BEFORE INSERT OR UPDATE ON game_variables FOR EACH ROW EXECUTE PROCEDURE generic_update_trigger();
 
-ALTER TABLE updates ADD COLUMN preview TEXT NOT NULL DEFAULT '';
+BEGIN TRANSACTION;
+ALTER TABLE updates ADD COLUMN preview TEXT NOT NULL DEFAULT '', ADD COLUMN stage TEXT NOT NULL DEFAULT 0;
+UPDATE updates SET stage = 1 WHERE build_display LIKE '1.0.0a%';
+UPDATE updates SET stage = 2 WHERE build_display LIKE '1.0.0b%';
+UPDATE updates SET stage = 3 WHERE build_display = '1.0.0';
+COMMIT;
