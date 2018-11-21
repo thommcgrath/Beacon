@@ -44,10 +44,9 @@ Begin ContainerControl DocumentImportView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   4
       Visible         =   True
       Width           =   600
       Begin RadioButton SourceRadio
@@ -251,7 +250,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -281,7 +279,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -311,7 +308,6 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -665,7 +661,6 @@ Begin ContainerControl DocumentImportView
       End
    End
    Begin Timer DiscoveryWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -738,7 +733,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Importer_Finished(Sender As Beacon.ImportThread, ParsedData As Xojo.Core.Dictionary)
-		  Dim Idx As Integer
+		  Dim Idx As Integer = -1
 		  For I As Integer = 0 To Self.mImporters.Ubound
 		    If Self.mImporters(I) = Sender Then
 		      Self.mParsedData(I) = ParsedData
@@ -747,14 +742,19 @@ End
 		    End If
 		  Next
 		  
+		  If Idx = -1 Then
+		    Return
+		  End If
+		  
+		  Dim Engine As Beacon.DiscoveryEngine = Self.mEngines(Idx)
+		  Dim CommandLineOptions As Xojo.Core.Dictionary = Engine.CommandLineOptions
+		  If CommandLineOptions = Nil Then
+		    CommandLineOptions = New Xojo.Core.Dictionary
+		  End If
+		  Dim Document As New Beacon.Document
+		  Document.MapCompatibility = Engine.Map
+		  
 		  Try
-		    Dim Engine As Beacon.DiscoveryEngine = Self.mEngines(Idx)
-		    Dim Profile As Beacon.ServerProfile = Engine.Profile
-		    Dim CommandLineOptions As Xojo.Core.Dictionary = Engine.CommandLineOptions
-		    If CommandLineOptions = Nil Then
-		      CommandLineOptions = New Xojo.Core.Dictionary
-		    End If
-		    
 		    Dim Maps() As Beacon.Map = Beacon.Maps.ForMask(Engine.Map)
 		    If Maps.Ubound = -1 Then
 		      Maps.Append(Beacon.Maps.TheIsland)
@@ -778,14 +778,21 @@ End
 		      End If
 		    End If
 		    
-		    Dim Document As New Beacon.Document
-		    Document.MapCompatibility = Engine.Map
 		    Document.AddConfigGroup(New BeaconConfigs.Difficulty(DifficultyValue))
-		    
+		  Catch Err As RuntimeException
+		    Document.AddConfigGroup(New BeaconConfigs.Difficulty(5.0))
+		  End Try
+		  
+		  Try
 		    If Self.mOAuthData <> Nil And Self.mOAuthProvider <> "" Then
 		      Document.OAuthData(Self.mOAuthProvider) = Self.mOAuthData
 		    End If
+		  Catch Err As RuntimeException
 		    
+		  End Try
+		  
+		  Try
+		    Dim Profile As Beacon.ServerProfile = Engine.Profile
 		    If Profile <> Nil Then
 		      If ParsedData.HasKey("SessionName") Then
 		        Profile.Name = ParsedData.Value("SessionName")
@@ -793,17 +800,21 @@ End
 		      
 		      Document.Add(Profile)
 		    End If
+		  Catch Err As RuntimeException
 		    
-		    Dim ConfigNames() As Text = BeaconConfigs.AllConfigNames()
-		    For Each ConfigName As Text In ConfigNames
-		      If ConfigName = BeaconConfigs.Difficulty.ConfigName Or ConfigName = BeaconConfigs.CustomContent.ConfigName Then
-		        // Difficulty and custom content area special
-		        Continue For ConfigName
-		      End If
-		      
-		      Dim ConfigInfo As Xojo.Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(ConfigName)
-		      Dim Methods() As Xojo.Introspection.MethodInfo = ConfigInfo.Methods
-		      For Each Signature As Xojo.Introspection.MethodInfo In Methods
+		  End Try
+		  
+		  Dim ConfigNames() As Text = BeaconConfigs.AllConfigNames()
+		  For Each ConfigName As Text In ConfigNames
+		    If ConfigName = BeaconConfigs.Difficulty.ConfigName Or ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		      // Difficulty and custom content area special
+		      Continue For ConfigName
+		    End If
+		    
+		    Dim ConfigInfo As Xojo.Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(ConfigName)
+		    Dim Methods() As Xojo.Introspection.MethodInfo = ConfigInfo.Methods
+		    For Each Signature As Xojo.Introspection.MethodInfo In Methods
+		      Try
 		        If Signature.IsShared And Signature.Name = "FromImport" And Signature.Parameters.Ubound = 3 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
 		          Dim Params(3) As Auto
 		          Params(0) = ParsedData
@@ -816,30 +827,37 @@ End
 		          End If
 		          Continue For ConfigName
 		        End If
-		      Next
+		      Catch Err As RuntimeException
+		        
+		      End Try
 		    Next
-		    
-		    // Now figure out what configs we'll generate so CustomContent can figure out what NOT to capture.
-		    // Do not do this in the loop above to ensure all configs are loaded first, in case they rely on each other.
-		    Dim GameIniValues As New Xojo.Core.Dictionary
-		    Dim GameUserSettingsIniValues As New Xojo.Core.Dictionary
-		    Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
-		    For Each Config As Beacon.ConfigGroup In Configs
-		      Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document))
-		      Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document))
-		    Next
-		    
-		    Dim CustomContent As New BeaconConfigs.CustomContent
+		  Next
+		  
+		  // Now figure out what configs we'll generate so CustomContent can figure out what NOT to capture.
+		  // Do not do this in the loop above to ensure all configs are loaded first, in case they rely on each other.
+		  Dim GameIniValues As New Xojo.Core.Dictionary
+		  Dim GameUserSettingsIniValues As New Xojo.Core.Dictionary
+		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
+		  For Each Config As Beacon.ConfigGroup In Configs
+		    Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document))
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document))
+		  Next
+		  
+		  Dim CustomContent As New BeaconConfigs.CustomContent
+		  Try
 		    CustomContent.GameIniContent(GameIniValues) = Sender.GameIniContent
-		    CustomContent.GameUserSettingsIniContent(GameUserSettingsIniValues) = Sender.GameUserSettingsIniContent
-		    If CustomContent.Modified Then
-		      Document.AddConfigGroup(CustomContent)
-		    End If
-		    
-		    Self.mDocuments(Idx) = Document
 		  Catch Err As RuntimeException
-		    
 		  End Try
+		  Try
+		    CustomContent.GameUserSettingsIniContent(GameUserSettingsIniValues) = Sender.GameUserSettingsIniContent
+		  Catch Err As RuntimeException
+		  End Try
+		  If CustomContent.Modified Then
+		    Document.AddConfigGroup(CustomContent)
+		  End If
+		  
+		  Self.mDocuments(Idx) = Document
+		  Exception Unhandled As RuntimeException
 		End Sub
 	#tag EndMethod
 
