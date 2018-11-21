@@ -100,7 +100,7 @@ Begin DiscoveryView LocalDiscoveryView
       TabStop         =   True
       Text            =   ""
       TextColor       =   &c00000000
-      TextFont        =   "System"
+      TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   151
@@ -303,7 +303,6 @@ Begin DiscoveryView LocalDiscoveryView
       Width           =   560
    End
    Begin ClipboardWatcher Watcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
