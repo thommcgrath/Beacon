@@ -1,33 +1,151 @@
 <?php
 
+interface FTPProvider {
+	public function Connect(string $host, int $port, string $user, string $pass);
+	public function Close();
+	
+	public function ListFiles(string $remote_directory_path);
+	public function Download(string $remote_file_path);
+	public function Upload(string $remote_file_path, string $local_file_path);
+}
+
+class FTPConnection implements FTPProvider {
+	protected $connection;
+	
+	public function Connect(string $host, int $port, string $user, string $pass) {
+		$connection = @ftp_connect($host, $port);
+		if (!@ftp_login($connection, $user, $pass)) {
+			return false;
+		}
+		$this->connection = $connection;
+		ftp_pasv($connection, true);
+		return true;
+	}
+	
+	public function Close() {
+		ftp_close($this->connection);
+		$this->connection = null;
+	}
+	
+	public function ListFiles(string $remote_directory_path) {
+		$files = ftp_nlist($this->connection, $remote_directory_path);
+		$filenames = array();
+		foreach ($files as $file) {
+			$filenames[] = basename($file);
+		}
+		return $filenames;
+	}
+	
+	public function Download(string $remote_file_path) {
+		ob_start();
+		$result = @ftp_get($this->connection, "php://output", $remote_file_path, FTP_ASCII);
+		$data = ob_get_contents();
+		ob_end_clean();
+		return $result ? $data : false;
+	}
+	
+	public function Upload(string $remote_file_path, string $content) {
+		return @ftp_put($this->connection, $ftp_path, $temp_path, FTP_ASCII);
+	}
+}
+
+class FTPSSLConnection extends FTPConnection {
+	public function Connect(string $host, int $port, string $user, string $pass) {
+		$connection = @ftp_ssl_connect($host, $port);
+		if (!@ftp_login($connection, $user, $pass)) {
+			return false;
+		}
+		$this->connection = $connection;
+		ftp_pasv($connection, true);
+		return true;
+	}
+}
+
+class SFTPConnection implements FTPProvider {
+	protected $ssh_connection;
+	protected $ftp_connection;
+	
+	public function Connect(string $host, int $port, string $user, string $pass) {
+		$ssh_connection = @ssh2_connect($host, $port);
+		if ($ssh_connection === false) {
+			return false;
+		}
+		
+		$authenticated = @ssh2_auth_password($ssh_connection, $user, $pass);
+		if ($authenticated === false) {
+			return false;
+		}
+		
+		$this->ftp_connection = ssh2_sftp($ssh_connection);
+		$this->ssh_connection = $ssh_connection;
+		return true;
+	}
+	
+	public function Close() {
+		ssh2_disconnect($this->ssh_connection);
+		$this->connection = null;
+	}
+	
+	public function ListFiles(string $remote_directory_path) {
+		$fd = intval($this->ftp_connection);
+		$handle = @opendir("ssh2.sftp://$fd/$remote_directory_path");
+		$files = array();
+		if (!$handle) {
+			return $files;
+		}
+		while (false != ($entry = readdir($handle))){
+			$files[] = $entry;
+		}
+		closedir($handle);
+		return $files;
+	}
+	
+	public function Download(string $remote_file_path) {
+		return @file_get_contents('ssh2.sftp://' . intval($this->ftp_connection) . '/' . $remote_file_path);
+	}
+	
+	public function Upload(string $remote_file_path, string $local_file_path) {
+		return @file_put_contents('ssh2.sftp://' . intval($this->ftp_connection) . '/' . $remote_file_path, file_get_contents($local_file_path));
+	}
+}
+
+function sftp_debug_callback($message, $language, $always_display) {
+	printf("Debug: %s\n", $message);
+}
+
 require(dirname(__FILE__) . '/loader.php');
 
 $method = BeaconAPI::Method();
-BeaconAPI::Authorize();
+//BeaconAPI::Authorize();
 
 $ftp_user = isset($_REQUEST['user']) ? $_REQUEST['user'] : BeaconAPI::ReplyError('Missing user variable.', null, 400);
 $ftp_pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : BeaconAPI::ReplyError('Missing pass variable.', null, 400);
 $ftp_host = isset($_REQUEST['host']) ? $_REQUEST['host'] : BeaconAPI::ReplyError('Missing host variable.', null, 400);
 $ftp_port = isset($_REQUEST['port']) ? intval($_REQUEST['port']) : 0;
+$ftp_mode = isset($_REQUEST['mode']) ? strtolower($_REQUEST['mode']) : 'ftp';
 if ($ftp_port == 0) {
 	$ftp_port = 21;
 }
 $ref = isset($_REQUEST['ref']) ? $_REQUEST['ref'] : BeaconCommon::GenerateUUID();
 
-$connection = ftp_ssl_connect($ftp_host, $ftp_port);
-if ($connection === false) {
+if ($ftp_port == 22 || $ftp_mode == 'sftp') {
+	$class_names = array('SFTPConnection');
+} elseif ($ftp_port == 21 || $ftp_mode == 'ftp') {
+	$class_names = array('FTPSSLConnection', 'FTPConnection');
+} else {
+	$class_names = array('FTPSSLConnection', 'FTPConnection', 'SFTPConnection');
+}
+$ftp_provider = null;
+foreach ($class_names as $class_name) {
+	$instance = new $class_name();
+	if ($instance->Connect($ftp_host, $ftp_port, $ftp_user, $ftp_pass)) {
+		$ftp_provider = $instance;
+		break;
+	}
+}
+if (is_null($ftp_provider)) {
 	BeaconAPI::ReplyError('Unable to connect to host.', array('ref' => $ref, 'host' => $ftp_host . ':' . $ftp_port), 500);
 }
-if (!@ftp_login($connection, $ftp_user, $ftp_pass)) {
-	$connection = ftp_connect($ftp_host, $ftp_port);
-	if ($connection === false) {
-		BeaconAPI::ReplyError('Unable to connect to host.', array('ref' => $ref, 'host' => $ftp_host . ':' . $ftp_port), 500);
-	}
-	if (!@ftp_login($connection, $ftp_user, $ftp_pass)) {
-		BeaconAPI::ReplyError('Unable to authenticate with host.', array('ref' => $ref), 500);
-	}
-}
-ftp_pasv($connection, true);
 
 switch ($method) {
 case 'GET':
@@ -38,10 +156,10 @@ case 'GET':
 			array('ShooterGame'),
 			array('Saved')
 		);
-		$ftp_path = Discover($connection, '', $hier);
-		$config_path = Discover($connection, $ftp_path . 'Config/', array(array('WindowsServer', 'LinuxServer', 'WindowsNoEditor')));
-		$game_ini_path = $config_path . 'Game.ini';
-		$settings_ini_path = $config_path . 'GameUserSettings.ini';
+		$ftp_path = Discover($ftp_provider, '', $hier);
+		$config_path = Discover($ftp_provider, $ftp_path . '/Config', array(array('WindowsServer', 'LinuxServer', 'WindowsNoEditor')));
+		$game_ini_path = $config_path . '/Game.ini';
+		$settings_ini_path = $config_path . '/GameUserSettings.ini';
 
 		$results = array(
 			'Game.ini' => $game_ini_path,
@@ -50,21 +168,17 @@ case 'GET':
 		);
 
 		$log_found = false;
-		$logs_path = $ftp_path . 'Logs';
-		$logs_list = ftp_nlist($connection, $logs_path);
+		$logs_path = $ftp_path . '/Logs';
+		$logs_list = $ftp_provider->ListFiles($logs_path);
 		rsort($logs_list);
 		foreach ($logs_list as $log_file) {
 			$filename = basename($log_file);
 			if (substr($filename, 0, 11) != 'ShooterGame') {
 				continue;
 			}
-
-			ob_start();
-			$result = ftp_get($connection, "php://output", $log_file, FTP_ASCII);
-			$data = ob_get_contents();
-			ob_end_clean();
-
-			if ((!$result) || ($data == '')) {
+			
+			$data = $ftp_provider->Download($log_file);
+			if ($data === false) {
 				continue;
 			}
 
@@ -98,7 +212,7 @@ case 'GET':
 
 		if (!$log_found) {
 			// That's unfortunate. Let's try something else.
-			$folders = ftp_nlist($connection, $ftp_path);
+			$folders = $ftp_provider->ListFiles($ftp_path);
 			$possibles = array();
 			foreach ($folders as $folder_path) {
 				$foldername = basename($folder_path);
@@ -109,7 +223,7 @@ case 'GET':
 
 			$maps = array();
 			foreach ($possibles as $possible) {
-				$files = ftp_nlist($connection, $ftp_path . $possible);
+				$files = $ftp_provider->ListFiles($ftp_path . '/' . $possible);
 				foreach ($files as $file_path) {
 					$filename = basename($file_path);
 					if (substr($filename, -4) == '.ark') {
@@ -130,22 +244,14 @@ case 'GET':
 		if (strtolower(substr($ftp_path, -4)) != '.ini') {
 			BeaconAPI::ReplyError('Requested file does not appear to be an ini file.', array('ref' => $ref, 'path' => $ftp_path), 500);
 		}
-
-		$temp_path = sys_get_temp_dir() . '/' . BeaconCommon::GenerateUUID();
-		$success = @ftp_get($connection, $temp_path, $ftp_path, FTP_ASCII);
-		ftp_close($connection);
-
-		if ($success) {
-			header('Content-Type: text/plain');
-			$content = file_get_contents($temp_path);
-			unlink($temp_path);
-			BeaconAPI::ReplySuccess(array('ref' => $ref, 'content' => $content));
-		} else {
-			if (file_exists($temp_path)) {
-				unlink($temp_path);
-			}
+		
+		$content = $ftp_provider->Download($ftp_path);
+		if ($content === false) {
 			BeaconAPI::ReplyError('Unable to download file.', array('ref' => $ref, 'path' => $ftp_path), 500);
 		}
+
+		header('Content-Type: text/plain');
+		BeaconAPI::ReplySuccess(array('ref' => $ref, 'content' => $content));
 		break;
 	}
 case 'POST':
@@ -158,16 +264,14 @@ case 'POST':
 	$temp_path = sys_get_temp_dir() . '/' . BeaconCommon::GenerateUUID();
 	file_put_contents($temp_path, BeaconAPI::Body());
 
-	$success = ftp_put($connection, $ftp_path, $temp_path, FTP_ASCII);
-	ftp_close($connection);
+	$success = $ftp_provider->Upload($ftp_path, $temp_path);
+	if (file_exists($temp_path)) {
+		unlink($temp_path);
+	}
 
 	if ($success) {
 		BeaconAPI::ReplySuccess(array('ref' => $ref));
-		unlink($temp_path);
 	} else {
-		if (file_exists($temp_path)) {
-			unlink($temp_path);
-		}
 		BeaconAPI::ReplyError('Unable to upload file.', array('ref' => $ref, 'path' => $ftp_path), 500);
 	}
 
@@ -177,25 +281,35 @@ default:
 	break;
 }
 
-function Discover($connection, $starting_path, $hierarchy) {
+function Discover(FTPProvider $connection, string $starting_path, array $hierarchy) {
 	$path = $starting_path;
-	while (count($hierarchy) > 0) {
-		$contents = ftp_nlist($connection, $path);
-		foreach ($hierarchy as $possibles) {
-			foreach ($possibles as $possible) {
-				if (in_array($path . $possible, $contents)) {
-					$path .= $possible . '/';
-					array_shift($hierarchy);
-					break 2;
-				}
-			}
-
-			// can't locate any further
-			array_shift($hierarchy);
+	foreach ($hierarchy as $possibles) {
+		$discovered_path = SearchDirectory($connection, $path, $possibles);
+		if ($discovered_path != '') {
+			$path = $discovered_path;
+		} else {
+			return false;
 		}
 	}
 	return $path;
 }
 
+function SearchDirectory(FTPProvider $connection, string $starting_path, array $possibles) {
+	if ($starting_path == '') {
+		foreach ($possibles as $possible) {
+			$files = $connection->ListFiles('/' . $possible);
+			if (count($files) > 0) {
+				return '/' . $possible;
+			}
+		}
+	} else {
+		$files = $connection->ListFiles($starting_path);
+		foreach ($files as $file) {
+			if (in_array($file, $possibles)) {
+				return $starting_path . '/' . $file;
+			}
+		}
+	}
+}
 
 ?>
