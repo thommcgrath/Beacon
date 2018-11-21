@@ -261,9 +261,9 @@ CREATE TABLE loot_sources (
 	uicolor TEXT NOT NULL CHECK (uicolor ~* '^[0-9a-fA-F]{8}$'),
 	icon UUID NOT NULL REFERENCES loot_source_icons(object_id) ON UPDATE CASCADE ON DELETE RESTRICT,
 	sort INTEGER NOT NULL UNIQUE,
-	required_item_sets INTEGER NOT NULL DEFAULT 1,
 	experimental BOOLEAN NOT NULL DEFAULT FALSE,
 	notes TEXT NOT NULL DEFAULT '',
+	requirements JSONB NOT NULL DEFAULT '{}',
 	CHECK (class_string LIKE '%_C')
 ) INHERITS (objects);
 GRANT SELECT ON TABLE loot_sources TO thezaz_website;

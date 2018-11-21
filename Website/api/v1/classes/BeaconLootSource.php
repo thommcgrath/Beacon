@@ -6,9 +6,9 @@ class BeaconLootSource extends BeaconBlueprint {
 	private $ui_color;
 	private $icon_id;
 	private $sort_order;
-	private $required_item_sets;
 	private $experimental;
 	private $notes;
+	private $requirements = '{}';
 	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
@@ -17,9 +17,9 @@ class BeaconLootSource extends BeaconBlueprint {
 		$columns[] = 'uicolor';
 		$columns[] = 'icon';
 		$columns[] = 'sort';
-		$columns[] = 'required_item_sets';
 		$columns[] = 'experimental';
 		$columns[] = 'notes';
+		$columns[] = 'requirements';
 		return $columns;
 	}
 	
@@ -44,11 +44,13 @@ class BeaconLootSource extends BeaconBlueprint {
 		case 'sort_order':
 			return $this->sort_order;
 		case 'required_item_sets':
-			return $this->required_item-sets;
+			return 1;
 		case 'experimental':
 			return $this->experimental;
 		case 'notes':
 			return $this->notes;
+		case 'requirements':
+			return $this->requirements;
 		default:
 			parent::GetColumnValue($column);
 		}
@@ -64,9 +66,9 @@ class BeaconLootSource extends BeaconBlueprint {
 		$obj->ui_color = $row->Field('uicolor');
 		$obj->icon_id = $row->Field('icon');
 		$obj->sort_order = intval($row->Field('sort'));
-		$obj->required_item_sets = intval($row->Field('required_item_sets'));
 		$obj->experimental = boolval($row->Field('experimental'));
 		$obj->notes = $row->Field('notes');
+		$obj->requirements = $row->Field('requirements');
 		return $obj;
 	}
 	
@@ -79,9 +81,10 @@ class BeaconLootSource extends BeaconBlueprint {
 		$json['ui_color'] = $this->ui_color;
 		$json['icon'] = $this->icon_id;
 		$json['sort_order'] = $this->sort_order;
-		$json['required_item_sets'] = $this->required_item_sets;
+		$json['required_item_sets'] = 1;
 		$json['experimental'] = $this->experimental;
 		$json['notes'] = $this->notes;
+		$json['requirements'] = $this->requirements;
 		return $json;
 	}
 	
@@ -127,14 +130,6 @@ class BeaconLootSource extends BeaconBlueprint {
 	
 	public function SetSortOrder(int $order) {
 		$this->sort_order = $order;
-	}
-	
-	public function RequiredItemSets() {
-		return $this->required_item_sets;
-	}
-	
-	public function SetRequiredItemSets(int $required_item_sets) {
-		$this->required_item_sets = max(1, $required_item_sets);
 	}
 	
 	public function Experimental() {

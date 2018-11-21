@@ -20,14 +20,14 @@ CREATE TABLE loot_sources (
 	uicolor TEXT NOT NULL CHECK (uicolor ~* '^[0-9a-fA-F]{8}$'),
 	icon UUID NOT NULL REFERENCES loot_source_icons(object_id) ON UPDATE CASCADE ON DELETE RESTRICT,
 	sort INTEGER NOT NULL UNIQUE,
-	required_item_sets INTEGER NOT NULL DEFAULT 1,
 	experimental BOOLEAN NOT NULL DEFAULT FALSE,
 	notes TEXT NOT NULL DEFAULT '',
+	requirements JSONB NOT NULL DEFAULT '{}',
 	CHECK (class_string LIKE '%_C')
 ) INHERITS (objects);
 GRANT SELECT ON TABLE loot_sources TO thezaz_website;
 
-INSERT INTO loot_sources (object_id, mod_id, min_version, last_update, label, path, class_string, availability, multiplier_min, multiplier_max, uicolor, icon, sort, required_item_sets) SELECT loot_sources_old.object_id, loot_sources_old.mod_id, loot_sources_old.min_version, loot_sources_old.last_update, loot_sources_old.label, path, class_string, availability, multiplier_min, multiplier_max, uicolor, loot_source_icons.object_id AS icon, sort, required_item_sets FROM loot_sources_old INNER JOIN loot_source_icons ON (loot_sources_old.icon = loot_source_icons.icon_data) ORDER BY loot_sources_old.sort;
+INSERT INTO loot_sources (object_id, mod_id, min_version, last_update, label, path, class_string, availability, multiplier_min, multiplier_max, uicolor, icon, sort) SELECT loot_sources_old.object_id, loot_sources_old.mod_id, loot_sources_old.min_version, loot_sources_old.last_update, loot_sources_old.label, path, class_string, availability, multiplier_min, multiplier_max, uicolor, loot_source_icons.object_id AS icon, sort FROM loot_sources_old INNER JOIN loot_source_icons ON (loot_sources_old.icon = loot_source_icons.icon_data) ORDER BY loot_sources_old.sort;
 
 DROP VIEW search_contents;
 DROP TABLE loot_sources_old;
