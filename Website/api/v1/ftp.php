@@ -30,8 +30,10 @@ class FTPConnection implements FTPProvider {
 	public function ListFiles(string $remote_directory_path) {
 		$files = ftp_nlist($this->connection, $remote_directory_path);
 		$filenames = array();
-		foreach ($files as $file) {
-			$filenames[] = basename($file);
+		if (is_array($files)) {
+			foreach ($files as $file) {
+				$filenames[] = basename($file);
+			}
 		}
 		return $filenames;
 	}
@@ -151,13 +153,23 @@ switch ($method) {
 case 'GET':
 	$object = BeaconAPI::ObjectID();
 	if ($object == 'discover') {
-		$hier = array(
-			array('arkse','arkserver'),
-			array('ShooterGame'),
-			array('Saved')
-		);
-		$ftp_path = Discover($ftp_provider, '', $hier);
+		if (isset($_REQUEST['path'])) {
+			$ftp_path = $_REQUEST['path'];
+		} else {
+			$hier = array(
+				array('arkse','arkserver'),
+				array('ShooterGame'),
+				array('Saved')
+			);
+			$ftp_path = Discover($ftp_provider, '', $hier);
+			if ($ftp_path === false) {
+				BeaconAPI::ReplyError('Unable to determine path to ShooterGame/Saved folder.', array('ref' => $ref), 404);
+			}
+		}
 		$config_path = Discover($ftp_provider, $ftp_path . '/Config', array(array('WindowsServer', 'LinuxServer', 'WindowsNoEditor')));
+		if ($config_path === false) {
+			BeaconAPI::ReplyError('Unable to find Config folder in ' . $ftp_path, array('ref' => $ref), 404);
+		}
 		$game_ini_path = $config_path . '/Game.ini';
 		$settings_ini_path = $config_path . '/GameUserSettings.ini';
 

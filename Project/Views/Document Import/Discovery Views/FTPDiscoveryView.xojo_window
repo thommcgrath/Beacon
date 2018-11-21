@@ -98,7 +98,7 @@ Begin DiscoveryView FTPDiscoveryView
       BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True
-      CueText         =   "Optional"
+      CueText         =   "Optional path to ShooterGame/Saved"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
