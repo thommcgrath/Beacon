@@ -233,7 +233,8 @@ End
 	#tag Event
 		Sub Moved()
 		  If Self.mOpened Then
-		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Self.Bounds.Left, Self.Bounds.Top, Self.Bounds.Width, Self.Bounds.Height)
+		    Dim Bounds As REALbasic.Rect = Self.Bounds
+		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -281,7 +282,8 @@ End
 	#tag Event
 		Sub Resized()
 		  If Self.mOpened Then
-		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Self.Bounds.Left, Self.Bounds.Top, Self.Bounds.Width, Self.Bounds.Height)
+		    Dim Bounds As REALbasic.Rect = Self.Bounds
+		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
 	#tag EndEvent
