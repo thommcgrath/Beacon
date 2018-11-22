@@ -285,6 +285,9 @@ Protected Class DocumentController
 		  If Document.Title.Trim = "" Then
 		    Document.Title = Self.Name
 		  End If
+		  If Self.mClearPublishStatus Then
+		    Document.IsPublic = False
+		  End If
 		  
 		  Self.mDocument = Document
 		  Self.mLoaded = True
@@ -313,6 +316,7 @@ Protected Class DocumentController
 		  
 		  Try
 		    Self.mTextContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
+		    Self.mClearPublishStatus = True
 		  Catch Err As RuntimeException
 		    Self.mBusy = False
 		  End Try
@@ -524,6 +528,10 @@ Protected Class DocumentController
 
 	#tag Property, Flags = &h21
 		Private mClearModifiedOnWrite As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mClearPublishStatus As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
