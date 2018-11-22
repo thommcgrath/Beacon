@@ -1,6 +1,22 @@
 #tag Module
 Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
+		Function ActualStringHeight(Extends G As Graphics, Source As String, WrapWidth As Double) As Double
+		  // G.StringHeight is not always correct. It should be G.TextHeight * LineCount,
+		  // but it seems to be missing a pixel per line in most cases. This code will work
+		  // around the issue, and will remain correct even if the bug is fixed.
+		  
+		  Dim ExpectedLineHeight As Double = G.TextHeight
+		  Dim ActualLineHeight As Double = G.StringHeight("A", 100)
+		  Dim LineHeightDelta As Double = ExpectedLineHeight - ActualLineHeight
+		  
+		  Dim Height As Double = G.StringHeight(Source, WrapWidth)
+		  Dim LineCount As Double = Height / ActualLineHeight
+		  Return Height + (LineCount * LineHeightDelta)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function AddSuffix(Extends Title As Text, Suffix As Text) As Text
 		  Dim Words() As Text = Title.Split(" ")
 		  If Words.Ubound >= 0 And Words(Words.Ubound) = Suffix Then

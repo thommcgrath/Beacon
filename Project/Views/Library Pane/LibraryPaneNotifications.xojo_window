@@ -126,11 +126,6 @@ End
 		  G.TextUnit = FontUnits.Point
 		  G.TextSize = 0
 		  
-		  // There seems to be an issue where G.TextHeight and G.StringHeight("A", 100) do not agree. So we'll need to counter that.
-		  Dim ExpectedLineHeight As Double = G.TextHeight
-		  Dim ComputedLineHeight As Double = G.StringHeight("A", 100)
-		  Dim DifferencePerLine As Double = ExpectedLineHeight - ComputedLineHeight
-		  
 		  Dim OldUnreadCount As Integer = Self.UnreadCount
 		  
 		  Dim CloseIcon As Picture
@@ -144,8 +139,7 @@ End
 		    
 		    Dim Message As String = Self.mNotifications(I).Message
 		    Dim MessageTop As Double = Pos + CellPadding
-		    Dim MessageHeight As Double = G.StringHeight(Message, CellWidth)
-		    MessageHeight = MessageHeight + ((MessageHeight / ComputedLineHeight) * DifferencePerLine)
+		    Dim MessageHeight As Double = G.ActualStringHeight(Message, CellWidth)
 		    Dim MessageBaseline As Double = MessageTop + G.TextAscent
 		    G.ForeColor = SystemColors.LabelColor
 		    G.DrawString(Message, CellPadding, MessageBaseline, CellWidth, False)
@@ -155,8 +149,7 @@ End
 		    Dim SecondaryMessage As String = Self.mNotifications(I).SecondaryMessage
 		    If SecondaryMessage <> "" Then
 		      Dim SecondaryMessageTop As Double = MessageTop + MessageHeight + (CellPadding / 2)
-		      Dim SecondaryMessageHeight As Double = G.StringHeight(SecondaryMessage, CellWidth)
-		      SecondaryMessageHeight = SecondaryMessageHeight + ((SecondaryMessageHeight / ComputedLineHeight) * DifferencePerLine)
+		      Dim SecondaryMessageHeight As Double = G.ActualStringHeight(SecondaryMessage, CellWidth)
 		      Dim SecondaryMessageBaseline As Double = SecondaryMessageTop + G.TextAscent
 		      G.ForeColor = SystemColors.SecondaryLabelColor
 		      G.DrawString(SecondaryMessage, CellPadding, SecondaryMessageBaseline, CellWidth, False)
