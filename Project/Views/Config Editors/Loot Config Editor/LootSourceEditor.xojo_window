@@ -44,7 +44,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   197
+      Height          =   196
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -70,7 +70,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   63
+      Top             =   64
       Transparent     =   True
       Underline       =   False
       UseFocusRing    =   False
@@ -80,7 +80,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       _ScrollWidth    =   -1
    End
    Begin Beacon.ImportThread Importer
-      Enabled         =   True
       GameIniContent  =   ""
       GameUserSettingsIniContent=   ""
       Index           =   -2147483648
@@ -141,7 +140,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -159,7 +157,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          HasBackColor    =   False
          Height          =   464
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -280,7 +277,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackColor    =   False
       Height          =   183
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -298,6 +294,35 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Visible         =   True
       Width           =   250
    End
+   Begin FadedSeparator FadedSeparator3
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   40
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   250
+   End
    Begin LootSourceSettingsContainer LootSourceSettingsContainer1
       AcceptFocus     =   False
       AcceptTabs      =   True
@@ -310,7 +335,6 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackColor    =   False
       Height          =   23
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -322,7 +346,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   40
+      Top             =   41
       Transparent     =   True
       UseFocusRing    =   False
       Visible         =   True
@@ -780,6 +804,7 @@ End
 		  Self.SetList.Width = ListWidth
 		  Self.Simulator.Width = ListWidth
 		  Self.LootSourceSettingsContainer1.Width = ListWidth
+		  Self.FadedSeparator3.Width = ListWidth
 		  Self.StatusBar1.Width = ListWidth
 		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
 		  Self.Panel.Width = EditorWidth
