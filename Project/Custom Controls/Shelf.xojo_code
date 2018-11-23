@@ -163,6 +163,13 @@ Implements ObservationKit.Observer
 		  Dim RequiredSpace As Double = (StaticSpaceCount * If(Self.IsVertical, CellHeight, CellWidth)) + ((StaticSpaceCount + 1) * CellSpacing)
 		  Dim FlexibleSpaceSize As Double = Max(Floor(AvailableSpace - RequiredSpace) / FlexibleSpaceCount, 0)
 		  
+		  Dim CellDeltaX, CellDeltay As Double
+		  If Self.IsVertical Then
+		    CellDeltaX = (G.Width - CellWidth) / 2
+		  Else
+		    CellDeltaY = (G.Height - CellHeight) / 2
+		  End If
+		  
 		  Dim NextPos As Double = CellSpacing
 		  Redim Self.mHitRects(Self.mItems.Ubound)
 		  For I As Integer = 0 To Self.mItems.Ubound
@@ -177,7 +184,7 @@ Implements ObservationKit.Observer
 		    End If
 		    
 		    Dim IconColor As Color = SystemColors.SecondaryLabelColor
-		    Dim CellRect As New BeaconUI.Rect(If(Self.IsVertical, CellSpacing, NextPos), If(Self.IsVertical, NextPos, CellSpacing), CellWidth, CellHeight)
+		    Dim CellRect As New BeaconUI.Rect(If(Self.IsVertical, 0, NextPos) + CellDeltaX, If(Self.IsVertical, NextPos, 0) + CellDeltaY, CellWidth, CellHeight)
 		    Self.mHitRects(I) = CellRect
 		    
 		    If Self.mSelectedIndex = I Then

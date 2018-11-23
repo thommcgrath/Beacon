@@ -405,12 +405,15 @@ Begin ContainerControl LootSourceSettingsContainer
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
+      DoubleBuffer    =   False
       DrawCaptions    =   True
       Enabled         =   True
-      Height          =   55
+      EraseBackground =   False
+      Height          =   49
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
+      IsVertical      =   False
       Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -423,7 +426,8 @@ Begin ContainerControl LootSourceSettingsContainer
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   -6
+      Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   250
