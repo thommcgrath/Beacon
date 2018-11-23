@@ -1461,7 +1461,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Min(Max(CDbl(Me.Text), 1, Self.mPreset.MinItems), Self.mPreset.Count)
+		  Dim Value As Integer = Max(CDbl(Me.Text), 1)
 		  If Self.mPreset.MaxItems <> Value Then
 		    Self.mPreset.MaxItems = Value
 		    Self.ContentsChanged = True
@@ -1485,7 +1485,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Min(Max(CDbl(Me.Text), 1), Self.mPreset.MaxItems, Self.mPreset.Count)
+		  Dim Value As Integer = Max(CDbl(Me.Text), 1)
 		  If Self.mPreset.MinItems <> Value Then
 		    Self.mPreset.MinItems = Value
 		    Self.ContentsChanged = True
