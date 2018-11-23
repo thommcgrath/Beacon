@@ -301,6 +301,7 @@ MultiImage=IconExperimentalBadge;Icons/IconExperimentalBadge.xojo_image;&h000000
 MultiImage=IconToolbarLock;Icons/IconToolbarLock.xojo_image;&h00000000217C47FF;&h0000000007F977FF;false
 MultiImage=IconToolbarUnlock;Icons/IconToolbarUnlock.xojo_image;&h000000003332F7FF;&h0000000007F977FF;false
 Class=TextAreaState;Classes/TextAreaState.xojo_code;&h0000000057B6C7FF;&h00000000056D5FFF;false
+MultiImage=IconHints;Icons/IconHints.xojo_image;&h0000000029D1E7FF;&h0000000007F977FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=1

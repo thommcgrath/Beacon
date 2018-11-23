@@ -10,7 +10,7 @@ Begin ContainerControl LootSourceSettingsContainer
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   130
+   Height          =   158
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -26,31 +26,6 @@ Begin ContainerControl LootSourceSettingsContainer
    UseFocusRing    =   False
    Visible         =   True
    Width           =   250
-   Begin DisclosureTriangle DisclosureTriangle1
-      AcceptFocus     =   False
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Facing          =   0
-      Height          =   18
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   2
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   2
-      Transparent     =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   18
-   End
    Begin FadedSeparator FadedSeparator2
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -74,316 +49,384 @@ Begin ContainerControl LootSourceSettingsContainer
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   129
+      Top             =   157
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
       Width           =   250
    End
-   Begin Label SettingsLabel
+   Begin PagePanel PagePanel1
       AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
       Enabled         =   True
-      Height          =   18
+      Height          =   108
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
+      Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Multiline       =   False
+      PanelCount      =   2
+      Panels          =   ""
       Scope           =   2
-      Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   12
       TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Settings"
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   2
+      Top             =   49
       Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   219
-   End
-   Begin RangeField MinItemSetsField
-      AcceptTabs      =   False
-      Alignment       =   2
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   117
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   "####"
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "1"
-      TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   32
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
       Value           =   0
       Visible         =   True
-      Width           =   50
+      Width           =   250
+      Begin CheckBox AppendModeCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Add Item Sets to Default"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   "When checked, the item sets are added to the default loot source contents. When unchecked, the item sets completely replace the loot source contents."
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         State           =   0
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   129
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   210
+      End
+      Begin UpDownArrows MaxItemSetsStepper
+         AcceptFocus     =   False
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Left            =   167
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   81
+         Transparent     =   False
+         Visible         =   True
+         Width           =   13
+      End
+      Begin UpDownArrows MinItemSetsStepper
+         AcceptFocus     =   False
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Left            =   167
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Top             =   57
+         Transparent     =   False
+         Visible         =   True
+         Width           =   13
+      End
+      Begin CheckBox NoDuplicatesCheck
+         AutoDeactivate  =   True
+         Bold            =   False
+         Caption         =   "Prevent Duplicates"
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         State           =   0
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   105
+         Transparent     =   False
+         Underline       =   False
+         Value           =   False
+         Visible         =   True
+         Width           =   210
+      End
+      Begin UITweaks.ResizedLabel MaxItemSetsLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   4
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Max Item Sets:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   81
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   85
+      End
+      Begin RangeField MaxItemSetsField
+         AcceptTabs      =   False
+         Alignment       =   2
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   117
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Mask            =   "####"
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "1"
+         TextColor       =   &c00000000
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   81
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Value           =   0
+         Visible         =   True
+         Width           =   50
+      End
+      Begin UITweaks.ResizedLabel MinItemSetsLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   6
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Min Item Sets:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   57
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   85
+      End
+      Begin RangeField MinItemSetsField
+         AcceptTabs      =   False
+         Alignment       =   2
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   117
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Mask            =   "####"
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   7
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "1"
+         TextColor       =   &c00000000
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   57
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Value           =   0
+         Visible         =   True
+         Width           =   50
+      End
+      Begin TextArea NotesArea
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   True
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   92
+         HelpTag         =   ""
+         HideSelection   =   True
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Italic          =   False
+         Left            =   8
+         LimitText       =   0
+         LineHeight      =   0.0
+         LineSpacing     =   1.0
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Mask            =   ""
+         Multiline       =   True
+         ReadOnly        =   True
+         Scope           =   2
+         ScrollbarHorizontal=   False
+         ScrollbarVertical=   True
+         Styled          =   True
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+         TextColor       =   &c00000000
+         TextFont        =   "SmallSystem"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   57
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   234
+      End
    End
-   Begin UITweaks.ResizedLabel MinItemSetsLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Min Item Sets:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   32
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   85
-   End
-   Begin RangeField MaxItemSetsField
+   Begin Shelf Switcher
+      AcceptFocus     =   False
       AcceptTabs      =   False
-      Alignment       =   2
       AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
+      Backdrop        =   0
+      DrawCaptions    =   True
       Enabled         =   True
-      Format          =   ""
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   117
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Mask            =   "####"
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "1"
-      TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   56
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Value           =   0
-      Visible         =   True
-      Width           =   50
-   End
-   Begin UITweaks.ResizedLabel MaxItemSetsLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
+      Height          =   55
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Max Item Sets:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   56
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   85
-   End
-   Begin CheckBox NoDuplicatesCheck
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Prevent Duplicates"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
+      Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
+      RequiresSelection=   False
       Scope           =   2
-      State           =   0
-      TabIndex        =   6
+      ScrollSpeed     =   20
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   80
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
+      Top             =   -6
+      UseFocusRing    =   True
       Visible         =   True
-      Width           =   210
-   End
-   Begin UpDownArrows MinItemSetsStepper
-      AcceptFocus     =   False
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   167
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   32
-      Transparent     =   False
-      Visible         =   True
-      Width           =   13
-   End
-   Begin UpDownArrows MaxItemSetsStepper
-      AcceptFocus     =   False
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   167
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   56
-      Transparent     =   False
-      Visible         =   True
-      Width           =   13
-   End
-   Begin CheckBox AppendModeCheck
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   "Add Item Sets to Default"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   "When checked, the item sets are added to the default loot source contents. When unchecked, the item sets completely replace the loot source contents."
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      State           =   0
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "SmallSystem"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   104
-      Transparent     =   False
-      Underline       =   False
-      Value           =   False
-      Visible         =   True
-      Width           =   210
+      Width           =   250
    End
 End
 #tag EndWindow
@@ -420,11 +463,13 @@ End
 		    Self.MaxItemSetsField.Text = ""
 		    Self.NoDuplicatesCheck.State = CheckBox.CheckedStates.Unchecked
 		    Self.AppendModeCheck.State = CheckBox.CheckedStates.Unchecked
+		    Self.NotesArea.Text = ""
 		  Else
 		    Dim CommonMinItemSets As Integer = Sources(0).MinItemSets
 		    Dim CommonMaxItemSets As Integer = Sources(0).MaxItemSets
 		    Dim CommonNoDuplicates As CheckBox.CheckedStates = If(Sources(0).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked)
 		    Dim CommonAppendMode As CheckBox.CheckedStates = If(Sources(0).AppendMode, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
+		    Dim CommonNotes As String = Sources(0).Notes
 		    
 		    For I As Integer = 0 To Sources.Ubound
 		      Self.mSources(I) = New WeakRef(Sources(I))
@@ -441,12 +486,16 @@ End
 		      If If(Sources(I).AppendMode, CheckBox.CheckedStates.Checked, Checkbox.CheckedStates.Unchecked) <> CommonAppendMode Then
 		        CommonAppendMode = CheckBox.CheckedStates.Indeterminate
 		      End If
+		      If Sources(I).Notes <> CommonNotes Then
+		        CommonNotes = ""
+		      End If
 		    Next
 		    
 		    Self.MinItemSetsField.Text = If(CommonMinItemSets > -1, Str(CommonMinItemSets, "-0"), "")
 		    Self.MaxItemSetsField.Text = If(CommonMaxItemSets > -1, Str(CommonMaxItemSets, "-0"), "")
 		    Self.NoDuplicatesCheck.State = CommonNoDuplicates
 		    Self.AppendModeCheck.State = CommonAppendMode
+		    Self.NotesArea.Text = If(CommonNotes <> "", CommonNotes, "This loot source follows normal behavior.")
 		  End If
 		  Self.mSettingUp = False
 		End Sub
@@ -454,18 +503,19 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub SetupUI()
-		  If Self.DisclosureTriangle1.Value Then
+		  Select Case Self.Switcher.SelectedIndex
+		  Case 1
+		    Self.PagePanel1.Visible = True
+		    Self.PagePanel1.Value = 0
+		    Self.Height = Self.ExpandedHeight
+		  Case 2
+		    Self.PagePanel1.Visible = True
+		    Self.PagePanel1.Value = 1
 		    Self.Height = Self.ExpandedHeight
 		  Else
+		    Self.PagePanel1.Visible = False
 		    Self.Height = Self.CollapsedHeight
-		  End If
-		  
-		  Self.MaxItemSetsField.Visible = Self.DisclosureTriangle1.Value
-		  Self.MaxItemSetsLabel.Visible = Self.DisclosureTriangle1.Value
-		  Self.MinItemSetsField.Visible = Self.DisclosureTriangle1.Value
-		  Self.MinItemSetsLabel.Visible = Self.DisclosureTriangle1.Value
-		  Self.NoDuplicatesCheck.Visible = Self.DisclosureTriangle1.Value
-		  Self.AppendModeCheck.Visible = Self.DisclosureTriangle1.Value
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -484,60 +534,84 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = CollapsedHeight, Type = Double, Dynamic = False, Default = \"23", Scope = Private
+	#tag Constant, Name = CollapsedHeight, Type = Double, Dynamic = False, Default = \"55", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = ExpandedHeight, Type = Double, Dynamic = False, Default = \"130", Scope = Private
+	#tag Constant, Name = ExpandedHeight, Type = Double, Dynamic = False, Default = \"158", Scope = Private
 	#tag EndConstant
 
 
 #tag EndWindowCode
 
-#tag Events DisclosureTriangle1
+#tag Events AppendModeCheck
 	#tag Event
 		Sub Action()
-		  Self.SetupUI
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MinItemSetsField
-	#tag Event
-		Sub TextChange()
 		  If Self.mSettingUp Then
-		    Return
-		  End If
-		  
-		  Dim Value As Integer = Val(Me.Text)
-		  If Value = 0 Then
 		    Return
 		  End If
 		  
 		  Dim Sources() As Beacon.LootSource = Self.LootSources
 		  For I As Integer = 0 To Sources.Ubound
-		    Sources(I).MinItemSets = Value
+		    Sources(I).AppendMode = Me.Value
 		  Next
+		  
 		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
+#tag EndEvents
+#tag Events MaxItemSetsStepper
 	#tag Event
-		Function AllowContents(Value As String) As Boolean
-		  If Value.Trim = "" And Self.mSources.Ubound > 0 Then
-		    Return True
+		Sub Down()
+		  If Self.mSettingUp Then
+		    Return
 		  End If
-		End Function
-	#tag EndEvent
-	#tag Event
-		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
-		  MinValue = 1
-		  MaxValue = 9999
+		  
+		  Self.MaxItemSetsField.Value = Self.MaxItemSetsField.Value - 1
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub RangeError(DesiredValue As Integer, NewValue As Integer)
-		  #Pragma Unused DesiredValue
-		  #Pragma Unused NewValue
+		Sub Up()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
 		  
-		  Beep
+		  Self.MaxItemSetsField.Value = Self.MaxItemSetsField.Value + 1
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MinItemSetsStepper
+	#tag Event
+		Sub Down()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Self.MinItemSetsField.Value = Self.MinItemSetsField.Value - 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Up()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Self.MinItemSetsField.Value = Self.MinItemSetsField.Value + 1
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events NoDuplicatesCheck
+	#tag Event
+		Sub Action()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Dim Sources() As Beacon.LootSource = Self.LootSources
+		  For I As Integer = 0 To Sources.Ubound
+		    Sources(I).SetsRandomWithoutReplacement = Me.Value
+		  Next
+		  
+		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -582,75 +656,59 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events NoDuplicatesCheck
+#tag Events MinItemSetsField
 	#tag Event
-		Sub Action()
+		Sub TextChange()
 		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
+		  Dim Value As Integer = Val(Me.Text)
+		  If Value = 0 Then
 		    Return
 		  End If
 		  
 		  Dim Sources() As Beacon.LootSource = Self.LootSources
 		  For I As Integer = 0 To Sources.Ubound
-		    Sources(I).SetsRandomWithoutReplacement = Me.Value
+		    Sources(I).MinItemSets = Value
 		  Next
-		  
 		  RaiseEvent Changed
 		End Sub
 	#tag EndEvent
-#tag EndEvents
-#tag Events MinItemSetsStepper
 	#tag Event
-		Sub Down()
-		  If Self.mSettingUp Then
-		    Return
+		Function AllowContents(Value As String) As Boolean
+		  If Value.Trim = "" And Self.mSources.Ubound > 0 Then
+		    Return True
 		  End If
-		  
-		  Self.MinItemSetsField.Value = Self.MinItemSetsField.Value - 1
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
+		  MinValue = 1
+		  MaxValue = 9999
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Up()
-		  If Self.mSettingUp Then
-		    Return
-		  End If
+		Sub RangeError(DesiredValue As Integer, NewValue As Integer)
+		  #Pragma Unused DesiredValue
+		  #Pragma Unused NewValue
 		  
-		  Self.MinItemSetsField.Value = Self.MinItemSetsField.Value + 1
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events MaxItemSetsStepper
-	#tag Event
-		Sub Down()
-		  If Self.mSettingUp Then
-		    Return
-		  End If
-		  
-		  Self.MaxItemSetsField.Value = Self.MaxItemSetsField.Value - 1
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Up()
-		  If Self.mSettingUp Then
-		    Return
-		  End If
-		  
-		  Self.MaxItemSetsField.Value = Self.MaxItemSetsField.Value + 1
+		  Beep
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events AppendModeCheck
+#tag Events Switcher
 	#tag Event
-		Sub Action()
-		  If Self.mSettingUp Then
-		    Return
-		  End If
-		  
-		  Dim Sources() As Beacon.LootSource = Self.LootSources
-		  For I As Integer = 0 To Sources.Ubound
-		    Sources(I).AppendMode = Me.Value
-		  Next
-		  
-		  RaiseEvent Changed
+		Sub Open()
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.Add(IconPresetSettings, "Settings", "settings")
+		  Me.Add(IconHints, "Hints", "notes")
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Self.SetupUI()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
