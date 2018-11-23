@@ -831,6 +831,7 @@ End
 		  Dim NewPosition As Integer
 		  If Value Then
 		    NewPosition = Self.Height - Preferences.SimulatorSize
+		    Self.Simulator.Height = Preferences.SimulatorSize
 		  Else
 		    NewPosition = Self.Height
 		  End If
@@ -1452,8 +1453,9 @@ End
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
 		  Me.Height = NewSize
-		  Self.SetList.Height = (Self.Height - Self.SetList.Top) - NewSize
-		  Me.Top = Self.SetList.Top + Self.SetList.Height
+		  Me.Top = Self.Height - NewSize
+		  Self.StatusBar1.Top = Self.Height - (NewSize + Self.StatusBar1.Height)
+		  Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
 		End Sub
 	#tag EndEvent
 	#tag Event
