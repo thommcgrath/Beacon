@@ -245,6 +245,7 @@ Folder=Loot Config Editor;Views/Config Editors/Loot Config Editor;&h0000000051A1
 Window=LootConfigEditor;Views/Config Editors/Loot Config Editor/LootConfigEditor.xojo_window;&h000000006DC957FF;&h0000000051A177FF;false
 Window=LootSourceEditor;Views/Config Editors/Loot Config Editor/LootSourceEditor.xojo_window;&h000000006D9A07FF;&h0000000051A177FF;false
 Window=LootSourceSettingsContainer;Views/Config Editors/Loot Config Editor/LootSourceSettingsContainer.xojo_window;&h00000000080ACFFF;&h0000000051A177FF;false
+Window=LootSourceHintsContainer;Views/Config Editors/Loot Config Editor/LootSourceHintsContainer.xojo_window;&h000000004B5C77FF;&h0000000051A177FF;false
 Window=ItemSetEditor;Views/Config Editors/Loot Config Editor/ItemSetEditor.xojo_window;&h000000005F0DBFFF;&h0000000051A177FF;false
 Window=ItemSetSettingsContainer;Views/Config Editors/Loot Config Editor/ItemSetSettingsContainer.xojo_window;&h000000004D5E07FF;&h0000000051A177FF;false
 Class=LootDrops;Modules/BeaconConfigs/LootDrops.xojo_code;&h0000000000E7DFFF;&h0000000068EBAFFF;false
