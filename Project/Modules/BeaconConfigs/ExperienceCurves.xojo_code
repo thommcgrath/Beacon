@@ -97,6 +97,50 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.ExperienceCurves
+		  #Pragma Unused CommandLineOptions
+		  #Pragma Unused MapCompatibility
+		  #Pragma Unused QualityMultiplier
+		  
+		  If Not ParsedData.HasKey("LevelExperienceRampOverrides") Then
+		    Return Nil
+		  End If
+		  
+		  Dim PlayerExperience As Boolean = True
+		  Dim Values As Auto = ParsedData.Value("LevelExperienceRampOverrides")
+		  Dim ValuesInfo As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Values)
+		  Dim Overrides() As Auto
+		  If ValuesInfo.FullName = "Auto()" Then
+		    Overrides = Values
+		  ElseIf ValuesInfo.FullName = "Xojo.Core.Dictionary" Then
+		    Overrides.Append(Values)
+		  Else
+		    Return Nil
+		  End If
+		  
+		  Dim Config As New BeaconConfigs.ExperienceCurves
+		  For Each Dict As Xojo.Core.Dictionary In Overrides
+		    Dim MaxLevel As Integer = 0
+		    While Dict.HasKey("ExperiencePointsForLevel[" + MaxLevel.ToText + "]")
+		      MaxLevel = MaxLevel + 1
+		    Wend
+		    MaxLevel = MaxLevel - 1
+		    
+		    Dim MaxXP As Integer = Dict.Value("ExperiencePointsForLevel[" + MaxLevel.ToText + "]")
+		    If PlayerExperience Then
+		      Config.PlayerLevelCap = MaxLevel + 2
+		      Config.PlayerMaxExperience = MaxXP
+		      PlayerExperience = False
+		    Else
+		      Config.DinoLevelCap = MaxLevel + 2
+		      Config.DinoMaxExperience = MaxXP
+		    End If
+		  Next
+		  Return Config
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  
