@@ -335,7 +335,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.MinimumWidth = Self.FadedSeparator1.Width + Self.ListMinWidth + LootSourceEditor.MinimumWidth
-		  Self.MinimumHeight = 400
+		  Self.MinimumHeight = 547
 		End Sub
 	#tag EndEvent
 

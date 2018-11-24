@@ -683,6 +683,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function MinSimulatorPosition() As Integer
+		  Return Self.SettingsContainer.Top + Self.SettingsContainer.Height + HintsContainer.Height + 200
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub RebuildSetList()
 		  Dim SelectedSetNames() As String
 		  For I As Integer = 0 To SetList.ListCount - 1
@@ -863,6 +869,8 @@ End
 		  // This does not save the position in preferences, it is only for coordinating
 		  // the size and position of controls
 		  
+		  Pos = Max(Pos, Self.SettingsContainer.Top + Self.SettingsContainer.Height + Self.HintsContainer.Height + 200)
+		  
 		  Self.Simulator.Top = Pos
 		  Self.StatusBar1.Top = Pos - Self.StatusBar1.Height
 		  Self.SetList.Height = Self.StatusBar1.Top - Self.SetList.Top
@@ -890,6 +898,7 @@ End
 		  Else
 		    NewPosition = Self.Height
 		  End If
+		  NewPosition = Max(NewPosition, Self.MinSimulatorPosition)
 		  
 		  If Not Animated Then
 		    Self.SimulatorPosition = NewPosition
@@ -1530,6 +1539,8 @@ End
 #tag Events Simulator
 	#tag Event
 		Sub ShouldResize(ByRef NewSize As Integer)
+		  NewSize = Min(NewSize, Self.Height - Self.MinSimulatorPosition)
+		  
 		  Me.Height = NewSize
 		  Me.Top = Self.Height - NewSize
 		  Self.StatusBar1.Top = Self.Height - (NewSize + Self.StatusBar1.Height)
