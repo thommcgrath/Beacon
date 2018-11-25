@@ -1354,6 +1354,10 @@ End
 		    For Each Map As Beacon.Map In Maps
 		      Dim Entries() As Beacon.PresetEntry
 		      For I As Integer = 0 To Me.ListCount - 1
+		        If Not Me.Selected(I) Then
+		          Continue
+		        End If
+		        
 		        Dim Entry As Beacon.PresetEntry = Me.RowTag(I)
 		        If Entry.ValidForMap(Map) Then
 		          Entries.Append(Entry)
