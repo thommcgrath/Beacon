@@ -108,6 +108,12 @@ Protected Class ConfigGroup
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function WasPerfectImport() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)

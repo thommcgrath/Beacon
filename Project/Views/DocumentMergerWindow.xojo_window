@@ -239,7 +239,14 @@ End
 		    Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		    For Each Config As Beacon.ConfigGroup In Configs
 		      Dim CurrentConfig As Beacon.ConfigGroup = DestinationDocument.ConfigGroup(Config.ConfigName)
-		      Win.List.AddRow("", Prefix + Language.LabelForConfig(Config))
+		      Dim CellContent As String = Prefix + Language.LabelForConfig(Config)
+		      If Not Config.WasPerfectImport Then
+		        If Win.List.DefaultRowHeight <> 40 Then
+		          Win.List.DefaultRowHeight = 40
+		        End If
+		        CellContent = CellContent + EndOfLine + "This imported config is not perfect. Beacon will make a close approximation."
+		      End If
+		      Win.List.AddRow("", CellContent)
 		      Win.List.CellCheck(Win.List.LastIndex, 0) = UsePrefixes = False And (CurrentConfig = Nil Or CurrentConfig.IsImplicit)
 		      Win.List.RowTag(Win.List.LastIndex) = Config
 		      Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
@@ -334,10 +341,10 @@ End
 		    Case Variant.TypeObject
 		      Select Case Tag
 		      Case IsA Beacon.ConfigGroup
-		        Dim Config As Beacon.ConfigGroup = Self.List.RowTag(I)
+		        Dim Config As Beacon.ConfigGroup = Tag
 		        Self.mDestination.AddConfigGroup(Config)
 		      Case IsA Beacon.ServerProfile
-		        Dim Profile As Beacon.ServerProfile = Self.List.RowTag(I)
+		        Dim Profile As Beacon.ServerProfile = Tag
 		        Self.mDestination.Add(Profile)
 		        
 		        If Profile.OAuthProvider <> "" And Self.mOAuthData.HasKey(Profile.OAuthProvider) Then

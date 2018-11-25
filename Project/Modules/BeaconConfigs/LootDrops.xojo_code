@@ -306,6 +306,12 @@ Implements Xojo.Core.Iterable
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function WasPerfectImport() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mResolveIssuesCallback As Beacon.ConfigGroup.ResolveIssuesCallback

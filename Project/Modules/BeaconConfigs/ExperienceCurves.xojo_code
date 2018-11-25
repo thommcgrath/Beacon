@@ -179,6 +179,12 @@ Inherits Beacon.ConfigGroup
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function WasPerfectImport() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
