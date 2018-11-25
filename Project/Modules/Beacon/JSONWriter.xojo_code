@@ -33,7 +33,7 @@ Inherits Beacon.Thread
 		  #endif
 		  Self.mFinished = True
 		  Self.mRunning = False
-		  Xojo.Core.Timer.CallLater(1, AddressOf RaiseFinished)
+		  Self.mRaiseFinishedCallbackKey = CallLater.Schedule(1, WeakAddressOf RaiseFinished)
 		End Sub
 	#tag EndEvent
 
@@ -62,6 +62,12 @@ Inherits Beacon.Thread
 		  Self.Constructor()
 		  Self.mSource = Source
 		  Self.mDestination = Destination
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  CallLater.Cancel(Self.mRaiseFinishedCallbackKey)
 		End Sub
 	#tag EndMethod
 
@@ -188,6 +194,10 @@ Inherits Beacon.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRaiseFinishedCallbackKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mRunning As Boolean
 	#tag EndProperty
 
@@ -271,6 +281,14 @@ Inherits Beacon.Thread
 			Name="State"
 			Group="Behavior"
 			Type="Beacon.Thread.States"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Running"
+				"1 - Waiting"
+				"2 - Suspended"
+				"3 - Sleeping"
+				"4 - NotRunning"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Success"

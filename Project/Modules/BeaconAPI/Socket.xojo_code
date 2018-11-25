@@ -55,7 +55,7 @@ Protected Class Socket
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  Xojo.Core.Timer.CancelCall(WeakAddressOf Self.AdvanceQueue)
+		  CallLater.Cancel(Self.mAdvanceQueueCallbackKey)
 		  
 		  Self.Socket.Disconnect
 		  Self.Socket = Nil
@@ -68,7 +68,7 @@ Protected Class Socket
 		  
 		  Self.ActiveRequest.InvokeCallback(False, Err.Reason, Nil, 0, Nil)
 		  Self.ActiveRequest = Nil
-		  Xojo.Core.Timer.CallLater(50, WeakAddressOf Self.AdvanceQueue)
+		  Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
 		End Sub
 	#tag EndMethod
 
@@ -107,7 +107,7 @@ Protected Class Socket
 		  End If
 		  
 		  Self.ActiveRequest = Nil
-		  Xojo.Core.Timer.CallLater(50, WeakAddressOf Self.AdvanceQueue)
+		  Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
 		End Sub
 	#tag EndMethod
 
@@ -124,7 +124,7 @@ Protected Class Socket
 		Sub Start(Request As BeaconAPI.Request)
 		  Self.Queue.Append(Request)
 		  If UBound(Self.Queue) = 0 And Self.Working = False Then
-		    Xojo.Core.Timer.CallLater(50, WeakAddressOf Self.AdvanceQueue)
+		    Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
 		    Self.Working = True
 		  End If
 		End Sub
@@ -167,6 +167,10 @@ Protected Class Socket
 
 	#tag Property, Flags = &h21
 		Private ActiveRequest As BeaconAPI.Request
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAdvanceQueueCallbackKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

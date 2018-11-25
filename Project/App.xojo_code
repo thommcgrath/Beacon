@@ -486,7 +486,7 @@ Implements NotificationKit.Receiver
 		  If Self.CurrentThread = Nil Then
 		    Self.PresentException(Dict)
 		  Else
-		    Xojo.Core.Timer.CallLater(1, AddressOf PresentException, Dict)
+		    Call CallLater.Schedule(1, AddressOf PresentException, Dict)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -737,7 +737,7 @@ Implements NotificationKit.Receiver
 		Private Sub mHandoffSocket_Error(Sender As IPCSocket)
 		  Dim Code As Integer = Sender.LastErrorCode
 		  If Code = 102 Then
-		    Xojo.Core.Timer.CallLater(100, AddressOf Sender.Listen)
+		    Call CallLater.Schedule(100, AddressOf Sender.Listen)
 		  Else
 		    App.Log("IPC error " + Str(Code, "-0"))
 		  End If

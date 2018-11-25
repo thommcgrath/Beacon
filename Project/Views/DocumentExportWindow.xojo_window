@@ -226,7 +226,7 @@ Begin Window DocumentExportWindow
       Visible         =   True
       Width           =   96
    End
-   Begin UITweaks.ResizedPushButton CopyButton
+   Begin ReactionButton CopyButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -258,7 +258,7 @@ Begin Window DocumentExportWindow
       Visible         =   True
       Width           =   96
    End
-   Begin UITweaks.ResizedPushButton RewriteClipboardButton
+   Begin ReactionButton RewriteClipboardButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -414,12 +414,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Destructor()
-		  Xojo.Core.Timer.CancelCall(WeakAddressOf RestoreCopyButton)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, Document As Beacon.Document)
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		  Dim GameIniHeaders As New Xojo.Core.Dictionary
@@ -470,19 +464,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub RestoreCopyButton()
-		  Self.CopyButton.Caption = "Copy All"
-		  Self.CopyButton.Enabled = True
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub RestoreRewriteClipboardButton()
-		  
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub Setup()
 		  If Self.mCommandLineConfigs.Count > 0 Then
 		    Self.FileList.AddRow("Command Line Options")
@@ -521,8 +502,8 @@ End
 #tag Events FileList
 	#tag Event
 		Sub Change()
-		  Xojo.Core.Timer.CancelCall(WeakAddressOf RestoreCopyButton)
-		  Xojo.Core.Timer.CancelCall(WeakAddressOf RestoreRewriteClipboardButton)
+		  Self.CopyButton.Restore
+		  Self.RewriteClipboardButton.Restore
 		  
 		  Self.CopyButton.Enabled = Me.ListIndex > -1
 		  Self.CopyButton.Caption = "Copy All"
@@ -617,7 +598,6 @@ End
 		  Board.Text = Self.ContentArea.Text
 		  Me.Caption = "Copied!"
 		  Me.Enabled = False
-		  Xojo.Core.Timer.CallLater(2000, WeakAddressOf RestoreCopyButton)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -638,8 +618,8 @@ End
 		  Dim Board As New Clipboard
 		  Board.Text = Beacon.RewriteIniContent(Board.Text.ToText, Configs)
 		  Self.mLastRewrittenHash = EncodeHex(MD5(Board.Text))
-		  Self.RewriteClipboardButton.Enabled = False
-		  Self.RewriteClipboardButton.Caption = "Ready for Paste"
+		  Me.Enabled = False
+		  Me.Caption = "Ready for Paste"
 		End Sub
 	#tag EndEvent
 #tag EndEvents

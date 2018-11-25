@@ -191,7 +191,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  Xojo.Core.Timer.CancelCall(WeakAddressOf TriggerCallback)
+		  CallLater.Cancel(Self.mCallbackKey)
 		End Sub
 	#tag EndMethod
 
@@ -294,6 +294,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCallbackKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDestination As Beacon.Document
 	#tag EndProperty
 
@@ -375,7 +379,7 @@ End
 		  End If
 		  
 		  If Self.mCallback <> Nil Then
-		    Xojo.Core.Timer.CallLater(100, WeakAddressOf TriggerCallback)
+		    Self.mCallbackKey = CallLater.Schedule(100, WeakAddressOf TriggerCallback)
 		    Self.Hide
 		  Else
 		    Self.Close

@@ -343,10 +343,10 @@ Implements Beacon.DeploymentEngine
 		    Case "starting"
 		      // Wait
 		      Self.mStartOnFinish = True
-		      Xojo.Core.Timer.CallLater(5000, AddressOf WatchStatusForStop)
+		      Self.mWatchForStatusStopCallbackKey = CallLater.Schedule(5000, AddressOf WatchStatusForStop)
 		    Case "stopping"
 		      // Wait
-		      Xojo.Core.Timer.CallLater(5000, AddressOf WatchStatusForStop)
+		      Self.mWatchForStatusStopCallbackKey = CallLater.Schedule(5000, AddressOf WatchStatusForStop)
 		    Case "stopped"
 		      // Ok to continue
 		      Dim Settings As Xojo.Core.Dictionary = GameServer.Value("settings")
@@ -563,8 +563,8 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h0
 		Sub Cancel()
-		  Xojo.Core.Timer.CancelCall(AddressOf WaitNitradoIdle)
-		  Xojo.Core.Timer.CancelCall(AddressOf WatchStatusForStop)
+		  CallLater.Cancel(Self.mWaitNitradoCallbackKey)
+		  CallLater.Cancel(Self.mWatchForStatusStopCallbackKey)
 		  Self.mCancelled = True
 		End Sub
 	#tag EndMethod
@@ -842,7 +842,7 @@ Implements Beacon.DeploymentEngine
 		  Dim ResumeTime As Xojo.Core.Date = Now + New Xojo.Core.DateInterval(0, 0, 0, 0, 0, Floor(SecondsToWait), (SecondsToWait - Floor(SecondsToWait)) * 1000000000)
 		  
 		  Self.mStatus = "Waiting per Nitrado recommendations. Will resume at " + ResumeTime.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.None, Xojo.Core.Date.FormatStyles.Medium) + "…"
-		  Xojo.Core.Timer.CallLater(SecondsToWait * 1000, AddressOf WaitNitradoIdle)
+		  Self.mWaitNitradoCallbackKey = CallLater.Schedule(SecondsToWait * 1000, AddressOf WaitNitradoIdle)
 		End Sub
 	#tag EndMethod
 
@@ -944,6 +944,14 @@ Implements Beacon.DeploymentEngine
 
 	#tag Property, Flags = &h21
 		Private mStatus As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWaitNitradoCallbackKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWatchForStatusStopCallbackKey As String
 	#tag EndProperty
 
 

@@ -158,7 +158,7 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  Xojo.Core.Timer.CancelCall(WeakAddressOf TriggerLoadStarted)
+		  CallLater.Cancel(Self.mLoadStartedCallbackKey)
 		End Sub
 	#tag EndMethod
 
@@ -190,7 +190,7 @@ Protected Class DocumentController
 		  Self.mIdentity = WithIdentity
 		  Self.mLoadThread.Run
 		  
-		  Xojo.Core.Timer.CallLater(1500, WeakAddressOf TriggerLoadStarted)
+		  Self.mLoadStartedCallbackKey = CallLater.Schedule(1500, WeakAddressOf TriggerLoadStarted)
 		End Sub
 	#tag EndMethod
 
@@ -245,7 +245,7 @@ Protected Class DocumentController
 		    
 		    If Not Success Then
 		      Self.mBusy = False
-		      Xojo.Core.Timer.CallLater(1, AddressOf TriggerLoadError)
+		      Call CallLater.Schedule(1, AddressOf TriggerLoadError)
 		      Return
 		    End If
 		  Case Beacon.DocumentURL.TypeTransient
@@ -271,14 +271,14 @@ Protected Class DocumentController
 		  Self.mTextContent = ""
 		  
 		  If Not Self.mBusy Then
-		    Xojo.Core.Timer.CallLater(1, AddressOf TriggerLoadError)
+		    Call CallLater.Schedule(1, AddressOf TriggerLoadError)
 		    Return
 		  End If
 		  Self.mBusy = False
 		  
 		  Dim Document As Beacon.Document = Beacon.Document.FromText(TextContent, Self.mIdentity)
 		  If Document = Nil Then
-		    Xojo.Core.Timer.CallLater(1, AddressOf TriggerLoadError)
+		    Call CallLater.Schedule(1, AddressOf TriggerLoadError)
 		    Return
 		  End If
 		  
@@ -291,7 +291,7 @@ Protected Class DocumentController
 		  
 		  Self.mDocument = Document
 		  Self.mLoaded = True
-		  Xojo.Core.Timer.CallLater(1, AddressOf TriggerLoadSuccess)
+		  Call CallLater.Schedule(1, AddressOf TriggerLoadSuccess)
 		End Sub
 	#tag EndMethod
 
@@ -385,7 +385,7 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h21
 		Private Sub TriggerLoadError()
-		  Xojo.Core.Timer.CancelCall(WeakAddressOf TriggerLoadStarted)
+		  CallLater.Cancel(Self.mLoadStartedCallbackKey)
 		  
 		  RaiseEvent LoadError()
 		End Sub
@@ -399,7 +399,7 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h21
 		Private Sub TriggerLoadSuccess()
-		  Xojo.Core.Timer.CancelCall(WeakAddressOf TriggerLoadStarted)
+		  CallLater.Cancel(Self.mLoadStartedCallbackKey)
 		  
 		  RaiseEvent Loaded(Self.mDocument)
 		End Sub
@@ -552,6 +552,10 @@ Protected Class DocumentController
 
 	#tag Property, Flags = &h21
 		Private mLoaded As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mLoadStartedCallbackKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

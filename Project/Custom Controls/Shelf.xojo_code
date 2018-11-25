@@ -59,7 +59,7 @@ Implements ObservationKit.Observer
 
 	#tag Event
 		Sub MouseExit()
-		  Xojo.Core.Timer.CancelCall(WeakAddressOf ShowHoverToolTip)
+		  CallLater.Cancel(Self.mHoverCallbackKey)
 		End Sub
 	#tag EndEvent
 
@@ -71,8 +71,8 @@ Implements ObservationKit.Observer
 		      Continue
 		    End If
 		    If Self.mHitRects(I).Contains(Point) Then
-		      Xojo.Core.Timer.CancelCall(WeakAddressOf ShowHoverToolTip)
-		      Xojo.Core.Timer.CallLater(2000, WeakAddressOf ShowHoverToolTip)
+		      CallLater.Cancel(Self.mHoverCallbackKey)
+		      Self.mHoverCallbackKey = CallLater.Schedule(1000, WeakAddressOf ShowHoverToolTip)
 		      Return
 		    End If
 		  Next
@@ -280,7 +280,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  Xojo.Core.Timer.CancelCall(WeakAddressOf ShowHoverToolTip)
+		  CallLater.Cancel(Self.mHoverCallbackKey)
 		End Sub
 	#tag EndMethod
 
@@ -414,6 +414,10 @@ Implements ObservationKit.Observer
 
 	#tag Property, Flags = &h21
 		Private mHitRects() As BeaconUI.Rect
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHoverCallbackKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

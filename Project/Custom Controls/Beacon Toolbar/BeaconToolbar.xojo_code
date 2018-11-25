@@ -27,7 +27,7 @@ Implements ObservationKit.Observer
 		  Self.mMouseY = Y
 		  
 		  Tooltip.Hide
-		  Xojo.Core.Timer.CancelCall(AddressOf ShowHoverTooltip)
+		  CallLater.Cancel(Self.mHoverCallbackKey)
 		  
 		  If Self.mResizerEnabled And Self.mResizerRect <> Nil And Self.mResizerRect.Contains(Point) Then
 		    Self.mResizing = True
@@ -203,6 +203,12 @@ Implements ObservationKit.Observer
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  CallLater.Cancel(Self.mHoverCallbackKey)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub DrawButton(G As Graphics, Button As BeaconToolbarItem, Rect As REALbasic.Rect, Mode As ButtonModes, Highlighted As Boolean)
 		  #Pragma Unused Highlighted
@@ -278,10 +284,10 @@ Implements ObservationKit.Observer
 		  Self.mHoverItem = Item
 		  
 		  Tooltip.Hide
-		  Xojo.Core.Timer.CancelCall(AddressOf ShowHoverTooltip)
+		  CallLater.Cancel(Self.mHoverCallbackKey)
 		  
 		  If Item <> Nil And Item.HelpTag <> "" Then
-		    Xojo.Core.Timer.CallLater(1000, AddressOf ShowHoverTooltip)
+		    Self.mHoverCallbackKey = CallLater.Schedule(1000, WeakAddressOf ShowHoverTooltip)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -560,6 +566,10 @@ Implements ObservationKit.Observer
 
 	#tag Property, Flags = &h21
 		Private mHoldTimer As Timer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mHoverCallbackKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

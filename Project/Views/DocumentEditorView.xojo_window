@@ -44,6 +44,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -175,6 +176,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Width           =   300
    End
    Begin Timer AutosaveTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -480,7 +482,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ImportCallback(Documents() As Beacon.Document)
-		  Xojo.Core.Timer.CallLater(1, WeakAddressOf CopyFromDocuments, Documents)
+		  Call CallLater.Schedule(1, WeakAddressOf CopyFromDocuments, Documents)
 		End Sub
 	#tag EndMethod
 

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class EngramSearcherThread
 Inherits Beacon.Thread
-	#tag CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+	#tag CompatibilityFlags = ( TargetConsole and ( Target32Bit or Target64Bit ) ) or ( TargetWeb and ( Target32Bit or Target64Bit ) ) or ( TargetDesktop and ( Target32Bit or Target64Bit ) )
 	#tag Event
 		Sub Run()
 		  Dim StartTime As Double = Microseconds
@@ -22,7 +22,7 @@ Inherits Beacon.Thread
 		        End If
 		        If StartTriggered = False And Microseconds - StartTime > 1000000 Then
 		          StartTriggered = True
-		          Xojo.Core.Timer.CallLater(1, AddressOf TriggerStarted)
+		          Call CallLater.Schedule(1, AddressOf TriggerStarted)
 		        End If
 		        
 		        If InQuotes Then
@@ -66,7 +66,7 @@ Inherits Beacon.Thread
 		        End If
 		        If StartTriggered = False And Microseconds - StartTime > 1000000 Then
 		          StartTriggered = True
-		          Xojo.Core.Timer.CallLater(1, AddressOf TriggerStarted)
+		          Call CallLater.Schedule(1, AddressOf TriggerStarted)
 		        End If
 		        
 		        If Columns.Ubound <> 3 Then
@@ -99,16 +99,16 @@ Inherits Beacon.Thread
 		        FoundSinceLastPush = True
 		        
 		        If Microseconds - LastPushTime > 1000000 Then
-		          Xojo.Core.Timer.CallLater(1, AddressOf TriggerFound)
+		          Call CallLater.Schedule(1, AddressOf TriggerFound)
 		          LastPushTime = Microseconds
 		          FoundSinceLastPush = False
 		        End If
 		      Next
 		      
 		      If Self.mEngrams.Ubound > -1 Then
-		        Xojo.Core.Timer.CallLater(1, AddressOf TriggerFound)
+		        Call CallLater.Schedule(1, AddressOf TriggerFound)
 		      End If
-		      Xojo.Core.Timer.CallLater(1, AddressOf TriggerFinished)
+		      Call CallLater.Schedule(1, AddressOf TriggerFinished)
 		      Return
 		    Catch Err As RuntimeException
 		      // Probably not a CSV
@@ -130,7 +130,7 @@ Inherits Beacon.Thread
 		    
 		    If StartTriggered = False And Microseconds - StartTime > 1000000 Then
 		      StartTriggered = True
-		      Xojo.Core.Timer.CallLater(1, AddressOf TriggerStarted)
+		      Call CallLater.Schedule(1, AddressOf TriggerStarted)
 		    End If
 		    
 		    Dim Path As String
@@ -154,7 +154,7 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  If Paths.Count = 0 Then
-		    Xojo.Core.Timer.CallLater(1, AddressOf TriggerFinished)
+		    Call CallLater.Schedule(1, AddressOf TriggerFinished)
 		    Return
 		  End If
 		  
@@ -168,7 +168,7 @@ Inherits Beacon.Thread
 		    
 		    If StartTriggered = False And Microseconds - StartTime > 1000000 Then
 		      StartTriggered = True
-		      Xojo.Core.Timer.CallLater(1, AddressOf TriggerStarted)
+		      Call CallLater.Schedule(1, AddressOf TriggerStarted)
 		    End If
 		    
 		    Dim Path As Text = Key.ToText
@@ -186,7 +186,7 @@ Inherits Beacon.Thread
 		    FoundSinceLastPush = True
 		    
 		    If Microseconds - LastPushTime > 1000000 Then
-		      Xojo.Core.Timer.CallLater(1, AddressOf TriggerFound)
+		      Call CallLater.Schedule(1, AddressOf TriggerFound)
 		      LastPushTime = Microseconds
 		      FoundSinceLastPush = False
 		    End If
@@ -197,10 +197,10 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  If FoundSinceLastPush Then
-		    Xojo.Core.Timer.CallLater(1, AddressOf TriggerFound)
+		    Call CallLater.Schedule(1, AddressOf TriggerFound)
 		  End If
 		  
-		  Xojo.Core.Timer.CallLater(1, AddressOf TriggerFinished)
+		  Call CallLater.Schedule(1, AddressOf TriggerFinished)
 		End Sub
 	#tag EndEvent
 
@@ -354,6 +354,14 @@ Inherits Beacon.Thread
 			Name="State"
 			Group="Behavior"
 			Type="Beacon.Thread.States"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Running"
+				"1 - Waiting"
+				"2 - Suspended"
+				"3 - Sleeping"
+				"4 - NotRunning"
+			#tag EndEnumValues
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

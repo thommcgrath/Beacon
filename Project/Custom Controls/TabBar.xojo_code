@@ -150,7 +150,8 @@ Implements ObservationKit.Observer
 		          Progress.DrawPicture(IndeterminatePattern, X + CycleOffset, 0)
 		        Next
 		        
-		        Xojo.Core.Timer.CallLater(10, WeakAddressOf Self.UpdateIndeterminate)
+		        CallLater.Cancel(Self.mUpdateIndeterminateKey)
+		        Self.mUpdateIndeterminateKey = CallLater.Schedule(10, WeakAddressOf UpdateIndeterminate)
 		      Else
 		        Dim FillWidth As Integer = Self.mTabRects(I).Width * View.Progress
 		        Progress.ForeColor = SystemColors.SelectedContentBackgroundColor
@@ -175,7 +176,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  Xojo.Core.Timer.CancelCall(WeakAddressOf Self.UpdateIndeterminate)
+		  CallLater.Cancel(Self.mUpdateIndeterminateKey)
 		End Sub
 	#tag EndMethod
 
@@ -330,6 +331,10 @@ Implements ObservationKit.Observer
 
 	#tag Property, Flags = &h21
 		Private mTabRects(-1) As REALbasic.Rect
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpdateIndeterminateKey As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

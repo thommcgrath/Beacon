@@ -239,7 +239,7 @@ Inherits Listbox
 		  
 		  RaiseEvent Open
 		  
-		  Xojo.Core.Timer.CallLater(1, AddressOf PostOpenInvalidate)
+		  Self.mPostOpenInvalidateCallbackKey = CallLater.Schedule(1, WeakAddressOf PostOpenInvalidate)
 		End Sub
 	#tag EndEvent
 
@@ -284,6 +284,12 @@ Inherits Listbox
 		  Dim Board As New Clipboard
 		  Return RaiseEvent CanPaste(Board)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  CallLater.Cancel(Self.mPostOpenInvalidateCallbackKey)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -435,6 +441,10 @@ Inherits Listbox
 		Event RowIsInvalid(Row As Integer) As Boolean
 	#tag EndHook
 
+
+	#tag Property, Flags = &h21
+		Private mPostOpenInvalidateCallbackKey As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mScrollTask As AnimationKit.ScrollTask
