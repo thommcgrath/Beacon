@@ -732,7 +732,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Importer_Finished(Sender As Beacon.ImportThread, ParsedData As Xojo.Core.Dictionary)
+		Private Sub Importer_ThreadedParseFinished(Sender As Beacon.ImportThread, ParsedData As Xojo.Core.Dictionary)
 		  Dim Idx As Integer = -1
 		  For I As Integer = 0 To Self.mImporters.Ubound
 		    If Self.mImporters(I) = Sender Then
@@ -1162,7 +1162,7 @@ End
 		        Dim Importer As New Beacon.ImportThread
 		        Importer.GameIniContent = Engine.GameIniContent
 		        Importer.GameUserSettingsIniContent = Engine.GameUserSettingsIniContent
-		        AddHandler Importer.Finished, WeakAddressOf Importer_Finished
+		        AddHandler Importer.ThreadedParseFinished, WeakAddressOf Importer_ThreadedParseFinished
 		        Importer.Run
 		        Self.mImporters(I) = Importer
 		        Status = "Parsing Config Files…"
@@ -1179,7 +1179,11 @@ End
 		      Else
 		        // Show importer progress
 		        Dim Progress As Integer = Round(Self.mImporters(I).Progress * 100)
-		        Status = "Parsing Config Files… (" + Progress.ToText() + "%)"
+		        If Self.mImporters(I).Progress >= 1 Then
+		          Status = "Finishing…"
+		        Else
+		          Status = "Parsing Config Files… (" + Progress.ToText() + "%)"
+		        End If
 		      End If
 		    Else
 		      // Show engine status

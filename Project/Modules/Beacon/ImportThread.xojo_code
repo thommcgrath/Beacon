@@ -67,6 +67,9 @@ Inherits Beacon.Thread
 		  
 		  Self.Invalidate
 		  Self.mCharactersProcessed = Self.mCharactersTotal
+		  
+		  RaiseEvent ThreadedParseFinished(Self.mParsedData)
+		  
 		  Self.mFinished = True
 		End Sub
 	#tag EndEvent
@@ -239,6 +242,10 @@ Inherits Beacon.Thread
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event ThreadedParseFinished(ParsedData As Xojo.Core.Dictionary)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event UpdateUI()
 	#tag EndHook
 
@@ -321,6 +328,14 @@ Inherits Beacon.Thread
 			Name="State"
 			Group="Behavior"
 			Type="Beacon.Thread.States"
+			EditorType="Enum"
+			#tag EnumValues
+				"0 - Running"
+				"1 - Waiting"
+				"2 - Suspended"
+				"3 - Sleeping"
+				"4 - NotRunning"
+			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
