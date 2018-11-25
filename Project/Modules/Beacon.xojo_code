@@ -562,7 +562,7 @@ Protected Module Beacon
 		  InitialContent = InitialContent.ReplaceAll(LF, CR)
 		  InitialContent = InitialContent.ReplaceAll(CR, EOL)
 		  
-		  // Organize are existing content
+		  // Organize all existing content
 		  Dim Lines() As Text = InitialContent.Split(EOL)
 		  Dim Configs As New Xojo.Core.Dictionary
 		  Dim LastGroupHeader As Text
