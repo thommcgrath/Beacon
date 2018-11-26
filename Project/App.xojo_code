@@ -905,7 +905,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub ShowReleaseNotes()
-		  ShowURL(Beacon.WebURL("/history.php#build" + Self.NonReleaseVersion.ToText(Xojo.Core.Locale.Raw, "0")))
+		  ShowURL(Beacon.WebURL("/history.php?stage=" + Self.StageCode.ToText(Xojo.Core.Locale.Raw, "0") + "#build" + Self.NonReleaseVersion.ToText(Xojo.Core.Locale.Raw, "0")))
 		End Sub
 	#tag EndMethod
 
