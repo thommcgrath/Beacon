@@ -486,7 +486,7 @@ Implements NotificationKit.Receiver
 		  If Self.CurrentThread = Nil Then
 		    Self.PresentException(Dict)
 		  Else
-		    Call CallLater.Schedule(1, AddressOf PresentException, Dict)
+		    Call CallLater.Schedule(0, AddressOf PresentException, Dict)
 		  End If
 		End Sub
 	#tag EndMethod

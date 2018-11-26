@@ -245,7 +245,7 @@ Protected Class DocumentController
 		    
 		    If Not Success Then
 		      Self.mBusy = False
-		      Call CallLater.Schedule(1, AddressOf TriggerLoadError)
+		      Call CallLater.Schedule(0, AddressOf TriggerLoadError)
 		      Return
 		    End If
 		  Case Beacon.DocumentURL.TypeTransient
@@ -271,14 +271,14 @@ Protected Class DocumentController
 		  Self.mTextContent = ""
 		  
 		  If Not Self.mBusy Then
-		    Call CallLater.Schedule(1, AddressOf TriggerLoadError)
+		    Call CallLater.Schedule(0, AddressOf TriggerLoadError)
 		    Return
 		  End If
 		  Self.mBusy = False
 		  
 		  Dim Document As Beacon.Document = Beacon.Document.FromText(TextContent, Self.mIdentity)
 		  If Document = Nil Then
-		    Call CallLater.Schedule(1, AddressOf TriggerLoadError)
+		    Call CallLater.Schedule(0, AddressOf TriggerLoadError)
 		    Return
 		  End If
 		  
@@ -291,7 +291,7 @@ Protected Class DocumentController
 		  
 		  Self.mDocument = Document
 		  Self.mLoaded = True
-		  Call CallLater.Schedule(1, AddressOf TriggerLoadSuccess)
+		  Call CallLater.Schedule(0, AddressOf TriggerLoadSuccess)
 		End Sub
 	#tag EndMethod
 

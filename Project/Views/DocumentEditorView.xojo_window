@@ -482,7 +482,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ImportCallback(Documents() As Beacon.Document)
-		  Call CallLater.Schedule(1, WeakAddressOf CopyFromDocuments, Documents)
+		  Call CallLater.Schedule(0, WeakAddressOf CopyFromDocuments, Documents)
 		End Sub
 	#tag EndMethod
 

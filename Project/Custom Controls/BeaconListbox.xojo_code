@@ -239,7 +239,7 @@ Inherits Listbox
 		  
 		  RaiseEvent Open
 		  
-		  Self.mPostOpenInvalidateCallbackKey = CallLater.Schedule(1, WeakAddressOf PostOpenInvalidate)
+		  Self.mPostOpenInvalidateCallbackKey = CallLater.Schedule(0, WeakAddressOf PostOpenInvalidate)
 		End Sub
 	#tag EndEvent
 
