@@ -33,7 +33,7 @@ Inherits Beacon.Thread
 		  #endif
 		  Self.mFinished = True
 		  Self.mRunning = False
-		  Self.mRaiseFinishedCallbackKey = CallLater.Schedule(0, WeakAddressOf RaiseFinished)
+		  Self.mRaiseFinishedCallbackKey = CallLater.Schedule(0, AddressOf RaiseFinished)
 		End Sub
 	#tag EndEvent
 
