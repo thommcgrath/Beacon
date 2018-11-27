@@ -115,6 +115,23 @@ Inherits Beacon.ConfigGroup
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function FilterIniText(Input As Text) As Text
+		  Dim EOL As Text = Text.FromUnicodeCodepoint(10)
+		  Input = Beacon.ReplaceLineEndings(Input, EOL)
+		  
+		  Dim Lines() As Text = Input.Split(EOL)
+		  For I As Integer = Lines.Ubound DownTo 0
+		    If Lines(I).BeginsWith(Beacon.MarkupPrefix) Then
+		      Lines.Remove(I)
+		    End If
+		  Next
+		  
+		  Input = Lines.Join(EOL)
+		  Return Input.Trim
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function GameIniContent() As Text
 		  Return Self.mGameIniContent
@@ -127,8 +144,10 @@ Inherits Beacon.ConfigGroup
 		    Dim ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ShooterGameHeader, Value, SupportedConfigs)
 		    Dim ConfigDict As New Xojo.Core.Dictionary
 		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
-		    Value = Beacon.RewriteIniContent("", ConfigDict)
+		    Value = Beacon.RewriteIniContent("", ConfigDict, False)
 		  End If
+		  
+		  Value = Self.FilterIniText(Value)
 		  
 		  If Self.mGameIniContent.Compare(Value, Text.CompareCaseSensitive, Xojo.Core.Locale.Raw) <> 0 Then
 		    Self.mGameIniContent = Value
@@ -172,8 +191,10 @@ Inherits Beacon.ConfigGroup
 		    
 		    Dim ConfigDict As New Xojo.Core.Dictionary
 		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
-		    Value = Beacon.RewriteIniContent("", ConfigDict)
+		    Value = Beacon.RewriteIniContent("", ConfigDict, False)
 		  End If
+		  
+		  Value = Self.FilterIniText(Value)
 		  
 		  If Self.mGameUserSettingsIniContent.Compare(Value, Text.CompareCaseSensitive, Xojo.Core.Locale.Raw) <> 0 Then
 		    Self.mGameUserSettingsIniContent = Value
