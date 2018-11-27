@@ -640,6 +640,8 @@ Implements Beacon.DataSource
 		  Try
 		    Self.BeginTransaction()
 		    
+		    Dim EngramsChanged As Boolean
+		    
 		    // Drop indexes
 		    Self.SQLExecute("DROP INDEX engrams_class_string_idx;")
 		    Self.SQLExecute("DROP INDEX engrams_path_idx;")
@@ -779,6 +781,7 @@ Implements Beacon.DataSource
 		        End If
 		        Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, can_blueprint) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, ModID, Label, Availability, Path, ClassString, CanBlueprint)
 		      End If
+		      EngramsChanged = True
 		    Next
 		    
 		    Dim ReloadPresets As Boolean
@@ -868,6 +871,10 @@ Implements Beacon.DataSource
 		    End If
 		    
 		    App.Log("Imported classes. Engrams date is " + PayloadTimestamp.ToText())
+		    
+		    If EngramsChanged Then
+		      NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
+		    End If
 		    
 		    Return True
 		  Catch Err As RuntimeException
@@ -1301,6 +1308,8 @@ Implements Beacon.DataSource
 		      Self.SQLExecute("INSERT INTO engrams (object_id, path, class_string, label, can_blueprint, availability, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", Beacon.CreateUUID, Engram.Path, Engram.ClassString, Engram.Label, Engram.CanBeBlueprint, Engram.Availability, Self.UserModID)
 		    End If
 		    Self.Commit()
+		    
+		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
 		  Catch Err As UnsupportedOperationException
 		    Self.RollBack()
 		    Return False
@@ -1671,6 +1680,9 @@ Implements Beacon.DataSource
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_DatabaseUpdated, Type = Text, Dynamic = False, Default = \"Database Updated", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_EngramsChanged, Type = Text, Dynamic = False, Default = \"Engrams Changed", Scope = Public
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_ImportFailed, Type = Text, Dynamic = False, Default = \"Import Failed", Scope = Public

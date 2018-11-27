@@ -21,6 +21,8 @@ Protected Module Language
 		    Return "Player and Tame Levels"
 		  Case BeaconConfigs.CustomContent.ConfigName
 		    Return "Custom Config Content"
+		  Case BeaconConfigs.CraftingCosts.ConfigName
+		    Return "Crafting Costs"
 		  End Select
 		End Function
 	#tag EndMethod

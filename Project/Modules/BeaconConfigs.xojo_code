@@ -10,6 +10,7 @@ Protected Module BeaconConfigs
 		    Names.Append(BeaconConfigs.Metadata.ConfigName)
 		    Names.Append(BeaconConfigs.ExperienceCurves.ConfigName)
 		    Names.Append(BeaconConfigs.CustomContent.ConfigName)
+		    Names.Append(BeaconConfigs.CraftingCosts.ConfigName)
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As Text
@@ -79,6 +80,8 @@ Protected Module BeaconConfigs
 		    Return GetTypeInfo(BeaconConfigs.ExperienceCurves)
 		  Case BeaconConfigs.CustomContent.ConfigName
 		    Return GetTypeInfo(BeaconConfigs.CustomContent)
+		  Case BeaconConfigs.CraftingCosts.ConfigName
+		    Return GetTypeInfo(BeaconConfigs.CraftingCosts)
 		  End Select
 		End Function
 	#tag EndMethod

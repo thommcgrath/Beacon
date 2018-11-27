@@ -49,8 +49,8 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function RecentDocuments() As Beacon.DocumentURL()
+	#tag Method, Flags = &h1
+		Protected Function RecentDocuments() As Beacon.DocumentURL()
 		  Init
 		  
 		  // When used with a freshly parsed file, the return type will be Auto()
@@ -88,8 +88,8 @@ Protected Module Preferences
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub RecentDocuments(Assigns Values() As Beacon.DocumentURL)
+	#tag Method, Flags = &h1
+		Protected Sub RecentDocuments(Assigns Values() As Beacon.DocumentURL)
 		  Dim URLs() As Text
 		  Redim URLs(Values.Ubound)
 		  For I As Integer = 0 To Values.Ubound
@@ -103,7 +103,23 @@ Protected Module Preferences
 	#tag EndMethod
 
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.IntegerValue("Crafting Costs Splitter Position", 250)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Init
+			  mManager.IntegerValue("Crafting Costs Splitter Position") = Value
+			End Set
+		#tag EndSetter
+		Protected CraftingSplitterPosition As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
@@ -116,10 +132,10 @@ Protected Module Preferences
 			  mManager.SizeValue("Entry Editor Size") = Value
 			End Set
 		#tag EndSetter
-		EntryEditorSize As Xojo.Core.Size
+		Protected EntryEditorSize As Xojo.Core.Size
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
@@ -132,10 +148,10 @@ Protected Module Preferences
 			  mManager.BooleanValue("Has Shown Experimental Warning") = Value
 			End Set
 		#tag EndSetter
-		HasShownExperimentalWarning As Boolean
+		Protected HasShownExperimentalWarning As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
@@ -148,10 +164,10 @@ Protected Module Preferences
 			  mManager.BooleanValue("Has Shown Subscribe Dialog") = Value
 			End Set
 		#tag EndSetter
-		HasShownSubscribeDialog As Boolean
+		Protected HasShownSubscribeDialog As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
@@ -164,10 +180,10 @@ Protected Module Preferences
 			  mManager.IntegerValue("Item Sets Splitter Position") = Value
 			End Set
 		#tag EndSetter
-		ItemSetsSplitterPosition As Integer
+		Protected ItemSetsSplitterPosition As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
@@ -180,10 +196,10 @@ Protected Module Preferences
 			  mManager.IntegerValue("Last Preset Map Filter") = Value
 			End Set
 		#tag EndSetter
-		LastPresetMapFilter As UInt64
+		Protected LastPresetMapFilter As UInt64
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
@@ -196,14 +212,14 @@ Protected Module Preferences
 			  mManager.RectValue("Main Window Size") = Value
 			End Set
 		#tag EndSetter
-		MainWindowPosition As Xojo.Core.Rect
+		Protected MainWindowPosition As Xojo.Core.Rect
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
 		Private mManager As PreferencesManager
 	#tag EndProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
@@ -220,10 +236,10 @@ Protected Module Preferences
 			  NotificationKit.Post(Notification_OnlineStateChanged, Value)
 			End Set
 		#tag EndSetter
-		OnlineEnabled As Boolean
+		Protected OnlineEnabled As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
@@ -240,10 +256,10 @@ Protected Module Preferences
 			  NotificationKit.Post(Notification_OnlineTokenChanged, Value)
 			End Set
 		#tag EndSetter
-		OnlineToken As Text
+		Protected OnlineToken As Text
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
@@ -259,10 +275,10 @@ Protected Module Preferences
 			  mManager.BooleanValue("Show Experimental Sources") = Value
 			End Set
 		#tag EndSetter
-		ShowExperimentalLootSources As Boolean
+		Protected ShowExperimentalLootSources As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
@@ -275,10 +291,10 @@ Protected Module Preferences
 			  mManager.IntegerValue("Simulator Size") = Value
 			End Set
 		#tag EndSetter
-		SimulatorSize As Integer
+		Protected SimulatorSize As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
@@ -291,10 +307,10 @@ Protected Module Preferences
 			  mManager.BooleanValue("Simulator Visible") = Value
 			End Set
 		#tag EndSetter
-		SimulatorVisible As Boolean
+		Protected SimulatorVisible As Boolean
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
@@ -307,10 +323,10 @@ Protected Module Preferences
 			  mManager.IntegerValue("Sources Splitter Position") = Value
 			End Set
 		#tag EndSetter
-		SourcesSplitterPosition As Integer
+		Protected SourcesSplitterPosition As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h0
+	#tag ComputedProperty, Flags = &h1
 		#tag Getter
 			Get
 			  Init
@@ -323,7 +339,7 @@ Protected Module Preferences
 			  mManager.ColorValue("UI Color") = Value
 			End Set
 		#tag EndSetter
-		UIColor As Color
+		Protected UIColor As Color
 	#tag EndComputedProperty
 
 
@@ -419,6 +435,11 @@ Protected Module Preferences
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ShowExperimentalLootSources"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="HasShownExperimentalWarning"
 			Group="Behavior"
 			Type="Boolean"
 		#tag EndViewProperty

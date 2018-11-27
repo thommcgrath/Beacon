@@ -195,6 +195,18 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.Engram) As Integer
+		  If Other = Nil Then
+		    Return 1
+		  End If
+		  
+		  Dim SelfPath As Text = Self.Path
+		  Dim OtherPath As Text = Other.Path
+		  Return SelfPath.Compare(OtherPath)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Path() As Text
 		  If Self.IsValid Then
 		    Return Self.mPath

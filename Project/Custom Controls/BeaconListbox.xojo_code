@@ -140,6 +140,17 @@ Inherits Listbox
 	#tag EndEvent
 
 	#tag Event
+		Sub Change()
+		  If Self.mBlockSelectionChangeCount > 0 Then
+		    Self.mFireChangeWhenUnlocked = True
+		    Return
+		  End If
+		  
+		  RaiseEvent Change
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Function ConstructContextualMenu(base as MenuItem, x as Integer, y as Integer) As Boolean
 		  Dim Board As New Clipboard
 		  Dim CanCopy As Boolean = RaiseEvent CanCopy()
@@ -406,6 +417,10 @@ Inherits Listbox
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event Change()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
 	#tag EndHook
 
@@ -443,6 +458,14 @@ Inherits Listbox
 
 
 	#tag Property, Flags = &h21
+		Private mBlockSelectionChangeCount As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFireChangeWhenUnlocked As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mPostOpenInvalidateCallbackKey As String
 	#tag EndProperty
 
@@ -474,6 +497,29 @@ Inherits Listbox
 			End Set
 		#tag EndSetter
 		RowCount As Integer
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mBlockSelectionChangeCount > 0
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Value Then
+			    Self.mBlockSelectionChangeCount = Self.mBlockSelectionChangeCount + 1
+			  Else
+			    Self.mBlockSelectionChangeCount = Self.mBlockSelectionChangeCount - 1
+			  End If
+			  
+			  If Self.mBlockSelectionChangeCount = 0 And Self.mFireChangeWhenUnlocked Then
+			    RaiseEvent Change
+			    Self.mFireChangeWhenUnlocked = False
+			  End If
+			End Set
+		#tag EndSetter
+		SelectionChangeBlocked As Boolean
 	#tag EndComputedProperty
 
 

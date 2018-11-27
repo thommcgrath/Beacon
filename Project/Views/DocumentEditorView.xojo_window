@@ -44,7 +44,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   0
@@ -176,7 +175,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       Width           =   300
    End
    Begin Timer AutosaveTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -872,6 +870,8 @@ End
 		        NewPanel = New ExperienceCurvesConfigEditor(Self.mController)
 		      Case BeaconConfigs.CustomContent.ConfigName
 		        NewPanel = New CustomContentConfigEditor(Self.mController)
+		      Case BeaconConfigs.CraftingCosts.ConfigName
+		        NewPanel = New CraftingCostsConfigEditor(Self.mController)
 		      End Select
 		      If NewPanel <> Nil Then
 		        Self.Panels.Value(Tag.StringValue) = NewPanel
