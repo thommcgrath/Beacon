@@ -32,7 +32,9 @@ Begin BeaconContainer CraftingCostEditor
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Resources Required"
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -51,6 +53,7 @@ Begin BeaconContainer CraftingCostEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   350
@@ -102,7 +105,7 @@ Begin BeaconContainer CraftingCostEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   0
-      Height          =   237
+      Height          =   238
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -120,6 +123,7 @@ Begin BeaconContainer CraftingCostEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   2
@@ -142,7 +146,7 @@ Begin BeaconContainer CraftingCostEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Borders         =   2
+      Borders         =   1
       Caption         =   ""
       DoubleBuffer    =   False
       Enabled         =   True
@@ -163,35 +167,6 @@ Begin BeaconContainer CraftingCostEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   279
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   350
-   End
-   Begin FadedSeparator StatusSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   False
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   278
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True

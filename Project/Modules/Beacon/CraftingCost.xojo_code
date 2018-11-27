@@ -24,6 +24,17 @@ Protected Class CraftingCost
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor(Source As Beacon.CraftingCost)
+		  Self.Constructor()
+		  Self.Engram = Source.Engram
+		  For I As Integer = 0 To Source.Ubound
+		    Self.Append(Source.Resource(I), Source.Quantity(I), Source.RequireExactResource(I))
+		  Next
+		  Self.Modified = Source.Modified
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor(Engram As Beacon.Engram)
 		  Self.Constructor()
 		  Self.Engram = Engram
@@ -386,11 +397,6 @@ Protected Class CraftingCost
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mEngram"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior

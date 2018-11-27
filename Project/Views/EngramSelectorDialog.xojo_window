@@ -140,6 +140,7 @@ Begin Window EngramSelectorDialog
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   2
@@ -257,6 +258,7 @@ Begin Window EngramSelectorDialog
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   5
@@ -535,6 +537,11 @@ End
 	#tag Event
 		Sub DoubleClick()
 		  Self.MakeSelection()
+		  
+		  If Not Self.mAllowMultipleSelection Then
+		    Self.mCancelled = False
+		    Self.Hide
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

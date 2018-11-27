@@ -32,7 +32,9 @@ Begin ConfigEditor CraftingCostsConfigEditor
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Engrams"
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -51,6 +53,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   250
@@ -89,7 +92,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Borders         =   2
+      Borders         =   1
       Caption         =   ""
       DoubleBuffer    =   False
       Enabled         =   True
@@ -133,7 +136,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   0
-      Height          =   333
+      Height          =   334
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -151,6 +154,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -217,7 +221,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   2
       Visible         =   True
       Width           =   399
       Begin LogoFillCanvas FillCanvas
@@ -279,35 +283,36 @@ Begin ConfigEditor CraftingCostsConfigEditor
          Visible         =   True
          Width           =   399
       End
-   End
-   Begin FadedSeparator ListStatusSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   False
-      Scope           =   0
-      ScrollSpeed     =   20
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   374
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   250
+      Begin LogoFillCanvas LogoFillCanvas1
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         Caption         =   "Multiple Selection"
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   396
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Panel"
+         Left            =   251
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   399
+      End
    End
 End
 #tag EndWindow
@@ -396,7 +401,6 @@ End
 		  Self.List.Width = ListWidth
 		  Self.ListSeparator.Left = ListWidth
 		  Self.ListStatusBar.Width = ListWidth
-		  Self.ListStatusSeparator.Width = ListWidth
 		  Self.Panel.Left = Self.ListSeparator.Left + Self.ListSeparator.Width
 		  Self.Panel.Width = EditorWidth
 		  
@@ -416,7 +420,7 @@ End
 		    CurrentEngrams.Append(Config(I).Engram)
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, CurrentEngrams, Self.Document.ConsoleModsOnly, True)
+		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, CurrentEngrams, Self.Document.ConsoleModsOnly, False)
 		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
 		    Return
 		  End If
@@ -426,6 +430,43 @@ End
 		  Dim NewCosts() As Beacon.CraftingCost
 		  For Each Engram As Beacon.Engram In NewEngrams
 		    Dim Cost As New Beacon.CraftingCost(Engram)
+		    Config.Append(Cost)
+		    NewCosts.Append(Cost)
+		  Next
+		  
+		  Self.UpdateList(NewCosts)
+		  Self.ContentsChanged = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowDuplicateSelection()
+		  If Self.List.SelCount <> 1 Then
+		    Return
+		  End If
+		  
+		  Dim CurrentEngrams() As Beacon.Engram
+		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(False)
+		  For I As Integer = 0 To Config.Ubound
+		    If Config(I).Engram = Nil Then
+		      Continue
+		    End If
+		    
+		    CurrentEngrams.Append(Config(I).Engram)
+		  Next
+		  
+		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, CurrentEngrams, Self.Document.ConsoleModsOnly, True)
+		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
+		    Return
+		  End If
+		  
+		  Dim SourceCost As Beacon.CraftingCost = Self.List.RowTag(Self.List.ListIndex)
+		  Config = Self.Config(True)
+		  
+		  Dim NewCosts() As Beacon.CraftingCost
+		  For Each Engram As Beacon.Engram In NewEngrams
+		    Dim Cost As New Beacon.CraftingCost(SourceCost)
+		    Cost.Engram = Engram
 		    Config.Append(Cost)
 		    NewCosts.Append(Cost)
 		  Next
@@ -536,7 +577,12 @@ End
 		Sub Open()
 		  Dim AddButton As New BeaconToolbarItem("AddEngram", IconAdd)
 		  AddButton.HelpTag = "Change the crafting cost for a new item."
+		  
+		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
+		  DuplicateButton.HelpTag = "Duplicate the selected crafting override."
+		  
 		  Me.LeftItems.Append(AddButton)
+		  Me.LeftItems.Append(DuplicateButton)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -544,6 +590,8 @@ End
 		  Select Case Item.Name
 		  Case "AddEngram"
 		    Self.ShowAddEngram()
+		  Case "Duplicate"
+		    Self.ShowDuplicateSelection()
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -564,6 +612,8 @@ End
 		  Else
 		    Self.Panel.Value = Self.PageMultipleSelection
 		  End If
+		  
+		  Self.Header.Duplicate.Enabled = Me.SelCount = 1
 		  
 		  Self.UpdateStatus()
 		End Sub
