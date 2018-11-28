@@ -310,6 +310,7 @@ Class=CraftingCosts;Modules/BeaconConfigs/CraftingCosts.xojo_code;&h000000005E92
 Window=CraftingCostEditor;Views/Config Editors/Crafting Costs/CraftingCostEditor.xojo_window;&h000000006BBFAFFF;&h00000000068D0FFF;false
 Class=CraftingCost;Modules/Beacon/CraftingCost.xojo_code;&h000000005B5E0FFF;&h0000000055ADDFFF;false
 Window=EngramSelectorDialog;Views/EngramSelectorDialog.xojo_window;&h0000000056BA3FFF;&h0000000008A387FF;false
+Class=CodeArea;Custom Controls/CodeArea.xojo_code;&h000000002B59D7FF;&h0000000030DCFFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=1

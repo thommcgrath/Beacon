@@ -61,7 +61,7 @@ Begin DiscoveryView LocalDiscoveryView
       Visible         =   True
       Width           =   560
    End
-   Begin TextArea ConfigArea
+   Begin CodeArea ConfigArea
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True

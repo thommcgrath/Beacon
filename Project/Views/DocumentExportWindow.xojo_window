@@ -146,7 +146,7 @@ Begin Window DocumentExportWindow
       Visible         =   True
       Width           =   96
    End
-   Begin TextArea ContentArea
+   Begin CodeArea ContentArea
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True

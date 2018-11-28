@@ -58,7 +58,7 @@ Begin ConfigEditor CustomContentConfigEditor Implements NotificationKit.Receiver
       Visible         =   True
       Width           =   308
    End
-   Begin TextArea ConfigArea
+   Begin CodeArea ConfigArea
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
