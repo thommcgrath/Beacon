@@ -251,6 +251,14 @@ CREATE TRIGGER loot_source_icons_before_insert_trigger BEFORE INSERT ON loot_sou
 CREATE TRIGGER loot_source_icons_before_update_trigger BEFORE UPDATE ON loot_source_icons FOR EACH ROW EXECUTE PROCEDURE object_update_trigger();
 CREATE TRIGGER loot_source_icons_after_delete_trigger AFTER DELETE ON loot_source_icons FOR EACH ROW EXECUTE PROCEDURE object_delete_trigger();
 
+CREATE OR REPLACE FUNCTION loot_source_icons_update_loot_source() RETURNS TRIGGER AS $$
+BEGIN
+	UPDATE loot_sources SET last_update = CURRENT_TIMESTAMP(0) WHERE icon = NEW.object_id;
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER loot_source_icons_after_update_trigger AFTER UPDATE ON loot_source_icons FOR EACH ROW EXECUTE PROCEDURE loot_source_icons_update_loot_source();
+
 CREATE TABLE loot_sources (
 	PRIMARY KEY (object_id),
 	FOREIGN KEY (mod_id) REFERENCES mods(mod_id) ON DELETE CASCADE ON UPDATE CASCADE,
