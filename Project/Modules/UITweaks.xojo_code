@@ -22,7 +22,18 @@ Protected Module UITweaks
 		  Dim ControlCount As Integer = Win.ControlCount
 		  For I As Integer = 0 To ControlCount - 1
 		    Dim Ctl As Control = Win.Control(I)
-		    If Ctl.PanelIndex <> PanelIndex Then
+		    Dim ControlPanelIndex As Integer = Ctl.PanelIndex
+		    #if TargetWin32 And Target64Bit
+		      // Bug <feedback://showreport?report_id=54283>
+		      #if XojoVersion >= 2018.03 And XojoVersion < 2018.04
+		        If ControlPanelIndex = 4294967295 Then
+		          ControlPanelIndex = -1
+		        End If
+		      #else
+		        #Pragma Error "Test PanelIndex again to make sure this code is still necessary"
+		      #endif
+		    #endif
+		    If ControlPanelIndex <> PanelIndex Then
 		      Continue
 		    End If
 		    If Ctl IsA PushButton Then
