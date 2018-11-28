@@ -129,6 +129,8 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Issues(Document As Beacon.Document) As Beacon.Issue()
+		  #Pragma Unused Document
+		  
 		  Dim Issues() As Beacon.Issue
 		  Dim ConfigName As Text = "CraftingCosts"
 		  For I As Integer = 0 To Self.mCosts.Ubound

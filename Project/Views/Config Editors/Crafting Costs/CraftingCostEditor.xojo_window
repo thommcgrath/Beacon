@@ -334,7 +334,16 @@ End
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
 		  If Warn Then
-		    #Pragma Warning "Does not warn about deleting"
+		    Dim Message As String
+		    If Me.SelCount = 1 Then
+		      Message = "Are you sure you want to remove """ + Me.Cell(Me.ListIndex, 0) + """ from the required resources?"
+		    Else
+		      Message = "Are you sure you want to delete these " + Str(Me.SelCount, "-0") + " resources from the crafting cost?"
+		    End If
+		    
+		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then
+		      Return
+		    End If
 		  End If
 		  
 		  For I As Integer = Me.ListCount - 1 DownTo 0
