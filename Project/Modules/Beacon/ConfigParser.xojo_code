@@ -1,7 +1,7 @@
 #tag Class
 Private Class ConfigParser
 	#tag Method, Flags = &h0
-		Function AddCharacter(Char As Text) As Boolean
+		Function AddCharacter(Char As String) As Boolean
 		  Static LineEndingChar As Text = Beacon.ImportThread.LineEndingChar
 		  
 		  Self.ConsumedLastChar = True
@@ -55,7 +55,7 @@ Private Class ConfigParser
 		        Self.Buffer.Append(Char)
 		      End If
 		    Case "="
-		      Self.Key = Self.Buffer.Join("").Trim
+		      Self.Key = Self.Buffer.Join("").Trim.ToText
 		      Redim Self.Buffer(-1)
 		      Self.Type = Self.TypePair
 		      Self.SubParser = New Beacon.ConfigParser(Self.Level) // Same level
@@ -64,7 +64,7 @@ Private Class ConfigParser
 		        Self.Buffer.Append(Char)
 		      Else
 		        Self.ConsumedLastChar = False
-		        Self.mValue = Self.Buffer.Join("")
+		        Self.mValue = Self.Buffer.Join("").ToText
 		        Redim Self.Buffer(-1)
 		        Return True
 		      End If
@@ -99,7 +99,7 @@ Private Class ConfigParser
 
 
 	#tag Property, Flags = &h21
-		Private Buffer() As Text
+		Private Buffer() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -9,21 +9,21 @@ Inherits Beacon.Thread
 		  Dim LineEnding As Text = Self.LineEndingChar()
 		  
 		  // Normalize line endings
-		  Dim Content As Text = Beacon.ReplaceLineEndings(Self.mGameUserSettingsIniContent + LineEnding + Self.mGameIniContent, LineEnding)
+		  Dim Content As String = ReplaceLineEndings(Self.mGameUserSettingsIniContent + LineEnding + Self.mGameIniContent, LineEnding)
 		  Self.mCharactersProcessed = 0
 		  Self.mCharactersTotal = Content.Length
 		  
 		  Self.mParsedData = New Xojo.Core.Dictionary
 		  
-		  Dim Lines() As Text = Content.Split(LineEnding)
-		  Self.mCharactersTotal = Self.mCharactersTotal + Lines.Ubound + 1 // To account for the trailing CR characters we're adding
-		  For Each Line As Text In Lines
+		  Dim Lines() As String = Content.Split(LineEnding)
+		  Self.mCharactersTotal = Self.mCharactersTotal + ((Lines.Ubound + 1) * LineEnding.Length) // To account for the trailing line ending characters we're adding
+		  For Each Line As String In Lines
 		    If Self.mCancelled Then
 		      Return
 		    End If
 		    
 		    If Line.Length = 0 Or Line.Left(1) = ";" Then
-		      Self.mCharactersProcessed = Self.mCharactersProcessed + Line.Length + 1
+		      Self.mCharactersProcessed = Self.mCharactersProcessed + Line.Length + LineEnding.Length
 		      Self.Invalidate
 		      Continue
 		    End If
@@ -107,10 +107,11 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function Import(Content As Text) As Auto
+		Private Function Import(Content As String) As Auto
 		  Dim Parser As New Beacon.ConfigParser
 		  Dim Value As Auto
-		  For Each Char As Text In Content.Characters
+		  Dim Characters() As String = Content.Split("")
+		  For Each Char As String In Characters
 		    If Self.mCancelled Then
 		      Return Nil
 		    End If
@@ -195,18 +196,27 @@ Inherits Beacon.Thread
 		      Next
 		      Return Items
 		    End If
-		  Case "Text"
-		    If Input = "true" Then
+		  Case "Text", "String"
+		    Dim StringValue As String
+		    If Info.FullName = "Text" Then
+		      Dim TextValue As Text = Input
+		      StringValue = TextValue
+		    Else
+		      StringValue = Input
+		    End If
+		    If StringValue = "true" Then
 		      Return True
-		    ElseIf Input = "false" Then
+		    ElseIf StringValue = "false" Then
 		      Return False
-		    ElseIf Input = "" Then
-		      Return ""
+		    ElseIf StringValue = "" Then
+		      // Want to ensure this returns text instead of string
+		      Dim TextValue As Text = ""
+		      Return TextValue
 		    Else
 		      Dim IsNumeric As Boolean = True
 		      Dim DecimalPoints As Integer
-		      Dim TextValue As Text = Input
-		      For Each Char As Text In TextValue.Characters
+		      Dim Characters() As String = StringValue.Split("")
+		      For Each Char As String In Characters
 		        Select Case Char
 		        Case "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"
 		          // Still a Number
@@ -224,10 +234,10 @@ Inherits Beacon.Thread
 		      Next
 		      If IsNumeric Then
 		        // Number
-		        Return Double.FromText(TextValue)
+		        Return Val(StringValue)
 		      Else
 		        // Probably Text
-		        Return TextValue
+		        Return StringValue.ToText
 		      End If
 		    End If
 		  Else
