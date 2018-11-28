@@ -290,7 +290,7 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Function GetConfigHelp(ConfigName As String, ByRef Title As String, ByRef Body As String, ByRef DetailURL As String) As Boolean
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE LOWER(config_name) = LOWER(?1);", ConfigName)
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT title, body, detail_url FROM config_help WHERE config_name = ?1;", Lowercase(ConfigName))
 		  If Results.RecordCount <> 1 Then
 		    Return False
 		  End If
@@ -996,7 +996,7 @@ Implements Beacon.DataSource
 		  
 		  // Config Help
 		  If FromSchemaVersion >= 6 Then
-		    Commands.Append("INSERT INTO config_help SELECT * FROM legacy.config_help;")
+		    Commands.Append("INSERT INTO config_help (config_name, title, body, detail_url) SELECT LOWER(config_name), title, body, detail_url FROM legacy.config_help;")
 		  End If
 		  
 		  // Preset Modifiers
