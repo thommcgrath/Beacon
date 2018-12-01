@@ -14,7 +14,7 @@ spl_autoload_register(function($class_name) {
 	}
 });
 
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 if (BeaconAPI::Method() == 'OPTIONS') {
 	http_response_code(200);
