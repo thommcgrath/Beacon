@@ -41,6 +41,7 @@ spl_autoload_register(function($class_name) {
 	header('X-Content-Security-Policy: ' . $policy);
 	header('X-WebKit-CSP: ' . $policy);
 	header('Cache-Control: no-cache');
+	header('Referrer-Policy: same-origin');
 })();
 
 require(dirname(__FILE__) . '/config.php');
