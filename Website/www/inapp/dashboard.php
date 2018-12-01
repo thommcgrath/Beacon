@@ -1,6 +1,6 @@
 <?php
 
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTemplate('dashboard');
 
 $session = null;

@@ -1,6 +1,6 @@
 <?php
 
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 if (empty($_GET['mod_id']) || BeaconCommon::IsUUID($_GET['mod_id']) == false) {
 	//header('Location: /mods/');

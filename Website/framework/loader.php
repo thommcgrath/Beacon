@@ -1,10 +1,5 @@
 <?php
 
-$_SERVER['FRAMEWORK_DIR'] = dirname(__FILE__);
-if (!isset($_SERVER['SITE_ROOT'])) {
-	$_SERVER['SITE_ROOT'] = dirname(__FILE__, 2);
-}
-
 if (ob_get_level()) {
 	ob_end_clean();
 }
@@ -17,13 +12,13 @@ spl_autoload_register(function($class_name) {
 	$filename = str_replace('\\', '/', $class_name) . '.php';
 	
 	// check the global classes
-	$file = $_SERVER['FRAMEWORK_DIR'] . '/classes/' . $filename;
+	$file = dirname(__FILE__) . '/classes/' . $filename;
 	if (file_exists($file)) {
 		include($file);
 	}
 	
 	// check the most recent api too
-	$file = $_SERVER['SITE_ROOT'] . '/api/v1/classes/' . $filename;
+	$file = dirname(__FILE__, 2) . '/api/v1/classes/' . $filename;
 	if (file_exists($file)) {
 		include($file);
 	}
@@ -31,7 +26,7 @@ spl_autoload_register(function($class_name) {
 
 (function() {
 	$_SERVER['CSP_NONCE'] = base64_encode(random_bytes(12));
-	$policy = 'default-src \'self\' https://*.beaconapp.cc https://*.stripe.com \'nonce-' . $_SERVER['CSP_NONCE'] . '\'; child-src \'self\' https://www.youtube-nocookie.com;';
+	$policy = 'default-src \'self\' https://*.beaconapp.cc https://*.stripe.com \'nonce-' . $_SERVER['CSP_NONCE'] . '\'; child-src \'self\' https://www.youtube-nocookie.com https://*.stripe.com;';
 	if (isset($_SERVER['HTTP_USER_AGENT']) && (preg_match('/Edge\/\d+/', $_SERVER['HTTP_USER_AGENT']) === 1)) {
 		// Edge treats SVG style info in the page context incorrect, so we need unsafe-inline
 		$policy .= ' style-src \'self\' \'unsafe-inline\';';
@@ -48,7 +43,7 @@ spl_autoload_register(function($class_name) {
 	header('Cache-Control: no-cache');
 })();
 
-require($_SERVER['FRAMEWORK_DIR'] . '/config.php');
+require(dirname(__FILE__) . '/config.php');
 
 BeaconTemplate::Start();
 

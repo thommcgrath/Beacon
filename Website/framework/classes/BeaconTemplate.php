@@ -12,7 +12,7 @@ abstract class BeaconTemplate {
 	
 	public static function SetTemplate(string $template_name) {
 		$template_name = preg_replace('/[^a-zA-Z0-9]+/', '', $template_name);
-		$file = $_SERVER['FRAMEWORK_DIR'] . '/templates/' . $template_name . '.php';
+		$file = BeaconCommon::FrameworkPath() . '/templates/' . $template_name . '.php';
 		if (!file_exists($file)) {
 			trigger_error('No such template ' . $file, E_USER_ERROR);
 		}
@@ -23,7 +23,7 @@ abstract class BeaconTemplate {
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		
-		$file = $_SERVER['FRAMEWORK_DIR'] . '/templates/' . self::$template_name . '.php';
+		$file = BeaconCommon::FrameworkPath() . '/templates/' . self::$template_name . '.php';
 		require($file);
 	}
 	

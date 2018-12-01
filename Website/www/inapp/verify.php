@@ -1,6 +1,6 @@
 <?php
 
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Content-Type: application/json');
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');

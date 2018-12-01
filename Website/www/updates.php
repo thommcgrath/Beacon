@@ -1,6 +1,6 @@
 <?php
 
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 2) . '/framework/loader.php');
 header('Cache-Control: no-cache');
 
 $stage = 3;

@@ -1,6 +1,6 @@
 <?php
 
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 4) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Beacon Login');
 
 $cleanup_url = false;

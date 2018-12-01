@@ -1,6 +1,6 @@
 <?php
 
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 2) . '/framework/loader.php');
 header('Content-Type: application/json');
 
 $email_address = array_key_exists('email', $_POST) ? $_POST['email'] : '';

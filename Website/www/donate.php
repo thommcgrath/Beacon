@@ -1,7 +1,7 @@
 <?php
 
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
-require($_SERVER['FRAMEWORK_DIR'] . '/stripe/init.php');
+require(dirname(__FILE__, 2) . '/framework/loader.php');
+require(BeaconCommon::FrameworkPath() . '/stripe/init.php');
 BeaconTemplate::AddStylesheet('/assets/css/donate.css');
 
 if (isset($_POST['token']) && isset($_POST['amount']) && isset($_POST['email'])) {

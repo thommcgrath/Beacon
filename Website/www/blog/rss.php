@@ -1,5 +1,5 @@
 <?php
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 3) . '/framework/loader.php');
 header('Content-Type: application/rss+xml');
 
 echo '<?xml version="1.0" encoding="UTF-8"?>';

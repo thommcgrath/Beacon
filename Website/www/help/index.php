@@ -1,5 +1,5 @@
 <?php
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Help');
 
 $default_island_document = BeaconDocumentMetadata::GetByDocumentID('eab656ca-20c6-4bec-bd15-6066f0fb16d3');

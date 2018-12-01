@@ -1,5 +1,5 @@
 <?php
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Item Spawn Codes');
 BeaconTemplate::AddHeaderLine('<script src="/assets/scripts/clipboard-polyfill.js"></script>');
 BeaconTemplate::AddHeaderLine('<script src="spawncodes.js"></script>');

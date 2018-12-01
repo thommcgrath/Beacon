@@ -35,6 +35,10 @@ abstract class BeaconCommon {
 		return static::EnvironmentName() === 'workbench';
 	}
 	
+	public static function FrameworkPath() {
+		return dirname(__FILE__, 2);
+	}
+	
 	public static function Database() {
 		if (self::$database === null) {
 			trigger_error('Database has not been setup', E_USER_ERROR);

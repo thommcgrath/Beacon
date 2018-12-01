@@ -1,5 +1,5 @@
 <?php
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 $database = BeaconCommon::Database();
 $results = $database->Query("SELECT mac_url, win_url, build_display, build_number FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");

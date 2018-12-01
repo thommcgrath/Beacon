@@ -1,6 +1,6 @@
 <?php
 
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 4) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Verify Your E-Mail Address');
 
 if (isset($_POST['code'])) {

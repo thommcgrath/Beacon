@@ -1,5 +1,5 @@
 <?php
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 2) . '/framework/loader.php');
 $stage = isset($_GET['stage']) ? intval($_GET['stage']) : 3;
 BeaconTemplate::SetTitle('Version History');
 ?><h1>Version History</h1>

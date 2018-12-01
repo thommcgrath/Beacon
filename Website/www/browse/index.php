@@ -1,5 +1,5 @@
 <?php
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Browse Documents');
 BeaconTemplate::AddStylesheet('/assets/css/generator.css');
 

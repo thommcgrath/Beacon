@@ -1,5 +1,5 @@
 <?php
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 2) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Privacy Policy');
 ?><h1>Beacon Privacy Policy</h1>
 <div class="indent">

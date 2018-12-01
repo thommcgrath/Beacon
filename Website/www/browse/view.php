@@ -5,7 +5,7 @@ if (empty($_GET['document_id'])) {
 	exit;
 }
 
-require($_SERVER['SITE_ROOT'] . '/framework/loader.php');
+require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 $document_id = $_GET['document_id'];
 $search_keys = array(
