@@ -34,9 +34,8 @@ spl_autoload_register(function($class_name) {
 	$policy .= ' upgrade-insecure-requests; block-all-mixed-content; sandbox allow-forms allow-same-origin allow-scripts;';
 	header('X-Frame-Options: SAMEORIGIN');
 	header('X-Content-Type-Options: nosniff');
-	header('X-XSS-Protection: 1; mode=block');
+	header('X-XSS-Protection: 1; report=https://6d153c89aff98df62a0c4c4c2847c74e.report-uri.com/r/d/xss/enforce');
 	header('Strict-Transport-Security: max-age=15638400; includeSubDomains; preload');
-	header('Public-Key-Pins: pin-sha256=\"9U4eJjHBF6yuWAG5YdOrAhnaCQ4e/3LzOgwQkXIa2vo=\"; pin-sha256=\"86h29611cpitP0ZXL3WgeNhgTPDPgiS97NsbmPSg1BY=\"; pin-sha256=\"wPCukSJxPVVV60AInhJHvGt/sWYOa5rvk7oGiFK1pd4=\"; max-age=15638400; includeSubDomains;');
 	header('Content-Security-Policy: ' . $policy);
 	header('X-Content-Security-Policy: ' . $policy);
 	header('X-WebKit-CSP: ' . $policy);
