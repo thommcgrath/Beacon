@@ -32,15 +32,10 @@ spl_autoload_register(function($class_name) {
 		$policy .= ' style-src \'self\' \'unsafe-inline\';';
 	}
 	$policy .= ' upgrade-insecure-requests; block-all-mixed-content; sandbox allow-forms allow-same-origin allow-scripts;';
-	header('X-Frame-Options: SAMEORIGIN');
-	header('X-Content-Type-Options: nosniff');
-	header('X-XSS-Protection: 1; report=https://6d153c89aff98df62a0c4c4c2847c74e.report-uri.com/r/d/xss/enforce');
-	header('Strict-Transport-Security: max-age=15638400; includeSubDomains; preload');
 	header('Content-Security-Policy: ' . $policy);
 	header('X-Content-Security-Policy: ' . $policy);
 	header('X-WebKit-CSP: ' . $policy);
 	header('Cache-Control: no-cache');
-	header('Referrer-Policy: same-origin');
 })();
 
 require(dirname(__FILE__) . '/config.php');
