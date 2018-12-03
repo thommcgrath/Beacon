@@ -299,7 +299,10 @@ Implements NotificationKit.Receiver
 		    Dim Token As Text = Dict.Value("session_id")
 		    Preferences.OnlineToken = Token
 		    
-		    Dim Request As New BeaconAPI.Request("user.php", "GET", AddressOf APICallback_GetCurrentUser)
+		    Dim Fields As New Xojo.Core.Dictionary
+		    Fields.Value("hardware_id") = Beacon.HardwareID
+		    
+		    Dim Request As New BeaconAPI.Request("user.php", "GET", Fields, AddressOf APICallback_GetCurrentUser)
 		    Request.Authenticate(Token)
 		    BeaconAPI.Send(Request)
 		  Catch Err As RuntimeException
@@ -585,14 +588,9 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Identity(Assigns Value As Beacon.Identity)
-		  Dim OriginalUIColor As Color = BeaconUI.PrimaryColor()
 		  Dim OriginalID As Text = If(Self.mIdentity <> Nil, Self.mIdentity.Identifier, "")
 		  Self.mIdentity = Value
 		  Self.WriteIdentity()
-		  Dim NewUIColor As Color = BeaconUI.PrimaryColor()
-		  If OriginalUIColor <> NewUIColor Then
-		    NotificationKit.Post("UI Color Changed", New BeaconUI.ColorProfile(NewUIColor))
-		  End If
 		  Dim NewID As Text = If(Self.mIdentity <> Nil, Self.mIdentity.Identifier, "")
 		  If NewID <> OriginalID Then
 		    NotificationKit.Post(Notification_IdentityChanged, Value)
@@ -660,7 +658,10 @@ Implements NotificationKit.Receiver
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_RequestUser()
 		  If Preferences.OnlineEnabled And Preferences.OnlineToken <> "" Then
-		    Dim Request As New BeaconAPI.Request("user.php", "GET", AddressOf APICallback_GetCurrentUser)
+		    Dim Fields As New Xojo.Core.Dictionary
+		    Fields.Value("hardware_id") = Beacon.HardwareID
+		    
+		    Dim Request As New BeaconAPI.Request("user.php", "GET", Fields, AddressOf APICallback_GetCurrentUser)
 		    Request.Authenticate(Preferences.OnlineToken)
 		    BeaconAPI.Send(Request)
 		  End If

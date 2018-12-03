@@ -181,7 +181,6 @@ Class=Collection;Modules/Beacon/Collection.xojo_code;&h00000000452CE7FF;&h000000
 Class=CollectionIterator;Modules/Beacon/CollectionIterator.xojo_code;&h000000007DB517FF;&h0000000055ADDFFF;false
 Class=LootSourceCollection;Modules/Beacon/LootSourceCollection.xojo_code;&h000000005980AFFF;&h0000000055ADDFFF;false
 Class=DocumentURL;Modules/Beacon/DocumentURL.xojo_code;&h000000006A8CF7FF;&h0000000055ADDFFF;false
-Class=ViewSwitcher;Custom Controls/ViewSwitcher.xojo_code;&h000000006A3B5FFF;&h0000000030DCFFFF;false
 MultiImage=IconDocuments;Icons/IconDocuments.xojo_image;&h000000002FE697FF;&h0000000007F977FF;false
 MultiImage=IconEngrams;Icons/IconEngrams.xojo_image;&h000000000C169FFF;&h0000000007F977FF;false
 MultiImage=IconPresets;Icons/IconPresets.xojo_image;&h0000000064CBEFFF;&h0000000007F977FF;false

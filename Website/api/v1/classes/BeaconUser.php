@@ -7,8 +7,7 @@ class BeaconUser implements JsonSerializable {
 	protected $private_key = null;
 	protected $private_key_salt = null;
 	protected $private_key_iterations = null;
-	protected $patreon_user_id = null;
-	protected $is_patreon_supporter = false;
+	protected $signatures = array();
 	
 	public function __construct($source = null) {
 		if ($source instanceof BeaconRecordSet) {
@@ -18,8 +17,6 @@ class BeaconUser implements JsonSerializable {
 			$this->private_key = $source->Field('private_key');
 			$this->private_key_salt = $source->Field('private_key_salt');
 			$this->private_key_iterations = intval($source->Field('private_key_iterations'));
-			$this->patreon_user_id = $source->Field('patreon_id') !== null ? intval($source->Field('patreon_id')) : null;
-			$this->is_patreon_supporter = $source->Field('is_patreon_supporter');
 		} elseif (is_null($source)) {
 			$this->user_id = BeaconCommon::GenerateUUID();
 		}
@@ -49,25 +46,8 @@ class BeaconUser implements JsonSerializable {
 		return $this->private_key_iterations;
 	}
 	
-	public function IsPatreonLinked() {
-		return $this->patreon_user_id !== null;
-	}
-	
-	public function IsPatreonSupporter() {
-		return $this->is_patreon_supporter;
-	}
-	
 	public function IsAnonymous() {
 		return empty($this->login_key);
-	}
-	
-	public function Validation() {
-		$time = floor(time() / 604800);
-		$key = strtolower($this->user_id) . ' ' . $time . ' ' . ($this->patreon_user_id !== null ? $this->patreon_user_id : '' ) . ' ' . ($this->is_patreon_supporter ? 1 : 0);
-		$signature = '';
-		if (openssl_sign($key, $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
-			return bin2hex($signature);
-		}
 	}
 	
 	public function jsonSerialize() {
@@ -78,10 +58,18 @@ class BeaconUser implements JsonSerializable {
 			'private_key' => $this->private_key,
 			'private_key_salt' => $this->private_key_salt,
 			'private_key_iterations' => $this->private_key_iterations,
-			'patreon_user_id' => $this->patreon_user_id,
-			'is_patreon_supporter' => $this->is_patreon_supporter,
-			'validation' => $this->Validation()
+			'signatures' => $this->signatures,
+			'omni_version' => 0
 		);
+	}
+	
+	public function PrepareSignatures(string $hardware_id) {
+		// version 1
+		$fields = array($hardware_id, strtolower($this->UserID()), strtolower($this->LoginKey()), '0');
+		$signature = '';
+		if (openssl_sign(implode(' ', $fields), $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
+			$this->signatures[1] = bin2hex($signature);
+		}
 	}
 	
 	public function TestPassword(string $password) {
@@ -218,7 +206,7 @@ class BeaconUser implements JsonSerializable {
 		
 	
 	private static function SQLColumns() {
-		return array('user_id', 'login_key', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'patreon_id', 'is_patreon_supporter');
+		return array('user_id', 'login_key', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations');
 	}
 	
 	public static function GetByEmail(string $email) {

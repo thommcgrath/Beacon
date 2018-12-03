@@ -30,40 +30,30 @@ Protected Class Identity
 		    Return False
 		  End If
 		  
-		  Dim Changed As Boolean
 		  Try
-		    Dim Signature As Xojo.Core.MemoryBlock = If(Dict.HasKey("validation"), Beacon.DecodeHex(Dict.Value("validation")), Nil)
-		    Dim IsPatreonSupporter As Boolean = Dict.Lookup("is_patreon_supporter", False)
-		    Dim PatreonUserID As Integer = If(Dict.Lookup("patreon_user_id", Nil) <> Nil, Dict.Value("patreon_user_id"), 0)
-		    Dim LoginKey As Auto = Dict.Lookup("login_key", "")
-		    If LoginKey = Nil Then
-		      LoginKey = ""
-		    End If
-		    
-		    If Self.mSignature <> Signature Then
-		      Self.mSignature = Signature
-		      Changed = True
-		    End If
-		    
-		    If Self.mIsPatreonSupporter <> IsPatreonSupporter Then
-		      Self.mIsPatreonSupporter = IsPatreonSupporter
-		      Changed = True
-		    End If
-		    
-		    If Self.mPatreonUserID <> PatreonUserID Then
-		      Self.mPatreonUserID = PatreonUserID
-		      Changed = True
-		    End If
-		    
-		    If Self.mLoginKey <> LoginKey Then
-		      Self.mLoginKey = LoginKey
-		      Changed = True
-		    End If
+		    Self.mLoginKey = Dict.Lookup("login_key", "")
 		  Catch Err As RuntimeException
-		    
+		    Self.mLoginKey = ""
 		  End Try
 		  
-		  Return Changed
+		  Try
+		    Self.mPurchasedOmniVersion = Dict.Lookup("omni_version", 0)
+		  Catch Err As RuntimeException
+		    Self.mPurchasedOmniVersion = 0
+		  End Try
+		  
+		  Try
+		    If Dict.HasKey("signatures") Then
+		      Dim SignaturesDict As Xojo.Core.Dictionary = Dict.Value("signatures")
+		      Self.mSignature = Beacon.DecodeHex(SignaturesDict.Lookup(Self.SignatureVersion, ""))
+		    Else
+		      Self.mSignature = Nil
+		    End If
+		  Catch Err As RuntimeException
+		    Self.mSignature = Nil
+		  End Try
+		  
+		  Return True
 		End Function
 	#tag EndMethod
 
@@ -91,14 +81,11 @@ Protected Class Identity
 		  Dict.Value("Public") = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mPublicKey)
 		  Dict.Value("Private") = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mPrivateKey)
 		  Dict.Value("Version") = 2
-		  If Self.mPatreonUserID > 0 Then
-		    Dict.Value("PatreonUserID") = Self.mPatreonUserID
-		  End If
-		  Dict.Value("IsPatreonSupporter") = Self.mIsPatreonSupporter
+		  Dict.Value("Omni Version") = Self.mPurchasedOmniVersion
+		  Dict.Value("LoginKey") = Self.mLoginKey
 		  If Self.mSignature <> Nil Then
 		    Dict.Value("Signature") = Beacon.EncodeHex(Self.mSignature)
 		  End If
-		  Dict.Value("LoginKey") = Self.mLoginKey
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -129,6 +116,7 @@ Protected Class Identity
 		    If Not Identity.ConsumeUserDictionary(Dict) Then
 		      Return Nil
 		    End If
+		    Identity.Validate()
 		    Return Identity
 		  Catch Err As RuntimeException
 		    Return Nil
@@ -172,12 +160,8 @@ Protected Class Identity
 		  
 		  Dim Identity As New Beacon.Identity(Source.Value("Identifier"), PublicKey, PrivateKey)
 		  
-		  If Source.HasKey("IsPatreonSupporter") Then
-		    Identity.mIsPatreonSupporter = Source.Value("IsPatreonSupporter")
-		  End If
-		  
-		  If Source.HasKey("PatreonUserID") Then
-		    Identity.mPatreonUserID = Source.Value("PatreonUserID")
+		  If Source.HasKey("Omni Version") Then
+		    Identity.mPurchasedOmniVersion = Source.Value("Omni Version")
 		  End If
 		  
 		  If Source.HasKey("Signature") Then
@@ -188,13 +172,9 @@ Protected Class Identity
 		    Identity.mLoginKey = Source.Value("LoginKey")
 		  End If
 		  
+		  Identity.Validate()
+		  
 		  Return Identity
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsPatreonSupporter() As Boolean
-		  Return Self.mIsPatreonSupporter
 		End Function
 	#tag EndMethod
 
@@ -217,6 +197,12 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function PurchasedOmni() As Boolean
+		  Return Self.mPurchasedOmniVersion >= Beacon.OmniVersion
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Sign(Data As Xojo.Core.MemoryBlock) As Xojo.Core.MemoryBlock
 		  Return Xojo.Crypto.RSASign(Data, Self.mPrivateKey)
 		End Function
@@ -224,20 +210,23 @@ Protected Class Identity
 
 	#tag Method, Flags = &h0
 		Sub Validate()
-		  If Self.mSignature = Nil Then
-		    Self.mIsPatreonSupporter = False
-		    Return
+		  If Self.mSignature <> Nil Then
+		    Dim Fields(3) As Text
+		    Fields(0) = Beacon.HardwareID
+		    Fields(1) = Self.mIdentifier.Lowercase
+		    Fields(2) = Self.mLoginKey.Lowercase
+		    Fields(3) = Self.mPurchasedOmniVersion.ToText(Xojo.Core.Locale.Raw)
+		    
+		    Dim PublicKey As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(BeaconAPI.PublicKey)
+		    Dim CheckData As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Fields.Join(" "))
+		    If Xojo.Crypto.RSAVerifySignature(CheckData, Self.mSignature, PublicKey) Then
+		      // It is valid, now return so the reset code below does not fire
+		      Return
+		    End If
 		  End If
 		  
-		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
-		  Dim Time As Integer = Xojo.Math.Floor(Now.SecondsFrom1970 / 604800)
-		  Dim PatreonUserID As Text = If(Self.mPatreonUserID > 0, Self.mPatreonUserID.ToText(Xojo.Core.Locale.Raw), "")
-		  
-		  Dim PublicKey As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(BeaconAPI.PublicKey)
-		  Dim CheckData As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Self.mIdentifier.Lowercase + " " + Time.ToText(Xojo.Core.Locale.Raw) + " " + PatreonUserID + " " + If(Self.mIsPatreonSupporter, "1", "0"))
-		  If Not Xojo.Crypto.RSAVerifySignature(CheckData, Self.mSignature, PublicKey) Then
-		    Self.mIsPatreonSupporter = False
-		  End If
+		  Self.mLoginKey = ""
+		  Self.mPurchasedOmniVersion = 0
 		End Sub
 	#tag EndMethod
 
@@ -247,15 +236,7 @@ Protected Class Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mIsPatreonSupporter As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mLoginKey As Text
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mPatreonUserID As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -267,8 +248,16 @@ Protected Class Identity
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPurchasedOmniVersion As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSignature As Xojo.Core.MemoryBlock
 	#tag EndProperty
+
+
+	#tag Constant, Name = SignatureVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
 
 
 	#tag ViewBehavior

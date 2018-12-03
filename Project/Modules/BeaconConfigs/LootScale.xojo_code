@@ -2,6 +2,14 @@
 Protected Class LootScale
 Inherits Beacon.ConfigGroup
 	#tag Event
+		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
+		  #Pragma Unused SourceDocument
+		  
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", Self.mMultiplier.PrettyText))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
@@ -54,12 +62,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  #Pragma Unused SourceDocument
-		  
-		  Dim Values(0) As Beacon.ConfigValue
-		  Values(0) = New Beacon.ConfigValue(Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", Self.mMultiplier.PrettyText)
-		  Return Values
+		Function RequiresOmni() As Boolean
+		  Return False
 		End Function
 	#tag EndMethod
 

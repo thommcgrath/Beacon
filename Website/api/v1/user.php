@@ -47,7 +47,12 @@ case 'POST':
 case 'GET':
 	if (is_null(BeaconAPI::ObjectID())) {
 		BeaconAPI::Authorize();
-		BeaconAPI::ReplySuccess(BeaconUser::GetByUserID(BeaconAPI::UserID()));
+		
+		$user = BeaconUser::GetByUserID(BeaconAPI::UserID());
+		if (isset($_GET['hardware_id'])) {
+			$user->PrepareSignatures(trim($_GET['hardware_id']));
+		}
+		BeaconAPI::ReplySuccess($user);
 	} else {
 		// legacy support
 		$identifiers = explode(',', BeaconAPI::ObjectID());

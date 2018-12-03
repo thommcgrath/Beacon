@@ -78,15 +78,6 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ColorProfile() As BeaconUI.ColorProfile
-		  If mColorProfile = Nil Then
-		    mColorProfile = New BeaconUI.ColorProfile(BeaconUI.PrimaryColor)
-		  End If
-		  Return mColorProfile
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ContrastAgainst(Extends LeftColor As Color, RightColor As Color) As Double
 		  Dim LeftLuminance As Double = LeftColor.Luminance
 		  Dim RightLuminance As Double = RightColor.Luminance
@@ -301,29 +292,6 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function PrimaryColor() As Color
-		  If App.Identity <> Nil And App.Identity.IsPatreonSupporter Then
-		    Return Preferences.UIColor
-		  Else
-		    Return DefaultPrimaryColor
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Sub PrimaryColor(Assigns Value As Color)
-		  Dim CurrentColor As Color = PrimaryColor()
-		  Preferences.UIColor = Value
-		  Dim NewColor As Color = PrimaryColor()
-		  
-		  If CurrentColor <> NewColor Then
-		    mColorProfile = New BeaconUI.ColorProfile(Value)
-		    NotificationKit.Post(PrimaryColorNotification, mColorProfile)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Sub RegisterSheetPositionHandler()
 		  #if TargetCocoa
 		    If DelegateClass = Nil Then
@@ -455,12 +423,6 @@ Protected Module BeaconUI
 
 	#tag Constant, Name = CursorsEnabled, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected
 		#Tag Instance, Platform = Mac OS, Language = Default, Definition  = \"False"
-	#tag EndConstant
-
-	#tag Constant, Name = DefaultPrimaryColor, Type = Color, Dynamic = False, Default = \"&c713A9A", Scope = Protected
-	#tag EndConstant
-
-	#tag Constant, Name = PrimaryColorNotification, Type = Text, Dynamic = False, Default = \"UI Color Changed", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = ToolbarHasBackground, Type = Boolean, Dynamic = False, Default = \"True", Scope = Protected

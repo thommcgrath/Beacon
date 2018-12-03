@@ -346,6 +346,27 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function HardwareID() As Text
+		  #if TargetDesktop
+		    Dim Root As Global.FolderItem = Volume(0)
+		    If Root = Nil Or Root.Exists = False Then
+		      // What the hell is this?
+		      Return ""
+		    End If
+		    
+		    Dim Created As Date = Root.CreationDate
+		    If Created = Nil Then
+		      // Seriously?
+		      Return ""
+		    End If
+		    Created.GMTOffset = 0
+		    
+		    Return REALbasic.EncodeHex(Crypto.SHA256(Str(Created.TotalSeconds, "-0"))).Lowercase.ToText
+		  #endif
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function HasAllKeys(Extends Dict As Xojo.Core.Dictionary, ParamArray Keys() As Auto) As Boolean
 		  For Each Key As Auto In Keys
@@ -779,6 +800,9 @@ Protected Module Beacon
 
 
 	#tag Constant, Name = MarkupPrefix, Type = Text, Dynamic = False, Default = \"; \x1F", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = OmniVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant
 
 	#tag Constant, Name = RewriteModeGameIni, Type = Text, Dynamic = False, Default = \"Game.ini", Scope = Protected

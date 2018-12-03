@@ -326,22 +326,6 @@ Protected Module Preferences
 		Protected SourcesSplitterPosition As Integer
 	#tag EndComputedProperty
 
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Init
-			  Return mManager.ColorValue("UI Color", BeaconUI.DefaultPrimaryColor)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  Init
-			  mManager.ColorValue("UI Color") = Value
-			End Set
-		#tag EndSetter
-		Protected UIColor As Color
-	#tag EndComputedProperty
-
 
 	#tag Constant, Name = Notification_OnlineStateChanged, Type = Text, Dynamic = False, Default = \"Online State Changed", Scope = Protected
 	#tag EndConstant
@@ -354,11 +338,6 @@ Protected Module Preferences
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="HasShownSubscribeDialog"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -374,25 +353,10 @@ Protected Module Preferences
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="SourcesSplitterPosition"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="OnlineEnabled"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="OnlineToken"
-			Group="Behavior"
-			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
@@ -406,42 +370,6 @@ Protected Module Preferences
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="UIColor"
-			Group="Behavior"
-			InitialValue="&c000000"
-			Type="Color"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="SimulatorSize"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="SimulatorVisible"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ItemSetsSplitterPosition"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="LastPresetMapFilter"
-			Group="Behavior"
-			Type="UInt64"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="ShowExperimentalLootSources"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HasShownExperimentalWarning"
-			Group="Behavior"
-			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Module

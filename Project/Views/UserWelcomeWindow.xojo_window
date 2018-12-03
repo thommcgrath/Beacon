@@ -306,7 +306,10 @@ End
 		    Self.mUserToken = Params.Lookup("token", "")
 		    Self.mUserPassword = Params.Lookup("password", "")
 		    
-		    Dim Request As New BeaconAPI.Request("user.php", "GET", "", "text/plain", AddressOf APICallback_GetCurrentUser)
+		    Dim Fields As New Xojo.Core.Dictionary
+		    Fields.Value("hardware_id") = Beacon.HardwareID
+		    
+		    Dim Request As New BeaconAPI.Request("user.php", "GET", Fields, AddressOf APICallback_GetCurrentUser)
 		    Request.Authenticate(Self.mUserToken.ToText)
 		    BeaconAPI.Send(Request)
 		  Case "dismiss_me"

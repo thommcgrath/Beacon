@@ -54,8 +54,6 @@ Inherits Canvas
 
 	#tag Event
 		Sub Open()
-		  Self.mColorProfile = BeaconUI.ColorProfile
-		  
 		  RaiseEvent Open
 		  
 		  #if XojoVersion >= 2018.01
@@ -87,12 +85,6 @@ Inherits Canvas
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h0
-		Function ColorProfile() As BeaconUI.ColorProfile
-		  Return Self.mColorProfile
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Invalidate(eraseBackground As Boolean = True)
@@ -167,10 +159,6 @@ Inherits Canvas
 		Event Paint(g As Graphics, areas() As REALbasic.Rect)
 	#tag EndHook
 
-
-	#tag Property, Flags = &h21
-		Private mColorProfile As BeaconUI.ColorProfile
-	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mPainted As Boolean
