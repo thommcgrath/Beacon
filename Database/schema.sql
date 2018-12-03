@@ -493,3 +493,38 @@ GRANT SELECT ON game_variables TO thezaz_website;
 
 CREATE TRIGGER game_variables_before_update_trigger BEFORE INSERT OR UPDATE ON game_variables FOR EACH ROW EXECUTE PROCEDURE generic_update_trigger();
 -- End Game Variables
+
+-- Omni purchases
+CREATE TABLE products (
+	product_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+	product_name TEXT NOT NULL,
+	retail_price NUMERIC(6,2) NOT NULL
+);
+GRANT SELECT ON products TO thezaz_website;
+
+CREATE TABLE purchases (
+	purchase_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+	purchaser_email email NOT NULL,
+	purchase_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	subtotal NUMERIC(6,2) NOT NULL,
+	discount NUMERIC(6,2) NOT NULL,
+	tax NUMERIC(6,2) NOT NULL,
+	total_paid NUMERIC(6,2) NOT NULL,
+	merchant_reference CITEXT NOT NULL UNIQUE
+);
+CREATE INDEX purchases_purchaser_email_idx ON purchases(purchaser_email);
+GRANT SELECT, INSERT ON purchases TO thezaz_website;
+
+CREATE TABLE purchase_items (
+	line_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+	purchase_id UUID NOT NULL REFERENCES purchases(purchase_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED,
+	product_id UUID NOT NULL REFERENCES products(product_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+	retail_price NUMERIC(6,2) NOT NULL,
+	discount NUMERIC(6,2) NOT NULL,
+	line_total NUMERIC(6,2) NOT NULL
+);
+GRANT SELECT, INSERT ON purchase_items TO thezaz_website;
+
+CREATE VIEW purchased_products AS SELECT products.product_id, products.product_name, purchases.purchaser_email FROM purchases INNER JOIN (purchase_items INNER JOIN products ON (purchase_items.product_id = products.product_id)) ON (purchase_items.purchase_id = purchases.purchase_id);
+GRANT SELECT ON purchased_products TO thezaz_website;
+-- End Omni purchases
