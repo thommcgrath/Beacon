@@ -74,7 +74,7 @@ class BeaconUser implements JsonSerializable {
 			'private_key_salt' => $this->private_key_salt,
 			'private_key_iterations' => $this->private_key_iterations,
 			'signatures' => $this->signatures,
-			'omni_version' => 0
+			'omni_version' => $this->purchased_omni_version
 		);
 	}
 	
@@ -83,7 +83,7 @@ class BeaconUser implements JsonSerializable {
 		$fields = array($hardware_id, strtolower($this->UserID()), strtolower($this->LoginKey()), strval($this->purchased_omni_version));
 		$signature = '';
 		if (openssl_sign(implode(' ', $fields), $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
-			$this->signatures[1] = bin2hex($signature);
+			$this->signatures['1'] = bin2hex($signature);
 		}
 	}
 	
