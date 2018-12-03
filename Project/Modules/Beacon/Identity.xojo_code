@@ -45,7 +45,7 @@ Protected Class Identity
 		  Try
 		    If Dict.HasKey("signatures") Then
 		      Dim SignaturesDict As Xojo.Core.Dictionary = Dict.Value("signatures")
-		      Self.mSignature = Beacon.DecodeHex(SignaturesDict.Lookup(Self.SignatureVersion, ""))
+		      Self.mSignature = Beacon.DecodeHex(SignaturesDict.Lookup(Self.SignatureVersion.ToText, ""))
 		    Else
 		      Self.mSignature = Nil
 		    End If
@@ -83,7 +83,7 @@ Protected Class Identity
 		  Dict.Value("Version") = 2
 		  Dict.Value("Omni Version") = Self.mPurchasedOmniVersion
 		  Dict.Value("LoginKey") = Self.mLoginKey
-		  If Self.mSignature <> Nil Then
+		  If Self.mSignature <> Nil And Self.mSignature.Size > 0 Then
 		    Dict.Value("Signature") = Beacon.EncodeHex(Self.mSignature)
 		  End If
 		  Return Dict
