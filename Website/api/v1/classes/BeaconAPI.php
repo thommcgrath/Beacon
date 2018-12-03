@@ -169,6 +169,10 @@ abstract class BeaconAPI {
 			return null;
 		}
 		
+		if (empty($request[0])) {
+			return null;
+		}
+		
 		return $request[0];
 	}
 	
