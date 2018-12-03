@@ -498,7 +498,8 @@ CREATE TRIGGER game_variables_before_update_trigger BEFORE INSERT OR UPDATE ON g
 CREATE TABLE products (
 	product_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 	product_name TEXT NOT NULL,
-	retail_price NUMERIC(6,2) NOT NULL
+	retail_price NUMERIC(6,2) NOT NULL,
+	stripe_sku TEXT NOT NULL UNIQUE
 );
 GRANT SELECT ON products TO thezaz_website;
 
@@ -510,7 +511,8 @@ CREATE TABLE purchases (
 	discount NUMERIC(6,2) NOT NULL,
 	tax NUMERIC(6,2) NOT NULL,
 	total_paid NUMERIC(6,2) NOT NULL,
-	merchant_reference CITEXT NOT NULL UNIQUE
+	merchant_reference CITEXT NOT NULL UNIQUE,
+	client_reference_id TEXT
 );
 CREATE INDEX purchases_purchaser_email_idx ON purchases(purchaser_email);
 GRANT SELECT, INSERT ON purchases TO thezaz_website;
