@@ -44,6 +44,7 @@ Begin Window DocumentDeployWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -120,6 +121,7 @@ Begin Window DocumentDeployWindow
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -339,6 +341,7 @@ Begin Window DocumentDeployWindow
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -425,6 +428,7 @@ Begin Window DocumentDeployWindow
       End
    End
    Begin Beacon.OAuth2Client Auth
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Provider        =   ""
@@ -432,6 +436,7 @@ Begin Window DocumentDeployWindow
       TabPanelIndex   =   0
    End
    Begin Timer DeployingWatchTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -467,13 +472,13 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument)
+		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, App.Identity)
 		    For Each Option As Beacon.ConfigValue In Options
 		      Self.mCommandLineOptions.Append(Option)
 		    Next
 		    
-		    Beacon.ConfigValue.FillConfigDict(Self.mGameIniOptions, Group.GameIniValues(Self.mDocument))
-		    Beacon.ConfigValue.FillConfigDict(Self.mGameUserSettingsIniOptions, Group.GameUserSettingsIniValues(Self.mDocument))
+		    Beacon.ConfigValue.FillConfigDict(Self.mGameIniOptions, Group.GameIniValues(Self.mDocument, App.Identity))
+		    Beacon.ConfigValue.FillConfigDict(Self.mGameUserSettingsIniOptions, Group.GameUserSettingsIniValues(Self.mDocument, App.Identity))
 		  Next
 		  
 		  Dim CustomContent As BeaconConfigs.CustomContent

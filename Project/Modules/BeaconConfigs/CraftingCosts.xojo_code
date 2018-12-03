@@ -2,6 +2,17 @@
 Protected Class CraftingCosts
 Inherits Beacon.ConfigGroup
 	#tag Event
+		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
+		  #Pragma Unused SourceDocument
+		  
+		  For Each Cost As Beacon.CraftingCost In Self.mCosts
+		    Dim TextValue As Text = Cost.TextValue
+		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", TextValue))
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
@@ -81,20 +92,6 @@ Inherits Beacon.ConfigGroup
 		  If Config.Ubound > -1 Then
 		    Return Config
 		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  #Pragma Unused SourceDocument
-		  
-		  Dim Values() As Beacon.ConfigValue
-		  For Each Cost As Beacon.CraftingCost In Self.mCosts
-		    Dim TextValue As Text = Cost.TextValue
-		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", TextValue))
-		  Next
-		  
-		  Return Values
 		End Function
 	#tag EndMethod
 

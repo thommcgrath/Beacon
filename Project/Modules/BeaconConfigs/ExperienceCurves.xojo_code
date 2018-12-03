@@ -2,6 +2,42 @@
 Protected Class ExperienceCurves
 Inherits Beacon.ConfigGroup
 	#tag Event
+		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
+		  #Pragma Unused SourceDocument
+		  
+		  Dim MaxLevel As UInteger = Self.PlayerLevelCap
+		  Dim MaxXP As UInteger = Self.PlayerMaxExperience
+		  
+		  // Index 0 is level 2!
+		  // Index 150 is level 152
+		  // Index 178 is level 180
+		  // This is because players start at level 1, not level 0. Then the 0-based array needs to be accounted for.
+		  Dim Chunks() As Text
+		  For Index As Integer = 0 To MaxLevel - 2
+		    Dim Level As Integer = Index + 2
+		    Dim XP As UInteger = Round(Self.PlayerCurve.Evaluate((Level - 1) / (MaxLevel - 1), 0, MaxXP))
+		    Chunks.Append("ExperiencePointsForLevel[" + Index.ToText + "]=" + XP.ToText)
+		  Next
+		  
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsPlayer", MaxXP.ToText))
+		  
+		  Redim Chunks(-1)
+		  MaxLevel = Self.DinoLevelCap
+		  MaxXP = Self.DinoMaxExperience
+		  
+		  For Index As Integer = 0 To MaxLevel - 2
+		    Dim Level As Integer = Index + 2
+		    Dim XP As UInteger = Round(Self.DinoCurve.Evaluate((Level - 1) / (MaxLevel - 1), 0, MaxXP))
+		    Chunks.Append("ExperiencePointsForLevel[" + Index.ToText + "]=" + XP.ToText)
+		  Next
+		  
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsDino", MaxXP.ToText))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
@@ -137,45 +173,6 @@ Inherits Beacon.ConfigGroup
 		    End If
 		  Next
 		  Return Config
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  #Pragma Unused SourceDocument
-		  
-		  Dim MaxLevel As UInteger = Self.PlayerLevelCap
-		  Dim MaxXP As UInteger = Self.PlayerMaxExperience
-		  
-		  // Index 0 is level 2!
-		  // Index 150 is level 152
-		  // Index 178 is level 180
-		  // This is because players start at level 1, not level 0. Then the 0-based array needs to be accounted for.
-		  Dim Chunks() As Text
-		  For Index As Integer = 0 To MaxLevel - 2
-		    Dim Level As Integer = Index + 2
-		    Dim XP As UInteger = Round(Self.PlayerCurve.Evaluate((Level - 1) / (MaxLevel - 1), 0, MaxXP))
-		    Chunks.Append("ExperiencePointsForLevel[" + Index.ToText + "]=" + XP.ToText)
-		  Next
-		  
-		  Dim Values() As Beacon.ConfigValue
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsPlayer", MaxXP.ToText))
-		  
-		  Redim Chunks(-1)
-		  MaxLevel = Self.DinoLevelCap
-		  MaxXP = Self.DinoMaxExperience
-		  
-		  For Index As Integer = 0 To MaxLevel - 2
-		    Dim Level As Integer = Index + 2
-		    Dim XP As UInteger = Round(Self.DinoCurve.Evaluate((Level - 1) / (MaxLevel - 1), 0, MaxXP))
-		    Chunks.Append("ExperiencePointsForLevel[" + Index.ToText + "]=" + XP.ToText)
-		  Next
-		  
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsDino", MaxXP.ToText))
-		  
-		  Return Values
 		End Function
 	#tag EndMethod
 

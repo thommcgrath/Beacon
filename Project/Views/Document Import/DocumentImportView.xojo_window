@@ -44,6 +44,7 @@ Begin ContainerControl DocumentImportView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   4
@@ -250,6 +251,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -279,6 +281,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -308,6 +311,7 @@ Begin ContainerControl DocumentImportView
          HasBackColor    =   False
          Height          =   456
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   0
          LockBottom      =   True
@@ -428,6 +432,7 @@ Begin ContainerControl DocumentImportView
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -642,6 +647,7 @@ Begin ContainerControl DocumentImportView
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   3
@@ -661,6 +667,7 @@ Begin ContainerControl DocumentImportView
       End
    End
    Begin Timer DiscoveryWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -839,8 +846,8 @@ End
 		  Dim GameUserSettingsIniValues As New Xojo.Core.Dictionary
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document))
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document))
+		    Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document, App.Identity))
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document, App.Identity))
 		  Next
 		  
 		  Dim CustomContent As New BeaconConfigs.CustomContent

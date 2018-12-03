@@ -3,6 +3,21 @@ Protected Class LootDrops
 Inherits Beacon.ConfigGroup
 Implements Xojo.Core.Iterable
 	#tag Event
+		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
+		  Dim DifficultyConfig As BeaconConfigs.Difficulty = SourceDocument.Difficulty
+		  If DifficultyConfig = Nil Then
+		    DifficultyConfig = New BeaconConfigs.Difficulty
+		    DifficultyConfig.IsImplicit = True
+		  End If
+		  
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    Dim TextValue As Text = Source.TextValue(DifficultyConfig)
+		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", TextValue))
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
@@ -87,23 +102,6 @@ Implements Xojo.Core.Iterable
 		  If LootDrops.UBound > -1 Then
 		    Return LootDrops
 		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  Dim DifficultyConfig As BeaconConfigs.Difficulty = SourceDocument.Difficulty
-		  If DifficultyConfig = Nil Then
-		    DifficultyConfig = New BeaconConfigs.Difficulty
-		    DifficultyConfig.IsImplicit = True
-		  End If
-		  
-		  Dim Values() As Beacon.ConfigValue
-		  For Each Source As Beacon.LootSource In Self.mSources
-		    Dim TextValue As Text = Source.TextValue(DifficultyConfig)
-		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", TextValue))
-		  Next
-		  Return Values
 		End Function
 	#tag EndMethod
 
@@ -267,6 +265,12 @@ Implements Xojo.Core.Iterable
 		  Self.mSources.Remove(Index)
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RequiresOmni() As Boolean
+		  Return False
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

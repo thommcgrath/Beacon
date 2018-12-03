@@ -2,6 +2,23 @@
 Protected Class Difficulty
 Inherits Beacon.ConfigGroup
 	#tag Event
+		Sub CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
+		  #Pragma Unused SourceDocument
+		  
+		  Values.Append(New Beacon.ConfigValue("?", "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(1)))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
+		  #Pragma Unused SourceDocument
+		  
+		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", Self.DifficultyOffset.PrettyText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(1)))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
@@ -21,16 +38,6 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Function CommandLineOptions(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  #Pragma Unused SourceDocument
-		  
-		  Dim Options(0) As Beacon.ConfigValue
-		  Options(0) = New Beacon.ConfigValue("?", "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(1))
-		  Return Options
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Shared Function ConfigName() As Text
 		  Return "Difficulty"
 		End Function
@@ -44,23 +51,18 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  #Pragma Unused SourceDocument
-		  
-		  Dim Options(1) As Beacon.ConfigValue
-		  Options(0) = New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", Self.DifficultyOffset.PrettyText)
-		  Options(1) = New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(1))
-		  Return Options
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Levels() As Integer()
 		  Dim Results() As Integer
 		  For I As Integer = 1 To 30
 		    Results.Append(Floor(Self.DifficultyValue * I))
 		  Next
 		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RequiresOmni() As Boolean
+		  Return False
 		End Function
 	#tag EndMethod
 

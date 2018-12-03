@@ -2,6 +2,14 @@
 Protected Class Metadata
 Inherits Beacon.ConfigGroup
 	#tag Event
+		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
+		  #Pragma Unused SourceDocument
+		  
+		  Values.Append(New Beacon.ConfigValue("SessionSettings", "SessionName", Self.mTitle))
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
@@ -52,12 +60,8 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  #Pragma Unused SourceDocument
-		  
-		  Dim Values() As Beacon.ConfigValue
-		  Values.Append(New Beacon.ConfigValue("SessionSettings", "SessionName", Self.mTitle))
-		  Return Values
+		Function RequiresOmni() As Boolean
+		  Return False
 		End Function
 	#tag EndMethod
 

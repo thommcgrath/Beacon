@@ -62,6 +62,7 @@ Begin Window DocumentExportWindow
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   0
@@ -291,6 +292,7 @@ Begin Window DocumentExportWindow
       Width           =   140
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -426,7 +428,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Values() As Beacon.ConfigValue = Config.CommandLineOptions(Document)
+		    Dim Values() As Beacon.ConfigValue = Config.CommandLineOptions(Document, App.Identity)
 		    If Values <> Nil Then
 		      For Each Value As Beacon.ConfigValue In Values
 		        Dim Arr() As Text
@@ -442,8 +444,8 @@ End
 		      Next
 		    End If
 		    
-		    Beacon.ConfigValue.FillConfigDict(GameIniHeaders, Config.GameIniValues(Document))
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniHeaders, Config.GameUserSettingsIniValues(Document))
+		    Beacon.ConfigValue.FillConfigDict(GameIniHeaders, Config.GameIniValues(Document, App.Identity))
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniHeaders, Config.GameUserSettingsIniValues(Document, App.Identity))
 		  Next
 		  
 		  // Now process the custom content

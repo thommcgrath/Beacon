@@ -1,10 +1,13 @@
 #tag Class
 Protected Class ConfigGroup
 	#tag Method, Flags = &h0
-		Function CommandLineOptions(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  #Pragma Unused SourceDocument
-		  
+		Function CommandLineOptions(SourceDocument As Beacon.Document, Identity As Beacon.Identity) As Beacon.ConfigValue()
 		  Dim Values() As Beacon.ConfigValue
+		  
+		  If Self.RequiresOmni = False Or (Identity <> Nil And Identity.PurchasedOmni) Then
+		    RaiseEvent CommandLineOptions(SourceDocument, Values)
+		  End If
+		  
 		  Return Values
 		End Function
 	#tag EndMethod
@@ -40,19 +43,25 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  #Pragma Unused SourceDocument
-		  
+		Function GameIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity) As Beacon.ConfigValue()
 		  Dim Values() As Beacon.ConfigValue
+		  
+		  If Self.RequiresOmni = False Or (Identity <> Nil And Identity.PurchasedOmni) Then
+		    RaiseEvent GameIniValues(SourceDocument, Values)
+		  End If
+		  
 		  Return Values
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  #Pragma Unused SourceDocument
-		  
+		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity) As Beacon.ConfigValue()
 		  Dim Values() As Beacon.ConfigValue
+		  
+		  If Self.RequiresOmni = False Or (Identity <> Nil And Identity.PurchasedOmni) Then
+		    RaiseEvent GameUserSettingsIniValues(SourceDocument, Values)
+		  End If
+		  
 		  Return Values
 		End Function
 	#tag EndMethod
@@ -85,6 +94,12 @@ Protected Class ConfigGroup
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function RequiresOmni() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
 	#tag DelegateDeclaration, Flags = &h0
 		Delegate Sub ResolveIssuesCallback()
 	#tag EndDelegateDeclaration
@@ -114,6 +129,18 @@ Protected Class ConfigGroup
 		End Function
 	#tag EndMethod
 
+
+	#tag Hook, Flags = &h0
+		Event CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
+	#tag EndHook
 
 	#tag Hook, Flags = &h0
 		Event ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)

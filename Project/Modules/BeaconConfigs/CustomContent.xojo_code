@@ -309,6 +309,12 @@ Inherits Beacon.ConfigGroup
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function RequiresOmni() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function WriteContent(Input As Text, Identity As Beacon.Identity) As Text
 		  Dim Pos As Integer
