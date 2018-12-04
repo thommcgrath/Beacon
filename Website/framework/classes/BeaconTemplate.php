@@ -57,6 +57,10 @@ abstract class BeaconTemplate {
 		self::$header_lines[] = '<link href="' . htmlentities($url) . '" type="text/css" rel="stylesheet">';
 	}
 	
+	public static function AddScript(string $url) {
+		self::$header_lines[] = '<script src="' . htmlentities($url) . '"></script>';
+	}
+	
 	public static function StartScript() {
 		ob_start();
 	}
