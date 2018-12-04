@@ -26,12 +26,53 @@ spl_autoload_register(function($class_name) {
 
 (function() {
 	$_SERVER['CSP_NONCE'] = base64_encode(random_bytes(12));
-	$policy = 'default-src \'self\' https://*.beaconapp.cc https://*.stripe.com \'nonce-' . $_SERVER['CSP_NONCE'] . '\' \'unsafe-inline\'; frame-src \'self\' https://www.youtube-nocookie.com https://*.stripe.com;';
-	if (isset($_SERVER['HTTP_USER_AGENT']) && (preg_match('/Edge\/\d+/', $_SERVER['HTTP_USER_AGENT']) === 1)) {
-		// Edge treats SVG style info in the page context incorrect, so we need unsafe-inline
-		$policy .= ' style-src \'self\' \'unsafe-inline\';';
+	
+	$policies = array(
+		'default-src' => array(
+			"'self'",
+			"https://*.beaconapp.cc",
+			"https://*.stripe.com"
+		),
+		'frame-src' => array(
+			"'self'",
+			"https://www.youtube-nocookie.com",
+			"https://*.stripe.com"
+		),
+		'style-src' => array(
+			"'self'"
+		),
+		'sandbox' => array(
+			'allow-forms',
+			'allow-same-origin',
+			'allow-scripts'
+		),
+		'upgrade-insecure-requests' => array(
+		)
+	);
+	
+	$browser = get_browser($_SERVER['HTTP_USER_AGENT'], true);
+	$use_nonces = !(is_array($browser) && $browser['browser'] == 'Edge');
+	if ($use_nonces) {
+		$policies['default-src'][] = "'nonce-" . $_SERVER['CSP_NONCE'] . "'";
+		$policies['style-src'][] = "'nonce-" . $_SERVER['CSP_NONCE'] . "'";
+	} else {
+		$policies['default-src'][] = "'unsafe-inline'";
+		$policies['style-src'][] = "'unsafe-inline'";
 	}
-	$policy .= ' upgrade-insecure-requests; sandbox allow-forms allow-same-origin allow-scripts;';
+	if (is_array($browser) && $browser['browser'] == 'Safari' && intval($browser['majorver']) <= 8 && in_array('unsafe-inline', $policies['default-src']) == false) {
+		$policies['default-src'][] = "'unsafe-inline'";
+	}
+	
+	$groups = array();
+	foreach ($policies as $group => $attributes) {
+		if (count($attributes) > 0) {
+			$groups[] = $group . ' ' . implode(' ', $attributes) . ';';
+		} else {
+			$groups[] = $group . ';';
+		}
+	}
+	$policy = implode(' ', $groups);
+	
 	header('Content-Security-Policy: ' . $policy);
 	header('Cache-Control: no-cache');
 })();
