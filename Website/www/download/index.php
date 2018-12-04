@@ -45,7 +45,6 @@ if (BeaconCommon::IsMacOS()) {
 <?php } else { ?>
 <p class="text-center"><a class="button" href="<?php echo $primary_url; ?>"><?php echo htmlentities($primary_label); ?></a><br><span class="mini">Or <a href="<?php echo $alternate_url; ?>"><?php echo htmlentities($alternate_label); ?></a> | <a href="#requirements">System Requirements</a></span></p>
 <?php } ?>
-<div class="patreon_box"><p><a href="/donate.php" class="button">Donate</a></p><p>Beacon may be free, but developing it isn't. Consider helping out with a couple bucks towards things like server rentals.</p></div>
 <h3>Engrams Database</h3>
 <div class="indent">
 	<p><a href="classes.php?version=<?php echo $build; ?>">Download Engrams Database</a><br>Last updated <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?>.</p>
@@ -69,7 +68,6 @@ if (BeaconCommon::IsMacOS()) {
 		<p><strong>Windows</strong></p>
 		<ul>
 			<li>Windows 7 with Service Pack 1, Windows 8, Windows 8.1, Windows 10, or newer.</li>
-			<li>64-bit edition of Windows.</li>
 		</ul>
 	</div>
 </div>
