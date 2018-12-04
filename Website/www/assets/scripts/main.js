@@ -146,6 +146,9 @@ var search = {
 			var field_bounds = document.getElementById('sidebar_search_field').getBoundingClientRect();
 			
 			this.list.style.display = 'flex';
+			if (window.getComputedStyle(this.list, null).display != 'flex') {
+				this.list.style.display = '-webkit-flex';
+			}
 			this.list.style.left = (field_bounds.left + 0) + 'px';
 			this.list.style.top = (field_bounds.top + field_bounds.height + 3) + 'px';
 		} else {

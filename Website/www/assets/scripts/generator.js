@@ -1,3 +1,7 @@
+if (Number.parseInt === undefined) {
+    Number.parseInt = window.parseInt;
+}
+
 var difficulty = {
 	maps: 0,
 	init: function() {

@@ -579,12 +579,15 @@ header div.inner {
 
 #site_wrapper {
 	display: flex;
+	display: -webkit-flex;
 	flex-direction: column;
+	-webkit-flex-direction: column;
 	max-width: 100%;
 }
 
 #main {
 	flex: 1 0 0;
+	-webkit-flex: 1 0 0;
 	padding: 63px 15px 15px 15px;
 	min-width: 0px;
 }
@@ -596,8 +599,10 @@ header div.inner {
 	background-color: #713a9a;
 	padding: 0.0em;
 	flex: 0 0 auto;
+	-webkit-flex: 0 0 auto;
 	color: #FFFFFF;
 	flex-direction: row;
+	-webkit-flex-direction: row;
 }
 
 #sidebar {
@@ -615,6 +620,7 @@ header div.inner {
 
 #header {
 	display: flex;
+	display: -webkit-flex;
 	position: fixed;
 	top: 0px;
 	left: 0px;
@@ -663,6 +669,7 @@ header div.inner {
 #sidebar_logo_container,
 #header_logo_container {
 	flex: 1 1 0;
+	-webkit-flex: 1 1 0;
 }
 
 #sidebar_logo {
@@ -697,11 +704,13 @@ header div.inner {
 	font-size: 1.2em;
 	vertical-align: middle;
 	flex: 1 1 0;
+	-webkit-flex: 1 1 0;
 }
 
 #header_hamburger_container {
 	width: 32px;
 	flex: 0 0 0;
+	-webkit-flex: 0 0 0;
 }
 
 #header_hamburger {
@@ -716,6 +725,7 @@ header div.inner {
 	width: 32px;
 	min-width: 32px;
 	flex: 0 0 0;
+	-webkit-flex: 0 0 0;
 }
 
 #sidebar ul {
@@ -750,6 +760,7 @@ header div.inner {
 
 #sidebar_double_button {
 	flex-direction: column;
+	-webkit-flex-direction: column;
 }
 
 #sidebar_double_button a {
@@ -806,6 +817,7 @@ div.results div.result span.summary {
 	left: 0px;
 	z-index: 200;
 	flex-direction: column;
+	-webkit-flex-direction: column;
 	border: 1px solid #3b3b3b;
 	padding: 0px;
 	box-shadow: 0px 1px 10px 5px rgba(0, 0, 0, 0.4);
@@ -933,8 +945,11 @@ span.object_type {
 
 .option_group {
 	display: flex;
+	display: -webkit-flex;
 	flex-direction: row;
+	-webkit-flex-direction: row;
 	flex-wrap: wrap;
+	-webkit-flex-wrap: wrap;
 }
 
 div.article + div.article {
@@ -965,7 +980,9 @@ div.triple_column div.column {
 #pagenav {
 	color: #aaaaaa;
 	display: flex;
+	display: -webkit-flex;
 	flex-direction: row;
+	-webkit-flex-direction: row;
 	margin-left: auto;
 	margin-right: auto;
 	width: 300px;
@@ -974,6 +991,7 @@ div.triple_column div.column {
 
 #pagenav-newer, #pagenav-current, #pagenav-older {
 	flex: 1 0 33%;
+	-webkit-flex: 1 0 33%;
 }
 
 #pagenav-newer {
@@ -1085,6 +1103,7 @@ div.triple_column div.column {
 	
 	#site_wrapper {
 		flex-direction: row;
+		-webkit-flex-direction: row;
 	}
 	
 	#sidebar {
@@ -1115,6 +1134,7 @@ div.triple_column div.column {
 	
 	#sidebar_double_button {
 		display: flex;
+		display: -webkit-flex;
 	}
 	
 	.inner {
