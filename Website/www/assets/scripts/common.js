@@ -31,7 +31,7 @@ var request = {
 };
 
 var dialog = {
-	show: function(message, explanation, handler = null) {
+	show: function(message, explanation, handler) {
 		var overlay = document.getElementById('overlay');
 		var dialog_frame = document.getElementById('dialog');
 		var dialog_message = document.getElementById('dialog_message');
@@ -51,7 +51,7 @@ var dialog = {
 			});
 		}
 	},
-	hide: function (handler = null) {
+	hide: function (handler) {
 		var overlay = document.getElementById('overlay');
 		var dialog_frame = document.getElementById('dialog');
 		if (overlay && dialog_frame) {

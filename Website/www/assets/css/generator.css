@@ -1,4 +1,5 @@
 #mode_tabs {
+	display: -webkit-flex;
 	display: flex;
 }
 
