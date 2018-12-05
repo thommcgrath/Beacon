@@ -90,12 +90,41 @@ abstract class BeaconTemplate {
 		ob_end_clean();
 		
 		$lines = explode("\n", $content);
-		self::$header_lines[] = '<style type="text/css" nonce="' . $_SERVER['CSP_NONCE'] . '">';
+		$cleaned_lines = array();
 		foreach ($lines as $line) {
 			if (substr($line, 0, 7) == '<style ' || substr($line, 0, 7) == '<style>' || $line == '</style>') {
 				continue;
 			}
 			
+			$cleaned_lines[] = $line;
+		}
+		
+		$content = implode("\n", $cleaned_lines);
+		$content_hash = md5($content);
+		
+		$cached = BeaconCache::Get($content_hash);
+		if (is_null($cached)) {
+			$cmd = BeaconCommon::FrameworkPath() . '/dart-sass/sass --style=compressed --stdin';
+			$spec = array(0 => array('pipe', 'r'), 1 => array('pipe', 'w'), 2 => array('pipe', 'w'));
+			$process = proc_open($cmd, $spec, $pipes);
+			if (is_resource($process)) {
+				fwrite($pipes[0], $content);
+				fclose($pipes[0]);
+				
+				$cached = trim(stream_get_contents($pipes[1]));
+				fclose($pipes[1]);
+				
+				proc_close($process);
+				
+				BeaconCache::Set($content_hash, $cached);
+			} else {
+				$cached = $content;
+			}
+		}
+		
+		$lines = explode("\n", $cached);
+		self::$header_lines[] = '<style type="text/css" nonce="' . $_SERVER['CSP_NONCE'] . '">';
+		foreach ($lines as $line) {
 			self::$header_lines[] = $line;
 		}
 		self::$header_lines[] = '</style>';
