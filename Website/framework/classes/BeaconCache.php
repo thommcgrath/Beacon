@@ -24,10 +24,10 @@ abstract class BeaconCache {
 		}
 	}
 	
-	public static function Set(string $key, $value) {
+	public static function Set(string $key, $value, $ttl = 0) {
 		static::Init();
 		$key = BeaconCommon::EnvironmentName() . '.' . $key;
-		static::$mem->set($key, $value);
+		static::$mem->set($key, $value, $ttl);
 		$status = static::$mem->getResultCode();
 		if ($status != 0) {
 			throw new Exception('Memcached Error: ' . $status);
