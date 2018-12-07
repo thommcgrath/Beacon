@@ -4,6 +4,11 @@ abstract class BeaconTemplate {
 	protected static $template_name = 'default';
 	protected static $title = '';
 	protected static $header_lines = array();
+	protected static $body_class = '';
+	
+	protected static function CacheKey() {
+		return md5(serialize($_GET));
+	}
 	
 	public static function Start() {
 		ob_start();
@@ -154,6 +159,14 @@ abstract class BeaconTemplate {
 		} else {
 			return true;
 		}
+	}
+	
+	public static function BodyClass() {
+		return static::$body_class;
+	}
+	
+	public static function SetBodyClass(string $class_name) {
+		static::$body_class = $class_name;
 	}
 }
 

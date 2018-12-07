@@ -6,11 +6,11 @@ if (!BeaconTemplate::IsHTML()) {
 }
 
 ?><!DOCTYPE html>
-<html lang="en">
+<html>
 	<head>
 		<meta charset="UTF-8">
-		<title><?php echo htmlentities(BeaconTemplate::Title()); ?></title>
-		<link href="/assets/css/main.css" rel="stylesheet" media="all" type="text/css">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="Beacon is Ark's easiest server manager that can update and control your Xbox, PS4, and PC Ark servers with a couple clicks.">
 		<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
 		<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
 		<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
@@ -25,8 +25,10 @@ if (!BeaconTemplate::IsHTML()) {
 		<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
 		<meta name="theme-color" content="#713a9a">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<script src="/assets/scripts/common.js"></script>
-		<script src="/assets/scripts/main.js"></script>
+		<link href="<?php echo BeaconCommon::AssetURI('default.scss'); ?>" rel="stylesheet" type="text/css">
+		<script src="<?php echo BeaconCommon::AssetURI('common.js'); ?>"></script>
+		<script src="<?php echo BeaconCommon::AssetURI('default.js'); ?>"></script>
+		<title><?php echo htmlentities(BeaconTemplate::Title()); ?></title>
 		<?php
 		$header_lines = BeaconTemplate::ExtraHeaderLines();
 		for ($i = 0; $i < count($header_lines); $i++) {
@@ -41,66 +43,38 @@ if (!BeaconTemplate::IsHTML()) {
 		unset($header_lines);
 		?>
 	</head>
-	<body>
-		<div id="site_wrapper">
-			<div id="header">
-				<div id="header_hamburger_container"><img id="header_hamburger" src="/assets/images/hamburger-white.svg"></div>
-				<div id="header_logo_container"><img id="header_logo" src="/assets/images/beacon-white.svg" alt="Beacon - A loot editor for Ark: Survival Evolved"></div>
-				<div id="header_spacer"></div>
-			</div>
-			<div id="darkener"></div>
-			<div id="sidebar">
-				<div id="sidebar_logo_container"><img id="sidebar_logo" src="/assets/images/beacon-white.svg" alt="Beacon - A loot editor for Ark: Survival Evolved"><img id="sidebar_title" src="/assets/images/beacon-title-white.svg"></div>
-				<div id="sidebar_search"><form action="/search/" method="get"><input type="search" placeholder="Search" id="sidebar_search_field" name="query" autocomplete="off"></form></div>
-				<div id="sidebar_double_button"><a href="/download/">Download</a><a href="/omni/">Get Omni</a></div>
-				<div id="sidebar_menu">
-					<h3>Help</h3>
-					<ul>
-						<?php
-						
-						$article_ids = array('96d0efc7-2e62-4ae4-9d9b-70cc890dc98e');
-						foreach ($article_ids as $article_id) {
-							$article = BeaconArticleMetadata::GetByArticleID($article_id);
-							echo '<li><a href="/read.php/' . $article->ArticleID() . '">' . htmlentities($article->Title()) . '</a></li>';
-						}
-						
-						?><li><a href="/spawn/">Ark Spawn Codes</a></li>
-						<li><a href="/help/">More Topics&hellip;</a></li>
-					</ul>
-					<h3>News</h3>
-					<ul>
-						<?php
-						
-						$posts = BeaconArticleMetadata::GetRecentArticles(3, 0, BeaconArticleMetadata::TYPE_BLOG);
-						foreach ($posts as $post) {
-							echo '<li><a href="/read.php/' . $post->ArticleID() . '">' . htmlentities($post->Title()) . '</a></li>';
-						}
-						
-						?>
-						<li><a href="/blog/">Older&hellip;</a></li>
-					</ul>
-					<h3>Community</h3>
-					<ul>
-						<li><a href="/browse/">Browse Community Configs</a></li>
-						<li><a href="/mods/">Supported Mods</a></li>
-					</ul>
-				</div>
-			</div>
-			<div id="main">
-				<?php echo $buffer; ?>
-				<footer class="inner">
-					<p><a id="footer_github_logo" href="https://github.com/thommcgrath/Beacon" title="GitHub"><img height="24" src="/assets/images/github-color.svg"></a><a id="footer_discord_logo" href="/discord.php" title="Discord"><img height="24" src="/assets/images/discord-color.svg"></a></p>
-					<p>Beacon is an open source project by Thom McGrath. Copyright 2016-<?php echo date('Y'); ?>.</p>
-					<p>Get in touch using <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.</p>
-				</footer>
+	<body<?php if (BeaconTemplate::BodyClass() != '') { echo ' class="' . BeaconTemplate::BodyClass() . '"'; } ?>>
+		<div id="header_wrapper">
+			<div id="header" class="pagebody">
+				<div id="header_logo_cell"><a href="/"><img id="header_logo" src="<?php echo BeaconCommon::AssetURI('beacon-header-color.svg'); ?>" height="80"></a></div>
+				<div id="header_links_cell"><ul><li><a id="menu_explore_link" href="#">Explore</a></li><li><a id="menu_download_link" href="/download/">Download</a></li><li><a id="menu_support_link" href="/help/">Support</a></li><li><a id="menu_buy_link" href="/omni/">Buy</a></li></ul></div>
 			</div>
 		</div>
-		<div id="overlay"></div>
-		<div id="dialog">
-			<div id="dialog_inner">
-				<p id="dialog_message">Message</p>
-				<p id="dialog_explanation">Explanation</p>
-				<p id="dialog_buttons"><button id="dialog_action_button">Ok</button></p>
+		<div id="content_wrapper">
+			<div id="content" class="pagebody">
+				<?php echo $buffer; ?>
+			</div>
+			<div id="footer" class="pagebody">
+				<p><a class="external_logo" href="https://github.com/thommcgrath/Beacon" title="GitHub"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('github-color.svg'); ?>"></a><a class="external_logo" href="/discord.php" title="Discord"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('discord-color.svg'); ?>"></a></p>
+				<p>Beacon is an open source project by Thom McGrath. Copyright 2016-<?php echo date('Y'); ?>.</p>
+				<p>Get in touch using <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.</p>
+			</div>
+		</div>
+		<div id="explore_container">
+			<div id="explore_popover">
+				<div><input id="explore_search_field" type="search" placeholder="Search" incremental></div>
+				<ul id="explore_links">
+					<li><a href="/browse/">Browse Community Files</a></li>
+					<li><a href="/spawn/">Admin Spawn Codes</a></li>
+				</ul>
+				<div id="explore_results">
+					<ul id="explore_results_list"></ul>
+					<div id="explore_results_empty">No Results</div>
+					<div id="explore_results_buttons">
+						<div id="explore_results_left_button"><button id="explore_results_back">&#x2329; Back</button></div>
+						<div id="explore_results_right_button"><button id="explore_results_more">More</button></div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</body>

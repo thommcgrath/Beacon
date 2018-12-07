@@ -39,7 +39,12 @@ spl_autoload_register(function($class_name) {
 			"https://*.stripe.com"
 		),
 		'style-src' => array(
-			"'self'"
+			"'self'",
+			"https://*.typekit.net/"
+		),
+		'font-src' => array(
+			"'self'",
+			"https://use.typekit.net"
 		),
 		'sandbox' => array(
 			'allow-forms',
