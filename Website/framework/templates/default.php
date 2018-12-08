@@ -64,6 +64,7 @@ if (!BeaconTemplate::IsHTML()) {
 			<div id="explore_popover">
 				<div><input id="explore_search_field" type="search" placeholder="Search" incremental></div>
 				<ul id="explore_links">
+					<li><a href="https://youtu.be/NPyOk9R3Ra0" target="_blank">Video: Introduction to Beacon</a></li>
 					<li><a href="/browse/">Browse Community Files</a></li>
 					<li><a href="/spawn/">Admin Spawn Codes</a></li>
 				</ul>
@@ -71,7 +72,7 @@ if (!BeaconTemplate::IsHTML()) {
 					<ul id="explore_results_list"></ul>
 					<div id="explore_results_empty">No Results</div>
 					<div id="explore_results_buttons">
-						<div id="explore_results_left_button"><button id="explore_results_back">&#x2329; Back</button></div>
+						<div id="explore_results_left_button"><button id="explore_results_back">Back</button></div>
 						<div id="explore_results_right_button"><button id="explore_results_more">More</button></div>
 					</div>
 				</div>
