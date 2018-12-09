@@ -20,20 +20,82 @@ CREATE TABLE updates (
 GRANT SELECT ON TABLE updates TO thezaz_website;
 -- End Updates
 
--- Users: The absolute minimum we need to track, with "hard-coded" value for the developer.
+-- Domains that will be useful later
 CREATE DOMAIN email AS citext CHECK (value ~ '^[a-zA-Z0-9.!#$%&''*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$');
 CREATE DOMAIN hex AS citext CHECK (value ~ '^[a-fA-F0-9]+$');
+-- End domains
 
+-- Email Addresses
+CREATE TABLE email_addresses (
+	email_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+	address TEXT NOT NULL,
+	group_key hex NOT NULL
+);
+GRANT SELECT, INSERT ON TABLE email_addresses TO thezaz_website;
+
+CREATE TABLE email_verification (
+	email_id UUID NOT NULL PRIMARY KEY REFERENCES email_addresses(email_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	code hex NOT NULL
+);
+GRANT SELECT, INSERT, UPDATE, DELETE ON email_verification TO thezaz_website;
+
+CREATE OR REPLACE FUNCTION group_key_for_email(p_address email) RETURNS hex AS $$
+DECLARE
+	v_user TEXT;
+	v_domain TEXT;
+	v_kvalue TEXT;
+BEGIN
+	v_user := SUBSTRING(p_address, '^([^@]+)@.+$');
+	v_domain := SUBSTRING(p_address, '^[^@]+@(.+)$');
+	
+	IF LENGTH(v_user) <= 2 THEN
+		v_kvalue := '@' || v_domain;
+	ELSE
+		v_kvalue := SUBSTRING(v_user, 1, 2) || '*@' || v_domain;
+	END IF;
+	
+	RETURN MD5(LOWER(v_kvalue));
+END;
+$$ LANGUAGE 'plpgsql' IMMUTABLE;
+
+CREATE OR REPLACE FUNCTION uuid_for_email(p_address email) RETURNS UUID AS $$
+DECLARE
+	v_uuid UUID;
+BEGIN
+	SELECT email_id INTO v_uuid FROM email_addresses WHERE group_key = group_key_for_email(p_address) AND CRYPT(LOWER(p_address), address) = address;
+	IF FOUND THEN
+		RETURN v_uuid;
+	ELSE
+		RETURN NULL;
+	END IF;
+END;
+$$ LANGUAGE 'plpgsql' STABLE;
+
+CREATE OR REPLACE FUNCTION uuid_for_email(p_address email, p_create BOOLEAN) RETURNS UUID AS $$
+DECLARE
+	v_uuid UUID;
+BEGIN
+	v_uuid := uuid_for_email(p_address);
+	IF v_uuid IS NULL AND p_create = TRUE THEN
+		INSERT INTO email_addresses (address, group_key) VALUES (CRYPT(LOWER(p_address), GEN_SALT('bf')), group_key_for_email(p_address)) RETURNING email_id INTO v_uuid;
+	END IF;
+	RETURN v_uuid;	
+END;
+$$ LANGUAGE 'plpgsql' VOLATILE;
+-- End Email Addresses
+
+-- Users: The absolute minimum we need to track, with "hard-coded" value for the developer.
 CREATE TABLE users (
 	user_id UUID NOT NULL PRIMARY KEY,
-	login_key email UNIQUE,
+	email_id UUID UNIQUE REFERENCES email_addresses(email_id) ON UPDATE CASCADE ON DELETE RESTRICT,
+	username CITEXT,
 	public_key TEXT NOT NULL,
 	private_key hex,
 	private_key_salt hex,
 	private_key_iterations INTEGER,
 	patreon_id INTEGER,
 	is_patreon_supporter BOOLEAN NOT NULL DEFAULT FALSE,
-	CHECK ((login_key IS NULL AND private_key_iterations IS NULL AND private_key_salt IS NULL AND private_key IS NULL) OR (login_key IS NOT NULL AND private_key_iterations IS NOT NULL AND private_key_salt IS NOT NULL AND private_key IS NOT NULL))
+	CHECK ((email_id IS NULL AND username IS NULL AND private_key_iterations IS NULL AND private_key_salt IS NULL AND private_key IS NULL) OR (email_id IS NOT NULL AND username IS NOT NULL AND private_key_iterations IS NOT NULL AND private_key_salt IS NOT NULL AND private_key IS NOT NULL))
 );
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE users TO thezaz_website;
 -- End Users
@@ -502,10 +564,11 @@ CREATE TABLE products (
 	stripe_sku TEXT NOT NULL UNIQUE
 );
 GRANT SELECT ON products TO thezaz_website;
+INSERT INTO products(product_id, product_name, retail_price, stripe_sku) VALUES ('972f9fc5-ad64-4f9c-940d-47062e705cc5', 'Omni', 10, 'sku_E5V8BaWFlmvLGG');
 
 CREATE TABLE purchases (
 	purchase_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-	purchaser_email email NOT NULL,
+	purchaser_email UUID NOT NULL REFERENCES email_addresses(email_id) ON UPDATE CASCADE ON DELETE RESTRICT,
 	purchase_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	subtotal NUMERIC(6,2) NOT NULL,
 	discount NUMERIC(6,2) NOT NULL,

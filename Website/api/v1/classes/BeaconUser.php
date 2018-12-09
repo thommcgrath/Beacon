@@ -2,7 +2,8 @@
 
 class BeaconUser implements JsonSerializable {
 	protected $user_id = '';
-	protected $login_key = null;
+	protected $username = null;
+	protected $email_id = null;
 	protected $public_key = '';
 	protected $private_key = null;
 	protected $private_key_salt = null;
@@ -13,14 +14,15 @@ class BeaconUser implements JsonSerializable {
 	public function __construct($source = null) {
 		if ($source instanceof BeaconRecordSet) {
 			$this->user_id = $source->Field('user_id');
-			$this->login_key = $source->Field('login_key');
+			$this->username = $source->Field('username');
+			$this->email_id = $source->Field('email_id');
 			$this->public_key = $source->Field('public_key');
 			$this->private_key = $source->Field('private_key');
 			$this->private_key_salt = $source->Field('private_key_salt');
 			$this->private_key_iterations = intval($source->Field('private_key_iterations'));
 			
 			$database = BeaconCommon::Database();
-			$purchases = $database->Query('SELECT * FROM purchased_products WHERE purchaser_email = $1;', $this->login_key);
+			$purchases = $database->Query('SELECT * FROM purchased_products WHERE purchaser_email = $1;', $this->email_id);
 			while (!$purchases->EOF()) {
 				$omni_version = 0;
 				$product_id = $purchases->Field('product_id');
@@ -42,7 +44,11 @@ class BeaconUser implements JsonSerializable {
 	}
 	
 	public function LoginKey() {
-		return $this->login_key;
+		return $this->username;
+	}
+	
+	public function Username() {
+		return $this->username;
 	}
 	
 	public function PublicKey() {
@@ -62,13 +68,14 @@ class BeaconUser implements JsonSerializable {
 	}
 	
 	public function IsAnonymous() {
-		return empty($this->login_key);
+		return empty($this->email_id);
 	}
 	
 	public function jsonSerialize() {
 		return array(
 			'user_id' => $this->user_id,
-			'login_key' => $this->login_key,
+			'login_key' => $this->username,
+			'username' => $this->username,
 			'public_key' => $this->public_key,
 			'private_key' => $this->private_key,
 			'private_key_salt' => $this->private_key_salt,
@@ -98,27 +105,46 @@ class BeaconUser implements JsonSerializable {
 	}
 	
 	public function ReplacePassword(string $password, string $private_key) {
-		if (empty($this->login_key)) {
+		if (empty($this->email_id)) {
 			return false;
 		}
 		
 		unset($this->private_key);
-		return $this->AddAuthentication($this->login_key, $password, $private_key);
+		return $this->AddAuthentication($this->username, $this->email_id, $password, $private_key);
 	}
 	
-	public function AddAuthentication(string $login_key, string $password, string $private_key) {
+	public function AddAuthentication(string $username, string $email, string $password, string $private_key) {
 		if (empty($this->private_key) == false) {
 			return false;
 		}
 		
 		try {
+			if (BeaconCommon::IsUUID($email)) {
+				$email_id = $email;
+			} else {
+				$database = BeaconCommon::Database();
+				$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $email);
+				$email_id = $results->Field('email_id');
+			}
+			
+			if (empty($username)) {
+				if (empty($this->username)) {
+					$database = BeaconCommon::Database();
+					$results = $database->Query('SELECT generate_username() AS username;');
+					$username = $results->Field('username');
+				} else {
+					$username = $this->username;
+				}
+			}
+			
 			$salt = BeaconEncryption::GenerateSalt();
 			$iterations = 12000;
 			$hash = BeaconEncryption::HashFromPassword($password, $salt, $iterations);
 			$encrypted_private_key = bin2hex(BeaconEncryption::BlowfishEncrypt($hash, $private_key));
 			$salt = bin2hex($salt);
 			
-			$this->login_key = $login_key;
+			$this->username = $username;
+			$this->email_id = $email_id;
 			$this->private_key_salt = $salt;
 			$this->private_key_iterations = $iterations;
 			$this->private_key = $encrypted_private_key;
@@ -183,7 +209,8 @@ class BeaconUser implements JsonSerializable {
 		
 		if (is_null($original_user)) {
 			$changes['user_id'] = $this->user_id;
-			$changes['login_key'] = $this->login_key;
+			$changes['username'] = $this->username;
+			$changes['email_id'] = $this->email_id;
 			$changes['public_key'] = $this->public_key;
 			$changes['private_key'] = $this->private_key;
 			$changes['private_key_salt'] = $this->private_key_salt;
@@ -194,7 +221,7 @@ class BeaconUser implements JsonSerializable {
 				return false;
 			}
 		} else {
-			$keys = array('login_key', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations');
+			$keys = array('username', 'email_id', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations');
 			foreach ($keys as $key) {
 				if ($this->$key !== $original_user->$key) {
 					$changes[$key] = $this->$key;
@@ -207,7 +234,7 @@ class BeaconUser implements JsonSerializable {
 				$database->BeginTransaction();
 				$database->Update('users', $changes, array('user_id' => $this->user_id));
 				if (array_key_exists('private_key', $changes)) {
-					$database->Query('DELETE FROM email_verification WHERE email = $1;', $this->login_key);
+					$database->Query('DELETE FROM email_verification WHERE email_id = $1;', $this->email_id);
 					$database->Query('DELETE FROM sessions WHERE user_id = $1;', $this->user_id);
 				}
 				$database->Commit();
@@ -221,12 +248,12 @@ class BeaconUser implements JsonSerializable {
 		
 	
 	private static function SQLColumns() {
-		return array('user_id', 'login_key', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations');
+		return array('user_id', 'email_id', 'username', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations');
 	}
 	
 	public static function GetByEmail(string $email) {
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE login_key = $1;', $email);
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id IS NOT NULL AND email_id = uuid_for_email($1);', $email);
 		$users = static::GetFromResults($results);
 		if (count($users) == 1) {
 			return $users[0];
@@ -256,8 +283,8 @@ class BeaconUser implements JsonSerializable {
 		return $users;
 	}
 	
-	public static function ValidateLoginKey(string $login_key) {
-		return filter_var($login_key, FILTER_VALIDATE_EMAIL);
+	public static function ValidateEmail(string $email) {
+		return filter_var($email, FILTER_VALIDATE_EMAIL);
 	}
 	
 	public static function ValidatePassword(string $password) {

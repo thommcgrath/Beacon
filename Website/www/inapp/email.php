@@ -7,7 +7,7 @@ header('Pragma: no-cache');
 header('Expires: 0');
 http_response_code(500);
 
-if (empty($_GET['email']) || BeaconUser::ValidateLoginKey($_GET['email']) == false) {
+if (empty($_GET['email']) || BeaconUser::ValidateEmail($_GET['email']) == false) {
 	http_response_code(400);
 	echo json_encode(array(), JSON_PRETTY_PRINT);
 	exit;
@@ -17,8 +17,8 @@ $email = $_GET['email'];
 $database = BeaconCommon::Database();
 $code = BeaconCommon::GenerateRandomKey(8);
 $database->BeginTransaction();
-$database->Query('DELETE FROM email_verification WHERE email = $1;', $email);
-$database->Query('INSERT INTO email_verification (email, code) VALUES ($1, encode(digest($2, \'sha512\'), \'hex\'));', $email, $code);
+$database->Query('DELETE FROM email_verification WHERE email_id = uuid_for_email($1);', $email);
+$database->Query('INSERT INTO email_verification (email_id, code) VALUES (uuid_for_email($1, TRUE), encode(digest($2, \'sha512\'), \'hex\'));', $email, $code);
 $database->Commit();
 
 $response = array(

@@ -7,7 +7,7 @@ header('Pragma: no-cache');
 header('Expires: 0');
 http_response_code(500);
 
-if (empty($_GET['email']) || BeaconUser::ValidateLoginKey($_GET['email']) == false || empty($_GET['code'])) {
+if (empty($_GET['email']) || BeaconUser::ValidateEmail($_GET['email']) == false || empty($_GET['code'])) {
 	http_response_code(400);
 	echo json_encode(array(), JSON_PRETTY_PRINT);
 	exit;
@@ -17,7 +17,7 @@ $email = $_GET['email'];
 $code = $_GET['code'];
 
 $database = BeaconCommon::Database();
-$results = $database->Query('SELECT * FROM email_verification WHERE email = $1 AND code = encode(digest($2, \'sha512\'), \'hex\');', $email, $code);
+$results = $database->Query('SELECT * FROM email_verification WHERE email_id = uuid_for_email($1) AND code = encode(digest($2, \'sha512\'), \'hex\');', $email, $code);
 $verified = $results->RecordCount() == 1;
 
 $response = array(

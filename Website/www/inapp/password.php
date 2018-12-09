@@ -7,7 +7,7 @@ header('Pragma: no-cache');
 header('Expires: 0');
 http_response_code(500);
 
-if (empty($_GET['email']) || BeaconUser::ValidateLoginKey($_GET['email']) == false || empty($_GET['password']) || empty($_GET['code'])) {
+if (empty($_GET['email']) || BeaconUser::ValidateEmail($_GET['email']) == false || empty($_GET['password']) || empty($_GET['code'])) {
 	http_response_code(400);
 	echo json_encode(array('message' => 'Missing parameters.'), JSON_PRETTY_PRINT);
 	exit;
@@ -19,7 +19,7 @@ $code = $_GET['code'];
 $allow_vulnerable = isset($_GET['allow_vulnerable']) ? boolval($_GET['allow_vulnerable']) : false;
 
 $database = BeaconCommon::Database();
-$results = $database->Query('SELECT * FROM email_verification WHERE email = $1 AND code = encode(digest($2, \'sha512\'), \'hex\');', $email, $code);
+$results = $database->Query('SELECT * FROM email_verification WHERE email_id = uuid_for_email($1) AND code = encode(digest($2, \'sha512\'), \'hex\');', $email, $code);
 if ($results->RecordCount() == 0) {
 	http_response_code(436);
 	echo json_encode(array('message' => 'Email not verified.'), JSON_PRETTY_PRINT);
@@ -62,7 +62,7 @@ $private_key = null;
 BeaconEncryption::GenerateKeyPair($public_key, $private_key);
 
 $user->SetPublicKey($public_key);
-if ($user->AddAuthentication($email, $password, $private_key) == false && $user->ReplacePassword($password, $private_key) == false) {
+if ($user->AddAuthentication('', $email, $password, $private_key) == false && $user->ReplacePassword($password, $private_key) == false) {
 	http_response_code(500);
 	echo json_encode(array('message' => 'There was an error updating authentication parameters.'), JSON_PRETTY_PRINT);
 	exit;
