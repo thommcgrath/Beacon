@@ -13,6 +13,10 @@ class BeaconBlueprint extends BeaconObject {
 		return $columns;
 	}
 	
+	protected static function TableName() {
+		return 'blueprints';
+	}
+	
 	protected function GetColumnValue(string $column) {
 		switch ($column) {
 		case 'availability':

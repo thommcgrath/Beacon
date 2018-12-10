@@ -478,8 +478,13 @@ CREATE TABLE articles (
 GRANT SELECT ON TABLE articles TO thezaz_website;
 -- End Articles
 
+-- Blueprints
+CREATE OR REPLACE VIEW blueprints AS (SELECT object_id, label, tableoid, min_version, last_update, mod_id, path, class_string, availability FROM creatures) UNION (SELECT object_id, label, tableoid, min_version, last_update, mod_id, path, class_string, availability FROM engrams) UNION (SELECT object_id, label, tableoid, min_version, last_update, mod_id, path, class_string, availability FROM loot_sources);
+GRANT SELECT ON TABLE blueprints TO thezaz_website;
+-- End Blueprints
+
 -- Search
-CREATE OR REPLACE VIEW search_contents AS (SELECT article_id AS id, title, body, setweight(to_tsvector(title), 'A') || ' ' || setweight(to_tsvector(body), 'B') AS lexemes, 'Article' AS type FROM articles) UNION (SELECT object_id AS id, label AS title, '' AS body, setweight(to_tsvector(label), 'A') AS lexemes, 'Object' AS type FROM objects WHERE objects.tableoid::regclass IN ('engrams', 'creatures', 'loot_sources')) UNION (SELECT mod_id AS id, name AS title, '' AS body, setweight(to_tsvector(name), 'C') AS lexemes, 'Mod' AS type FROM mods WHERE confirmed = TRUE) UNION (SELECT document_id, title, description AS body, setweight(to_tsvector(title), 'A') || ' ' || setweight(to_tsvector(description), 'B') AS lexemes, 'Document' AS type FROM documents WHERE published = 'Approved');
+CREATE OR REPLACE VIEW search_contents AS (SELECT article_id AS id, title, body, setweight(to_tsvector(title), 'A') || ' ' || setweight(to_tsvector(body), 'B') AS lexemes, 'Article' AS type, '/read/' || article_id AS uri FROM articles) UNION (SELECT object_id AS id, label AS title, '' AS body, setweight(to_tsvector(label), 'A') AS lexemes, 'Object' AS type, '/object/' || class_string AS uri FROM blueprints) UNION (SELECT mod_id AS id, name AS title, '' AS body, setweight(to_tsvector(name), 'C') AS lexemes, 'Mod' AS type, '/mods/info.php?mod_id=' || mod_id AS uri FROM mods WHERE confirmed = TRUE) UNION (SELECT document_id, title, description AS body, setweight(to_tsvector(title), 'A') || ' ' || setweight(to_tsvector(description), 'B') AS lexemes, 'Document' AS type, '/browse/view.php?document_id=' || document_id AS uri FROM documents WHERE published = 'Approved');
 GRANT SELECT ON TABLE search_contents TO thezaz_website;
 -- End Search
 

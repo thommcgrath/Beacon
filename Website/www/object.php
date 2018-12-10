@@ -2,63 +2,49 @@
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
-if (!isset($_SERVER['PATH_INFO'])) {
-	http_response_code(404);
-	echo 'This doesn\'t lead anywhere.';
-	exit;
-}
-
-$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
-if ((is_array($request) === false) || (count($request) == 0)) {
-	http_response_code(404);
-	echo 'This doesn\'t lead anywhere.';
-	exit;
-}
-
-$object_id = $request[0];
-if (!BeaconCommon::IsUUID($object_id)) {
+if (!isset($_GET['id'])) {
 	http_response_code(400);
-	echo 'Malformed object id';
+	echo 'Missing id parameter';
 	exit;
 }
 
-$obj = BeaconObject::GetByObjectID($object_id);
+$obj = BeaconCommon::ResolveObjectIdentifier($_GET['id']);
 if (is_null($obj)) {
 	http_response_code(404);
 	echo 'Object not found';
 	exit;
 }
-$group = $obj->ObjectGroup();
+
+if ($obj instanceof BeaconBlueprint && $_GET['id'] != $obj->ClassString()) {
+	header('Location: /object/' . urlencode($obj->ClassString()));
+	exit;
+}
+
+BeaconTemplate::SetTitle($obj->Label());
+
 $properties = array(
 	'Mod' => '[' . $obj->ModName() . '](/mods/info.php?mod_id=' . urlencode($obj->ModID()) . ')'
 );
 
-BeaconTemplate::SetTitle($obj->Label());
+if ($obj instanceof BeaconBlueprint) {
+	PrepareBlueprintTable($obj, $properties);
+}
 
-switch ($group) {
-case 'creatures':
+if ($obj instanceof BeaconCreature) {
 	$type = 'Creature';
-	PrepareCreatureTable(BeaconCreature::GetByObjectID($object_id), $properties);
-	break;
-case 'diets':
-	$type = 'Diet';
-	PrepareDietTable(BeaconDiet::GetByObjectID($object_id), $properties);
-	break;
-case 'engrams':
+	PrepareCreatureTable($obj, $properties);
+} elseif ($obj instanceof BeaconEngram) {
 	$type = 'Engram';
-	PrepareEngramTable(BeaconEngram::GetByObjectID($object_id), $properties);
-	break;
-case 'loot_sources':
+	PrepareEngramTable($obj, $properties);
+} elseif ($obj instanceof BeaconDiet) {
+	$type = 'Diet';
+	PrepareDietTable($obj, $properties);
+} elseif ($obj instanceof BeaconLootSource) {
 	$type = 'Loot Source';
-	PrepareLootSourceTable(BeaconLootSource::GetByObjectID($object_id), $properties);
-	break;
-case 'presets':
+	PrepareLootSourceTable($obj, $properties);
+} elseif ($obj instanceof BeaconPreset) {
 	$type = 'Preset';
-	PreparePresetTable(BeaconPreset::GetByObjectID($object_id), $properties);
-	break;
-default:
-	$type = $group;
-	break;
+	PreparePresetTable($obj, $properties);
 }
 
 $parser = new Parsedown();
@@ -78,12 +64,16 @@ function PrepareBlueprintTable(BeaconBlueprint $blueprint, array &$properties) {
 	$related_ids = $blueprint->RelatedObjectIDs();
 	$related_items = array();
 	foreach ($related_ids as $id) {
-		$obj = BeaconObject::GetByObjectID($id);
-		if (is_null($obj)) {
-			continue;
+		$blueprint = BeaconBlueprint::GetByObjectID($id);
+		if (is_null($blueprint)) {
+			$obj = BeaconObject::GetByObjectID($id);
+			if (is_null($obj)) {
+				continue;
+			}
+			$related_items[] = '[' . $obj->Label() . '](/object/' . urlencode($obj->ObjectID()) . ')';
+		} else {
+			$related_items[] = '[' . $blueprint->Label() . '](/object/' . urlencode($blueprint->ClassString()) . ')';
 		}
-		
-		$related_items[] = '[' . $obj->Label() . '](/object.php/' . urlencode($obj->ObjectID()) . ')';
 	}
 	if (count($related_items) > 0) {
 		$properties['Related Objects'] = implode(', ', $related_items);
@@ -91,10 +81,6 @@ function PrepareBlueprintTable(BeaconBlueprint $blueprint, array &$properties) {
 }
 
 function PrepareCreatureTable(BeaconCreature $creature, array &$properties) {
-	if ($creature instanceof BeaconBlueprint) {
-		PrepareBlueprintTable($creature, $properties);
-	}
-	
 	/*if ($creature->Tamable()) {
 		$taming_diet = $creature->TamingDiet();
 		$tamed_diet = $creature->TamedDiet();
@@ -114,24 +100,13 @@ function PrepareCreatureTable(BeaconCreature $creature, array &$properties) {
 }
 
 function PrepareEngramTable(BeaconEngram $engram, array &$properties) {
-	if ($engram instanceof BeaconBlueprint) {
-		PrepareBlueprintTable($engram, $properties);
-	}
 }
 
 function PrepareLootSourceTable(BeaconLootSource $loot_source, array &$properties) {
-	if ($loot_source instanceof BeaconBlueprint) {
-		PrepareBlueprintTable($loot_source, $properties);
-	}
-	
 	$properties['Multipliers'] = sprintf('%F - %F', $loot_source->MultiplierMin(), $loot_source->MultiplierMax());
 }
 
 function PrepareDietTable(BeaconDiet $diet, array &$properties) {
-	if ($diet instanceof BeaconBlueprint) {
-		PrepareBlueprintTable($engram, $diet);
-	}
-	
 	$engram_ids = $diet->EngramIDs();
 	$engrams = array();
 	foreach ($engram_ids as $id) {
@@ -150,9 +125,6 @@ function PrepareDietTable(BeaconDiet $diet, array &$properties) {
 }
 
 function PreparePresetTable(BeaconPreset $preset, array &$properties) {
-	if ($preset instanceof BeaconBlueprint) {
-		PrepareBlueprintTable($preset, $properties);
-	}
 }
 
 ?>

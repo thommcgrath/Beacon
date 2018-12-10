@@ -2,20 +2,7 @@
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
-if (!isset($_SERVER['PATH_INFO'])) {
-	http_response_code(404);
-	echo 'This doesn\'t lead anywhere.';
-	exit;
-}
-
-$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
-if ((is_array($request) === false) || (count($request) == 0)) {
-	http_response_code(404);
-	echo 'This doesn\'t lead anywhere.';
-	exit;
-}
-
-$article_id = $request[0];
+$article_id = isset($_GET['id']) ? $_GET['id'] : '';
 if (!BeaconCommon::IsUUID($article_id)) {
 	http_response_code(400);
 	echo 'Malformed article id';
