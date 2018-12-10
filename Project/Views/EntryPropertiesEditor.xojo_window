@@ -925,7 +925,7 @@ End
 		  MinQuantityField.Text = Str(MinQuantities(0))
 		  MaxQuantityField.Text = Str(MaxQuantities(UBound(MaxQuantities)))
 		  If CanBeBlueprint Then
-		    ChanceSlider.Value = TotalChance / (Entries.Ubound + 1)
+		    ChanceSlider.Value = 100 * (TotalChance / (Entries.Ubound + 1))
 		    ChanceSlider.Enabled = True
 		    ChanceLabel.Enabled = True
 		    ChanceField.Enabled = True
