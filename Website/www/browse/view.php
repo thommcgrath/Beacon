@@ -30,8 +30,8 @@ if (array_key_exists('map_filter', $_GET)) {
 }
 
 BeaconTemplate::SetTitle($document->Name());
-BeaconTemplate::AddStylesheet('/assets/css/generator.css');
-BeaconTemplate::AddHeaderLine('<script src="/assets/scripts/generator.js"></script>');
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('generator.scss'));
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('generator.js'));
 
 ?><h1><?php echo htmlentities($document->Name()); ?></h1>
 <h3>Description</h3>
@@ -52,7 +52,7 @@ if (count($map_names) >= 3) {
 	echo $map_names[0];
 }
 ?></p>
-	<p>Platforms: <span class="platform_tag pc">PC</span><?php if ($document->ConsoleSafe()) {?><span class="platform_tag xbox">Xbox</span><span class="platform_tag playstation">PlayStation</span><?php } ?></p>
+	<p>Platforms: <span class="platform_tag pc">PC</span><?php if ($document->ConsoleSafe()) {?><span class="platform_tag xbox">Xbox</span><span class="platform_tag playstation">PlayStation</span><span class="platform_tag nintendo">Switch</span><?php } ?></p>
 	<p>Uses Mods: <?php
 	
 	$mods = $document->LookupRequiredMods();

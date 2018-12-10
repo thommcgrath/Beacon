@@ -1,9 +1,9 @@
 <?php
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Item Spawn Codes');
-BeaconTemplate::AddHeaderLine('<script src="/assets/scripts/clipboard-polyfill.js"></script>');
-BeaconTemplate::AddHeaderLine('<script src="spawncodes.js"></script>');
-BeaconTemplate::AddHeaderLine('<link href="spawncodes.css" rel="stylesheet" media="all" type="text/css">');
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('clipboard-polyfill.js'));
+BeaconTemplate::AddScript(BeaconCommon::AssetURI('spawncodes.js'));
+BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('spawncodes.scss'));
 $mod_id = array_key_exists('mod_id', $_GET) ? $_GET['mod_id'] : null;
 $database = BeaconCommon::Database();
 
@@ -66,8 +66,8 @@ if ($mod_id === null) {
 		$mod = $engram->ModName();
 		
 		echo '<tr id="spawn_' . htmlentities($id) . '" class="beacon-engram" beacon-label="' . htmlentities(strtolower($label)) . '" beacon-spawn-code="' . htmlentities($spawn) . '" beacon-uuid="' . $id . '">';
-		echo '<td>' . htmlentities($label) . ($include_mod_names ? '<span class="beacon-engram-mod-name"><br>' . htmlentities($mod) . '</span>' : '') . '<div class="beacon-spawn-code-small">' . htmlentities($spawn) . '</div></td>';
-		echo '<td>' . htmlentities($spawn) . '</td>';
+		echo '<td>' . htmlentities($label) . ($include_mod_names ? '<span class="beacon-engram-mod-name"><br>' . htmlentities($mod) . '</span>' : '') . '<div class="beacon-spawn-code-small source-code-font">' . htmlentities($spawn) . '</div></td>';
+		echo '<td class="source-code-font">' . htmlentities($spawn) . '</td>';
 		echo '<td><button class="beacon-engram-copy" beacon-uuid="' . htmlentities($id) . '">Copy</button></td>';
 		echo '</tr>';
 	}

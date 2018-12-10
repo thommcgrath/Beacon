@@ -3,6 +3,11 @@
 @import 'https://use.typekit.net/paa2qqa.css';
 
 $beacon-purple: #713a9a;
+$pc-orange: #c27c0e;
+$xbox-green: #107c10;
+$playstation-blue: #003791;
+$switch-red: #e60012;
+
 $header-link-opacity: 0.6;
 $header-link-border-opacity: 0.4;
 $header-link-pressed-opacity: 0.2;
@@ -20,6 +25,12 @@ $breakpoint_desktop: $max_content_width + ($page_margins * 2);
 
 $animation-timing: 0.15s;
 
+@mixin source-code-pro() {
+	font-family: source-code-pro, monospace;
+	font-weight: 400;
+	font-style: normal;
+}
+
 body {
 	font-family: acumin-pro, sans-serif;
 	font-weight: 400;
@@ -29,10 +40,84 @@ body {
 	background-color: #ffffff;
 }
 
-.code {
-	font-family: source-code-pro, monospace;
-	font-weight: 400;
-	font-style: normal;
+*:first-child {
+	margin-top: 0px;
+}
+
+*:last-child {
+	margin-bottom: 0px;
+}
+
+b, strong, .bold {
+	font-weight: bold;
+}
+
+i, em, .italic {
+	font-style: italic;
+}
+
+p, h1, h2, h3 {
+	margin-bottom: 15px;
+	margin-top: 15px;
+}
+
+pre {
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	padding: 0.6em;
+	border-radius: 0.4em;
+	overflow: auto;
+	background-color: rgba(255, 255, 255, 0.75);
+	color: #000000;
+	text-shadow: 0px 1px 0px #ffffff;
+	margin: 10px;
+	display: block;
+	font-size: 0.8em;
+}
+
+code, .code {
+	@include source-code-pro();
+	background-color: #f4f4f4;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 0.4em;
+	padding: 0.2em 0.5em;
+	font-size: 0.8em;
+	line-height: 2.0em;
+}
+
+.source-code-font {
+	@include source-code-pro();
+}
+
+.break-code code {
+	word-break: break-all;
+	display: block;
+}
+
+.platform_tag {
+	color: #FFFFFF;
+	border-radius: 0.5em;
+	display: inline-block;
+	padding: 2px 8px;
+	
+	&+& {
+		margin-left: 6px;
+	}
+	
+	&.xbox {
+		background-color: $xbox-green;
+	}
+	
+	&.playstation {
+		background-color: $playstation-blue;
+	}
+	
+	&.nintendo {
+		background-color: $switch-red;
+	}
+	
+	&.pc {
+		background-color: $pc-orange;
+	}
 }
 
 .text-left {
@@ -76,6 +161,70 @@ body {
 	min-width: 280px;
 }
 
+.indent {
+	margin-left: 40px;
+}
+
+.option_group {
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
+	-ms-flex-direction: row;
+	flex-direction: row;
+	-ms-flex-wrap: wrap;
+	flex-wrap: wrap;
+}
+
+h1 {
+	font-size: 17pt;
+}
+
+h2 {
+	font-size: 15pt;
+}
+
+h3 {
+	font-size: 13pt;
+}
+
+h1, h2, h3 {
+	font-weight: 400;
+	line-height: 1.1em;
+	
+	.subtitle {
+		font-weight: 300;
+		font-size: 0.7em;
+	}
+}
+
+/* ! Generic Table */
+
+table.generic {
+	border-collapse: collapse;
+	width: 100%;
+	border: 1px solid $beacon-purple;
+	
+	td, th {
+		border: 1px solid #f4f4f4;
+		padding: 0.6em;
+	}
+	
+	thead {
+		background-color: $beacon-purple;
+		color: #FFFFFF;
+		
+		td, th {
+			border-color: $beacon-purple;
+			text-align: left;
+			font-weight: 400;
+		}
+	}
+}
+
+/* ! Header */
+
 #header_wrapper {
 	background-color: #ffffff;
 	border-bottom: 1px solid rgba(0, 0, 0, $header-border-opacity);
@@ -89,15 +238,28 @@ body {
 }
 
 #header {
+	display: -webkit-box;
+	display: -ms-flexbox;
 	display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: stretch;
+	-ms-flex-wrap: wrap;
+	flex-wrap: wrap;
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
+	-ms-flex-direction: row;
+	flex-direction: row;
+	-webkit-box-pack: start;
+	-ms-flex-pack: start;
+	justify-content: flex-start;
+	-webkit-box-align: stretch;
+	-ms-flex-align: stretch;
+	align-items: stretch;
 }
 
 #header_logo_cell {
+	-webkit-box-ordinal-group: 2;
+	-ms-flex-order: 1;
 	order: 1;
+	-ms-flex-preferred-size: 100%;
 	flex-basis: 100%;
 	text-align: center;
 }
@@ -108,20 +270,29 @@ body {
 }
 
 #header_links_cell {
+	-webkit-box-ordinal-group: 3;
+	-ms-flex-order: 2;
 	order: 2;
+	-ms-flex-preferred-size: 100%;
 	flex-basis: 100%;
 	overflow: hidden;
 	
 	ul {
 		list-style-type: none;
-	    margin: 10px 0px 0px 0px;
-	    padding: 0;
-	    overflow: hidden;
+		margin: 10px 0px 0px 0px;
+		padding: 0;
+		overflow: hidden;
+		display: -webkit-box;
+		display: -ms-flexbox;
 		display: flex;
 		height: 100%;
+		-webkit-box-pack: center;
+		-ms-flex-pack: center;
 		justify-content: center;
 		
 		li {
+			-webkit-box-flex: 0;
+			-ms-flex: 0 0 0px;
 			flex: 0 0 0;
 			text-align: center;
 			white-space: nowrap;
@@ -134,15 +305,21 @@ body {
 		
 		li a {
 			display: block;
-		    color: rgba(0, 0, 0, $header-link-opacity);
-		    text-align: center;
-		    text-decoration: none;
+			color: rgba(0, 0, 0, $header-link-opacity);
+			text-align: center;
+			text-decoration: none;
 			padding: 0.2em 0.5em;
 			border-radius: 1.0em;
 			border: 1px solid rgba(0, 0, 0, 0.0);
 			background-color: rgba(0, 0, 0, 0.0);
+			-webkit-transition-duration: $animation-timing;
+			-o-transition-duration: $animation-timing;
 			transition-duration: $animation-timing;
+			-webkit-transition-timing-function: ease-out;
+			-o-transition-timing-function: ease-out;
 			transition-timing-function: ease-out;
+			-webkit-transition-property: border-color, color, background-color, border-radius;
+			-o-transition-property: border-color, color, background-color, border-radius;
 			transition-property: border-color, color, background-color, border-radius;
 			
 			@media (min-width: 340px) {
@@ -212,8 +389,14 @@ button, input[type="button"], input[type="submit"], input[type="reset"], a.butto
 	padding: 0.5em 0.8em;
 	text-align: center;
 	text-decoration: none;
+	-webkit-transition-duration: $animation-timing;
+	-o-transition-duration: $animation-timing;
 	transition-duration: $animation-timing;
+	-webkit-transition-property: background-color, color, border-color, opacity;
+	-o-transition-property: background-color, color, border-color, opacity;
 	transition-property: background-color, color, border-color, opacity;
+	-webkit-transition-timing-function: ease-out;
+	-o-transition-timing-function: ease-out;
 	transition-timing-function: ease-out;
 	vertical-align: middle;
 	white-space: nowrap;
@@ -261,8 +444,14 @@ input[type="text"], input[type="password"], input[type="email"], input[type="url
 	font-size: $form-font-size;
 	margin: 0px;
 	padding: 0.4em;
+	-webkit-transition-duration: $animation-timing;
+	-o-transition-duration: $animation-timing;
 	transition-duration: $animation-timing;
+	-webkit-transition-property: background-color, color, border-color;
+	-o-transition-property: background-color, color, border-color;
 	transition-property: background-color, color, border-color;
+	-webkit-transition-timing-function: ease-out;
+	-o-transition-timing-function: ease-out;
 	transition-timing-function: ease-out;
 	width: 100%;
 	line-height: 1.0em;
@@ -294,8 +483,14 @@ label.radio span {
 	margin: 6px;
 	position: relative;
 	border-radius: $form-font-size;
+	-webkit-transition-property: background-color;
+	-o-transition-property: background-color;
 	transition-property: background-color;
+	-webkit-transition-timing-function: ease-out;
+	-o-transition-timing-function: ease-out;
 	transition-timing-function: ease-out;
+	-webkit-transition-duration: $animation-timing;
+	-o-transition-duration: $animation-timing;
 	transition-duration: $animation-timing;
 }
 
@@ -324,8 +519,14 @@ label.checkbox span:after {
 	border-radius: 14px;
 	display: block;
 	content: '';
+	-webkit-transition-property: left, background-color;
+	-o-transition-property: left, background-color;
 	transition-property: left, background-color;
+	-webkit-transition-timing-function: ease-out;
+	-o-transition-timing-function: ease-out;
 	transition-timing-function: ease-out;
+	-webkit-transition-duration: $animation-timing;
+	-o-transition-duration: $animation-timing;
 	transition-duration: $animation-timing;
 }
 
@@ -343,8 +544,14 @@ label.radio span:after {
 	border-radius: 12px;
 	display: block;
 	content: '';
+	-webkit-transition-property: opacity, background-color;
+	-o-transition-property: opacity, background-color;
 	transition-property: opacity, background-color;
+	-webkit-transition-timing-function: ease-out;
+	-o-transition-timing-function: ease-out;
 	transition-timing-function: ease-out;
+	-webkit-transition-duration: $animation-timing;
+	-o-transition-duration: $animation-timing;
 	transition-duration: $animation-timing;
 	opacity: 0.0;
 }
@@ -383,8 +590,14 @@ div.select {
 		font-size: $form-font-size;
 		text-align: center;
 		text-decoration: none;
+		-webkit-transition-duration: $animation-timing;
+		-o-transition-duration: $animation-timing;
 		transition-duration: $animation-timing;
+		-webkit-transition-property: background-color;
+		-o-transition-property: background-color;
 		transition-property: background-color;
+		-webkit-transition-timing-function: ease-out;
+		-o-transition-timing-function: ease-out;
 		transition-timing-function: ease-out;
 		vertical-align: middle;
 		white-space: nowrap;
@@ -459,16 +672,22 @@ div.select {
 	}
 	
 	#explore_results_buttons {
+		display: -webkit-box;
+		display: -ms-flexbox;
 		display: flex;
 		margin-top: 9px;
 		width: 100%;
 		
 		#explore_results_left_button {
+			-webkit-box-flex: 1;
+			-ms-flex: 1 0 0px;
 			flex: 1 0 0;
 			text-align: left;
 		}
 		
 		#explore_results_right_button {
+			-webkit-box-flex: 1;
+			-ms-flex: 1 0 0px;
 			flex: 1 0 0;
 			text-align: right;
 		}
@@ -476,17 +695,23 @@ div.select {
 	
 	ul {
 		list-style-type: none;
-	    margin: 0px;
-	    padding: 0px;
-	    overflow: hidden;
+		margin: 0px;
+		padding: 0px;
+		overflow: hidden;
 		
 		li {
 			a {
 				text-decoration: none;
 				border-radius: 4px;
 				padding: 4px 6px;
+				-webkit-transition-property: color, background-color;
+				-o-transition-property: color, background-color;
 				transition-property: color, background-color;
+				-webkit-transition-duration: $animation-timing;
+				-o-transition-duration: $animation-timing;
 				transition-duration: $animation-timing;
+				-webkit-transition-timing-function: ease-out;
+				-o-transition-timing-function: ease-out;
 				transition-timing-function: ease-out;
 				color: rgba(0, 0, 0, 0.7);
 				display: block;
@@ -715,6 +940,54 @@ div.select {
 	a {
 		color: #64aef9;
 	}
+	
+	.platform_tag {
+		$tag-background-color: darken($background-color, 3%);
+		background-color: $tag-background-color;
+		
+		&.xbox {
+			background-color: $tag-background-color;
+			color: lighten($xbox-green, 20%);
+		}
+		
+		&.playstation {
+			background-color: $tag-background-color;
+			color: lighten($playstation-blue, 45%);
+		}
+		
+		&.pc {
+			background-color: $tag-background-color;
+			color: lighten($pc-orange, 10%);
+		}
+		
+		&.nintendo {
+			background-color: $tag-background-color;
+			color: lighten($switch-red, 35%);
+		}
+	}
+	
+	table.generic {
+		$table-color: mix($foreground-color, $background-color, 5%);
+		
+		td, th {
+			border-color: $table-color;
+		}
+		
+		thead {
+			background-color: $table-color;
+			color: $foreground-color;
+			
+			td, th {
+				border-color: $table-color;
+			}
+		}
+	}
+	
+	code, .code {
+		background-color: mix($foreground-color, $background-color, 5%);
+		color: $foreground-color;
+		border-color: mix($foreground-color, $background-color, 15%);
+	}
 }
 
 body.purple {
@@ -739,17 +1012,33 @@ body.purple {
 		font-size: 13pt;
 	}
 	
+	h1 {
+		font-size: 19pt;
+	}
+	
+	h2 {
+		font-size: 17pt;
+	}
+	
+	h3 {
+		font-size: 15pt;
+	}
+	
 	#header_wrapper {
 		padding-top: 20px;
 		padding-bottom: 20px;
 	}
 	
 	#header {
+		-ms-flex-wrap: nowrap;
 		flex-wrap: nowrap;
+		-webkit-box-align: center;
+		-ms-flex-align: center;
 		align-items: center;
 	}
 	
 	#header_logo_cell {
+		-ms-flex-preferred-size: 80px;
 		flex-basis: 80px;
 	}
 	
@@ -758,11 +1047,15 @@ body.purple {
 	}
 	
 	#header_links_cell ul {
+		-webkit-box-pack: end;
+		-ms-flex-pack: end;
 		justify-content: flex-end;
 		margin: 0px;
 	}
 	
 	#header_links_cell li {
+		-webkit-box-flex: 0;
+		-ms-flex: 0 0 0px;
 		flex: 0 0 0;
 	}
 	
