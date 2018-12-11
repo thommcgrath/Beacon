@@ -93,7 +93,13 @@ class BeaconMod implements JsonSerializable {
 	
 	public static function GetByWorkshopID(string $user_id, string $workshop_id) {
 		$database = BeaconCommon::Database();
-		$results = $database->Query(self::BuildSQL('user_id = $1 AND workshop_id = ANY($2)'), $user_id, '{' . $workshop_id . '}');
+		$results = $database->Query(self::BuildSQL('user_id = $1 AND ABS(workshop_id) = ANY($2)'), $user_id, '{' . $workshop_id . '}');
+		return self::GetFromResults($results);
+	}
+	
+	public static function GetByConfirmedWorkshopID(string $workshop_id) {
+		$database = BeaconCommon::Database();
+		$results = $database->Query(self::BuildSQL('confirmed = TRUE AND ABS(workshop_id) = ANY($1)'), '{' . $workshop_id . '}');
 		return self::GetFromResults($results);
 	}
 	

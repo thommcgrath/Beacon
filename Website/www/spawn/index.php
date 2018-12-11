@@ -7,6 +7,17 @@ BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('spawncodes.scss'));
 $mod_id = array_key_exists('mod_id', $_GET) ? $_GET['mod_id'] : null;
 $database = BeaconCommon::Database();
 
+if (is_null($mod_id) && isset($_GET['workshop_id'])) {
+	$mod = BeaconMod::GetByConfirmedWorkshopID($_GET['workshop_id']);
+	if (is_array($mod) && count($mod) == 1) {
+		$mod_id = $mod[0]->ModID();
+	} else {
+		echo '<h1>Mod is not registered with Beacon.</h1>';
+		echo '<p>If you are the mod owner, see <a href="' . BeaconCommon::AbsoluteURL('/read/f21f4863-8043-4323-b6df-a9f96bbd982c') . '">Registering your mod with Beacon</a> for help.</p>';
+		exit;
+	}
+}
+
 $results = $database->Query("SELECT build_number FROM updates ORDER BY build_number DESC LIMIT 1;");
 if ($results->RecordCount() == 1) {
 	$build = intval($results->Field('build_number'));

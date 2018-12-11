@@ -67,6 +67,7 @@ if (!BeaconTemplate::IsHTML()) {
 					<li><a href="https://youtu.be/NPyOk9R3Ra0">Video: Introduction to Beacon</a></li>
 					<li><a href="/browse/">Browse Community Files</a></li>
 					<li><a href="/spawn/">Admin Spawn Codes</a></li>
+					<li><a href="/mods/">Supported Mods</a></li>
 				</ul>
 				<div id="explore_results">
 					<ul id="explore_results_list"></ul>

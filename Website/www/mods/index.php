@@ -14,7 +14,7 @@ $mods = BeaconMod::GetLive();
 	</thead>
 	<tbody>
 		<?php foreach ($mods as $mod) { ?><tr>
-			<td><a href="/mods/info.php?mod_id=<?php echo $mod->ModID(); ?>"><?php echo htmlentities($mod->Name()); ?></a></td>
+			<td><a href="/mods/<?php echo abs($mod->WorkshopID()); ?>"><?php echo htmlentities($mod->Name()); ?></a></td>
 			<td><a href="<?php echo BeaconWorkshopItem::URLForModID($mod->WorkshopID()); ?>"><?php echo abs($mod->WorkshopID()); ?></a></td>
 		</tr><?php } ?>
 	</tbody>

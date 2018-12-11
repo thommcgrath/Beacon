@@ -88,9 +88,16 @@ code, .code {
 	@include source-code-pro();
 }
 
-.break-code code {
-	word-break: break-all;
-	display: block;
+.break-code {
+	word-break: break-word;
+	
+	code {
+		display: initial;
+		word-break: break-all;
+		border: none;
+		padding: 0px;
+		background: none;
+	}
 }
 
 .platform_tag {
@@ -197,6 +204,13 @@ h1, h2, h3 {
 		font-weight: 300;
 		font-size: 0.7em;
 	}
+}
+
+span.object_type {
+	color: rgba(0, 0, 0, 0.5);
+	font-weight: 300;
+	font-size: smaller;
+	float: right;
 }
 
 /* ! Generic Table */
