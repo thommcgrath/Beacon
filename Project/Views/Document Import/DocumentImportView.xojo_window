@@ -1162,10 +1162,10 @@ End
 		        Dim Importer As New Beacon.ImportThread
 		        Importer.GameIniContent = Engine.GameIniContent
 		        Importer.GameUserSettingsIniContent = Engine.GameUserSettingsIniContent
-		        AddHandler Importer.ThreadedParseFinished, WeakAddressOf Importer_ThreadedParseFinished
-		        Importer.Run
+		        AddHandler Importer.ThreadedParseFinished, WeakAddressOf Importer_ThreadedParseFinished      
 		        Self.mImporters(I) = Importer
 		        Status = "Parsing Config Files…"
+		        Importer.Run
 		      ElseIf Self.mImporters(I).Finished Then
 		        // Show import finished
 		        Finished = True
