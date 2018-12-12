@@ -55,6 +55,7 @@ if ($mod_id === null) {
 		$title = implode(', ', $mod_names) . ', and ' . $last;
 	}
 	$title = 'Spawn codes for ' . $title;
+	BeaconTemplate::SetTitle($title);
 }
 ?><h1><?php echo htmlentities($title); ?><br><span class="subtitle">Up to date as of <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?></span></h1>
 <p><input type="search" id="beacon-filter-field" placeholder="Filter Engrams" autocomplete="off"></p>

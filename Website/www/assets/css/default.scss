@@ -7,6 +7,11 @@ $pc-orange: #c27c0e;
 $xbox-green: #107c10;
 $playstation-blue: #003791;
 $switch-red: #e60012;
+$base-text-red: #ff3b30;
+$base-text-green: #28cd41;
+$base-text-blue: #007aff;
+$base-text-purple: #af52de;
+$base-text-yellow: #ffcc00;
 
 $header-link-opacity: 0.6;
 $header-link-border-opacity: 0.4;
@@ -24,6 +29,89 @@ $breakpoint_mobile: 635px;
 $breakpoint_desktop: $max_content_width + ($page_margins * 2);
 
 $animation-timing: 0.15s;
+
+@function gcd($a, $b) {
+	// From: http://rosettacode.org/wiki/Greatest_common_divisor#JavaScript
+	@if ($b != 0) {
+		@return gcd($b, $a % $b);
+	} @else {
+		@return abs($a);
+	}
+}
+
+@function pow($base, $exponent, $prec: 12) {
+	// Handles decimal exponents by trying to convert them into a fraction and then use a nthRoot-algorithm for parts of the calculation
+	@if (floor($exponent) != $exponent) {
+		$prec2 : pow(10, $prec);
+		$exponent: round($exponent * $prec2);
+		$denominator: gcd($exponent, $prec2);
+		@return nthRoot(pow($base, $exponent / $denominator), $prec2 / $denominator, $prec);
+	}
+
+	$value: $base;
+	@if $exponent > 1 {
+		@for $i from 2 through $exponent {
+			$value: $value * $base;
+		}
+	} @else if $exponent < 1 {
+		@for $i from 0 through -$exponent {
+			$value: $value / $base;
+		}
+	}
+
+	@return $value;
+}
+
+@function nthRoot($num, $n: 2, $prec: 12) {
+	// From: http://rosettacode.org/wiki/Nth_root#JavaScript
+	$x: 1;
+
+	@for $i from 0 through $prec {
+		$x: 1 / $n * (($n - 1) * $x + ($num / pow($x, $n - 1)));
+	}
+
+	@return $x;
+}
+
+@function luminance($color) {
+	$red: red($color) / 255;
+	$green: green($color) / 255;
+	$blue: blue($color) / 255;
+	
+	$red: if($red <= 0.03928, $red / 12.92, pow((($red + 0.055) / 1.055), 2.4));
+	$green: if($green <= 0.03928, $green / 12.92, pow((($green + 0.055) / 1.055), 2.4));
+	$blue: if($blue <= 0.03928, $blue / 12.92, pow((($blue + 0.055) / 1.055), 2.4));
+	
+	@return (0.2126 * $red) + (0.7152 * $green) + (0.0722 * $blue);
+}
+
+@function contrast-against($backcolor, $forecolor) {
+	$backlum: luminance($backcolor);
+	$forelum: luminance($forecolor);
+	@if $backlum > $forelum {
+		@return ($backlum + 0.05) / ($forelum + 0.05);
+	} @else {
+		@return ($forelum + 0.05) / ($backlum + 0.05);
+	}
+}
+
+@function contrasting-color($backcolor, $forecolor) {
+	@for $percent from 0 through 100 {
+		$darker: darken($forecolor, $percent);
+		$lighter: lighten($forecolor, $percent);
+		@if contrast-against($backcolor, $darker) >= 4.5 {
+			@return $darker;
+		} @else if contrast-against($backcolor, $lighter) >= 4.5 {
+			@return $lighter;
+		}
+	}
+	
+	@if contrast-against($backcolor, #ffffff) > contrast-against($backcolor, #000000) {
+		@return #ffffff;
+	} @else {
+		@return #000000;
+	}
+}
 
 @mixin source-code-pro() {
 	font-family: source-code-pro, monospace;
@@ -213,6 +301,26 @@ span.object_type {
 	float: right;
 }
 
+.text-red {
+	color: contrasting-color(#ffffff, $base-text-red);
+}
+
+.text-green {
+	color: contrasting-color(#ffffff, $base-text-green);
+}
+
+.text-blue {
+	color: contrasting-color(#ffffff, $base-text-blue);
+}
+
+.text-purple {
+	color: contrasting-color(#ffffff, $base-text-purple);
+}
+
+.text-yellow {
+	color: contrasting-color(#ffffff, $base-text-yellow);
+}
+
 /* ! Generic Table */
 
 table.generic {
@@ -360,7 +468,7 @@ table.generic {
 #footer {
 	font-size: 0.8em;
 	text-align: center;
-	margin-top: $page_margins;
+	margin-top: $page_margins * 2;
 	margin-bottom: $page_margins;
 	
 	a.external_logo {
@@ -778,7 +886,7 @@ div.select {
 	}
 }
 
-/* !Dark Mode */
+/* ! Dark Mode */
 
 @mixin dark-mode($foreground-color, $background-color) {
 	#header_wrapper {
@@ -956,27 +1064,28 @@ div.select {
 	}
 	
 	.platform_tag {
-		$tag-background-color: darken($background-color, 3%);
-		background-color: $tag-background-color;
-		
 		&.xbox {
-			background-color: $tag-background-color;
-			color: lighten($xbox-green, 20%);
+			$bg-color: contrasting-color($background-color, $xbox-green);
+			background-color: $bg-color;
+			color: contrasting-color($bg-color, #ffffff);
 		}
 		
 		&.playstation {
-			background-color: $tag-background-color;
-			color: lighten($playstation-blue, 45%);
+			$bg-color: contrasting-color($background-color, $playstation-blue);
+			background-color: $bg-color;
+			color: contrast-against($bg-color, #ffffff);
 		}
 		
 		&.pc {
-			background-color: $tag-background-color;
-			color: lighten($pc-orange, 10%);
+			$bg-color: contrasting-color($background-color, $pc-orange);
+			background-color: $bg-color;
+			color: contrasting-color($bg-color, #ffffff);
 		}
 		
 		&.nintendo {
-			background-color: $tag-background-color;
-			color: lighten($switch-red, 35%);
+			$bg-color: contrasting-color($background-color, $switch-red);
+			background-color: $bg-color;
+			color: contrasting-color($bg-color, #ffffff);
 		}
 	}
 	
@@ -1001,6 +1110,26 @@ div.select {
 		background-color: mix($foreground-color, $background-color, 5%);
 		color: $foreground-color;
 		border-color: mix($foreground-color, $background-color, 15%);
+	}
+	
+	.text-red {
+		color: contrasting-color($background-color, $base-text-red);
+	}
+	
+	.text-green {
+		color: contrasting-color($background-color, $base-text-green);
+	}
+	
+	.text-blue {
+		color: contrasting-color($background-color, $base-text-blue);
+	}
+	
+	.text-purple {
+		color: contrasting-color($background-color, $base-text-purple);
+	}
+	
+	.text-yellow {
+		color: contrasting-color($background-color, $base-text-yellow);
 	}
 }
 
@@ -1097,6 +1226,26 @@ body.purple {
 	body {
 		background-color: #262626;
 		color: #ffffff;
+	}
+	
+	.text-red {
+		color: #ff493d;
+	}
+	
+	.text-green {
+		color: #31d74a;
+	}
+	
+	.text-blue {
+		color: #0a8dff;
+	}
+	
+	.text-purple {
+		color: #c45cf9;
+	}
+	
+	.text-yellow {
+		color: #ffd609;
 	}
 	
 	@include dark-mode(#ffffff, #262626);
