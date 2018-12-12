@@ -255,6 +255,32 @@ Implements NotificationKit.Receiver
 	#tag EndMenuHandler
 
 	#tag MenuHandler
+		Function HelpCreateOfflineAuthorizationRequest() As Boolean Handles HelpCreateOfflineAuthorizationRequest.Action
+			Dim Dialog As New SaveAsDialog
+			Dialog.SuggestedFileName = "Authorization Request" + BeaconFileTypes.BeaconAuth.PrimaryExtension
+			
+			Dim File As FolderItem = Dialog.ShowModal()
+			If File = Nil Then
+			Return True
+			End If
+			
+			Dim HardwareID As Text = Beacon.HardwareID
+			Dim Identity As Beacon.Identity = Self.Identity
+			Dim Dict As New Xojo.Core.Dictionary
+			Dict.Value("UserID") = Identity.Identifier
+			Dict.Value("Signed") = Beacon.EncodeHex(Identity.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(HardwareID)))
+			Dict.Value("Device") = HardwareID
+			
+			Dim JSON As Text = Xojo.Data.GenerateJSON(Dict)
+			Dim Stream As TextOutputStream = TextOutputStream.Create(File)
+			Stream.Write(JSON)
+			Stream.Close
+			
+			Return True
+		End Function
+	#tag EndMenuHandler
+
+	#tag MenuHandler
 		Function HelpMakeADonation() As Boolean Handles HelpMakeADonation.Action
 			Self.ShowDonation()
 			Return True

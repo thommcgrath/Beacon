@@ -100,4 +100,19 @@
 		Imported=True
 	#tag EndFileType
 
+	#tag FileType
+		CodeName=BeaconAuth
+		DocIcon=Beacon.xojo_resources;&h1FF0884
+		Extension=.beaconauth
+		Flags=&h0
+		MacCreator=
+		MacType=
+		Name=Beacon Authorization
+		UTI=com.thezaz.beacon.auth
+		UTIConformsTo=public.text
+		Description=
+		MimeType=
+		Imported=False
+	#tag EndFileType
+
 #tag EndFileTypeSet

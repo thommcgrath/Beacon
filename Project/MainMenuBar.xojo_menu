@@ -467,6 +467,13 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
+      Begin MenuItem HelpCreateOfflineAuthorizationRequest
+         SpecialMenu = 0
+         Text = "Create Offline Authorization Request…"
+         Index = -2147483648
+         AutoEnable = True
+         Visible = True
+      End
    End
 End
 #tag EndMenu

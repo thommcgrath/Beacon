@@ -20,6 +20,7 @@
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25JZGVudGl0eS5pY25z
 					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25QcmVzZXQuaWNucw==
 					FolderItem = Li4vLi4vRm9udHMv
+					FolderItem = Li4vLi4vQXJ0d29yay9CZWFjb25BdXRoLmljbnM=
 				End
 				Begin CopyFilesBuildStep CopyMigration
 					AppliesTo = 2
