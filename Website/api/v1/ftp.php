@@ -57,8 +57,8 @@ class FTPConnection implements FTPProvider {
 		return $result ? $data : false;
 	}
 	
-	public function Upload(string $remote_file_path, string $content) {
-		return @ftp_put($this->connection, $ftp_path, $temp_path, FTP_ASCII);
+	public function Upload(string $remote_file_path, string $local_file_path) {
+		return @ftp_put($this->connection, $remote_file_path, $local_file_path, FTP_ASCII);
 	}
 }
 
@@ -129,7 +129,7 @@ function sftp_debug_callback($message, $language, $always_display) {
 require(dirname(__FILE__) . '/loader.php');
 
 $method = BeaconAPI::Method();
-//BeaconAPI::Authorize();
+BeaconAPI::Authorize();
 
 $ftp_user = isset($_REQUEST['user']) ? $_REQUEST['user'] : BeaconAPI::ReplyError('Missing user variable.', null, 400);
 $ftp_pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : BeaconAPI::ReplyError('Missing pass variable.', null, 400);
@@ -200,26 +200,31 @@ case 'GET':
 				continue;
 			}
 			
-			$data = $ftp_provider->Download($log_file);
+			$data = $ftp_provider->Download($ftp_path . '/Logs/' . $log_file);
 			if ($data === false) {
 				continue;
 			}
 
 			$log_found = true;
 			foreach (preg_split("/((\r?\n)|(\r\n?))/", $data) as $line) {
-				$pos = stripos($line, 'CommandLine: "');
+				$pos = stripos($line, 'CommandLine: ');
 				if ($pos === false) {
 					continue;
 				}
-				$pos += 14;
-				$end = strpos($line, '"', $pos);
+				$pos += 13;
+				if (substr($line, $pos, 1) == '=') {
+					$pos += 1;
+					$end = strpos($line, '"', $pos);
+				} else {
+					$end = strlen($line);
+				}
 				$length = $end - $pos;
 				$content = substr($line, $pos, $length);
 
 				$params = explode('?', $content);
 
-				$map = array_shift($params);;
-				$listen = array_shift($params);;
+				$map = array_shift($params);
+				$listen = array_shift($params);
 
 				$results['Maps'] = array($map);
 				$arguments = array();
