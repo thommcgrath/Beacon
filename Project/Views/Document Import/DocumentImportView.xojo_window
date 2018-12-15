@@ -869,10 +869,10 @@ End
 		      If Self.mImporters(I) = Nil Then
 		        Dim Importer As New Beacon.ImportThread
 		        Importer.AddContent(Engine.IniContent)
-		        AddHandler Importer.Finished, WeakAddressOf Importer_Finished
-		        Importer.Run
+		        AddHandler Importer.Finished, WeakAddressOf Importer_Finished      
 		        Self.mImporters(I) = Importer
 		        Status = "Parsing Config Files…"
+		        Importer.Run
 		      ElseIf Self.mImporters(I).Finished Then
 		        // Show import finished
 		        Finished = True
