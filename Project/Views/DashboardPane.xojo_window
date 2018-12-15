@@ -354,7 +354,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function DashboardURL() As Text
-		  Return Beacon.WebURL("/inapp/dashboard.php/" + Beacon.EncodeURLComponent(Preferences.OnlineToken) + "?build=" + App.NonReleaseVersion.ToText)
+		  Return Beacon.WebURL("/inapp/dashboard.php/" + Beacon.EncodeURLComponent(Preferences.OnlineToken) + "?build=" + App.BuildNumber.ToText)
 		End Function
 	#tag EndMethod
 
@@ -415,7 +415,7 @@ End
 #tag Events VersionLabel
 	#tag Event
 		Sub Open()
-		  Me.Text = "Version " + App.ShortVersion + " (Build " + Str(App.NonReleaseVersion, "-0") + ")"
+		  Me.Text = "Version " + App.ShortVersion
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -453,6 +453,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

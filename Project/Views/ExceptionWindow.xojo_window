@@ -645,7 +645,7 @@ End
 		  Next
 		  
 		  Dim Fields As New Xojo.Core.Dictionary
-		  Fields.Value("build") = App.NonReleaseVersion.ToText
+		  Fields.Value("build") = App.BuildNumber.ToText
 		  Fields.Value("hash") = Self.mExceptionHash
 		  Fields.Value("type") = Self.mExceptionDetails.Value("Type")
 		  Fields.Value("reason") = Self.mExceptionDetails.Value("Reason")
