@@ -26,7 +26,7 @@ Protected Class UpdateChecker
 		  AddHandler Self.mSocket.HeadersReceived, WeakAddressOf Self.mSocket_HeadersReceived
 		  AddHandler Self.mSocket.PageReceived, WeakAddressOf Self.mSocket_PageReceived
 		  Self.mSocket.RequestHeader("Cache-Control") = "no-cache"
-		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?build=" + App.NonReleaseVersion.ToText))
+		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?build=" + App.BuildNumber.ToText))
 		End Sub
 	#tag EndMethod
 
@@ -106,7 +106,7 @@ Protected Class UpdateChecker
 		  
 		  Try
 		    Dim LatestBuild As Integer = Dict.Value("build")
-		    If LatestBuild <= App.NonReleaseVersion Then
+		    If LatestBuild <= App.BuildNumber Then
 		      If Not Self.mSilent Then
 		        RaiseEvent NoUpdate()
 		      End If

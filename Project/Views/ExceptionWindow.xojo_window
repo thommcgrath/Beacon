@@ -291,6 +291,7 @@ Begin Window ExceptionWindow
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   103
       Transparent     =   False
       Value           =   3
@@ -348,6 +349,7 @@ Begin Window ExceptionWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Top             =   155
          Transparent     =   False
          Value           =   0
@@ -643,7 +645,7 @@ End
 		  Next
 		  
 		  Dim Fields As New Xojo.Core.Dictionary
-		  Fields.Value("build") = App.NonReleaseVersion.ToText
+		  Fields.Value("build") = App.BuildNumber.ToText
 		  Fields.Value("hash") = Self.mExceptionHash
 		  Fields.Value("type") = Self.mExceptionDetails.Value("Type")
 		  Fields.Value("reason") = Self.mExceptionDetails.Value("Reason")

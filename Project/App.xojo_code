@@ -49,9 +49,9 @@ Implements NotificationKit.Receiver
 	#tag Event
 		Sub Open()
 		  #If TargetMacOS
-		    Self.Log("Beacon " + Str(Self.NonReleaseVersion, "-0") + " for Mac.")
+		    Self.Log("Beacon " + Str(Self.BuildNumber, "-0") + " for Mac.")
 		  #ElseIf TargetWin32
-		    Self.Log("Beacon " + Str(Self.NonReleaseVersion, "-0") + " for Windows.")
+		    Self.Log("Beacon " + Str(Self.BuildNumber, "-0") + " for Windows.")
 		  #EndIf
 		  
 		  Dim Lock As New Mutex("com.thezaz.beacon")
@@ -339,6 +339,12 @@ Implements NotificationKit.Receiver
 		    End If
 		  End If
 		  Return Folder
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BuildNumber() As Integer
+		  Return (Self.MajorVersion * 10000000) + (Self.MinorVersion * 100000) + (Self.BugVersion * 1000) + (Self.StageCode * 100) + Self.NonReleaseVersion
 		End Function
 	#tag EndMethod
 
@@ -852,7 +858,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub ShowBugReporter(ExceptionHash As Text = "")
-		  Dim Path As Text = "/reportaproblem.php?build=" + Self.NonReleaseVersion.ToText
+		  Dim Path As Text = "/reportaproblem.php?build=" + Self.BuildNumber.ToText
 		  If ExceptionHash <> "" Then
 		    Path = Path + "&exception=" + ExceptionHash
 		  End If
@@ -886,7 +892,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub ShowReleaseNotes()
-		  ShowURL(Beacon.WebURL("/history.php#build" + Self.NonReleaseVersion.ToText(Xojo.Core.Locale.Raw, "0")))
+		  ShowURL(Beacon.WebURL("/history.php#build" + Self.BuildNumber.ToText(Xojo.Core.Locale.Raw, "0")))
 		End Sub
 	#tag EndMethod
 
