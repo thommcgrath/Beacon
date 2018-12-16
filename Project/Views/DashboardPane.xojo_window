@@ -415,7 +415,7 @@ End
 #tag Events VersionLabel
 	#tag Event
 		Sub Open()
-		  Me.Text = "Version " + App.ShortVersion
+		  Me.Text = "Version " + App.BuildVersion
 		End Sub
 	#tag EndEvent
 #tag EndEvents

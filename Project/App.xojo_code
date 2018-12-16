@@ -395,6 +395,22 @@ Implements NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function BuildVersion() As String
+		  Dim VersionString As String = Str(Self.MajorVersion, "0") + "." + Str(Self.MinorVersion, "0") + "." + Str(Self.BugVersion, "0")
+		  Select Case Self.StageCode
+		  Case 0
+		    Return VersionString + "pa" + Str(Self.NonReleaseVersion, "0")
+		  Case 1
+		    Return VersionString + "a" + Str(Self.NonReleaseVersion, "0")
+		  Case 2
+		    Return VersionString + "b" + Str(Self.NonReleaseVersion, "0")
+		  Else
+		    Return VersionString
+		  End Select
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub CheckFolder(Folder As FolderItem)
 		  If Folder.Exists Then
