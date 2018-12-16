@@ -120,14 +120,23 @@ Inherits Beacon.ConfigGroup
 		  Dim EOL As Text = Text.FromUnicodeCodepoint(10)
 		  Input = Beacon.ReplaceLineEndings(Input, EOL)
 		  
+		  Dim InsideBeaconSection As Boolean
 		  Dim Lines() As Text = Input.Split(EOL)
-		  For I As Integer = Lines.Ubound DownTo 0
-		    If Lines(I).BeginsWith(Beacon.MarkupPrefix) Then
-		      Lines.Remove(I)
+		  Dim FilteredLines() As Text
+		  For I As Integer = 0 To Lines.Ubound
+		    Dim Line As Text = Lines(I).Trim
+		    If Line = "[Beacon]" Then
+		      InsideBeaconSection = True
+		    ElseIf Line.BeginsWith("[") And Line.EndsWith("]") Then
+		      InsideBeaconSection = False
+		    End If
+		    
+		    If Not InsideBeaconSection Then
+		      FilteredLines.Append(Line)
 		    End If
 		  Next
 		  
-		  Input = Lines.Join(EOL)
+		  Input = FilteredLines.Join(EOL)
 		  Return Input.Trim
 		End Function
 	#tag EndMethod
