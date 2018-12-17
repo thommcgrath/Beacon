@@ -11,7 +11,7 @@ $min_version = array_key_exists('version', $_GET) ? intval($_GET['version']) : 0
 
 $database = BeaconCommon::Database();
 
-if ($min_version >= 41) {
+if ($min_version >= 10100000) {
 	$beacon_version = 4;
 	$values = array(
 		'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
