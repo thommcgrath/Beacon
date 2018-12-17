@@ -577,11 +577,15 @@ End
 		  Dim FilenameParts() As String = Split(Filename, ".")
 		  Dim Extension As String = FilenameParts(UBound(FilenameParts))
 		  
-		  Dim Folder As FolderItem = App.ApplicationSupport.Child("Updates")
-		  If Not Folder.Exists Then
-		    Folder.CreateAsFolder
-		  End If
-		  Self.mFile = Folder.Child("Beacon " + Version + "." + Extension)
+		  Self.mFilename = "Beacon " + Version + "." + Extension
+		  
+		  #if Not TargetMacOS
+		    Dim Folder As FolderItem = App.ApplicationSupport.Child("Updates")
+		    If Not Folder.Exists Then
+		      Folder.CreateAsFolder
+		    End If
+		    Self.mFile = Folder.Child(Self.mFilename)
+		  #endif
 		  
 		  Self.ViewPanel.Value = Self.ViewResults
 		End Sub
@@ -590,6 +594,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mFilename As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -663,6 +671,19 @@ End
 #tag Events ResultsActionButton
 	#tag Event
 		Sub Action()
+		  If Self.mFile = Nil Then
+		    Dim Dialog As New SaveAsDialog
+		    Dialog.SuggestedFileName = Self.mFilename
+		    Dialog.PromptText = "Choose a location for the update file"
+		    
+		    Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		    If File = Nil Then
+		      Return
+		    End If
+		    
+		    Self.mFile = File
+		  End If
+		  
 		  If Self.mFile.Exists Then
 		    If UpdateChecker.VerifyFile(Self.mFile, Self.mSignature) Then
 		      Self.LaunchUpdate()
@@ -799,9 +820,11 @@ End
 		    Confirm.Explanation = "Choose ""Install Now"" to quit Beacon and start the update. If you aren't ready to update now, choose ""Install On Quit"" to start the update when you're done, or ""Show Archive"" to install the update yourself."
 		    Confirm.ActionButton.Caption = "Install Now"
 		    Confirm.CancelButton.Caption = "Install On Quit"
-		    Confirm.AlternateActionButton.Caption = "Show Archive"
 		    Confirm.CancelButton.Visible = True
-		    Confirm.AlternateActionButton.Visible = True
+		    #if Not TargetMacOS
+		      Confirm.AlternateActionButton.Caption = "Show Archive"
+		      Confirm.AlternateActionButton.Visible = True
+		    #endif
 		    
 		    Dim Selection As MessageDialogButton = Confirm.ShowModal
 		    Select Case Selection
