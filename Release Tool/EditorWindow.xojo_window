@@ -18,9 +18,9 @@ Begin Window EditorWindow
    MaxWidth        =   32000
    MenuBar         =   1391144959
    MenuBarVisible  =   True
-   MinHeight       =   64
+   MinHeight       =   510
    MinimizeButton  =   True
-   MinWidth        =   64
+   MinWidth        =   720
    Placement       =   2
    Resizeable      =   True
    Title           =   "Release Tool"
@@ -54,7 +54,7 @@ Begin Window EditorWindow
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -63,6 +63,7 @@ Begin Window EditorWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   20
+      Transparent     =   True
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -88,8 +89,9 @@ Begin Window EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Mac URL:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -124,6 +126,7 @@ Begin Window EditorWindow
       Selectable      =   False
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Windows URL:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -173,6 +176,7 @@ Begin Window EditorWindow
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   54
+      Transparent     =   True
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -202,11 +206,11 @@ Begin Window EditorWindow
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   "####"
+      Mask            =   ""
       Password        =   False
-      ReadOnly        =   False
+      ReadOnly        =   True
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -214,11 +218,12 @@ Begin Window EditorWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   122
+      Transparent     =   True
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   80
+      Width           =   176
    End
    Begin Label BuildLabel
       AutoDeactivate  =   True
@@ -240,15 +245,16 @@ Begin Window EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   5
+      TabIndex        =   6
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Build:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   122
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -282,7 +288,7 @@ Begin Window EditorWindow
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -290,7 +296,8 @@ Begin Window EditorWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   122
+      Top             =   88
+      Transparent     =   True
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -316,15 +323,16 @@ Begin Window EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   4
       TabPanelIndex   =   0
-      Text            =   "Display Version:"
+      TabStop         =   True
+      Text            =   "Short Version:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   122
+      Top             =   88
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -333,7 +341,7 @@ Begin Window EditorWindow
    Begin HTMLViewer PreviewArea
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   313
+      Height          =   279
       HelpTag         =   ""
       Index           =   -2147483648
       Left            =   283
@@ -344,10 +352,10 @@ Begin Window EditorWindow
       LockTop         =   True
       Renderer        =   0
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   197
+      Top             =   231
       Visible         =   True
       Width           =   437
    End
@@ -363,7 +371,7 @@ Begin Window EditorWindow
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   313
+      Height          =   279
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -384,7 +392,7 @@ Begin Window EditorWindow
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   True
-      TabIndex        =   9
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -392,7 +400,8 @@ Begin Window EditorWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   197
+      Top             =   231
+      Transparent     =   True
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -405,7 +414,7 @@ Begin Window EditorWindow
       Cancel          =   False
       Caption         =   "Begin"
       Default         =   False
-      Enabled         =   True
+      Enabled         =   False
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
@@ -424,7 +433,8 @@ Begin Window EditorWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   156
+      Top             =   190
+      Transparent     =   True
       Underline       =   False
       Visible         =   True
       Width           =   80
@@ -451,7 +461,7 @@ Begin Window EditorWindow
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   196
+      Top             =   230
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -465,7 +475,7 @@ Begin Window EditorWindow
       DoubleBuffer    =   True
       Enabled         =   True
       EraseBackground =   False
-      Height          =   313
+      Height          =   279
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -476,10 +486,10 @@ Begin Window EditorWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   197
+      Top             =   231
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -490,12 +500,92 @@ Begin Window EditorWindow
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
    End
    Begin Xojo.Net.HTTPSocket WinSocket
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
+   End
+   Begin TextField ShortPreviewField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   132
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   156
+      Transparent     =   False
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   568
+   End
+   Begin Label ShortPreviewLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Short Preview:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   156
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   100
    End
 End
 #tag EndWindow
@@ -530,7 +620,7 @@ End
 		  
 		  ActionButton.Enabled = True
 		  
-		  Dim Values(6) As String
+		  Dim Values(8) As String
 		  Values(0) = Str(Self.mValues.Value("build_number").IntegerValue, "-0")
 		  Values(1) = "'" + Self.mValues.Value("build_display").StringValue + "'"
 		  Values(2) = "convert_from(decode('" + EncodeHex(Self.mValues.Value("notes").StringValue) + "', 'hex'), 'UTF8')"
@@ -538,8 +628,10 @@ End
 		  Values(4) = "'" + Self.mValues.Value("mac_signature").StringValue + "'"
 		  Values(5) = "'" + ReplaceAll(Self.mValues.Value("win_url").StringValue, "'", "''") + "'"
 		  Values(6) = "'" + Self.mValues.Value("win_signature").StringValue + "'"
+		  Values(7) = Str(Self.mValues.Value("stage").IntegerValue, "-0")
+		  Values(8) = "'" + ReplaceAll(Self.mValues.Value("preview").StringValue, "'", "''") + "'"
 		  
-		  Dim SQL As String = "INSERT INTO ""updates"" (""build_number"", ""build_display"", ""notes"", ""mac_url"", ""mac_signature"", ""win_url"", ""win_signature"") VALUES (" + Join(Values, ", ") + ");"
+		  Dim SQL As String = "INSERT INTO ""updates"" (""build_number"", ""build_display"", ""notes"", ""mac_url"", ""mac_signature"", ""win_url"", ""win_signature"", ""stage"", ""preview"") VALUES (" + Join(Values, ", ") + ");"
 		  Dim Board As New Clipboard
 		  Board.Text = SQL
 		  
@@ -553,12 +645,53 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mStageCode As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mValues As Dictionary
 	#tag EndProperty
 
 
 #tag EndWindowCode
 
+#tag Events VersionField
+	#tag Event
+		Sub TextChange()
+		  Dim Parser As New Regex
+		  Parser.SearchPattern = "^(\d+)\.(\d+)\.(\d+)(([a-z]+)(\d+))?$"
+		  
+		  Dim Matches As RegexMatch = Parser.Search(Me.Text.Trim)
+		  If Matches = Nil Then
+		    Self.BuildNumberField.Text = ""
+		    Self.ActionButton.Enabled = False
+		    Return
+		  End If
+		  
+		  Dim MajorVersion As Integer = Val(Matches.SubExpressionString(1))
+		  Dim MinorVersion As Integer = Val(Matches.SubExpressionString(2))
+		  Dim BugVersion As Integer = Val(Matches.SubExpressionString(3))
+		  Dim StageCode As Integer = 3
+		  Dim NonReleaseVersion As Integer
+		  If Matches.SubExpressionCount > 4 Then
+		    NonReleaseVersion = Val(Matches.SubExpressionString(6))
+		    Select Case Matches.SubExpressionString(5)
+		    Case "a"
+		      StageCode = 1
+		    Case "b"
+		      StageCode = 2
+		    Else
+		      StageCode = 0
+		    End Select
+		  End If
+		  
+		  Dim BuildNumber As Integer = (MajorVersion * 10000000) + (MinorVersion * 100000) + (BugVersion * 1000) + (StageCode * 100) + NonReleaseVersion
+		  Self.BuildNumberField.Text = Str(BuildNumber, "0")
+		  Self.mStageCode = StageCode
+		  Self.ActionButton.Enabled = True
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events NotesArea
 	#tag Event
 		Sub TextChange()
@@ -577,6 +710,8 @@ End
 		  Self.mValues.Value("notes") = NotesArea.Text
 		  Self.mValues.Value("mac_url") = MacURLField.Text
 		  Self.mValues.Value("win_url") = WinURLField.Text
+		  Self.mValues.Value("stage") = Self.mStageCode
+		  Self.mValues.Value("preview") = Self.ShortPreviewField.Text
 		  
 		  MacSocket.Send("GET", Self.mValues.Value("mac_url").StringValue.ToText) // Is this not one of the most ridiculous lines of code?
 		  WinSocket.Send("GET", Self.mValues.Value("win_url").StringValue.ToText)

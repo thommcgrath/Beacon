@@ -12,7 +12,7 @@ $cache_key = md5('classes' . serialize($_GET));
 $cached = BeaconCache::Get($cache_key);
 if (is_null($cached)) {
 	$database = BeaconCommon::Database();
-	if ($min_version >= 41) {
+	if ($min_version >= 10100000) {
 		$beacon_version = 4;
 		$values = array(
 			'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
