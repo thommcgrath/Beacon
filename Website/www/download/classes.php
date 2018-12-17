@@ -7,7 +7,39 @@ if (array_key_exists('changes_since', $_GET)) {
 	$since = New DateTime($_GET['changes_since']);
 }
 
-$min_version = array_key_exists('version', $_GET) ? intval($_GET['version']) : 0;
+if (isset($_GET['version'])) {
+	if ((string)(int)$_GET['version'] == $_GET['version']) {
+		$min_version = intval($_GET['version']);
+	} else {
+		if (preg_match('/^(\d+)\.(\d+)\.(\d+)(([a-z]+)(\d+))?$/', $_GET['version'], $matches) == 1) {
+			$major_version = intval($matches[1]);
+			$minor_version = intval($matches[2]);
+			$bug_version = intval($matches[3]);
+			$stage_code = 3;
+			$non_release_version = 0;
+			if (isset($matches[4])) {
+				$non_release_version = intval($matches[6]);
+				switch ($matches[5]) {
+				case 'a':
+					$stage_code = 1;
+					break;
+				case 'b':
+					$stage_code = 2;
+					break;
+				default:
+					$stage_code = 0;
+					break;
+				}
+			}
+			$min_version = ($major_version * 10000000) + ($minor_version * 100000) + ($bug_version * 1000) + ($stage_code * 100) + $non_release_version;
+		} else {
+			$min_version = 0;
+		}
+	}
+} else {
+	$min_version = 0;
+}
+
 $cache_key = md5('classes' . serialize($_GET));
 $cached = BeaconCache::Get($cache_key);
 if (is_null($cached)) {

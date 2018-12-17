@@ -30,11 +30,11 @@
 				End
 				Begin IDEScriptBuildStep DownloadClassesDebug , AppliesTo = 1
 					Dim App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
-					Call DoShellCommand("/usr/bin/curl https://workbench.beaconapp.cc/download/classes.php?version=" + PropertyValue("App.NonReleaseVersion") + " > " + App + "/Contents/Resources/Classes.json")
+					Call DoShellCommand("/usr/bin/curl https://workbench.beaconapp.cc/download/classes.php?version=" + PropertyValue("App.ShortVersion") + " > " + App + "/Contents/Resources/Classes.json")
 				End
 				Begin IDEScriptBuildStep DownloadClassesBuild , AppliesTo = 2
 					Dim App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
-					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/classes.php?version=" + PropertyValue("App.NonReleaseVersion") + " > " + App + "/Contents/Resources/Classes.json")
+					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/classes.php?version=" + PropertyValue("App.ShortVersion") + " > " + App + "/Contents/Resources/Classes.json")
 				End
 				Begin IDEScriptBuildStep Sign , AppliesTo = 0
 					Dim App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
