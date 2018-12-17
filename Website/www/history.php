@@ -10,7 +10,7 @@ BeaconTemplate::SetTitle('Version History');
 	$parser = new Parsedown();
 	$body = '';
 	while (!$results->EOF()) {
-		$body = trim("$body\n<h2 id=\"build" . $results->Field('build_number') . "\">" . $results->Field('build_display') . " (Build " . $results->Field('build_number') . ")</h2>\n<div class=\"indent\">\n" . $parser->text($results->Field('notes')) . "\n</div>");
+		$body = trim("$body\n<h2 id=\"build" . $results->Field('build_number') . "\">" . $results->Field('build_display') . "</h2>\n<div class=\"indent\">\n" . $parser->text($results->Field('notes')) . "\n</div>");
 		$results->MoveNext();
 	}
 	
