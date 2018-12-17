@@ -68,6 +68,7 @@ if (!BeaconTemplate::IsHTML()) {
 					<li><a href="/browse/">Browse Community Files</a></li>
 					<li><a href="/spawn/">Admin Spawn Codes</a></li>
 					<li><a href="/mods/">Supported Mods</a></li>
+					<li><a href="/account/">Beacon Account</a></li>
 				</ul>
 				<div id="explore_results">
 					<ul id="explore_results_list"></ul>

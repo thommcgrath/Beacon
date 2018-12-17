@@ -1,10 +1,30 @@
+@mixin set-foreground-color($foreground-color) {
+	#search_form {
+		border-color: rgba($foreground-color, 0.05);
+	}
+	
+	#mode_tabs_new, #mode_tabs_paste, #mode_tabs_upload {
+		background-color: rgba($foreground-color, 0.05);
+	}
+	
+	#mode_tabs div.selected, #mode_view, #mode_customizations {
+		background-color: rgba($foreground-color, 0.1);
+	}
+	
+	#browse_results div.properties-text {
+		color: rgba($foreground-color, 0.5);
+		border-color: rgba($foreground-color, 0.1);
+	}
+}
+
+@include set-foreground-color(#000000);
+
 #mode_tabs {
 	display: -webkit-flex;
 	display: flex;
 }
 
 #mode_tabs_new, #mode_tabs_paste, #mode_tabs_upload {
-	background-color: rgba(0, 0, 0, 0.05);
 	padding: 6px 10px;
 	text-align: center;
 	margin-right: 6px;
@@ -12,12 +32,10 @@
 }
 
 #mode_tabs div.selected {
-	background-color: rgba(0, 0, 0, 0.1);
 	font-weight: 700;
 }
 
 #mode_view, #mode_customizations {
-	background-color: rgba(0, 0, 0, 0.1);
 	padding: 10px;
 }
 
@@ -51,20 +69,19 @@
 }
 
 #search_form {
-	border: 1px solid #f4f4f4;
+	border-width: 1px;
+	border-style: solid;
 	border-radius: 0.6em;
 	margin-bottom: 20px;
 	padding: 10px;
-	
-	@media (prefers-color-scheme: dark) {
-		border-color: rgba(255, 255, 255, 0.05);
-	}
 }
 
 body.purple {
-	#search_form {
-		border-color: rgba(255, 255, 255, 0.05);
-	}
+	@include set-foreground-color(#ffffff);
+}
+
+@media (prefers-color-scheme: dark) {
+	@include set-foreground-color(#ffffff);
 }
 
 #browse_results {
@@ -73,8 +90,8 @@ body.purple {
 	}
 	
 	div.properties-text {
-		color: #808080;
-		border-top: 1px solid #f4f4f4;
+		border-top-style: solid;
+		border-top-width: 1px;
 		font-size: smaller;
 		margin-top: 0.5em;
 		padding-top: 0.5em;

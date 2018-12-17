@@ -4,7 +4,7 @@ require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 $session = BeaconSession::GetFromCookie();
 if (is_null($session)) {
-	BeaconTemplate::SetTemplate('login');
+	BeaconCommon::Redirect('/account/login/');
 	exit;
 }
 

@@ -2,7 +2,7 @@
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Beacon Login');
-BeaconSetBodyClass('purple');
+BeaconTemplate::SetBodyClass('purple');
 
 $cleanup_url = false;
 	
