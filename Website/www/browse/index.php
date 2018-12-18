@@ -51,7 +51,7 @@ $documents = BeaconDocumentMetadata::Search($search_keys, $sort_order, $limit, $
 $end_time = microtime(true);
 
 ?><h1>Browse Documents</h1>
-<div id="search_form">
+<div id="search_form" class="separator-color">
 	<form action="" method="get">
 		<table id="options_table">
 			<tr>

@@ -1,0 +1,58 @@
+@mixin setup-colors($foreground-color) {
+	#branding_section {
+		background-color: rgba($foreground-color, 0.05);
+		color: $foreground-color;
+	}
+	
+	.explanation {
+		color: rgba($foreground-color, 0.6);
+	}
+}
+
+@include setup-colors(#000000);
+
+@media (prefers-color-scheme: dark) {
+	@include setup-colors(#ffffff);
+}
+
+body {
+	margin: 0px;
+	text-align: center;
+	width: 400px;
+}
+
+#branding_section {
+	padding: 20px;
+}
+
+#branding_logo {
+	width: 128px;
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+}
+
+.explanation {
+	font-size: 0.9em;
+}
+
+p {
+	margin: 20px;
+}
+
+#page_intro,
+#page_loading,
+#page_login,
+#page_recover,
+#page_verify,
+#page_password {
+	padding: 20px;
+}
+
+#page_loading,
+#page_login,
+#page_recover,
+#page_verify,
+#page_password {
+	display: none;
+}

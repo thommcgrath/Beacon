@@ -6,7 +6,7 @@ if (!BeaconTemplate::IsHTML()) {
 }
 
 ?><!DOCTYPE html>
-<html>
+<html<?php if (BeaconTemplate::BodyClass() != '') { echo ' class="' . BeaconTemplate::BodyClass() . '"'; } ?>>
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,8 +24,8 @@ if (!BeaconTemplate::IsHTML()) {
 		<meta name="application-name" content="Beacon">
 		<meta name="msapplication-config" content="/assets/favicon/browserconfig.xml">
 		<meta name="theme-color" content="#713a9a">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link href="<?php echo BeaconCommon::AssetURI('default.scss'); ?>" rel="stylesheet" type="text/css">
+		<link href="<?php echo BeaconCommon::AssetURI('colors.scss'); ?>" rel="stylesheet" type="text/css">
 		<script src="<?php echo BeaconCommon::AssetURI('common.js'); ?>"></script>
 		<script src="<?php echo BeaconCommon::AssetURI('default.js'); ?>"></script>
 		<title><?php echo htmlentities(BeaconTemplate::Title()); ?></title>
@@ -43,7 +43,7 @@ if (!BeaconTemplate::IsHTML()) {
 		unset($header_lines);
 		?>
 	</head>
-	<body<?php if (BeaconTemplate::BodyClass() != '') { echo ' class="' . BeaconTemplate::BodyClass() . '"'; } ?>>
+	<body>
 		<div id="header_wrapper">
 			<div id="header" class="pagebody">
 				<div id="header_logo_cell"><a href="/"><img id="header_logo" src="<?php echo BeaconCommon::AssetURI('beacon-header-color.svg'); ?>" height="80"></a></div>
@@ -78,6 +78,14 @@ if (!BeaconTemplate::IsHTML()) {
 						<div id="explore_results_right_button"><button id="explore_results_more">More</button></div>
 					</div>
 				</div>
+			</div>
+		</div>
+		<div id="overlay"></div>
+		<div id="dialog">
+			<div id="dialog_inner">
+				<p id="dialog_message">Message</p>
+				<p id="dialog_explanation">Explanation</p>
+				<p id="dialog_buttons"><button id="dialog_action_button">Ok</button></p>
 			</div>
 		</div>
 	</body>

@@ -25,10 +25,8 @@ BeaconTemplate::StartStyles();
 #index_updates {
 	box-sizing: border-box;
 	font-size: 10pt;
-	color: rgba(#000000, 0.6);
 	padding-top: 15px;
 	margin-top: 40px;
-	border-color: rgba(#000000, 0.2);
 	border-style: solid;
 	border-width: 0px;
 	border-top-width: 1px;
@@ -36,6 +34,7 @@ BeaconTemplate::StartStyles();
 	ul {
 		list-style: none;
 		padding-left: 0px;
+		border-color: inherit;
 		
 		li {
 			margin: 0px;
@@ -48,7 +47,9 @@ BeaconTemplate::StartStyles();
 		
 		li+li {
 			margin-top: 15px;
-			border-top: 1px solid rgba(#000000, 0.2);
+			border-top-width: 1px;
+			border-top-style: solid;
+			border-color: inherit;
 			padding-top: 15px;
 		}
 	}
@@ -96,15 +97,6 @@ BeaconTemplate::StartStyles();
 @media (prefers-color-scheme: dark) {
 	#hero.mac {
 		background-image: url(/assets/images/hero-mac-dark.png);
-	}
-	
-	#index_updates {
-		border-color: rgba(#ffffff, 0.2);
-		color: rgba(#ffffff, 0.6);
-		
-		ul li+li {
-			border-color: rgba(#ffffff, 0.2);
-		}
 	}
 }
 
@@ -186,7 +178,7 @@ BeaconTemplate::FinishStyles();
 			<p>Mod authors can also <a href="/read/f21f4863-8043-4323-b6df-a9f96bbd982c">add support for their mod</a> directly to Beacon. The items show up to all Beacon users automatically, and Beacon will also maintain a spawn codes page just for your mod. For example, <a href="/mods/731604991/spawncodes">here is the spawn codes for Structures Plus</a>. The engrams list can be updated at any time from within Beacon, or Beacon's API can pull the engrams list from your own server (or Steam page) every few hours.</p>
 		</div>
 	</div>
-	<div id="index_updates">
+	<div id="index_updates" class="separator-color text-lighter">
 		<h3>Recent Updates</h3>
 		<ul>
 			<?php

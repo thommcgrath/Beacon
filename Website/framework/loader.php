@@ -42,9 +42,19 @@ spl_autoload_register(function($class_name) {
 			"'self'",
 			"https://*.typekit.net/"
 		),
+		'script-src' => array(
+			"'self'",
+			"https://*.stripe.com"
+		),
 		'font-src' => array(
 			"'self'",
 			"https://use.typekit.net"
+		),
+		'object-src' => array(
+			"'none'"
+		),
+		'base-uri' => array(
+			"'self'"
 		),
 		'sandbox' => array(
 			'allow-forms',
@@ -60,9 +70,11 @@ spl_autoload_register(function($class_name) {
 	if ($use_nonces) {
 		$policies['default-src'][] = "'nonce-" . $_SERVER['CSP_NONCE'] . "'";
 		$policies['style-src'][] = "'nonce-" . $_SERVER['CSP_NONCE'] . "'";
+		$policies['script-src'][] = "'nonce-" . $_SERVER['CSP_NONCE'] . "'";
 	} else {
 		$policies['default-src'][] = "'unsafe-inline'";
 		$policies['style-src'][] = "'unsafe-inline'";
+		$policies['script-src'][] = "'unsafe-inline'";
 	}
 	if (is_array($browser) && $browser['browser'] == 'Safari' && intval($browser['majorver']) <= 8 && in_array('unsafe-inline', $policies['default-src']) == false) {
 		$policies['default-src'][] = "'unsafe-inline'";

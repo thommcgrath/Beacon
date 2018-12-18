@@ -1,0 +1,444 @@
+@function gcd($a, $b) {
+	// From: http://rosettacode.org/wiki/Greatest_common_divisor#JavaScript
+	@if ($b != 0) {
+		@return gcd($b, $a % $b);
+	} @else {
+		@return abs($a);
+	}
+}
+
+@function pow($base, $exponent, $prec: 12) {
+	// Handles decimal exponents by trying to convert them into a fraction and then use a nthRoot-algorithm for parts of the calculation
+	@if (floor($exponent) != $exponent) {
+		$prec2 : pow(10, $prec);
+		$exponent: round($exponent * $prec2);
+		$denominator: gcd($exponent, $prec2);
+		@return nthRoot(pow($base, $exponent / $denominator), $prec2 / $denominator, $prec);
+	}
+
+	$value: $base;
+	@if $exponent > 1 {
+		@for $i from 2 through $exponent {
+			$value: $value * $base;
+		}
+	} @else if $exponent < 1 {
+		@for $i from 0 through -$exponent {
+			$value: $value / $base;
+		}
+	}
+
+	@return $value;
+}
+
+@function nthRoot($num, $n: 2, $prec: 12) {
+	// From: http://rosettacode.org/wiki/Nth_root#JavaScript
+	$x: 1;
+
+	@for $i from 0 through $prec {
+		$x: 1 / $n * (($n - 1) * $x + ($num / pow($x, $n - 1)));
+	}
+
+	@return $x;
+}
+
+@function luminance($color) {
+	$red: red($color) / 255;
+	$green: green($color) / 255;
+	$blue: blue($color) / 255;
+	
+	$red: if($red <= 0.03928, $red / 12.92, pow((($red + 0.055) / 1.055), 2.4));
+	$green: if($green <= 0.03928, $green / 12.92, pow((($green + 0.055) / 1.055), 2.4));
+	$blue: if($blue <= 0.03928, $blue / 12.92, pow((($blue + 0.055) / 1.055), 2.4));
+	
+	@return (0.2126 * $red) + (0.7152 * $green) + (0.0722 * $blue);
+}
+
+@function contrast-against($backcolor, $forecolor) {
+	$backlum: luminance($backcolor);
+	$forelum: luminance($forecolor);
+	@if $backlum > $forelum {
+		@return ($backlum + 0.05) / ($forelum + 0.05);
+	} @else {
+		@return ($forelum + 0.05) / ($backlum + 0.05);
+	}
+}
+
+@function contrasting-color($backcolor, $forecolor) {
+	@for $percent from 0 through 20 {
+		$darker: darken($forecolor, $percent * 5);
+		$lighter: lighten($forecolor, $percent * 5);
+		@if contrast-against($backcolor, $darker) >= 4.5 {
+			@return $darker;
+		} @else if contrast-against($backcolor, $lighter) >= 4.5 {
+			@return $lighter;
+		}
+	}
+	
+	@if contrast-against($backcolor, #ffffff) > contrast-against($backcolor, #000000) {
+		@return #ffffff;
+	} @else {
+		@return #000000;
+	}
+}
+
+@mixin setup-colors($foreground-color, $background-color, $accent-color) {
+	$pc-fill: contrasting-color($background-color, #c27c0e);
+	$xbox-fill: contrasting-color($background-color, #107c10);
+	$playstation-fill: contrasting-color($background-color, #003791);
+	$switch-fill: contrasting-color($background-color, #e60012);
+	$pc-text: contrasting-color($pc-fill, #ffffff);
+	$xbox-text: contrasting-color($xbox-fill, #ffffff);
+	$playstation-text: contrasting-color($playstation-fill, #ffffff);
+	$switch-text: contrasting-color($switch-fill, #ffffff);
+	$text-red: contrasting-color($background-color, #ff3b30);
+	$text-green: contrasting-color($background-color, #28cd41);
+	$text-blue: contrasting-color($background-color, #007aff);
+	$text-purple: contrasting-color($background-color, #af52de);
+	$text-yellow: contrasting-color($background-color, #ffcc00);
+	$link-color: contrasting-color($background-color, #2e7fda);
+	$accent-text-color: contrasting-color($accent-color, $background-color);
+	$pressed-accent-color: darken($accent-color, 20%);
+	$pressed-accent-text-color: darken($accent-text-color, 20%);
+	$explore-color: darken($background-color, 10%);
+	$separator-color: mix($foreground-color, $background-color, 15%);
+	
+	body {
+		color: $foreground-color;
+		background-color: $background-color;
+	}
+	
+	pre, code, .code {
+		background-color: rgba($foreground-color, 0.05);
+		border-color: rgba($foreground-color, 0.1);
+	}
+	
+	.platform_tag {
+		&.xbox {
+			background-color: $xbox-fill;
+			color: $xbox-text;
+		}
+		
+		&.playstation {
+			background-color: $playstation-fill;
+			color: $playstation-text;
+		}
+		
+		&.pc {
+			background-color: $pc-fill;
+			color: $pc-text;
+		}
+		
+		&.nintendo {
+			background-color: $switch-fill;
+			color: $switch-text;
+		}
+	}
+	
+	.text-red {
+		color: $text-red;
+	}
+	
+	.text-green {
+		color: $text-green;
+	}
+	
+	.text-blue {
+		color: $text-blue;
+	}
+	
+	.text-purple {
+		color: $text-purple;
+	}
+	
+	.text-yellow {
+		color: $text-yellow;
+	}
+	
+	table.generic {
+		border-color: 1px solid $accent-color;
+		
+		td, th {
+			border-color: $separator-color;
+		}
+		
+		thead {
+			background-color: $accent-color;
+			color: $accent-text-color;
+			
+			td, th {
+				border-color: $accent-color;
+				color: $accent-text-color;
+			}
+		}
+	}
+	
+	#header_wrapper {
+		background-color: $background-color;
+		border-color: rgba($foreground-color, 0.1);
+	}
+	
+	#header_links_cell ul li a {
+		color: rgba($foreground-color, 0.6);
+		
+		&:hover {
+			border-color: rgba($foreground-color, 0.4);
+		}
+		
+		&:active {
+			background-color: rgba($foreground-color, 0.2);
+		}
+	}
+	
+	.accent-color {
+		color: $accent-color;
+		fill: $accent-color;
+	}
+	
+	.separator-color {
+		border-color: $separator-color;
+	}
+	
+	.text-lighter {
+		color: mix($foreground-color, $background-color, 50%);
+	}
+	
+	input[type="text"], input[type="password"], input[type="email"], input[type="url"], input[type="tel"], input[type="search"], input[type="number"], textarea {
+		border-color: rgba($foreground-color, 0.3);
+		background-color: rgba(#ffffff, 0.1);
+		color: $foreground-color;
+		
+		&:focus {
+			border-color: rgba(#000000, 0.6);
+			background-color: #ffffff;
+			color: #000000;
+			
+			&::placeholder {
+				color: rgba(#000000, 0.6);
+			}
+		}
+		
+		&::placeholder {
+			color: rgba($foreground-color, 0.4);
+		}
+	}
+	
+	button, input[type="button"], input[type="submit"], input[type="reset"], a.button {
+		background-color: rgba($accent-color, 0);
+		color: $accent-color;
+		border-color: $accent-color;
+		
+		&:enabled {
+			&:active {
+				background-color: $pressed-accent-color;
+				border-color: $pressed-accent-color;
+				color: $pressed-accent-text-color;
+			}
+		}
+	}
+	
+	a.button:active {
+		background-color: $pressed-accent-color;
+		border-color: $pressed-accent-color;
+		color: $pressed-accent-text-color;
+	}
+	
+	$keyframe_selector_suffix: "" + red($accent-color) + green($accent-color) + blue($accent-color);
+	
+	@keyframes default_button_#{$keyframe_selector_suffix} {
+		50% { background-color: $accent-color; color: $accent-text-color; }
+	}
+	
+	input[type="submit"], button.default {
+		animation: default_button_#{$keyframe_selector_suffix} 2s infinite;
+	}
+	
+	div.select {
+		select {
+			background-color: $accent-color;
+			color: $accent-text-color;
+			
+			&:active {
+				background-color: $pressed-accent-color;
+				color: $pressed-accent-text-color
+			}
+		}
+		
+		span:after {
+			color: $accent-text-color;
+		}
+	}
+	
+	label.radio, label.checkbox {
+		span {
+			background-color: rgba($accent-color, 0);
+			border-color: $accent-color;
+			
+			&:after {
+				background-color: $accent-color;
+			}
+		}
+		
+		& :checked {
+			&:active {
+				+span {
+					background-color: $pressed-accent-color;
+					border-color: $pressed-accent-color;
+					
+					&:after {
+						background-color: $pressed-accent-text-color;
+					}
+				}
+			}
+			
+			+span {
+				background-color: $accent-color;
+			
+				&:after {
+					background-color: $accent-text-color;
+				}
+			}
+		}
+		
+		& :active {
+			+span {
+				background-color: darken($background-color, 20%);
+				border-color: $pressed-accent-color;
+			}
+			
+			&:after {
+				background-color: $pressed-accent-color;
+			}
+		}
+	}
+	
+	#menu_explore_link.expanded {
+		background-color: darken($background-color, 10%);
+		color: $foreground-color;
+	}
+	
+	@supports (-webkit-backdrop-filter: blur(30px)) {
+		#header_wrapper {
+			-webkit-backdrop-filter: blur(30px);
+			background-color: rgba($background-color, 0.5);
+		}
+	}
+	
+	#explore_popover {
+		background-color: $explore-color;
+		border-color: rgba(0, 0, 0, 0);
+		
+		ul {
+			li {
+				a {
+					color: $foreground-color;
+					
+					&:hover {
+						color: $accent-text-color;
+						background-color: $accent-color;
+						
+						.result_preview {
+							color: $accent-text-color;
+						}
+						
+						.result_type {
+							color: $accent-text-color;
+							border-color: $accent-text-color;
+						}
+					}
+					
+					.result_preview {
+						color: rgba($foreground-color, 0.5);
+					}
+					
+					.result_type {
+						color: rgba($foreground-color, 0.4);
+						border-color: rgba($foreground-color, 0.2);
+					}
+				}
+			}
+		}
+	}
+	
+	a {
+		color: $link-color;
+	}
+	
+	/* !Search Results */
+	
+	div.results {
+		span.result_type {
+			color: rgba($foreground-color, 0.35);
+		}
+		
+		div.result {
+			border-color: rgba($foreground-color, 0.15);
+			
+			span.summary {
+				color: rgba($foreground-color, 0.65);
+			}
+		}
+	}
+	
+	/* !Other Stuff */
+	span.object_type {
+		color: rgba($foreground-color, 0.35);
+	}
+	
+	/* !Code Generator */
+	
+	#mode_tabs div.selected, #mode_view, #mode_customizations {
+		background-color: mix($foreground-color, $background-color, 10%);
+	}
+	
+	#mode_tabs_new, #mode_tabs_paste, #mode_tabs_upload {
+		background-color: mix($foreground-color, $background-color, 5%);
+	}
+	
+	#browse_results div.properties-text {
+		color: rgba($foreground-color, 0.5);
+		border-color: rgba($foreground-color, 0.1);
+	}
+	
+	/* !Dialog */
+	
+	#overlay {
+		background-color: rgba(#000000, 0);
+		
+		@supports (-webkit-backdrop-filter: blur(0px)) {
+				-webkit-backdrop-filter: blur(0px);
+		}
+		
+		&.visible {
+			background-color: rgba(#000000, 0.8);
+			
+			@supports (-webkit-backdrop-filter: blur(15px)) {
+				background-color: rgba(#000000, 0.3);
+				-webkit-backdrop-filter: blur(15px);
+			}
+		}	
+	}
+	
+	#dialog {
+		background-color: $background-color;
+	}
+	
+	
+}
+
+@include setup-colors(#000000, #ffffff, #713a9a);
+
+html.purple {
+	@include setup-colors(#ffffff, #713a9a, #ffffff);
+	
+	#header_logo, .white-on-dark {
+		filter: brightness(0) invert(1);
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	@include setup-colors(#ffffff, #262626, #ffffff);
+	
+	#header_logo, .white-on-dark {
+		filter: brightness(0) invert(1);
+	}
+}

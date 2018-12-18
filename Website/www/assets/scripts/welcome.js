@@ -1,39 +1,3 @@
-var dialog = {
-	show: function(message, explanation) {
-		var overlay = document.getElementById('overlay');
-		var dialog_frame = document.getElementById('dialog');
-		var dialog_message = document.getElementById('dialog_message');
-		var dialog_explanation = document.getElementById('dialog_explanation');
-		var dialog_action_button = document.getElementById('dialog_action_button');
-		if (overlay && dialog && dialog_message && dialog_explanation && dialog_action_button) {
-			overlay.className = 'exist';
-			dialog_frame.className = 'exist';
-			setTimeout(function() {
-				overlay.className = 'exist visible';
-				dialog_frame.className = 'exist visible';
-			}, 1);
-			
-			dialog_message.innerText = message;
-			dialog_explanation.innerText = explanation;
-			dialog_action_button.addEventListener('click', function(event) {
-				dialog.hide();
-			});
-		}
-	},
-	hide: function () {
-		var overlay = document.getElementById('overlay');
-		var dialog_frame = document.getElementById('dialog');
-		if (overlay && dialog_frame) {
-			overlay.className = 'exist';
-			dialog_frame.className = 'exist';
-			setTimeout(function() {
-				overlay.className = '';
-				dialog_frame.className = '';
-			}, 200);
-		}
-	}
-};
-
 document.addEventListener('DOMContentLoaded', function(event) {
 	var known_vulnerable_password = '';
 	var current_page = 'intro';

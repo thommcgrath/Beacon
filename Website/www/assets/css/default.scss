@@ -2,17 +2,6 @@
 @import '/assets/css/normalize.css';
 @import 'https://use.typekit.net/paa2qqa.css';
 
-$beacon-purple: #713a9a;
-$pc-orange: #c27c0e;
-$xbox-green: #107c10;
-$playstation-blue: #003791;
-$switch-red: #e60012;
-$base-text-red: #ff3b30;
-$base-text-green: #28cd41;
-$base-text-blue: #007aff;
-$base-text-purple: #af52de;
-$base-text-yellow: #ffcc00;
-
 $header-link-opacity: 0.6;
 $header-link-border-opacity: 0.4;
 $header-link-pressed-opacity: 0.2;
@@ -30,89 +19,6 @@ $breakpoint_desktop: $max_content_width + ($page_margins * 2);
 
 $animation-timing: 0.15s;
 
-@function gcd($a, $b) {
-	// From: http://rosettacode.org/wiki/Greatest_common_divisor#JavaScript
-	@if ($b != 0) {
-		@return gcd($b, $a % $b);
-	} @else {
-		@return abs($a);
-	}
-}
-
-@function pow($base, $exponent, $prec: 12) {
-	// Handles decimal exponents by trying to convert them into a fraction and then use a nthRoot-algorithm for parts of the calculation
-	@if (floor($exponent) != $exponent) {
-		$prec2 : pow(10, $prec);
-		$exponent: round($exponent * $prec2);
-		$denominator: gcd($exponent, $prec2);
-		@return nthRoot(pow($base, $exponent / $denominator), $prec2 / $denominator, $prec);
-	}
-
-	$value: $base;
-	@if $exponent > 1 {
-		@for $i from 2 through $exponent {
-			$value: $value * $base;
-		}
-	} @else if $exponent < 1 {
-		@for $i from 0 through -$exponent {
-			$value: $value / $base;
-		}
-	}
-
-	@return $value;
-}
-
-@function nthRoot($num, $n: 2, $prec: 12) {
-	// From: http://rosettacode.org/wiki/Nth_root#JavaScript
-	$x: 1;
-
-	@for $i from 0 through $prec {
-		$x: 1 / $n * (($n - 1) * $x + ($num / pow($x, $n - 1)));
-	}
-
-	@return $x;
-}
-
-@function luminance($color) {
-	$red: red($color) / 255;
-	$green: green($color) / 255;
-	$blue: blue($color) / 255;
-	
-	$red: if($red <= 0.03928, $red / 12.92, pow((($red + 0.055) / 1.055), 2.4));
-	$green: if($green <= 0.03928, $green / 12.92, pow((($green + 0.055) / 1.055), 2.4));
-	$blue: if($blue <= 0.03928, $blue / 12.92, pow((($blue + 0.055) / 1.055), 2.4));
-	
-	@return (0.2126 * $red) + (0.7152 * $green) + (0.0722 * $blue);
-}
-
-@function contrast-against($backcolor, $forecolor) {
-	$backlum: luminance($backcolor);
-	$forelum: luminance($forecolor);
-	@if $backlum > $forelum {
-		@return ($backlum + 0.05) / ($forelum + 0.05);
-	} @else {
-		@return ($forelum + 0.05) / ($backlum + 0.05);
-	}
-}
-
-@function contrasting-color($backcolor, $forecolor) {
-	@for $percent from 0 through 100 {
-		$darker: darken($forecolor, $percent);
-		$lighter: lighten($forecolor, $percent);
-		@if contrast-against($backcolor, $darker) >= 4.5 {
-			@return $darker;
-		} @else if contrast-against($backcolor, $lighter) >= 4.5 {
-			@return $lighter;
-		}
-	}
-	
-	@if contrast-against($backcolor, #ffffff) > contrast-against($backcolor, #000000) {
-		@return #ffffff;
-	} @else {
-		@return #000000;
-	}
-}
-
 @mixin source-code-pro() {
 	font-family: source-code-pro, monospace;
 	font-weight: 400;
@@ -124,8 +30,6 @@ body {
 	font-weight: 400;
 	font-style: normal;
 	font-size: 11pt;
-	color: #000000;
-	background-color: #ffffff;
 }
 
 *:first-child {
@@ -151,8 +55,8 @@ p, h1, h2, h3 {
 
 code, .code {
 	@include source-code-pro();
-	background-color: #f4f4f4;
-	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-width: 1px;
+	border-style: solid;
 	border-radius: 0.4em;
 	padding: 0.2em 0.5em;
 	font-size: 0.8em;
@@ -160,12 +64,11 @@ code, .code {
 }
 
 pre {
-	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-width: 1px;
+	border-style: solid;
 	padding: 0.6em;
 	border-radius: 0.4em;
 	overflow: auto;
-	background-color: rgba(255, 255, 255, 0.75);
-	color: #000000;
 	margin: 10px;
 	display: block;
 	font-size: 0.8em;
@@ -195,29 +98,12 @@ pre {
 }
 
 .platform_tag {
-	color: #FFFFFF;
 	border-radius: 0.5em;
 	display: inline-block;
 	padding: 2px 8px;
 	
 	&+& {
 		margin-left: 6px;
-	}
-	
-	&.xbox {
-		background-color: $xbox-green;
-	}
-	
-	&.playstation {
-		background-color: $playstation-blue;
-	}
-	
-	&.nintendo {
-		background-color: $switch-red;
-	}
-	
-	&.pc {
-		background-color: $pc-orange;
 	}
 }
 
@@ -305,30 +191,9 @@ h1, h2, h3 {
 }
 
 span.object_type {
-	color: rgba(0, 0, 0, 0.5);
 	font-weight: 300;
 	font-size: smaller;
 	float: right;
-}
-
-.text-red {
-	color: contrasting-color(#ffffff, $base-text-red);
-}
-
-.text-green {
-	color: contrasting-color(#ffffff, $base-text-green);
-}
-
-.text-blue {
-	color: contrasting-color(#ffffff, $base-text-blue);
-}
-
-.text-purple {
-	color: contrasting-color(#ffffff, $base-text-purple);
-}
-
-.text-yellow {
-	color: contrasting-color(#ffffff, $base-text-yellow);
 }
 
 /* ! Generic Table */
@@ -336,19 +201,17 @@ span.object_type {
 table.generic {
 	border-collapse: collapse;
 	width: 100%;
-	border: 1px solid $beacon-purple;
+	border-width: 1px;
+	border-style: solid;
 	
 	td, th {
-		border: 1px solid #f4f4f4;
+		border-width: 1px;
+		border-style: solid;
 		padding: 0.6em;
 	}
 	
 	thead {
-		background-color: $beacon-purple;
-		color: #FFFFFF;
-		
 		td, th {
-			border-color: $beacon-purple;
 			text-align: left;
 			font-weight: 400;
 		}
@@ -358,8 +221,8 @@ table.generic {
 /* ! Header */
 
 #header_wrapper {
-	background-color: #ffffff;
-	border-bottom: 1px solid rgba(0, 0, 0, $header-border-opacity);
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
 	position: fixed;
 	top: 0px;
 	left: 0px;
@@ -437,13 +300,13 @@ table.generic {
 		
 		li a {
 			display: block;
-			color: rgba(0, 0, 0, $header-link-opacity);
 			text-align: center;
 			text-decoration: none;
 			padding: 0.2em 0.5em;
 			border-radius: 1.0em;
-			border: 1px solid rgba(0, 0, 0, 0.0);
-			background-color: rgba(0, 0, 0, 0.0);
+			border-width: 1px;
+			border-style: solid;
+			border-color: rgba(0, 0, 0, 0);
 			-webkit-transition-duration: $animation-timing;
 			-o-transition-duration: $animation-timing;
 			transition-duration: $animation-timing;
@@ -457,14 +320,6 @@ table.generic {
 			@media (min-width: 340px) {
 				padding-left: 0.75em;
 				padding-right: 0.75em;
-			}
-			
-			&:hover {
-				border-color: rgba(0, 0, 0, $header-link-border-opacity);
-			}
-			
-			&:active {
-				background-color: rgba(0, 0, 0, $header-link-pressed-opacity);
 			}
 		}
 	}
@@ -491,29 +346,15 @@ table.generic {
 	}
 }
 
-a {
-	color: #2e7fda;
-}
-
 /* !Buttons */
-
-@keyframes default_button {
-	50% { background-color: lighten($beacon-purple, 15%); }
-}
-
-@mixin active-button {
-	background-color: darken($beacon-purple, 15%);
-	color: darken(#ffffff, 15%);
-}
 
 button, input[type="button"], input[type="submit"], input[type="reset"], a.button {
 	-webkit-appearance: none;
 	appearance: none;
-	background-color: $beacon-purple;
 	border-radius: $button-border-radius;
-	border: none;
+	border-width: 2px;
+	border-style: solid;
 	box-sizing: border-box;
-	color: #ffffff;
 	cursor: pointer;
 	display: inline-block;
 	font-family: inherit;
@@ -538,20 +379,10 @@ button, input[type="button"], input[type="submit"], input[type="reset"], a.butto
 		margin-left: 12px;
 	}
 	
-	&:enabled {
-		&:active {
-			@include active-button;
-		}
-	}
-	
 	&:disabled {
 		cursor: default;
 		opacity: 0.25;
 	}
-}
-
-a.button:active {
-	@include active-button;
 }
 
 input[type="submit"] {
@@ -568,9 +399,9 @@ input[type="submit"] {
 input[type="text"], input[type="password"], input[type="email"], input[type="url"], input[type="tel"], input[type="search"], input[type="number"], textarea {
 	-webkit-appearance: none;
 	appearance: none;
-	background-color: rgba(255, 255, 255, 0.7);
 	border-radius: 0.2em;
-	border: 1px solid rgba(0, 0, 0, 0.4);
+	border-width: 1px;
+	border-style: solid;
 	box-sizing: border-box;
 	font-family: inherit;
 	font-size: $form-font-size;
@@ -588,12 +419,7 @@ input[type="text"], input[type="password"], input[type="email"], input[type="url
 	width: 100%;
 	line-height: 1.0em;
 	
-	&:focus {
-		background-color: #ffffff;
-	}
-	
 	&::placeholder {
-		color: rgba(0, 0, 0, 0.5);
 		line-height: 1.0em;
 		vertical-align: bottom;
 		padding-top: 0.3em;
@@ -610,42 +436,37 @@ label.radio input[type="radio"] {
 label.checkbox span,
 label.radio span {
 	display: inline-block;
-	background-color: #d0d0d0;
 	vertical-align: middle;
 	margin: 6px;
 	position: relative;
 	border-radius: $form-font-size;
-	-webkit-transition-property: background-color;
-	-o-transition-property: background-color;
-	transition-property: background-color;
+	-webkit-transition-property: background-color, border-color;
+	-o-transition-property: background-color, border-color;
+	transition-property: background-color, border-color;
 	-webkit-transition-timing-function: ease-out;
 	-o-transition-timing-function: ease-out;
 	transition-timing-function: ease-out;
 	-webkit-transition-duration: $animation-timing;
 	-o-transition-duration: $animation-timing;
 	transition-duration: $animation-timing;
+	border-width: 2px;
+	border-style: solid;
 }
 
 label.checkbox span {
-	width: 46px;
-	height: 24px;
+	width: 42px;
+	height: 20px;
 }
 
 label.radio span {
-	width: 24px;
-	height: 24px;
-}
-
-label.checkbox :checked + span,
-label.radio :checked + span {
-	background-color: $beacon-purple;
+	width: 20px;
+	height: 20px;
 }
 
 label.checkbox span:after {
 	position: absolute;
-	top: 5px;
-	left: 5px;
-	background-color: #FFFFFF;
+	top: 3px;
+	left: 3px;
 	width: 14px;
 	height: 14px;
 	border-radius: 14px;
@@ -668,9 +489,8 @@ label.checkbox :checked + span:after {
 
 label.radio span:after {
 	position: absolute;
-	top: 6px;
-	left: 6px;
-	background-color: #ffffff;
+	top: 4px;
+	left: 4px;
 	width: 12px;
 	height: 12px;
 	border-radius: 12px;
@@ -692,16 +512,6 @@ label.radio :checked + span:after {
 	opacity: 1.0;
 }
 
-label.checkbox :active + span,
-label.radio :active + span {
-	background-color: #b5b5b5;
-}
-
-label.checkbox :checked:active + span,
-label.radio :checked:active + span {
-	background-color: darker($beacon-purple, 15%);
-}
-
 /* !Menus */
 
 div.select {
@@ -715,9 +525,7 @@ div.select {
 		min-height: 22px;
 		border: none;
 		border-radius: $button-border-radius;
-		background-color: $beacon-purple;
 		display: inline-block;
-		color: #FFFFFF;
 		font-family: inherit;
 		font-size: $form-font-size;
 		text-align: center;
@@ -736,10 +544,6 @@ div.select {
 		padding: 0.5em 2.5em 0.5em 0.8em;
 		line-height: 1.3em;
 		
-		&:active {
-			background-color: darken($beacon-purple, 15%);
-		}
-		
 		&:focus {
 			font-size: $form-font-size;
 		}
@@ -750,7 +554,6 @@ div.select {
 		top: 0.25em;
 		right: 0.7em;
 		content: '▾';
-		color: #FFFFFF;
 		font-size: 1.3em;
 		pointer-events: none;
 	}
@@ -771,7 +574,6 @@ div.select {
 
 #explore_popover {
 	position: absolute;
-	background-color: #ffffff;
 	width: 260px;
 	top: 20px;
 	left: 20px;
@@ -845,34 +647,18 @@ div.select {
 				-webkit-transition-timing-function: ease-out;
 				-o-transition-timing-function: ease-out;
 				transition-timing-function: ease-out;
-				color: rgba(0, 0, 0, 0.7);
 				display: block;
-				
-				&:hover {
-					background-color: $beacon-purple;
-					color: #ffffff;
-					
-					.result_preview {
-						color: #ffffff;
-					}
-					
-					.result_type {
-						color: #ffffff;
-						border-color: #ffffff;
-					}
-				}
 				
 				.result_preview {
 					font-size: 10pt;
-					color: rgba(0, 0, 0, 0.5);
 				}
 				
 				.result_type {
 					font-size: 9pt;
-					color: rgba(0, 0, 0, 0.4);
 					margin-left: 12px;
 					float: right;
-					border: 1px solid rgba(0, 0, 0, 0.2);
+					border-width: 1px;
+					border-style: solid;
 					padding: 2px 4px;
 					border-radius: 4px;
 				}
@@ -886,14 +672,7 @@ div.select {
 }
 
 #menu_explore_link.expanded {
-	background-color: #8f8f8f;
 	border-radius: 4px 4px 0px 0px;
-	border-color: rgba(0, 0, 0, 0);
-	color: #ffffff;
-	
-	&:hover {
-		border-color: rgba(0, 0, 0, 0);
-	}
 }
 
 /* !Double Column & Triple Column */
@@ -917,7 +696,6 @@ div.triple_column div.column {
 
 div.results {
 	span.result_type {
-		color: rgba(0, 0, 0, 0.35);
 		font-weight: 500;
 		margin: 0.8em;
 	}
@@ -933,275 +711,76 @@ div.results {
 		
 		span.summary {
 			font-size: 0.9em;
-			color: #404040;
 		}
 	}
 }
 
-/* ! Dark Mode */
+/* !Dialog & Overlay */
 
-@mixin dark-mode($foreground-color, $background-color) {
-	#header_wrapper {
-		background-color: $background-color;
-		border-color: rgba($foreground-color, $header-border-opacity);
-	}
+#overlay {
+	display: none;
+	position: fixed;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	transition-duration: 0.15s;
+	transition-timing-function: ease-out;
+	transition-property: background-color, -webkit-backdrop-filter;
+	z-index: 2000;
+	background-color: rgba(0, 0, 0, 0.0);
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
 	
-	#header_logo, .white-on-dark {
-		filter: brightness(0) invert(1);
-	}
-	
-	#header_links_cell ul li a {
-		color: rgba($foreground-color, $header-link-opacity);
-		
-		&:hover {
-			border-color: rgba($foreground-color, $header-link-border-opacity);
-		}
-		
-		&:active {
-			background-color: rgba($foreground-color, $header-link-pressed-opacity);
-		}
-	}
-	
-	input[type="text"], input[type="password"], input[type="email"], input[type="url"], input[type="tel"], input[type="search"], input[type="number"], textarea {
-		border-color: rgba($foreground-color, 0.2);
-		background-color: rgba($foreground-color, 0.1);
-		color: $foreground-color;
-		
-		&:focus {
-			background-color: #ffffff;
-			color: #000000;
-			
-			&::placeholder {
-				color: rgba(0, 0, 0, 0.5);
-			}
-		}
-		
-		&::placeholder {
-			color: rgba($foreground-color, 0.4);
-		}
-	}
-	
-	button, input[type="button"], input[type="submit"], input[type="reset"], a.button {
-		background-color: rgba($foreground-color, 0.2);
-		
-		&:enabled {
-			&:active {
-				background-color: darken($background-color, 5%);
-				color: darken($foreground-color, 15%);
-			}
-		}
-	}
-	
-	a.button:active {
-		background-color: darken($background-color, 5%);
-		color: darken($foreground-color, 15%);
-	}
-	
-	$keyframe_selector_suffix: "" + red($foreground-color) + green($foreground-color) + blue($foreground-color);
-	
-	@keyframes default_button_#{$keyframe_selector_suffix} {
-		50% { background-color: rgba($foreground-color, 0.35); }
-	}
-	
-	input[type="submit"] {
-		animation: default_button_#{$keyframe_selector_suffix} 2s infinite;
-	}
-	
-	div.select {
-		select {
-			background-color: rgba($foreground-color, 0.2);
-			color: $foreground-color;
-			
-			&:active {
-				background-color: darken($background-color, 5%);
-			}
-		}
-		
-		span:after {
-			color: $foreground-color;
-		}
-	}
-	
-	label.radio, label.checkbox {
-		span {
-			background-color: rgba($foreground-color, 0.2);
-			
-			&:after {
-				background-color: $foreground-color;
-			}
-		}
-		
-		& :checked {
-			&:active {
-				+span {
-					background-color: darken($foreground-color, 25%);
-				}
-			}
-			
-			+span {
-				background-color: $foreground-color;
-			
-				&:after {
-					background-color: $background-color;
-				}
-			}
-		}
-		
-		& :active {
-			+span {
-				background-color: darken($background-color, 5%);
-			}
-		}
-	}
-	
-	#menu_explore_link.expanded {
-		background-color: darken($background-color, 10%);
-		color: $foreground-color;
-	}
-	
-	@supports (-webkit-backdrop-filter: blur(30px)) {
-		#header_wrapper {
-			-webkit-backdrop-filter: blur(30px);
-			background-color: rgba($background-color, $header-blurred-opacity);
-		}
-	}
-	
-	#explore_popover {
-		background-color: darken($background-color, 10%);
-		border-color: rgba(0, 0, 0, 0);
-		
-		ul {
-			li {
-				a {
-					color: $foreground-color;
-					
-					&:hover {
-						color: $background-color;
-						background-color: $foreground-color;
-						
-						.result_preview {
-							color: $background-color;
-						}
-						
-						.result_type {
-							color: $background-color;
-							border-color: $background-color;
-						}
-					}
-					
-					.result_preview {
-						color: rgba($foreground-color, 0.5);
-					}
-					
-					.result_type {
-						color: rgba($foreground-color, 0.4);
-						border-color: rgba($foreground-color, 0.2);
-					}
-				}
-			}
-		}
-	}
-	
-	a {
-		color: #64aef9;
-	}
-	
-	.platform_tag {
-		&.xbox {
-			$bg-color: contrasting-color($background-color, $xbox-green);
-			background-color: $bg-color;
-			color: contrasting-color($bg-color, #ffffff);
-		}
-		
-		&.playstation {
-			$bg-color: contrasting-color($background-color, $playstation-blue);
-			background-color: $bg-color;
-			color: contrast-against($bg-color, #ffffff);
-		}
-		
-		&.pc {
-			$bg-color: contrasting-color($background-color, $pc-orange);
-			background-color: $bg-color;
-			color: contrasting-color($bg-color, #ffffff);
-		}
-		
-		&.nintendo {
-			$bg-color: contrasting-color($background-color, $switch-red);
-			background-color: $bg-color;
-			color: contrasting-color($bg-color, #ffffff);
-		}
-	}
-	
-	table.generic {
-		$table-color: mix($foreground-color, $background-color, 5%);
-		
-		td, th {
-			border-color: $table-color;
-		}
-		
-		thead {
-			background-color: $table-color;
-			color: $foreground-color;
-			
-			td, th {
-				border-color: $table-color;
-			}
-		}
-	}
-	
-	pre, code, .code {
-		background-color: mix($foreground-color, $background-color, 5%);
-		color: $foreground-color;
-		border-color: mix($foreground-color, $background-color, 15%);
-	}
-	
-	.text-red {
-		color: contrasting-color($background-color, $base-text-red);
-	}
-	
-	.text-green {
-		color: contrasting-color($background-color, $base-text-green);
-	}
-	
-	.text-blue {
-		color: contrasting-color($background-color, $base-text-blue);
-	}
-	
-	.text-purple {
-		color: contrasting-color($background-color, $base-text-purple);
-	}
-	
-	.text-yellow {
-		color: contrasting-color($background-color, $base-text-yellow);
-	}
-	
-	/* !Search Results */
-	
-	div.results {
-		span.result_type {
-			color: rgba($foreground-color, 0.35);
-		}
-		
-		div.result {
-			border-color: rgba($foreground-color, 0.15);
-			
-			span.summary {
-				color: rgba($foreground-color, 0.65);
-			}
-		}
-	}
-	
-	/* !Other Stuff */
-	span.object_type {
-		color: rgba($foreground-color, 0.35);
+	&.exist {
+		display: block;
 	}
 }
 
-body.purple {
-	background-color: $beacon-purple;
-	color: #ffffff;
+#dialog {
+	display: none;
+	position: fixed;
+	top: 30%;
+	left: 0px;
+	right: 0px;
+	z-index: 2001;
+	opacity: 0;
+	transition-duration: 0.15s;
+	transition-timing-function: ease-out;
+	transition-property: opacity;
+	transition-delay: 0s;
 	
-	@include dark-mode(#ffffff, $beacon-purple);
+	&.exist {
+		display: block;
+	}
+	
+	&.visible {
+		opacity: 1;
+		transition-delay: 0.2s;
+	}
+	
+	p {
+		margin: 20px;
+	}
+}
+
+#dialog_inner {
+	width: 300px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#dialog_message {
+	font-weight: 600;
+	text-align: left;
+}
+
+#dialog_explanation {
+	text-align: left;
+	font-size: smaller;
+}
+
+#dialog_buttons {
+	text-align: center;
 }
 
 @media (min-width: $breakpoint_mini) {
@@ -1287,40 +866,4 @@ body.purple {
 		display: table-cell;
 		width: 33%;
 	}
-}
-
-@supports (-webkit-backdrop-filter: blur(30px)) {
-	#header_wrapper {
-		-webkit-backdrop-filter: blur(30px);
-		background-color: rgba(255, 255, 255, $header-blurred-opacity);
-	}
-}
-
-@media (prefers-color-scheme: dark) {
-	body {
-		background-color: #262626;
-		color: #ffffff;
-	}
-	
-	.text-red {
-		color: #ff493d;
-	}
-	
-	.text-green {
-		color: #31d74a;
-	}
-	
-	.text-blue {
-		color: #0a8dff;
-	}
-	
-	.text-purple {
-		color: #c45cf9;
-	}
-	
-	.text-yellow {
-		color: #ffd609;
-	}
-	
-	@include dark-mode(#ffffff, #262626);
 }
