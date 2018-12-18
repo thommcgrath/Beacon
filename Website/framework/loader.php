@@ -50,7 +50,7 @@ spl_autoload_register(function($class_name) {
 		)
 	);
 	
-	$browser = get_browser($_SERVER['HTTP_USER_AGENT'], true);
+	$browser = isset($_SERVER['HTTP_USER_AGENT']) ? get_browser($_SERVER['HTTP_USER_AGENT'], true) : null;
 	$use_nonces = !(is_array($browser) && $browser['browser'] == 'Edge');
 	if ($use_nonces) {
 		$policies['default-src'][] = "'nonce-" . $_SERVER['CSP_NONCE'] . "'";
