@@ -127,7 +127,7 @@ abstract class BeaconAPI {
 							$authorized = true;
 						}
 					}
-				} elseif (BeaconUser::ValidateLoginKey($username)) {
+				} elseif (BeaconUser::ValidateEmail($username)) {
 					// password authorization
 					$user = BeaconUser::GetByEmail($username);
 					if (is_null($user) == false && $user->TestPassword($password)) {
