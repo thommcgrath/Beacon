@@ -25,6 +25,9 @@ Protected Module BeaconEncryption
 		  Dim Crypt As New M_Crypto.Blowfish_MTC(Beacon.ConvertMemoryBlock(Key))
 		  Crypt.SetInitialVector(Beacon.ConvertMemoryBlock(Header.Vector))
 		  Data = Beacon.ConvertMemoryBlock(Crypt.DecryptCBC(Beacon.ConvertMemoryBlock(Data)))
+		  If Data.Size > Header.Length Then
+		    Data = Data.Left(Header.Length)
+		  End If
 		  
 		  Dim ComputedChecksum As UInt32 = Beacon.CRC32(Data)
 		  If ComputedChecksum <> Header.Checksum Then
