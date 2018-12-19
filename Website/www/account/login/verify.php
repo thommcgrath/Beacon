@@ -1,28 +1,39 @@
 <?php
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
-BeaconTemplate::SetTitle('Verify Your E-Mail Address');
+header('Content-Type: application/json');
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+http_response_code(500);
 
-if (isset($_POST['code'])) {
-	$code = $_POST['code'];
-	
-	BeaconCommon::StartSession();
-	if ($code === $_SESSION['login_verify_code']) {
-		unset($_SESSION['login_verify_code']);
-		$_SESSION['login_email_verified'] = true;
-		header('Location: /account/login/password.php');
-		http_response_code(302);
-		exit;
-	}
-	
-	$error = true;
-} else {
-	$error = false;
+if (empty($_POST['email']) || BeaconUser::ValidateEmail($_POST['email']) == false || empty($_POST['code'])) {
+	http_response_code(400);
+	echo json_encode(array(), JSON_PRETTY_PRINT);
+	exit;
 }
 
-?><h1>Verify Your E-Mail Address</h1>
-<form action="" method="post">
-	<p><input type="text" maxlength="6" minlength="6" name="code" placeholder="Verification Code" pattern="^[0-9]{6}$" title="Enter the 6 digit verification code."></p>
-	<?php if ($error) { ?><p>Sorry, that's not the correct verification code.</p><?php } ?>
-	<p><input type="submit" value="Verify"></p>
-</form>
+$email = $_POST['email'];
+$code = $_POST['code'];
+
+$database = BeaconCommon::Database();
+$results = $database->Query('SELECT email_id FROM email_verification WHERE email_id = uuid_for_email($1) AND code = encode(digest($2, \'sha512\'), \'hex\');', $email, $code);
+$verified = $results->RecordCount() == 1;
+
+$response = array(
+	'email' => $email,
+	'verified' => $verified,
+	'username' => null
+);
+
+if ($verified) {
+	$results = $database->Query('SELECT username FROM users WHERE email_id = $1;', $results->Field('email_id'));
+	if ($results->RecordCount() == 1) {
+		$response['username'] = $results->Field('username');
+	}
+}
+
+http_response_code(200);
+echo json_encode($response, JSON_PRETTY_PRINT);
+
+?>

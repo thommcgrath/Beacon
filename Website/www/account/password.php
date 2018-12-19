@@ -13,15 +13,15 @@ header('Pragma: no-cache');
 header('Expires: 0');
 http_response_code(500);
 
-if (empty($_GET['current_password']) || empty($_GET['password'])) {
+if (empty($_POST['current_password']) || empty($_POST['password'])) {
 	http_response_code(400);
 	echo json_encode(array('message' => 'Missing parameters.'), JSON_PRETTY_PRINT);
 	exit;
 }
 
-$current_password = $_GET['current_password'];
-$password = $_GET['password'];
-$allow_vulnerable = isset($_GET['allow_vulnerable']) ? boolval($_GET['allow_vulnerable']) : false;
+$current_password = $_POST['current_password'];
+$password = $_POST['password'];
+$allow_vulnerable = isset($_POST['allow_vulnerable']) ? filter_var($_POST['allow_vulnerable'], FILTER_VALIDATE_BOOLEAN) : false;
 
 $database = BeaconCommon::Database();
 

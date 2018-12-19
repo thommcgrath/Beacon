@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		var current_password = document.getElementById('password_current_field').value;
 		var password = document.getElementById('password_initial_field').value;
 		var password_confirm = document.getElementById('password_confirm_field').value;
+		var allow_vulnerable = password === known_vulnerable_password;
 		
 		if (password.length < 8) {
 			dialog.show('Password too short', 'Your password must be at least 8 characters long.');
@@ -34,17 +35,14 @@ document.addEventListener('DOMContentLoaded', function(event) {
 			return false;
 		}
 		
-		var url = '/account/password.php?current_password=' + encodeURIComponent(current_password) + '&password=' + encodeURIComponent(password);
-		if (password == known_vulnerable_password) {
-			url += '&allow_vulnerable=true';
-		}
-		request.start('GET', url, function(obj) {
+		request.post('/account/password.php', {'current_password': current_password, 'password': password, 'allow_vulnerable': allow_vulnerable}, function(obj) {
 			document.getElementById('change_password_form').reset();
 			dialog.show('Your password has been changed.', 'Changing your password does not sign you out of other devices.');
 		}, function(http_status, content) {
 			switch (http_status) {
 			case 436:
 			case 437:
+			case 439:
 				dialog.show('Unable to change password', obj.message);
 				break;
 			case 438:

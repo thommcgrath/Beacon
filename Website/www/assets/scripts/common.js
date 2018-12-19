@@ -1,8 +1,11 @@
 var request = {
-	start: function(method, uri, success_handler, error_handler, headers) {
+	start: function(method, uri, content_type, entity_body, success_handler, error_handler, headers) {
 		var xhr = new XMLHttpRequest();
 		xhr.open(method, uri, true);
 		xhr.setRequestHeader('Accept', 'application/json');
+		if (content_type != '') {
+			xhr.setRequestHeader('Content-Type', content_type);
+		}
 		if (headers !== null) {
 			for (var key in headers) {
 				xhr.setRequestHeader(key, headers[key]);
@@ -26,7 +29,32 @@ var request = {
 			}
 			success_handler(obj);
 		};
-		xhr.send();
+		xhr.send(entity_body);
+	},
+	get: function(uri, formdata, success_handler, error_handler, headers) {
+		var query = this.encodeFormData(formdata);
+		if (query != '') {
+			query = '?' + query;
+		}
+		this.start('GET', uri + query, '', '', success_handler, error_handler, headers);
+	},
+	post: function(uri, formdata, success_handler, error_handler, headers) {
+		this.start('POST', uri, 'application/x-www-form-urlencoded', this.encodeFormData(formdata), success_handler, error_handler, headers);
+	},
+	encodeFormData: function(formdata) {
+		if (formdata === null) {
+			return '';
+		} else if (formdata === undefined) {
+			return '';
+		} else if (formdata.constructor === {}.constructor) {
+			var pairs = [];
+			for (var key in formdata) {
+				pairs.push(encodeURIComponent(key) + '=' + encodeURIComponent(formdata[key]));
+			}
+			return pairs.join('&');
+		} else {
+			return '';
+		}
 	}
 };
 

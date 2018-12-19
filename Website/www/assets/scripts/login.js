@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		
 		show_page('loading');
 		
-		request.start('POST', 'https://api.' + window.location.hostname + '/v1/session.php', function(obj) {
+		request.post('https://api.' + window.location.hostname + '/v1/session.php', {}, function(obj) {
 			window.location = '/account/auth.php?session_id=' + encodeURIComponent(obj.session_id) + '&return=' + encodeURIComponent(document.getElementById('login_return_field').value);
 		}, function(http_status) {
 			show_page('intro');
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 	document.getElementById('login_recover_form').addEventListener('submit', function(event) {
 		event.preventDefault();
 		var email = document.getElementById('recover_email_field').value.trim();
-		request.start('GET', '/inapp/email.php?email=' + encodeURIComponent(email), function(obj) {
+		request.post('/account/login/email.php', {'email': email}, function(obj) {
 			if (obj.verified) {
 				document.getElementById('password_email_field').value = obj.email;
 				show_page('password');
@@ -93,12 +93,16 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		
 		var code = document.getElementById('verify_code_field').value.trim();
 		var email = document.getElementById('verify_email_field').value.trim();
-		request.start('GET', '/inapp/verify.php?email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code), function(obj) {
+		request.post('/account/login/verify.php', {'email': email, 'code': code}, function(obj) {
 			if (obj.verified) {
 				document.getElementById('password_email_field').value = obj.email;
 				document.getElementById('password_code_field').value = code;
+				if (obj.username) {
+					document.getElementById('username_field').value = obj.username;
+					document.getElementById('login_page_password').className = 'as-recover-user';
+				}
 				show_page('password');
-				focus_first(['password_initial_field', 'password_confirm_field', 'password_action_button']);
+				focus_first(['username_field', 'password_initial_field', 'password_confirm_field', 'password_action_button']);
 			} else {
 				document.getElementById('verify_code_field').value = '';
 				show_page('verify');
@@ -122,8 +126,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		
 		var email = document.getElementById('password_email_field').value.trim();
 		var code = document.getElementById('password_code_field').value;
+		var username = document.getElementById('username_field').value;
 		var password = document.getElementById('password_initial_field').value;
 		var password_confirm = document.getElementById('password_confirm_field').value;
+		var allow_vulnerable = password === known_vulnerable_password;
 		
 		if (password.length < 8) {
 			dialog.show('Password too short', 'Your password must be at least 8 characters long.');
@@ -135,11 +141,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		}
 		
 		show_page('loading');
-		var url = '/inapp/password.php?email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&code=' + encodeURIComponent(code);
-		if (password == known_vulnerable_password) {
-			url += '&allow_vulnerable=true';
-		}
-		request.start('GET', url, function(obj) {
+		request.post('/account/login/password.php', {'email': email, 'username': username, 'password': password, 'code': code, 'allow_vulnerable': allow_vulnerable}, function(obj) {
 			window.location = '/account/auth.php?session_id=' + encodeURIComponent(obj.session_id) + '&return=' + encodeURIComponent(document.getElementById('login_return_field').value);
 		}, function(http_status, content) {
 			show_page('password');
@@ -147,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 			switch (http_status) {
 			case 436:
 			case 437:
+			case 439:
 				dialog.show('Unable to create Beacon account.', obj.message);
 				break;
 			case 438:
@@ -158,5 +161,23 @@ document.addEventListener('DOMContentLoaded', function(event) {
 				break;
 			}
 		});
+	});
+	
+	document.getElementById('suggested-username-link').addEventListener('click', function(ev) {
+		ev.preventDefault();
+		
+		document.getElementById('username_field').value = this.getAttribute('beacon-username');
+		
+		return false;
+	});
+	
+	document.getElementById('new-suggestion-link').addEventListener('click', function(ev) {
+		request.get('/account/login/suggest.php', {}, function(obj) {
+			document.getElementById('suggested-username-link').innerText = obj.username;
+			document.getElementById('suggested-username-link').setAttribute('beacon-username', obj.username);
+		}, function(http_status, content) {});
+		
+		ev.preventDefault();
+		return false;
 	});
 });
