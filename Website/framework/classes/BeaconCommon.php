@@ -32,7 +32,7 @@ abstract class BeaconCommon {
 	}
 	
 	public static function InDevelopment() {
-		return static::EnvironmentName() === 'workbench';
+		return static::EnvironmentName() !== 'live';
 	}
 	
 	public static function FrameworkPath() {
@@ -132,7 +132,7 @@ abstract class BeaconCommon {
 		if (self::InProduction()) {
 			$url = 'https://beaconapp.cc' . $path;
 		} else {
-			$url = 'https://workbench.beaconapp.cc' . $path;
+			$url = 'https://' . self::EnvironmentName() . '.beaconapp.cc' . $path;
 		}
 		return $url;
 	}
@@ -259,6 +259,17 @@ abstract class BeaconCommon {
 			BeaconCache::Set($obj->ClassString(), $obj, 3600);
 		}
 		return $obj;
+	}
+	
+	public static function CurrentContentType() {
+		$headers = headers_list();
+		foreach ($headers as $header) {
+			if (stripos($header, 'Content-Type') !== false) {
+				list($key, $value) = explode(':', $header, 2);
+				return $value;
+			}
+		}
+		return 'text/html';
 	}
 }
 

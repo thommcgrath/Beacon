@@ -24,6 +24,9 @@ spl_autoload_register(function($class_name) {
 	}
 });
 
+BeaconErrors::SetSecureMode(BeaconCommon::InProduction());
+BeaconErrors::StartWatching();
+
 (function() {
 	$_SERVER['CSP_NONCE'] = base64_encode(random_bytes(12));
 	

@@ -7,7 +7,7 @@ abstract class BeaconTemplate {
 	protected static $body_class = '';
 	
 	protected static function CacheKey() {
-		return md5(serialize($_GET));
+		return md5($_SERVER['REQUEST_URI']);
 	}
 	
 	public static function Start() {
