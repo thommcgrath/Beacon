@@ -70,7 +70,7 @@
 				<div id="dialog">
 					<p id="dialog_message">Message</p>
 					<p id="dialog_explanation">Explanation</p>
-					<p id="dialog_buttons"><button id="dialog_action_button">Ok</button></p>
+					<p id="dialog_buttons"><button id="dialog_cancel_button">Cancel</button><button id="dialog_action_button" class="default">Ok</button></p>
 				</div>
 			</div>
 		</div>

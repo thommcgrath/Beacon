@@ -149,7 +149,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
 			switch (http_status) {
 			case 436:
 			case 437:
-			case 439:
 				dialog.show('Unable to create Beacon account.', obj.message);
 				break;
 			case 438:

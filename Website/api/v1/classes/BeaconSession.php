@@ -16,10 +16,7 @@ class BeaconSession implements JsonSerializable {
 	}
 	
 	public function User() {
-		$users = BeaconUser::GetByUserID($this->user_id);
-		if (count($users) === 1) {
-			return $users[0];
-		}
+		return BeaconUser::GetByUserID($this->user_id);
 	}
 	
 	public function Expiration() {

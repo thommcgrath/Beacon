@@ -1,3 +1,12 @@
+if (!String.prototype.endsWith) {
+	String.prototype.endsWith = function(search, this_len) {
+		if (this_len === undefined || this_len > this.length) {
+			this_len = this.length;
+		}
+		return this.substring(this_len - search.length, this_len) === search;
+	};
+}
+
 var request = {
 	start: function(method, uri, content_type, entity_body, success_handler, error_handler, headers) {
 		var xhr = new XMLHttpRequest();
@@ -65,7 +74,8 @@ var dialog = {
 		var dialog_message = document.getElementById('dialog_message');
 		var dialog_explanation = document.getElementById('dialog_explanation');
 		var dialog_action_button = document.getElementById('dialog_action_button');
-		if (overlay && dialog && dialog_message && dialog_explanation && dialog_action_button) {
+		var dialog_cancel_button = document.getElementById('dialog_cancel_button');
+		if (overlay && dialog && dialog_message && dialog_explanation && dialog_action_button && dialog_cancel_button) {
 			overlay.className = 'exist';
 			dialog_frame.className = 'exist';
 			setTimeout(function() {
@@ -75,8 +85,40 @@ var dialog = {
 			dialog_message.innerText = message;
 			dialog_explanation.innerText = explanation;
 			dialog_action_button.addEventListener('click', function(event) {
+				event.target.removeEventListener(event.type, arguments.callee);
 				dialog.hide(handler);
 			});
+			dialog_cancel_button.className = 'hidden';
+			dialog_action_button.innerText = 'Ok';
+		}
+	},
+	confirm: function(message, explanation, action_caption, cancel_caption, handler) {
+		var overlay = document.getElementById('overlay');
+		var dialog_frame = document.getElementById('dialog');
+		var dialog_message = document.getElementById('dialog_message');
+		var dialog_explanation = document.getElementById('dialog_explanation');
+		var dialog_action_button = document.getElementById('dialog_action_button');
+		var dialog_cancel_button = document.getElementById('dialog_cancel_button');
+		if (overlay && dialog && dialog_message && dialog_explanation && dialog_action_button && dialog_cancel_button) {
+			overlay.className = 'exist';
+			dialog_frame.className = 'exist';
+			setTimeout(function() {
+				overlay.className = 'exist visible';
+				dialog_frame.className = 'exist visible';
+			}, 10);
+			dialog_message.innerText = message;
+			dialog_explanation.innerText = explanation;
+			dialog_action_button.addEventListener('click', function(event) {
+				event.target.removeEventListener(event.type, arguments.callee);
+				dialog.hide(handler);
+			});
+			dialog_cancel_button.addEventListener('click', function(event) {
+				event.target.removeEventListener(event.type, arguments.callee);
+				dialog.hide();
+			});
+			dialog_cancel_button.className = '';
+			dialog_action_button.innerText = action_caption;
+			dialog_cancel_button.innerText = cancel_caption;
 		}
 	},
 	hide: function (handler) {

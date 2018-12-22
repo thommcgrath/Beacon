@@ -248,8 +248,12 @@
 		50% { background-color: $accent-color; color: $accent-text-color; }
 	}
 	
-	input[type="submit"], button.default {
+	input[type="submit"]:enabled, button.default:enabled {
 		animation: default_button_#{$keyframe_selector_suffix} 2s infinite;
+		
+		&:active {
+			animation: none;
+		}
 	}
 	
 	div.select {

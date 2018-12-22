@@ -266,10 +266,43 @@ abstract class BeaconCommon {
 		foreach ($headers as $header) {
 			if (stripos($header, 'Content-Type') !== false) {
 				list($key, $value) = explode(':', $header, 2);
-				return $value;
+				return trim($value);
 			}
 		}
 		return 'text/html';
+	}
+	
+	public static function CurrentOmniVersion() {
+		return 1;
+	}
+	
+	public static function BestResponseContentType($supported_types = null) {
+		$selected_types = [];
+		
+		$client_types = explode(',', strtolower(str_replace(' ', '', $_SERVER['HTTP_ACCEPT'])));
+		foreach ($client_types as $type) {
+			$quality = 1;
+			if (strpos($type, ';q=')) {
+				list($type, $quality) = explode(';q=', $type, 2);
+			}
+			if ($quality > 0) {
+				$selected_types[$type] = $quality;
+			}
+		}
+		arsort($selected_types);
+		
+		if (is_null($supported_types) || is_array($supported_types) === false) {
+			return $selected_types;
+		}
+		
+		$supported_types = array_map('strtolower', (array)$supported_types);
+		foreach ($selected_types as $type => $quality) {
+			if ($quality && in_array($type, $supported_types)) {
+				return $type;
+			}
+		}
+		
+		return null;
 	}
 }
 

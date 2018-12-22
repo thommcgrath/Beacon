@@ -43,12 +43,20 @@ class BeaconUser implements JsonSerializable {
 		return $this->user_id;
 	}
 	
+	public function Suffix() {
+		return substr($this->user_id, 0, 8);
+	}
+	
 	public function LoginKey() {
 		return $this->username;
 	}
 	
 	public function Username() {
 		return $this->username;
+	}
+	
+	public function SetUsername(string $username) {
+		$this->username = trim($username);
 	}
 	
 	public function PublicKey() {
@@ -71,6 +79,10 @@ class BeaconUser implements JsonSerializable {
 		return empty($this->email_id);
 	}
 	
+	public function OmniVersion() {
+		return $this->purchased_omni_version;
+	}
+	
 	public function jsonSerialize() {
 		return array(
 			'user_id' => $this->user_id,
@@ -87,7 +99,7 @@ class BeaconUser implements JsonSerializable {
 	
 	public function PrepareSignatures(string $hardware_id) {
 		// version 1
-		$fields = array($hardware_id, strtolower($this->UserID()), strtolower($this->LoginKey()), strval($this->purchased_omni_version));
+		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->purchased_omni_version));
 		$signature = '';
 		if (openssl_sign(implode(' ', $fields), $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
 			$this->signatures['1'] = bin2hex($signature);
@@ -245,7 +257,10 @@ class BeaconUser implements JsonSerializable {
 		
 		return true;
 	}
-		
+	
+	public function CheckSignature(string $data, string $signature) {
+		return (openssl_verify($data, hex2bin($signature), $this->public_key, 'sha1WithRSAEncryption') === 1);
+	}
 	
 	private static function SQLColumns() {
 		return array('user_id', 'email_id', 'username', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations');

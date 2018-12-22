@@ -10,7 +10,6 @@ http_response_code(500);
 define('ERR_EMAIL_NOT_VERIFIED', 436);
 define('ERR_PASSWORD_VIOLATES_RULES', 437);
 define('ERR_PASSWORD_COMPROMISED', 438);
-define('ERR_USERNAME_TAKEN', 439);
 
 if (empty($_POST['email']) || BeaconUser::ValidateEmail($_POST['email']) == false || empty($_POST['password']) || empty($_POST['code']) || empty($_POST['username'])) {
 	http_response_code(400);
@@ -42,14 +41,6 @@ if ($results->RecordCount() == 0) {
 $results = $database->Query('SELECT user_id FROM users WHERE email_id = $1;', $email_id);
 if ($results->RecordCount() == 1) {
 	$user_id = $results->Field('user_id');
-} else {
-	// make sure the username isn't already in use
-	$results = $database->Query('SELECT email_id FROM users WHERE username = $1;', $username);
-	if ($results->RecordCount() == 1) {
-		http_response_code(ERR_USERNAME_TAKEN);
-		echo json_encode(array('message' => 'Username is already in use by another user.'), JSON_PRETTY_PRINT);
-		exit;
-	}
 }
 
 // make sure the password is a good password

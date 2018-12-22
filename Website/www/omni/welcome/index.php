@@ -116,65 +116,6 @@ BeaconTemplate::StartStyles(); ?>
 	height: 0px;
 }
 
-.signin_step+.signin_step {
-	margin-top: 20px;
-	border-top: 1px solid rgba(0, 0, 0, 0.2);
-	padding-top: 20px;
-}
-
-#img_signin_menu {
-	background-image: url(menu.png);
-	width: 150px;
-	height: 118px;
-	background-size: 100%;
-	border: 1px solid #afafaf;
-	float: left;
-}
-
-.signin_text {
-	padding-left: 170px;
-}
-
-#img_signin_link {
-	background-image: url(signin.png);
-	width: 150px;
-	height: 59px;
-	background-size: 100%;
-	border: 1px solid #afafaf;
-	float: left;
-}
-
-#img_signin_enable {
-	background-image: url(enable_cloud.png);
-	width: 150px;
-	height: 59px;
-	background-size: 100%;
-	border: 1px solid #afafaf;
-	float: left;
-	clear: left;
-	margin-top: 6px;
-}
-
-#img_signin_options {
-	background-image: url(options.png);
-	width: 150px;
-	height: 59px;
-	background-size: 100%;
-	border: 1px solid #afafaf;
-	float: left;
-}
-
-#img_signin_fields {
-	background-image: url(fields.png);
-	width: 150px;
-	height: 59px;
-	background-size: 100%;
-	border: 1px solid #afafaf;
-	float: left;
-	clear: left;
-	margin-top: 6px;
-}
-
 </style>
 <?php
 BeaconTemplate::FinishStyles();
@@ -199,32 +140,5 @@ BeaconTemplate::FinishStyles();
 </div>
 <div id="signin_instructions" class="welcome_content">
 	<h3>How to sign into Beacon</h3>
-	<div class="signin_step">
-		<div id="img_signin_menu">&nbsp;</div>
-		<div class="signin_text">
-			<h4>Open the menu</h4>
-			<p>Use the icon with the 3 lines, shown circled in red here.</p>
-		</div>
-		<div class="push">&nbsp;</div>
-	</div>
-	<div class="signin_step">
-		<div id="img_signin_link">&nbsp;</div>
-		<div id="img_signin_enable">&nbsp;</div>
-		<div class="signin_text">
-			<h4>Click the &quot;Sign In&quot; link</h4>
-			<p>If you see &quot;Enable Cloud &amp; Community&quot; instead, click that one.</p>
-			<p>If you see your email address instead, you're already signed in! Relaunch Beacon to activate Omni. Or you can click &quot;Sign Out&quot; if you see a different email address.</p>
-		</div>
-		<div class="push">&nbsp;</div>
-	</div>
-	<div class="signin_step">
-		<div id="img_signin_options">&nbsp;</div>
-		<div id="img_signin_fields">&nbsp;</div>
-		<div class="signin_text">
-			<h4>Login or create your account</h4>
-			<p>Click &quot;Login with Email&quot; if given the option, which will display the login form. Otherwise Beacon will bring you directly to the form.</p>
-			<p>Enter your email address and password, or click &quot;Create or Recover Beacon Account&quot; to setup a password. Follow the steps in Beacon.</p>
-		</div>
-		<div class="push">&nbsp;</div>
-	</div>
+	<?php include('instructions.php'); ?>
 </div>

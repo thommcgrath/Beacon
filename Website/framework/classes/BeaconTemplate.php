@@ -155,7 +155,8 @@ abstract class BeaconTemplate {
 		// used, so that needs be accounted for.
 		
 		if (array_key_exists('content-type', $dict)) {
-			return ($dict['content-type'] === 'text/html');
+			$parts = explode(';', $dict['content-type']);
+			return ($parts[0] === 'text/html');
 		} else {
 			return true;
 		}

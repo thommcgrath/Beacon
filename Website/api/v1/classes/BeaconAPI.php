@@ -109,19 +109,16 @@ abstract class BeaconAPI {
 				
 				if (BeaconCommon::IsUUID($username)) {
 					// public key authorization
-					$database = BeaconCommon::Database();
-					$results = $database->Query('SELECT public_key FROM users WHERE user_id = $1;', $username);
-					if ($results->RecordCount() == 1) {
-						$public_key = $results->Field('public_key');
-						
+					$user = BeaconUser::GetByUserID($username);
+					if (!is_null($user)) {
 						$url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 						
 						$content = self::Method() . chr(10) . $url;
 						if (self::Method() !== 'GET') {
 							$content .= chr(10) . self::Body();
 						}
-						$verified = openssl_verify($content, hex2bin($password), $public_key);
-						if ($verified === 1) {
+						
+						if ($user->CheckSignature($content, $password)) {
 							self::$user_id = $username;
 							self::$auth_style = self::AUTH_STYLE_PUBLIC_KEY;
 							$authorized = true;
@@ -186,7 +183,7 @@ abstract class BeaconAPI {
 		if (strlen($path) == 0 || substr($path, 0, 1) != '/') {
 			$path = '/' . $path;
 		}
-		$domain = BeaconCommon::InProduction() ? 'api.beaconapp.cc' : 'api.workbench.beaconapp.cc';
+		$domain = BeaconCommon::InProduction() ? 'api.beaconapp.cc' : 'api.' . BeaconCommon::EnvironmentName() . '.beaconapp.cc';
 		return 'https://' . $domain . '/v1' . $path;
 	}
 }

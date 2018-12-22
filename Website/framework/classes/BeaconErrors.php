@@ -150,11 +150,11 @@ abstract class BeaconErrors {
 						echo '</ol>';
 					}
 					break;
-				case 'text/plain':
-					echo $description . "\n\n" . implode("\n", $trace);
-					break;
 				case 'application/json':
 					echo json_encode(array('description' => $description, 'trace' => $trace), JSON_PRETTY_PRINT);
+					break;
+				default:
+					echo $description . "\n\n" . implode("\n", $trace);
 					break;
 				}
 			}

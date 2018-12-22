@@ -156,6 +156,16 @@ pre {
 	margin-left: 40px;
 }
 
+.hidden {
+	display: none;
+}
+
+div.small_section {
+	max-width: 400px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .option_group {
 	display: -webkit-box;
 	display: -ms-flexbox;
@@ -382,15 +392,6 @@ button, input[type="button"], input[type="submit"], input[type="reset"], a.butto
 	&:disabled {
 		cursor: default;
 		opacity: 0.25;
-	}
-}
-
-input[type="submit"] {
-	animation: default_button 2s infinite;
-	&:enabled {
-		&:active {
-			animation: none;
-		}
 	}
 }
 
