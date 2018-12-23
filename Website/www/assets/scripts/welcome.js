@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		
 		show_page('loading');
 		
-		request.start('POST', 'https://api.' + window.location.hostname + '/v1/session.php', function(obj) {
+		request.post('https://api.' + window.location.hostname + '/v1/session.php', {}, function(obj) {
 			window.location = 'beacon://set_user_token?token=' + encodeURIComponent(obj.session_id) + '&password=' + encodeURIComponent(password);
 		}, function(http_status) {
 			show_page('login');
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		show_page('loading');
 		
 		var email = document.getElementById('recover_email_field').value.trim();
-		request.start('GET', '/inapp/email.php?email=' + encodeURIComponent(email), function(obj) {
+		request.post('/account/login/email.php', {'email': email}, function(obj) {
 			if (obj.verified) {
 				document.getElementById('password_email_field').value = obj.email;
 				show_page('password');
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		
 		var code = document.getElementById('verify_code_field').value.trim();
 		var email = document.getElementById('verify_email_field').value.trim();
-		request.start('GET', '/inapp/verify.php?email=' + encodeURIComponent(email) + '&code=' + encodeURIComponent(code), function(obj) {
+		request.post('/account/login/verify.php', {'email': email, 'code': code}, function(obj) {
 			if (obj.verified) {
 				document.getElementById('password_email_field').value = obj.email;
 				document.getElementById('password_code_field').value = code;
@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		var code = document.getElementById('password_code_field').value;
 		var password = document.getElementById('password_initial_field').value;
 		var password_confirm = document.getElementById('password_confirm_field').value;
+		var allow_vulnerable = password === known_vulnerable_password;
 		
 		if (password.length < 8) {
 			dialog.show('Password too short', 'Your password must be at least 8 characters long.');
@@ -160,11 +161,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 		}
 		
 		show_page('loading');
-		var url = '/inapp/password.php?email=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password) + '&code=' + encodeURIComponent(code);
-		if (password == known_vulnerable_password) {
-			url += '&allow_vulnerable=true';
-		}
-		request.start('GET', url, function(obj) {
+		request.post('/account/login/password.php', {'email': email, 'username': username, 'password': password, 'code': code, 'allow_vulnerable': allow_vulnerable}, function(obj) {
 			window.location = 'beacon://set_user_token?token=' + encodeURIComponent(obj.session_id) + '&password=' + encodeURIComponent(password);
 		}, function(http_status, content) {
 			show_page('password');
