@@ -3,6 +3,8 @@
 abstract class BeaconTemplate {
 	protected static $template_name = 'default';
 	protected static $title = '';
+	protected static $script_lines = array();
+	protected static $style_lines = array();
 	protected static $header_lines = array();
 	protected static $body_class = '';
 	
@@ -51,11 +53,49 @@ abstract class BeaconTemplate {
 	}
 	
 	public static function ExtraHeaderLines() {
-		return self::$header_lines;
+		$script = array();
+		if (count(self::$script_lines) > 0) {
+			$script = self::$script_lines;
+			array_unshift($script, '<script nonce="' . htmlentities($_SERVER['CSP_NONCE']) . '">');
+			$script[] = '</script>';
+		}
+		
+		$style = array();
+		if (count(self::$style_lines) > 0) {
+			$style = self::$style_lines;
+			$content = implode("\n", $style);
+			$content_hash = md5($content);
+			
+			$cached = BeaconCache::Get($content_hash);
+			if (is_null($cached)) {
+				$cmd = BeaconCommon::FrameworkPath() . '/dart-sass/sass --style=compressed --stdin';
+				$spec = array(0 => array('pipe', 'r'), 1 => array('pipe', 'w'), 2 => array('pipe', 'w'));
+				$process = proc_open($cmd, $spec, $pipes);
+				if (is_resource($process)) {
+					fwrite($pipes[0], $content);
+					fclose($pipes[0]);
+					
+					$cached = trim(stream_get_contents($pipes[1]));
+					fclose($pipes[1]);
+					
+					proc_close($process);
+					
+					BeaconCache::Set($content_hash, $cached);
+				} else {
+					$cached = $content;
+				}
+			}
+			
+			$style = explode("\n", $cached);
+			array_unshift($style, '<style type="text/css" nonce="' . htmlentities($_SERVER['CSP_NONCE']) . '">');
+			$style[] = '</style>';
+		}
+		
+		return array_merge(self::$header_lines, $style, $script);
 	}
 	
 	public static function ExtraHeaderContent($separator = "\n") {
-		return implode($separator, self::$header_lines);
+		return implode($separator, self::ExtraHeaderLines());
 	}
 	
 	public static function AddStylesheet(string $url) {
@@ -75,15 +115,13 @@ abstract class BeaconTemplate {
 		ob_end_clean();
 		
 		$lines = explode("\n", $content);
-		self::$header_lines[] = '<script nonce="' . $_SERVER['CSP_NONCE'] . '">';
 		foreach ($lines as $line) {
 			if (substr($line, 0, 8) == '<script ' || substr($line, 0, 8) == '<script>' || $line == '</script>') {
 				continue;
 			}
 			
-			self::$header_lines[] = $line;
+			self::$script_lines[] = $line;
 		}
-		self::$header_lines[] = '</script>';
 	}
 	
 	public static function StartStyles() {
@@ -95,44 +133,13 @@ abstract class BeaconTemplate {
 		ob_end_clean();
 		
 		$lines = explode("\n", $content);
-		$cleaned_lines = array();
 		foreach ($lines as $line) {
 			if (substr($line, 0, 7) == '<style ' || substr($line, 0, 7) == '<style>' || $line == '</style>') {
 				continue;
 			}
 			
-			$cleaned_lines[] = $line;
+			self::$style_lines[] = $line;
 		}
-		
-		$content = implode("\n", $cleaned_lines);
-		$content_hash = md5($content);
-		
-		$cached = BeaconCache::Get($content_hash);
-		if (is_null($cached)) {
-			$cmd = BeaconCommon::FrameworkPath() . '/dart-sass/sass --style=compressed --stdin';
-			$spec = array(0 => array('pipe', 'r'), 1 => array('pipe', 'w'), 2 => array('pipe', 'w'));
-			$process = proc_open($cmd, $spec, $pipes);
-			if (is_resource($process)) {
-				fwrite($pipes[0], $content);
-				fclose($pipes[0]);
-				
-				$cached = trim(stream_get_contents($pipes[1]));
-				fclose($pipes[1]);
-				
-				proc_close($process);
-				
-				BeaconCache::Set($content_hash, $cached);
-			} else {
-				$cached = $content;
-			}
-		}
-		
-		$lines = explode("\n", $cached);
-		self::$header_lines[] = '<style type="text/css" nonce="' . $_SERVER['CSP_NONCE'] . '">';
-		foreach ($lines as $line) {
-			self::$header_lines[] = $line;
-		}
-		self::$header_lines[] = '</style>';
 	}
 	
 	public static function IsHTML() {
