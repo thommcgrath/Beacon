@@ -277,6 +277,14 @@ abstract class BeaconCommon {
 	}
 	
 	public static function BestResponseContentType($supported_types = null) {
+		if (!isset($_SERVER['HTTP_ACCEPT'])) {
+			if (is_array($supported_types) && count($supported_types) > 0) {
+				return $supported_types[0];
+			} else {
+				return 'text/html';
+			}
+		}
+		
 		$selected_types = [];
 		
 		$client_types = explode(',', strtolower(str_replace(' ', '', $_SERVER['HTTP_ACCEPT'])));

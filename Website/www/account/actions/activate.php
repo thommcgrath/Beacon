@@ -53,15 +53,16 @@ if (BeaconCommon::IsUUID($sent_user_id) === false) {
 	ExitWithError(400, 'UserID is not a v4 UUID');
 }
 
-$signature = $json['Signed'];
+$signature = hex2bin($json['Signed']);
 $device_id = $json['Device'];
+$signing_data = $json['Device'];
 
 if ($user_id != $sent_user_id) {
 	// Potentially need to merge users
 	$other_user = BeaconUser::GetByUserID($sent_user_id);
 	if ($other_user instanceof BeaconUser) {
 		// Definitely know the other user
-		if (!$other_user->CheckSignature($device_id, $signature)) {
+		if (!$other_user->CheckSignature($signing_data, $signature)) {
 			ExitWithError(400, 'Not authorized to merge user');
 		}
 		
@@ -70,7 +71,7 @@ if ($user_id != $sent_user_id) {
 		}
 	}
 } else {
-	if ($user->CheckSignature($device_id, $signature) === false) {
+	if (!$user->CheckSignature($signing_data, $signature)) {
 		ExitWithError(400, 'Request signature is not correct');
 	}
 }
@@ -92,7 +93,7 @@ function ExitWithError(int $status, string $message) {
 		echo json_encode(['message' => $message], JSON_PRETTY_PRINT);
 		break;
 	default:
-		echo '<h1>There was an error generating your activation file</h1><p>' . htmlentities($output_type . $message) . '</p>';
+		echo '<h1>There was an error generating your activation file</h1><p>' . htmlentities($message) . '</p>';
 		break;
 	}
 	exit;

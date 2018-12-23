@@ -259,7 +259,7 @@ class BeaconUser implements JsonSerializable {
 	}
 	
 	public function CheckSignature(string $data, string $signature) {
-		return (openssl_verify($data, hex2bin($signature), $this->public_key, 'sha1WithRSAEncryption') === 1);
+		return BeaconEncryption::RSAVerify($this->public_key, $data, $signature);
 	}
 	
 	private static function SQLColumns() {
