@@ -420,20 +420,6 @@ End
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Function ExportPrivateKey(Key As Text) As String
-		  Dim Contents As String = "-----BEGIN RSA PRIVATE KEY-----" + EndOfLine + EncodeBase64(Crypto.DEREncodePrivateKey(Key), 64) + EndOfLine + "-----END RSA PRIVATE KEY-----"
-		  Return ReplaceLineEndings(Contents, EndOfLine.UNIX)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function ExportPublicKey(Key As Text) As String
-		  Dim Contents As String = "-----BEGIN PUBLIC KEY-----" + EndOfLine + EncodeBase64(DecodeHex(Key), 64) + EndOfLine + "-----END PUBLIC KEY-----"
-		  Return ReplaceLineEndings(Contents, EndOfLine.UNIX)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
@@ -480,8 +466,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI(Identity As Beacon.Identity)
 		  UserIDField.Text = Identity.Identifier
-		  PublicKeyArea.Text = Self.ExportPublicKey(Identity.PublicKey)
-		  PrivateKeyArea.Text = Self.ExportPrivateKey(Identity.PrivateKey)
+		  PublicKeyArea.Text = BeaconEncryption.PEMEncodePublicKey(Identity.PublicKey)
+		  PrivateKeyArea.Text = BeaconEncryption.PEMEncodePrivateKey(Identity.PrivateKey)
 		End Sub
 	#tag EndMethod
 

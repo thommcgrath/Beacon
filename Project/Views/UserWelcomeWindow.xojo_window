@@ -179,9 +179,12 @@ End
 		      Dim PublicKey As Text = Dict.Value("public_key")
 		      Dim UserID As Text = Dict.Value("user_id")
 		      
-		      If App.Identity.Identifier = UserID And App.Identity.PublicKey = PublicKey Then
-		        Success = True
-		      End If
+		      #Pragma Warning "What did this code do?"
+		      #if false
+		        If App.Identity.Identifier = UserID And App.Identity.PublicKey = PublicKey Then
+		          Success = True
+		        End If
+		      #endif
 		    End If
 		  Catch Err As RuntimeException
 		    
@@ -212,7 +215,7 @@ End
 		  
 		  Dim Params As New Xojo.Core.Dictionary
 		  Params.Value("user_id") = App.Identity.Identifier
-		  Params.Value("public_key") = App.Identity.PublicKey
+		  Params.Value("public_key") = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(App.Identity.PublicKey)
 		  
 		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
 		  Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)

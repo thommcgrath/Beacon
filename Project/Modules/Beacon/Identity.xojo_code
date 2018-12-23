@@ -130,6 +130,10 @@ Protected Class Identity
 		    Dim PublicKey As Xojo.Core.MemoryBlock = BeaconEncryption.PEMDecodePublicKey(Dict.Value("public_key"))
 		    Dim UserID As Text = Dict.Value("user_id")
 		    
+		    If Not VerifyKeyPair(PublicKey, PrivateKey) Then
+		      Return Nil
+		    End If
+		    
 		    Dim Identity As New Beacon.Identity(UserID, PublicKey, PrivateKey)
 		    If Not Identity.ConsumeUserDictionary(Dict) Then
 		      Return Nil
@@ -168,11 +172,7 @@ Protected Class Identity
 		    PrivateKey = Beacon.DecodeHex(Source.Value("Private"))
 		  End If
 		  
-		  If Not Xojo.Crypto.RSAVerifyKey(PublicKey) Then
-		    Return Nil
-		  End If
-		  
-		  If Not Xojo.Crypto.RSAVerifyKey(PrivateKey) Then
+		  If Not VerifyKeyPair(PublicKey, PrivateKey) Then
 		    Return Nil
 		  End If
 		  
@@ -258,14 +258,14 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PrivateKey() As Text
-		  Return Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mPrivateKey)
+		Function PrivateKey() As Xojo.Core.MemoryBlock
+		  Return Self.mPrivateKey
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PublicKey() As Text
-		  Return Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mPublicKey)
+		Function PublicKey() As Xojo.Core.MemoryBlock
+		  Return Self.mPublicKey
 		End Function
 	#tag EndMethod
 
@@ -300,6 +300,28 @@ Protected Class Identity
 		  Self.mLoginKey = ""
 		  Self.mPurchasedOmniVersion = 0
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function VerifyKeyPair(PublicKey As Xojo.Core.MemoryBlock, PrivateKey As Xojo.Core.MemoryBlock) As Boolean
+		  If Xojo.Crypto.RSAVerifyKey(PublicKey) = False Or Xojo.Crypto.RSAVerifyKey(PrivateKey) = False Then
+		    Return False
+		  End If
+		  
+		  Try
+		    Dim Original As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(12)
+		    Dim Encrypted As Xojo.Core.MemoryBlock = Xojo.Crypto.RSAEncrypt(Original, PublicKey)
+		    Dim Decrypted As Xojo.Core.MemoryBlock = Xojo.Crypto.RSADecrypt(Encrypted, PrivateKey)
+		    If Decrypted <> Original Then
+		      Return False
+		    End If
+		    
+		    Dim Signature As Xojo.Core.MemoryBlock = Xojo.Crypto.RSASign(Original, PrivateKey)
+		    Return Xojo.Crypto.RSAVerifySignature(Original, Signature, PublicKey)
+		  Catch Err As Xojo.Crypto.CryptoException
+		    Return False
+		  End Try
+		End Function
 	#tag EndMethod
 
 
