@@ -189,6 +189,7 @@ MultiImage=IconClose;Icons/IconClose.xojo_image;&h0000000059F4C7FF;&h0000000007F
 Window=EngramsManagerView;Views/EngramsManagerView.xojo_window;&h00000000062977FF;&h0000000008A387FF;false
 MultiImage=IconToolbarRebuild;Icons/IconToolbarRebuild.xojo_image;&h0000000030FE67FF;&h0000000007F977FF;false
 Window=IdentityView;Views/IdentityView.xojo_window;&h000000005C2BA7FF;&h0000000008A387FF;false
+Window=IdentityDecryptDialog;Views/IdentityDecryptDialog.xojo_window;&h000000002C33E7FF;&h0000000008A387FF;false
 MultiImage=IconToolbarImport;Icons/IconToolbarImport.xojo_image;&h0000000075639FFF;&h0000000007F977FF;false
 Window=APIBuilderView;Views/APIBuilderView.xojo_window;&h0000000004225FFF;&h0000000008A387FF;false
 Window=ModsView;Views/ModsView.xojo_window;&h0000000065FC77FF;&h0000000008A387FF;false

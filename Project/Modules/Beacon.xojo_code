@@ -828,7 +828,7 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function WebURL(Path As Text = "/") As Text
 		  #if DebugBuild
-		    Dim Domain As Text = "https://workbench.beaconapp.cc"
+		    Dim Domain As Text = "https://lab.beaconapp.cc"
 		  #else
 		    Dim Domain As Text = "https://beaconapp.cc"
 		  #endif

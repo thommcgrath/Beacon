@@ -181,6 +181,11 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
+		  If File.IsType(BeaconFileTypes.BeaconIdentity) Then
+		    Call Self.ImportIdentityFile(File)
+		    Return
+		  End If
+		  
 		  Dim Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = "Unable to open file"
@@ -201,7 +206,7 @@ Implements NotificationKit.Receiver
 	#tag MenuHandler
 		Function FileImport() As Boolean Handles FileImport.Action
 			Dim Dialog As New OpenDialog
-			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.JsonFile
+			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.JsonFile + BeaconFileTypes.BeaconIdentity
 			
 			Dim File As Beacon.FolderItem = Dialog.ShowModal
 			If File <> Nil Then
@@ -265,10 +270,13 @@ Implements NotificationKit.Receiver
 			End If
 			
 			Dim HardwareID As Text = Beacon.HardwareID
+			Dim SigningData As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(HardwareID)
+			Dim Signed As Xojo.Core.MemoryBlock = Identity.Sign(SigningData)
+			
 			Dim Identity As Beacon.Identity = Self.Identity
 			Dim Dict As New Xojo.Core.Dictionary
 			Dict.Value("UserID") = Identity.Identifier
-			Dict.Value("Signed") = Beacon.EncodeHex(Identity.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(HardwareID)))
+			Dict.Value("Signed") = Beacon.EncodeHex(Signed)
 			Dict.Value("Device") = HardwareID
 			
 			Dim JSON As Text = Xojo.Data.GenerateJSON(Dict)
@@ -636,13 +644,61 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub Identity(Assigns Value As Beacon.Identity)
-		  Dim OriginalID As Text = If(Self.mIdentity <> Nil, Self.mIdentity.Identifier, "")
+		  If Self.mIdentity = Value Then
+		    Return
+		  End If
+		  
 		  Self.mIdentity = Value
 		  Self.WriteIdentity()
-		  Dim NewID As Text = If(Self.mIdentity <> Nil, Self.mIdentity.Identifier, "")
-		  If NewID <> OriginalID Then
-		    NotificationKit.Post(Notification_IdentityChanged, Value)
+		  NotificationKit.Post(Notification_IdentityChanged, Value)
+		  
+		  Preferences.OnlineToken = ""
+		  
+		  If Not Preferences.OnlineEnabled Then
+		    Return
 		  End If
+		  
+		  // Request a new session token
+		  Dim Request As New BeaconAPI.Request("session.php", "POST", AddressOf APICallback_CreateSession)
+		  Request.Sign(Self.Identity)
+		  BeaconAPI.Send(Request)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ImportIdentityFile(File As FolderItem, ParentWindow As Window = Nil)
+		  If ParentWindow = Nil Then
+		    ParentWindow = MainWindow
+		  End If
+		  
+		  Dim Stream As TextInputStream = TextInputStream.Open(File)
+		  Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
+		  Stream.Close
+		  
+		  Dim Dict As Xojo.Core.Dictionary
+		  Try
+		    Dict = Xojo.Data.ParseJSON(Contents.ToText)
+		  Catch Err As RuntimeException
+		    ParentWindow.ShowAlert("Cannot import identity", "File is not an identity file.")
+		    Return
+		  End Try
+		  
+		  Dim Identity As Beacon.Identity
+		  If Beacon.Identity.IsUserDictionary(Dict) Then
+		    // Password is needed to decrypt
+		    Identity = IdentityDecryptDialog.ShowDecryptIdentityDict(ParentWindow, Dict)
+		    If Identity = Nil Then
+		      Return
+		    End If
+		  Else
+		    Identity = Beacon.Identity.Import(Dict)
+		    If Identity = Nil Then
+		      ParentWindow.ShowAlert("Cannot import identity", "File is not an identity file.")
+		      Return
+		    End If
+		  End If
+		  
+		  Self.Identity = Identity
 		End Sub
 	#tag EndMethod
 

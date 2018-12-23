@@ -1,5 +1,23 @@
 #tag Class
 Protected Class Identity
+	#tag Method, Flags = &h21
+		Private Shared Function Compare(Left As Xojo.Core.MemoryBlock, Right As Xojo.Core.MemoryBlock) As Integer
+		  // I guess if both are non-nil, we'll sort by hex?
+		  
+		  If Left <> Nil And Right = Nil Then
+		    Return 1
+		  ElseIf Left = Nil And Right <> Nil Then
+		    Return -1
+		  ElseIf Left = Nil And Right = Nil Then
+		    Return 0
+		  End If
+		  
+		  Dim LeftString As String = Beacon.EncodeHex(Left)
+		  Dim RightString As String = Beacon.EncodeHex(Right)
+		  Return StrComp(LeftString, RightString, REALbasic.StrCompLexical)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Dim PrivateKey, PublicKey As Xojo.Core.MemoryBlock
@@ -179,8 +197,63 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function IsUserDictionary(Dict As Xojo.Core.Dictionary) As Boolean
+		  If Dict = Nil Then
+		    Return False
+		  End If
+		  
+		  Return Dict.HasAllKeys("private_key_salt", "private_key_iterations", "private_key", "public_key", "user_id")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function LoginKey() As Text
 		  Return Self.mLoginKey
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Operator_Compare(Other As Beacon.Identity) As Integer
+		  If Other = Nil Then
+		    Return 1
+		  End If
+		  
+		  // Case changes do matter
+		  Dim Result As Integer = StrComp(Self.mLoginKey, Other.mLoginKey, REALbasic.StrCompLexical)
+		  If Result <> 0 Then
+		    Return Result
+		  End If
+		  
+		  // Case changes do not matter
+		  If Self.mIdentifier <> Other.mIdentifier Then
+		    Return StrComp(Self.mIdentifier, Other.mIdentifier, REALbasic.StrCompLexical)
+		  End If
+		  
+		  // Newer sorts after older
+		  If Self.mPurchasedOmniVersion > Other.mPurchasedOmniVersion Then
+		    Return 1
+		  ElseIf Self.mPurchasedOmniVersion < Other.mPurchasedOmniVersion Then
+		    Return -1
+		  End If
+		  
+		  // Use custom comparison for binary data
+		  Result = Self.Compare(Self.mPublicKey, Other.mPublicKey)
+		  If Result <> 0 Then
+		    Return Result
+		  End If
+		  
+		  Result = Self.Compare(Self.mPrivateKey, Other.mPrivateKey)
+		  If Result <> 0 Then
+		    Return Result
+		  End If
+		  
+		  Result = Self.Compare(Self.mSignature, Other.mSignature)
+		  If Result <> 0 Then
+		    Return Result
+		  End If
+		  
+		  // They are fully equal
+		  Return 0
 		End Function
 	#tag EndMethod
 
@@ -211,11 +284,10 @@ Protected Class Identity
 	#tag Method, Flags = &h0
 		Sub Validate()
 		  If Self.mSignature <> Nil Then
-		    Dim Fields(3) As Text
+		    Dim Fields(2) As Text
 		    Fields(0) = Beacon.HardwareID
 		    Fields(1) = Self.mIdentifier.Lowercase
-		    Fields(2) = Self.mLoginKey.Lowercase
-		    Fields(3) = Self.mPurchasedOmniVersion.ToText(Xojo.Core.Locale.Raw)
+		    Fields(2) = Self.mPurchasedOmniVersion.ToText(Xojo.Core.Locale.Raw)
 		    
 		    Dim PublicKey As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(BeaconAPI.PublicKey)
 		    Dim CheckData As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Fields.Join(" "))

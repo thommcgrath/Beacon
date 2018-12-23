@@ -62,6 +62,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -80,6 +81,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -514,7 +516,7 @@ End
 	#tag Method, Flags = &h0
 		Sub ShowOpenDocument()
 		  Dim Dialog As New OpenDialog
-		  Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset
+		  Dialog.Filter = BeaconFileTypes.BeaconDocument + BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.BeaconIdentity
 		  
 		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File <> Nil Then

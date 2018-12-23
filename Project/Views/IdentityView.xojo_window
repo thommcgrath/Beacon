@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconSubview IdentityView
+Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   False
@@ -289,7 +289,6 @@ Begin BeaconSubview IdentityView
       Width           =   80
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -407,9 +406,16 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  NotificationKit.Ignore(Self, App.Notification_IdentityChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.ToolbarCaption = "Identity"
 		  Self.UpdateUI(App.Identity)
+		  NotificationKit.Watch(Self, App.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
@@ -426,6 +432,18 @@ End
 		  Dim Contents As String = "-----BEGIN PUBLIC KEY-----" + EndOfLine + EncodeBase64(DecodeHex(Key), 64) + EndOfLine + "-----END PUBLIC KEY-----"
 		  Return ReplaceLineEndings(Contents, EndOfLine.UNIX)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case App.Notification_IdentityChanged
+		    Dim Identity As Beacon.Identity = Notification.UserData
+		    Self.UpdateUI(Identity)
+		  End Select
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -455,21 +473,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Stream As TextInputStream = TextInputStream.Open(File)
-		  Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
-		  Stream.Close
-		  
-		  Dim Dict As Xojo.Core.Dictionary
-		  Try
-		    Dict = Xojo.Data.ParseJSON(Contents.ToText)
-		  Catch Err As RuntimeException
-		    Self.ShowAlert("Cannot import identity", "File is not an identity file.")
-		    Return
-		  End Try
-		  
-		  Dim Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
-		  App.Identity = Identity
-		  Self.UpdateUI(Identity)
+		  App.ImportIdentityFile(File, Self)
 		End Sub
 	#tag EndMethod
 
@@ -503,6 +507,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true
