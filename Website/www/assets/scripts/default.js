@@ -75,7 +75,7 @@ var explore = {
 		}
 		
 		var rect = this.link.getBoundingClientRect();
-		this.popover.style.top = rect.top + 'px';
+		this.popover.style.top = rect.bottom + 'px';
 		this.popover.style.left = Math.max(rect.left + ((rect.width - 320) / 2), 20) + 'px';
 		this.container.style.display = 'block';
 		this.link.className = 'expanded';
