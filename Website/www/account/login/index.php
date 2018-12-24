@@ -39,13 +39,6 @@ BeaconTemplate::StartStyles();
 	max-width: 600px;
 }
 
-#login_page_loading,
-#login_page_recover,
-#login_page_verify,
-#login_page_password {
-	display: none;
-}
-
 ul.buttons {
 	margin: 0px;
 	padding: 0px;
@@ -119,6 +112,7 @@ $default_username = $results->Field('username');
 		<form id="login_form_intro" action="check.php" method="post">
 			<p><input type="email" name="email" placeholder="E-Mail Address" id="login_email_field" required></p>
 			<p><input type="password" name="password" placeholder="Password" id="login_password_field" minlength="8" title="Enter a password with at least 8 characters" required></p>
+			<p><label class="checkbox"><input type="checkbox" id="login_remember_check"><span></span>Remember me on this computer</label></p>
 			<ul class="buttons"><li><input type="submit" value="Login"></li><li><button id="login_recover_button">Create or Recover Account</button></li></ul>
 		</form>
 	</div>

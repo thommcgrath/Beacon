@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		this.disabled = true;
 		
 		var stripe = Stripe(<?php echo json_encode(BeaconCommon::GetGlobal('Stripe_Public_Key')); ?>, {
-			betas: ['checkout_beta_3']
+			betas: ['checkout_beta_4']
 		});
 		
 		stripe.redirectToCheckout({

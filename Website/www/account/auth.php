@@ -7,11 +7,13 @@ if (stripos($return_uri, '://') === false) {
 	$return_uri = BeaconCommon::AbsoluteURL($return_uri);
 }
 
+$temporary = isset($_GET['temporary']) ? strtolower($_GET['temporary']) == 'true' : false;
+
 if (isset($_GET['session_id'])) {
 	$session_id = $_GET['session_id'];
 	$session = BeaconSession::GetBySessionID($session_id);
 	if ($session !== null) {
-		$session->SendCookie();
+		$session->SendCookie($temporary);
 	}
 } else {
 	BeaconSession::RemoveCookie();
