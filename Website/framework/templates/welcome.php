@@ -9,7 +9,19 @@
 		<link href="<?php echo BeaconCommon::AssetURI('colors.scss'); ?>" rel="stylesheet" type="text/css">
 		<link href="<?php echo BeaconCommon::AssetURI('welcome.scss'); ?>" rel="stylesheet" media="all" type="text/css">
 		<script src="<?php echo BeaconCommon::AssetURI('common.js'); ?>"></script>
-		<script src="<?php echo BeaconCommon::AssetURI('welcome.js'); ?>"></script>
+		<?php
+		$header_lines = BeaconTemplate::ExtraHeaderLines();
+		for ($i = 0; $i < count($header_lines); $i++) {
+			$line = $header_lines[$i];
+			if ($i == 0) {
+				echo "$line\n";
+			} else {
+				echo "\t\t$line\n";
+			}
+			unset($line);
+		}
+		unset($header_lines);
+		?>
 	</head>
 	<body>
 		<?php echo $buffer; ?>

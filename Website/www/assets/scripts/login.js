@@ -2,34 +2,42 @@ document.addEventListener('DOMContentLoaded', function() {
 	var current_page;
 	var pages = ['intro', 'login', 'recover', 'verify', 'password', 'loading'];
 	pages.forEach(function(page) {
-		var element = document.getElementById('login_page_' + page);
-		if (element) {
-			if (current_page) {
-				element.classList.add('hidden');
-			} else {
-				current_page = page;
-			}
+		var element = document.getElementById('page_' + page);
+		if (!element) {
+			return;
 		}
+		
+		if (!current_page) {
+			current_page = page;
+			return;
+		}
+		
+		element.classList.add('hidden');
 	});
 	
 	var show_page = function(to_page) {
-		var fromElement = document.getElementById('login_page_' + current_page);
-		var toElement = document.getElementById('login_page_' + to_page);
+		var fromElement = document.getElementById('page_' + current_page);
+		var toElement = document.getElementById('page_' + to_page);
 		if (fromElement && toElement) {
 			fromElement.classList.add('hidden');
 			toElement.classList.remove('hidden');
+			current_page = to_page;
 		}
-		current_page = to_page;
 	};
 	
 	var known_vulnerable_password = '';
 	var i;
+	var consumeURI;
 	
 	var focus_first = function(field_ids) {
 		var focused = false;
 		var field;
 		for (i = 0; i < field_ids.length; i++) {
-			field = document.getElementById(field_ids[i]);
+			if (field_ids[i] instanceof HTMLElement) {
+				field = field_ids[i];
+			} else {
+				field = document.getElementById(field_ids[i]);
+			}
 			if (field && field.value == '') {
 				field.focus();
 				focused = true;
@@ -54,12 +62,20 @@ document.addEventListener('DOMContentLoaded', function() {
 		storedRemember = storedEmail !== null;
 	}
 	
+	var introPage = document.getElementById('page_intro');
+	var introContinueButton = document.getElementById('intro_continue_button');
+	var introLoginButton = document.getElementById('intro_login_button');
+	var introDeclineButton = document.getElementById('intro_decline_button');
+	
+	var loginPage = document.getElementById('page_login');
 	var loginForm = document.getElementById('login_form_intro');
 	var loginEmailField = document.getElementById('login_email_field');
 	var loginPasswordField = document.getElementById('login_password_field');
 	var loginRememberCheck = document.getElementById('login_remember_check');
 	var loginReturnField = document.getElementById('login_return_field');
 	var loginRecoverButton = document.getElementById('login_recover_button');
+	var loginCancelButton = document.getElementById('login_cancel_button');
+	var loginActionButton = document.getElementById('login_action_button');
 	
 	var recoverForm = document.getElementById('login_recover_form');
 	var recoverEmailField = document.getElementById('recover_email_field');
@@ -71,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	var verifyCancelButton = document.getElementById('verify_cancel_button');
 	var verifyActionButton = document.getElementById('verify_action_button');
 	
-	var passwordPage = document.getElementById('login_page_password');
+	var passwordPage = document.getElementById('page_password');
 	var passwordForm = document.getElementById('login_password_form');
 	var passwordEmailField = document.getElementById('password_email_field');
 	var passwordCodeField = document.getElementById('password_code_field');
@@ -89,14 +105,42 @@ document.addEventListener('DOMContentLoaded', function() {
 		loginReturnURI = loginReturnField.value;
 	}
 	
+	var consumeURI;
+	if (passwordPage) {
+		consumeURI = passwordPage.getAttribute('beacon-consumer-uri');
+	}	
+	
+	// !Intro page
+	if (introContinueButton) {
+		introContinueButton.addEventListener('click', function(ev) {
+			ev.preventDefault();
+			show_page('loading');
+			window.location = 'beacon://set_user_privacy?action=anonymous';
+		});
+	}
+	if (introLoginButton) {
+		introLoginButton.addEventListener('click', function(ev) {
+			ev.preventDefault();
+			show_page('login');
+			focus_first([loginEmailField, loginPasswordField, loginRememberCheck, loginActionButton]);
+		});
+	}
+	if (introDeclineButton) {
+		introDeclineButton.addEventListener('click', function(ev) {
+			ev.preventDefault();
+			show_page('loading');
+			window.location = 'beacon://set_user_privacy?action=full';
+		});
+	}
+	
+	// !Login Page
+	if (loginEmailField && storedRemember) {
+		loginEmailField.value = storedEmail;
+	}
+	if (loginRememberCheck) {
+		loginRememberCheck.checked = storedRemember;
+	}
 	if (loginForm) {
-		if (loginEmailField && storedRemember) {
-			loginEmailField.value = storedEmail;
-		}
-		if (loginRememberCheck) {
-			loginRememberCheck.checked = storedRemember;
-		}
-		
 		loginForm.addEventListener('submit', function(event) {
 			event.preventDefault();
 			
@@ -128,13 +172,15 @@ document.addEventListener('DOMContentLoaded', function() {
 					localStorage.setItem('email', loginEmail);
 				}
 				
-				var url = '/account/auth.php?session_id=' + encodeURIComponent(obj.session_id) + '&return=' + encodeURIComponent(loginReturnURI);
-				if (loginRemember == false) {
-					url += '&temporary=true';
-				}
+				var url = consumeURI;
+				url = url.replace('{{session_id}}', encodeURIComponent(obj.session_id));
+				url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
+				url = url.replace('{{user_password}}', encodeURIComponent(loginPassword));
+				url = url.replace('{{temporary}}', (loginRemember == false ? 'false' : 'true'));
+				
 				window.location = url;
 			}, function(http_status) {
-				show_page('intro');
+				show_page('login');
 				
 				switch (http_status) {
 				case 401:
@@ -148,23 +194,34 @@ document.addEventListener('DOMContentLoaded', function() {
 			
 			return false;
 		});
-		
-		if (loginRecoverButton) {
-			loginRecoverButton.addEventListener('click', function(event) {
-				event.preventDefault();
-				
-				if (recoverEmailField && loginEmailField) {
-					recoverEmailField.value = loginEmailField.value;
-				}
-				
-				show_page('recover');
-				focus_first([recoverEmailField.id]);
-				
-				return false;
-			});
-		}
+	}
+	if (loginRecoverButton) {
+		loginRecoverButton.addEventListener('click', function(event) {
+			event.preventDefault();
+			
+			if (recoverEmailField && loginEmailField) {
+				recoverEmailField.value = loginEmailField.value;
+			}
+			
+			show_page('recover');
+			focus_first([recoverEmailField]);
+			
+			return false;
+		});
+	}
+	if (loginCancelButton) {
+		loginCancelButton.addEventListener('click', function(ev) {
+			ev.preventDefault();
+			if (introPage) {
+				show_page('intro');
+			} else {
+				window.location = 'beacon://dismiss_me';
+			}
+			return false;
+		});
 	}
 	
+	// !Recovery Page
 	if (recoverForm) {
 		recoverForm.addEventListener('submit', function(event) {
 			event.preventDefault();
@@ -180,13 +237,13 @@ document.addEventListener('DOMContentLoaded', function() {
 						passwordEmailField.value = obj.email;
 					}
 					show_page('password');
-					focus_first([passwordInitialField.id, passwordConfirmField.id, passwordActionButton.id]);
+					focus_first([passwordInitialField, passwordConfirmField, passwordActionButton]);
 				} else {
 					if (verifyEmailField) {
 						verifyEmailField.value = obj.email;
 					}
 					show_page('verify');
-					focus_first([verifyCodeField.id, verifyActionButton.id]);
+					focus_first([verifyCodeField, verifyActionButton]);
 				}
 			}, function(http_status) {
 				show_page('recover');
@@ -194,17 +251,17 @@ document.addEventListener('DOMContentLoaded', function() {
 			});
 			return false;
 		});
-		
-		if (recoverCancelButton) {
-			recoverCancelButton.addEventListener('click', function(event) {
-				event.preventDefault();
-				show_page('intro');
-				focus_first([loginEmailField.id, loginPasswordField.id]);
-				return false;
-			});
-		}
+	}
+	if (recoverCancelButton) {
+		recoverCancelButton.addEventListener('click', function(event) {
+			event.preventDefault();
+			show_page('login');
+			focus_first([loginEmailField, loginPasswordField, loginActionButton]);
+			return false;
+		});
 	}
 	
+	// !Address verification
 	if (verifyForm) {
 		verifyForm.addEventListener('submit', function(event) {
 			event.preventDefault();
@@ -230,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						passwordPage.className = 'as-recover-user';
 					}
 					show_page('password');
-					focus_first([passwordUsernameField.id, passwordInitialField.id, passwordConfirmField.id, passwordActionButton.id]);
+					focus_first([passwordUsernameField, passwordInitialField, passwordConfirmField, passwordActionButton]);
 				} else {
 					if (verifyCodeField) {
 						verifyCodeField.value = '';
@@ -246,17 +303,17 @@ document.addEventListener('DOMContentLoaded', function() {
 				dialog.show('Unable to confirm', 'There was a ' + http_status + ' error while trying to verify the code.');
 			});
 		});
-		
-		if (verifyCancelButton) {
-			verifyCancelButton.addEventListener('click', function(event) {
-				event.preventDefault();
-				show_page('intro');
-				focus_first([loginEmailField.id, loginPasswordField.id]);
-				return false;
-			});
-		}
+	}
+	if (verifyCancelButton) {
+		verifyCancelButton.addEventListener('click', function(event) {
+			event.preventDefault();
+			show_page('login');
+			focus_first([loginEmailField, loginPasswordField, loginActionButton]);
+			return false;
+		});
 	}
 	
+	// !Password form
 	if (passwordForm) {
 		passwordForm.addEventListener('submit', function(event) {
 			event.preventDefault();
@@ -300,10 +357,12 @@ document.addEventListener('DOMContentLoaded', function() {
 					localStorage.setItem('email', passwordEmail);
 				}
 				
-				var url = '/account/auth.php?session_id=' + encodeURIComponent(obj.session_id) + '&return=' + encodeURIComponent(loginReturnURI);
-				if (loginRemember == false) {
-					url += '&temporary=true';
-				}
+				var url = consumeURI;
+				url = url.replace('{{session_id}}', encodeURIComponent(obj.session_id));
+				url = url.replace('{{return_uri}}', encodeURIComponent(loginReturnURI));
+				url = url.replace('{{user_password}}', encodeURIComponent(passwordInitial));
+				url = url.replace('{{temporary}}', (loginRemember == false ? 'false' : 'true'));
+				
 				window.location = url;
 			}, function(http_status, content) {
 				show_page('password');
@@ -325,40 +384,37 @@ document.addEventListener('DOMContentLoaded', function() {
 				}
 			});
 		});
-		
-		if (passwordCancelButton) {
-			passwordCancelButton.addEventListener('click', function(event) {
-				event.preventDefault();
-				show_page('intro');
-				focus_first([loginEmailField.id, loginPasswordField.id]);
-				return false;
-			});
-		}
-		
-		if (passwordUseSuggestedLink) {
-			passwordUseSuggestedLink.addEventListener('click', function(ev) {
-				ev.preventDefault();
-				
-				if (passwordUsernameField) {
-					passwordUsernameField.value = this.getAttribute('beacon-username');
+	}
+	if (passwordCancelButton) {
+		passwordCancelButton.addEventListener('click', function(event) {
+			event.preventDefault();
+			show_page('intro');
+			focus_first([loginEmailField, loginPasswordField, loginActionButton]);
+			return false;
+		});
+	}
+	if (passwordUseSuggestedLink) {
+		passwordUseSuggestedLink.addEventListener('click', function(ev) {
+			ev.preventDefault();
+			
+			if (passwordUsernameField) {
+				passwordUsernameField.value = this.getAttribute('beacon-username');
+			}
+			
+			return false;
+		});
+	}
+	if (passwordNewSuggestionLink) {
+		passwordNewSuggestionLink.addEventListener('click', function(ev) {
+			request.get('/account/login/suggest.php', {}, function(obj) {
+				if (passwordUseSuggestedLink) {
+					passwordUseSuggestedLink.innerText = obj.username;
+					passwordUseSuggestedLink.setAttribute('beacon-username', obj.username);
 				}
-				
-				return false;
-			});
-		}
-		
-		if (passwordNewSuggestionLink) {
-			passwordNewSuggestionLink.addEventListener('click', function(ev) {
-				request.get('/account/login/suggest.php', {}, function(obj) {
-					if (passwordUseSuggestedLink) {
-						passwordUseSuggestedLink.innerText = obj.username;
-						passwordUseSuggestedLink.setAttribute('beacon-username', obj.username);
-					}
-				}, function() {});
-				
-				ev.preventDefault();
-				return false;
-			});
-		}
+			}, function() {});
+			
+			ev.preventDefault();
+			return false;
+		});
 	}
 });
