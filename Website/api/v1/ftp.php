@@ -1,131 +1,5 @@
 <?php
 
-interface FTPProvider {
-	public function Connect(string $host, int $port, string $user, string $pass);
-	public function Close();
-	
-	public function ListFiles(string $remote_directory_path);
-	public function Download(string $remote_file_path);
-	public function Upload(string $remote_file_path, string $local_file_path);
-}
-
-class FTPConnection implements FTPProvider {
-	protected $connection;
-	
-	public function Connect(string $host, int $port, string $user, string $pass) {
-		$connection = @ftp_connect($host, $port);
-		if (!@ftp_login($connection, $user, $pass)) {
-			return false;
-		}
-		$this->connection = $connection;
-		ftp_pasv($connection, true);
-		return true;
-	}
-	
-	public function Close() {
-		ftp_close($this->connection);
-		$this->connection = null;
-	}
-	
-	public function ListFiles(string $remote_directory_path) {
-		$filenames = array();
-		if (function_exists('ftp_mlsd')) {
-			$files = ftp_mlsd($this->connection, $remote_directory_path);
-			if (is_array($files)) {
-				foreach ($files as $file) {
-					$filenames[] = $file['name'];
-				}
-			}
-		} else {
-			// chrdir first, because nlist returns incorrect results if you ask for the directory directly
-			ftp_chdir($this->connection, $remote_directory_path);
-			$files = ftp_nlist($this->connection, '');
-			if (is_array($files)) {
-				foreach ($files as $file) {
-					$filenames[] = basename($file);
-				}
-			}
-		}
-		return $filenames;
-	}
-	
-	public function Download(string $remote_file_path) {
-		ob_start();
-		$result = @ftp_get($this->connection, "php://output", $remote_file_path, FTP_ASCII);
-		$data = ob_get_contents();
-		ob_end_clean();
-		return $result ? $data : false;
-	}
-	
-	public function Upload(string $remote_file_path, string $local_file_path) {
-		return @ftp_put($this->connection, $remote_file_path, $local_file_path, FTP_ASCII);
-	}
-}
-
-class FTPSSLConnection extends FTPConnection {
-	public function Connect(string $host, int $port, string $user, string $pass) {
-		$connection = @ftp_ssl_connect($host, $port);
-		if (!@ftp_login($connection, $user, $pass)) {
-			return false;
-		}
-		$this->connection = $connection;
-		ftp_pasv($connection, true);
-		return true;
-	}
-}
-
-class SFTPConnection implements FTPProvider {
-	protected $ssh_connection;
-	protected $ftp_connection;
-	
-	public function Connect(string $host, int $port, string $user, string $pass) {
-		$ssh_connection = @ssh2_connect($host, $port);
-		if ($ssh_connection === false) {
-			return false;
-		}
-		
-		$authenticated = @ssh2_auth_password($ssh_connection, $user, $pass);
-		if ($authenticated === false) {
-			return false;
-		}
-		
-		$this->ftp_connection = ssh2_sftp($ssh_connection);
-		$this->ssh_connection = $ssh_connection;
-		return true;
-	}
-	
-	public function Close() {
-		ssh2_disconnect($this->ssh_connection);
-		$this->connection = null;
-	}
-	
-	public function ListFiles(string $remote_directory_path) {
-		$fd = intval($this->ftp_connection);
-		$handle = @opendir("ssh2.sftp://$fd/$remote_directory_path");
-		$files = array();
-		if (!$handle) {
-			return $files;
-		}
-		while (false != ($entry = readdir($handle))){
-			$files[] = $entry;
-		}
-		closedir($handle);
-		return $files;
-	}
-	
-	public function Download(string $remote_file_path) {
-		return @file_get_contents('ssh2.sftp://' . intval($this->ftp_connection) . '/' . $remote_file_path);
-	}
-	
-	public function Upload(string $remote_file_path, string $local_file_path) {
-		return @file_put_contents('ssh2.sftp://' . intval($this->ftp_connection) . '/' . $remote_file_path, file_get_contents($local_file_path));
-	}
-}
-
-function sftp_debug_callback($message, $language, $always_display) {
-	printf("Debug: %s\n", $message);
-}
-
 require(dirname(__FILE__) . '/loader.php');
 
 $method = BeaconAPI::Method();
@@ -142,11 +16,11 @@ if ($ftp_port == 0) {
 $ref = isset($_REQUEST['ref']) ? $_REQUEST['ref'] : BeaconCommon::GenerateUUID();
 
 if ($ftp_port == 22 || $ftp_mode == 'sftp') {
-	$class_names = array('SFTPConnection');
+	$class_names = array('BeaconSFTPConnection');
 } elseif ($ftp_port == 21 || $ftp_mode == 'ftp') {
-	$class_names = array('FTPSSLConnection', 'FTPConnection');
+	$class_names = array('BeaconFTPSSLConnection', 'BeaconFTPConnection');
 } else {
-	$class_names = array('FTPSSLConnection', 'FTPConnection', 'SFTPConnection');
+	$class_names = array('BeaconFTPSSLConnection', 'BeaconFTPConnection', 'BeaconSFTPConnection');
 }
 $ftp_provider = null;
 foreach ($class_names as $class_name) {
@@ -168,21 +42,21 @@ case 'GET':
 			$ftp_path = $_REQUEST['path'];
 		} else {
 			$hier = array(
-				array('arkse','arkserver'),
-				array('ShooterGame'),
-				array('Saved')
+				array('arkse/','arkserver/'),
+				array('ShooterGame/'),
+				array('Saved/')
 			);
 			$ftp_path = Discover($ftp_provider, '', $hier);
 			if ($ftp_path === false) {
 				BeaconAPI::ReplyError('Unable to determine path to ShooterGame/Saved folder.', array('ref' => $ref), 404);
 			}
 		}
-		$config_path = Discover($ftp_provider, $ftp_path . '/Config', array(array('WindowsServer', 'LinuxServer', 'WindowsNoEditor')));
+		$config_path = Discover($ftp_provider, $ftp_path . 'Config/', array(array('WindowsServer/', 'LinuxServer/', 'WindowsNoEditor/')));
 		if ($config_path === false) {
 			BeaconAPI::ReplyError('Unable to find Config folder in "' . $ftp_path . '"', array('ref' => $ref), 404);
 		}
-		$game_ini_path = $config_path . '/Game.ini';
-		$settings_ini_path = $config_path . '/GameUserSettings.ini';
+		$game_ini_path = $config_path . 'Game.ini';
+		$settings_ini_path = $config_path . 'GameUserSettings.ini';
 
 		$results = array(
 			'Game.ini' => $game_ini_path,
@@ -268,18 +142,24 @@ case 'GET':
 		BeaconAPI::ReplySuccess($results);
 	} else {
 		$ftp_path = isset($_REQUEST['path']) ? $_REQUEST['path'] : BeaconAPI::ReplyError('Missing path variable.', null, 400);
-
-		if (strtolower(substr($ftp_path, -4)) != '.ini') {
+		
+		if (substr($ftp_path, -1) == '/') {
+			$list = $ftp_provider->ListFiles($ftp_path);
+			if (is_array($list)) {
+				BeaconAPI::ReplySuccess(array('ref' => $ref, 'files' => $list));
+			} else {
+				BeaconAPI::ReplyError('Unable to list path.', array('ref' => $ref, 'path' => $ftp_path), 500);
+			}
+		} elseif (strtolower(substr($ftp_path, -4)) == '.ini') {
+			$content = $ftp_provider->Download($ftp_path);
+			if ($content === false) {
+				BeaconAPI::ReplyError('Unable to download file.', array('ref' => $ref, 'path' => $ftp_path), 500);
+			}
+			
+			BeaconAPI::ReplySuccess(array('ref' => $ref, 'content' => $content));
+		} else {
 			BeaconAPI::ReplyError('Requested file does not appear to be an ini file.', array('ref' => $ref, 'path' => $ftp_path), 500);
 		}
-		
-		$content = $ftp_provider->Download($ftp_path);
-		if ($content === false) {
-			BeaconAPI::ReplyError('Unable to download file.', array('ref' => $ref, 'path' => $ftp_path), 500);
-		}
-
-		header('Content-Type: text/plain');
-		BeaconAPI::ReplySuccess(array('ref' => $ref, 'content' => $content));
 		break;
 	}
 case 'POST':
@@ -309,7 +189,7 @@ default:
 	break;
 }
 
-function Discover(FTPProvider $connection, string $starting_path, array $hierarchy) {
+function Discover(BeaconFTPProvider $connection, string $starting_path, array $hierarchy) {
 	$path = $starting_path;
 	foreach ($hierarchy as $possibles) {
 		$discovered_path = SearchDirectory($connection, $path, $possibles);
@@ -322,7 +202,7 @@ function Discover(FTPProvider $connection, string $starting_path, array $hierarc
 	return $path;
 }
 
-function SearchDirectory(FTPProvider $connection, string $starting_path, array $possibles) {
+function SearchDirectory(BeaconFTPProvider $connection, string $starting_path, array $possibles) {
 	if ($starting_path == '') {
 		foreach ($possibles as $possible) {
 			$files = $connection->ListFiles('/' . $possible);
@@ -334,7 +214,7 @@ function SearchDirectory(FTPProvider $connection, string $starting_path, array $
 		$files = $connection->ListFiles($starting_path);
 		foreach ($files as $file) {
 			if (in_array($file, $possibles)) {
-				return $starting_path . '/' . $file;
+				return $starting_path . $file;
 			}
 		}
 	}
