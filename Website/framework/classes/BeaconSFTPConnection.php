@@ -5,6 +5,10 @@ include('Net/SFTP.php');
 class BeaconSFTPConnection implements BeaconFTPProvider {
 	protected $connection;
 	
+	public function ConnectionType() {
+		return 'sftp';
+	}
+	
 	public function Connect(string $host, int $port, string $user, string $pass) {
 		$sftp = new Net_SFTP($host, $port);
 		if (!$sftp->login($user, $pass)) {

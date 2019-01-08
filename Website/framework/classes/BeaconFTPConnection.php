@@ -3,6 +3,10 @@
 class BeaconFTPConnection implements BeaconFTPProvider {
 	protected $connection;
 	
+	public function ConnectionType() {
+		return 'ftp';
+	}
+	
 	public function Connect(string $host, int $port, string $user, string $pass) {
 		$connection = @ftp_connect($host, $port);
 		if (!@ftp_login($connection, $user, $pass)) {

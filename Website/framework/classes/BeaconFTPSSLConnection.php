@@ -1,6 +1,10 @@
 <?php
 
 class BeaconFTPSSLConnection extends BeaconFTPConnection {
+	public function ConnectionType() {
+		return 'ftp+tls';
+	}
+	
 	public function Connect(string $host, int $port, string $user, string $pass) {
 		$connection = @ftp_ssl_connect($host, $port);
 		if (!@ftp_login($connection, $user, $pass)) {

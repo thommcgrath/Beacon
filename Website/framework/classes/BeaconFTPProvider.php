@@ -7,6 +7,7 @@ interface BeaconFTPProvider {
 	public function ListFiles(string $remote_directory_path);
 	public function Download(string $remote_file_path);
 	public function Upload(string $remote_file_path, string $local_file_path);
+	public function ConnectionType();
 }
 
 ?>
