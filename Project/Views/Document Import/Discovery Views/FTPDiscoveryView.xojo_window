@@ -26,493 +26,96 @@ Begin DiscoveryView FTPDiscoveryView
    UseFocusRing    =   False
    Visible         =   True
    Width           =   600
-   Begin UITweaks.ResizedPushButton ServerActionButton
+   Begin PagePanel ViewPanel
       AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   False
-      Caption         =   "Next"
-      Default         =   True
-      Enabled         =   False
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   500
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   13
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   312
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedPushButton ServerCancelButton
-      AutoDeactivate  =   True
-      Bold            =   False
-      ButtonStyle     =   "0"
-      Cancel          =   True
-      Caption         =   "Cancel"
-      Default         =   False
       Enabled         =   True
-      Height          =   20
+      Height          =   352
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Italic          =   False
-      Left            =   408
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   12
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   312
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   80
-   End
-   Begin UITweaks.ResizedTextField ServerPathField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   "Optional path to ShooterGame/Saved"
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   118
-      LimitText       =   0
-      LockBottom      =   False
+      Left            =   0
+      LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
+      PanelCount      =   3
+      Panels          =   ""
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   17
       TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   278
+      Top             =   0
       Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
+      Value           =   0
       Visible         =   True
-      Width           =   462
-   End
-   Begin UITweaks.ResizedLabel ServerPathLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Path Prefix:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   278
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   86
-   End
-   Begin UITweaks.ResizedTextField ServerPassField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   118
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   True
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   9
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   244
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   462
-   End
-   Begin UITweaks.ResizedLabel ServerPassLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   8
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Password:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   244
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   86
-   End
-   Begin UITweaks.ResizedTextField ServerUserField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   118
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   210
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   462
-   End
-   Begin UITweaks.ResizedLabel ServerUserLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Username:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   210
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   86
-   End
-   Begin UITweaks.ResizedTextField ServerPortField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   118
-      LimitText       =   5
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   "#####"
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "21"
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   176
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   101
-   End
-   Begin UITweaks.ResizedLabel ServerPortLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Port:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   176
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   86
-   End
-   Begin UITweaks.ResizedTextField ServerHostField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   118
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   142
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   462
-   End
-   Begin UITweaks.ResizedLabel ServerHostLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Host:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   142
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   86
-   End
-   Begin GroupBox ExplanationGroup
-      AutoDeactivate  =   True
-      Bold            =   False
-      Caption         =   ""
-      Enabled         =   True
-      Height          =   78
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   52
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   560
+      Width           =   600
+      Begin UITweaks.ResizedLabel ServerModeLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Type:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   238
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   86
+      End
+      Begin UITweaks.ResizedPopupMenu ServerModeMenu
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         InitialValue    =   "Autodetect\nFTP\nFTP with TLS\nSFTP"
+         Italic          =   False
+         Left            =   118
+         ListIndex       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   238
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   142
+      End
       Begin Label ExplanationLabel
          AutoDeactivate  =   True
          Bold            =   False
@@ -522,9 +125,9 @@ Begin DiscoveryView FTPDiscoveryView
          Height          =   38
          HelpTag         =   ""
          Index           =   -2147483648
-         InitialParent   =   "ExplanationGroup"
+         InitialParent   =   "ViewPanel"
          Italic          =   False
-         Left            =   40
+         Left            =   20
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -533,8 +136,8 @@ Begin DiscoveryView FTPDiscoveryView
          Multiline       =   True
          Scope           =   2
          Selectable      =   False
-         TabIndex        =   0
-         TabPanelIndex   =   0
+         TabIndex        =   2
+         TabPanelIndex   =   1
          TabStop         =   True
          Text            =   "Beacon will securely send this information to the Beacon API server, which will perform the FTP work. The server will not store or log FTP information in any way."
          TextAlign       =   0
@@ -542,47 +145,758 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   72
+         Top             =   52
          Transparent     =   True
          Underline       =   False
          Visible         =   True
-         Width           =   520
+         Width           =   560
+      End
+      Begin Label ServerMessageLabel
+         AutoDeactivate  =   True
+         Bold            =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   3
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Server Settings"
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   20
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin UITweaks.ResizedLabel ServerHostLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   4
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Host:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   102
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   86
+      End
+      Begin UITweaks.ResizedTextField ServerHostField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   118
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Mask            =   ""
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   5
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   102
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   462
+      End
+      Begin UITweaks.ResizedLabel ServerPortLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   6
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Port:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   136
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   86
+      End
+      Begin UITweaks.ResizedTextField ServerPortField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   118
+         LimitText       =   5
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Mask            =   "#####"
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   7
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "21"
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   136
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   101
+      End
+      Begin UITweaks.ResizedLabel ServerUserLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   8
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Username:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   170
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   86
+      End
+      Begin UITweaks.ResizedTextField ServerUserField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   118
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Mask            =   ""
+         Password        =   False
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   9
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   170
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   462
+      End
+      Begin UITweaks.ResizedLabel ServerPassLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   10
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   "Password:"
+         TextAlign       =   2
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   204
+         Transparent     =   True
+         Underline       =   False
+         Visible         =   True
+         Width           =   86
+      End
+      Begin UITweaks.ResizedTextField ServerPassField
+         AcceptTabs      =   False
+         Alignment       =   0
+         AutoDeactivate  =   True
+         AutomaticallyCheckSpelling=   False
+         BackColor       =   &cFFFFFF00
+         Bold            =   False
+         Border          =   True
+         CueText         =   ""
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Format          =   ""
+         Height          =   22
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   118
+         LimitText       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Mask            =   ""
+         Password        =   True
+         ReadOnly        =   False
+         Scope           =   2
+         TabIndex        =   11
+         TabPanelIndex   =   1
+         TabStop         =   True
+         Text            =   ""
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   204
+         Transparent     =   False
+         Underline       =   False
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   462
+      End
+      Begin UITweaks.ResizedPushButton ServerCancelButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   True
+         Caption         =   "Cancel"
+         Default         =   False
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   408
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   12
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   312
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedPushButton ServerActionButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Next"
+         Default         =   True
+         Enabled         =   False
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   500
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   13
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   312
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin Label DiscoveringMessage
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Connecting to Server…"
+         TextAlign       =   1
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   150
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin ProgressBar DiscoveringProgress
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Maximum         =   0
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   2
+         Top             =   182
+         Transparent     =   False
+         Value           =   0
+         Visible         =   True
+         Width           =   560
+      End
+      Begin Label BrowseMessage
+         AutoDeactivate  =   True
+         Bold            =   True
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Text            =   "Please locate your Game.ini file"
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   20
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   560
+      End
+      Begin PushButton BrowseActionButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Next"
+         Default         =   True
+         Enabled         =   False
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   500
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   1
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   312
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin PushButton BrowseCancelButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   True
+         Caption         =   "Cancel"
+         Default         =   False
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   408
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   2
+         TabPanelIndex   =   3
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   312
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin FadedSeparator BrowseBorders
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   1
+         HelpTag         =   ""
+         Index           =   0
+         InitialParent   =   "ViewPanel"
+         Left            =   20
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   3
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   52
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   560
+      End
+      Begin FadedSeparator BrowseBorders
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   1
+         HelpTag         =   ""
+         Index           =   1
+         InitialParent   =   "ViewPanel"
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   False
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   4
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   299
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   560
+      End
+      Begin FadedSeparator BrowseBorders
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   246
+         HelpTag         =   ""
+         Index           =   2
+         InitialParent   =   "ViewPanel"
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   5
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   53
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   1
+      End
+      Begin FadedSeparator BrowseBorders
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   246
+         HelpTag         =   ""
+         Index           =   3
+         InitialParent   =   "ViewPanel"
+         Left            =   579
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         ScrollSpeed     =   20
+         TabIndex        =   6
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   53
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   True
+         Width           =   1
+      End
+      Begin ColumnBrowser Browser
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         CurrentPath     =   ""
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   246
+         HelpTag         =   ""
+         InitialParent   =   "ViewPanel"
+         Left            =   21
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   7
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   53
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   558
+      End
+      Begin ProgressWheel BrowseSpinner
+         AutoDeactivate  =   True
+         Enabled         =   True
+         Height          =   16
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Left            =   20
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   False
+         Scope           =   2
+         TabIndex        =   9
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   316
+         Transparent     =   False
+         Visible         =   False
+         Width           =   16
       End
    End
-   Begin Label ServerMessageLabel
-      AutoDeactivate  =   True
-      Bold            =   True
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
+   Begin BeaconAPI.Socket BrowseSocket
       Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
       LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Multiline       =   False
       Scope           =   2
-      Selectable      =   False
-      TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Server Settings"
-      TextAlign       =   0
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   560
    End
 End
 #tag EndWindow
@@ -603,9 +917,79 @@ End
 
 
 	#tag Method, Flags = &h21
+		Private Sub APICallback_DetectPath(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		  If Success Then
+		    // Discovery was able to find the path and the user doesn't need to do any further work.
+		    Dim Dict As Xojo.Core.Dictionary = Details
+		    Dim Path As Text = Dict.Value("path")
+		    
+		    Dim Engines(0) As Beacon.DiscoveryEngine
+		    Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, Path, App.Identity)
+		    Self.ShouldFinish(Engines)
+		    
+		    Return
+		  End If
+		  
+		  If HTTPStatus = 404 Then
+		    // Server was connected, but the path could not be determined, so time to show the browser.
+		    Self.ViewPanel.Value = Self.PageBrowse
+		    Self.Browser.Reset()
+		    Return
+		  End If
+		  
+		  // The connection was not succesful
+		  Self.ViewPanel.Value = Self.PageGeneral
+		  
+		  Self.ShowAlert("Beacon was unable to discover the server.", "Reason: " + Message)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub APICallback_ListPath(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		  If Not Success Then
+		    Self.ShowAlert("Unable to list contents of " + Self.Browser.CurrentPath, Message)
+		    Return
+		  End If
+		  
+		  Dim Dict As Xojo.Core.Dictionary = Details
+		  Dim Files() As Auto = Dict.Value("files")
+		  Dim Children() As String
+		  For Each Child As Text In Files
+		    Children.Append(Child)
+		  Next
+		  Self.Browser.AppendChildren(Children)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub CheckServerActionButton()
 		  Self.ServerActionButton.Enabled = ServerHostField.Text <> "" And Val(ServerPortField.Text) > 0 And ServerUserField.Text <> "" And ServerPassField.Text <> ""
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function FormDataFromProfile() As Xojo.Core.Dictionary
+		  If Self.mProfile = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Dim Fields As New Xojo.Core.Dictionary
+		  Fields.Value("host") = Self.mProfile.Host
+		  Fields.Value("port") = Self.mProfile.Port.ToText
+		  Fields.Value("user") = Self.mProfile.Username
+		  Fields.Value("pass") = Self.mProfile.Password
+		  
+		  Select Case Self.mProfile.Mode
+		  Case Beacon.FTPServerProfile.ModeFTP
+		    Fields.Value("mode") = "ftp"
+		  Case Beacon.FTPServerProfile.ModeFTPTLS
+		    Fields.Value("mode") = "ftp+tls"
+		  Case Beacon.FTPServerProfile.ModeSFTP
+		    Fields.Value("mode") = "sftp"
+		  End Select
+		  
+		  Return Fields
+		End Function
 	#tag EndMethod
 
 
@@ -614,45 +998,24 @@ End
 	#tag EndHook
 
 
+	#tag Property, Flags = &h21
+		Private mProfile As Beacon.FTPServerProfile
+	#tag EndProperty
+
+
+	#tag Constant, Name = PageBrowse, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageDiscovering, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageGeneral, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
-#tag Events ServerActionButton
-	#tag Event
-		Sub Action()
-		  Dim Profile As New Beacon.FTPServerProfile
-		  Profile.Host = Self.ServerHostField.Text.ToText
-		  Profile.Username = Self.ServerUserField.Text.ToText
-		  Profile.Password = Self.ServerPassField.Text.ToText
-		  Profile.Port = Val(Self.ServerPortField.Text)
-		  
-		  Dim Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.FTPDiscoveryEngine(Profile, Self.ServerPathField.Text.ToText, App.Identity)
-		  Self.ShouldFinish(Engines)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerCancelButton
-	#tag Event
-		Sub Action()
-		  Self.ShouldCancel()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerPathField
-	#tag Event
-		Sub TextChange()
-		  Self.CheckServerActionButton()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerPassField
-	#tag Event
-		Sub TextChange()
-		  Self.CheckServerActionButton()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerUserField
+#tag Events ServerHostField
 	#tag Event
 		Sub TextChange()
 		  Self.CheckServerActionButton()
@@ -666,10 +1029,119 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ServerHostField
+#tag Events ServerUserField
 	#tag Event
 		Sub TextChange()
 		  Self.CheckServerActionButton()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ServerPassField
+	#tag Event
+		Sub TextChange()
+		  Self.CheckServerActionButton()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ServerCancelButton
+	#tag Event
+		Sub Action()
+		  Self.ShouldCancel()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ServerActionButton
+	#tag Event
+		Sub Action()
+		  Self.mProfile = New Beacon.FTPServerProfile()
+		  Self.mProfile.Host = Self.ServerHostField.Text.ToText
+		  Self.mProfile.Port = Val(Self.ServerPortField.Text)
+		  Self.mProfile.Username = Self.ServerUserField.Text.ToText
+		  Self.mProfile.Password = Self.ServerPassField.Text.ToText
+		  
+		  Select Case Self.ServerModeMenu.ListIndex
+		  Case 1
+		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeFTP
+		  Case 2
+		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeFTPTLS
+		  Case 3
+		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeSFTP
+		  Else
+		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeAuto
+		  End Select
+		  
+		  Self.ViewPanel.Value = Self.PageDiscovering
+		  
+		  Dim Fields As Xojo.Core.Dictionary = Self.FormDataFromProfile()
+		  Dim Request As New BeaconAPI.Request("ftp/path", "GET", Fields, WeakAddressOf APICallback_DetectPath)
+		  Request.Sign(App.Identity)
+		  BeaconAPI.Send(Request)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BrowseActionButton
+	#tag Event
+		Sub Action()
+		  Dim GameIniPath As String = Self.Browser.CurrentPath
+		  Dim Components() As String = GameIniPath.Split("/")
+		  If Components.Ubound <= 2 Then
+		    Self.ShowAlert("FTP Access Too Restrictive", "Beacon needs to be able to access this server's ""Logs"" folder too, to learn more about the server than the config files can provide. The path to this server's Game.ini does not allow access to other directories needed within Ark's ""Saved"" directory.")
+		    Return
+		  End If
+		  Components.Remove(Components.Ubound) // Remove Game.ini
+		  Components.Remove(Components.Ubound) // Remove WindowsServer
+		  Components(Components.Ubound) = "" // Remove Config but retain trailing slash
+		  
+		  // Should now equal the "Saved" directory
+		  Dim InitialPath As String = Components.Join("/")
+		  Dim Engines(0) As Beacon.DiscoveryEngine
+		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath.ToText, App.Identity)
+		  Self.ShouldFinish(Engines)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BrowseCancelButton
+	#tag Event
+		Sub Action()
+		  Self.ViewPanel.Value = Self.PageGeneral
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Browser
+	#tag Event
+		Sub NeedsChildrenForPath(Path As String)
+		  Dim Fields As Xojo.Core.Dictionary = Self.FormDataFromProfile()
+		  If Fields = Nil Then
+		    Return
+		  End If
+		  Fields.Value("path") = Path.ToText
+		  
+		  // For now, append an empty list
+		  Dim Empty() As String
+		  Me.AppendChildren(Empty)
+		  
+		  Dim Request As New BeaconAPI.Request("ftp", "GET", Fields, WeakAddressOf APICallback_ListPath)
+		  Request.Sign(App.Identity)
+		  Self.BrowseSocket.Start(Request)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PathSelected(Path As String)
+		  Self.BrowseActionButton.Enabled = Path.EndsWith("Game.ini")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events BrowseSocket
+	#tag Event
+		Sub WorkCompleted()
+		  Self.Browser.Enabled = True
+		  Self.BrowseSpinner.Visible = False
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub WorkStarted()
+		  Self.Browser.Enabled = False
+		  Self.BrowseSpinner.Visible = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents

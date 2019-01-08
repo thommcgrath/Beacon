@@ -513,7 +513,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   231
+      Top             =   263
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -549,7 +549,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   231
+      Top             =   263
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -591,7 +591,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   265
+      Top             =   297
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -627,7 +627,74 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   265
+      Top             =   297
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   172
+   End
+   Begin UITweaks.ResizedPopupMenu ModeMenu
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   "Autodetect\nFTP\nFTP with TLS\nSFTP"
+      Italic          =   False
+      Left            =   204
+      ListIndex       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   231
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   165
+   End
+   Begin UITweaks.ResizedLabel ModeLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Type:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   231
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -647,6 +714,7 @@ End
 		  Self.PassField.Text = Self.mProfile.Password
 		  Self.GameIniPathField.Text = Self.mProfile.GameIniPath
 		  Self.GameUserSettingsIniPathField.Text = Self.mProfile.GameUserSettingsIniPath
+		  Self.ModeMenu.SelectByTag(Self.mProfile.Mode)
 		End Sub
 	#tag EndEvent
 
@@ -722,7 +790,30 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ModeMenu
+	#tag Event
+		Sub Open()
+		  Me.DeleteAllRows
+		  Me.AddRow("Autodetect", Beacon.FTPServerProfile.ModeAuto)
+		  Me.AddRow("FTP", Beacon.FTPServerProfile.ModeFTP)
+		  Me.AddRow("FTP with TLS", Beacon.FTPServerProfile.ModeFTPTLS)
+		  Me.AddRow("SFTP", Beacon.FTPServerProfile.ModeSFTP)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Self.mProfile.Mode = Me.Tag
+		  Self.ContentsChanged = Self.mProfile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
 		Group="Behavior"

@@ -15,6 +15,7 @@ Inherits Beacon.ServerProfile
 		  Self.mPassword = Dict.Value("Pass")
 		  Self.mGameIniPath = Dict.Value("Game.ini Path")
 		  Self.mGameUserSettingsIniPath = Dict.Value("GameUserSettings.ini Path")
+		  Self.mMode = Dict.Lookup("Mode", ModeAuto)
 		End Sub
 	#tag EndEvent
 
@@ -27,6 +28,7 @@ Inherits Beacon.ServerProfile
 		  Dict.Value("Pass") = Self.mPassword
 		  Dict.Value("Game.ini Path") = Self.mGameIniPath
 		  Dict.Value("GameUserSettings.ini Path") = Self.mGameUserSettingsIniPath
+		  Dict.Value("Mode") = Self.mMode
 		End Sub
 	#tag EndEvent
 
@@ -34,6 +36,7 @@ Inherits Beacon.ServerProfile
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Do not call Super.Constructor()
+		  Self.mMode = Self.ModeAuto
 		End Sub
 	#tag EndMethod
 
@@ -128,6 +131,36 @@ Inherits Beacon.ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mMode As Text
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mMode
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Select Case Value
+			  Case Self.ModeFTP, Self.ModeFTPTLS, Self.ModeSFTP
+			    // Whitelist
+			  Else
+			    Value = Self.ModeAuto
+			  End Select
+			  
+			  If Self.mMode.Compare(Value, Text.CompareCaseSensitive) = 0 Then
+			    Return
+			  End If
+			  
+			  Self.mMode = Value
+			  Self.Modified = True
+			End Set
+		#tag EndSetter
+		Mode As Text
+	#tag EndComputedProperty
+
+	#tag Property, Flags = &h21
 		Private mPassword As Text
 	#tag EndProperty
 
@@ -197,7 +230,25 @@ Inherits Beacon.ServerProfile
 	#tag EndComputedProperty
 
 
+	#tag Constant, Name = ModeAuto, Type = Text, Dynamic = False, Default = \"auto", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ModeFTP, Type = Text, Dynamic = False, Default = \"ftp", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ModeFTPTLS, Type = Text, Dynamic = False, Default = \"ftp+tls", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = ModeSFTP, Type = Text, Dynamic = False, Default = \"sftp", Scope = Public
+	#tag EndConstant
+
+
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="IsConsole"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
 			Group="Behavior"
@@ -268,6 +319,11 @@ Inherits Beacon.ServerProfile
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Username"
+			Group="Behavior"
+			Type="Text"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="Mode"
 			Group="Behavior"
 			Type="Text"
 		#tag EndViewProperty

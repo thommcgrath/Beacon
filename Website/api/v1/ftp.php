@@ -9,19 +9,37 @@ $ftp_user = isset($_REQUEST['user']) ? $_REQUEST['user'] : BeaconAPI::ReplyError
 $ftp_pass = isset($_REQUEST['pass']) ? $_REQUEST['pass'] : BeaconAPI::ReplyError('Missing pass variable.', null, 400);
 $ftp_host = isset($_REQUEST['host']) ? $_REQUEST['host'] : BeaconAPI::ReplyError('Missing host variable.', null, 400);
 $ftp_port = isset($_REQUEST['port']) ? intval($_REQUEST['port']) : 0;
-$ftp_mode = isset($_REQUEST['mode']) ? strtolower($_REQUEST['mode']) : 'ftp';
+$ftp_mode = isset($_REQUEST['mode']) ? strtolower($_REQUEST['mode']) : 'auto';
 if ($ftp_port == 0) {
 	$ftp_port = 21;
 }
 $ref = isset($_REQUEST['ref']) ? $_REQUEST['ref'] : BeaconCommon::GenerateUUID();
 
-if ($ftp_port == 22 || $ftp_mode == 'sftp') {
+switch ($ftp_mode) {
+case 'ftp':
+	$class_names = array('BeaconFTPConnection');
+	break;
+case 'ftp+tls':
+	$class_names = array('BeaconFTPSSLConnection');
+	break;
+case 'sftp':
 	$class_names = array('BeaconSFTPConnection');
-} elseif ($ftp_port == 21 || $ftp_mode == 'ftp') {
-	$class_names = array('BeaconFTPSSLConnection', 'BeaconFTPConnection');
-} else {
-	$class_names = array('BeaconFTPSSLConnection', 'BeaconFTPConnection', 'BeaconSFTPConnection');
+	break;
+default:
+	switch ($ftp_port) {
+	case 21:
+		$class_names = array('BeaconFTPSSLConnection', 'BeaconFTPConnection');
+		break;
+	case 22:
+		$class_names = array('BeaconSFTPConnection');
+		break;
+	default:
+		$class_names = array('BeaconFTPSSLConnection', 'BeaconFTPConnection', 'BeaconSFTPConnection');
+		break;
+	}
+	break;
 }
+
 $ftp_provider = null;
 foreach ($class_names as $class_name) {
 	$instance = new $class_name();
@@ -37,7 +55,7 @@ if (is_null($ftp_provider)) {
 switch ($method) {
 case 'GET':
 	$object = BeaconAPI::ObjectID();
-	if ($object == 'discover') {
+	if ($object == 'discover' || $object == 'path') {
 		if (isset($_REQUEST['path'])) {
 			$ftp_path = $_REQUEST['path'];
 		} else {
@@ -50,6 +68,9 @@ case 'GET':
 			if ($ftp_path === false) {
 				BeaconAPI::ReplyError('Unable to determine path to ShooterGame/Saved folder.', array('ref' => $ref), 404);
 			}
+		}
+		if ($object == 'path') {
+			BeaconAPI::ReplySuccess(array('ref' => $ref, 'path' => $ftp_path));
 		}
 		$config_path = Discover($ftp_provider, $ftp_path . 'Config/', array(array('WindowsServer/', 'LinuxServer/', 'WindowsNoEditor/')));
 		if ($config_path === false) {
