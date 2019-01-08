@@ -86,7 +86,7 @@ case 'GET':
 		);
 
 		$log_found = false;
-		$logs_path = $ftp_path . '/Logs';
+		$logs_path = $ftp_path . 'Logs';
 		$logs_list = $ftp_provider->ListFiles($logs_path);
 		rsort($logs_list);
 		foreach ($logs_list as $log_file) {
@@ -95,8 +95,8 @@ case 'GET':
 				continue;
 			}
 			
-			$data = $ftp_provider->Download($ftp_path . '/Logs/' . $log_file);
-			if ($data === false) {
+			$data = $ftp_provider->Download($logs_path . '/' . $log_file);
+			if ($data === false || $data === '') {
 				continue;
 			}
 
@@ -115,18 +115,55 @@ case 'GET':
 				}
 				$length = $end - $pos;
 				$content = substr($line, $pos, $length);
+				
+				$in_quotes = false;
+				$chars = str_split($content);
+				$buffer = '';
+				$params = array();
+				foreach ($chars as $char) {
+					if ($char == '"') {
+						if ($in_quotes) {
+							$params[] = $buffer;
+							$buffer = '';
+							$in_quotes = false;
+						} else {
+							$in_quotes = true;
+						}
+						continue;
+					} elseif ($char == ' ') {
+						if (!$in_quotes) {
+							$params[] = $buffer;
+							$buffer = '';
+						}
+					} elseif ($char == '-' && $buffer == '') {
+						continue;
+					} else {
+						$buffer .= $char;
+					}
+				}
+				if ($buffer != '') {
+					$params[] = $buffer;
+					$buffer = '';
+				}
+				
+				$startup_params = explode('?', array_shift($params));
+				$map = array_shift($startup_params);
+				$listen = array_shift($startup_params);
+				$params = array_merge($startup_params, $params);
 
-				$params = explode('?', $content);
-
-				$map = array_shift($params);
-				$listen = array_shift($params);
-
-				$results['Maps'] = array($map);
 				$arguments = array();
 				foreach ($params as $param) {
-					list($key, $value) = explode('=', $param, 2);
-					$arguments[$key] = $value;
+					if ($param == '') {
+						continue;
+					}
+					if (strstr($param, '=')) {
+						list($key, $value) = explode('=', $param, 2);
+						$arguments[$key] = $value;
+					} else {
+						$arguments[$param] = 'true';
+					}
 				}
+				$results['Maps'] = array($map);
 				$results['Options'] = $arguments;
 			}
 
