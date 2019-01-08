@@ -51,6 +51,11 @@ foreach ($class_names as $class_name) {
 if (is_null($ftp_provider)) {
 	BeaconAPI::ReplyError('Unable to connect to host.', array('ref' => $ref, 'host' => $ftp_host . ':' . $ftp_port), 500);
 }
+$ftp_mode = $ftp_provider->ConnectionType();
+$reply_details = array(
+	'ref' => $ref,
+	'ftp_mode' => $ftp_mode
+);
 
 switch ($method) {
 case 'GET':
@@ -66,24 +71,22 @@ case 'GET':
 			);
 			$ftp_path = Discover($ftp_provider, '', $hier);
 			if ($ftp_path === false) {
-				BeaconAPI::ReplyError('Unable to determine path to ShooterGame/Saved folder.', array('ref' => $ref), 404);
+				BeaconAPI::ReplyError('Unable to determine path to ShooterGame/Saved folder.', $reply_details, 404);
 			}
 		}
+		$reply_details['path'] = $ftp_path;
 		if ($object == 'path') {
-			BeaconAPI::ReplySuccess(array('ref' => $ref, 'path' => $ftp_path));
+			BeaconAPI::ReplySuccess($reply_details);
 		}
 		$config_path = Discover($ftp_provider, $ftp_path . 'Config/', array(array('WindowsServer/', 'LinuxServer/', 'WindowsNoEditor/')));
 		if ($config_path === false) {
-			BeaconAPI::ReplyError('Unable to find Config folder in "' . $ftp_path . '"', array('ref' => $ref), 404);
+			BeaconAPI::ReplyError('Unable to find Config folder in "' . $ftp_path . '"', $reply_details, 404);
 		}
 		$game_ini_path = $config_path . 'Game.ini';
 		$settings_ini_path = $config_path . 'GameUserSettings.ini';
-
-		$results = array(
-			'Game.ini' => $game_ini_path,
-			'GameUserSettings.ini' => $settings_ini_path,
-			'ref' => $ref
-		);
+		
+		$reply_details['Game.ini'] = $game_ini_path;
+		$reply_details['GameUserSettings.ini'] = $settings_ini_path;
 
 		$log_found = false;
 		$logs_path = $ftp_path . 'Logs';
@@ -163,8 +166,8 @@ case 'GET':
 						$arguments[$param] = 'true';
 					}
 				}
-				$results['Maps'] = array($map);
-				$results['Options'] = $arguments;
+				$reply_details['Maps'] = array($map);
+				$reply_details['Options'] = $arguments;
 			}
 
 			break;
@@ -176,14 +179,14 @@ case 'GET':
 			$possibles = array();
 			foreach ($folders as $folder_path) {
 				$foldername = basename($folder_path);
-				if ((substr($foldername, -9) == 'SavedArks') || (substr($foldername, -14) == 'SavedArksLocal')) {
+				if ((substr($foldername, -9) == 'SavedArks/') || (substr($foldername, -14) == 'SavedArksLocal/')) {
 					$possibles[] = $foldername;
 				}
 			}
 
 			$maps = array();
 			foreach ($possibles as $possible) {
-				$files = $ftp_provider->ListFiles($ftp_path . '/' . $possible);
+				$files = $ftp_provider->ListFiles($ftp_path . $possible);
 				foreach ($files as $file_path) {
 					$filename = basename($file_path);
 					if (substr($filename, -4) == '.ark') {
@@ -194,38 +197,40 @@ case 'GET':
 					}
 				}
 			}
-			$results['Maps'] = $maps;
+			$reply_details['Maps'] = $maps;
 		}
 
-		BeaconAPI::ReplySuccess($results);
+		BeaconAPI::ReplySuccess($reply_details);
 	} else {
-		$ftp_path = isset($_REQUEST['path']) ? $_REQUEST['path'] : BeaconAPI::ReplyError('Missing path variable.', null, 400);
+		$ftp_path = isset($_REQUEST['path']) ? $_REQUEST['path'] : BeaconAPI::ReplyError('Missing path variable.', $reply_details, 400);
 		
 		if (substr($ftp_path, -1) == '/') {
 			$list = $ftp_provider->ListFiles($ftp_path);
 			if (is_array($list)) {
-				BeaconAPI::ReplySuccess(array('ref' => $ref, 'files' => $list));
+				$reply_details['files'] = $list;
+				BeaconAPI::ReplySuccess($reply_details);
 			} else {
-				BeaconAPI::ReplyError('Unable to list path.', array('ref' => $ref, 'path' => $ftp_path), 500);
+				BeaconAPI::ReplyError('Unable to list path.', $reply_details, 500);
 			}
 		} elseif (strtolower(substr($ftp_path, -4)) == '.ini') {
 			$content = $ftp_provider->Download($ftp_path);
 			if ($content === false) {
-				BeaconAPI::ReplyError('Unable to download file.', array('ref' => $ref, 'path' => $ftp_path), 500);
+				BeaconAPI::ReplyError('Unable to download file.', $reply_details, 500);
 			}
 			
-			BeaconAPI::ReplySuccess(array('ref' => $ref, 'content' => $content));
+			$reply_details['content'] = $content;
+			BeaconAPI::ReplySuccess($reply_details);
 		} else {
-			BeaconAPI::ReplyError('Requested file does not appear to be an ini file.', array('ref' => $ref, 'path' => $ftp_path), 500);
+			BeaconAPI::ReplyError('Requested file does not appear to be an ini file.', $reply_details, 500);
 		}
 		break;
 	}
 case 'POST':
 	if (BeaconAPI::ContentType() !== 'text/plain') {
-		BeaconAPI::ReplyError('Send plain text data.', array('ref' => $ref), 400);
+		BeaconAPI::ReplyError('Send plain text data.', $reply_details, 400);
 	}
 
-	$ftp_path = isset($_REQUEST['path']) ? $_REQUEST['path'] : BeaconAPI::ReplyError('Missing path variable.', null, 400);
+	$ftp_path = isset($_REQUEST['path']) ? $_REQUEST['path'] : BeaconAPI::ReplyError('Missing path variable.', $reply_details, 400);
 
 	$temp_path = sys_get_temp_dir() . '/' . BeaconCommon::GenerateUUID();
 	file_put_contents($temp_path, BeaconAPI::Body());
@@ -238,12 +243,12 @@ case 'POST':
 	if ($success) {
 		BeaconAPI::ReplySuccess(array('ref' => $ref));
 	} else {
-		BeaconAPI::ReplyError('Unable to upload file.', array('ref' => $ref, 'path' => $ftp_path), 500);
+		BeaconAPI::ReplyError('Unable to upload file.', $reply_details, 500);
 	}
 
 	break;
 default:
-	BeaconAPI::ReplyError('Method not allowed.', array('ref' => $ref), 405);
+	BeaconAPI::ReplyError('Method not allowed.', $reply_details, 405);
 	break;
 }
 

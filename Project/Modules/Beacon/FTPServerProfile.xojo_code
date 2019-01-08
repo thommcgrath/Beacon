@@ -34,6 +34,18 @@ Inherits Beacon.ServerProfile
 
 
 	#tag Method, Flags = &h0
+		Function AsFormData() As Xojo.Core.Dictionary
+		  Dim Fields As New Xojo.Core.Dictionary
+		  Fields.Value("host") = Self.Host
+		  Fields.Value("port") = Self.Port.ToText
+		  Fields.Value("user") = Self.Username
+		  Fields.Value("pass") = Self.Password
+		  Fields.Value("mode") = Self.Mode
+		  Return Fields
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  // Do not call Super.Constructor()
 		  Self.mMode = Self.ModeAuto

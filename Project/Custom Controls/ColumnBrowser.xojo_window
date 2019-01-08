@@ -160,6 +160,8 @@ End
 
 	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
 		  G.ForeColor = SystemColors.UnderPageBackgroundColor
 		  G.FillRect(0, 0, G.Width, G.Height)
 		End Sub
@@ -167,6 +169,8 @@ End
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
 		  Self.Scroller.PageStep = Self.Width
 		  Self.UpdateScrollbarMaximum()
 		End Sub

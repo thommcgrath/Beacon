@@ -79,12 +79,7 @@ Protected Class Request
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Path As Text, Method As Text, Payload As Xojo.Core.Dictionary, Callback As BeaconAPI.Request.ReplyCallback)
-		  Dim Parts() As Text
-		  For Each Entry As Xojo.Core.DictionaryEntry In Payload
-		    Parts.Append(Beacon.EncodeURLComponent(Entry.Key) + "=" + Beacon.EncodeURLComponent(Entry.Value))
-		  Next
-		  
-		  Self.Constructor(Path, Method, Parts.Join("&"), "application/x-www-form-urlencoded", Callback)
+		  Self.Constructor(Path, Method, Self.URLEncodeFormData(Payload), "application/x-www-form-urlencoded", Callback)
 		End Sub
 	#tag EndMethod
 
@@ -142,6 +137,16 @@ Protected Class Request
 	#tag Method, Flags = &h0
 		Function URL() As Text
 		  Return Self.mURL
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function URLEncodeFormData(FormData As Xojo.Core.Dictionary) As Text
+		  Dim Parts() As Text
+		  For Each Entry As Xojo.Core.DictionaryEntry In FormData
+		    Parts.Append(Beacon.EncodeURLComponent(Entry.Key) + "=" + Beacon.EncodeURLComponent(Entry.Value))
+		  Next
+		  Return Parts.Join("&")
 		End Function
 	#tag EndMethod
 

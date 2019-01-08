@@ -8,16 +8,12 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function BuildFTPParameters(File As Text = "") As Text
-		  Dim Parts(3) As Text
-		  Parts(0) = "user=" + Beacon.EncodeURLComponent(Self.mProfile.Username)
-		  Parts(1) = "pass=" + Beacon.EncodeURLComponent(Self.mProfile.Password)
-		  Parts(2) = "host=" + Beacon.EncodeURLComponent(Self.mProfile.Host)
-		  Parts(3) = "port=" + Beacon.EncodeURLComponent(Self.mProfile.Port.ToText)
+		Private Function BuildFTPParameters(File As Text = "") As Xojo.Core.Dictionary
+		  Dim Fields As Xojo.Core.Dictionary = Self.mProfile.AsFormData
 		  If File <> "" Then
-		    Parts.Append("path=" + Beacon.EncodeURLComponent(File))
+		    Fields.Value("path") = File
 		  End If
-		  Return Parts.Join("&")
+		  Return Fields
 		End Function
 	#tag EndMethod
 
@@ -139,8 +135,7 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub DiscoverServer()
-		  Dim URL As Text = "ftp.php/discover?" + Self.BuildFTPParameters(Self.mInitialPath)
-		  Dim DiscoveryRequest As New BeaconAPI.Request(URL, "GET", AddressOf Callback_DiscoverServer)
+		  Dim DiscoveryRequest As New BeaconAPI.Request("ftp/discover", "GET", Self.BuildFTPParameters(Self.mInitialPath), AddressOf Callback_DiscoverServer)
 		  DiscoveryRequest.Sign(Self.mIdentity)
 		  BeaconAPI.Send(DiscoveryRequest)
 		End Sub
@@ -148,7 +143,7 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub DownloadGameIni()
-		  Dim SettingsRequest As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameIniPath), "GET", AddressOf Callback_DownloadGameIni)
+		  Dim SettingsRequest As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameIniPath), AddressOf Callback_DownloadGameIni)
 		  SettingsRequest.Sign(Self.mIdentity)
 		  BeaconAPI.Send(SettingsRequest)
 		End Sub
@@ -156,7 +151,7 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub DownloadGameUserSettingsIni()
-		  Dim SettingsRequest As New BeaconAPI.Request("ftp.php?" + Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), "GET", AddressOf Callback_DownloadGameUserSettingsIni)
+		  Dim SettingsRequest As New BeaconAPI.Request("ftp", "GET", Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath), AddressOf Callback_DownloadGameUserSettingsIni)
 		  SettingsRequest.Sign(Self.mIdentity)
 		  BeaconAPI.Send(SettingsRequest)
 		End Sub

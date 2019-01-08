@@ -688,7 +688,7 @@ Begin ServerViewContainer FTPServerView
       TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Type:"
+      Text            =   "Mode:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"

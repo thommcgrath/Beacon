@@ -10,7 +10,7 @@ Begin DiscoveryView FTPDiscoveryView
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   352
+   Height          =   310
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -29,7 +29,7 @@ Begin DiscoveryView FTPDiscoveryView
    Begin PagePanel ViewPanel
       AutoDeactivate  =   True
       Enabled         =   True
-      Height          =   352
+      Height          =   310
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -72,7 +72,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabIndex        =   0
          TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "Type:"
+         Text            =   "Mode:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
@@ -128,7 +128,7 @@ Begin DiscoveryView FTPDiscoveryView
          InitialParent   =   "ViewPanel"
          Italic          =   False
          Left            =   20
-         LockBottom      =   True
+         LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
          LockRight       =   True
@@ -502,70 +502,6 @@ Begin DiscoveryView FTPDiscoveryView
          Visible         =   True
          Width           =   462
       End
-      Begin UITweaks.ResizedPushButton ServerCancelButton
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   True
-         Caption         =   "Cancel"
-         Default         =   False
-         Enabled         =   True
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   408
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   12
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   312
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
-      Begin UITweaks.ResizedPushButton ServerActionButton
-         AutoDeactivate  =   True
-         Bold            =   False
-         ButtonStyle     =   "0"
-         Cancel          =   False
-         Caption         =   "Next"
-         Default         =   True
-         Enabled         =   False
-         Height          =   20
-         HelpTag         =   ""
-         Index           =   -2147483648
-         InitialParent   =   "ViewPanel"
-         Italic          =   False
-         Left            =   500
-         LockBottom      =   False
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   False
-         LockTop         =   True
-         Scope           =   2
-         TabIndex        =   13
-         TabPanelIndex   =   1
-         TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   312
-         Transparent     =   False
-         Underline       =   False
-         Visible         =   True
-         Width           =   80
-      End
       Begin Label DiscoveringMessage
          AutoDeactivate  =   True
          Bold            =   False
@@ -685,7 +621,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   312
+         Top             =   270
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -717,7 +653,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   312
+         Top             =   270
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -775,7 +711,7 @@ Begin DiscoveryView FTPDiscoveryView
          TabIndex        =   4
          TabPanelIndex   =   3
          TabStop         =   True
-         Top             =   299
+         Top             =   257
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
@@ -789,7 +725,7 @@ Begin DiscoveryView FTPDiscoveryView
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
-         Height          =   246
+         Height          =   204
          HelpTag         =   ""
          Index           =   2
          InitialParent   =   "ViewPanel"
@@ -818,7 +754,7 @@ Begin DiscoveryView FTPDiscoveryView
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
-         Height          =   246
+         Height          =   204
          HelpTag         =   ""
          Index           =   3
          InitialParent   =   "ViewPanel"
@@ -850,7 +786,7 @@ Begin DiscoveryView FTPDiscoveryView
          Enabled         =   True
          EraseBackground =   True
          HasBackColor    =   False
-         Height          =   246
+         Height          =   204
          HelpTag         =   ""
          InitialParent   =   "ViewPanel"
          Left            =   21
@@ -886,10 +822,74 @@ Begin DiscoveryView FTPDiscoveryView
          TabIndex        =   9
          TabPanelIndex   =   3
          TabStop         =   True
-         Top             =   316
+         Top             =   274
          Transparent     =   False
          Visible         =   False
          Width           =   16
+      End
+      Begin UITweaks.ResizedPushButton ServerCancelButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   True
+         Caption         =   "Cancel"
+         Default         =   False
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   408
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   12
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   270
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
+      End
+      Begin UITweaks.ResizedPushButton ServerActionButton
+         AutoDeactivate  =   True
+         Bold            =   False
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Next"
+         Default         =   True
+         Enabled         =   False
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "ViewPanel"
+         Italic          =   False
+         Left            =   500
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   False
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   13
+         TabPanelIndex   =   1
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   270
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   80
       End
    End
    Begin BeaconAPI.Socket BrowseSocket
@@ -918,9 +918,23 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DetectPath(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		  #Pragma Unused RawReply
+		  
+		  Dim Info As Xojo.Introspection.TypeInfo
+		  Dim Dict As Xojo.Core.Dictionary
+		  If Details <> Nil Then
+		    Info = Xojo.Introspection.GetType(Details)
+		    If Info.FullName = "Xojo.Core.Dictionary" Then
+		      Dict = Details
+		    End If
+		  End If
+		  
+		  If Dict <> Nil And Dict.HasKey("ftp_mode") Then
+		    Self.mProfile.Mode = Dict.Value("ftp_mode")
+		  End If
+		  
 		  If Success Then
 		    // Discovery was able to find the path and the user doesn't need to do any further work.
-		    Dim Dict As Xojo.Core.Dictionary = Details
 		    Dim Path As Text = Dict.Value("path")
 		    
 		    Dim Engines(0) As Beacon.DiscoveryEngine
@@ -946,6 +960,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ListPath(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		  #Pragma Unused HTTPStatus
+		  #Pragma Unused RawReply
+		  
 		  If Not Success Then
 		    Self.ShowAlert("Unable to list contents of " + Self.Browser.CurrentPath, Message)
 		    Return
@@ -973,22 +990,7 @@ End
 		    Return Nil
 		  End If
 		  
-		  Dim Fields As New Xojo.Core.Dictionary
-		  Fields.Value("host") = Self.mProfile.Host
-		  Fields.Value("port") = Self.mProfile.Port.ToText
-		  Fields.Value("user") = Self.mProfile.Username
-		  Fields.Value("pass") = Self.mProfile.Password
-		  
-		  Select Case Self.mProfile.Mode
-		  Case Beacon.FTPServerProfile.ModeFTP
-		    Fields.Value("mode") = "ftp"
-		  Case Beacon.FTPServerProfile.ModeFTPTLS
-		    Fields.Value("mode") = "ftp+tls"
-		  Case Beacon.FTPServerProfile.ModeSFTP
-		    Fields.Value("mode") = "sftp"
-		  End Select
-		  
-		  Return Fields
+		  Return Self.mProfile.AsFormData()
 		End Function
 	#tag EndMethod
 
@@ -1043,42 +1045,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ServerCancelButton
-	#tag Event
-		Sub Action()
-		  Self.ShouldCancel()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events ServerActionButton
-	#tag Event
-		Sub Action()
-		  Self.mProfile = New Beacon.FTPServerProfile()
-		  Self.mProfile.Host = Self.ServerHostField.Text.ToText
-		  Self.mProfile.Port = Val(Self.ServerPortField.Text)
-		  Self.mProfile.Username = Self.ServerUserField.Text.ToText
-		  Self.mProfile.Password = Self.ServerPassField.Text.ToText
-		  
-		  Select Case Self.ServerModeMenu.ListIndex
-		  Case 1
-		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeFTP
-		  Case 2
-		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeFTPTLS
-		  Case 3
-		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeSFTP
-		  Else
-		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeAuto
-		  End Select
-		  
-		  Self.ViewPanel.Value = Self.PageDiscovering
-		  
-		  Dim Fields As Xojo.Core.Dictionary = Self.FormDataFromProfile()
-		  Dim Request As New BeaconAPI.Request("ftp/path", "GET", Fields, WeakAddressOf APICallback_DetectPath)
-		  Request.Sign(App.Identity)
-		  BeaconAPI.Send(Request)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events BrowseActionButton
 	#tag Event
 		Sub Action()
@@ -1128,6 +1094,42 @@ End
 	#tag Event
 		Sub PathSelected(Path As String)
 		  Self.BrowseActionButton.Enabled = Path.EndsWith("Game.ini")
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ServerCancelButton
+	#tag Event
+		Sub Action()
+		  Self.ShouldCancel()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ServerActionButton
+	#tag Event
+		Sub Action()
+		  Self.mProfile = New Beacon.FTPServerProfile()
+		  Self.mProfile.Host = Self.ServerHostField.Text.ToText
+		  Self.mProfile.Port = Val(Self.ServerPortField.Text)
+		  Self.mProfile.Username = Self.ServerUserField.Text.ToText
+		  Self.mProfile.Password = Self.ServerPassField.Text.ToText
+		  
+		  Select Case Self.ServerModeMenu.ListIndex
+		  Case 1
+		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeFTP
+		  Case 2
+		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeFTPTLS
+		  Case 3
+		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeSFTP
+		  Else
+		    Self.mProfile.Mode = Beacon.FTPServerProfile.ModeAuto
+		  End Select
+		  
+		  Self.ViewPanel.Value = Self.PageDiscovering
+		  
+		  Dim Fields As Xojo.Core.Dictionary = Self.FormDataFromProfile()
+		  Dim Request As New BeaconAPI.Request("ftp/path", "GET", Fields, WeakAddressOf APICallback_DetectPath)
+		  Request.Sign(App.Identity)
+		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
