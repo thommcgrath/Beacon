@@ -129,6 +129,27 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IntegerValue(Extends Value As Auto) As Integer
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		  Select Case Info.Name
+		  Case "Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"
+		    Return Value
+		  Case "Double", "Single"
+		    Dim DoubleValue As Double = Value
+		    Return Round(DoubleValue)
+		  Case "String"
+		    Dim StringValue As String = Value
+		    Return Val(StringValue)
+		  Case "Text"
+		    Dim TextValue As Text = Value
+		    Return Integer.FromText(TextValue)
+		  Else
+		    Return 0
+		  End Select
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Join(Extends Source() As String, Delimiter As String) As String
 		  Return Join(Source, Delimiter)
 		End Function

@@ -213,6 +213,12 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function OmniVersion() As Integer
+		  Return Self.mPurchasedOmniVersion
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.Identity) As Integer
 		  If Other = Nil Then
 		    Return 1
@@ -266,12 +272,6 @@ Protected Class Identity
 	#tag Method, Flags = &h0
 		Function PublicKey() As Xojo.Core.MemoryBlock
 		  Return Self.mPublicKey
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function PurchasedOmni() As Boolean
-		  Return Self.mPurchasedOmniVersion >= Beacon.OmniVersion
 		End Function
 	#tag EndMethod
 

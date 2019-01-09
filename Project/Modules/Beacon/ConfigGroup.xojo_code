@@ -4,7 +4,7 @@ Protected Class ConfigGroup
 		Function CommandLineOptions(SourceDocument As Beacon.Document, Identity As Beacon.Identity) As Beacon.ConfigValue()
 		  Dim Values() As Beacon.ConfigValue
 		  
-		  If Self.RequiresOmni = False Or (Identity <> Nil And Identity.PurchasedOmni) Then
+		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
 		    RaiseEvent CommandLineOptions(SourceDocument, Values)
 		  End If
 		  
@@ -46,7 +46,7 @@ Protected Class ConfigGroup
 		Function GameIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity) As Beacon.ConfigValue()
 		  Dim Values() As Beacon.ConfigValue
 		  
-		  If Self.RequiresOmni = False Or (Identity <> Nil And Identity.PurchasedOmni) Then
+		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
 		    RaiseEvent GameIniValues(SourceDocument, Values)
 		  End If
 		  
@@ -58,7 +58,7 @@ Protected Class ConfigGroup
 		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity) As Beacon.ConfigValue()
 		  Dim Values() As Beacon.ConfigValue
 		  
-		  If Self.RequiresOmni = False Or (Identity <> Nil And Identity.PurchasedOmni) Then
+		  If BeaconConfigs.ConfigPurchased(Self, Identity.OmniVersion) Then
 		    RaiseEvent GameUserSettingsIniValues(SourceDocument, Values)
 		  End If
 		  
@@ -92,12 +92,6 @@ Protected Class ConfigGroup
 		Sub Modified(Assigns Value As Boolean)
 		  Self.mModified = Value
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function RequiresOmni() As Boolean
-		  Return True
-		End Function
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0

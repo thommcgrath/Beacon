@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
+Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,  NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -46,7 +46,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
       TabPanelIndex   =   0
       Top             =   41
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   858
       Begin LogoFillCanvas LogoFillCanvas1
@@ -77,6 +77,34 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
+         Width           =   858
+      End
+      Begin Canvas OmniNoticeBanner
+         AcceptFocus     =   False
+         AcceptTabs      =   False
+         AutoDeactivate  =   True
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         Height          =   31
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "PagePanel1"
+         Left            =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Top             =   41
+         Transparent     =   True
+         UseFocusRing    =   True
+         Visible         =   False
          Width           =   858
       End
    End
@@ -232,6 +260,8 @@ End
 
 	#tag Event
 		Sub Close()
+		  NotificationKit.Ignore(Self, App.Notification_IdentityChanged)
+		  
 		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
 		    DocumentImportWindow(Self.mImportWindowRef.Value).Cancel
 		    Self.mImportWindowRef = Nil
@@ -272,6 +302,8 @@ End
 		      End If
 		    Next
 		  End If
+		  
+		  NotificationKit.Watch(Self, App.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
@@ -546,6 +578,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case App.Notification_IdentityChanged
+		    // Simply toggle the menu to force a redraw
+		    Dim ListIndex As Integer = Self.ConfigMenu.ListIndex
+		    Self.ConfigMenu.ListIndex = -1
+		    Self.ConfigMenu.ListIndex = ListIndex
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
 		  // Part of the ObservationKit.Observer interface.
 		  
@@ -704,6 +750,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDrawOmniBannerPressed As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private Shared mEditorRefs As Dictionary
 	#tag EndProperty
 
@@ -737,9 +787,68 @@ End
 	#tag Constant, Name = LocalMinWidth, Type = Double, Dynamic = False, Default = \"500", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = OmniWarningText, Type = String, Dynamic = False, Default = \"This config type requires Beacon Omni. Click this banner to learn more.", Scope = Private
+	#tag EndConstant
+
 
 #tag EndWindowCode
 
+#tag Events OmniNoticeBanner
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
+		  Dim BaseColor As Color = SystemColors.SystemYellowColor
+		  Dim BackgroundColor As Color = BaseColor.AtOpacity(0.2)
+		  Dim TextColor As Color = SystemColors.LabelColor
+		  Dim BorderColor As Color = SystemColors.SeparatorColor
+		  
+		  G.ForeColor = BackgroundColor
+		  G.FillRect(0, 0, G.Width, G.Height - 1)
+		  G.ForeColor = BorderColor
+		  G.DrawLine(0, G.Height - 1, G.Width, G.Height - 1)
+		  
+		  Dim TextWidth As Double = G.StringWidth(Self.OmniWarningText)
+		  Dim TextLeft As Double = (G.Width - TextWidth) / 2
+		  Dim TextBaseline As Double = (G.Height / 2) + (G.CapHeight / 2)
+		  G.ForeColor = TextColor
+		  G.DrawString(Self.OmniWarningText, TextLeft, TextBaseline, G.Width - 40, True)
+		  
+		  If Self.mDrawOmniBannerPressed Then
+		    G.ForeColor = &c00000080
+		    G.FillRect(0, 0, G.Width, G.Height - 1)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
+		  Self.mDrawOmniBannerPressed = True
+		  Self.OmniNoticeBanner.Invalidate
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub MouseDrag(X As Integer, Y As Integer)
+		  Dim ShouldBePressed As Boolean = X >= 0 And X < Me.Width And Y >= 0 And Y < Me.Height
+		  If Self.mDrawOmniBannerPressed <> ShouldBePressed Then
+		    Self.mDrawOmniBannerPressed = ShouldBePressed
+		    Self.OmniNoticeBanner.Invalidate
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MouseUp(X As Integer, Y As Integer)
+		  Self.mDrawOmniBannerPressed = False
+		  Self.OmniNoticeBanner.Invalidate
+		  If X >= 0 And X < Me.Width And Y >= 0 And Y < Me.Height Then
+		    ShowURL(Beacon.WebURL("/omni"))
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events BeaconToolbar1
 	#tag Event
 		Sub Open()
@@ -897,10 +1006,22 @@ End
 		  Self.CurrentPanel = NewPanel
 		  
 		  If Self.CurrentPanel <> Nil Then
+		    Dim RequiresPurchase As Boolean
+		    If Tag <> Nil And (Tag.Type = Variant.TypeString Or Tag.Type = Variant.TypeText) Then
+		      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Tag.TextValue, If(App.Identity <> Nil, App.Identity.OmniVersion, 0))
+		    End If
+		    Dim TopOffset As Integer
+		    If RequiresPurchase Then
+		      TopOffset = (Self.OmniNoticeBanner.Top + Self.OmniNoticeBanner.Height) - Self.PagePanel1.Top
+		    End If
 		    If Embed Then
 		      AddHandler Self.CurrentPanel.ContentsChanged, WeakAddressOf Panel_ContentsChanged
-		      Self.CurrentPanel.EmbedWithinPanel(Self.PagePanel1, 1, 0, 0, Self.PagePanel1.Width, Self.PagePanel1.Height)
+		      Self.CurrentPanel.EmbedWithinPanel(Self.PagePanel1, 1, 0, TopOffset, Self.PagePanel1.Width, Self.PagePanel1.Height - TopOffset)
+		    Else
+		      Self.CurrentPanel.Top = Self.PagePanel1.Top + TopOffset
+		      Self.CurrentPanel.Height = Self.PagePanel1.Height - TopOffset
 		    End If
+		    Self.OmniNoticeBanner.Visible = RequiresPurchase
 		    Self.CurrentPanel.Visible = True  
 		    Self.CurrentPanel.SwitchedTo()
 		    Self.CurrentPanel.AddObserver(Self, "MinimumWidth")

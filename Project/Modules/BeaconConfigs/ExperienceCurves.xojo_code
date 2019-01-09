@@ -1,5 +1,5 @@
 #tag Class
-Protected Class ExperienceCurves
+ Attributes ( OmniVersion = 1 ) Protected Class ExperienceCurves
 Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)

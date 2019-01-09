@@ -29,6 +29,33 @@ Protected Module BeaconConfigs
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function ConfigPurchased(Config As Beacon.ConfigGroup, PurchasedVersion As Integer) As Boolean
+		  Return ConfigPurchased(Config.ConfigName, PurchasedVersion)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ConfigPurchased(ConfigName As Text, PurchasedVersion As Integer) As Boolean
+		  Dim Info As Xojo.Introspection.TypeInfo = TypeInfoForConfigName(ConfigName)
+		  If Info = Nil Then
+		    Return True
+		  End If
+		  
+		  Dim ConfigAttributes() As Xojo.Introspection.AttributeInfo = Info.GetAttributes
+		  For Each ConfigAttribute As Xojo.Introspection.AttributeInfo In ConfigAttributes
+		    If ConfigAttribute.Name <> "OmniVersion" Then
+		      Continue
+		    End If
+		    
+		    Dim RequiredVersion As Integer = ConfigAttribute.Value.IntegerValue
+		    Return PurchasedVersion >= RequiredVersion
+		  Next
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function CreateInstance(GroupName As Text) As Beacon.ConfigGroup
 		  Dim Info As Xojo.Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(GroupName)
 		  If Info = Nil Or Info.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) = False Then

@@ -1,5 +1,5 @@
 #tag Class
-Protected Class CraftingCosts
+ Attributes ( OmniVersion = 1 ) Protected Class CraftingCosts
 Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
