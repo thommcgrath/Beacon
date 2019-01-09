@@ -74,6 +74,9 @@ case 'GET':
 				BeaconAPI::ReplyError('Unable to determine path to ShooterGame/Saved folder.', $reply_details, 404);
 			}
 		}
+		if (substr($ftp_path, -1) != '/') {
+			$ftp_path .= '/';
+		}
 		$reply_details['path'] = $ftp_path;
 		if ($object == 'path') {
 			BeaconAPI::ReplySuccess($reply_details);
