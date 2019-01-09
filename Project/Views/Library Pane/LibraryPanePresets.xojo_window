@@ -94,6 +94,7 @@ Begin LibrarySubview LibraryPanePresets Implements NotificationKit.Receiver
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   2
@@ -382,14 +383,25 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenPreset(File As FolderItem)
+		Sub OpenPreset(File As FolderItem, Import As Boolean)
 		  Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
 		  If Preset = Nil Then
 		    Self.ShowAlert("Unable to open preset file", "The file may be damaged or a newer format.")
 		    Return
 		  End If
 		  
-		  Self.OpenPreset(Preset)
+		  If Import Then
+		    LocalData.SharedInstance.SavePreset(Preset)
+		    Self.OpenPreset(Preset)
+		    Return
+		  End If
+		  
+		  Dim ViewID As Text = EncodeHex(Crypto.MD5(File.NativePath)).ToText
+		  Dim View As BeaconSubview = Self.View(ViewID)
+		  If View = Nil Then
+		    View = New PresetEditorView(Preset, File)
+		  End If
+		  Self.ShowView(View)
 		End Sub
 	#tag EndMethod
 

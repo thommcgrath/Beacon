@@ -143,54 +143,7 @@ Implements NotificationKit.Receiver
 
 	#tag Event
 		Sub OpenDocument(item As FolderItem)
-		  If Self.mIdentity = Nil Then
-		    Return
-		  End If
-		  
-		  Dim File As Beacon.FolderItem = Item
-		  
-		  If Not File.Exists Then
-		    Return
-		  End If
-		  
-		  If File.IsType(BeaconFileTypes.JsonFile) Then
-		    Try
-		      Dim Content As Text = File.Read(Xojo.Core.TextEncoding.UTF8)
-		      LocalData.SharedInstance.Import(Content)
-		    Catch Err As RuntimeException
-		      
-		    End Try
-		    Return
-		  End If
-		  
-		  If File.IsType(BeaconFileTypes.BeaconPreset) Then
-		    MainWindow.BringToFront()
-		    MainWindow.Presets.OpenPreset(File)
-		    Return
-		  End If
-		  
-		  If File.IsType(BeaconFileTypes.IniFile) Then
-		    MainWindow.BringToFront()
-		    MainWindow.Documents.ImportFile(File)
-		    Return
-		  End If
-		  
-		  If File.IsType(BeaconFileTypes.BeaconDocument) Then
-		    MainWindow.BringToFront()
-		    MainWindow.Documents.OpenFile(File)
-		    Return
-		  End If
-		  
-		  If File.IsType(BeaconFileTypes.BeaconIdentity) Then
-		    Call Self.ImportIdentityFile(File)
-		    Return
-		  End If
-		  
-		  Dim Dialog As New MessageDialog
-		  Dialog.Title = ""
-		  Dialog.Message = "Unable to open file"
-		  Dialog.Explanation = "Beacon doesn't know what to do with the file " + File.Name
-		  Call Dialog.ShowModal
+		  Self.OpenFile(Item, False)
 		End Sub
 	#tag EndEvent
 
@@ -210,7 +163,7 @@ Implements NotificationKit.Receiver
 			
 			Dim File As Beacon.FolderItem = Dialog.ShowModal
 			If File <> Nil Then
-			Self.OpenDocument(File)
+			Self.OpenFile(File, True)
 			End If
 			
 			Return True
@@ -505,7 +458,7 @@ Implements NotificationKit.Receiver
 		      // Given a file
 		      Dim File As FolderItem = GetFolderItem(Path, FolderItem.PathTypeNative)
 		      If File <> Nil And File.Exists Then
-		        Self.OpenDocument(File)
+		        Self.OpenFile(File, False)
 		      End If
 		    End If
 		  End If
@@ -920,6 +873,57 @@ Implements NotificationKit.Receiver
 		  Case Preferences.Notification_RecentsChanged
 		    Self.RebuildRecentMenu()
 		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub OpenFile(File As Beacon.FolderItem, Import As Boolean)
+		  If Self.mIdentity = Nil Then
+		    Return
+		  End If
+		  
+		  If Not File.Exists Then
+		    Return
+		  End If
+		  
+		  If File.IsType(BeaconFileTypes.JsonFile) Then
+		    Try
+		      Dim Content As Text = File.Read(Xojo.Core.TextEncoding.UTF8)
+		      LocalData.SharedInstance.Import(Content)
+		    Catch Err As RuntimeException
+		      
+		    End Try
+		    Return
+		  End If
+		  
+		  If File.IsType(BeaconFileTypes.BeaconPreset) Then
+		    MainWindow.BringToFront()
+		    MainWindow.Presets.OpenPreset(File, Import)
+		    Return
+		  End If
+		  
+		  If File.IsType(BeaconFileTypes.IniFile) Then
+		    MainWindow.BringToFront()
+		    MainWindow.Documents.ImportFile(File)
+		    Return
+		  End If
+		  
+		  If File.IsType(BeaconFileTypes.BeaconDocument) Then
+		    MainWindow.BringToFront()
+		    MainWindow.Documents.OpenFile(File)
+		    Return
+		  End If
+		  
+		  If File.IsType(BeaconFileTypes.BeaconIdentity) Then
+		    Call Self.ImportIdentityFile(File)
+		    Return
+		  End If
+		  
+		  Dim Dialog As New MessageDialog
+		  Dialog.Title = ""
+		  Dialog.Message = "Unable to open file"
+		  Dialog.Explanation = "Beacon doesn't know what to do with the file " + File.Name
+		  Call Dialog.ShowModal
 		End Sub
 	#tag EndMethod
 

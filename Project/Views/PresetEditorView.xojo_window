@@ -200,6 +200,7 @@ Begin BeaconSubview PresetEditorView
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   1
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -650,6 +651,7 @@ Begin BeaconSubview PresetEditorView
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   1
          ShowDropIndicator=   False
          TabIndex        =   3
@@ -848,8 +850,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Preset As Beacon.Preset)
+		Sub Constructor(Preset As Beacon.Preset, SourceFile As FolderItem = Nil)
 		  Self.mPreset = New Beacon.MutablePreset(Preset)
+		  Self.mSaveFile = SourceFile
 		End Sub
 	#tag EndMethod
 
@@ -1086,7 +1089,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateUI()
-		  Self.ToolbarCaption = Self.mPreset.Label
+		  If Self.mSaveFile <> Nil Then
+		    Self.Title = Self.mSaveFile.DisplayName
+		  Else
+		    Self.Title = Self.mPreset.Label
+		  End If
+		  Self.ToolbarCaption = Self.Title
 		  Self.mUpdating = True
 		  Self.ContentsChanged = False
 		  
@@ -1137,7 +1145,11 @@ End
 
 	#tag Method, Flags = &h0
 		Function ViewID() As Text
-		  Return Self.mPreset.PresetID
+		  If Self.mSaveFile <> Nil Then
+		    Return EncodeHex(Crypto.MD5(Self.mSaveFile.NativePath)).ToText
+		  Else
+		    Return Self.mPreset.PresetID
+		  End If
 		End Function
 	#tag EndMethod
 
