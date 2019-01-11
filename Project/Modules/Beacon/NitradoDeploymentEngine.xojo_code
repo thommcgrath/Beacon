@@ -833,7 +833,7 @@ Implements Beacon.DeploymentEngine
 	#tag Method, Flags = &h21
 		Private Sub WaitNitradoIdle()
 		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
-		  Dim SecondsToWait As Double = 180 - (Now.SecondsFrom1970 - Self.mServerStopTime.SecondsFrom1970)
+		  Dim SecondsToWait As Double = 120 - (Now.SecondsFrom1970 - Self.mServerStopTime.SecondsFrom1970)
 		  If SecondsToWait < 10 Then // Don't need to be THAT precise
 		    Self.RunNextTask()
 		    Return
