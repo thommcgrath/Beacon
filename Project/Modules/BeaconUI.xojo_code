@@ -78,6 +78,76 @@ Protected Module BeaconUI
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Capture(Extends Win As Window) As Picture
+		  #if TargetWin32
+		    Declare Sub BitBlt Lib "GDI32" (DestinationContext As Integer, X As Integer, Y As Integer, Width As Integer, Height As Integer, SourceContext As Integer, SrcX As Integer, SrcY As Integer, RasterOperationCode As Integer)
+		    Declare Function GetDC Lib "User32" (Handle As Integer ) As Integer
+		    Declare Function CreateCompatibleBitmap Lib "Gdi32" (Context As Integer, Width As Integer, Height As Integer) As Integer
+		    Declare Sub GetObjectA Lib "GDI32" (Bitmap As Integer, Size As Integer, Struct As Ptr)
+		    Declare Sub DeleteObject Lib "Gdi32" (Obj As Integer)
+		    Declare Function GetDeviceCaps Lib "GDI32" (hDC As Integer, Index As Integer) As Integer
+		    
+		    Const LOGPIXELSX = 88
+		    Const LOGPIXELSY = 90
+		    
+		    // We want to get the screen's DC first
+		    Dim Context As Integer = GetDC(Win.Handle)
+		    Dim HorizontalScale As Double = GetDeviceCaps(Context, LOGPIXELSX) / 96
+		    Dim VerticalScale As Double = GetDeviceCaps(Context, LOGPIXELSY) / 96
+		    
+		    Dim BitmapHandle As Integer
+		    Dim PicWidth As Integer = Win.Width * HorizontalScale
+		    Dim PicHeight As Integer = Win.Height * VerticalScale
+		    BitmapHandle = CreateCompatibleBitmap(Context, PicWidth, PicHeight)
+		    If BitmapHandle = 0 Then
+		      Return Nil
+		    End If
+		    
+		    Dim BitsPerPixel As Integer
+		    #if Target32Bit
+		      Dim BitmapInfo As New MemoryBlock(24)
+		      GetObjectA(BitmapHandle, 24, BitmapInfo)
+		      BitsPerPixel = BitmapInfo.UInt8Value(18)
+		    #else
+		      Dim BitmapInfo As New MemoryBlock(48)
+		      GetObjectA(BitmapHandle, 48, BitmapInfo)
+		      BitsPerPixel = BitmapInfo.UInt8Value(18)
+		    #endif
+		    
+		    DeleteObject(BitmapHandle)
+		    
+		    Dim WindowPic As New Picture(PicWidth, PicHeight, BitsPerPixel)
+		    WindowPic.HorizontalResolution = 72 * HorizontalScale
+		    WindowPic.VerticalResolution = 72 * VerticalScale
+		    
+		    Dim DestinationContext As Integer = WindowPic.Graphics.Handle(Graphics.HandleTypeHDC)
+		    Const CAPTUREBLT = &h40000000
+		    Const SRCCOPY = &hCC0020
+		    BitBlt(DestinationContext, 0, 0, PicWidth, PicHeight, Context, 0, 0, SRCCOPY + CAPTUREBLT )
+		    
+		    Dim Pics() As Picture
+		    For Scale As Double = 1.0 To 3.0
+		      If Scale = HorizontalScale And Scale = VerticalScale Then
+		        Pics.Append(WindowPic)
+		        Continue
+		      End If
+		      
+		      Dim Pic As New Picture(Win.Width * Scale, Win.Height * Scale)
+		      Pic.HorizontalResolution = 72 * Scale
+		      Pic.VerticalResolution = 72 * Scale
+		      Pic.Graphics.DrawPicture(WindowPic, 0, 0, Pic.Width, Pic.Height, 0, 0, WindowPic.Width, WindowPic.Height)
+		      Pics.Append(Pic)
+		    Next
+		    
+		    Return New Picture(Win.Width, Win.Height, Pics)
+		  #else
+		    #pragma Unused Win
+		    Return Nil
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ContrastAgainst(Extends LeftColor As Color, RightColor As Color) As Double
 		  Dim LeftLuminance As Double = LeftColor.Luminance
 		  Dim RightLuminance As Double = RightColor.Luminance

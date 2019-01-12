@@ -288,6 +288,14 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub Resizing()
+		  #if TargetWin32
+		    Self.LibraryPane1.Dismiss()
+		  #endif
+		End Sub
+	#tag EndEvent
+
 
 	#tag MenuHandler
 		Function FileClose() As Boolean Handles FileClose.Action
@@ -397,6 +405,10 @@ End
 		  #Pragma Unused Sender
 		  
 		  Self.OverlayCanvas.Visible = False
+		  #if TargetWin32
+		    Self.Views.Visible = True
+		    Self.TabBar1.Visible = True
+		  #endif
 		End Sub
 	#tag EndMethod
 
@@ -533,6 +545,10 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mOverlayPic As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSubviews(-1) As BeaconSubview
 	#tag EndProperty
 
@@ -611,6 +627,10 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
+		  If Self.mOverlayPic <> Nil Then
+		    G.DrawPicture(Self.mOverlayPic, 0, 0)
+		  End If
+		  
 		  G.ForeColor = SystemColors.ShadowColor.AtOpacity(Self.mOverlayFillOpacity)
 		  G.FillRect(0, 0, G.Width, G.Height)
 		End Sub
@@ -656,45 +676,30 @@ End
 		  Self.mLibraryPaneAnimation.DurationInSeconds = 0.12
 		  Self.mLibraryPaneAnimation.Run
 		  
-		  #if TargetMacOS
-		    If Self.mOverlayFillAnimation <> Nil Then
-		      Self.mOverlayFillAnimation.Cancel
-		      Self.mOverlayFillAnimation = Nil
-		    End If
-		    
-		    If Difference > 0 Then
-		      Self.OverlayCanvas.Visible = True
-		      Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.35)
-		    Else
-		      Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.0)
-		      AddHandler Self.mOverlayFillAnimation.Completed, WeakAddressOf mOverlayFillAnimation_Completed
-		    End If
-		    
-		    Self.mOverlayFillAnimation.Curve = Self.mLibraryPaneAnimation.Curve
-		    Self.mOverlayFillAnimation.DurationInSeconds = Self.mLibraryPaneAnimation.DurationInSeconds
-		    Self.mOverlayFillAnimation.Run
-		  #else
-		    If Self.mTabBarAnimation <> Nil Then
-		      Self.mTabBarAnimation.Cancel
-		      Self.mTabBarAnimation = Nil
-		    End If
-		    If Self.mViewsAnimation <> Nil Then
-		      Self.mViewsAnimation.Cancel
-		      Self.mViewsAnimation = Nil
-		    End If
-		    
-		    Self.mTabBarAnimation = New AnimationKit.MoveTask(Self.TabBar1)
-		    Self.mTabBarAnimation.Left = Self.mLibraryPaneAnimation.Left + Self.mLibraryPaneAnimation.Width
-		    Self.mTabBarAnimation.Curve = Self.mLibraryPaneAnimation.Curve
-		    Self.mTabBarAnimation.DurationInSeconds = Self.mLibraryPaneAnimation.DurationInSeconds
-		    Self.mTabBarAnimation.Run
-		    
-		    Self.mViewsAnimation = New AnimationKit.MoveTask(Self.Views)
-		    Self.mViewsAnimation.Left = Self.mTabBarAnimation.Left
-		    Self.mViewsAnimation.Curve = Self.mLibraryPaneAnimation.Curve
-		    Self.mViewsAnimation.DurationInSeconds = Self.mLibraryPaneAnimation.DurationInSeconds
-		    Self.mViewsAnimation.Run
-		  #endif
+		  If Self.mOverlayFillAnimation <> Nil Then
+		    Self.mOverlayFillAnimation.Cancel
+		    Self.mOverlayFillAnimation = Nil
+		  End If
+		  
+		  If Self.mOverlayFillOpacity = 0 Then
+		    Self.mOverlayPic = Self.Capture
+		  End If
+		  
+		  If Difference > 0 Then
+		    Self.OverlayCanvas.Visible = True
+		    #if TargetWin32
+		      Self.Views.Visible = False
+		      Self.TabBar1.Visible = False
+		    #endif
+		    Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.35)
+		  Else
+		    Self.mOverlayFillAnimation = New AnimationKit.ValueTask(Self, "overlay_opacity", Self.mOverlayFillOpacity, 0.0)
+		    AddHandler Self.mOverlayFillAnimation.Completed, WeakAddressOf mOverlayFillAnimation_Completed
+		  End If
+		  
+		  Self.mOverlayFillAnimation.Curve = Self.mLibraryPaneAnimation.Curve
+		  Self.mOverlayFillAnimation.DurationInSeconds = Self.mLibraryPaneAnimation.DurationInSeconds
+		  Self.mOverlayFillAnimation.Run
 		End Sub
 	#tag EndEvent
 #tag EndEvents
