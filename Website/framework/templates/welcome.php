@@ -25,5 +25,13 @@
 	</head>
 	<body>
 		<?php echo $buffer; ?>
+		<div id="overlay"></div>
+		<div id="dialog">
+			<div id="dialog_inner">
+				<p id="dialog_message">Message</p>
+				<p id="dialog_explanation">Explanation</p>
+				<p id="dialog_buttons"><button id="dialog_cancel_button">Cancel</button><button id="dialog_action_button" class="default">Ok</button></p>
+			</div>
+		</div>
 	</body>
 </html>
