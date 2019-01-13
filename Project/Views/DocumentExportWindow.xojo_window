@@ -292,7 +292,6 @@ Begin Window DocumentExportWindow
       Width           =   140
    End
    Begin Timer ClipboardWatcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -520,17 +519,23 @@ End
 		  
 		  Dim Option As String = Me.Cell(Me.ListIndex, 0)
 		  If Option = "Command Line Options" Then
-		    Self.ContentArea.Text = "?listen"
+		    Dim QuestionParameters As Text = "Map?listen"
 		    If Self.mCommandLineConfigs.HasKey("?") Then
 		      Dim Arr() As Text = Self.mCommandLineConfigs.Value("?")
-		      Self.ContentArea.Text = Self.ContentArea.Text + "?" + Arr.Join("?")
+		      QuestionParameters = QuestionParameters + "?" + Arr.Join("?")
 		    End If
+		    
+		    Dim Parameters(0) As Text
+		    Parameters(0) = """" + QuestionParameters + """"
 		    If Self.mCommandLineConfigs.HasKey("-") Then
 		      Dim Arr() As Text = Self.mCommandLineConfigs.Value("-")
 		      For Each Command As Text In Arr
-		        Self.ContentArea.Text = Self.ContentArea.Text + " -" + Command
+		        Parameters.Append("-" + Command)
 		      Next
 		    End If
+		    
+		    Self.ContentArea.Text = Parameters.Join(" ")
+		    
 		    Self.SaveButton.Enabled = False
 		    Self.RewriteFileButton.Enabled = False
 		    Self.CheckClipboard()
