@@ -242,17 +242,13 @@
 		color: $pressed-accent-text-color;
 	}
 	
-	$keyframe_selector_suffix: "" + red($accent-color) + green($accent-color) + blue($accent-color);
-	
-	@keyframes default_button_#{$keyframe_selector_suffix} {
-		50% { background-color: $accent-color; color: $accent-text-color; }
-	}
-	
 	input[type="submit"]:enabled, button.default:enabled {
-		animation: default_button_#{$keyframe_selector_suffix} 2s infinite;
+		background-color: $accent-color;
+		color: $accent-text-color;
 		
 		&:active {
-			animation: none;
+			background-color: $pressed-accent-color;
+			color: $pressed-accent-text-color;
 		}
 	}
 	
