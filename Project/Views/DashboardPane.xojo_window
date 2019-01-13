@@ -52,7 +52,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   244
+      Top             =   243
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -84,7 +84,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   244
+      Top             =   243
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -148,7 +148,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   276
+      Top             =   275
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -218,7 +218,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   298
+      Top             =   297
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -232,11 +232,11 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   31
+      Height          =   30
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   331
+      Left            =   281
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -251,7 +251,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   145
+      Width           =   247
    End
    Begin LinkLabel WebsiteLink
       AutoDeactivate  =   True
@@ -283,7 +283,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   330
+      Top             =   329
       Transparent     =   True
       Underline       =   True
       URL             =   ""
@@ -296,7 +296,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, LocalData.Notification_DatabaseUpdated)
+		  NotificationKit.Ignore(Self, LocalData.Notification_DatabaseUpdated, App.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
@@ -310,7 +310,7 @@ End
 		  Self.MinHeight = Self.mMainGroup.Height + Self.mCopyrightGroup.Height + 100
 		  Self.MinWidth = Max(Self.mMainGroup.Width, Self.mCopyrightGroup.Width) + 40
 		  
-		  NotificationKit.Watch(Self, LocalData.Notification_DatabaseUpdated)
+		  NotificationKit.Watch(Self, LocalData.Notification_DatabaseUpdated, App.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
@@ -373,6 +373,8 @@ End
 		    Else
 		      Self.SyncLabel.Text = "Engrams updated " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC"
 		    End If
+		  Case App.Notification_IdentityChanged
+		    Self.TitleCanvas.Invalidate
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -436,7 +438,13 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.DrawPicture(BeaconUI.IconWithColor(BeaconText,SystemColors.LabelColor), 0, 0)
+		  Dim TitleIcon As Picture
+		  If App.Identity <> Nil And App.Identity.OmniVersion > 0 Then
+		    TitleIcon = IconBeaconOmniText
+		  Else
+		    TitleIcon = IconBeaconText
+		  End If
+		  G.DrawPicture(BeaconUI.IconWithColor(TitleIcon, SystemColors.LabelColor), 0, 0)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
