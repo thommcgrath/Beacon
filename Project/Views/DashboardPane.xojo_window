@@ -177,7 +177,7 @@ Begin BeaconSubview DashboardPane Implements NotificationKit.Receiver
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "© 2016-2018 Thom McGrath, All Rights Reserved."
+      Text            =   "© 2016-2019 Thom McGrath, All Rights Reserved."
       TextAlign       =   1
       TextColor       =   &c00000000
       TextFont        =   "SmallSystem"
