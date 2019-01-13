@@ -46,7 +46,7 @@ Begin DiscoveryView FTPDiscoveryView
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   600
       Begin UITweaks.ResizedLabel ServerModeLabel
@@ -531,7 +531,7 @@ Begin DiscoveryView FTPDiscoveryView
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   150
+         Top             =   129
          Transparent     =   False
          Underline       =   False
          Visible         =   True
@@ -554,7 +554,7 @@ Begin DiscoveryView FTPDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
-         Top             =   182
+         Top             =   161
          Transparent     =   False
          Value           =   0
          Visible         =   True
@@ -904,7 +904,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Begin()
-		  Self.DesiredHeight = 352
+		  Self.DesiredHeight = 310
 		End Sub
 	#tag EndEvent
 
