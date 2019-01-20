@@ -36,8 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			clientReferenceId: <?php echo json_encode($client_reference_id); ?>
 		}).then(function (result) {
 			if (result.error) {
-				var displayError = document.getElementById('error-message');
-				displayError.textContent = result.error.message;
+				dialog.show('Unable to start Stripe checkout', result.error.message);
 			}
 		});
 	});
@@ -45,8 +44,70 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <?php
 BeaconTemplate::FinishScript();
+BeaconTemplate::StartStyles(); ?>
+<style type="text/css">
 
-echo $client_reference_id;
+table.generic .bullet-column {
+	width: 100px;
+}
 
-?><div id="error-message"></div>
-<button id="buy-button">Buy Omni</button>
+</style>
+<?php
+BeaconTemplate::FinishStyles();
+
+?>
+<h1>Do more with Beacon Omni</h1>
+<p>Beacon does a lot for free. Loot drops, server control, file sharing, and more. But when it's time to get into more advanced configuration like crafting costs and player experience.</p>
+<p>All users of Beacon can use all features, however Omni-only config types will not be included in generated Game.ini and GameUserSettings.ini files.</p>
+<p class="text-center"><button id="buy-button" class="default">Buy Omni</button></p>
+<table class="generic">
+	<thead>
+		<tr>
+			<th>Feature</th>
+			<th class="text-center bullet-column">Beacon</th>
+			<th class="text-center bullet-column">Omni</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Loot Drops<br><span class="smaller text-lighter">Beacon's original purpose, editing loot drops, it what it does best.</span></td>
+			<td class="text-center">&#10687;</td>
+			<td class="text-center">&#10687;</td>
+		</tr>
+		<tr>
+			<td>Nitrado Server Control<br><span class="smaller text-lighter">Nitrado server owners can allow Beacon to directly control their server, including proper restart timing, config editing, and server settings changes.</span></td>
+			<td class="text-center bullet-column">&#10687;</td>
+			<td class="text-center bullet-column">&#10687;</td>
+		</tr>
+		<tr>
+			<td>FTP Upload and Download<br><span class="smaller text-lighter">Beacon can use FTP edit your Game.ini and GameUserSettings.ini files right on the server.</span></td>
+			<td class="text-center bullet-column">&#10687;</td>
+			<td class="text-center bullet-column">&#10687;</td>
+		</tr>
+		<tr>
+			<td>Download Community Beacon Files<br><span class="smaller text-lighter">Download Beacon files created by other users to make getting started with custom loot easier.</span></td>
+			<td class="text-center bullet-column">&#10687;</td>
+			<td class="text-center bullet-column">&#10687;</td>
+		</tr>
+		<tr>
+			<td>Create Community Beacon Files<br><span class="smaller text-lighter">Share your creation with the world to serve as a starting point for others.</span></td>
+			<td class="text-center bullet-column">&#10687;</td>
+			<td class="text-center bullet-column">&#10687;</td>
+		</tr>
+		<tr>
+			<td>Crafting Costs<br><span class="smaller text-lighter">Change the cost of any craftable item in Ark.</span></td>
+			<td class="text-center bullet-column">&nbsp;</td>
+			<td class="text-center bullet-column">&#10687;</td>
+		</tr>
+		<tr>
+			<td>Player &amp; Tame Experience<br><span class="smaller text-lighter">Control max level and the experience curve for both players and tamed dinos.</span></td>
+			<td class="text-center bullet-column">&nbsp;</td>
+			<td class="text-center bullet-column">&#10687;</td>
+		</tr>
+		<tr>
+			<td>More config types on the way<br><span class="smaller text-lighter">Support for more config control such as spawn map, breeding timers, and detailed harvest rates are planned for Omni.</span></td>
+			<td class="text-center bullet-column">&nbsp;</td>
+			<td class="text-center bullet-column">&#10687;</td>
+		</tr>
+	</tbody>
+</table>
