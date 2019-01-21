@@ -122,6 +122,7 @@ Implements NotificationKit.Receiver
 		    // Not critically important
 		  End Try
 		  
+		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_CheckBetaExpiration)
 		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_PrivacyCheck)
 		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_SetupDatabase)
 		  Self.mLaunchQueue.Append(AddressOf LaunchQueue_ShowMainWindow)
@@ -658,6 +659,26 @@ Implements NotificationKit.Receiver
 	#tag DelegateDeclaration, Flags = &h21
 		Private Delegate Sub LaunchQueueTask()
 	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h21
+		Private Sub LaunchQueue_CheckBetaExpiration()
+		  If Self.StageCode >= 3 Then
+		    Self.NextLaunchQueueTask()
+		    Return
+		  End If
+		  
+		  Dim Limit As New Date(Self.BuildDate)
+		  Limit.Day = Limit.Day + 30
+		  Dim Now As New Date
+		  If Now > Limit Then
+		    BeaconUI.ShowAlert("This beta has expired.", "Please download a new version from " + Beacon.WebURL("/download/"))
+		    Quit
+		    Return
+		  End If
+		  
+		  Self.NextLaunchQueueTask()
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_CheckUpdates()
