@@ -200,7 +200,7 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToDate(Extends Source As Text, FallbackTimezone As Xojo.Core.TimeZone = Xojo.Core.TimeZone.Current) As Xojo.Core.Date
+		Function ToDate(Extends Source As Text, FallbackTimezone As Xojo.Core.TimeZone = Nil) As Xojo.Core.Date
 		  // YYYY-MM-DD HH:MM:SS+0000
 		  
 		  If Source.Length < 19 Then
@@ -226,8 +226,10 @@ Protected Module FrameworkExtensions
 		      OffsetSeconds = OffsetSeconds * -1
 		    End If
 		    Zone = New Xojo.Core.TimeZone(OffsetSeconds)
-		  Else
+		  ElseIf FallbackTimezone <> Nil Then
 		    Zone = FallbackTimezone
+		  Else
+		    Zone = Xojo.Core.TimeZone.Current
 		  End If
 		  
 		  Return New Xojo.Core.Date(Year, Month, Day, Hour, Minute, Second, 0, Zone)

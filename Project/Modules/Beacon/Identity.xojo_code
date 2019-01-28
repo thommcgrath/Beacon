@@ -307,7 +307,7 @@ Protected Class Identity
 		      Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
 		      If Now.SecondsFrom1970 < Expires.SecondsFrom1970 Then
 		        // Not Expired
-		        Fields(3) = Self.mExpirationText
+		        Fields.Append(Self.mExpirationText)
 		      End If
 		    End If
 		    
