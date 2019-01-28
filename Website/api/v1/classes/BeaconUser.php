@@ -1,6 +1,8 @@
 <?php
 
 class BeaconUser implements JsonSerializable {
+	const OmniFree = true;
+	
 	protected $user_id = '';
 	protected $username = null;
 	protected $email_id = null;
@@ -10,6 +12,7 @@ class BeaconUser implements JsonSerializable {
 	protected $private_key_iterations = null;
 	protected $signatures = array();
 	protected $purchased_omni_version = 0;
+	protected $expiration = '';
 	
 	public function __construct($source = null) {
 		if ($source instanceof BeaconRecordSet) {
@@ -21,18 +24,22 @@ class BeaconUser implements JsonSerializable {
 			$this->private_key_salt = $source->Field('private_key_salt');
 			$this->private_key_iterations = intval($source->Field('private_key_iterations'));
 			
-			$database = BeaconCommon::Database();
-			$purchases = $database->Query('SELECT * FROM purchased_products WHERE purchaser_email = $1;', $this->email_id);
-			while (!$purchases->EOF()) {
-				$omni_version = 0;
-				$product_id = $purchases->Field('product_id');
-				switch ($product_id) {
-				case '972f9fc5-ad64-4f9c-940d-47062e705cc5':
-					$omni_version = 1;
-					break;
+			if (self::OmniFree) {
+				$this->purchased_omni_version = 1;
+			} else {
+				$database = BeaconCommon::Database();
+				$purchases = $database->Query('SELECT * FROM purchased_products WHERE purchaser_email = $1;', $this->email_id);
+				while (!$purchases->EOF()) {
+					$omni_version = 0;
+					$product_id = $purchases->Field('product_id');
+					switch ($product_id) {
+					case '972f9fc5-ad64-4f9c-940d-47062e705cc5':
+						$omni_version = 1;
+						break;
+					}
+					$this->purchased_omni_version = max($this->purchased_omni_version, $omni_version);
+					$purchases->MoveNext();
 				}
-				$this->purchased_omni_version = max($this->purchased_omni_version, $omni_version);
-				$purchases->MoveNext();
 			}
 		} elseif (is_null($source)) {
 			$this->user_id = BeaconCommon::GenerateUUID();
@@ -84,7 +91,7 @@ class BeaconUser implements JsonSerializable {
 	}
 	
 	public function jsonSerialize() {
-		return array(
+		$arr = array(
 			'user_id' => $this->user_id,
 			'login_key' => $this->username,
 			'username' => $this->username,
@@ -95,11 +102,19 @@ class BeaconUser implements JsonSerializable {
 			'signatures' => $this->signatures,
 			'omni_version' => $this->purchased_omni_version
 		);
+		if (!empty($this->expiration)) {
+			'expiration' => $this->expiration;
+		}
+		return $arr;
 	}
 	
 	public function PrepareSignatures(string $hardware_id) {
 		// version 1
 		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->purchased_omni_version));
+		if (self::OmniFree) {
+			$this->expiration = date('Y-m-d H:i:sO', time() + 2592000);
+			$fields[] = $this->expiration;
+		}
 		$signature = '';
 		if (openssl_sign(implode(' ', $fields), $signature, BeaconCommon::GetGlobal('Beacon_Private_Key'))) {
 			$this->signatures['1'] = bin2hex($signature);

@@ -61,6 +61,12 @@ Protected Class Identity
 		  End Try
 		  
 		  Try
+		    Self.mExpirationText = Dict.Lookup("expiration", "")
+		  Catch Err As RuntimeException
+		    Self.mExpirationText = ""
+		  End Try
+		  
+		  Try
 		    If Dict.HasKey("signatures") Then
 		      Dim SignaturesDict As Xojo.Core.Dictionary = Dict.Value("signatures")
 		      Self.mSignature = Beacon.DecodeHex(SignaturesDict.Lookup(Self.SignatureVersion.ToText, ""))
@@ -103,6 +109,9 @@ Protected Class Identity
 		  Dict.Value("LoginKey") = Self.mLoginKey
 		  If Self.mSignature <> Nil And Self.mSignature.Size > 0 Then
 		    Dict.Value("Signature") = Beacon.EncodeHex(Self.mSignature)
+		  End If
+		  If Self.mExpirationText <> "" Then
+		    Dict.Value("Expiration") = Self.mExpirationText
 		  End If
 		  Return Dict
 		End Function
@@ -188,6 +197,10 @@ Protected Class Identity
 		  
 		  If Source.HasKey("LoginKey") Then
 		    Identity.mLoginKey = Source.Value("LoginKey")
+		  End If
+		  
+		  If Source.HasKey("Expiration") Then
+		    Identity.mExpirationText = Source.Value("Expiration")
 		  End If
 		  
 		  Identity.Validate()
@@ -289,6 +302,15 @@ Protected Class Identity
 		    Fields(1) = Self.mIdentifier.Lowercase
 		    Fields(2) = Self.mPurchasedOmniVersion.ToText(Xojo.Core.Locale.Raw)
 		    
+		    If Self.mExpirationText <> "" Then
+		      Dim Expires As Xojo.Core.Date = Self.mExpirationText.ToDate(New Xojo.Core.TimeZone(0))
+		      Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
+		      If Now.SecondsFrom1970 < Expires.SecondsFrom1970 Then
+		        // Not Expired
+		        Fields(3) = Self.mExpirationText
+		      End If
+		    End If
+		    
 		    Dim PublicKey As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(BeaconAPI.PublicKey)
 		    Dim CheckData As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Fields.Join(" "))
 		    If Xojo.Crypto.RSAVerifySignature(CheckData, Self.mSignature, PublicKey) Then
@@ -324,6 +346,10 @@ Protected Class Identity
 		End Function
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mExpirationText As Text
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mIdentifier As Text
