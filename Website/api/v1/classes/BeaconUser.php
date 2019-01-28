@@ -103,7 +103,7 @@ class BeaconUser implements JsonSerializable {
 			'omni_version' => $this->purchased_omni_version
 		);
 		if (!empty($this->expiration)) {
-			'expiration' => $this->expiration;
+			$arr['expiration'] = $this->expiration;
 		}
 		return $arr;
 	}
