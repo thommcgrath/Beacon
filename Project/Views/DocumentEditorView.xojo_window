@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,  NotificationKit.Receiver
+Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,NotificationKit.Receiver
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -44,6 +44,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,  Noti
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   1
@@ -203,6 +204,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,  Noti
       Width           =   300
    End
    Begin Timer AutosaveTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -260,7 +262,7 @@ End
 
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, App.Notification_IdentityChanged)
+		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged)
 		  
 		  If Self.mImportWindowRef <> Nil And Self.mImportWindowRef.Value <> Nil Then
 		    DocumentImportWindow(Self.mImportWindowRef.Value).Cancel
@@ -303,7 +305,7 @@ End
 		    Next
 		  End If
 		  
-		  NotificationKit.Watch(Self, App.Notification_IdentityChanged)
+		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
@@ -582,7 +584,7 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case App.Notification_IdentityChanged
+		  Case IdentityManager.Notification_IdentityChanged
 		    // Simply toggle the menu to force a redraw
 		    Dim ListIndex As Integer = Self.ConfigMenu.ListIndex
 		    Self.ConfigMenu.ListIndex = -1

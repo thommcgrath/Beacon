@@ -103,7 +103,7 @@ End
 		  If Not Preferences.OnlineEnabled Then
 		    Links.Append("Enable Cloud && Community" : "beacon://enableonline")
 		  Else
-		    If App.Identity.LoginKey = "" Then
+		    If App.Identity = Nil Or App.Identity.LoginKey = "" Then
 		      Links.Append("Sign In" : "beacon://signin")
 		    Else
 		      Links.Append(App.Identity.LoginKey : "")
@@ -219,6 +219,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

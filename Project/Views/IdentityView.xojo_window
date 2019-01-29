@@ -289,6 +289,7 @@ Begin BeaconSubview IdentityView Implements NotificationKit.Receiver
       Width           =   80
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -407,7 +408,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, App.Notification_IdentityChanged)
+		  NotificationKit.Ignore(Self, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
@@ -415,7 +416,7 @@ End
 		Sub Open()
 		  Self.ToolbarCaption = "Identity"
 		  Self.UpdateUI(App.Identity)
-		  NotificationKit.Watch(Self, App.Notification_IdentityChanged)
+		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
@@ -425,7 +426,7 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case App.Notification_IdentityChanged
+		  Case IdentityManager.Notification_IdentityChanged
 		    Dim Identity As Beacon.Identity = Notification.UserData
 		    Self.UpdateUI(Identity)
 		  End Select

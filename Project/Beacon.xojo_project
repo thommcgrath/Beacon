@@ -50,6 +50,7 @@ Folder=Data Model;Data Model;&h000000007CAFFFFF;&h0000000000000000;false
 MultiImage=IconApp;Icons/IconApp.xojo_image;&h000000001078D7FF;&h0000000007F977FF;false
 Class=Identity;Modules/Beacon/Identity.xojo_code;&h0000000077887FFF;&h0000000055ADDFFF;false
 Folder=Classes;Classes;&h00000000056D5FFF;&h0000000000000000;false
+Class=IdentityManager;Classes/IdentityManager.xojo_code;&h0000000031972FFF;&h00000000056D5FFF;false
 Class=UpdateChecker;Classes/UpdateChecker.xojo_code;&h0000000067D057FF;&h00000000056D5FFF;false
 Window=UpdateWindow;Views/UpdateWindow.xojo_window;&h000000006BB3EFFF;&h0000000008A387FF;false
 Module=PopupMenuExtensions;Modules/PopupMenuExtensions.xojo_code;&h000000005718BFFF;&h000000001444B7FF;false

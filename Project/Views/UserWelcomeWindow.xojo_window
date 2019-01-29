@@ -82,161 +82,48 @@ End
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Sub APICallback_CreateSession(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Message
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Success Then
-		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Details
-		      Dim Token As Text = Dict.Value("session_id")
-		      Preferences.OnlineToken = Token
-		      Preferences.OnlineEnabled = True
-		      Self.Close()
-		    Catch Err As RuntimeException
-		      If Self.ShowConfirm("Something went wrong while saving your authentication token.", "Would you like to try again?", "Try Again", "Cancel") Then
-		        Self.ObtainToken()
-		      Else
-		        Self.Close()
-		      End If
-		    End Try
-		  Else
-		    If Self.ShowConfirm("Beacon was unable to authenticate with the cloud.", "Would you like to try again?", "Try Again", "Cancel") Then
-		      Self.ObtainToken()
-		    Else
-		      Self.Close()
-		    End If
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_GetCurrentUser(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Success Then
-		    Dim Dict As Xojo.Core.Dictionary = Details
-		    Dim Identity As Beacon.Identity = Beacon.Identity.FromUserDictionary(Dict, Self.mUserPassword.ToText)
-		    If Identity <> Nil Then
-		      Preferences.OnlineToken = Self.mUserToken.ToText
-		      Preferences.OnlineEnabled = True
-		      
-		      If App.Identity <> Nil And App.Identity.Identifier <> Identity.Identifier And Identity.LoginKey <> "" Then
-		        // merge old identity
-		        Dim OldIdentity As Beacon.Identity = App.Identity
-		        App.Identity = Identity
-		        
-		        Dim SignedValue As Text = Beacon.CreateUUID
-		        Dim Signature As Text = Beacon.EncodeHex(OldIdentity.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(SignedValue)))
-		        
-		        Dim MergeKeys As New Xojo.Core.Dictionary
-		        MergeKeys.Value("user_id") = OldIdentity.Identifier
-		        MergeKeys.Value("login_key") = Identity.LoginKey
-		        MergeKeys.Value("signed_value") = SignedValue
-		        MergeKeys.Value("signature") = Signature
-		        
-		        Dim Request As New BeaconAPI.Request("user.php", "POST", Xojo.Data.GenerateJSON(MergeKeys), "application/json", AddressOf APICallback_MergeUser)
-		        Request.Authenticate(Preferences.OnlineToken)
-		        BeaconAPI.Send(Request)
-		      Else
-		        App.Identity = Identity
-		        Self.Close
-		      End If
-		      Return
-		    End If
-		  End If
-		  
-		  Self.ShowAlert("Beacon was unable to download your user details.", Message)
-		  App.Identity = New Beacon.Identity
-		  Self.Close()
-		  Return
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_MergeUser(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Success
-		  #Pragma Unused Message
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  Self.Close()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_UserSave(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  Try
-		    If Success = False And Details IsA Xojo.Core.Dictionary Then
-		      Dim Dict As Xojo.Core.Dictionary = Details
-		      Dim PublicKey As Text = Dict.Value("public_key")
-		      Dim UserID As Text = Dict.Value("user_id")
-		      
-		      #Pragma Warning "What did this code do?"
-		      #if false
-		        If App.Identity.Identifier = UserID And App.Identity.PublicKey = PublicKey Then
-		          Success = True
-		        End If
-		      #endif
-		    End If
-		  Catch Err As RuntimeException
-		    
-		  End Try
-		  
-		  If Success Then
-		    Self.ObtainToken()
-		  Else
-		    Self.ShowAlert("Beacon was unable to create a user with the cloud. For now, online features are disabled.", Message)
-		    Self.Close()
-		  End If
+	#tag Method, Flags = &h0
+		Sub Constructor(LoginOnly As Boolean = False)
+		  Self.mLoginOnly = LoginOnly
+		  AddHandler App.IdentityManager.Finished, WeakAddressOf IdentityManager_Finished
+		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(LoginOnly As Boolean = False)
-		  Self.mLoginOnly = LoginOnly
-		  Super.Constructor
-		  
+		Sub Destructor()
+		  RemoveHandler App.IdentityManager.Finished, WeakAddressOf IdentityManager_Finished
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub HandleAnonymous()
-		  If App.Identity = Nil Then
-		    App.Identity = New Beacon.Identity
-		  End If
-		  
-		  Dim Params As New Xojo.Core.Dictionary
-		  Params.Value("user_id") = App.Identity.Identifier
-		  Params.Value("public_key") = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(App.Identity.PublicKey)
-		  
-		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
-		  Dim Request As New BeaconAPI.Request("user.php", "POST", Body, "application/json", AddressOf APICallback_UserSave)
-		  BeaconAPI.Send(Request)
+		  Preferences.OnlineEnabled = True
+		  Preferences.OnlineToken = ""
+		  App.IdentityManager.Create()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub HandleDisableOnline()
-		  If App.Identity = Nil Then
-		    App.Identity = New Beacon.Identity
-		  End If
-		  Self.Close()
+		  Preferences.OnlineEnabled = False
+		  Preferences.OnlineToken = ""
+		  App.IdentityManager.Create()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub ObtainToken()
-		  Dim Request As New BeaconAPI.Request("session.php", "POST", New Xojo.Core.Dictionary, AddressOf APICallback_CreateSession)
-		  Request.Sign(App.Identity)
-		  BeaconAPI.Send(Request)
+		Private Sub IdentityManager_Finished(Sender As IdentityManager)
+		  If Sender.CurrentIdentity = Nil Then
+		    // Error
+		    Dim Message As Text = Sender.LastError
+		    If Message = "" Then
+		      Message = "Please try again. If the problem persists help, see " + Beacon.WebURL("/help") + " for more help options."
+		    End If
+		    Self.ShowAlert("There was an error setting up your user.", Message)
+		  Else
+		    Self.Close()
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -247,14 +134,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mLoginOnly As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUserPassword As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mUserToken As String
 	#tag EndProperty
 
 
@@ -306,15 +185,13 @@ End
 		    Else
 		    End Select
 		  Case "set_user_token"
-		    Self.mUserToken = Params.Lookup("token", "")
-		    Self.mUserPassword = Params.Lookup("password", "")
+		    Dim StringToken As String = Params.Lookup("token", "")
+		    Dim StringPassword As String = Params.Lookup("password", "")
 		    
-		    Dim Fields As New Xojo.Core.Dictionary
-		    Fields.Value("hardware_id") = Beacon.HardwareID
+		    Preferences.OnlineEnabled = True
+		    Preferences.OnlineToken = StringToken.ToText
 		    
-		    Dim Request As New BeaconAPI.Request("user.php", "GET", Fields, AddressOf APICallback_GetCurrentUser)
-		    Request.Authenticate(Self.mUserToken.ToText)
-		    BeaconAPI.Send(Request)
+		    App.IdentityManager.RefreshUserDetails(StringPassword.ToText)
 		  Case "dismiss_me"
 		    Self.Close()
 		  Else
@@ -327,10 +204,7 @@ End
 	#tag Event
 		Sub Error(errorNumber as Integer, errorMessage as String)
 		  App.Log("UserWelcomeWindow.ContentView.Error " + Str(ErrorNumber) + ": " + ErrorMessage)
-		  If App.Identity = Nil Then
-		    App.Identity = New Beacon.Identity
-		  End If
-		  Self.Close()
+		  App.IdentityManager.Create()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -296,7 +296,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, LocalData.Notification_DatabaseUpdated, App.Notification_IdentityChanged)
+		  NotificationKit.Ignore(Self, LocalData.Notification_DatabaseUpdated, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
@@ -310,7 +310,7 @@ End
 		  Self.MinHeight = Self.mMainGroup.Height + Self.mCopyrightGroup.Height + 100
 		  Self.MinWidth = Max(Self.mMainGroup.Width, Self.mCopyrightGroup.Width) + 40
 		  
-		  NotificationKit.Watch(Self, LocalData.Notification_DatabaseUpdated, App.Notification_IdentityChanged)
+		  NotificationKit.Watch(Self, LocalData.Notification_DatabaseUpdated, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
 
@@ -373,7 +373,7 @@ End
 		    Else
 		      Self.SyncLabel.Text = "Engrams updated " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC"
 		    End If
-		  Case App.Notification_IdentityChanged
+		  Case IdentityManager.Notification_IdentityChanged
 		    Self.TitleCanvas.Invalidate
 		  End Select
 		End Sub

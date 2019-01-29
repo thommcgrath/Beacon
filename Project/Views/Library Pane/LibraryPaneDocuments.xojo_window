@@ -186,7 +186,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineStateChanged, App.Notification_IdentityChanged, Preferences.Notification_RecentsChanged)
+		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineStateChanged, IdentityManager.Notification_IdentityChanged, Preferences.Notification_RecentsChanged)
 		End Sub
 	#tag EndEvent
 
@@ -194,7 +194,7 @@ End
 		Sub Open()
 		  Self.ToolbarCaption = "Documents"
 		  
-		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged, App.Notification_IdentityChanged, Preferences.Notification_RecentsChanged)
+		  NotificationKit.Watch(Self, Preferences.Notification_OnlineStateChanged, IdentityManager.Notification_IdentityChanged, Preferences.Notification_RecentsChanged)
 		  Self.SwitcherVisible = Preferences.OnlineEnabled
 		  
 		  Dim AutosaveFolder As FolderItem = App.AutosaveFolder()
@@ -437,7 +437,7 @@ End
 		  Select Case Notification.Name
 		  Case "Beacon.Document.TitleChanged", Preferences.Notification_RecentsChanged
 		    Self.UpdateDocumentsList()
-		  Case App.Notification_IdentityChanged
+		  Case IdentityManager.Notification_IdentityChanged
 		    If Self.View = Self.ViewCloudDocuments Then
 		      Self.UpdateCloudDocuments()
 		    End If

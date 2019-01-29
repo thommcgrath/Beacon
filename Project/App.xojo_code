@@ -106,15 +106,7 @@ Implements NotificationKit.Receiver
 		  NotificationKit.Watch(Self, BeaconAPI.Socket.Notification_Unauthorized, Preferences.Notification_RecentsChanged)
 		  
 		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
-		  If IdentityFile.Exists Then
-		    Dim Stream As TextInputStream = TextInputStream.Open(IdentityFile)
-		    Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
-		    Stream.Close
-		    
-		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents.ToText)
-		    Dim Identity As Beacon.Identity = Beacon.Identity.Import(Dict)
-		    Self.mIdentity = Identity
-		  End If
+		  Self.mIdentityManager = New IdentityManager(IdentityFile)
 		  
 		  Try
 		    Self.TemporarilyInstallFont(Self.ResourcesFolder.Child("Fonts").Child("SourceCodePro").Child("SourceCodePro-Regular.otf"))
@@ -272,58 +264,6 @@ Implements NotificationKit.Receiver
 	#tag EndMenuHandler
 
 
-	#tag Method, Flags = &h21
-		Private Sub APICallback_CreateSession(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Message
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Not Success Then
-		    Return
-		  End If
-		  
-		  Try
-		    Dim Dict As Xojo.Core.Dictionary = Details
-		    Dim Token As Text = Dict.Value("session_id")
-		    Preferences.OnlineToken = Token
-		    
-		    Dim Fields As New Xojo.Core.Dictionary
-		    Fields.Value("hardware_id") = Beacon.HardwareID
-		    
-		    Dim Request As New BeaconAPI.Request("user.php", "GET", Fields, AddressOf APICallback_GetCurrentUser)
-		    Request.Authenticate(Token)
-		    BeaconAPI.Send(Request)
-		  Catch Err As RuntimeException
-		    
-		  End Try
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_GetCurrentUser(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Message
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Success Then
-		    Try
-		      Dim Identity As Beacon.Identity = Self.Identity.Clone
-		      If Identity.ConsumeUserDictionary(Details) Then
-		        Identity.Validate()
-		        Self.Identity = Identity
-		      End If
-		    Catch Err As RuntimeException
-		      
-		    End Try
-		  ElseIf HTTPStatus = 401 Then
-		    // Need to get a new token
-		    Dim Request As New BeaconAPI.Request("session.php", "POST", AddressOf APICallback_CreateSession)
-		    Request.Sign(Self.Identity)
-		    BeaconAPI.Send(Request)
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
 		  Dim AppSupport As FolderItem = SpecialFolder.ApplicationData
@@ -411,7 +351,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function GetOnlinePermission() As Boolean
-		  If Self.mIdentity <> Nil And Preferences.OnlineEnabled Then
+		  If Self.mIdentityManager.CurrentIdentity <> Nil And Preferences.OnlineEnabled Then
 		    Return True
 		  End If
 		  
@@ -592,38 +532,21 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Identity() As Beacon.Identity
-		  Return Self.mIdentity
+		Attributes( Deprecated = "App.IdentityManager.CurrentIdentity" )  Function Identity() As Beacon.Identity
+		  Return Self.mIdentityManager.CurrentIdentity
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Identity(Assigns Value As Beacon.Identity)
-		  If Self.mIdentity = Value Then
-		    Return
-		  End If
-		  
-		  Dim OldUserID As Text = If(Self.mIdentity <> Nil, Self.mIdentity.Identifier, "")
-		  Dim NewUserID As Text = If(Value <> Nil, Value.Identifier, "")
-		  Dim ReplaceToken As Boolean = OldUserID <> NewUserID
-		  
-		  Self.mIdentity = Value
-		  Self.WriteIdentity()
-		  NotificationKit.Post(Notification_IdentityChanged, Value)
-		  
-		  If ReplaceToken Then
-		    Preferences.OnlineToken = ""
-		    
-		    If Not Preferences.OnlineEnabled Then
-		      Return
-		    End If
-		    
-		    // Request a new session token
-		    Dim Request As New BeaconAPI.Request("session.php", "POST", AddressOf APICallback_CreateSession)
-		    Request.Sign(Self.Identity)
-		    BeaconAPI.Send(Request)
-		  End If
+		Attributes( Deprecated = "App.IdentityManager.CurrentIdentity" )  Sub Identity(Assigns Value As Beacon.Identity)
+		  Self.mIdentityManager.CurrentIdentity = Value
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IdentityManager() As IdentityManager
+		  Return Self.mIdentityManager
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -731,7 +654,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_PrivacyCheck()
-		  If Self.mIdentity = Nil Then
+		  If Self.mIdentityManager.CurrentIdentity = Nil Then
 		    Dim WelcomeWindow As New UserWelcomeWindow
 		    WelcomeWindow.ShowModal()
 		  Else
@@ -742,21 +665,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_RequestUser()
-		  If Preferences.OnlineEnabled Then
-		    If Preferences.OnlineToken <> "" Then
-		      Dim Fields As New Xojo.Core.Dictionary
-		      Fields.Value("hardware_id") = Beacon.HardwareID
-		      
-		      Dim Request As New BeaconAPI.Request("user.php", "GET", Fields, AddressOf APICallback_GetCurrentUser)
-		      Request.Authenticate(Preferences.OnlineToken)
-		      BeaconAPI.Send(Request)
-		    Else
-		      Dim Request As New BeaconAPI.Request("session.php", "POST", AddressOf APICallback_CreateSession)
-		      Request.Sign(Self.Identity)
-		      BeaconAPI.Send(Request)
-		    End If
-		  End If
-		  
+		  Self.mIdentityManager.RefreshUserDetails()
 		  Self.NextLaunchQueueTask()
 		End Sub
 	#tag EndMethod
@@ -912,7 +821,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub OpenFile(File As Beacon.FolderItem, Import As Boolean)
-		  If Self.mIdentity = Nil Then
+		  If Self.mIdentityManager = Nil Or Self.mIdentityManager.CurrentIdentity = Nil Then
 		    Return
 		  End If
 		  
@@ -1096,18 +1005,6 @@ Implements NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub WriteIdentity()
-		  Dim IdentityFile As FolderItem = Self.ApplicationSupport.Child("Default" + BeaconFileTypes.BeaconIdentity.PrimaryExtension)
-		  If Self.mIdentity <> Nil Then
-		    Dim Writer As New Beacon.JSONWriter(Self.mIdentity.Export, IdentityFile)
-		    Writer.Run
-		  Else
-		    IdentityFile.Delete
-		  End If
-		End Sub
-	#tag EndMethod
-
 
 	#tag Property, Flags = &h0
 		LaunchOnQuit As FolderItem
@@ -1122,7 +1019,7 @@ Implements NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mIdentity As Beacon.Identity
+		Private mIdentityManager As IdentityManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1161,9 +1058,6 @@ Implements NotificationKit.Receiver
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_AppearanceChanged, Type = Text, Dynamic = False, Default = \"Appearance Changed", Scope = Public
-	#tag EndConstant
-
-	#tag Constant, Name = Notification_IdentityChanged, Type = Text, Dynamic = False, Default = \"Identity Changed", Scope = Public
 	#tag EndConstant
 
 
