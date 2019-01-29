@@ -1463,6 +1463,12 @@ End
 		  Dim Mask As UInt64 = Self.mDocument.MapCompatibility
 		  Dim ConsoleSafe As Boolean = Self.mDocument.ConsoleModsOnly
 		  
+		  #if DebugBuild
+		    #Pragma Warning "Does not duplicate non-preset item sets"
+		  #else
+		    #Pragma Warning "Does not duplicate non-preset item sets"
+		  #endif
+		  
 		  For Each Destination As Beacon.MutableLootSource In Self.mDestinations
 		    For I As Integer = 0 To Self.CustomizePresetsList.ListCount - 1
 		      Dim Preset As Beacon.Preset = Self.CustomizePresetsList.RowTag(I)

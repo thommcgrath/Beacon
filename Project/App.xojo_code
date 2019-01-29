@@ -307,8 +307,9 @@ Implements NotificationKit.Receiver
 		  
 		  If Success Then
 		    Try
-		      Dim Identity As Beacon.Identity = Self.Identity
+		      Dim Identity As Beacon.Identity = Self.Identity.Clone
 		      If Identity.ConsumeUserDictionary(Details) Then
+		        Identity.Validate()
 		        Self.Identity = Identity
 		      End If
 		    Catch Err As RuntimeException
@@ -602,20 +603,26 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
+		  Dim OldUserID As Text = If(Self.mIdentity <> Nil, Self.mIdentity.Identifier, "")
+		  Dim NewUserID As Text = If(Value <> Nil, Value.Identifier, "")
+		  Dim ReplaceToken As Boolean = OldUserID <> NewUserID
+		  
 		  Self.mIdentity = Value
 		  Self.WriteIdentity()
 		  NotificationKit.Post(Notification_IdentityChanged, Value)
 		  
-		  Preferences.OnlineToken = ""
-		  
-		  If Not Preferences.OnlineEnabled Then
-		    Return
+		  If ReplaceToken Then
+		    Preferences.OnlineToken = ""
+		    
+		    If Not Preferences.OnlineEnabled Then
+		      Return
+		    End If
+		    
+		    // Request a new session token
+		    Dim Request As New BeaconAPI.Request("session.php", "POST", AddressOf APICallback_CreateSession)
+		    Request.Sign(Self.Identity)
+		    BeaconAPI.Send(Request)
 		  End If
-		  
-		  // Request a new session token
-		  Dim Request As New BeaconAPI.Request("session.php", "POST", AddressOf APICallback_CreateSession)
-		  Request.Sign(Self.Identity)
-		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndMethod
 
@@ -735,13 +742,19 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub LaunchQueue_RequestUser()
-		  If Preferences.OnlineEnabled And Preferences.OnlineToken <> "" Then
-		    Dim Fields As New Xojo.Core.Dictionary
-		    Fields.Value("hardware_id") = Beacon.HardwareID
-		    
-		    Dim Request As New BeaconAPI.Request("user.php", "GET", Fields, AddressOf APICallback_GetCurrentUser)
-		    Request.Authenticate(Preferences.OnlineToken)
-		    BeaconAPI.Send(Request)
+		  If Preferences.OnlineEnabled Then
+		    If Preferences.OnlineToken <> "" Then
+		      Dim Fields As New Xojo.Core.Dictionary
+		      Fields.Value("hardware_id") = Beacon.HardwareID
+		      
+		      Dim Request As New BeaconAPI.Request("user.php", "GET", Fields, AddressOf APICallback_GetCurrentUser)
+		      Request.Authenticate(Preferences.OnlineToken)
+		      BeaconAPI.Send(Request)
+		    Else
+		      Dim Request As New BeaconAPI.Request("session.php", "POST", AddressOf APICallback_CreateSession)
+		      Request.Sign(Self.Identity)
+		      BeaconAPI.Send(Request)
+		    End If
 		  End If
 		  
 		  Self.NextLaunchQueueTask()

@@ -1,5 +1,12 @@
 #tag Class
 Protected Class Identity
+	#tag Method, Flags = &h0
+		Function Clone() As Beacon.Identity
+		  Dim Exported As Xojo.Core.Dictionary = Self.Export()
+		  Return Self.Import(Exported)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Shared Function Compare(Left As Xojo.Core.MemoryBlock, Right As Xojo.Core.MemoryBlock) As Integer
 		  // I guess if both are non-nil, we'll sort by hex?
@@ -252,6 +259,29 @@ Protected Class Identity
 		  If Self.mPurchasedOmniVersion > Other.mPurchasedOmniVersion Then
 		    Return 1
 		  ElseIf Self.mPurchasedOmniVersion < Other.mPurchasedOmniVersion Then
+		    Return -1
+		  End If
+		  
+		  // Compare expirations
+		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
+		  Dim Zone As New Xojo.Core.TimeZone(0)
+		  Dim Period As New Xojo.Core.DateInterval(30)
+		  Dim SelfExpiration As Xojo.Core.Date
+		  If Self.mExpirationText <> "" Then
+		    SelfExpiration = Self.mExpirationText.ToDate(Zone)
+		  Else
+		    SelfExpiration = Now + Period
+		  End If
+		  Dim OtherExpiration As Xojo.Core.Date
+		  If Other.mExpirationText <> "" Then
+		    OtherExpiration = Other.mExpirationText.ToDate(Zone)
+		  Else
+		    OtherExpiration = Now + Period
+		  End If
+		  If SelfExpiration.SecondsFrom1970 = OtherExpiration.SecondsFrom1970 Then
+		  ElseIf SelfExpiration.SecondsFrom1970 > OtherExpiration.SecondsFrom1970 Then
+		    Return 1
+		  Else
 		    Return -1
 		  End If
 		  
