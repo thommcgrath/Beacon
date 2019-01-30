@@ -528,7 +528,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ShowURL(URL As Text) As Beacon.WebView
-		  #if TargetMacOS
+		  // This code is disabled because Nitrado login is currently working in embedded webkit in 10.10
+		  #if false and TargetMacOS
 		    Declare Function NSClassFromString Lib "Cocoa" (ClassName As CFStringRef) As Ptr
 		    Declare Function GetProcessInfo Lib "Cocoa" Selector "processInfo" (Target As Ptr) As Ptr
 		    Declare Function OperatingSystemVersion Lib "AppKit" Selector "operatingSystemVersion" (Target As Ptr) As MacVersionInfo
