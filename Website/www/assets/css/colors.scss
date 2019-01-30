@@ -198,7 +198,7 @@
 		border-color: $separator-color;
 	}
 	
-	.text-lighter {
+	.text-lighter, .user-suffix {
 		color: mix($foreground-color, $background-color, 50%);
 	}
 	

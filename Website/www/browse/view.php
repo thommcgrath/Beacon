@@ -33,10 +33,14 @@ BeaconTemplate::SetTitle($document->Name());
 BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('generator.scss'));
 BeaconTemplate::AddScript(BeaconCommon::AssetURI('generator.js'));
 
-?><h1><?php echo htmlentities($document->Name()); ?></h1>
+$author_id = $document->UserID();
+$author = BeaconUser::GetByUserID($author_id);
+$author_name = $author->IsAnonymous() ? 'Anonymous' : $author->Username();
+
+?><h1><?php echo htmlentities($document->Name()); ?><br><span class="subtitle">By <?php echo htmlentities($author_name); ?><span class="user-suffix">#<?php echo htmlentities($author->Suffix()); ?></span></span></h1>
 <h3>Description</h3>
 <div class="indent">
-	<p><?php echo htmlentities($document->Description()); ?></p>
+	<p><?php echo nl2br(htmlentities($document->Description())); ?></p>
 </div>
 <h3>Requirements</h3>
 <div class="indent">

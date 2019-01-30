@@ -43,10 +43,6 @@ BeaconTemplate::StartStyles(); ?>
 	}
 }
 
-.user-suffix {
-	font-weight: 300;
-}	
-
 </style><?php
 BeaconTemplate::FinishStyles();
 
@@ -84,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 </script><?php
 BeaconTemplate::FinishScript();
 
-?><h1><?php echo htmlentities($user->LoginKey()); ?><span class="text-lighter user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span><br><span class="subtitle"><a href="/account/auth.php?return=<?php echo urlencode('/'); ?>" title="Sign Out">Sign Out</a></span></h1>
+?><h1><?php echo htmlentities($user->LoginKey()); ?><span class="user-suffix">#<?php echo htmlentities($user->Suffix()); ?></span><br><span class="subtitle"><a href="/account/auth.php?return=<?php echo urlencode('/'); ?>" title="Sign Out">Sign Out</a></span></h1>
 <ul id="account_toolbar_menu" class="separator-color">
 	<li id="account_toolbar_menu_documents" class="active"><a href="#documents" id="toolbar_documents_button">Documents</a></li>
 	<li id="account_toolbar_menu_omni"><a href="#omni" id="toolbar_omni_button">Omni</a></li>
