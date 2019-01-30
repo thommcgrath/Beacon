@@ -99,8 +99,9 @@
 	$accent-text-color: contrasting-color($accent-color, $background-color);
 	$pressed-accent-color: darken($accent-color, 20%);
 	$pressed-accent-text-color: darken($accent-text-color, 20%);
-	$explore-color: darken($background-color, 10%);
 	$separator-color: mix($foreground-color, $background-color, 15%);
+	$explore-color: $background-color;
+	$explore-border-color: $separator-color;
 	
 	body {
 		color: $foreground-color;
@@ -312,7 +313,7 @@
 	}
 	
 	#menu_explore_link.expanded {
-		background-color: darken($background-color, 10%);
+		background-color: $explore-border-color;
 		color: $foreground-color;
 	}
 	
@@ -325,7 +326,7 @@
 	
 	#explore_popover {
 		background-color: $explore-color;
-		border-color: rgba(0, 0, 0, 0);
+		border-color: $explore-border-color;
 		
 		ul {
 			li {
