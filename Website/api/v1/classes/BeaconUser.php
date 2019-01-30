@@ -112,7 +112,8 @@ class BeaconUser implements JsonSerializable {
 		// version 1
 		$fields = array($hardware_id, strtolower($this->UserID()), strval($this->purchased_omni_version));
 		if (self::OmniFree) {
-			$this->expiration = date('Y-m-d H:i:sO', time() + 2592000);
+			$expires = (floor(time() / 604800) * 604800) + 2592000;
+			$this->expiration = date('Y-m-d H:i:sO', $expires);
 			$fields[] = $this->expiration;
 		}
 		$signature = '';
