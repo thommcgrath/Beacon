@@ -116,6 +116,9 @@ Implements ObservationKit.Observer
 		  G.TextSize = 10
 		  G.TextUnit = FontUnits.Point
 		  
+		  Dim PrecisionX As Double = 1 / G.ScaleX
+		  Dim PrecisionY As Double = 1 / G.ScaleY
+		  
 		  Dim CellPadding, CellSpacing As Double
 		  If Self.IsVertical Then
 		    CellSpacing = Min((G.Width - Self.IconSize) / 4, 6)
@@ -189,13 +192,13 @@ Implements ObservationKit.Observer
 		    
 		    If Self.mSelectedIndex = I Then
 		      G.ForeColor = SystemColors.SelectedContentBackgroundColor
-		      G.FillRoundRect(CellRect.Left, CellRect.Top, CellRect.Width, CellRect.Height, CellCornerRadius, CellCornerRadius)
+		      G.FillRoundRect(NearestMultiple(CellRect.Left, PrecisionX), NearestMultiple(CellRect.Top, PrecisionY), NearestMultiple(CellRect.Width, PrecisionX), NearestMultiple(CellRect.Height, PrecisionY), CellCornerRadius, CellCornerRadius)
 		      IconColor = SystemColors.AlternateSelectedControlTextColor
 		    End If
 		    
 		    Dim IconRect As New BeaconUI.Rect(CellRect.Left + ((CellRect.Width - Self.IconSize) / 2), CellRect.Top + CellSpacing, Self.IconSize, Self.IconSize)
 		    Dim Icon As Picture = BeaconUI.IconWithColor(Self.mItems(I).Icon, IconColor)
-		    G.DrawPicture(Icon, IconRect.Left, IconRect.Top, IconRect.Width, IconRect.Height, 0, 0, Icon.Width, Icon.Height)
+		    G.DrawPicture(Icon, NearestMultiple(IconRect.Left, PrecisionX), NearestMultiple(IconRect.Top, PrecisionY), NearestMultiple(IconRect.Width, PrecisionX), NearestMultiple(IconRect.Height, PrecisionY), 0, 0, Icon.Width, Icon.Height)
 		    
 		    If Self.mItems(I).NotificationColor <> ShelfItem.NotificationColors.None Then
 		      Dim PulseColor As Color
@@ -228,11 +231,11 @@ Implements ObservationKit.Observer
 		      Dim DotRect As New BeaconUI.Rect(IconRect.Right - Self.NotificationDotSize, IconRect.Top, Self.NotificationDotSize, Self.NotificationDotSize)
 		      
 		      G.ForeColor = PulseColor
-		      G.FillOval(DotRect.Left, DotRect.Top, DotRect.Width, DotRect.Height)
+		      G.FillOval(NearestMultiple(DotRect.Left, PrecisionX), NearestMultiple(DotRect.Top, PrecisionY), NearestMultiple(DotRect.Width, PrecisionX), NearestMultiple(DotRect.Height, PrecisionY))
 		      If PulseAmount > 0 Then
 		        Dim PulseSize As Double = Self.NotificationDotSize + ((Self.NotificationDotSize * 2) * PulseAmount)
 		        G.ForeColor = PulseColor.AtOpacity(1.0 - PulseAmount)
-		        G.DrawOval(DotRect.Left - ((PulseSize - Self.NotificationDotSize) / 2), DotRect.Top - ((PulseSize - Self.NotificationDotSize) / 2), PulseSize, PulseSize)
+		        G.DrawOval(NearestMultiple(DotRect.Left - ((PulseSize - Self.NotificationDotSize) / 2), PrecisionX), NearestMultiple(DotRect.Top - ((PulseSize - Self.NotificationDotSize) / 2), PrecisionY), NearestMultiple(PulseSize, PrecisionX), NearestMultiple(PulseSize, PrecisionY))
 		      End If
 		    End If
 		    
@@ -244,12 +247,12 @@ Implements ObservationKit.Observer
 		      Dim CaptionX As Double = CellRect.Left + ((CellRect.Width - CaptionWidth) / 2)
 		      
 		      G.ForeColor = IconColor
-		      G.DrawString(Caption, CaptionX, CaptionY, CaptionWidth, True)
+		      G.DrawString(Caption, NearestMultiple(CaptionX, PrecisionX), NearestMultiple(CaptionY, PrecisionY), NearestMultiple(CellRect.Width, PrecisionX), True)
 		    End If
 		    
 		    If Self.mPressed And Self.mMouseDownItem = I Then
 		      G.ForeColor = &c000000CC
-		      G.FillRoundRect(CellRect.Left, CellRect.Top, CellRect.Width, CellRect.Height, CellCornerRadius, CellCornerRadius)
+		      G.FillRoundRect(NearestMultiple(CellRect.Left, PrecisionX), NearestMultiple(CellRect.Top, PrecisionY), NearestMultiple(CellRect.Width, PrecisionX), NearestMultiple(CellRect.Height, PrecisionY), CellCornerRadius, CellCornerRadius)
 		    End If
 		    
 		    NextPos = NextPos + If(Self.IsVertical, CellHeight, CellWidth) + CellSpacing

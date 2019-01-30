@@ -802,13 +802,16 @@ End
 		    Return
 		  End If
 		  
+		  Dim PrecisionX As Double = 1 / G.ScaleX
+		  Dim PrecisionY As Double = 1 / G.ScaleY
+		  
 		  If Column = 0 Then
 		    Dim Source As Beacon.LootSource = Me.RowTag(Row)
 		    Dim Icon As Picture = LocalData.SharedInstance.IconForLootSource(Source, BackgroundColor)
 		    Dim SpaceWidth As Integer = Me.Column(Column).WidthActual
 		    Dim SpaceHeight As Integer = Me.DefaultRowHeight
 		    
-		    G.DrawPicture(Icon, (SpaceWidth - Icon.Width) / 2, (SpaceHeight - Icon.Height) / 2)
+		    G.DrawPicture(Icon, NearestMultiple((SpaceWidth - Icon.Width) / 2, PrecisionX), NearestMultiple((SpaceHeight - Icon.Height) / 2, PrecisionY))
 		  End If
 		End Sub
 	#tag EndEvent

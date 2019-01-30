@@ -190,6 +190,27 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NearestMultiple(Original As Double, Factor As Double) As Double
+		  Dim Whole As Integer = Floor(Original)
+		  If Whole = Original Then
+		    Return Original
+		  End If
+		  
+		  Dim Decimal As Double = Original - Whole
+		  Dim Multiplier As Double = 1 / Factor
+		  Decimal = Round(Decimal * Multiplier) / Multiplier
+		  
+		  Return Whole + Decimal
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function NearestMultiple(Extends Original As Double, Factor As Double) As Double
+		  Return NearestMultiple(Original, Factor)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SubString(Extends Source As String, Start As Integer, Length As Integer = -1) As String
 		  If Length = -1 Then
 		    Return Mid(Source, Start - 1)

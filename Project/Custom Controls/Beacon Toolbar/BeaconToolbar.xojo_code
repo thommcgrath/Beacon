@@ -213,6 +213,9 @@ Implements ObservationKit.Observer
 		Private Sub DrawButton(G As Graphics, Button As BeaconToolbarItem, Rect As REALbasic.Rect, Mode As ButtonModes, Highlighted As Boolean)
 		  #Pragma Unused Highlighted
 		  
+		  Dim PrecisionX As Double = 1 / G.ScaleX
+		  Dim PrecisionY As Double = 1 / G.ScaleY
+		  
 		  If Button.Icon <> Nil Then
 		    Dim UseAccent As Boolean = True
 		    Dim AccentColor As Color
@@ -251,7 +254,7 @@ Implements ObservationKit.Observer
 		    
 		    If Button.Toggled Then
 		      G.ForeColor = If(UseAccent, AccentColor, SystemColors.SelectedContentBackgroundColor)
-		      G.FillRoundRect(Rect.Left, Rect.Top, Rect.Width, Rect.Height, 4, 4)
+		      G.FillRoundRect(NearestMultiple(Rect.Left, PrecisionX), NearestMultiple(Rect.Top, PrecisionY), NearestMultiple(Rect.Width, PrecisionX), NearestMultiple(Rect.Height, PrecisionY), 4, 4)
 		    End If
 		    
 		    Dim Overlay As Picture
@@ -259,12 +262,12 @@ Implements ObservationKit.Observer
 		      Overlay = IconToolbarDropdown
 		    End If
 		    Dim Icon As Picture = BeaconUI.IconWithColor(Button.Icon, IconColor, Overlay)
-		    G.DrawPicture(Icon, Rect.Left + ((Rect.Width - Icon.Width) / 2), Rect.Top + ((Rect.Height - Icon.Height) / 2))
+		    G.DrawPicture(Icon, NearestMultiple(Rect.Left + ((Rect.Width - Icon.Width) / 2), PrecisionX), NearestMultiple(Rect.Top + ((Rect.Height - Icon.Height) / 2), PrecisionY))
 		  End If
 		  
 		  If Mode = ButtonModes.Pressed Then
 		    G.ForeColor = &c00000080
-		    G.FillRoundRect(Rect.Left, Rect.Top, Rect.Width, Rect.Height, 4, 4)
+		    G.FillRoundRect(NearestMultiple(Rect.Left, PrecisionX), NearestMultiple(Rect.Top, PrecisionY), NearestMultiple(Rect.Width, PrecisionX), NearestMultiple(Rect.Height, PrecisionY), 4, 4)
 		  End If
 		End Sub
 	#tag EndMethod
