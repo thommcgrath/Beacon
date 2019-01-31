@@ -107,8 +107,8 @@ function SaveUser(array $values, string &$message) {
 	
 	if (array_key_exists('login_key', $values)) {
 		// wants to save a named user
-		if (BeaconUser::ValidateLoginKey($values['login_key']) == false) {
-			$message = 'Login key is malformed.';
+		if (BeaconUser::ValidateEmail($values['login_key']) == false) {
+			$message = 'E-Mail address does not appear to be an e-mail address.';
 			return null;
 		}
 		$user_by_email = BeaconUser::GetByEmail($values['login_key']);

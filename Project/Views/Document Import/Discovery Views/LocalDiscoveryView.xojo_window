@@ -94,7 +94,7 @@ Begin DiscoveryView LocalDiscoveryView
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
-      Styled          =   True
+      Styled          =   False
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
