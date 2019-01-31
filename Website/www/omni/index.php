@@ -60,7 +60,7 @@ BeaconTemplate::FinishStyles();
 <p>Beacon does a lot for free. Loot drops, server control, file sharing, and more. But when it's time to get into more advanced configuration like crafting costs and player experience.</p>
 <p>All users of Beacon can use all features, however Omni-only config types will not be included in generated Game.ini and GameUserSettings.ini files.</p>
 <?php if (BeaconUser::OmniFree) { ?>
-<p class="text-center"><strong>Beacon Omni is currently in beta testing. While testing, Omni features are available to all users. Instructions for activating Omni are available in <a href="/account/#omni">your account control panel</a>. Free beta Omni licenses will expire in the future.</strong></p>
+<p class="text-center inset-note"><strong>Beacon Omni is currently in beta testing. While testing, Omni features are available to all users. Instructions for activating Omni are available in <a href="/account/#omni">your account control panel</a>. Free beta Omni licenses will expire in the future.</strong></p>
 <?php } else { ?>
 <p class="text-center"><button id="buy-button" class="default">Buy Omni</button></p>
 <?php } ?>
