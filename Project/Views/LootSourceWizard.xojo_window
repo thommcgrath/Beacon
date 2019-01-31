@@ -1466,11 +1466,14 @@ End
 		  Dim Mask As UInt64 = Self.mDocument.MapCompatibility
 		  Dim ConsoleSafe As Boolean = Self.mDocument.ConsoleModsOnly
 		  
-		  #if DebugBuild
-		    #Pragma Warning "Does not duplicate non-preset item sets"
-		  #else
-		    #Pragma Warning "Does not duplicate non-preset item sets"
-		  #endif
+		  Dim CustomSets() As Beacon.ItemSet
+		  If Self.mDuplicateSource Then
+		    For Each Set As Beacon.ItemSet In Self.mSource
+		      If Set.SourcePresetID = "" Then
+		        CustomSets.Append(Set)
+		      End If
+		    Next
+		  End If
 		  
 		  For Each Destination As Beacon.MutableLootSource In Self.mDestinations
 		    For I As Integer = 0 To Self.CustomizePresetsList.ListCount - 1
@@ -1499,6 +1502,10 @@ End
 		          End If
 		        Next
 		      End If
+		    Next
+		    
+		    For Each Set As Beacon.ItemSet In CustomSets
+		      Destination.Append(New Beacon.ItemSet(Set))
 		    Next
 		    
 		    Destination.MinItemSets = MinItemSets
