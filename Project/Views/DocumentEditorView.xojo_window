@@ -983,6 +983,8 @@ End
 		        NewPanel = New CustomContentConfigEditor(Self.mController)
 		      Case BeaconConfigs.CraftingCosts.ConfigName
 		        NewPanel = New CraftingCostsConfigEditor(Self.mController)
+		      Case BeaconConfigs.StackSizes.ConfigName
+		        NewPanel = New StackSizesConfigEditor(Self.mController)
 		      End Select
 		      If NewPanel <> Nil Then
 		        Self.Panels.Value(Tag.StringValue) = NewPanel
