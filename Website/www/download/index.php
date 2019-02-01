@@ -12,7 +12,7 @@ $win_url = $results->Field('win_url');
 $version = $results->Field('build_display');
 $build   = intval($results->Field('build_number'));
 
-$results = $database->Query("SELECT MAX(last_update) FROM objects WHERE min_version <= $1;", array($build));
+$results = $database->Query("SELECT MAX(objects.last_update) FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE;", array($build));
 $prerelease = $database->Query("SELECT mac_url, win_url, build_display, build_number, stage FROM updates WHERE stage < 3 AND build_number > $1 ORDER BY build_number DESC LIMIT 1;", $build);
 $last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
 
@@ -53,7 +53,7 @@ if (BeaconCommon::IsMacOS()) {
 <h3 id="preview">Preview Release</h3>
 <div class="indent">
 	<p>Beacon <?php echo htmlentities($prerelease->Field('build_display')); ?> is available for testing. Preview releases may not be stable and users should make backups of any data they are not willing to lose. To create a backup, launch Beacon and choose &quot;Open Data Folder&quot; from the &quot;Help&quot; menu. The folder shown contains valuable user data. Copy the folder to a safe location, along with any Beacon files desired.</p>
-	<p>Links: <a href="<?php echo htmlentities($prerelease->Field('mac_url')); ?>">Mac Download</a>, <a href="<?php echo htmlentities($prerelease->Field('win_url')); ?>">Windows Download</a>, <a href="/history.php?stage=<?php echo htmlentities($prerelease->Field('stage')); ?>#build<?php echo htmlentities($prerelease->Field('build_number')); ?>">Release Notes</a></p>
+	<p>Links: <a href="<?php echo htmlentities($prerelease->Field('mac_url')); ?>">Mac Download</a>, <a href="<?php echo htmlentities($prerelease->Field('win_url')); ?>">Windows Download</a>, <a href="/history.php?stage=<?php echo htmlentities($prerelease->Field('stage')); ?>#build<?php echo htmlentities($prerelease->Field('build_number')); ?>">Release Notes</a>, <a href="classes.php?build=<?php echo $prerelease->Field('build_number'); ?>">Engrams Database</a></p>
 </div>
 <?php } ?>
 <h3 id="requirements">System Requirements</h3>

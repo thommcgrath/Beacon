@@ -157,7 +157,7 @@ if (is_null($cached)) {
 		}
 	}
 	
-	$results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(last_update) AS stamp FROM objects WHERE min_version <= $1) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;", $min_version);
+	$results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;", $min_version);
 	$last_database_update = new DateTime($results->Field("stamp"), new DateTimeZone('UTC'));
 	
 	$values['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
