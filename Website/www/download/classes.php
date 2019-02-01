@@ -41,19 +41,19 @@ if (isset($_GET['version'])) {
 }
 
 $cache_key = md5('classes' . serialize($_GET));
-$cached = BeaconCache::Get($cache_key);
+$cached = null;//BeaconCache::Get($cache_key);
 if (is_null($cached)) {
 	$database = BeaconCommon::Database();
 	if ($min_version >= 10100000) {
 		$beacon_version = 4;
 		$values = array(
-			'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
-			'loot_source_icons' => BeaconLootSourceIcon::GetAll($min_version, $since),
-			'engrams' => BeaconEngram::GetAll($min_version, $since),
-			'presets' => BeaconPreset::GetAll($min_version, $since),
-			'preset_modifiers' => BeaconPresetModifier::GetAll($min_version, $since),
-			'creatures' => BeaconCreature::GetAll($min_version, $since),
-			'diets' => BeaconDiet::GetAll($min_version, $since),
+			'loot_sources' => BeaconLootSource::GetAll($min_version, $since, true),
+			'loot_source_icons' => BeaconLootSourceIcon::GetAll($min_version, $since, true),
+			'engrams' => BeaconEngram::GetAll($min_version, $since, true),
+			'presets' => BeaconPreset::GetAll($min_version, $since, true),
+			'preset_modifiers' => BeaconPresetModifier::GetAll($min_version, $since, true),
+			'creatures' => BeaconCreature::GetAll($min_version, $since, true),
+			'diets' => BeaconDiet::GetAll($min_version, $since, true),
 			'help_topics' => BeaconHelpTopic::GetAll($since),
 			'game_variables' => BeaconGameVariable::GetAll($since),
 			'mods' => BeaconMod::GetLive(),
@@ -62,12 +62,12 @@ if (is_null($cached)) {
 	} elseif ($min_version > 33) {
 		$beacon_version = 3;
 		$values = array(
-			'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
-			'engrams' => BeaconEngram::GetAll($min_version, $since),
-			'presets' => BeaconPreset::GetAll($min_version, $since),
-			'preset_modifiers' => BeaconPresetModifier::GetAll($min_version, $since),
-			'creatures' => BeaconCreature::GetAll($min_version, $since),
-			'diets' => BeaconDiet::GetAll($min_version, $since),
+			'loot_sources' => BeaconLootSource::GetAll($min_version, $since, true),
+			'engrams' => BeaconEngram::GetAll($min_version, $since, true),
+			'presets' => BeaconPreset::GetAll($min_version, $since, true),
+			'preset_modifiers' => BeaconPresetModifier::GetAll($min_version, $since, true),
+			'creatures' => BeaconCreature::GetAll($min_version, $since, true),
+			'diets' => BeaconDiet::GetAll($min_version, $since, true),
 			'help_topics' => BeaconHelpTopic::GetAll($since),
 			'game_variables' => BeaconGameVariable::GetAll($since),
 			'mods' => BeaconMod::GetLive(),
@@ -103,7 +103,7 @@ if (is_null($cached)) {
 		}
 		
 		$values['loot_sources'] = array('additions' => array(), 'removals' => array());
-		$loot_sources = BeaconLootSource::GetAll($min_version, $since);
+		$loot_sources = BeaconLootSource::GetAll($min_version, $since, true);
 		foreach ($loot_sources as $loot_source) {
 			$values['loot_sources']['additions'][] = array(
 				'class' => $loot_source->ClassString(),
@@ -126,7 +126,7 @@ if (is_null($cached)) {
 		}
 		
 		$values['engrams'] = array('additions' => array(), 'removed_paths' => array());
-		$engrams = BeaconEngram::GetAll($min_version, $since);
+		$engrams = BeaconEngram::GetAll($min_version, $since, true);
 		foreach ($engrams as $engram) {
 			$values['engrams']['additions'][] = array(
 				'class' => $engram->ClassString(),
@@ -143,7 +143,7 @@ if (is_null($cached)) {
 		}
 		
 		$values['presets'] = array('additions' => array(), 'removals' => array());
-		$presets = BeaconPreset::GetAll($min_version, $since);
+		$presets = BeaconPreset::GetAll($min_version, $since, true);
 		foreach ($presets as $preset) {
 			$values['presets']['additions'][] = array(
 				'id' => $preset->ObjectID(),

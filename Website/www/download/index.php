@@ -53,7 +53,7 @@ if (BeaconCommon::IsMacOS()) {
 <h3 id="preview">Preview Release</h3>
 <div class="indent">
 	<p>Beacon <?php echo htmlentities($prerelease->Field('build_display')); ?> is available for testing. Preview releases may not be stable and users should make backups of any data they are not willing to lose. To create a backup, launch Beacon and choose &quot;Open Data Folder&quot; from the &quot;Help&quot; menu. The folder shown contains valuable user data. Copy the folder to a safe location, along with any Beacon files desired.</p>
-	<p>Links: <a href="<?php echo htmlentities($prerelease->Field('mac_url')); ?>">Mac Download</a>, <a href="<?php echo htmlentities($prerelease->Field('win_url')); ?>">Windows Download</a>, <a href="/history.php?stage=<?php echo htmlentities($prerelease->Field('stage')); ?>#build<?php echo htmlentities($prerelease->Field('build_number')); ?>">Release Notes</a>, <a href="classes.php?build=<?php echo $prerelease->Field('build_number'); ?>">Engrams Database</a></p>
+	<p>Links: <a href="<?php echo htmlentities($prerelease->Field('mac_url')); ?>">Mac Download</a>, <a href="<?php echo htmlentities($prerelease->Field('win_url')); ?>">Windows Download</a>, <a href="/history.php?stage=<?php echo htmlentities($prerelease->Field('stage')); ?>#build<?php echo htmlentities($prerelease->Field('build_number')); ?>">Release Notes</a>, <a href="classes.php?version=<?php echo $prerelease->Field('build_number'); ?>">Engrams Database</a></p>
 </div>
 <?php } ?>
 <h3 id="requirements">System Requirements</h3>
