@@ -47,13 +47,13 @@ if (is_null($cached)) {
 	if ($min_version >= 10100000) {
 		$beacon_version = 4;
 		$values = array(
-			'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
-			'loot_source_icons' => BeaconLootSourceIcon::GetAll($min_version, $since),
-			'engrams' => BeaconEngram::GetAll($min_version, $since),
-			'presets' => BeaconPreset::GetAll($min_version, $since),
-			'preset_modifiers' => BeaconPresetModifier::GetAll($min_version, $since),
-			'creatures' => BeaconCreature::GetAll($min_version, $since),
-			'diets' => BeaconDiet::GetAll($min_version, $since),
+			'loot_sources' => BeaconLootSource::GetAll($min_version, $since, true),
+			'loot_source_icons' => BeaconLootSourceIcon::GetAll($min_version, $since, true),
+			'engrams' => BeaconEngram::GetAll($min_version, $since, true),
+			'presets' => BeaconPreset::GetAll($min_version, $since, true),
+			'preset_modifiers' => BeaconPresetModifier::GetAll($min_version, $since, true),
+			'creatures' => BeaconCreature::GetAll($min_version, $since, true),
+			'diets' => BeaconDiet::GetAll($min_version, $since, true),
 			'help_topics' => BeaconHelpTopic::GetAll($since),
 			'game_variables' => BeaconGameVariable::GetAll($since),
 			'mods' => BeaconMod::GetLive(),
@@ -62,12 +62,12 @@ if (is_null($cached)) {
 	} elseif ($min_version > 33) {
 		$beacon_version = 3;
 		$values = array(
-			'loot_sources' => BeaconLootSource::GetAll($min_version, $since),
-			'engrams' => BeaconEngram::GetAll($min_version, $since),
-			'presets' => BeaconPreset::GetAll($min_version, $since),
-			'preset_modifiers' => BeaconPresetModifier::GetAll($min_version, $since),
-			'creatures' => BeaconCreature::GetAll($min_version, $since),
-			'diets' => BeaconDiet::GetAll($min_version, $since),
+			'loot_sources' => BeaconLootSource::GetAll($min_version, $since, true),
+			'engrams' => BeaconEngram::GetAll($min_version, $since, true),
+			'presets' => BeaconPreset::GetAll($min_version, $since, true),
+			'preset_modifiers' => BeaconPresetModifier::GetAll($min_version, $since, true),
+			'creatures' => BeaconCreature::GetAll($min_version, $since, true),
+			'diets' => BeaconDiet::GetAll($min_version, $since, true),
 			'help_topics' => BeaconHelpTopic::GetAll($since),
 			'game_variables' => BeaconGameVariable::GetAll($since),
 			'mods' => BeaconMod::GetLive(),
@@ -103,7 +103,7 @@ if (is_null($cached)) {
 		}
 		
 		$values['loot_sources'] = array('additions' => array(), 'removals' => array());
-		$loot_sources = BeaconLootSource::GetAll($min_version, $since);
+		$loot_sources = BeaconLootSource::GetAll($min_version, $since, true);
 		foreach ($loot_sources as $loot_source) {
 			$values['loot_sources']['additions'][] = array(
 				'class' => $loot_source->ClassString(),
@@ -126,7 +126,7 @@ if (is_null($cached)) {
 		}
 		
 		$values['engrams'] = array('additions' => array(), 'removed_paths' => array());
-		$engrams = BeaconEngram::GetAll($min_version, $since);
+		$engrams = BeaconEngram::GetAll($min_version, $since, true);
 		foreach ($engrams as $engram) {
 			$values['engrams']['additions'][] = array(
 				'class' => $engram->ClassString(),
@@ -143,7 +143,7 @@ if (is_null($cached)) {
 		}
 		
 		$values['presets'] = array('additions' => array(), 'removals' => array());
-		$presets = BeaconPreset::GetAll($min_version, $since);
+		$presets = BeaconPreset::GetAll($min_version, $since, true);
 		foreach ($presets as $preset) {
 			$values['presets']['additions'][] = array(
 				'id' => $preset->ObjectID(),
@@ -157,7 +157,7 @@ if (is_null($cached)) {
 		}
 	}
 	
-	$results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(last_update) AS stamp FROM objects WHERE min_version <= $1) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;", $min_version);
+	$results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;", $min_version);
 	$last_database_update = new DateTime($results->Field("stamp"), new DateTimeZone('UTC'));
 	
 	$values['timestamp'] = $last_database_update->format('Y-m-d H:i:s');

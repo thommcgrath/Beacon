@@ -166,8 +166,13 @@ End
 		    
 		    Dim Dialog As New MessageDialog
 		    Dialog.Title = ""
-		    Dialog.Message = "Engram definitions have been updated"
-		    Dialog.Explanation = "Engrams, loot sources, and presets are current as of " + Date.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC."
+		    If Date <> Nil Then
+		      Dialog.Message = "Engram definitions have been updated"
+		      Dialog.Explanation = "Engrams, loot sources, and presets are current as of " + Date.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC."
+		    Else
+		      Dialog.Message = "Engram definitions have not been updated"
+		      Dialog.Explanation = "No engram definitions are currently loaded into Beacon. Try relaunching Beacon. If the problem persists, see the website at " + Beacon.WebURL("/help/") + " for more support options."
+		    End If
 		    Call Dialog.ShowModal
 		    
 		    Self.Close
