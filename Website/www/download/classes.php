@@ -41,7 +41,7 @@ if (isset($_GET['version'])) {
 }
 
 $cache_key = md5('classes' . serialize($_GET));
-$cached = null;//BeaconCache::Get($cache_key);
+$cached = BeaconCache::Get($cache_key);
 if (is_null($cached)) {
 	$database = BeaconCommon::Database();
 	if ($min_version >= 10100000) {
