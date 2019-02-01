@@ -41,6 +41,16 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
+		Function Classes() As Text()
+		  Dim Results() As Text
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOverrides
+		    Results.Append(Entry.Key)
+		  Next
+		  Return Results
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Shared Function ConfigName() As Text
 		  Return "StackSizes"
 		End Function
@@ -51,6 +61,12 @@ Inherits Beacon.ConfigGroup
 		  Super.Constructor()
 		  Self.mOverrides = New Xojo.Core.Dictionary
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Count() As UInteger
+		  Return Self.mOverrides.Count
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -83,7 +99,7 @@ Inherits Beacon.ConfigGroup
 		      If Not Dict.HasAllKeys("ItemClassString", "Quantity") Then
 		        Continue
 		      End If   
-		       
+		      
 		      Dim Quantity As Xojo.Core.Dictionary = Dict.Value("Quantity")
 		      Dim ClassString As Text = Dict.Value("ItemClassString")
 		      Dim StackSize As Integer = Quantity.Lookup("MaxItemQuantity", 0)
@@ -107,7 +123,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function Override(ClassString As Text) As Integer
-		  
+		  Return Self.mOverrides.Lookup(ClassString, 0)
 		End Function
 	#tag EndMethod
 
@@ -121,6 +137,12 @@ Inherits Beacon.ConfigGroup
 		    Self.Modified = True
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UBound() As Integer
+		  Return Self.mOverrides.Count - 1
+		End Function
 	#tag EndMethod
 
 
@@ -151,6 +173,11 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="IsImplicit"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
@@ -183,6 +210,11 @@ Inherits Beacon.ConfigGroup
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="GlobalMultiplier"
+			Group="Behavior"
+			Type="Double"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -139,7 +139,9 @@ Begin ConfigEditor StackSizesConfigEditor
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Stack Size Overrides"
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -158,6 +160,7 @@ Begin ConfigEditor StackSizesConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   63
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   764
@@ -227,6 +230,7 @@ Begin ConfigEditor StackSizesConfigEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   5
@@ -248,17 +252,168 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Method, Flags = &h1
+		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StackSizes
+		  Static ConfigName As Text = BeaconConfigs.StackSizes.ConfigName
+		  
+		  Dim Document As Beacon.Document = Self.Document
+		  Dim Config As BeaconConfigs.StackSizes
+		  
+		  If Self.mConfigRef <> Nil And Self.mConfigRef.Value <> Nil Then
+		    Config = BeaconConfigs.StackSizes(Self.mConfigRef.Value)
+		  ElseIf Document.HasConfigGroup(ConfigName) Then
+		    Config = BeaconConfigs.StackSizes(Document.ConfigGroup(ConfigName))
+		    Self.mConfigRef = New WeakRef(Config)
+		  Else
+		    Config = New BeaconConfigs.StackSizes
+		    Self.mConfigRef = New WeakRef(Config)
+		  End If
+		  
+		  If ForWriting And Not Document.HasConfigGroup(ConfigName) Then
+		    Document.AddConfigGroup(Config)
+		  End If
+		  
+		  Return Config
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub ShowAddOverride()
+		  Dim CurrentEngrams() As Beacon.Engram
+		  Dim Config As BeaconConfigs.StackSizes = Self.Config(False)
+		  Dim Classes() As Text = Config.Classes
+		  For Each ClassString As Text In Classes
+		    Dim Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
+		    If Engram = Nil Then
+		      Continue
+		    End If
+		    
+		    CurrentEngrams.Append(Engram)
+		  Next
 		  
+		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, CurrentEngrams, Self.Document.ConsoleModsOnly, False)
+		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
+		    Return
+		  End If
+		  
+		  Config = Self.Config(True)
+		  
+		  For Each Engram As Beacon.Engram In NewEngrams
+		    Config.Override(Engram.ClassString) = 100
+		  Next
+		  
+		  Self.UpdateList(NewEngrams)
+		  Self.ContentsChanged = True
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub ShowDuplicateOverride()
+		  If Self.List.SelCount <> 1 Then
+		    Return
+		  End If
 		  
+		  Dim CurrentEngrams() As Beacon.Engram
+		  Dim Config As BeaconConfigs.StackSizes = Self.Config(False)
+		  Dim Classes() As Text = Config.Classes
+		  For Each ClassString As Text In Classes
+		    Dim Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
+		    If Engram = Nil Then
+		      Continue
+		    End If
+		    
+		    CurrentEngrams.Append(Engram)
+		  Next
+		  
+		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, CurrentEngrams, Self.Document.ConsoleModsOnly, True)
+		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
+		    Return
+		  End If
+		  
+		  Dim SourceClass As Text = Self.List.RowTag(Self.List.ListIndex)
+		  Dim Size As Integer = Config.Override(SourceClass)
+		  
+		  Config = Self.Config(True)
+		  
+		  For Each Engram As Beacon.Engram In NewEngrams
+		    Config.Override(Engram.ClassString) = Size
+		  Next
+		  
+		  Self.UpdateList(NewEngrams)
+		  Self.ContentsChanged = True
 		End Sub
 	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList()
+		  Dim Classes() As Text
+		  For I As Integer = 0 To Self.List.ListCount - 1
+		    If Not Self.List.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Classes.Append(Self.List.RowTag(I))
+		  Next
+		  Self.UpdateList(Classes)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(ParamArray SelectEngrams() As Beacon.Engram)
+		  Self.UpdateList(SelectEngrams)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
+		  Dim Classes() As Text
+		  For Each Engram As Beacon.Engram In SelectEngrams
+		    Classes.Append(Engram.ClassString)
+		  Next
+		  Self.UpdateList(Classes) 
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(ParamArray SelectClasses() As Text)
+		  Self.UpdateList(SelectClasses)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(SelectClasses() As Text)
+		  Dim Config As BeaconConfigs.StackSizes = Self.Config(False)
+		  Dim Classes() As Text = Config.Classes
+		  
+		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
+		  Self.List.SelectionChangeBlocked = True
+		  
+		  Self.List.DeleteAllRows()
+		  For Each ClassString As Text In Classes
+		    Dim Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
+		    Dim EngramName As Text
+		    If Engram <> Nil Then
+		      EngramName = Engram.Label
+		    Else
+		      EngramName = ClassString
+		    End If
+		    
+		    Dim Size As Integer = Config.Override(ClassString)
+		    Self.List.AddRow(EngramName, Size.ToText)
+		    Self.List.RowTag(Self.List.LastIndex) = ClassString
+		    Self.List.Selected(Self.List.LastIndex) = SelectClasses.IndexOf(ClassString) > -1
+		  Next
+		  
+		  Self.List.Sort
+		  Self.List.ScrollPosition = ScrollPosition
+		  Self.List.SelectionChangeBlocked = False
+		End Sub
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mConfigRef As WeakRef
+	#tag EndProperty
 
 
 	#tag Constant, Name = ColumnEngram, Type = Double, Dynamic = False, Default = \"0", Scope = Private
@@ -304,6 +459,20 @@ End
 	#tag Event
 		Sub Change()
 		  Self.Header.Duplicate.Enabled = Me.SelCount = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  If Column <> Self.ColumnStackSize Then
+		    Return
+		  End If
+		  
+		  Dim Size As Integer = Val(Me.Cell(Row, Column))
+		  Dim ClassString As Text = Me.RowTag(Row)
+		  
+		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
+		  Config.Override(ClassString) = Size
+		  Self.ContentsChanged = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
