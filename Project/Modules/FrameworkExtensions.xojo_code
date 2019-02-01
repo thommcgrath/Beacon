@@ -196,11 +196,8 @@ Protected Module FrameworkExtensions
 		    Return Original
 		  End If
 		  
-		  Dim Decimal As Double = Original - Whole
 		  Dim Multiplier As Double = 1 / Factor
-		  Decimal = Round(Decimal * Multiplier) / Multiplier
-		  
-		  Return Whole + Decimal
+		  Return Round(Original * Multiplier) / Multiplier
 		End Function
 	#tag EndMethod
 

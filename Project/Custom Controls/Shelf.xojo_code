@@ -196,7 +196,7 @@ Implements ObservationKit.Observer
 		      IconColor = SystemColors.AlternateSelectedControlTextColor
 		    End If
 		    
-		    Dim IconRect As New BeaconUI.Rect(CellRect.Left + ((CellRect.Width - Self.IconSize) / 2), CellRect.Top + CellSpacing, Self.IconSize, Self.IconSize)
+		    Dim IconRect As New BeaconUI.Rect(NearestMultiple(CellRect.Left + ((CellRect.Width - Self.IconSize) / 2), PrecisionX), NearestMultiple(CellRect.Top + CellSpacing, PrecisionY), Self.IconSize, Self.IconSize)
 		    Dim Icon As Picture = BeaconUI.IconWithColor(Self.mItems(I).Icon, IconColor)
 		    G.DrawPicture(Icon, NearestMultiple(IconRect.Left, PrecisionX), NearestMultiple(IconRect.Top, PrecisionY), NearestMultiple(IconRect.Width, PrecisionX), NearestMultiple(IconRect.Height, PrecisionY), 0, 0, Icon.Width, Icon.Height)
 		    
@@ -231,11 +231,12 @@ Implements ObservationKit.Observer
 		      Dim DotRect As New BeaconUI.Rect(IconRect.Right - Self.NotificationDotSize, IconRect.Top, Self.NotificationDotSize, Self.NotificationDotSize)
 		      
 		      G.ForeColor = PulseColor
-		      G.FillOval(NearestMultiple(DotRect.Left, PrecisionX), NearestMultiple(DotRect.Top, PrecisionY), NearestMultiple(DotRect.Width, PrecisionX), NearestMultiple(DotRect.Height, PrecisionY))
+		      G.FillOval(DotRect.Left, DotRect.Top, DotRect.Width, DotRect.Height)
 		      If PulseAmount > 0 Then
-		        Dim PulseSize As Double = Self.NotificationDotSize + ((Self.NotificationDotSize * 2) * PulseAmount)
+		        Dim PrecisePulseSize As Double = Self.NotificationDotSize + ((Self.NotificationDotSize * 2) * PulseAmount)
+		        Dim PulseSize As Double = NearestMultiple(PrecisePulseSize, PrecisionX * 2)
 		        G.ForeColor = PulseColor.AtOpacity(1.0 - PulseAmount)
-		        G.DrawOval(NearestMultiple(DotRect.Left - ((PulseSize - Self.NotificationDotSize) / 2), PrecisionX), NearestMultiple(DotRect.Top - ((PulseSize - Self.NotificationDotSize) / 2), PrecisionY), NearestMultiple(PulseSize, PrecisionX), NearestMultiple(PulseSize, PrecisionY))
+		        G.DrawOval(DotRect.Left - ((PulseSize - Self.NotificationDotSize) / 2), DotRect.Top - ((PulseSize - Self.NotificationDotSize) / 2), PulseSize, PulseSize)
 		      End If
 		    End If
 		    
