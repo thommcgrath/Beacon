@@ -23,6 +23,8 @@ Protected Module Language
 		    Return "Custom Config Content"
 		  Case BeaconConfigs.CraftingCosts.ConfigName
 		    Return "Crafting Costs"
+		  Case BeaconConfigs.StackSizes.ConfigName
+		    Return "Stack Sizes"
 		  End Select
 		End Function
 	#tag EndMethod
