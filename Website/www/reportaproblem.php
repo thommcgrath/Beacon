@@ -11,7 +11,7 @@ case 'GET':
 		$exception_hash = $_GET['exception'];
 		$build = isset($_GET['build']) ? intval($_GET['build']) : 34;
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT exception_type, location, reason, trace, solution_details, solution_min_build FROM exceptions WHERE exception_hash = $1 AND build <= $2 ORDER BY build DESC LIMIT 1;', $exception_hash, $build);
+		$results = $database->Query('SELECT exception_type, build, location, reason, trace, solution_details, solution_min_build FROM exceptions WHERE exception_hash = $1 AND build <= $2 ORDER BY build DESC LIMIT 1;', $exception_hash, $build);
 		if ($results->RecordCount() == 0) {
 			http_response_code(404);
 			echo '<h1>Unknown Error</h1><p>No exception with this id has been reported yet.</p>';
@@ -128,7 +128,8 @@ case 'GET':
 		echo '<h2>Technical Details</h2>';
 		echo '<p><strong>Type</strong>: ' . htmlentities($results->Field('exception_type')) . '<br>';
 		echo '<strong>Location</strong>: ' . htmlentities($results->Field('location')) . '<br>';
-		echo '<strong>Reason</strong>: ' . htmlentities($results->Field('reason')) . '</p>';
+		echo '<strong>Reason</strong>: ' . htmlentities($results->Field('reason')) . '<br>';
+		echo '<strong>Version</strong>: ' . htmlentities(BeaconCommon::BuildNumberToVersion($results->Field('build'))) . '</p>';
 		echo '<p><strong>Stack Trace</strong></p>';
 		echo '<ol>';
 		$trace = explode(chr(10), $results->Field('trace'));
@@ -241,6 +242,13 @@ case 'POST':
 							'type' => 'button',
 							'text' => 'View Details',
 							'url' => $details_url
+						)
+					),
+					'fields' => array(
+						array(
+							'title' => 'Version',
+							'value' => BeaconCommon::BuildNumberToVersion($build),
+							'short' => true
 						)
 					)
 				)

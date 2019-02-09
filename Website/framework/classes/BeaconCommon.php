@@ -312,6 +312,50 @@ abstract class BeaconCommon {
 		
 		return null;
 	}
+	
+	public static function BuildNumberToVersion(int $build_number) {
+		if ($build_number < 10000000) {
+			$database = static::Database();
+			$results = $database->Query('SELECT build_display FROM updates WHERE build_number = $1;', $build_number);
+			if ($results->RecordCount() == 1) {
+				return $results->Field('build_display');
+			} else {
+				return $build_number;
+			}
+		}
+		
+		$major_version = floor($build_number / 10000000);
+		$build_number = $build_number - ($major_version * 10000000);
+		$minor_version = floor($build_number / 100000);
+		$build_number = $build_number - ($minor_version * 100000);
+		$bug_version = floor($build_number / 1000);
+		$build_number = $build_number - ($bug_version * 1000);
+		$stage_code = floor($build_number / 100);
+		$build_number = $build_number - ($stage_code * 100);
+		$non_release_version = $build_number;
+		
+		if ($stage_code < 3) {
+			switch ($stage_code) {
+			case 2:
+				$prerelease = 'b';
+				break;
+			case 1:
+				$prerelease = 'a';
+				break;
+			case 0:
+				$prerelease = 'pa';
+				break;
+			default:
+				$prerelease = 'u';
+				break;
+			}
+			$prerelease .= $non_release_version;
+		} else {
+			$prerelease = '';
+		}
+		
+		return $major_version . '.' . $minor_version . '.' . $bug_version . $prerelease;
+	}
 }
 
 ?>
