@@ -359,24 +359,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(ParamArray SelectEngrams() As Beacon.Engram)
-		  Self.UpdateList(SelectEngrams)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
 		  Dim Classes() As Text
 		  For Each Engram As Beacon.Engram In SelectEngrams
 		    Classes.Append(Engram.ClassString)
 		  Next
 		  Self.UpdateList(Classes) 
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub UpdateList(ParamArray SelectClasses() As Text)
-		  Self.UpdateList(SelectClasses)
 		End Sub
 	#tag EndMethod
 
@@ -420,6 +408,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnStackSize, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.stacksize", Scope = Private
 	#tag EndConstant
 
 
@@ -473,6 +464,94 @@ End
 		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
 		  Config.Override(ClassString) = Size
 		  Self.ContentsChanged = True
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.SelCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.RawDataAvailable(Self.kClipboardType)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  If Warn Then
+		    Dim Message As String
+		    If Me.SelCount = 1 Then
+		      Message = "Are you sure you want to delete the """ + Me.Cell(Me.ListIndex, 0) + """ stack size override?"
+		    Else
+		      Message = "Are you sure you want to delete these " + Str(Me.SelCount, "-0") + " stack size overrides?"
+		    End If
+		    
+		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then
+		      Return
+		    End If
+		  End If
+		  
+		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
+		  For I As Integer = 0 To Me.ListCount - 1
+		    If Not Me.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim ClassString As Text = Me.RowTag(I)
+		    Config.Override(ClassString) = 0
+		  Next
+		  Self.UpdateList()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Dim Items As New Xojo.Core.Dictionary
+		  Dim Config As BeaconConfigs.StackSizes = Self.Config(False)
+		  For I As Integer = 0 To Me.ListCount - 1
+		    If Not Me.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim ClassString As Text = Me.RowTag(I)
+		    Dim Size As Integer = Config.Override(ClassString)
+		    Items.Value(ClassString) = Size
+		  Next
+		  
+		  Board.AddRawData(Xojo.Data.GenerateJSON(Items), Self.kClipboardType)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
+		    Return
+		  End If
+		  
+		  Dim JSON As Text = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8).ToText
+		  Dim Items As Xojo.Core.Dictionary
+		  Try
+		    Items = Xojo.Data.ParseJSON(JSON)
+		  Catch Err As Xojo.Data.InvalidJSONException
+		    Items = New Xojo.Core.Dictionary
+		  End Try
+		  
+		  If Items.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
+		  Dim SelectClasses() As Text
+		  For Each Entry As Xojo.Core.DictionaryEntry In Items
+		    Dim ClassString As Text = Entry.Key
+		    Dim Size As Integer = Entry.Value
+		    SelectClasses.Append(ClassString)
+		    Config.Override(ClassString) = Size
+		  Next
+		  Self.UpdateList(SelectClasses)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
