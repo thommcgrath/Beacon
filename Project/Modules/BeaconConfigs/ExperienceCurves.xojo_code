@@ -6,7 +6,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  Dim MaxLevel As UInteger = Self.PlayerLevelCap
-		  Dim MaxXP As UInteger = Self.PlayerMaxExperience
+		  Dim MaxXP As UInt64 = Self.PlayerMaxExperience
 		  
 		  // Index 0 is level 2!
 		  // Index 150 is level 152
@@ -115,7 +115,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DefaultDinoMaxExperience() As Integer
+		Function DefaultDinoMaxExperience() As UInt64
 		  Return Beacon.Data.GetIntegerVariable("Dino Max Experience")
 		End Function
 	#tag EndMethod
@@ -127,7 +127,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DefaultPlayerMaxExperience() As Integer
+		Function DefaultPlayerMaxExperience() As UInt64
 		  Return Beacon.Data.GetIntegerVariable("Player Max Experience")
 		End Function
 	#tag EndMethod
@@ -231,7 +231,7 @@ Inherits Beacon.ConfigGroup
 			  End If
 			End Set
 		#tag EndSetter
-		DinoMaxExperience As UInteger
+		DinoMaxExperience As UInt64
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
@@ -243,7 +243,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDinoMaxExperience As UInteger
+		Private mDinoMaxExperience As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -255,7 +255,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPlayerMaxExperience As UInteger
+		Private mPlayerMaxExperience As UInt64
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -306,7 +306,7 @@ Inherits Beacon.ConfigGroup
 			  End If
 			End Set
 		#tag EndSetter
-		PlayerMaxExperience As UInteger
+		PlayerMaxExperience As UInt64
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
