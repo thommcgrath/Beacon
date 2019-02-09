@@ -62,7 +62,7 @@ Begin ConfigEditor StackSizesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   53
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -98,40 +98,11 @@ Begin ConfigEditor StackSizesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   53
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   177
-   End
-   Begin FadedSeparator FadedSeparator1
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   False
-      Enabled         =   True
-      EraseBackground =   True
-      Height          =   1
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Scope           =   2
-      ScrollSpeed     =   20
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   62
-      Transparent     =   True
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   764
    End
    Begin BeaconToolbar Header
       AcceptFocus     =   False
@@ -159,7 +130,7 @@ Begin ConfigEditor StackSizesConfigEditor
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   63
+      Top             =   0
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
@@ -188,7 +159,7 @@ Begin ConfigEditor StackSizesConfigEditor
       TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   103
+      Top             =   87
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -212,7 +183,7 @@ Begin ConfigEditor StackSizesConfigEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
-      Height          =   364
+      Height          =   380
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -239,7 +210,7 @@ Begin ConfigEditor StackSizesConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   104
+      Top             =   88
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   False
@@ -247,6 +218,35 @@ Begin ConfigEditor StackSizesConfigEditor
       Width           =   764
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
+   End
+   Begin FadedSeparator FadedSeparator1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   40
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   764
    End
 End
 #tag EndWindow
