@@ -102,7 +102,7 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  For I As Integer = 0 To Self.mCosts.Ubound
-		    If Self.mCosts(I) = Cost Then
+		    If Self.mCosts(I).Engram = Cost.Engram Or Self.mCosts(I) = Cost Then
 		      Return I
 		    End If
 		  Next

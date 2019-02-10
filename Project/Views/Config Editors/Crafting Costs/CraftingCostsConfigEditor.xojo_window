@@ -325,6 +325,34 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub ParsingFinished(ParsedData As Xojo.Core.Dictionary)
+		  If ParsedData = Nil Then
+		    Return
+		  End If
+		  
+		  Dim OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts.FromImport(ParsedData, New Xojo.Core.Dictionary, Self.Document.MapCompatibility, Self.Document.DifficultyValue)
+		  If OtherConfig = Nil Or OtherConfig.Ubound = -1 Then
+		    Return
+		  End If
+		  
+		  Dim Config As BeaconConfigs.CraftingCosts = Self.Config(True)
+		  Dim NewCosts() As Beacon.CraftingCost
+		  For I As Integer = 0 To OtherConfig.Ubound
+		    Dim CraftingCost As Beacon.CraftingCost = OtherConfig(I)
+		    Dim Idx As Integer = Config.IndexOf(CraftingCost)
+		    If Idx > -1 Then
+		      Config(Idx) = CraftingCost
+		    Else
+		      Config.Append(CraftingCost)
+		    End If
+		    NewCosts.Append(CraftingCost)
+		  Next
+		  Self.ContentsChanged = True
+		  Self.UpdateList(NewCosts)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Resize(Initial As Boolean)
 		  If Initial Then
 		    Self.SetListWidth(Preferences.CraftingSplitterPosition)
@@ -659,7 +687,15 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType)
+		  If Board.RawDataAvailable(Self.kClipboardType) Then
+		    Return True
+		  End If
+		  
+		  If Not Board.TextAvailable Then
+		    Return False
+		  End If
+		  
+		  Return Board.Text.IndexOf("ConfigOverrideItemCraftingCosts") > -1
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -679,29 +715,33 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
+		  If Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideItemCraftingCosts") > -1 Then
+		    Dim ImportText As String = Board.Text.GuessEncoding
+		    Self.Parse(ImportText.ToText, "Clipboard")
 		    Return
 		  End If
 		  
-		  Dim Dicts() As Auto
-		  Try
-		    Dim Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		    Dicts = Xojo.Data.ParseJSON(Contents.ToText)
-		    
-		    Dim Costs() As Beacon.CraftingCost
-		    For Each Dict As Xojo.Core.Dictionary In Dicts
-		      Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
-		      If Cost <> Nil Then
-		        Self.Config(False).Append(Cost)
-		        Costs.Append(Cost)
-		      End If
-		    Next
-		    
-		    Self.UpdateList(Costs)
-		    Self.ContentsChanged = True
-		  Catch Err As RuntimeException
+		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
+		    Dim Dicts() As Auto
+		    Try
+		      Dim Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
+		      Dicts = Xojo.Data.ParseJSON(Contents.ToText)
+		      
+		      Dim Costs() As Beacon.CraftingCost
+		      For Each Dict As Xojo.Core.Dictionary In Dicts
+		        Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
+		        If Cost <> Nil Then
+		          Self.Config(False).Append(Cost)
+		          Costs.Append(Cost)
+		        End If
+		      Next
+		      
+		      Self.UpdateList(Costs)
+		      Self.ContentsChanged = True
+		    Catch Err As RuntimeException
+		    End Try
 		    Return
-		  End Try
+		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
