@@ -505,6 +505,7 @@ End
 		    Dim ClassString As Text = Me.RowTag(I)
 		    Config.Override(ClassString) = 0
 		  Next
+		  Self.ContentsChanged = True
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
@@ -551,6 +552,7 @@ End
 		    SelectClasses.Append(ClassString)
 		    Config.Override(ClassString) = Size
 		  Next
+		  Self.ContentsChanged = True
 		  Self.UpdateList(SelectClasses)
 		End Sub
 	#tag EndEvent
