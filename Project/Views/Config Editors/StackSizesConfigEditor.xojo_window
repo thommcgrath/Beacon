@@ -252,6 +252,30 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub ParsingFinished(ParsedData As Xojo.Core.Dictionary)
+		  // Don't import the global multiplier, it would likely be confusing for users
+		  
+		  If ParsedData = Nil Then
+		    Return
+		  End If
+		  
+		  Dim OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes.FromImport(ParsedData, New Xojo.Core.Dictionary, Self.Document.MapCompatibility, Self.Document.DifficultyValue)
+		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
+		    Return
+		  End If
+		  
+		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
+		  Dim Classes() As Text = OtherConfig.Classes
+		  For Each ClassString As Text In Classes
+		    Config.Override(ClassString) = OtherConfig.Override(ClassString)
+		  Next
+		  Self.ContentsChanged = True
+		  Self.UpdateList(Classes)
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StackSizes
 		  Static ConfigName As Text = BeaconConfigs.StackSizes.ConfigName
@@ -478,7 +502,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function CanPaste(Board As Clipboard) As Boolean
-		  Return Board.RawDataAvailable(Self.kClipboardType)
+		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideItemMaxQuantity") > -1)
 		End Function
 	#tag EndEvent
 	#tag Event
@@ -528,32 +552,37 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
-		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
+		  If Board.RawDataAvailable(Self.kClipboardType) Then
+		    Dim JSON As Text = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8).ToText
+		    Dim Items As Xojo.Core.Dictionary
+		    Try
+		      Items = Xojo.Data.ParseJSON(JSON)
+		    Catch Err As Xojo.Data.InvalidJSONException
+		      Items = New Xojo.Core.Dictionary
+		    End Try
+		    
+		    If Items.Count = 0 Then
+		      Return
+		    End If
+		    
+		    Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
+		    Dim SelectClasses() As Text
+		    For Each Entry As Xojo.Core.DictionaryEntry In Items
+		      Dim ClassString As Text = Entry.Key
+		      Dim Size As Integer = Entry.Value
+		      SelectClasses.Append(ClassString)
+		      Config.Override(ClassString) = Size
+		    Next
+		    Self.ContentsChanged = True
+		    Self.UpdateList(SelectClasses)
 		    Return
 		  End If
 		  
-		  Dim JSON As Text = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8).ToText
-		  Dim Items As Xojo.Core.Dictionary
-		  Try
-		    Items = Xojo.Data.ParseJSON(JSON)
-		  Catch Err As Xojo.Data.InvalidJSONException
-		    Items = New Xojo.Core.Dictionary
-		  End Try
-		  
-		  If Items.Count = 0 Then
+		  If Board.TextAvailable Then
+		    Dim ImportText As String = Board.Text.GuessEncoding
+		    Self.Parse(ImportText.ToText, "Clipboard")
 		    Return
 		  End If
-		  
-		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
-		  Dim SelectClasses() As Text
-		  For Each Entry As Xojo.Core.DictionaryEntry In Items
-		    Dim ClassString As Text = Entry.Key
-		    Dim Size As Integer = Entry.Value
-		    SelectClasses.Append(ClassString)
-		    Config.Override(ClassString) = Size
-		  Next
-		  Self.ContentsChanged = True
-		  Self.UpdateList(SelectClasses)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
