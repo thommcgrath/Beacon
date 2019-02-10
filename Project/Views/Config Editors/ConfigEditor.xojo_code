@@ -81,6 +81,43 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Sub Parse(Content As Text, Source As Text)
+		  Dim Parser As New Beacon.ImportThread
+		  AddHandler Parser.Finished, WeakAddressOf Parser_Finished
+		  AddHandler Parser.UpdateUI, WeakAddressOf Parser_UpdateUI
+		  
+		  Dim Win As New ImporterWindow
+		  Win.Source = Source
+		  Win.ShowWithin(Self.TrueWindow)
+		  
+		  If Self.mParserWindows = Nil Then
+		    Self.mParserWindows = New Xojo.Core.Dictionary
+		  End If
+		  Self.mParserWindows.Value(Parser) = Win
+		  
+		  Parser.GameIniContent = Content
+		  Parser.Run
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Parser_Finished(Sender As Beacon.ImportThread, ParsedData As Xojo.Core.Dictionary)
+		  Dim Win As ImporterWindow = Self.mParserWindows.Value(Sender)
+		  Win.Close
+		  Self.mParserWindows.Remove(Sender)
+		  
+		  RaiseEvent ParsingFinished(ParsedData)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Parser_UpdateUI(Sender As Beacon.ImportThread)
+		  Dim Win As ImporterWindow = Self.mParserWindows.Value(Sender)
+		  Win.Progress = Sender.Progress
+		End Sub
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event EnableMenuItems()
@@ -88,6 +125,10 @@ Inherits BeaconSubview
 
 	#tag Hook, Flags = &h0
 		Event Open()
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
+		Event ParsingFinished(ParsedData As Xojo.Core.Dictionary)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -105,6 +146,10 @@ Inherits BeaconSubview
 
 	#tag Property, Flags = &h21
 		Private mController As Beacon.DocumentController
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mParserWindows As Xojo.Core.Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
