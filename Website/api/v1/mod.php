@@ -63,13 +63,19 @@ case 'POST':
 			BeaconAPI::ReplyError('Not all keys are present.', $item);
 		}
 		$workshop_id = $item['mod_id'];
+		if (!is_numeric($workshop_id)) {
+			$database->Rollback();
+			BeaconAPI::ReplyError('Mod ID must be numeric.', $item);
+		}
 		$pull_url = null;
 		if (isset($item['pull_url'])) {
 			$pull_url = filter_var($item['pull_url'], FILTER_VALIDATE_URL, FILTER_FLAG_SCHEME_REQUIRED | FILTER_FLAG_HOST_REQUIRED);
 			if ($pull_url === false) {
+				$database->Rollback();
 				BeaconAPI::ReplyError('Pull URL is not valid.', $item['pull_url']);
 			}
 			if (substr($pull_url, 0, 4) !== 'http') {
+				$database->Rollback();
 				BeaconAPI::ReplyError('Must use http or https urls.', $item['pull_url']);
 			}
 		}
@@ -90,7 +96,7 @@ case 'POST':
 			
 			try {
 				$database->Query('INSERT INTO mods (workshop_id, name, user_id, pull_url) VALUES ($1, $2, $3, $4);', $workshop_id, $workshop_item->Name(), $user_id, $pull_url);
-			} catch (\BeaconQueryException $e) {
+			} catch (BeaconQueryException $e) {
 				BeaconAPI::ReplyError('Mod ' . $workshop_id . ' was not registered: ' . $e->getMessage());
 			}
 		}
