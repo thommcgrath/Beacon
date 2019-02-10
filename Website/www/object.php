@@ -115,6 +115,8 @@ function PrepareCreatureTable(BeaconCreature $creature, array &$properties) {
 }
 
 function PrepareEngramTable(BeaconEngram $engram, array &$properties) {
+	$properties['Blueprintable'] = $engram->CanBlueprint() ? 'Yes' : 'No';
+	$properties['Harvestable'] = $engram->Harvestable() ? 'Yes' : 'No';
 }
 
 function PrepareLootSourceTable(BeaconLootSource $loot_source, array &$properties) {

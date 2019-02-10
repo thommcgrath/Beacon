@@ -2,10 +2,12 @@
 
 class BeaconEngram extends BeaconBlueprint {
 	private $can_blueprint = false;
+	private $harvestable = false;
 	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
 		$columns[] = 'can_blueprint';
+		$columns[] = 'harvestable';
 		return $columns;
 	}
 	
@@ -19,6 +21,7 @@ class BeaconEngram extends BeaconBlueprint {
 			return null;
 		}
 		$obj->can_blueprint = $row->Field('can_blueprint');
+		$obj->harvestable = $row->Field('harvestable');
 		return $obj;
 	}
 	
@@ -29,7 +32,8 @@ class BeaconEngram extends BeaconBlueprint {
 	public function jsonSerialize() {
 		$json = parent::jsonSerialize();
 		$json['can_blueprint'] = $this->can_blueprint;
-		$json['resource_url'] = BeaconAPI::URL('/engram.php/' . urlencode($this->ObjectID()));
+		$json['harvestable'] = $this->harvestable;
+		$json['resource_url'] = BeaconAPI::URL('/engram/' . urlencode($this->ObjectID()));
 		
 		// legacy support
 		$json['mod_id'] = $this->ModID();
@@ -48,10 +52,16 @@ class BeaconEngram extends BeaconBlueprint {
 		$this->can_blueprint = $can_blueprint;
 	}
 	
+	public function Harvestable() {
+		return $this->harvestable;
+	}
+	
 	protected function GetColumnValue(string $column) {
 		switch ($column) {
 		case 'can_blueprint':
 			return $this->can_blueprint;
+		case 'harvestable':
+			return $this->harvestable;
 		default:
 			parent::GetColumnValue($column);
 		}
