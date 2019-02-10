@@ -392,6 +392,15 @@ abstract class BeaconCommon {
 		
 		return $major_version . '.' . $minor_version . '.' . $bug_version . $prerelease;
 	}
+	
+	public static function BooleanValue($value) {
+		if (is_bool($value) === true) {
+			return $value;
+		}
+		
+		$boolval = (is_string($value) ? filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) : (bool) $value);
+		return ($boolval === null ? false : $boolval);
+	}
 }
 
 ?>

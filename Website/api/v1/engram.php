@@ -112,7 +112,8 @@ case 'POST':
 		$label = $item['label'];
 		$availability = 0;
 		$availability_keys = null;
-		$can_blueprint = boolval($item['can_blueprint']);
+		$can_blueprint = BeaconCommon::BooleanValue($item['can_blueprint']);
+		$harvestable = isset($item['harvestable']) ? BeaconCommon::BooleanValue($item['harvestable']) : false;
 		if (array_key_exists('availability', $item)) {
 			if (is_int($item['availability'])) {
 				$availability = $item['availability'];
@@ -159,10 +160,10 @@ case 'POST':
 				$database->Rollback();
 				BeaconAPI::ReplyError('Class ' . $path . ' already belongs to another mod.');
 			}
-			$database->Query('UPDATE engrams SET label = $2, availability = $3, can_blueprint = $4 WHERE path = $1;', $path, $label, $availability, $can_blueprint);
+			$database->Query('UPDATE engrams SET label = $2, availability = $3, can_blueprint = $4, harvestable = $5 WHERE path = $1;', $path, $label, $availability, $can_blueprint, $harvestable);
 		} else {
 			// new
-			$database->Query('INSERT INTO engrams (path, label, availability, can_blueprint, mod_id) VALUES ($1, $2, $3, $4, $5);', $path, $label, $availability, $can_blueprint, $mod_id);
+			$database->Query('INSERT INTO engrams (path, label, availability, can_blueprint, mod_id, harvestable) VALUES ($1, $2, $3, $4, $5, $6);', $path, $label, $availability, $can_blueprint, $mod_id, $harvestable);
 		}
 		
 		$engram = BeaconEngram::Get($path);

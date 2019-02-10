@@ -89,7 +89,8 @@ function PullMod(BeaconMod $mod) {
 		$path = $engram['path'];
 		$label = $engram['label'];
 		$availability_keys = $engram['availability'];
-		$can_blueprint = $engram['can_blueprint'];
+		$can_blueprint = BeaconCommon::BooleanValue($engram['can_blueprint']);
+		$harvestable = isset($engram['harvestable']) ? BeaconCommon::BooleanValue($engram['harvestable']) : false;
 		
 		$availability = 0;
 		if (is_string($availability_keys)) {
@@ -103,6 +104,18 @@ function PullMod(BeaconMod $mod) {
 				}
 				if ($key === 'scorched') {
 					$availability = $availability | BeaconEngram::ENVIRONMENT_SCORCHED;
+				}
+				if ($key === 'center') {
+					$availability = $availability | BeaconMaps::TheCenter;
+				}
+				if ($key === 'ragnarok') {
+					$availability = $availability | BeaconMaps::Ragnarok;
+				}
+				if (($key === 'abberation') || ($key === 'aberration')) {
+					$availability = $availability | BeaconMaps::Aberration;
+				}
+				if ($key === 'extinction') {
+					$availability = $availability | BeaconMaps::Extinction;
 				}
 			}
 		}
@@ -120,10 +133,10 @@ function PullMod(BeaconMod $mod) {
 				SendAlert($mod, 'Engram ' . $path . ' belongs to another mod.');
 				return;
 			}
-			$database->Query('UPDATE engrams SET label = $2, availability = $3, can_blueprint = $4 WHERE path = $1;', $path, $label, $availability, $can_blueprint);
+			$database->Query('UPDATE engrams SET label = $2, availability = $3, can_blueprint = $4, harvestable = $5 WHERE path = $1;', $path, $label, $availability, $can_blueprint, $harvestable);
 		} else {
 			// new
-			$database->Query('INSERT INTO engrams (path, label, availability, can_blueprint, mod_id) VALUES ($1, $2, $3, $4, $5);', $path, $label, $availability, $can_blueprint, $mod_id);
+			$database->Query('INSERT INTO engrams (path, label, availability, can_blueprint, mod_id, harvestable) VALUES ($1, $2, $3, $4, $5, $6);', $path, $label, $availability, $can_blueprint, $mod_id, $harvestable);
 		}
 	}
 	$database->Query('UPDATE mods SET last_pull_hash = $2 WHERE mod_id = $1;', $mod_id, $hash);

@@ -16,9 +16,10 @@ The endpoint is https://api.beaconapp.cc/v1/engram.php
     "Scorched"
   ],
   "can_blueprint": true,
+  "harvestable": false,
   "spawn": "cheat giveitem \"Blueprint'/Game/Mods/ExampleMod/MyEngram.MyEngram'\" 1 0 false",
   "uid": "cfd291d28fa367397fa0273f07f1c46e",
-  "resource_url": "https://api.beaconapp.cc/v1/engram.php/cfd291d28fa367397fa0273f07f1c46e",
+  "resource_url": "https://api.beaconapp.cc/v1/engram/cfd291d28fa367397fa0273f07f1c46e",
   "mod_id": 123456,
   "mod_name": "Example Mod"
 }
@@ -31,6 +32,7 @@ The endpoint is https://api.beaconapp.cc/v1/engram.php
 | label | Human-readable/in-game name of the engram |
 | environments | Array of strings of the supported environments. Current allowed values are `Island`, `Scorched`, `Center`, `Ragnarok`, and `Aberration`. |
 | can_blueprint | If this engram represents a resource, like wood or stone, that cannot be blueprinted, this value should be false. Craftable items, such as weapons and armor, should set this to true. |
+| harvestable | If this engram represents a resource that would be affected by harvest rate multipliers, this value should be true. |
 | spawn | The admin code to summon the item |
 | uid | Unique ID of this engram. This is the MD5 of the lowercase version of the path. |
 | resource_url | API URL of this engram |
@@ -118,7 +120,7 @@ Host: beaconapp.cc
 Authorization: Basic QTcwRjNENjAtQTI4MS00QzQ1LTgwQTAtQUQ2OUI3MzhENTY4OjM0M0IzODYyRTY5M0RFNDRDNThCODA2NEVFMkVBOUZFMzA1QTY3QTk0MkMxRUNCQUQzMkQ0QzFFRDMwRjhCNTg3Mzg1NDM5QTZENzlFMkQwOEZGOEI3REJBQTA3MDI3MjM1RjEzQTE1NzA2ODUwMzEyMTA0MDRDM0RDM0M4QTY2NjJGQ0UwRkZCRjBENDM2QTMyMzU3Mjc5QzNBODBCQTQwOERGQTc4NzM3RTIwMTU0MjQ3MDMwNDI2QTIyNDI1RTY3MEU4RjZGQTA4MzFFRjM5RjY0NjczQTM2Nzg3RDgyNjc2OENEMkRBMDI0OTcxNUNFNDIxQjE1QkNGMjBFMEQ1QjI4M0E3MTZDRjIxNkY5MTM1QzEzMUUwRjM0QkQwNEQ5QkFFMTA5MDIzQzgzQkE2ODBERTQyMzA2MEFFMzc2RjQ0OEIxOUMyQkFDRTM4MDI0MEZBQzRBMzEzRTRDRDg3MTA2NjFGMUQyQUY4MTBDNjA2Q0IxMDBEQjhCRTk3REFFNDU3NERDMjNDNzYwQzFCREUwNDg1OEUzMUVEOUEwNzlDRjU4RkZFRjI2QjA4NkI3OEZEQjkzMzVDNzBBODM0RkUzQTk1RUUwNUQyNkUxNjY0MEFBODU5RDFBRkNDMTNBNDM3RDFBQ0Y0MDgxOERGQTZDQzM2RjdCMDVFNzFE
 Content-Type: application/json
 
-{"path":"/Game/Mods/ExampleMod/MyEngram.MyEngram","label":"My Engram","environments":["Island","Scorched"],"can_blueprint": true,"mod_id": 123456}
+{"path":"/Game/Mods/ExampleMod/MyEngram.MyEngram","label":"My Engram","environments":["Island","Scorched"],"can_blueprint":true,"harvestable":false,"mod_id":123456}
 
 HTTP/1.1 200 OK
 ```

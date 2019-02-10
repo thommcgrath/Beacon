@@ -56,6 +56,10 @@ class BeaconEngram extends BeaconBlueprint {
 		return $this->harvestable;
 	}
 	
+	public function SetHarvestable(bool $harvestable) {
+		$this->harvestable = $harvestable;
+	}
+	
 	protected function GetColumnValue(string $column) {
 		switch ($column) {
 		case 'can_blueprint':
