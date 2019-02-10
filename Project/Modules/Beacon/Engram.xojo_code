@@ -60,6 +60,7 @@ Protected Class Engram
 		  Self.mModID = Source.mModID
 		  Self.mModName = Source.mModName
 		  Self.mConsoleSafe = Source.mConsoleSafe
+		  Self.mHarvestable = Source.mHarvestable
 		End Sub
 	#tag EndMethod
 
@@ -104,6 +105,12 @@ Protected Class Engram
 	#tag Method, Flags = &h0
 		Function GeneratedClassBlueprintPath() As Text
 		  Return "BlueprintGeneratedClass'" + Self.mPath + "_C'"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Harvestable() As Boolean
+		  Return Self.mHarvestable
 		End Function
 	#tag EndMethod
 
@@ -239,6 +246,10 @@ Protected Class Engram
 
 	#tag Property, Flags = &h1
 		Protected mConsoleSafe As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mHarvestable As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

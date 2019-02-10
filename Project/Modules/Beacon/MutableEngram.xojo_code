@@ -29,6 +29,12 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Harvestable(Assigns Value As Boolean)
+		  Self.mHarvestable = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As Text)
 		  Self.mLabel = Value
 		End Sub
