@@ -109,6 +109,11 @@ BeaconTemplate::FinishStyles();
 			<td class="text-center bullet-column">&#10687;</td>
 		</tr>
 		<tr>
+			<td>Stack Sizes (Experimental)<br><span class="smaller text-lighter">Ark finally allows admins to customize stack sizes, so Beacon Omni has an editor ready to go.</span></td>
+			<td class="text-center bullet-column">&nbsp;</td>
+			<td class="text-center bullet-column">&#10687;</td>
+		</tr>
+		<tr>
 			<td>More config types on the way<br><span class="smaller text-lighter">Support for more config control such as spawn map, breeding timers, and detailed harvest rates are planned for Omni.</span></td>
 			<td class="text-center bullet-column">&nbsp;</td>
 			<td class="text-center bullet-column">&#10687;</td>
