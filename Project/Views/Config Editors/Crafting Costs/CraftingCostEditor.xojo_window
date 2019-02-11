@@ -212,7 +212,7 @@ End
 		    Self.List.AddRow(Self.mTarget.Resource(I).Label, Str(Self.mTarget.Quantity(I), "-0"))
 		    Self.List.CellCheck(Self.List.LastIndex, Self.ColumnRequireExact) = Self.mTarget.RequireExactResource(I)
 		    Self.List.Selected(Self.List.LastIndex) = Paths.IndexOf(Self.mTarget.Resource(I).Path) > -1
-		    Self.List.RowTag(Self.List.LastIndex) = I
+		    Self.List.RowTag(Self.List.LastIndex) = Self.mTarget.Resource(I)
 		  Next
 		  Self.List.Sort
 		  Self.List.ScrollPosition = ScrollPosition
@@ -351,8 +351,8 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Idx As Integer = Me.RowTag(I)
-		    Self.mTarget.Remove(Idx)
+		    Dim Engram As Beacon.Engram = Me.RowTag(I)
+		    Self.mTarget.Remove(Engram)
 		    Me.RemoveRow(I)
 		    Self.ContentsChanged = True
 		  Next
@@ -366,10 +366,11 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Idx As Integer = Me.RowTag(I)
+		    Dim Engram As Beacon.Engram = Me.RowTag(I)
+		    Dim Idx As Integer = Self.mTarget.IndexOf(Engram)
 		    
 		    Dim Dict As New Xojo.Core.Dictionary
-		    Dict.Value("Class") = Self.mTarget.Resource(Idx).ClassString
+		    Dict.Value("Class") = Engram.ClassString
 		    Dict.Value("Quantity") = Self.mTarget.Quantity(Idx)
 		    Dict.Value("Exact") = Self.mTarget.RequireExactResource(Idx)
 		    Dicts.Append(Dict)
@@ -415,7 +416,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
-		  Dim Idx As Integer = Me.RowTag(Row)
+		  Dim Engram As Beacon.Engram = Me.RowTag(Row)
+		  Dim Idx As Integer = Self.mTarget.IndexOf(Engram)
 		  Select Case Column
 		  Case Self.ColumnQuantity
 		    Self.mTarget.Quantity(Idx) = Val(Me.Cell(Row, Column))
