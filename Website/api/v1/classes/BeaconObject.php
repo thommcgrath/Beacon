@@ -357,7 +357,7 @@ class BeaconObject implements JsonSerializable {
 		$database->Commit();
 	}
 	
-	private static function NormalizeTag(string $tag) {
+	public static function NormalizeTag(string $tag) {
 		$tag = strtolower($tag);
 		$tag = preg_replace('/[^\w]/', '', $tag);
 		return $tag;
@@ -385,6 +385,10 @@ class BeaconObject implements JsonSerializable {
 			}
 			$this->tags = $arr;
 		}
+	}
+	
+	public function IsTagged(string $tag) {
+		return in_array(self::NormalizeTag($tag), $this->tags);
 	}
 }
 

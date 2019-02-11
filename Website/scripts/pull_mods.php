@@ -80,7 +80,7 @@ function PullMod(BeaconMod $mod) {
 	$database = BeaconCommon::Database();
 	$database->BeginTransaction();
 	foreach ($engrams as $engram) {
-		if (!BeaconCommon::HasAllKeys($engram, 'path', 'label', 'availability', 'can_blueprint')) {
+		if (!BeaconCommon::HasAllKeys($engram, 'path', 'label', 'availability')) {
 			$database->Rollback();
 			SendAlert($mod, 'An engram is missing keys.');
 			return;
@@ -89,8 +89,28 @@ function PullMod(BeaconMod $mod) {
 		$path = $engram['path'];
 		$label = $engram['label'];
 		$availability_keys = $engram['availability'];
-		$can_blueprint = BeaconCommon::BooleanValue($engram['can_blueprint']);
-		$harvestable = isset($engram['harvestable']) ? BeaconCommon::BooleanValue($engram['harvestable']) : false;
+		
+		$tags = array();
+		if (isset($item['tags'])) {
+			if (is_string($item['tags'])) {
+				$item_tags = explode(',', $item['tags']);
+			} elseif (is_array($item['tags'])) {
+				$item_tags = $item['tags'];
+			} else {
+				$item_tags = array();
+			}
+			foreach ($item['tags'] as $tag) {
+				$tags[] = BeaconObject::NormalizeTag($tag);
+			}
+		} else {
+			if (isset($item['can_blueprint']) && BeaconCommon::BooleanValue($item['can_blueprint'])) {
+				$tags[] = 'blueprintable';
+			}
+			if (isset($item['harvestable']) && BeaconCommon::BooleanValue($item['harvestable'])) {
+				$tags[] = 'harvestable';
+			}
+		}
+		$tags = '{' . implode(',', $tags) . '}';
 		
 		$availability = 0;
 		if (is_string($availability_keys)) {
@@ -133,10 +153,10 @@ function PullMod(BeaconMod $mod) {
 				SendAlert($mod, 'Engram ' . $path . ' belongs to another mod.');
 				return;
 			}
-			$database->Query('UPDATE engrams SET label = $2, availability = $3, can_blueprint = $4, harvestable = $5 WHERE path = $1;', $path, $label, $availability, $can_blueprint, $harvestable);
+			$database->Query('UPDATE engrams SET label = $2, availability = $3, tags = $4 WHERE path = $1;', $path, $label, $availability, $tags);
 		} else {
 			// new
-			$database->Query('INSERT INTO engrams (path, label, availability, can_blueprint, mod_id, harvestable) VALUES ($1, $2, $3, $4, $5, $6);', $path, $label, $availability, $can_blueprint, $mod_id, $harvestable);
+			$database->Query('INSERT INTO engrams (path, label, availability, tags, mod_id) VALUES ($1, $2, $3, $4, $5, $6);', $path, $label, $availability, $tags, $mod_id);
 		}
 	}
 	$database->Query('UPDATE mods SET last_pull_hash = $2 WHERE mod_id = $1;', $mod_id, $hash);

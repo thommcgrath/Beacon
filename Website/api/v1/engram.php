@@ -56,7 +56,7 @@ case 'POST':
 	$workshop_ids = array();
 	$mod_ids = array();
 	foreach ($items as $item) {
-		if (!BeaconCommon::HasAllKeys($item, 'path', 'label', 'mod_id', 'availability', 'can_blueprint')) {
+		if (!BeaconCommon::HasAllKeys($item, 'path', 'label', 'mod_id', 'availability')) {
 			BeaconAPI::ReplyError('Not all keys are present.', $item);
 		}
 		
@@ -112,8 +112,29 @@ case 'POST':
 		$label = $item['label'];
 		$availability = 0;
 		$availability_keys = null;
-		$can_blueprint = BeaconCommon::BooleanValue($item['can_blueprint']);
-		$harvestable = isset($item['harvestable']) ? BeaconCommon::BooleanValue($item['harvestable']) : false;
+		
+		$tags = array();
+		if (isset($item['tags'])) {
+			if (is_string($item['tags'])) {
+				$item_tags = explode(',', $item['tags']);
+			} elseif (is_array($item['tags'])) {
+				$item_tags = $item['tags'];
+			} else {
+				$item_tags = array();
+			}
+			foreach ($item['tags'] as $tag) {
+				$tags[] = BeaconObject::NormalizeTag($tag);
+			}
+		} else {
+			if (isset($item['can_blueprint']) && BeaconCommon::BooleanValue($item['can_blueprint'])) {
+				$tags[] = 'blueprintable';
+			}
+			if (isset($item['harvestable']) && BeaconCommon::BooleanValue($item['harvestable'])) {
+				$tags[] = 'harvestable';
+			}
+		}
+		$tags = '{' . implode(',', $tags) . '}';
+		
 		if (array_key_exists('availability', $item)) {
 			if (is_int($item['availability'])) {
 				$availability = $item['availability'];
@@ -160,10 +181,10 @@ case 'POST':
 				$database->Rollback();
 				BeaconAPI::ReplyError('Class ' . $path . ' already belongs to another mod.');
 			}
-			$database->Query('UPDATE engrams SET label = $2, availability = $3, can_blueprint = $4, harvestable = $5 WHERE path = $1;', $path, $label, $availability, $can_blueprint, $harvestable);
+			$database->Query('UPDATE engrams SET label = $2, availability = $3, tags = $4 WHERE path = $1;', $path, $label, $availability, $tags));
 		} else {
 			// new
-			$database->Query('INSERT INTO engrams (path, label, availability, can_blueprint, mod_id, harvestable) VALUES ($1, $2, $3, $4, $5, $6);', $path, $label, $availability, $can_blueprint, $mod_id, $harvestable);
+			$database->Query('INSERT INTO engrams (path, label, availability, tags, mod_id) VALUES ($1, $2, $3, $4, $5, $6);', $path, $label, $availability, $tags, $mod_id);
 		}
 		
 		$engram = BeaconEngram::Get($path);
