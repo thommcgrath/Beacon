@@ -190,10 +190,19 @@ Inherits Beacon.ConfigGroup
 		  If SupportedConfigs <> Nil Then
 		    Dim ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Value, SupportedConfigs)
 		    
+		    Dim ProtectedKeys As New Xojo.Core.Dictionary
+		    ProtectedKeys.Value("ServerSettings.ServerAdminPassword") = True
+		    ProtectedKeys.Value("ServerSettings.ServerPassword") = True
+		    ProtectedKeys.Value("AuctionHouse.MarketID") = True
+		    
 		    // Make sure passwords get encrypted on save
 		    For I As Integer = ConfigValues.Ubound DownTo 0
 		      Dim ConfigValue As Beacon.ConfigValue = ConfigValues(I)
-		      If ConfigValue.Header = "ServerSettings" And (ConfigValue.Key = "ServerAdminPassword" Or ConfigValue.Key = "ServerPassword") And ConfigValue.Value <> "" Then
+		      If ConfigValue.Value = "" Then
+		        Continue
+		      End If
+		      
+		      If ProtectedKeys.HasKey(ConfigValue.Header + "." + ConfigValue.Key) Then
 		        ConfigValues(I) = New Beacon.ConfigValue(ConfigValue.Header, ConfigValue.Key, Self.EncryptedTag + ConfigValue.Value + Self.EncryptedTag)
 		      End If
 		    Next
