@@ -2,14 +2,28 @@
 Protected Class MutableEngram
 Inherits Beacon.Engram
 	#tag Method, Flags = &h0
+		Sub AddTag(Tag As Text)
+		  Tag = Self.NormalizeTag(Tag)
+		  If Self.mTags.IndexOf(Tag) = -1 Then
+		    Self.mTags.Append(Tag)
+		    Self.mTags.Sort
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Availability(Assigns Value As UInt64)
 		  Self.mAvailability = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CanBeBlueprint(Assigns Value As Boolean)
-		  Self.mCanBeBlueprint = Value
+		Attributes( Deprecated = "IsTagged(""blueprintable"")" )  Sub CanBeBlueprint(Assigns Value As Boolean)
+		  If Value Then
+		    Self.AddTag("blueprintable")
+		  Else
+		    Self.RemoveTag("blueprintable")
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -25,12 +39,6 @@ Inherits Beacon.Engram
 		  
 		  Self.mPath = Path
 		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Harvestable(Assigns Value As Boolean)
-		  Self.mHarvestable = Value
 		End Sub
 	#tag EndMethod
 
@@ -56,6 +64,35 @@ Inherits Beacon.Engram
 		Sub Path(Assigns Value As Text)
 		  Self.mPath = Value
 		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveTag(Tag As Text)
+		  Tag = Self.NormalizeTag(Tag)
+		  Dim Idx As Integer = Self.mTags.IndexOf(Tag)
+		  If Idx > -1 Then
+		    Self.mTags.Remove(Idx)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Tags(Assigns Tags() As Text)
+		  Redim Self.mTags(-1)
+		  
+		  For Each Tag As Text In Tags
+		    Tag = Self.NormalizeTag(Tag)
+		    Self.mTags.Append(Tag)
+		  Next
+		  Self.mTags.Sort
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub TagString(Assigns Value As Text)
+		  Dim Tags() As Text = Value.Split(",")
+		  Self.Tags = Tags
 		End Sub
 	#tag EndMethod
 

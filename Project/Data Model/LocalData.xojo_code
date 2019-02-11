@@ -62,13 +62,15 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE mods (mod_id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, console_safe INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_source_icons (icon_id TEXT NOT NULL PRIMARY KEY, icon_data BLOB NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE loot_sources (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, multiplier_min REAL NOT NULL, multiplier_max REAL NOT NULL, uicolor TEXT NOT NULL, sort_order INTEGER NOT NULL, icon TEXT NOT NULL REFERENCES loot_source_icons(icon_id) ON UPDATE CASCADE ON DELETE RESTRICT, experimental BOOLEAN NOT NULL, notes TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '{}');")
-		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, can_blueprint INTEGER NOT NULL, harvestable INTEGER NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE engrams (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '');")
 		  Self.SQLExecute("CREATE TABLE official_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE custom_presets (object_id TEXT NOT NULL PRIMARY KEY, label TEXT NOT NULL, contents TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE preset_modifiers (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, pattern TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
+		  
+		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts4(tags, object_id, source_table);")
 		  
 		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX engrams_path_idx ON engrams(path);")
@@ -479,25 +481,6 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HarvestableEngrams() As Beacon.Engram()
-		  Dim Engrams() As Beacon.Engram
-		  Try
-		    Dim RS As RecordSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE harvestable = 1;")
-		    If RS.RecordCount = 0 Then
-		      Return Nil
-		    End If
-		    
-		    Engrams = Self.RecordSetToEngram(RS)
-		    For Each Engram As Beacon.Engram In Engrams
-		      Self.mEngramCache.Value(Engram.Path) = Engram
-		    Next
-		  Catch Err As UnsupportedOperationException
-		  End Try  
-		  Return Engrams
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function HasExperimentalLootSources(ConsoleSafe As Boolean) As Boolean
 		  Try
 		    Dim Clauses(0) As String
@@ -788,20 +771,32 @@ Implements Beacon.DataSource
 		      Dim Availability As Integer = Dict.Value("availability")
 		      Dim Path As Text = Dict.Value("path")
 		      Dim ClassString As Text = Dict.Value("class_string")
-		      Dim CanBlueprint As Boolean = Dict.Value("can_blueprint")
-		      Dim Harvestable As Boolean = Dict.Value("harvestable")
+		      Dim TagString As String
+		      Try
+		        Dim Tags() As Text
+		        Dim Temp() As Auto = Dict.Value("tags")
+		        For Each Tag As Text In Temp
+		          Tags.Append(Tag)
+		        Next
+		        TagString = Text.Join(Tags, ",")
+		      Catch Err As TypeMismatchException
+		        
+		      End Try
 		      
 		      ObjectID = ObjectID.Lowercase
 		      ModID = ModID.Lowercase
 		      
 		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM engrams WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
 		      If Results.RecordCount = 1 And ObjectID = Results.Field("object_id").StringValue Then
-		        Self.SQLExecute("UPDATE engrams SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, can_blueprint = ?7, harvestable = ?8 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, CanBlueprint, Harvestable)
+		        Self.SQLExecute("UPDATE engrams SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, tags = ?7 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, TagString)
+		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = 'engrams';", ObjectID, TagString)
 		      Else
 		        If Results.RecordCount = 1 Then
 		          Self.SQLExecute("DELETE FROM engrams WHERE object_id = ?1;", Results.Field("object_id").StringValue)
+		          Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = 'engrams';", Results.Field("object_id").StringValue)
 		        End If
-		        Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, can_blueprint, harvestable) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", ObjectID, ModID, Label, Availability, Path, ClassString, CanBlueprint, Harvestable)
+		        Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, ModID, Label, Availability, Path, ClassString, TagString)
+		        Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, 'engrams');", ObjectID, TagString)
 		      End If
 		      EngramsChanged = True
 		    Next
@@ -999,8 +994,6 @@ Implements Beacon.DataSource
 		  // Engrams
 		  If FromSchemaVersion >= 9 Then
 		    Commands.Append("INSERT INTO engrams SELECT * FROM legacy.engrams;")
-		  ElseIf FromSchemaVersion >= 6 Then
-		    Commands.Append("INSERT INTO engrams SELECT *, 0 AS harvestable FROM legacy.engrams;")
 		  End If
 		  
 		  // Variables
@@ -1038,6 +1031,11 @@ Implements Beacon.DataSource
 		    Commands.Append("INSERT INTO custom_presets SELECT * FROM legacy.custom_presets;")
 		  End If
 		  
+		  // Searchable Tags
+		  If FromSchemaVersion >= 9 Then
+		    Commands.Append("INSERT INTO searchable_tags SELECT * FROM legacy.searchable_tags;")
+		  End If
+		  
 		  If UBound(Commands) > -1 Then
 		    Self.BeginTransaction()
 		    Try
@@ -1055,11 +1053,10 @@ Implements Beacon.DataSource
 		      Dim Results As RecordSet = Self.SQLSelect("SELECT path, class_string, label, availability, can_blueprint FROM legacy.engrams WHERE built_in = 0;")
 		      While Not Results.EOF
 		        Try
-		          If FromSchemaVersion >= 9 Then
-		            Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, path, class_string, label, availability, can_blueprint, harvestable) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", Beacon.CreateUUID, Self.UserModID, Results.Field("path").StringValue, Results.Field("class_string").StringValue, Results.Field("label").StringValue, Results.Field("availability").IntegerValue, Results.Field("can_blueprint").BooleanValue, Results.Field("harvestable").BooleanValue)
-		          Else
-		            Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, path, class_string, label, availability, can_blueprint, harvestable) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Beacon.CreateUUID, Self.UserModID, Results.Field("path").StringValue, Results.Field("class_string").StringValue, Results.Field("label").StringValue, Results.Field("availability").IntegerValue, Results.Field("can_blueprint").BooleanValue)
-		          End If
+		          Dim ObjectID As String = Beacon.CreateUUID
+		          Dim Tags As String = If(Results.Field("can_blueprint").BooleanValue, "blueprintable", "")
+		          Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, path, class_string, label, availability, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, Self.UserModID, Results.Field("path").StringValue, Results.Field("class_string").StringValue, Results.Field("label").StringValue, Results.Field("availability").IntegerValue, Tags)
+		          Self.SQLExecute("INSERT INTO searchable_tags (object_id, source_table, tags) VALUES (?1, ?2, ?3);", ObjectID, "engrams", Tags)
 		        Catch Err As UnsupportedOperationException
 		          Self.Rollback()
 		          Self.mBase.DetachDatabase("legacy")
@@ -1198,8 +1195,7 @@ Implements Beacon.DataSource
 		    Dim Engram As New Beacon.MutableEngram(Results.Field("path").StringValue.ToText)
 		    Engram.Label = Results.Field("label").StringValue.ToText
 		    Engram.Availability = Results.Field("availability").IntegerValue
-		    Engram.CanBeBlueprint = Results.Field("can_blueprint").BooleanValue
-		    Engram.Harvestable = Results.Field("harvestable").BooleanValue
+		    Engram.TagString = Results.Field("tags").StringValue.ToText
 		    Engram.ConsoleSafe = Results.Field("console_safe").BooleanValue
 		    Engram.ModID = Results.Field("mod_id").StringValue.ToText
 		    Engram.ModName = Results.Field("mod_name").StringValue.ToText
@@ -1319,7 +1315,7 @@ Implements Beacon.DataSource
 		  
 		  Self.BeginTransaction()
 		  Try
-		    Dim Results As RecordSet = Self.SQLSelect("SELECT mod_id FROM engrams WHERE LOWER(path) = LOWER(?1);", Engram.Path)
+		    Dim Results As RecordSet = Self.SQLSelect("SELECT object_id, mod_id FROM engrams WHERE LOWER(path) = LOWER(?1);", Engram.Path)
 		    If Results.RecordCount = 1 Then
 		      If Replace = False Then
 		        Self.Rollback()
@@ -1332,9 +1328,12 @@ Implements Beacon.DataSource
 		        Return False
 		      End If
 		      
-		      Self.SQLExecute("UPDATE engrams SET path = ?1, class_string = ?2, label = ?3, can_blueprint = ?4, availability = ?5, harvestable = ?6 WHERE LOWER(path) = LOWER(?1);", Engram.Path, Engram.ClassString, Engram.Label, Engram.CanBeBlueprint, Engram.Availability, Engram.Harvestable)
+		      Self.SQLExecute("UPDATE engrams SET path = ?1, class_string = ?2, label = ?3, tags = ?4, availability = ?5 WHERE LOWER(path) = LOWER(?1);", Engram.Path, Engram.ClassString, Engram.Label, Engram.TagString, Engram.Availability)
+		      Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = 'engrams';", Results.Field("object_id").StringValue, Engram.TagString)
 		    Else
-		      Self.SQLExecute("INSERT INTO engrams (object_id, path, class_string, label, can_blueprint, availability, mod_id, harvestable) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);", Beacon.CreateUUID, Engram.Path, Engram.ClassString, Engram.Label, Engram.CanBeBlueprint, Engram.Availability, Self.UserModID, Engram.Harvestable)
+		      Dim ObjectID As String = Beacon.CreateUUID
+		      Self.SQLExecute("INSERT INTO engrams (object_id, path, class_string, label, tags, availability, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, Engram.Path, Engram.ClassString, Engram.Label, Engram.TagString, Engram.Availability, Self.UserModID)
+		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, 'engrams');", ObjectID, Engram.TagString)
 		    End If
 		    Self.Commit()
 		    
@@ -1623,6 +1622,28 @@ Implements Beacon.DataSource
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function TaggedEngrams(Tag As Text) As Beacon.Engram()
+		  Dim SelectSQL As String = Self.EngramSelectSQL.Replace("engrams INNER JOIN mods", "engrams INNER JOIN searchable_tags ON (searchable_tags.object_id = engrams.object_id AND searchable_tags.source_table = 'engrams') INNER JOIN mods")
+		  
+		  Dim Engrams() As Beacon.Engram
+		  Try
+		    Tag = Beacon.Engram.NormalizeTag(Tag)
+		    Dim RS As RecordSet = Self.SQLSelect(SelectSQL + " WHERE searchable_tags.tags MATCH ?1;", Tag)
+		    If RS.RecordCount = 0 Then
+		      Return Nil
+		    End If
+		    
+		    Engrams = Self.RecordSetToEngram(RS)
+		    For Each Engram As Beacon.Engram In Engrams
+		      Self.mEngramCache.Value(Engram.Path) = Engram
+		    Next
+		  Catch Err As UnsupportedOperationException
+		  End Try  
+		  Return Engrams
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Shared Function TextToDate(Source As Text) As Xojo.Core.Date
 		  Dim Now As New Date
@@ -1702,7 +1723,7 @@ Implements Beacon.DataSource
 	#tag EndProperty
 
 
-	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT path\x2C label\x2C availability\x2C can_blueprint\x2C harvestable\x2C mods.console_safe\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.path\x2C engrams.label\x2C engrams.availability\x2C engrams.tags\x2C mods.console_safe\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"class_string\x2C label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements", Scope = Private
