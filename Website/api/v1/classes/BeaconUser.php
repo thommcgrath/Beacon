@@ -1,7 +1,7 @@
 <?php
 
 class BeaconUser implements JsonSerializable {
-	const OmniFree = true;
+	const OmniFree = false;
 	
 	protected $user_id = '';
 	protected $username = null;
