@@ -25,7 +25,7 @@ function check_purchase_status(client_reference_id) {
 	}
 	
 	number_of_checks++;
-	request.start('GET', 'status.php?client_reference_id=' + encodeURIComponent(client_reference_id), function(obj) {
+	request.get('status.php', {'client_reference_id': client_reference_id}, function(obj) {
 		document.getElementById('checking_container').style.display = 'none';
 		document.getElementById('checking_container').style.display = 'none';
 		document.getElementById('purchase_delayed').style.display = 'block';
