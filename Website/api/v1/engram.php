@@ -181,7 +181,7 @@ case 'POST':
 				$database->Rollback();
 				BeaconAPI::ReplyError('Class ' . $path . ' already belongs to another mod.');
 			}
-			$database->Query('UPDATE engrams SET label = $2, availability = $3, tags = $4 WHERE path = $1;', $path, $label, $availability, $tags));
+			$database->Query('UPDATE engrams SET label = $2, availability = $3, tags = $4 WHERE path = $1;', $path, $label, $availability, $tags);
 		} else {
 			// new
 			$database->Query('INSERT INTO engrams (path, label, availability, tags, mod_id) VALUES ($1, $2, $3, $4, $5, $6);', $path, $label, $availability, $tags, $mod_id);
