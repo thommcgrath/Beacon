@@ -43,8 +43,10 @@ if (is_null($session) == false) {
 	$user = BeaconUser::GetByUserID($session->UserID());
 	if (is_null($user) == false && is_null($explicit_email) == false) {
 		$desired_user = BeaconUser::GetByEmail($explicit_email);
-		if (is_null($desired_user) == false && $desired_user->UserID() !== $user->UserID()) {
+		if (is_null($desired_user) == true || $desired_user->UserID() !== $user->UserID()) {
 			$user = null;
+			$session = null;
+			BeaconSession::RemoveCookie();
 		}
 	}
 	if (is_null($user) == false) {
