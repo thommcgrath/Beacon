@@ -65,7 +65,7 @@ Begin DiscoveryView LocalDiscoveryView
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   True
+      AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True

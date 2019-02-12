@@ -129,6 +129,7 @@ Begin Window ResolveIssuesDialog
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   1
@@ -185,7 +186,7 @@ Begin Window ResolveIssuesDialog
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   True
+      AutomaticallyCheckSpelling=   False
       BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True
@@ -213,13 +214,13 @@ Begin Window ResolveIssuesDialog
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
-      Styled          =   True
+      Styled          =   False
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
       TextColor       =   &c00000000
-      TextFont        =   "System"
+      TextFont        =   "Source Code Pro"
       TextSize        =   0.0
       TextUnit        =   0
       Top             =   275
