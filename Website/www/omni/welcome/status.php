@@ -12,12 +12,12 @@ if ($results->RecordCount() == 0) {
 	exit;
 }
 
-$email = $results->Field('purchaser_email');
+$email_id = $results->Field('purchaser_email');
 $obj = array(
-	'email' => $email
+	'email_id' => $email_id
 );
 
-$users = $database->Query('SELECT user_id FROM users WHERE email_id = $1;', $email);
+$users = $database->Query('SELECT user_id FROM users WHERE email_id = $1;', $email_id);
 if ($users->RecordCount() == 1) {
 	$obj['user_id'] = $users->Field('user_id');
 } else {

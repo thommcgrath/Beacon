@@ -417,4 +417,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			return false;
 		});
 	}
+	
+	if (window.location.hash == '#create') {
+		show_page('recover');
+	}
 });

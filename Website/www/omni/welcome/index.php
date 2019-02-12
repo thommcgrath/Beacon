@@ -28,18 +28,18 @@ function check_purchase_status(client_reference_id) {
 	request.get('status.php', {'client_reference_id': client_reference_id}, function(obj) {
 		document.getElementById('checking_container').style.display = 'none';
 		document.getElementById('checking_container').style.display = 'none';
-		document.getElementById('purchase_delayed').style.display = 'block';
+		document.getElementById('purchase_confirmed').style.display = 'block';
 		
-		var email = obj.email;
 		var user_id = obj.user_id;
 		
 		if (user_id == null) {
-			document.getElementById('confirmed_text').innerText = 'You will need to create an account with the email address "' + email + '" to activate Omni in Beacon.';
-			document.getElementById('activate_button').innerText = 'Create Account in Beacon';
-			document.getElementById('activate_button').href = 'beacon://activate_account?email=' + encodeURIComponent(email) + '&new_account=true';
+			document.getElementById('confirmed_text').innerText = 'You will need to create an account with the email address used to purchase to activate Omni in Beacon.';
+			document.getElementById('activate_button').innerText = 'Create Account';
+			document.getElementById('activate_button').href = <?php echo json_encode(BeaconCommon::AbsoluteURL('/account/#create')); ?>;
 		} else {
-			document.getElementById('confirmed_text').innerText = 'Your account "' + email + '" is ready to use Omni. Simply relaunch Beacon or click the "Activate Omni" button below to have Beacon refresh your account status.';
-			document.getElementById('activate_button').href = 'beacon://activate_account?email=' + encodeURIComponent(email);
+			document.getElementById('confirmed_text').innerText = 'Your account is ready to use Omni. Simply relaunch Beacon or click the "Activate Omni" button below to have Beacon refresh your account status.';
+			document.getElementById('activate_button').innerText = 'Activate Omni';
+			document.getElementById('activate_button').href = 'beacon://action/refresh_user';
 		}
 	}, function(http_status, raw_body) {
 		setTimeout(function() {
