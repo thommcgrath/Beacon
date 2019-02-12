@@ -488,6 +488,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub EnableButtons()
+		  Dim Enabled As Boolean = Self.EngramSearcher.State = Beacon.Thread.States.NotRunning
+		  Self.ActionButton.Enabled = Enabled And Self.mSelectedEngrams.Count >= 1
+		  Self.CancelButton.Enabled = Enabled
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ListUnknownEngrams()
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mSelectedEngrams
 		    Dim Path As Text = Entry.Key
@@ -604,8 +612,7 @@ End
 		    Self.SingleEntryCheck.Visible = False
 		    Self.EngramList.Height = (Self.SingleEntryCheck.Top + Self.SingleEntryCheck.Height) - Self.EngramList.Top
 		  End If
-		  
-		  Self.ActionButton.Enabled = Self.mSelectedEngrams.Count >= 1
+		  Self.EnableButtons
 		End Sub
 	#tag EndMethod
 
@@ -875,11 +882,13 @@ End
 	#tag Event
 		Sub Finished()
 		  Self.SearchSpinnerVisible = False
+		  Self.EnableButtons()
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Started()
 		  Self.SearchSpinnerVisible = True
+		  Self.EnableButtons()
 		End Sub
 	#tag EndEvent
 	#tag Event
