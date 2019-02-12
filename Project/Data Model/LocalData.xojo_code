@@ -234,6 +234,8 @@ Implements Beacon.DataSource
 		    Self.BuildSchema()
 		  End If
 		  
+		  Self.mBase.SQLExecute("PRAGMA cache_size = -100000;")
+		  
 		  If MigrateFile <> Nil And MigrateFile.Exists And CurrentSchemaVersion < Self.SchemaVersion Then
 		    Self.MigrateData(MigrateFile, CurrentSchemaVersion)
 		  End If
