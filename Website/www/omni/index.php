@@ -13,12 +13,13 @@ if (!isset($_SESSION['client_reference_id'])) {
 }
 
 $database = BeaconCommon::Database();
-$results = $database->Query('SELECT stripe_sku FROM products WHERE product_id = $1', '972f9fc5-ad64-4f9c-940d-47062e705cc5');
+$results = $database->Query('SELECT stripe_sku, retail_price FROM products WHERE product_id = $1', '972f9fc5-ad64-4f9c-940d-47062e705cc5');
 if ($results->RecordCount() != 1) {
 	throw new Exception('Unable to find product');
 	exit;
 }
 $omni_sku = $results->Field('stripe_sku');
+$purchase_price = '$' . number_format($results->Field('retail_price'), 2, '.', ',');
 ?>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -71,7 +72,7 @@ if (!is_null($session)) {
 <?php } elseif (is_null($user) == false && $user->OmniVersion() >= 1) { ?>
 <p class="text-center inset-note">You have already purchased Beacon Omni! See <a href="/account/#omni">your account control panel</a> for instructions on activating Beacon Omni on your computer.</p>
 <?php } else { ?>
-<p class="text-center"><button id="buy-button" class="default">Buy Omni</button><br><span class="smaller">Already purchased? See <a href="/account/#omni">your account control panel</a> for more details.</span></p>
+<p class="text-center"><button id="buy-button" class="default">Buy Omni: <?php echo htmlentities($purchase_price); ?></button><br><span class="smaller">Already purchased? See <a href="/account/#omni">your account control panel</a> for more details.</span></p>
 <?php } ?>
 <table class="generic">
 	<thead>
