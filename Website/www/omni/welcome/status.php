@@ -17,7 +17,7 @@ $obj = array(
 	'email' => $email
 );
 
-$users = $database->Query('SELECT user_id FROM users WHERE email_id = uuid_for_email($1);', $email);
+$users = $database->Query('SELECT user_id FROM users WHERE email_id = $1;', $email);
 if ($users->RecordCount() == 1) {
 	$obj['user_id'] = $users->Field('user_id');
 } else {
