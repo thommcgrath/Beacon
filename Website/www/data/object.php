@@ -1,6 +1,6 @@
 <?php
 
-require(dirname(__FILE__, 2) . '/framework/loader.php');
+require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 if (!isset($_GET['id'])) {
 	http_response_code(400);
