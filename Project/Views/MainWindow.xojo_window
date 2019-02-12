@@ -437,6 +437,12 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ShowLibraryPane(PageIndex As Integer)
+		  Self.LibraryPane1.ShowPage(PageIndex)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ShowView(View As BeaconSubview)
 		  If Self.mCurrentView = View Then
 		    Return

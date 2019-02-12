@@ -39,7 +39,7 @@ function check_purchase_status(client_reference_id) {
 		} else {
 			document.getElementById('confirmed_text').innerText = 'Your account is ready to use Omni. Simply relaunch Beacon or click the "Activate Omni" button below to have Beacon refresh your account status.';
 			document.getElementById('activate_button').innerText = 'Activate Omni';
-			document.getElementById('activate_button').href = 'beacon://action/refresh_user';
+			document.getElementById('activate_button').href = 'beacon://action/refreshuser';
 		}
 	}, function(http_status, raw_body) {
 		setTimeout(function() {

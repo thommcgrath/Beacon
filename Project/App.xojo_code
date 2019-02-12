@@ -488,6 +488,9 @@ Implements NotificationKit.Receiver
 		        EngramsUpdateWindow.ShowIfNecessary()
 		        LocalData.SharedInstance.CheckForEngramUpdates
 		      End If
+		    Case "refreshuser"
+		      Self.IdentityManager.RefreshUserDetails()
+		      MainWindow.ShowLibraryPane(LibraryPane.PaneMenu)
 		    Else
 		      Break
 		    End Select
