@@ -15,6 +15,10 @@ if (empty($_GET['return']) === false) {
 	$_SESSION['login_return_url'] = $_GET['return'];
 	$cleanup_url = true;
 }
+if (empty($_GET['email']) === false) {
+	$_SESSION['login_explicit_email'] = $_GET['email'];
+	$cleanup_url = true;
+}
 
 if ($cleanup_url) {
 	header('Location: /account/login/');
@@ -26,6 +30,26 @@ if (isset($_SESSION['login_return_url'])) {
 	$return_url = $_SESSION['login_return_url'];
 } else {
 	$return_url = BeaconCommon::AbsoluteURL('/account/');
+}
+
+if (isset($_SESSION['login_explicit_email'])) {
+	$explicit_email = $_SESSION['login_explicit_email'];
+} else {
+	$explicit_email = null;
+}
+
+$session = BeaconSession::GetFromCookie();
+if (is_null($session) == false) {
+	$user = BeaconUser::GetByUserID($session->UserID());
+	if (is_null($user) == false && is_null($explicit_email) == false) {
+		$desired_user = BeaconUser::GetByEmail($explicit_email);
+		if (is_null($desired_user) == false && $desired_user->UserID() !== $user->UserID()) {
+			$user = null;
+		}
+	}
+	if (is_null($user) == false) {
+		BeaconCommon::Redirect($return_url);
+	}
 }
 
 BeaconTemplate::StartStyles();
@@ -42,7 +66,7 @@ BeaconTemplate::FinishStyles();
 
 ?>
 <div id="login_container">
-	<h1>Beacon Login<input type="hidden" id="login_return_field" value="<?php echo htmlentities($return_url); ?>"></h1>
+	<h1>Beacon Login<input type="hidden" id="login_return_field" value="<?php echo htmlentities($return_url); ?>"><?php if (!is_null($explicit_email)) { ?><input type="hidden" id="login_explicit_email" value="<?php echo htmlentities($explicit_email); ?>"><?php } ?></h1>
 	<?php
 		$login = new BeaconLogin();
 		$login->with_remember_me = true;

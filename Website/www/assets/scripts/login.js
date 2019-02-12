@@ -55,13 +55,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	};
 	
-	var storedRemember = false;
-	var storedEmail = '';
-	if (localStorage) {
-		storedEmail = localStorage.getItem('email');
-		storedRemember = storedEmail !== null;
-	}
-	
 	var introPage = document.getElementById('page_intro');
 	var introContinueButton = document.getElementById('intro_continue_button');
 	var introLoginButton = document.getElementById('intro_login_button');
@@ -76,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	var loginRecoverButton = document.getElementById('login_recover_button');
 	var loginCancelButton = document.getElementById('login_cancel_button');
 	var loginActionButton = document.getElementById('login_action_button');
+	var loginExplicitEmailField = document.getElementById('login_explicit_email');
 	
 	var recoverForm = document.getElementById('login_recover_form');
 	var recoverEmailField = document.getElementById('recover_email_field');
@@ -103,6 +97,17 @@ document.addEventListener('DOMContentLoaded', function() {
 	var loginRemember = false;
 	if (loginReturnField) {
 		loginReturnURI = loginReturnField.value;
+	}
+	
+	var storedRemember = false;
+	var storedEmail = null;
+	var explicitEmail = null;
+	if (loginExplicitEmailField) {
+		explicitEmail = loginExplicitEmailField.value;
+	}
+	if (explicitEmail === null && localStorage) {
+		storedEmail = localStorage.getItem('email');
+		storedRemember = storedEmail !== null;
 	}
 	
 	var consumeURI;
@@ -134,8 +139,12 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 	
 	// !Login Page
-	if (loginEmailField && storedRemember) {
-		loginEmailField.value = storedEmail;
+	if (loginEmailField) {
+		if (explicitEmail !== null) {
+			loginEmailField.value = explicitEmail;
+		} else if (storedRemember) {
+			loginEmailField.value = storedEmail;
+		}
 	}
 	if (loginRememberCheck) {
 		loginRememberCheck.checked = storedRemember;
@@ -419,6 +428,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 	
 	if (window.location.hash == '#create') {
+		if (recoverEmailField && explicitEmail) {
+			recoverEmailField.value = explicitEmail;
+		}
 		show_page('recover');
 	}
 });
