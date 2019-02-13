@@ -798,6 +798,12 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Function ShouldSave() As Boolean
+		  Self.Save()
+		End Function
+	#tag EndEvent
+
 
 	#tag MenuHandler
 		Function FileExport() As Boolean Handles FileExport.Action
