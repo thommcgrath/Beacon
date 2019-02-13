@@ -1113,8 +1113,16 @@ End
 		  Self.MapSelector.Items(5).Selected = (Mask And Beacon.Maps.Ragnarok.Mask) = Beacon.Maps.Ragnarok.Mask
 		  
 		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
+		  Dim SelectedEntries() As Text
+		  For I As Integer = 0 To Self.ContentsList.RowCount - 1
+		    If Self.ContentsList.Selected(I) Then
+		      Dim Entry As Beacon.PresetEntry = Self.ContentsList.RowTag(I)
+		      SelectedEntries.Append(Entry.UniqueID)
+		    End If
+		  Next
+		  Self.ContentsList.DeleteAllRows()
 		  For Each Entry As Beacon.PresetEntry In Self.mPreset
-		    Self.PutEntryInRow(Entry, -1, Maps)
+		    Self.PutEntryInRow(Entry, -1, Maps, SelectedEntries.IndexOf(Entry.UniqueID) > -1)
 		  Next
 		  Self.ContentsList.Sort
 		  
