@@ -37,6 +37,29 @@ Implements Beacon.DataSource
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function AllTags() As String()
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT DISTINCT tags FROM engrams WHERE tags != '';")
+		  Dim Dict As New Dictionary
+		  While Not Results.EOF
+		    Dim Tags() As String = Results.Field("tags").StringValue.Split(",")
+		    For Each Tag As String In Tags
+		      Dict.Value(Tag) = True
+		    Next
+		    Results.MoveNext
+		  Wend
+		  
+		  Dim Keys() As Variant = Dict.Keys
+		  Dim Tags() As String
+		  For Each Key As String In Keys
+		    Tags.Append(Key)
+		  Next
+		  Tags.Sort
+		  
+		  Return Tags
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub BeginTransaction()
 		  Self.mLock.Enter
@@ -1393,31 +1416,53 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As Text, ConsoleSafe As Boolean) As Beacon.Engram()
+		Function SearchForEngrams(SearchText As Text, ConsoleSafe As Boolean, Filter As Beacon.EngramSearchFilter = Nil) As Beacon.Engram()
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Dim Engrams() As Beacon.Engram
 		  
 		  Try
+		    Dim NextPlaceholder As Integer = 1
 		    Dim Clauses() As String
+		    Dim Values As New Dictionary
 		    If ConsoleSafe Then
 		      Clauses.Append("mods.console_safe = 1")
 		    End If
 		    If SearchText <> "" Then
-		      Clauses.Append("LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1)")
+		      Clauses.Append("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
+		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
+		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    
 		    Dim SQL As String = Self.EngramSelectSQL
+		    If Filter <> Nil Then
+		      If Filter.Mods.Ubound > -1 Then
+		        Dim Placeholders() As String
+		        For Each ModID As Text In Filter.Mods
+		          Placeholders.Append("?" + Str(NextPlaceholder))
+		          Values.Value(NextPlaceholder) = ModID
+		          NextPlaceholder = NextPlaceholder + 1
+		        Next
+		        Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
+		      End If
+		      If Filter.Tags.Ubound > -1 Then
+		        SQL = SQL.Replace("engrams INNER JOIN mods", "engrams INNER JOIN searchable_tags ON (searchable_tags.object_id = engrams.object_id AND searchable_tags.source_table = 'engrams') INNER JOIN mods")
+		        Clauses.Append("searchable_tags.tags MATCH ?" + Str(NextPlaceholder))
+		        Values.Value(NextPlaceholder) = Filter.Tags.Join(" OR ")
+		        NextPlaceholder = NextPlaceholder + 1
+		      End If
+		    End If
+		    
 		    If Clauses.Ubound > -1 Then
 		      SQL = SQL + " WHERE " + Join(Clauses, " AND ")
 		    End If
 		    SQL = SQL + " ORDER BY label;"
 		    
 		    Dim Results As RecordSet
-		    If SearchText = "" Then
+		    If Values.Count = 0 Then
 		      Results = Self.SQLSelect(SQL)
 		    Else
-		      Results = Self.SQLSelect(SQL, "%" + SearchText + "%")
+		      Results = Self.SQLSelect(SQL, Values)
 		    End If
 		    
 		    Engrams = Self.RecordSetToEngram(Results)
@@ -1493,7 +1538,22 @@ Implements Beacon.DataSource
 		Private Sub SQLExecute(SQLString As String, ParamArray Values() As Variant)
 		  Self.mLock.Enter
 		  
-		  If UBound(Values) = -1 Then
+		  If Values.Ubound = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
+		    // Dictionary keys are placeholder values, values are... values
+		    Dim Dict As Dictionary = Values(0)
+		    Redim Values(-1)
+		    
+		    Try
+		      // I know this line looks insane, but it's correct. Placeholders start at 1.
+		      For I As Integer = 1 To Dict.Count
+		        Values.Append(Dict.Value(I))
+		      Next
+		    Catch Err As TypeMismatchException
+		      Redim Values(-1)
+		    End Try
+		  End If
+		  
+		  If Values.Ubound = -1 Then
 		    Self.mBase.SQLExecute(SQLString)
 		    Dim Err As RuntimeException = Self.CheckError(SQLString)
 		    Self.mLock.Leave
@@ -1510,7 +1570,7 @@ Implements Beacon.DataSource
 		    Raise Err
 		  End If
 		  
-		  For I As Integer = 0 To UBound(Values)
+		  For I As Integer = 0 To Values.Ubound
 		    Dim Value As Variant = Values(I)
 		    Select Case Value.Type
 		    Case Variant.TypeInteger, Variant.TypeInt32
@@ -1557,7 +1617,22 @@ Implements Beacon.DataSource
 		  
 		  Dim RS As RecordSet
 		  
-		  If UBound(Values) = -1 Then
+		  If Values.Ubound = 0 And Values(0) <> Nil And Values(0).Type = Variant.TypeObject And Values(0).ObjectValue IsA Dictionary Then
+		    // Dictionary keys are placeholder values, values are... values
+		    Dim Dict As Dictionary = Values(0)
+		    Redim Values(-1)
+		    
+		    Try
+		      // I know this line looks insane, but it's correct. Placeholders start at 1.
+		      For I As Integer = 1 To Dict.Count
+		        Values.Append(Dict.Value(I))
+		      Next
+		    Catch Err As TypeMismatchException
+		      Redim Values(-1)
+		    End Try
+		  End If
+		  
+		  If Values.Ubound = -1 Then
 		    RS = Self.mBase.SQLSelect(SQLString)
 		    Dim Err As RuntimeException = Self.CheckError(SQLString)
 		    Self.mLock.Leave
@@ -1574,7 +1649,7 @@ Implements Beacon.DataSource
 		    Raise Err
 		  End If
 		  
-		  For I As Integer = 0 To UBound(Values)
+		  For I As Integer = 0 To Values.Ubound
 		    Dim Value As Variant = Values(I)
 		    Select Case Value.Type
 		    Case Variant.TypeInteger, Variant.TypeInt32

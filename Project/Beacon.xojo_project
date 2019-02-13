@@ -25,6 +25,7 @@ Class=FooterBar;Custom Controls/FooterBar.xojo_code;&h000000006A761FFF;&h0000000
 Class=FooterBarButton;Custom Controls/FooterBarButton.xojo_code;&h000000006C7AB7FF;&h0000000030DCFFFF;false
 Folder=Modules;Modules;&h000000001444B7FF;&h0000000000000000;false
 Module=Beacon;Modules/Beacon.xojo_code;&h0000000055ADDFFF;&h000000001444B7FF;false
+Class=EngramSearchFilter;Modules/Beacon/EngramSearchFilter.xojo_code;&h000000005EB1EFFF;&h0000000055ADDFFF;false
 Class=LocalDiscoveryEngine;Modules/Beacon/LocalDiscoveryEngine.xojo_code;&h0000000040CC87FF;&h0000000055ADDFFF;false
 Class=FTPDeploymentEngine;Modules/Beacon/FTPDeploymentEngine.xojo_code;&h00000000091AFFFF;&h0000000055ADDFFF;false
 Module=BeaconAPI;Modules/BeaconAPI.xojo_code;&h00000000783217FF;&h000000001444B7FF;false

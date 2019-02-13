@@ -103,7 +103,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As Text, ConsoleSafe As Boolean) As Beacon.Engram()
+		Function SearchForEngrams(SearchText As Text, ConsoleSafe As Boolean, Filter As Beacon.EngramSearchFilter = Nil) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod
