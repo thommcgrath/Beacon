@@ -255,6 +255,15 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function SanitizeText(Source As String) As String
+		  Dim Sanitizer As New RegEx
+		  Sanitizer.SearchPattern = "[^\x0A\x0D\x20-\x7E]+"
+		  Sanitizer.ReplacementPattern = ""
+		  Return Sanitizer.Replace(Source).ConvertEncoding(Encodings.ASCII)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function SelectionIsEncrypted() As Boolean
 		  If Self.ConfigArea.SelStart >= Self.ConfigArea.Text.Len Then
 		    Return False
@@ -433,12 +442,21 @@ End
 		    Return
 		  End If
 		  
+		  Dim SanitizedText As String = Self.SanitizeText(Me.Text)
+		  If SanitizedText <> Me.Text Then
+		    Dim SelStart As Integer = Me.SelStart
+		    Dim SelLength As Integer = Me.SelLength
+		    Me.Text = SanitizedText
+		    Me.SelStart = SelStart
+		    Me.SelLength = SelLength
+		  End If
+		  
 		  Select Case Self.Switcher.SelectedIndex
 		  Case 1
-		    Self.Config(True).GameUserSettingsIniContent = Me.Text.ToText
+		    Self.Config(True).GameUserSettingsIniContent = SanitizedText.ToText
 		    Self.ContentsChanged = True
 		  Case 2
-		    Self.Config(True).GameIniContent = Me.Text.ToText
+		    Self.Config(True).GameIniContent = SanitizedText.ToText
 		    Self.ContentsChanged = True
 		  End Select
 		End Sub
