@@ -431,6 +431,10 @@ Protected Class DocumentController
 		Private Sub Writer_Finished(Sender As Beacon.JSONWriter, Destination As Beacon.FolderItem)
 		  Self.mBusy = False
 		  
+		  If Sender = Nil Or Destination = Nil Then
+		    Return
+		  End If
+		  
 		  If Sender.Success Then
 		    If Self.mClearModifiedOnWrite And Self.mDocument <> Nil Then
 		      Self.mDocument.Modified = False
