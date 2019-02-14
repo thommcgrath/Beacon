@@ -39,18 +39,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConsoleSafe() As Boolean
-		  For Each Option As Beacon.SetEntryOption In Self.mOptions
-		    If Not Option.Engram.ConsoleSafe Then
-		      Return False
-		    End If
-		  Next
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mMinQuantity = 1
 		  Self.mMaxQuantity = 1
@@ -512,6 +500,22 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SafeForMods(Mods As Beacon.TextList) As Boolean
+		  If Mods.Ubound = -1 Then
+		    Return True
+		  End If
+		  
+		  For Each Option As Beacon.SetEntryOption In Self.mOptions
+		    If Mods.IndexOf(Option.Engram.ModID) = -1 Then
+		      Return False
+		    End If
+		  Next
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Simulate() As Beacon.SimulatedSelection()
 		  Dim Quantity As Integer
 		  If Self.mMaxQuantity < Self.mMinQuantity Then
@@ -872,7 +876,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Weight"
+			Name="RawWeight"
 			Group="Behavior"
 			Type="Double"
 		#tag EndViewProperty

@@ -17,6 +17,18 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function AllMods() As Beacon.ModDetails()
+		  Dim Mods() As Beacon.ModDetails
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT mod_id, name, console_safe FROM mods ORDER BY name;")
+		  While Not Results.EOF
+		    Mods.Append(New Beacon.ModDetails(Results.Field("mod_id").StringValue.ToText, Results.Field("name").StringValue.ToText, Results.Field("console_safe").BooleanValue))
+		    Results.MoveNext
+		  Wend
+		  Return Mods
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function AllPresetModifiers() As Beacon.PresetModifier()
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers ORDER BY label;")
 		  Dim Modifiers() As Beacon.PresetModifier
@@ -100,7 +112,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		  
-		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe) VALUES (?1, ?2, ?3);", Self.UserModID, "User Custom", False)
+		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe) VALUES (?1, ?2, ?3);", Self.UserModID, "User Engrams", True)
 		  Self.Commit()
 		  
 		  Self.mBase.UserVersion = Self.SchemaVersion
@@ -168,6 +180,18 @@ Implements Beacon.DataSource
 		  
 		  Self.mLock.Leave
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConsoleSafeMods() As Text()
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT mod_id FROM mods WHERE console_safe = 1;")
+		  Dim Mods() As Text
+		  While Not Results.EOF
+		    Mods.Append(Results.Field("mod_id").StringValue.ToText)
+		    Results.MoveNext
+		  Wend
+		  Return Mods
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -504,16 +528,30 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasExperimentalLootSources(ConsoleSafe As Boolean) As Boolean
+		Function HasExperimentalLootSources(Mods As Beacon.TextList) As Boolean
 		  Try
 		    Dim Clauses(0) As String
 		    Clauses(0) = "experimental = 1"
-		    If ConsoleSafe Then
-		      Clauses.Append("mods.console_safe = 1")
+		    
+		    Dim Values As New Dictionary
+		    Dim NextPlaceholder As Integer = 1
+		    If Mods.Ubound > -1 Then
+		      Dim Placeholders() As String
+		      For Each ModID As Text In Mods
+		        Placeholders.Append("?" + Str(NextPlaceholder))
+		        Values.Value(NextPlaceholder) = ModID
+		        NextPlaceholder = NextPlaceholder + 1
+		      Next
+		      Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
 		    
-		    Dim SQL As String = "SELECT COUNT(loot_sources.object_id) FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id) WHERE " + Clauses.Join(" AND ") + ";"
-		    Dim Results As RecordSet = Self.SQLSelect(SQL)
+		    Dim SQL As String = "SELECT COUNT(loot_sources.object_id) FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id) WHERE (" + Clauses.Join(") AND (") + ");"
+		    Dim Results As RecordSet
+		    If Values.Count > 0 Then
+		      Results = Self.SQLSelect(SQL, Values)
+		    Else
+		      Results = Self.SQLSelect(SQL)
+		    End If
 		    Return Results.IdxField(1).IntegerValue > 0
 		  Catch Err As RuntimeException
 		    Return False
@@ -1219,7 +1257,6 @@ Implements Beacon.DataSource
 		    Engram.Label = Results.Field("label").StringValue.ToText
 		    Engram.Availability = Results.Field("availability").IntegerValue
 		    Engram.TagString = Results.Field("tags").StringValue.ToText
-		    Engram.ConsoleSafe = Results.Field("console_safe").BooleanValue
 		    Engram.ModID = Results.Field("mod_id").StringValue.ToText
 		    Engram.ModName = Results.Field("mod_name").StringValue.ToText
 		    Engrams.Append(Engram)
@@ -1416,7 +1453,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As Text, ConsoleSafe As Boolean, Filter As Beacon.EngramSearchFilter = Nil) As Beacon.Engram()
+		Function SearchForEngrams(SearchText As Text, Mods As Beacon.TextList, Tags() As Text) As Beacon.Engram()
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Dim Engrams() As Beacon.Engram
@@ -1425,9 +1462,6 @@ Implements Beacon.DataSource
 		    Dim NextPlaceholder As Integer = 1
 		    Dim Clauses() As String
 		    Dim Values As New Dictionary
-		    If ConsoleSafe Then
-		      Clauses.Append("mods.console_safe = 1")
-		    End If
 		    If SearchText <> "" Then
 		      Clauses.Append("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
 		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
@@ -1435,26 +1469,24 @@ Implements Beacon.DataSource
 		    End If
 		    
 		    Dim SQL As String = Self.EngramSelectSQL
-		    If Filter <> Nil Then
-		      If Filter.Mods.Ubound > -1 Then
-		        Dim Placeholders() As String
-		        For Each ModID As Text In Filter.Mods
-		          Placeholders.Append("?" + Str(NextPlaceholder))
-		          Values.Value(NextPlaceholder) = ModID
-		          NextPlaceholder = NextPlaceholder + 1
-		        Next
-		        Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
-		      End If
-		      If Filter.Tags.Ubound > -1 Then
-		        SQL = SQL.Replace("engrams INNER JOIN mods", "engrams INNER JOIN searchable_tags ON (searchable_tags.object_id = engrams.object_id AND searchable_tags.source_table = 'engrams') INNER JOIN mods")
-		        Clauses.Append("searchable_tags.tags MATCH ?" + Str(NextPlaceholder))
-		        Values.Value(NextPlaceholder) = Filter.Tags.Join(" OR ")
+		    If Mods.Ubound > -1 Then
+		      Dim Placeholders() As String
+		      For Each ModID As Text In Mods
+		        Placeholders.Append("?" + Str(NextPlaceholder))
+		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
-		      End If
+		      Next
+		      Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
+		    End If
+		    If Tags.Ubound > -1 Then
+		      SQL = SQL.Replace("engrams INNER JOIN mods", "engrams INNER JOIN searchable_tags ON (searchable_tags.object_id = engrams.object_id AND searchable_tags.source_table = 'engrams') INNER JOIN mods")
+		      Clauses.Append("searchable_tags.tags MATCH ?" + Str(NextPlaceholder))
+		      Values.Value(NextPlaceholder) = Tags.Join(" OR ")
+		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    
 		    If Clauses.Ubound > -1 Then
-		      SQL = SQL + " WHERE " + Join(Clauses, " AND ")
+		      SQL = SQL + " WHERE (" + Join(Clauses, ") AND (") + ")"
 		    End If
 		    SQL = SQL + " ORDER BY label;"
 		    
@@ -1478,34 +1510,44 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForLootSources(SearchText As Text, ConsoleSafe As Boolean, IncludeExperimental As Boolean) As Beacon.LootSource()
+		Function SearchForLootSources(SearchText As Text, Mods As Beacon.TextList, IncludeExperimental As Boolean) As Beacon.LootSource()
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Dim Sources() As Beacon.LootSource
 		  
 		  Try
 		    Dim Clauses() As String
-		    If ConsoleSafe Then
-		      Clauses.Append("mods.console_safe = 1")
+		    Dim Values As New Dictionary
+		    Dim NextPlaceholder As Integer = 1
+		    If Mods.Ubound > -1 Then
+		      Dim Placeholders() As String
+		      For Each ModID As Text In Mods
+		        Placeholders.Append("?" + Str(NextPlaceholder))
+		        Values.Value(NextPlaceholder) = ModID
+		        NextPlaceholder = NextPlaceholder + 1
+		      Next
+		      Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
 		    If SearchText <> "" Then
-		      Clauses.Append("LOWER(label) LIKE LOWER(?1) OR LOWER(class_string) LIKE LOWER(?1)")
+		      Clauses.Append("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
+		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
+		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    If Not IncludeExperimental Then
 		      Clauses.Append("experimental = 0")
 		    End If
 		    
-		    Dim SQL As String = "SELECT " + Self.LootSourcesSelectColumns + ", mods.console_safe, mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
+		    Dim SQL As String = "SELECT " + Self.LootSourcesSelectColumns + ", mods.mod_id, mods.name AS mod_name FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id)"
 		    If Clauses.Ubound > -1 Then
-		      SQL = SQL + " WHERE " + Join(Clauses, " AND ")
+		      SQL = SQL + " WHERE (" + Join(Clauses, ") AND (") + ")"
 		    End If
 		    SQL = SQL + " ORDER BY label;"
 		    
 		    Dim Results As RecordSet
-		    If SearchText = "" Then
-		      Results = Self.SQLSelect(SQL)
+		    If Values.Count > 0 Then
+		      Results = Self.SQLSelect(SQL, Values)
 		    Else
-		      Results = Self.SQLSelect(SQL, "%" + SearchText + "%")
+		      Results = Self.SQLSelect(SQL)
 		    End If
 		    
 		    Sources = Self.RecordSetToLootSource(Results)
@@ -1697,28 +1739,6 @@ Implements Beacon.DataSource
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function TaggedEngrams(Tag As Text) As Beacon.Engram()
-		  Dim SelectSQL As String = Self.EngramSelectSQL.Replace("engrams INNER JOIN mods", "engrams INNER JOIN searchable_tags ON (searchable_tags.object_id = engrams.object_id AND searchable_tags.source_table = 'engrams') INNER JOIN mods")
-		  
-		  Dim Engrams() As Beacon.Engram
-		  Try
-		    Tag = Beacon.Engram.NormalizeTag(Tag)
-		    Dim RS As RecordSet = Self.SQLSelect(SelectSQL + " WHERE searchable_tags.tags MATCH ?1;", Tag)
-		    If RS.RecordCount = 0 Then
-		      Return Nil
-		    End If
-		    
-		    Engrams = Self.RecordSetToEngram(RS)
-		    For Each Engram As Beacon.Engram In Engrams
-		      Self.mEngramCache.Value(Engram.Path) = Engram
-		    Next
-		  Catch Err As UnsupportedOperationException
-		  End Try  
-		  Return Engrams
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Shared Function TextToDate(Source As Text) As Xojo.Core.Date
 		  Dim Now As New Date
@@ -1798,7 +1818,7 @@ Implements Beacon.DataSource
 	#tag EndProperty
 
 
-	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.path\x2C engrams.label\x2C engrams.availability\x2C engrams.tags\x2C mods.console_safe\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.path\x2C engrams.label\x2C engrams.availability\x2C engrams.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = LootSourcesSelectColumns, Type = String, Dynamic = False, Default = \"class_string\x2C label\x2C availability\x2C multiplier_min\x2C multiplier_max\x2C uicolor\x2C sort_order\x2C experimental\x2C notes\x2C requirements", Scope = Private

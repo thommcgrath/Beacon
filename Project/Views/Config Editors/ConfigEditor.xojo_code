@@ -118,6 +118,23 @@ Inherits BeaconSubview
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Shared Function SanitizeText(Source As String, ASCIIOnly As Boolean = True) As String
+		  Dim Sanitizer As New RegEx
+		  If ASCIIOnly Then
+		    Sanitizer.SearchPattern = "[^\x0A\x0D\x20-\x7E]+"
+		  Else
+		    Sanitizer.SearchPattern = "[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]+"
+		  End If
+		  Sanitizer.ReplacementPattern = ""
+		  If ASCIIOnly Then
+		    Return Sanitizer.Replace(Source).ConvertEncoding(Encodings.ASCII)
+		  Else
+		    Return Sanitizer.Replace(Source)
+		  End If
+		End Function
+	#tag EndMethod
+
 
 	#tag Hook, Flags = &h0
 		Event EnableMenuItems()

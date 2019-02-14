@@ -28,7 +28,14 @@ Implements Beacon.DocumentItem
 		  Next
 		  
 		  Self.mServerProfiles.Append(Profile.Clone)
-		  Self.ConsoleModsOnly = Self.ConsoleModsOnly Or Profile.IsConsole
+		  If Profile.IsConsole Then
+		    Dim SafeMods() As Text = Beacon.Data.ConsoleSafeMods
+		    For I As Integer = Self.mMods.Ubound DownTo 0
+		      If SafeMods.IndexOf(Self.mMods(I)) = -1 Then
+		        Self.mMods.Remove(I)
+		      End If
+		    Next
+		  End If
 		  Self.mModified = True
 		End Sub
 	#tag EndMethod
@@ -65,6 +72,7 @@ Implements Beacon.DocumentItem
 		  Self.AddConfigGroup(New BeaconConfigs.Difficulty)
 		  Self.Difficulty.IsImplicit = True
 		  Self.mModified = False
+		  Self.mMods = New Beacon.TextList
 		End Sub
 	#tag EndMethod
 
@@ -148,10 +156,16 @@ Implements Beacon.DocumentItem
 		  Else
 		    Doc.mMapCompatibility = 0
 		  End If
-		  If Dict.HasKey("ConsoleModsOnly") Then
-		    Doc.ConsoleModsOnly = Dict.Value("ConsoleModsOnly")
-		  Else
-		    Doc.ConsoleModsOnly = False
+		  If Dict.HasKey("Mods") Then
+		    Dim Mods As Beacon.TextList = Beacon.TextList.FromAuto(Dict.Value("Mods"))
+		    If Mods <> Nil Then
+		      Doc.mMods = Mods
+		    End If
+		  ElseIf Dict.HasKey("ConsoleModsOnly") Then
+		    Dim ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
+		    If ConsoleModsOnly Then
+		      Doc.mMods = Beacon.Data.ConsoleSafeMods()
+		    End If
 		  End If
 		  If Dict.HasKey("Secure") Then
 		    Dim SecureDict As Xojo.Core.Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
@@ -238,9 +252,10 @@ Implements Beacon.DocumentItem
 		      End If
 		      Doc.AddConfigGroup(DifficultyConfig)
 		      If Dict.HasKey("ConsoleModsOnly") Then
-		        Doc.ConsoleModsOnly = Dict.Value("ConsoleModsOnly")
-		      Else
-		        Doc.ConsoleModsOnly = False
+		        Dim ConsoleModsOnly As Boolean = Dict.Value("ConsoleModsOnly")
+		        If ConsoleModsOnly Then
+		          Doc.mMods = Beacon.Data.ConsoleSafeMods()
+		        End If
 		      End If
 		      If Dict.HasKey("Secure") Then
 		        Dim SecureDict As Xojo.Core.Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
@@ -324,11 +339,11 @@ Implements Beacon.DocumentItem
 		                Next
 		                
 		                // Reconfigure
-		                Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.ConsoleModsOnly)
+		                Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.Mods)
 		                
 		                // Now "deconfigure" it
-		                Redim Set(UBound(Entries))
-		                For I As Integer = 0 To UBound(Entries)
+		                Redim Set(Entries.Ubound)
+		                For I As Integer = 0 To Entries.Ubound
 		                  Set(I) = Entries(I)
 		                Next
 		                Continue For Set
@@ -475,6 +490,10 @@ Implements Beacon.DocumentItem
 		    Return True
 		  End If
 		  
+		  If Self.mMods.Modified Then
+		    Return True
+		  End If
+		  
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mConfigGroups
 		    Dim Group As Beacon.ConfigGroup = Entry.Value
 		    If Group.Modified Then
@@ -503,8 +522,16 @@ Implements Beacon.DocumentItem
 		    For Each Profile As Beacon.ServerProfile In Self.mServerProfiles
 		      Profile.Modified = False
 		    Next
+		    
+		    Self.mMods.Modified = False
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Mods() As Beacon.TextList
+		  Return Self.mMods
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -615,7 +642,7 @@ Implements Beacon.DocumentItem
 		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
 		  If Drops <> Nil Then
 		    For Each Source As Beacon.LootSource In Drops
-		      Source.ReconfigurePresets(Self.mMapCompatibility, Self.ConsoleModsOnly)
+		      Source.ReconfigurePresets(Self.mMapCompatibility, Self.Mods)
 		    Next
 		  End If
 		End Sub
@@ -703,7 +730,9 @@ Implements Beacon.DocumentItem
 		  Dim Document As New Xojo.Core.Dictionary
 		  Document.Value("Version") = Self.DocumentVersion
 		  Document.Value("Identifier") = Self.DocumentID
-		  Document.Value("ConsoleModsOnly") = Self.ConsoleModsOnly
+		  
+		  Dim ModsList() As Text = Self.Mods
+		  Document.Value("Mods") = ModsList
 		  
 		  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
 		  #if TargetiOS
@@ -767,25 +796,6 @@ Implements Beacon.DocumentItem
 		End Function
 	#tag EndMethod
 
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mConsoleModsOnly
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mConsoleModsOnly = Value Then
-			    Return
-			  End If
-			  
-			  Self.mConsoleModsOnly = Value
-			  Self.mModified = True
-			End Set
-		#tag EndSetter
-		ConsoleModsOnly As Boolean
-	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
@@ -856,10 +866,6 @@ Implements Beacon.DocumentItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mConsoleModsOnly As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mIdentifier As Text
 	#tag EndProperty
 
@@ -885,6 +891,10 @@ Implements Beacon.DocumentItem
 
 	#tag Property, Flags = &h21
 		Private mModified As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMods As Beacon.TextList
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

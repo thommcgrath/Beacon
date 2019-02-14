@@ -367,11 +367,11 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ExcludeEngrams() As Beacon.Engram, ConsoleModsOnly As Boolean, AllowMultipleSelection As Boolean)
+		Private Sub Constructor(ExcludeEngrams() As Beacon.Engram, Mods As Beacon.TextList, AllowMultipleSelection As Boolean)
 		  For Each Engram As Beacon.Engram In ExcludeEngrams
 		    Self.mExcludedEngrams.Append(Engram.Path)
 		  Next
-		  Self.mConsoleModsOnly = ConsoleModsOnly
+		  Self.mMods = Mods
 		  Self.mAllowMultipleSelection = AllowMultipleSelection
 		  Super.Constructor
 		  If AllowMultipleSelection Then
@@ -389,7 +389,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Filter(Value As String)
-		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(Value.ToText, Self.mConsoleModsOnly)
+		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(Value.ToText, Self.mMods)
 		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.DeleteAllRows
 		  For Each Engram As Beacon.Engram In Engrams
@@ -437,13 +437,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, ExcludeEngrams() As Beacon.Engram, ConsoleModsOnly As Boolean, AllowMultipleSelection As Boolean) As Beacon.Engram()
+		Shared Function Present(Parent As Window, ExcludeEngrams() As Beacon.Engram, Mods As Beacon.TextList, AllowMultipleSelection As Boolean) As Beacon.Engram()
 		  Dim Engrams() As Beacon.Engram
 		  If Parent = Nil Then
 		    Return Engrams
 		  End If
 		  
-		  Dim Win As New EngramSelectorDialog(ExcludeEngrams, ConsoleModsOnly, AllowMultipleSelection)
+		  Dim Win As New EngramSelectorDialog(ExcludeEngrams, Mods, AllowMultipleSelection)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  If Win.mCancelled Then
 		    Win.Close
@@ -507,11 +507,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mConsoleModsOnly As Boolean
+		Private mExcludedEngrams() As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExcludedEngrams() As Text
+		Private mMods As Beacon.TextList
 	#tag EndProperty
 
 

@@ -44,6 +44,7 @@ Begin Window LootSourceWizard
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -184,6 +185,7 @@ Begin Window LootSourceWizard
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   1
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -974,6 +976,7 @@ Begin Window LootSourceWizard
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   7
@@ -1099,7 +1102,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Dim HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.mDocument.ConsoleModsOnly)
+		  Dim HasExperimentalSources As Boolean = LocalData.SharedInstance.HasExperimentalLootSources(Self.mDocument.Mods)
 		  If HasExperimentalSources Then
 		    Self.SelectionExperimentalCheck.Value = Preferences.ShowExperimentalLootSources
 		  Else
@@ -1132,7 +1135,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub BuildSourceList()
 		  Dim CurrentSources() As Beacon.LootSource = Self.mDocument.LootSources
-		  Dim AllowedLootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.mDocument.ConsoleModsOnly, Preferences.ShowExperimentalLootSources)
+		  Dim AllowedLootSources() As Beacon.LootSource = Beacon.Data.SearchForLootSources("", Self.mDocument.Mods, Preferences.ShowExperimentalLootSources)
 		  Dim Mask As UInt64 = Self.mDocument.MapCompatibility
 		  For X As Integer = AllowedLootSources.Ubound DownTo 0
 		    If Not AllowedLootSources(X).ValidForMask(Mask) Then
@@ -1464,7 +1467,7 @@ End
 		  Dim AppendMode As Boolean = False
 		  Dim ReconfigurePresets As Boolean = Self.CustomizeReconfigureCheckbox.Value
 		  Dim Mask As UInt64 = Self.mDocument.MapCompatibility
-		  Dim ConsoleSafe As Boolean = Self.mDocument.ConsoleModsOnly
+		  Dim Mods As Beacon.TextList = Self.mDocument.Mods
 		  
 		  Dim CustomSets() As Beacon.ItemSet
 		  If Self.mDuplicateSource Then
@@ -1484,13 +1487,13 @@ End
 		          If Set.SourcePresetID = Preset.PresetID Then
 		            If ReconfigurePresets Then
 		              // Wants to rebuild it
-		              Set.ReconfigureWithPreset(Preset, Destination, Mask, ConsoleSafe)
+		              Set.ReconfigureWithPreset(Preset, Destination, Mask, Mods)
 		            End If
 		            Continue For I
 		          End If
 		        Next
 		        
-		        Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Destination, Mask, ConsoleSafe)
+		        Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Destination, Mask, Mods)
 		        Destination.Append(Set)
 		      Else
 		        For X As Integer = 0 To Destination.Ubound

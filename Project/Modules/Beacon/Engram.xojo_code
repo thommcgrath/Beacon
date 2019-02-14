@@ -35,12 +35,6 @@ Protected Class Engram
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ConsoleSafe() As Boolean
-		  Return Self.mConsoleSafe
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mAvailability = Beacon.Maps.All.Mask
@@ -57,7 +51,6 @@ Protected Class Engram
 		  Self.mIsValid = Source.mIsValid
 		  Self.mModID = Source.mModID
 		  Self.mModName = Source.mModName
-		  Self.mConsoleSafe = Source.mConsoleSafe
 		  
 		  Redim Self.mTags(-1)
 		  For Each Tag As Text In Source.mTags
@@ -268,10 +261,6 @@ Protected Class Engram
 
 	#tag Property, Flags = &h1
 		Protected mAvailability As UInt64
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mConsoleSafe As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

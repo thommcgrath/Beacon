@@ -759,6 +759,13 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function SearchForEngrams(Extends Source As Beacon.DataSource, SearchText As Text, Mods As Beacon.TextList) As Beacon.Engram()
+		  Dim Tags() As Text
+		  Return Source.SearchForEngrams(SearchText, Mods, Tags)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function ShiftLeft(Value As UInt64, NumBits As UInt64) As UInt64
 		  // It is insane that I need to implement this method manually.
@@ -828,7 +835,7 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function WebURL(Path As Text = "/") As Text
 		  #if DebugBuild
-		    Dim Domain As Text = "https://workbench.beaconapp.cc"
+		    Dim Domain As Text = "https://lab.beaconapp.cc"
 		  #else
 		    Dim Domain As Text = "https://beaconapp.cc"
 		  #endif

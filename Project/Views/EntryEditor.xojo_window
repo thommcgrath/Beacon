@@ -134,6 +134,7 @@ Begin Window EntryEditor
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -247,6 +248,7 @@ Begin Window EntryEditor
          HasBackColor    =   False
          Height          =   209
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   422
          LockBottom      =   True
@@ -329,6 +331,7 @@ Begin Window EntryEditor
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   0
@@ -444,11 +447,13 @@ Begin Window EntryEditor
       Width           =   80
    End
    Begin Beacon.EngramSearcherThread EngramSearcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
       StackSize       =   "0"
+      State           =   ""
       TabPanelIndex   =   0
    End
 End
@@ -517,14 +522,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, ConsoleSafe As Boolean, Sources() As Beacon.SetEntry = Nil, Prefilter As String = "") As Beacon.SetEntry()
+		Shared Function Present(Parent As Window, Mods As Beacon.TextList, Sources() As Beacon.SetEntry = Nil, Prefilter As String = "") As Beacon.SetEntry()
 		  If Sources <> Nil And UBound(Sources) > 0 Then
 		    // Need to use the multi-edit window
 		    Return EntryMultiEditor.Present(Parent, Sources)
 		  End If
 		  
 		  Dim Win As New EntryEditor
-		  Win.mConsoleSafe = ConsoleSafe
+		  Win.mMods = Mods
 		  
 		  If Sources <> Nil And UBound(Sources) = 0 Then
 		    Win.mOriginalEntry = New Beacon.SetEntry(Sources(0))
@@ -550,7 +555,7 @@ End
 		    FilterField.Text = SearchText
 		  End If
 		  
-		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mConsoleSafe)
+		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mMods)
 		  EngramList.DeleteAllRows
 		  
 		  Dim PerfectMatch As Boolean
@@ -659,15 +664,15 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mConsoleSafe As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mCreatedEntries() As Beacon.SetEntry
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
 		mEngramRowIndexes As Xojo.Core.Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMods As Beacon.TextList
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

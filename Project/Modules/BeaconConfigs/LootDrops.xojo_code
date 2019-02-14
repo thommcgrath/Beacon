@@ -171,8 +171,8 @@ Implements Xojo.Core.Iterable
 		                
 		                If Option.Engram = Nil Then
 		                  Issues.Append(New Beacon.Issue(ConfigName, "The engram is missing for an option of an entry in " + Set.Label + " of loot source " + Source.Label + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
-		                ElseIf Option.Engram.ConsoleSafe = False And Document.ConsoleModsOnly Then
-		                  Issues.Append(New Beacon.Issue(ConfigName, Option.Engram.Label + " is not safe for consoles.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
+		                ElseIf Document.Mods.IndexOf(Option.Engram.ModID) = -1 Then
+		                  Issues.Append(New Beacon.Issue(ConfigName, Option.Engram.Label + " is provided by a mod that is currently disabled.", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		                Else
 		                  Issues.Append(New Beacon.Issue(ConfigName, "Beacon does not know the blueprint for " + Option.Engram.ClassString + ".", Self.AssembleLocationDict(Source, Set, Entry, Option)))
 		                End If

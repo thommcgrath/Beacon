@@ -28,12 +28,6 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ConsoleSafe(Assigns Value As Boolean)
-		  Self.mConsoleSafe = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor(Path As Text)
 		  Super.Constructor()
 		  

@@ -221,7 +221,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   1
       Visible         =   True
       Width           =   399
       Begin LogoFillCanvas FillCanvas
@@ -448,7 +448,7 @@ End
 		    CurrentEngrams.Append(Config(I).Engram)
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, CurrentEngrams, Self.Document.ConsoleModsOnly, False)
+		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, CurrentEngrams, Self.Document.Mods, False)
 		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
 		    Return
 		  End If
@@ -483,7 +483,7 @@ End
 		    CurrentEngrams.Append(Config(I).Engram)
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, CurrentEngrams, Self.Document.ConsoleModsOnly, True)
+		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, CurrentEngrams, Self.Document.Mods, True)
 		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
 		    Return
 		  End If
@@ -761,9 +761,9 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function IsConsoleSafe() As Boolean
+		Function GetActiveMods() As Beacon.TextList
 		  If Self.Document <> Nil Then
-		    Return Self.Document.ConsoleModsOnly
+		    Return Self.Document.Mods
 		  End If
 		End Function
 	#tag EndEvent

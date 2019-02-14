@@ -442,6 +442,7 @@ Begin Window PresetModifierEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   11
@@ -691,7 +692,7 @@ End
 	#tag Event
 		Sub TextChange()
 		  Dim Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Text.ToText)
-		  Dim Sources() As Beacon.LootSource = LocalData.SharedInstance.SearchForLootSources("", False, Preferences.ShowExperimentalLootSources)
+		  Dim Sources() As Beacon.LootSource = LocalData.SharedInstance.SearchForLootSources("", New Beacon.TextList, Preferences.ShowExperimentalLootSources)
 		  Dim Matches() As Beacon.LootSource = Modifier.Matches(Sources)
 		  
 		  Self.MatchesList.DeleteAllRows()
