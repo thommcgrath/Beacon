@@ -116,7 +116,7 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  Dim Regex As New Regex
-		  Regex.SearchPattern = "(Blueprint['""](/Game/[^\<\>\:'""\\\|\?\*]+)['""])|(BlueprintGeneratedClass['""](/Game/[^\<\>\:'""\\\|\?\*]+)_C['""])|(cheat giveitem ['""](/Game/[^\<\>\:'""\\\|\?\*]+)['""])"
+		  Regex.SearchPattern = "(cheat giveitem ['""]Blueprint['""](/Game/[^\<\>\:'""\\\|\?\*]+)['""]['""])|(cheat giveitem ['""]BlueprintGeneratedClass['""](/Game/[^\<\>\:'""\\\|\?\*]+)_C['""]['""])|(cheat giveitem ['""](/Game/[^\<\>\:'""\\\|\?\*]+)['""])"
 		  
 		  Dim Match As RegexMatch = Regex.Search(Self.mContents)
 		  Dim Paths As New Dictionary
