@@ -78,7 +78,7 @@ Begin Window EngramSelectorDialog
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   219
+      Left            =   212
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -102,7 +102,7 @@ Begin Window EngramSelectorDialog
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   361
+      Width           =   368
    End
    Begin BeaconListbox List
       AutoDeactivate  =   True
@@ -370,7 +370,7 @@ Begin Window EngramSelectorDialog
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   187
+      Width           =   180
    End
 End
 #tag EndWindow

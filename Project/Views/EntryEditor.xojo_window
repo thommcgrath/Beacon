@@ -72,7 +72,7 @@ Begin Window EntryEditor
          Index           =   -2147483648
          InitialParent   =   "EngramsGroup"
          Italic          =   False
-         Left            =   40
+         Left            =   182
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -96,7 +96,7 @@ Begin Window EntryEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   312
+         Width           =   170
       End
       Begin BeaconListbox EngramList
          AutoDeactivate  =   True
@@ -207,6 +207,38 @@ Begin Window EntryEditor
          Visible         =   True
          Width           =   16
       End
+      Begin UITweaks.ResizedPopupMenu TagMenu
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "EngramsGroup"
+         InitialValue    =   ""
+         Italic          =   False
+         Left            =   40
+         ListIndex       =   0
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   False
+         LockTop         =   True
+         Scope           =   2
+         TabIndex        =   4
+         TabPanelIndex   =   0
+         TabStop         =   True
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   57
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   130
+      End
    End
    Begin GroupBox SettingsGroup
       AutoDeactivate  =   True
@@ -248,7 +280,6 @@ Begin Window EntryEditor
          HasBackColor    =   False
          Height          =   209
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   422
          LockBottom      =   True
@@ -447,7 +478,6 @@ Begin Window EntryEditor
       Width           =   80
    End
    Begin Beacon.EngramSearcherThread EngramSearcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
@@ -462,6 +492,19 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
+		  Dim SelectedTag As String = Preferences.SelectedTag
+		  Self.TagMenu.AddRow("All Engrams", "")
+		  Dim Tags() As String = LocalData.SharedInstance.AllTags
+		  For Each Tag As String In Tags
+		    Self.TagMenu.AddRow(Tag.TitleCase, Tag)
+		    If Tag = SelectedTag Then
+		      Self.TagMenu.ListIndex = Self.TagMenu.ListCount - 1
+		    End If
+		  Next
+		  If SelectedTag = "" Then
+		    Self.TagMenu.ListIndex = 0
+		  End If
+		  
 		  Dim PreferredSize As Xojo.Core.Size = Preferences.EntryEditorSize
 		  
 		  Self.Width = Max(PreferredSize.Width, Self.MinWidth)
@@ -485,9 +528,10 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Constructor()
+	#tag Method, Flags = &h21
+		Private Sub Constructor(Mods As Beacon.TextList)
 		  Self.mSelectedEngrams = New Xojo.Core.Dictionary
+		  Self.mMods = Mods
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -528,8 +572,7 @@ End
 		    Return EntryMultiEditor.Present(Parent, Sources)
 		  End If
 		  
-		  Dim Win As New EntryEditor
-		  Win.mMods = Mods
+		  Dim Win As New EntryEditor(Mods)
 		  
 		  If Sources <> Nil And UBound(Sources) = 0 Then
 		    Win.mOriginalEntry = New Beacon.SetEntry(Sources(0))
@@ -549,13 +592,39 @@ End
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Sub Search(SearchText As String)
-		  If FilterField.Text <> SearchText Then
-		    FilterField.Text = SearchText
+	#tag Method, Flags = &h21
+		Private Sub SetupUI(Prefilter As String = "")
+		  If Self.mOriginalEntry <> Nil Then
+		    For Each Option As Beacon.SetEntryOption In Self.mOriginalEntry
+		      Self.mSelectedEngrams.Value(Option.Engram.Path) = Option
+		    Next
 		  End If
 		  
-		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mMods)
+		  Self.FilterField.Text = Prefilter
+		  Self.UpdateFilter()
+		  SingleEntryCheck.Value = Self.mSelectedEngrams.Count > 1
+		  
+		  For I As Integer = 0 To EngramList.ListCount - 1
+		    If EngramList.CellCheck(I, 0) Then
+		      EngramList.ScrollPosition = I
+		      Exit For I
+		    End If
+		  Next
+		  
+		  Self.UpdateSelectionUI()
+		  Self.UpdateSimulation()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateFilter()
+		  Dim SearchText As String = Self.FilterField.Text
+		  Dim Tags() As Text
+		  If Self.TagMenu.ListIndex > 0 Then
+		    Tags.Append(Self.TagMenu.RowTag(Self.TagMenu.ListIndex).StringValue.ToText)
+		  End If
+		  
+		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mMods, Tags)
 		  EngramList.DeleteAllRows
 		  
 		  Dim PerfectMatch As Boolean
@@ -582,29 +651,6 @@ End
 		    Self.EngramSearcher.Cancel()
 		  End If  
 		  Self.ListUnknownEngrams()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub SetupUI(Prefilter As String = "")
-		  If Self.mOriginalEntry <> Nil Then
-		    For Each Option As Beacon.SetEntryOption In Self.mOriginalEntry
-		      Self.mSelectedEngrams.Value(Option.Engram.Path) = Option
-		    Next
-		  End If
-		  
-		  Self.Search(Prefilter)
-		  SingleEntryCheck.Value = Self.mSelectedEngrams.Count > 1
-		  
-		  For I As Integer = 0 To EngramList.ListCount - 1
-		    If EngramList.CellCheck(I, 0) Then
-		      EngramList.ScrollPosition = I
-		      Exit For I
-		    End If
-		  Next
-		  
-		  Self.UpdateSelectionUI()
-		  Self.UpdateSimulation()
 		End Sub
 	#tag EndMethod
 
@@ -700,7 +746,7 @@ End
 			  If Value Then
 			    Self.FilterField.Width = (Self.SearchSpinner.Left - 12) - Self.FilterField.Left
 			  Else
-			    Self.FilterField.Width = Self.EngramList.Width
+			    Self.FilterField.Width = (Self.EngramList.Left + Self.EngramList.Width) - Self.FilterField.Left
 			  End If
 			End Set
 		#tag EndSetter
@@ -726,7 +772,7 @@ End
 #tag Events FilterField
 	#tag Event
 		Sub TextChange()
-		  Self.Search(Me.Text)
+		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -808,6 +854,18 @@ End
 	#tag Event
 		Sub Action()
 		  Self.UpdateSimulation()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TagMenu
+	#tag Event
+		Sub Change()
+		  If Me.ListIndex = -1 Then
+		    Return
+		  End If
+		  
+		  Preferences.SelectedTag = Me.RowTag(Me.ListIndex).StringValue.ToText
+		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

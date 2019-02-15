@@ -1469,7 +1469,7 @@ Implements Beacon.DataSource
 		    End If
 		    
 		    Dim SQL As String = Self.EngramSelectSQL
-		    If Mods.Ubound > -1 Then
+		    If Mods <> Nil And Mods.Ubound > -1 Then
 		      Dim Placeholders() As String
 		      For Each ModID As Text In Mods
 		        Placeholders.Append("?" + Str(NextPlaceholder))
