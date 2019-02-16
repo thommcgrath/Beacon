@@ -26,27 +26,98 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
    UseFocusRing    =   False
    Visible         =   True
    Width           =   710
-   BeginSegmented SegmentedControl ViewSwitch
+   Begin BeaconToolbar LeftButtons
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Caption         =   ""
+      DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   24
+      EraseBackground =   False
+      Height          =   40
+      HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   264
+      Left            =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      MacControlStyle =   0
+      Resizer         =   "0"
+      ResizerEnabled  =   True
       Scope           =   2
-      Segments        =   "Players\n\nTrue\rTames\n\nFalse"
-      SelectionType   =   0
-      TabIndex        =   0
+      ScrollSpeed     =   20
+      TabIndex        =   1
       TabPanelIndex   =   0
-      Top             =   20
+      TabStop         =   True
+      Top             =   10
       Transparent     =   False
+      UseFocusRing    =   True
       Visible         =   True
-      Width           =   183
+      Width           =   201
+   End
+   Begin Shelf Switcher
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      DrawCaptions    =   True
+      Enabled         =   True
+      EraseBackground =   False
+      Height          =   60
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      IsVertical      =   False
+      Left            =   201
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RequiresSelection=   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   308
+   End
+   Begin FadedSeparator FadedSeparator1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   60
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   710
    End
 End
 #tag EndWindow
@@ -58,14 +129,6 @@ End
 		  Self.MinimumHeight = 368
 		  
 		  
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub Resize(Initial As Boolean)
-		  #Pragma Unused Initial
-		  
-		  Self.ViewSwitch.Left = (Self.Width - Self.ViewSwitch.Width) / 2
 		End Sub
 	#tag EndEvent
 
@@ -115,7 +178,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ViewingPlayerStats() As Boolean
-		  Return Self.ViewSwitch.Items(0).Selected
+		  //Return Self.ViewSwitch.Items(0).Selected
 		End Function
 	#tag EndMethod
 
@@ -127,12 +190,52 @@ End
 
 #tag EndWindowCode
 
-#tag Events ViewSwitch
+#tag Events LeftButtons
 	#tag Event
-		Sub Action(itemIndex as integer)
-		  #Pragma Unused ItemIndex
-		  
-		  
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "AddButton"
+		    
+		  Case "WizardButton"
+		    
+		  Case "EditButton"
+		    
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconToolbarAdd, "Add a level"))
+		  Me.LeftItems.Append(New BeaconToolbarItem("WizardButton", IconToolbarWizard, "Add multiple levels using a configuration wizard"))
+		  Me.LeftItems.Append(New BeaconToolbarItem("EditButton", IconToolbarEdit, False, "Edit the selected level"))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Switcher
+	#tag Event
+		Sub Open()
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.Add(IconPlayers, "Players", "players")
+		  Me.Add(IconTames, "Tames", "tames")
+		  Me.Add(ShelfItem.NewFlexibleSpacer)
+		  Me.SelectedIndex = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Dim SettingUp As Boolean = Self.SettingUp
+		  Self.SettingUp = True
+		  Select Case Me.SelectedIndex
+		  Case 1
+		    // Self.mGameIniState = New TextAreaState(Self.ConfigArea)
+		    // Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
+		    // Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
+		  Case 2
+		    // Self.mGameUserSettingsIniState = New TextAreaState(Self.ConfigArea)
+		    // Self.ConfigArea.Text = Self.Config(False).GameIniContent
+		    // Self.mGameIniState.ApplyTo(Self.ConfigArea)
+		  End Select
+		  Self.SettingUp = SettingUp
 		End Sub
 	#tag EndEvent
 #tag EndEvents
