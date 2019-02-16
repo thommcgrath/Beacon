@@ -134,6 +134,7 @@ Begin Window EntryEditor
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -329,6 +330,7 @@ Begin Window EntryEditor
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   0
@@ -449,6 +451,7 @@ Begin Window EntryEditor
       Priority        =   5
       Scope           =   2
       StackSize       =   "0"
+      State           =   ""
       TabPanelIndex   =   0
    End
 End
