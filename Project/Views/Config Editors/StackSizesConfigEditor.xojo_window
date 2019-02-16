@@ -301,6 +301,12 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ConfigLabel() As Text
+		  Return Language.LabelForConfig(BeaconConfigs.StackSizes.ConfigName)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub ShowAddOverride()
 		  Dim CurrentEngrams() As Beacon.Engram

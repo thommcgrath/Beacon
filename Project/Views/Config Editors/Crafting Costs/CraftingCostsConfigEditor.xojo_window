@@ -413,6 +413,12 @@ End
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ConfigLabel() As Text
+		  Return Language.LabelForConfig(BeaconConfigs.CraftingCosts.ConfigName)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub SetListWidth(NewSize As Integer)
 		  If Self.Width < Self.MinimumWidth Then
