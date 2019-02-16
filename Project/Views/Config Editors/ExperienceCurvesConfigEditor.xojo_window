@@ -119,6 +119,59 @@ Begin ConfigEditor ExperienceCurvesConfigEditor
       Visible         =   True
       Width           =   710
    End
+   Begin BeaconListbox List
+      AutoDeactivate  =   True
+      AutoHideScrollbars=   True
+      Bold            =   False
+      Border          =   False
+      ColumnCount     =   3
+      ColumnsResizable=   False
+      ColumnWidths    =   "100,200,150"
+      DataField       =   ""
+      DataSource      =   ""
+      DefaultRowHeight=   26
+      Enabled         =   True
+      EnableDrag      =   False
+      EnableDragReorder=   False
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
+      HasHeading      =   True
+      HeadingIndex    =   -1
+      Height          =   361
+      HelpTag         =   ""
+      Hierarchical    =   False
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   "Level	Required Experience	Ascension Required"
+      Italic          =   False
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RequiresSelection=   False
+      RowCount        =   0
+      Scope           =   2
+      ScrollbarHorizontal=   False
+      ScrollBarVertical=   True
+      SelectionType   =   1
+      ShowDropIndicator=   False
+      TabIndex        =   4
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   61
+      Transparent     =   False
+      Underline       =   False
+      UseFocusRing    =   False
+      Visible         =   True
+      Width           =   710
+      _ScrollOffset   =   0
+      _ScrollWidth    =   -1
+   End
 End
 #tag EndWindow
 
@@ -177,8 +230,49 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub UpdateList()
+		  Dim SelectedLevels() As Integer
+		  For I As Integer = 0 To Self.List.ListCount - 1
+		    If Self.List.Selected(I) Then
+		      SelectedLevels.Append(Val(Self.List.Cell(I, 0)))
+		    End If
+		  Next
+		  Self.UpdateList(SelectedLevels)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(SelectLevels() As Integer)
+		  Self.List.DeleteAllRows
+		  
+		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
+		  Dim Levels() As UInt64
+		  Dim AscensionLevels, MaxLevel As Integer
+		  If Self.ViewingPlayerStats Then
+		    Levels = Config.PlayerLevels
+		    AscensionLevels = Config.AscensionLevels
+		    MaxLevel = Config.PlayerLevelCap
+		  Else
+		    Levels = Config.DinoLevels
+		    MaxLevel = Config.DinoLevelCap
+		  End If
+		  
+		  For I As Integer = 0 To Levels.Ubound
+		    Dim Level As Integer = I + 2
+		    Dim XP As UInt64 = Levels(I)
+		    Dim IsAscensionLevel As Boolean = Level > (MaxLevel - AscensionLevels)
+		    
+		    Self.List.AddRow(Format(Level, "0,"), Format(XP, "-0,"), If(IsAscensionLevel, "Yes", "No"))
+		    Self.List.Selected(Self.List.LastIndex) = SelectLevels.IndexOf(Level) > -1
+		  Next
+		  
+		  Self.List.EnsureSelectionIsVisible()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function ViewingPlayerStats() As Boolean
-		  //Return Self.ViewSwitch.Items(0).Selected
+		  Return Self.Switcher.SelectedIndex = 1
 		End Function
 	#tag EndMethod
 
@@ -225,17 +319,18 @@ End
 		Sub Change()
 		  Dim SettingUp As Boolean = Self.SettingUp
 		  Self.SettingUp = True
-		  Select Case Me.SelectedIndex
-		  Case 1
-		    // Self.mGameIniState = New TextAreaState(Self.ConfigArea)
-		    // Self.ConfigArea.Text = Self.Config(False).GameUserSettingsIniContent
-		    // Self.mGameUserSettingsIniState.ApplyTo(Self.ConfigArea)
-		  Case 2
-		    // Self.mGameUserSettingsIniState = New TextAreaState(Self.ConfigArea)
-		    // Self.ConfigArea.Text = Self.Config(False).GameIniContent
-		    // Self.mGameIniState.ApplyTo(Self.ConfigArea)
-		  End Select
+		  Dim SelectedLevels() As Integer
+		  Self.UpdateList(SelectedLevels)
 		  Self.SettingUp = SettingUp
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events List
+	#tag Event
+		Sub Open()
+		  Me.ColumnAlignment(0) = Listbox.AlignRight
+		  Me.ColumnAlignment(1) = Listbox.AlignRight
+		  Me.ColumnAlignment(2) = Listbox.AlignCenter
 		End Sub
 	#tag EndEvent
 #tag EndEvents
