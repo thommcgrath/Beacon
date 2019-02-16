@@ -197,6 +197,28 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub ShowIssue(Issue As Beacon.Issue)
+		  If Issue.UserData = Nil Then
+		    Return
+		  End If
+		  
+		  Dim Tag As Text = Issue.UserData
+		  Dim Parts() As Text = Tag.Split(":")
+		  Dim Level As Integer = Integer.FromText(Parts(1))
+		  Select Case Parts(0)
+		  Case "Player"
+		    Self.Switcher.SelectedIndex = 1
+		  Case "Dino"
+		    Self.Switcher.SelectedIndex = 2
+		  End Select
+		  
+		  Dim Levels(0) As Integer
+		  Levels(0) = Level
+		  Self.UpdateList(Levels)
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.ExperienceCurves
@@ -227,6 +249,83 @@ End
 		Function ConfigLabel() As Text
 		  Return Language.LabelForConfig(BeaconConfigs.ExperienceCurves.ConfigName)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowAddExperience()
+		  Dim Level As Integer
+		  Dim LevelXP, MinXP As UInt64
+		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
+		  
+		  If Self.ViewingPlayerStats Then
+		    Level = Config.PlayerLevelCap + 1
+		    MinXP = Config.PlayerMaxExperience
+		  Else
+		    Level = Config.DinoLevelCap + 1
+		    MinXP = Config.DinoMaxExperience
+		  End If
+		  LevelXP = MinXP
+		  
+		  If MinXP > BeaconConfigs.ExperienceCurves.MaxSupportedXP Then
+		    Self.ShowAlert("No more levels possible", "Current Max XP is greater than Ark's supported maximum of " + Format(BeaconConfigs.ExperienceCurves.MaxSupportedXP, "0,"))
+		    Return
+		  End If
+		  
+		  If ExperienceLevelEditor.Present(Self, Level, LevelXP, MinXP, BeaconConfigs.ExperienceCurves.MaxSupportedXP) Then
+		    Config = Self.Config(True)
+		    If Self.ViewingPlayerStats Then
+		      Config.AppendPlayerExperience(LevelXP)
+		    Else
+		      Config.AppendDinoExperience(LevelXP)
+		    End If
+		    Dim SelectLevels(0) As Integer
+		    SelectLevels(0) = Level
+		    Self.UpdateList(SelectLevels)
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowAddExperienceWizard()
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ShowEditExperience()
+		  Dim Level, Index, CapIndex As Integer
+		  Dim LevelXP, MinXP, MaxXP As UInt64
+		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
+		  
+		  Index = Self.List.ListIndex
+		  Level = Index + 2
+		  
+		  If Self.ViewingPlayerStats Then
+		    CapIndex = Config.PlayerLevelCap - 2
+		    LevelXP = Config.PlayerExperience(Index)
+		    MinXP = If(Index > 0, Config.PlayerExperience(Index - 1), 0)
+		    MaxXP = If(Index < CapIndex, Config.PlayerExperience(Index + 1), BeaconConfigs.ExperienceCurves.MaxSupportedXP)
+		  Else
+		    CapIndex = Config.DinoLevelCap - 2
+		    LevelXP = Config.DinoExperience(Index)
+		    MinXP = If(Index > 0, Config.DinoExperience(Index - 1), 0)
+		    MaxXP = If(Index < CapIndex, Config.DinoExperience(Index + 1), BeaconConfigs.ExperienceCurves.MaxSupportedXP)
+		  End If
+		  
+		  If ExperienceLevelEditor.Present(Self, Level, LevelXP, MinXP, MaxXP) Then
+		    Config = Self.Config(True)
+		    If Self.ViewingPlayerStats Then
+		      Config.PlayerExperience(Index) = LevelXP
+		    Else
+		      Config.DinoExperience(Index) = LevelXP
+		    End If
+		    Dim SelectLevels(0) As Integer
+		    SelectLevels(0) = Level
+		    Self.UpdateList(SelectLevels)
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -289,11 +388,11 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddButton"
-		    
+		    Self.ShowAddExperience()
 		  Case "WizardButton"
-		    
+		    Self.ShowAddExperienceWizard()
 		  Case "EditButton"
-		    
+		    Self.ShowEditExperience()
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -331,6 +430,65 @@ End
 		  Me.ColumnAlignment(0) = Listbox.AlignRight
 		  Me.ColumnAlignment(1) = Listbox.AlignRight
 		  Me.ColumnAlignment(2) = Listbox.AlignCenter
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Self.List.SelCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  If Warn Then
+		    Dim Count As Integer = Self.List.SelCount
+		    If Count = 1 Then
+		      If Not Self.ShowConfirm("Are you sure you want to delete this experience requirement?", "You will be removing the experience requirement for the selected level. All later level requirements will be moved down. For example, when deleting level 2, level 3's requirement would become the new level 2 requirement.", "Delete", "Cancel") Then
+		        Return
+		      End If
+		    Else
+		      If Not Self.ShowConfirm("Are you sure you want to delete these experience requirements?", "You will be removing the experience requirements for the selected levels. All later level requirements will be moved down. For example, when deleting level 2, level 3's requirement would become the new level 2 requirement.", "Delete", "Cancel") Then
+		        Return
+		      End If
+		    End If
+		  End If
+		  
+		  Dim Player As Boolean = Self.ViewingPlayerStats
+		  Dim Config As BeaconConfigs.ExperienceCurves
+		  Dim Modified As Boolean = Self.ContentsChanged
+		  
+		  For I As Integer = 0 To Self.List.ListCount - 1
+		    If Not Self.List.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    If Config = Nil Then
+		      Config = Self.Config(True)
+		    End If
+		    
+		    If Player Then
+		      Config.RemovePlayerExperience(I)
+		    Else
+		      Config.RemoveDinoExperience(I)
+		    End If
+		    
+		    Modified = True
+		  Next
+		  
+		  Dim Levels() As Integer
+		  Self.UpdateList(Levels)
+		  Self.ContentsChanged = Modified
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Self.LeftButtons.EditButton.Enabled = Me.SelCount = 1
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  If Me.SelCount = 1 Then
+		    Self.ShowEditExperience()
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

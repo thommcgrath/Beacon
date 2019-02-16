@@ -142,7 +142,7 @@ Inherits Beacon.ConfigGroup
 		  PreviousXP = Self.FindLowValue(Self.mDinoLevels, Index, PreviousIndex)
 		  NextXP = Self.FindHighValue(Self.mDinoLevels, Index, NextIndex)
 		  
-		  If Self.mDinoLevels(Index) = XP Or (PreviousXP > -1 And XP < PreviousXP) Or (NextXP > -1 And XP > NextXP) Then
+		  If Self.mDinoLevels(Index) = XP Or (PreviousIndex > -1 And XP < PreviousXP) Or (NextIndex > -1 And XP > NextXP) Then
 		    Return
 		  End If
 		  
@@ -322,7 +322,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Function IsValid(Document As Beacon.Document) As Boolean
 		  Dim Issues() As Beacon.Issue = Self.Issues(Document)
-		  Return Issues.Ubound > -1
+		  Return Issues.Ubound = -1
 		End Function
 	#tag EndMethod
 
@@ -351,7 +351,7 @@ Inherits Beacon.ConfigGroup
 		  PreviousXP = Self.FindLowValue(Self.mPlayerLevels, Index, PreviousIndex)
 		  NextXP = Self.FindHighValue(Self.mPlayerLevels, Index, NextIndex)
 		  
-		  If Self.mPlayerLevels(Index) = XP Or (PreviousXP > -1 And XP < PreviousXP) Or (NextXP > -1 And XP > NextXP) Then
+		  If Self.mPlayerLevels(Index) = XP Or (PreviousIndex > -1 And XP < PreviousXP) Or (NextIndex > -1 And XP > NextXP) Then
 		    Return
 		  End If
 		  
