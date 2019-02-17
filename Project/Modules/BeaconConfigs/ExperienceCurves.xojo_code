@@ -395,9 +395,19 @@ Inherits Beacon.ConfigGroup
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mDinoLevels.Ubound + 2
+			  Return Self.mDinoLevels.Ubound + 1
 			End Get
 		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.DinoLevelCap = Value Then
+			    Return
+			  End If
+			  
+			  Redim Self.mDinoLevels(Value - 1)
+			  Self.Modified = True
+			End Set
+		#tag EndSetter
 		DinoLevelCap As UInteger
 	#tag EndComputedProperty
 
@@ -430,6 +440,16 @@ Inherits Beacon.ConfigGroup
 			  Return Self.mPlayerLevels.Ubound + 2
 			End Get
 		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.PlayerLevelCap = Value Then
+			    Return
+			  End If
+			  
+			  Redim Self.mPlayerLevels(Value - 2)
+			  Self.Modified = True
+			End Set
+		#tag EndSetter
 		PlayerLevelCap As UInteger
 	#tag EndComputedProperty
 

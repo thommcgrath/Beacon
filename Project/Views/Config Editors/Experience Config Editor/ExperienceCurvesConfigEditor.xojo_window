@@ -252,6 +252,46 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub LoadDefaultDinoXP()
+		  If Self.Config(False).DinoLevelCap > 1 And Not Self.ShowConfirm("Are you sure you want to replace the current experience values?", "Loading Ark's default dino experience will replace your current values. Would you like to continue?", "Load", "Cancel") Then
+		    Return
+		  End If
+		  
+		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(True)
+		  Config.DinoLevelCap = LocalData.SharedInstance.GetIntegerVariable("Dino Level Cap")
+		  
+		  Dim TextList As Text = LocalData.SharedInstance.GetTextVariable("Dino Default Experience")
+		  Dim List() As Text = TextList.Split(",")
+		  For I As Integer = 0 To List.Ubound
+		    Config.DinoExperience(I) = UInt64.FromText(List(I))
+		  Next
+		  
+		  Self.UpdateList()
+		  Self.ContentsChanged = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub LoadDefaultPlayerXP()
+		  If Self.Config(False).PlayerLevelCap > 1 And Not Self.ShowConfirm("Are you sure you want to replace the current experience values?", "Loading Ark's default player experience will replace your current values. Would you like to continue?", "Load", "Cancel") Then
+		    Return
+		  End If
+		  
+		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(True)
+		  Config.PlayerLevelCap = LocalData.SharedInstance.GetIntegerVariable("Player Level Cap")
+		  
+		  Dim TextList As Text = LocalData.SharedInstance.GetTextVariable("Player Default Experience")
+		  Dim List() As Text = TextList.Split(",")
+		  For I As Integer = 0 To List.Ubound
+		    Config.PlayerExperience(I) = UInt64.FromText(List(I))
+		  Next
+		  
+		  Self.UpdateList()
+		  Self.ContentsChanged = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ShowAddExperience()
 		  Dim Level As Integer
 		  Dim LevelXP, MinXP As UInt64
@@ -375,17 +415,20 @@ End
 		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
 		  Dim Levels() As UInt64
 		  Dim AscensionLevels, MaxLevel As Integer
+		  Dim IndexOffset As Integer
 		  If Self.ViewingPlayerStats Then
 		    Levels = Config.PlayerLevels
 		    AscensionLevels = Config.AscensionLevels
 		    MaxLevel = Config.PlayerLevelCap
+		    IndexOffset = 2
 		  Else
 		    Levels = Config.DinoLevels
 		    MaxLevel = Config.DinoLevelCap
+		    IndexOffset = 1
 		  End If
 		  
 		  For I As Integer = 0 To Levels.Ubound
-		    Dim Level As Integer = I + 2
+		    Dim Level As Integer = I + IndexOffset
 		    Dim XP As UInt64 = Levels(I)
 		    Dim IsAscensionLevel As Boolean = Level > (MaxLevel - AscensionLevels)
 		    
@@ -393,7 +436,7 @@ End
 		    Self.List.Selected(Self.List.LastIndex) = SelectLevels.IndexOf(Level) > -1
 		  Next
 		  
-		  Self.List.EnsureSelectionIsVisible()
+		  Self.List.EnsureSelectionIsVisible(False)
 		End Sub
 	#tag EndMethod
 
@@ -421,6 +464,12 @@ End
 		    Self.ShowAddExperienceWizard()
 		  Case "EditButton"
 		    Self.ShowEditExperience()
+		  Case "LoadXPButton"
+		    If Self.ViewingPlayerStats Then
+		      Self.LoadDefaultPlayerXP()
+		    Else
+		      Self.LoadDefaultDinoXP()
+		    End If
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -429,6 +478,7 @@ End
 		  Me.LeftItems.Append(New BeaconToolbarItem("AddButton", IconToolbarAdd, "Add a level"))
 		  Me.LeftItems.Append(New BeaconToolbarItem("WizardButton", IconToolbarWizard, "Add multiple levels using a configuration wizard"))
 		  Me.LeftItems.Append(New BeaconToolbarItem("EditButton", IconToolbarEdit, False, "Edit the selected level"))
+		  Me.LeftItems.Append(New BeaconToolbarItem("LoadXPButton", IconToolbarExperience, "Load the default experience values"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
