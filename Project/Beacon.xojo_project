@@ -323,6 +323,7 @@ MultiImage=IconPlayers;Icons/IconPlayers.xojo_image;&h000000004C922FFF;&h0000000
 MultiImage=IconTames;Icons/IconTames.xojo_image;&h00000000407C17FF;&h0000000007F977FF;false
 MultiImage=IconToolbarWizard;Icons/IconToolbarWizard.xojo_image;&h0000000021132FFF;&h0000000007F977FF;false
 Window=ExperienceLevelEditor;Views/Config Editors/Experience Config Editor/ExperienceLevelEditor.xojo_window;&h0000000072758FFF;&h000000005A6CD7FF;false
+Window=ExperienceWizard;Views/Config Editors/Experience Config Editor/ExperienceWizard.xojo_window;&h00000000038107FF;&h000000005A6CD7FF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=1

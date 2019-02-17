@@ -288,7 +288,35 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddExperienceWizard()
+		  Dim Level As Integer
+		  Dim MinXP As UInt64
+		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(False)
+		  Dim Players As Boolean = Self.ViewingPlayerStats
 		  
+		  If Players Then
+		    Level = Config.PlayerLevelCap + 1
+		    MinXP = Config.PlayerMaxExperience
+		  Else
+		    Level = Config.DinoLevelCap + 1
+		    MinXP = Config.DinoMaxExperience
+		  End If
+		  
+		  Dim Levels() As UInt64 = ExperienceWizard.Present(Self, Level, MinXP)
+		  If Levels.Ubound = -1 Then
+		    Return
+		  End If
+		  
+		  Config = Self.Config(True)
+		  For Each LevelXP As UInt64 In Levels
+		    If Players Then
+		      Config.AppendPlayerExperience(LevelXP)
+		    Else
+		      Config.AppendDinoExperience(LevelXP)
+		    End If
+		  Next
+		  
+		  Self.UpdateList()
+		  Self.ContentsChanged = True
 		End Sub
 	#tag EndMethod
 
@@ -456,7 +484,7 @@ End
 		  Dim Config As BeaconConfigs.ExperienceCurves
 		  Dim Modified As Boolean = Self.ContentsChanged
 		  
-		  For I As Integer = 0 To Self.List.ListCount - 1
+		  For I As Integer = Self.List.ListCount - 1 DownTo 0
 		    If Not Self.List.Selected(I) Then
 		      Continue
 		    End If
