@@ -275,6 +275,18 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub RestoreToDefault()
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.StackSizes.ConfigName)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub SetupUI()
+		  Self.UpdateList()
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StackSizes

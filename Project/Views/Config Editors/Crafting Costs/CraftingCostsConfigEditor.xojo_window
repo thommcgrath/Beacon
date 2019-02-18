@@ -365,6 +365,12 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub RestoreToDefault()
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.CraftingCosts.ConfigName)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub SetupUI()
 		  Self.UpdateList()
 		End Sub
