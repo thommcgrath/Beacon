@@ -12,9 +12,9 @@ $win_url = $results->Field('win_url');
 $version = $results->Field('build_display');
 $build   = intval($results->Field('build_number'));
 
-$results = $database->Query("SELECT MAX(objects.last_update) FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE;", array($build));
+$results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;", $build);
+$last_database_update = new DateTime($results->Field("stamp"), new DateTimeZone('UTC'));
 $prerelease = $database->Query("SELECT mac_url, win_url, build_display, build_number, stage FROM updates WHERE stage < 3 AND build_number > $1 ORDER BY build_number DESC LIMIT 1;", $build);
-$last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
 
 define('MODE_NA', 0);
 define('MODE_MAC', 1);
