@@ -193,7 +193,7 @@ End
 
 	#tag Event
 		Sub SetupUI()
-		  
+		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 
