@@ -5,6 +5,10 @@ Inherits Beacon.ConfigGroup
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
 		  #Pragma Unused SourceDocument
 		  
+		  If Self.mPlayerLevels.Ubound = -1 Then
+		    Return
+		  End If
+		  
 		  Dim MaxXP As UInt64 = Self.PlayerMaxExperience
 		  
 		  // Index 0 is level 2!
@@ -19,6 +23,10 @@ Inherits Beacon.ConfigGroup
 		  
 		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
 		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsPlayer", MaxXP.ToText))
+		  
+		  If Self.mDinoLevels.Ubound = -1 Then
+		    Return
+		  End If
 		  
 		  Redim Chunks(-1)
 		  MaxXP = Self.DinoMaxExperience
@@ -287,7 +295,9 @@ Inherits Beacon.ConfigGroup
 		  Dim ConfigName As Text = "ExperienceCurves"
 		  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Current
 		  
-		  If Self.PlayerLevelCap <= Self.AscensionLevels Then
+		  If Self.mPlayerLevels.Ubound = -1 And Self.mDinoLevels.Ubound > -1 Then
+		    Issues.Append(New Beacon.Issue(ConfigName, "Ark requires player experience to be defined if editing dino experience."))
+		  ElseIf Self.PlayerLevelCap <= Self.AscensionLevels Then
 		    Issues.Append(New Beacon.Issue(ConfigName, "Must define at least " + Self.AscensionLevels.ToText(Locale) + " player levels to handle ascension correctly."))
 		  End If
 		  
@@ -525,7 +535,7 @@ Inherits Beacon.ConfigGroup
 		#tag ViewProperty
 			Name="DinoMaxExperience"
 			Group="Behavior"
-			Type="Int32"
+			Type="UInt64"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="PlayerLevelCap"
@@ -535,7 +545,7 @@ Inherits Beacon.ConfigGroup
 		#tag ViewProperty
 			Name="PlayerMaxExperience"
 			Group="Behavior"
-			Type="Int32"
+			Type="UInt64"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="PlayerSoftLevelCap"
