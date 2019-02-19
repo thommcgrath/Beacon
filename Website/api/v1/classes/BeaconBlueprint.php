@@ -4,12 +4,14 @@ class BeaconBlueprint extends BeaconObject {
 	private $availability;
 	private $path;
 	private $class_string;
+	private $is_ambiguous = false;
 	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
 		$columns[] = 'availability';
 		$columns[] = 'path';
 		$columns[] = 'class_string';
+		$columns[] = '(SELECT COUNT(object_id) FROM ' . static::TableName() . ' AS x WHERE x.class_string = ' . static::TableName() . '.class_string) AS duplicate_count';
 		return $columns;
 	}
 	
@@ -38,6 +40,7 @@ class BeaconBlueprint extends BeaconObject {
 		$obj->availability = intval($row->Field('availability'));
 		$obj->path = $row->Field('path');
 		$obj->class_string = $row->Field('class_string');
+		$obj->is_ambiguous = intval($row->Field('duplicate_count')) > 1;
 		return $obj;
 	}
 	
@@ -104,6 +107,10 @@ class BeaconBlueprint extends BeaconObject {
 	
 	public function ClassString() {
 		return $this->class_string;
+	}
+	
+	public function IsAmbiguous() {
+		return $this->is_ambiguous;
 	}
 	
 	public function Availability() {

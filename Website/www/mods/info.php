@@ -30,8 +30,7 @@ $has_something = $has_engrams || $has_loot_sources;
 <h3><?php echo htmlentities($mod->Name()); ?> Engrams</h3>
 <p>See the full list with spawn codes <a href="/mods/<?php echo abs($mod->WorkshopID()); ?>/spawncodes">here</a>.</p>
 <ul>
-	<?php foreach ($engrams as $engram) { ?><li><a href="/object/<?php echo $engram->ClassString(); ?>"><?php echo htmlentities($engram->Label()); ?></a></li><?php } ?>
-</ul>
+	<?php foreach ($engrams as $engram) { ?><li><a href="/object/<?php echo ($engram->IsAmbiguous() ? (urlencode($engram->ModWorkshopID()) . '/' . urlencode($engram->ClassString())) : urlencode($engram->ClassString())); ?>"><?php echo htmlentities($engram->Label()); ?></a></li><?php } ?></ul>
 <?php } ?>
 <?php if ($has_loot_sources) { ?>
 <h3><?php echo htmlentities($mod->Name()); ?> Loot Sources</h3>

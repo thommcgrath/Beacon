@@ -7,6 +7,7 @@ class BeaconObject implements JsonSerializable {
 	private $min_version;
 	private $mod_id;
 	private $mod_name;
+	private $mod_workshop_id;
 	
 	public function __construct($object_id = null) {
 		if ($object_id === null) {
@@ -22,7 +23,8 @@ class BeaconObject implements JsonSerializable {
 			'label',
 			'min_version',
 			'mods.mod_id',
-			'mods.name AS mod_name'
+			'mods.name AS mod_name',
+			'ABS(mods.workshop_id) AS mod_workshop_id'
 		);
 	}
 	
@@ -236,6 +238,7 @@ class BeaconObject implements JsonSerializable {
 		$obj->min_version = intval($row->Field('min_version'));
 		$obj->mod_id = $row->Field('mod_id');
 		$obj->mod_name = $row->Field('mod_name');
+		$obj->mod_workshop_id = $row->Field('mod_workshop_id');
 		return $obj;
 	}
 	
@@ -327,6 +330,10 @@ class BeaconObject implements JsonSerializable {
 	
 	public function ModName() {
 		return $this->mod_name;
+	}
+	
+	public function ModWorkshopID() {
+		return $this->mod_workshop_id;
 	}
 	
 	public function Delete() {
