@@ -72,6 +72,7 @@ if (!is_null($session)) {
 <?php } elseif (is_null($user) == false && $user->OmniVersion() >= 1) { ?>
 <p class="text-center inset-note">You have already purchased Beacon Omni! See <a href="/account/#omni">your account control panel</a> for instructions on activating Beacon Omni on your computer.</p>
 <?php } else { ?>
+<p class="text-center inset-note"><strong>Beacon Omni is currently in beta testing.</strong> You will need to use the Beacon 1.1 Beta to access Omni features. See the <a href="/download/">&quot;Preview Release&quot; section of the download page</a> to download Beacon 1.1 Beta.</p>
 <p class="text-center"><button id="buy-button" class="default">Buy Omni: <?php echo htmlentities($purchase_price); ?></button><br><span class="smaller">Already purchased? See <a href="/account/#omni">your account control panel</a> for more details.</span></p>
 <?php } ?>
 <table class="generic">
