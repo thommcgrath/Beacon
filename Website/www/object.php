@@ -38,7 +38,7 @@ if ($obj instanceof BeaconBlueprint && $_GET['id'] != $obj->ClassString()) {
 BeaconTemplate::SetTitle($obj->Label());
 
 $properties = array(
-	'Mod' => '[' . $obj->ModName() . '](/mods/info.php?mod_id=' . urlencode($obj->ModID()) . ')'
+	'Mod' => '[' . $obj->ModName() . '](/mods/' . urlencode($obj->ModID()) . ')'
 );
 
 if ($obj instanceof BeaconBlueprint) {
