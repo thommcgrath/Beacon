@@ -159,6 +159,13 @@
 		border-color: $separator-color;
 	}
 	
+	blockquote {
+		$blockquote-color: mix($foreground-color, $background-color, 3%);
+		border-left-color: mix($foreground-color, $blockquote-color, 30%);
+		color: mix($foreground-color, $blockquote-color, 80%);
+		background-color: $blockquote-color;
+	}
+	
 	table.generic {
 		border-color: 1px solid $accent-color;
 		
@@ -427,7 +434,24 @@
 		background-color: $background-color;
 	}
 	
-	
+	/* !Help Article */
+	#help_article {
+		#toc {
+			border-color: $separator-color;
+			
+			ul {
+				li {
+					&.current {
+						color: mix($foreground-color, $background-color, 70%);
+						
+						&::before {
+							color: mix($foreground-color, $background-color, 30%);
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 @include setup-colors(#000000, #ffffff, #713a9a);

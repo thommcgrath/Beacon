@@ -218,6 +218,17 @@ span.object_type {
 	padding: 15px;
 }
 
+blockquote {
+	border-left-width: 3px;
+	border-left-style: solid;
+	margin-left: 0px;
+	margin-right: 0px;
+	padding-left: 30px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-right: 10px;
+}
+
 /* ! Generic Table */
 
 table.generic {
@@ -796,6 +807,61 @@ div.results {
 	text-align: center;
 }
 
+#help_article {
+	#article_content {
+		
+	}
+	
+	#toc {
+		border-top-width: 1px;
+		border-top-style: solid;
+		margin-top: 30px;
+		padding-top: 30px;
+		
+		p {
+			margin-top: 0px;
+			margin-bottom: 0px;
+			padding-left: 1em;
+			text-indent: -1em;
+			font-size: 1.2em;
+			font-weight: 600;
+		}
+		
+		ul {
+			margin-top: 4px;
+			list-style: none;
+			padding-left: 1em;
+			text-indent: -1em;
+			
+			&+p {
+				margin-top: 12px;
+			}
+			
+			li {
+				padding-left: 0px;
+				padding-top: 2px;
+				padding-bottom: 2px;
+				
+				&.current {
+					&::before {
+						content: '❭';
+						margin-left: -10px;
+						padding-right: 5px;
+					}
+				}
+				
+				a {
+					text-decoration: none;
+					
+					&:hover {
+						text-decoration: underline;
+					}
+				}
+			}
+		}
+	}
+}
+
 @media (min-width: $breakpoint_mini) {
 	#header_logo {
 		height: 80px;
@@ -878,5 +944,52 @@ div.results {
 	div.triple_column div.column {
 		display: table-cell;
 		width: 33%;
+	}
+	
+	#help_article {
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-box-orient: horizontal;
+		-webkit-box-direction: normal;
+		-ms-flex-direction: row;
+		flex-direction: row;
+		-ms-flex-wrap: nowrap;
+		flex-wrap: nowrap;
+		
+		#article_content {
+			display: -webkit-box;
+			display: -ms-flexbox;
+			display: flex;
+			-webkit-box-orient: vertical;
+			-webkit-box-direction: normal;
+			-ms-flex-direction: column;
+			flex-direction: column;
+			-webkit-box-flex: 0;
+			-ms-flex-positive: 0;
+			flex-grow: 0;
+			padding-right: 20px;
+			width: ($max_content_width - 200);
+		}
+		
+		#toc {
+			display: -webkit-box;
+			display: -ms-flexbox;
+			display: flex;
+			-webkit-box-orient: vertical;
+			-webkit-box-direction: normal;
+			-ms-flex-direction: column;
+			flex-direction: column;
+			-webkit-box-flex: 0;
+			-ms-flex-positive: 0;
+			flex-grow: 0;
+			width: 200px;
+			border-left-width: 1px;
+			border-left-style: solid;
+			border-top: none;
+			padding-left: 20px;
+			padding-top: 0px;
+			margin-top: 0px;
+		}
 	}
 }
