@@ -436,13 +436,20 @@
 	
 	/* !Help Article */
 	#help_article {
+		#article_content {
+			h2, h3 {
+				border-color: mix($separator-color, $background-color, 30%);
+			}
+		}
+		
 		#toc {
 			border-color: $separator-color;
 			
 			ul {
 				li {
 					&.current {
-						color: mix($foreground-color, $background-color, 70%);
+						color: $accent-color;
+						border-color: $accent-color;
 						
 						&::before {
 							color: mix($foreground-color, $background-color, 30%);

@@ -64,7 +64,7 @@ if (!BeaconTemplate::IsHTML()) {
 			<div id="explore_popover">
 				<div><input id="explore_search_field" type="search" placeholder="Search" incremental></div>
 				<ul id="explore_links">
-					<li><a href="https://youtu.be/NPyOk9R3Ra0">Video: Introduction to Beacon</a></li>
+					<li><a href="/videos/introduction_to_loot">Video: Introduction to Beacon</a></li>
 					<li><a href="/browse/">Browse Community Files</a></li>
 					<li><a href="/spawn/">Admin Spawn Codes</a></li>
 					<li><a href="/mods/">Supported Mods</a></li>
