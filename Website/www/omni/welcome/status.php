@@ -18,7 +18,8 @@ $obj = array(
 );
 
 $intent_id = $results->Field('merchant_reference');
-$obj['email'] = email_for_intent_id($intent_id);
+$api = New BeaconStripeAPI(BeaconCommon::GetGlobal('Stripe_Secret_Key'));
+$obj['email'] = $api->EmailForPaymentIntent($intent_id);
 
 $users = $database->Query('SELECT user_id FROM users WHERE email_id = $1;', $email_id);
 if ($users->RecordCount() == 1) {
@@ -28,45 +29,5 @@ if ($users->RecordCount() == 1) {
 }
 
 echo json_encode($obj);
-
-function email_for_intent_id(string $intent_id) {
-	$api_secret = BeaconCommon::GetGlobal('Stripe_Secret_Key');
-	
-	$curl = curl_init('https://api.stripe.com/v1/payment_intents/' . $intent_id);
-	$headers = array('Authorization: Bearer ' . $api_secret);
-	curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-	$pi_body = curl_exec($curl);
-	$pi_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-	curl_close($curl);
-	
-	if ($pi_status != 200) {
-		return null;
-	}
-	$pi_json = json_decode($pi_body, true);
-	if (is_null($pi_json)) {
-		return null;
-	}
-	$source_id = $pi_json['source'];
-	
-	$curl = curl_init('https://api.stripe.com/v1/sources/' . $source_id);
-	$headers = array('Authorization: Bearer ' . $api_secret);
-	curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-	curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-	$source_body = curl_exec($curl);
-	$source_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-	curl_close($curl);
-	
-	if ($source_status != 200) {
-		return null;
-	}
-	$source_json = json_decode($source_body, true);
-	if (is_null($source_json)) {
-		return null;
-	}
-	
-	$owner = $source_json['owner'];
-	return $owner['email'];
-}
 
 ?>
