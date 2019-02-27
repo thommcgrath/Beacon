@@ -42,7 +42,7 @@ $total = 0;
 $generated_purchase_id = BeaconCommon::GenerateUUID();
 $database->BeginTransaction();
 $database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7);', $generated_purchase_id, $email, $subtotal, $subtotal - $total, 0, $total, 'STW ' . $applicant_id);
-$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, line_total) VALUES ($1, $2, $3, $4, $5);', $generated_purchase_id, $product_id, $retail_price, $retail_price, 0);
+$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total) VALUES ($1, $2, $3, $4, $5, $6);', $generated_purchase_id, $product_id, $retail_price, $retail_price, 1, 0);
 $database->Query('UPDATE stw_applicants SET generated_purchase_id = $2, encrypted_email = NULL WHERE applicant_id = $1;', $applicant_id, $generated_purchase_id);
 $database->Query('UPDATE stw_purchases SET generated_purchase_id = $2 WHERE original_purchase_id = $1;', $original_purchase_id, $generated_purchase_id);
 $database->Commit();

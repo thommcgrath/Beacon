@@ -55,7 +55,7 @@ case 'checkout_beta.session_succeeded':
 		
 		$results = $database->Query('SELECT product_id, retail_price FROM products WHERE stripe_sku = $1;', $sku);
 		if ($results->RecordCount() == 1) {
-			$purchased_products[] = array('product_id' => $results->Field('product_id'), 'price' => $results->Field('retail_price'), 'paid' => $item['amount'] / 100);
+			$purchased_products[] = array('product_id' => $results->Field('product_id'), 'quantity' => $item['quantity'], 'price' => $results->Field('retail_price'), 'paid' => $item['amount'] / 100);
 			continue;
 		}
 	}
@@ -74,30 +74,31 @@ case 'checkout_beta.session_succeeded':
 		exit;
 	}
 	
-	$subtotal = 0;
-	$total = 0;
-	$line_count = 0;
+	$purchase_subtotal = 0;
+	$purchase_total = 0;
+	$purchase_discount = 0;
 	$purchase_id = BeaconCommon::GenerateUUID();
 	$stw_copies = 0;
-	$stw_products = array('f2a99a9e-e27f-42cf-91a8-75a7ef9cf015', '10393874-7927-4f40-be92-e6cf7e6a3a2c');
 	$database->BeginTransaction();
 	foreach ($purchased_products as $item) {
-		$amount = $item['paid'];
-		$retail_price = $item['price'];
 		$product_id = $item['product_id'];
+		$paid_unit_price = $item['paid'];
+		$full_unit_price = $item['price'];
+		$discount_per_unit = $full_unit_price - $paid_unit_price;
+		$quantity = $item['quantity'];
+		$line_total = $paid_unit_price * $quantity;
 		
-		$subtotal += $retail_price;
-		$total += $amount;
-		$discount = $retail_price - $amount;
-		$line_count++;
+		$purchase_subtotal += ($full_unit_price * $quantity);
+		$purchase_total += $line_total;
+		$purchase_discount += ($discount_per_unit * $quantity);
 		
-		if (in_array($product_id, $stw_products)) {
-			$stw_copies++;
+		if ($product_id == 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015') {
+			$stw_copies += $quantity;
 		}
 		
-		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, line_total) VALUES ($1, $2, $3, $4, $5);', $purchase_id, $product_id, $retail_price, $discount, $amount);
+		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total) VALUES ($1, $2, $3, $4, $5, $6);', $purchase_id, $product_id, $full_unit_price, $discount_per_unit, $quantity, $line_total);
 	}
-	$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, client_reference_id) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7, $8);', $purchase_id, $email, $subtotal, $subtotal - $total, 0, $total, $intent_id, $client_reference_id);
+	$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, client_reference_id) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7, $8);', $purchase_id, $email, $purchase_subtotal, $purchase_discount, 0, $purchase_total, $intent_id, $client_reference_id);
 	
 	// Make sure the user's email is removed from the raffle
 	$database->Query('DELETE FROM stw_applicants WHERE email_id = uuid_for_email($1);', $email);
