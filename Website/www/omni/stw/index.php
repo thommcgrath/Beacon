@@ -10,8 +10,14 @@ $pst = clone $utc;
 $pst->setTimezone(new DateTimeZone('America/Los_Angeles'));
 
 BeaconCommon::StartSession();
-BeaconEncryption::GenerateKeyPair($public_key, $private_key);
-$_SESSION['STW_PRIVATE_KEY'] = $private_key;
+if (isset($_SESSION['STW_PUBLIC_KEY'])) {
+	$public_key = $_SESSION['STW_PUBLIC_KEY'];
+} else {
+	BeaconEncryption::GenerateKeyPair($public_key, $private_key);
+	$_SESSION['STW_PRIVATE_KEY'] = $private_key;
+	$_SESSION['STW_PUBLIC_KEY'] = $public_key;
+	unset($private_key);
+}
 
 BeaconTemplate::AddScript('https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/2.3.1/jsencrypt.min.js');
 
@@ -54,9 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
 BeaconTemplate::FinishScript();
 
 ?><h1>Beacon Omni's <em>Share The Wealth</em> Program</h1>
-<p>The <em>Share The Wealth</em> program is designed for users in one of two groups: users who are unable to purchase for any reason, and users who want to show more support for Beacon. The program allows buyers to purchase an extra copy of Beacon Omni which then gets awarded to another random user.</p>
+<p>The <em>Share The Wealth</em> program is designed for users in one of two groups: users who are unable to purchase for any reason, and users who want to show more support for Beacon. The program allows buyers to purchase extra copies of Beacon Omni which then gets awarded to another random user.</p>
 <h3>How to give a copy of Beacon Omni</h3>
-<p>When purchasing, there are two special products: <em>Beacon Omni (Give One Get One)</em> and <em>Beacon Omni (Share The Wealth Edition)</em>. The &quot;Give One Get One&quot; version includes a copy of Beacon Omni for yourself and an extra copy for the <em>Share The Wealth</em> program at a discount. The &quot;Share The Wealth Edition&quot; version is a copy only for the <em>Share The Wealth</em> program.</p>
+<p>When purchasing, there is a line labeled &quot;Beacon Share The Wealth&quot; which allows purchasing up to 10 additional copies of Beacon Omni to be given away to random users.</p>
 <h3>How to get a free copy of Beacon Omni</h3>
 <p>If you'd like to be a potential recipient of a free Beacon Omni license under the <em>Share The Wealth</em> program, all you need to do is add your email address.</p>
 <div id="stw_container" class="text-center inset-note">
