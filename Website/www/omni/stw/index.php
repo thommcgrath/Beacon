@@ -1,7 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 4) . '/framework/loader.php');
-BeaconTemplate::SetTitle('Share The Wealth');
+BeaconTemplate::SetTitle('The \'Share The Wealth\' Program');
 
 $utc = new DateTime(date('Y-m-d 13:00', time()));
 $est = clone $utc;
@@ -59,10 +59,10 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php
 BeaconTemplate::FinishScript();
 
-?><h1>Beacon Omni's <em>Share The Wealth</em> Program</h1>
-<p>The <em>Share The Wealth</em> program is designed for users in one of two groups: users who are unable to purchase for any reason, and users who want to show more support for Beacon. The program allows buyers to purchase extra copies of Beacon Omni which then gets awarded to another random user.</p>
+?><h1>Beacon's <em>Share The Wealth</em> Program</h1>
+<p>Beacon's <em>Share The Wealth</em> program is an option for users who want to show additional support for Beacon, while also providing licenses to other users.</p>
 <h3>How to give a copy of Beacon Omni</h3>
-<p>When purchasing, there is a line labeled &quot;Beacon Share The Wealth&quot; which allows purchasing up to 10 additional copies of Beacon Omni to be given away to random users.</p>
+<p>When purchasing, the line labeled &quot;Beacon Share The Wealth&quot; allows purchasing up to 10 additional copies of Beacon Omni to be given away to random users.</p>
 <h3>How to get a free copy of Beacon Omni</h3>
 <p>If you'd like to be a potential recipient of a free Beacon Omni license under the <em>Share The Wealth</em> program, all you need to do is add your email address.</p>
 <div id="stw_container" class="text-center inset-note">
