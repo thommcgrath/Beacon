@@ -12,16 +12,18 @@ abstract class BeaconEncryption {
 		return hash_pbkdf2('sha512', $password, $salt, $iterations, 56, true);
 	}
 	
-	public static function RSAEncrypt(string $public_key, string $data) {
-		if (@openssl_public_encrypt($data, $result, $public_key, OPENSSL_PKCS1_OAEP_PADDING)) {
+	public static function RSAEncrypt(string $public_key, string $data, bool $oaep_padding = true) {
+		$flags = ($oaep_padding ? OPENSSL_PKCS1_OAEP_PADDING : OPENSSL_PKCS1_PADDING);
+		if (@openssl_public_encrypt($data, $result, $public_key, $flags)) {
 			return $result;
 		} else {
 			throw new Exception('Unable to encrypt');
 		}
 	}
 	
-	public static function RSADecrypt(string $private_key, string $data) {
-		if (@openssl_private_decrypt($data, $result, $private_key, OPENSSL_PKCS1_OAEP_PADDING)) {
+	public static function RSADecrypt(string $private_key, string $data, bool $oaep_padding = true) {
+		$flags = ($oaep_padding ? OPENSSL_PKCS1_OAEP_PADDING : OPENSSL_PKCS1_PADDING);
+		if (@openssl_private_decrypt($data, $result, $private_key, $flags)) {
 			return $result;
 		} else {
 			throw new Exception('Unable to decrypt');

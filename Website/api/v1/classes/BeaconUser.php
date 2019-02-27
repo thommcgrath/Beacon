@@ -34,6 +34,7 @@ class BeaconUser implements JsonSerializable {
 					$product_id = $purchases->Field('product_id');
 					switch ($product_id) {
 					case '972f9fc5-ad64-4f9c-940d-47062e705cc5':
+					case '10393874-7927-4f40-be92-e6cf7e6a3a2c':
 						$omni_version = 1;
 						break;
 					}
