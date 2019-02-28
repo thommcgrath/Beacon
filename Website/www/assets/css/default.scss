@@ -814,6 +814,22 @@ div.results {
 			border-bottom-style: solid;
 			padding-bottom: 0.3em;
 		}
+		
+		h1, h2, h3 {
+			margin-top: 20px;
+		}
+		
+		p, ul, ol {
+			margin-top: 8px;
+		}
+		
+		p, ul, ol, h1, h2, h3 {
+			margin-bottom: 8px;
+			
+			&:first-child {
+				margin-top: 0px;
+			}
+		}
 	}
 	
 	#toc {
@@ -842,13 +858,26 @@ div.results {
 			
 			li {
 				padding-left: 10px;
-				padding-top: 2px;
-				padding-bottom: 2px;
+				padding-top: 4px;
+				padding-bottom: 4px;
 				
 				&.current {
 					padding-left: 7px;
 					border-left-width: 3px;
 					border-left-style: solid;
+				}
+				
+				&+li {
+					border-top-width: 1px;
+					border-top-style: solid;
+				}
+				
+				&:first-child {
+					padding-top: 0px;
+				}
+				
+				&:last-child {
+					padding-bottom: 0px;
 				}
 				
 				a {

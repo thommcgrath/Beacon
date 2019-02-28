@@ -32,14 +32,18 @@ $slug = $_GET['slug'];
 $database = BeaconCommon::Database();
 $cache_key = 'support:' . $slug;
 
+$results = $database->Query('SELECT article_id, article_hash FROM support_articles WHERE article_slug = $1 AND published = TRUE;', $slug);
+if ($results->RecordCount() == 0) {
+	echo 'Article not found';
+	http_response_code(404);
+	exit;
+}
+$article_id = $results->Field('article_id');
+$cache_key = $results->Field('article_hash');
+
 $article_data = BeaconCache::Get($cache_key);
 if (is_null($article_data)) {
-	$results = $database->Query('SELECT subject, content_markdown, forward_url FROM support_articles WHERE article_slug = $1 AND published = TRUE;', $slug);
-	if ($results->RecordCount() == 0) {
-		echo 'Article not found';
-		http_response_code(404);
-		exit;
-	}
+	$results = $database->Query('SELECT subject, content_markdown, forward_url FROM support_articles WHERE article_id = $1;', $article_id);
 	
 	$article_data = array(
 		'title' => $results->Field('subject')

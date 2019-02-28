@@ -449,11 +449,15 @@
 				li {
 					&.current {
 						color: $accent-color;
-						border-color: $accent-color;
+						border-left-color: $accent-color;
 						
 						&::before {
 							color: mix($foreground-color, $background-color, 30%);
 						}
+					}
+					
+					&+li {
+						border-top-color: mix($separator-color, $background-color, 30%);
 					}
 				}
 			}

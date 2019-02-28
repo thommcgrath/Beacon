@@ -4,6 +4,13 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE;
 
+CREATE OR REPLACE FUNCTION update_support_article_hash() RETURNS TRIGGER AS $$
+BEGIN
+	NEW.article_hash := MD5(NEW.subject || '::' || COALESCE(NEW.content_markdown, '') || '::' || COALESCE(NEW.preview, ''));
+	RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql';
+
 CREATE TABLE support_articles (
 	article_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
 	article_slug VARCHAR(20) NOT NULL UNIQUE,
@@ -12,9 +19,11 @@ CREATE TABLE support_articles (
 	preview CITEXT NOT NULL,
 	published BOOLEAN NOT NULL DEFAULT FALSE,
 	forward_url TEXT,
+	article_hash HEX NOT NULL UNIQUE,
 	CHECK (content_markdown IS NOT NULL OR forward_url IS NOT NULL)
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON support_articles TO thezaz_website;
+CREATE TRIGGER "update_support_article_hash_trigger" BEFORE UPDATE OR INSERT ON support_articles FOR EACH ROW EXECUTE PROCEDURE update_support_article_hash();
 
 CREATE TABLE support_images (
 	image_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),

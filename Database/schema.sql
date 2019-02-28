@@ -502,6 +502,22 @@ $$;
 ALTER FUNCTION public.slugify(p_input text) OWNER TO thommcgrath;
 
 --
+-- Name: update_support_article_hash(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.update_support_article_hash() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.article_hash := MD5(NEW.subject || '::' || COALESCE(NEW.content_markdown, '') || '::' || COALESCE(NEW.preview, ''));
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.update_support_article_hash() OWNER TO thommcgrath;
+
+--
 -- Name: uuid_for_email(public.email); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -1030,6 +1046,7 @@ CREATE TABLE public.support_articles (
     preview public.citext NOT NULL,
     published boolean DEFAULT false NOT NULL,
     forward_url text,
+    article_hash public.hex NOT NULL,
     CONSTRAINT support_articles_check CHECK (((content_markdown IS NOT NULL) OR (forward_url IS NOT NULL)))
 );
 
@@ -1821,6 +1838,14 @@ ALTER TABLE ONLY public.support_article_groups
 
 
 --
+-- Name: support_articles support_articles_article_hash_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_articles
+    ADD CONSTRAINT support_articles_article_hash_key UNIQUE (article_hash);
+
+
+--
 -- Name: support_articles support_articles_article_slug_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2181,6 +2206,13 @@ CREATE TRIGGER presets_before_update_trigger BEFORE UPDATE ON public.presets FOR
 --
 
 CREATE TRIGGER presets_json_sync_trigger BEFORE INSERT OR UPDATE ON public.presets FOR EACH ROW EXECUTE PROCEDURE public.presets_json_sync_function();
+
+
+--
+-- Name: support_articles update_support_article_hash_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER update_support_article_hash_trigger BEFORE INSERT OR UPDATE ON public.support_articles FOR EACH ROW EXECUTE PROCEDURE public.update_support_article_hash();
 
 
 --
