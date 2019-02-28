@@ -918,6 +918,7 @@ CREATE TABLE public.purchase_items (
     product_id uuid NOT NULL,
     retail_price numeric(6,2) NOT NULL,
     discount numeric(6,2) NOT NULL,
+    quantity numeric(6,0) NOT NULL,
     line_total numeric(6,2) NOT NULL
 );
 
@@ -1012,6 +1013,34 @@ CREATE TABLE public.sessions (
 
 
 ALTER TABLE public.sessions OWNER TO thommcgrath;
+
+--
+-- Name: stw_applicants; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.stw_applicants (
+    applicant_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    encrypted_email text,
+    email_id uuid NOT NULL,
+    generated_purchase_id uuid,
+    CONSTRAINT stw_applicants_check CHECK ((((encrypted_email IS NOT NULL) AND (generated_purchase_id IS NULL)) OR ((encrypted_email IS NULL) AND (generated_purchase_id IS NOT NULL))))
+);
+
+
+ALTER TABLE public.stw_applicants OWNER TO thommcgrath;
+
+--
+-- Name: stw_purchases; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.stw_purchases (
+    stw_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    original_purchase_id uuid NOT NULL,
+    generated_purchase_id uuid
+);
+
+
+ALTER TABLE public.stw_purchases OWNER TO thommcgrath;
 
 --
 -- Name: updates; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -1529,11 +1558,11 @@ ALTER TABLE ONLY public.products
 
 
 --
--- Name: purchase_items purchase_items_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: purchase_items purchase_items_pkey1; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY public.purchase_items
-    ADD CONSTRAINT purchase_items_pkey PRIMARY KEY (line_id);
+    ADD CONSTRAINT purchase_items_pkey1 PRIMARY KEY (line_id);
 
 
 --
@@ -1558,6 +1587,30 @@ ALTER TABLE ONLY public.purchases
 
 ALTER TABLE ONLY public.sessions
     ADD CONSTRAINT sessions_pkey PRIMARY KEY (session_id);
+
+
+--
+-- Name: stw_applicants stw_applicants_email_id_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.stw_applicants
+    ADD CONSTRAINT stw_applicants_email_id_key UNIQUE (email_id);
+
+
+--
+-- Name: stw_applicants stw_applicants_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.stw_applicants
+    ADD CONSTRAINT stw_applicants_pkey PRIMARY KEY (applicant_id);
+
+
+--
+-- Name: stw_purchases stw_purchases_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.stw_purchases
+    ADD CONSTRAINT stw_purchases_pkey PRIMARY KEY (stw_id);
 
 
 --
@@ -2006,19 +2059,19 @@ ALTER TABLE ONLY public.presets
 
 
 --
--- Name: purchase_items purchase_items_product_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: purchase_items purchase_items_product_id_fkey1; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY public.purchase_items
-    ADD CONSTRAINT purchase_items_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(product_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT purchase_items_product_id_fkey1 FOREIGN KEY (product_id) REFERENCES public.products(product_id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --
--- Name: purchase_items purchase_items_purchase_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: purchase_items purchase_items_purchase_id_fkey1; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY public.purchase_items
-    ADD CONSTRAINT purchase_items_purchase_id_fkey FOREIGN KEY (purchase_id) REFERENCES public.purchases(purchase_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+    ADD CONSTRAINT purchase_items_purchase_id_fkey1 FOREIGN KEY (purchase_id) REFERENCES public.purchases(purchase_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -2035,6 +2088,38 @@ ALTER TABLE ONLY public.purchases
 
 ALTER TABLE ONLY public.sessions
     ADD CONSTRAINT sessions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: stw_applicants stw_applicants_email_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.stw_applicants
+    ADD CONSTRAINT stw_applicants_email_id_fkey FOREIGN KEY (email_id) REFERENCES public.email_addresses(email_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: stw_applicants stw_applicants_generated_purchase_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.stw_applicants
+    ADD CONSTRAINT stw_applicants_generated_purchase_id_fkey FOREIGN KEY (generated_purchase_id) REFERENCES public.purchases(purchase_id) ON UPDATE CASCADE ON DELETE SET DEFAULT;
+
+
+--
+-- Name: stw_purchases stw_purchases_generated_purchase_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.stw_purchases
+    ADD CONSTRAINT stw_purchases_generated_purchase_id_fkey FOREIGN KEY (generated_purchase_id) REFERENCES public.purchases(purchase_id) ON UPDATE CASCADE ON DELETE SET DEFAULT;
+
+
+--
+-- Name: stw_purchases stw_purchases_original_purchase_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.stw_purchases
+    ADD CONSTRAINT stw_purchases_original_purchase_id_fkey FOREIGN KEY (original_purchase_id) REFERENCES public.purchases(purchase_id) ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED;
 
 
 --
@@ -2253,6 +2338,20 @@ GRANT SELECT ON TABLE public.search_contents TO thezaz_website;
 --
 
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.sessions TO thezaz_website;
+
+
+--
+-- Name: TABLE stw_applicants; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.stw_applicants TO thezaz_website;
+
+
+--
+-- Name: TABLE stw_purchases; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,UPDATE ON TABLE public.stw_purchases TO thezaz_website;
 
 
 --
