@@ -1,6 +1,8 @@
 ALTER TABLE email_addresses ADD COLUMN group_key_precision INTEGER;
 UPDATE email_addresses SET group_key_precision = 2;
 ALTER TABLE email_addresses ALTER COLUMN group_key_precision SET NOT NULL;
+CREATE INDEX email_addresses_group_key_idx ON email_addresses(group_key);
+GRANT UPDATE ON email_addresses TO thezaz_website;
 
 DROP FUNCTION group_key_for_email(email);
 CREATE OR REPLACE FUNCTION group_key_for_email(p_address email, p_precision INTEGER) RETURNS hex AS $$
@@ -26,7 +28,7 @@ CREATE OR REPLACE FUNCTION uuid_for_email(p_address email) RETURNS UUID AS $$
 DECLARE
 	v_uuid UUID;
 BEGIN
-	SELECT email_id INTO v_uuid FROM email_addresses WHERE group_key = group_key_for_email(p_address, email_addresses.group_key_precision) AND CRYPT(LOWER(p_address), address) = address;
+	SELECT email_id INTO v_uuid FROM email_addresses WHERE group_key IN (SELECT DISTINCT ON (emails.group_key_precision) group_keys FROM email_addresses AS emails, LATERAL group_key_for_email(p_address, emails.group_key_precision) AS group_keys) AND CRYPT(LOWER(p_address), email_addresses.address) = email_addresses.address;
 	IF FOUND THEN
 		RETURN v_uuid;
 	ELSE

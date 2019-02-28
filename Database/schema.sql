@@ -455,7 +455,7 @@ CREATE FUNCTION public.uuid_for_email(p_address public.email) RETURNS uuid
 DECLARE
 	v_uuid UUID;
 BEGIN
-	SELECT email_id INTO v_uuid FROM email_addresses WHERE group_key = group_key_for_email(p_address, email_addresses.group_key_precision) AND CRYPT(LOWER(p_address), address) = address;
+	SELECT email_id INTO v_uuid FROM email_addresses WHERE group_key IN (SELECT DISTINCT ON (emails.group_key_precision) group_keys FROM email_addresses AS emails, LATERAL group_key_for_email(p_address, emails.group_key_precision) AS group_keys) AND CRYPT(LOWER(p_address), email_addresses.address) = email_addresses.address;
 	IF FOUND THEN
 		RETURN v_uuid;
 	ELSE
@@ -1675,6 +1675,13 @@ CREATE UNIQUE INDEX creatures_classstring_mod_id_uidx ON public.creatures USING 
 
 
 --
+-- Name: email_addresses_group_key_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX email_addresses_group_key_idx ON public.email_addresses USING btree (group_key);
+
+
+--
 -- Name: engrams_classstring_mod_id_uidx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
@@ -2239,7 +2246,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.documents TO thezaz_website;
 -- Name: TABLE email_addresses; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT ON TABLE public.email_addresses TO thezaz_website;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.email_addresses TO thezaz_website;
 
 
 --
