@@ -284,7 +284,7 @@ class BeaconUser implements JsonSerializable {
 	
 	public static function GetByEmail(string $email) {
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id IS NOT NULL AND email_id = uuid_for_email($1);', $email);
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id IS NOT NULL AND email_id = uuid_for_email($1, FALSE);', $email);
 		$users = static::GetFromResults($results);
 		if (count($users) == 1) {
 			return $users[0];

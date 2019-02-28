@@ -336,10 +336,10 @@ $$;
 ALTER FUNCTION public.generic_update_trigger() OWNER TO thommcgrath;
 
 --
--- Name: group_key_for_email(public.email); Type: FUNCTION; Schema: public; Owner: thommcgrath
+-- Name: group_key_for_email(public.email, integer); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
-CREATE FUNCTION public.group_key_for_email(p_address public.email) RETURNS public.hex
+CREATE FUNCTION public.group_key_for_email(p_address public.email, p_precision integer) RETURNS public.hex
     LANGUAGE plpgsql IMMUTABLE
     AS $_$
 DECLARE
@@ -350,10 +350,10 @@ BEGIN
 	v_user := SUBSTRING(p_address, '^([^@]+)@.+$');
 	v_domain := SUBSTRING(p_address, '^[^@]+@(.+)$');
 	
-	IF LENGTH(v_user) <= 2 THEN
+	IF LENGTH(v_user) <= p_precision THEN
 		v_kvalue := '@' || v_domain;
 	ELSE
-		v_kvalue := SUBSTRING(v_user, 1, 2) || '*@' || v_domain;
+		v_kvalue := SUBSTRING(v_user, 1, p_precision) || '*@' || v_domain;
 	END IF;
 	
 	RETURN MD5(LOWER(v_kvalue));
@@ -361,7 +361,7 @@ END;
 $_$;
 
 
-ALTER FUNCTION public.group_key_for_email(p_address public.email) OWNER TO thommcgrath;
+ALTER FUNCTION public.group_key_for_email(p_address public.email, p_precision integer) OWNER TO thommcgrath;
 
 --
 -- Name: loot_source_icons_update_loot_source(); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -455,7 +455,7 @@ CREATE FUNCTION public.uuid_for_email(p_address public.email) RETURNS uuid
 DECLARE
 	v_uuid UUID;
 BEGIN
-	SELECT email_id INTO v_uuid FROM email_addresses WHERE group_key = group_key_for_email(p_address) AND CRYPT(LOWER(p_address), address) = address;
+	SELECT email_id INTO v_uuid FROM email_addresses WHERE group_key = group_key_for_email(p_address, email_addresses.group_key_precision) AND CRYPT(LOWER(p_address), address) = address;
 	IF FOUND THEN
 		RETURN v_uuid;
 	ELSE
@@ -476,12 +476,21 @@ CREATE FUNCTION public.uuid_for_email(p_address public.email, p_create boolean) 
     AS $$
 DECLARE
 	v_uuid UUID;
+	v_precision INTEGER;
+	k_target_precision CONSTANT INTEGER := 5;
 BEGIN
 	v_uuid := uuid_for_email(p_address);
-	IF v_uuid IS NULL AND p_create = TRUE THEN
-		INSERT INTO email_addresses (address, group_key) VALUES (CRYPT(LOWER(p_address), GEN_SALT('bf')), group_key_for_email(p_address)) RETURNING email_id INTO v_uuid;
+	IF v_uuid IS NULL THEN
+		IF p_create = TRUE THEN
+			INSERT INTO email_addresses (address, group_key, group_key_precision) VALUES (CRYPT(LOWER(p_address), GEN_SALT('bf')), group_key_for_email(p_address, k_target_precision), k_target_precision) RETURNING email_id INTO v_uuid;
+		END IF;
+	ELSE
+		SELECT group_key_precision INTO v_precision FROM email_addresses WHERE email_id = v_uuid;
+		IF v_precision != k_target_precision THEN
+			UPDATE email_addresses SET group_key = group_key_for_email(p_address, k_target_precision), group_key_precision = k_target_precision WHERE email_id = v_uuid;
+		END IF;
 	END IF;
-	RETURN v_uuid;
+	RETURN v_uuid;	
 END;
 $$;
 
@@ -742,7 +751,8 @@ ALTER TABLE public.documents OWNER TO thommcgrath;
 CREATE TABLE public.email_addresses (
     email_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     address text NOT NULL,
-    group_key public.hex NOT NULL
+    group_key public.hex NOT NULL,
+    group_key_precision integer NOT NULL
 );
 
 
