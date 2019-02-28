@@ -147,6 +147,17 @@ CREATE TYPE public.taming_methods AS ENUM (
 ALTER TYPE public.taming_methods OWNER TO thommcgrath;
 
 --
+-- Name: video_host; Type: TYPE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TYPE public.video_host AS ENUM (
+    'YouTube'
+);
+
+
+ALTER TYPE public.video_host OWNER TO thommcgrath;
+
+--
 -- Name: compute_class_trigger(); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
@@ -444,6 +455,51 @@ $$;
 
 
 ALTER FUNCTION public.presets_json_sync_function() OWNER TO thommcgrath;
+
+--
+-- Name: set_slug_from_article_subject(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.set_slug_from_article_subject() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.article_slug := slugify(NEW.subject);
+	RETURN NEW;
+END $$;
+
+
+ALTER FUNCTION public.set_slug_from_article_subject() OWNER TO thommcgrath;
+
+--
+-- Name: set_slug_from_video_title(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.set_slug_from_video_title() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.video_slug := slugify(NEW.video_title);
+	RETURN NEW;
+END $$;
+
+
+ALTER FUNCTION public.set_slug_from_video_title() OWNER TO thommcgrath;
+
+--
+-- Name: slugify(text); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.slugify(p_input text) RETURNS text
+    LANGUAGE plpgsql IMMUTABLE
+    AS $$
+BEGIN
+	RETURN regexp_replace(TRIM(LEFT(regexp_replace(LOWER(unaccent(p_input)), '[^a-z0-9 \\-]+', ' ', 'gi'), 20)), '\s+', '_', 'g');
+END;
+$$;
+
+
+ALTER FUNCTION public.slugify(p_input text) OWNER TO thommcgrath;
 
 --
 -- Name: uuid_for_email(public.email); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -963,23 +1019,66 @@ CREATE VIEW public.purchased_products AS
 ALTER TABLE public.purchased_products OWNER TO thommcgrath;
 
 --
+-- Name: support_articles; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.support_articles (
+    article_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    article_slug character varying(20) NOT NULL,
+    subject public.citext NOT NULL,
+    content_markdown public.citext,
+    preview public.citext NOT NULL,
+    published boolean DEFAULT false NOT NULL,
+    forward_url text,
+    CONSTRAINT support_articles_check CHECK (((content_markdown IS NOT NULL) OR (forward_url IS NOT NULL)))
+);
+
+
+ALTER TABLE public.support_articles OWNER TO thommcgrath;
+
+--
+-- Name: support_videos; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.support_videos (
+    video_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    video_slug character varying(20) NOT NULL,
+    video_title public.citext NOT NULL,
+    host public.video_host NOT NULL,
+    host_video_id text NOT NULL
+);
+
+
+ALTER TABLE public.support_videos OWNER TO thommcgrath;
+
+--
 -- Name: search_contents; Type: VIEW; Schema: public; Owner: thommcgrath
 --
 
 CREATE VIEW public.search_contents AS
- SELECT articles.article_id AS id,
-    articles.title,
-    articles.body,
-    ((setweight(to_tsvector(articles.title), 'A'::"char") || ''::tsvector) || setweight(to_tsvector(articles.body), 'B'::"char")) AS lexemes,
-    'Article'::text AS type,
-    ('/read/'::text || articles.article_id) AS uri,
+ SELECT support_articles.article_id AS id,
+    support_articles.subject AS title,
+    COALESCE(support_articles.content_markdown, support_articles.preview, ''::public.citext) AS body,
+    ((setweight(to_tsvector((support_articles.subject)::text), 'A'::"char") || ''::tsvector) || setweight(to_tsvector((COALESCE(support_articles.content_markdown, support_articles.preview, ''::public.citext))::text), 'B'::"char")) AS lexemes,
+    'Help'::text AS type,
+    COALESCE(support_articles.forward_url, ('/help/'::text || (support_articles.article_slug)::text)) AS uri,
     0 AS min_version
-   FROM public.articles
+   FROM public.support_articles
+  WHERE (support_articles.published = true)
+UNION
+ SELECT support_videos.video_id AS id,
+    support_videos.video_title AS title,
+    ''::text AS body,
+    setweight(to_tsvector((support_videos.video_title)::text), 'A'::"char") AS lexemes,
+    'Video'::text AS type,
+    ('/videos/'::text || (support_videos.video_slug)::text) AS uri,
+    0 AS min_version
+   FROM public.support_videos
 UNION
  SELECT blueprints.object_id AS id,
     blueprints.label AS title,
     ''::text AS body,
-    setweight(to_tsvector((blueprints.label)::text), 'A'::"char") AS lexemes,
+    setweight(to_tsvector((blueprints.label)::text), 'C'::"char") AS lexemes,
     'Object'::text AS type,
     ('/object/'::text || (blueprints.class_string)::text) AS uri,
     blueprints.min_version
@@ -988,7 +1087,7 @@ UNION
  SELECT mods.mod_id AS id,
     mods.name AS title,
     ''::text AS body,
-    setweight(to_tsvector(mods.name), 'C'::"char") AS lexemes,
+    setweight(to_tsvector(mods.name), 'D'::"char") AS lexemes,
     'Mod'::text AS type,
     ('/mods/'::text || mods.mod_id) AS uri,
     0 AS min_version
@@ -998,7 +1097,7 @@ UNION
  SELECT documents.document_id AS id,
     documents.title,
     documents.description AS body,
-    ((setweight(to_tsvector(documents.title), 'A'::"char") || ''::tsvector) || setweight(to_tsvector(documents.description), 'B'::"char")) AS lexemes,
+    ((setweight(to_tsvector(documents.title), 'C'::"char") || ''::tsvector) || setweight(to_tsvector(documents.description), 'D'::"char")) AS lexemes,
     'Document'::text AS type,
     ('/browse/'::text || documents.document_id) AS uri,
     0 AS min_version
@@ -1048,6 +1147,50 @@ CREATE TABLE public.stw_purchases (
 
 
 ALTER TABLE public.stw_purchases OWNER TO thommcgrath;
+
+--
+-- Name: support_article_groups; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.support_article_groups (
+    group_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    group_name public.citext NOT NULL,
+    sort_order integer
+);
+
+
+ALTER TABLE public.support_article_groups OWNER TO thommcgrath;
+
+--
+-- Name: support_images; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.support_images (
+    image_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    image_data bytea NOT NULL,
+    image_data_2x bytea,
+    image_data_3x bytea,
+    content_type public.citext NOT NULL,
+    width_points numeric(4,0) NOT NULL,
+    height_points numeric(4,0) NOT NULL
+);
+
+
+ALTER TABLE public.support_images OWNER TO thommcgrath;
+
+--
+-- Name: support_table_of_contents; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.support_table_of_contents (
+    record_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    article_id uuid NOT NULL,
+    group_id uuid NOT NULL,
+    sort_order integer
+);
+
+
+ALTER TABLE public.support_table_of_contents OWNER TO thommcgrath;
 
 --
 -- Name: updates; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -1670,6 +1813,78 @@ ALTER TABLE ONLY public.stw_purchases
 
 
 --
+-- Name: support_article_groups support_article_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_article_groups
+    ADD CONSTRAINT support_article_groups_pkey PRIMARY KEY (group_id);
+
+
+--
+-- Name: support_articles support_articles_article_slug_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_articles
+    ADD CONSTRAINT support_articles_article_slug_key UNIQUE (article_slug);
+
+
+--
+-- Name: support_articles support_articles_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_articles
+    ADD CONSTRAINT support_articles_pkey PRIMARY KEY (article_id);
+
+
+--
+-- Name: support_images support_images_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_images
+    ADD CONSTRAINT support_images_pkey PRIMARY KEY (image_id);
+
+
+--
+-- Name: support_table_of_contents support_table_of_contents_article_id_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_table_of_contents
+    ADD CONSTRAINT support_table_of_contents_article_id_key UNIQUE (article_id);
+
+
+--
+-- Name: support_table_of_contents support_table_of_contents_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_table_of_contents
+    ADD CONSTRAINT support_table_of_contents_pkey PRIMARY KEY (record_id);
+
+
+--
+-- Name: support_videos support_videos_host_host_video_id_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_videos
+    ADD CONSTRAINT support_videos_host_host_video_id_key UNIQUE (host, host_video_id);
+
+
+--
+-- Name: support_videos support_videos_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_videos
+    ADD CONSTRAINT support_videos_pkey PRIMARY KEY (video_id);
+
+
+--
+-- Name: support_videos support_videos_video_slug_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_videos
+    ADD CONSTRAINT support_videos_video_slug_key UNIQUE (video_slug);
+
+
+--
 -- Name: updates updates_build_number_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -1749,6 +1964,20 @@ CREATE INDEX purchases_purchaser_email_idx ON public.purchases USING btree (purc
 --
 
 CREATE TRIGGER client_notices_before_update_trigger BEFORE INSERT OR UPDATE ON public.client_notices FOR EACH ROW EXECUTE PROCEDURE public.generic_update_trigger();
+
+
+--
+-- Name: support_articles create_slug_from_article_subject_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER create_slug_from_article_subject_trigger BEFORE INSERT ON public.support_articles FOR EACH ROW WHEN ((new.article_slug IS NULL)) EXECUTE PROCEDURE public.set_slug_from_article_subject();
+
+
+--
+-- Name: support_videos create_slug_from_video_title_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER create_slug_from_video_title_trigger BEFORE INSERT ON public.support_videos FOR EACH ROW WHEN ((new.video_slug IS NULL)) EXECUTE PROCEDURE public.set_slug_from_video_title();
 
 
 --
@@ -2179,6 +2408,22 @@ ALTER TABLE ONLY public.stw_purchases
 
 
 --
+-- Name: support_table_of_contents support_table_of_contents_article_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_table_of_contents
+    ADD CONSTRAINT support_table_of_contents_article_id_fkey FOREIGN KEY (article_id) REFERENCES public.support_articles(article_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: support_table_of_contents support_table_of_contents_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.support_table_of_contents
+    ADD CONSTRAINT support_table_of_contents_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.support_article_groups(group_id) ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED;
+
+
+--
 -- Name: users users_email_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -2383,6 +2628,20 @@ GRANT SELECT ON TABLE public.purchased_products TO thezaz_website;
 
 
 --
+-- Name: TABLE support_articles; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_articles TO thezaz_website;
+
+
+--
+-- Name: TABLE support_videos; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_videos TO thezaz_website;
+
+
+--
 -- Name: TABLE search_contents; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
@@ -2408,6 +2667,27 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.stw_applicants TO thezaz_websi
 --
 
 GRANT SELECT,INSERT,UPDATE ON TABLE public.stw_purchases TO thezaz_website;
+
+
+--
+-- Name: TABLE support_article_groups; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_article_groups TO thezaz_website;
+
+
+--
+-- Name: TABLE support_images; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT ON TABLE public.support_images TO thezaz_website;
+
+
+--
+-- Name: TABLE support_table_of_contents; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.support_table_of_contents TO thezaz_website;
 
 
 --
