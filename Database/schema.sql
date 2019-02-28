@@ -1075,7 +1075,7 @@ ALTER TABLE public.support_videos OWNER TO thommcgrath;
 CREATE VIEW public.search_contents AS
  SELECT support_articles.article_id AS id,
     support_articles.subject AS title,
-    COALESCE(support_articles.content_markdown, support_articles.preview, ''::public.citext) AS body,
+    COALESCE(support_articles.preview, support_articles.content_markdown, ''::public.citext) AS body,
     ((setweight(to_tsvector((support_articles.subject)::text), 'A'::"char") || ''::tsvector) || setweight(to_tsvector((COALESCE(support_articles.content_markdown, support_articles.preview, ''::public.citext))::text), 'B'::"char")) AS lexemes,
     'Help'::text AS type,
     COALESCE(support_articles.forward_url, ('/help/'::text || (support_articles.article_slug)::text)) AS uri,
