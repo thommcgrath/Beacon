@@ -69,7 +69,7 @@ class BeaconSFTPConnection implements BeaconFTPProvider {
 			return false;
 		}
 		
-		return $this->connection->put($remote_file_path, file_get_contents($local_file_path), Net_SFTP::SOURCE_STRING);
+		return $this->connection->put($remote_file_path, file_get_contents($local_file_path));
 	}
 }
 

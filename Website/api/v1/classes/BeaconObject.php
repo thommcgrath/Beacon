@@ -8,6 +8,7 @@ class BeaconObject implements JsonSerializable {
 	private $mod_id;
 	private $mod_name;
 	private $mod_workshop_id;
+	private $tags = array();
 	
 	public function __construct($object_id = null) {
 		if ($object_id === null) {
@@ -22,6 +23,7 @@ class BeaconObject implements JsonSerializable {
 			'object_id',
 			'label',
 			'min_version',
+			'tags',
 			'mods.mod_id',
 			'mods.name AS mod_name',
 			'ABS(mods.workshop_id) AS mod_workshop_id'
@@ -60,6 +62,8 @@ class BeaconObject implements JsonSerializable {
 			return $this->min_version;
 		case 'mod_id':
 			return $this->mod_id;
+		case 'tags':
+			return '{' . implode(',', $this->tags) . '}';
 		default:
 			return null;
 		}
@@ -165,6 +169,13 @@ class BeaconObject implements JsonSerializable {
 				return $numeric_value;
 			}
 		}
+		if (is_string($value)) {
+			if (strpos($value, ':') !== false) {
+				list($column, $value) = explode(':', $value, 2);
+				$possible_columns[] = $column;
+				return $value;
+			}
+		}
 		
 		return null;
 	}
@@ -192,8 +203,16 @@ class BeaconObject implements JsonSerializable {
 		
 		$c = 3;
 		foreach ($values as $column => $list) {
-			$clauses[] = $column . ' = ANY($' . $c++ . ')';
-			$parameters[] = $list;
+			if ($column == 'tags') {
+				$tags = explode(',', substr($list, 1, -1));
+				foreach ($tags as $tag) {
+					$clauses[] = '$' . $c++ . ' = ANY(tags)';
+					$parameters[] = $tag;
+				}
+			} else {
+				$clauses[] = $column . ' = ANY($' . $c++ . ')';
+				$parameters[] = $list;
+			}
 		}
 		if (count($clauses) > 0) {
 			$clauses = array('(' . implode(' OR ', $clauses) . ')');
@@ -204,7 +223,8 @@ class BeaconObject implements JsonSerializable {
 		}
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query(static::BuildSQL($clauses), $parameters);
+		$sql = static::BuildSQL($clauses);
+		$results = $database->Query($sql, $parameters);
 		return static::FromResults($results);
 	}
 	
@@ -213,6 +233,11 @@ class BeaconObject implements JsonSerializable {
 		if (count($objects) == 1) {
 			return $objects[0];
 		}
+	}
+	
+	public static function GetWithTag(string $tag, int $min_version = 0, DateTime $updated_since = null) {
+		$tag = self::NormalizeTag($tag);
+		return static::Get('tags:' . $tag, $min_version, $updated_since);
 	}
 	
 	protected static function FromResults(BeaconRecordSet $results) {
@@ -232,6 +257,14 @@ class BeaconObject implements JsonSerializable {
 	}
 	
 	protected static function FromRow(BeaconRecordSet $row) {
+		$tags = substr($row->Field('tags'), 1, -1);
+		if (strlen($tags) > 0) {
+			$tags = explode(',', $tags);
+		} else {
+			$tags = array();
+		}
+		asort($tags);
+		
 		$obj = new static($row->Field('object_id'));
 		$obj->object_group = $row->Field('table_name');
 		$obj->label = $row->Field('label');
@@ -239,6 +272,7 @@ class BeaconObject implements JsonSerializable {
 		$obj->mod_id = $row->Field('mod_id');
 		$obj->mod_name = $row->Field('mod_name');
 		$obj->mod_workshop_id = $row->Field('mod_workshop_id');
+		$obj->tags = array_values($tags);
 		return $obj;
 	}
 	
@@ -300,7 +334,8 @@ class BeaconObject implements JsonSerializable {
 				'id' => $this->mod_id,
 				'name' => $this->mod_name
 			),
-			'group' => $this->object_group
+			'group' => $this->object_group,
+			'tags' => $this->tags
 		);
 	}
 	
@@ -341,6 +376,40 @@ class BeaconObject implements JsonSerializable {
 		$database->BeginTransaction();
 		$database->Query('DELETE FROM ' . static::TableName() . ' WHERE object_id = $1;', $this->object_id);
 		$database->Commit();
+	}
+	
+	public static function NormalizeTag(string $tag) {
+		$tag = strtolower($tag);
+		$tag = preg_replace('/[^\w]/', '', $tag);
+		return $tag;
+	}
+	
+	public function Tags() {
+		return $this->tags;
+	}
+	
+	public function AddTag(string $tag) {
+		$tag = self::NormalizeTag($tag);
+		if (!in_array($tag, $this->tags)) {
+			$this->tags[] = $tag;
+		}
+	}
+	
+	public function RemoveTag(string $tag) {
+		$tag = self::NormalizeTag($tag);
+		if (in_array($tag, $this->tags)) {
+			$arr = array();
+			foreach ($this->tags as $current_tag) {
+				if ($current_tag !== $tag) {
+					$arr[] = $current_tag;
+				}
+			}
+			$this->tags = $arr;
+		}
+	}
+	
+	public function IsTagged(string $tag) {
+		return in_array(self::NormalizeTag($tag), $this->tags);
 	}
 }
 

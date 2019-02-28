@@ -1467,7 +1467,7 @@ End
 		  Dim ConsoleSafe As Boolean = Self.mDocument.ConsoleModsOnly
 		  
 		  Dim CustomSets() As Beacon.ItemSet
-		  If Self.mDuplicateSource Then
+		  If Self.mSource <> Nil Then
 		    For Each Set As Beacon.ItemSet In Self.mSource
 		      If Set.SourcePresetID = "" Then
 		        CustomSets.Append(Set)

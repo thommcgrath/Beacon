@@ -245,25 +245,31 @@ abstract class BeaconCommon {
 			return null;
 		}
 		
+		$build_number = 0;
+		$builds = $database->Query("SELECT build_number FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
+		if ($builds->RecordCount() == 1) {
+			$build_number = intval($builds->Field('build_number'));
+		}
+		
 		$objects = array();
 		while (!$results->EOF()) {
 			$id = $results->Field('object_id');
 			$tablename = $results->Field('tablename');
 			switch ($tablename) {
 			case 'creatures':
-				$obj = BeaconCreature::GetByObjectID($id);
+				$obj = BeaconCreature::GetByObjectID($id, $build_number);
 				break;
 			case 'diets':
-				$obj = BeaconDiet::GetByObjectID($id);
+				$obj = BeaconDiet::GetByObjectID($id, $build_number);
 				break;
 			case 'engrams':
-				$obj = BeaconEngram::GetByObjectID($id);
+				$obj = BeaconEngram::GetByObjectID($id, $build_number);
 				break;
 			case 'loot_sources':
-				$obj = BeaconLootSource::GetByObjectID($id);
+				$obj = BeaconLootSource::GetByObjectID($id, $build_number);
 				break;
 			case 'presets':
-				$obj = BeaconPreset::GetByObjectID($id);
+				$obj = BeaconPreset::GetByObjectID($id, $build_number);
 				break;
 			default:
 				$obj = null;
@@ -385,6 +391,15 @@ abstract class BeaconCommon {
 		}
 		
 		return $major_version . '.' . $minor_version . '.' . $bug_version . $prerelease;
+	}
+	
+	public static function BooleanValue($value) {
+		if (is_bool($value) === true) {
+			return $value;
+		}
+		
+		$boolval = (is_string($value) ? filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) : (bool) $value);
+		return ($boolval === null ? false : $boolval);
 	}
 }
 

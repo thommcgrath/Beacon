@@ -18,11 +18,18 @@ $query = preg_replace('/\s+/', ' | ', trim($query));
 $query = preg_replace('/(\w+)/', '$1:*', $query);
 
 $database = BeaconCommon::Database();
+
+$build_number = 0;
+$builds = $database->Query("SELECT build_number FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
+if ($builds->RecordCount() == 1) {
+	$build_number = intval($builds->Field('build_number'));
+}
+
 $items = array();
-$results = $database->Query('SELECT COUNT(id) AS result_count FROM search_contents, to_tsquery($1) AS keywords WHERE keywords @@ lexemes;', $query);
+$results = $database->Query('SELECT COUNT(id) AS result_count FROM search_contents, to_tsquery($1) AS keywords WHERE keywords @@ lexemes AND min_version <= $2;', $query, $build_number);
 $result_count = $results->Field('result_count');
 if ($result_count > 0) {
-	$results = $database->Query('SELECT id, title, body, type, uri, ts_rank(lexemes, keywords) AS rank FROM search_contents, to_tsquery($1) AS keywords WHERE keywords @@ lexemes ORDER BY rank DESC, title ASC LIMIT $2;', $query, $max_results);
+	$results = $database->Query('SELECT id, title, body, type, uri, ts_rank(lexemes, keywords) AS rank FROM search_contents, to_tsquery($1) AS keywords WHERE keywords @@ lexemes AND min_version <= $3 ORDER BY rank DESC, title ASC LIMIT $2;', $query, $max_results, $build_number);
 	while (!$results->EOF()) {
 		$summary = $results->Field('body');
 		if (strlen($summary) > 200) {
