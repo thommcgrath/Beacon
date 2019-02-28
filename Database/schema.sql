@@ -969,7 +969,8 @@ CREATE VIEW public.search_contents AS
     articles.body,
     ((setweight(to_tsvector(articles.title), 'A'::"char") || ''::tsvector) || setweight(to_tsvector(articles.body), 'B'::"char")) AS lexemes,
     'Article'::text AS type,
-    ('/read/'::text || articles.article_id) AS uri
+    ('/read/'::text || articles.article_id) AS uri,
+    0 AS min_version
    FROM public.articles
 UNION
  SELECT blueprints.object_id AS id,
@@ -977,7 +978,8 @@ UNION
     ''::text AS body,
     setweight(to_tsvector((blueprints.label)::text), 'A'::"char") AS lexemes,
     'Object'::text AS type,
-    ('/object/'::text || (blueprints.class_string)::text) AS uri
+    ('/object/'::text || (blueprints.class_string)::text) AS uri,
+    blueprints.min_version
    FROM public.blueprints
 UNION
  SELECT mods.mod_id AS id,
@@ -985,7 +987,8 @@ UNION
     ''::text AS body,
     setweight(to_tsvector(mods.name), 'C'::"char") AS lexemes,
     'Mod'::text AS type,
-    ('/mods/info.php?mod_id='::text || mods.mod_id) AS uri
+    ('/mods/'::text || mods.mod_id) AS uri,
+    0 AS min_version
    FROM public.mods
   WHERE (mods.confirmed = true)
 UNION
@@ -994,7 +997,8 @@ UNION
     documents.description AS body,
     ((setweight(to_tsvector(documents.title), 'A'::"char") || ''::tsvector) || setweight(to_tsvector(documents.description), 'B'::"char")) AS lexemes,
     'Document'::text AS type,
-    ('/browse/'::text || documents.document_id) AS uri
+    ('/browse/'::text || documents.document_id) AS uri,
+    0 AS min_version
    FROM public.documents
   WHERE (documents.published = 'Approved'::public.publish_status);
 
