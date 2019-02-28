@@ -517,7 +517,8 @@ CREATE TABLE public.objects (
     label public.citext NOT NULL,
     min_version integer DEFAULT 0 NOT NULL,
     last_update timestamp with time zone DEFAULT ('now'::text)::timestamp(0) with time zone NOT NULL,
-    mod_id uuid DEFAULT '30bbab29-44b2-4f4b-a373-6d4740d9d3b5'::uuid NOT NULL
+    mod_id uuid DEFAULT '30bbab29-44b2-4f4b-a373-6d4740d9d3b5'::uuid NOT NULL,
+    tags public.citext[] DEFAULT '{}'::public.citext[]
 );
 
 
@@ -553,7 +554,6 @@ CREATE TABLE public.engrams (
     path public.citext NOT NULL,
     class_string public.citext NOT NULL,
     availability integer DEFAULT 0 NOT NULL,
-    can_blueprint boolean DEFAULT true NOT NULL,
     CONSTRAINT engrams_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
 )
 INHERITS (public.objects);
@@ -598,7 +598,8 @@ CREATE VIEW public.blueprints AS
     creatures.mod_id,
     creatures.path,
     creatures.class_string,
-    creatures.availability
+    creatures.availability,
+    creatures.tags
    FROM public.creatures
 UNION
  SELECT engrams.object_id,
@@ -609,7 +610,8 @@ UNION
     engrams.mod_id,
     engrams.path,
     engrams.class_string,
-    engrams.availability
+    engrams.availability,
+    engrams.tags
    FROM public.engrams
 UNION
  SELECT loot_sources.object_id,
@@ -620,7 +622,8 @@ UNION
     loot_sources.mod_id,
     loot_sources.path,
     loot_sources.class_string,
-    loot_sources.availability
+    loot_sources.availability,
+    loot_sources.tags
    FROM public.loot_sources;
 
 
@@ -1130,6 +1133,13 @@ ALTER TABLE ONLY public.creatures ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2
 
 
 --
+-- Name: creatures tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.creatures ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
 -- Name: diets object_id; Type: DEFAULT; Schema: public; Owner: thommcgrath
 --
 
@@ -1155,6 +1165,13 @@ ALTER TABLE ONLY public.diets ALTER COLUMN last_update SET DEFAULT ('now'::text)
 --
 
 ALTER TABLE ONLY public.diets ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2-4f4b-a373-6d4740d9d3b5'::uuid;
+
+
+--
+-- Name: diets tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.diets ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
 
 
 --
@@ -1186,6 +1203,13 @@ ALTER TABLE ONLY public.engrams ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2-4
 
 
 --
+-- Name: engrams tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.engrams ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
 -- Name: loot_source_icons object_id; Type: DEFAULT; Schema: public; Owner: thommcgrath
 --
 
@@ -1211,6 +1235,13 @@ ALTER TABLE ONLY public.loot_source_icons ALTER COLUMN last_update SET DEFAULT (
 --
 
 ALTER TABLE ONLY public.loot_source_icons ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2-4f4b-a373-6d4740d9d3b5'::uuid;
+
+
+--
+-- Name: loot_source_icons tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.loot_source_icons ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
 
 
 --
@@ -1242,6 +1273,13 @@ ALTER TABLE ONLY public.loot_sources ALTER COLUMN mod_id SET DEFAULT '30bbab29-4
 
 
 --
+-- Name: loot_sources tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.loot_sources ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
 -- Name: preset_modifiers object_id; Type: DEFAULT; Schema: public; Owner: thommcgrath
 --
 
@@ -1270,6 +1308,13 @@ ALTER TABLE ONLY public.preset_modifiers ALTER COLUMN mod_id SET DEFAULT '30bbab
 
 
 --
+-- Name: preset_modifiers tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.preset_modifiers ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
 -- Name: presets object_id; Type: DEFAULT; Schema: public; Owner: thommcgrath
 --
 
@@ -1295,6 +1340,13 @@ ALTER TABLE ONLY public.presets ALTER COLUMN last_update SET DEFAULT ('now'::tex
 --
 
 ALTER TABLE ONLY public.presets ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2-4f4b-a373-6d4740d9d3b5'::uuid;
+
+
+--
+-- Name: presets tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.presets ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
 
 
 --
