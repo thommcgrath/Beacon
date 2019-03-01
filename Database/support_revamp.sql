@@ -1,6 +1,18 @@
 CREATE OR REPLACE FUNCTION slugify(p_input TEXT) RETURNS TEXT AS $$
+DECLARE
+	v_simplified TEXT;
+	v_words TEXT[];
+	v_slug TEXT;
 BEGIN
-	RETURN regexp_replace(TRIM(LEFT(regexp_replace(LOWER(unaccent(p_input)), '[^a-z0-9 \\-]+', ' ', 'gi'), 20)), '\s+', '_', 'g');
+	v_simplified := TRIM(regexp_replace(LOWER(unaccent(p_input)), '[^a-z0-9 \\-]+', ' ', 'gi'));
+	v_simplified := replace(v_simplified, ' - ', ' ');
+	v_words := regexp_split_to_array(v_simplified, '\s+');
+	LOOP
+		v_slug := array_to_string(v_words, '_');
+		EXIT WHEN LENGTH(v_slug) <= 32;
+		v_words = (SELECT v_words[1:array_upper(v_words, 1) - 1]);
+	END LOOP;
+	RETURN v_slug;
 END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE;
 
@@ -13,7 +25,7 @@ $$ LANGUAGE 'plpgsql';
 
 CREATE TABLE support_articles (
 	article_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-	article_slug VARCHAR(20) NOT NULL UNIQUE,
+	article_slug VARCHAR(32) NOT NULL UNIQUE,
 	subject CITEXT NOT NULL,
 	content_markdown CITEXT,
 	preview CITEXT NOT NULL,
@@ -55,7 +67,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON support_table_of_contents TO thezaz_webs
 CREATE TYPE video_host AS ENUM ('YouTube');
 CREATE TABLE support_videos (
 	video_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-	video_slug VARCHAR(20) NOT NULL UNIQUE,
+	video_slug VARCHAR(32) NOT NULL UNIQUE,
 	video_title CITEXT NOT NULL,
 	host video_host NOT NULL,
 	host_video_id TEXT NOT NULL,

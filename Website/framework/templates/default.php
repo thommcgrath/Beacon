@@ -61,17 +61,17 @@ if (empty($description)) {
 			</div>
 			<div id="footer" class="pagebody">
 				<p>Beacon is an open source project by</p>
-				<p><a class="external_logo" href="https://thezaz.com/"><img class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('thezaz-color.svg'); ?>" height="144"></a></p>
+				<p><a class="external_logo" href="https://thezaz.com/"><img class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('thezaz-color.svg'); ?>" height="120"></a></p>
 				<p>Copyright 2016-<?php echo date('Y'); ?></p>
 				<p><a class="external_logo" href="https://github.com/thommcgrath/Beacon" title="GitHub"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('github-color.svg'); ?>"></a><a class="external_logo" href="/discord.php" title="Discord"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('discord-color.svg'); ?>"></a></p>
-				<p>Get in touch using <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.</p>
+				<p>Get in touch using <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.<span class="smaller"><br><a href="/help/about_user_privacy">Privacy Policy</a></span></p>
 			</div>
 		</div>
 		<div id="explore_container">
 			<div id="explore_popover">
 				<div><input id="explore_search_field" type="search" placeholder="Search" incremental></div>
 				<ul id="explore_links">
-					<li><a href="/videos/introduction_to_loot">Video: Introduction to Beacon</a></li>
+					<li><a href="/videos/introduction_to_loot_drops_with">Video: Introduction to Beacon</a></li>
 					<li><a href="/browse/">Browse Community Files</a></li>
 					<li><a href="/spawn/">Admin Spawn Codes</a></li>
 					<li><a href="/mods/">Supported Mods</a></li>
