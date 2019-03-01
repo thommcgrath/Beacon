@@ -43,10 +43,11 @@ $cache_key = $results->Field('article_hash');
 
 $article_data = BeaconCache::Get($cache_key);
 if (is_null($article_data)) {
-	$results = $database->Query('SELECT subject, content_markdown, forward_url FROM support_articles WHERE article_id = $1;', $article_id);
+	$results = $database->Query('SELECT subject, content_markdown, preview, forward_url, array_to_string(affected_ini_keys, \', \',\'\') AS affected_keys FROM support_articles WHERE article_id = $1;', $article_id);
 	
 	$article_data = array(
-		'title' => $results->Field('subject')
+		'title' => $results->Field('subject'),
+		'preview' => $results->Field('preview')
 	);
 	
 	if (is_null($results->Field('forward_url'))) {
@@ -63,6 +64,14 @@ if (is_null($article_data)) {
 		
 		$parser = new Parsedown();
 		$article_data['html'] = '<h1>' . htmlentities($results->Field('subject')) . '</h1>' . "\n" . $parser->text($markdown);
+		
+		if ($results->Field('affected_keys') != '') {
+			// Want these keys on the page for SEO purposes
+			$affected_keys = explode(',', $results->Field('affected_keys'));
+			sort($affected_keys);
+			$caption = 'This editor affects the following config key' . (count($affected_keys) > 1 ? 's' : '') . ': ';
+			$article_data['html'] .= '<div class="affected_ini_keys">' . htmlentities($caption) . BeaconCommon::ArrayToEnglish($affected_keys) . '</div>';
+		}
 	} else {
 		$article_data['forward'] = $results->Field('forward_url');
 	}
@@ -77,6 +86,7 @@ echo '<div id="help_article">';
 echo '<div id="article_content">' . $article_data['html'] . '</div>';
 
 BeaconTemplate::SetTitle($article_data['title']);
+BeaconTemplate::SetPageDescription($article_data['preview']);
 
 $results = $database->Query('SELECT support_articles.article_slug, support_articles.subject, support_articles.forward_url, support_article_groups.group_name, support_article_groups.sort_order, support_table_of_contents.sort_order FROM (support_article_groups INNER JOIN support_table_of_contents ON (support_table_of_contents.group_id = support_article_groups.group_id)) LEFT JOIN support_articles ON (support_table_of_contents.article_id = support_articles.article_id) WHERE support_articles.published = TRUE ORDER BY support_article_groups.sort_order, support_table_of_contents.sort_order, support_article_groups.group_name, support_articles.subject;');
 $toc = array();

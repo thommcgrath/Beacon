@@ -7,6 +7,7 @@ abstract class BeaconTemplate {
 	protected static $style_lines = array();
 	protected static $header_lines = array();
 	protected static $body_class = '';
+	protected static $page_description = '';
 	
 	protected static function CacheKey() {
 		return md5($_SERVER['REQUEST_URI']);
@@ -175,6 +176,14 @@ abstract class BeaconTemplate {
 	
 	public static function SetBodyClass(string $class_name) {
 		static::$body_class = $class_name;
+	}
+	
+	public static function PageDescription() {
+		return static::$page_description;
+	}
+	
+	public static function SetPageDescription(string $page_description) {
+		static::$page_description = $page_description;
 	}
 }
 

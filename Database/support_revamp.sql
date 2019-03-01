@@ -6,7 +6,7 @@ $$ LANGUAGE 'plpgsql' IMMUTABLE;
 
 CREATE OR REPLACE FUNCTION update_support_article_hash() RETURNS TRIGGER AS $$
 BEGIN
-	NEW.article_hash := MD5(NEW.subject || '::' || COALESCE(NEW.content_markdown, '') || '::' || COALESCE(NEW.preview, ''));
+	NEW.article_hash := MD5(NEW.subject || '::' || COALESCE(NEW.content_markdown, '') || '::' || COALESCE(NEW.preview, '') || ARRAY_TO_STRING(NEW.affected_ini_keys, ','));
 	RETURN NEW;
 END;
 $$ LANGUAGE 'plpgsql';
@@ -20,6 +20,7 @@ CREATE TABLE support_articles (
 	published BOOLEAN NOT NULL DEFAULT FALSE,
 	forward_url TEXT,
 	article_hash HEX NOT NULL UNIQUE,
+	affected_ini_keys CITEXT[] NOT NULL DEFAULT '{}',
 	CHECK (content_markdown IS NOT NULL OR forward_url IS NOT NULL)
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON support_articles TO thezaz_website;

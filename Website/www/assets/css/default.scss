@@ -830,6 +830,20 @@ div.results {
 				margin-top: 0px;
 			}
 		}
+		
+		code {
+			padding: 1px 5px;
+			border-radius: 4px;
+		}
+		
+		.affected_ini_keys {
+			border-top-width: 1px;
+			border-top-style: solid;
+			font-size: 0.8em;
+			padding: 15px;
+			margin-top: 20px;
+			font-weight: 300;
+		}
 	}
 	
 	#toc {

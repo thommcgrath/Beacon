@@ -509,7 +509,7 @@ CREATE FUNCTION public.update_support_article_hash() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 BEGIN
-	NEW.article_hash := MD5(NEW.subject || '::' || COALESCE(NEW.content_markdown, '') || '::' || COALESCE(NEW.preview, ''));
+	NEW.article_hash := MD5(NEW.subject || '::' || COALESCE(NEW.content_markdown, '') || '::' || COALESCE(NEW.preview, '') || ARRAY_TO_STRING(NEW.affected_ini_keys, ','));
 	RETURN NEW;
 END;
 $$;
@@ -1047,6 +1047,7 @@ CREATE TABLE public.support_articles (
     published boolean DEFAULT false NOT NULL,
     forward_url text,
     article_hash public.hex NOT NULL,
+    affected_ini_keys public.citext[] DEFAULT '{}'::public.citext[] NOT NULL,
     CONSTRAINT support_articles_check CHECK (((content_markdown IS NOT NULL) OR (forward_url IS NOT NULL)))
 );
 

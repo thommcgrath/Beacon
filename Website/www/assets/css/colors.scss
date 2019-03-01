@@ -440,6 +440,13 @@
 			h2, h3 {
 				border-color: mix($separator-color, $background-color, 30%);
 			}
+			
+			.affected_ini_keys {
+				$bg: mix($foreground-color, $background-color, 2%);
+				background-color: $bg;
+				text-shadow: 0px 1px 0px $background-color;
+				border-top-color: mix($separator-color, $bg, 35%);
+			}
 		}
 		
 		#toc {
