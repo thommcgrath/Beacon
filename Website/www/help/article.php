@@ -13,6 +13,14 @@ BeaconTemplate::StartStyles(); ?>
 
 img.inline {
 	max-width: 100%;
+	vertical-align: text-bottom;
+	background-color: #ffffff;
+	border-radius: 2px;
+	padding: 2px;
+}
+
+img.standalone {
+	max-width: 100%;
 }
 
 pre {
@@ -52,12 +60,25 @@ if (is_null($article_data)) {
 	
 	if (is_null($results->Field('forward_url'))) {
 		$markdown = $results->Field('content_markdown');
+		
+		// This is for images alone, they need to be centered.
+		$pattern = '/\n\!\[([^\[\]]*)\]\(([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12})\)\n/';
+		while (preg_match($pattern, $markdown, $matches) === 1) {
+			$alt = $matches[1];
+			$image_id = $matches[2];
+			$match = $matches[0];
+			$html = '<p class="text-center"><img class="standalone" src="/help/image/' . $image_id . '" srcset="/help/image/' . $image_id . ' 1x, /help/image/' . $image_id . '@2x 2x, /help/image/' . $image_id . '@3x 3x" alt="' . htmlentities($alt) . '"></p>';
+			
+			$markdown = str_replace($match, $html, $markdown);
+		}
+		
+		// This is for inline images.
 		$pattern = '/\!\[([^\[\]]*)\]\(([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-4[0-9A-Fa-f]{3}-[89ABab][0-9A-Fa-f]{3}-[0-9A-Fa-f]{12})\)/';
 		while (preg_match($pattern, $markdown, $matches) === 1) {
 			$alt = $matches[1];
 			$image_id = $matches[2];
 			$match = $matches[0];
-			$html = '<p class="text-center"><img class="inline" src="/help/image/' . $image_id . '" srcset="/help/image/' . $image_id . ' 1x, /help/image/' . $image_id . '@2x 2x, /help/image/' . $image_id . '@3x 3x" alt="' . htmlentities($alt) . '"></p>';
+			$html = '<img class="inline" src="/help/image/' . $image_id . '" srcset="/help/image/' . $image_id . ' 1x, /help/image/' . $image_id . '@2x 2x, /help/image/' . $image_id . '@3x 3x" alt="' . htmlentities($alt) . '">';
 			
 			$markdown = str_replace($match, $html, $markdown);
 		}
