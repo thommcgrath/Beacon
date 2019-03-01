@@ -81,6 +81,10 @@ pre {
 	}
 }
 
+a {
+	word-break: break-word;
+}
+
 .source-code-font {
 	@include source-code-pro();
 }
@@ -809,6 +813,8 @@ div.results {
 
 #help_article {
 	#article_content {
+		line-height: 1.4em;
+		
 		h2, h3 {
 			border-bottom-width: 1px;
 			border-bottom-style: solid;
@@ -832,8 +838,14 @@ div.results {
 		}
 		
 		code {
-			padding: 1px 5px;
+			padding: 0px 5px;
 			border-radius: 4px;
+			line-height: 1.4em;
+		}
+		
+		pre {
+			margin-top: 15px;
+			margin-bottom: 15px;
 		}
 		
 		.affected_ini_keys {
@@ -851,6 +863,7 @@ div.results {
 		border-top-style: solid;
 		margin-top: 30px;
 		padding-top: 30px;
+		font-size: 0.9em;
 		
 		p {
 			margin-top: 0px;
