@@ -76,6 +76,7 @@ if (empty($description)) {
 					<li><a href="/spawn/">Admin Spawn Codes</a></li>
 					<li><a href="/mods/">Supported Mods</a></li>
 					<li><a href="/account/">Beacon Account</a></li>
+					<li><a href="/blog/">Development Blog</a></li>
 				</ul>
 				<div id="explore_results">
 					<ul id="explore_results_list"></ul>

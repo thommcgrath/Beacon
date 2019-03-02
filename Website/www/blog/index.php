@@ -102,6 +102,11 @@ $results = $database->Query('SELECT article_id, article_slug, subject FROM blog_
 				
 			?>
 		</ul>
+		<p>Feeds</p>
+		<ul>
+			<li><a href="/blog/json.php">JSON Feed</a></li>
+			<li><a href="/blog/rss.php">RSS Feed</a></li>
+		</ul>
 	</div>
 </div><?php
 
