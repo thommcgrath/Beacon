@@ -1,7 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
-BeaconTemplate::AddHeaderLine('<meta name="description" content="Using Ark\'s ConfigOverrideSupplyCrateItems to modify loot crate contents by hand is a maddening experience. Beacon makes it easy.">');
+BeaconTemplate::SetPageDescription('Using Ark\'s ConfigOverrideSupplyCrateItems to modify loot crate contents by hand is a maddening experience. Beacon makes it easy.');
 
 $hero_suffix = BeaconCommon::IsWindows() ? 'windows' : 'mac';
 
@@ -146,7 +146,6 @@ BeaconTemplate::StartStyles();
 
 </style><?php
 BeaconTemplate::FinishStyles();
-//BeaconTemplate::SetBodyClass('purple');
 
 ?>
 <div id="hero_container"><img id="hero" class="<?php echo $hero_suffix; ?>" src="/assets/images/spacer.png"></div>
@@ -183,7 +182,7 @@ BeaconTemplate::FinishStyles();
 		<ul>
 			<?php
 			
-			$results = $database->Query('SELECT message, secondary_message, action_url, last_update FROM client_notices WHERE (min_version IS NULL OR min_version <= $1) AND (max_version IS NULL OR max_version >= $1) ORDER BY last_update DESC LIMIT 4;', $public_build);
+			$results = $database->Query('(SELECT message, secondary_message, action_url, last_update FROM client_notices WHERE (min_version IS NULL OR min_version <= $1) AND (max_version IS NULL OR max_version >= $1)) UNION (SELECT subject AS message, preview AS secondary_message, \'/blog/\' || article_slug AS action_url, last_updated AS last_update FROM blog_articles WHERE publish_date < CURRENT_TIMESTAMP) ORDER BY last_update DESC LIMIT 4;', $public_build);
 			while (!$results->EOF()) {
 				echo '<li>';
 				echo '<span class="title">' . htmlentities($results->Field('message')) . '</span>';

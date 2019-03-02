@@ -4,8 +4,10 @@ DECLARE
 	v_words TEXT[];
 	v_slug TEXT;
 BEGIN
-	v_simplified := TRIM(regexp_replace(LOWER(unaccent(p_input)), '[^a-z0-9 \\-]+', ' ', 'gi'));
-	v_simplified := replace(v_simplified, ' - ', ' ');
+	v_simplified := LOWER(unaccent(p_input));
+	v_simplified := regexp_replace(v_simplified, '(\S)''(\S)', '\1\2');
+	v_simplified := TRIM(regexp_replace(v_simplified, '[^a-z0-9 \\-]+', ' ', 'gi'));
+	v_simplified := replace(v_simplified, '\s-\s', ' ');
 	v_words := regexp_split_to_array(v_simplified, '\s+');
 	LOOP
 		v_slug := array_to_string(v_words, '_');
@@ -16,12 +18,17 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION update_support_article_hash() RETURNS TRIGGER AS $$
+CREATE FUNCTION set_slug_from_article_subject() RETURNS TRIGGER LANGUAGE plpgsql AS $$
 BEGIN
-	NEW.article_hash := MD5(NEW.subject || '::' || COALESCE(NEW.content_markdown, '') || '::' || COALESCE(NEW.preview, '') || ARRAY_TO_STRING(NEW.affected_ini_keys, ','));
+	NEW.article_slug := slugify(NEW.subject);
 	RETURN NEW;
-END;
-$$ LANGUAGE 'plpgsql';
+END $$;
+
+CREATE FUNCTION set_slug_from_video_title() RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+	NEW.video_slug := slugify(NEW.video_title);
+	RETURN NEW;
+END $$;
 
 CREATE TABLE support_articles (
 	article_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -36,7 +43,42 @@ CREATE TABLE support_articles (
 	CHECK (content_markdown IS NOT NULL OR forward_url IS NOT NULL)
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON support_articles TO thezaz_website;
+CREATE OR REPLACE FUNCTION update_support_article_hash() RETURNS TRIGGER AS $$
+BEGIN
+	NEW.article_hash := MD5(NEW.subject || '::' || COALESCE(NEW.content_markdown, '') || '::' || COALESCE(NEW.preview, '') || ARRAY_TO_STRING(NEW.affected_ini_keys, ','));
+	RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql';
+CREATE TRIGGER "create_slug_from_article_subject_trigger" BEFORE INSERT ON support_articles FOR EACH ROW WHEN (NEW.article_slug IS NULL) EXECUTE PROCEDURE set_slug_from_article_subject();
 CREATE TRIGGER "update_support_article_hash_trigger" BEFORE UPDATE OR INSERT ON support_articles FOR EACH ROW EXECUTE PROCEDURE update_support_article_hash();
+
+CREATE TABLE blog_articles (
+	article_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+	article_slug VARCHAR(32) NOT NULL UNIQUE,
+	subject CITEXT NOT NULL,
+	content_markdown CITEXT NOT NULL,
+	preview CITEXT NOT NULL,
+	article_hash HEX NOT NULL UNIQUE,
+	publish_date TIMESTAMP WITH TIME ZONE,
+	last_updated TIMESTAMP WITH TIME ZONE NOT NULL
+);
+GRANT SELECT, INSERT, UPDATE, DELETE ON blog_articles TO thezaz_website;
+CREATE OR REPLACE FUNCTION update_blog_article_hash() RETURNS TRIGGER AS $$
+BEGIN
+	NEW.article_hash := MD5(NEW.subject || '::' || COALESCE(NEW.content_markdown, '') || '::' || COALESCE(NEW.preview, ''));
+	RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql';
+CREATE OR REPLACE FUNCTION update_blog_article_timestamp() RETURNS TRIGGER AS $$
+BEGIN
+	NEW.last_updated = CURRENT_TIMESTAMP(0);
+	RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql';
+CREATE TRIGGER "create_slug_from_article_subject_trigger" BEFORE INSERT ON blog_articles FOR EACH ROW WHEN (NEW.article_slug IS NULL) EXECUTE PROCEDURE set_slug_from_article_subject();
+CREATE TRIGGER "update_blog_article_hash_trigger" BEFORE UPDATE OR INSERT ON blog_articles FOR EACH ROW EXECUTE PROCEDURE update_blog_article_hash();
+INSERT INTO blog_articles (article_id, subject, content_markdown, preview, publish_date, last_updated) SELECT article_id, title AS subject, body AS content_markdown, '' AS preview, publish_time AS publish_date, last_update AS last_updated FROM articles WHERE type = 'Blog';
+CREATE TRIGGER "update_blog_article_timestamp_trigger" BEFORE UPDATE OR INSERT ON blog_articles FOR EACH ROW EXECUTE PROCEDURE update_blog_article_timestamp();
 
 CREATE TABLE support_images (
 	image_id UUID NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -75,19 +117,6 @@ CREATE TABLE support_videos (
 	UNIQUE(host, host_video_id)
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON support_videos TO thezaz_website;
-
-CREATE FUNCTION set_slug_from_article_subject() RETURNS TRIGGER LANGUAGE plpgsql AS $$
-BEGIN
-	NEW.article_slug := slugify(NEW.subject);
-	RETURN NEW;
-END $$;
-CREATE TRIGGER "create_slug_from_article_subject_trigger" BEFORE INSERT ON support_articles FOR EACH ROW WHEN (NEW.article_slug IS NULL) EXECUTE PROCEDURE set_slug_from_article_subject();
-
-CREATE FUNCTION set_slug_from_video_title() RETURNS TRIGGER LANGUAGE plpgsql AS $$
-BEGIN
-	NEW.video_slug := slugify(NEW.video_title);
-	RETURN NEW;
-END $$;
 CREATE TRIGGER "create_slug_from_video_title_trigger" BEFORE INSERT ON support_videos FOR EACH ROW WHEN (NEW.video_slug IS NULL) EXECUTE PROCEDURE set_slug_from_video_title();
 
 CREATE OR REPLACE VIEW "public"."search_contents" AS SELECT support_articles.article_id AS id,
@@ -136,6 +165,8 @@ UNION
     0 AS min_version
    FROM documents
   WHERE documents.published = 'Approved'::publish_status;
+  
+DROP TABLE articles;
   
 INSERT INTO support_videos (video_title, host, host_video_id) VALUES ('Introduction to Loot Drops with Beacon', 'YouTube', 'NPyOk9R3Ra0');
 

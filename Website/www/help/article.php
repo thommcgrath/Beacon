@@ -38,7 +38,6 @@ BeaconTemplate::FinishStyles();
 
 $slug = $_GET['slug'];
 $database = BeaconCommon::Database();
-$cache_key = 'support:' . $slug;
 
 $results = $database->Query('SELECT article_id, article_hash FROM support_articles WHERE article_slug = $1 AND published = TRUE;', $slug);
 if ($results->RecordCount() == 0) {
