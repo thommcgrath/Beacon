@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	var loginCancelButton = document.getElementById('login_cancel_button');
 	var loginActionButton = document.getElementById('login_action_button');
 	var loginExplicitEmailField = document.getElementById('login_explicit_email');
+	var loginExplicitCodeField = document.getElementById('login_explicit_code');
 	
 	var recoverForm = document.getElementById('login_recover_form');
 	var recoverEmailField = document.getElementById('recover_email_field');
@@ -432,5 +433,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			recoverEmailField.value = explicitEmail;
 		}
 		show_page('recover');
+	} else if (loginExplicitEmailField && loginExplicitCodeField) {
+		passwordEmailField.value = loginExplicitEmailField.value;
+		passwordCodeField.value = loginExplicitCodeField.value;
+		show_page('password');
 	}
 });
