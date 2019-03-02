@@ -78,6 +78,11 @@ $$ LANGUAGE 'plpgsql';
 CREATE TRIGGER "create_slug_from_article_subject_trigger" BEFORE INSERT ON blog_articles FOR EACH ROW WHEN (NEW.article_slug IS NULL) EXECUTE PROCEDURE set_slug_from_article_subject();
 CREATE TRIGGER "update_blog_article_hash_trigger" BEFORE UPDATE OR INSERT ON blog_articles FOR EACH ROW EXECUTE PROCEDURE update_blog_article_hash();
 INSERT INTO blog_articles (article_id, subject, content_markdown, preview, publish_date, last_updated) SELECT article_id, title AS subject, body AS content_markdown, '' AS preview, publish_time AS publish_date, last_update AS last_updated FROM articles WHERE type = 'Blog';
+UPDATE blog_articles SET preview = 'Some things are changing for Beacon. Don''t worry though.' WHERE article_id = '036ddc12-fb7e-462e-a1c1-b2084ea02dc8';
+UPDATE blog_articles SET preview = 'Probably Beacon''s biggest update ever.' WHERE article_id = '9438f6c0-9846-46d4-94c0-ea28fa48e63c';
+UPDATE blog_articles SET preview = 'Development is on track, but here''s a progress update anyway.' WHERE article_id = '5f0d6ac3-ca77-41e0-a153-8faa6c2ee44f';
+UPDATE blog_articles SET preview = 'Here is Beacon''s development roadmap for the next few months.' WHERE article_id = 'b9bfa1cc-c3f9-488e-a483-de71ad070305';
+UPDATE blog_articles SET preview = 'The website needed some new features.' WHERE article_id = '8a68e698-8a3c-49fb-86e9-d03ac0ac8209';
 CREATE TRIGGER "update_blog_article_timestamp_trigger" BEFORE UPDATE OR INSERT ON blog_articles FOR EACH ROW EXECUTE PROCEDURE update_blog_article_timestamp();
 
 CREATE TABLE support_images (
