@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 11.1
--- Dumped by pg_dump version 11.1
+-- Dumped from database version 11.2
+-- Dumped by pg_dump version 11.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -2559,7 +2559,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.documents TO thezaz_website;
 -- Name: TABLE email_addresses; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT ON TABLE public.email_addresses TO thezaz_website;
+GRANT SELECT,INSERT,DELETE ON TABLE public.email_addresses TO thezaz_website;
 
 
 --
@@ -2650,7 +2650,7 @@ GRANT SELECT,INSERT ON TABLE public.purchase_items TO thezaz_website;
 -- Name: TABLE purchases; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT ON TABLE public.purchases TO thezaz_website;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.purchases TO thezaz_website;
 
 
 --
