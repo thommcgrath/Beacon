@@ -2,51 +2,10 @@
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::SetTitle('Help');
 
-BeaconTemplate::StartStyles(); ?>
-<style>
-
-#support_search_block {
-	text-align: center;
-	margin-bottom: 40px;
-}
-
-#support_search_field {
-	max-width: 60%;
-	margin-right: 15px;
-}
-
-#support_search_button {
-	vertical-align: baseline;
-}
-
-</style>
-<?php
-BeaconTemplate::FinishStyles();
-
-BeaconTemplate::StartScript(); ?>
-<script>
-	
-document.addEventListener('DOMContentLoaded', function() {
-	document.getElementById('support_search_form').addEventListener('submit', function(ev) {
-		var query = document.getElementById('support_search_field').value;
-		var url = '/help/search/' + encodeURIComponent(query);
-		
-		window.location = url;
-		this.disabled = true;
-		ev.preventDefault();
-	});
-});
-
-</script>
-<?php
-BeaconTemplate::FinishScript();
+$with_search_button = true;
+include('inc.searchfield.php');
 
 ?>
-<div id="support_search_block">
-	<form action="/help/search.php" method="get" id="support_search_form">
-		<p><input type="search" placeholder="Search For Help" name="query" id="support_search_field" recents="0"><input type="submit" value="Search" id="support_search_button"></p>
-	</form>
-</div>
 <h2>Getting Started</h2>
 <div class="indent">
 	<p>New users who have no idea how to start customizing loot should <a href="/videos/introduction_to_loot_drops_with">watch this introductory video</a>.</p>

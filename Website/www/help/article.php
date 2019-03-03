@@ -126,6 +126,10 @@ while (!$results->EOF()) {
 }
 
 echo '<div id="toc">';
+
+$with_search_button = false;
+include('inc.searchfield.php');
+
 foreach ($toc as $group_name => $group_contents) {
 	echo '<p>' . htmlentities($group_name) . '</p><ul>';
 	foreach ($group_contents as $article) {

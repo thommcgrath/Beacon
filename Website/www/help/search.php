@@ -15,6 +15,9 @@ $database = BeaconCommon::Database();
 
 BeaconTemplate::SetTitle('Help: ' . $terms);
 
+$with_search_button = true;
+include('inc.searchfield.php');
+
 $build_number = 0;
 $builds = $database->Query("SELECT build_number FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
 if ($builds->RecordCount() == 1) {
@@ -31,12 +34,21 @@ BeaconTemplate::StartStyles(); ?>
 <style>
 
 div.support_result {
-	border-width: 1px;
-	border-style: solid;
 	padding: 15px;
-	border-radius: 8px;
-	margin-top: 15px;
-	margin-bottom: 15px;
+	
+	&:first-child {
+		margin-top: 15px;
+	}
+	
+	&:last-child {
+		margin-bottom: 15px;
+	}
+	
+	&+div.support_result {
+		border-top-width: 1px;
+		border-top-style: solid;
+		margin-top: 0px;
+	}
 }
 
 </style>
