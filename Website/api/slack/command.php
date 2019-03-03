@@ -32,10 +32,16 @@ if ($computed_hash != $expected_hash) {
 $command = $_POST['command'];
 $text = $_POST['text'];
 $response_url = $_POST['response_url'];
+$env = BeaconCommon::EnvironmentName();
 
 switch ($command) {
 case '/confirm':
+case '/confirm-' . $env:
 	include('commands/confirm.php');
+	break;
+case '/changeemail':
+case '/changeemail-' . $env:
+	include('commands/changeemail.php');
 	break;
 default:
 	http_response_code(404);
