@@ -43,6 +43,10 @@ case '/changeemail':
 case '/changeemail-' . $env:
 	include('commands/changeemail.php');
 	break;
+case '/grant':
+case '/grant-' . $env:
+	include('commands/grant.php');
+	break;
 default:
 	http_response_code(404);
 	echo "Unknown command";
