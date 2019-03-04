@@ -50,6 +50,49 @@ class BeaconLogin {
 </div>
 		<?php
 	}
+	
+	public static function GenerateUsername() {
+		$database = BeaconCommon::Database();
+		$results = $database->Query('SELECT generate_username() AS username;');
+		return $results->Field('username');
+	}
+	
+	public static function GenerateVerificationCode(string $email) {
+		if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+			return null;
+		}
+		
+		$database = BeaconCommon::Database();
+		$code = BeaconCommon::GenerateRandomKey(8);
+		$database->BeginTransaction();
+		$database->Query('DELETE FROM email_verification WHERE email_id = uuid_for_email($1);', $email);
+		$database->Query('INSERT INTO email_verification (email_id, code) VALUES (uuid_for_email($1, TRUE), encode(digest($2, \'sha512\'), \'hex\'));', $email, $code);
+		$database->Commit();
+		
+		return $code;
+	}
+	
+	public static function GenerateVerificationLink(string $email) {
+		$code = static::GenerateVerificationCode($email);
+		if (is_null($code)) {
+			return null;
+		}
+		
+		return BeaconCommon::AbsoluteURL('/account/login/?email=' . urlencode($email) . '&code=' . urlencode($code));
+	}
+	
+	public static function SendVerification(string $email) {
+		$code = static::GenerateVerificationCode($email);
+		if (is_null($code)) {
+			return false;
+		}
+		
+		$headers = 'From: "Beacon Support" <forgotmyparachute@beaconapp.cc>';
+		$subject = 'Please Verify Your E-Mail Address';
+		$body = "To continue setting up your Beacon Account, enter the following code where prompted.\n\n$code\n\nIf you need help, simply reply to this email.";
+		
+		return mail($email, $subject, $body, $headers);
+	}
 }
 
 ?>
