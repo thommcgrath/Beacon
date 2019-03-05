@@ -139,7 +139,7 @@ Begin BeaconSubview PresetEditorView
       TabPanelIndex   =   0
       Top             =   61
       Transparent     =   False
-      Value           =   1
+      Value           =   2
       Visible         =   True
       Width           =   740
       BeginSegmented SegmentedControl MapSelector
@@ -1193,6 +1193,9 @@ End
 	#tag Constant, Name = ColumnQuantity, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
+	#tag Constant, Name = ModifierClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.presetmodifier", Scope = Private
+	#tag EndConstant
+
 	#tag Constant, Name = PageContents, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
 
@@ -1572,6 +1575,82 @@ End
 	#tag Event
 		Sub DoubleClick()
 		  Self.ShowModifierEditor(True)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.SelCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.RawDataAvailable(Self.ModifierClipboardType)
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  If Warn And Not Self.ShowConfirm(if(Self.ModifiersList.SelCount = 1, "Are you sure you want to delete this modifier?", "Are you sure you want to delete these " + Str(Self.ContentsList.SelCount, "-0") + " modifiers?"), "This action cannot be undone.", "Delete", "Cancel") Then
+		    Return
+		  End If
+		  
+		  For I As Integer = Self.ModifiersList.ListCount - 1 DownTo 0
+		    If Not Self.ModifiersList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim ModifierID As Text = Self.ModifiersList.RowTag(I)
+		    Self.mPreset.ClearModifier(ModifierID)
+		    Self.ModifiersList.RemoveRow(I)
+		    Self.ContentsChanged = True
+		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Dim Modifiers As New Xojo.Core.Dictionary
+		  For I As Integer = 0 To Me.ListCount - 1
+		    If Not Me.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim ModifierID As Text = Me.RowTag(I)
+		    Dim Dict As New Xojo.Core.Dictionary
+		    Dict.Value("Quantity") = Self.mPreset.QuantityMultiplier(ModifierID)
+		    Dict.Value("Quality") = Self.mPreset.QualityModifier(ModifierID)
+		    Modifiers.Value(ModifierID) = Dict
+		  Next
+		  
+		  Board.AddRawData(Xojo.Data.GenerateJSON(Modifiers), Self.ModifierClipboardType)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  If Not Board.RawDataAvailable(Self.ModifierClipboardType) Then
+		    Return
+		  End If
+		  
+		  Try
+		    Dim Data As Text = Board.RawData(Self.ModifierClipboardType).DefineEncoding(Encodings.UTF8).ToText
+		    Dim Modifiers As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Data)
+		    
+		    For Each Entry As Xojo.Core.DictionaryEntry In Modifiers
+		      Dim ModifierID As Text = Entry.Key
+		      Dim Dict As Xojo.Core.Dictionary = Entry.Value
+		      
+		      Self.mPreset.QuantityMultiplier(ModifierID) = Dict.Value("Quantity")
+		      Self.mPreset.QualityModifier(ModifierID) = Dict.Value("Quality")
+		    Next
+		    
+		    Self.ContentsChanged = True
+		    Self.UpdateUI()
+		  Catch Err As RuntimeException
+		    Return
+		  End Try
 		End Sub
 	#tag EndEvent
 #tag EndEvents
