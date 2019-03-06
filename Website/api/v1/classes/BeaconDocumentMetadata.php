@@ -89,7 +89,7 @@ class BeaconDocumentMetadata implements JsonSerializable {
 	}
 	
 	public function ResourceURL() {
-		return BeaconAPI::URL('/document.php/' . urlencode($this->document_id) . '?name=' . urlencode($this->name));
+		return BeaconAPI::URL('/document/' . urlencode($this->document_id) . '?name=' . urlencode($this->name));
 	}
 	
 	public static function GetAll() {
