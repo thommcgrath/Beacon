@@ -1516,7 +1516,7 @@ End
 		    
 		    // Rebuild if necessary
 		    If ReconfigurePresets Then
-		      Destination.ReconfigurePresets(Mask, ConsoleSafe)
+		      Destination.ReconfigurePresets(Mask, Mods)
 		    End If
 		    
 		    // Apply basic settings
