@@ -676,6 +676,18 @@ CREATE VIEW public.computed_engram_availabilities AS
 ALTER TABLE public.computed_engram_availabilities OWNER TO thommcgrath;
 
 --
+-- Name: corrupt_files; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.corrupt_files (
+    file_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    contents bytea NOT NULL
+);
+
+
+ALTER TABLE public.corrupt_files OWNER TO thommcgrath;
+
+--
 -- Name: deletions; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
@@ -1363,6 +1375,14 @@ ALTER TABLE ONLY public.articles
 
 ALTER TABLE ONLY public.client_notices
     ADD CONSTRAINT client_notices_pkey PRIMARY KEY (notice_id);
+
+
+--
+-- Name: corrupt_files corrupt_files_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.corrupt_files
+    ADD CONSTRAINT corrupt_files_pkey PRIMARY KEY (file_id);
 
 
 --
@@ -2247,6 +2267,13 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.creature_engrams TO thezaz_web
 --
 
 GRANT SELECT ON TABLE public.computed_engram_availabilities TO thezaz_website;
+
+
+--
+-- Name: TABLE corrupt_files; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT ON TABLE public.corrupt_files TO thezaz_website;
 
 
 --
