@@ -116,7 +116,7 @@ Begin ConfigEditor MetaDataConfigEditor
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   136
+      Height          =   104
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -213,7 +213,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   334
+      Top             =   302
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -256,6 +256,7 @@ Begin ConfigEditor MetaDataConfigEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   6
@@ -264,7 +265,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   202
+      Top             =   170
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -302,7 +303,7 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   202
+      Top             =   170
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -337,11 +338,44 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   236
+      Top             =   204
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   100
+   End
+   Begin CheckBox UncompressedCheckbox
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Disable document compression"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   "Document compression can be disabled when the plain text version is needed, such as when storing the file in a version control system."
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   132
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      Scope           =   2
+      State           =   0
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   334
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   476
    End
 End
 #tag EndWindow
@@ -360,6 +394,7 @@ End
 		  Self.DescriptionArea.Text = Self.Document.Description
 		  Self.PublicFileCheckbox.Value = Self.Document.IsPublic
 		  Self.PublicFileCheckbox.Enabled = (Self.Controller.URL.Scheme = Beacon.DocumentURL.TypeCloud)
+		  Self.UncompressedCheckbox.Value = Not Self.Document.UseCompression
 		  
 		  Dim Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
 		  Dim ScrollPosition As Integer = Self.ModsList.ScrollPosition
@@ -468,6 +503,21 @@ End
 		    Next
 		    Self.ContentsChanged = Self.ContentsChanged Or Self.Document.Mods.Modified
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events UncompressedCheckbox
+	#tag Event
+		Sub Action()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.Document.UseCompression = Not Me.Value
+		  Self.Document.Metadata.IsImplicit = False
+		  Self.ContentsChanged = True
+		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents
