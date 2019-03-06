@@ -127,6 +127,7 @@ case 'GET':
 				}
 				
 				if ($best_option == 'gzip') {
+					header('Content-Encoding: gzip');
 					echo gzencode(json_encode($documents[0]));
 				} else {
 					echo json_encode($documents[0], JSON_PRETTY_PRINT);
