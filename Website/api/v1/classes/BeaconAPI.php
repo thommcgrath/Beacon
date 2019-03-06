@@ -17,6 +17,9 @@ abstract class BeaconAPI {
 			} else {
 				self::$body_raw = file_get_contents('php://input');
 			}
+			if (isset($_SERVER['HTTP_CONTENT_ENCODING']) && $_SERVER['HTTP_CONTENT_ENCODING'] == 'gzip') {
+				self::$body_raw = gzdecode(self::$body_raw);
+			}
 		}
 		return self::$body_raw;
 	}

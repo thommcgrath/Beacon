@@ -102,7 +102,35 @@ case 'GET':
 				header('Content-Type: application/octet-stream');
 				header('Content-Disposition: attachment; filename="' . preg_replace('/[^a-z09\-_ \(\)]/i', '', $documents[0]->Name()) . '.beacon"');
 				http_response_code(200);
-				echo json_encode($documents[0], JSON_PRETTY_PRINT);
+				
+				$best_option = '*';
+				$accept = isset($_SERVER['HTTP_ACCEPT_ENCODING']) ? strtolower(trim($_SERVER['HTTP_ACCEPT_ENCODING'])) : '';
+				if ($accept !== '') {
+					$pieces = explode(',', $accept);
+					$best_quality = 0;
+					$supported = array('gzip', '*');
+					foreach ($pieces as $piece) {
+						$piece = trim($piece);
+						if (strpos($piece, ';') === false) {
+							$option = $piece;
+							$quality = 1;
+						} else {
+							list($option, $quality) = explode(';', $piece, 2);
+							$quality = substr($quality, 2);
+						}
+						
+						if ($quality > $best_quality && in_array($option, $supported)) {
+							$best_option = $option;
+							$best_quality = $quality;
+						}
+					}
+				}
+				
+				if ($best_option == 'gzip') {
+					echo gzencode(json_encode($documents[0]));
+				} else {
+					echo json_encode($documents[0], JSON_PRETTY_PRINT);
+				}
 				exit;
 			}
 		} else {
