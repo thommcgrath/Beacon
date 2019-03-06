@@ -73,7 +73,7 @@ Protected Module SimpleHTTP
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h1
-		Protected Delegate Sub ResponseCallback(URL As Text, Status As Integer, Content As Xojo . Core . MemoryBlock, Tag As Auto)
+		Protected Delegate Sub ResponseCallback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
 	#tag EndDelegateDeclaration
 
 

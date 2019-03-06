@@ -167,6 +167,11 @@ Implements Beacon.DocumentItem
 		      Doc.mMods = Beacon.Data.ConsoleSafeMods()
 		    End If
 		  End If
+		  If Dict.HasKey("UseCompression") Then
+		    Doc.UseCompression = Dict.Value("UseCompression")
+		  Else
+		    Doc.UseCompression = True
+		  End If
 		  If Dict.HasKey("Secure") Then
 		    Dim SecureDict As Xojo.Core.Dictionary = ReadSecureData(Dict.Value("Secure"), Identity)
 		    If SecureDict <> Nil Then
@@ -228,6 +233,7 @@ Implements Beacon.DocumentItem
 		        LootSources = Dict.Value("Beacons")
 		      End If
 		      Doc.mIdentifier = Dict.Value("Identifier")
+		      Doc.mUseCompression = True
 		      Version = Dict.Lookup("Version", 0)
 		      
 		      If Dict.HasKey("Title") Then
@@ -733,6 +739,7 @@ Implements Beacon.DocumentItem
 		  
 		  Dim ModsList() As Text = Self.Mods
 		  Document.Value("Mods") = ModsList
+		  Document.Value("UseCompression") = Self.UseCompression
 		  
 		  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
 		  #if TargetiOS
@@ -905,6 +912,10 @@ Implements Beacon.DocumentItem
 		Private mServerProfiles() As Beacon.ServerProfile
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mUseCompression As Boolean
+	#tag EndProperty
+
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
@@ -920,6 +931,23 @@ Implements Beacon.DocumentItem
 			End Set
 		#tag EndSetter
 		Title As Text
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mUseCompression
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mUseCompression <> Value Then
+			    Self.mUseCompression = Value
+			    Self.mModified = True
+			  End If
+			End Set
+		#tag EndSetter
+		UseCompression As Boolean
 	#tag EndComputedProperty
 
 

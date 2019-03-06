@@ -11,17 +11,19 @@ Inherits Beacon.Thread
 		  #endif
 		  Try
 		    Dim Source As Xojo.Core.Dictionary
+		    Dim Compress As Boolean = False
 		    If Self.mSource <> Nil Then
 		      Source = Self.mSource
 		    ElseIf Self.mSourceDocument <> Nil And Self.mSourceIdentity <> Nil Then
 		      Source = Self.mSourceDocument.ToDictionary(Self.mSourceIdentity)
+		      Compress = Self.mSourceDocument.UseCompression
 		    Else
 		      Dim Err As New NilObjectException
 		      Err.Reason = "No source dictionary or document."
 		      Raise Err
 		    End If
 		    
-		    Self.mSuccess = Self.WriteSynchronous(Source, Self.mDestination)
+		    Self.mSuccess = Self.WriteSynchronous(Source, Self.mDestination, Compress)
 		  Catch Err As RuntimeException
 		    Self.mError = Err
 		  End Try
@@ -139,15 +141,26 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
-		Shared Function WriteSynchronous(Source As Xojo.Core.Dictionary, File As Beacon.FolderItem) As Boolean
+		Shared Function WriteSynchronous(Source As Xojo.Core.Dictionary, File As Beacon.FolderItem, Compress As Boolean) As Boolean
 		  // Prepare
 		  Dim Content As Text = Xojo.Data.GenerateJSON(Source)
 		  
 		  // Pretty
-		  Content = JSONPrettyPrint(Content)
-		  
-		  // Do it
-		  File.Write(Content, Xojo.Core.TextEncoding.UTF8)
+		  #if TargetiOS
+		    Content = JSONPrettyPrint(Content)
+		    File.Write(Content, Xojo.Core.TextEncoding.UTF8)
+		  #else
+		    If Compress Then
+		      Dim Compressor As New _GZipString
+		      Compressor.UseHeaders = True
+		      
+		      Dim Bytes As Global.MemoryBlock = Compressor.Compress(Content, _GZipString.DefaultCompression)
+		      File.Write(Beacon.ConvertMemoryBlock(Bytes))
+		    Else
+		      Content = JSONPrettyPrint(Content)
+		      File.Write(Content, Xojo.Core.TextEncoding.UTF8)
+		    End If
+		  #endif
 		  
 		  Return True
 		End Function

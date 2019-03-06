@@ -35,19 +35,27 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentUpload(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
+		Private Sub APICallback_DocumentUpload(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		  #Pragma Unused URL
+		  #Pragma Unused Content
+		  #Pragma Unused Tag
 		  
 		  Self.mBusy = False
 		  
+		  Dim Success As Boolean = Status >= 200 And Status < 300
 		  If Success Then
 		    If Self.mClearModifiedOnWrite Then
 		      Self.mDocument.Modified = False
 		    End If
 		    RaiseEvent WriteSuccess
 		  Else
+		    Dim Message As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True)
+		    Try
+		      Dim Reply As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Message)
+		      Message = Reply.Value("message")
+		    Catch Err As RuntimeException
+		      
+		    End Try
 		    RaiseEvent WriteError(Message)
 		  End If
 		End Sub
@@ -412,12 +420,23 @@ Protected Class DocumentController
 		  Sender.LockUserData()
 		  Dim WithIdentity As Beacon.Identity = Sender.UserData
 		  
-		  Dim Body As Text = Xojo.Data.GenerateJSON(Self.mDocument.ToDictionary(WithIdentity))
-		  Dim Request As New BeaconAPI.Request(Self.mDocumentURL.WithScheme("https"), "POST", Body, "application/json", AddressOf APICallback_DocumentUpload)
-		  Request.Sign(WithIdentity)
-		  Sender.UnlockUserData()
+		  Dim JSON As Text = Xojo.Data.GenerateJSON(Self.mDocument.ToDictionary(WithIdentity))
+		  Dim Body As Xojo.Core.MemoryBlock
+		  Dim Headers As New Xojo.Core.Dictionary
+		  Headers.Value("Authorization") = "Session " + Preferences.OnlineToken
+		  #if Not TargetiOS
+		    Dim Compressor As New _GZipString
+		    Compressor.UseHeaders = True
+		    
+		    Dim Bytes As Global.MemoryBlock = Compressor.Compress(JSON, _GZipString.DefaultCompression)
+		    Headers.Value("Content-Encoding") = "gzip"
+		    Body = Beacon.ConvertMemoryBlock(Bytes)
+		  #else
+		    Body = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(JSON)
+		  #endif
 		  
-		  Self.mAPISocket.Start(Request)
+		  SimpleHTTP.Post(Self.mDocumentURL.WithScheme("https"), "application/json", Body, AddressOf APICallback_DocumentUpload, Self.mDocument.DocumentID, Headers)
+		  Sender.UnlockUserData()
 		End Sub
 	#tag EndMethod
 
