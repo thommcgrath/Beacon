@@ -287,7 +287,7 @@ End
 		Sub Action()
 		  Dim NewURL As Text = Beacon.DocumentURL.TypeCloud + "://" + BeaconAPI.URL("/document.php/" + Self.mController.Document.DocumentID).Mid(8)
 		  Self.mController.Document.Title = Self.TitleField.Text.ToText
-		  Self.mController.SaveAs(NewURL, App.Identity)
+		  Self.mController.SaveAs(NewURL)
 		  Self.mResponseState = Self.StateSaved
 		  Self.Hide
 		End Sub

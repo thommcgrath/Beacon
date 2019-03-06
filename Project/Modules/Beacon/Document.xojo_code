@@ -73,6 +73,7 @@ Implements Beacon.DocumentItem
 		  Self.Difficulty.IsImplicit = True
 		  Self.mModified = False
 		  Self.mMods = New Beacon.TextList
+		  Self.UseCompression = True
 		End Sub
 	#tag EndMethod
 
@@ -957,11 +958,6 @@ Implements Beacon.DocumentItem
 
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="ConsoleModsOnly"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Description"
 			Group="Behavior"
 			Type="Text"
@@ -1018,6 +1014,11 @@ Implements Beacon.DocumentItem
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="UseCompression"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

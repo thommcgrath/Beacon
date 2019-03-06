@@ -208,9 +208,9 @@ End
 		      Dim FileURL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
 		      App.Log("Attempting to restore autosave " + FileURL.URL)
 		      
-		      Dim Controller As New Beacon.DocumentController(FileURL)
+		      Dim Controller As New Beacon.DocumentController(FileURL, App.IdentityManager.CurrentIdentity)
 		      AddHandler Controller.Loaded, AddressOf AutosaveController_Loaded
-		      Controller.Load(App.Identity)
+		      Controller.Load()
 		    Next
 		  End If
 		End Sub
@@ -268,7 +268,7 @@ End
 		  
 		  // Create a modified transient document
 		  Document.Modified = True
-		  Dim Controller As New Beacon.DocumentController(Document)
+		  Dim Controller As New Beacon.DocumentController(Document, App.IdentityManager.CurrentIdentity)
 		  Self.OpenController(Controller)
 		End Sub
 	#tag EndMethod
@@ -354,7 +354,9 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Controller_LoadError(Sender As Beacon.DocumentController)
+		Private Sub Controller_LoadError(Sender As Beacon.DocumentController, Reason As Text)
+		  #Pragma Unused Reason
+		  
 		  Dim RecentIdx As Integer = -1
 		  Dim Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
 		  For I As Integer = 0 To Recents.Ubound
@@ -418,7 +420,7 @@ End
 		    NewDocumentNumber = NewDocumentNumber + 1
 		  End If
 		  
-		  Self.OpenController(New Beacon.DocumentController(Document))
+		  Self.OpenController(New Beacon.DocumentController(Document, App.IdentityManager.CurrentIdentity))
 		End Sub
 	#tag EndMethod
 
@@ -460,7 +462,7 @@ End
 		  AddHandler Controller.LoadError, WeakAddressOf Controller_LoadError
 		  AddHandler Controller.LoadProgress, WeakAddressOf Controller_LoadProgress
 		  AddHandler Controller.LoadStarted, WeakAddressOf Controller_LoadStarted
-		  Controller.Load(App.Identity)
+		  Controller.Load()
 		  
 		  Preferences.AddToRecentDocuments(URL)
 		End Sub
@@ -469,13 +471,13 @@ End
 	#tag Method, Flags = &h0
 		Sub OpenFile(File As FolderItem)
 		  Dim URL As Beacon.DocumentURL = Beacon.DocumentURL.URLForFile(File)
-		  Self.OpenController(New Beacon.DocumentController(URL))
+		  Self.OpenController(New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub OpenURL(URL As Beacon.DocumentURL)
-		  Self.OpenController(New Beacon.DocumentController(URL))
+		  Self.OpenController(New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity))
 		End Sub
 	#tag EndMethod
 
@@ -716,7 +718,7 @@ End
 		        Continue For I
 		      End If
 		      
-		      Dim Controller As New Beacon.DocumentController(Beacon.DocumentURL(Me.RowTag(I)))
+		      Dim Controller As New Beacon.DocumentController(Beacon.DocumentURL(Me.RowTag(I)), App.IdentityManager.CurrentIdentity)
 		      If Not Controller.CanWrite Then
 		        Return False
 		      End If
@@ -763,7 +765,7 @@ End
 		    End If
 		    
 		    Dim URL As Beacon.DocumentURL = Me.RowTag(I)
-		    Dim Controller As New Beacon.DocumentController(URL)
+		    Dim Controller As New Beacon.DocumentController(URL, App.IdentityManager.CurrentIdentity)
 		    If Controller.CanWrite() Then
 		      Controllers.Append(Controller)
 		    End If

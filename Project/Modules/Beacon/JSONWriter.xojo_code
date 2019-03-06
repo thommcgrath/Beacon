@@ -1,6 +1,6 @@
 #tag Class
 Protected Class JSONWriter
-Inherits Beacon.Thread
+Inherits Thread
 	#tag Event
 		Sub Run()
 		  Self.mSuccess = False
@@ -74,7 +74,7 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function JSONPrettyPrint(JSON As Text) As Text
+		Private Shared Function PrettyPrint(JSON As Text) As Text
 		  Const Indent = &h09
 		  Const EndOfLine = &h0A
 		  
@@ -145,9 +145,8 @@ Inherits Beacon.Thread
 		  // Prepare
 		  Dim Content As Text = Xojo.Data.GenerateJSON(Source)
 		  
-		  // Pretty
 		  #if TargetiOS
-		    Content = JSONPrettyPrint(Content)
+		    Content = PrettyPrint(Content)
 		    File.Write(Content, Xojo.Core.TextEncoding.UTF8)
 		  #else
 		    If Compress Then
@@ -157,7 +156,7 @@ Inherits Beacon.Thread
 		      Dim Bytes As Global.MemoryBlock = Compressor.Compress(Content, _GZipString.DefaultCompression)
 		      File.Write(Beacon.ConvertMemoryBlock(Bytes))
 		    Else
-		      Content = JSONPrettyPrint(Content)
+		      Content = PrettyPrint(Content)
 		      File.Write(Content, Xojo.Core.TextEncoding.UTF8)
 		    End If
 		  #endif
@@ -261,19 +260,14 @@ Inherits Beacon.Thread
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
+			EditorType="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			Type="String"
+			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Priority"
@@ -288,20 +282,7 @@ Inherits Beacon.Thread
 		#tag ViewProperty
 			Name="StackSize"
 			Group="Behavior"
-			Type="UInteger"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="State"
-			Group="Behavior"
-			Type="Beacon.Thread.States"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Running"
-				"1 - Waiting"
-				"2 - Suspended"
-				"3 - Sleeping"
-				"4 - NotRunning"
-			#tag EndEnumValues
+			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Success"
@@ -313,13 +294,7 @@ Inherits Beacon.Thread
 			Visible=true
 			Group="ID"
 			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Top"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
+			EditorType="String"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
