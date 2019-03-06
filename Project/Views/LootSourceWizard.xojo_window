@@ -1514,7 +1514,7 @@ End
 		    Next
 		    
 		    // Rebuild if necessary
-		    If Self.CustomizeReconfigureCheckbox.Value Then
+		    If ReconfigurePresets Then
 		      Destination.ReconfigurePresets(Mask, ConsoleSafe)
 		    End If
 		    
