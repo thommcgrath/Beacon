@@ -1510,13 +1510,13 @@ End
 		        Continue
 		      End If
 		      
-		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Destination, Mask, ConsoleSafe)
+		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Destination, Mask, Mods)
 		      Destination.Append(Set)
 		    Next
 		    
 		    // Rebuild if necessary
 		    If Self.CustomizeReconfigureCheckbox.Value Then
-		      Destination.ReconfigurePresets(Mask, ConsoleSafe)
+		      Destination.ReconfigurePresets(Mask, Mods)
 		    End If
 		    
 		    // Apply basic settings
