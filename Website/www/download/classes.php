@@ -40,10 +40,13 @@ if (isset($_GET['version'])) {
 	$min_version = 0;
 }
 
-$cache_key = md5('classes' . serialize($_GET));
+$database = BeaconCommon::Database();
+$results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;", $min_version);
+$last_database_update = new DateTime($results->Field("stamp"), new DateTimeZone('UTC'));
+
+$cache_key = md5('classes' . serialize($_GET) . serialize($last_database_update));
 $cached = BeaconCache::Get($cache_key);
 if (is_null($cached)) {
-	$database = BeaconCommon::Database();
 	if ($min_version >= 10100000) {
 		$beacon_version = 4;
 		$values = array(
@@ -156,9 +159,6 @@ if (is_null($cached)) {
 			$values['presets']['removals'][] = $preset['object_id'];
 		}
 	}
-	
-	$results = $database->Query("SELECT MAX(stamp) AS stamp FROM ((SELECT MAX(objects.last_update) AS stamp FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.min_version <= $1 AND mods.confirmed = TRUE) UNION (SELECT MAX(action_time) AS stamp FROM deletions WHERE min_version <= $1) UNION (SELECT MAX(last_update) AS stamp FROM help_topics) UNION (SELECT MAX(last_update) AS stamp FROM game_variables)) AS merged;", $min_version);
-	$last_database_update = new DateTime($results->Field("stamp"), new DateTimeZone('UTC'));
 	
 	$values['timestamp'] = $last_database_update->format('Y-m-d H:i:s');
 	$values['beacon_version'] = $beacon_version;

@@ -275,6 +275,18 @@ End
 		End Sub
 	#tag EndEvent
 
+	#tag Event
+		Sub RestoreToDefault()
+		  Self.Document.RemoveConfigGroup(BeaconConfigs.StackSizes.ConfigName)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub SetupUI()
+		  Self.UpdateList()
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StackSizes
@@ -298,6 +310,12 @@ End
 		  End If
 		  
 		  Return Config
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ConfigLabel() As Text
+		  Return Language.LabelForConfig(BeaconConfigs.StackSizes.ConfigName)
 		End Function
 	#tag EndMethod
 
@@ -440,6 +458,21 @@ End
 
 #tag EndWindowCode
 
+#tag Events GlobalMultiplierField
+	#tag Event
+		Sub TextChange()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
+		  Config.GlobalMultiplier = CDbl(Me.Text)
+		  Self.ContentsChanged = True
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events Header
 	#tag Event
 		Sub Open()

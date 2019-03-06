@@ -30,7 +30,8 @@ This file content is identical to the [engram.php POST](engram.md#post) method c
       "Island",
       "Scorched"
     ],
-    "can_blueprint": true
+    "can_blueprint": true,
+    "harvestable": false
   }
 ]
 ```
@@ -42,8 +43,8 @@ Content-Type: text/csv
 The CSV file must contain a header row. The columns must match the [engram structure](engram.php#engram-structure). The `mod_id` key is optional, but will be ignored if provided. The `availability` column may be a comma-separated string.
 
 ```csv
-"class","label","availability","can_blueprint"
-"Prefix_MyEngram_C","My Engram","Island,Scorched","true"
+"class","label","availability","can_blueprint","harvestable"
+"Prefix_MyEngram_C","My Engram","Island,Scorched","true","false"
 ```
 
 ## Errors

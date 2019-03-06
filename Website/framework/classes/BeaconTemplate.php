@@ -99,11 +99,11 @@ abstract class BeaconTemplate {
 	}
 	
 	public static function AddStylesheet(string $url) {
-		self::$header_lines[] = '<link href="' . htmlentities($url) . '" type="text/css" rel="stylesheet">';
+		self::$header_lines[] = '<link href="' . htmlentities($url) . '" type="text/css" rel="stylesheet" nonce="' . $_SERVER['CSP_NONCE'] . '">';
 	}
 	
 	public static function AddScript(string $url) {
-		self::$header_lines[] = '<script src="' . htmlentities($url) . '"></script>';
+		self::$header_lines[] = '<script src="' . htmlentities($url) . '" nonce="' . $_SERVER['CSP_NONCE'] . '"></script>';
 	}
 	
 	public static function StartScript() {

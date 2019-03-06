@@ -1,6 +1,6 @@
 <?php
 
-require(dirname(__FILE__, 2) . '/framework/loader.php');
+require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 if (!isset($_GET['id'])) {
 	http_response_code(400);
@@ -8,23 +8,46 @@ if (!isset($_GET['id'])) {
 	exit;
 }
 
-$obj = BeaconCommon::ResolveObjectIdentifier($_GET['id']);
+$workshop_id = isset($_GET['mod']) ? intval($_GET['mod']) : 0;
+$obj = BeaconCommon::ResolveObjectIdentifier($_GET['id'], $workshop_id);
 if (is_null($obj)) {
 	http_response_code(404);
 	echo 'Object not found';
 	exit;
 }
 
+if (is_array($obj)) {
+	echo '<h1>' . htmlentities($_GET['id']) . ' Disambiguation</h1>';
+	echo '<ul>';
+	foreach ($obj as $o) {
+		echo '<li><a href="/object/' . urlencode($o->ModWorkshopID()) . '/' . urlencode($o->ClassString()) . '">' . htmlentities($o->Label()) . '</a> <span class="text-lighter">(' . htmlentities($o->ModName()) . ')</span></li>';
+	}
+	echo '</ul>';
+	exit;
+}
+
 if ($obj instanceof BeaconBlueprint && $_GET['id'] != $obj->ClassString()) {
-	header('Location: /object/' . urlencode($obj->ClassString()));
+	if ($obj->IsAmbiguous()) {
+		header('Location: /object/' . urlencode($obj->ModWorkshopID()) . '/' . urlencode($obj->ClassString()));
+	} else {
+		header('Location: /object/' . urlencode($obj->ClassString()));
+	}
 	exit;
 }
 
 BeaconTemplate::SetTitle($obj->Label());
 
 $properties = array(
-	'Mod' => '[' . $obj->ModName() . '](/mods/info.php?mod_id=' . urlencode($obj->ModID()) . ')'
+	'Mod' => '[' . $obj->ModName() . '](/mods/' . urlencode($obj->ModID()) . ')'
 );
+$tags = $obj->Tags();
+if (count($tags) > 0) {
+	$links = array();
+	foreach ($tags as $tag) {
+		$links[] = '[' . ucwords($tag) . '](/tags/' . urlencode($tag) . ')';
+	}
+	$properties['Tags'] = implode(', ', $links);
+}
 
 if ($obj instanceof BeaconBlueprint) {
 	PrepareBlueprintTable($obj, $properties);
@@ -100,6 +123,8 @@ function PrepareCreatureTable(BeaconCreature $creature, array &$properties) {
 }
 
 function PrepareEngramTable(BeaconEngram $engram, array &$properties) {
+	$properties['Blueprintable'] = $engram->CanBlueprint() ? 'Yes' : 'No';
+	$properties['Harvestable'] = $engram->Harvestable() ? 'Yes' : 'No';
 }
 
 function PrepareLootSourceTable(BeaconLootSource $loot_source, array &$properties) {

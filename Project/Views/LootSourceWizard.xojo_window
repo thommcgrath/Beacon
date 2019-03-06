@@ -47,7 +47,7 @@ Begin Window LootSourceWizard
       TabStop         =   True
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   550
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -1469,48 +1469,57 @@ End
 		  Dim Mask As UInt64 = Self.mDocument.MapCompatibility
 		  Dim Mods As Beacon.TextList = Self.mDocument.Mods
 		  
-		  Dim CustomSets() As Beacon.ItemSet
-		  If Self.mDuplicateSource Then
+		  Dim AllowedPresets(), AdditionalPresets() As Text
+		  For I As Integer = 0 To Self.CustomizePresetsList.ListCount - 1
+		    If Not Self.CustomizePresetsList.CellCheck(I, 0) Then
+		      Continue
+		    End If
+		    
+		    Dim Preset As Beacon.Preset = Self.CustomizePresetsList.RowTag(I)
+		    AllowedPresets.Append(Preset.PresetID)
+		    AdditionalPresets.Append(Preset.PresetID)
+		  Next
+		  
+		  Dim SourceSets() As Beacon.ItemSet
+		  If Self.mSource <> Nil Then
 		    For Each Set As Beacon.ItemSet In Self.mSource
-		      If Set.SourcePresetID = "" Then
-		        CustomSets.Append(Set)
+		      If Set.SourcePresetID = "" Or AllowedPresets.IndexOf(Set.SourcePresetID) > -1 Or LocalData.SharedInstance.GetPreset(Set.SourcePresetID) = Nil Then
+		        SourceSets.Append(Set)
+		      End If
+		      
+		      Dim Idx As Integer = AdditionalPresets.IndexOf(Set.SourcePresetID)
+		      If Idx > -1 Then
+		        AdditionalPresets.Remove(Idx)
 		      End If
 		    Next
 		  End If
 		  
 		  For Each Destination As Beacon.MutableLootSource In Self.mDestinations
-		    For I As Integer = 0 To Self.CustomizePresetsList.ListCount - 1
-		      Dim Preset As Beacon.Preset = Self.CustomizePresetsList.RowTag(I)
-		      If Self.CustomizePresetsList.CellCheck(I, 0) Then
-		        For X As Integer = 0 To Destination.Ubound
-		          Dim Set As Beacon.ItemSet = Destination(X)
-		          If Set.SourcePresetID = Preset.PresetID Then
-		            If ReconfigurePresets Then
-		              // Wants to rebuild it
-		              Set.ReconfigureWithPreset(Preset, Destination, Mask, Mods)
-		            End If
-		            Continue For I
-		          End If
-		        Next
-		        
-		        Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Destination, Mask, Mods)
-		        Destination.Append(Set)
-		      Else
-		        For X As Integer = 0 To Destination.Ubound
-		          Dim Set As Beacon.ItemSet = Destination(X)
-		          If Set.SourcePresetID = Preset.PresetID Then
-		            // Remove this set
-		            Destination.Remove(X)
-		            Continue For I
-		          End If
-		        Next
-		      End If
-		    Next
+		    // Clear the current contents
+		    Redim Destination(-1)
 		    
-		    For Each Set As Beacon.ItemSet In CustomSets
+		    // Add the clones
+		    For Each Set As Beacon.ItemSet In SourceSets
 		      Destination.Append(New Beacon.ItemSet(Set))
 		    Next
 		    
+		    // Add newly selected presets
+		    For Each PresetID As Text In AdditionalPresets
+		      Dim Preset As Beacon.Preset = LocalData.SharedInstance.GetPreset(PresetID)
+		      If Preset = Nil Then
+		        Continue
+		      End If
+		      
+		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Destination, Mask, ConsoleSafe)
+		      Destination.Append(Set)
+		    Next
+		    
+		    // Rebuild if necessary
+		    If Self.CustomizeReconfigureCheckbox.Value Then
+		      Destination.ReconfigurePresets(Mask, ConsoleSafe)
+		    End If
+		    
+		    // Apply basic settings
 		    Destination.MinItemSets = MinItemSets
 		    Destination.MaxItemSets = MaxItemSets
 		    Destination.SetsRandomWithoutReplacement = PreventDuplicates

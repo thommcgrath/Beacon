@@ -139,11 +139,13 @@ case 'POST':
 			BeaconAPI::ReplyError('Not all keys are present.', $document);
 		}
 		if ($single_mode && is_null(BeaconAPI::ObjectID()) == false && strtolower($document['Identifier']) !== strtolower(BeaconAPI::ObjectID())) {
+			$database->Rollback();
 			BeaconAPI::ReplyError('Document UUID of ' . strtolower($document['Identifier']) . ' in content does not match the resource UUID of ' . strtolower(BeaconAPI::ObjectID()) . '.');
 		}
 		
 		$document_version = intval($document['Version']);
 		if ($document_version < 2) {
+			$database->Rollback();
 			BeaconAPI::ReplyError('Version 1 documents are no longer not accepted.');
 		}
 		
@@ -151,16 +153,42 @@ case 'POST':
 		$contents = json_encode($document);
 		
 		// make sure this document is either new or owner by the server
-		$results = $database->Query('SELECT user_id FROM documents WHERE document_id = $1;', $document_id);
-		if ($results->RecordCount() == 1) {
-			if (strtolower($results->Field('user_id')) !== strtolower(BeaconAPI::UserID())) {
-				$database->Rollback();
-				BeaconAPI::ReplyError('Document ' . $document_id . ' does not belong to you.');
+		try {
+			$results = $database->Query('SELECT user_id FROM documents WHERE document_id = $1;', $document_id);
+			if ($results->RecordCount() == 1) {
+				if (strtolower($results->Field('user_id')) !== strtolower(BeaconAPI::UserID())) {
+					$database->Rollback();
+					BeaconAPI::ReplyError('Document ' . $document_id . ' does not belong to you.');
+				}
+				
+				$database->Query('UPDATE documents SET contents = $2 WHERE document_id = $1;', $document_id, $contents);
+			} else {
+				$database->Query('INSERT INTO documents (user_id, contents) VALUES ($1, $2);', BeaconAPI::UserID(), $contents);
+			}
+		} catch (Exception $e) {
+			$database->Rollback();
+			
+			$reason = $e->getMessage();
+			$user_id = BeaconAPI::UserID();
+			$user = BeaconUser::GetByUserID($user_id);
+			if (is_null($user)) {
+				$username = $user_id;
+			} else {
+				$username = $user->Username() . '#' . $user->Suffix();
 			}
 			
-			$database->Query('UPDATE documents SET contents = $2 WHERE document_id = $1;', $document_id, $contents);
-		} else {
-			$database->Query('INSERT INTO documents (user_id, contents) VALUES ($1, $2);', BeaconAPI::UserID(), $contents);
+			$comment = "User $username had trouble saving this document: $reason";
+			$compressed = gzencode($contents, 9);
+			
+			$database->BeginTransaction();
+			$results = $database->Query('INSERT INTO corrupt_files (contents) VALUES ($1) RETURNING file_id;', '\x' . bin2hex($compressed));
+			$database->Commit();
+			$file_id = $results->Field('file_id');
+			$url = BeaconCommon::AbsoluteURL('/corruptfile.php?file_id=' . urlencode($file_id));
+			
+			BeaconCommon::PostSlackMessage("User $username had trouble saving a document: $reason\n\nDownload the file: $url");
+			
+			BeaconAPI::ReplyError('There was a database error while saving the document.');
 		}
 		
 		// see if a publish request is needed

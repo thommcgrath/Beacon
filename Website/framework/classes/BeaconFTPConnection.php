@@ -34,8 +34,39 @@ class BeaconFTPConnection implements BeaconFTPProvider {
 				$dir = strtolower(substr($file['type'], -3)) == 'dir';
 				$results[] = $file['name'] . ($dir ? '/' : '');
 			}
+		} elseif ($files === false) {
+			if (substr($remote_directory_path, -1, 1) == '/') {
+				$remote_directory_path = substr($remote_directory_path, 0, -1);
+			}
+			$files = ftp_rawlist($this->connection, $remote_directory_path);
+			if (is_array($files)) {
+				$systype = ftp_systype($this->connection);
+				$files = $this->ParseRawList($systype, $files);
+				if (!is_null($files)) {
+					$results = $files;
+				}
+			}
 		}
 		return $results;
+	}
+	
+	protected function ParseRawList(string $systype, array $lines) {
+		$files = array();
+		switch ($systype) {
+		case 'Windows_NT':
+			foreach ($lines as $line) {
+				$datetime = substr($line, 0, 17);
+				$type = trim(substr($line, 24, 15));
+				$filename = substr($line, 39);
+				$dir = ($type == '<DIR>');
+				
+				$files[] = $filename . ($dir ? '/' : '');
+			}
+			break;
+		default:
+			return null;
+		}
+		return $files;
 	}
 	
 	public function Download(string $remote_file_path) {

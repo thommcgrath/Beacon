@@ -203,7 +203,8 @@ End
 		  Dim Paths() As Text
 		  For I As Integer = 0 To Self.List.ListCount - 1
 		    If Self.List.Selected(I) Then
-		      Paths.Append(Self.mTarget.Resource(I).Path)
+		      Dim Resource As Beacon.Engram = Self.List.RowTag(I)
+		      Paths.Append(Resource.Path)
 		    End If
 		  Next
 		  

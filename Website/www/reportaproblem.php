@@ -7,15 +7,35 @@ header('Cache-Control: no-cache');
 $method = strtoupper($_SERVER['REQUEST_METHOD']);
 switch ($method) {
 case 'GET':
-	if (isset($_GET['exception'])) {
-		$exception_hash = $_GET['exception'];
-		$build = isset($_GET['build']) ? intval($_GET['build']) : 34;
+	if (isset($_GET['exception']) || isset($_GET['uuid'])) {
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT exception_type, build, location, reason, trace, solution_details, solution_min_build FROM exceptions WHERE exception_hash = $1 AND build <= $2 ORDER BY build DESC LIMIT 1;', $exception_hash, $build);
-		if ($results->RecordCount() == 0) {
-			http_response_code(404);
-			echo '<h1>Unknown Error</h1><p>No exception with this id has been reported yet.</p>';
-			exit;
+		if (isset($_GET['uuid'])) {
+			$exception_id = $_GET['uuid'];
+			if (!BeaconCommon::IsUUID($exception_id)) {
+				http_response_code(404);
+				echo '<h1>Bad Error ID</h1><p>' . htmlentities($exception_id) . ' is not a valid exception UUID.</p>';
+				exit;
+			}
+			
+			$results = $database->Query('SELECT exception_type, build, location, reason, trace, solution_details, solution_min_build FROM exceptions WHERE exception_id = $1;', $exception_id);
+			if ($results->RecordCount() == 0) {
+				http_response_code(404);
+				echo '<h1>Exception Not Found</h1><p>No exception with this id has been reported yet.</p>';
+				exit;
+			}
+			
+			$build = $results->Field('build');
+		} else {
+			$exception_hash = $_GET['exception'];
+			$build = isset($_GET['build']) ? intval($_GET['build']) : 34;
+			$results = $database->Query('SELECT exception_id, exception_type, build, location, reason, trace, solution_details, solution_min_build FROM exceptions WHERE exception_hash = $1 AND build <= $2 ORDER BY build DESC LIMIT 1;', $exception_hash, $build);
+			if ($results->RecordCount() == 0) {
+				http_response_code(404);
+				echo '<h1>Exception Not Found</h1><p>No exception with this id has been reported yet.</p>';
+				exit;
+			}
+			
+			$exception_id = $results->Field('exception_id');
 		}
 		
 		$force_view = isset($_GET['action']) && strtolower($_GET['action']) == 'view';
@@ -47,7 +67,7 @@ case 'GET':
 			<div id="reporter_container">
 				<p class="text-left"><strong>The error has been reported.</strong> If you have any information about how to reproduce the error, please include it here. Otherwise, it is safe to leave this page.</p>
 				<form action="<?php echo basename(__FILE__); ?>" method="post">
-					<input type="hidden" name="hash" value="<?php echo htmlentities($exception_hash); ?>">
+					<input type="hidden" name="uuid" value="<?php echo htmlentities($exception_id); ?>">
 					<input type="hidden" name="build" value="<?php echo htmlentities($build); ?>">
 					<p><textarea name="comments" placeholder="Comments" rows="5"></textarea></p>
 					<p class="text-right"><input type="submit" value="Submit Comments"></p>
@@ -146,18 +166,18 @@ case 'GET':
 	}
 	break;
 case 'POST':
-	if (BeaconCommon::HasAllKeys($_POST, 'build', 'hash', 'comments')) {
+	if (BeaconCommon::HasAllKeys($_POST, 'build', 'uuid', 'comments')) {
 		$build = intval($_POST['build']);
-		$hash = $_POST['hash'];
+		$exception_id = $_POST['uuid'];
 		$comments = trim($_POST['comments']);
 		
 		try {
 			$database = BeaconCommon::Database();
 			$database->BeginTransaction();
-			$database->Query('INSERT INTO exception_comments (exception_hash, build, comments) VALUES ($1, $2, $3);', $hash, $build, $comments);
+			$database->Query('INSERT INTO exception_comments (exception_id, build, comments) VALUES ($1, $2, $3);', $exception_id, $build, $comments);
 			$database->Commit();
 			
-			$details_url = BeaconCommon::AbsoluteURL('/' . basename(__FILE__) . '?exception=' . urlencode($hash) . '&build=' . urlencode($build) . '&action=view');
+			$details_url = BeaconCommon::AbsoluteURL('/' . basename(__FILE__) . '?uuid=' . urlencode($exception_id) . '&action=view');
 			$arr = array(
 				'attachments' => array(
 					array(
@@ -177,6 +197,8 @@ case 'POST':
 			BeaconCommon::PostSlackRaw(json_encode($arr));
 		} catch (Exception $e) {
 			// Likely some sort of tomfoolery, just pretend all is well.
+			echo '<h1>Error Reporter Error</h1><p>Ironic, I know...</p><p>' . htmlentities($e->getMessage()) . '</p>';
+			exit;
 		}
 		
 		echo '<h1>Beacon Error Reporter</h1><p>Thank you, your comments have been added.</p>';

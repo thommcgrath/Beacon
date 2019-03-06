@@ -214,51 +214,87 @@ abstract class BeaconCommon {
 		}
 	}
 	
-	public static function ResolveObjectIdentifier(string $object_id) {
+	public static function ResolveObjectIdentifier(string $object_id, int $workshop_id = 0) {
 		// $object_id could be a UUID or a class string. Only blueprints have class strings,
 		// but if supplied with a UUID of a blueprint, we want the blueprint object back.
 		// In fact, we always want the most specific class possible for the given input.
 		
-		$obj = BeaconCache::Get($object_id);
-		if (is_null($obj)) {
-			$database = static::Database();
-			if (static::IsUUID($object_id)) {
-				$results = $database->Query('SELECT object_id, tableoid::regclass AS tablename FROM objects WHERE object_id = $1;', $object_id);
-			} else {
-				$results = $database->Query('SELECT object_id, tableoid::regclass AS tablename FROM blueprints WHERE class_string = $1;', $object_id);
-			}
-			if ($results->RecordCount() != 1) {
-				return null;
-			}
-			
-			$object_id = $results->Field('object_id');
+		$workshop_id = abs($workshop_id);
+		
+		$cache_key = $object_id;
+		if ($workshop_id > 0) {
+			$cache_key = $workshop_id . '|' . $cache_key;
+		}
+		
+		$obj = BeaconCache::Get($cache_key);
+		if (!is_null($obj)) {
+			// Renew the cache
+			BeaconCache::Set($cache_key, $obj, 3600);
+			return $obj;
+		}
+		
+		$database = static::Database();
+		if (static::IsUUID($object_id)) {
+			$results = $database->Query('SELECT objects.object_id, objects.tableoid::regclass AS tablename FROM objects INNER JOIN mods ON (objects.mod_id = mods.mod_id) WHERE objects.object_id = $1 AND mods.confirmed = TRUE;', $object_id);
+		} elseif ($workshop_id > 0) {
+			$results = $database->Query('SELECT blueprints.object_id, blueprints.tableoid::regclass AS tablename FROM blueprints INNER JOIN mods ON (blueprints.mod_id = mods.mod_id) WHERE blueprints.class_string = $1 AND mods.confirmed = TRUE AND ABS(mods.workshop_id) = $2 LIMIT 1;', $object_id, $workshop_id);
+		} else {
+			$results = $database->Query('SELECT blueprints.object_id, blueprints.tableoid::regclass AS tablename FROM blueprints INNER JOIN mods ON (blueprints.mod_id = mods.mod_id) WHERE blueprints.class_string = $1 AND mods.confirmed = TRUE;', $object_id);
+		}
+		if ($results->RecordCount() == 0) {
+			return null;
+		}
+		
+		$build_number = 0;
+		$builds = $database->Query("SELECT build_number FROM updates WHERE stage >= 3 ORDER BY build_number DESC LIMIT 1;");
+		if ($builds->RecordCount() == 1) {
+			$build_number = intval($builds->Field('build_number'));
+		}
+		
+		$objects = array();
+		while (!$results->EOF()) {
+			$id = $results->Field('object_id');
 			$tablename = $results->Field('tablename');
 			switch ($tablename) {
 			case 'creatures':
-				$obj = BeaconCreature::GetByObjectID($object_id);
+				$obj = BeaconCreature::GetByObjectID($id, $build_number);
 				break;
 			case 'diets':
-				$obj = BeaconDiet::GetByObjectID($object_id);
+				$obj = BeaconDiet::GetByObjectID($id, $build_number);
 				break;
 			case 'engrams':
-				$obj = BeaconEngram::GetByObjectID($object_id);
+				$obj = BeaconEngram::GetByObjectID($id, $build_number);
 				break;
 			case 'loot_sources':
-				$obj = BeaconLootSource::GetByObjectID($object_id);
+				$obj = BeaconLootSource::GetByObjectID($id, $build_number);
 				break;
 			case 'presets':
-				$obj = BeaconPreset::GetByObjectID($object_id);
+				$obj = BeaconPreset::GetByObjectID($id, $build_number);
+				break;
+			default:
+				$obj = null;
 				break;
 			}
+			if (!is_null($obj)) {
+				$objects[] = $obj;
+			}
+			$results->MoveNext();
 		}
-		if (is_null($obj)) {
+		
+		if (count($objects) == 0) {
 			return null;
+		} elseif (count($objects) == 1) {
+			BeaconCache::Set($cache_key, $objects[0], 3600);
+			return $objects[0];
+		} else {
+			foreach ($objects as $obj) {
+				if ($obj instanceof BeaconBlueprint) {
+					BeaconCache::Set($obj->ModWorkshopID() . '|' . $obj->ClassString(), $obj, 3600);
+				}
+			}
+			BeaconCache::Set($cache_key, $objects, 3600);
+			return $objects;
 		}
-		BeaconCache::Set($obj->ObjectID(), $obj, 3600);
-		if ($obj instanceof BeaconBlueprint) {
-			BeaconCache::Set($obj->ClassString(), $obj, 3600);
-		}
-		return $obj;
 	}
 	
 	public static function CurrentContentType() {
@@ -355,6 +391,15 @@ abstract class BeaconCommon {
 		}
 		
 		return $major_version . '.' . $minor_version . '.' . $bug_version . $prerelease;
+	}
+	
+	public static function BooleanValue($value) {
+		if (is_bool($value) === true) {
+			return $value;
+		}
+		
+		$boolval = (is_string($value) ? filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) : (bool) $value);
+		return ($boolval === null ? false : $boolval);
 	}
 }
 
