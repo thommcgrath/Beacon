@@ -1515,8 +1515,8 @@ End
 		    Next
 		    
 		    // Rebuild if necessary
-		    If Self.CustomizeReconfigureCheckbox.Value Then
-		      Destination.ReconfigurePresets(Mask, Mods)
+		    If ReconfigurePresets Then
+		      Destination.ReconfigurePresets(Mask, ConsoleSafe)
 		    End If
 		    
 		    // Apply basic settings
