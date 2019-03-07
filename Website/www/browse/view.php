@@ -56,7 +56,7 @@ if (count($map_names) >= 3) {
 	echo $map_names[0];
 }
 ?></p>
-	<p>Platforms: <span class="platform_tag pc">PC</span><?php if ($document->ConsoleSafe()) {?><span class="platform_tag xbox">Xbox</span><span class="platform_tag playstation">PlayStation</span><span class="platform_tag nintendo">Switch</span><?php } ?></p>
+	<p>Platforms: <span class="platform_tag pc">PC</span><?php if ($document->ConsoleSafe()) {?><span class="platform_tag xbox">Xbox</span><span class="platform_tag playstation">PlayStation</span><?php } ?></p>
 	<p>Uses Mods: <?php
 	
 	$mods = $document->LookupRequiredMods();
