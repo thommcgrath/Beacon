@@ -96,5 +96,6 @@ if (empty($description)) {
 				<p id="dialog_buttons"><button id="dialog_cancel_button">Cancel</button><button id="dialog_action_button" class="default">Ok</button></p>
 			</div>
 		</div>
+		<?php BeaconTemplate::PhotoSwipeDOM(); ?>
 	</body>
 </html>

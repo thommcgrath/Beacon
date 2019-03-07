@@ -8,6 +8,7 @@ abstract class BeaconTemplate {
 	protected static $header_lines = array();
 	protected static $body_class = '';
 	protected static $page_description = '';
+	protected static $use_photoswipe = false;
 	
 	protected static function CacheKey() {
 		return md5($_SERVER['REQUEST_URI']);
@@ -30,6 +31,12 @@ abstract class BeaconTemplate {
 	public static function Finish() {
 		$buffer = ob_get_contents();
 		ob_end_clean();
+		
+		foreach (static::$header_lines as $line) {
+			if (strpos($line, 'photoswipe.min.js') !== false) {
+				static::$use_photoswipe = true;
+			}
+		}
 		
 		$file = BeaconCommon::FrameworkPath() . '/templates/' . self::$template_name . '.php';
 		require($file);
@@ -184,6 +191,50 @@ abstract class BeaconTemplate {
 	
 	public static function SetPageDescription(string $page_description) {
 		static::$page_description = $page_description;
+	}
+	
+	public static function PhotoSwipeDOM() {
+		if (!static::$use_photoswipe) {
+			return;
+		}
+		
+		?><div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="pswp__bg"></div>
+			<div class="pswp__scroll-wrap">
+				<div class="pswp__container">
+		            <div class="pswp__item"></div>
+		            <div class="pswp__item"></div>
+		            <div class="pswp__item"></div>
+		        </div>
+				<div class="pswp__ui pswp__ui--hidden">
+					<div class="pswp__top-bar">
+						<div class="pswp__counter"></div>
+						<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+						<button class="pswp__button pswp__button--share" title="Share"></button>
+						<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+						<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+						<div class="pswp__preloader">
+		                    <div class="pswp__preloader__icn">
+		                      <div class="pswp__preloader__cut">
+		                        <div class="pswp__preloader__donut"></div>
+		                      </div>
+		                    </div>
+		                </div>
+		            </div>
+					<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+		                <div class="pswp__share-tooltip"></div> 
+		            </div>
+					<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+		            </button>
+					<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+		            </button>
+					<div class="pswp__caption">
+		                <div class="pswp__caption__center"></div>
+		            </div>
+				</div>
+			</div>
+		</div>
+<?php
 	}
 }
 

@@ -47,6 +47,7 @@ if ($results->RecordCount() == 0) {
 }
 $article_id = $results->Field('article_id');
 $cache_key = $results->Field('article_hash');
+$photoswipe_triggers = array();
 
 $article_data = BeaconCache::Get($cache_key);
 if (is_null($article_data)) {
@@ -54,7 +55,8 @@ if (is_null($article_data)) {
 	
 	$article_data = array(
 		'title' => $results->Field('subject'),
-		'preview' => $results->Field('preview')
+		'preview' => $results->Field('preview'),
+		'pswp_js' => array()
 	);
 	
 	if (is_null($results->Field('forward_url'))) {
@@ -66,7 +68,24 @@ if (is_null($article_data)) {
 			$alt = $matches[1];
 			$image_id = $matches[2];
 			$match = $matches[0];
-			$html = '<p class="text-center"><img class="standalone" src="/help/image/' . $image_id . '" srcset="/help/image/' . $image_id . ' 1x, /help/image/' . $image_id . '@2x 2x, /help/image/' . $image_id . '@3x 3x" alt="' . htmlentities($alt) . '"></p>';
+			$use_photoswipe = false;
+			
+			$imagedata = $database->Query('SELECT width_points, height_points FROM support_images WHERE image_id = $1;', $image_id);
+			if ($imagedata->RecordCount() == 1 && ($imagedata->Field('width_points') >= 300 || $imagedata->Field('height_points') >= 300)) {
+				$image_url = '/help/image/' . $image_id . '@3x';
+				$use_photoswipe = true;
+				$photoswipe_trigger = 'pswp' . BeaconCommon::GenerateRandomKey();
+				$article_data['pswp_js'][] = "document.getElementById('$photoswipe_trigger').addEventListener('click', function(ev) {
+		var pswpElement = document.querySelectorAll('.pswp')[0];
+		var items = [{src: '$image_url', w: {$imagedata->Field('width_points')}, h: {$imagedata->Field('height_points')}, title: " . json_encode($alt) . "}];
+		var options = {};
+		var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
+		gallery.init();
+		ev.preventDefault();
+	});";
+			}
+			
+			$html = '<p class="text-center">' . ($use_photoswipe ? '<a href="' . $image_url . '" id="' . $photoswipe_trigger . '">' : '') . '<img class="standalone" src="/help/image/' . $image_id . '" srcset="/help/image/' . $image_id . ' 1x, /help/image/' . $image_id . '@2x 2x, /help/image/' . $image_id . '@3x 3x" alt="' . htmlentities($alt) . '">' . ($use_photoswipe ? '</a>' : '') . '</p>';
 			
 			$markdown = str_replace($match, $html, $markdown);
 		}
@@ -100,6 +119,23 @@ if (is_null($article_data)) {
 }
 if (isset($article_data['forward'])) {
 	BeaconCommon::Redirect($article_data['forward'], false);
+}
+
+if (count($article_data['pswp_js']) > 0) {
+	BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('photoswipe.css'));
+	BeaconTemplate::AddStylesheet(BeaconCommon::AssetURI('photoswipe-ui.css'));
+	BeaconTemplate::AddScript(BeaconCommon::AssetURI('photoswipe.min.js'));
+	BeaconTemplate::AddScript(BeaconCommon::AssetURI('photoswipe-ui-default.min.js'));
+	
+	BeaconTemplate::StartScript();
+	echo "<script>\n";
+	
+	echo "document.addEventListener('DOMContentLoaded', function() {\n\t";
+	echo implode("\n\t\n\t", $article_data['pswp_js']);
+	echo "\n});";
+	
+	echo "\n</script>";
+	BeaconTemplate::FinishScript();
 }
 
 echo '<div id="help_article">';
