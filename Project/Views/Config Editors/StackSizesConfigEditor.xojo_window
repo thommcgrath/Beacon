@@ -458,6 +458,21 @@ End
 
 #tag EndWindowCode
 
+#tag Events GlobalMultiplierField
+	#tag Event
+		Sub TextChange()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
+		  Config.GlobalMultiplier = CDbl(Me.Text)
+		  Self.ContentsChanged = True
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events Header
 	#tag Event
 		Sub Open()

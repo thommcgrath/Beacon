@@ -282,6 +282,18 @@ Protected Module FrameworkExtensions
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ToText(Extends Source As Xojo.Core.MemoryBlock) As Text
+		  Dim Content As String = CType(Source.Data, Global.MemoryBlock).StringValue(0, Source.Size)
+		  If Encodings.UTF16.IsValidData(Content) Then
+		    Content = Content.DefineEncoding(Encodings.UTF16).DefineEncoding(Encodings.UTF8)
+		  Else
+		    Content = Content.DefineEncoding(Encodings.UTF8)
+		  End If
+		  Return Content.ToText
+		End Function
+	#tag EndMethod
+
 
 	#tag ViewBehavior
 		#tag ViewProperty
