@@ -124,23 +124,27 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0
 		Function GuessEncoding(Extends Value As String) As String
-		  If Value.Encoding <> Nil Then
-		    Return Value
-		  End If
+		  // This function will check for UTF-8 and UTF-16 Byte Order Marks,
+		  // remove them, and convert to UTF-8.
 		  
-		  // For the sake of speed, check the most common encoding first
-		  If Encodings.UTF8.IsValidData(Value) Then
-		    Return Value.DefineEncoding(Encodings.UTF8)
+		  If Value.LeftB(3) = Encodings.ASCII.Chr(239) + Encodings.ASCII.Chr(187) + Encodings.ASCII.Chr(191) Then
+		    // The rare UTF-8 BOM
+		    Return Value.DefineEncoding(Encodings.UTF8).MidB(4)
+		  ElseIf Value.LeftB(2) = Encodings.ASCII.Chr(254) + Encodings.ASCII.Chr(255) Then
+		    // Confirmed UTF-16 BE
+		    Return Value.DefineEncoding(Encodings.UTF16BE).MidB(3).ConvertEncoding(Encodings.UTF8)
+		  ElseIf Value.LeftB(2) = Encodings.ASCII.Chr(255) + Encodings.ASCII.Chr(254) Then
+		    // Confirmed UTF-16 LE
+		    Return Value.DefineEncoding(Encodings.UTF16LE).MidB(3).ConvertEncoding(Encodings.UTF8)
+		  ElseIf Encodings.UTF16.IsValidData(Value) Then
+		    // This string could be interpreted as UTF16 in the platform's endianess
+		    Return Value.DefineEncoding(Encodings.UTF16).ConvertEncoding(Encodings.UTF8)
+		  ElseIf Value.Encoding = Nil Then
+		    // Need to give it something
+		    Return Value.DefineEncoding(Encodings.ASCII).ConvertEncoding(Encodings.UTF8)
 		  Else
-		    For I As Integer = 0 To Encodings.Count - 1
-		      Dim Encoding As TextEncoding = Encodings.Item(I)
-		      If Encoding.IsValidData(Value) Then
-		        Return Value.DefineEncoding(Encoding)
-		      End If
-		    Next
+		    Return Value.ConvertEncoding(Encodings.UTF8)
 		  End If
-		  
-		  Return Value.DefineEncoding(Encodings.ASCII)
 		End Function
 	#tag EndMethod
 
@@ -285,11 +289,7 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function ToText(Extends Source As Xojo.Core.MemoryBlock) As Text
 		  Dim Content As String = CType(Source.Data, Global.MemoryBlock).StringValue(0, Source.Size)
-		  If Encodings.UTF16.IsValidData(Content) Then
-		    Content = Content.DefineEncoding(Encodings.UTF16).DefineEncoding(Encodings.UTF8)
-		  Else
-		    Content = Content.DefineEncoding(Encodings.UTF8)
-		  End If
+		  Content = Content.GuessEncoding
 		  Return Content.ToText
 		End Function
 	#tag EndMethod
