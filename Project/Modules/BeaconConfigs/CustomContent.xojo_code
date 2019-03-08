@@ -294,6 +294,10 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Function ReadContent(Input As Text, Identity As Beacon.Identity) As Text
+		  // There was an issue with 1.1.1 and earlier that parsed UTF-16 data as UTF-8 which
+		  // left the custom content littered with null characters
+		  Input = Input.ReplaceAll(Text.FromUnicodeCodepoint(0), "")
+		  
 		  Dim Pos As Integer
 		  Self.mEncryptedValues = New Xojo.Core.Dictionary
 		  
