@@ -962,6 +962,8 @@ Implements Beacon.DataSource
 		    Return
 		  End If
 		  
+		  App.Log("Migrating data from schema " + Str(FromSchemaVersion, "-0") + " at " + Source.NativePath)
+		  
 		  Dim MigrateLegacyCustomEngrams As Boolean = FromSchemaVersion <= 5
 		  Dim Commands() As String
 		  
@@ -1084,6 +1086,8 @@ Implements Beacon.DataSource
 		      PresetsFolder.Delete
 		    End If
 		  End If
+		  
+		  App.Log("Migration complete")
 		End Sub
 	#tag EndMethod
 
