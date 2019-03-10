@@ -43,6 +43,12 @@ Protected Class ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DefaultImported() As Boolean
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GameIniValues(SourceDocument As Beacon.Document, Identity As Beacon.Identity) As Beacon.ConfigValue()
 		  Dim Values() As Beacon.ConfigValue
 		  
