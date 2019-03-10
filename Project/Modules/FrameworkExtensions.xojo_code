@@ -123,32 +123,6 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GuessEncoding(Extends Value As String) As String
-		  // This function will check for UTF-8 and UTF-16 Byte Order Marks,
-		  // remove them, and convert to UTF-8.
-		  
-		  If Value.LeftB(3) = Encodings.ASCII.Chr(239) + Encodings.ASCII.Chr(187) + Encodings.ASCII.Chr(191) Then
-		    // The rare UTF-8 BOM
-		    Return Value.DefineEncoding(Encodings.UTF8).MidB(4)
-		  ElseIf Value.LeftB(2) = Encodings.ASCII.Chr(254) + Encodings.ASCII.Chr(255) Then
-		    // Confirmed UTF-16 BE
-		    Return Value.DefineEncoding(Encodings.UTF16BE).MidB(3).ConvertEncoding(Encodings.UTF8)
-		  ElseIf Value.LeftB(2) = Encodings.ASCII.Chr(255) + Encodings.ASCII.Chr(254) Then
-		    // Confirmed UTF-16 LE
-		    Return Value.DefineEncoding(Encodings.UTF16LE).MidB(3).ConvertEncoding(Encodings.UTF8)
-		  ElseIf Encodings.UTF16.IsValidData(Value) Then
-		    // This string could be interpreted as UTF16 in the platform's endianess
-		    Return Value.DefineEncoding(Encodings.UTF16).ConvertEncoding(Encodings.UTF8)
-		  ElseIf Value.Encoding = Nil Then
-		    // Need to give it something
-		    Return Value.DefineEncoding(Encodings.ASCII).ConvertEncoding(Encodings.UTF8)
-		  Else
-		    Return Value.ConvertEncoding(Encodings.UTF8)
-		  End If
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function IndexOf(Extends Source As String, StartAt As Integer = 0, Other As String) As Integer
 		  Return InStr(StartAt, Source, Other) - 1
 		End Function
