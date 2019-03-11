@@ -235,6 +235,9 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Self.mBase.SQLExecute("PRAGMA cache_size = -100000;")
+		  Self.BeginTransaction()
+		  Self.SQLExecute("UPDATE mods SET console_safe = $2 WHERE mod_id = $1 AND console_safe != $2;", Self.UserModID, True)
+		  Self.Commit()
 		  
 		  If MigrateFile <> Nil And MigrateFile.Exists And CurrentSchemaVersion < Self.SchemaVersion Then
 		    Self.MigrateData(MigrateFile, CurrentSchemaVersion)
