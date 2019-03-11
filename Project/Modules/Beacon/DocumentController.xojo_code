@@ -476,7 +476,7 @@ Protected Class DocumentController
 		  Select Case Destination.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
 		    Dim UploadThread As New Beacon.Thread
-		    UploadThread.Priority = Beacon.Thread.PriorityLow
+		    UploadThread.Priority = Thread.LowestPriority
 		    UploadThread.UserData = WithIdentity
 		    AddHandler UploadThread.Run, AddressOf UploadThread_Run
 		    UploadThread.Run

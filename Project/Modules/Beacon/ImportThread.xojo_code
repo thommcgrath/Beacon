@@ -91,8 +91,6 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Super.Constructor
-		  
 		  Self.mUpdateTimer = New Xojo.Core.Timer
 		  Self.mUpdateTimer.Mode = Xojo.Core.Timer.Modes.Off
 		  Self.mUpdateTimer.Period = 0
@@ -268,7 +266,7 @@ Inherits Beacon.Thread
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.State <> Beacon.Thread.States.NotRunning Then
+			  If Self.State <> Thread.NotRunning Then
 			    Dim Err As New RuntimeException
 			    Err.Reason = "Importer is already running"
 			    Raise Err
@@ -288,7 +286,7 @@ Inherits Beacon.Thread
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Self.State <> Beacon.Thread.States.NotRunning Then
+			  If Self.State <> Thread.NotRunning Then
 			    Dim Err As New RuntimeException
 			    Err.Reason = "Importer is already running"
 			    Raise Err

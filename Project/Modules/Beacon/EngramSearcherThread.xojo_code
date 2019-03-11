@@ -207,9 +207,9 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h0
 		Sub Cancel()
-		  If Self.State <> Beacon.Thread.States.NotRunning Then
+		  If Self.State <> Thread.NotRunning Then
 		    Self.Stop
-		    Do Until Self.State = Beacon.Thread.States.NotRunning
+		    Do Until Self.State = Thread.NotRunning
 		      App.YieldToNextThread()
 		    Loop
 		  End If
@@ -218,8 +218,6 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Super.Constructor
-		  
 		  Self.mEngramsLock = New CriticalSection
 		End Sub
 	#tag EndMethod
