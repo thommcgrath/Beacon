@@ -661,12 +661,14 @@ End
 		  
 		  Try
 		    Dim InStream As TextInputStream = TextInputStream.Open(File)
-		    Content = InStream.ReadAll(Encodings.UTF8)
+		    Content = InStream.ReadAll()
 		    InStream.Close
 		  Catch Err As IOException
 		    Self.ShowAlert("Unable to open " + File.DisplayName, "Beacon was unable to read the current content of the file to rewriting. The file has not been changed.")
 		    Return
 		  End Try
+		  
+		  Content = Content.GuessEncoding
 		  
 		  Dim Configs As Xojo.Core.Dictionary
 		  Select Case ConfigFilename

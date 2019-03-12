@@ -473,6 +473,9 @@ End
 		    #Pragma BreakOnExceptions Default
 		    Dim Contents As String = Stream.ReadAll()
 		    Stream.Close
+		    
+		    Contents = Contents.GuessEncoding
+		    
 		    Return Contents
 		  Catch Err As IOException
 		    #Pragma BreakOnExceptions Default

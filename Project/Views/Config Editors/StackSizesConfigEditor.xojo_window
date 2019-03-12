@@ -283,6 +283,7 @@ End
 
 	#tag Event
 		Sub SetupUI()
+		  Self.GlobalMultiplierField.Text = Format(Self.Config(False).GlobalMultiplier, "0.0#####")
 		  Self.UpdateList()
 		End Sub
 	#tag EndEvent

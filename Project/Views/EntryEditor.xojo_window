@@ -538,7 +538,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub EnableButtons()
-		  Dim Enabled As Boolean = Self.EngramSearcher.State = Beacon.Thread.States.NotRunning
+		  Dim Enabled As Boolean = Self.EngramSearcher.State = Thread.NotRunning
 		  Self.ActionButton.Enabled = Enabled And Self.mSelectedEngrams.Count >= 1
 		  Self.CancelButton.Enabled = Enabled
 		End Sub

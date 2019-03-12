@@ -42,8 +42,7 @@ Inherits Thread
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor()
-		  Super.Constructor
-		  Self.Priority = Beacon.Thread.PriorityLow
+		  Self.Priority = Thread.LowestPriority
 		  #if Not TargetiOS
 		    Self.mLock = New CriticalSection
 		  #endif

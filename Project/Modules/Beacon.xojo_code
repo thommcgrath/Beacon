@@ -346,6 +346,50 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function GuessEncoding(Extends Value As String) As String
+		  // This function will check for UTF-8 and UTF-16 Byte Order Marks,
+		  // remove them, and convert to UTF-8.
+		  
+		  If Value.LeftB(3) = Encodings.ASCII.Chr(239) + Encodings.ASCII.Chr(187) + Encodings.ASCII.Chr(191) Then
+		    // The rare UTF-8 BOM
+		    Return Value.DefineEncoding(Encodings.UTF8).MidB(4)
+		  ElseIf Value.LeftB(2) = Encodings.ASCII.Chr(254) + Encodings.ASCII.Chr(255) Then
+		    // Confirmed UTF-16 BE
+		    Return Value.DefineEncoding(Encodings.UTF16BE).MidB(3).ConvertEncoding(Encodings.UTF8)
+		  ElseIf Value.LeftB(2) = Encodings.ASCII.Chr(255) + Encodings.ASCII.Chr(254) Then
+		    // Confirmed UTF-16 LE
+		    Return Value.DefineEncoding(Encodings.UTF16LE).MidB(3).ConvertEncoding(Encodings.UTF8)
+		  Else
+		    // Ok, now we need to get fancy. It's a safe bet that all files contain a "/script/" string, right?
+		    // Let's interpret the file as each of the 3 and see which one matches.
+		    
+		    Const TestValue = "/script/"
+		    Static EncodingsList() As TextEncoding
+		    If EncodingsList.Ubound = -1 Then
+		      EncodingsList = Array(Encodings.UTF8, Encodings.UTF16LE, Encodings.UTF16BE)
+		      Dim Bound As Integer = Encodings.Count - 1
+		      For I As Integer = 0 To Bound
+		        Dim Encoding As TextEncoding = Encodings.Item(I)
+		        If EncodingsList.IndexOf(Encoding) = -1 Then
+		          EncodingsList.Append(Encoding)
+		        End If
+		      Next
+		    End If
+		    
+		    For Each Encoding As TextEncoding In EncodingsList
+		      Dim TestVersion As String = Value.DefineEncoding(Encoding)
+		      If TestVersion.InStr(TestValue) > 0 Then
+		        Return TestVersion.ConvertEncoding(Encodings.UTF8)
+		      End If
+		    Next
+		    
+		    // Who knows what the heck it could be, so it's ASCII now.
+		    Return Value.DefineEncoding(Encodings.ASCII).ConvertEncoding(Encodings.UTF8)
+		  End If
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function HardwareID() As Text
 		  #if TargetDesktop

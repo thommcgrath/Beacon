@@ -248,7 +248,7 @@ End
 		        CellContent = CellContent + EndOfLine + "This imported config is not perfect. Beacon will make a close approximation."
 		      End If
 		      Win.List.AddRow("", CellContent)
-		      Win.List.CellCheck(Win.List.LastIndex, 0) = UsePrefixes = False And (CurrentConfig = Nil Or CurrentConfig.IsImplicit)
+		      Win.List.CellCheck(Win.List.LastIndex, 0) = UsePrefixes = False And Config.DefaultImported And (CurrentConfig = Nil Or CurrentConfig.IsImplicit)
 		      Win.List.RowTag(Win.List.LastIndex) = Config
 		      Enabled = Enabled Or Win.List.CellCheck(Win.List.LastIndex, 0)
 		    Next

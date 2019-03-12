@@ -84,7 +84,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True) // Yes, allow lossy here
+		    Dim TextContent As Text = Content.ToText
 		    Self.mGameIniOriginal = TextContent
 		    Self.RunNextTask()
 		  Catch Err As RuntimeException
@@ -137,7 +137,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True) // Yes, allow lossy here
+		    Dim TextContent As Text = Content.ToText
 		    Self.mGameUserSettingsIniOriginal = TextContent
 		    Self.RunNextTask()
 		  Catch Err As RuntimeException
