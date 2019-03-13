@@ -25,8 +25,21 @@ Inherits Beacon.ConfigGroup
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  Self.mGlobalMultiplier = Dict.Lookup("Global", 1.0)
-		  Self.mOverrides = Dict.Lookup("Overrides", New Xojo.Core.Dictionary)
+		  Dim Overrides As Auto = Dict.Lookup("Overrides", New Xojo.Core.Dictionary)
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Overrides)
+		  If Info.FullName = "Xojo.Core.Dictionary" Then
+		    Self.mOverrides = Overrides
+		  Else
+		    Self.mOverrides = New Xojo.Core.Dictionary
+		  End If
+		  
+		  Dim Multiplier As Auto = Dict.Lookup("Global", 1.0)
+		  Info = Xojo.Introspection.GetType(Multiplier)
+		  If Info.FullName = "Double" Then
+		    Self.mGlobalMultiplier = Multiplier
+		  Else
+		    Self.mGlobalMultiplier = 1.0
+		  End If
 		End Sub
 	#tag EndEvent
 
