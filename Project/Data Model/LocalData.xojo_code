@@ -75,7 +75,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		  
-		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe) VALUES (?1, ?2, ?3);", Self.UserModID, "User Custom", False)
+		  Self.SQLExecute("INSERT INTO mods (mod_id, name, console_safe) VALUES (?1, ?2, ?3);", Self.UserModID, "User Custom", True)
 		  Self.Commit()
 		  
 		  Self.mBase.UserVersion = Self.SchemaVersion
@@ -236,7 +236,7 @@ Implements Beacon.DataSource
 		  
 		  Self.mBase.SQLExecute("PRAGMA cache_size = -100000;")
 		  Self.BeginTransaction()
-		  Self.SQLExecute("UPDATE mods SET console_safe = $2 WHERE mod_id = $1 AND console_safe != $2;", Self.UserModID, True)
+		  Self.SQLExecute("UPDATE mods SET console_safe = ?2 WHERE mod_id = ?1 AND console_safe != ?2;", Self.UserModID, True)
 		  Self.Commit()
 		  
 		  If MigrateFile <> Nil And MigrateFile.Exists And CurrentSchemaVersion < Self.SchemaVersion Then
