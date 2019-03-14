@@ -295,16 +295,13 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEntryList(SelectEntries() As Beacon.SetEntry)
-		  If Self.mSet = Nil Then
-		    EntryList.DeleteAllRows
-		    Return
-		  End If
-		  
 		  Dim Selected() As Text
 		  Dim ScrollToSelection As Boolean
 		  If SelectEntries <> Nil Then
 		    For Each Entry As Beacon.SetEntry In SelectEntries
-		      Selected.Append(Entry.UniqueID)
+		      If Entry <> Nil Then
+		        Selected.Append(Entry.UniqueID)
+		      End If
 		    Next
 		    ScrollToSelection = True
 		  Else
@@ -316,16 +313,24 @@ End
 		    Next
 		  End If
 		  
-		  Dim RequiredRows As Integer = UBound(Self.mSet) + 1
-		  While EntryList.ListCount < RequiredRows
-		    EntryList.AddRow("")
-		  Wend
-		  While EntryList.ListCount > RequiredRows
-		    EntryList.RemoveRow(0)
-		  Wend
+		  EntryList.DeleteAllRows()
+		  
+		  If Self.mSet = Nil Then
+		    Self.UpdateStatus()
+		    Return
+		  End If
+		  
+		  
+		  If Self.mSet = Nil Then
+		    EntryList.DeleteAllRows
+		    Return
+		  End If
 		  
 		  For I As Integer = 0 To UBound(Self.mSet)
 		    Dim Entry As Beacon.SetEntry = Self.mSet(I)
+		    If Entry = Nil Then
+		      Continue
+		    End If
 		    Dim BlueprintChance As Double = if(Entry.CanBeBlueprint, Entry.ChanceToBeBlueprint, 0)
 		    Dim RelativeWeight As Double = Self.mSet.RelativeWeight(I)
 		    Dim ChanceText As String
@@ -354,13 +359,15 @@ End
 		      FiguresText = FiguresText + ", " + Str(BlueprintChance, "0%") + " bp"
 		    End If
 		    
-		    EntryList.Cell(I, Self.ColumnLabel) = Entry.Label
-		    EntryList.Cell(I, Self.ColumnQuality) = QualityText
-		    EntryList.Cell(I, Self.ColumnQuantity) = QuantityText
-		    EntryList.Cell(I, Self.ColumnFigures) = FiguresText
+		    EntryList.AddRow("")
+		    Dim Idx As Integer = EntryList.LastIndex
+		    EntryList.Cell(Idx, Self.ColumnLabel) = Entry.Label
+		    EntryList.Cell(Idx, Self.ColumnQuality) = QualityText
+		    EntryList.Cell(Idx, Self.ColumnQuantity) = QuantityText
+		    EntryList.Cell(Idx, Self.ColumnFigures) = FiguresText
 		    
-		    EntryList.RowTag(I) = Entry
-		    EntryList.Selected(I) = Selected.IndexOf(Entry.UniqueID) > -1
+		    EntryList.RowTag(Idx) = Entry
+		    EntryList.Selected(Idx) = Selected.IndexOf(Entry.UniqueID) > -1
 		  Next
 		  
 		  EntryList.Sort
