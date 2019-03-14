@@ -448,17 +448,18 @@ Protected Class DocumentController
 		    Dim Reason As Text
 		    Dim Err As RuntimeException = Sender.Error
 		    If Err <> Nil Then
-		      If Err.Reason <> "" Then
-		        Reason = Err.Reason
-		      ElseIf Err.Message <> "" Then
-		        Reason = Err.Message.ToText
-		      Else
+		      Reason = Err.Explanation
+		      If Reason = "" Then
 		        Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Err)
-		        Reason = Info.Name + " from JSONWriter"
+		        If Info <> Nil Then
+		          Reason = Info.Name + " from JSONWriter"
+		        End If
 		      End If
-		    Else
+		    End If
+		    If Reason = "" Then
 		      Reason = "Unknown JSONWriter error"
 		    End If
+		    
 		    RaiseEvent WriteError(Reason)
 		  End If
 		End Sub
