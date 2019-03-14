@@ -82,60 +82,16 @@ while (!$results->EOF()) {
 $parser = new Parsedown();
 $body = $parser->text($markdown);
 
-$root = BeaconCommon::AbsoluteURL('');
+$css_url = BeaconCommon::AbsoluteURL(BeaconCommon::AssetURI('default.scss'));
 $html = <<<HTML
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="UTF-8">
 		<title>Beacon Update</title>
+		<link href="$css_url" rel="stylesheet" type="text/css">
 		<style type="text/css">
-		
-		@font-face {
-			font-family: 'Muli';
-			font-style: normal;
-			font-weight: 400;
-			src: local('Muli Regular'), local('Muli-Regular'), url($root/assets/fonts/muli-regular.ttf) format('truetype');
-		}
-		
-		@font-face {
-			font-family: 'Muli';
-			font-style: normal;
-			font-weight: 600;
-			src: local('Muli SemiBold'), local('Muli-SemiBold'), url($root/assets/fonts/muli-semibold.ttf) format('truetype');
-		}
-		
-		@font-face {
-			font-family: 'Muli';
-			font-style: normal;
-			font-weight: 700;
-			src: local('Muli Bold'), local('Muli-Bold'), url($root/assets/fonts/muli-bold.ttf) format('truetype');
-		}
-		
-		body {
-			font-family: Muli, sans-serif;
-			font-size: 12pt;
-		}
-		
-		h1 {
-			font-size: 16pt;
-			font-weight: bold;
-		}
-		
-		h2 {
-			font-size: 14pt;
-			font-weight: bold;
-		}
-		
-		h3 {
-			font-size: 12pt;
-			font-weight: bold;
-		}
-		
-		li+li {
-			margin-top: 12px;
-		}
-		
+		body {margin: 20px;}
 		</style>
 	</head>
 	<body>
