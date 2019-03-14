@@ -204,6 +204,12 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function DictionaryValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto, Default As Xojo.Core.Dictionary, AllowArray As Boolean = False) As Xojo.Core.Dictionary
+		  Return GetValueAsType(Dict, Key, "Xojo.Core.Dictionary", Default, AllowArray)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function DifficultyOffset(Value As Double, Scale As Double) As Double
 		  Return Xojo.Math.Min((Value - 0.5) / (Scale - 0.5), 1.0)
@@ -224,6 +230,12 @@ Protected Module Beacon
 		Protected Function DifficultyValue(Offset As Double, Scale As Double) As Double
 		  Offset = Xojo.Math.Max(Offset, 0.0001)
 		  Return (Offset * (Scale - 0.5)) + 0.5
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DoubleValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto, Default As Double, AllowArray As Boolean = False) As Double
+		  Return GetValueAsType(Dict, Key, "Double", Default, AllowArray)
 		End Function
 	#tag EndMethod
 
@@ -328,6 +340,40 @@ Protected Module Beacon
 		    Dim StringValue As String = Value
 		    Return EncodeURLComponent(StringValue).ReplaceAll(" ", "%20").ToText
 		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function GetLastValueAsType(Values() As Auto, FullName As Text, Default As Auto) As Auto
+		  For I As Integer = Values.Ubound DownTo 0
+		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Values(I))
+		    If Info.FullName = FullName Then
+		      Return Values(I)
+		    End If
+		  Next
+		  Return Default
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function GetValueAsType(Dict As Xojo.Core.Dictionary, Key As Auto, FullName As Text, Default As Auto, AllowArray As Boolean = False) As Auto
+		  If Not Dict.HasKey(Key) Then
+		    Return Default
+		  End If
+		  
+		  Dim Value As Auto = Dict.Value(Key)
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		  If Info = Nil Then
+		    Return Default
+		  End If
+		  If Info.FullName = "Auto()" And AllowArray Then
+		    Dim Arr() As Auto = Value
+		    Return GetLastValueAsType(Arr, FullName, Default)
+		  ElseIf Info.FullName = FullName Then
+		    Return Value
+		  Else
+		    Return Default
+		  End If
 		End Function
 	#tag EndMethod
 

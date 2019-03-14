@@ -25,21 +25,8 @@ Inherits Beacon.ConfigGroup
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  Dim Overrides As Auto = Dict.Lookup("Overrides", New Xojo.Core.Dictionary)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Overrides)
-		  If Info <> Nil And Info.FullName = "Xojo.Core.Dictionary" Then
-		    Self.mOverrides = Overrides
-		  Else
-		    Self.mOverrides = New Xojo.Core.Dictionary
-		  End If
-		  
-		  Dim Multiplier As Auto = Dict.Lookup("Global", 1.0)
-		  Info = Xojo.Introspection.GetType(Multiplier)
-		  If Info <> Nil And Info.FullName = "Double" Then
-		    Self.mGlobalMultiplier = Multiplier
-		  Else
-		    Self.mGlobalMultiplier = 1.0
-		  End If
+		  Self.mOverrides = Dict.DictionaryValue("Overrides", New Xojo.Core.Dictionary)
+		  Self.mGlobalMultiplier = Dict.DoubleValue("Global", 1.0)
 		End Sub
 	#tag EndEvent
 
@@ -88,11 +75,8 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused QualityMultiplier
 		  
-		  Dim GlobalMultiplier As Double = 1.0
+		  Dim GlobalMultiplier As Double = ParsedData.DoubleValue("ItemStackSizeMultiplier", 1.0, True)
 		  Dim Overrides As New Xojo.Core.Dictionary
-		  If ParsedData.HasKey("ItemStackSizeMultiplier") Then
-		    GlobalMultiplier = ParsedData.Value("ItemStackSizeMultiplier")
-		  End If
 		  
 		  If ParsedData.HasKey("ConfigOverrideItemMaxQuantity") Then
 		    Dim AutoValue As Auto = ParsedData.Value("ConfigOverrideItemMaxQuantity")
