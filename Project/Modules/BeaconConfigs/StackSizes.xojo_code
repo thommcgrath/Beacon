@@ -27,7 +27,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Dim Overrides As Auto = Dict.Lookup("Overrides", New Xojo.Core.Dictionary)
 		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Overrides)
-		  If Info.FullName = "Xojo.Core.Dictionary" Then
+		  If Info <> Nil And Info.FullName = "Xojo.Core.Dictionary" Then
 		    Self.mOverrides = Overrides
 		  Else
 		    Self.mOverrides = New Xojo.Core.Dictionary
@@ -35,7 +35,7 @@ Inherits Beacon.ConfigGroup
 		  
 		  Dim Multiplier As Auto = Dict.Lookup("Global", 1.0)
 		  Info = Xojo.Introspection.GetType(Multiplier)
-		  If Info.FullName = "Double" Then
+		  If Info <> Nil And Info.FullName = "Double" Then
 		    Self.mGlobalMultiplier = Multiplier
 		  Else
 		    Self.mGlobalMultiplier = 1.0
