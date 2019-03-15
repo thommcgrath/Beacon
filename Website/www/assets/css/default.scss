@@ -811,8 +811,8 @@ div.results {
 	text-align: center;
 }
 
-#help_article {
-	#article_content {
+#knowledge_wrapper {
+	#knowledge_main {
 		line-height: 1.4em;
 		
 		h2, h3 {
@@ -864,12 +864,17 @@ div.results {
 		}
 	}
 	
-	#toc {
+	#knowledge_contents {
 		border-top-width: 1px;
 		border-top-style: solid;
 		margin-top: 30px;
 		padding-top: 30px;
 		font-size: 0.9em;
+		
+		#knowledge_search_block {
+			text-align: center;
+			margin-bottom: 30px;
+		}
 		
 		p {
 			margin-top: 0px;
@@ -1009,7 +1014,7 @@ div.results {
 		width: 33%;
 	}
 	
-	#help_article {
+	#knowledge_wrapper {
 		display: -webkit-box;
 		display: -ms-flexbox;
 		display: flex;
@@ -1020,7 +1025,7 @@ div.results {
 		-ms-flex-wrap: nowrap;
 		flex-wrap: nowrap;
 		
-		#article_content {
+		#knowledge_main {
 			display: -webkit-box;
 			display: -ms-flexbox;
 			display: flex;
@@ -1035,7 +1040,7 @@ div.results {
 			width: ($max_content_width - 220);
 		}
 		
-		#toc {
+		#knowledge_contents {
 			display: -webkit-box;
 			display: -ms-flexbox;
 			display: flex;

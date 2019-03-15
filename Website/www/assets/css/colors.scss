@@ -435,8 +435,8 @@
 	}
 	
 	/* !Help Article */
-	#help_article {
-		#article_content {
+	#knowledge_wrapper {
+		#knowledge_main {
 			h2, h3 {
 				border-color: mix($separator-color, $background-color, 30%);
 			}
@@ -449,7 +449,7 @@
 			}
 		}
 		
-		#toc {
+		#knowledge_contents {
 			border-color: $separator-color;
 			
 			ul {
