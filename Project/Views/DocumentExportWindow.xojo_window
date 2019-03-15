@@ -668,11 +668,7 @@ End
 		    Return
 		  End Try
 		  
-		  If Encodings.UTF16.IsValidData(Content) Then
-		    Content = Content.DefineEncoding(Encodings.UTF16).ConvertEncoding(Encodings.UTF8)
-		  Else
-		    Content = Content.DefineEncoding(Encodings.UTF8)
-		  End If
+		  Content = Content.GuessEncoding
 		  
 		  Dim Configs As Xojo.Core.Dictionary
 		  Select Case ConfigFilename

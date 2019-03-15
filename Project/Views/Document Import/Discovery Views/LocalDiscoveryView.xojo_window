@@ -474,15 +474,7 @@ End
 		    Dim Contents As String = Stream.ReadAll()
 		    Stream.Close
 		    
-		    // Check if it's valid UTF-16 data
-		    If Encodings.UTF16.IsValidData(Contents) Then
-		      Contents = Contents.DefineEncoding(Encodings.UTF16)
-		    End If
-		    
-		    // And if it's not UTF-8, then convert it
-		    If Contents.Encoding <> Encodings.UTF8 Then
-		      Contents = Contents.ConvertEncoding(Encodings.UTF8)
-		    End If
+		    Contents = Contents.GuessEncoding
 		    
 		    Return Contents
 		  Catch Err As IOException

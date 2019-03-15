@@ -77,6 +77,12 @@ Inherits Beacon.ConfigGroup
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function DefaultImported() As Boolean
+		  Return False
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function Encrypt(Input As Text, Identity As Beacon.Identity) As Text
 		  Try
@@ -294,6 +300,9 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h21
 		Private Function ReadContent(Input As Text, Identity As Beacon.Identity) As Text
+		  Dim StringValue As String = Input
+		  Input = StringValue.GuessEncoding.ToText
+		  
 		  Dim Pos As Integer
 		  Self.mEncryptedValues = New Xojo.Core.Dictionary
 		  

@@ -84,18 +84,24 @@ abstract class BeaconTemplate {
 					fclose($pipes[0]);
 					
 					$cached = trim(stream_get_contents($pipes[1]));
+					$err = trim(stream_get_contents($pipes[2]));
 					fclose($pipes[1]);
+					fclose($pipes[2]);
 					
 					proc_close($process);
+					
+					if (empty($cached)) {
+						$cached = "/*Error:\n\n" . htmlentities($err) . "\n\n*/\n\n$content";
+					}
 					
 					BeaconCache::Set($content_hash, $cached);
 				} else {
 					$cached = $content;
 				}
 			}
-			
+						
 			$style = explode("\n", $cached);
-			array_unshift($style, '<style type="text/css" nonce="' . htmlentities($_SERVER['CSP_NONCE']) . '">');
+			array_unshift($style, '<style type="text/css" nonce="' . htmlentities($_SERVER['CSP_NONCE']) . '" hash="' . $content_hash . '">');
 			$style[] = '</style>';
 		}
 		
@@ -142,7 +148,7 @@ abstract class BeaconTemplate {
 		
 		$lines = explode("\n", $content);
 		foreach ($lines as $line) {
-			if (substr($line, 0, 7) == '<style ' || substr($line, 0, 7) == '<style>' || $line == '</style>') {
+			if (substr($line, 0, 7) == '<style ' || substr($line, 0, 7) == '<style>' || substr($line, -8) == '</style>') {
 				continue;
 			}
 			

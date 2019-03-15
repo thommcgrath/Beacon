@@ -63,9 +63,15 @@ case 'GET':
 			</style><?php
 			BeaconTemplate::FinishStyles();
 			
+			// check the version
+			$results = $database->Query('SELECT build_number, build_display FROM updates WHERE stage = 3 ORDER BY build_number DESC LIMIT 1;');
+			$show_update_notice = ($results->Field('build_number') > $build);
+			$display_version = $results->Field('build_display');
+			
 			?><h1>Beacon Error Reporter</h1>
 			<div id="reporter_container">
 				<p class="text-left"><strong>The error has been reported.</strong> If you have any information about how to reproduce the error, please include it here. Otherwise, it is safe to leave this page.</p>
+				<?php if ($show_update_notice) { ?><p class="inset-note">Your version of Beacon is out of date! Issues can often be fixed just by updating. You should try installing <a href="/download/">version <?php echo $display_version; ?></a>.</p><?php } ?>
 				<form action="<?php echo basename(__FILE__); ?>" method="post">
 					<input type="hidden" name="uuid" value="<?php echo htmlentities($exception_id); ?>">
 					<input type="hidden" name="build" value="<?php echo htmlentities($build); ?>">
@@ -125,13 +131,14 @@ case 'GET':
 			
 			BeaconTemplate::StartStyles();
 			?><style>
-			
+				
 			#technical_details {
 				border: 1px solid rgba(0, 0, 0, 0.1);
 				background-color: rgba(255, 255, 255, 0.1);
 				padding: 20px;
 				font-size: smaller;
 				display: none;
+				overflow-x: auto;
 			}
 			
 			#show_technical_details {

@@ -123,28 +123,6 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GuessEncoding(Extends Value As String) As String
-		  If Value.Encoding <> Nil Then
-		    Return Value
-		  End If
-		  
-		  // For the sake of speed, check the most common encoding first
-		  If Encodings.UTF8.IsValidData(Value) Then
-		    Return Value.DefineEncoding(Encodings.UTF8)
-		  Else
-		    For I As Integer = 0 To Encodings.Count - 1
-		      Dim Encoding As TextEncoding = Encodings.Item(I)
-		      If Encoding.IsValidData(Value) Then
-		        Return Value.DefineEncoding(Encoding)
-		      End If
-		    Next
-		  End If
-		  
-		  Return Value.DefineEncoding(Encodings.ASCII)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function IndexOf(Extends Source As String, StartAt As Integer = 0, Other As String) As Integer
 		  Return InStr(StartAt, Source, Other) - 1
 		End Function
@@ -285,11 +263,7 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function ToText(Extends Source As Xojo.Core.MemoryBlock) As Text
 		  Dim Content As String = CType(Source.Data, Global.MemoryBlock).StringValue(0, Source.Size)
-		  If Encodings.UTF16.IsValidData(Content) Then
-		    Content = Content.DefineEncoding(Encodings.UTF16).DefineEncoding(Encodings.UTF8)
-		  Else
-		    Content = Content.DefineEncoding(Encodings.UTF8)
-		  End If
+		  Content = Content.GuessEncoding
 		  Return Content.ToText
 		End Function
 	#tag EndMethod
