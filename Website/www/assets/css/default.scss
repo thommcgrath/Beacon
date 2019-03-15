@@ -821,7 +821,7 @@ div.results {
 			padding-bottom: 0.3em;
 		}
 		
-		h1, h2, h3 {
+		h1, h2, h3, h4, h5, h6 {
 			margin-top: 20px;
 		}
 		
@@ -835,6 +835,12 @@ div.results {
 			&:first-child {
 				margin-top: 0px;
 			}
+		}
+		
+		
+		h4, h5, h6 {
+			margin-bottom: 0px;
+			font-weight: 600;
 		}
 		
 		code {
