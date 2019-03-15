@@ -7,28 +7,17 @@ header('Cache-Control: no-cache');
 $method = strtoupper($_SERVER['REQUEST_METHOD']);
 switch ($method) {
 case 'GET':
+	$user_id = isset($_GET['user_id']) ? $_GET['user_id'] : null;
+	$client_build = isset($_GET['build']) ? intval($_GET['build']) : null;
+	
 	if (isset($_GET['exception']) || isset($_GET['uuid'])) {
 		$database = BeaconCommon::Database();
+		$exception_id = null;
+		
 		if (isset($_GET['uuid'])) {
 			$exception_id = $_GET['uuid'];
-			if (!BeaconCommon::IsUUID($exception_id)) {
-				http_response_code(404);
-				echo '<h1>Bad Error ID</h1><p>' . htmlentities($exception_id) . ' is not a valid exception UUID.</p>';
-				exit;
-			}
-			
-			$results = $database->Query('SELECT exception_type, build, location, reason, trace, solution_details, solution_min_build FROM exceptions WHERE exception_id = $1;', $exception_id);
-			if ($results->RecordCount() == 0) {
-				http_response_code(404);
-				echo '<h1>Exception Not Found</h1><p>No exception with this id has been reported yet.</p>';
-				exit;
-			}
-			
-			$build = $results->Field('build');
-		} else {
-			$exception_hash = $_GET['exception'];
-			$build = isset($_GET['build']) ? intval($_GET['build']) : 34;
-			$results = $database->Query('SELECT exception_id, exception_type, build, location, reason, trace, solution_details, solution_min_build FROM exceptions WHERE exception_hash = $1 AND build <= $2 ORDER BY build DESC LIMIT 1;', $exception_hash, $build);
+		} elseif (isset($_GET['exception']) && is_null($client_build) == false) {
+			$results = $database->Query('SELECT exception_id FROM exception_signatures WHERE client_hash = $1 AND client_build = $2;', $_GET['exception'], $client_build);
 			if ($results->RecordCount() == 0) {
 				http_response_code(404);
 				echo '<h1>Exception Not Found</h1><p>No exception with this id has been reported yet.</p>';
@@ -38,8 +27,21 @@ case 'GET':
 			$exception_id = $results->Field('exception_id');
 		}
 		
+		if (!BeaconCommon::IsUUID($exception_id)) {
+			http_response_code(404);
+			echo '<h1>Bad Error ID</h1><p>' . htmlentities($exception_id) . ' is not a valid exception UUID.</p>';
+			exit;
+		}
+		
+		$results = $database->Query('SELECT exception_id, exception_class, min_reported_build, max_reported_build, location, reason, trace, solution_comments, solution_build FROM exceptions WHERE exception_id = $1;', $exception_id);
+		if ($results->RecordCount() == 0) {
+			http_response_code(404);
+			echo '<h1>Exception Not Found</h1><p>No exception with this id has been reported yet.</p>';
+			exit;
+		}
+		
 		$force_view = isset($_GET['action']) && strtolower($_GET['action']) == 'view';
-		if (is_null($results->Field('solution_details')) && $force_view == false) {
+		if (is_null($results->Field('solution_build')) && $force_view == false) {
 			BeaconTemplate::StartStyles();
 			?><style type="text/css">
 			
@@ -64,9 +66,12 @@ case 'GET':
 			BeaconTemplate::FinishStyles();
 			
 			// check the version
-			$results = $database->Query('SELECT build_number, build_display FROM updates WHERE stage = 3 ORDER BY build_number DESC LIMIT 1;');
-			$show_update_notice = ($results->Field('build_number') > $build);
-			$display_version = $results->Field('build_display');
+			$show_update_notice = false;
+			if (is_null($client_build) == false) {
+				$results = $database->Query('SELECT build_number, build_display FROM updates WHERE stage = 3 ORDER BY build_number DESC LIMIT 1;');
+				$show_update_notice = ($results->Field('build_number') > $client_build);
+				$display_version = $results->Field('build_display');
+			}
 			
 			?><h1>Beacon Error Reporter</h1>
 			<div id="reporter_container">
@@ -74,7 +79,7 @@ case 'GET':
 				<?php if ($show_update_notice) { ?><p class="inset-note">Your version of Beacon is out of date! Issues can often be fixed just by updating. You should try installing <a href="/download/">version <?php echo $display_version; ?></a>.</p><?php } ?>
 				<form action="<?php echo basename(__FILE__); ?>" method="post">
 					<input type="hidden" name="uuid" value="<?php echo htmlentities($exception_id); ?>">
-					<input type="hidden" name="build" value="<?php echo htmlentities($build); ?>">
+					<?php if (!is_null($user_id)) { ?><input type="hidden" name="user_id" value="<?php echo htmlentities($user_id); ?>"><?php } ?>
 					<p><textarea name="comments" placeholder="Comments" rows="5"></textarea></p>
 					<p class="text-right"><input type="submit" value="Submit Comments"></p>
 					<p id="reporter_disclaimer">This data is anonymous. It will not be possible for Beacon's developers to contact you about this issue.</p>
@@ -83,23 +88,21 @@ case 'GET':
 			exit;
 		}
 		
-		$details_only = is_null($results->Field('solution_details'));
+		$details_only = is_null($results->Field('solution_build'));
 		
 		echo '<h1>Error Report</h1>';
 		if ($details_only == false) {
 			echo '<h2>Solution</h2>';
-			if (intval($results->Field('solution_min_build')) > $build) {
-				$build_details = $database->Query('SELECT build_display FROM updates WHERE build_number >= $1 ORDER BY build_number ASC LIMIT 1;', $results->Field('solution_min_build'));
-				if ($build_details->RecordCount() == 1) {
-					echo '<p>Update to <a href="https://github.com/thommcgrath/Beacon/releases">Beacon ' . htmlentities($build_details->Field('build_display')) . '</a> (or newer) to fix this problem.</p>';
-				} else {
-					echo '<p>This problem will be resolved in a future update.</p>';
-				}
+			$build_details = $database->Query('SELECT build_display FROM updates WHERE build_number >= $1 AND stage >= (SELECT stage FROM updates WHERE build_number = $1) ORDER BY build_number DESC LIMIT 1;', $results->Field('solution_build'));
+			if ($build_details->RecordCount() == 1) {
+				echo '<p>Update to <a href="https://github.com/thommcgrath/Beacon/releases">Beacon ' . htmlentities($build_details->Field('build_display')) . '</a> to fix this problem.</p>';
+			} else {
+				echo '<p>This problem will be resolved in a future update.</p>';
 			}
 			
-			$solution_details = $results->Field('solution_details');
+			$solution_details = $results->Field('solution_comments');
 			if (BeaconCommon::IsMacOS()) {
-				$solution_details = str_replace('<<appsupport>>', '~/Library/Application Support/The ZAZ/Beacon', $solution_details);
+				$solution_details = str_replace('<<appsupport>>', '~/Library/Containers/com.thezaz.beacon/Data/Library/Application Support/The ZAZ/Beacon', $solution_details);
 				$solution_details = str_replace('<<pathseparator>>', '/', $solution_details);
 			} else {
 				$solution_details = str_replace('<<appsupport>>', '%AppData%\The ZAZ\Beacon', $solution_details);
@@ -153,10 +156,11 @@ case 'GET':
 		}
 		
 		echo '<h2>Technical Details</h2>';
-		echo '<p><strong>Type</strong>: ' . htmlentities($results->Field('exception_type')) . '<br>';
+		echo '<p><strong>Type</strong>: ' . htmlentities($results->Field('exception_class')) . '<br>';
 		echo '<strong>Location</strong>: ' . htmlentities($results->Field('location')) . '<br>';
 		echo '<strong>Reason</strong>: ' . htmlentities($results->Field('reason')) . '<br>';
-		echo '<strong>Version</strong>: ' . htmlentities(BeaconCommon::BuildNumberToVersion($results->Field('build'))) . '</p>';
+		echo '<strong>First Reported In</strong>: ' . htmlentities(BeaconCommon::BuildNumberToVersion($results->Field('min_reported_build'))) . '<br>';
+		echo '<strong>Last Reported In</strong>: ' . htmlentities(BeaconCommon::BuildNumberToVersion($results->Field('max_reported_build'))) . '</p>';
 		echo '<p><strong>Stack Trace</strong></p>';
 		echo '<ol>';
 		$trace = explode(chr(10), $results->Field('trace'));
@@ -173,48 +177,23 @@ case 'GET':
 	}
 	break;
 case 'POST':
-	if (BeaconCommon::HasAllKeys($_POST, 'build', 'uuid', 'comments')) {
-		$build = intval($_POST['build']);
+	if (BeaconCommon::HasAllKeys($_POST, 'uuid', 'comments')) {
 		$exception_id = $_POST['uuid'];
 		$comments = trim($_POST['comments']);
+		$user_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
 		
-		try {
-			$database = BeaconCommon::Database();
-			$database->BeginTransaction();
-			$database->Query('INSERT INTO exception_comments (exception_id, build, comments) VALUES ($1, $2, $3);', $exception_id, $build, $comments);
-			$database->Commit();
-			
-			$details_url = BeaconCommon::AbsoluteURL('/' . basename(__FILE__) . '?uuid=' . urlencode($exception_id) . '&action=view');
-			$arr = array(
-				'attachments' => array(
-					array(
-						'title' => 'New exception comment',
-						'text' => $comments,
-						'actions' => array(
-							array(
-								'type' => 'button',
-								'text' => 'View Exception',
-								'url' => $details_url
-							)
-						)
-					)
-				)
-			);
-			
-			BeaconCommon::PostSlackRaw(json_encode($arr));
-		} catch (Exception $e) {
-			// Likely some sort of tomfoolery, just pretend all is well.
-			echo '<h1>Error Reporter Error</h1><p>Ironic, I know...</p><p>' . htmlentities($e->getMessage()) . '</p>';
-			exit;
+		if (BeaconExceptions::AddComments($exception_id, $comments, $user_id)) {
+			echo '<h1>Beacon Error Reporter</h1><p>Thank you, your comments have been added.</p>';
+		} else {
+			echo '<h1>Error Reporter Error</h1><p>Ironic, I know, but the error reporter hit an error.</p>';
 		}
 		
-		echo '<h1>Beacon Error Reporter</h1><p>Thank you, your comments have been added.</p>';
 		exit;
 	}
 	
 	header('Content-Type: application/json');
 	
-	if (!BeaconCommon::HasAllKeys($_POST, 'build', 'hash', 'type', 'location', 'reason', 'trace')) {
+	if (!BeaconCommon::HasAllKeys($_POST, 'build', 'type', 'reason', 'trace')) {
 		http_response_code(400);
 		echo json_encode(array(
 			'reported' => false,
@@ -225,11 +204,11 @@ case 'POST':
 	}
 	
 	$build = intval($_POST['build']);
-	$hash = $_POST['hash'];
 	$type = $_POST['type'];
-	$location = $_POST['location'];
-	$reason = $_POST['reason'];
-	$trace = $_POST['trace'];
+	$reason = trim($_POST['reason']);
+	$trace = trim($_POST['trace']);
+	$hash = $_POST['hash'];
+	$user_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
 	
 	if ($build < 34) {
 		http_response_code(400);
@@ -241,18 +220,27 @@ case 'POST':
 		exit;
 	}
 	
-	if (preg_match('/[a-f0-9]{40}/i', $hash) == 0) {
-		http_response_code(400);
+	$exception_id = BeaconExceptions::RecordException($trace, $type, $reason, $hash, $build, $user_id);
+	if (is_null($exception_id)) {
+		http_response_code(500);
 		echo json_encode(array(
 			'reported' => false,
 			'solution' => null,
-			'error_reason' => 'Exception hash should be a hex-encoded SHA-1 hash.'
+			'error_reason' => 'Unable to save exception data.'
 		), JSON_PRETTY_PRINT);
 		exit;
 	}
 	
-	$database = BeaconCommon::Database();
-	$results = $database->Query('SELECT solution_min_build FROM exceptions WHERE exception_hash = $1 AND build <= $2 AND (solution_min_build IS NULL OR solution_min_build > $2) ORDER BY build DESC LIMIT 1;', $hash, $build);
+	$response = array('reported' => true, 'error_reason' => null, 'solution' => null);
+	$results = BeaconCommon::Database()->Query('SELECT solution_build, solution_comments FROM exceptions WHERE exception_id = $1;', $exception_id);
+	if (!is_null($results->Field('solution_build'))) {
+		$response['solution'] = BeaconCommon::AbsoluteURL('/' . basename(__FILE__) . '?uuid=' . urlencode($exception_id));
+	}
+	
+	http_response_code(200);
+	echo json_encode($response, JSON_PRETTY_PRINT);
+	
+	/*$results = $database->Query('SELECT solution_min_build FROM exceptions WHERE exception_hash = $1 AND build <= $2 AND (solution_min_build IS NULL OR solution_min_build > $2) ORDER BY build DESC LIMIT 1;', $hash, $build);
 	if ($results->RecordCount() == 0) {
 		// Record the exception
 		$database->BeginTransaction();
@@ -301,7 +289,7 @@ case 'POST':
 			'solution' => BeaconCommon::AbsoluteURL('/reportaproblem.php?exception=' . urlencode($hash) . '&build=' . urlencode($build)),
 			'error_reason' => null
 		), JSON_PRETTY_PRINT);
-	}
+	}*/
 	
 	break;
 }
