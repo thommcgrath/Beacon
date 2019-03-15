@@ -240,57 +240,6 @@ case 'POST':
 	http_response_code(200);
 	echo json_encode($response, JSON_PRETTY_PRINT);
 	
-	/*$results = $database->Query('SELECT solution_min_build FROM exceptions WHERE exception_hash = $1 AND build <= $2 AND (solution_min_build IS NULL OR solution_min_build > $2) ORDER BY build DESC LIMIT 1;', $hash, $build);
-	if ($results->RecordCount() == 0) {
-		// Record the exception
-		$database->BeginTransaction();
-		$database->Query('INSERT INTO exceptions (exception_hash, build, exception_type, location, reason, trace) VALUES ($1, $2, $3, $4, $5, $6);', $hash, $build, $type, $location, $reason, $trace);
-		$database->Commit();
-		
-		$details_url = BeaconCommon::AbsoluteURL('/' . basename(__FILE__) . '?exception=' . urlencode($hash) . '&build=' . urlencode($build) . '&action=view');
-		
-		$arr = array(
-			'attachments' => array(
-				array(
-					'title' => 'New ' . $type . ' in ' . $location . ' reported',
-					'text' => $reason,
-					'actions' => array(
-						array(
-							'type' => 'button',
-							'text' => 'View Details',
-							'url' => $details_url
-						)
-					),
-					'fields' => array(
-						array(
-							'title' => 'Version',
-							'value' => BeaconCommon::BuildNumberToVersion($build),
-							'short' => true
-						)
-					)
-				)
-			)
-		);
-		
-		BeaconCommon::PostSlackRaw(json_encode($arr));
-	}
-	
-	if ($results->RecordCount() == 0 || is_null($results->Field('solution_min_build'))) {
-		// No solution yet
-		echo json_encode(array(
-			'reported' => true,
-			'solution' => null,
-			'error_reason' => null
-		), JSON_PRETTY_PRINT);
-	} else {
-		// Solution is known
-		echo json_encode(array(
-			'reported' => true,
-			'solution' => BeaconCommon::AbsoluteURL('/reportaproblem.php?exception=' . urlencode($hash) . '&build=' . urlencode($build)),
-			'error_reason' => null
-		), JSON_PRETTY_PRINT);
-	}*/
-	
 	break;
 }
 
