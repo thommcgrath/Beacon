@@ -1,5 +1,5 @@
 #tag Window
-Begin Window PresetModifierEditor
+Begin BeaconDialog PresetModifierEditor
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False

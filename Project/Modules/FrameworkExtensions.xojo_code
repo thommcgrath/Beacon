@@ -98,6 +98,24 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub CorrectWindowPlacement(Extends Win As Window, Parent As Window)
+		  #if TargetWin32
+		    If Win = Nil Or Parent = Nil Then
+		      Return
+		    End If
+		    
+		    If Win.Placement = Window.PlacementParent Then
+		      Win.Top = Parent.Top
+		      Win.Left = Parent.Left + ((Parent.Width - Win.Width) / 2)
+		    End If
+		  #else
+		    #Pragma Unused Win
+		    #Pragma Unused Parent
+		  #endif
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function DoubleValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto, ResolveWithFirst As Boolean = False) As Double
 		  Dim Value As Auto = Dict.Value(Key)
 		  Return AutoToDouble(Value, ResolveWithFirst)

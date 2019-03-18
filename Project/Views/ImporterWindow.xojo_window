@@ -1,5 +1,5 @@
 #tag Window
-Begin Window ImporterWindow
+Begin BeaconDialog ImporterWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False

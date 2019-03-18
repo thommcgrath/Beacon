@@ -1,5 +1,5 @@
 #tag Window
-Begin Window LootSourceWizard
+Begin BeaconDialog LootSourceWizard
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False

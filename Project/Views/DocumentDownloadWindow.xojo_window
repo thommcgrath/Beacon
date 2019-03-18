@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DocumentDownloadWindow
+Begin BeaconDialog DocumentDownloadWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
@@ -21,7 +21,7 @@ Begin Window DocumentDownloadWindow
    MinHeight       =   64
    MinimizeButton  =   False
    MinWidth        =   64
-   Placement       =   2
+   Placement       =   1
    Resizeable      =   False
    Title           =   "Downloading"
    Visible         =   True

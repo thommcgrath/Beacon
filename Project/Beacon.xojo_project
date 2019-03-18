@@ -7,6 +7,7 @@ FileTypeSet=BeaconFileTypes;BeaconFileTypes.xojo_filetypeset;&h0000000029A467FF;
 BuildSteps=Build Automation;Build Automation.xojo_code;&h000000000D6ED7FF;&h0000000000000000;false
 Folder=Views;Views;&h0000000008A387FF;&h0000000000000000;false
 Class=BeaconWindow;Views/BeaconWindow.xojo_code;&h000000000A6D47FF;&h0000000008A387FF;false
+Class=BeaconDialog;Views/BeaconDialog.xojo_code;&h00000000606797FF;&h0000000008A387FF;false
 Class=BeaconMultiview;Views/BeaconMultiview.xojo_code;&h000000000FBF7FFF;&h0000000008A387FF;false
 Class=BeaconContainer;Views/BeaconContainer.xojo_code;&h0000000046FEDFFF;&h0000000008A387FF;false
 Class=BeaconSubview;Views/BeaconSubview.xojo_code;&h000000005369F7FF;&h0000000008A387FF;false
