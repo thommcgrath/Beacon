@@ -205,6 +205,28 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DetectLineEnding(Extends Source As String) As String
+		  Const CR = &u0D
+		  Const LF = &u0A
+		  
+		  If Source.InStr(CR + LF) > 0 Then
+		    Return CR + LF
+		  ElseIf Source.InStr(CR) > 0 Then
+		    Return CR
+		  Else
+		    Return LF
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function DetectLineEnding(Extends Source As Text) As Text
+		  Dim StringValue As String = Source
+		  Return StringValue.DetectLineEnding.ToText
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function DictionaryValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto, Default As Xojo.Core.Dictionary, AllowArray As Boolean = False) As Xojo.Core.Dictionary
 		  Return GetValueAsType(Dict, Key, "Xojo.Core.Dictionary", Default, AllowArray)
 		End Function
@@ -666,14 +688,14 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function RewriteIniContent(InitialContent As Text, NewConfigs As Xojo.Core.Dictionary, WithMarkup As Boolean = True) As Text
 		  // First, normalize line endings
-		  Dim EOL As Text = Text.FromUnicodeCodepoint(10)
-		  InitialContent = Beacon.ReplaceLineEndings(InitialContent, EOL)
+		  Dim EOL As Text = InitialContent.DetectLineEnding
+		  InitialContent = Beacon.ReplaceLineEndings(InitialContent, Text.FromUnicodeCodepoint(10))
 		  
 		  // So that we can make changes without changing the input
 		  NewConfigs = Beacon.Clone(NewConfigs)
 		  
 		  // Organize all existing content
-		  Dim Lines() As Text = InitialContent.Split(EOL)
+		  Dim Lines() As Text = InitialContent.Split(Text.FromUnicodeCodepoint(10))
 		  Dim UntouchedConfigs As New Xojo.Core.Dictionary
 		  Dim LastGroupHeader As Text
 		  For I As Integer = 0 To Lines.Ubound
