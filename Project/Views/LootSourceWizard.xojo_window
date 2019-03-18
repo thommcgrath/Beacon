@@ -1180,6 +1180,36 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ChooseSelectedLootSources()
+		  If Self.SourceList.SelCount = 0 Then
+		    Return
+		  End If
+		  
+		  Redim Self.mDestinations(-1)
+		  
+		  For I As Integer = 0 To Self.SourceList.ListCount - 1
+		    If Not Self.SourceList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim Source As Beacon.LootSource = SourceList.RowTag(I)
+		    
+		    If Source.Experimental And Not Preferences.HasShownExperimentalWarning Then
+		      If Self.ShowConfirm(Language.ExperimentalWarningMessage, Language.ReplacePlaceholders(Language.ExperimentalWarningExplanation, Source.Label), Language.ExperimentalWarningActionCaption, Language.ExperimentalWarningCancelCaption) Then
+		        Preferences.HasShownExperimentalWarning = True
+		      Else
+		        Return
+		      End If
+		    End If
+		    
+		    Self.mDestinations.Append(New Beacon.MutableLootSource(Source))
+		  Next
+		  
+		  Self.ShowCustomize()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Constructor(Document As Beacon.Document, Source As Beacon.LootSource, Duplicate As Boolean)
 		  // Calling the overridden superclass constructor.
 		  Self.mDocument = Document
@@ -1317,27 +1347,7 @@ End
 #tag Events SelectionActionButton
 	#tag Event
 		Sub Action()
-		  Redim Self.mDestinations(-1)
-		  
-		  For I As Integer = 0 To Self.SourceList.ListCount - 1
-		    If Not Self.SourceList.Selected(I) Then
-		      Continue
-		    End If
-		    
-		    Dim Source As Beacon.LootSource = SourceList.RowTag(I)
-		    
-		    If Source.Experimental And Not Preferences.HasShownExperimentalWarning Then
-		      If Self.ShowConfirm(Language.ExperimentalWarningMessage, Language.ReplacePlaceholders(Language.ExperimentalWarningExplanation, Source.Label), Language.ExperimentalWarningActionCaption, Language.ExperimentalWarningCancelCaption) Then
-		        Preferences.HasShownExperimentalWarning = True
-		      Else
-		        Return
-		      End If
-		    End If
-		    
-		    Self.mDestinations.Append(New Beacon.MutableLootSource(Source))
-		  Next
-		  
-		  Self.ShowCustomize()
+		  Self.ChooseSelectedLootSources()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1393,6 +1403,11 @@ End
 		  
 		  Return True
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  Self.ChooseSelectedLootSources()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SelectionCustomButton
