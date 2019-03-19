@@ -85,14 +85,14 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor(LoginOnly As Boolean = False)
 		  Self.mLoginOnly = LoginOnly
-		  AddHandler App.IdentityManager.Finished, WeakAddressOf IdentityManager_Finished
+		  AddHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
-		  RemoveHandler App.IdentityManager.Finished, WeakAddressOf IdentityManager_Finished
+		  RemoveHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		End Sub
 	#tag EndMethod
 
