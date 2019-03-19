@@ -728,6 +728,14 @@ Protected Module Beacon
 		      Key = Key.Left(ModifierPos)
 		    End If
 		    
+		    If NewConfigs.HasKey(LastGroupHeader) Then
+		      Dim NewConfigSection As Xojo.Core.Dictionary = NewConfigs.Value(LastGroupHeader)
+		      If NewConfigSection.HasKey(Key) Then
+		        // This key is being overridden by Beacon
+		        Continue
+		      End If
+		    End If
+		    
 		    Dim ConfigLines() As Text
 		    If SectionDict.HasKey(Key) Then
 		      ConfigLines = SectionDict.Value(Key)
