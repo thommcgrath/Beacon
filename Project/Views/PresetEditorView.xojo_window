@@ -1646,8 +1646,8 @@ End
 		      Self.mPreset.QualityModifier(ModifierID) = Dict.Value("Quality")
 		    Next
 		    
-		    Self.ContentsChanged = True
 		    Self.UpdateUI()
+		    Self.ContentsChanged = True
 		  Catch Err As RuntimeException
 		    Return
 		  End Try
