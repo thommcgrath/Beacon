@@ -42,10 +42,6 @@ Inherits ContainerControl
 
 	#tag Method, Flags = &h0
 		Sub EmbedWithin(containingControl As RectControl, left As Integer = 0, top As Integer = 0, width As Integer = -1, height As Integer = -1)
-		  #if DebugBuild
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Self)
-		    System.DebugLog(Info.FullName + ".EmbedWithin Left: " + Str(Left, "-0") + ", Top: " + Str(Top, "-0") + ", Width: " + Str(Width, "-0") + ", Height: " + Str(Height, "-0"))
-		  #endif
 		  Super.EmbedWithin(ContainingControl, Left, Top, Width, Height)
 		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
 		    BeaconContainer(Self.Window).mChildren.Append(New WeakRef(Self))
@@ -57,10 +53,6 @@ Inherits ContainerControl
 
 	#tag Method, Flags = &h0
 		Sub EmbedWithin(containingWindow As Window, left As Integer = 0, top As Integer = 0, width As Integer = -1, height As Integer = -1)
-		  #if DebugBuild
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Self)
-		    System.DebugLog(Info.FullName + ".EmbedWithin Left: " + Str(Left, "-0") + ", Top: " + Str(Top, "-0") + ", Width: " + Str(Width, "-0") + ", Height: " + Str(Height, "-0"))
-		  #endif
 		  Super.EmbedWithin(ContainingWindow, Left, Top, Width, Height)
 		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
 		    BeaconContainer(Self.Window).mChildren.Append(New WeakRef(Self))
@@ -72,10 +64,6 @@ Inherits ContainerControl
 
 	#tag Method, Flags = &h0
 		Sub EmbedWithinPanel(containingPanel As PagePanel, page As Integer, left As Integer = 0, top As Integer = 0, width As Integer = -1, height As Integer = -1)
-		  #if DebugBuild
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Self)
-		    System.DebugLog(Info.FullName + ".EmbedWithinPanel Left: " + Str(Left, "-0") + ", Top: " + Str(Top, "-0") + ", Width: " + Str(Width, "-0") + ", Height: " + Str(Height, "-0"))
-		  #endif
 		  Super.EmbedWithinPanel(ContainingPanel, Page, Left, Top, Width, Height)
 		  If Self.Window <> Nil And Self.Window IsA BeaconContainer Then
 		    BeaconContainer(Self.Window).mChildren.Append(New WeakRef(Self))
