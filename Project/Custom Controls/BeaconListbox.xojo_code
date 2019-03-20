@@ -303,29 +303,29 @@ Inherits Listbox
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub DoClear()
+	#tag Method, Flags = &h0
+		Sub DoClear()
 		  RaiseEvent PerformClear(True)
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub DoCopy()
+	#tag Method, Flags = &h0
+		Sub DoCopy()
 		  Dim Board As New Clipboard
 		  RaiseEvent PerformCopy(Board)
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub DoCut()
+	#tag Method, Flags = &h0
+		Sub DoCut()
 		  Dim Board As New Clipboard
 		  RaiseEvent PerformCopy(Board)
 		  RaiseEvent PerformClear(False)
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub DoPaste()
+	#tag Method, Flags = &h0
+		Sub DoPaste()
 		  Dim Board As New Clipboard
 		  RaiseEvent PerformPaste(Board)
 		End Sub
