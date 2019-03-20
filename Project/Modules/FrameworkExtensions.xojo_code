@@ -228,9 +228,9 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function SubString(Extends Source As String, Start As Integer, Length As Integer = -1) As String
 		  If Length = -1 Then
-		    Return Mid(Source, Start - 1)
+		    Return Mid(Source, Start + 1)
 		  Else
-		    Return Mid(Source, Start - 1, Length)
+		    Return Mid(Source, Start + 1, Length)
 		  End If
 		End Function
 	#tag EndMethod
