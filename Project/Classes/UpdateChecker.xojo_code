@@ -20,18 +20,91 @@ Protected Class UpdateChecker
 		  Self.mSilent = Silent
 		  Self.mChecking = True
 		  
-		  Self.mSocket = New Xojo.Net.HTTPSocket
-		  Self.mSocket.ValidateCertificates = True
+		  Self.mSocket = New URLConnection
 		  AddHandler Self.mSocket.Error, WeakAddressOf Self.mSocket_Error
 		  AddHandler Self.mSocket.HeadersReceived, WeakAddressOf Self.mSocket_HeadersReceived
-		  AddHandler Self.mSocket.PageReceived, WeakAddressOf Self.mSocket_PageReceived
+		  AddHandler Self.mSocket.ContentReceived, WeakAddressOf Self.mSocket_ContentReceived
 		  Self.mSocket.RequestHeader("Cache-Control") = "no-cache"
 		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?build=" + App.BuildNumber.ToText + "&stage=" + App.StageCode.ToText))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_Error(Sender As Xojo.Net.HTTPSocket, Error As RuntimeException)
+		Private Sub mSocket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
+		  #Pragma Unused Sender
+		  #Pragma Unused URL
+		  #Pragma Unused HTTPStatus
+		  
+		  If Self.mSocket <> Nil Then
+		    Self.mSocket = Nil
+		  End If
+		  
+		  Self.mChecking = False
+		  
+		  Content = Content.DefineEncoding(Encodings.UTF8)
+		  
+		  Dim Reply As New JSONMBS(Content)
+		  If Not Reply.Valid Then
+		    If Not Self.mSilent Then
+		      RaiseEvent CheckError("Invalid definition file: " + Reply.ParseError)
+		    End If
+		    Return
+		  End If
+		  
+		  If Reply.HasChild("notices") Then
+		    Dim Notices As JSONMBS = Reply.Child("notices")
+		    If Notices.Type = JSONMBS.kTypeArray Then
+		      Dim Node As JSONMBS = Notices.ChildNode
+		      While Node <> Nil
+		        Dim Notification As New Beacon.UserNotification(Node.Child("message").ValueString.ToText)
+		        Notification.SecondaryMessage = Node.Child("secondary_message").ValueString.ToText
+		        Notification.ActionURL = Node.Child("action_url").ValueString.ToText
+		        Notification.DoNotResurrect = True
+		        LocalData.SharedInstance.SaveNotification(Notification)
+		        Node = Node.NextNode
+		      Wend
+		    End If
+		  End If
+		  
+		  If Not Reply.HasChild("build") Then
+		    If Not Self.mSilent Then
+		      RaiseEvent NoUpdate()
+		    End If
+		    Return
+		  End If
+		  
+		  Try
+		    Dim LatestBuild As Integer = Reply.Child("build").ValueInteger
+		    If LatestBuild <= App.BuildNumber Then
+		      If Not Self.mSilent Then
+		        RaiseEvent NoUpdate()
+		      End If
+		      Return
+		    End If
+		    
+		    Dim Version As String = Reply.Child("version").ValueString
+		    Dim NotesHTML As String = Reply.Child("notes").ValueString
+		    Dim PreviewText As String = If(Reply.HasChild("preview"), Reply.Child("preview").ValueString, "")
+		    Dim Location As JSONMBS
+		    #if TargetMacOS
+		      Location = Reply.Child("mac")
+		    #elseif TargetWin32
+		      Location = Reply.Child("win")
+		    #endif
+		    Dim PackageURL As String = Location.Child("url").ValueString
+		    Dim Signature As String = Location.Child("signature").ValueString
+		    
+		    RaiseEvent UpdateAvailable(Version, PreviewText, NotesHTML, PackageURL, Signature)
+		  Catch Err As RuntimeException
+		    If Not Self.mSilent Then
+		      RaiseEvent CheckError("Invalid definition file.")
+		    End If
+		  End Try
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mSocket_Error(Sender As URLConnection, Error As RuntimeException)
 		  Sender.Disconnect
 		  Self.mChecking = False
 		  
@@ -46,7 +119,7 @@ Protected Class UpdateChecker
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mSocket_HeadersReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer)
+		Private Sub mSocket_HeadersReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer)
 		  #Pragma Unused URL
 		  
 		  If HTTPStatus <> 200 Then
@@ -57,80 +130,6 @@ Protected Class UpdateChecker
 		    End If
 		    Return
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mSocket_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Sender
-		  #Pragma Unused URL
-		  #Pragma Unused HTTPStatus
-		  
-		  If Self.mSocket <> Nil Then
-		    Self.mSocket = Nil
-		  End If
-		  
-		  Self.mChecking = False
-		  
-		  Dim Body As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
-		  Dim Dict As Xojo.Core.Dictionary
-		  Try
-		    Dict = Xojo.Data.ParseJSON(Body)
-		  Catch Err As Xojo.Data.InvalidJSONException
-		    If Not Self.mSilent Then
-		      RaiseEvent CheckError("Invalid definition file.")
-		    End If
-		    Return
-		  End Try
-		  
-		  If Dict.HasKey("notices") Then
-		    Dim Notices() As Auto = Dict.Value("notices")
-		    Dict.Remove("notices")
-		    
-		    For Each Notice As Xojo.Core.Dictionary In Notices
-		      Dim Notification As New Beacon.UserNotification(Notice.Value("message"))
-		      Notification.SecondaryMessage = Notice.Value("secondary_message")
-		      Notification.ActionURL = Notice.Value("action_url")
-		      Notification.DoNotResurrect = True
-		      LocalData.SharedInstance.SaveNotification(Notification)
-		    Next
-		  End If
-		  
-		  If Dict.Count = 0 Then
-		    // No update
-		    If Not Self.mSilent Then
-		      RaiseEvent NoUpdate()
-		    End If
-		    Return
-		  End If
-		  
-		  Try
-		    Dim LatestBuild As Integer = Dict.Value("build")
-		    If LatestBuild <= App.BuildNumber Then
-		      If Not Self.mSilent Then
-		        RaiseEvent NoUpdate()
-		      End If
-		      Return
-		    End If
-		    
-		    Dim Version As Text = Dict.Value("version")
-		    Dim NotesHTML As Text = Dict.Value("notes")
-		    Dim PreviewText As Text = Dict.Lookup("preview", "")
-		    Dim Location As Xojo.Core.Dictionary
-		    #if TargetMacOS
-		      Location = Dict.Value("mac")
-		    #elseif TargetWin32
-		      Location = Dict.Value("win")
-		    #endif
-		    Dim PackageURL As Text = Location.Value("url")
-		    Dim Signature As Text = Location.Value("signature")
-		    
-		    RaiseEvent UpdateAvailable(Version, PreviewText, NotesHTML, PackageURL, Signature)
-		  Catch Err As KeyNotFoundException
-		    If Not Self.mSilent Then
-		      RaiseEvent CheckError("Invalid definition file.")
-		    End If
-		  End Try
 		End Sub
 	#tag EndMethod
 
@@ -167,7 +166,7 @@ Protected Class UpdateChecker
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSocket As Xojo.Net.HTTPSocket
+		Private mSocket As URLConnection
 	#tag EndProperty
 
 
