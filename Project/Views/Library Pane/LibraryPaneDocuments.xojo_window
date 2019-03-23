@@ -361,7 +361,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Controller_LoadError(Sender As Beacon.DocumentController)
+		Private Sub Controller_LoadError(Sender As Beacon.DocumentController, Reason As Text)
 		  Self.DetachControllerEvents(Sender)
 		  
 		  Dim RecentIdx As Integer = -1
@@ -475,7 +475,7 @@ End
 		  End If
 		  
 		  Self.AttachControllerEvents(Controller)
-		  Controller.Load(App.Identity)
+		  Controller.Load()
 		  
 		  Preferences.AddToRecentDocuments(URL)
 		End Sub

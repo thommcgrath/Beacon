@@ -2,7 +2,7 @@
 Protected Class DocumentController
 	#tag Method, Flags = &h0
 		Function Busy() As Boolean
-		  Return Self.mActiveThread <> Nil And Self.mActiveThread.State <> Thread.States.NotRunning
+		  Return Self.mActiveThread <> Nil And Self.mActiveThread.State <> Thread.NotRunning
 		End Function
 	#tag EndMethod
 
@@ -45,7 +45,7 @@ Protected Class DocumentController
 		  End If
 		  
 		  Self.mActiveThread = New Thread
-		  Self.mActiveThread.Priority = Thread.PriorityHigh
+		  Self.mActiveThread.Priority = Thread.HighPriority
 		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Delete
 		  Self.mActiveThread.Run
 		End Sub
@@ -463,7 +463,7 @@ Protected Class DocumentController
 		  Select Case Destination.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
 		    Self.mActiveThread = New Thread
-		    Self.mActiveThread.Priority = Thread.PriorityLow
+		    Self.mActiveThread.Priority = Thread.LowestPriority
 		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
 		    Self.mActiveThread.Run
 		  Case Beacon.DocumentURL.TypeLocal
