@@ -263,6 +263,15 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub AttachControllerEvents(Controller As Beacon.DocumentController)
+		  AddHandler Controller.Loaded, WeakAddressOf Controller_Loaded
+		  AddHandler Controller.LoadError, WeakAddressOf Controller_LoadError
+		  AddHandler Controller.LoadProgress, WeakAddressOf Controller_LoadProgress
+		  AddHandler Controller.LoadStarted, WeakAddressOf Controller_LoadStarted
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub AutosaveController_Loaded(Sender As Beacon.DocumentController, Document As Beacon.Document)
 		  RemoveHandler Sender.Loaded, AddressOf AutosaveController_Loaded
 		  
@@ -332,9 +341,7 @@ End
 		    Self.mProgress = Nil
 		  End If
 		  
-		  RemoveHandler Sender.Loaded, WeakAddressOf Controller_Loaded
-		  RemoveHandler Sender.LoadError, WeakAddressOf Controller_LoadError
-		  RemoveHandler Sender.LoadProgress, WeakAddressOf Controller_LoadProgress
+		  Self.DetachControllerEvents(Sender)
 		  
 		  Dim URL As Beacon.DocumentURL = Sender.URL
 		  Select Case URL.Scheme
@@ -354,8 +361,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Controller_LoadError(Sender As Beacon.DocumentController, Reason As Text)
-		  #Pragma Unused Reason
+		Private Sub Controller_LoadError(Sender As Beacon.DocumentController)
+		  Self.DetachControllerEvents(Sender)
 		  
 		  Dim RecentIdx As Integer = -1
 		  Dim Recents() As Beacon.DocumentURL = Preferences.RecentDocuments
@@ -400,6 +407,15 @@ End
 		    Self.mProgress.Progress = -1
 		    Self.mProgress.ShowWithin(Self.TrueWindow)
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub DetachControllerEvents(Controller As Beacon.DocumentController)
+		  RemoveHandler Controller.Loaded, WeakAddressOf Controller_Loaded
+		  RemoveHandler Controller.LoadError, WeakAddressOf Controller_LoadError
+		  RemoveHandler Controller.LoadProgress, WeakAddressOf Controller_LoadProgress
+		  RemoveHandler Controller.LoadStarted, WeakAddressOf Controller_LoadStarted
 		End Sub
 	#tag EndMethod
 
@@ -458,11 +474,8 @@ End
 		    Return
 		  End If
 		  
-		  AddHandler Controller.Loaded, WeakAddressOf Controller_Loaded
-		  AddHandler Controller.LoadError, WeakAddressOf Controller_LoadError
-		  AddHandler Controller.LoadProgress, WeakAddressOf Controller_LoadProgress
-		  AddHandler Controller.LoadStarted, WeakAddressOf Controller_LoadStarted
-		  Controller.Load()
+		  Self.AttachControllerEvents(Controller)
+		  Controller.Load(App.Identity)
 		  
 		  Preferences.AddToRecentDocuments(URL)
 		End Sub

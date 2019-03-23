@@ -159,6 +159,9 @@ Implements Beacon.DataSource
 		  If LastSync <> "" Then
 		    CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync).ToText
 		  End If
+		  If App.IdentityManager <> Nil And App.IdentityManager.CurrentIdentity <> Nil Then
+		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.Identifier).ToText
+		  End If
 		  Return CheckURL
 		End Function
 	#tag EndMethod

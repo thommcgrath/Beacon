@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DeveloperImportURLDialog
+Begin BeaconDialog DeveloperImportURLDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True

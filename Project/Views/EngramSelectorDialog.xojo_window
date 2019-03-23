@@ -1,5 +1,5 @@
 #tag Window
-Begin Window EngramSelectorDialog
+Begin BeaconDialog EngramSelectorDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False

@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DocumentDeployWindow
+Begin BeaconDialog DocumentDeployWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False

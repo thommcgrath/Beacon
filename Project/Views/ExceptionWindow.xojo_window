@@ -651,6 +651,9 @@ End
 		  Fields.Value("reason") = Self.mExceptionDetails.Value("Reason")
 		  Fields.Value("location") = Self.mExceptionDetails.Value("Location")
 		  Fields.Value("trace") = Lines.Join(Text.FromUnicodeCodepoint(10))
+		  If Self.mExceptionDetails.HasKey("UserID") Then
+		    Fields.Value("user_id") = Self.mExceptionDetails.Value("UserID")
+		  End If
 		  
 		  SimpleHTTP.Post(Beacon.WebURL("/reportaproblem.php"), Fields, AddressOf Reporter_Callback, Nil)
 		End Sub

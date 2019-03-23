@@ -444,10 +444,10 @@ End
 		  
 		  Select Case Self.Switcher.SelectedIndex
 		  Case 1
-		    Self.Config(True).GameUserSettingsIniContent = SanitizedText.ToText
+		    Self.Config(True).GameUserSettingsIniContent = SanitizedText
 		    Self.ContentsChanged = True
 		  Case 2
-		    Self.Config(True).GameIniContent = SanitizedText.ToText
+		    Self.Config(True).GameIniContent = SanitizedText
 		    Self.ContentsChanged = True
 		  End Select
 		End Sub

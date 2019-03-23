@@ -425,6 +425,20 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub EmbeddingFinished()
+		  Self.Simulator.Height = Preferences.SimulatorSize
+		  If Self.SimulatorVisible Then
+		    Self.SimulatorPosition = Self.Height - Self.Simulator.Height
+		  Else
+		    Self.SimulatorPosition = Self.Height
+		  End If
+		  
+		  Self.SetListWidth(Preferences.ItemSetsSplitterPosition)
+		  Self.mSavePositions = True
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub EnableMenuItems()
 		  Self.BuildPresetMenu(DocumentAddItemSet)
 		  If Self.SetList.SelCount > 0 Then
@@ -435,21 +449,13 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.Simulator.Height = Preferences.SimulatorSize
-		  If Self.SimulatorVisible Then
-		    Self.SimulatorPosition = Self.Height - Self.Simulator.Height
-		  Else
-		    Self.SimulatorPosition = Self.Height
-		  End If
 		  Self.UpdateStatus()
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
-		  If Initial Then
-		    Self.SetListWidth(Preferences.ItemSetsSplitterPosition)
-		  Else
+		  If Self.mSavePositions Then
 		    Self.SetListWidth(Self.Header.Width)
 		  End If
 		  
@@ -692,7 +698,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function MinSimulatorPosition() As Integer
-		  Return Self.SettingsContainer.Top + Self.SettingsContainer.Height + HintsContainer.Height + 200
+		  Return Self.SettingsContainer.Top + Self.SettingsContainer.Height + Self.HintsContainer.Height + 200
 		End Function
 	#tag EndMethod
 
@@ -853,7 +859,9 @@ End
 		  Self.Panel.Left = Self.FadedSeparator1.Left + Self.FadedSeparator1.Width
 		  Self.Panel.Width = EditorWidth
 		  
-		  Preferences.ItemSetsSplitterPosition = ListWidth
+		  If Self.mSavePositions Then
+		    Preferences.ItemSetsSplitterPosition = ListWidth
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -877,7 +885,7 @@ End
 		  // This does not save the position in preferences, it is only for coordinating
 		  // the size and position of controls
 		  
-		  Pos = Max(Pos, Self.SettingsContainer.Top + Self.SettingsContainer.Height + Self.HintsContainer.Height + 200)
+		  Pos = Max(Pos, Self.MinSimulatorPosition)
 		  
 		  Self.Simulator.Top = Pos
 		  Self.StatusBar1.Top = Pos - Self.StatusBar1.Height
@@ -1017,6 +1025,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private ImportProgress As ImporterWindow
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSavePositions As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -1559,7 +1571,7 @@ End
 		Sub ResizeFinished()
 		  If Me.Height < 100 Then
 		    Self.SimulatorVisible = False
-		  Else
+		  ElseIf Self.mSavePositions Then
 		    Preferences.SimulatorSize = Me.Height
 		  End If
 		End Sub

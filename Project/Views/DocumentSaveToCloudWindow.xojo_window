@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DocumentSaveToCloudWindow
+Begin BeaconDialog DocumentSaveToCloudWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False

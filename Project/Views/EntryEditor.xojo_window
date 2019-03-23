@@ -1,5 +1,5 @@
 #tag Window
-Begin Window EntryEditor
+Begin BeaconDialog EntryEditor
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False

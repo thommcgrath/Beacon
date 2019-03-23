@@ -228,10 +228,12 @@ End
 		    Return
 		  End If
 		  
-		  For I As Integer = 0 To UBound(Entries)
+		  For I As Integer = 0 To Entries.Ubound
 		    Dim Source As Beacon.SetEntry = Sources(I)
 		    Dim Idx As Integer = Self.mSet.IndexOf(Source)
-		    Self.mSet(Idx) = Entries(I)
+		    If Idx > -1 Then
+		      Self.mSet(Idx) = Entries(I)
+		    End If
 		  Next
 		  
 		  Self.UpdateEntryList()

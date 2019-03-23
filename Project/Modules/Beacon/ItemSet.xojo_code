@@ -110,7 +110,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim QualityModifiers() As Integer
 		  For Each ModifierID As Text In ActiveModifiers
 		    Dim Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
-		    If Modifier.Matches(ForLootSource) Then
+		    If Modifier <> Nil And Modifier.Matches(ForLootSource) Then
 		      QuantityMultipliers.Append(Preset.QuantityMultiplier(ModifierID))
 		      QualityModifiers.Append(Preset.QualityModifier(ModifierID))
 		    End If

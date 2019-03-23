@@ -436,6 +436,9 @@ Implements NotificationKit.Receiver
 		  Dict.Value("Location") = Location.ToText
 		  Dict.Value("Type") = Info.FullName
 		  Dict.Value("Trace") = Stack
+		  If Self.IdentityManager <> Nil And Self.IdentityManager.CurrentIdentity <> Nil Then
+		    Dict.Value("UserID") = Self.IdentityManager.CurrentIdentity.Identifier
+		  End If
 		  
 		  If Self.CurrentThread = Nil Then
 		    Self.PresentException(Dict)

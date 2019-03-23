@@ -28,7 +28,7 @@ $retail_price = $results->Field('retail_price');
 // generate the purchase record
 $purchase_id = BeaconCommon::GenerateUUID();
 $database->BeginTransaction();
-$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference) VALUES ($1, $2, $3, $4, $5, $6, $7);', $purchase_id, $email_id, $retail_price, $retail_price, 0, 0, 'Gift issued from Slack');
+$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference) VALUES ($1, $2, $3, $4, $5, $6, $7);', $purchase_id, $email_id, $retail_price, $retail_price, 0, 0, 'Gift issued from Slack for ' . $email_id);
 $database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total) VALUES ($1, $2, $3, $4, $5, $6);', $purchase_id, OMNI_PRODUCT_ID, $retail_price, $retail_price, 1, 0);
 $database->Query('DELETE FROM stw_applicants WHERE email_id = $1;', $email_id);
 $database->Commit();

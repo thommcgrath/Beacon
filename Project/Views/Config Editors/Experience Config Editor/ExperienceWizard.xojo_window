@@ -1,5 +1,5 @@
 #tag Window
-Begin Window ExperienceWizard
+Begin BeaconDialog ExperienceWizard
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False

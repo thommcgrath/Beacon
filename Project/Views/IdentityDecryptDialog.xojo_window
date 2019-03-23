@@ -1,5 +1,5 @@
 #tag Window
-Begin Window IdentityDecryptDialog
+Begin BeaconDialog IdentityDecryptDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
