@@ -44,6 +44,7 @@ Begin DiscoveryView NitradoDiscoveryView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -133,6 +134,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Top             =   222
          Transparent     =   False
          Value           =   0
@@ -175,6 +177,7 @@ Begin DiscoveryView NitradoDiscoveryView
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -293,6 +296,7 @@ Begin DiscoveryView NitradoDiscoveryView
       End
    End
    Begin Beacon.OAuth2Client AuthClient
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Provider        =   ""
@@ -300,6 +304,7 @@ Begin DiscoveryView NitradoDiscoveryView
       TabPanelIndex   =   0
    End
    Begin Timer LookupStartTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -527,7 +532,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function ShowURL(URL As Text) As Beacon.WebView
+		Function ShowURL(URL As String) As Beacon.WebView
 		  // This code is disabled because Nitrado login is currently working in embedded webkit in 10.10
 		  #if false and TargetMacOS
 		    Declare Function NSClassFromString Lib "Cocoa" (ClassName As CFStringRef) As Ptr

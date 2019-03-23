@@ -444,7 +444,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function ShowURL(URL As Text) As Beacon.WebView
+		Function ShowURL(URL As String) As Beacon.WebView
 		  Return MiniBrowser.ShowURL(URL)
 		End Function
 	#tag EndEvent
@@ -497,6 +497,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
 		Group="Behavior"

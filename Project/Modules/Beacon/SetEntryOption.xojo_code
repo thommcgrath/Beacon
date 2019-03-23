@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SetEntryOption
-Implements Beacon.DocumentItem
+Implements Beacon.DocumentItem,Beacon.JSONSerializable
 	#tag Method, Flags = &h0
 		Sub Constructor(Engram As Beacon.Engram, Weight As Double)
 		  Self.mEngram = New Beacon.Engram(Engram)
@@ -116,6 +116,21 @@ Implements Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function IsValid(Document As Beacon.Document) As Boolean
 		  Return Self.mEngram <> Nil And Self.mEngram.IsValid And (Document.ConsoleModsOnly = False Or Self.mEngram.ConsoleSafe)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function JSONSerialize() As Variant
+		  Dim Keys As New Dictionary
+		  
+		  Dim Path As String = Self.Engram.Path
+		  If Path <> "" Then
+		    Keys.Value("Path") = Path
+		  End If
+		  Keys.Value("Class") = Self.Engram.ClassString
+		  Keys.Value("Weight") = Self.Weight
+		  
+		  Return Keys
 		End Function
 	#tag EndMethod
 

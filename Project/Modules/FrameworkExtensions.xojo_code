@@ -141,6 +141,17 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function HasAllKeys(Extends Source As Global.Dictionary, ParamArray Keys() As Variant) As Boolean
+		  For Each Key As Variant In Keys
+		    If Not Source.HasKey(Key) Then
+		      Return False
+		    End If
+		  Next
+		  Return False
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IndexOf(Extends Source As String, StartAt As Integer = 0, Other As String) As Integer
 		  Return InStr(StartAt, Source, Other) - 1
 		End Function
@@ -223,6 +234,26 @@ Protected Module FrameworkExtensions
 		Function NearestMultiple(Extends Original As Double, Factor As Double) As Double
 		  Return NearestMultiple(Original, Factor)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function NewDateFromSecondsFrom1970(SecondsFrom1970 As Double) As Date
+		  Dim Now As New Date
+		  Now.SecondsFrom1970 = SecondsFrom1970
+		  Return Now
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SecondsFrom1970(Extends Source As Global.Date) As Double
+		  Return (Source.TotalSeconds - 2082844800) - (Source.GMTOffset * 3600)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SecondsFrom1970(Extends Source As Global.Date, Assigns Value As Double)
+		  Source.TotalSeconds = Value + 2082844800 + (Source.GMTOffset * 3600)
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

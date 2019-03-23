@@ -99,31 +99,30 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  If Self.mUpdater = Nil Then
-		    Self.mUpdater = New Xojo.Net.HTTPSocket
-		    Self.mUpdater.ValidateCertificates = True
+		    Self.mUpdater = New URLConnection
 		    Self.mUpdater.RequestHeader("Cache-Control") = "no-cache"
-		    AddHandler Self.mUpdater.PageReceived, WeakAddressOf Self.mUpdater_PageReceived
+		    AddHandler Self.mUpdater.ContentReceived, WeakAddressOf Self.mUpdater_ContentReceived
 		    AddHandler Self.mUpdater.Error, WeakAddressOf Self.mUpdater_Error
 		  End If
 		  
 		  Self.mCheckingForUpdates = True
-		  Dim CheckURL As Text = Self.ClassesURL()
+		  Dim CheckURL As String = Self.ClassesURL()
 		  App.Log("Checking for engram updates from " + CheckURL)
 		  Self.mUpdater.Send("GET", CheckURL)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ClassesURL() As Text
+		Function ClassesURL() As String
 		  Dim Version As Integer = App.BuildNumber
 		  
 		  Dim LastSync As String = Self.Variable("sync_time")
-		  Dim CheckURL As Text = Beacon.WebURL("/download/classes.php?version=" + Version.ToText)
+		  Dim CheckURL As String = Beacon.WebURL("/download/classes.php?version=" + Version.ToText)
 		  If LastSync <> "" Then
-		    CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync).ToText
+		    CheckURL = CheckURL + "&changes_since=" + EncodeURLComponent(LastSync)
 		  End If
 		  If App.IdentityManager <> Nil And App.IdentityManager.CurrentIdentity <> Nil Then
-		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.Identifier).ToText
+		    CheckURL = CheckURL + "&user_id=" + EncodeURLComponent(App.IdentityManager.CurrentIdentity.Identifier)
 		  End If
 		  Return CheckURL
 		End Function
@@ -286,7 +285,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBooleanVariable(Key As Text) As Boolean
+		Function GetBooleanVariable(Key As String) As Boolean
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
 		    Return Results.Field("value").BooleanValue
@@ -331,7 +330,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetDoubleVariable(Key As Text) As Double
+		Function GetDoubleVariable(Key As String) As Double
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
 		    Return Results.Field("value").DoubleValue
@@ -342,7 +341,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByClass(ClassString As Text) As Beacon.Engram
+		Function GetEngramByClass(ClassString As String) As Beacon.Engram
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Try
@@ -367,7 +366,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByPath(Path As Text) As Beacon.Engram
+		Function GetEngramByPath(Path As String) As Beacon.Engram
 		  // Part of the Beacon.DataSource interface.
 		  
 		  If Self.mEngramCache.HasKey(Path) Then
@@ -392,7 +391,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetIntegerVariable(Key As Text) As Integer
+		Function GetIntegerVariable(Key As String) As Integer
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
 		    Return Results.Field("value").IntegerValue
@@ -403,7 +402,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetLootSource(ClassString As Text) As Beacon.LootSource
+		Function GetLootSource(ClassString As String) As Beacon.LootSource
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Try
@@ -426,12 +425,12 @@ Implements Beacon.DataSource
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT * FROM notifications WHERE deleted = 0 ORDER BY moment DESC;")
 		  While Not Results.EOF
 		    Dim Notification As New Beacon.UserNotification
-		    Notification.Message = Results.Field("message").StringValue.ToText
-		    Notification.SecondaryMessage = Results.Field("secondary_message").StringValue.ToText
-		    Notification.ActionURL = Results.Field("action_url").StringValue.ToText
+		    Notification.Message = Results.Field("message").StringValue
+		    Notification.SecondaryMessage = Results.Field("secondary_message").StringValue
+		    Notification.ActionURL = Results.Field("action_url").StringValue
 		    Notification.Read = Results.Field("read").BooleanValue
-		    Notification.Timestamp = Self.TextToDate(Results.Field("moment").StringValue.ToText)
-		    Notification.UserData = Xojo.Data.ParseJSON(Results.Field("user_data").StringValue.ToText)
+		    Notification.Timestamp = New Beacon.Date(Results.Field("moment").StringValue)
+		    Notification.UserData = Beacon.ParseJSON(Results.Field("user_data").StringValue)
 		    Notifications.Append(Notification)
 		    
 		    Results.MoveNext
@@ -441,7 +440,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetPreset(PresetID As Text) As Beacon.Preset
+		Function GetPreset(PresetID As String) As Beacon.Preset
 		  For Each Preset As Beacon.Preset In Self.mPresets
 		    If Preset.PresetID = PresetID Then
 		      Return Preset
@@ -451,7 +450,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetPresetModifier(ModifierID As Text) As Beacon.PresetModifier
+		Function GetPresetModifier(ModifierID As String) As Beacon.PresetModifier
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT object_id, label, pattern FROM preset_modifiers WHERE LOWER(object_id) = LOWER(?1);", ModifierID)
 		  If Results.RecordCount <> 1 Then
 		    Return Nil
@@ -466,7 +465,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetTextVariable(Key As Text) As Text
+		Function GetTextVariable(Key As String) As String
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT value FROM game_variables WHERE key = ?1;", Key)
 		  If Results.RecordCount = 1 Then
 		    Dim StringValue As String = Results.Field("value").StringValue
@@ -1128,18 +1127,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mUpdater_Error(Sender As Xojo.Net.HTTPSocket, Error As RuntimeException)
-		  #Pragma Unused Sender
-		  
-		  App.Log("Engram check error: " + Error.Reason)
-		  NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
-		  
-		  Self.mCheckingForUpdates = False
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mUpdater_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
+		Private Sub mUpdater_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
@@ -1149,9 +1137,8 @@ Implements Beacon.DataSource
 		    Return
 		  End If
 		  
-		  Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
-		  Dim ExpectedHash As Text = Sender.ResponseHeader("Content-MD5")
-		  Dim ComputedHash As Text = EncodeHex(Crypto.MD5(TextContent)).ToText
+		  Dim ExpectedHash As String = Sender.ResponseHeader("Content-MD5")
+		  Dim ComputedHash As String = EncodeHex(Crypto.MD5(Content))
 		  
 		  If ComputedHash <> ExpectedHash Then
 		    App.Log("Engram update hash mismatch. Expected " + ExpectedHash + ", computed " + ComputedHash + ".")
@@ -1159,7 +1146,18 @@ Implements Beacon.DataSource
 		    Return
 		  End If
 		  
-		  Self.Import(TextContent)
+		  Self.Import(Content.ToText)
+		  
+		  Self.mCheckingForUpdates = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub mUpdater_Error(Sender As URLConnection, Error As RuntimeException)
+		  #Pragma Unused Sender
+		  
+		  App.Log("Engram check error: " + Error.Reason)
+		  NotificationKit.Post(Self.Notification_ImportFailed, Self.LastSync)
 		  
 		  Self.mCheckingForUpdates = False
 		End Sub
@@ -1347,7 +1345,7 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Dim Notify As Boolean = Results.RecordCount = 0 Or Deleted Or Read
-		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.ToText, If(Notification.Read, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Xojo.Data.GenerateJSON(Notification.UserData), "{}"))
+		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.SQLDateTimeWithOffset, If(Notification.Read, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Beacon.GenerateJSON(Notification.UserData), "{}"))
 		  Self.Commit
 		  
 		  If Notify Then
@@ -1377,7 +1375,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As Text, ConsoleSafe As Boolean) As Beacon.Engram()
+		Function SearchForEngrams(SearchText As String, ConsoleSafe As Boolean) As Beacon.Engram()
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Dim Engrams() As Beacon.Engram
@@ -1417,7 +1415,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForLootSources(SearchText As Text, ConsoleSafe As Boolean, IncludeExperimental As Boolean) As Beacon.LootSource()
+		Function SearchForLootSources(SearchText As String, ConsoleSafe As Boolean, IncludeExperimental As Boolean) As Beacon.LootSource()
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Dim Sources() As Beacon.LootSource
@@ -1681,7 +1679,7 @@ Implements Beacon.DataSource
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUpdater As Xojo.Net.HTTPSocket
+		Private mUpdater As URLConnection
 	#tag EndProperty
 
 

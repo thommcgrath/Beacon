@@ -10,12 +10,12 @@ Protected Module BeaconAPI
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function URL(Path As Text = "/") As Text
-		  Dim URL As Text = Beacon.WebURL()
-		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
+		Protected Function URL(Path As String = "/") As String
+		  Dim URL As String = Beacon.WebURL()
+		  If Path.Length = 0 Or Path.BeginsWith("/") = False Then
 		    Path = "/" + Path
 		  End If
-		  URL = URL.Left(8) + "api." + URL.Mid(8) + "v1" + Path
+		  URL = URL.Left(8) + "api." + URL.SubString(8) + "v1" + Path
 		  Return URL
 		End Function
 	#tag EndMethod

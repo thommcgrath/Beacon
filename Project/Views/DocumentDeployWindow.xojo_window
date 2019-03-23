@@ -817,7 +817,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function ShowURL(URL As Text) As Beacon.WebView
+		Function ShowURL(URL As String) As Beacon.WebView
 		  Return MiniBrowser.ShowURL(URL)
 		End Function
 	#tag EndEvent

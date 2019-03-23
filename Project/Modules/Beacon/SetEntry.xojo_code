@@ -1,6 +1,6 @@
 #tag Class
 Protected Class SetEntry
-Implements Beacon.Countable,Beacon.DocumentItem
+Implements Beacon.Countable,Beacon.DocumentItem,Beacon.JSONSerializable
 	#tag Method, Flags = &h0
 		Sub Append(Item As Beacon.SetEntryOption)
 		  Self.mOptions.Append(Item)
@@ -418,6 +418,26 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Values.Append(Entry.TextValue(Multipliers, UseBlueprints, Difficulty))
 		  Next
 		  Return Values.Join(Separator)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function JSONSerialize() As Variant
+		  Dim Children() As Variant
+		  For Each Item As Beacon.SetEntryOption In Self.mOptions
+		    Children.Append(Item)
+		  Next
+		  
+		  Dim Keys As New Dictionary
+		  Keys.Value("ChanceToBeBlueprintOverride") = Self.ChanceToBeBlueprint
+		  Keys.Value("Items") = Children
+		  Keys.Value("MinQuality") = Self.MinQuality.Key
+		  Keys.Value("MaxQuality") = Self.MaxQuality.Key
+		  Keys.Value("MinQuantity") = Self.MinQuantity
+		  Keys.Value("MaxQuantity") = Self.MaxQuantity
+		  Keys.Value("Weight") = Self.RawWeight
+		  Keys.Value("EntryWeight") = Self.RawWeight / 1000
+		  Return Keys
 		End Function
 	#tag EndMethod
 
@@ -872,7 +892,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Weight"
+			Name="RawWeight"
 			Group="Behavior"
 			Type="Double"
 		#tag EndViewProperty

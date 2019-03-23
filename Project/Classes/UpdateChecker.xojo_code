@@ -43,30 +43,32 @@ Protected Class UpdateChecker
 		  
 		  Content = Content.DefineEncoding(Encodings.UTF8)
 		  
-		  Dim Reply As New JSONMBS(Content)
-		  If Not Reply.Valid Then
+		  Dim Reply As Dictionary
+		  Try
+		    Reply = Beacon.ParseJSON(Content)
+		  Catch Err As RuntimeException
 		    If Not Self.mSilent Then
-		      RaiseEvent CheckError("Invalid definition file: " + Reply.ParseError)
+		      RaiseEvent CheckError("Invalid definition file")
 		    End If
 		    Return
-		  End If
+		  End Try
 		  
-		  If Reply.HasChild("notices") Then
-		    Dim Notices As JSONMBS = Reply.Child("notices")
-		    If Notices.Type = JSONMBS.kTypeArray Then
-		      Dim Node As JSONMBS = Notices.ChildNode
-		      While Node <> Nil
-		        Dim Notification As New Beacon.UserNotification(Node.Child("message").ValueString.ToText)
-		        Notification.SecondaryMessage = Node.Child("secondary_message").ValueString.ToText
-		        Notification.ActionURL = Node.Child("action_url").ValueString.ToText
+		  If Reply.HasKey("notices") Then
+		    Try
+		      Dim Notices() As Dictionary = Reply.Value("notices")
+		      For Each Notice As Dictionary In Notices
+		        Dim Notification As New Beacon.UserNotification(Notice.Value("message").StringValue)
+		        Notification.SecondaryMessage = Notice.Value("secondary_message").StringValue
+		        Notification.ActionURL = Notice.Value("action_url").StringValue
 		        Notification.DoNotResurrect = True
 		        LocalData.SharedInstance.SaveNotification(Notification)
-		        Node = Node.NextNode
-		      Wend
-		    End If
+		      Next
+		    Catch Err As RuntimeException
+		      
+		    End Try
 		  End If
 		  
-		  If Not Reply.HasChild("build") Then
+		  If Not Reply.HasKey("build") Then
 		    If Not Self.mSilent Then
 		      RaiseEvent NoUpdate()
 		    End If
@@ -74,7 +76,7 @@ Protected Class UpdateChecker
 		  End If
 		  
 		  Try
-		    Dim LatestBuild As Integer = Reply.Child("build").ValueInteger
+		    Dim LatestBuild As Integer = Reply.Value("build").IntegerValue
 		    If LatestBuild <= App.BuildNumber Then
 		      If Not Self.mSilent Then
 		        RaiseEvent NoUpdate()
@@ -82,17 +84,17 @@ Protected Class UpdateChecker
 		      Return
 		    End If
 		    
-		    Dim Version As String = Reply.Child("version").ValueString
-		    Dim NotesHTML As String = Reply.Child("notes").ValueString
-		    Dim PreviewText As String = If(Reply.HasChild("preview"), Reply.Child("preview").ValueString, "")
-		    Dim Location As JSONMBS
+		    Dim Version As String = Reply.Value("version").StringValue
+		    Dim NotesHTML As String = Reply.Value("notes").StringValue
+		    Dim PreviewText As String = If(Reply.HasKey("preview"), Reply.Value("preview").StringValue, "")
+		    Dim Location As Dictionary
 		    #if TargetMacOS
-		      Location = Reply.Child("mac")
+		      Location = Reply.Value("mac")
 		    #elseif TargetWin32
-		      Location = Reply.Child("win")
+		      Location = Reply.Value("win")
 		    #endif
-		    Dim PackageURL As String = Location.Child("url").ValueString
-		    Dim Signature As String = Location.Child("signature").ValueString
+		    Dim PackageURL As String = Location.Value("url").StringValue
+		    Dim Signature As String = Location.Value("signature").StringValue
 		    
 		    RaiseEvent UpdateAvailable(Version, PreviewText, NotesHTML, PackageURL, Signature)
 		  Catch Err As RuntimeException

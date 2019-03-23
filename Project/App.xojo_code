@@ -781,14 +781,14 @@ Implements NotificationKit.Receiver
 		Private Sub mUpdateChecker_UpdateAvailable(Sender As UpdateChecker, Version As String, PreviewText As String, Notes As String, URL As String, Signature As String)
 		  #Pragma Unused Sender
 		  
-		  Dim Data As New Xojo.Core.Dictionary
-		  Data.Value("Version") = Version.ToText
-		  Data.Value("Notes") = Notes.ToText
-		  Data.Value("Download") = URL.ToText
-		  Data.Value("Signature") = Signature.ToText
+		  Dim Data As New Dictionary
+		  Data.Value("Version") = Version
+		  Data.Value("Notes") = Notes
+		  Data.Value("Download") = URL
+		  Data.Value("Signature") = Signature
 		  
-		  Dim Notification As New Beacon.UserNotification("Beacon " + Version.ToText + " is now available!")
-		  Notification.SecondaryMessage = PreviewText.ToText
+		  Dim Notification As New Beacon.UserNotification("Beacon " + Version + " is now available!")
+		  Notification.SecondaryMessage = PreviewText
 		  Notification.ActionURL = "beacon://action/checkforupdate"
 		  Notification.UserData = Data
 		  Notification.DoNotResurrect = True
@@ -928,13 +928,13 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowBugReporter(ExceptionHash As Text = "")
-		  Dim Path As Text = "/reportaproblem.php?build=" + Self.BuildNumber.ToText
+		Sub ShowBugReporter(ExceptionHash As String = "")
+		  Dim Path As String = "/reportaproblem.php?build=" + Str(Self.BuildNumber, "0")
 		  If ExceptionHash <> "" Then
 		    Path = Path + "&exception=" + ExceptionHash
 		  End If
 		  
-		  ShowURL(Beacon.WebURL(Path))
+		  ShowURL(Beacon.WebURL(Path.ToText))
 		End Sub
 	#tag EndMethod
 

@@ -365,6 +365,13 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean = False) As String
+		  Dim Node As JSONMBS = VariantToJSON(Source)
+		  Return Node.ToString(Pretty)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Function GetLastValueAsType(Values() As Auto, FullName As Text, Default As Auto) As Auto
 		  For I As Integer = Values.Ubound DownTo 0
@@ -540,6 +547,43 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function JSONToVariant(Node As JSONMBS) As Variant
+		  If Node = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Select Case Node.Type
+		  Case JSONMBS.kTypeArray
+		    Dim Results() As Variant
+		    Dim Child As JSONMBS = Node.ChildNode
+		    While Child <> Nil
+		      Results.Append(JSONToVariant(Child))
+		      Child = Child.NextNode
+		    Wend
+		    Return Results
+		  Case JSONMBS.kTypeError, JSONMBS.kTypeNull
+		    Return Nil
+		  Case JSONMBS.kTypeFalse
+		    Return False
+		  Case JSONMBS.kTypeNumber
+		    Return Node.ValueDouble
+		  Case JSONMBS.kTypeObject
+		    Dim Dict As New Dictionary
+		    Dim Child As JSONMBS = Node.ChildNode
+		    While Child <> Nil
+		      Dict.Value(Child.Name) = JSONToVariant(Child)
+		      Child = Child.NextNode
+		    Wend
+		    Return Dict
+		  Case JSONMBS.kTypeString
+		    Return Node.ValueString
+		  Case JSONMBS.kTypeTrue
+		    Return True
+		  End Select
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Label(Extends Maps() As Beacon.Map) As Text
 		  Dim Names() As Text
@@ -575,6 +619,19 @@ Protected Module Beacon
 		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Value)
 		  Dim Hash As Xojo.Core.MemoryBlock = Xojo.Crypto.MD5(Bytes)
 		  Return Beacon.EncodeHex(Hash)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function ParseJSON(Content As String) As Variant
+		  Dim Node As New JSONMBS(Content)
+		  If Not Node.Valid Then
+		    Dim Err As New UnsupportedFormatException
+		    Err.Message = "Supplied string is not a valid JSON structure"
+		    Raise Err
+		  End If
+		  
+		  Return JSONToVariant(Node)
 		End Function
 	#tag EndMethod
 
@@ -969,17 +1026,66 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h1
-		Protected Delegate Function URLHandler(URL As Text) As Boolean
+		Protected Delegate Function URLHandler(URL As String) As Boolean
 	#tag EndDelegateDeclaration
 
+	#tag Method, Flags = &h21
+		Private Function VariantToJSON(Value As Variant) As JSONMBS
+		  If Value = Nil Or Value.Type = Variant.TypeNil Then
+		    Return JSONMBS.NewNullNode
+		  End If
+		  
+		  Dim Child As JSONMBS
+		  Select Case Value.Type
+		  Case Variant.TypeString
+		    Child = JSONMBS.NewStringNode(Value.StringValue)
+		  Case Variant.TypeText
+		    Child = JSONMBS.NewStringNode(Value.TextValue)
+		  Case Variant.TypeBoolean
+		    Child = JSONMBS.NewBoolNode(Value.BooleanValue)
+		  Case Variant.TypeDate
+		    Dim Converted As New Beacon.Date(Value.DateValue)
+		    Child = JSONMBS.NewStringNode(Converted.SQLDateTimeWithOffset)
+		  Case Variant.TypeDouble, Variant.TypeSingle, Variant.TypeInteger, Variant.TypeInt32
+		    Child = JSONMBS.NewNumberNode(Value.DoubleValue)
+		  Case Variant.TypeInt64
+		    Child = JSONMBS.NewInt64Node(Value.Int64Value)
+		  Case Variant.TypeObject
+		    Dim Obj As Object = Value.ObjectValue
+		    Select Case Obj
+		    Case IsA Dictionary
+		      Dim Dict As Dictionary = Dictionary(Obj)
+		      Dim Bound As Integer = Dict.Count - 1
+		      Child = JSONMBS.NewObjectNode
+		      For I As Integer = 0 To Bound
+		        Dim Key As Variant = Dict.Key(I)
+		        Child.AddItemToObject(Key.StringValue, VariantToJSON(Dict.Value(Key)))
+		      Next
+		    Case IsA MemoryBlock
+		      Child = JSONMBS.NewStringNode(MemoryBlock(Obj))
+		    Case IsA Beacon.JSONSerializable
+		      Child = VariantToJSON(Beacon.JSONSerializable(Obj).JSONSerialize)
+		    End Select
+		  End Select
+		  
+		  If Child = Nil Then
+		    Dim Err As New UnsupportedFormatException
+		    Err.Message = "Unable to convert variant type " + Str(Value.Type, "-0") + " to JSON"
+		    Raise Err
+		  End If
+		  
+		  Return Child
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
-		Protected Function WebURL(Path As Text = "/") As Text
+		Protected Function WebURL(Path As String = "/") As String
 		  #if DebugBuild
-		    Dim Domain As Text = "https://workbench.beaconapp.cc"
+		    Dim Domain As String = "https://workbench.beaconapp.cc"
 		  #else
-		    Dim Domain As Text = "https://beaconapp.cc"
+		    Dim Domain As String = "https://beaconapp.cc"
 		  #endif
-		  If Path.Length = 0 Or Path.Left(1) <> "/" Then
+		  If Path.Length = 0 Or Path.BeginsWith("/") = False Then
 		    Path = "/" + Path
 		  End If
 		  Return Domain + Path
