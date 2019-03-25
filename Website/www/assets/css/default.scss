@@ -231,6 +231,14 @@ blockquote {
 	padding-top: 10px;
 	padding-bottom: 10px;
 	padding-right: 10px;
+	
+	p:first-child {
+		margin-top: 0px !important;
+	}
+	
+	p:last-child {
+		margin-bottom: 0px !important;
+	}
 }
 
 /* ! Generic Table */
