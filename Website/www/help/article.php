@@ -108,7 +108,7 @@ if (is_null($article_data)) {
 			// Want these keys on the page for SEO purposes
 			$affected_keys = explode(',', $results->Field('affected_keys'));
 			sort($affected_keys);
-			$caption = 'This editor affects the following config key' . (count($affected_keys) > 1 ? 's' : '') . ': ';
+			$caption = 'This editor affects the following Ark config key' . (count($affected_keys) > 1 ? 's' : '') . ': ';
 			$article_data['html'] .= '<div class="affected_ini_keys">' . htmlentities($caption) . BeaconCommon::ArrayToEnglish($affected_keys) . '</div>';
 		}
 	} else {
