@@ -365,17 +365,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h1
-		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean = False) As String
-		  #if Not DebugBuild
-		    #Pragma Error "Do not build without an MBS license"
-		  #endif
-		  
-		  Dim Node As JSONMBS = VariantToJSON(Source)
-		  Return Node.ToString(Pretty)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Function GetLastValueAsType(Values() As Auto, FullName As Text, Default As Auto) As Auto
 		  For I As Integer = Values.Ubound DownTo 0
@@ -551,43 +540,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function JSONToVariant(Node As JSONMBS) As Variant
-		  If Node = Nil Then
-		    Return Nil
-		  End If
-		  
-		  Select Case Node.Type
-		  Case JSONMBS.kTypeArray
-		    Dim Results() As Variant
-		    Dim Child As JSONMBS = Node.ChildNode
-		    While Child <> Nil
-		      Results.Append(JSONToVariant(Child))
-		      Child = Child.NextNode
-		    Wend
-		    Return Results
-		  Case JSONMBS.kTypeError, JSONMBS.kTypeNull
-		    Return Nil
-		  Case JSONMBS.kTypeFalse
-		    Return False
-		  Case JSONMBS.kTypeNumber
-		    Return Node.ValueDouble
-		  Case JSONMBS.kTypeObject
-		    Dim Dict As New Dictionary
-		    Dim Child As JSONMBS = Node.ChildNode
-		    While Child <> Nil
-		      Dict.Value(Child.Name) = JSONToVariant(Child)
-		      Child = Child.NextNode
-		    Wend
-		    Return Dict
-		  Case JSONMBS.kTypeString
-		    Return Node.ValueString
-		  Case JSONMBS.kTypeTrue
-		    Return True
-		  End Select
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Label(Extends Maps() As Beacon.Map) As Text
 		  Dim Names() As Text
@@ -623,64 +575,6 @@ Protected Module Beacon
 		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Value)
 		  Dim Hash As Xojo.Core.MemoryBlock = Xojo.Crypto.MD5(Bytes)
 		  Return Beacon.EncodeHex(Hash)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function ObjectToJSON(Obj As Object) As JSONMBS
-		  Select Case Obj
-		  Case IsA Global.Dictionary
-		    Dim Dict As Global.Dictionary = Global.Dictionary(Obj)
-		    Dim Bound As Integer = Dict.Count - 1
-		    Dim Child As JSONMBS = JSONMBS.NewObjectNode
-		    For I As Integer = 0 To Bound
-		      Dim Key As Variant = Dict.Key(I)
-		      Child.AddItemToObject(Key.StringValue, VariantToJSON(Dict.Value(Key)))
-		    Next
-		    Return Child
-		  Case IsA Xojo.Core.Dictionary
-		    Dim Dict As Xojo.Core.Dictionary = Xojo.Core.Dictionary(Obj)
-		    Dim Child As JSONMBS = JSONMBS.NewObjectNode
-		    For Each Entry As Xojo.Core.DictionaryEntry In Dict
-		      Child.AddItemToObject(Entry.Key, VariantToJSON(Entry.Value))
-		    Next
-		    Return Child
-		  Case IsA Global.MemoryBlock
-		    Return JSONMBS.NewStringNode(EncodeBase64(Global.MemoryBlock(Obj)))
-		  Case IsA Xojo.Core.MemoryBlock
-		    Dim Converted As Global.MemoryBlock = ConvertMemoryBlock(Xojo.Core.MemoryBlock(Obj))
-		    Return JSONMBS.NewStringNode(EncodeBase64(Converted))
-		  Case IsA Beacon.JSONSerializable
-		    Return VariantToJSON(Beacon.JSONSerializable(Obj).JSONSerialize)
-		  Case IsA JSONMBS
-		    Return JSONMBS(Obj)
-		  Case IsA Beacon.Date
-		    Return JSONMBS.NewStringNode(Beacon.Date(Obj).SQLDateTimeWithOffset)
-		  Case IsA Global.Date
-		    Dim Converted As New Beacon.Date(Global.Date(Obj))
-		    Return JSONMBS.NewStringNode(Converted.SQLDateTimeWithOffset)
-		  Case IsA Xojo.Core.Date
-		    Dim Converted As New Beacon.Date(Xojo.Core.Date(Obj))
-		    Return JSONMBS.NewStringNode(Converted.SQLDateTimeWithOffset)
-		  Else
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Obj)
-		    Dim Err As New UnsupportedFormatException
-		    Err.Message = "Unable to convert " + Info.FullName + " to JSON"
-		    Raise Err
-		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function ParseJSON(Content As String) As Variant
-		  Dim Node As New JSONMBS(Content)
-		  If Not Node.Valid Then
-		    Dim Err As New UnsupportedFormatException
-		    Err.Message = "Supplied string is not a valid JSON structure"
-		    Raise Err
-		  End If
-		  
-		  Return JSONToVariant(Node)
 		End Function
 	#tag EndMethod
 
@@ -1084,131 +978,6 @@ Protected Module Beacon
 	#tag DelegateDeclaration, Flags = &h1
 		Protected Delegate Function URLHandler(URL As Text) As Boolean
 	#tag EndDelegateDeclaration
-
-	#tag Method, Flags = &h21
-		Private Function VariantToJSON(Value As Variant) As JSONMBS
-		  If Value = Nil Or Value.Type = Variant.TypeNil Then
-		    Return JSONMBS.NewNullNode
-		  End If
-		  
-		  Dim Child As JSONMBS
-		  If Bitwise.BitAnd(Value.Type, Variant.TypeArray) = Variant.TypeArray Then
-		    // This is stupid but necessary to get an array of objects. WTF.
-		    Select Case Value.ArrayElementType
-		    Case Variant.TypeString
-		      Dim Arr() As String = Value
-		      Child = JSONMBS.NewArrayNode
-		      For Each Item As String In Arr
-		        Child.AddItemToArray(JSONMBS.NewStringNode(Item))
-		      Next
-		    Case Variant.TypeText
-		      Dim Arr() As Text = Value
-		      Child = JSONMBS.NewArrayNode
-		      For Each Item As Text In Arr
-		        Child.AddItemToArray(JSONMBS.NewStringNode(Item))
-		      Next
-		    Case Variant.TypeBoolean
-		      Dim Arr() As Boolean = Value
-		      Child = JSONMBS.NewArrayNode
-		      For Each Item As Boolean In Arr
-		        Child.AddItemToArray(JSONMBS.NewBoolNode(Item))
-		      Next
-		    Case Variant.TypeDouble
-		      Dim Arr() As Double = Value
-		      Child = JSONMBS.NewArrayNode
-		      For Each Item As Double In Arr
-		        Child.AddItemToArray(JSONMBS.NewNumberNode(Item))
-		      Next
-		    Case Variant.TypeSingle
-		      Dim Arr() As Single = Value
-		      Child = JSONMBS.NewArrayNode
-		      For Each Item As Single In Arr
-		        Child.AddItemToArray(JSONMBS.NewNumberNode(Item))
-		      Next
-		    Case Variant.TypeInteger, Variant.TypeInt32, Variant.TypeInt64
-		      Dim IntegerType As Introspection.TypeInfo = Introspection.GetType(Value)
-		      Child = JSONMBS.NewArrayNode
-		      Select Case IntegerType.Name
-		      Case "UInt64()"
-		        Dim Arr() As UInt64 = Value
-		        For Each Item As UInt64 In Arr
-		          Child.AddItemToArray(JSONMBS.NewNumberNode(Item))
-		        Next
-		      Case "Int64()"
-		        Dim Arr() As Int64 = Value
-		        For Each Item As Int64 In Arr
-		          Child.AddItemToArray(JSONMBS.NewNumberNode(Item))
-		        Next
-		      Case "UInt32()"
-		        Dim Arr() As UInt32 = Value
-		        For Each Item As UInt32 In Arr
-		          Child.AddItemToArray(JSONMBS.NewNumberNode(Item))
-		        Next
-		      Case "Int32()"
-		        Dim Arr() As Int32 = Value
-		        For Each Item As Int32 In Arr
-		          Child.AddItemToArray(JSONMBS.NewNumberNode(Item))
-		        Next
-		      Case "UInt16()"
-		        Dim Arr() As UInt16 = Value
-		        For Each Item As UInt16 In Arr
-		          Child.AddItemToArray(JSONMBS.NewNumberNode(Item))
-		        Next
-		      Case "Int16()"
-		        Dim Arr() As Int16 = Value
-		        For Each Item As Int16 In Arr
-		          Child.AddItemToArray(JSONMBS.NewNumberNode(Item))
-		        Next
-		      Case "UInt8()"
-		        Dim Arr() As UInt8 = Value
-		        For Each Item As UInt8 In Arr
-		          Child.AddItemToArray(JSONMBS.NewNumberNode(Item))
-		        Next
-		      Case "Int8()"
-		        Dim Arr() As UInt8 = Value
-		        For Each Item As UInt8 In Arr
-		          Child.AddItemToArray(JSONMBS.NewNumberNode(Item))
-		        Next
-		      End Select
-		    Case Variant.TypeObject
-		      Dim Temp As Auto = Value
-		      Dim Objects() As Object = Temp
-		      
-		      Child = JSONMBS.NewArrayNode
-		      For Each Obj As Object In Objects
-		        Child.AddItemToArray(ObjectToJSON(Obj))
-		      Next
-		    End Select
-		  Else
-		    Select Case Value.Type
-		    Case Variant.TypeString
-		      Child = JSONMBS.NewStringNode(Value.StringValue)
-		    Case Variant.TypeText
-		      Child = JSONMBS.NewStringNode(Value.TextValue)
-		    Case Variant.TypeBoolean
-		      Child = JSONMBS.NewBoolNode(Value.BooleanValue)
-		    Case Variant.TypeDate
-		      Dim Converted As New Beacon.Date(Value.DateValue)
-		      Child = JSONMBS.NewStringNode(Converted.SQLDateTimeWithOffset)
-		    Case Variant.TypeDouble, Variant.TypeSingle, Variant.TypeInteger, Variant.TypeInt32
-		      Child = JSONMBS.NewNumberNode(Value.DoubleValue)
-		    Case Variant.TypeInt64
-		      Child = JSONMBS.NewInt64Node(Value.Int64Value)
-		    Case Variant.TypeObject
-		      Child = ObjectToJSON(Value.ObjectValue)
-		    End Select
-		  End If
-		  
-		  If Child = Nil Then
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		    Dim Err As New UnsupportedFormatException
-		    Err.Message = "Unable to convert " + Info.FullName + " to JSON"
-		    Raise Err
-		  End If
-		  
-		  Return Child
-		End Function
-	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function WebURL(Path As Text = "/") As Text
