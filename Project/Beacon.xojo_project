@@ -326,6 +326,7 @@ MultiImage=IconToolbarWizard;Icons/IconToolbarWizard.xojo_image;&h0000000021132F
 Window=ExperienceLevelEditor;Views/Config Editors/Experience Config Editor/ExperienceLevelEditor.xojo_window;&h0000000072758FFF;&h000000005A6CD7FF;false
 Window=ExperienceWizard;Views/Config Editors/Experience Config Editor/ExperienceWizard.xojo_window;&h00000000038107FF;&h000000005A6CD7FF;false
 MultiImage=IconToolbarExperience;Icons/IconToolbarExperience.xojo_image;&h000000004AAF67FF;&h0000000007F977FF;false
+Class=DelayedTextField;Custom Controls/DelayedTextField.xojo_code;&h000000007A3AE7FF;&h0000000030DCFFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=1

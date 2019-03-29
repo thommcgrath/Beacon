@@ -54,7 +54,7 @@ Begin BeaconDialog EntryEditor
       Underline       =   False
       Visible         =   True
       Width           =   380
-      Begin UITweaks.ResizedTextField FilterField
+      Begin DelayedTextField FilterField
          AcceptTabs      =   False
          Alignment       =   0
          AutoDeactivate  =   True
@@ -458,6 +458,12 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Close()
+		  Self.EngramSearcher.Cancel
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub Open()
 		  Dim PreferredSize As Xojo.Core.Size = Preferences.EntryEditorSize
