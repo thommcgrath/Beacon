@@ -1,5 +1,5 @@
 #tag Window
-Begin Window LibraryEngramsURLDialog
+Begin BeaconDialog LibraryEngramsURLDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False

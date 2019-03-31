@@ -854,8 +854,8 @@ ALTER TABLE public.email_verification OWNER TO thommcgrath;
 CREATE TABLE public.exception_comments (
     comment_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     exception_id uuid NOT NULL,
-    build integer NOT NULL,
     comments text NOT NULL,
+    user_id uuid,
     date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -863,22 +863,46 @@ CREATE TABLE public.exception_comments (
 ALTER TABLE public.exception_comments OWNER TO thommcgrath;
 
 --
+-- Name: exception_signatures; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.exception_signatures (
+    client_hash public.hex NOT NULL,
+    client_build integer NOT NULL,
+    exception_id uuid NOT NULL,
+    trace text NOT NULL
+);
+
+
+ALTER TABLE public.exception_signatures OWNER TO thommcgrath;
+
+--
+-- Name: exception_users; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.exception_users (
+    exception_id uuid NOT NULL,
+    user_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.exception_users OWNER TO thommcgrath;
+
+--
 -- Name: exceptions; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
 CREATE TABLE public.exceptions (
-    exception_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    exception_hash public.hex NOT NULL,
-    exception_type public.citext NOT NULL,
-    build integer NOT NULL,
-    reason public.citext NOT NULL,
-    location public.citext NOT NULL,
-    trace public.citext NOT NULL,
-    solution_details text,
-    solution_min_build integer,
-    CONSTRAINT exceptions_build_check CHECK ((build >= 34)),
-    CONSTRAINT exceptions_check CHECK ((((solution_details IS NULL) AND (solution_min_build IS NULL)) OR ((solution_details IS NOT NULL) AND (solution_min_build >= 34)))),
-    CONSTRAINT exceptions_exception_type_check CHECK ((btrim((exception_type)::text) <> ''::text))
+    exception_id uuid NOT NULL,
+    min_reported_build integer NOT NULL,
+    max_reported_build integer NOT NULL,
+    location text NOT NULL,
+    exception_class text NOT NULL,
+    reason text NOT NULL,
+    trace text NOT NULL,
+    solution_build integer,
+    solution_comments text,
+    CONSTRAINT exceptions_check1 CHECK (((solution_build IS NULL) OR (solution_build > max_reported_build)))
 );
 
 
@@ -1659,19 +1683,27 @@ ALTER TABLE ONLY public.engrams
 
 
 --
--- Name: exception_comments exception_comments_pkey1; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: exception_comments exception_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY public.exception_comments
-    ADD CONSTRAINT exception_comments_pkey1 PRIMARY KEY (comment_id);
+    ADD CONSTRAINT exception_comments_pkey PRIMARY KEY (comment_id);
 
 
 --
--- Name: exceptions exceptions_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: exception_signatures exception_signatures_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.exception_signatures
+    ADD CONSTRAINT exception_signatures_pkey PRIMARY KEY (client_hash, client_build);
+
+
+--
+-- Name: exceptions exceptions_pkey1; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY public.exceptions
-    ADD CONSTRAINT exceptions_pkey PRIMARY KEY (exception_id);
+    ADD CONSTRAINT exceptions_pkey1 PRIMARY KEY (exception_id);
 
 
 --
@@ -1982,13 +2014,6 @@ CREATE UNIQUE INDEX creatures_classstring_mod_id_uidx ON public.creatures USING 
 --
 
 CREATE UNIQUE INDEX engrams_classstring_mod_id_uidx ON public.engrams USING btree (class_string, mod_id);
-
-
---
--- Name: exceptions_exception_hash_build_uidx; Type: INDEX; Schema: public; Owner: thommcgrath
---
-
-CREATE UNIQUE INDEX exceptions_exception_hash_build_uidx ON public.exceptions USING btree (exception_hash, build);
 
 
 --
@@ -2325,11 +2350,43 @@ ALTER TABLE ONLY public.engrams
 
 
 --
--- Name: exception_comments exception_comments_exception_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: exception_comments exception_comments_exception_id_fkey1; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY public.exception_comments
-    ADD CONSTRAINT exception_comments_exception_id_fkey FOREIGN KEY (exception_id) REFERENCES public.exceptions(exception_id);
+    ADD CONSTRAINT exception_comments_exception_id_fkey1 FOREIGN KEY (exception_id) REFERENCES public.exceptions(exception_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: exception_comments exception_comments_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.exception_comments
+    ADD CONSTRAINT exception_comments_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: exception_signatures exception_signatures_exception_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.exception_signatures
+    ADD CONSTRAINT exception_signatures_exception_id_fkey FOREIGN KEY (exception_id) REFERENCES public.exceptions(exception_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: exception_users exception_users_exception_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.exception_users
+    ADD CONSTRAINT exception_users_exception_id_fkey FOREIGN KEY (exception_id) REFERENCES public.exceptions(exception_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: exception_users exception_users_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.exception_users
+    ADD CONSTRAINT exception_users_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2600,14 +2657,28 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.email_verification TO thezaz_w
 -- Name: TABLE exception_comments; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT INSERT ON TABLE public.exception_comments TO thezaz_website;
+GRANT SELECT,INSERT ON TABLE public.exception_comments TO thezaz_website;
+
+
+--
+-- Name: TABLE exception_signatures; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT ON TABLE public.exception_signatures TO thezaz_website;
+
+
+--
+-- Name: TABLE exception_users; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT ON TABLE public.exception_users TO thezaz_website;
 
 
 --
 -- Name: TABLE exceptions; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT ON TABLE public.exceptions TO thezaz_website;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.exceptions TO thezaz_website;
 
 
 --

@@ -89,6 +89,17 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Decrypt(Data As Global.MemoryBlock) As Global.MemoryBlock
+		  Try
+		    Dim Decrypted As Global.MemoryBlock = Crypto.RSADecrypt(Data, Beacon.ConvertMemoryBlock(Self.mPrivateKey))
+		    Return Decrypted
+		  Catch Err As CryptoException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Decrypt(Data As Xojo.Core.MemoryBlock) As Xojo.Core.MemoryBlock
 		  Try
 		    Dim Decrypted As Xojo.Core.MemoryBlock = Xojo.Crypto.RSADecrypt(Data, Self.mPrivateKey)
@@ -96,6 +107,12 @@ Protected Class Identity
 		  Catch Err As Xojo.Crypto.CryptoException
 		    Return Nil
 		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function Encrypt(Data As Global.MemoryBlock) As Global.MemoryBlock
+		  Return Crypto.RSAEncrypt(Data, Beacon.ConvertMemoryBlock(Self.mPublicKey))
 		End Function
 	#tag EndMethod
 

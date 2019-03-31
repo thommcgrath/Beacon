@@ -1594,7 +1594,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformClear(Warn As Boolean)
-		  If Warn And Not Self.ShowConfirm(if(Self.ModifiersList.SelCount = 1, "Are you sure you want to delete this modifier?", "Are you sure you want to delete these " + Str(Self.ContentsList.SelCount, "-0") + " modifiers?"), "This action cannot be undone.", "Delete", "Cancel") Then
+		  If Warn And Not Self.ShowConfirm(if(Self.ModifiersList.SelCount = 1, "Are you sure you want to delete this modifier?", "Are you sure you want to delete these " + Str(Self.ModifiersList.SelCount, "-0") + " modifiers?"), "This action cannot be undone.", "Delete", "Cancel") Then
 		    Return
 		  End If
 		  
@@ -1646,8 +1646,8 @@ End
 		      Self.mPreset.QualityModifier(ModifierID) = Dict.Value("Quality")
 		    Next
 		    
-		    Self.ContentsChanged = True
 		    Self.UpdateUI()
+		    Self.ContentsChanged = True
 		  Catch Err As RuntimeException
 		    Return
 		  End Try
@@ -1671,16 +1671,7 @@ End
 #tag Events DeleteModifierButton
 	#tag Event
 		Sub Action()
-		  For I As Integer = Self.ModifiersList.ListCount - 1 DownTo 0
-		    If Not Self.ModifiersList.Selected(I) Then
-		      Continue
-		    End If
-		    
-		    Dim ModifierID As Text = Self.ModifiersList.RowTag(I)
-		    Self.mPreset.ClearModifier(ModifierID)
-		    Self.ModifiersList.RemoveRow(I)
-		    Self.ContentsChanged = True
-		  Next
+		  Self.ModifiersList.DoClear()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

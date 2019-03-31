@@ -1,5 +1,5 @@
 #tag Window
-Begin Window ExperienceLevelEditor
+Begin BeaconDialog ExperienceLevelEditor
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False

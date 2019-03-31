@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DocumentMergerWindow
+Begin BeaconDialog DocumentMergerWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False

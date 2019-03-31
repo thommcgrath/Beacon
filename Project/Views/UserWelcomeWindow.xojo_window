@@ -53,6 +53,8 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
+		  RemoveHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
+		  
 		  If App.Identity = Nil Then
 		    Quit
 		  Else
@@ -63,6 +65,8 @@ End
 
 	#tag Event
 		Sub Open()
+		  AddHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
+		  
 		  Self.mBaseURL = Beacon.WebURL("inapp/")
 		  Dim Fields() As Text
 		  If Self.mLoginOnly Then
@@ -85,14 +89,7 @@ End
 	#tag Method, Flags = &h0
 		Sub Constructor(LoginOnly As Boolean = False)
 		  Self.mLoginOnly = LoginOnly
-		  AddHandler App.IdentityManager.Finished, WeakAddressOf IdentityManager_Finished
 		  Super.Constructor
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Destructor()
-		  RemoveHandler App.IdentityManager.Finished, WeakAddressOf IdentityManager_Finished
 		End Sub
 	#tag EndMethod
 

@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DeveloperAddModDialog
+Begin BeaconDialog DeveloperAddModDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True

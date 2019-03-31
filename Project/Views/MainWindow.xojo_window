@@ -529,6 +529,18 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ViewAtIndex(Idx As Integer) As BeaconSubview
+		  Return Self.mSubviews(Idx)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ViewCount() As UInteger
+		  Return Self.mSubviews.Ubound + 1
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h21
 		Private mCurrentView As BeaconSubview
