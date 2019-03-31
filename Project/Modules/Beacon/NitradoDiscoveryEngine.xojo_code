@@ -49,7 +49,7 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True) // Yes, allow lossy here
+		    Dim TextContent As Text = Content.ToText
 		    Self.mGameIniContent = TextContent.Trim
 		    Self.DownloadGameUserSettingsIni
 		  Catch Err As RuntimeException
@@ -101,7 +101,7 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True) // Yes, allow lossy here
+		    Dim TextContent As Text = Content.ToText
 		    Self.mGameUserSettingsIniContent = TextContent.Trim
 		    
 		    Self.mStatus = "Finished"

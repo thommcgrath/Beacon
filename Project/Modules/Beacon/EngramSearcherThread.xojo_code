@@ -7,6 +7,8 @@ Inherits Beacon.Thread
 		  Dim StartTime As Double = Microseconds
 		  Dim StartTriggered As Boolean
 		  
+		  Const DebugEventDelay = 1
+		  
 		  // First try to parse as a csv
 		  If Self.mTryAsCSV Then
 		    Try
@@ -22,7 +24,7 @@ Inherits Beacon.Thread
 		        End If
 		        If StartTriggered = False And Microseconds - StartTime > 1000000 Then
 		          StartTriggered = True
-		          Call CallLater.Schedule(0, AddressOf TriggerStarted)
+		          Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		        End If
 		        
 		        If InQuotes Then
@@ -66,7 +68,7 @@ Inherits Beacon.Thread
 		        End If
 		        If StartTriggered = False And Microseconds - StartTime > 1000000 Then
 		          StartTriggered = True
-		          Call CallLater.Schedule(0, AddressOf TriggerStarted)
+		          Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		        End If
 		        
 		        If Columns.Ubound <> 3 Then
@@ -99,16 +101,16 @@ Inherits Beacon.Thread
 		        FoundSinceLastPush = True
 		        
 		        If Microseconds - LastPushTime > 1000000 Then
-		          Call CallLater.Schedule(0, AddressOf TriggerFound)
+		          Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		          LastPushTime = Microseconds
 		          FoundSinceLastPush = False
 		        End If
 		      Next
 		      
 		      If Self.mEngrams.Ubound > -1 Then
-		        Call CallLater.Schedule(0, AddressOf TriggerFound)
+		        Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		      End If
-		      Call CallLater.Schedule(0, AddressOf TriggerFinished)
+		      Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
 		      Return
 		    Catch Err As RuntimeException
 		      // Probably not a CSV
@@ -130,7 +132,7 @@ Inherits Beacon.Thread
 		    
 		    If StartTriggered = False And Microseconds - StartTime > 1000000 Then
 		      StartTriggered = True
-		      Call CallLater.Schedule(0, AddressOf TriggerStarted)
+		      Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		    End If
 		    
 		    Dim Path As String
@@ -154,7 +156,7 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  If Paths.Count = 0 Then
-		    Call CallLater.Schedule(0, AddressOf TriggerFinished)
+		    Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
 		    Return
 		  End If
 		  
@@ -168,7 +170,7 @@ Inherits Beacon.Thread
 		    
 		    If StartTriggered = False And Microseconds - StartTime > 1000000 Then
 		      StartTriggered = True
-		      Call CallLater.Schedule(0, AddressOf TriggerStarted)
+		      Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		    End If
 		    
 		    Dim Path As Text = Key.ToText
@@ -186,7 +188,7 @@ Inherits Beacon.Thread
 		    FoundSinceLastPush = True
 		    
 		    If Microseconds - LastPushTime > 1000000 Then
-		      Call CallLater.Schedule(0, AddressOf TriggerFound)
+		      Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		      LastPushTime = Microseconds
 		      FoundSinceLastPush = False
 		    End If
@@ -197,19 +199,23 @@ Inherits Beacon.Thread
 		  End If
 		  
 		  If FoundSinceLastPush Then
-		    Call CallLater.Schedule(0, AddressOf TriggerFound)
+		    Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		  End If
 		  
-		  Call CallLater.Schedule(0, AddressOf TriggerFinished)
+		  Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
 		Sub Cancel()
-		  If Self.State <> Beacon.Thread.States.NotRunning Then
+		  For I As Integer = Self.mPendingTriggers.Ubound DownTo 0
+		    CallLater.Cancel(Self.mPendingTriggers(I))
+		    Self.mPendingTriggers.Remove(I)
+		  Next
+		  If Self.State <> Thread.NotRunning Then
 		    Self.Stop
-		    Do Until Self.State = Beacon.Thread.States.NotRunning
+		    Do Until Self.State = Thread.NotRunning
 		      App.YieldToNextThread()
 		    Loop
 		  End If
@@ -218,9 +224,13 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Super.Constructor
-		  
 		  Self.mEngramsLock = New CriticalSection
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  Self.Cancel
 		End Sub
 	#tag EndMethod
 
@@ -302,6 +312,10 @@ Inherits Beacon.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mPendingTriggers() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mTryAsCSV As Boolean
 	#tag EndProperty
 
@@ -313,19 +327,14 @@ Inherits Beacon.Thread
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
+			EditorType="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			Type="String"
+			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Priority"
@@ -335,33 +344,14 @@ Inherits Beacon.Thread
 		#tag ViewProperty
 			Name="StackSize"
 			Group="Behavior"
-			Type="UInteger"
+			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
 			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Top"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="State"
-			Group="Behavior"
-			Type="Beacon.Thread.States"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Running"
-				"1 - Waiting"
-				"2 - Suspended"
-				"3 - Sleeping"
-				"4 - NotRunning"
-			#tag EndEnumValues
+			EditorType="String"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

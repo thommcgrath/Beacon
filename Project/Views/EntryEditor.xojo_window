@@ -1,5 +1,5 @@
 #tag Window
-Begin Window EntryEditor
+Begin BeaconDialog EntryEditor
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
@@ -54,7 +54,7 @@ Begin Window EntryEditor
       Underline       =   False
       Visible         =   True
       Width           =   380
-      Begin UITweaks.ResizedTextField FilterField
+      Begin DelayedTextField FilterField
          AcceptTabs      =   False
          Alignment       =   0
          AutoDeactivate  =   True
@@ -459,6 +459,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  Self.EngramSearcher.Cancel
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Dim PreferredSize As Xojo.Core.Size = Preferences.EntryEditorSize
 		  
@@ -492,7 +498,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub EnableButtons()
-		  Dim Enabled As Boolean = Self.EngramSearcher.State = Beacon.Thread.States.NotRunning
+		  Dim Enabled As Boolean = Self.EngramSearcher.State = Thread.NotRunning
 		  Self.ActionButton.Enabled = Enabled And Self.mSelectedEngrams.Count >= 1
 		  Self.CancelButton.Enabled = Enabled
 		End Sub

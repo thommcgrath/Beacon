@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DocumentDeployWindow
+Begin BeaconDialog DocumentDeployWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
@@ -628,6 +628,8 @@ End
 		    End If
 		  ElseIf SuccessCount = 1 And TotalCount = 1 Then
 		    Report(0) = "The deployment finished successfully. " + If(Self.mDeploymentEngines(0).ServerIsStarting, "The server is starting up now.", "You may start the server when you are ready.")
+		  ElseIf SuccessCount = TotalCount Then
+		    Report.Insert(0, "All servers updated successfully.")
 		  Else
 		    Report.Insert(0, "Some servers successfully updated, but there were errors.")
 		  End If

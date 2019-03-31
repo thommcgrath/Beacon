@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 11.1
--- Dumped by pg_dump version 11.1
+-- Dumped from database version 11.2
+-- Dumped by pg_dump version 11.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -526,7 +526,8 @@ CREATE TABLE public.objects (
     label public.citext NOT NULL,
     min_version integer DEFAULT 0 NOT NULL,
     last_update timestamp with time zone DEFAULT ('now'::text)::timestamp(0) with time zone NOT NULL,
-    mod_id uuid DEFAULT '30bbab29-44b2-4f4b-a373-6d4740d9d3b5'::uuid NOT NULL
+    mod_id uuid DEFAULT '30bbab29-44b2-4f4b-a373-6d4740d9d3b5'::uuid NOT NULL,
+    tags public.citext[] DEFAULT '{}'::public.citext[]
 );
 
 
@@ -562,7 +563,6 @@ CREATE TABLE public.engrams (
     path public.citext NOT NULL,
     class_string public.citext NOT NULL,
     availability integer DEFAULT 0 NOT NULL,
-    can_blueprint boolean DEFAULT true NOT NULL,
     CONSTRAINT engrams_path_check CHECK ((path OPERATOR(public.~~) '/%'::public.citext))
 )
 INHERITS (public.objects);
@@ -607,7 +607,8 @@ CREATE VIEW public.blueprints AS
     creatures.mod_id,
     creatures.path,
     creatures.class_string,
-    creatures.availability
+    creatures.availability,
+    creatures.tags
    FROM public.creatures
 UNION
  SELECT engrams.object_id,
@@ -618,7 +619,8 @@ UNION
     engrams.mod_id,
     engrams.path,
     engrams.class_string,
-    engrams.availability
+    engrams.availability,
+    engrams.tags
    FROM public.engrams
 UNION
  SELECT loot_sources.object_id,
@@ -629,7 +631,8 @@ UNION
     loot_sources.mod_id,
     loot_sources.path,
     loot_sources.class_string,
-    loot_sources.availability
+    loot_sources.availability,
+    loot_sources.tags
    FROM public.loot_sources;
 
 
@@ -680,6 +683,18 @@ CREATE VIEW public.computed_engram_availabilities AS
 
 
 ALTER TABLE public.computed_engram_availabilities OWNER TO thommcgrath;
+
+--
+-- Name: corrupt_files; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.corrupt_files (
+    file_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    contents bytea NOT NULL
+);
+
+
+ALTER TABLE public.corrupt_files OWNER TO thommcgrath;
 
 --
 -- Name: deletions; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -777,8 +792,8 @@ ALTER TABLE public.email_verification OWNER TO thommcgrath;
 CREATE TABLE public.exception_comments (
     comment_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     exception_id uuid NOT NULL,
-    build integer NOT NULL,
     comments text NOT NULL,
+    user_id uuid,
     date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -786,22 +801,46 @@ CREATE TABLE public.exception_comments (
 ALTER TABLE public.exception_comments OWNER TO thommcgrath;
 
 --
+-- Name: exception_signatures; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.exception_signatures (
+    client_hash public.hex NOT NULL,
+    client_build integer NOT NULL,
+    exception_id uuid NOT NULL,
+    trace text NOT NULL
+);
+
+
+ALTER TABLE public.exception_signatures OWNER TO thommcgrath;
+
+--
+-- Name: exception_users; Type: TABLE; Schema: public; Owner: thommcgrath
+--
+
+CREATE TABLE public.exception_users (
+    exception_id uuid NOT NULL,
+    user_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.exception_users OWNER TO thommcgrath;
+
+--
 -- Name: exceptions; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
 CREATE TABLE public.exceptions (
-    exception_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    exception_hash public.hex NOT NULL,
-    exception_type public.citext NOT NULL,
-    build integer NOT NULL,
-    reason public.citext NOT NULL,
-    location public.citext NOT NULL,
-    trace public.citext NOT NULL,
-    solution_details text,
-    solution_min_build integer,
-    CONSTRAINT exceptions_build_check CHECK ((build >= 34)),
-    CONSTRAINT exceptions_check CHECK ((((solution_details IS NULL) AND (solution_min_build IS NULL)) OR ((solution_details IS NOT NULL) AND (solution_min_build >= 34)))),
-    CONSTRAINT exceptions_exception_type_check CHECK ((btrim((exception_type)::text) <> ''::text))
+    exception_id uuid NOT NULL,
+    min_reported_build integer NOT NULL,
+    max_reported_build integer NOT NULL,
+    location text NOT NULL,
+    exception_class text NOT NULL,
+    reason text NOT NULL,
+    trace text NOT NULL,
+    solution_build integer,
+    solution_comments text,
+    CONSTRAINT exceptions_check1 CHECK (((solution_build IS NULL) OR (solution_build > max_reported_build)))
 );
 
 
@@ -1140,6 +1179,13 @@ ALTER TABLE ONLY public.creatures ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2
 
 
 --
+-- Name: creatures tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.creatures ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
 -- Name: diets object_id; Type: DEFAULT; Schema: public; Owner: thommcgrath
 --
 
@@ -1165,6 +1211,13 @@ ALTER TABLE ONLY public.diets ALTER COLUMN last_update SET DEFAULT ('now'::text)
 --
 
 ALTER TABLE ONLY public.diets ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2-4f4b-a373-6d4740d9d3b5'::uuid;
+
+
+--
+-- Name: diets tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.diets ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
 
 
 --
@@ -1196,6 +1249,13 @@ ALTER TABLE ONLY public.engrams ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2-4
 
 
 --
+-- Name: engrams tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.engrams ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
 -- Name: loot_source_icons object_id; Type: DEFAULT; Schema: public; Owner: thommcgrath
 --
 
@@ -1221,6 +1281,13 @@ ALTER TABLE ONLY public.loot_source_icons ALTER COLUMN last_update SET DEFAULT (
 --
 
 ALTER TABLE ONLY public.loot_source_icons ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2-4f4b-a373-6d4740d9d3b5'::uuid;
+
+
+--
+-- Name: loot_source_icons tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.loot_source_icons ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
 
 
 --
@@ -1252,6 +1319,13 @@ ALTER TABLE ONLY public.loot_sources ALTER COLUMN mod_id SET DEFAULT '30bbab29-4
 
 
 --
+-- Name: loot_sources tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.loot_sources ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
 -- Name: preset_modifiers object_id; Type: DEFAULT; Schema: public; Owner: thommcgrath
 --
 
@@ -1277,6 +1351,13 @@ ALTER TABLE ONLY public.preset_modifiers ALTER COLUMN last_update SET DEFAULT ('
 --
 
 ALTER TABLE ONLY public.preset_modifiers ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2-4f4b-a373-6d4740d9d3b5'::uuid;
+
+
+--
+-- Name: preset_modifiers tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.preset_modifiers ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
 
 
 --
@@ -1308,6 +1389,13 @@ ALTER TABLE ONLY public.presets ALTER COLUMN mod_id SET DEFAULT '30bbab29-44b2-4
 
 
 --
+-- Name: presets tags; Type: DEFAULT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.presets ALTER COLUMN tags SET DEFAULT '{}'::public.citext[];
+
+
+--
 -- Name: articles articles_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
@@ -1321,6 +1409,14 @@ ALTER TABLE ONLY public.articles
 
 ALTER TABLE ONLY public.client_notices
     ADD CONSTRAINT client_notices_pkey PRIMARY KEY (notice_id);
+
+
+--
+-- Name: corrupt_files corrupt_files_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.corrupt_files
+    ADD CONSTRAINT corrupt_files_pkey PRIMARY KEY (file_id);
 
 
 --
@@ -1436,19 +1532,27 @@ ALTER TABLE ONLY public.engrams
 
 
 --
--- Name: exception_comments exception_comments_pkey1; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: exception_comments exception_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY public.exception_comments
-    ADD CONSTRAINT exception_comments_pkey1 PRIMARY KEY (comment_id);
+    ADD CONSTRAINT exception_comments_pkey PRIMARY KEY (comment_id);
 
 
 --
--- Name: exceptions exceptions_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: exception_signatures exception_signatures_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.exception_signatures
+    ADD CONSTRAINT exception_signatures_pkey PRIMARY KEY (client_hash, client_build);
+
+
+--
+-- Name: exceptions exceptions_pkey1; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY public.exceptions
-    ADD CONSTRAINT exceptions_pkey PRIMARY KEY (exception_id);
+    ADD CONSTRAINT exceptions_pkey1 PRIMARY KEY (exception_id);
 
 
 --
@@ -1686,13 +1790,6 @@ CREATE INDEX email_addresses_group_key_idx ON public.email_addresses USING btree
 --
 
 CREATE UNIQUE INDEX engrams_classstring_mod_id_uidx ON public.engrams USING btree (class_string, mod_id);
-
-
---
--- Name: exceptions_exception_hash_build_uidx; Type: INDEX; Schema: public; Owner: thommcgrath
---
-
-CREATE UNIQUE INDEX exceptions_exception_hash_build_uidx ON public.exceptions USING btree (exception_hash, build);
 
 
 --
@@ -2008,11 +2105,43 @@ ALTER TABLE ONLY public.engrams
 
 
 --
--- Name: exception_comments exception_comments_exception_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: exception_comments exception_comments_exception_id_fkey1; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
 ALTER TABLE ONLY public.exception_comments
-    ADD CONSTRAINT exception_comments_exception_id_fkey FOREIGN KEY (exception_id) REFERENCES public.exceptions(exception_id);
+    ADD CONSTRAINT exception_comments_exception_id_fkey1 FOREIGN KEY (exception_id) REFERENCES public.exceptions(exception_id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: exception_comments exception_comments_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.exception_comments
+    ADD CONSTRAINT exception_comments_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE RESTRICT;
+
+
+--
+-- Name: exception_signatures exception_signatures_exception_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.exception_signatures
+    ADD CONSTRAINT exception_signatures_exception_id_fkey FOREIGN KEY (exception_id) REFERENCES public.exceptions(exception_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: exception_users exception_users_exception_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.exception_users
+    ADD CONSTRAINT exception_users_exception_id_fkey FOREIGN KEY (exception_id) REFERENCES public.exceptions(exception_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: exception_users exception_users_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.exception_users
+    ADD CONSTRAINT exception_users_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(user_id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2215,6 +2344,13 @@ GRANT SELECT ON TABLE public.computed_engram_availabilities TO thezaz_website;
 
 
 --
+-- Name: TABLE corrupt_files; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT ON TABLE public.corrupt_files TO thezaz_website;
+
+
+--
 -- Name: TABLE deletions; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
@@ -2246,7 +2382,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.documents TO thezaz_website;
 -- Name: TABLE email_addresses; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT,UPDATE ON TABLE public.email_addresses TO thezaz_website;
+GRANT SELECT,INSERT,DELETE ON TABLE public.email_addresses TO thezaz_website;
 
 
 --
@@ -2260,14 +2396,28 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.email_verification TO thezaz_w
 -- Name: TABLE exception_comments; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT INSERT ON TABLE public.exception_comments TO thezaz_website;
+GRANT SELECT,INSERT ON TABLE public.exception_comments TO thezaz_website;
+
+
+--
+-- Name: TABLE exception_signatures; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT ON TABLE public.exception_signatures TO thezaz_website;
+
+
+--
+-- Name: TABLE exception_users; Type: ACL; Schema: public; Owner: thommcgrath
+--
+
+GRANT SELECT,INSERT ON TABLE public.exception_users TO thezaz_website;
 
 
 --
 -- Name: TABLE exceptions; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT ON TABLE public.exceptions TO thezaz_website;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.exceptions TO thezaz_website;
 
 
 --
@@ -2337,7 +2487,7 @@ GRANT SELECT,INSERT ON TABLE public.purchase_items TO thezaz_website;
 -- Name: TABLE purchases; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT ON TABLE public.purchases TO thezaz_website;
+GRANT SELECT,INSERT,UPDATE ON TABLE public.purchases TO thezaz_website;
 
 
 --
@@ -2399,4 +2549,3 @@ GRANT SELECT ON TABLE public.wordlist TO thezaz_website;
 --
 -- PostgreSQL database dump complete
 --
-

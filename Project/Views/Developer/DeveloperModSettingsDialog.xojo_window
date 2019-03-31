@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DeveloperModSettingsDialog
+Begin BeaconDialog DeveloperModSettingsDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True

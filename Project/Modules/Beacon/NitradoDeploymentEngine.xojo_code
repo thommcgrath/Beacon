@@ -84,7 +84,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True) // Yes, allow lossy here
+		    Dim TextContent As Text = Content.ToText
 		    Self.mGameIniOriginal = TextContent
 		    Self.RunNextTask()
 		  Catch Err As RuntimeException
@@ -137,7 +137,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, True) // Yes, allow lossy here
+		    Dim TextContent As Text = Content.ToText
 		    Self.mGameUserSettingsIniOriginal = TextContent
 		    Self.RunNextTask()
 		  Catch Err As RuntimeException
@@ -833,7 +833,8 @@ Implements Beacon.DeploymentEngine
 	#tag Method, Flags = &h21
 		Private Sub WaitNitradoIdle()
 		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
-		  Dim SecondsToWait As Double = 120 - (Now.SecondsFrom1970 - Self.mServerStopTime.SecondsFrom1970)
+		  Dim SecondsToWait As Double = Double.FromText(Beacon.Data.GetTextVariable("Nitrado Wait Seconds"))
+		  SecondsToWait = SecondsToWait - (Now.SecondsFrom1970 - Self.mServerStopTime.SecondsFrom1970)
 		  If SecondsToWait < 10 Then // Don't need to be THAT precise
 		    Self.RunNextTask()
 		    Return

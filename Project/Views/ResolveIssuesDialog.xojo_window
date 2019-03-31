@@ -1,5 +1,5 @@
 #tag Window
-Begin Window ResolveIssuesDialog
+Begin BeaconDialog ResolveIssuesDialog
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False

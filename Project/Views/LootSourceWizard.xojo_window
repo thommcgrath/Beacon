@@ -1,5 +1,5 @@
 #tag Window
-Begin Window LootSourceWizard
+Begin BeaconDialog LootSourceWizard
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
@@ -46,7 +46,7 @@ Begin Window LootSourceWizard
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   0
+      Value           =   2
       Visible         =   True
       Width           =   550
       Begin UITweaks.ResizedPushButton SelectionActionButton
@@ -184,6 +184,7 @@ Begin Window LootSourceWizard
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   1
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -974,6 +975,7 @@ Begin Window LootSourceWizard
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   0
          ShowDropIndicator=   False
          TabIndex        =   7
@@ -1178,6 +1180,36 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ChooseSelectedLootSources()
+		  If Self.SourceList.SelCount = 0 Then
+		    Return
+		  End If
+		  
+		  Redim Self.mDestinations(-1)
+		  
+		  For I As Integer = 0 To Self.SourceList.ListCount - 1
+		    If Not Self.SourceList.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim Source As Beacon.LootSource = SourceList.RowTag(I)
+		    
+		    If Source.Experimental And Not Preferences.HasShownExperimentalWarning Then
+		      If Self.ShowConfirm(Language.ExperimentalWarningMessage, Language.ReplacePlaceholders(Language.ExperimentalWarningExplanation, Source.Label), Language.ExperimentalWarningActionCaption, Language.ExperimentalWarningCancelCaption) Then
+		        Preferences.HasShownExperimentalWarning = True
+		      Else
+		        Return
+		      End If
+		    End If
+		    
+		    Self.mDestinations.Append(New Beacon.MutableLootSource(Source))
+		  Next
+		  
+		  Self.ShowCustomize()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub Constructor(Document As Beacon.Document, Source As Beacon.LootSource, Duplicate As Boolean)
 		  // Calling the overridden superclass constructor.
 		  Self.mDocument = Document
@@ -1315,27 +1347,7 @@ End
 #tag Events SelectionActionButton
 	#tag Event
 		Sub Action()
-		  Redim Self.mDestinations(-1)
-		  
-		  For I As Integer = 0 To Self.SourceList.ListCount - 1
-		    If Not Self.SourceList.Selected(I) Then
-		      Continue
-		    End If
-		    
-		    Dim Source As Beacon.LootSource = SourceList.RowTag(I)
-		    
-		    If Source.Experimental And Not Preferences.HasShownExperimentalWarning Then
-		      If Self.ShowConfirm(Language.ExperimentalWarningMessage, Language.ReplacePlaceholders(Language.ExperimentalWarningExplanation, Source.Label), Language.ExperimentalWarningActionCaption, Language.ExperimentalWarningCancelCaption) Then
-		        Preferences.HasShownExperimentalWarning = True
-		      Else
-		        Return
-		      End If
-		    End If
-		    
-		    Self.mDestinations.Append(New Beacon.MutableLootSource(Source))
-		  Next
-		  
-		  Self.ShowCustomize()
+		  Self.ChooseSelectedLootSources()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1391,6 +1403,11 @@ End
 		  
 		  Return True
 		End Function
+	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  Self.ChooseSelectedLootSources()
+		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events SelectionCustomButton
@@ -1466,48 +1483,57 @@ End
 		  Dim Mask As UInt64 = Self.mDocument.MapCompatibility
 		  Dim ConsoleSafe As Boolean = Self.mDocument.ConsoleModsOnly
 		  
-		  Dim CustomSets() As Beacon.ItemSet
+		  Dim AllowedPresets(), AdditionalPresets() As Text
+		  For I As Integer = 0 To Self.CustomizePresetsList.ListCount - 1
+		    If Not Self.CustomizePresetsList.CellCheck(I, 0) Then
+		      Continue
+		    End If
+		    
+		    Dim Preset As Beacon.Preset = Self.CustomizePresetsList.RowTag(I)
+		    AllowedPresets.Append(Preset.PresetID)
+		    AdditionalPresets.Append(Preset.PresetID)
+		  Next
+		  
+		  Dim SourceSets() As Beacon.ItemSet
 		  If Self.mSource <> Nil Then
 		    For Each Set As Beacon.ItemSet In Self.mSource
-		      If Set.SourcePresetID = "" Then
-		        CustomSets.Append(Set)
+		      If Set.SourcePresetID = "" Or AllowedPresets.IndexOf(Set.SourcePresetID) > -1 Or LocalData.SharedInstance.GetPreset(Set.SourcePresetID) = Nil Then
+		        SourceSets.Append(Set)
+		      End If
+		      
+		      Dim Idx As Integer = AdditionalPresets.IndexOf(Set.SourcePresetID)
+		      If Idx > -1 Then
+		        AdditionalPresets.Remove(Idx)
 		      End If
 		    Next
 		  End If
 		  
 		  For Each Destination As Beacon.MutableLootSource In Self.mDestinations
-		    For I As Integer = 0 To Self.CustomizePresetsList.ListCount - 1
-		      Dim Preset As Beacon.Preset = Self.CustomizePresetsList.RowTag(I)
-		      If Self.CustomizePresetsList.CellCheck(I, 0) Then
-		        For X As Integer = 0 To Destination.Ubound
-		          Dim Set As Beacon.ItemSet = Destination(X)
-		          If Set.SourcePresetID = Preset.PresetID Then
-		            If ReconfigurePresets Then
-		              // Wants to rebuild it
-		              Set.ReconfigureWithPreset(Preset, Destination, Mask, ConsoleSafe)
-		            End If
-		            Continue For I
-		          End If
-		        Next
-		        
-		        Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Destination, Mask, ConsoleSafe)
-		        Destination.Append(Set)
-		      Else
-		        For X As Integer = 0 To Destination.Ubound
-		          Dim Set As Beacon.ItemSet = Destination(X)
-		          If Set.SourcePresetID = Preset.PresetID Then
-		            // Remove this set
-		            Destination.Remove(X)
-		            Continue For I
-		          End If
-		        Next
-		      End If
-		    Next
+		    // Clear the current contents
+		    Redim Destination(-1)
 		    
-		    For Each Set As Beacon.ItemSet In CustomSets
+		    // Add the clones
+		    For Each Set As Beacon.ItemSet In SourceSets
 		      Destination.Append(New Beacon.ItemSet(Set))
 		    Next
 		    
+		    // Add newly selected presets
+		    For Each PresetID As Text In AdditionalPresets
+		      Dim Preset As Beacon.Preset = LocalData.SharedInstance.GetPreset(PresetID)
+		      If Preset = Nil Then
+		        Continue
+		      End If
+		      
+		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, Destination, Mask, ConsoleSafe)
+		      Destination.Append(Set)
+		    Next
+		    
+		    // Rebuild if necessary
+		    If ReconfigurePresets Then
+		      Destination.ReconfigurePresets(Mask, ConsoleSafe)
+		    End If
+		    
+		    // Apply basic settings
 		    Destination.MinItemSets = MinItemSets
 		    Destination.MaxItemSets = MaxItemSets
 		    Destination.SetsRandomWithoutReplacement = PreventDuplicates

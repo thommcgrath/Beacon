@@ -1,6 +1,6 @@
 <?php
 
-require(dirname(__FILE__, 2) . '/framework/loader.php');
+require(dirname(__FILE__, 3) . '/framework/loader.php');
 
 if (!isset($_GET['id'])) {
 	http_response_code(400);
@@ -40,6 +40,14 @@ BeaconTemplate::SetTitle($obj->Label());
 $properties = array(
 	'Mod' => '[' . $obj->ModName() . '](/mods/' . urlencode($obj->ModID()) . ')'
 );
+$tags = $obj->Tags();
+if (count($tags) > 0) {
+	$links = array();
+	foreach ($tags as $tag) {
+		$links[] = '[' . ucwords($tag) . '](/tags/' . urlencode($tag) . ')';
+	}
+	$properties['Tags'] = implode(', ', $links);
+}
 
 if ($obj instanceof BeaconBlueprint) {
 	PrepareBlueprintTable($obj, $properties);
@@ -115,6 +123,8 @@ function PrepareCreatureTable(BeaconCreature $creature, array &$properties) {
 }
 
 function PrepareEngramTable(BeaconEngram $engram, array &$properties) {
+	$properties['Blueprintable'] = $engram->CanBlueprint() ? 'Yes' : 'No';
+	$properties['Harvestable'] = $engram->Harvestable() ? 'Yes' : 'No';
 }
 
 function PrepareLootSourceTable(BeaconLootSource $loot_source, array &$properties) {

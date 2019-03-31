@@ -365,6 +365,10 @@ Protected Class FolderItem
 		  Filename = Filename.ReplaceAll("/", "-")
 		  Filename = Filename.ReplaceAll("\", "-")
 		  Filename = Filename.ReplaceAll(":", "-")
+		  Filename = Filename.ReplaceAll("""", "")
+		  Filename = Filename.ReplaceAll("<", "")
+		  Filename = Filename.ReplaceAll(">", "")
+		  Filename = Filename.ReplaceAll("|", "")
 		  Return Filename
 		End Function
 	#tag EndMethod

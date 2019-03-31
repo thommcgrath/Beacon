@@ -84,8 +84,8 @@ Inherits BeaconSubview
 	#tag Method, Flags = &h1
 		Protected Sub Parse(Content As Text, Source As Text)
 		  Dim Parser As New Beacon.ImportThread
-		  AddHandler Parser.Finished, WeakAddressOf Parser_Finished
-		  AddHandler Parser.UpdateUI, WeakAddressOf Parser_UpdateUI
+		  AddHandler Parser.Finished, AddressOf Parser_Finished
+		  AddHandler Parser.UpdateUI, AddressOf Parser_UpdateUI
 		  
 		  Dim Win As New ImporterWindow
 		  Win.Source = Source
@@ -103,6 +103,9 @@ Inherits BeaconSubview
 
 	#tag Method, Flags = &h21
 		Private Sub Parser_Finished(Sender As Beacon.ImportThread, ParsedData As Xojo.Core.Dictionary)
+		  RemoveHandler Sender.Finished, AddressOf Parser_Finished
+		  RemoveHandler Sender.UpdateUI, AddressOf Parser_UpdateUI
+		  
 		  Dim Win As ImporterWindow = Self.mParserWindows.Value(Sender)
 		  Win.Close
 		  Self.mParserWindows.Remove(Sender)

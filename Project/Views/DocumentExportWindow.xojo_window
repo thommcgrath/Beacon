@@ -1,5 +1,5 @@
 #tag Window
-Begin Window DocumentExportWindow
+Begin BeaconDialog DocumentExportWindow
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   False
@@ -259,7 +259,7 @@ Begin Window DocumentExportWindow
       Visible         =   True
       Width           =   96
    End
-   Begin ReactionButton RewriteClipboardButton
+   Begin UITweaks.ResizedPushButton RewriteClipboardButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -359,12 +359,18 @@ End
 		  End If
 		  
 		  Dim Board As New Clipboard
-		  If Board.TextAvailable = False Or ReplaceLineEndings(Board.Text, EndOfLine) = Self.ContentArea.Text Then
+		  If Board.TextAvailable = False Then
 		    If Self.RewriteClipboardButton.Enabled Then
 		      Self.RewriteClipboardButton.Enabled = False
 		    End If
-		    If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
-		      Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
+		    If ReplaceLineEndings(Board.Text, EndOfLine) = Self.CurrentContent Then
+		      If Self.RewriteClipboardButton.Caption <> Self.ReadyForPaste Then
+		        Self.RewriteClipboardButton.Caption = Self.ReadyForPaste
+		      End If
+		    Else
+		      If Self.RewriteClipboardButton.Caption <> "Rewrite Clipboard" Then
+		        Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
+		      End If
 		    End If
 		    Return
 		  End If
@@ -399,8 +405,8 @@ End
 		    If Self.RewriteClipboardButton.Enabled Then
 		      Self.RewriteClipboardButton.Enabled = False
 		    End If
-		    If Self.RewriteClipboardButton.Caption <> "Ready for Paste" Then
-		      Self.RewriteClipboardButton.Caption = "Ready for Paste"
+		    If Self.RewriteClipboardButton.Caption <> Self.ReadyForPaste Then
+		      Self.RewriteClipboardButton.Caption = Self.ReadyForPaste
 		    End If
 		    Return
 		  End If
@@ -481,8 +487,31 @@ End
 	#tag EndMethod
 
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mCurrentContent
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  Value = ReplaceLineEndings(Value, EndOfLine)
+			  If Self.mCurrentContent <> Value Then
+			    Self.mCurrentContent = Value
+			    Self.ContentArea.Text = Value
+			    Self.CheckClipboard()
+			  End If
+			End Set
+		#tag EndSetter
+		CurrentContent As String
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mCommandLineConfigs As Xojo.Core.DIctionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mCurrentContent As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -498,13 +527,18 @@ End
 	#tag EndProperty
 
 
+	#tag Constant, Name = ReadyForPaste, Type = String, Dynamic = False, Default = \"Ready for Paste!", Scope = Private
+	#tag EndConstant
+
+
 #tag EndWindowCode
 
 #tag Events FileList
 	#tag Event
 		Sub Change()
 		  Self.CopyButton.Restore
-		  Self.RewriteClipboardButton.Restore
+		  Self.RewriteClipboardButton.Caption = "Rewrite Clipboard"
+		  Self.RewriteClipboardButton.Enabled = False
 		  
 		  Self.CopyButton.Enabled = Me.ListIndex > -1
 		  Self.CopyButton.Caption = "Copy All"
@@ -512,8 +546,7 @@ End
 		  If Me.ListIndex = -1 Then
 		    Self.SaveButton.Enabled = False
 		    Self.RewriteFileButton.Enabled = False
-		    Self.ContentArea.Text = ""
-		    Self.CheckClipboard()
+		    Self.CurrentContent = ""
 		    Return
 		  End If
 		  
@@ -534,11 +567,10 @@ End
 		      Next
 		    End If
 		    
-		    Self.ContentArea.Text = Parameters.Join(" ")
+		    Self.CurrentContent = Parameters.Join(" ")
 		    
 		    Self.SaveButton.Enabled = False
 		    Self.RewriteFileButton.Enabled = False
-		    Self.CheckClipboard()
 		    Return
 		  End If
 		  
@@ -548,15 +580,13 @@ End
 		  ElseIf Option = "Game.ini" Then
 		    Configs = Self.mGameIniConfigs
 		  Else
-		    Self.ContentArea.Text = ""
-		    Self.CheckClipboard()
+		    Self.CurrentContent = ""
 		    Return
 		  End If
 		  
 		  Self.SaveButton.Enabled = True
 		  Self.RewriteFileButton.Enabled = True
-		  Self.ContentArea.Text = ReplaceLineEndings(Beacon.RewriteIniContent("", Configs), EndOfLine)
-		  Self.CheckClipboard()
+		  Self.CurrentContent = Beacon.RewriteIniContent("", Configs)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -586,7 +616,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Content As String = Self.ContentArea.Text
+		  Dim Content As String = Self.CurrentContent
 		  Try
 		    Dim OutStream As TextOutputStream = TextOutputStream.Create(File)
 		    OutStream.Write(Content)
@@ -602,7 +632,8 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Board As New Clipboard
-		  Board.Text = Self.ContentArea.Text
+		  Board.Text = Self.CurrentContent
+		  Self.mLastRewrittenHash = EncodeHex(MD5(Board.Text))
 		  Me.Caption = "Copied!"
 		  Me.Enabled = False
 		End Sub
@@ -626,7 +657,7 @@ End
 		  Board.Text = Beacon.RewriteIniContent(Board.Text.ToText, Configs)
 		  Self.mLastRewrittenHash = EncodeHex(MD5(Board.Text))
 		  Me.Enabled = False
-		  Me.Caption = "Ready for Paste"
+		  Me.Caption = Self.ReadyForPaste
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -661,12 +692,14 @@ End
 		  
 		  Try
 		    Dim InStream As TextInputStream = TextInputStream.Open(File)
-		    Content = InStream.ReadAll(Encodings.UTF8)
+		    Content = InStream.ReadAll()
 		    InStream.Close
 		  Catch Err As IOException
 		    Self.ShowAlert("Unable to open " + File.DisplayName, "Beacon was unable to read the current content of the file to rewriting. The file has not been changed.")
 		    Return
 		  End Try
+		  
+		  Content = Content.GuessEncoding
 		  
 		  Dim Configs As Xojo.Core.Dictionary
 		  Select Case ConfigFilename

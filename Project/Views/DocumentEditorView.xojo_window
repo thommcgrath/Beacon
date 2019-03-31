@@ -447,6 +447,11 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
+		  If Self.mController <> Nil Then
+		    RemoveHandler Self.mController.WriteSuccess, WeakAddressOf mController_WriteSuccess
+		    RemoveHandler Self.mController.WriteError, WeakAddressOf mController_WriteError
+		  End If
+		  
 		  If Self.mEditorRefs <> Nil And Self.mEditorRefs.HasKey(Self.mController.Document.DocumentID) Then
 		    Self.mEditorRefs.Remove(Self.mController.Document.DocumentID)
 		  End If

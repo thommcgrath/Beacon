@@ -1,25 +1,8 @@
 <?php
 
 class BeaconEngram extends BeaconBlueprint {
-	private $can_blueprint = false;
-	
-	protected static function SQLColumns() {
-		$columns = parent::SQLColumns();
-		$columns[] = 'can_blueprint';
-		return $columns;
-	}
-	
 	protected static function TableName() {
 		return 'engrams';
-	}
-	
-	protected static function FromRow(BeaconRecordSet $row) {
-		$obj = parent::FromRow($row);
-		if ($obj === null) {
-			return null;
-		}
-		$obj->can_blueprint = $row->Field('can_blueprint');
-		return $obj;
 	}
 	
 	public function SpawnCode() {
@@ -28,8 +11,8 @@ class BeaconEngram extends BeaconBlueprint {
 	
 	public function jsonSerialize() {
 		$json = parent::jsonSerialize();
-		$json['can_blueprint'] = $this->can_blueprint;
-		$json['resource_url'] = BeaconAPI::URL('/engram.php/' . urlencode($this->ObjectID()));
+		$json['can_blueprint'] = $this->CanBlueprint();
+		$json['resource_url'] = BeaconAPI::URL('/engram/' . urlencode($this->ObjectID()));
 		
 		// legacy support
 		$json['mod_id'] = $this->ModID();
@@ -41,19 +24,26 @@ class BeaconEngram extends BeaconBlueprint {
 	}
 	
 	public function CanBlueprint() {
-		return $this->can_blueprint;
+		return $this->IsTagged('blueprintable');
 	}
 	
 	public function SetCanBlueprint(bool $can_blueprint) {
-		$this->can_blueprint = $can_blueprint;
+		if ($can_blueprint) {
+			$this->AddTag('blueprintable');
+		} else {
+			$this->RemoveTag('blueprintable');
+		}
 	}
 	
-	protected function GetColumnValue(string $column) {
-		switch ($column) {
-		case 'can_blueprint':
-			return $this->can_blueprint;
-		default:
-			parent::GetColumnValue($column);
+	public function Harvestable() {
+		return $this->IsTagged('harvestable');
+	}
+	
+	public function SetHarvestable(bool $harvestable) {
+		if ($harvestable) {
+			$this->AddTag('harvestable');
+		} else {
+			$this->RemoveTag('harvestable');
 		}
 	}
 	

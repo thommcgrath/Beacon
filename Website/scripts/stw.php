@@ -19,13 +19,14 @@ if ($applicant_count == 0) {
 }
 
 $num = random_int(1, $applicant_count);
-$results = $database->Query('SELECT applicant_id, encrypted_email FROM stw_applicants WHERE generated_purchase_id IS NULL OFFSET $1 LIMIT 1;', $num - 1);
+$results = $database->Query('SELECT applicant_id, encrypted_email, email_id FROM stw_applicants WHERE generated_purchase_id IS NULL OFFSET $1 LIMIT 1;', $num - 1);
 if ($results->RecordCount() == 0) {
 	echo "Something went wrong, a winner was not selected.\n";
 	exit;
 }
 
 $applicant_id = $results->Field('applicant_id');
+$email_id = $results->Field('email_id');
 try {
 	$email = BeaconEncryption::BlowfishDecrypt(BeaconCommon::GetGlobal('Email_Encryption_Key'), base64_decode($results->Field('encrypted_email')));
 } catch (Exception $e) {
@@ -41,7 +42,7 @@ $subtotal = $retail_price;
 $total = 0;
 $generated_purchase_id = BeaconCommon::GenerateUUID();
 $database->BeginTransaction();
-$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7);', $generated_purchase_id, $email, $subtotal, $subtotal - $total, 0, $total, 'STW ' . $applicant_id);
+$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference) VALUES ($1, $2, $3, $4, $5, $6, $7);', $generated_purchase_id, $email_id, $subtotal, $subtotal - $total, 0, $total, 'STW ' . $applicant_id);
 $database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total) VALUES ($1, $2, $3, $4, $5, $6);', $generated_purchase_id, $product_id, $retail_price, $retail_price, 1, 0);
 $database->Query('UPDATE stw_applicants SET generated_purchase_id = $2, encrypted_email = NULL WHERE applicant_id = $1;', $applicant_id, $generated_purchase_id);
 $database->Query('UPDATE stw_purchases SET generated_purchase_id = $2 WHERE original_purchase_id = $1;', $original_purchase_id, $generated_purchase_id);
@@ -49,7 +50,7 @@ $database->Commit();
 
 // See if the recipient already has an account
 $link_url = '/account/login/?return=' . urlencode(BeaconCommon::AbsoluteURL('/account/#omni'));
-$results = $database->Query('SELECT user_id FROM users WHERE email_id = uuid_for_email($1);', $email);
+$results = $database->Query('SELECT user_id FROM users WHERE email_id = $1;', $email_id);
 if ($results->RecordCount() == 0) {
 	$link_url .= '&email=' . urlencode($email);
 	$instruction_text = "You will need to create an account with the email address <$email> using the link below. Once you've created your account, setup instructions should be shown to you under the 'Omni' header in your account control panel. The link will take you there automatically after account creation.";
