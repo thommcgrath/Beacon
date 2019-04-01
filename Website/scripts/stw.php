@@ -63,8 +63,7 @@ $link_url = BeaconCommon::AbsoluteURL($link_url);
 $subject = "You've been given a free copy of Beacon Omni!";
 $sender = '"Beacon Share The Wealth" <forgotmyparachute@beaconapp.cc>';
 $body = "Beacon Share The Wealth is a program that allows buyers of Beacon Omni to gift free copies to random strangers, and today you're the lucky recipient! Really, there's no strings attached!\n\n$instruction_text\n\n<$link_url>\n\nIf you have any questions, feel free to respond to this email.";
-$headers = "From: $sender";
-$notified = mail($email, $subject, $body, $headers);
+$notified = BeaconEmail::SendMail($email, $subject, $body);
 
 // Notify slack maybe?
 if ($notified) {
