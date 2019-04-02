@@ -1801,6 +1801,13 @@ CREATE INDEX purchases_purchaser_email_idx ON public.purchases USING btree (purc
 
 
 --
+-- Name: stw_purchases_original_purchase_id_generated_purchase_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX stw_purchases_original_purchase_id_generated_purchase_id_idx ON public.stw_purchases USING btree (original_purchase_id, generated_purchase_id);
+
+
+--
 -- Name: client_notices client_notices_before_update_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
 --
 
