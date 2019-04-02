@@ -52,9 +52,10 @@ $database->Commit();
 $link_url = '/account/login/?return=' . urlencode(BeaconCommon::AbsoluteURL('/account/#omni'));
 $results = $database->Query('SELECT user_id FROM users WHERE email_id = $1;', $email_id);
 if ($results->RecordCount() == 0) {
-	$link_url .= '&email=' . urlencode($email);
+	$link_url .= '&email=' . urlencode($email) . '#create';
 	$instruction_text = "You will need to create an account with the email address <$email> using the link below. Once you've created your account, setup instructions should be shown to you under the 'Omni' header in your account control panel. The link will take you there automatically after account creation.";
 } else {
+	$link_url .= '&email=' . urlencode($email);
 	$instruction_text = "Since you already have an account with Beacon, just sign into your account control panel using the link below and look in the 'Omni' header for setup instructions.";
 }
 $link_url = BeaconCommon::AbsoluteURL($link_url);
