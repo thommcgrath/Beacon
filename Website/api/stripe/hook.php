@@ -74,6 +74,11 @@ case 'checkout_beta.session_succeeded':
 		exit;
 	}
 	
+	$user = BeaconUser::GetByEmail($email);
+	if (is_null($user)) {
+		BeaconLogin::SendVerification($email);
+	}
+	
 	$purchase_subtotal = 0;
 	$purchase_total = 0;
 	$purchase_discount = 0;

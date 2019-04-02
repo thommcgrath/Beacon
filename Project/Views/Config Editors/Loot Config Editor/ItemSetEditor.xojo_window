@@ -222,7 +222,7 @@ End
 		  Next
 		  
 		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.ConsoleModsOnly, Sources, Prefilter)
-		  If Entries = Nil Then
+		  If Entries = Nil Or Entries.Ubound <> Sources.Ubound Then
 		    Return
 		  End If
 		  
