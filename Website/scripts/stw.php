@@ -4,12 +4,13 @@
 require(dirname(__FILE__, 2) . '/framework/loader.php');
 
 $database = BeaconCommon::Database();
-$results = $database->Query('SELECT original_purchase_id FROM stw_purchases WHERE generated_purchase_id IS NULL LIMIT 1;');
+$results = $database->Query('SELECT stw_id, original_purchase_id FROM stw_purchases WHERE generated_purchase_id IS NULL LIMIT 1;');
 if ($results->RecordCount() != 1) {
 	echo "No free copies to give away today\n";
 	exit;
 }
 $original_purchase_id = $results->Field('original_purchase_id');
+$stw_id = $results->Field('stw_id');
 
 $results = $database->Query('SELECT COUNT(applicant_id) AS applicant_count FROM stw_applicants WHERE generated_purchase_id IS NULL;');
 $applicant_count = $results->Field('applicant_count');
@@ -45,7 +46,7 @@ $database->BeginTransaction();
 $database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference) VALUES ($1, $2, $3, $4, $5, $6, $7);', $generated_purchase_id, $email_id, $subtotal, $subtotal - $total, 0, $total, 'STW ' . $applicant_id);
 $database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total) VALUES ($1, $2, $3, $4, $5, $6);', $generated_purchase_id, $product_id, $retail_price, $retail_price, 1, 0);
 $database->Query('UPDATE stw_applicants SET generated_purchase_id = $2, encrypted_email = NULL WHERE applicant_id = $1;', $applicant_id, $generated_purchase_id);
-$database->Query('UPDATE stw_purchases SET generated_purchase_id = $2 WHERE original_purchase_id = $1;', $original_purchase_id, $generated_purchase_id);
+$database->Query('UPDATE stw_purchases SET generated_purchase_id = $2 WHERE stw_id = $1;', $stw_id, $generated_purchase_id);
 $database->Commit();
 
 // See if the recipient already has an account
