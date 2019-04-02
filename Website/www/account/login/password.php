@@ -100,10 +100,9 @@ $response = array(
 );
 
 if ($new_user) {
-	$headers = 'From: "Beacon Support" <forgotmyparachute@beaconapp.cc>';
 	$subject = 'Welcome to Beacon';
 	$body = "You just created a Beacon Account, which means you can easily share your documents with multiple devices. You can also link accounts like Discord, Nitrado, and Patreon to your Beacon Account. You can manage your account at <https://beaconapp.cc/account/> to change your password, link accounts, manage documents, and delete your account. Though let's hope you don't want to do that last one.\n\nFor reference, you can view Beacon's privacy policy at <https://beaconapp.cc/privacy.php>. The TL;DR of it is simple: your data is yours and won't be sold or monetized in anyway.\n\nHave fun and happy looting!\nThom McGrath, developer of Beacon.";
-	mail($email, $subject, $body, $headers);
+	BeaconEmail::SendMail($email, $subject, $body);
 }
 
 http_response_code(200);
