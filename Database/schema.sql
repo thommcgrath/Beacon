@@ -977,7 +977,8 @@ CREATE TABLE public.purchases (
     tax numeric(6,2) NOT NULL,
     total_paid numeric(6,2) NOT NULL,
     merchant_reference public.citext NOT NULL,
-    client_reference_id text
+    client_reference_id text,
+    refunded boolean DEFAULT false NOT NULL
 );
 
 
@@ -990,10 +991,13 @@ ALTER TABLE public.purchases OWNER TO thommcgrath;
 CREATE VIEW public.purchased_products AS
  SELECT products.product_id,
     products.product_name,
-    purchases.purchaser_email
+    purchases.purchaser_email,
+    purchases.purchase_id,
+    purchases.client_reference_id
    FROM (public.purchases
      JOIN (public.purchase_items
-     JOIN public.products ON ((purchase_items.product_id = products.product_id))) ON ((purchase_items.purchase_id = purchases.purchase_id)));
+     JOIN public.products ON ((purchase_items.product_id = products.product_id))) ON ((purchase_items.purchase_id = purchases.purchase_id)))
+  WHERE (purchases.refunded = false);
 
 
 ALTER TABLE public.purchased_products OWNER TO thommcgrath;
@@ -1773,6 +1777,13 @@ CREATE UNIQUE INDEX creatures_classstring_mod_id_uidx ON public.creatures USING 
 --
 
 CREATE UNIQUE INDEX engrams_classstring_mod_id_uidx ON public.engrams USING btree (class_string, mod_id);
+
+
+--
+-- Name: exception_users_exception_id_user_id_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE UNIQUE INDEX exception_users_exception_id_user_id_idx ON public.exception_users USING btree (exception_id, user_id);
 
 
 --

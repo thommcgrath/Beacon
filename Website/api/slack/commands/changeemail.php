@@ -22,9 +22,30 @@ if (is_null($old_email_id)) {
 }
 
 try {
+	$results = $database->Query('SELECT merchant_reference FROM purchases WHERE purchaser_email = $1;', $old_email_id);
+	$stripe_api = null;
+	while (!$results->EOF()) {
+		$merchant_reference = $results->Field('merchant_reference');
+		if (substr($merchant_reference, 0, 3) == 'pi_') {
+			if (is_null($stripe_api)) {
+				$stripe_api = new BeaconStripeAPI(BeaconCommon::GetGlobal('Stripe_Secret_Key'));
+			}
+			if (!$stripe_api->ChangeEmailForPaymentIntent($merchant_reference, $to_address)) {
+				PostReply("I could not change the email address of PaymentIntent `$merchant_reference`.");
+				exit;
+			}
+		}
+		$results->MoveNext();
+	}
+	
 	$database->BeginTransaction();
 	$results = $database->Query('SELECT uuid_for_email($1, TRUE) AS email_id;', $to_address);
 	$new_email_id = $results->Field('email_id');
+	if ($new_email_id == $old_email_id) {
+		$database->Rollback();
+		PostReply("Uh.... both addresses are the same.");
+		exit;
+	}
 	$database->Query('UPDATE purchases SET purchaser_email = $1 WHERE purchaser_email = $2;', $new_email_id, $old_email_id);
 	$database->Query('DELETE FROM email_verification WHERE email_id = $1;', $old_email_id);
 	$results = $database->Query('SELECT applicant_id FROM stw_applicants WHERE email_id = $1;', $new_email_id);
@@ -38,6 +59,11 @@ try {
 	}
 	$database->Query('DELETE FROM email_addresses WHERE email_id = $1;', $old_email_id);
 	$database->Commit();
+	
+	$user = BeaconUser::GetByEmail($to_address);
+	if (is_null($user)) {
+		BeaconLogin::SendVerification($to_address);
+	}
 } catch (Exception $e) {
 	PostReply("I can't do that: {$e->getMessage()}");
 	exit;
