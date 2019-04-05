@@ -248,6 +248,10 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Controller As Beacon.DocumentController) As Integer
+		  If Not Preferences.OnlineEnabled Then
+		    Return StateSaveLocal
+		  End If
+		  
 		  Dim Win As New DocumentSaveToCloudWindow
 		  Win.mController = Controller
 		  Win.TitleField.Text = Controller.Name
