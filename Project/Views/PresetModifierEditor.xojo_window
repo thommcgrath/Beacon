@@ -715,7 +715,7 @@ End
 #tag EndEvents
 #tag Events QualityField
 	#tag Event
-		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
 		  MinValue = -10
 		  MaxValue = 10
 		End Sub
