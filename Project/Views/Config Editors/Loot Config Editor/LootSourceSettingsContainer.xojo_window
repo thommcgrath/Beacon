@@ -527,13 +527,13 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
 		  MinValue = 1
 		  MaxValue = 9999
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub RangeError(DesiredValue As Integer, NewValue As Integer)
+		Sub RangeError(DesiredValue As Double, NewValue As Double)
 		  #Pragma Unused DesiredValue
 		  #Pragma Unused NewValue
 		  
@@ -568,13 +568,13 @@ End
 		End Function
 	#tag EndEvent
 	#tag Event
-		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
 		  MinValue = 1
 		  MaxValue = 9999
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub RangeError(DesiredValue As Integer, NewValue As Integer)
+		Sub RangeError(DesiredValue As Double, NewValue As Double)
 		  #Pragma Unused DesiredValue
 		  #Pragma Unused NewValue
 		  

@@ -1,120 +1,53 @@
 #tag Class
-Protected Class RangeField
+Protected Class DelayedTextField
 Inherits UITweaks.ResizedTextField
 	#tag Event
-		Function KeyDown(Key As String) As Boolean
-		  If RaiseEvent KeyDown(Key) Then
-		    Return True
-		  End If
-		  
-		  If Key = Chr(10) Or Key = Chr(13) Then
-		    Self.CheckValue()
-		    Return True
-		  End If
-		End Function
-	#tag EndEvent
-
-	#tag Event
-		Sub LostFocus()
-		  Self.CheckValue()
-		  RaiseEvent LostFocus
+		Sub TextChange()
+		  Self.mTimer.Reset
+		  Self.mTimer.Mode = Timer.ModeSingle
 		End Sub
 	#tag EndEvent
 
 
 	#tag Method, Flags = &h0
-		Sub CheckValue()
-		  If RaiseEvent AllowContents(Me.Text) Then
-		    Return
-		  End If
+		Sub Constructor()
+		  // Calling the overridden superclass constructor.
 		  
-		  Dim MinValue, MaxValue As Double
-		  RaiseEvent GetRange(MinValue, MaxValue)
+		  Self.mTimer = New Timer
+		  Self.mTimer.Mode = Timer.ModeOff
+		  Self.mTimer.Period = 250
+		  AddHandler Self.mTimer.Action, WeakAddressOf mTimer_Action
 		  
-		  Dim Value As Double = CDbl(Me.Text)
-		  If Value < MinValue Then
-		    Me.Text = Self.Format(MinValue)
-		    RaiseEvent RangeError(Value, MinValue)
-		  ElseIf Value > MaxValue Then
-		    Me.Text = Self.Format(MaxValue)
-		    RaiseEvent RangeError(Value, MaxValue)
-		  Else
-		    Dim Formatted As String = Self.Format(Value)
-		    If Me.Text <> Formatted Then
-		      Me.Text = Formatted
-		    End If
-		  End If
+		  Super.Constructor
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Destructor()
+		  RemoveHandler Self.mTimer.Action, WeakAddressOf mTimer_Action
+		  Self.mTimer.Mode = Timer.ModeOff
+		  Self.mTimer.Reset
+		  Self.mTimer = Nil
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function Format(Value As Double) As String
-		  If Floor(Value) = Value Then
-		    // Integer
-		    Return Format(Value, "-0,")
-		  Else
-		    // Double
-		    Return Format(Value, "-0,.0####")
-		  End If
-		End Function
+		Private Sub mTimer_Action(Sender As Timer)
+		  #Pragma Unused Sender
+		  
+		  RaiseEvent TextChange
+		End Sub
 	#tag EndMethod
 
 
 	#tag Hook, Flags = &h0
-		Event AllowContents(Value As String) As Boolean
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event KeyDown(Key As String) As Boolean
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event LostFocus()
-	#tag EndHook
-
-	#tag Hook, Flags = &h0
-		Event RangeError(DesiredValue As Double, NewValue As Double)
+		Event TextChange()
 	#tag EndHook
 
 
 	#tag Property, Flags = &h21
-		Private mMaxValue As Double
+		Private mTimer As Timer
 	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mMinValue As Double
-	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return CDbl(Me.Text.Trim)
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If CDbl(Me.Text.Trim) <> Value Then
-			    Dim MinValue, MaxValue As Double
-			    RaiseEvent GetRange(MinValue, MaxValue)
-			    
-			    If Value < MinValue Then
-			      Me.Text = Self.Format(MinValue)
-			      RaiseEvent RangeError(Value, MinValue)
-			    ElseIf Value > MaxValue Then
-			      Me.Text = Self.Format(MaxValue)
-			      RaiseEvent RangeError(Value, MaxValue)
-			    Else
-			      Me.Text = Self.Format(Value)
-			    End If
-			  End If
-			End Set
-		#tag EndSetter
-		Value As Double
-	#tag EndComputedProperty
 
 
 	#tag ViewBehavior
@@ -405,11 +338,6 @@ Inherits UITweaks.ResizedTextField
 			Group="Position"
 			InitialValue="80"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Value"
-			Group="Behavior"
-			Type="Double"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -224,7 +224,7 @@ End
 		  Next
 		  
 		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods, Sources, Prefilter)
-		  If Entries = Nil Then
+		  If Entries = Nil Or Entries.Ubound <> Sources.Ubound Then
 		    Return
 		  End If
 		  
@@ -356,7 +356,15 @@ End
 		      QuantityText = Entry.MinQuantity.ToText + " - " + Entry.MaxQuantity.ToText
 		    End If
 		    
-		    Dim FiguresText As String = Str(Round(Entry.RawWeight), "0") + " wt"
+		    Dim FiguresText As String
+		    Dim Weight As Double = Entry.RawWeight
+		    If Floor(Weight) = Weight Then
+		      FiguresText = Format(Weight, "-0,")
+		    Else
+		      FiguresText = Format(Weight, "-0,.0####")
+		    End If
+		    FiguresText = FiguresText + " wt"
+		    
 		    If Entry.CanBeBlueprint Then
 		      FiguresText = FiguresText + ", " + Str(BlueprintChance, "0%") + " bp"
 		    End If

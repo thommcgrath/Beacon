@@ -286,6 +286,15 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
+		    MiniBrowser(Self.mBrowser.Value).Close
+		    Self.mBrowser = Nil
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.Auth.Provider = Beacon.OAuth2Client.ProviderNitrado
 		  Self.Auth.AuthData = Self.mDocument.OAuthData("Nitrado")
@@ -426,6 +435,10 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mBrowser As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
 	#tag EndProperty
 
@@ -445,7 +458,16 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ShowURL(URL As Text) As Beacon.WebView
-		  Return MiniBrowser.ShowURL(URL)
+		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
+		    MiniBrowser(Self.mBrowser.Value).Close
+		    Self.mBrowser = Nil
+		  End If
+		  
+		  Dim Browser As MiniBrowser = MiniBrowser.ShowURL(URL)
+		  If Browser <> Nil Then
+		    Self.mBrowser = New WeakRef(Browser)
+		  End If
+		  Return Browser
 		End Function
 	#tag EndEvent
 #tag EndEvents
@@ -497,6 +519,12 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="Progress"
+		Group="Behavior"
+		InitialValue="ProgressNone"
+		Type="Double"
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="ToolbarCaption"
 		Group="Behavior"

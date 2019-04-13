@@ -154,6 +154,12 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Close()
+		  Self.Searcher.Cancel
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.RebuildList()
 		  Self.ToolbarCaption = "My Engrams"
