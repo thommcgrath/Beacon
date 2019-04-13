@@ -137,6 +137,7 @@ Begin BeaconSubview PresetEditorView
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   61
       Transparent     =   False
       Value           =   2
@@ -159,6 +160,7 @@ Begin BeaconSubview PresetEditorView
          SelectionType   =   1
          TabIndex        =   0
          TabPanelIndex   =   2
+         TabStop         =   True
          Top             =   81
          Transparent     =   False
          Visible         =   True
@@ -905,7 +907,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, False, Entries)
+		  Dim NewEntries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.TextList, Entries)
 		  If NewEntries = Nil Then
 		    Return
 		  End If
@@ -1049,7 +1051,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowAddDialog()
-		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, False)
+		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self.TrueWindow, New Beacon.TextList)
 		  If Entries = Nil Or Entries.Ubound = -1 Then
 		    Return
 		  End If

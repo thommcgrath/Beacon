@@ -97,6 +97,7 @@ Begin BeaconDialog DocumentMergerWindow
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   1
@@ -333,7 +334,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim PreviousConsoleSafe As Boolean = Self.mDestination.ConsoleModsOnly
+		  Dim PreviousMods As New Beacon.TextList(Self.mDestination.Mods)
 		  
 		  For I As Integer = 0 To Self.List.ListCount - 1
 		    If Not Self.List.CellCheck(I, 0) Or Self.List.RowTag(I) = Nil Then
@@ -372,9 +373,9 @@ End
 		    End Select
 		  Next
 		  
-		  If Self.mDestination.ConsoleModsOnly And PreviousConsoleSafe = False Then
-		    Dim Notification As New Beacon.UserNotification("""Show only console-safe engrams"" has been enabled for document """ + Self.mDestination.Title + """ because a console server was linked.")
-		    Notification.SecondaryMessage = "This setting can be disabled using the """ + Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName) + """ config group."
+		  If Self.mDestination.Mods <> PreviousMods Then
+		    Dim Notification As New Beacon.UserNotification("The list of mods enabled for document """ + Self.mDestination.Title + """ has changed.")
+		    Notification.SecondaryMessage = "You can change the enabled mods in the """ + Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName) + """ config group."
 		    LocalData.SharedInstance.SaveNotification(Notification)
 		  End If
 		  

@@ -28,18 +28,35 @@ Inherits UITweaks.ResizedTextField
 		    Return
 		  End If
 		  
-		  Dim MinValue, MaxValue As Integer
+		  Dim MinValue, MaxValue As Double
 		  RaiseEvent GetRange(MinValue, MaxValue)
 		  
-		  Dim Value As Integer = Val(Me.Text)
+		  Dim Value As Double = CDbl(Me.Text)
 		  If Value < MinValue Then
-		    Me.Text = Str(MinValue, "-0")
+		    Me.Text = Self.Format(MinValue)
 		    RaiseEvent RangeError(Value, MinValue)
 		  ElseIf Value > MaxValue Then
-		    Me.Text = Str(MaxValue, "-0")
+		    Me.Text = Self.Format(MaxValue)
 		    RaiseEvent RangeError(Value, MaxValue)
+		  Else
+		    Dim Formatted As String = Self.Format(Value)
+		    If Me.Text <> Formatted Then
+		      Me.Text = Formatted
+		    End If
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Shared Function Format(Value As Double) As String
+		  If Floor(Value) = Value Then
+		    // Integer
+		    Return Format(Value, "-0,")
+		  Else
+		    // Double
+		    Return Format(Value, "-0,.0####")
+		  End If
+		End Function
 	#tag EndMethod
 
 
@@ -48,7 +65,7 @@ Inherits UITweaks.ResizedTextField
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
+		Event GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -60,43 +77,43 @@ Inherits UITweaks.ResizedTextField
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event RangeError(DesiredValue As Integer, NewValue As Integer)
+		Event RangeError(DesiredValue As Double, NewValue As Double)
 	#tag EndHook
 
 
 	#tag Property, Flags = &h21
-		Private mMaxValue As Integer
+		Private mMaxValue As Double
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMinValue As Integer
+		Private mMinValue As Double
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Val(Me.Text.Trim)
+			  Return CDbl(Me.Text.Trim)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If Val(Me.Text.Trim) <> Value Then
-			    Dim MinValue, MaxValue As Integer
+			  If CDbl(Me.Text.Trim) <> Value Then
+			    Dim MinValue, MaxValue As Double
 			    RaiseEvent GetRange(MinValue, MaxValue)
 			    
 			    If Value < MinValue Then
-			      Me.Text = Str(MinValue, "-0")
+			      Me.Text = Self.Format(MinValue)
 			      RaiseEvent RangeError(Value, MinValue)
 			    ElseIf Value > MaxValue Then
-			      Me.Text = Str(MaxValue, "-0")
+			      Me.Text = Self.Format(MaxValue)
 			      RaiseEvent RangeError(Value, MaxValue)
 			    Else
-			      Me.Text = Str(Value, "-0")
+			      Me.Text = Self.Format(Value)
 			    End If
 			  End If
 			End Set
 		#tag EndSetter
-		Value As Integer
+		Value As Double
 	#tag EndComputedProperty
 
 
@@ -392,7 +409,7 @@ Inherits UITweaks.ResizedTextField
 		#tag ViewProperty
 			Name="Value"
 			Group="Behavior"
-			Type="Integer"
+			Type="Double"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

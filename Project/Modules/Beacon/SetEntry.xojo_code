@@ -39,18 +39,6 @@ Implements Beacon.Countable,Beacon.DocumentItem,Beacon.JSONSerializable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConsoleSafe() As Boolean
-		  For Each Option As Beacon.SetEntryOption In Self.mOptions
-		    If Not Option.Engram.ConsoleSafe Then
-		      Return False
-		    End If
-		  Next
-		  
-		  Return True
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mMinQuantity = 1
 		  Self.mMaxQuantity = 1
@@ -529,6 +517,22 @@ Implements Beacon.Countable,Beacon.DocumentItem,Beacon.JSONSerializable
 		  Self.mOptions.Remove(Index)
 		  Self.Modified = True
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SafeForMods(Mods As Beacon.TextList) As Boolean
+		  If Mods.Ubound = -1 Then
+		    Return True
+		  End If
+		  
+		  For Each Option As Beacon.SetEntryOption In Self.mOptions
+		    If Mods.IndexOf(Option.Engram.ModID) = -1 Then
+		      Return False
+		    End If
+		  Next
+		  
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

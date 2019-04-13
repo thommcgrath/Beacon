@@ -183,7 +183,7 @@ End
 		    Engrams.Append(Self.mTarget.Resource(I))
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, Engrams, RaiseEvent IsConsoleSafe, True)
+		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, Engrams, RaiseEvent GetActiveMods, True)
 		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
 		    Return
 		  End If
@@ -238,7 +238,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event IsConsoleSafe() As Boolean
+		Event GetActiveMods() As Beacon.TextList
 	#tag EndHook
 
 

@@ -78,7 +78,7 @@ Begin BeaconDialog EngramSelectorDialog
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   20
+      Left            =   212
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -102,7 +102,7 @@ Begin BeaconDialog EngramSelectorDialog
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   560
+      Width           =   368
    End
    Begin BeaconListbox List
       AutoDeactivate  =   True
@@ -340,13 +340,58 @@ Begin BeaconDialog EngramSelectorDialog
       Visible         =   True
       Width           =   40
    End
+   Begin UITweaks.ResizedPopupMenu TagMenu
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   20
+      ListIndex       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   53
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   180
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.Filter("")
+		  Dim SelectedTag As String = Preferences.SelectedTag
+		  Self.TagMenu.AddRow("All Engrams", "")
+		  Dim Tags() As String = LocalData.SharedInstance.AllTags
+		  For Each Tag As String In Tags
+		    Self.TagMenu.AddRow(Tag.TitleCase, Tag)
+		    If Tag = SelectedTag Then
+		      Self.TagMenu.ListIndex = Self.TagMenu.ListCount - 1
+		    End If
+		  Next
+		  If SelectedTag = "" Then
+		    Self.TagMenu.ListIndex = 0
+		  End If
+		  
+		  Self.UpdateFilter()
 		  Self.SwapButtons()
 		  Self.ActionButton.Enabled = False
 		  Self.Resize()
@@ -367,11 +412,11 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ExcludeEngrams() As Beacon.Engram, ConsoleModsOnly As Boolean, AllowMultipleSelection As Boolean)
+		Private Sub Constructor(ExcludeEngrams() As Beacon.Engram, Mods As Beacon.TextList, AllowMultipleSelection As Boolean)
 		  For Each Engram As Beacon.Engram In ExcludeEngrams
 		    Self.mExcludedEngrams.Append(Engram.Path)
 		  Next
-		  Self.mConsoleModsOnly = ConsoleModsOnly
+		  Self.mMods = Mods
 		  Self.mAllowMultipleSelection = AllowMultipleSelection
 		  Super.Constructor
 		  If AllowMultipleSelection Then
@@ -384,23 +429,6 @@ End
 		    Self.SelectedList.Left = Self.AddToSelectionsButton.Left + Self.AddToSelectionsButton.Width + 12
 		    Self.MessageLabel.Text = "Select Engrams"
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Filter(Value As String)
-		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(Value.ToText, Self.mConsoleModsOnly)
-		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
-		  Self.List.DeleteAllRows
-		  For Each Engram As Beacon.Engram In Engrams
-		    If Self.mExcludedEngrams.IndexOf(Engram.Path) > -1 Then
-		      Continue
-		    End If
-		    
-		    Self.List.AddRow(Engram.Label, Engram.ModName)
-		    Self.List.RowTag(Self.List.LastIndex) = Engram
-		  Next
-		  Self.List.ScrollPosition = ScrollPosition
 		End Sub
 	#tag EndMethod
 
@@ -437,13 +465,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, ExcludeEngrams() As Beacon.Engram, ConsoleModsOnly As Boolean, AllowMultipleSelection As Boolean) As Beacon.Engram()
+		Shared Function Present(Parent As Window, ExcludeEngrams() As Beacon.Engram, Mods As Beacon.TextList, AllowMultipleSelection As Boolean) As Beacon.Engram()
 		  Dim Engrams() As Beacon.Engram
 		  If Parent = Nil Then
 		    Return Engrams
 		  End If
 		  
-		  Dim Win As New EngramSelectorDialog(ExcludeEngrams, ConsoleModsOnly, AllowMultipleSelection)
+		  Dim Win As New EngramSelectorDialog(ExcludeEngrams, Mods, AllowMultipleSelection)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  If Win.mCancelled Then
 		    Win.Close
@@ -487,13 +515,36 @@ End
 		  Self.ActionButton.Enabled = Self.SelectedList.ListCount > 0
 		  
 		  Self.List.SelectionChangeBlocked = True
-		  Self.Filter(Self.FilterField.Text)
+		  Self.UpdateFilter()
 		  For I As Integer = 0 To Self.List.ListCount - 1
 		    Dim Engram As Beacon.Engram = Self.List.RowTag(I)
 		    Self.List.Selected(I) = SelectPaths.IndexOf(Engram.Path) > -1
 		  Next
 		  Self.List.EnsureSelectionIsVisible
 		  Self.List.SelectionChangeBlocked = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateFilter()
+		  Dim SearchText As String = Self.FilterField.Text
+		  Dim Tags() As Text
+		  If Self.TagMenu.ListIndex > 0 Then
+		    Tags.Append(Self.TagMenu.RowTag(Self.TagMenu.ListIndex).StringValue.ToText)
+		  End If
+		  
+		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mMods, Tags)
+		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
+		  Self.List.DeleteAllRows
+		  For Each Engram As Beacon.Engram In Engrams
+		    If Self.mExcludedEngrams.IndexOf(Engram.Path) > -1 Then
+		      Continue
+		    End If
+		    
+		    Self.List.AddRow(Engram.Label, Engram.ModName)
+		    Self.List.RowTag(Self.List.LastIndex) = Engram
+		  Next
+		  Self.List.ScrollPosition = ScrollPosition
 		End Sub
 	#tag EndMethod
 
@@ -507,11 +558,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mConsoleModsOnly As Boolean
+		Private mExcludedEngrams() As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExcludedEngrams() As Text
+		Private mMods As Beacon.TextList
 	#tag EndProperty
 
 
@@ -520,7 +571,7 @@ End
 #tag Events FilterField
 	#tag Event
 		Sub TextChange()
-		  Self.Filter(Me.Text)
+		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -596,6 +647,18 @@ End
 	#tag Event
 		Sub Action()
 		  Self.UnmakeSelection()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events TagMenu
+	#tag Event
+		Sub Change()
+		  If Me.ListIndex = -1 Then
+		    Return
+		  End If
+		  
+		  Preferences.SelectedTag = Me.RowTag(Me.ListIndex).StringValue.ToText
+		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
 #tag EndEvents

@@ -34,7 +34,9 @@ if ($result_count > 0) {
 		$summary = $results->Field('body');
 		if (strlen($summary) > 200) {
 			$pos = strpos($summary, ' ', 200);
-			$summary = trim(substr($summary, 0, $pos)) . '…';
+			if ($pos !== false) {
+				$summary = trim(substr($summary, 0, $pos)) . '…';
+			}
 		}
 		
 		$item = array(

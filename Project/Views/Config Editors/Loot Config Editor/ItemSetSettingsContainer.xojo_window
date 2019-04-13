@@ -371,7 +371,7 @@ Begin ContainerControl ItemSetSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      Value           =   0
+      Value           =   0.0
       Visible         =   True
       Width           =   82
    End
@@ -415,7 +415,7 @@ Begin ContainerControl ItemSetSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      Value           =   0
+      Value           =   0.0
       Visible         =   True
       Width           =   82
    End
@@ -443,7 +443,7 @@ Begin ContainerControl ItemSetSettingsContainer
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
-      Mask            =   "####"
+      Mask            =   ""
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -459,7 +459,7 @@ Begin ContainerControl ItemSetSettingsContainer
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      Value           =   0
+      Value           =   0.0
       Visible         =   True
       Width           =   82
    End
@@ -710,13 +710,13 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
 		  MinValue = 1
 		  MaxValue = 9999
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub RangeError(DesiredValue As Integer, NewValue As Integer)
+		Sub RangeError(DesiredValue As Double, NewValue As Double)
 		  #Pragma Unused DesiredValue
 		  #Pragma Unused NewValue
 		  
@@ -741,13 +741,13 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
 		  MinValue = 1
 		  MaxValue = 9999
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub RangeError(DesiredValue As Integer, NewValue As Integer)
+		Sub RangeError(DesiredValue As Double, NewValue As Double)
 		  #Pragma Unused DesiredValue
 		  #Pragma Unused NewValue
 		  
@@ -762,7 +762,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Value As Integer = Val(Me.Text)
+		  Dim Value As Double = Me.Value
 		  If Value = 0 Then
 		    Return
 		  End If
@@ -772,13 +772,13 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
-		  MinValue = 1
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0.00001
 		  MaxValue = 1000000
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub RangeError(DesiredValue As Integer, NewValue As Integer)
+		Sub RangeError(DesiredValue As Double, NewValue As Double)
 		  #Pragma Unused DesiredValue
 		  #Pragma Unused NewValue
 		  

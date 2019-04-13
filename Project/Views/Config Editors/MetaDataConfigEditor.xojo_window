@@ -116,7 +116,7 @@ Begin ConfigEditor MetaDataConfigEditor
       DataSource      =   ""
       Enabled         =   True
       Format          =   ""
-      Height          =   236
+      Height          =   104
       HelpTag         =   ""
       HideSelection   =   True
       Index           =   -2147483648
@@ -136,7 +136,7 @@ Begin ConfigEditor MetaDataConfigEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
-      Styled          =   True
+      Styled          =   False
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
@@ -213,22 +213,146 @@ Begin ConfigEditor MetaDataConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   334
+      Top             =   302
       Transparent     =   False
       Underline       =   False
       Value           =   False
       Visible         =   True
       Width           =   476
    End
-   Begin CheckBox ConsoleSafeEngramsCheckbox
+   Begin BeaconListbox ModsList
+      AutoDeactivate  =   True
+      AutoHideScrollbars=   True
+      Bold            =   False
+      Border          =   True
+      ColumnCount     =   3
+      ColumnsResizable=   False
+      ColumnWidths    =   "26,*,100"
+      DataField       =   ""
+      DataSource      =   ""
+      DefaultRowHeight=   26
+      Enabled         =   True
+      EnableDrag      =   False
+      EnableDragReorder=   False
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
+      HasHeading      =   True
+      HeadingIndex    =   1
+      Height          =   120
+      HelpTag         =   ""
+      Hierarchical    =   False
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   " 	Mod	Console Safe"
+      Italic          =   False
+      Left            =   132
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   False
+      RequiresSelection=   False
+      RowCount        =   0
+      Scope           =   2
+      ScrollbarHorizontal=   False
+      ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
+      SelectionType   =   0
+      ShowDropIndicator=   False
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   170
+      Transparent     =   False
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   476
+      _ScrollOffset   =   0
+      _ScrollWidth    =   -1
+   End
+   Begin UITweaks.ResizedLabel ModsLabel
       AutoDeactivate  =   True
       Bold            =   False
-      Caption         =   "Show only console-safe engrams"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   7
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Enabled Mods:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   170
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   100
+   End
+   Begin Label ModsNoteLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   86
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   False
+      Multiline       =   True
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Does not change anything on the server, only limits which engrams are shown in lists."
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   204
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   100
+   End
+   Begin CheckBox UncompressedCheckbox
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Disable document compression"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
       Height          =   20
-      HelpTag         =   ""
+      HelpTag         =   "Document compression can be disabled when the plain text version is needed, such as when storing the file in a version control system."
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
@@ -240,13 +364,13 @@ Begin ConfigEditor MetaDataConfigEditor
       LockTop         =   False
       Scope           =   2
       State           =   0
-      TabIndex        =   4
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   302
+      Top             =   334
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -260,7 +384,7 @@ End
 	#tag Event
 		Sub RestoreToDefault()
 		  Self.Document.RemoveConfigGroup(BeaconConfigs.Metadata.ConfigName)
-		  Self.Document.ConsoleModsOnly = False
+		  Redim Self.Document.Mods(-1)
 		End Sub
 	#tag EndEvent
 
@@ -268,16 +392,23 @@ End
 		Sub SetupUI()
 		  Self.TitleField.Text = Self.Document.Title
 		  Self.DescriptionArea.Text = Self.Document.Description
-		  Self.ConsoleSafeEngramsCheckbox.Value = Self.Document.ConsoleModsOnly
 		  Self.PublicFileCheckbox.Value = Self.Document.IsPublic
 		  Self.PublicFileCheckbox.Enabled = (Self.Controller.URL.Scheme = Beacon.DocumentURL.TypeCloud)
+		  Self.UncompressedCheckbox.Value = Not Self.Document.UseCompression
 		  
-		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
-		    If Self.Document.ServerProfile(I).IsConsole Then
-		      Self.ConsoleSafeEngramsCheckbox.Caption = Self.ConsoleSafeEngramsCheckbox.Caption + " (Recommended)"
-		      Exit For I
-		    End If
+		  Dim Mods() As Beacon.ModDetails = LocalData.SharedInstance.AllMods
+		  Dim ScrollPosition As Integer = Self.ModsList.ScrollPosition
+		  Dim ListIndex As Integer = Self.ModsList.ListIndex
+		  Self.ModsList.DeleteAllRows()
+		  For Each Details As Beacon.ModDetails In Mods
+		    Self.ModsList.AddRow("", Details.Name, If(Details.ConsoleSafe, "Yes", "No"))
+		    Dim Idx As Integer = Self.ModsList.LastIndex
+		    Self.ModsList.RowTag(Idx) = Details
+		    Self.ModsList.CellCheck(Idx, 0) = Self.Document.Mods.Ubound = -1 Or Self.Document.Mods.IndexOf(Details.ModID) > -1
 		  Next
+		  Self.ModsList.Sort
+		  Self.ModsList.ScrollPosition = ScrollPosition
+		  Self.ModsList.ListIndex = ListIndex
 		End Sub
 	#tag EndEvent
 
@@ -316,7 +447,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.Description = Trim(Me.Text).ToText
+		  Self.Document.Description = Self.SanitizeText(Trim(Me.Text), False).ToText
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
@@ -338,7 +469,44 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events ConsoleSafeEngramsCheckbox
+#tag Events ModsList
+	#tag Event
+		Sub Open()
+		  Me.ColumnType(0) = Listbox.TypeCheckbox
+		  Me.ColumnAlignment(2) = Listbox.AlignCenter
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub CellAction(row As Integer, column As Integer)
+		  If Self.SettingUp Or Column <> 0 Then
+		    Return
+		  End If
+		  
+		  Dim AllChecked As Boolean = True
+		  For I As Integer = 0 To Me.ListCount - 1
+		    If Not Me.CellCheck(I, 0) Then
+		      AllChecked = False
+		      Exit For I
+		    End If
+		  Next
+		  
+		  If AllChecked Then
+		    Redim Self.Document.Mods(-1)
+		    Self.ContentsChanged = True
+		  Else
+		    For I As Integer = 0 To Me.ListCount - 1
+		      If Me.CellCheck(I, 0) Then
+		        Self.Document.Mods.Append(Beacon.ModDetails(Me.RowTag(I)).ModID)
+		      Else
+		        Self.Document.Mods.Remove(Beacon.ModDetails(Me.RowTag(I)).ModID)
+		      End If
+		    Next
+		    Self.ContentsChanged = Self.ContentsChanged Or Self.Document.Mods.Modified
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events UncompressedCheckbox
 	#tag Event
 		Sub Action()
 		  If Self.SettingUp Then
@@ -346,7 +514,8 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.ConsoleModsOnly = Me.Value
+		  Self.Document.UseCompression = Not Me.Value
+		  Self.Document.Metadata.IsImplicit = False
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
 		End Sub

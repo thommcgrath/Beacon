@@ -159,6 +159,13 @@
 		border-color: $separator-color;
 	}
 	
+	blockquote {
+		$blockquote-color: mix($foreground-color, $background-color, 3%);
+		border-left-color: mix($foreground-color, $blockquote-color, 30%);
+		color: mix($foreground-color, $blockquote-color, 80%);
+		background-color: $blockquote-color;
+	}
+	
 	table.generic {
 		border-color: 1px solid $accent-color;
 		
@@ -427,7 +434,42 @@
 		background-color: $background-color;
 	}
 	
-	
+	/* !Help Article */
+	#knowledge_wrapper {
+		#knowledge_main {
+			h2, h3 {
+				border-color: mix($separator-color, $background-color, 30%);
+			}
+			
+			.affected_ini_keys {
+				$bg: mix($foreground-color, $background-color, 2%);
+				background-color: $bg;
+				text-shadow: 0px 1px 0px $background-color;
+				border-top-color: mix($separator-color, $bg, 35%);
+			}
+		}
+		
+		#knowledge_contents {
+			border-color: $separator-color;
+			
+			ul {
+				li {
+					&.current {
+						color: $accent-color;
+						border-left-color: $accent-color;
+						
+						&::before {
+							color: mix($foreground-color, $background-color, 30%);
+						}
+					}
+					
+					&+li {
+						border-top-color: mix($separator-color, $background-color, 30%);
+					}
+				}
+			}
+		}
+	}
 }
 
 @include setup-colors(#000000, #ffffff, #713a9a);

@@ -248,6 +248,10 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Function Present(Parent As Window, Controller As Beacon.DocumentController) As Integer
+		  If Not Preferences.OnlineEnabled Then
+		    Return StateSaveLocal
+		  End If
+		  
 		  Dim Win As New DocumentSaveToCloudWindow
 		  Win.mController = Controller
 		  Win.TitleField.Text = Controller.Name
@@ -287,7 +291,7 @@ End
 		Sub Action()
 		  Dim NewURL As Text = Beacon.DocumentURL.TypeCloud + "://" + BeaconAPI.URL("/document.php/" + Self.mController.Document.DocumentID).Mid(8)
 		  Self.mController.Document.Title = Self.TitleField.Text.ToText
-		  Self.mController.SaveAs(NewURL, App.Identity)
+		  Self.mController.SaveAs(NewURL)
 		  Self.mResponseState = Self.StateSaved
 		  Self.Hide
 		End Sub

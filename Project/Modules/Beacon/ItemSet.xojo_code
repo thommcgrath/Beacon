@@ -99,7 +99,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Mask As UInt64, ConsoleSafe As Boolean) As Beacon.ItemSet
+		Shared Function FromPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Mask As UInt64, Mods As Beacon.TextList) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
 		  Set.Label = Preset.Label
 		  // Weight is intentionally skipped, as that is relative to the source, no reason for a preset to alter that.
@@ -119,7 +119,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim Qualities() As Beacon.Quality = Beacon.Qualities.All
 		  
 		  For Each Entry As Beacon.PresetEntry In Preset
-		    If Not Entry.ValidForMask(Mask) Or (ConsoleSafe And Not Entry.ConsoleSafe) Then
+		    If Not Entry.ValidForMask(Mask) Or Not Entry.SafeForMods(Mods) Then
 		      Continue
 		    End If
 		    
@@ -414,13 +414,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Sub ReconfigureWithPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Document As Beacon.Document)
-		  Self.ReconfigureWithPreset(Preset, ForLootSource, Document.MapCompatibility, Document.ConsoleModsOnly)
+		  Self.ReconfigureWithPreset(Preset, ForLootSource, Document.MapCompatibility, Document.Mods)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReconfigureWithPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Mask As UInt64, ConsoleSafe As Boolean)
-		  Dim Clone As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, ForLootSource, Mask, ConsoleSafe)
+		Sub ReconfigureWithPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Mask As UInt64, Mods As Beacon.TextList)
+		  Dim Clone As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, ForLootSource, Mask, Mods)
 		  If Self.SourcePresetID = Preset.PresetID And Self.Hash = Clone.Hash Then
 		    Return
 		  End If

@@ -1,7 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
-BeaconTemplate::AddHeaderLine('<meta name="description" content="Using Ark\'s ConfigOverrideSupplyCrateItems to modify loot crate contents by hand is a maddening experience. Beacon makes it easy.">');
+BeaconTemplate::SetPageDescription('Using Ark\'s ConfigOverrideSupplyCrateItems to modify loot crate contents by hand is a maddening experience. Beacon makes it easy.');
 
 $hero_suffix = BeaconCommon::IsWindows() ? 'windows' : 'mac';
 
@@ -196,7 +196,7 @@ BeaconTemplate::FinishStyles();
 		<div class="feature">
 			<h2>Plus mods and more<br><span class="subtitle text-yellow">Painlessly add engrams from any mod</span></h2>
 			<p>Users wanting to add mod items to their loot drops only need a list of the admin spawn codes. Give Beacon the link to the web page with the codes, or copy &amp; paste them, and Beacon can do the rest. No special formatting required, Beacon will scour the content for spawn codes.</p>
-			<p>Mod authors can also <a href="/read/f21f4863-8043-4323-b6df-a9f96bbd982c">add support for their mod</a> directly to Beacon. The items show up to all Beacon users automatically, and Beacon will also maintain a spawn codes page just for your mod. For example, <a href="/mods/731604991/spawncodes">here is the spawn codes for Structures Plus</a>. The engrams list can be updated at any time from within Beacon, or Beacon's API can pull the engrams list from your own server (or Steam page) every few hours.</p>
+			<p>Mod authors can also <a href="/help/registering_your_mod_with_beacon">add support for their mod</a> directly to Beacon. The items show up to all Beacon users automatically, and Beacon will also maintain a spawn codes page just for your mod. For example, <a href="/mods/731604991/spawncodes">here is the spawn codes for Structures Plus</a>. The engrams list can be updated at any time from within Beacon, or Beacon's API can pull the engrams list from your own server (or Steam page) every few hours.</p>
 		</div>
 	</div>
 	<div id="index_updates" class="separator-color text-lighter">
@@ -204,7 +204,7 @@ BeaconTemplate::FinishStyles();
 		<ul>
 			<?php
 			
-			$results = $database->Query('SELECT message, secondary_message, action_url, last_update FROM client_notices WHERE (min_version IS NULL OR min_version <= $1) AND (max_version IS NULL OR max_version >= $1) ORDER BY last_update DESC LIMIT 4;', $public_build);
+			$results = $database->Query('(SELECT message, secondary_message, action_url, last_update FROM client_notices WHERE (min_version IS NULL OR min_version <= $1) AND (max_version IS NULL OR max_version >= $1)) UNION (SELECT subject AS message, preview AS secondary_message, \'/blog/\' || article_slug AS action_url, last_updated AS last_update FROM blog_articles WHERE publish_date < CURRENT_TIMESTAMP) ORDER BY last_update DESC LIMIT 4;', $public_build);
 			while (!$results->EOF()) {
 				echo '<li>';
 				echo '<span class="title">' . htmlentities($results->Field('message')) . '</span>';

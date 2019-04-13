@@ -181,6 +181,12 @@ case 'POST':
 		$exception_id = $_POST['uuid'];
 		$comments = trim($_POST['comments']);
 		$user_id = isset($_POST['user_id']) ? $_POST['user_id'] : null;
+		if (!is_null($user_id)) {
+			$user = BeaconUser::GetByUserID($user_id);
+			if (is_null($user)) {
+				$user_id = null;
+			}
+		}
 		
 		if (BeaconExceptions::AddComments($exception_id, $comments, $user_id)) {
 			echo '<h1>Beacon Error Reporter</h1><p>Thank you, your comments have been added.</p>';

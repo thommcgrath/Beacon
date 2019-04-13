@@ -13,6 +13,12 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ConsoleSafeMods() As String()
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetBooleanVariable(Key As String) As Boolean
 		  
 		End Function
@@ -103,13 +109,13 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As String, ConsoleSafe As Boolean) As Beacon.Engram()
+		Function SearchForEngrams(SearchText As String, Mods As Beacon.TextList, Tags() As String) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForLootSources(SearchText As String, ConsoleSafe As Boolean, IncludeExperimental As Boolean) As Beacon.LootSource()
+		Function SearchForLootSources(SearchText As String, Mods As Beacon.TextList, IncludeExperimental As Boolean) As Beacon.LootSource()
 		  
 		End Function
 	#tag EndMethod

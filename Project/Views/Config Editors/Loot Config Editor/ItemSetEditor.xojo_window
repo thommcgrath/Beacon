@@ -62,6 +62,7 @@ Begin BeaconContainer ItemSetEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -152,6 +153,7 @@ Begin BeaconContainer ItemSetEditor
       HasBackColor    =   False
       Height          =   23
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -221,8 +223,8 @@ End
 		    Sources.Append(EntryList.RowTag(I))
 		  Next
 		  
-		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.ConsoleModsOnly, Sources, Prefilter)
-		  If Entries = Nil Then
+		  Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods, Sources, Prefilter)
+		  If Entries = Nil Or Entries.Ubound <> Sources.Ubound Then
 		    Return
 		  End If
 		  
@@ -354,7 +356,15 @@ End
 		      QuantityText = Entry.MinQuantity.ToText + " - " + Entry.MaxQuantity.ToText
 		    End If
 		    
-		    Dim FiguresText As String = Str(Round(Entry.RawWeight), "0") + " wt"
+		    Dim FiguresText As String
+		    Dim Weight As Double = Entry.RawWeight
+		    If Floor(Weight) = Weight Then
+		      FiguresText = Format(Weight, "-0,")
+		    Else
+		      FiguresText = Format(Weight, "-0,.0####")
+		    End If
+		    FiguresText = FiguresText + " wt"
+		    
 		    If Entry.CanBeBlueprint Then
 		      FiguresText = FiguresText + ", " + Str(BlueprintChance, "0%") + " bp"
 		    End If
@@ -646,7 +656,7 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AddEntry"
-		    Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.ConsoleModsOnly)
+		    Dim Entries() As Beacon.SetEntry = EntryEditor.Present(Self, Self.Document.Mods)
 		    If Entries = Nil Then
 		      Return
 		    End If

@@ -93,7 +93,7 @@ abstract class BeaconExceptions {
 		}
 		$database->Query('INSERT INTO exception_signatures (exception_id, client_build, client_hash, trace) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING;', $exception_id, $client_build, $client_hash, $trace);
 		if (is_null($user_id) == false) {
-			$database->Query('INSERT INTO exception_users (exception_id, user_id) VALUES ($1, $2) ON CONFLICT DO NOTHING;', $exception_id, $user_id);
+			$database->Query('INSERT INTO exception_users (exception_id, user_id) SELECT $1, user_id FROM users WHERE user_id = $2 ON CONFLICT DO NOTHING;', $exception_id, $user_id);
 		}
 		$database->Commit();
 		
@@ -140,7 +140,7 @@ abstract class BeaconExceptions {
 		$database->Query('INSERT INTO exceptions (exception_id, min_reported_build, max_reported_build, exception_class, location, reason, trace) VALUES ($1, $2, $2, $3, $4, $5, $6);', $exception_id, $client_build, $type, $location, $reason, $trace);
 		$database->Query('INSERT INTO exception_signatures (exception_id, client_build, client_hash, trace) VALUES ($1, $2, $3, $4);', $exception_id, $client_build, $client_hash, $trace);
 		if (!is_null($user_id)) {
-			$database->Query('INSERT INTO exception_users (exception_id, user_id) VALUES ($1, $2);', $exception_id, $user_id);
+			$database->Query('INSERT INTO exception_users (exception_id, user_id) SELECT $1, user_id FROM users WHERE user_id = $2;', $exception_id, $user_id);
 		}
 		$database->Commit();
 		

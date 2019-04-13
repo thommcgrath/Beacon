@@ -255,15 +255,6 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function SanitizeText(Source As String) As String
-		  Dim Sanitizer As New RegEx
-		  Sanitizer.SearchPattern = "[^\x0A\x0D\x20-\x7E]+"
-		  Sanitizer.ReplacementPattern = ""
-		  Return Sanitizer.Replace(Source).ConvertEncoding(Encodings.ASCII)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Function SelectionIsEncrypted() As Boolean
 		  If Self.ConfigArea.SelStart >= Self.ConfigArea.Text.Len Then
 		    Return False

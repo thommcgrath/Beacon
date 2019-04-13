@@ -1,61 +1,8 @@
 #tag Class
 Protected Class DocumentController
-	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Success Then
-		    RaiseEvent DeleteSuccess
-		  Else
-		    RaiseEvent DeleteError(Message)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentDownload(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  // Reminder: this will happen on the main thread
-		  #Pragma Unused Message
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  
-		  If Not Success Then
-		    Self.mBusy = False
-		    Return
-		  End If
-		  
-		  Try
-		    Self.mTextContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(RawReply)
-		  Catch Err As RuntimeException
-		    Self.mBusy = False
-		  End Try
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub APICallback_DocumentUpload(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  Self.mBusy = False
-		  
-		  If Success Then
-		    If Self.mClearModifiedOnWrite Then
-		      Self.mDocument.Modified = False
-		    End If
-		    RaiseEvent WriteSuccess
-		  Else
-		    RaiseEvent WriteError(Message)
-		  End If
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Busy() As Boolean
-		  Return Self.mBusy
+		  Return Self.mActiveThread <> Nil And Self.mActiveThread.State <> Thread.NotRunning
 		End Function
 	#tag EndMethod
 
@@ -69,90 +16,38 @@ Protected Class DocumentController
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub CheckAPISocket()
-		  If Self.mAPISocket <> Nil Then
-		    Return
-		  End If
-		  
-		  Self.mAPISocket = New BeaconAPI.Socket
-		  AddHandler Self.mAPISocket.WorkProgress, WeakAddressOf Self.mAPISocket_WorkProgress
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub CheckSocket()
-		  If Self.mSocket <> Nil Then
-		    Return
-		  End If
-		  
-		  Self.mSocket = New Xojo.Net.HTTPSocket
-		  AddHandler Self.mSocket.Error, WeakAddressOf Self.mSocket_Error
-		  AddHandler Self.mSocket.PageReceived, WeakAddressOf Self.mSocket_PageReceived
-		  AddHandler Self.mSocket.ReceiveProgress, WeakAddressOf Self.mSocket_ReceiveProgress
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
-		Sub Constructor()
-		  Self.Constructor(Beacon.DocumentURL.TypeTransient + "://" + Beacon.CreateUUID)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Constructor(Document As Beacon.Document)
+		Sub Constructor(Document As Beacon.Document, WithIdentity As Beacon.Identity)
 		  Self.mDocumentURL = Beacon.DocumentURL.TypeTransient + "://" + Document.DocumentID + "?name=" + Beacon.EncodeURLComponent(Document.Title)
 		  Self.mLoaded = True
 		  Self.mDocument = Document
+		  Self.mIdentity = WithIdentity
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(URL As Beacon.DocumentURL)
+		Sub Constructor(URL As Beacon.DocumentURL, WithIdentity As Beacon.Identity)
 		  Self.mDocumentURL = URL
-		  
-		  Self.mLoadThread = New Beacon.Thread
-		  AddHandler Self.mLoadThread.Run, WeakAddressOf Self.mLoadThread_Run
+		  Self.mIdentity = WithIdentity
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(WithIdentity As Beacon.Identity)
+		  Self.Constructor(Beacon.DocumentURL.TypeTransient + "://" + Beacon.CreateUUID, WithIdentity)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Delete()
-		  If Not Self.CanWrite Then
-		    RaiseEvent DeleteError("Document is not writable")
+		  If Self.Busy Then
 		    Return
 		  End If
 		  
-		  Select Case Self.mDocumentURL.Scheme
-		  Case Beacon.DocumentURL.TypeCloud
-		    Dim Request As New BeaconAPI.Request(Self.mDocumentURL.WithScheme("https"), "DELETE", AddressOf APICallback_DocumentDelete)
-		    Request.Sign(App.Identity)
-		    Self.CheckAPISocket()
-		    Self.mAPISocket.Start(Request)
-		  Case Beacon.DocumentURL.TypeLocal
-		    Try
-		      Dim File As New Beacon.FolderItem(Self.mDocumentURL.Path)
-		      If File.Exists Then
-		        File.Delete  
-		      End If
-		      RaiseEvent DeleteSuccess
-		    Catch Err As RuntimeException
-		      RaiseEvent DeleteError(Err.Explanation)
-		    End Try
-		  Case Beacon.DocumentURL.TypeTransient
-		    Dim Path As Text = Self.mDocumentURL.URL.Mid(Beacon.DocumentURL.TypeTransient.Length + 3)
-		    Try
-		      Dim File As Beacon.FolderItem = Beacon.FolderItem.Temporary.Child(Path + BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText)
-		      If File.Exists Then
-		        File.Delete
-		      End If
-		      RaiseEvent DeleteSuccess
-		    Catch Err As RuntimeException
-		      RaiseEvent DeleteError(Err.Explanation)
-		    End Try
-		  Else
-		    RaiseEvent DeleteError("Unknown storage scheme " + Self.mDocumentURL.Scheme)
-		  End Select
+		  Self.mActiveThread = New Thread
+		  Self.mActiveThread.Priority = Thread.HighPriority
+		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Delete
+		  Self.mActiveThread.Run
 		End Sub
 	#tag EndMethod
 
@@ -175,20 +70,42 @@ Protected Class DocumentController
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Shared Function ErrorMessageFromSocket(Socket As SimpleHTTP.SynchronousHTTPSocket) As Text
+		  Dim Message As Text = "The error reason is unknown"
+		  If Socket.LastContent <> Nil Then
+		    Try
+		      Message = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Socket.LastContent, True)
+		      Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Message)
+		      If Dict.HasKey("message") Then
+		        Message = Dict.Value("message")
+		      ElseIf Dict.HasKey("description") Then
+		        Message = Dict.Value("description")
+		      End If
+		    Catch Err As RuntimeException
+		      
+		    End Try
+		  ElseIf Socket.LastException <> Nil Then
+		    Message = Socket.LastException.Explanation
+		  End If
+		  Return Message
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
-		Sub Load(WithIdentity As Beacon.Identity)
+		Sub Load()
 		  If Self.Loaded Then
 		    RaiseEvent Loaded(Self.mDocument)
 		    Return
 		  End If
 		  
-		  If Self.mBusy Then
+		  If Self.Busy Then
 		    Return
 		  End If
 		  
-		  Self.mBusy = True
-		  Self.mIdentity = WithIdentity
-		  Self.mLoadThread.Run
+		  Self.mActiveThread = New Thread
+		  AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Load
+		  Self.mActiveThread.Run
 		  
 		  Self.mLoadStartedCallbackKey = CallLater.Schedule(1500, WeakAddressOf TriggerLoadStarted)
 		End Sub
@@ -198,138 +115,6 @@ Protected Class DocumentController
 		Function Loaded() As Boolean
 		  Return Self.mLoaded
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mAPISocket_WorkProgress(Sender As BeaconAPI.Socket, Request As BeaconAPI.Request, BytesReceived As Int64, BytesTotal As Int64)
-		  #Pragma Unused Sender
-		  #Pragma Unused Request
-		  
-		  RaiseEvent LoadProgress(BytesReceived, BytesTotal)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mLoadThread_Run(Sender As Thread)
-		  Select Case Self.mDocumentURL.Scheme
-		  Case Beacon.DocumentURL.TypeCloud
-		    // authenticated api request
-		    Self.CheckAPISocket()
-		    
-		    Dim Request As New BeaconAPI.Request(Self.mDocumentURL.WithScheme("https"), "GET", AddressOf APICallback_DocumentDownload)
-		    Request.Sign(Self.mIdentity)
-		    Self.mAPISocket.Start(Request)
-		  Case Beacon.DocumentURL.TypeWeb
-		    // basic https request
-		    Self.CheckSocket()
-		    
-		    Self.mSocket.Send("GET", Self.mDocumentURL.URL)
-		  Case Beacon.DocumentURL.TypeLocal
-		    // just a local file
-		    Dim Success As Boolean
-		    Try
-		      Dim File As Beacon.FolderItem
-		      If Self.mDocumentURL.HasParam("saveinfo") Then
-		        File = Beacon.FolderItem.FromSaveInfo(Self.mDocumentURL.Param("saveinfo"))
-		      Else
-		        File = New Beacon.FolderItem(Self.mDocumentURL.Path)
-		      End If
-		      If File <> Nil And File.Exists Then
-		        Self.mTextContent = File.Read(Xojo.Core.TextEncoding.UTF8)
-		        Self.mFileRef = File // Just to keep the security scoped bookmark open
-		        Success = True
-		      End If
-		    Catch Err As RuntimeException
-		      
-		    End Try
-		    
-		    If Not Success Then
-		      Self.mBusy = False
-		      Call CallLater.Schedule(0, AddressOf TriggerLoadError)
-		      Return
-		    End If
-		  Case Beacon.DocumentURL.TypeTransient
-		    // just a local file stored in the the temp directory
-		    Dim File As Beacon.FolderItem = Beacon.FolderItem.Temporary.Child(Self.mDocumentURL.Path + BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText)
-		    If File.Exists Then
-		      Self.mTextContent = File.Read(Xojo.Core.TextEncoding.UTF8)
-		    Else
-		      Dim Temp As New Beacon.Document
-		      Self.mTextContent = Xojo.Data.GenerateJSON(Temp.ToDictionary(Self.mIdentity))
-		    End If
-		  Else
-		    Self.mBusy = False
-		    Return
-		  End Select
-		  
-		  // Wait for the loading to finish or error
-		  While Self.mTextContent = "" And Self.mBusy
-		    Sender.Sleep(50)
-		  Wend
-		  
-		  Dim TextContent As Text = Self.mTextContent
-		  Self.mTextContent = ""
-		  
-		  If Not Self.mBusy Then
-		    Call CallLater.Schedule(0, AddressOf TriggerLoadError)
-		    Return
-		  End If
-		  Self.mBusy = False
-		  
-		  Dim Document As Beacon.Document = Beacon.Document.FromText(TextContent, Self.mIdentity)
-		  If Document = Nil Then
-		    Call CallLater.Schedule(0, AddressOf TriggerLoadError)
-		    Return
-		  End If
-		  
-		  If Document.Title.Trim = "" Then
-		    Document.Title = Self.Name
-		  End If
-		  If Self.mClearPublishStatus Then
-		    Document.IsPublic = False
-		  End If
-		  
-		  Self.mDocument = Document
-		  Self.mLoaded = True
-		  Call CallLater.Schedule(0, AddressOf TriggerLoadSuccess)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mSocket_Error(Sender As Xojo.Net.HTTPSocket, Err As RuntimeException)
-		  #Pragma Unused Sender
-		  #Pragma Unused Err
-		  
-		  Self.mBusy = False
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mSocket_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Sender
-		  #Pragma Unused URL
-		  
-		  If HTTPStatus < 200 Or HTTPStatus >= 300 Then
-		    Self.mBusy = False
-		    Return
-		  End If
-		  
-		  Try
-		    Self.mTextContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
-		    Self.mClearPublishStatus = True
-		  Catch Err As RuntimeException
-		    Self.mBusy = False
-		  End Try
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub mSocket_ReceiveProgress(Sender As Xojo.Net.HTTPSocket, BytesReceived As Int64, TotalBytes As Int64, NewData As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Sender
-		  #Pragma Unused NewData
-		  
-		  RaiseEvent LoadProgress(BytesReceived, TotalBytes)
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -343,51 +128,259 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Save(WithIdentity As Beacon.Identity)
-		  If Self.mBusy Or Self.Loaded = False Then
+		Sub Save()
+		  If Self.Busy Or Self.Loaded = False Then
 		    Return
 		  End If
 		  
 		  If Self.mDocument.Title <> "" Then
 		    Self.mDocumentURL.Name = Self.mDocument.Title
 		  End If
-		  Self.WriteTo(Self.mDocumentURL, WithIdentity, True)
+		  Self.WriteTo(Self.mDocumentURL, True)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveACopy(Destination As Beacon.DocumentURL, WithIdentity As Beacon.Identity) As Beacon.DocumentController
+		Function SaveACopy(Destination As Beacon.DocumentURL) As Beacon.DocumentController
 		  // Like Save As, but the destination is not saved
 		  If Self.Loaded = False Then
 		    Return Nil
 		  End If
 		  
-		  Dim Controller As New Beacon.DocumentController(Self.mDocument)
+		  Dim Controller As New Beacon.DocumentController(Self.mDocument, Self.mIdentity)
 		  Controller.mDocumentURL = Destination
 		  If Self.mDocument.Title <> "" Then
 		    Destination.Name = Self.mDocument.Title
 		  End If
-		  Controller.WriteTo(Destination, WithIdentity, False)
+		  Controller.WriteTo(Destination, False)
 		  Return Controller
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SaveAs(Destination As Beacon.DocumentURL, WithIdentity As Beacon.Identity)
-		  If Self.mBusy Or Self.Loaded = False Then
+		Sub SaveAs(Destination As Beacon.DocumentURL)
+		  If Self.Busy Or Self.Loaded = False Then
 		    Return
 		  End If
 		  
 		  Self.mDocumentURL = Destination
-		  Self.Save(WithIdentity)
+		  Self.Save()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub TriggerLoadError()
+		Private Sub Thread_Delete(Sender As Thread)
+		  #Pragma Unused Sender
+		  
+		  If Not Self.CanWrite Then
+		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Document is not writable")
+		    Return
+		  End If
+		  
+		  Select Case Self.mDocumentURL.Scheme
+		  Case Beacon.DocumentURL.TypeCloud
+		    Dim Socket As New SimpleHTTP.SynchronousHTTPSocket
+		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
+		    Socket.Send("DELETE", Self.mDocumentURL.WithScheme("https").URL)
+		    If Socket.LastHTTPStatus = 200 Then
+		      Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
+		    Else
+		      Dim Message As Text = Self.ErrorMessageFromSocket(Socket)
+		      Call CallLater.Schedule(0, AddressOf TriggerDeleteError, Message)
+		    End If
+		  Case Beacon.DocumentURL.TypeLocal
+		    Try
+		      Dim File As New Beacon.FolderItem(Self.mDocumentURL.Path)
+		      If File.Exists Then
+		        File.Delete  
+		      End If
+		      Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
+		    Catch Err As RuntimeException
+		      Call CallLater.Schedule(0, AddressOf TriggerDeleteError, Err.Explanation)
+		    End Try
+		  Case Beacon.DocumentURL.TypeTransient
+		    Dim Path As Text = Self.mDocumentURL.URL.Mid(Beacon.DocumentURL.TypeTransient.Length + 3)
+		    Try
+		      Dim File As Beacon.FolderItem = Beacon.FolderItem.Temporary.Child(Path + BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText)
+		      If File.Exists Then
+		        File.Delete
+		      End If
+		      Call CallLater.Schedule(0, AddressOf TriggerDeleteSuccess)
+		    Catch Err As RuntimeException
+		      Call CallLater.Schedule(0, AddressOf TriggerDeleteError, Err.Explanation)
+		    End Try
+		  Else
+		    Call CallLater.Schedule(0, AddressOf TriggerDeleteError, "Unknown storage scheme " + Self.mDocumentURL.Scheme)
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Thread_Load(Sender As Thread)
+		  #Pragma Unused Sender
+		  
+		  Dim FileContent As Xojo.Core.MemoryBlock
+		  Dim ClearPublishStatus As Boolean
+		  
+		  Select Case Self.mDocumentURL.Scheme
+		  Case Beacon.DocumentURL.TypeCloud
+		    // authenticated api request
+		    Dim Socket As New SimpleHTTP.SynchronousHTTPSocket
+		    Socket.RequestHeader("Accept-Encoding") = "gzip"
+		    Socket.RequestHeader("Authorization") = "Session " + Preferences.OnlineToken
+		    Socket.Send("GET", Self.mDocumentURL.WithScheme("https").URL)
+		    If Socket.LastHTTPStatus >= 200 Then
+		      FileContent = Socket.LastContent
+		    Else
+		      Dim Message As Text = Self.ErrorMessageFromSocket(Socket)
+		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, Message)
+		    End If
+		  Case Beacon.DocumentURL.TypeWeb
+		    // basic https request
+		    Dim Socket As New SimpleHTTP.SynchronousHTTPSocket
+		    Socket.RequestHeader("Accept-Encoding") = "gzip"
+		    Socket.Send("GET", Self.mDocumentURL.URL)
+		    If Socket.LastHTTPStatus >= 200 Then
+		      FileContent = Socket.LastContent
+		      ClearPublishStatus = True
+		    Else
+		      Dim Message As Text = Self.ErrorMessageFromSocket(Socket)
+		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, Message)
+		    End If
+		  Case Beacon.DocumentURL.TypeLocal
+		    // just a local file
+		    Dim Success As Boolean
+		    Dim Message As Text = "Could not load data from file"
+		    Try
+		      Dim File As Beacon.FolderItem
+		      If Self.mDocumentURL.HasParam("saveinfo") Then
+		        File = Beacon.FolderItem.FromSaveInfo(Self.mDocumentURL.Param("saveinfo"))
+		      Else
+		        File = New Beacon.FolderItem(Self.mDocumentURL.Path)
+		      End If
+		      If File <> Nil And File.Exists Then
+		        FileContent = File.Read()
+		        Self.mFileRef = File // Just to keep the security scoped bookmark open
+		        Success = True
+		      End If
+		    Catch Err As RuntimeException
+		      Message = Err.Explanation
+		    End Try
+		    
+		    If Not Success Then
+		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, Message)
+		      Return
+		    End If
+		  Case Beacon.DocumentURL.TypeTransient
+		    // just a local file stored in the the temp directory
+		    Dim File As Beacon.FolderItem = Beacon.FolderItem.Temporary.Child(Self.mDocumentURL.Path + BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText)
+		    If File.Exists Then
+		      FileContent = File.Read()
+		    Else
+		      Dim Temp As New Beacon.Document
+		      FileContent = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Xojo.Data.GenerateJSON(Temp.ToDictionary(Self.mIdentity)))
+		    End If
+		  Else
+		    Return
+		  End Select
+		  
+		  If FileContent = Nil Then
+		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, "File is empty")
+		    Return
+		  End If
+		  
+		  Dim TextContent As Text
+		  If FileContent.Size > 2 And FileContent.UInt8Value(0) = &h1F And FileContent.UInt8Value(1) = &h8B Then
+		    #if Not TargetiOS
+		      Dim Compressor As New _GZipString
+		      Dim Decompressed As String = Compressor.Decompress(Beacon.ConvertMemoryBlock(FileContent))
+		      If Decompressed <> "" Then
+		        TextContent = Decompressed.DefineEncoding(Encodings.UTF8).ToText
+		      Else
+		        Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Unable to decompress file")
+		        Return
+		      End If
+		    #else
+		      Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Compressed files are not supported in this version")
+		      Return
+		    #endif
+		  Else
+		    TextContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(FileContent)
+		  End If
+		  
+		  Dim Document As Beacon.Document = Beacon.Document.FromText(TextContent, Self.mIdentity)
+		  If Document = Nil Then
+		    Call CallLater.Schedule(0, AddressOf TriggerLoadError, "Unable to parse document")
+		    Return
+		  End If
+		  
+		  If Document.Title.Trim = "" Then
+		    Document.Title = Self.Name
+		  End If
+		  If ClearPublishStatus Then
+		    Document.IsPublic = False
+		  End If
+		  
+		  Self.mDocument = Document
+		  Self.mLoaded = True
+		  Call CallLater.Schedule(0, AddressOf TriggerLoadSuccess)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Thread_Upload(Sender As Thread)
+		  #Pragma Unused Sender
+		  
+		  Dim JSON As Text = Xojo.Data.GenerateJSON(Self.mDocument.ToDictionary(Self.mIdentity))
+		  Dim Body As Xojo.Core.MemoryBlock
+		  Dim Headers As New Xojo.Core.Dictionary
+		  Headers.Value("Authorization") = "Session " + Preferences.OnlineToken
+		  #if Not TargetiOS
+		    Dim Compressor As New _GZipString
+		    Compressor.UseHeaders = True
+		    
+		    Dim Bytes As Global.MemoryBlock = Compressor.Compress(JSON, _GZipString.DefaultCompression)
+		    Headers.Value("Content-Encoding") = "gzip"
+		    Body = Beacon.ConvertMemoryBlock(Bytes)
+		  #else
+		    Body = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(JSON)
+		  #endif
+		  
+		  Dim Socket As New SimpleHTTP.SynchronousHTTPSocket
+		  For Each Entry As Xojo.Core.DictionaryEntry In Headers
+		    Socket.RequestHeader(Entry.Key) = Entry.Value
+		  Next
+		  Socket.SetRequestContent(Body, "application/json")
+		  Socket.Send("POST", Self.mDocumentURL.WithScheme("https").URL)
+		  If Socket.LastHTTPStatus = 200 Or Socket.LastHTTPStatus = 201 Then
+		    If Self.mClearModifiedOnWrite Then
+		      Self.mDocument.Modified = False
+		    End If
+		    Call CallLater.Schedule(0, AddressOf TriggerWriteSuccess)
+		  Else
+		    Dim Message As Text = Self.ErrorMessageFromSocket(Socket)
+		    Call CallLater.Schedule(0, AddressOf TriggerWriteError, Message)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TriggerDeleteError(Reason As Auto)
+		  RaiseEvent DeleteError(Reason)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TriggerDeleteSuccess()
+		  RaiseEvent DeleteSuccess
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TriggerLoadError(Reason As Auto)
 		  CallLater.Cancel(Self.mLoadStartedCallbackKey)
 		  
-		  RaiseEvent LoadError()
+		  RaiseEvent LoadError(Reason)
 		End Sub
 	#tag EndMethod
 
@@ -406,18 +399,14 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UploadThread_Run(Sender As Beacon.Thread)
-		  Self.CheckAPISocket()
-		  
-		  Sender.LockUserData()
-		  Dim WithIdentity As Beacon.Identity = Sender.UserData
-		  
-		  Dim Body As Text = Xojo.Data.GenerateJSON(Self.mDocument.ToDictionary(WithIdentity))
-		  Dim Request As New BeaconAPI.Request(Self.mDocumentURL.WithScheme("https"), "POST", Body, "application/json", AddressOf APICallback_DocumentUpload)
-		  Request.Sign(WithIdentity)
-		  Sender.UnlockUserData()
-		  
-		  Self.mAPISocket.Start(Request)
+		Private Sub TriggerWriteError(Reason As Auto)
+		  RaiseEvent WriteError(Reason)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub TriggerWriteSuccess()
+		  RaiseEvent WriteSuccess
 		End Sub
 	#tag EndMethod
 
@@ -429,8 +418,6 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h21
 		Private Sub Writer_Finished(Sender As Beacon.JSONWriter, Destination As Beacon.FolderItem)
-		  Self.mBusy = False
-		  
 		  If Sender = Nil Or Destination = Nil Then
 		    Return
 		  End If
@@ -466,23 +453,21 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub WriteTo(Destination As Beacon.DocumentURL, WithIdentity As Beacon.Identity, ClearModified As Boolean)
-		  If Self.mBusy Or Self.Loaded = False Or Destination.Scheme = Beacon.DocumentURL.TypeWeb Then
+		Private Sub WriteTo(Destination As Beacon.DocumentURL, ClearModified As Boolean)
+		  If Self.Busy Or Self.Loaded = False Or Destination.Scheme = Beacon.DocumentURL.TypeWeb Then
 		    Return
 		  End If
 		  
-		  Self.mBusy = True
 		  Self.mClearModifiedOnWrite = ClearModified
 		  
 		  Select Case Destination.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
-		    Dim UploadThread As New Beacon.Thread
-		    UploadThread.Priority = Thread.LowestPriority
-		    UploadThread.UserData = WithIdentity
-		    AddHandler UploadThread.Run, AddressOf UploadThread_Run
-		    UploadThread.Run
+		    Self.mActiveThread = New Thread
+		    Self.mActiveThread.Priority = Thread.LowestPriority
+		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
+		    Self.mActiveThread.Run
 		  Case Beacon.DocumentURL.TypeLocal
-		    Dim Writer As New Beacon.JSONWriter(Self.mDocument, WithIdentity, New Beacon.FolderItem(Destination.Path))
+		    Dim Writer As New Beacon.JSONWriter(Self.mDocument, Self.mIdentity, New Beacon.FolderItem(Destination.Path))
 		    AddHandler Writer.Finished, AddressOf Writer_Finished
 		    Writer.Run
 		  End Select
@@ -503,7 +488,7 @@ Protected Class DocumentController
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event LoadError()
+		Event LoadError(Reason As Text)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -524,19 +509,11 @@ Protected Class DocumentController
 
 
 	#tag Property, Flags = &h21
-		Private mAPISocket As BeaconAPI.Socket
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mBusy As Boolean
+		Private mActiveThread As Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mClearModifiedOnWrite As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mClearPublishStatus As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -564,15 +541,7 @@ Protected Class DocumentController
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLoadThread As Beacon.Thread
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mSocket As Xojo.Net.HTTPSocket
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mTextContent As Text
+		Private mUploadThread As Beacon.Thread
 	#tag EndProperty
 
 

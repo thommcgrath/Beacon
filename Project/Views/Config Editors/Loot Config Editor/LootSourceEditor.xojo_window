@@ -62,6 +62,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   5
@@ -80,6 +81,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       _ScrollWidth    =   -1
    End
    Begin Beacon.ImportThread Importer
+      Enabled         =   True
       GameIniContent  =   ""
       GameUserSettingsIniContent=   ""
       Index           =   -2147483648
@@ -140,6 +142,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   0
@@ -157,6 +160,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
          HasBackColor    =   False
          Height          =   464
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -277,6 +281,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackColor    =   False
       Height          =   183
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   True
@@ -335,6 +340,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackColor    =   False
       Height          =   23
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -395,6 +401,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       HasBackColor    =   False
       Height          =   76
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
       LockBottom      =   False
@@ -402,6 +409,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockLeft        =   True
       LockRight       =   False
       LockTop         =   True
+      Notes           =   ""
       Scope           =   0
       TabIndex        =   8
       TabPanelIndex   =   0
@@ -647,7 +655,7 @@ End
 		  
 		  Dim Added As Boolean
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Source, Self.Document.MapCompatibility, Self.Document.ConsoleModsOnly)
+		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.FromPreset(SelectedPreset, Source, Self.Document.MapCompatibility, Self.Document.Mods)
 		    If Source.IndexOf(Set) = -1 Then
 		      Source.Append(Set)
 		      Added = True

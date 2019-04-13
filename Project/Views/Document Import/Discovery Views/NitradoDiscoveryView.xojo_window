@@ -325,6 +325,15 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub Close()
+		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
+		    MiniBrowser(Self.mBrowser.Value).Close
+		    Self.mBrowser = Nil
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub GetValuesFromDocument(Document As Beacon.Document)
 		  Self.AuthClient.AuthData = Document.OAuthData("Nitrado")
 		End Sub
@@ -461,6 +470,10 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mBrowser As WeakRef
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSelectedServers As Xojo.Core.Dictionary
 	#tag EndProperty
 
@@ -477,6 +490,11 @@ End
 #tag Events FindingCancelButton
 	#tag Event
 		Sub Action()
+		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
+		    MiniBrowser(Self.mBrowser.Value).Close
+		    Self.mBrowser = Nil
+		  End If
+		  
 		  Self.ShouldCancel()
 		End Sub
 	#tag EndEvent
@@ -533,6 +551,11 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ShowURL(URL As String) As Beacon.WebView
+		  If Self.mBrowser <> Nil And Self.mBrowser.Value <> Nil And Self.mBrowser.Value IsA MiniBrowser Then
+		    MiniBrowser(Self.mBrowser.Value).Close
+		    Self.mBrowser = Nil
+		  End If
+		  
 		  // This code is disabled because Nitrado login is currently working in embedded webkit in 10.10
 		  #if false and TargetMacOS
 		    Declare Function NSClassFromString Lib "Cocoa" (ClassName As CFStringRef) As Ptr
@@ -547,7 +570,11 @@ End
 		    End If
 		  #endif
 		  
-		  Return MiniBrowser.ShowURL(URL)
+		  Dim Browser As MiniBrowser = MiniBrowser.ShowURL(URL)
+		  If Browser <> Nil Then
+		    Self.mBrowser = New WeakRef(Browser)
+		  End If
+		  Return Browser
 		End Function
 	#tag EndEvent
 #tag EndEvents

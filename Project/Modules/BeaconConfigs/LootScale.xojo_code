@@ -30,7 +30,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Identity
 		  
 		  Dict.Value("Multiplier") = Self.mMultiplier
-		  Dict.Value("App Version") = App.NonReleaseVersion
+		  Dict.Value("App Version") = App.BuildNumber
 		End Sub
 	#tag EndEvent
 

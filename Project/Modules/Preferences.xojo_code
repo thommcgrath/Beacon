@@ -263,6 +263,25 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.TextValue("Selected Tag", "")
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If OnlineToken = Value Then
+			    Return
+			  End If
+			  
+			  mManager.TextValue("Selected Tag") = Value
+			End Set
+		#tag EndSetter
+		Protected SelectedTag As Text
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.BooleanValue("Show Experimental Sources", False)
 			End Get
 		#tag EndGetter

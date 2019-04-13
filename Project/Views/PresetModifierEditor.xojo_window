@@ -293,7 +293,7 @@ Begin BeaconDialog PresetModifierEditor
       Visible         =   True
       Width           =   428
    End
-   Begin UITweaks.ResizedTextField GroupPatternField
+   Begin DelayedTextField GroupPatternField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
@@ -442,6 +442,7 @@ Begin BeaconDialog PresetModifierEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   11
@@ -577,6 +578,36 @@ End
 		  // Calling the overridden superclass constructor.
 		  Self.mPreset = Preset
 		  Self.mEditID = EditModifierID
+		  
+		  Self.mSources = LocalData.SharedInstance.SearchForLootSources("", New Beacon.TextList, Preferences.ShowExperimentalLootSources)
+		  
+		  Dim Win As MainWindow = MainWindow
+		  If Win <> Nil Then
+		    Dim Classes() As Text
+		    For Each Source As Beacon.LootSource In Self.mSources
+		      Classes.Append(Source.ClassString)
+		    Next
+		    
+		    Dim Bound As UInteger = Win.ViewCount - 1
+		    For I As Integer = 0 To Bound
+		      Dim View As BeaconSubview = Win.ViewAtIndex(I)
+		      If Not (View IsA DocumentEditorView) Then
+		        Continue
+		      End If
+		      
+		      Dim Document As Beacon.Document = DocumentEditorView(View).Document
+		      Dim Sources As Beacon.LootSourceCollection = Document.LootSources
+		      Dim SourcesBound As Integer = Sources.UBound
+		      For X As Integer = 0 To SourcesBound
+		        Dim Source As Beacon.LootSource = Sources(X)
+		        If Source.IsOfficial = False And Classes.IndexOf(Source.ClassString) = -1 Then
+		          Classes.Append(Source.ClassString)
+		          Self.mSources.Append(Source)
+		        End If
+		      Next
+		    Next
+		  End If
+		  
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -630,6 +661,10 @@ End
 		Private mPreset As Beacon.MutablePreset
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSources() As Beacon.LootSource
+	#tag EndProperty
+
 
 	#tag Constant, Name = HeightDelta, Type = Double, Dynamic = False, Default = \"240", Scope = Private
 	#tag EndConstant
@@ -681,7 +716,7 @@ End
 #tag EndEvents
 #tag Events QualityField
 	#tag Event
-		Sub GetRange(ByRef MinValue As Integer, ByRef MaxValue As Integer)
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
 		  MinValue = -10
 		  MaxValue = 10
 		End Sub
@@ -691,8 +726,7 @@ End
 	#tag Event
 		Sub TextChange()
 		  Dim Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Text.ToText)
-		  Dim Sources() As Beacon.LootSource = LocalData.SharedInstance.SearchForLootSources("", False, Preferences.ShowExperimentalLootSources)
-		  Dim Matches() As Beacon.LootSource = Modifier.Matches(Sources)
+		  Dim Matches() As Beacon.LootSource = Modifier.Matches(Self.mSources)
 		  
 		  Self.MatchesList.DeleteAllRows()
 		  For Each Match As Beacon.LootSource In Matches

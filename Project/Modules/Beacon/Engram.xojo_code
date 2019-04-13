@@ -13,8 +13,8 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CanBeBlueprint() As Boolean
-		  Return Self.mCanBeBlueprint
+		Attributes( Deprecated = "IsTagged(""blueprintable"")" )  Function CanBeBlueprint() As Boolean
+		  Return Self.IsTagged("blueprintable")
 		End Function
 	#tag EndMethod
 
@@ -35,15 +35,8 @@ Protected Class Engram
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Function ConsoleSafe() As Boolean
-		  Return Self.mConsoleSafe
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
-		  Self.mCanBeBlueprint = True
 		  Self.mAvailability = Beacon.Maps.All.Mask
 		End Sub
 	#tag EndMethod
@@ -53,13 +46,16 @@ Protected Class Engram
 		  Self.Constructor()
 		  
 		  Self.mAvailability = Source.mAvailability
-		  Self.mCanBeBlueprint = Source.mCanBeBlueprint
 		  Self.mPath = Source.mPath
 		  Self.mLabel = Source.mLabel
 		  Self.mIsValid = Source.mIsValid
 		  Self.mModID = Source.mModID
 		  Self.mModName = Source.mModName
-		  Self.mConsoleSafe = Source.mConsoleSafe
+		  
+		  Redim Self.mTags(-1)
+		  For Each Tag As Text In Source.mTags
+		    Self.mTags.Append(Tag)
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -69,7 +65,7 @@ Protected Class Engram
 		  Columns(0) = """Path"""
 		  Columns(1) = """Label"""
 		  Columns(2) = """Availability Mask"""
-		  Columns(3) = """Can Blueprint"""
+		  Columns(3) = """Tags"""
 		  
 		  Dim Lines(0) As Text
 		  Lines(0) = Columns.Join(",")
@@ -78,7 +74,7 @@ Protected Class Engram
 		    Columns(0) = """" + Engram.mPath + """"
 		    Columns(1) = """" + Engram.mLabel + """"
 		    Columns(2) = Engram.mAvailability.ToText
-		    Columns(3) = If(Engram.mCanBeBlueprint, "True", "False")
+		    Columns(3) = Engram.TagString
 		    Lines.Append(Columns.Join(","))
 		  Next
 		  
@@ -104,6 +100,13 @@ Protected Class Engram
 	#tag Method, Flags = &h0
 		Function GeneratedClassBlueprintPath() As Text
 		  Return "BlueprintGeneratedClass'" + Self.mPath + "_C'"
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function IsTagged(Tag As Text) As Boolean
+		  Tag = Self.NormalizeTag(Tag)
+		  Return Self.mTags.IndexOf(Tag) > -1
 		End Function
 	#tag EndMethod
 
@@ -195,6 +198,21 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Shared Function NormalizeTag(Tag As Text) As Text
+		  #if Not TargetiOS
+		    Dim Sanitizer As New RegEx
+		    Sanitizer.SearchPattern = "[^\w]"
+		    Sanitizer.ReplacementPattern = ""
+		    
+		    Dim TagString As String = Sanitizer.Replace(Tag.Lowercase)
+		    Return TagString.ToText
+		  #else
+		    #Pragma Error "Not implemented"
+		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.Engram) As Integer
 		  If Other = Nil Then
 		    Return 1
@@ -217,6 +235,18 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Tags() As Text()
+		  Return Self.mTags
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TagString() As Text
+		  Return Text.Join(Self.mTags, ",")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ValidForMap(Map As Beacon.Map) As Boolean
 		  Return Map = Nil Or Map.Matches(Self.mAvailability)
 		End Function
@@ -231,14 +261,6 @@ Protected Class Engram
 
 	#tag Property, Flags = &h1
 		Protected mAvailability As UInt64
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mCanBeBlueprint As Boolean
-	#tag EndProperty
-
-	#tag Property, Flags = &h1
-		Protected mConsoleSafe As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -259,6 +281,10 @@ Protected Class Engram
 
 	#tag Property, Flags = &h1
 		Protected mPath As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mTags() As Text
 	#tag EndProperty
 
 

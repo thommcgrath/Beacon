@@ -313,7 +313,7 @@ End
 		Function ShouldSave() As Boolean
 		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeTransient Then  
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
-		    Self.mController.Save(App.Identity)
+		    Self.mController.Save()
 		  Else
 		    Self.SaveAs()
 		  End If
@@ -354,7 +354,7 @@ End
 		  End If
 		  
 		  Dim File As FolderItem = Self.AutosaveFile(True)
-		  If File <> Nil And Self.mController.SaveACopy(Beacon.DocumentURL.URLForFile(File), App.Identity) <> Nil Then
+		  If File <> Nil And Self.mController.SaveACopy(Beacon.DocumentURL.URLForFile(File)) <> Nil Then
 		    Self.AutosaveTimer.Reset
 		  End If
 		End Sub
@@ -664,7 +664,7 @@ End
 		      End If
 		      Self.Document.Title = Filename
 		    End If
-		    Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(File), App.Identity)
+		    Self.mController.SaveAs(Beacon.DocumentURL.URLForFile(File))
 		    Self.Title = Self.mController.Name
 		    Self.ToolbarCaption = Self.mController.Name
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
