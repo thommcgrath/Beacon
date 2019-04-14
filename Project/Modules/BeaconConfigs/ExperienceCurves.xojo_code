@@ -293,7 +293,6 @@ Inherits Beacon.ConfigGroup
 		  
 		  Dim Issues() As Beacon.Issue
 		  Dim ConfigName As String = "ExperienceCurves"
-		  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Current
 		  
 		  If Self.mPlayerLevels.Ubound = -1 And Self.mDinoLevels.Ubound > -1 Then
 		    Issues.Append(New Beacon.Issue(ConfigName, "Ark requires player experience to be defined if editing dino experience."))

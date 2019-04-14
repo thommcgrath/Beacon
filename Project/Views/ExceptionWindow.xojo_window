@@ -661,12 +661,12 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Dict As Dictionary)
-		  Dim Trace() As Xojo.Core.StackFrame = Dict.Value("Trace")
+		  Dim Trace() As String = Dict.Value("Trace")
 		  Dim Lines() As String
 		  Lines.Append(Dict.Value("Type"))
 		  Lines.Append(Dict.Value("Reason"))
-		  For Each Frame As Xojo.Core.StackFrame In Trace
-		    Lines.Append(Frame.Name)
+		  For Each Frame As String In Trace
+		    Lines.Append(Frame)
 		  Next
 		  
 		  Dim HashContent As String = Join(Lines, &u10)

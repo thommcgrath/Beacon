@@ -160,7 +160,7 @@ End
 		    Self.RevealTimer.Mode = Timer.ModeOff
 		    
 		    Dim Date As Date
-		    If Notification.UserData <> Nil And Notification.UserData IsA Xojo.Core.Date Then
+		    If Notification.UserData <> Nil And Notification.UserData IsA Date Then
 		      Date = Notification.UserData
 		    Else
 		      Date = LocalData.SharedInstance.LastSync

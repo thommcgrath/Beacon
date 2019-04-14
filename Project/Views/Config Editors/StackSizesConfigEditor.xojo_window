@@ -591,7 +591,7 @@ End
 		    Dim Items As Dictionary
 		    Try
 		      Items = Beacon.ParseJSON(JSON)
-		    Catch Err As Xojo.Data.InvalidJSONException
+		    Catch Err As UnsupportedFormatException
 		      Items = New Dictionary
 		    End Try
 		    

@@ -156,15 +156,11 @@ Implements Beacon.Countable
 		  End If
 		  
 		  Try
-		    Dim Stream As TextInputStream = TextInputStream.Open(File)
-		    Dim Bytes As String = Stream.ReadAll(Encodings.UTF8)
-		    Stream.Close
-		    
-		    Dim Dict As Dictionary = Beacon.ParseJSON(Bytes)
+		    Dim Dict As Dictionary = Beacon.ParseJSON(File.Read(Encodings.UTF8))
 		    Return Beacon.Preset.FromDictionary(Dict)
-		  Catch Err As Xojo.IO.IOException
+		  Catch Err As IOException
 		    Return Nil
-		  Catch Err As Xojo.Data.InvalidJSONException
+		  Catch Err As UnsupportedFormatException
 		    Return Nil
 		  Catch Err As TypeMismatchException
 		    Return Nil
@@ -330,14 +326,8 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub ToFile(File As Global.FolderItem)
+		Sub ToFile(File As FolderItem)
 		  Call Beacon.JSONWriter.WriteSynchronous(Self.ToDictionary, File, False)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Sub ToFile(File As Xojo.IO.FolderItem)
-		  Call Beacon.JSONWriter.WriteSynchronous(Self.ToDictionary, File)
 		End Sub
 	#tag EndMethod
 

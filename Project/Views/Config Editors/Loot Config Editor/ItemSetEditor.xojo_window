@@ -509,7 +509,7 @@ End
 		  Dim Parsed As Auto
 		  Try
 		    Parsed = Beacon.ParseJSON(Contents)
-		  Catch Err As Xojo.Data.InvalidJSONException
+		  Catch Err As UnsupportedFormatException
 		    Beep
 		    Return
 		  End Try
