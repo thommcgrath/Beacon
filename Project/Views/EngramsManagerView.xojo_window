@@ -263,7 +263,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowEngramInRow(Engram As Beacon.Engram, Index As Integer)
 		  List.Cell(Index, Self.ColumnLabel) = Engram.Label
-		  List.CellCheck(Index, Self.ColumnBlueprintable) = Engram.CanBeBlueprint
+		  List.CellCheck(Index, Self.ColumnBlueprintable) = Engram.IsTagged("blueprintable")
 		  List.CellCheck(Index, Self.ColumnIsland) = Engram.ValidForMap(Beacon.Maps.TheIsland)
 		  List.CellCheck(Index, Self.ColumnScorched) = Engram.ValidForMap(Beacon.Maps.ScorchedEarth)
 		  List.CellCheck(Index, Self.ColumnCenter) = Engram.ValidForMap(Beacon.Maps.TheCenter)
@@ -372,7 +372,7 @@ End
 		  Case Self.ColumnLabel
 		    Editable.Label = Me.Cell(Row, Column)
 		  Case Self.ColumnBlueprintable
-		    Editable.CanBeBlueprint = Me.CellCheck(Row, Column)
+		    Editable.IsTagged("blueprintable") = Me.CellCheck(Row, Column)
 		  Case Self.ColumnIsland
 		    Editable.ValidForMap(Beacon.Maps.TheIsland) = Me.CellCheck(Row, Column)
 		  Case Self.ColumnScorched

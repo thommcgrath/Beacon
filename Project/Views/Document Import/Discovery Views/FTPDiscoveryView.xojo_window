@@ -942,7 +942,7 @@ End
 		    Dim Path As String = Dict.Value("path")
 		    
 		    Dim Engines(0) As Beacon.DiscoveryEngine
-		    Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, Path, App.Identity)
+		    Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, Path, App.IdentityManager.CurrentIdentity)
 		    Self.ShouldFinish(Engines)
 		    
 		    Return
@@ -1063,9 +1063,9 @@ End
 		  Components(Components.Ubound) = "" // Remove Config but retain trailing slash
 		  
 		  // Should now equal the "Saved" directory
-		  Dim InitialPath As String = Components.Join("/")
+		  Dim InitialPath As String = Join(Components, "/")
 		  Dim Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath, App.Identity)
+		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath, App.IdentityManager.CurrentIdentity)
 		  Self.ShouldFinish(Engines)
 		End Sub
 	#tag EndEvent
@@ -1091,7 +1091,7 @@ End
 		  Me.AppendChildren(Empty)
 		  
 		  Dim Request As New BeaconAPI.Request("ftp", "GET", Fields, WeakAddressOf APICallback_ListPath)
-		  Request.Sign(App.Identity)
+		  Request.Sign(App.IdentityManager.CurrentIdentity)
 		  Self.BrowseSocket.Start(Request)
 		End Sub
 	#tag EndEvent
@@ -1132,7 +1132,7 @@ End
 		  
 		  Dim Fields As Dictionary = Self.FormDataFromProfile()
 		  Dim Request As New BeaconAPI.Request("ftp/path", "GET", Fields, WeakAddressOf APICallback_DetectPath)
-		  Request.Sign(App.Identity)
+		  Request.Sign(App.IdentityManager.CurrentIdentity)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndEvent

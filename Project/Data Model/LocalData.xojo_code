@@ -547,10 +547,10 @@ Implements Beacon.DataSource
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
-		      Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
+		      Clauses.Append("mods.mod_id IN (" + Join(Placeholders, ", ") + ")")
 		    End If
 		    
-		    Dim SQL As String = "SELECT COUNT(loot_sources.object_id) FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id) WHERE (" + Clauses.Join(") AND (") + ");"
+		    Dim SQL As String = "SELECT COUNT(loot_sources.object_id) FROM loot_sources INNER JOIN mods ON (loot_sources.mod_id = mods.mod_id) WHERE (" + Join(Clauses, ") AND (") + ");"
 		    Dim Results As RecordSet
 		    If Values.Count > 0 Then
 		      Results = Self.SQLSelect(SQL, Values)
@@ -1460,12 +1460,12 @@ Implements Beacon.DataSource
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
-		      Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
+		      Clauses.Append("mods.mod_id IN (" + Join(Placeholders, ", ") + ")")
 		    End If
 		    If Tags.Ubound > -1 Then
 		      SQL = SQL.Replace("engrams INNER JOIN mods", "engrams INNER JOIN searchable_tags ON (searchable_tags.object_id = engrams.object_id AND searchable_tags.source_table = 'engrams') INNER JOIN mods")
 		      Clauses.Append("searchable_tags.tags MATCH ?" + Str(NextPlaceholder))
-		      Values.Value(NextPlaceholder) = Tags.Join(" OR ")
+		      Values.Value(NextPlaceholder) = Join(Tags, " OR ")
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    
@@ -1510,7 +1510,7 @@ Implements Beacon.DataSource
 		        Values.Value(NextPlaceholder) = ModID
 		        NextPlaceholder = NextPlaceholder + 1
 		      Next
-		      Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
+		      Clauses.Append("mods.mod_id IN (" + Join(Placeholders, ", ") + ")")
 		    End If
 		    If SearchText <> "" Then
 		      Clauses.Append("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")

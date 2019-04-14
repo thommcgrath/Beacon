@@ -214,7 +214,6 @@ Implements Beacon.DeploymentEngine
 		      Dim Hour As Integer = Val(Line.Mid(12, 2))
 		      Dim Minute As Integer = Val(Line.Mid(15, 2))
 		      Dim Second As Integer = Val(Line.Mid(18, 2))
-		      Dim Nanosecond As Integer = (Val(Line.Mid(21, 3)) / 1000) * 1000000000
 		      
 		      Self.mServerStopTime = New Date(Year, Month, Day, Hour, Minute, Second, 0)
 		      TimestampFound = True
@@ -817,7 +816,7 @@ Implements Beacon.DeploymentEngine
 	#tag Method, Flags = &h21
 		Private Sub WaitNitradoIdle()
 		  Dim Now As New Date
-		  Dim SecondsToWait As Double = Val(Beacon.Data.GetTextVariable("Nitrado Wait Seconds"))
+		  Dim SecondsToWait As Double = Val(Beacon.Data.GetStringVariable("Nitrado Wait Seconds"))
 		  SecondsToWait = SecondsToWait - (Now.SecondsFrom1970 - Self.mServerStopTime.SecondsFrom1970)
 		  If SecondsToWait < 10 Then // Don't need to be THAT precise
 		    Self.RunNextTask()

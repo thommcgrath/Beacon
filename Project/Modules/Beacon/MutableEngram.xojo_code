@@ -18,21 +18,21 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "IsTagged(""blueprintable"")" )  Sub CanBeBlueprint(Assigns Value As Boolean)
-		  If Value Then
-		    Self.AddTag("blueprintable")
-		  Else
-		    Self.RemoveTag("blueprintable")
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor(Path As String)
 		  Super.Constructor()
 		  
 		  Self.mPath = Path
 		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub IsTagged(Tag As String, Assigns Value As Boolean)
+		  If Value Then
+		    Self.AddTag(Tag)
+		  Else
+		    Self.RemoveTag(Tag)
+		  End If
 		End Sub
 	#tag EndMethod
 

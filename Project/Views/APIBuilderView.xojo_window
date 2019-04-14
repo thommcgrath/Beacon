@@ -776,7 +776,7 @@ End
 		      Request = New BeaconAPI.Request(Path, Method, AddressOf APICallback_DoNothing)
 		    End If
 		    If AuthenticatedCheck.Value Then
-		      Request.Sign(App.Identity)
+		      Request.Sign(App.IdentityManager.CurrentIdentity)
 		    End If
 		  Catch Err As UnsupportedOperationException
 		    Self.ShowAlert("Cannot build the request", Err.Reason)

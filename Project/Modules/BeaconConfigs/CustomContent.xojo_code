@@ -126,7 +126,7 @@ Inherits Beacon.ConfigGroup
 		  Input = ReplaceLineEndings(Input, EOL)
 		  
 		  Dim InsideBeaconSection As Boolean
-		  Dim Lines() As String = Input.Split(EOL)
+		  Dim Lines() As String = Split(Input, EOL)
 		  Dim FilteredLines() As String
 		  For I As Integer = 0 To Lines.Ubound
 		    Dim Line As String = Lines(I).Trim
@@ -141,7 +141,7 @@ Inherits Beacon.ConfigGroup
 		    End If
 		  Next
 		  
-		  Input = FilteredLines.Join(EOL)
+		  Input = Join(FilteredLines, EOL)
 		  Return Input.Trim
 		End Function
 	#tag EndMethod

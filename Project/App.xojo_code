@@ -215,10 +215,10 @@ Implements NotificationKit.Receiver
 			Return True
 			End If
 			
+			Dim Identity As Beacon.Identity = Self.IdentityManager.CurrentIdentity
 			Dim HardwareID As String = Beacon.HardwareID
 			Dim Signed As MemoryBlock = Identity.Sign(HardwareID)
 			
-			Dim Identity As Beacon.Identity = Self.Identity
 			Dim Dict As New Dictionary
 			Dict.Value("UserID") = Identity.Identifier
 			Dict.Value("Signed") = EncodeHex(Signed)
@@ -537,18 +537,6 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "App.IdentityManager.CurrentIdentity" )  Function Identity() As Beacon.Identity
-		  Return Self.mIdentityManager.CurrentIdentity
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "App.IdentityManager.CurrentIdentity" )  Sub Identity(Assigns Value As Beacon.Identity)
-		  Self.mIdentityManager.CurrentIdentity = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function IdentityManager() As IdentityManager
 		  Return Self.mIdentityManager
 		End Function
@@ -587,7 +575,7 @@ Implements NotificationKit.Receiver
 		    End If
 		  End If
 		  
-		  Self.Identity = Identity
+		  Self.IdentityManager.CurrentIdentity = Identity
 		End Sub
 	#tag EndMethod
 

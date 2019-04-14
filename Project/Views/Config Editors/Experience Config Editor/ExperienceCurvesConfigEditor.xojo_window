@@ -261,7 +261,7 @@ End
 		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(True)
 		  Config.DinoLevelCap = LocalData.SharedInstance.GetIntegerVariable("Dino Level Cap")
 		  
-		  Dim StringList As String = LocalData.SharedInstance.GetTextVariable("Dino Default Experience")
+		  Dim StringList As String = LocalData.SharedInstance.GetStringVariable("Dino Default Experience")
 		  Dim List() As String = Split(StringList, ",")
 		  For I As Integer = 0 To List.Ubound
 		    Config.DinoExperience(I) = Val(List(I))
@@ -281,7 +281,7 @@ End
 		  Dim Config As BeaconConfigs.ExperienceCurves = Self.Config(True)
 		  Config.PlayerLevelCap = LocalData.SharedInstance.GetIntegerVariable("Player Level Cap")
 		  
-		  Dim StringList As String = LocalData.SharedInstance.GetTextVariable("Player Default Experience")
+		  Dim StringList As String = LocalData.SharedInstance.GetStringVariable("Player Default Experience")
 		  Dim List() As String = Split(StringList, ",")
 		  For I As Integer = 0 To List.Ubound
 		    Config.PlayerExperience(I) = Val(List(I))

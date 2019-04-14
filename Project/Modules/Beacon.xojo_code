@@ -320,7 +320,7 @@ Protected Module Beacon
 		  Else
 		    Dim Tail As String = Names(Names.Ubound)
 		    Names.Remove(Names.Ubound)
-		    Return Names.Join(", ") + ", & " + Tail
+		    Return Join(Names, ", ") + ", & " + Tail
 		  End If
 		End Function
 	#tag EndMethod

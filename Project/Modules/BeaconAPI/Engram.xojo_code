@@ -52,7 +52,7 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.Engram)
-		  Self.CanBeBlueprint = Source.CanBeBlueprint
+		  Self.CanBeBlueprint = Source.IsTagged("blueprintable")
 		  Self.Label = Source.Label
 		  Self.mAvailability = Source.Availability
 		  Self.mPath = Source.Path
@@ -266,7 +266,8 @@ Protected Class Engram
 		#tag ViewProperty
 			Name="Label"
 			Group="Behavior"
-			Type="Text"
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -278,7 +279,8 @@ Protected Class Engram
 		#tag ViewProperty
 			Name="ModID"
 			Group="Behavior"
-			Type="Text"
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -289,7 +291,8 @@ Protected Class Engram
 		#tag ViewProperty
 			Name="Path"
 			Group="Behavior"
-			Type="Text"
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

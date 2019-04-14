@@ -209,12 +209,6 @@ Protected Module FrameworkExtensions
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Attributes( Deprecated = "Join(Array, Delimiter)" )  Function Join(Extends Source() As String, Delimiter As String) As String
-		  Return Join(Source, Delimiter)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function Left(Extends Source As MemoryBlock, Length As UInteger) As MemoryBlock
 		  Length = Min(Length, Source.Size)

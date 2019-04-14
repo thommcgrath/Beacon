@@ -244,7 +244,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Dim Content As String = Beacon.RewriteIniContent(Self.mGameIniOriginal, Self.mGameIniDict)
 		  Dim Request As New BeaconAPI.Request("ftp?" + BeaconAPI.Request.URLEncodeFormData(Self.BuildFTPParameters(Self.mProfile.GameIniPath)), "POST", Content, "text/plain", AddressOf Callback_UploadGameIni)
-		  Request.Sign(App.Identity)
+		  Request.Sign(App.IdentityManager.CurrentIdentity)
 		  Self.mSocket.Start(Request)
 		End Sub
 	#tag EndMethod
@@ -261,7 +261,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Dim Content As String = Beacon.RewriteIniContent(Self.mGameUserSettingsIniOriginal, Self.mGameUserSettingsIniDict)
 		  Dim Request As New BeaconAPI.Request("ftp?" + BeaconAPI.Request.URLEncodeFormData(Self.BuildFTPParameters(Self.mProfile.GameUserSettingsIniPath)), "POST", Content, "text/plain", AddressOf Callback_UploadGameUserSettingsIni)
-		  Request.Sign(App.Identity)
+		  Request.Sign(App.IdentityManager.CurrentIdentity)
 		  Self.mSocket.Start(Request)
 		End Sub
 	#tag EndMethod

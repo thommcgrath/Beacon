@@ -44,6 +44,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   1
@@ -203,6 +204,7 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Width           =   300
    End
    Begin Timer AutosaveTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -1015,7 +1017,7 @@ End
 		  If Self.CurrentPanel <> Nil Then
 		    Dim RequiresPurchase As Boolean
 		    If Tag <> Nil And (Tag.Type = Variant.TypeString Or Tag.Type = Variant.TypeText) Then
-		      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Tag.TextValue, If(App.Identity <> Nil, App.Identity.OmniVersion, 0))
+		      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Tag.TextValue, If(App.IdentityManager.CurrentIdentity <> Nil, App.IdentityManager.CurrentIdentity.OmniVersion, 0))
 		    End If
 		    Dim TopOffset As Integer
 		    If RequiresPurchase Then

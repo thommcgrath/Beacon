@@ -846,8 +846,8 @@ End
 		  Dim GameUserSettingsIniValues As New Dictionary
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document, App.Identity))
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document, App.Identity))
+		    Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document, App.IdentityManager.CurrentIdentity))
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document, App.IdentityManager.CurrentIdentity))
 		  Next
 		  
 		  Dim CustomContent As New BeaconConfigs.CustomContent

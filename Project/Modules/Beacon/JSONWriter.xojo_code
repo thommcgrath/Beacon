@@ -82,6 +82,8 @@ Inherits Thread
 		Shared Function WriteSynchronous(Source As Dictionary, File As FolderItem, Compress As Boolean) As Boolean
 		  // Prepare
 		  
+		  #Pragma Unused Source
+		  
 		  Dim Content As String = Beacon.GenerateJSON(Not Compress)
 		  If Compress Then
 		    Dim Compressor As New _GZipString

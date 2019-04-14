@@ -434,7 +434,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Values() As Beacon.ConfigValue = Config.CommandLineOptions(Document, App.Identity)
+		    Dim Values() As Beacon.ConfigValue = Config.CommandLineOptions(Document, App.IdentityManager.CurrentIdentity)
 		    If Values <> Nil Then
 		      For Each Value As Beacon.ConfigValue In Values
 		        Dim Arr() As String
@@ -450,8 +450,8 @@ End
 		      Next
 		    End If
 		    
-		    Beacon.ConfigValue.FillConfigDict(GameIniHeaders, Config.GameIniValues(Document, App.Identity))
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniHeaders, Config.GameUserSettingsIniValues(Document, App.Identity))
+		    Beacon.ConfigValue.FillConfigDict(GameIniHeaders, Config.GameIniValues(Document, App.IdentityManager.CurrentIdentity))
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniHeaders, Config.GameUserSettingsIniValues(Document, App.IdentityManager.CurrentIdentity))
 		  Next
 		  
 		  // Now process the custom content

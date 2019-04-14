@@ -13,12 +13,6 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "IsTagged(""blueprintable"")" )  Function CanBeBlueprint() As Boolean
-		  Return Self.IsTagged("blueprintable")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ClassString() As String
 		  If Self.IsValid Then
 		    Dim Components() As String = Split(Self.mPath, "/")
@@ -75,10 +69,10 @@ Protected Class Engram
 		    Columns(1) = """" + Engram.mLabel + """"
 		    Columns(2) = Str(Engram.mAvailability, "0")
 		    Columns(3) = Engram.TagString
-		    Lines.Append(Columns.Join(","))
+		    Lines.Append(Join(Columns, ","))
 		  Next
 		  
-		  Return Lines.Join(Text.FromUnicodeCodepoint(13) + Text.FromUnicodeCodepoint(10))
+		  Return Join(Lines, &u13 + &u10)
 		End Function
 	#tag EndMethod
 

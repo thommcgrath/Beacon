@@ -454,6 +454,8 @@ End
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
 		  If Self.mSavePositions Then
 		    Self.SetListWidth(Self.Header.Width)
 		  End If

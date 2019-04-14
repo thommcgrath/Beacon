@@ -89,7 +89,7 @@ Inherits Beacon.Thread
 		        
 		        Dim Engram As New Beacon.MutableEngram(Path)
 		        Engram.Availability = Availability
-		        Engram.CanBeBlueprint = CanBlueprint
+		        Engram.IsTagged("blueprintable") = CanBlueprint
 		        Engram.Label = Label
 		        
 		        Self.mEngramsLock.Enter

@@ -650,7 +650,7 @@ End
 		  Fields.Value("type") = Self.mExceptionDetails.Value("Type")
 		  Fields.Value("reason") = Self.mExceptionDetails.Value("Reason")
 		  Fields.Value("location") = Self.mExceptionDetails.Value("Location")
-		  Fields.Value("trace") = Lines.Join(&u0A)
+		  Fields.Value("trace") = Join(Lines, &u0A)
 		  If Self.mExceptionDetails.HasKey("UserID") Then
 		    Fields.Value("user_id") = Self.mExceptionDetails.Value("UserID")
 		  End If

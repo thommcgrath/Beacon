@@ -472,13 +472,13 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, App.Identity)
+		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, App.IdentityManager.CurrentIdentity)
 		    For Each Option As Beacon.ConfigValue In Options
 		      Self.mCommandLineOptions.Append(Option)
 		    Next
 		    
-		    Beacon.ConfigValue.FillConfigDict(Self.mGameIniOptions, Group.GameIniValues(Self.mDocument, App.Identity))
-		    Beacon.ConfigValue.FillConfigDict(Self.mGameUserSettingsIniOptions, Group.GameUserSettingsIniValues(Self.mDocument, App.Identity))
+		    Beacon.ConfigValue.FillConfigDict(Self.mGameIniOptions, Group.GameIniValues(Self.mDocument, App.IdentityManager.CurrentIdentity))
+		    Beacon.ConfigValue.FillConfigDict(Self.mGameUserSettingsIniOptions, Group.GameUserSettingsIniValues(Self.mDocument, App.IdentityManager.CurrentIdentity))
 		  Next
 		  
 		  Dim CustomContent As BeaconConfigs.CustomContent
@@ -512,7 +512,7 @@ End
 		      Case IsA Beacon.NitradoServerProfile
 		        DeploymentEngine = New Beacon.NitradoDeploymentEngine(Profile.Name, Beacon.NitradoServerProfile(Profile).ServiceID, Self.mDocument.OAuthData(Profile.OAuthProvider))
 		      Case IsA Beacon.FTPServerProfile
-		        DeploymentEngine = New Beacon.FTPDeploymentEngine(Beacon.FTPServerProfile(Profile), App.Identity)
+		        DeploymentEngine = New Beacon.FTPDeploymentEngine(Beacon.FTPServerProfile(Profile), App.IdentityManager.CurrentIdentity)
 		      Else
 		        Continue
 		      End Select
