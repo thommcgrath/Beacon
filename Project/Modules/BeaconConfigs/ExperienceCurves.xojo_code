@@ -298,7 +298,7 @@ Inherits Beacon.ConfigGroup
 		  If Self.mPlayerLevels.Ubound = -1 And Self.mDinoLevels.Ubound > -1 Then
 		    Issues.Append(New Beacon.Issue(ConfigName, "Ark requires player experience to be defined if editing dino experience."))
 		  ElseIf Self.PlayerLevelCap <= Self.AscensionLevels Then
-		    Issues.Append(New Beacon.Issue(ConfigName, "Must define at least " + Self.AscensionLevels.ToText(Locale) + " player levels to handle ascension correctly."))
+		    Issues.Append(New Beacon.Issue(ConfigName, "Must define at least " + Str(Self.AscensionLevels, "-0") + " player levels to handle ascension correctly."))
 		  End If
 		  
 		  For I As Integer = 0 To Self.mPlayerLevels.Ubound
@@ -306,10 +306,10 @@ Inherits Beacon.ConfigGroup
 		    Dim XP As Integer = Self.mPlayerLevels(I)
 		    Dim LastXP As UInt64 = If(I > 0, Self.mPlayerLevels(I - 1), 0)
 		    If XP < LastXP Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Player level " + Level.ToText(Locale) + " required experience is lower than the previous level.", "Player:" + Level.ToText))
+		      Issues.Append(New Beacon.Issue(ConfigName, "Player level " + Format(Level, "-0,") + " required experience is lower than the previous level.", "Player:" + Str(Level, "0")))
 		    End If
 		    If XP > Self.MaxSupportedXP Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Player level " + Level.ToText(Locale) + " required experience is greater than Ark's limit of " + Format(Self.MaxSupportedXP, "0,").ToText + ".", "Player:" + Level.ToText))
+		      Issues.Append(New Beacon.Issue(ConfigName, "Player level " + Format(Level, "-0,") + " required experience is greater than Ark's limit of " + Format(Self.MaxSupportedXP, "0,") + ".", "Player:" + Str(Level, "0")))
 		    End If
 		  Next
 		  
@@ -318,10 +318,10 @@ Inherits Beacon.ConfigGroup
 		    Dim XP As Integer = Self.mDinoLevels(I)
 		    Dim LastXP As UInt64 = If(I > 0, Self.mDinoLevels(I - 1), 0)
 		    If XP < LastXP Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Dino level " + Level.ToText(Locale) + " required experience is lower than the previous level.", "Dino:" + Level.ToText))
+		      Issues.Append(New Beacon.Issue(ConfigName, "Dino level " + Format(Level, "-0,") + " required experience is lower than the previous level.", "Dino:" + Str(Level, "0")))
 		    End If
 		    If XP > Self.MaxSupportedXP Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Dino level " + Level.ToText(Locale) + " required experience is greater than Ark's limit of " + Format(Self.MaxSupportedXP, "0,").ToText + ".", "Dino:" + Level.ToText))
+		      Issues.Append(New Beacon.Issue(ConfigName, "Dino level " + Format(Level, "-0,") + " required experience is greater than Ark's limit of " + Format(Self.MaxSupportedXP, "0,") + ".", "Dino:" + Str(Level, "0")))
 		    End If
 		  Next
 		  

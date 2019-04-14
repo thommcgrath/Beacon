@@ -13,8 +13,9 @@ Inherits Beacon.ConfigGroup
 		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  If Dict.Lookup("App Version", 40) < Self.DiscardBeforeVersion Then
-		    App.Log("Discarding loot scale config because saved version " + App.NonReleaseVersion.ToText + " < " + Self.DiscardBeforeVersion.ToText + ".")
+		  Dim SavedWithVersion As Integer = Dict.Lookup("App Version", 40)
+		  If SavedWithVersion < Self.DiscardBeforeVersion Then
+		    App.Log("Discarding loot scale config because saved version " + Str(SavedWithVersion, "-0") + " < " + Str(Self.DiscardBeforeVersion, "-0") + ".")
 		    Self.mMultiplier = 1.0
 		    Return
 		  End If

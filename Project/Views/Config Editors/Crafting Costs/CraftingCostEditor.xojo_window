@@ -389,7 +389,7 @@ End
 		  Dim Dicts() As Auto
 		  Try
 		    Dim Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		    Dicts = Beacon.ParseJSON(Contents.ToText)
+		    Dicts = Beacon.ParseJSON(Contents)
 		    
 		    For Each Dict As Dictionary In Dicts
 		      Dim ClassString As String = Dict.Value("Class")

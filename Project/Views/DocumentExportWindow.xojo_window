@@ -655,8 +655,8 @@ End
 		  End Select
 		  
 		  Dim Board As New Clipboard
-		  Board.Text = Beacon.RewriteIniContent(Board.Text.ToText, Configs)
-		  Self.mLastRewrittenHash = EncodeHex(MD5(Board.Text))
+		  Board.Text = Beacon.RewriteIniContent(Board.Text, Configs)
+		  Self.mLastRewrittenHash = Beacon.MD5(Board.Text)
 		  Me.Enabled = False
 		  Me.Caption = Self.ReadyForPaste
 		End Sub
@@ -709,7 +709,7 @@ End
 		  Case Beacon.RewriteModeGameUserSettingsIni
 		    Configs = Self.mGameUserSettingsConfigs
 		  End Select
-		  Content = Beacon.RewriteIniContent(Content.ToText, Configs)
+		  Content = Beacon.RewriteIniContent(Content, Configs)
 		  
 		  Try
 		    Dim OutStream As TextOutputStream = TextOutputStream.Create(File)

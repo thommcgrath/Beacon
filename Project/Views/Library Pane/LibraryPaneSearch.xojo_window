@@ -334,7 +334,7 @@ End
 #tag Events SearchTimer
 	#tag Event
 		Sub Action()
-		  Dim Terms As String = Trim(Self.SearchField.Text).ToText
+		  Dim Terms As String = Trim(Self.SearchField.Text)
 		  
 		  If Terms = "" Then
 		    Self.Reset()

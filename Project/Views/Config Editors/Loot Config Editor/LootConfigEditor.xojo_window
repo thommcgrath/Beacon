@@ -873,7 +873,7 @@ End
 		    Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
 		    Dim Parsed As Auto
 		    Try
-		      Parsed = Beacon.ParseJSON(Contents.ToText)
+		      Parsed = Beacon.ParseJSON(Contents)
 		    Catch Err As Xojo.Data.InvalidJSONException
 		      Beep
 		      Return

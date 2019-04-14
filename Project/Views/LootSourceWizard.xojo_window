@@ -1421,7 +1421,7 @@ End
 #tag Events DefineActionButton
 	#tag Event
 		Sub Action()
-		  Dim ClassString As String = Self.DefineClassField.Text.ToText.Trim
+		  Dim ClassString As String = Trim(Self.DefineClassField.Text)
 		  If Not ClassString.EndsWith("_C") Then
 		    Self.ShowAlert("Invalid class string", "Ark class strings always end in _C. Check your class string and try again.")
 		    Return
@@ -1432,7 +1432,7 @@ End
 		  If Source <> Nil Then
 		    Destination = New Beacon.MutableLootSource(Source)
 		  Else
-		    Dim Label As String = Self.DefineNameField.Text.ToText.Trim
+		    Dim Label As String = Trim(Self.DefineNameField.Text)
 		    If Label = "" Then
 		      Self.ShowAlert("No label provided", "A loot source without a name isn't very useful is it? Enter a name and try again.")
 		      Return

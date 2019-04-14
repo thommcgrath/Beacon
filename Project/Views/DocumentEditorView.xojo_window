@@ -655,8 +655,8 @@ End
 		    End If
 		    
 		    If Self.Document.Title.BeginsWith("Untitled Document") Then
-		      Dim Filename As String = File.Name.ToText
-		      Dim Extension As String = BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText
+		      Dim Filename As String = File.Name
+		      Dim Extension As String = BeaconFileTypes.BeaconDocument.PrimaryExtension
 		      If Filename.EndsWith(Extension) Then
 		        Filename = Filename.Left(Filename.Length - Extension.Length).Trim
 		      End If
@@ -961,7 +961,7 @@ End
 		    Self.UpdateHelpForConfig(Tag.StringValue)
 		    
 		    If Self.mController.Document <> Nil Then
-		      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Tag.StringValue.ToText
+		      Preferences.LastUsedConfigName(Self.mController.Document.DocumentID) = Tag.StringValue
 		    End If
 		    
 		    If Self.Panels.HasKey(Tag.StringValue) Then

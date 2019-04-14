@@ -396,7 +396,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim ViewID As String = EncodeHex(Crypto.MD5(File.NativePath)).ToText
+		  Dim ViewID As String = Beacon.MD5(File.NativePath)
 		  Dim View As BeaconSubview = Self.View(ViewID)
 		  If View = Nil Then
 		    View = New PresetEditorView(Preset, File)

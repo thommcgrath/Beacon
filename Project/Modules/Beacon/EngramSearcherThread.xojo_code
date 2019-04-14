@@ -82,9 +82,9 @@ Inherits Beacon.Thread
 		          Continue
 		        End If
 		        
-		        Dim Path As String = Columns(0).ToText
-		        Dim Label As String = Columns(1).ToText
-		        Dim Availability As UInt64 = UInt64.FromText(Columns(2).ToText)
+		        Dim Path As String = Columns(0)
+		        Dim Label As String = Columns(1)
+		        Dim Availability As UInt64 = Val(Columns(2))
 		        Dim CanBlueprint As Boolean = If(Columns(3) = "True", True, False)
 		        
 		        Dim Engram As New Beacon.MutableEngram(Path)
@@ -175,7 +175,7 @@ Inherits Beacon.Thread
 		      Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		    End If
 		    
-		    Dim Path As String = Key.ToText
+		    Dim Path As String = Key
 		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
 		    If Engram = Nil Then
 		      Engram = Beacon.Engram.CreateUnknownEngram(Path)

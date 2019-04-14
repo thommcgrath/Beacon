@@ -430,7 +430,7 @@ End
 		    End If
 		    
 		    Dim Size As Integer = Config.Override(ClassString)
-		    Self.List.AddRow(EngramName, Size.ToText)
+		    Self.List.AddRow(EngramName, Str(Size, "-0"))
 		    Self.List.RowTag(Self.List.LastIndex) = ClassString
 		    Self.List.Selected(Self.List.LastIndex) = SelectClasses.IndexOf(ClassString) > -1
 		  Next
@@ -587,7 +587,7 @@ End
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Dim JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8).ToText
+		    Dim JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
 		    Dim Items As Dictionary
 		    Try
 		      Items = Beacon.ParseJSON(JSON)
@@ -614,7 +614,7 @@ End
 		  
 		  If Board.TextAvailable Then
 		    Dim ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse(ImportText.ToText, "Clipboard")
+		    Self.Parse(ImportText, "Clipboard")
 		    Return
 		  End If
 		End Sub

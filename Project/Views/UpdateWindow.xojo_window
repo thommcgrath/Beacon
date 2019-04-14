@@ -688,7 +688,7 @@ End
 		    End If
 		  End If
 		  
-		  Self.Downloader.Send("GET", Self.mURL.ToText)
+		  Self.Downloader.Send("GET", Self.mURL)
 		  Self.DownloadProgressBar.Maximum = 0
 		  Self.ViewPanel.Value = Self.ViewDownload
 		End Sub

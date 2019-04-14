@@ -430,7 +430,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.Title = Trim(Me.Text).ToText
+		  Self.Document.Title = Trim(Me.Text)
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
@@ -447,7 +447,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.Description = Self.SanitizeText(Trim(Me.Text), False).ToText
+		  Self.Document.Description = Self.SanitizeText(Trim(Me.Text), False)
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False

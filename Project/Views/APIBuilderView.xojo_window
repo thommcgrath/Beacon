@@ -763,10 +763,10 @@ End
 #tag Events BuildButton
 	#tag Event
 		Sub Action()
-		  Dim Path As String = PathField.Text.ToText
-		  Dim Method As String = MethodMenu.Text.ToText
-		  Dim Body As String = BodyField.Text.ToText
-		  Dim ContentType As String = ContentTypeField.Text.ToText
+		  Dim Path As String = PathField.Text
+		  Dim Method As String = MethodMenu.Text
+		  Dim Body As String = BodyField.Text
+		  Dim ContentType As String = ContentTypeField.Text
 		  
 		  Dim Request As BeaconAPI.Request
 		  Try

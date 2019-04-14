@@ -1065,7 +1065,7 @@ End
 		  // Should now equal the "Saved" directory
 		  Dim InitialPath As String = Components.Join("/")
 		  Dim Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath.ToText, App.Identity)
+		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath, App.Identity)
 		  Self.ShouldFinish(Engines)
 		End Sub
 	#tag EndEvent
@@ -1084,7 +1084,7 @@ End
 		  If Fields = Nil Then
 		    Return
 		  End If
-		  Fields.Value("path") = Path.ToText
+		  Fields.Value("path") = Path
 		  
 		  // For now, append an empty list
 		  Dim Empty() As String
@@ -1112,10 +1112,10 @@ End
 	#tag Event
 		Sub Action()
 		  Self.mProfile = New Beacon.FTPServerProfile()
-		  Self.mProfile.Host = Self.ServerHostField.Text.ToText
+		  Self.mProfile.Host = Self.ServerHostField.Text
 		  Self.mProfile.Port = Val(Self.ServerPortField.Text)
-		  Self.mProfile.Username = Self.ServerUserField.Text.ToText
-		  Self.mProfile.Password = Self.ServerPassField.Text.ToText
+		  Self.mProfile.Username = Self.ServerUserField.Text
+		  Self.mProfile.Password = Self.ServerPassField.Text
 		  
 		  Select Case Self.ServerModeMenu.ListIndex
 		  Case 1

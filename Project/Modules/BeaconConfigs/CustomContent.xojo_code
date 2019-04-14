@@ -25,7 +25,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h21
 		Private Function Decrypt(Input As String, Identity As Beacon.Identity) As String
 		  Try
-		    Dim SecureDict As Dictionary = Beacon.ParseJSON(Input.ToText)
+		    Dim SecureDict As Dictionary = Beacon.ParseJSON(Input)
 		    If Not SecureDict.HasAllKeys("Key", "Vector", "Content", "Hash") Then
 		      Return ""
 		    End If
@@ -287,7 +287,7 @@ Inherits Beacon.ConfigGroup
 		    End If
 		    
 		    Dim Value As String = Line.SubString(KeyPos + 1).Trim
-		    Values.Append(New Beacon.ConfigValue(CurrentHeader.ToText, Key.ToText, Value.ToText))
+		    Values.Append(New Beacon.ConfigValue(CurrentHeader, Key, Value))
 		  Next
 		  Return Values
 		End Function

@@ -198,7 +198,7 @@ End
 		    
 		    Dim Dialog As New MessageDialog
 		    Dialog.Title = ""
-		    Dialog.Message = "You have " + NumChanges.ToText + " documents with unsaved changes. Do you want to review these changes before quitting?"
+		    Dialog.Message = "You have " + Str(NumChanges, "-0") + " documents with unsaved changes. Do you want to review these changes before quitting?"
 		    Dialog.Explanation = "If you don't review your documents, all your changes will be lost."
 		    Dialog.ActionButton.Caption = "Review Changes…"
 		    Dialog.CancelButton.Visible = True

@@ -430,7 +430,7 @@ End
 		    Document = New Beacon.Document
 		    
 		    Static NewDocumentNumber As Integer = 1
-		    Document.Title = "Untitled Document " + NewDocumentNumber.ToText
+		    Document.Title = "Untitled Document " + Str(NewDocumentNumber, "-0")
 		    Document.Modified = False
 		    NewDocumentNumber = NewDocumentNumber + 1
 		  End If

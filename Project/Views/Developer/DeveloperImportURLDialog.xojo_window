@@ -269,13 +269,13 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim URL As String = Trim(URLField.Text).ToText
+		  Dim URL As String = Trim(URLField.Text)
 		  If URL.IndexOf("pasted.co/") > -1 Then
 		    Self.ShowAlert("Can't import from this url", "TinyPaste/pasted.co prevent pulling content from their pages. Instead, copy and paste the spawn codes into a text file and import that.")
 		    Return
 		  End If
 		  
-		  Self.Socket.Send("GET", Trim(URLField.Text).ToText)
+		  Self.Socket.Send("GET", Trim(URLField.Text))
 		  Spinner.Visible = True
 		  ActionButton.Enabled = False
 		  URLField.Enabled = False
@@ -309,7 +309,7 @@ End
 		  URLField.Enabled = True
 		  
 		  If HTTPStatus <> 200 Then
-		    MsgBox("The content was not loaded correctly. HTTP status " + HTTPStatus.ToText)
+		    MsgBox("The content was not loaded correctly. HTTP status " + Str(HTTPStatus, "-0"))
 		    Return
 		  End If
 		  

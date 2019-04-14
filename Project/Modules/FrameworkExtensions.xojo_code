@@ -144,7 +144,7 @@ Protected Module FrameworkExtensions
 		  If Err.Reason <> "" Then
 		    Return Err.Reason
 		  ElseIf Err.Message <> "" Then
-		    Return Err.Message.ToText
+		    Return Err.Message
 		  Else
 		    Return ""
 		  End If
@@ -197,7 +197,7 @@ Protected Module FrameworkExtensions
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function IsType(Extends File As FolderItem, Type As FileType) As Boolean
-		  Return File.Name.EndsWith(Type.PrimaryExtension.ToText)
+		  Return File.Name.EndsWith(Type.PrimaryExtension)
 		End Function
 	#tag EndMethod
 

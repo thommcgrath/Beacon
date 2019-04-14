@@ -725,7 +725,7 @@ End
 #tag Events GroupPatternField
 	#tag Event
 		Sub TextChange()
-		  Dim Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Text.ToText)
+		  Dim Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Text)
 		  Dim Matches() As Beacon.LootSource = Modifier.Matches(Self.mSources)
 		  
 		  Self.MatchesList.DeleteAllRows()
@@ -762,7 +762,7 @@ End
 		      Return
 		    End If
 		    
-		    Modifier = New Beacon.PresetModifier(Self.GroupNameField.Text.ToText, Self.GroupPatternField.Text.ToText)
+		    Modifier = New Beacon.PresetModifier(Self.GroupNameField.Text, Self.GroupPatternField.Text)
 		    LocalData.SharedInstance.AddPresetModifier(Modifier)
 		  End If
 		  

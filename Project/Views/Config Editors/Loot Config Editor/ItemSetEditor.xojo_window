@@ -351,9 +351,9 @@ End
 		    
 		    Dim QuantityText As String
 		    If Entry.MinQuantity = Entry.MaxQuantity Then
-		      QuantityText = Entry.MinQuantity.ToText
+		      QuantityText = Str(Entry.MinQuantity, "-0")
 		    Else
-		      QuantityText = Entry.MinQuantity.ToText + " - " + Entry.MaxQuantity.ToText
+		      QuantityText = Str(Entry.MinQuantity, "-0") + " - " + Str(Entry.MaxQuantity, "-0")
 		    End If
 		    
 		    Dim FiguresText As String
@@ -508,7 +508,7 @@ End
 		  Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
 		  Dim Parsed As Auto
 		  Try
-		    Parsed = Beacon.ParseJSON(Contents.ToText)
+		    Parsed = Beacon.ParseJSON(Contents)
 		  Catch Err As Xojo.Data.InvalidJSONException
 		    Beep
 		    Return

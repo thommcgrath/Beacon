@@ -186,9 +186,9 @@ End
 		    Dim StringPassword As String = Params.Lookup("password", "")
 		    
 		    Preferences.OnlineEnabled = True
-		    Preferences.OnlineToken = StringToken.ToText
+		    Preferences.OnlineToken = StringToken
 		    
-		    App.IdentityManager.RefreshUserDetails(StringPassword.ToText)
+		    App.IdentityManager.RefreshUserDetails(StringPassword)
 		  Case "dismiss_me"
 		    Self.Close()
 		  Else

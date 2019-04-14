@@ -349,7 +349,7 @@ End
 		  
 		  If Warn Then
 		    Dim Subject As String = If(SelCount = 1, "server", "servers")
-		    Dim DemonstrativeAdjective As String = If(SelCount = 1, "this", "these " + SelCount.ToText)
+		    Dim DemonstrativeAdjective As String = If(SelCount = 1, "this", "these " + Str(SelCount, "-0"))
 		    If Not Self.ShowConfirm("Are you sure you want to delete " + DemonstrativeAdjective + " " + Subject + "?", "The " + Subject + " can be added again later using the ""Import"" feature next to the ""Config Type"" menu.", "Delete", "Cancel") Then
 		      Return
 		    End If
@@ -632,6 +632,7 @@ End
 	#tag ViewProperty
 		Name="CurrentProfileID"
 		Group="Behavior"
-		Type="Text"
+		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior

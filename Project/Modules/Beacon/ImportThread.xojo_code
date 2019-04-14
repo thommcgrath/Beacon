@@ -235,7 +235,7 @@ Inherits Beacon.Thread
 		        Return Val(StringValue)
 		      Else
 		        // Probably Text
-		        Return StringValue.ToText
+		        Return StringValue
 		      End If
 		    End If
 		  Else

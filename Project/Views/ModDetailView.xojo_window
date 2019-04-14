@@ -931,9 +931,9 @@ End
 		  
 		  Select Case Column
 		  Case 0
-		    Engram.Path = Me.Cell(Row, Column).ToText
+		    Engram.Path = Me.Cell(Row, Column)
 		  Case 1
-		    Engram.Label = Me.Cell(Row, Column).ToText
+		    Engram.Label = Me.Cell(Row, Column)
 		  Case 2
 		    Engram.CanBeBlueprint = Me.CellCheck(Row, Column)
 		  Case 3

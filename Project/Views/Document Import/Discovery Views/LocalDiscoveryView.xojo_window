@@ -572,7 +572,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.LocalDiscoveryEngine(Self.mGameIniContent.ToText, Self.mGameUserSettingsIniContent.ToText)
+		  Engines(0) = New Beacon.LocalDiscoveryEngine(Self.mGameIniContent, Self.mGameUserSettingsIniContent)
 		  Self.ShouldFinish(Engines)
 		End Sub
 	#tag EndEvent

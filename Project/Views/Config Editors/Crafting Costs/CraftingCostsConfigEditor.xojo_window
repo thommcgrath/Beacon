@@ -731,7 +731,7 @@ End
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideItemCraftingCosts") > -1 Then
 		    Dim ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse(ImportText.ToText, "Clipboard")
+		    Self.Parse(ImportText, "Clipboard")
 		    Return
 		  End If
 		  
@@ -739,7 +739,7 @@ End
 		    Dim Dicts() As Auto
 		    Try
 		      Dim Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		      Dicts = Beacon.ParseJSON(Contents.ToText)
+		      Dicts = Beacon.ParseJSON(Contents)
 		      
 		      Dim Costs() As Beacon.CraftingCost
 		      For Each Dict As Dictionary In Dicts

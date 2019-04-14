@@ -511,7 +511,7 @@ End
 #tag Events ServerNameField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Name = Me.Text.ToText
+		  Self.mProfile.Name = Me.Text
 		  Self.Controls.Caption = Me.Text
 		  Self.ContentsChanged = Self.mProfile.Modified
 		End Sub

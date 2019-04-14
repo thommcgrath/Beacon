@@ -370,7 +370,7 @@ End
 		  Dim Editable As New Beacon.MutableEngram(Engram)
 		  Select Case Column
 		  Case Self.ColumnLabel
-		    Editable.Label = Me.Cell(Row, Column).ToText
+		    Editable.Label = Me.Cell(Row, Column)
 		  Case Self.ColumnBlueprintable
 		    Editable.CanBeBlueprint = Me.CellCheck(Row, Column)
 		  Case Self.ColumnIsland

@@ -103,7 +103,7 @@ Protected Class PresetModifier
 		    Message = ""
 		    Return True
 		  Catch Err As RegexException
-		    Message = Err.Message.ToText
+		    Message = Err.Message
 		    Return False
 		  End Try
 		  #Pragma BreakOnExceptions Default

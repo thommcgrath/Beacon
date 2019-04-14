@@ -1189,7 +1189,7 @@ End
 		        If Self.mImporters(I).Progress >= 1 Then
 		          Status = "Finishing…"
 		        Else
-		          Status = "Parsing Config Files… (" + Progress.ToText() + "%)"
+		          Status = "Parsing Config Files… (" + Format(Round(Progress * 100), "0") + "%)"
 		        End If
 		      End If
 		    Else

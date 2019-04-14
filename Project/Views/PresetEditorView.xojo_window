@@ -1143,12 +1143,14 @@ End
 		    Dim QuantityMultiplier As Double = Self.mPreset.QuantityMultiplier(Modifier)
 		    Dim QualityModifier As Integer = Self.mPreset.QualityModifier(Modifier)
 		    
-		    Dim QuantityLabel As String = "x " + QuantityMultiplier.ToText(Xojo.Core.Locale.Current)
+		    Dim QuantityLabel As String = "x " + Str(QuantityMultiplier, "-0")
 		    Dim QualityLabel As String
 		    If QualityModifier = 0 Then
 		      QualityLabel = "No Change"
+		    ElseIf QualityModifier > 0 Then
+		      QualityLabel = "+" + Str(QualityModifier, "0") + " Tier" + If(Abs(QualityModifier) <> 1, "s", "")
 		    Else
-		      QualityLabel = QualityModifier.ToText(Xojo.Core.Locale.Current, "+0;-0") + " Tier" + If(Abs(QualityModifier) <> 1, "s", "")
+		      QualityLabel = "-" + Str(Abs(QualityModifier), "0") + " Tier" + If(Abs(QualityModifier) <> 1, "s", "")
 		    End If
 		    
 		    Self.ModifiersList.AddRow(Modifier.Label, QualityLabel, QuantityLabel)
@@ -1162,7 +1164,7 @@ End
 	#tag Method, Flags = &h0
 		Function ViewID() As String
 		  If Self.mSaveFile <> Nil Then
-		    Return EncodeHex(Crypto.MD5(Self.mSaveFile.NativePath)).ToText
+		    Return Beacon.MD5(Self.mSaveFile.NativePath)
 		  Else
 		    Return Self.mPreset.PresetID
 		  End If
@@ -1546,7 +1548,7 @@ End
 		  
 		  Dim Value As String = Trim(Me.Text)
 		  If Value <> "" And StrComp(Self.mPreset.Grouping, Value, 0) <> 0 Then
-		    Self.mPreset.Grouping = Value.ToText
+		    Self.mPreset.Grouping = Value
 		    Self.ContentsChanged = True
 		  End If
 		End Sub
@@ -1561,7 +1563,7 @@ End
 		  
 		  Dim Value As String = Trim(Me.Text)
 		  If Value <> "" And StrComp(Self.mPreset.Label, Value, 0) <> 0 Then
-		    Self.mPreset.Label = Value.ToText
+		    Self.mPreset.Label = Value
 		    Self.ContentsChanged = True
 		  End If
 		End Sub
@@ -1637,7 +1639,7 @@ End
 		  End If
 		  
 		  Try
-		    Dim Data As String = Board.RawData(Self.ModifierClipboardType).DefineEncoding(Encodings.UTF8).ToText
+		    Dim Data As String = Board.RawData(Self.ModifierClipboardType).DefineEncoding(Encodings.UTF8)
 		    Dim Modifiers As Dictionary = Beacon.ParseJSON(Data)
 		    
 		    For Each Entry As DictionaryMember In Modifiers.Members

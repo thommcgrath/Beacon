@@ -273,7 +273,7 @@ Protected Class DocumentController
 		    End If
 		  Case Beacon.DocumentURL.TypeTransient
 		    // just a local file stored in the the temp directory
-		    Dim File As FolderItem = SpecialFolder.Temporary.Child(Self.mDocumentURL.Path + BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText)
+		    Dim File As FolderItem = SpecialFolder.Temporary.Child(Self.mDocumentURL.Path + BeaconFileTypes.BeaconDocument.PrimaryExtension)
 		    If File.Exists Then
 		      FileContent = File.Read()
 		    Else

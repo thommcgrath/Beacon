@@ -306,7 +306,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Self.WorkshopMod.PullURL = Self.PullURLField.Text.ToText
+		  Self.WorkshopMod.PullURL = Self.PullURLField.Text
 		  Dim Payload As String = Beacon.GenerateJSON(Self.WorkshopMod.AsDictionary)
 		  
 		  Dim Request As New BeaconAPI.Request("mod.php", "POST", Payload, "application/json", AddressOf APICallback_SaveMod)

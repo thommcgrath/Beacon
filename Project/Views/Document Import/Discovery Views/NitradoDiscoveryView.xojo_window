@@ -384,7 +384,7 @@ End
 		  Case 200
 		    // Good
 		  Else
-		    Self.ShowAlert("Nitrado API Error", "An unexpected error with the Nitrado API occurred. HTTP status " + Status.ToText + " was returned.")
+		    Self.ShowAlert("Nitrado API Error", "An unexpected error with the Nitrado API occurred. HTTP status " + Str(Status, "-0") + " was returned.")
 		    Self.ShouldCancel()
 		    Return
 		  End Select

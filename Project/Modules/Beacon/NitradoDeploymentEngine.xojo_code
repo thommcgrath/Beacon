@@ -485,7 +485,7 @@ Implements Beacon.DeploymentEngine
 		    Self.RunNextTask()
 		  Else
 		    Self.mErrored = True
-		    Self.mStatus = "Error: Could not upload Game.ini, server said " + Status.ToText
+		    Self.mStatus = "Error: Could not upload Game.ini, server said " + Str(Status, "-0")
 		  End If
 		End Sub
 	#tag EndMethod
@@ -540,7 +540,7 @@ Implements Beacon.DeploymentEngine
 		    Self.RunNextTask()
 		  Else
 		    Self.mErrored = True
-		    Self.mStatus = "Error: Could not upload GameUserSettings.ini, server said " + Status.ToText
+		    Self.mStatus = "Error: Could not upload GameUserSettings.ini, server said " + Str(Status, "-0")
 		  End If
 		End Sub
 	#tag EndMethod

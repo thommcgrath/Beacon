@@ -530,10 +530,10 @@ End
 		  Dim SearchText As String = Self.FilterField.Text
 		  Dim Tags() As String
 		  If Self.TagMenu.ListIndex > 0 Then
-		    Tags.Append(Self.TagMenu.RowTag(Self.TagMenu.ListIndex).StringValue.ToText)
+		    Tags.Append(Self.TagMenu.RowTag(Self.TagMenu.ListIndex).StringValue)
 		  End If
 		  
-		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mMods, Tags)
+		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText, Self.mMods, Tags)
 		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.DeleteAllRows
 		  For Each Engram As Beacon.Engram In Engrams
@@ -657,7 +657,7 @@ End
 		    Return
 		  End If
 		  
-		  Preferences.SelectedTag = Me.RowTag(Me.ListIndex).StringValue.ToText
+		  Preferences.SelectedTag = Me.RowTag(Me.ListIndex).StringValue
 		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent

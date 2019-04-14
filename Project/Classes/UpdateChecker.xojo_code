@@ -25,7 +25,7 @@ Protected Class UpdateChecker
 		  AddHandler Self.mSocket.HeadersReceived, WeakAddressOf Self.mSocket_HeadersReceived
 		  AddHandler Self.mSocket.ContentReceived, WeakAddressOf Self.mSocket_ContentReceived
 		  Self.mSocket.RequestHeader("Cache-Control") = "no-cache"
-		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?build=" + App.BuildNumber.ToText + "&stage=" + App.StageCode.ToText))
+		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?build=" + Str(App.BuildNumber, "-0") + "&stage=" + Str(App.StageCode, "-0")))
 		End Sub
 	#tag EndMethod
 

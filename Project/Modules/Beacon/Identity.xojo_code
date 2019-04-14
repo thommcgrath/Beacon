@@ -76,7 +76,7 @@ Protected Class Identity
 		  Try
 		    If Dict.HasKey("signatures") Then
 		      Dim SignaturesDict As Dictionary = Dict.Value("signatures")
-		      Self.mSignature = DecodeHex(SignaturesDict.Lookup(Self.SignatureVersion.ToText, ""))
+		      Self.mSignature = DecodeHex(SignaturesDict.Lookup(Str(Self.SignatureVersion, "-0"), ""))
 		    Else
 		      Self.mSignature = Nil
 		    End If

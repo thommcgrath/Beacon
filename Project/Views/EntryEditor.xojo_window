@@ -632,7 +632,7 @@ End
 		    Tags.Append(Self.TagMenu.RowTag(Self.TagMenu.ListIndex).StringValue)
 		  End If
 		  
-		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mMods, Tags)
+		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText, Self.mMods, Tags)
 		  EngramList.DeleteAllRows
 		  
 		  Dim PerfectMatch As Boolean
@@ -872,7 +872,7 @@ End
 		    Return
 		  End If
 		  
-		  Preferences.SelectedTag = Me.RowTag(Me.ListIndex).StringValue.ToText
+		  Preferences.SelectedTag = Me.RowTag(Me.ListIndex).StringValue
 		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent

@@ -239,7 +239,7 @@ End
 		  URLField.Enabled = False
 		  
 		  Downloader.ClearRequestHeaders
-		  Downloader.Send("GET", Trim(URLField.Text).ToText)
+		  Downloader.Send("GET", Trim(URLField.Text))
 		End Sub
 	#tag EndEvent
 #tag EndEvents

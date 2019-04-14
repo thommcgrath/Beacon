@@ -125,7 +125,7 @@ Protected Class IdentityManager
 		    Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
 		    Stream.Close
 		    
-		    Dim Dict As Dictionary = Beacon.ParseJSON(Contents.ToText)
+		    Dim Dict As Dictionary = Beacon.ParseJSON(Contents)
 		    Self.mCurrentIdentity = Beacon.Identity.Import(Dict)
 		  Catch Err As RuntimeException
 		  End Try

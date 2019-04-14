@@ -684,7 +684,7 @@ End
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
 		  Self.ImportProgress.ShowWithin(Self.TrueWindow)
 		  Self.Importer.Clear
-		  Self.Importer.GameIniContent = Content.ToText
+		  Self.Importer.GameIniContent = Content
 		  Self.Importer.Run
 		End Sub
 	#tag EndMethod
@@ -1137,7 +1137,7 @@ End
 		    Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
 		    Dim Parsed As Auto
 		    Try
-		      Parsed = Beacon.ParseJSON(Contents.ToText)
+		      Parsed = Beacon.ParseJSON(Contents)
 		    Catch Err As Xojo.Data.InvalidJSONException
 		      Beep
 		      Return

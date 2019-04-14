@@ -201,7 +201,7 @@ Implements Beacon.DiscoveryEngine
 		  
 		  Dim FilePath As String = Self.mProfile.ConfigPath + "/Game.ini"
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.URLEncode(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Str(Self.mProfile.ServiceID, "-0") + "/gameservers/file_server/download?file=" + Beacon.URLEncode(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -214,7 +214,7 @@ Implements Beacon.DiscoveryEngine
 		  
 		  Dim FilePath As String = Self.mProfile.ConfigPath + "/GameUserSettings.ini"
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.URLEncode(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Str(Self.mProfile.ServiceID, "-0") + "/gameservers/file_server/download?file=" + Beacon.URLEncode(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -248,7 +248,7 @@ Implements Beacon.DiscoveryEngine
 		  
 		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers", AddressOf Callback_GetServerStatus, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Str(Self.mProfile.ServiceID, "-0") + "/gameservers", AddressOf Callback_GetServerStatus, Nil, Headers)
 		End Sub
 	#tag EndMethod
 

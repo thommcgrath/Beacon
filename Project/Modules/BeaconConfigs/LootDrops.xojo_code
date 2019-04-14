@@ -146,7 +146,7 @@ Implements Xojo.Core.Iterable
 		    End If
 		    
 		    If Source.Count < Source.RequiredItemSets Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " +Source.RequiredItemSets.ToText + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.", Source))
+		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " + Str(Source.RequiredItemSets, "-0") + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.", Source))
 		    Else
 		      For Each Set As Beacon.ItemSet In Source
 		        If Set.IsValid(Document) Then

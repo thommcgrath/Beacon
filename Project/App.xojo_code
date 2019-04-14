@@ -432,7 +432,7 @@ Implements NotificationKit.Receiver
 		  Dim Dict As New Dictionary
 		  Dict.Value("Object") = Error
 		  Dict.Value("Reason") = Error.Explanation
-		  Dict.Value("Location") = Location.ToText
+		  Dict.Value("Location") = Location
 		  Dict.Value("Type") = Info.FullName
 		  Dict.Value("Trace") = Stack
 		  If Self.IdentityManager <> Nil And Self.IdentityManager.CurrentIdentity <> Nil Then
@@ -453,7 +453,7 @@ Implements NotificationKit.Receiver
 		    Return False
 		  End If
 		  
-		  If Beacon.OAuth2Client.HandleURL(URL.ToText) Then
+		  If Beacon.OAuth2Client.HandleURL(URL) Then
 		    Return True
 		  End If
 		  
@@ -498,7 +498,7 @@ Implements NotificationKit.Receiver
 		    End Select
 		  Else
 		    Dim LegacyURL As String = "thezaz.com/beacon/documents.php/"
-		    Dim TextURL As String = URL.ToText
+		    Dim TextURL As String = URL
 		    Dim Idx As Integer = TextURL.IndexOf(LegacyURL)
 		    If Idx > -1 Then
 		      Dim DocID As String = TextURL.Mid(Idx + LegacyURL.Length)
@@ -506,7 +506,7 @@ Implements NotificationKit.Receiver
 		    End If
 		    
 		    Dim FileURL As String = "https://" + URL
-		    MainWindow.Documents.OpenURL(FileURL.ToText)
+		    MainWindow.Documents.OpenURL(FileURL)
 		  End If
 		  
 		  Return True
@@ -566,7 +566,7 @@ Implements NotificationKit.Receiver
 		  
 		  Dim Dict As Dictionary
 		  Try
-		    Dict = Beacon.ParseJSON(Contents.ToText)
+		    Dict = Beacon.ParseJSON(Contents)
 		  Catch Err As RuntimeException
 		    ParentWindow.ShowAlert("Cannot import identity", "File is not an identity file.")
 		    Return
@@ -698,8 +698,8 @@ Implements NotificationKit.Receiver
 		  
 		  Self.mLogLock.Enter
 		  
-		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
-		  Dim DetailedMessage As String = Now.ToText + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Chr(9) + Message
+		  Dim Now As New Date
+		  Dim DetailedMessage As String = Now.SQLDateTimeWithOffset + " " + &u9 + Message
 		  
 		  #if DebugBuild
 		    System.DebugLog(DetailedMessage)
@@ -933,7 +933,7 @@ Implements NotificationKit.Receiver
 		    Path = Path + "&exception=" + ExceptionHash
 		  End If
 		  
-		  ShowURL(Beacon.WebURL(Path.ToText))
+		  ShowURL(Beacon.WebURL(Path))
 		End Sub
 	#tag EndMethod
 
@@ -962,7 +962,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub ShowReleaseNotes()
-		  ShowURL(Beacon.WebURL("/history.php?stage=" + Self.StageCode.ToText(Xojo.Core.Locale.Raw, "0") + "#build" + Self.BuildNumber.ToText(Xojo.Core.Locale.Raw, "0")))
+		  ShowURL(Beacon.WebURL("/history.php?stage=" + Str(Self.StageCode, "-0") + "#build" + Str(Self.BuildNumber, "-0")))
 		End Sub
 	#tag EndMethod
 

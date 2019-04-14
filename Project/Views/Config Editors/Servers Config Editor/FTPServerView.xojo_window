@@ -709,7 +709,7 @@ End
 		  Self.Header.Caption = Self.mProfile.Name
 		  Self.ServerNameField.Text = Self.mProfile.Name
 		  Self.HostField.Text = Self.mProfile.Host
-		  Self.PortField.Text = Self.mProfile.Port.ToText
+		  Self.PortField.Text = Str(Self.mProfile.Port, "-0")
 		  Self.UserField.Text = Self.mProfile.Username
 		  Self.PassField.Text = Self.mProfile.Password
 		  Self.GameIniPathField.Text = Self.mProfile.GameIniPath
@@ -736,7 +736,7 @@ End
 #tag Events ServerNameField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Name = Me.Text.ToText
+		  Self.mProfile.Name = Me.Text
 		  Self.Header.Caption = Me.Text
 		  Self.ContentsChanged = Self.mProfile.Modified
 		End Sub
@@ -745,7 +745,7 @@ End
 #tag Events HostField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Host = Me.Text.ToText
+		  Self.mProfile.Host = Me.Text
 		  Self.ContentsChanged = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -753,7 +753,7 @@ End
 #tag Events PortField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Port = Integer.FromText(Me.Text.ToText)
+		  Self.mProfile.Port = Val(Me.Text)
 		  Self.ContentsChanged = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -761,7 +761,7 @@ End
 #tag Events UserField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Username = Me.Text.ToText
+		  Self.mProfile.Username = Me.Text
 		  Self.ContentsChanged = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -769,7 +769,7 @@ End
 #tag Events PassField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.Password = Me.Text.ToText
+		  Self.mProfile.Password = Me.Text
 		  Self.ContentsChanged = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -777,7 +777,7 @@ End
 #tag Events GameIniPathField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.GameIniPath = Me.Text.ToText
+		  Self.mProfile.GameIniPath = Me.Text
 		  Self.ContentsChanged = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent
@@ -785,7 +785,7 @@ End
 #tag Events GameUserSettingsIniPathField
 	#tag Event
 		Sub TextChange()
-		  Self.mProfile.GameUserSettingsIniPath = Me.Text.ToText
+		  Self.mProfile.GameUserSettingsIniPath = Me.Text
 		  Self.ContentsChanged = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent

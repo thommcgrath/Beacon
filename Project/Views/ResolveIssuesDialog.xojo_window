@@ -471,7 +471,7 @@ End
 		  Me.Enabled = False
 		  BlueprintsField.ReadOnly = True
 		  
-		  Dim Content As String = BlueprintsField.Text.ToText
+		  Dim Content As String = BlueprintsField.Text
 		  Dim Configs() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
 		  Dim Callback As Beacon.ConfigGroup.ResolveIssuesCallback = AddressOf ResolvingFinished
 		  Self.ConfigsWaitingToResolve = Configs.Ubound + 1

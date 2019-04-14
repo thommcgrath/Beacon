@@ -254,7 +254,7 @@ End
 		  // No trim. Trailing or leading whitespace is perfectly valid for the password.
 		  Dim Password As String = Self.PasswordField.Text
 		  
-		  Dim Identity As Beacon.Identity = Beacon.Identity.FromUserDictionary(Self.mInputDictionary, Password.ToText)
+		  Dim Identity As Beacon.Identity = Beacon.Identity.FromUserDictionary(Self.mInputDictionary, Password)
 		  If Identity <> Nil Then
 		    Self.mOutputIdentity = Identity
 		    Self.Hide
