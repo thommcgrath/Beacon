@@ -44,6 +44,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   25
       Transparent     =   False
       Value           =   0
@@ -61,6 +62,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          HasBackColor    =   False
          Height          =   375
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   41
          LockBottom      =   True
@@ -155,6 +157,7 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   -259
       LockBottom      =   True
@@ -264,7 +267,7 @@ End
 		      Next
 		    End If
 		    
-		    Dim AvailableBounds As New Xojo.Core.Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
+		    Dim AvailableBounds As New REALbasic.Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
 		    
 		    Dim Width As Integer = Min(Max(Bounds.Width, Self.MinWidth), Self.MaxWidth, AvailableBounds.Width)
 		    Dim Height As Integer = Min(Max(Bounds.Height, Self.MinHeight), Self.MaxHeight, AvailableBounds.Height)

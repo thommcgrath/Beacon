@@ -221,14 +221,16 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Localize(Extends Rect As Xojo.Core.Rect, Point As Xojo.Core.Point) As Xojo.Core.Point
-		  Return New Xojo.Core.Point(Point.X - Rect.Origin.X, Point.Y - Rect.Origin.Y)
+		Function Localize(Extends Rect As REALbasic.Rect, Point As REALbasic.Point) As REALbasic.Point
+		  Return New REALbasic.Point(Point.X - Rect.Origin.X, Point.Y - Rect.Origin.Y)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Localize(Extends Rect As Xojo.Core.Rect, OtherRect As Xojo.Core.Rect) As Xojo.Core.Rect
-		  Return New Xojo.Core.Rect(Rect.Localize(OtherRect.Origin), OtherRect.Size)
+		Function Localize(Extends Rect As REALbasic.Rect, OtherRect As REALbasic.Rect) As REALbasic.Rect
+		  Dim Origin As REALbasic.Point = Rect.Localize(OtherRect.Origin)
+		  Dim Size As REALbasic.Size = OtherRect.Size
+		  Return New REALbasic.Rect(Origin.X, Origin.Y, Size.Width, Size.Height)
 		End Function
 	#tag EndMethod
 

@@ -207,7 +207,7 @@ Implements ObservationKit.Observable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
+			  Return New REALbasic.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -218,7 +218,7 @@ Implements ObservationKit.Observable
 			  Self.Height = Value.Height
 			End Set
 		#tag EndSetter
-		Rect As Xojo.Core.Rect
+		Rect As REALbasic.Rect
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0

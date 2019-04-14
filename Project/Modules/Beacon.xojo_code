@@ -209,7 +209,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetDesktop and (Target32Bit or Target64Bit))
-		Function GlobalPosition(Extends Target As Window) As Xojo.Core.Point
+		Function GlobalPosition(Extends Target As Window) As REALbasic.Point
 		  Dim Left As Integer = Target.Left
 		  Dim Top As Integer = Target.Top
 		  
@@ -219,7 +219,7 @@ Protected Module Beacon
 		    Top = Top + Target.Top
 		  Wend
 		  
-		  Return New Xojo.Core.Point(Left, Top)
+		  Return New REALbasic.Point(Left, Top)
 		End Function
 	#tag EndMethod
 
