@@ -414,42 +414,6 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Writer_Finished(Sender As Beacon.JSONWriter, Destination As FolderItem)
-		  If Sender = Nil Or Destination = Nil Then
-		    Return
-		  End If
-		  
-		  If Sender.Success Then
-		    If Self.mClearModifiedOnWrite And Self.mDocument <> Nil Then
-		      Self.mDocument.Modified = False
-		    End If
-		    
-		    // Update the document url to regenerate saveinfo/bookmarks
-		    Self.mDocumentURL = Beacon.DocumentURL.URLForFile(Destination)
-		    
-		    RaiseEvent WriteSuccess()
-		  Else
-		    Dim Reason As String
-		    Dim Err As RuntimeException = Sender.Error
-		    If Err <> Nil Then
-		      Reason = Err.Explanation
-		      If Reason = "" Then
-		        Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		        If Info <> Nil Then
-		          Reason = Info.Name + " from JSONWriter"
-		        End If
-		      End If
-		    End If
-		    If Reason = "" Then
-		      Reason = "Unknown JSONWriter error"
-		    End If
-		    
-		    RaiseEvent WriteError(Reason)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub WriteTo(Destination As Beacon.DocumentURL, ClearModified As Boolean)
 		  If Self.Busy Or Self.Loaded = False Or Destination.Scheme = Beacon.DocumentURL.TypeWeb Then
 		    Return
@@ -464,9 +428,42 @@ Protected Class DocumentController
 		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
 		    Self.mActiveThread.Run
 		  Case Beacon.DocumentURL.TypeLocal
-		    Dim Writer As New Beacon.JSONWriter(Self.mDocument, Self.mIdentity, New FolderItem(Destination.Path))
-		    AddHandler Writer.Finished, AddressOf Writer_Finished
-		    Writer.Run
+		    Dim File As New FolderItem(Destination.Path, FolderItem.PathTypeNative)
+		    Try
+		      Dim Dict As Dictionary = Self.mDocument.ToDictionary(App.IdentityManager.CurrentIdentity)
+		      Dim Compress As Boolean = Self.mDocument.UseCompression
+		      Dim Content As String = Beacon.GenerateJSON(Dict, Not Compress)
+		      If Compress Then
+		        Dim Compressor As New _GZipString
+		        Compressor.UseHeaders = True
+		        Content = Compressor.Compress(Content)
+		      End If
+		      File.Write(Content)
+		      
+		      If Self.mClearModifiedOnWrite Then
+		        If Self.mDocument <> Nil Then
+		          Self.mDocument.Modified = False
+		        End If
+		        
+		        // Update the document url to regenerate saveinfo/bookmarks
+		        Self.mDocumentURL = Beacon.DocumentURL.URLForFile(File)
+		      End If
+		      
+		      RaiseEvent WriteSuccess()
+		    Catch Err As RuntimeException
+		      Dim Reason As String = Err.Explanation
+		      If Reason = "" Then
+		        Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		        If Info <> Nil Then
+		          Reason = Info.Name + " in DocumentController.WriteTo"
+		        End If
+		      End If
+		      If Reason = "" Then
+		        Reason = "Unknown DocumentController.WriteTo error"
+		      End If
+		      
+		      RaiseEvent WriteError(Reason)
+		    End Try
 		  End Select
 		End Sub
 	#tag EndMethod

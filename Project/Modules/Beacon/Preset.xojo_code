@@ -327,7 +327,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Sub ToFile(File As FolderItem)
-		  Call Beacon.JSONWriter.WriteSynchronous(Self.ToDictionary, File, False)
+		  File.Write(Beacon.GenerateJSON(Self.ToDictionary, True))
 		End Sub
 	#tag EndMethod
 

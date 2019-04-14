@@ -89,7 +89,6 @@ Class=Frame;Modules/AnimationKit/Frame.xojo_code;&h00000000338B9627;&h0000000011
 Class=FrameSetIterator;Modules/AnimationKit/FrameSetIterator.xojo_code;&h000000002B877291;&h00000000116B320C;false
 Interface=FrameTarget;Modules/AnimationKit/FrameTarget.xojo_code;&h0000000021BF716E;&h00000000116B320C;false
 Window=SubscribeDialog;Views/SubscribeDialog.xojo_window;&h00000000132627FF;&h0000000008A387FF;false
-Class=JSONWriter;Modules/Beacon/JSONWriter.xojo_code;&h00000000489F37FF;&h0000000055ADDFFF;false
 Class=TabHeader;Custom Controls/TabHeader.xojo_code;&h000000005CAA5FFF;&h0000000030DCFFFF;false
 Folder=Developer;Views/Developer;&h000000002C1FFFFF;&h0000000008A387FF;false
 Window=DeveloperAddModDialog;Views/Developer/DeveloperAddModDialog.xojo_window;&h00000000727B7FFF;&h000000002C1FFFFF;false

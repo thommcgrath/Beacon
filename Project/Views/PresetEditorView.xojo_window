@@ -815,8 +815,7 @@ End
 			
 			Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 			If File <> Nil Then
-			Dim Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary, File)
-			Writer.Run
+			File.Write(Beacon.GenerateJSON(Self.mPreset.ToDictionary, True))
 			End If
 			Return True
 		End Function
@@ -1029,8 +1028,7 @@ End
 		  If Self.mSaveFile = Nil Then
 		    Beacon.Data.SavePreset(Self.mPreset)
 		  Else
-		    Dim Writer As New Beacon.JSONWriter(Self.mPreset.ToDictionary, Self.mSaveFile)
-		    Writer.Run
+		    Self.mSaveFile.Write(Beacon.GenerateJSON(Self.mPreset.ToDictionary, True))
 		  End If
 		  Self.ContentsChanged = False
 		  NotificationKit.Post("Preset Saved", Self.mPreset)

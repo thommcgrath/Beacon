@@ -445,8 +445,7 @@ End
 		  End If
 		  
 		  Dim Dict As Dictionary = App.IdentityManager.CurrentIdentity.Export
-		  Dim Writer As New Beacon.JSONWriter(Dict, File)
-		  Writer.Run
+		  File.Write(Beacon.GenerateJSON(Dict))
 		End Sub
 	#tag EndMethod
 
