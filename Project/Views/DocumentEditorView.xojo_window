@@ -1016,8 +1016,8 @@ End
 		  
 		  If Self.CurrentPanel <> Nil Then
 		    Dim RequiresPurchase As Boolean
-		    If Tag <> Nil And (Tag.Type = Variant.TypeString Or Tag.Type = Variant.TypeText) Then
-		      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Tag.TextValue, If(App.IdentityManager.CurrentIdentity <> Nil, App.IdentityManager.CurrentIdentity.OmniVersion, 0))
+		    If Tag <> Nil And Tag.Type = Variant.TypeString Then
+		      RequiresPurchase = Not BeaconConfigs.ConfigPurchased(Tag.StringValue, If(App.IdentityManager.CurrentIdentity <> Nil, App.IdentityManager.CurrentIdentity.OmniVersion, 0))
 		    End If
 		    Dim TopOffset As Integer
 		    If RequiresPurchase Then

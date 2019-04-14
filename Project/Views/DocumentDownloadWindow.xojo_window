@@ -223,7 +223,7 @@ End
 			  Select Case Self.mDocumentURL.Scheme
 			  Case Beacon.DocumentURL.TypeLocal
 			    Try
-			      Dim File As New FolderItem(Self.mDocumentURL.Path)
+			      Dim File As New FolderItem(Self.mDocumentURL.Path, FolderItem.PathTypeNative)
 			      Self.URLLabel.Text = File.NativePath
 			    Catch Err As RuntimeException
 			      Self.URLLabel.Text = Self.mDocumentURL.Path

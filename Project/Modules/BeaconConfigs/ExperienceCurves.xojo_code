@@ -46,8 +46,8 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Identity
 		  
 		  If Dict.HasKey("Player Levels") Then
-		    Dim List() As Auto = Dict.Value("Player Levels")
-		    For Each LevelXP As UInt64 In List
+		    Dim List() As Variant = Dict.Value("Player Levels")
+		    For Each LevelXP As Variant In List
 		      Self.mPlayerLevels.Append(LevelXP)
 		    Next
 		  ElseIf Dict.HasAllKeys("Player Curve", "Player Level Cap", "Player Max Experience") Then
@@ -58,8 +58,8 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  If Dict.HasKey("Dino Levels") Then
-		    Dim List() As Auto = Dict.Value("Dino Levels")
-		    For Each LevelXP As UInt64 In List
+		    Dim List() As Variant = Dict.Value("Dino Levels")
+		    For Each LevelXP As Variant In List
 		      Self.mDinoLevels.Append(LevelXP)
 		    Next
 		  ElseIf Dict.HasAllKeys("Dino Curve", "Dino Level Cap", "Dino Max Experience") Then
