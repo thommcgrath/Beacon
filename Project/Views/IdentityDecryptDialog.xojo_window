@@ -216,14 +216,14 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(InputDict As Xojo.Core.Dictionary)
+		Private Sub Constructor(InputDict As Dictionary)
 		  Self.mInputDictionary = InputDict
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ShowDecryptIdentityDict(Parent As Window, Dict As Xojo.Core.Dictionary) As Beacon.Identity
+		Shared Function ShowDecryptIdentityDict(Parent As Window, Dict As Dictionary) As Beacon.Identity
 		  If Parent = Nil Then
 		    Return Nil
 		  End If
@@ -238,7 +238,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mInputDictionary As Xojo.Core.Dictionary
+		Private mInputDictionary As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

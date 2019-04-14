@@ -662,15 +662,15 @@ End
 	#tag Method, Flags = &h0
 		Shared Sub Present(Dict As Dictionary)
 		  Dim Trace() As Xojo.Core.StackFrame = Dict.Value("Trace")
-		  Dim Lines() As Text
+		  Dim Lines() As String
 		  Lines.Append(Dict.Value("Type"))
 		  Lines.Append(Dict.Value("Reason"))
 		  For Each Frame As Xojo.Core.StackFrame In Trace
 		    Lines.Append(Frame.Name)
 		  Next
 		  
-		  Dim HashContent As Text = Lines.Join(Text.FromUnicodeCodepoint(10))
-		  Dim Hash As Text = Beacon.EncodeHex(Xojo.Crypto.SHA1(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(HashContent)))
+		  Dim HashContent As String = Join(Lines, &u10)
+		  Dim Hash As String = EncodeHex(Crypto.SHA1(HashContent))
 		  
 		  Dim Win As New ExceptionWindow
 		  Win.mExceptionHash = Hash.Lowercase

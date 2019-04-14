@@ -308,7 +308,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_ServerStatus(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_ServerStatus(URL As String, Status As Integer, Content As String, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -321,12 +321,11 @@ End
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
-		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
-		    Dim GameServer As Xojo.Core.Dictionary = Data.Value("gameserver")
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Dim Data As Dictionary = Response.Value("data")
+		    Dim GameServer As Dictionary = Data.Value("gameserver")
 		    
-		    Dim ServerStatus As Text = GameServer.Value("status")
+		    Dim ServerStatus As String = GameServer.Value("status")
 		    Dim Started, Enabled As Boolean
 		    Select Case ServerStatus
 		    Case "started"
@@ -382,7 +381,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_ServerToggle(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_ServerToggle(URL As String, Status As Integer, Content As String, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Content
 		  #Pragma Unused Tag
@@ -426,10 +425,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshServerStatus()
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.Auth.AccessToken
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Str(Self.mProfile.ServiceID, "-0") + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -476,20 +475,20 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "PowerButton"
-		    Dim Headers As New Xojo.Core.Dictionary
+		    Dim Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.Auth.AccessToken
 		    
 		    If Item.Toggled Then
-		      Dim FormData As New Xojo.Core.Dictionary
+		      Dim FormData As New Dictionary
 		      FormData.Value("message") = "Server stopped by Beacon (https://beaconapp.cc)"
 		      FormData.Value("stop_message") = "Server is now stopping."
 		      
-		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/stop", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
+		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Str(Self.mProfile.ServiceID, "-0") + "/gameservers/stop", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
 		    Else
-		      Dim FormData As New Xojo.Core.Dictionary
+		      Dim FormData As New Dictionary
 		      FormData.Value("message") = "Server started by Beacon (https://beaconapp.cc)"
 		      
-		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/restart", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
+		      SimpleHTTP.Post("https://api.nitrado.net/services/" + Str(Self.mProfile.ServiceID, "-0") + "/gameservers/restart", FormData, AddressOf Callback_ServerToggle, Nil, Headers)
 		    End If
 		    
 		    Item.Enabled = False

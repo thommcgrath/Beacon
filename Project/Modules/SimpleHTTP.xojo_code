@@ -49,7 +49,7 @@ Protected Module SimpleHTTP
 		  Dim Parts() As String
 		  Dim Keys() As Variant = Fields.Keys
 		  For Each Key As Variant In Keys
-		    Parts.Append(EncodeURLComponent(Key.StringValue) + "=" + EncodeURLComponent(Fields.Value(Key).StringValue))
+		    Parts.Append(Beacon.URLEncode(Key.StringValue) + "=" + Beacon.URLEncode(Fields.Value(Key).StringValue))
 		  Next
 		  
 		  Dim Content As String = Parts.Join("&")

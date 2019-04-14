@@ -1,37 +1,37 @@
 #tag Class
-Protected Class Notification
+Protected Class StringListIterator
+Implements Xojo.Core.Iterator
 	#tag Method, Flags = &h0
-		Sub Constructor(Name As String)
-		  Self.Constructor(Name, Nil)
+		Sub Constructor(List As Beacon.StringList)
+		  Self.mItems = List
+		  Self.mIndex = -1
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Name As String, UserData As Variant)
-		  Self.mName = Name
-		  Self.mUserData = UserData
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Name() As String
-		  Return Self.mName
+		Function MoveNext() As Boolean
+		  // Part of the Xojo.Core.Iterator interface.
+		  
+		  Self.mIndex = Self.mIndex + 1
+		  Return Self.mIndex <= Self.mItems.Ubound
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UserData() As Variant
-		  Return Self.mUserData
+		Function Value() As Auto
+		  // Part of the Xojo.Core.Iterator interface.
+		  
+		  Return Self.mItems(Self.mIndex)
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mName As String
+		Private mIndex As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUserData As Variant
+		Private mItems() As String
 	#tag EndProperty
 
 

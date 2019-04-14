@@ -75,8 +75,8 @@ Protected Class Curve
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Export() As Xojo.Core.Dictionary
-		  Dim Dict As New Xojo.Core.Dictionary
+		Function Export() As Dictionary
+		  Dim Dict As New Dictionary
 		  Dict.Value("C1X") = Self.C1.X
 		  Dict.Value("C1Y") = Self.C1.Y
 		  Dict.Value("C2X") = Self.C2.X
@@ -86,7 +86,7 @@ Protected Class Curve
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.Curve
+		Shared Function Import(Dict As Dictionary) As Beacon.Curve
 		  If Not Dict.HasAllKeys("C1X", "C1Y", "C2X", "C2Y") Then
 		    Return Nil
 		  End If

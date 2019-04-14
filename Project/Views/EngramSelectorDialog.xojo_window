@@ -412,7 +412,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ExcludeEngrams() As Beacon.Engram, Mods As Beacon.TextList, AllowMultipleSelection As Boolean)
+		Private Sub Constructor(ExcludeEngrams() As Beacon.Engram, Mods As Beacon.StringList, AllowMultipleSelection As Boolean)
 		  For Each Engram As Beacon.Engram In ExcludeEngrams
 		    Self.mExcludedEngrams.Append(Engram.Path)
 		  Next
@@ -465,7 +465,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, ExcludeEngrams() As Beacon.Engram, Mods As Beacon.TextList, AllowMultipleSelection As Boolean) As Beacon.Engram()
+		Shared Function Present(Parent As Window, ExcludeEngrams() As Beacon.Engram, Mods As Beacon.StringList, AllowMultipleSelection As Boolean) As Beacon.Engram()
 		  Dim Engrams() As Beacon.Engram
 		  If Parent = Nil Then
 		    Return Engrams
@@ -498,7 +498,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UnmakeSelection()
-		  Dim SelectPaths() As Text
+		  Dim SelectPaths() As String
 		  For I As Integer = Self.SelectedList.ListCount - 1 DownTo 0
 		    If Not Self.SelectedList.Selected(I) Then
 		      Continue
@@ -528,7 +528,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
 		  Dim SearchText As String = Self.FilterField.Text
-		  Dim Tags() As Text
+		  Dim Tags() As String
 		  If Self.TagMenu.ListIndex > 0 Then
 		    Tags.Append(Self.TagMenu.RowTag(Self.TagMenu.ListIndex).StringValue.ToText)
 		  End If
@@ -558,11 +558,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExcludedEngrams() As Text
+		Private mExcludedEngrams() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMods As Beacon.TextList
+		Private mMods As Beacon.StringList
 	#tag EndProperty
 
 

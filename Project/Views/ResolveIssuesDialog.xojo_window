@@ -345,7 +345,7 @@ End
 		    Return DocumentIssues
 		  End If
 		  
-		  Dim UniqueIssues As New Xojo.Core.Dictionary
+		  Dim UniqueIssues As New Dictionary
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    Dim Issues() As Beacon.Issue = Config.Issues(Document)
@@ -471,7 +471,7 @@ End
 		  Me.Enabled = False
 		  BlueprintsField.ReadOnly = True
 		  
-		  Dim Content As Text = BlueprintsField.Text.ToText
+		  Dim Content As String = BlueprintsField.Text.ToText
 		  Dim Configs() As Beacon.ConfigGroup = Self.Document.ImplementedConfigs
 		  Dim Callback As Beacon.ConfigGroup.ResolveIssuesCallback = AddressOf ResolvingFinished
 		  Self.ConfigsWaitingToResolve = Configs.Ubound + 1

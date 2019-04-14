@@ -261,6 +261,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       Width           =   16
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -271,7 +272,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub APICallback_SaveMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		Private Sub APICallback_SaveMod(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
 		  #Pragma Unused Details
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
@@ -306,7 +307,7 @@ End
 	#tag Event
 		Sub Action()
 		  Self.WorkshopMod.PullURL = Self.PullURLField.Text.ToText
-		  Dim Payload As Text = Xojo.Data.GenerateJSON(Self.WorkshopMod.AsDictionary)
+		  Dim Payload As String = Beacon.GenerateJSON(Self.WorkshopMod.AsDictionary)
 		  
 		  Dim Request As New BeaconAPI.Request("mod.php", "POST", Payload, "application/json", AddressOf APICallback_SaveMod)
 		  Request.Sign(App.Identity)

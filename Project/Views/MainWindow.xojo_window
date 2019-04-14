@@ -234,22 +234,22 @@ End
 		Sub Moved()
 		  If Self.mOpened Then
 		    Dim Bounds As REALbasic.Rect = Self.Bounds
-		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
+		    Preferences.MainWindowPosition = New REALbasic.Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
-		  Dim Bounds As Xojo.Core.Rect = Preferences.MainWindowPosition
+		  Dim Bounds As REALbasic.Rect = Preferences.MainWindowPosition
 		  If Bounds <> Nil Then
 		    // Find the best screen
 		    Dim IdealScreen As Screen = Screen(0)
 		    If ScreenCount > 1 Then
 		      Dim MaxArea As Integer
 		      For I As Integer = 0 To ScreenCount - 1
-		        Dim ScreenBounds As New Xojo.Core.Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
-		        Dim Intersection As Xojo.Core.Rect = ScreenBounds.Intersection(Bounds)
+		        Dim ScreenBounds As New REALbasic.Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
+		        Dim Intersection As REALbasic.Rect = ScreenBounds.Intersection(Bounds)
 		        If Intersection = Nil Then
 		          Continue
 		        End If
@@ -283,7 +283,7 @@ End
 		Sub Resized()
 		  If Self.mOpened Then
 		    Dim Bounds As REALbasic.Rect = Self.Bounds
-		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
+		    Preferences.MainWindowPosition = New REALbasic.Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -413,7 +413,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source

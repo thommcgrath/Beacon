@@ -2,21 +2,27 @@
 Private Class BlowfishHeader
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mBytes = New Xojo.Core.MutableMemoryBlock(Self.Size)
+		  Self.mBytes = New MemoryBlock(Self.Size)
 		  Self.mBytes.LittleEndian = BlowfishLittleEndian
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Sub Constructor(Source As MemoryBlock)
+		  Self.ConsumeMemoryBlock(Source)
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
-		Private Sub ConsumeMemoryBlock(Source As Xojo.Core.MemoryBlock)
-		  Self.mBytes = New Xojo.Core.MutableMemoryBlock(0)
+		Private Sub ConsumeMemoryBlock(Source As MemoryBlock)
+		  Self.mBytes = New MemoryBlock(0)
 		  Self.mBytes.LittleEndian = BlowfishLittleEndian
 		  Self.mBytes.Append(Source.Left(Min(Source.Size, Self.Size)))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromMemoryBlock(Source As Xojo.Core.MemoryBlock) As BlowfishHeader
+		Shared Function FromMemoryBlock(Source As MemoryBlock) As BlowfishHeader
 		  Dim Header As New BlowfishHeader
 		  Header.ConsumeMemoryBlock(Source)
 		  Return Header
@@ -24,13 +30,20 @@ Private Class BlowfishHeader
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Convert() As Xojo.Core.MemoryBlock
-		  Return New Xojo.Core.MemoryBlock(Self.mBytes)
+		Function Operator_Convert() As MemoryBlock
+		  If Self.mBytes = Nil Then
+		    Return Nil
+		  End If
+		  
+		  Dim Mem As New MemoryBlock(Self.mBytes.Size)
+		  Mem.LittleEndian = Self.mBytes.LittleEndian
+		  Mem.StringValue(0, Mem.Size) = Self.mBytes.StringValue(0, Self.mBytes.Size)
+		  Return Mem
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Convert(Source As Xojo.Core.MemoryBlock)
+		Sub Operator_Convert(Source As MemoryBlock)
 		  Self.ConsumeMemoryBlock(Source)
 		End Sub
 	#tag EndMethod
@@ -79,21 +92,21 @@ Private Class BlowfishHeader
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mBytes As Xojo.Core.MutableMemoryBlock
+		Private mBytes As MemoryBlock
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return Self.mBytes.Mid(Self.OffsetVector, 8)
+			  Return Self.mBytes.StringValue(Self.OffsetVector, 8)
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Self.mBytes.Mid(Self.OffsetVector, 8) = Value
+			  Self.mBytes.StringValue(Self.OffsetVector, 8) = Value
 			End Set
 		#tag EndSetter
-		Vector As Xojo.Core.MemoryBlock
+		Vector As MemoryBlock
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0

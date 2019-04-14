@@ -364,7 +364,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_ListServers(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_ListServers(URL As String, Status As Integer, Content As String, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -390,9 +390,7 @@ End
 		  End Select
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    
-		    Dim Reply As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    Dim Reply As Dictionary = Beacon.ParseJSON(Content)
 		    If Reply.HasKey("status") = False Or Reply.Value("status") <> "success" Then
 		      Self.ShowAlert("Nitrado API Error", "The request to list services was not successful.")
 		      Self.ShouldCancel()
@@ -401,21 +399,21 @@ End
 		    
 		    Self.List.DeleteAllRows
 		    
-		    Dim Data As Xojo.Core.Dictionary = Reply.Value("data")
+		    Dim Data As Dictionary = Reply.Value("data")
 		    Dim Services() As Auto = Data.Value("services")
-		    For Each Service As Xojo.Core.Dictionary In Services
-		      Dim Type As Text = Service.Value("type")
+		    For Each Service As Dictionary In Services
+		      Dim Type As String = Service.Value("type")
 		      If Type <> "gameserver" Then
 		        Continue
 		      End If
 		      
-		      Dim Details As Xojo.Core.Dictionary = Service.Value("details")
-		      Dim Game As Text = Details.Value("game")
+		      Dim Details As Dictionary = Service.Value("details")
+		      Dim Game As String = Details.Value("game")
 		      If Not Game.BeginsWith("Ark: Survival Evolved") Then
 		        Continue
 		      End If
 		      
-		      Dim ServerName As Text = Details.Value("name")
+		      Dim ServerName As String = Details.Value("name")
 		      If Service.Lookup("comment", Nil) <> Nil Then
 		        ServerName = Service.Value("comment")
 		      End If
@@ -433,7 +431,7 @@ End
 		    Self.DesiredHeight = 400
 		    Self.PagePanel1.Value = 1
 		  Catch Err As RuntimeException
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Err)
+		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
 		    Self.ShowAlert("Nitrado API Error", "The Nitrado API responded in an unexpected manner. An unhandled " + Info.FullName + " was encountered.")
 		    Self.ShouldCancel()
 		  End Try
@@ -455,10 +453,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ListServers()
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.AuthClient.AccessToken
 		  
-		  Dim URL As Text = "https://api.nitrado.net/services"
+		  Dim URL As String = "https://api.nitrado.net/services"
 		  SimpleHTTP.Get(URL, AddressOf Callback_ListServers, Nil, Headers)
 		End Sub
 	#tag EndMethod
@@ -474,7 +472,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSelectedServers As Xojo.Core.Dictionary
+		Private mSelectedServers As Dictionary
 	#tag EndProperty
 
 

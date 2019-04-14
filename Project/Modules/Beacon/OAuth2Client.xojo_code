@@ -100,8 +100,8 @@ Protected Class OAuth2Client
 		      Continue
 		    End If
 		    
-		    Dim Key As String = DecodeURLComponent(Part.Left(Idx))
-		    Dim Value As String = DecodeURLComponent(Part.SubString(Idx + 1))
+		    Dim Key As String = Beacon.URLDecode(Part.Left(Idx))
+		    Dim Value As String = Beacon.URLDecode(Part.SubString(Idx + 1))
 		    
 		    Select Case Key
 		    Case "access_token"
@@ -169,7 +169,7 @@ Protected Class OAuth2Client
 		    EndPos = URL.Length
 		  End If
 		  
-		  Dim RequestID As String = DecodeURLComponent(URL.SubString(StartPos, EndPos - StartPos))
+		  Dim RequestID As String = Beacon.URLDecode(URL.SubString(StartPos, EndPos - StartPos))
 		  If References.HasKey(RequestID) Then
 		    Dim Ref As WeakRef = References.Value(RequestID)
 		    Call OAuth2Client(Ref.Value).Authorization_Handler(URL)
@@ -209,7 +209,7 @@ Protected Class OAuth2Client
 
 	#tag Method, Flags = &h21
 		Private Sub NewAuthorization()
-		  Dim URL As String = Self.AuthURL + "?provider=" + EncodeURLComponent(Self.mProvider)
+		  Dim URL As String = Self.AuthURL + "?provider=" + Beacon.URLEncode(Self.mProvider)
 		  Dim Browser As Beacon.WebView = RaiseEvent ShowURL(URL)
 		  If Browser = Nil Then
 		    If Self.References = Nil Then
@@ -220,7 +220,7 @@ Protected Class OAuth2Client
 		    Dim Ref As WeakRef = New WeakRef(Self)
 		    Self.References.Value(Self.mRequestID) = Ref
 		    
-		    ShowURL(URL + "&requestid=" + EncodeURLComponent(Self.mRequestID))
+		    ShowURL(URL + "&requestid=" + Beacon.URLEncode(Self.mRequestID))
 		    Return
 		  End If
 		  Browser.URLHandler = AddressOf Authorization_Handler

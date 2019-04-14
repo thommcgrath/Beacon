@@ -463,8 +463,8 @@ End
 		  Next
 		  Self.ServerSelectionList.Sort
 		  
-		  Self.mGameIniOptions = New Xojo.Core.Dictionary
-		  Self.mGameUserSettingsIniOptions = New Xojo.Core.Dictionary
+		  Self.mGameIniOptions = New Dictionary
+		  Self.mGameUserSettingsIniOptions = New Dictionary
 		  
 		  Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
 		  For Each Group As Beacon.ConfigGroup In Groups
@@ -530,7 +530,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Provider As Text = Self.mOAuthQueue(0)
+		  Dim Provider As String = Self.mOAuthQueue(0)
 		  Self.mOAuthQueue.Remove(0)
 		  
 		  Self.Auth.Provider = Provider
@@ -547,15 +547,15 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Backup(Engine As Beacon.DeploymentEngine, Folder As Beacon.FolderItem)
+		Private Sub Backup(Engine As Beacon.DeploymentEngine, Folder As FolderItem)
 		  If Engine.Errored Then
 		    Return
 		  End If
 		  
-		  Dim ServerFolder As Beacon.FolderItem = Folder.Child(Beacon.FolderItem.SanitizeFilename(Engine.Name))
+		  Dim ServerFolder As FolderItem = Folder.Child(Beacon.SanitizeFilename(Engine.Name))
 		  
-		  Dim GameIniContent As Text = Engine.BackupGameIni.Trim
-		  Dim GameUserSettingsIniContent As Text = Engine.BackupGameUserSettingsIni.Trim
+		  Dim GameIniContent As String = Engine.BackupGameIni.Trim
+		  Dim GameUserSettingsIniContent As String = Engine.BackupGameUserSettingsIni.Trim
 		  If GameIniContent = "" And GameUserSettingsIniContent = "" Then
 		    Return
 		  End If
@@ -564,7 +564,7 @@ End
 		    ServerFolder.CreateAsFolder
 		  End If
 		  
-		  Dim Subfolder As Beacon.FolderItem = ServerFolder.Child(Self.mDeployLabel)
+		  Dim Subfolder As FolderItem = ServerFolder.Child(Self.mDeployLabel)
 		  Dim Counter As Integer = 1
 		  While Subfolder.Exists
 		    Subfolder = ServerFolder.Child(Self.mDeployLabel + "-" + Counter.ToText)
@@ -574,10 +574,10 @@ End
 		  Subfolder.CreateAsFolder
 		  
 		  If GameIniContent <> "" Then
-		    Subfolder.Child("Game.ini").Write(GameIniContent, Xojo.Core.TextEncoding.UTF8)
+		    Subfolder.Child("Game.ini").Write(GameIniContent)
 		  End If
 		  If GameUserSettingsIniContent <> "" Then
-		    Subfolder.Child("GameUserSettings.ini").Write(GameUserSettingsIniContent, Xojo.Core.TextEncoding.UTF8)
+		    Subfolder.Child("GameUserSettings.ini").Write(GameUserSettingsIniContent)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -646,11 +646,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCurrentProvider As Text
+		Private mCurrentProvider As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDeployLabel As Text
+		Private mDeployLabel As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -662,15 +662,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniOptions As Xojo.Core.Dictionary
+		Private mGameIniOptions As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniOptions As Xojo.Core.Dictionary
+		Private mGameUserSettingsIniOptions As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOAuthQueue() As Text
+		Private mOAuthQueue() As String
 	#tag EndProperty
 
 
@@ -759,7 +759,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Provider As Text = Profile.OAuthProvider
+		    Dim Provider As String = Profile.OAuthProvider
 		    If Provider <> "" And Self.mOAuthQueue.IndexOf(Provider) = -1 Then
 		      Self.mOAuthQueue.Append(Provider)
 		    End If
@@ -831,7 +831,7 @@ End
 		  Next
 		  
 		  If Finished Then
-		    Dim BackupsFolder As Beacon.FolderItem = App.ApplicationSupport.Child("Backups")
+		    Dim BackupsFolder As FolderItem = App.ApplicationSupport.Child("Backups")
 		    If Not BackupsFolder.Exists Then
 		      BackupsFolder.CreateAsFolder
 		    End If

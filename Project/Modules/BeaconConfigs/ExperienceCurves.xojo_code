@@ -15,14 +15,14 @@ Inherits Beacon.ConfigGroup
 		  // Index 150 is level 152
 		  // Index 178 is level 180
 		  // This is because players start at level 1, not level 0. Then the 0-based array needs to be accounted for.
-		  Dim Chunks() As Text
+		  Dim Chunks() As String
 		  For Index As Integer = 0 To Self.mPlayerLevels.Ubound
 		    Dim XP As UInt64 = Self.mPlayerLevels(Index)
-		    Chunks.Append("ExperiencePointsForLevel[" + Index.ToText + "]=" + XP.ToText)
+		    Chunks.Append("ExperiencePointsForLevel[" + Str(Index, "-0") + "]=" + Str(XP, "-0"))
 		  Next
 		  
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsPlayer", MaxXP.ToText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Join(Chunks, ",") + ")"))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsPlayer", Str(MaxXP, "-0")))
 		  
 		  If Self.mDinoLevels.Ubound = -1 Then
 		    Return
@@ -33,16 +33,16 @@ Inherits Beacon.ConfigGroup
 		  
 		  For Index As Integer = 0 To Self.mDinoLevels.Ubound
 		    Dim XP As UInt64 = Self.mDinoLevels(Index)
-		    Chunks.Append("ExperiencePointsForLevel[" + Index.ToText + "]=" + XP.ToText)
+		    Chunks.Append("ExperiencePointsForLevel[" + Str(Index, "-0") + "]=" + Str(XP, "-0"))
 		  Next
 		  
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Chunks.Join(",") + ")"))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsDino", MaxXP.ToText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LevelExperienceRampOverrides", "(" + Join(Chunks, ",") + ")"))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "OverrideMaxExperiencePointsDino", Str(MaxXP, "-0")))
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  If Dict.HasKey("Player Levels") Then
@@ -72,7 +72,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  Dict.Value("Player Levels") = Self.mPlayerLevels
@@ -110,7 +110,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As Text
+		Shared Function ConfigName() As String
 		  Return "ExperienceCurves"
 		End Function
 	#tag EndMethod
@@ -119,19 +119,19 @@ Inherits Beacon.ConfigGroup
 		Sub Constructor()
 		  Super.Constructor()
 		  
-		  Dim List As Text = Beacon.Data.GetTextVariable("Player Levels")
+		  Dim List As String = Beacon.Data.GetStringVariable("Player Levels")
 		  If List <> "" Then
-		    Dim Values() As Text = List.Split(",")
-		    For Each Value As Text In Values
-		      Self.mPlayerLevels.Append(UInt64.FromText(Value))
+		    Dim Values() As String = Split(List, ",")
+		    For Each Value As String In Values
+		      Self.mPlayerLevels.Append(Val(Value))
 		    Next
 		  End If
 		  
-		  List = Beacon.Data.GetTextVariable("Dino Levels")
+		  List = Beacon.Data.GetStringVariable("Dino Levels")
 		  If List <> "" Then
-		    Dim Values() As Text = List.Split(",")
-		    For Each Value As Text In Values
-		      Self.mDinoLevels.Append(UInt64.FromText(Value))
+		    Dim Values() As String = Split(List, ",")
+		    For Each Value As String In Values
+		      Self.mDinoLevels.Append(Val(Value))
 		    Next
 		  End If
 		End Sub
@@ -209,7 +209,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.ExperienceCurves
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.ExperienceCurves
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused QualityMultiplier
@@ -220,11 +220,11 @@ Inherits Beacon.ConfigGroup
 		  
 		  Dim PlayerExperience As Boolean = True
 		  Dim Values As Auto = ParsedData.Value("LevelExperienceRampOverrides")
-		  Dim ValuesInfo As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Values)
+		  Dim ValuesInfo As Introspection.TypeInfo = Introspection.GetType(Values)
 		  Dim Overrides() As Auto
 		  If ValuesInfo.FullName = "Auto()" Then
 		    Overrides = Values
-		  ElseIf ValuesInfo.FullName = "Xojo.Core.Dictionary" Then
+		  ElseIf ValuesInfo.FullName = "Dictionary" Then
 		    Overrides.Append(Values)
 		  Else
 		    Return Nil
@@ -232,10 +232,10 @@ Inherits Beacon.ConfigGroup
 		  
 		  Dim Config As New BeaconConfigs.ExperienceCurves
 		  Config.mWasPerfectImport = True
-		  For Each Dict As Xojo.Core.Dictionary In Overrides
+		  For Each Dict As Dictionary In Overrides
 		    Dim Levels() As UInt64
-		    For Each Entry As Xojo.Core.DictionaryEntry In Dict
-		      Dim Key As Text = Entry.Key
+		    For Each Entry As DictionaryMember In Dict.Members
+		      Dim Key As String = Entry.Key
 		      If Key.BeginsWith("ExperiencePointsForLevel") Then
 		        Dim OpenTagPosition As Integer = Key.IndexOf("[")
 		        Dim CloseTagPosition As Integer = Key.IndexOf(OpenTagPosition, "]")
@@ -243,8 +243,8 @@ Inherits Beacon.ConfigGroup
 		          Continue
 		        End If
 		        OpenTagPosition = OpenTagPosition + 1
-		        Dim IndexTxt As Text = Key.Mid(OpenTagPosition, CloseTagPosition - OpenTagPosition)
-		        Dim Index As Integer = Integer.FromText(IndexTxt)
+		        Dim IndexTxt As String = Key.SubString(OpenTagPosition, CloseTagPosition - OpenTagPosition)
+		        Dim Index As Integer = Val(IndexTxt)
 		        If Levels.Ubound < Index Then
 		          Redim Levels(Index)
 		        End If
@@ -292,7 +292,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Document
 		  
 		  Dim Issues() As Beacon.Issue
-		  Dim ConfigName As Text = "ExperienceCurves"
+		  Dim ConfigName As String = "ExperienceCurves"
 		  Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Current
 		  
 		  If Self.mPlayerLevels.Ubound = -1 And Self.mDinoLevels.Ubound > -1 Then

@@ -40,19 +40,19 @@ Implements ObservationKit.Observable
 
 
 	#tag Method, Flags = &h0
-		Sub AddObserver(Observer As ObservationKit.Observer, Key As Text)
+		Sub AddObserver(Observer As ObservationKit.Observer, Key As String)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
-		    Self.mObservers = New Xojo.Core.Dictionary
+		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As Xojo.Core.WeakRef
+		  Dim Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = UBound(Refs) DownTo 0
+		  For I As Integer = Refs.Ubound DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.Remove(I)
 		      Continue
@@ -64,7 +64,7 @@ Implements ObservationKit.Observable
 		    End If
 		  Next
 		  
-		  Refs.Append(Xojo.Core.WeakRef.Create(Observer))
+		  Refs.Append(New WeakRef(Observer))
 		  Self.mObservers.Value(Key) = Refs
 		  
 		End Sub
@@ -129,19 +129,19 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotifyObservers(Key As Text, Value As Auto)
+		Sub NotifyObservers(Key As String, Value As Variant)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
-		    Self.mObservers = New Xojo.Core.Dictionary
+		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As Xojo.Core.WeakRef
+		  Dim Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = UBound(Refs) DownTo 0
+		  For I As Integer = Refs.Ubound DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.Remove(I)
 		      Continue
@@ -154,19 +154,19 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As Text)
+		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As String)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
-		    Self.mObservers = New Xojo.Core.Dictionary
+		    Self.mObservers = New Dictionary
 		  End If
 		  
-		  Dim Refs() As Xojo.Core.WeakRef
+		  Dim Refs() As WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
 		  
-		  For I As Integer = UBound(Refs) DownTo 0
+		  For I As Integer = Refs.Ubound DownTo 0
 		    If Refs(I).Value = Nil Or Refs(I).Value = Observer Then
 		      Refs.Remove(I)
 		      Continue
@@ -185,14 +185,14 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SwitchedTo(UserData As Auto = Nil)
+		Sub SwitchedTo(UserData As Variant = Nil)
 		  RaiseEvent Shown(UserData)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ViewID() As Text
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Self)
+		Function ViewID() As String
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Self)
 		  Return Info.Name
 		End Function
 	#tag EndMethod
@@ -231,7 +231,7 @@ Implements ObservationKit.Observable
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event Shown(UserData As Auto = Nil)
+		Event Shown(UserData As Variant = Nil)
 	#tag EndHook
 
 
@@ -284,7 +284,7 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mObservers As Xojo.Core.Dictionary
+		Private mObservers As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

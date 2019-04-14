@@ -1,7 +1,7 @@
 #tag Class
 Protected Class SimulatedSelection
 	#tag Method, Flags = &h0
-		Function Description() As Text
+		Function Description() As String
 		  Return Engram.Label + if(Self.IsBlueprint And Engram.CanBeBlueprint, " Blueprint", "")
 		End Function
 	#tag EndMethod
@@ -45,11 +45,6 @@ Protected Class SimulatedSelection
 			Visible=true
 			Group="ID"
 			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Quality"
-			Group="Behavior"
-			Type="Beacon.Qualities"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

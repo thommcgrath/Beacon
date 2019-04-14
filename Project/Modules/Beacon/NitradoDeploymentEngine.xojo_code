@@ -155,7 +155,7 @@ Implements Beacon.DeploymentEngine
 		  // If the log file cannot be downloaded for any reason, assume a stop time of now
 		  
 		  If Self.CheckError(Status) Then
-		    Self.mServerStopTime = New Beacon.Date
+		    Self.mServerStopTime = New Date
 		    Self.RunNextTask()
 		    Return
 		  End If
@@ -164,7 +164,7 @@ Implements Beacon.DeploymentEngine
 		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
-		      Self.mServerStopTime = New Beacon.Date
+		      Self.mServerStopTime = New Date
 		      Self.RunNextTask()
 		      Return
 		    End If
@@ -177,7 +177,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadLogFile_Content, Nil, Headers)
 		  Catch Err As RuntimeException
-		    Self.mServerStopTime = New Beacon.Date
+		    Self.mServerStopTime = New Date
 		    Self.RunNextTask()
 		    Return
 		  End Try
@@ -194,7 +194,7 @@ Implements Beacon.DeploymentEngine
 		  End If
 		  
 		  If Self.CheckError(Status) Then
-		    Self.mServerStopTime = New Beacon.Date
+		    Self.mServerStopTime = New Date
 		    Self.RunNextTask()
 		    Return
 		  End If
@@ -216,16 +216,16 @@ Implements Beacon.DeploymentEngine
 		      Dim Second As Integer = Val(Line.Mid(18, 2))
 		      Dim Nanosecond As Integer = (Val(Line.Mid(21, 3)) / 1000) * 1000000000
 		      
-		      Self.mServerStopTime = New Beacon.Date(Year, Month, Day, Hour, Minute, Second, 0)
+		      Self.mServerStopTime = New Date(Year, Month, Day, Hour, Minute, Second, 0)
 		      TimestampFound = True
 		      Exit For I
 		    Next
 		    
 		    If Not TimestampFound Then
-		      Self.mServerStopTime = New Beacon.Date
+		      Self.mServerStopTime = New Date
 		    End If
 		  Catch Err As RuntimeException
-		    Self.mServerStopTime = New Beacon.Date
+		    Self.mServerStopTime = New Date
 		  End Try
 		  
 		  Self.RunNextTask()
@@ -321,8 +321,8 @@ Implements Beacon.DeploymentEngine
 		  
 		  Try
 		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
-		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
-		    Dim GameServer As Xojo.Core.Dictionary = Data.Value("gameserver")
+		    Dim Data As Dictionary = Response.Value("data")
+		    Dim GameServer As Dictionary = Data.Value("gameserver")
 		    
 		    Self.mServerStatus = GameServer.Value("status")
 		    Select Case Self.mServerStatus
@@ -339,14 +339,14 @@ Implements Beacon.DeploymentEngine
 		      Self.mWatchForStatusStopCallbackKey = CallLater.Schedule(5000, AddressOf WatchStatusForStop)
 		    Case "stopped"
 		      // Ok to continue
-		      Dim Settings As Xojo.Core.Dictionary = GameServer.Value("settings")
-		      Dim GeneralSettings As Xojo.Core.Dictionary = Settings.Value("general")
+		      Dim Settings As Dictionary = GameServer.Value("settings")
+		      Dim GeneralSettings As Dictionary = Settings.Value("general")
 		      Self.mExpertMode = GeneralSettings.Value("expertMode") = "true"
 		      
-		      Dim StartParams As Xojo.Core.Dictionary = Settings.Value("start-param")
+		      Dim StartParams As Dictionary = Settings.Value("start-param")
 		      For Each ConfigValue As Beacon.ConfigValue In Self.mCommandLineOptions
-		        Dim Key As Text = ConfigValue.Key
-		        Dim Value As Text = ConfigValue.Value
+		        Dim Key As String = ConfigValue.Key
+		        Dim Value As String = ConfigValue.Value
 		        
 		        If Not StartParams.HasKey(Key) Then
 		          Continue
@@ -364,7 +364,7 @@ Implements Beacon.DeploymentEngine
 		        Return
 		      End If
 		      
-		      Dim GameSpecific As Xojo.Core.Dictionary = GameServer.Value("game_specific")
+		      Dim GameSpecific As Dictionary = GameServer.Value("game_specific")
 		      Self.mLogFilePath = GameSpecific.Value("path") + "ShooterGame/Saved/Logs/ShooterGame.log"
 		      Self.mConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
 		      
@@ -455,7 +455,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    Dim Data As Dictionary = Response.Value("data")
 		    Dim TokenDict As Dictionary = Data.Value("token")
-		    Dim Token As Text = TokenDict.Value("token")
+		    Dim Token As String = TokenDict.Value("token")
 		    
 		    Dim Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
@@ -510,7 +510,7 @@ Implements Beacon.DeploymentEngine
 		    
 		    Dim Data As Dictionary = Response.Value("data")
 		    Dim TokenDict As Dictionary = Data.Value("token")
-		    Dim Token As Text = TokenDict.Value("token")
+		    Dim Token As String = TokenDict.Value("token")
 		    
 		    Dim Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
@@ -598,7 +598,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Dim FilePath As String = Self.mConfigPath + "/Game.ini"
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Str(Self.mServiceID, "-0") + "/gameservers/file_server/download?file=" + EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Str(Self.mServiceID, "-0") + "/gameservers/file_server/download?file=" + Beacon.URLEncode(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -617,7 +617,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Dim FilePath As String = Self.mConfigPath + "/GameUserSettings.ini"
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Str(Self.mServiceID, "-0") + "/gameservers/file_server/download?file=" + EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Str(Self.mServiceID, "-0") + "/gameservers/file_server/download?file=" + Beacon.URLEncode(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -628,7 +628,7 @@ Implements Beacon.DeploymentEngine
 		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Str(Self.mServiceID, "-0") + "/gameservers/file_server/download?file=" + EncodeURLComponent(Self.mLogFilePath), AddressOf Callback_DownloadLogFile, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Str(Self.mServiceID, "-0") + "/gameservers/file_server/download?file=" + Beacon.URLEncode(Self.mLogFilePath), AddressOf Callback_DownloadLogFile, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -816,7 +816,7 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub WaitNitradoIdle()
-		  Dim Now As New Beacon.Date
+		  Dim Now As New Date
 		  Dim SecondsToWait As Double = Val(Beacon.Data.GetTextVariable("Nitrado Wait Seconds"))
 		  SecondsToWait = SecondsToWait - (Now.SecondsFrom1970 - Self.mServerStopTime.SecondsFrom1970)
 		  If SecondsToWait < 10 Then // Don't need to be THAT precise
@@ -824,7 +824,7 @@ Implements Beacon.DeploymentEngine
 		    Return
 		  End If
 		  
-		  Dim ResumeTime As New Beacon.Date(Now)
+		  Dim ResumeTime As New Date(Now)
 		  ResumeTime.SecondsFrom1970 = ResumeTime.SecondsFrom1970 + SecondsToWait
 		  
 		  Self.mStatus = "Waiting per Nitrado recommendations. Will resume at " + ResumeTime.LongTime + "…"
@@ -917,7 +917,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mServerStopTime As Beacon.Date
+		Private mServerStopTime As Date
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

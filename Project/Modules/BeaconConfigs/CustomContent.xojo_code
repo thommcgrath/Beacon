@@ -2,14 +2,14 @@
 Protected Class CustomContent
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  Self.mGameIniContent = Self.ReadContent(Dict.Lookup("Game.ini", ""), Identity)
 		  Self.mGameUserSettingsIniContent = Self.ReadContent(Dict.Lookup("GameUserSettings.ini", ""), Identity)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  Dict.Value("Game.ini") = Self.WriteContent(Self.mGameIniContent, Identity)
 		  Dict.Value("GameUserSettings.ini") = Self.WriteContent(Self.mGameUserSettingsIniContent, Identity)
 		End Sub
@@ -17,7 +17,7 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As Text
+		Shared Function ConfigName() As String
 		  Return "CustomContent"
 		End Function
 	#tag EndMethod
@@ -25,7 +25,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h21
 		Private Function Decrypt(Input As String, Identity As Beacon.Identity) As String
 		  Try
-		    Dim SecureDict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Input.ToText)
+		    Dim SecureDict As Dictionary = Beacon.ParseJSON(Input.ToText)
 		    If Not SecureDict.HasAllKeys("Key", "Vector", "Content", "Hash") Then
 		      Return ""
 		    End If
@@ -51,7 +51,7 @@ Inherits Beacon.ConfigGroup
 		        Return ""
 		      End Try
 		      
-		      Dim ComputedHash As String = EncodeHex(Crypto.SHA512(Decrypted))
+		      Dim ComputedHash As String = Beacon.SHA512(Decrypted)
 		      If ComputedHash <> ExpectedHash Then
 		        Return ""
 		      End If
@@ -85,7 +85,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h21
 		Private Function Encrypt(Input As String, Identity As Beacon.Identity) As String
 		  Try
-		    Dim Hash As String = EncodeHex(Crypto.SHA512(Input))
+		    Dim Hash As String = Beacon.SHA512(Input)
 		    If Self.mEncryptedValues <> Nil And Self.mEncryptedValues.HasKey(Hash) Then
 		      Return Self.mEncryptedValues.Value(Hash)
 		    End If
@@ -98,13 +98,13 @@ Inherits Beacon.ConfigGroup
 		      AES.SetInitialVector(Vector)
 		      Dim Encrypted As Global.MemoryBlock = AES.EncryptCBC(Input)
 		      
-		      Dim SecureDict As New Xojo.Core.Dictionary
+		      Dim SecureDict As New Dictionary
 		      SecureDict.Value("Key") = EncodeHex(Identity.Encrypt(Key))
 		      SecureDict.Value("Vector") = EncodeHex(Vector)
 		      SecureDict.Value("Content") = EncodeHex(Encrypted)
 		      SecureDict.Value("Hash") = Hash
 		      
-		      Dim JSON As String = Xojo.Data.GenerateJSON(SecureDict)
+		      Dim JSON As String = Beacon.GenerateJSON(SecureDict)
 		      If Self.mEncryptedValues = Nil Then
 		        Self.mEncryptedValues = New Dictionary
 		      End If
@@ -153,10 +153,10 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub GameIniContent(SupportedConfigs As Xojo.Core.Dictionary = Nil, Assigns Value As String)
+		Sub GameIniContent(SupportedConfigs As Dictionary = Nil, Assigns Value As String)
 		  If SupportedConfigs <> Nil Then
 		    Dim ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ShooterGameHeader, Value, SupportedConfigs)
-		    Dim ConfigDict As New Xojo.Core.Dictionary
+		    Dim ConfigDict As New Dictionary
 		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
 		    Value = Beacon.RewriteIniContent("", ConfigDict, False)
 		  End If
@@ -170,12 +170,12 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function GameIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  Return Self.GameIniValues(SourceDocument, New Xojo.Core.Dictionary)
+		  Return Self.GameIniValues(SourceDocument, New Dictionary)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniValues(SourceDocument As Beacon.Document, ExistingConfigs As Xojo.Core.Dictionary) As Beacon.ConfigValue()
+		Function GameIniValues(SourceDocument As Beacon.Document, ExistingConfigs As Dictionary) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  
 		  Return Self.IniValues(Beacon.ShooterGameHeader, Self.mGameIniContent, ExistingConfigs)
@@ -189,11 +189,11 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub GameUserSettingsIniContent(SupportedConfigs As Xojo.Core.Dictionary = Nil, Assigns Value As String)
+		Sub GameUserSettingsIniContent(SupportedConfigs As Dictionary = Nil, Assigns Value As String)
 		  If SupportedConfigs <> Nil Then
 		    Dim ConfigValues() As Beacon.ConfigValue = Self.IniValues(Beacon.ServerSettingsHeader, Value, SupportedConfigs)
 		    
-		    Dim ProtectedKeys As New Xojo.Core.Dictionary
+		    Dim ProtectedKeys As New Dictionary
 		    ProtectedKeys.Value("ServerSettings.ServerAdminPassword") = True
 		    ProtectedKeys.Value("ServerSettings.ServerPassword") = True
 		    ProtectedKeys.Value("AuctionHouse.MarketID") = True
@@ -210,7 +210,7 @@ Inherits Beacon.ConfigGroup
 		      End If
 		    Next
 		    
-		    Dim ConfigDict As New Xojo.Core.Dictionary
+		    Dim ConfigDict As New Dictionary
 		    Beacon.ConfigValue.FillConfigDict(ConfigDict, ConfigValues)
 		    Value = Beacon.RewriteIniContent("", ConfigDict, False)
 		  End If
@@ -224,12 +224,12 @@ Inherits Beacon.ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document) As Beacon.ConfigValue()
-		  Return Self.GameUserSettingsIniValues(SourceDocument, New Xojo.Core.Dictionary)
+		  Return Self.GameUserSettingsIniValues(SourceDocument, New Dictionary)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, ExistingConfigs As Xojo.Core.Dictionary) As Beacon.ConfigValue()
+		Function GameUserSettingsIniValues(SourceDocument As Beacon.Document, ExistingConfigs As Dictionary) As Beacon.ConfigValue()
 		  #Pragma Unused SourceDocument
 		  
 		  Return Self.IniValues(Beacon.ServerSettingsHeader, Self.mGameUserSettingsIniContent, ExistingConfigs)
@@ -237,14 +237,14 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetSkippedKeys(Header As String, ExistingConfigs As Xojo.Core.Dictionary) As String()
+		Private Function GetSkippedKeys(Header As String, ExistingConfigs As Dictionary) As String()
 		  Dim SkippedKeys() As String
-		  If Not ExistingConfigs.HasKey(Header.ToText) Then
+		  If Not ExistingConfigs.HasKey(Header) Then
 		    Return SkippedKeys
 		  End If
 		  
-		  Dim Siblings As Xojo.Core.Dictionary = ExistingConfigs.Value(Header.ToText)
-		  For Each Entry As Xojo.Core.DictionaryEntry In Siblings
+		  Dim Siblings As Dictionary = ExistingConfigs.Value(Header)
+		  For Each Entry As DictionaryMember In Siblings.Members
 		    SkippedKeys.Append(Entry.Key)
 		  Next
 		  Return SkippedKeys
@@ -252,7 +252,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function IniValues(InitialHeader As Text, Source As String, ExistingConfigs As Xojo.Core.Dictionary) As Beacon.ConfigValue()
+		Private Function IniValues(InitialHeader As String, Source As String, ExistingConfigs As Dictionary) As Beacon.ConfigValue()
 		  Source = Source.ReplaceAll(Self.EncryptedTag, "")
 		  Source = ReplaceLineEndings(Source, Encodings.ASCII.Chr(10))
 		  

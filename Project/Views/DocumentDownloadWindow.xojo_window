@@ -145,6 +145,7 @@ Begin BeaconDialog DocumentDownloadWindow
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   84
       Transparent     =   False
       Value           =   0
@@ -222,8 +223,8 @@ End
 			  Select Case Self.mDocumentURL.Scheme
 			  Case Beacon.DocumentURL.TypeLocal
 			    Try
-			      Dim File As New Beacon.FolderItem(Self.mDocumentURL.Path)
-			      Self.URLLabel.Text = File.Path
+			      Dim File As New FolderItem(Self.mDocumentURL.Path)
+			      Self.URLLabel.Text = File.NativePath
 			    Catch Err As RuntimeException
 			      Self.URLLabel.Text = Self.mDocumentURL.Path
 			    End Try
@@ -480,10 +481,5 @@ End
 		Name="Progress"
 		Group="Behavior"
 		Type="Double"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="URL"
-		Group="Behavior"
-		Type="Text"
 	#tag EndViewProperty
 #tag EndViewBehavior

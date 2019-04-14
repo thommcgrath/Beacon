@@ -43,7 +43,7 @@ Protected Class UserNotification
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Timestamp As Beacon.Date
+		Timestamp As Date
 	#tag EndProperty
 
 	#tag Property, Flags = &h0

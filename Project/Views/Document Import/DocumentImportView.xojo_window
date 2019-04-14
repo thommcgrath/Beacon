@@ -688,7 +688,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub BeginDiscovery(Engines() As Beacon.DiscoveryEngine, OAuthProvider As Text, OAuthData As Xojo.Core.Dictionary)
+		Private Sub BeginDiscovery(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
 		  Self.mEngines = Engines
 		  Self.mOAuthProvider = OAuthProvider
 		  Self.mOAuthData = OAuthData
@@ -739,7 +739,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Importer_ThreadedParseFinished(Sender As Beacon.ImportThread, ParsedData As Xojo.Core.Dictionary)
+		Private Sub Importer_ThreadedParseFinished(Sender As Beacon.ImportThread, ParsedData As Dictionary)
 		  Dim Idx As Integer = -1
 		  For I As Integer = 0 To Self.mImporters.Ubound
 		    If Self.mImporters(I) = Sender Then
@@ -754,9 +754,9 @@ End
 		  End If
 		  
 		  Dim Engine As Beacon.DiscoveryEngine = Self.mEngines(Idx)
-		  Dim CommandLineOptions As Xojo.Core.Dictionary = Engine.CommandLineOptions
+		  Dim CommandLineOptions As Dictionary = Engine.CommandLineOptions
 		  If CommandLineOptions = Nil Then
-		    CommandLineOptions = New Xojo.Core.Dictionary
+		    CommandLineOptions = New Dictionary
 		  End If
 		  Dim Document As New Beacon.Document
 		  Document.MapCompatibility = Engine.Map
@@ -811,19 +811,19 @@ End
 		    
 		  End Try
 		  
-		  Dim ConfigNames() As Text = BeaconConfigs.AllConfigNames()
-		  For Each ConfigName As Text In ConfigNames
+		  Dim ConfigNames() As String = BeaconConfigs.AllConfigNames()
+		  For Each ConfigName As String In ConfigNames
 		    If ConfigName = BeaconConfigs.Difficulty.ConfigName Or ConfigName = BeaconConfigs.CustomContent.ConfigName Then
 		      // Difficulty and custom content area special
 		      Continue For ConfigName
 		    End If
 		    
-		    Dim ConfigInfo As Xojo.Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(ConfigName)
-		    Dim Methods() As Xojo.Introspection.MethodInfo = ConfigInfo.Methods
-		    For Each Signature As Xojo.Introspection.MethodInfo In Methods
+		    Dim ConfigInfo As Introspection.TypeInfo = BeaconConfigs.TypeInfoForConfigName(ConfigName)
+		    Dim Methods() As Introspection.MethodInfo = ConfigInfo.GetMethods
+		    For Each Signature As Introspection.MethodInfo In Methods
 		      Try
-		        If Signature.IsShared And Signature.Name = "FromImport" And Signature.Parameters.Ubound = 3 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
-		          Dim Params(3) As Auto
+		        If Signature.IsShared And Signature.Name = "FromImport" And Signature.GetParameters.Ubound = 3 And Signature.ReturnType <> Nil And Signature.ReturnType.IsSubclassOf(GetTypeInfo(Beacon.ConfigGroup)) Then
+		          Dim Params(3) As Variant
 		          Params(0) = ParsedData
 		          Params(1) = CommandLineOptions
 		          Params(2) = Document.MapCompatibility
@@ -842,8 +842,8 @@ End
 		  
 		  // Now figure out what configs we'll generate so CustomContent can figure out what NOT to capture.
 		  // Do not do this in the loop above to ensure all configs are loaded first, in case they rely on each other.
-		  Dim GameIniValues As New Xojo.Core.Dictionary
-		  Dim GameUserSettingsIniValues As New Xojo.Core.Dictionary
+		  Dim GameIniValues As New Dictionary
+		  Dim GameUserSettingsIniValues As New Dictionary
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document, App.Identity))
@@ -932,11 +932,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOAuthData As Xojo.Core.Dictionary
+		Private mOAuthData As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOAuthProvider As Text
+		Private mOAuthProvider As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -944,7 +944,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mParsedData() As Xojo.Core.Dictionary
+		Private mParsedData() As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -1047,7 +1047,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As Text, OAuthData As Xojo.Core.Dictionary)
+		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
 		  Self.BeginDiscovery(Engines, OAuthProvider, OAuthData)
 		End Sub
 	#tag EndEvent
@@ -1068,7 +1068,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As Text, OAuthData As Xojo.Core.Dictionary)
+		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
 		  Self.BeginDiscovery(Engines, OAuthProvider, OAuthData)
 		End Sub
 	#tag EndEvent
@@ -1089,7 +1089,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As Text, OAuthData As Xojo.Core.Dictionary)
+		Sub Finished(Engines() As Beacon.DiscoveryEngine, OAuthProvider As String, OAuthData As Dictionary)
 		  Self.BeginDiscovery(Engines, OAuthProvider, OAuthData)
 		End Sub
 	#tag EndEvent

@@ -414,7 +414,7 @@ End
 
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName)
 		End Function
 	#tag EndMethod

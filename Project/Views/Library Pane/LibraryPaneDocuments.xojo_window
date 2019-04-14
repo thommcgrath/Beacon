@@ -81,7 +81,6 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -218,7 +217,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_CloudDocumentsList(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		Private Sub APICallback_CloudDocumentsList(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
 		  #Pragma Unused Message
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
@@ -227,9 +226,9 @@ End
 		  
 		  If Success Then
 		    Dim Dicts() As Auto = Details
-		    For Each Dict As Xojo.Core.Dictionary In Dicts
+		    For Each Dict As Dictionary In Dicts
 		      Dim Document As New BeaconAPI.Document(Dict)
-		      Dim URL As Text = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Mid(Document.ResourceURL.IndexOf("://") + 3)
+		      Dim URL As String = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Mid(Document.ResourceURL.IndexOf("://") + 3)
 		      Self.mCloudDocuments.Append(URL)
 		    Next
 		  End If
@@ -241,7 +240,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_CommunityDocumentsList(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		Private Sub APICallback_CommunityDocumentsList(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
 		  #Pragma Unused Message
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
@@ -250,7 +249,7 @@ End
 		  
 		  If Success Then
 		    Dim Dicts() As Auto = Details
-		    For Each Dict As Xojo.Core.Dictionary In Dicts
+		    For Each Dict As Dictionary In Dicts
 		      Dim Document As New BeaconAPI.Document(Dict)
 		      Self.mCommunityDocuments.Append(Document.ResourceURL)
 		    Next
@@ -283,10 +282,10 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Controller_DeleteError(Sender As Beacon.DocumentController, Reason As Text)
+		Private Sub Controller_DeleteError(Sender As Beacon.DocumentController, Reason As String)
 		  Dim Notification As New Beacon.UserNotification("The document " + Sender.Name + " could not be deleted.")
 		  Notification.SecondaryMessage = Reason
-		  Notification.UserData = New Xojo.Core.Dictionary
+		  Notification.UserData = New Dictionary
 		  Notification.UserData.Value("DocumentID") = If(Sender.Document <> Nil, Sender.Document.DocumentID, "")
 		  Notification.UserData.Value("DocumentURL") = Sender.URL.URL // To force convert to text
 		  Notification.UserData.Value("Reason") = Reason
@@ -361,7 +360,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Controller_LoadError(Sender As Beacon.DocumentController, Reason As Text)
+		Private Sub Controller_LoadError(Sender As Beacon.DocumentController, Reason As String)
 		  Self.DetachControllerEvents(Sender)
 		  
 		  Dim RecentIdx As Integer = -1
@@ -516,13 +515,13 @@ End
 
 	#tag Method, Flags = &h0
 		Sub SelectedDocuments(Assigns Documents() As Beacon.DocumentURL)
-		  Dim Selected() As Text
+		  Dim Selected() As String
 		  For Each URL As Beacon.DocumentURL In Documents
 		    Selected.Append(URL)
 		  Next
 		  
 		  For I As Integer = 0 To Self.List.ListCount - 1
-		    Dim URL As Text = Beacon.DocumentURL(Self.List.RowTag(I))
+		    Dim URL As String = Beacon.DocumentURL(Self.List.RowTag(I))
 		    Self.List.Selected(I) = Selected.IndexOf(URL) > -1
 		  Next
 		End Sub
@@ -543,7 +542,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateCloudDocuments()
 		  If App.Identity <> Nil Then
-		    Dim Params As New Xojo.Core.Dictionary
+		    Dim Params As New Dictionary
 		    Params.Value("user_id") = App.Identity.Identifier
 		    
 		    Dim Request As New BeaconAPI.Request("document.php", "GET", Params, AddressOf APICallback_CloudDocumentsList)
@@ -561,7 +560,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateCommunityDocuments()
-		  Dim Params As New Xojo.Core.Dictionary
+		  Dim Params As New Dictionary
 		  
 		  // Do not sign this request so we get only truly public documents
 		  Dim Request As New BeaconAPI.Request("document.php", "GET", Params, AddressOf APICallback_CommunityDocumentsList)
@@ -587,7 +586,7 @@ End
 		  End Select
 		  
 		  Dim RowBound As Integer = Self.List.ListCount - 1
-		  Dim SelectedURLs() As Text
+		  Dim SelectedURLs() As String
 		  For I As Integer = 0 To RowBound
 		    If Self.List.Selected(I) Then
 		      Dim URL As Beacon.DocumentURL = Self.List.RowTag(I)
@@ -711,7 +710,7 @@ End
 		    Dim Row1URL As Beacon.DocumentURL = Me.RowTag(Row1)
 		    Dim Row2URL As Beacon.DocumentURL = Me.RowTag(Row2)
 		    
-		    Result = Row1URL.Name.Compare(Row2URL.Name)
+		    Result = StrComp(Row1URL.Name, Row2URL.Name, 0)
 		    
 		    Return True
 		  End Select

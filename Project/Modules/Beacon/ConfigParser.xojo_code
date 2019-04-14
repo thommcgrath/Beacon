@@ -2,7 +2,7 @@
 Private Class ConfigParser
 	#tag Method, Flags = &h0
 		Function AddCharacter(Char As String) As Boolean
-		  Static LineEndingChar As Text = Beacon.ImportThread.LineEndingChar
+		  Static LineEndingChar As String = Beacon.ImportThread.LineEndingChar
 		  
 		  Self.ConsumedLastChar = True
 		  
@@ -111,7 +111,7 @@ Private Class ConfigParser
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Key As Text
+		Private Key As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -79,7 +79,7 @@ Protected Class ColorProfile
 		        Continue
 		      End If
 		      
-		      Dim Difference As Double = Xojo.Math.Abs(TestGray - DesiredGray)
+		      Dim Difference As Double = Abs(TestGray - DesiredGray)
 		      Grays.Append(TestGray)
 		      Differences.Append(Difference)
 		    Next

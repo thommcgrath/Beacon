@@ -2,7 +2,7 @@
 Protected Class MutableEngram
 Inherits Beacon.Engram
 	#tag Method, Flags = &h0
-		Sub AddTag(Tag As Text)
+		Sub AddTag(Tag As String)
 		  Tag = Self.NormalizeTag(Tag)
 		  If Self.mTags.IndexOf(Tag) = -1 Then
 		    Self.mTags.Append(Tag)
@@ -28,7 +28,7 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As Text)
+		Sub Constructor(Path As String)
 		  Super.Constructor()
 		  
 		  Self.mPath = Path
@@ -37,32 +37,32 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Label(Assigns Value As Text)
+		Sub Label(Assigns Value As String)
 		  Self.mLabel = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As Text)
+		Sub ModID(Assigns Value As String)
 		  Self.mModID = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModName(Assigns Value As Text)
+		Sub ModName(Assigns Value As String)
 		  Self.mModName = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Path(Assigns Value As Text)
+		Sub Path(Assigns Value As String)
 		  Self.mPath = Value
 		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveTag(Tag As Text)
+		Sub RemoveTag(Tag As String)
 		  Tag = Self.NormalizeTag(Tag)
 		  Dim Idx As Integer = Self.mTags.IndexOf(Tag)
 		  If Idx > -1 Then
@@ -72,10 +72,10 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Tags(Assigns Tags() As Text)
+		Sub Tags(Assigns Tags() As String)
 		  Redim Self.mTags(-1)
 		  
-		  For Each Tag As Text In Tags
+		  For Each Tag As String In Tags
 		    Tag = Self.NormalizeTag(Tag)
 		    Self.mTags.Append(Tag)
 		  Next
@@ -84,8 +84,8 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub TagString(Assigns Value As Text)
-		  Dim Tags() As Text = Value.Split(",")
+		Sub TagString(Assigns Value As String)
+		  Dim Tags() As String = Value.Split(",")
 		  Self.Tags = Tags
 		End Sub
 	#tag EndMethod

@@ -190,7 +190,7 @@ End
 		    Dim WelcomeWindow As New UserWelcomeWindow(True)
 		    WelcomeWindow.ShowModal()
 		  Case "beacon://showaccount"
-		    ShowURL(Beacon.WebURL("/account/auth.php?session_id=" + Preferences.OnlineToken + "&return=" + Beacon.EncodeURLComponent(Beacon.WebURL("/account/"))))
+		    ShowURL(Beacon.WebURL("/account/auth.php?session_id=" + Preferences.OnlineToken + "&return=" + Beacon.URLEncode(Beacon.WebURL("/account/"))))
 		  Case "beacon://spawncodes"
 		    App.ShowSpawnCodes()
 		  Case "beacon://reportproblem"

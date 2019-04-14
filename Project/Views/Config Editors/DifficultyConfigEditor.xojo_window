@@ -470,7 +470,7 @@ End
 
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.Difficulty.ConfigName)
 		End Function
 	#tag EndMethod
@@ -478,9 +478,9 @@ End
 	#tag Method, Flags = &h21
 		Private Sub FillReferenceFields(Difficulty As BeaconConfigs.Difficulty)
 		  Self.LootScaleField.Text = Str(Difficulty.DifficultyValue, "0%")
-		  Self.DifficultyValueField.Text = Difficulty.DifficultyValue.PrettyText
-		  Self.DifficultyOffsetField.Text = Difficulty.DifficultyOffset.PrettyText
-		  Self.OverrideOfficialDifficultyField.Text = Difficulty.OverrideOfficialDifficulty.PrettyText
+		  Self.DifficultyValueField.Text = Difficulty.DifficultyValue.PrettyString
+		  Self.DifficultyOffsetField.Text = Difficulty.DifficultyOffset.PrettyString
+		  Self.OverrideOfficialDifficultyField.Text = Difficulty.OverrideOfficialDifficulty.PrettyString
 		End Sub
 	#tag EndMethod
 

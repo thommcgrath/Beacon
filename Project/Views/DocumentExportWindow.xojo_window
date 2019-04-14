@@ -292,6 +292,7 @@ Begin BeaconDialog DocumentExportWindow
       Width           =   140
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -423,9 +424,9 @@ End
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, Document As Beacon.Document)
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
-		  Dim GameIniHeaders As New Xojo.Core.Dictionary
-		  Dim GameUserSettingsIniHeaders As New Xojo.Core.Dictionary
-		  Dim CommandLineHeaders As New Xojo.Core.Dictionary
+		  Dim GameIniHeaders As New Dictionary
+		  Dim GameUserSettingsIniHeaders As New Dictionary
+		  Dim CommandLineHeaders As New Dictionary
 		  
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    // Hold the custom content until the end so we know what lines Beacon will produce
@@ -436,7 +437,7 @@ End
 		    Dim Values() As Beacon.ConfigValue = Config.CommandLineOptions(Document, App.Identity)
 		    If Values <> Nil Then
 		      For Each Value As Beacon.ConfigValue In Values
-		        Dim Arr() As Text
+		        Dim Arr() As String
 		        If CommandLineHeaders.HasKey(Value.Header) Then
 		          Arr = CommandLineHeaders.Value(Value.Header)
 		        End If
@@ -507,7 +508,7 @@ End
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mCommandLineConfigs As Xojo.Core.DIctionary
+		Private mCommandLineConfigs As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -515,11 +516,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniConfigs As Xojo.Core.Dictionary
+		Private mGameIniConfigs As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameUserSettingsConfigs As Xojo.Core.Dictionary
+		Private mGameUserSettingsConfigs As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -552,29 +553,29 @@ End
 		  
 		  Dim Option As String = Me.Cell(Me.ListIndex, 0)
 		  If Option = "Command Line Options" Then
-		    Dim QuestionParameters As Text = "Map?listen"
+		    Dim QuestionParameters As String = "Map?listen"
 		    If Self.mCommandLineConfigs.HasKey("?") Then
-		      Dim Arr() As Text = Self.mCommandLineConfigs.Value("?")
-		      QuestionParameters = QuestionParameters + "?" + Arr.Join("?")
+		      Dim Arr() As String = Self.mCommandLineConfigs.Value("?")
+		      QuestionParameters = QuestionParameters + "?" + Join(Arr, "?")
 		    End If
 		    
-		    Dim Parameters(0) As Text
+		    Dim Parameters(0) As String
 		    Parameters(0) = """" + QuestionParameters + """"
 		    If Self.mCommandLineConfigs.HasKey("-") Then
-		      Dim Arr() As Text = Self.mCommandLineConfigs.Value("-")
-		      For Each Command As Text In Arr
+		      Dim Arr() As String = Self.mCommandLineConfigs.Value("-")
+		      For Each Command As String In Arr
 		        Parameters.Append("-" + Command)
 		      Next
 		    End If
 		    
-		    Self.CurrentContent = Parameters.Join(" ")
+		    Self.CurrentContent = Join(Parameters, " ")
 		    
 		    Self.SaveButton.Enabled = False
 		    Self.RewriteFileButton.Enabled = False
 		    Return
 		  End If
 		  
-		  Dim Configs As Xojo.Core.Dictionary
+		  Dim Configs As Dictionary
 		  If Option = "GameUserSettings.ini" Then
 		    Configs = Self.mGameUserSettingsConfigs
 		  ElseIf Option = "Game.ini" Then
@@ -643,14 +644,14 @@ End
 	#tag Event
 		Sub Action()
 		  Dim SelectedConfig As String = Self.FileList.Cell(Self.FileList.ListIndex, 0)
-		  Dim Configs As Xojo.Core.Dictionary
+		  Dim Configs As Dictionary
 		  Select Case SelectedConfig
 		  Case Beacon.RewriteModeGameIni
 		    Configs = Self.mGameIniConfigs
 		  Case Beacon.RewriteModeGameUserSettingsIni
 		    Configs = Self.mGameUserSettingsConfigs
 		  Else
-		    Configs = New Xojo.Core.Dictionary
+		    Configs = New Dictionary
 		  End Select
 		  
 		  Dim Board As New Clipboard
@@ -701,7 +702,7 @@ End
 		  
 		  Content = Content.GuessEncoding
 		  
-		  Dim Configs As Xojo.Core.Dictionary
+		  Dim Configs As Dictionary
 		  Select Case ConfigFilename
 		  Case Beacon.RewriteModeGameIni
 		    Configs = Self.mGameIniConfigs
@@ -945,5 +946,11 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="CurrentContent"
+		Group="Behavior"
+		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 #tag EndViewBehavior

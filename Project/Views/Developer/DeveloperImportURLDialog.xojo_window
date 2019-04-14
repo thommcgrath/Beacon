@@ -225,19 +225,19 @@ Begin BeaconDialog DeveloperImportURLDialog
       Visible         =   False
       Width           =   16
    End
-   Begin Xojo.Net.HTTPSocket Socket
+   Begin URLConnection Socket
+      HTTPStatusCode  =   0
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
-      ValidateCertificates=   False
    End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window) As Text
+		Shared Function Present(Parent As Window) As String
 		  Dim Win As New DeveloperImportURLDialog
 		  Dim C As New Clipboard
 		  If C.TextAvailable And C.Text.Left(4) = "http" Then
@@ -245,7 +245,7 @@ End
 		  End If
 		  Win.SwapButtons()
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Dim Content As Text = Win.mContent
+		  Dim Content As String = Win.mContent
 		  Win.Close
 		  Return Content
 		End Function
@@ -253,7 +253,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mContent As Text
+		Private mContent As String
 	#tag EndProperty
 
 
@@ -269,7 +269,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim URL As Text = Trim(URLField.Text).ToText
+		  Dim URL As String = Trim(URLField.Text).ToText
 		  If URL.IndexOf("pasted.co/") > -1 Then
 		    Self.ShowAlert("Can't import from this url", "TinyPaste/pasted.co prevent pulling content from their pages. Instead, copy and paste the spawn codes into a text file and import that.")
 		    Return
@@ -292,16 +292,16 @@ End
 #tag EndEvents
 #tag Events Socket
 	#tag Event
-		Sub Error(err as RuntimeException)
+		Sub Error(e As RuntimeException)
 		  Spinner.Visible = False
 		  ActionButton.Enabled = True
 		  URLField.Enabled = True
 		  
-		  MsgBox("Error: " + Err.Reason)
+		  MsgBox("Error: " + e.Reason)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
+		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
 		  URLField.Text = URL
 		  
 		  Spinner.Visible = False
@@ -313,7 +313,7 @@ End
 		    Return
 		  End If
 		  
-		  Self.mContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
+		  Self.mContent = Content
 		  
 		  // This could be a lot better.
 		  Self.mContent = Self.mContent.ReplaceAll("&apos;", "'")

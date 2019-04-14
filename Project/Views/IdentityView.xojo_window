@@ -444,7 +444,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = App.Identity.Export
+		  Dim Dict As Dictionary = App.Identity.Export
 		  Dim Writer As New Beacon.JSONWriter(Dict, File)
 		  Writer.Run
 		End Sub

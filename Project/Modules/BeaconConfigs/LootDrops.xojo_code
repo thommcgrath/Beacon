@@ -11,19 +11,19 @@ Implements Xojo.Core.Iterable
 		  End If
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Dim TextValue As Text = Source.TextValue(DifficultyConfig)
+		    Dim TextValue As String = Source.StringValue(DifficultyConfig)
 		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", TextValue))
 		  Next
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  If Dict.HasKey("Contents") Then
 		    Dim Contents() As Auto = Dict.Value("Contents")
-		    For Each DropDict As Xojo.Core.Dictionary In Contents
+		    For Each DropDict As Dictionary In Contents
 		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(DropDict)
 		      If Source <> Nil Then
 		        Self.mSources.Append(Source)
@@ -34,10 +34,10 @@ Implements Xojo.Core.Iterable
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  Dim Contents() As Xojo.Core.Dictionary
+		  Dim Contents() As Dictionary
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    Contents.Append(Source.Export)
 		  Next
@@ -54,8 +54,8 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function AssembleLocationDict(Source As Beacon.LootSource, ItemSet As Beacon.ItemSet = Nil, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Xojo.Core.Dictionary
-		  Dim Dict As New Xojo.Core.Dictionary
+		Private Shared Function AssembleLocationDict(Source As Beacon.LootSource, ItemSet As Beacon.ItemSet = Nil, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Dictionary
+		  Dim Dict As New Dictionary
 		  Dict.Value("LootSource") = Source
 		  If ItemSet <> Nil Then
 		    Dict.Value("ItemSet") = ItemSet
@@ -71,13 +71,13 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As Text
+		Shared Function ConfigName() As String
 		  Return "LootDrops"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.LootDrops
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.LootDrops
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  
@@ -93,7 +93,7 @@ Implements Xojo.Core.Iterable
 		  End Try
 		  
 		  Dim LootDrops As New BeaconConfigs.LootDrops
-		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
+		  For Each ConfigDict As Dictionary In Dicts
 		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, QualityMultiplier)
 		    If Source <> Nil Then
 		      LootDrops.Append(Source)
@@ -134,7 +134,7 @@ Implements Xojo.Core.Iterable
 	#tag Method, Flags = &h0
 		Function Issues(Document As Beacon.Document) As Beacon.Issue()
 		  Dim Issues() As Beacon.Issue
-		  Dim ConfigName As Text = "LootDrops"
+		  Dim ConfigName As String = "LootDrops"
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    If Not Document.SupportsLootSource(Source) Then
@@ -294,7 +294,7 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub TryToResolveIssues(InputContent As Text, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
+		Sub TryToResolveIssues(InputContent As String, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
 		  Self.mResolveIssuesCallback = Callback
 		  
 		  Dim Searcher As New Beacon.EngramSearcherThread

@@ -154,7 +154,7 @@ Implements NotificationKit.Receiver
 			Dim Dialog As New OpenDialog
 			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.JsonFile + BeaconFileTypes.BeaconIdentity
 			
-			Dim File As Beacon.FolderItem = Dialog.ShowModal
+			Dim File As FolderItem = Dialog.ShowModal
 			If File <> Nil Then
 			Self.OpenFile(File, True)
 			End If
@@ -215,17 +215,16 @@ Implements NotificationKit.Receiver
 			Return True
 			End If
 			
-			Dim HardwareID As Text = Beacon.HardwareID
-			Dim SigningData As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(HardwareID)
-			Dim Signed As Xojo.Core.MemoryBlock = Identity.Sign(SigningData)
+			Dim HardwareID As String = Beacon.HardwareID
+			Dim Signed As MemoryBlock = Identity.Sign(HardwareID)
 			
 			Dim Identity As Beacon.Identity = Self.Identity
-			Dim Dict As New Xojo.Core.Dictionary
+			Dim Dict As New Dictionary
 			Dict.Value("UserID") = Identity.Identifier
-			Dict.Value("Signed") = Beacon.EncodeHex(Signed)
+			Dict.Value("Signed") = EncodeHex(Signed)
 			Dict.Value("Device") = HardwareID
 			
-			Dim JSON As Text = Xojo.Data.GenerateJSON(Dict)
+			Dim JSON As String = Beacon.GenerateJSON(Dict)
 			Dim Stream As TextOutputStream = TextOutputStream.Create(File)
 			Stream.Write(JSON)
 			Stream.Close
@@ -413,7 +412,7 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Error)
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Error)
 		  Dim Stack() As Xojo.Core.StackFrame = Error.CallStack
 		  While Stack.Ubound >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
 		    Stack.Remove(0)
@@ -430,7 +429,7 @@ Implements NotificationKit.Receiver
 		  
 		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": " + Reason)
 		  
-		  Dim Dict As New Xojo.Core.Dictionary
+		  Dim Dict As New Dictionary
 		  Dict.Value("Object") = Error
 		  Dict.Value("Reason") = Error.Explanation
 		  Dict.Value("Location") = Location.ToText
@@ -498,11 +497,11 @@ Implements NotificationKit.Receiver
 		      Break
 		    End Select
 		  Else
-		    Dim LegacyURL As Text = "thezaz.com/beacon/documents.php/"
-		    Dim TextURL As Text = URL.ToText
+		    Dim LegacyURL As String = "thezaz.com/beacon/documents.php/"
+		    Dim TextURL As String = URL.ToText
 		    Dim Idx As Integer = TextURL.IndexOf(LegacyURL)
 		    If Idx > -1 Then
-		      Dim DocID As Text = TextURL.Mid(Idx + LegacyURL.Length)
+		      Dim DocID As String = TextURL.Mid(Idx + LegacyURL.Length)
 		      URL = BeaconAPI.URL("/document.php/" + DocID)
 		    End If
 		    
@@ -565,9 +564,9 @@ Implements NotificationKit.Receiver
 		  Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
 		  Stream.Close
 		  
-		  Dim Dict As Xojo.Core.Dictionary
+		  Dim Dict As Dictionary
 		  Try
-		    Dict = Xojo.Data.ParseJSON(Contents.ToText)
+		    Dict = Beacon.ParseJSON(Contents.ToText)
 		  Catch Err As RuntimeException
 		    ParentWindow.ShowAlert("Cannot import identity", "File is not an identity file.")
 		    Return
@@ -826,7 +825,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenFile(File As Beacon.FolderItem, Import As Boolean)
+		Sub OpenFile(File As FolderItem, Import As Boolean)
 		  If Self.mIdentityManager = Nil Or Self.mIdentityManager.CurrentIdentity = Nil Then
 		    Return
 		  End If
@@ -837,7 +836,7 @@ Implements NotificationKit.Receiver
 		  
 		  If File.IsType(BeaconFileTypes.JsonFile) Then
 		    Try
-		      Dim Content As Text = File.Read(Xojo.Core.TextEncoding.UTF8)
+		      Dim Content As String = File.Read(Encodings.UTF8)
 		      LocalData.SharedInstance.Import(Content)
 		    Catch Err As RuntimeException
 		      

@@ -62,6 +62,7 @@ Begin ConfigEditor ServersConfigEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -225,14 +226,14 @@ End
 
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return "Servers"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As Beacon.DocumentController)
-		  Self.mViews = New Xojo.Core.Dictionary
+		  Self.mViews = New Dictionary
 		  Super.Constructor(Controller)
 		End Sub
 	#tag EndMethod
@@ -279,7 +280,7 @@ End
 			  Self.mCurrentProfileID = Value
 			End Set
 		#tag EndSetter
-		CurrentProfileID As Text
+		CurrentProfileID As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -294,11 +295,11 @@ End
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mCurrentProfileID As Text
+		Private mCurrentProfileID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mViews As Xojo.Core.Dictionary
+		Private mViews As Dictionary
 	#tag EndProperty
 
 
@@ -313,7 +314,7 @@ End
 		  End If
 		  
 		  Dim Profile As Beacon.ServerProfile = Me.RowTag(Me.ListIndex)
-		  Dim ProfileID As Text = Profile.ProfileID
+		  Dim ProfileID As String = Profile.ProfileID
 		  If Not Self.mViews.HasKey(ProfileID) Then
 		    // Create the view
 		    Dim View As ServerViewContainer
@@ -375,7 +376,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
-		  Dim BackupsRoot As Beacon.FolderItem = App.ApplicationSupport.Child("Backups")
+		  Dim BackupsRoot As FolderItem = App.ApplicationSupport.Child("Backups")
 		  
 		  Dim RowIndex As Integer = Me.RowFromXY(X, Y)
 		  If RowIndex = -1 Then
@@ -385,7 +386,7 @@ End
 		  
 		  Try
 		    Dim Profile As Beacon.ServerProfile = Me.RowTag(RowIndex)
-		    Dim Folder As Beacon.FolderItem = BackupsRoot.Child(Beacon.FolderItem.SanitizeFilename(Profile.Name))
+		    Dim Folder As FolderItem = BackupsRoot.Child(Beacon.SanitizeFilename(Profile.Name))
 		    Base.Append(New MenuItem("Show Config Backups", Folder))
 		  Catch Err As RuntimeException
 		    Dim Item As New MenuItem("Show Config Backups", BackupsRoot)
@@ -400,7 +401,7 @@ End
 		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
 		  Select Case HitItem.Text
 		  Case "Show Config Backups"
-		    Dim Folder As Beacon.FolderItem = HitItem.Tag
+		    Dim Folder As FolderItem = HitItem.Tag
 		    If Folder = Nil Then
 		      Return True
 		    End If

@@ -3,7 +3,7 @@ Private Class Invocation
 	#tag Method, Flags = &h0
 		Sub Constructor(Notification As NotificationKit.Notification, Receiver As NotificationKit.Receiver)
 		  Self.mNotification = Notification
-		  Self.mReceiver = Xojo.Core.WeakRef.Create(Receiver)
+		  Self.mReceiver = New WeakRef(Receiver)
 		End Sub
 	#tag EndMethod
 
@@ -22,7 +22,7 @@ Private Class Invocation
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mReceiver As Xojo.Core.WeakRef
+		Private mReceiver As WeakRef
 	#tag EndProperty
 
 

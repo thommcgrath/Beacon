@@ -67,7 +67,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetTextVariable(Key As String) As String
+		Function GetStringVariable(Key As String) As String
 		  
 		End Function
 	#tag EndMethod
@@ -109,13 +109,13 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As String, Mods As Beacon.TextList, Tags() As String) As Beacon.Engram()
+		Function SearchForEngrams(SearchText As String, Mods As Beacon.StringList, Tags() As String) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForLootSources(SearchText As String, Mods As Beacon.TextList, IncludeExperimental As Boolean) As Beacon.LootSource()
+		Function SearchForLootSources(SearchText As String, Mods As Beacon.StringList, IncludeExperimental As Boolean) As Beacon.LootSource()
 		  
 		End Function
 	#tag EndMethod

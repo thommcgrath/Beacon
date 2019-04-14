@@ -44,7 +44,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   1
@@ -204,7 +203,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Width           =   300
    End
    Begin Timer AutosaveTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -294,8 +292,8 @@ End
 	#tag Event
 		Sub Open()
 		  If Self.mController.Document <> Nil Then
-		    Dim DocumentID As Text = Self.mController.Document.DocumentID
-		    Dim ConfigName As Text = Preferences.LastUsedConfigName(DocumentID)
+		    Dim DocumentID As String = Self.mController.Document.DocumentID
+		    Dim ConfigName As String = Preferences.LastUsedConfigName(DocumentID)
 		    For I As Integer = 0 To Self.ConfigMenu.ListCount - 1
 		      Dim Tag As Variant = Self.ConfigMenu.RowTag(I)
 		      If (Tag.Type = Variant.TypeText And Tag.TextValue = ConfigName) Or (Tag.Type = Variant.TypeString And Tag.StringValue = ConfigName) Then
@@ -470,7 +468,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim ConfigName As Text = Issue.ConfigName
+		  Dim ConfigName As String = Issue.ConfigName
 		  For I As Integer = 0 To Self.ConfigMenu.ListCount - 1
 		    If Self.ConfigMenu.RowTag(I) = ConfigName Then
 		      Self.ConfigMenu.ListIndex = I
@@ -524,14 +522,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mController_WriteError(Sender As Beacon.DocumentController, Reason As Text)
+		Private Sub mController_WriteError(Sender As Beacon.DocumentController, Reason As String)
 		  If Not Self.Closed Then
 		    Self.Progress = BeaconSubview.ProgressNone
 		  End If
 		  
 		  Dim Notification As New Beacon.UserNotification("Uh oh, the document " + Sender.Name + " did not save!")
 		  Notification.SecondaryMessage = Reason
-		  Notification.UserData = New Xojo.Core.Dictionary
+		  Notification.UserData = New Dictionary
 		  Notification.UserData.Value("DocumentID") = If(Sender.Document <> Nil, Sender.Document.DocumentID, "")
 		  Notification.UserData.Value("DocumentURL") = Sender.URL.URL // To force convert to text
 		  Notification.UserData.Value("Reason") = Reason
@@ -599,7 +597,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source
@@ -657,8 +655,8 @@ End
 		    End If
 		    
 		    If Self.Document.Title.BeginsWith("Untitled Document") Then
-		      Dim Filename As Text = File.Name.ToText
-		      Dim Extension As Text = BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText
+		      Dim Filename As String = File.Name.ToText
+		      Dim Extension As String = BeaconFileTypes.BeaconDocument.PrimaryExtension.ToText
 		      If Filename.EndsWith(Extension) Then
 		        Filename = Filename.Left(Filename.Length - Extension.Length).Trim
 		      End If
@@ -738,7 +736,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ViewID() As Text
+		Function ViewID() As String
 		  Return Self.mController.URL.Hash
 		End Function
 	#tag EndMethod
@@ -930,7 +928,7 @@ End
 #tag Events ConfigMenu
 	#tag Event
 		Sub Open()
-		  Dim Labels(), Tags() As Text
+		  Dim Labels(), Tags() As String
 		  Labels.Append("Maps")
 		  Tags.Append("maps")
 		  #if DeployEnabled
@@ -938,8 +936,8 @@ End
 		    Tags.Append("deployments")
 		  #endif
 		  
-		  Dim Names() As Text = BeaconConfigs.AllConfigNames
-		  For Each Name As Text In Names
+		  Dim Names() As String = BeaconConfigs.AllConfigNames
+		  For Each Name As String In Names
 		    Labels.Append(Language.LabelForConfig(Name))
 		    Tags.Append(Name)
 		  Next
