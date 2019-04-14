@@ -55,8 +55,13 @@ Protected Class UpdateChecker
 		  
 		  If Reply.HasKey("notices") Then
 		    Try
-		      Dim Notices() As Dictionary = Reply.Value("notices")
-		      For Each Notice As Dictionary In Notices
+		      Dim Notices() As Object = Reply.Value("notices")
+		      For Each Item As Object In Notices
+		        If Not (Item IsA Dictionary) Then
+		          Continue
+		        End If
+		        
+		        Dim Notice As Dictionary = Dictionary(Item)
 		        Dim Notification As New Beacon.UserNotification(Notice.Value("message").StringValue)
 		        Notification.SecondaryMessage = Notice.Value("secondary_message").StringValue
 		        Notification.ActionURL = Notice.Value("action_url").StringValue

@@ -152,6 +152,14 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function FutureDate(AdditionalSeconds As Double) As Date
+		  Dim Now As New Date
+		  Now.TotalSeconds = Now.TotalSeconds + AdditionalSeconds
+		  Return Now
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetFolderItemFromSaveInfo(SaveInfo As String) As FolderItem
 		  Return SecurityScopedFolderItem.FromSaveInfo(SaveInfo)
 		End Function
@@ -164,7 +172,7 @@ Protected Module FrameworkExtensions
 		      Return False
 		    End If
 		  Next
-		  Return False
+		  Return True
 		End Function
 	#tag EndMethod
 
@@ -406,7 +414,7 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Sub SQLDateTimeWithOffset(Extends Source As Date, Assigns Value As String)
 		  Dim Validator As New Regex
-		  Validator.SearchPattern = "^(\d{4})-(\d{2})-(\d{2})( (\d{2}):(\d{2}):(\d{2})(\.\d+)?((\+|-)(\d{1,2})(:(\d{2}))?)?)?$"
+		  Validator.SearchPattern = "^(\d{4})-(\d{2})-(\d{2})( (\d{2}):(\d{2}):(\d{2})(\.\d+)?\s*((\+|-)(\d{1,2})(:(\d{2}))?)?)?$"
 		  
 		  Dim Matches As RegexMatch = Validator.Search(Value)
 		  If Matches = Nil Then
@@ -423,16 +431,17 @@ Protected Module FrameworkExtensions
 		  Dim Minute As Integer
 		  Dim Second As Integer
 		  Dim Offset As Double
+		  Dim ExpressionCount As Integer = Matches.SubExpressionCount
 		  
-		  If Matches.SubExpressionString(4) <> "" Then
+		  If ExpressionCount >= 8 And Matches.SubExpressionString(4) <> "" Then
 		    Hour = Val(Matches.SubExpressionString(5))
 		    Minute = Val(Matches.SubExpressionString(6))
 		    Second = Val(Matches.SubExpressionString(7))
 		    
-		    If Matches.SubExpressionString(9) <> "" Then
+		    If ExpressionCount >= 12 And Matches.SubExpressionString(9) <> "" Then
 		      Dim OffsetHour As Integer = Val(Matches.SubExpressionString(11))
 		      Dim OffsetMinute As Integer
-		      If Matches.SubExpressionString(13) <> "" Then
+		      If ExpressionCount >= 14 And Matches.SubExpressionString(13) <> "" Then
 		        OffsetMinute = Val(Matches.SubExpressionString(13))
 		      End If
 		      Offset = OffsetHour + (OffsetMinute / 60)

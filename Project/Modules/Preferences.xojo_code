@@ -56,16 +56,16 @@ Protected Module Preferences
 		  // When used with a freshly parsed file, the return type will be Auto()
 		  // Once the array is updated, the local copy will return Text()
 		  
-		  Dim Temp As Auto = mManager.VariantValue("Documents")
+		  Dim Temp As Variant = mManager.VariantValue("Documents")
 		  Dim StoredData() As String
 		  If Temp <> Nil Then
 		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Temp)
-		    If Info.Name = "Text()" Then
+		    If Info.Name = "String()" Then
 		      StoredData = Temp
-		    ElseIf Info.Name = "Text" Then
+		    ElseIf Info.Name = "String" Then
 		      StoredData.Append(Temp)
-		    ElseIf Info.Name = "Auto()" Then
-		      Dim Arr() As Variant = Temp
+		    ElseIf Info.Name = "Object()" Then
+		      Dim Arr() As Object = Temp
 		      For Each Item As Variant In Arr
 		        Try
 		          StoredData.Append(Item)

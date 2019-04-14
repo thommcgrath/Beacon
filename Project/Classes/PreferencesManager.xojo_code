@@ -279,7 +279,6 @@ Protected Class PreferencesManager
 		    Return Default
 		  End If
 		  
-		  
 		  Dim Value As Variant = Self.mValues.Value(Key)
 		  If Value <> Nil And Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary And Dictionary(Value.ObjectValue).HasAllKeys("Left", "Top", "Width", "Height") Then
 		    Dim Dict As Dictionary = Value

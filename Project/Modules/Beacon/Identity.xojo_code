@@ -174,7 +174,7 @@ Protected Class Identity
 		    Return Nil
 		  End If
 		  
-		  Dim PublicKey, PrivateKey As MemoryBlock
+		  Dim PublicKey, PrivateKey As String
 		  If Source.HasKey("Version") Then
 		    Select Case Source.Value("Version")
 		    Case 2
@@ -263,8 +263,19 @@ Protected Class Identity
 		  End If
 		  
 		  // Compare expirations
-		  Dim SelfExpiration As Date = NewDateFromSQLDateTime(Self.mExpirationText)
-		  Dim OtherExpiration As Date = NewDateFromSQLDateTime(Other.mExpirationText)
+		  Dim SelfExpiration, OtherExpiration As Date
+		  #Pragma BreakOnExceptions False
+		  Try
+		    SelfExpiration = NewDateFromSQLDateTime(Self.mExpirationText)
+		  Catch Err As UnsupportedFormatException
+		    SelfExpiration = FutureDate(30)
+		  End Try
+		  Try
+		    OtherExpiration = NewDateFromSQLDateTime(Other.mExpirationText)
+		  Catch Err As UnsupportedFormatException
+		    OtherExpiration = FutureDate(30)
+		  End Try
+		  #Pragma BreakOnExceptions Default
 		  If SelfExpiration.SecondsFrom1970 = OtherExpiration.SecondsFrom1970 Then
 		  ElseIf SelfExpiration.SecondsFrom1970 > OtherExpiration.SecondsFrom1970 Then
 		    Return 1
