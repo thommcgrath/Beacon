@@ -296,19 +296,18 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  // If bForceBlueprint is not included or explicitly true, then force is true. This
 		  // mirrors how Ark works. If bForceBlueprint is false, then look to one of the
-		  // chance keys. If neither key is specified, chance default to 0.
-		  Dim HasExplicitChance As Boolean = Dict.HasKey("ChanceToActuallyGiveItem") Or Dict.HasKey("ChanceToBeBlueprintOverride")
-		  Dim ForceBlueprint As Boolean = if(Dict.HasKey("bForceBlueprint"), Dict.Value("bForceBlueprint"), Not HasExplicitChance) // Default is true in-game
+		  // chance keys. If neither key is specified, chance default to 1.0.
+		  Dim ForceBlueprint As Boolean = if(Dict.HasKey("bForceBlueprint"), Dict.Value("bForceBlueprint"), True)
 		  Dim Chance As Double
 		  If ForceBlueprint Then
-		    Chance = 1
+		    Chance = 1.0
 		  Else
 		    If Dict.HasKey("ChanceToActuallyGiveItem") Then
 		      Chance = 1.0 - Dict.Value("ChanceToActuallyGiveItem")
 		    ElseIf Dict.HasKey("ChanceToBeBlueprintOverride") Then
 		      Chance = Dict.Value("ChanceToBeBlueprintOverride")
 		    Else
-		      Chance = 0
+		      Chance = 1.0
 		    End If
 		  End If
 		  Entry.ChanceToBeBlueprint = Chance
@@ -872,7 +871,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Weight"
+			Name="RawWeight"
 			Group="Behavior"
 			Type="Double"
 		#tag EndViewProperty
