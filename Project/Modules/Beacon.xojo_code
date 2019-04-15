@@ -812,7 +812,9 @@ Protected Module Beacon
 		        End If
 		      Next
 		    End If
-		    UntouchedConfigs.Remove("Beacon")
+		    If UntouchedConfigs.HasKey("Beacon") Then
+		      UntouchedConfigs.Remove("Beacon")
+		    End If
 		    AllSectionHeaders.Remove(AllSectionHeaders.IndexOf("Beacon"))
 		  Else
 		    // We'll need to use the legacy style of removing only what is being replaced
