@@ -815,7 +815,7 @@ End
 			
 			Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 			If File <> Nil Then
-			File.Write(Beacon.GenerateJSON(Self.mPreset.ToDictionary, True))
+			Self.mPreset.ToFile(File)
 			End If
 			Return True
 		End Function
