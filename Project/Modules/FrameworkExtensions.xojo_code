@@ -49,53 +49,6 @@ Protected Module FrameworkExtensions
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function AutoToDouble(Value As Auto, ResolveWithFirst As Boolean = False) As Double
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  Select Case Info.FullName
-		  Case "Text"
-		    Dim TextValue As String = Value
-		    If TextValue = "" Then
-		      Return 0
-		    Else
-		      Return Val(TextValue)
-		    End If
-		  Case "Double"
-		    Dim DoubleValue As Double = Value
-		    Return DoubleValue
-		  Case "Single"
-		    Dim SingleValue As Single = Value
-		    Return SingleValue
-		  Case "Int8", "Int16", "Int32", "Int64"
-		    Dim IntegerValue As Int64 = Value
-		    Return IntegerValue
-		  Case "UInt8", "UInt16", "UInt32", "UInt64"
-		    Dim UIntegerValue As UInt64 = Value
-		    Return UIntegerValue
-		  Case "Auto()"
-		    Dim Arr() As Auto = Value
-		    Dim Possibles() As Double
-		    For Each Possible As Auto In Arr
-		      Dim Decoded As Double = AutoToDouble(Possible, ResolveWithFirst)
-		      Possibles.Append(Decoded)
-		    Next
-		    If Possibles.Ubound = -1 Then
-		      Return 0
-		    End If
-		    If ResolveWithFirst Then
-		      Return Possibles(0)
-		    Else
-		      Return Possibles(Possibles.Ubound)
-		    End If
-		  Else
-		    Break
-		  End Select
-		  
-		  Exception Err As TypeMismatchException
-		    Return 0
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
 		Function BeginsWith(Extends Source As String, Other As String) As Boolean
 		  Return Left(Source, Len(Other)) = Other
@@ -124,13 +77,6 @@ Protected Module FrameworkExtensions
 		    #Pragma Unused Parent
 		  #endif
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function DoubleValue(Extends Dict As Dictionary, Key As Auto, ResolveWithFirst As Boolean = False) As Double
-		  Dim Value As Auto = Dict.Value(Key)
-		  Return AutoToDouble(Value, ResolveWithFirst)
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -183,7 +129,7 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IntegerValue(Extends Value As Auto) As Integer
+		Attributes( Deprecated )  Function IntegerValue(Extends Value As Auto) As Integer
 		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
 		  Select Case Info.Name
 		  Case "Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"

@@ -24,19 +24,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function CoerceToDouble(ByRef Value As Variant, Info As Introspection.TypeInfo) As Boolean
-		  #Pragma BreakOnExceptions False
-		  Try
-		    Value = Value.DoubleValue
-		    Return True
-		  Catch Err As TypeMismatchException
-		    Return False
-		  End Try
-		  #Pragma BreakOnExceptions Default
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Sub ComputeDifficultySettings(BaseDifficulty As Double, DesiredDinoLevel As Integer, ByRef DifficultyValue As Double, ByRef DifficultyOffset As Double, ByRef OverrideOfficialDifficulty As Double)
 		  OverrideOfficialDifficulty = Max(Ceil(DesiredDinoLevel / 30), BaseDifficulty)
@@ -140,8 +127,36 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DictionaryValue(Extends Dict As Dictionary, Key As Auto, Default As Dictionary, AllowArray As Boolean = False) As Dictionary
-		  Return GetValueAsType(Dict, Key, "Dictionary", Default, AllowArray)
+		Function DictionaryValue(Extends Dict As Dictionary, Key As Variant, Default As Dictionary, AllowArray As Boolean = True) As Dictionary
+		  Dim Value As Variant = Dict.Lookup(Key, Default)
+		  If Value = Nil Then
+		    Return Default
+		  End If
+		  
+		  If Value.IsArray Then
+		    If Not AllowArray Then
+		      Return Default
+		    End If
+		    
+		    Select Case Value.ArrayElementType
+		    Case Variant.TypeObject
+		      Dim Temp As Auto = Value
+		      Dim Objects() As Object = Temp
+		      For I As Integer = Objects.Ubound DownTo 0
+		        Dim Obj As Variant = Objects(I)
+		        If Obj <> Nil And Obj.Type = Variant.TypeObject And Obj IsA Dictionary Then
+		          Return Dictionary(Obj.ObjectValue)
+		        End If
+		      Next
+		      Return Default
+		    Else
+		      Return Default
+		    End Select
+		  End If
+		  
+		  If Value.Type = Variant.TypeObject And Value IsA Dictionary Then
+		    Return Dictionary(Value.ObjectValue)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -169,8 +184,63 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DoubleValue(Extends Dict As Dictionary, Key As Auto, Default As Double, AllowArray As Boolean = False) As Double
-		  Return GetValueAsType(Dict, Key, "Double", Default, AllowArray, AddressOf CoerceToDouble)
+		Function DoubleValue(Extends Dict As Dictionary, Key As Variant, Default As Double = 0.0, AllowArray As Boolean = True) As Double
+		  Dim Value As Variant = Dict.Lookup(Key, Default)
+		  If Value = Nil Then
+		    Return Default
+		  End If
+		  
+		  If Value.IsArray Then
+		    If Not AllowArray Then
+		      Return Default
+		    End If
+		    
+		    Select Case Value.ArrayElementType
+		    Case Variant.TypeDouble
+		      Dim Doubles() As Double = Value
+		      If Doubles.Ubound > -1 Then
+		        Return Doubles(Doubles.Ubound)
+		      Else
+		        Return Default
+		      End If
+		    Case Variant.TypeObject
+		      Dim Temp As Auto = Value
+		      Dim Objects() As Object = Temp
+		      For I As Integer = Objects.Ubound DownTo 0
+		        Dim Obj As Variant = Objects(I)
+		        #Pragma BreakOnExceptions False
+		        Try
+		          Return Obj.DoubleValue
+		        Catch Err As TypeMismatchException
+		        End Try
+		        #Pragma BreakOnExceptions Default
+		      Next
+		      Return Default
+		    Case Variant.TypeInt32
+		      Dim Integers() As Int32 = Value
+		      If Integers.Ubound > -1 Then
+		        Return Integers(Integers.Ubound)
+		      Else
+		        Return Default
+		      End If
+		    Case Variant.TypeInt64
+		      Dim Integers() As Int64 = Value
+		      If Integers.Ubound > -1 Then
+		        Return Integers(Integers.Ubound)
+		      Else
+		        Return Default
+		      End If
+		    Else
+		      Return Default
+		    End Select
+		  End If
+		  
+		  #Pragma BreakOnExceptions False
+		  Try
+		    Return Value.DoubleValue
+		  Catch Err As TypeMismatchException
+		    Return Default
+		  End Try
 		End Function
 	#tag EndMethod
 
@@ -205,46 +275,6 @@ Protected Module Beacon
 		  End If
 		  
 		  Return JSON
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function GetLastValueAsType(Values() As Variant, FullName As String, Default As Auto) As Variant
-		  For I As Integer = Values.Ubound DownTo 0
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Values(I))
-		    If Info.FullName = FullName Then
-		      Return Values(I)
-		    End If
-		  Next
-		  Return Default
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function GetValueAsType(Dict As Dictionary, Key As Variant, FullName As String, Default As Variant, AllowArray As Boolean = False, Adapter As ValueAdapter = Nil) As Variant
-		  If Not Dict.HasKey(Key) Then
-		    Return Default
-		  End If
-		  
-		  Dim Value As Variant = Dict.Value(Key)
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  If Info = Nil Then
-		    Return Default
-		  End If
-		  If Info.FullName = "Variant()" And AllowArray Then
-		    Dim Arr() As Variant = Value
-		    Return GetLastValueAsType(Arr, FullName, Default)
-		  ElseIf Info.FullName = FullName Then
-		    Return Value
-		  ElseIf Adapter <> Nil Then
-		    If Adapter.Invoke(Value, Info) Then
-		      Return Value
-		    Else
-		      Return Default
-		    End If
-		  Else
-		    Return Default
-		  End If
 		End Function
 	#tag EndMethod
 
@@ -761,10 +791,6 @@ Protected Module Beacon
 
 	#tag DelegateDeclaration, Flags = &h1
 		Protected Delegate Function URLHandler(URL As String) As Boolean
-	#tag EndDelegateDeclaration
-
-	#tag DelegateDeclaration, Flags = &h21
-		Private Delegate Function ValueAdapter(ByRef Value As Variant, Info As Introspection.TypeInfo) As Boolean
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1
