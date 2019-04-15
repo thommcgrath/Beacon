@@ -370,14 +370,11 @@ Protected Class DocumentController
 		  Dim File As New FolderItem(Self.mDestination.Path, FolderItem.PathTypeURL)
 		  Try
 		    Dim Dict As Dictionary = Self.mDocument.ToDictionary(App.IdentityManager.CurrentIdentity)
-		    Dim Compress As Boolean = Self.mDocument.UseCompression
-		    Dim Content As String = Beacon.GenerateJSON(Dict, Not Compress)
-		    If Compress Then
-		      Dim Compressor As New _GZipString
-		      Compressor.UseHeaders = True
-		      Content = Compressor.Compress(Content)
+		    Dim Options As UInt64 = Beacon.JSONPretty
+		    If Self.mDocument.UseCompression Then
+		      Options = Options Or Beacon.JSONCompressed
 		    End If
-		    File.Write(Content)
+		    File.Write(Beacon.GenerateJSON(Dict, Options))
 		    
 		    If Self.mClearModifiedOnWrite Then
 		      If Self.mDocument <> Nil Then
