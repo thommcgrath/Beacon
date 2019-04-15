@@ -242,19 +242,17 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  If Dict.HasKey("MaxQuality") Then
 		    Entry.MaxQuality = Beacon.Qualities.ForKey(Dict.Value("MaxQuality"))
 		  End If
-		  If Dict.HasKey("MinQuantity") Then
-		    Entry.MinQuantity = Dict.Value("MinQuantity")
-		  End If
-		  If Dict.HasKey("MaxQuantity") Then
-		    Entry.MaxQuantity = Dict.Value("MaxQuantity")
-		  End If
-		  If Dict.HasKey("ChanceToBeBlueprintOverride") Then
-		    Entry.ChanceToBeBlueprint = Dict.Value("ChanceToBeBlueprintOverride")
-		  End If
+		  
+		  Entry.MinQuantity = Dict.Lookup("MinQuantity", Entry.MinQuantity)
+		  Entry.MaxQuantity = Dict.Lookup("MaxQuantity", Entry.MaxQuantity)
+		  Entry.ChanceToBeBlueprint = Dict.Lookup("ChanceToBeBlueprintOverride", Entry.ChanceToBeBlueprint)
+		  
 		  If Dict.HasKey("Items") Then
-		    Dim Children() As Auto = Dict.Value("Items")
-		    For Each Child As Dictionary In Children
-		      Entry.Append(Beacon.SetEntryOption.ImportFromBeacon(Child))
+		    Dim Children() As Object = Dict.Value("Items")
+		    For Each Obj As Object In Children
+		      If Obj IsA Dictionary Then
+		        Entry.Append(Beacon.SetEntryOption.ImportFromBeacon(Dictionary(Obj)))
+		      End If
 		    Next
 		  End If
 		  Entry.Modified = False

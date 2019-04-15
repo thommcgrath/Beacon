@@ -128,7 +128,9 @@ Protected Class Request
 		  Else
 		    Content = Content + &u10
 		  End If
-		  Content = Content + Self.mPayload.StringValue(0, Self.mPayload.Size)
+		  If Self.mPayload <> Nil And Self.mPayload.Size > 0 Then
+		    Content = Content + Self.mPayload.StringValue(0, Self.mPayload.Size)
+		  End If
 		  
 		  Self.Authenticate(Identity.Identifier, EncodeHex(Identity.Sign(Content)))
 		End Sub

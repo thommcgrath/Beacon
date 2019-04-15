@@ -22,9 +22,14 @@ Implements Xojo.Core.Iterable
 		  #Pragma Unused Identity
 		  
 		  If Dict.HasKey("Contents") Then
-		    Dim Contents() As Auto = Dict.Value("Contents")
-		    For Each DropDict As Dictionary In Contents
-		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(DropDict)
+		    Dim ItemSetCache As New Dictionary
+		    Dim Contents() As Object = Dict.Value("Contents")
+		    For Each DropDict As Object In Contents
+		      If Not DropDict IsA Dictionary Then
+		        Continue
+		      End If
+		      
+		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(Dictionary(DropDict), ItemSetCache)
 		      If Source <> Nil Then
 		        Self.mSources.Append(Source)
 		      End If

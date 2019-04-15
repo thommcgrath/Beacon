@@ -193,7 +193,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.LootSource
+		Shared Function ImportFromBeacon(Dict As Dictionary, ItemSetCache As Dictionary = Nil) As Beacon.LootSource
 		  Dim ClassString As String
 		  If Dict.HasKey("SupplyCrateClassString") Then
 		    ClassString = Dict.Value("SupplyCrateClassString")
@@ -226,38 +226,58 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    LootSource = New Beacon.LootSource(MutableSource)
 		  End If
 		  
-		  Dim Children() As Auto
+		  Dim Children() As Object
 		  If Dict.HasKey("ItemSets") Then
 		    Children = Dict.Value("ItemSets")
 		  Else
 		    Children = Dict.Value("Items")
 		  End If
 		  Dim AddedHashes As New Dictionary
-		  For Each Child As Dictionary In Children
-		    Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Child)
-		    Dim Hash As String = Set.Hash
-		    If Set <> Nil And AddedHashes.HasKey(Hash) = False Then
-		      LootSource.Append(Set)
-		      AddedHashes.Value(Hash) = True
+		  For Each Obj As Object In Children
+		    If Not (Obj IsA Dictionary) Then
+		      Continue
+		    End If
+		    
+		    Dim Child As Dictionary = Dictionary(Obj)
+		    Dim Set As Beacon.ItemSet
+		    Dim Hash As String
+		    
+		    If ItemSetCache <> Nil Then
+		      Hash = Child.Lookup("Hash", "")
+		      If Hash <> "" Then
+		        Set = ItemSetCache.Lookup(Hash, Nil)
+		        If Set <> Nil Then
+		          Set = New Beacon.ItemSet(Set)
+		        End If
+		      End If
+		    End If
+		    
+		    Dim AddToCache As Boolean
+		    If Set = Nil Then
+		      Set = Beacon.ItemSet.ImportFromBeacon(Child)
+		      AddToCache = True
+		    End If
+		    
+		    If Set <> Nil Then
+		      If AddedHashes.HasKey(Set.Hash) = False Then
+		        LootSource.Append(Set)
+		        AddedHashes.Value(Set.Hash) = True
+		      End If
+		      If AddToCache And ItemSetCache.HasKey(Set.Hash) = False Then
+		        ItemSetCache.Value(Set.Hash) = New Beacon.ItemSet(Set)
+		      End If
 		    End If
 		  Next
 		  
-		  If Dict.HasKey("MaxItemSets") Then
-		    LootSource.MaxItemSets = Dict.Value("MaxItemSets")
-		  End If
-		  If Dict.HasKey("MinItemSets") Then
-		    LootSource.MinItemSets = Dict.Value("MinItemSets")
-		  End If
-		  If Dict.HasKey("NumItemSetsPower") Then
-		    LootSource.NumItemSetsPower = Dict.Value("NumItemSetsPower")
-		  End If
+		  LootSource.MaxItemSets = Dict.Lookup("MaxItemSets", LootSource.MaxItemSets)
+		  LootSource.MinItemSets = Dict.Lookup("MinItemSets", LootSource.MinItemSets)
+		  LootSource.NumItemSetsPower = Dict.Lookup("NumItemSetsPower", LootSource.NumItemSetsPower)
+		  LootSource.AppendMode = Dict.Lookup("AppendMode", LootSource.AppendMode)
+		  
 		  If Dict.HasKey("bSetsRandomWithoutReplacement") Then
 		    LootSource.SetsRandomWithoutReplacement = Dict.Value("bSetsRandomWithoutReplacement")
 		  ElseIf Dict.HasKey("SetsRandomWithoutReplacement") Then
 		    LootSource.SetsRandomWithoutReplacement = Dict.Value("SetsRandomWithoutReplacement")
-		  End If
-		  If Dict.HasKey("AppendMode") Then
-		    LootSource.AppendMode = Dict.Value("AppendMode")
 		  End If
 		  
 		  LootSource.mModified = False
@@ -267,7 +287,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromConfig(Dict As Dictionary, DifficultyValue As Double) As Beacon.LootSource
+		Shared Function ImportFromConfig(Dict As Dictionary, DifficultyValue As Double, ItemSetCache As Dictionary = Nil) As Beacon.LootSource
 		  Dim ClassString As String
 		  If Dict.HasKey("SupplyCrateClassString") Then
 		    ClassString = Dict.Value("SupplyCrateClassString")

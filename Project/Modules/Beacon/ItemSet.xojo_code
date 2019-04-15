@@ -91,6 +91,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("NumItemsPower") = Self.NumItemsPower
 		  Keys.Value("Weight") = Self.RawWeight
 		  Keys.Value("SetWeight") = Self.RawWeight / 1000
+		  Keys.Value("Hash") = Self.Hash
 		  If Self.SourcePresetID <> "" Then
 		    Keys.Value("SourcePresetID") = Self.SourcePresetID
 		  End If
@@ -217,9 +218,9 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.ItemSet
 		  Dim Set As New Beacon.ItemSet
-		  If Dict.HasKey("NumItemsPower") Then
-		    Set.NumItemsPower = Dict.Value("NumItemsPower")
-		  End If
+		  
+		  Set.NumItemsPower = Dict.Lookup("NumItemsPower", Set.NumItemsPower)
+		  
 		  If Dict.HasKey("Weight") Then
 		    Set.RawWeight = Dict.Value("Weight")
 		  ElseIf Dict.HasKey("SetWeight") Then
@@ -236,29 +237,27 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Set.Label = Dict.Value("SetName")
 		  End If
 		  
-		  Dim Children() As Auto
+		  Dim Children() As Object
 		  If Dict.HasKey("ItemEntries") Then
 		    Children = Dict.Value("ItemEntries")
 		  ElseIf Dict.HasKey("Items") Then
 		    Children = Dict.Value("Items")
 		  End If
-		  For Each Child As Dictionary In Children
+		  For Each Obj As Object In Children
+		    If Not (Obj IsA Dictionary) Then
+		      Continue
+		    End If
+		    
+		    Dim Child As Dictionary = Dictionary(Obj)
 		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Child)
 		    If Entry <> Nil Then
 		      Set.Append(Entry)
 		    End If
 		  Next
 		  
-		  If Dict.HasKey("MinNumItems") Then
-		    Set.MinNumItems = Dict.Value("MinNumItems")
-		  End If
-		  If Dict.HasKey("MaxNumItems") Then
-		    Set.MaxNumItems = Dict.Value("MaxNumItems")
-		  End If
-		  
-		  If Dict.HasKey("SourcePresetID") Then
-		    Set.mSourcePresetID = Dict.Value("SourcePresetID")
-		  End If
+		  Set.MinNumItems = Dict.Lookup("MinNumItems", Set.MinNumItems)
+		  Set.MaxNumItems = Dict.Lookup("MaxNumItems", Set.MaxNumItems)
+		  Set.mSourcePresetID = Dict.Lookup("SourcePresetID", Set.mSourcePresetID)
 		  
 		  Set.Modified = False
 		  Return Set
@@ -737,7 +736,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		#tag ViewProperty
 			Name="Label"
 			Group="Behavior"
-			Type="Text"
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"

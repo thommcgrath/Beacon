@@ -61,7 +61,7 @@ Protected Class DocumentURL
 		  End If
 		  
 		  Dim HashData As String = Self.mScheme + "://" + Self.mPath
-		  Self.mHash = EncodeHex(Crypto.MD5(HashData))
+		  Self.mHash = Beacon.MD5(HashData)
 		End Sub
 	#tag EndMethod
 

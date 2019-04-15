@@ -180,12 +180,6 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "GetStringVariable" )  Function GetTextVariable(Extends Source As Beacon.DataSource, Key As String) As String
-		  Return Source.GetStringVariable(Key)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Function GetValueAsType(Dict As Dictionary, Key As Variant, FullName As String, Default As Variant, AllowArray As Boolean = False) As Auto
 		  If Not Dict.HasKey(Key) Then
