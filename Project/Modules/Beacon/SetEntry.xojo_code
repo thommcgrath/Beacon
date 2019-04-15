@@ -265,9 +265,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Shared Function ImportFromConfig(Dict As Xojo.Core.Dictionary, Multipliers As Beacon.Range, DifficultyValue As Double) As Beacon.SetEntry
 		  Dim Entry As New Beacon.SetEntry
-		  If Dict.HasKey("EntryWeight") Then
-		    Entry.RawWeight = Dict.Value("EntryWeight")
-		  End If
+		  Entry.RawWeight = Dict.Lookup("EntryWeight", 1.0)
 		  
 		  If Dict.HasKey("MinQuality") Then
 		    Entry.MinQuality = Beacon.Qualities.ForValue(Dict.Value("MinQuality"), Multipliers.Min, DifficultyValue)
@@ -295,7 +293,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    ElseIf Dict.HasKey("ChanceToBeBlueprintOverride") Then
 		      Chance = Dict.Value("ChanceToBeBlueprintOverride")
 		    Else
-		      Chance = 1.0
+		      Chance = 0.0
 		    End If
 		  End If
 		  Entry.ChanceToBeBlueprint = Chance
