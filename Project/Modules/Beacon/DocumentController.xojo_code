@@ -365,6 +365,8 @@ Protected Class DocumentController
 
 	#tag Method, Flags = &h21
 		Private Sub Thread_Write(Sender As Thread)
+		  #Pragma Unused Sender
+		  
 		  Dim File As New FolderItem(Self.mDestination.Path, FolderItem.PathTypeURL)
 		  Try
 		    Dim Dict As Dictionary = Self.mDocument.ToDictionary(App.IdentityManager.CurrentIdentity)

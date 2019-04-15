@@ -300,6 +300,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Shared Function ImportFromConfig(Dict As Dictionary, DifficultyValue As Double, ItemSetCache As Dictionary = Nil) As Beacon.LootSource
+		  #Pragma Unused ItemSetCache
+		  
 		  Dim ClassString As String
 		  If Dict.HasKey("SupplyCrateClassString") Then
 		    ClassString = Dict.Value("SupplyCrateClassString")
