@@ -18,6 +18,20 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function CoerceToDouble(ByRef Value As Auto, Info As Xojo.Introspection.TypeInfo) As Boolean
+		  #Pragma BreakOnExceptions False
+		  Try
+		    Dim DoubleValue As Double = Value
+		    Value = DoubleValue
+		    Return True
+		  Catch Err As TypeMismatchException
+		    Return False
+		  End Try
+		  #Pragma BreakOnExceptions Default
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub ComputeDifficultySettings(BaseDifficulty As Double, DesiredDinoLevel As Integer, ByRef DifficultyValue As Double, ByRef DifficultyOffset As Double, ByRef OverrideOfficialDifficulty As Double)
 		  OverrideOfficialDifficulty = Max(Ceil(DesiredDinoLevel / 30), BaseDifficulty)
@@ -257,7 +271,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function DoubleValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto, Default As Double, AllowArray As Boolean = False) As Double
-		  Return GetValueAsType(Dict, Key, "Double", Default, AllowArray)
+		  Return GetValueAsType(Dict, Key, "Double", Default, AllowArray, AddressOf CoerceToDouble)
 		End Function
 	#tag EndMethod
 
@@ -378,7 +392,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetValueAsType(Dict As Xojo.Core.Dictionary, Key As Auto, FullName As Text, Default As Auto, AllowArray As Boolean = False) As Auto
+		Private Function GetValueAsType(Dict As Xojo.Core.Dictionary, Key As Auto, FullName As Text, Default As Auto, AllowArray As Boolean = False, Adapter As ValueAdapter = Nil) As Auto
 		  If Not Dict.HasKey(Key) Then
 		    Return Default
 		  End If
@@ -393,6 +407,12 @@ Protected Module Beacon
 		    Return GetLastValueAsType(Arr, FullName, Default)
 		  ElseIf Info.FullName = FullName Then
 		    Return Value
+		  ElseIf Adapter <> Nil Then
+		    If Adapter.Invoke(Value, Info) Then
+		      Return Value
+		    Else
+		      Return Default
+		    End If
 		  Else
 		    Return Default
 		  End If
@@ -972,6 +992,10 @@ Protected Module Beacon
 
 	#tag DelegateDeclaration, Flags = &h1
 		Protected Delegate Function URLHandler(URL As Text) As Boolean
+	#tag EndDelegateDeclaration
+
+	#tag DelegateDeclaration, Flags = &h21
+		Private Delegate Function ValueAdapter(ByRef Value As Auto, Info As Xojo.Introspection.TypeInfo) As Boolean
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1
