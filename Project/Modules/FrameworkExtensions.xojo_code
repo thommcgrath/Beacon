@@ -408,7 +408,7 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Sub SQLDateTimeWithOffset(Extends Source As Date, Assigns Value As String)
 		  Dim Validator As New Regex
-		  Validator.SearchPattern = "^(\d{4})-(\d{2})-(\d{2})( (\d{2}):(\d{2}):(\d{2})(\.\d+)?\s*((\+|-)(\d{1,2})(:(\d{2}))?)?)?$"
+		  Validator.SearchPattern = "^(\d{4})-(\d{2})-(\d{2})( (\d{2}):(\d{2}):(\d{2})(\.\d+)?\s*((\+|-)(\d{1,2})(:?(\d{2}))?)?)?$"
 		  
 		  Dim Matches As RegexMatch = Validator.Search(Value)
 		  If Matches = Nil Then
