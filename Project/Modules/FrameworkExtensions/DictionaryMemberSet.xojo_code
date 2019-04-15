@@ -7,6 +7,7 @@ Implements Global.Xojo.Core.Iterable,Global.Xojo.Core.Iterator
 		  For Each Key As Variant In Keys
 		    Self.mMembers.Append(New FrameworkExtensions.DictionaryMember(Key, Source.Value(Key)))
 		  Next
+		  Self.mIndex = -1
 		End Sub
 	#tag EndMethod
 
