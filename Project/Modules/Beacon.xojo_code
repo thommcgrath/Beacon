@@ -163,8 +163,35 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function GenerateJSON(Source As Variant, Pretty As Boolean = False) As String
+		  Dim Options As UInt64
+		  If Pretty Then
+		    Options = Options Or JSONPretty
+		  End If
+		  Return GenerateJSON(Source, Options)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function GenerateJSON(Source As Variant, Options As UInt64) As String
+		  If (Options And JSONCompressed) = JSONCompressed Or (Options And JSONBase64) = JSONBase64 Then
+		    Options = Options And Not JSONPretty // If formatted, disable pretty
+		  End If
+		  
 		  Dim Node As JSONMBS = JSONMBS.Convert(Source)
-		  Return Node.ToString(Pretty)
+		  Dim JSON As String = Node.ToString((Options And JSONPretty) = JSONPretty)
+		  
+		  If (Options And JSONCompressed) = JSONCompressed Then
+		    Dim Compressor As New _GZipString
+		    Compressor.UseHeaders = True
+		    
+		    JSON = Compressor.Compress(JSON)
+		  End If
+		  
+		  If (Options And JSONBase64) = JSONBase64 Then
+		    JSON = EncodeBase64(JSON)
+		  End If
+		  
+		  Return JSON
 		End Function
 	#tag EndMethod
 
@@ -337,6 +364,26 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h1
 		Protected Function ParseJSON(Content As String) As Variant
+		  Static GZIPHeader As String
+		  If GZIPHeader = "" Then
+		    GZIPHeader = Encodings.ASCII.Chr(&h1F) + Encodings.ASCII.Chr(&h8B)
+		  End If
+		  
+		  Static Detector As RegEx
+		  If Detector = Nil Then
+		    Detector = New RegEx
+		    Detector.SearchPattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$"
+		  End If
+		  
+		  If Len(Content) Mod 4 = 0 And Detector.Search(Content) <> Nil Then
+		    Content = DecodeBase64(Content)
+		  End If
+		  
+		  If Content.BeginsWith(GZIPHeader) Then
+		    Dim Compressor As New _GZipString
+		    Content = Compressor.Decompress(Content)
+		  End If
+		  
 		  Dim Node As New JSONMBS(Content)
 		  If Not Node.Valid Then
 		    Dim Err As New UnsupportedFormatException
@@ -726,6 +773,15 @@ Protected Module Beacon
 		Private mDataSource As Beacon.DataSource
 	#tag EndProperty
 
+
+	#tag Constant, Name = JSONBase64, Type = Double, Dynamic = False, Default = \"4", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = JSONCompressed, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = JSONPretty, Type = Double, Dynamic = False, Default = \"2", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = OmniVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant
