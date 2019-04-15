@@ -894,8 +894,9 @@ End
 		    End If
 		    
 		    Dim Sources() As Beacon.LootSource
+		    Dim Cache As New Dictionary
 		    For Each Dict As Dictionary In Dicts
-		      Sources.Append(Beacon.LootSource.ImportFromBeacon(Dict))
+		      Sources.Append(Beacon.LootSource.ImportFromBeacon(Dict, Cache))
 		    Next
 		    Self.AddLootSources(Sources)
 		  End If

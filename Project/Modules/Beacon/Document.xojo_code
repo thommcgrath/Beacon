@@ -330,8 +330,9 @@ Implements Beacon.DocumentItem
 		  End If
 		  If LootSources.Ubound > -1 Then
 		    Dim Drops As New BeaconConfigs.LootDrops
+		    Dim Cache As New Dictionary
 		    For Each LootSource As Dictionary In LootSources
-		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(LootSource)
+		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(LootSource, Cache)
 		      If Source <> Nil Then
 		        If Version < 2 Then
 		          // Match item set names to presets

@@ -145,15 +145,17 @@ Implements Beacon.Countable,Beacon.DocumentItem
 
 	#tag Method, Flags = &h0
 		Function Export() As Dictionary
-		  Dim Children() As Dictionary
+		  Dim Children() As String
 		  For Each Set As Beacon.ItemSet In Self.mSets
-		    Children.Append(Set.Export)
+		    If Children.IndexOf(Set.Hash) = -1 Then
+		      Children.Append(Set.Hash)
+		    End If
 		  Next
 		  
 		  // Mandatory item sets should not be part of this.
 		  
 		  Dim Keys As New Dictionary
-		  Keys.Value("ItemSets") = Children
+		  Keys.Value("ItemSetHashes") = Children
 		  Keys.Value("MaxItemSets") = Self.MaxItemSets
 		  Keys.Value("MinItemSets") = Self.MinItemSets
 		  Keys.Value("NumItemSetsPower") = Self.NumItemSetsPower
@@ -193,7 +195,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromBeacon(Dict As Dictionary, ItemSetCache As Dictionary = Nil) As Beacon.LootSource
+		Shared Function ImportFromBeacon(Dict As Dictionary, ItemSetCache As Dictionary) As Beacon.LootSource
 		  Dim ClassString As String
 		  If Dict.HasKey("SupplyCrateClassString") Then
 		    ClassString = Dict.Value("SupplyCrateClassString")
@@ -226,48 +228,58 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    LootSource = New Beacon.LootSource(MutableSource)
 		  End If
 		  
-		  Dim Children() As Object
-		  If Dict.HasKey("ItemSets") Then
-		    Children = Dict.Value("ItemSets")
+		  If Dict.HasKey("ItemSetHashes") Then
+		    Dim Hashes() As Variant = Dict.Value("ItemSetHashes")
+		    For Each Hash As String In Hashes
+		      Dim Set As Beacon.ItemSet = ItemSetCache.Lookup(Hash, Nil)
+		      If Set <> Nil Then
+		        LootSource.Append(New Beacon.ItemSet(Set))
+		      End If
+		    Next
 		  Else
-		    Children = Dict.Value("Items")
-		  End If
-		  Dim AddedHashes As New Dictionary
-		  For Each Obj As Object In Children
-		    If Not (Obj IsA Dictionary) Then
-		      Continue
+		    Dim Children() As Object
+		    If Dict.HasKey("ItemSets") Then
+		      Children = Dict.Value("ItemSets")
+		    Else
+		      Children = Dict.Value("Items")
 		    End If
-		    
-		    Dim Child As Dictionary = Dictionary(Obj)
-		    Dim Set As Beacon.ItemSet
-		    Dim Hash As String
-		    
-		    If ItemSetCache <> Nil Then
-		      Hash = Child.Lookup("Hash", "")
-		      If Hash <> "" Then
-		        Set = ItemSetCache.Lookup(Hash, Nil)
-		        If Set <> Nil Then
-		          Set = New Beacon.ItemSet(Set)
+		    Dim AddedHashes As New Dictionary
+		    For Each Obj As Object In Children
+		      If Not (Obj IsA Dictionary) Then
+		        Continue
+		      End If
+		      
+		      Dim Child As Dictionary = Dictionary(Obj)
+		      Dim Set As Beacon.ItemSet
+		      Dim Hash As String
+		      
+		      If ItemSetCache <> Nil Then
+		        Hash = Child.Lookup("Hash", "")
+		        If Hash <> "" Then
+		          Set = ItemSetCache.Lookup(Hash, Nil)
+		          If Set <> Nil Then
+		            Set = New Beacon.ItemSet(Set)
+		          End If
 		        End If
 		      End If
-		    End If
-		    
-		    Dim AddToCache As Boolean
-		    If Set = Nil Then
-		      Set = Beacon.ItemSet.ImportFromBeacon(Child)
-		      AddToCache = True
-		    End If
-		    
-		    If Set <> Nil Then
-		      If AddedHashes.HasKey(Set.Hash) = False Then
-		        LootSource.Append(Set)
-		        AddedHashes.Value(Set.Hash) = True
+		      
+		      Dim AddToCache As Boolean
+		      If Set = Nil Then
+		        Set = Beacon.ItemSet.ImportFromBeacon(Child)
+		        AddToCache = True
 		      End If
-		      If AddToCache And ItemSetCache.HasKey(Set.Hash) = False Then
-		        ItemSetCache.Value(Set.Hash) = New Beacon.ItemSet(Set)
+		      
+		      If Set <> Nil Then
+		        If AddedHashes.HasKey(Set.Hash) = False Then
+		          LootSource.Append(Set)
+		          AddedHashes.Value(Set.Hash) = True
+		        End If
+		        If AddToCache And ItemSetCache.HasKey(Set.Hash) = False Then
+		          ItemSetCache.Value(Set.Hash) = New Beacon.ItemSet(Set)
+		        End If
 		      End If
-		    End If
-		  Next
+		    Next
+		  End If
 		  
 		  LootSource.MaxItemSets = Dict.Lookup("MaxItemSets", LootSource.MaxItemSets)
 		  LootSource.MinItemSets = Dict.Lookup("MinItemSets", LootSource.MinItemSets)

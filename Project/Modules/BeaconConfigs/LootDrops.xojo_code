@@ -21,20 +21,35 @@ Implements Xojo.Core.Iterable
 		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  If Dict.HasKey("Contents") Then
-		    Dim ItemSetCache As New Dictionary
-		    Dim Contents() As Object = Dict.Value("Contents")
-		    For Each DropDict As Object In Contents
-		      If Not DropDict IsA Dictionary Then
-		        Continue
-		      End If
-		      
-		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(Dictionary(DropDict), ItemSetCache)
-		      If Source <> Nil Then
-		        Self.mSources.Append(Source)
+		  Dim ItemSetCache As New Dictionary
+		  If Dict.HasKey("ItemSets") Then
+		    Dim CacheData As Dictionary = Dict.Value("ItemSets")
+		    For Each Entry As DictionaryMember In CacheData.Members
+		      Dim SetDict As Dictionary = Entry.Value
+		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(SetDict)
+		      If Set <> Nil Then
+		        ItemSetCache.Value(Entry.Key) = Set
 		      End If
 		    Next
 		  End If
+		  
+		  Dim Sources() As Object
+		  If Dict.HasKey("Sources") Then
+		    Sources = Dict.Value("Sources")
+		  ElseIf Dict.HasKey("Contents") Then
+		    Sources = Dict.Value("Contents")
+		  End If
+		  
+		  For Each DropDict As Object In Sources
+		    If Not DropDict IsA Dictionary Then
+		      Continue
+		    End If
+		    
+		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(Dictionary(DropDict), ItemSetCache)
+		    If Source <> Nil Then
+		      Self.mSources.Append(Source)
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 
@@ -42,11 +57,22 @@ Implements Xojo.Core.Iterable
 		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  Dim Contents() As Dictionary
+		  Dim ItemSets As New Dictionary
+		  Dim Sources() As Dictionary
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Contents.Append(Source.Export)
+		    For Each Set As Beacon.ItemSet In Source
+		      If ItemSets.HasKey(Set.Hash) Then
+		        Continue
+		      End If
+		      
+		      ItemSets.Value(Set.Hash) = Set.Export()
+		    Next
+		    
+		    Sources.Append(Source.Export)
 		  Next
-		  Dict.Value("Contents") = Contents
+		  
+		  Dict.Value("ItemSets") = ItemSets
+		  Dict.Value("Sources") = Sources
 		End Sub
 	#tag EndEvent
 

@@ -91,7 +91,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Keys.Value("NumItemsPower") = Self.NumItemsPower
 		  Keys.Value("Weight") = Self.RawWeight
 		  Keys.Value("SetWeight") = Self.RawWeight / 1000
-		  Keys.Value("Hash") = Self.Hash
 		  If Self.SourcePresetID <> "" Then
 		    Keys.Value("SourcePresetID") = Self.SourcePresetID
 		  End If
