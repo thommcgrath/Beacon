@@ -348,16 +348,60 @@ Protected Class DocumentController
 		    Socket.RequestHeader(Entry.Key) = Entry.Value
 		  Next
 		  Socket.SetRequestContent(Body, "application/json")
-		  Socket.Send("POST", Self.mDocumentURL.WithScheme("https").URL)
+		  Socket.Send("POST", Self.mDestination.WithScheme("https").URL)
 		  If Socket.LastHTTPStatus = 200 Or Socket.LastHTTPStatus = 201 Then
 		    If Self.mClearModifiedOnWrite Then
 		      Self.mDocument.Modified = False
+		      Self.mDocumentURL = Self.mDestination
 		    End If
 		    Call CallLater.Schedule(0, AddressOf TriggerWriteSuccess)
 		  Else
 		    Dim Message As String = Self.ErrorMessageFromSocket(Socket)
 		    Call CallLater.Schedule(0, AddressOf TriggerWriteError, Message)
 		  End If
+		  Self.mDestination = Nil
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Thread_Write(Sender As Thread)
+		  Dim File As New FolderItem(Self.mDestination.Path, FolderItem.PathTypeURL)
+		  Try
+		    Dim Dict As Dictionary = Self.mDocument.ToDictionary(App.IdentityManager.CurrentIdentity)
+		    Dim Compress As Boolean = Self.mDocument.UseCompression
+		    Dim Content As String = Beacon.GenerateJSON(Dict, Not Compress)
+		    If Compress Then
+		      Dim Compressor As New _GZipString
+		      Compressor.UseHeaders = True
+		      Content = Compressor.Compress(Content)
+		    End If
+		    File.Write(Content)
+		    
+		    If Self.mClearModifiedOnWrite Then
+		      If Self.mDocument <> Nil Then
+		        Self.mDocument.Modified = False
+		      End If
+		      
+		      // Update the document url to regenerate saveinfo/bookmarks
+		      Self.mDocumentURL = Beacon.DocumentURL.URLForFile(File)
+		    End If
+		    
+		    Call CallLater.Schedule(0, AddressOf TriggerWriteSuccess)
+		  Catch Err As RuntimeException
+		    Dim Reason As String = Err.Explanation
+		    If Reason = "" Then
+		      Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		      If Info <> Nil Then
+		        Reason = Info.Name + " in DocumentController.WriteTo"
+		      End If
+		    End If
+		    If Reason = "" Then
+		      Reason = "Unknown DocumentController.WriteTo error"
+		    End If
+		    
+		    Call CallLater.Schedule(0, AddressOf TriggerWriteError, Reason)
+		  End Try
+		  Self.mDestination = Nil
 		End Sub
 	#tag EndMethod
 
@@ -420,6 +464,7 @@ Protected Class DocumentController
 		  End If
 		  
 		  Self.mClearModifiedOnWrite = ClearModified
+		  Self.mDestination = Destination
 		  
 		  Select Case Destination.Scheme
 		  Case Beacon.DocumentURL.TypeCloud
@@ -428,42 +473,10 @@ Protected Class DocumentController
 		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Upload
 		    Self.mActiveThread.Run
 		  Case Beacon.DocumentURL.TypeLocal
-		    Dim File As New FolderItem(Destination.Path, FolderItem.PathTypeNative)
-		    Try
-		      Dim Dict As Dictionary = Self.mDocument.ToDictionary(App.IdentityManager.CurrentIdentity)
-		      Dim Compress As Boolean = Self.mDocument.UseCompression
-		      Dim Content As String = Beacon.GenerateJSON(Dict, Not Compress)
-		      If Compress Then
-		        Dim Compressor As New _GZipString
-		        Compressor.UseHeaders = True
-		        Content = Compressor.Compress(Content)
-		      End If
-		      File.Write(Content)
-		      
-		      If Self.mClearModifiedOnWrite Then
-		        If Self.mDocument <> Nil Then
-		          Self.mDocument.Modified = False
-		        End If
-		        
-		        // Update the document url to regenerate saveinfo/bookmarks
-		        Self.mDocumentURL = Beacon.DocumentURL.URLForFile(File)
-		      End If
-		      
-		      RaiseEvent WriteSuccess()
-		    Catch Err As RuntimeException
-		      Dim Reason As String = Err.Explanation
-		      If Reason = "" Then
-		        Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
-		        If Info <> Nil Then
-		          Reason = Info.Name + " in DocumentController.WriteTo"
-		        End If
-		      End If
-		      If Reason = "" Then
-		        Reason = "Unknown DocumentController.WriteTo error"
-		      End If
-		      
-		      RaiseEvent WriteError(Reason)
-		    End Try
+		    Self.mActiveThread = New Thread
+		    Self.mActiveThread.Priority = Thread.LowestPriority
+		    AddHandler Self.mActiveThread.Run, WeakAddressOf Thread_Write
+		    Self.mActiveThread.Run
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -508,6 +521,10 @@ Protected Class DocumentController
 
 	#tag Property, Flags = &h21
 		Private mClearModifiedOnWrite As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDestination As Beacon.DocumentURL
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
