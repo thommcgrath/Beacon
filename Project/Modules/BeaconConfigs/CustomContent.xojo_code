@@ -272,7 +272,7 @@ Inherits Beacon.ConfigGroup
 		      SkippedKeys = Self.GetSkippedKeys(CurrentHeader, ExistingConfigs)
 		    End If
 		    
-		    If CurrentHeader = "" Then
+		    If CurrentHeader = "" Or CurrentHeader = "Beacon" Then
 		      Continue
 		    End If
 		    
