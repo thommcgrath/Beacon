@@ -946,7 +946,7 @@ Implements Beacon.DataSource
 		    Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_sort_order_idx ON loot_sources(sort_order);")
 		    Self.SQLExecute("CREATE UNIQUE INDEX loot_sources_path_idx ON loot_sources(path);")
 		    
-		    Self.Variable("sync_time") = PayloadTimestamp.SQLDateTimeWithOffset
+		    Self.Variable("sync_time") = PayloadTimestamp.SQLDateTime
 		    Self.Commit()
 		    
 		    If ReloadPresets Then
@@ -1407,7 +1407,7 @@ Implements Beacon.DataSource
 		  End If
 		  
 		  Dim Notify As Boolean = Results.RecordCount = 0 Or Deleted Or Read
-		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.SQLDateTimeWithOffset, If(Notification.Read, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Beacon.GenerateJSON(Notification.UserData), "{}"))
+		  Self.SQLExecute("INSERT OR REPLACE INTO notifications (notification_id, message, secondary_message, moment, read, action_url, user_data, deleted) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0);", Notification.Identifier, Notification.Message, Notification.SecondaryMessage, Notification.Timestamp.SQLDateTime, If(Notification.Read, 1, 0), Notification.ActionURL, If(Notification.UserData <> Nil, Beacon.GenerateJSON(Notification.UserData), "{}"))
 		  Self.Commit
 		  
 		  If Notify Then
