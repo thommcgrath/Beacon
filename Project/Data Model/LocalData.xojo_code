@@ -1018,7 +1018,7 @@ Implements Beacon.DataSource
 		    If Preset <> Nil Then
 		      If Type <> Beacon.Preset.Types.BuiltIn And Preset.PresetID <> Results.Field("object_id").StringValue Then
 		        // To work around https://github.com/thommcgrath/Beacon/issues/64
-		        Dim Contents As String = Beacon.GenerateJSON(Preset.ToDictionary)
+		        Dim Contents As String = Beacon.GenerateJSON(Preset.ToDictionary, Beacon.JSONCompressed Or Beacon.JSONBase64)
 		        Self.BeginTransaction()
 		        Self.SQLExecute("UPDATE custom_presets SET LOWER(object_id) = LOWER(?2), contents = ?3 WHERE object_id = ?1;", Results.Field("object_id").StringValue, Preset.PresetID, Contents)
 		        Self.Commit()
@@ -1424,7 +1424,7 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h21
 		Private Sub SavePreset(Preset As Beacon.Preset, Reload As Boolean)
-		  Dim Content As String = Beacon.GenerateJSON(Preset.ToDictionary)
+		  Dim Content As String = Beacon.GenerateJSON(Preset.ToDictionary, Beacon.JSONCompressed Or Beacon.JSONBase64)
 		  
 		  Self.BeginTransaction()
 		  Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (object_id, label, contents) VALUES (LOWER(?1), ?2, ?3);", Preset.PresetID, Preset.Label, Content)
