@@ -128,27 +128,6 @@ Protected Module FrameworkExtensions
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Attributes( Deprecated )  Function IntegerValue(Extends Value As Auto) As Integer
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Value)
-		  Select Case Info.Name
-		  Case "Int8", "Int16", "Int32", "Int64", "UInt8", "UInt16", "UInt32", "UInt64"
-		    Return Value
-		  Case "Double", "Single"
-		    Dim DoubleValue As Double = Value
-		    Return Round(DoubleValue)
-		  Case "String"
-		    Dim StringValue As String = Value
-		    Return Val(StringValue)
-		  Case "Text"
-		    Dim TextValue As String = Value
-		    Return Val(TextValue)
-		  Else
-		    Return 0
-		  End Select
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function IsType(Extends File As FolderItem, Type As FileType) As Boolean
 		  Return File.Name.EndsWith(Type.PrimaryExtension)
