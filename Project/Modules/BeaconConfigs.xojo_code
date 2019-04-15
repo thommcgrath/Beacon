@@ -48,7 +48,17 @@ Protected Module BeaconConfigs
 		      Continue
 		    End If
 		    
-		    Dim RequiredVersion As Integer = ConfigAttribute.Value.IntegerValue
+		    Dim Value As Variant = ConfigAttribute.Value
+		    Dim RequiredVersion As Integer
+		    Select Case Value.Type
+		    Case Variant.TypeString, Variant.TypeInteger
+		      RequiredVersion = Value.IntegerValue
+		    Case Variant.TypeText
+		      RequiredVersion = Integer.FromText(Value.TextValue)
+		    Else
+		      Break
+		    End Select
+		    
 		    Return PurchasedVersion >= RequiredVersion
 		  Next
 		  
