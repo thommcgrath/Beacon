@@ -24,6 +24,19 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function CoerceToDouble(ByRef Value As Variant, Info As Introspection.TypeInfo) As Boolean
+		  #Pragma BreakOnExceptions False
+		  Try
+		    Value = Value.DoubleValue
+		    Return True
+		  Catch Err As TypeMismatchException
+		    Return False
+		  End Try
+		  #Pragma BreakOnExceptions Default
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub ComputeDifficultySettings(BaseDifficulty As Double, DesiredDinoLevel As Integer, ByRef DifficultyValue As Double, ByRef DifficultyOffset As Double, ByRef OverrideOfficialDifficulty As Double)
 		  OverrideOfficialDifficulty = Max(Ceil(DesiredDinoLevel / 30), BaseDifficulty)
@@ -157,7 +170,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function DoubleValue(Extends Dict As Dictionary, Key As Auto, Default As Double, AllowArray As Boolean = False) As Double
-		  Return GetValueAsType(Dict, Key, "Double", Default, AllowArray)
+		  Return GetValueAsType(Dict, Key, "Double", Default, AllowArray, AddressOf CoerceToDouble)
 		End Function
 	#tag EndMethod
 
@@ -196,7 +209,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetLastValueAsType(Values() As Variant, FullName As String, Default As Auto) As Auto
+		Private Function GetLastValueAsType(Values() As Variant, FullName As String, Default As Auto) As Variant
 		  For I As Integer = Values.Ubound DownTo 0
 		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Values(I))
 		    If Info.FullName = FullName Then
@@ -208,7 +221,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function GetValueAsType(Dict As Dictionary, Key As Variant, FullName As String, Default As Variant, AllowArray As Boolean = False) As Auto
+		Private Function GetValueAsType(Dict As Dictionary, Key As Variant, FullName As String, Default As Variant, AllowArray As Boolean = False, Adapter As ValueAdapter = Nil) As Variant
 		  If Not Dict.HasKey(Key) Then
 		    Return Default
 		  End If
@@ -223,6 +236,12 @@ Protected Module Beacon
 		    Return GetLastValueAsType(Arr, FullName, Default)
 		  ElseIf Info.FullName = FullName Then
 		    Return Value
+		  ElseIf Adapter <> Nil Then
+		    If Adapter.Invoke(Value, Info) Then
+		      Return Value
+		    Else
+		      Return Default
+		    End If
 		  Else
 		    Return Default
 		  End If
@@ -742,6 +761,10 @@ Protected Module Beacon
 
 	#tag DelegateDeclaration, Flags = &h1
 		Protected Delegate Function URLHandler(URL As String) As Boolean
+	#tag EndDelegateDeclaration
+
+	#tag DelegateDeclaration, Flags = &h21
+		Private Delegate Function ValueAdapter(ByRef Value As Variant, Info As Introspection.TypeInfo) As Boolean
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1
