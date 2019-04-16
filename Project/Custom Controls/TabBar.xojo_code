@@ -127,7 +127,7 @@ Implements ObservationKit.Observer
 		    Self.mCloseBoxes(I) = CloseRect
 		    Self.mTabRects(I) = New REALbasic.Rect(LeftPos, 0, TabWidth, G.Height)
 		    
-		    If View.Progress <> BeaconSubview.ProgressNone Then
+		    If View <> Nil And View.Progress <> BeaconSubview.ProgressNone Then
 		      Dim Progress As Graphics = G.Clip(Self.mTabRects(I).Left, Self.mTabRects(I).Top, Self.mTabRects(I).Width, Self.ProgressHeight)
 		      
 		      Dim ProgressBackColor As Color = SystemColors.QuaternaryLabelColor
@@ -292,7 +292,9 @@ Implements ObservationKit.Observer
 			    Dim NewBound As Integer = Value - 1
 			    For I As Integer = OldBound + 1 To NewBound
 			      Dim View As BeaconSubview = RaiseEvent ViewAtIndex(I)
-			      View.AddObserver(Self, "BeaconSubview.Progress")
+			      If View <> Nil Then
+			        View.AddObserver(Self, "BeaconSubview.Progress")
+			      End If
 			    Next
 			    
 			    Redim Self.mTabRects(Value - 1)
