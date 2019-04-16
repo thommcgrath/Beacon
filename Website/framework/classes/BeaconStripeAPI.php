@@ -27,26 +27,6 @@ class BeaconStripeAPI {
 		return $pi_json;
 	}
 	
-	public function GetPaymentSource(string $source_id) {
-		$curl = curl_init('https://api.stripe.com/v1/sources/' . $source_id);
-		$headers = array('Authorization: Bearer ' . $this->api_secret);
-		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		$source_body = curl_exec($curl);
-		$source_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
-		
-		if ($source_status != 200) {
-			return null;
-		}
-		$source_json = json_decode($source_body, true);
-		if (is_null($source_json)) {
-			return null;
-		}
-		
-		return $source_json;
-	}
-	
 	public function GetCustomer(string $customer_id) {
 		$curl = curl_init('https://api.stripe.com/v1/customers/' . $customer_id);
 		$headers = array('Authorization: Bearer ' . $this->api_secret);
