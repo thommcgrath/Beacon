@@ -29,7 +29,7 @@ DECLARE
 	v_row RECORD;
 	v_uuid UUID;
 BEGIN
-	FOR v_row IN SELECT DISTINCT group_key_precision FROM emails_addresses ORDER BY group_key_precision DESC
+	FOR v_row IN SELECT DISTINCT group_key_precision FROM email_addresses ORDER BY group_key_precision DESC
 	LOOP
 		SELECT email_id INTO v_uuid FROM email_addresses WHERE group_key = group_key_for_email(p_address, v_row.group_key_precision) AND CRYPT(LOWER(p_address), address) = address;
 		IF FOUND THEN
