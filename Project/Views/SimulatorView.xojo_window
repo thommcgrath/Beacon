@@ -291,7 +291,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mTarget As Auto
+		Private mTarget As Variant
 	#tag EndProperty
 
 

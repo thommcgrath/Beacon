@@ -279,7 +279,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    Set.Label = Dict.Value("SetName")
 		  End If
 		  
-		  Dim Children() As Auto
+		  Dim Children() As Variant
 		  If Dict.HasKey("ItemEntries") Then
 		    Children = Dict.Value("ItemEntries")
 		  End If

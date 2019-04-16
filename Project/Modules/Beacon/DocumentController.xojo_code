@@ -405,7 +405,7 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub TriggerDeleteError(Reason As Auto)
+		Private Sub TriggerDeleteError(Reason As Variant)
 		  RaiseEvent DeleteError(Reason)
 		End Sub
 	#tag EndMethod
@@ -417,7 +417,7 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub TriggerLoadError(Reason As Auto)
+		Private Sub TriggerLoadError(Reason As Variant)
 		  CallLater.Cancel(Self.mLoadStartedCallbackKey)
 		  
 		  RaiseEvent LoadError(Reason)
@@ -439,7 +439,7 @@ Protected Class DocumentController
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub TriggerWriteError(Reason As Auto)
+		Private Sub TriggerWriteError(Reason As Variant)
 		  RaiseEvent WriteError(Reason)
 		End Sub
 	#tag EndMethod

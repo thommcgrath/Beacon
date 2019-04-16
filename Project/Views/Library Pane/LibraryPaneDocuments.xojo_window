@@ -226,7 +226,7 @@ End
 		  Redim Self.mCloudDocuments(-1)
 		  
 		  If Success Then
-		    Dim Dicts() As Auto = Details
+		    Dim Dicts() As Variant = Details
 		    For Each Dict As Dictionary In Dicts
 		      Dim Document As New BeaconAPI.Document(Dict)
 		      Dim URL As String = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Mid(Document.ResourceURL.IndexOf("://") + 3)
@@ -249,7 +249,7 @@ End
 		  Redim Self.mCommunityDocuments(-1)
 		  
 		  If Success Then
-		    Dim Dicts() As Auto = Details
+		    Dim Dicts() As Variant = Details
 		    For Each Dict As Dictionary In Dicts
 		      Dim Document As New BeaconAPI.Document(Dict)
 		      Self.mCommunityDocuments.Append(Document.ResourceURL)

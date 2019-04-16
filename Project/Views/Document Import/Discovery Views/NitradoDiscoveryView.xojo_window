@@ -400,7 +400,7 @@ End
 		    Self.List.DeleteAllRows
 		    
 		    Dim Data As Dictionary = Reply.Value("data")
-		    Dim Services() As Auto = Data.Value("services")
+		    Dim Services() As Variant = Data.Value("services")
 		    For Each Service As Dictionary In Services
 		      Dim Type As String = Service.Value("type")
 		      If Type <> "gameserver" Then

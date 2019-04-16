@@ -372,7 +372,7 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function VariantValue(Key As String, Default As Auto = Nil) As Variant
+		Function VariantValue(Key As String, Default As Variant = Nil) As Variant
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
 		  End If

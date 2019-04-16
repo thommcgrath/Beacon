@@ -736,7 +736,7 @@ End
 		  End If
 		  
 		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
-		    Dim Dicts() As Auto
+		    Dim Dicts() As Variant
 		    Try
 		      Dim Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
 		      Dicts = Beacon.ParseJSON(Contents)

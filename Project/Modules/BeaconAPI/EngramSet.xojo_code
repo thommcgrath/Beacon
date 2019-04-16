@@ -51,7 +51,7 @@ Protected Class EngramSet
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Sources() As Auto)
+		Sub Constructor(Sources() As Dictionary)
 		  Self.mOriginalEngrams = New Dictionary
 		  Self.mNewEngrams = New Dictionary
 		  

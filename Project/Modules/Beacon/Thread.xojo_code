@@ -47,7 +47,7 @@ Inherits Global.Thread
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUserData As Auto
+		Private mUserData As Variant
 	#tag EndProperty
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
@@ -76,7 +76,7 @@ Inherits Global.Thread
 			  Self.UnlockUserData()
 			End Set
 		#tag EndSetter
-		UserData As Auto
+		UserData As Variant
 	#tag EndComputedProperty
 
 
@@ -87,19 +87,14 @@ Inherits Global.Thread
 			Group="ID"
 			InitialValue="-2147483648"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
+			EditorType="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
 			Visible=true
 			Group="ID"
 			Type="String"
+			EditorType="String"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Priority"
@@ -109,33 +104,14 @@ Inherits Global.Thread
 		#tag ViewProperty
 			Name="StackSize"
 			Group="Behavior"
-			Type="UInteger"
+			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"
 			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Top"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="State"
-			Group="Behavior"
-			Type="Beacon.Thread.States"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - Running"
-				"1 - Waiting"
-				"2 - Suspended"
-				"3 - Sleeping"
-				"4 - NotRunning"
-			#tag EndEnumValues
+			EditorType="String"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

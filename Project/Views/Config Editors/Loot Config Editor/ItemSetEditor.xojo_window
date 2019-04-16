@@ -506,7 +506,7 @@ End
 		  End If
 		  
 		  Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		  Dim Parsed As Auto
+		  Dim Parsed As Variant
 		  Try
 		    Parsed = Beacon.ParseJSON(Contents)
 		  Catch Err As UnsupportedFormatException
@@ -525,7 +525,7 @@ End
 		    End If
 		  ElseIf Info.FullName = "Auto()" Then
 		    // Multiple items
-		    Dim Dicts() As Auto = Parsed
+		    Dim Dicts() As Variant = Parsed
 		    For Each Dict As Dictionary In Dicts
 		      Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
 		      If Entry <> Nil Then

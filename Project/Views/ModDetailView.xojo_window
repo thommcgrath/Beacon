@@ -636,7 +636,7 @@ End
 		  End If
 		  
 		  If Not Self.mEngramSets.HasKey(Self.mCurrentMod.ModID) Then
-		    Dim Placeholder() As Auto
+		    Dim Placeholder() As Dictionary
 		    Self.mEngramSets.Value(Self.mCurrentMod.ModID) = New BeaconAPI.EngramSet(Placeholder)
 		  End If
 		  

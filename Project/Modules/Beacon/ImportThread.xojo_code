@@ -42,7 +42,7 @@ Inherits Beacon.Thread
 		      Value = Beacon.Pair(Value).Value
 		      
 		      If Self.mParsedData.HasKey(Key) Then
-		        Dim ExistingValue As Auto = Self.mParsedData.Value(Key)
+		        Dim ExistingValue As Variant = Self.mParsedData.Value(Key)
 		        Dim TypeInfo As Introspection.TypeInfo = Introspection.GetType(ExistingValue)
 		        
 		        Dim ValueArray() As Variant
@@ -107,7 +107,7 @@ Inherits Beacon.Thread
 	#tag Method, Flags = &h21
 		Private Function Import(Content As String) As Variant
 		  Dim Parser As New Beacon.ConfigParser
-		  Dim Value As Auto
+		  Dim Value As Variant
 		  Dim Characters() As String = Split(Content, "")
 		  For Each Char As String In Characters
 		    If Self.mCancelled Then
@@ -177,7 +177,7 @@ Inherits Beacon.Thread
 		  Case "Variant()"
 		    Dim ArrayValue() As Variant = Input
 		    Dim IsDict As Boolean = True
-		    For Each Item As Auto In ArrayValue
+		    For Each Item As Variant In ArrayValue
 		      Dim ItemInfo As Introspection.TypeInfo = Introspection.GetType(Item)
 		      IsDict = IsDict And ItemInfo.FullName = "Beacon.Pair"
 		    Next

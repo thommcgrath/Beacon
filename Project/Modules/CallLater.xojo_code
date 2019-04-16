@@ -5,7 +5,7 @@ Protected Module CallLater
 	#tag EndDelegateDeclaration
 
 	#tag DelegateDeclaration, Flags = &h1
-		Protected Delegate Sub CallWithArg(Argument As Auto)
+		Protected Delegate Sub CallWithArg(Argument As Variant)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1
@@ -44,7 +44,7 @@ Protected Module CallLater
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function Schedule(Delay As Integer, Callback As CallLater.CallWithArg, Argument As Auto) As String
+		Protected Function Schedule(Delay As Integer, Callback As CallLater.CallWithArg, Argument As Variant) As String
 		  Dim CallTimer As New CallLater.TriggerTimer
 		  CallTimer.Period = Delay
 		  CallTimer.Mode = Timer.ModeSingle

@@ -864,7 +864,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PresentException(Details As Auto)
+		Private Sub PresentException(Details As Variant)
 		  ExceptionWindow.Present(Details)
 		End Sub
 	#tag EndMethod

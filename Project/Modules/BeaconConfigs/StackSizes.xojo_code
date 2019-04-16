@@ -79,14 +79,14 @@ Inherits Beacon.ConfigGroup
 		  Dim Overrides As New Dictionary
 		  
 		  If ParsedData.HasKey("ConfigOverrideItemMaxQuantity") Then
-		    Dim AutoValue As Auto = ParsedData.Value("ConfigOverrideItemMaxQuantity")
+		    Dim AutoValue As Variant = ParsedData.Value("ConfigOverrideItemMaxQuantity")
 		    Dim Dicts() As Dictionary  
 		    Dim Info As Introspection.TypeInfo = Introspection.GetType(AutoValue)
 		    Select Case Info.FullName
 		    Case "Dictionary"
 		      Dicts.Append(AutoValue)
 		    Case "Auto()"
-		      Dim ArrayValue() As Auto = AutoValue
+		      Dim ArrayValue() As Variant = AutoValue
 		      For Each Dict As Dictionary In ArrayValue
 		        Dicts.Append(Dict)
 		      Next

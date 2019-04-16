@@ -116,7 +116,7 @@ Implements Xojo.Core.Iterable
 		    Return Nil
 		  End If
 		  
-		  Dim Dicts() As Auto
+		  Dim Dicts() As Variant
 		  Try
 		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
 		  Catch Err As TypeMismatchException

@@ -16,7 +16,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Identity
 		  
 		  If Dict.HasKey("Costs") Then
-		    Dim Costs() As Auto = Dict.Value("Costs")
+		    Dim Costs() As Variant = Dict.Value("Costs")
 		    For Each CostData As Dictionary In Costs
 		      Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(CostData)
 		      If Cost <> Nil Then
@@ -70,9 +70,9 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  Dim Values As Auto = ParsedData.Value("ConfigOverrideItemCraftingCosts")
+		  Dim Values As Variant = ParsedData.Value("ConfigOverrideItemCraftingCosts")
 		  Dim ValuesInfo As Introspection.TypeInfo = Introspection.GetType(Values)
-		  Dim Overrides() As Auto
+		  Dim Overrides() As Variant
 		  If ValuesInfo.FullName = "Auto()" Then
 		    Overrides = Values
 		  ElseIf ValuesInfo.FullName = "Dictionary" Then

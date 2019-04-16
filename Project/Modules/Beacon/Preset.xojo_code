@@ -73,7 +73,7 @@ Implements Beacon.Countable
 		  Preset.mMaxItems = Dict.Lookup("Max", Preset.MaxItems)
 		  
 		  If Dict.HasKey("Entries") Then
-		    Dim Contents() As Auto = Dict.Value("Entries")
+		    Dim Contents() As Variant = Dict.Value("Entries")
 		    For Each EntryDict As Dictionary In Contents
 		      Dim Entry As Beacon.PresetEntry = Beacon.PresetEntry.ImportFromBeacon(EntryDict)
 		      If Entry <> Nil Then
@@ -86,7 +86,7 @@ Implements Beacon.Countable
 		      For Each Set As DictionaryMember In Contents.Members
 		        Dim ValidForIsland As Boolean = (Set.Key = "Common" Or Set.Key = "Island")
 		        Dim ValidForScorched As Boolean = (Set.Key = "Common" Or Set.Key = "Scorched")
-		        Dim Items() As Auto = Set.Value
+		        Dim Items() As Variant = Set.Value
 		        For Each Item As Dictionary In Items
 		          Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Item)
 		          If Entry <> Nil Then
@@ -102,7 +102,7 @@ Implements Beacon.Countable
 		  
 		  If Dict.HasKey("Modifier Definitions") Then
 		    // Only import the unknown ones. All get exported anyway.
-		    Dim Definitions() As Auto = Dict.Value("Modifier Definitions")
+		    Dim Definitions() As Variant = Dict.Value("Modifier Definitions")
 		    For Each Definition As Dictionary In Definitions
 		      If Not Definition.HasKey("ModifierID") Then
 		        Continue

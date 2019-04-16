@@ -326,7 +326,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    LootSource = New Beacon.LootSource(MutableSource)
 		  End If
 		  
-		  Dim Children() As Auto
+		  Dim Children() As Variant
 		  If Dict.HasKey("ItemSets") Then
 		    Children = Dict.Value("ItemSets")
 		  End If

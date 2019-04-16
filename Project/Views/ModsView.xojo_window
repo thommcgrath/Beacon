@@ -287,7 +287,7 @@ End
 		  
 		  ModList.DeleteAllRows()
 		  
-		  Dim Arr() As Auto = Details
+		  Dim Arr() As Variant = Details
 		  For Each Dict As Dictionary In Arr
 		    Dim UserMod As New BeaconAPI.WorkshopMod(Dict)
 		    

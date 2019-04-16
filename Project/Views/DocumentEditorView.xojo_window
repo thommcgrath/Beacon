@@ -439,7 +439,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub CopyFromDocuments(SourceDocuments As Auto)
+		Private Sub CopyFromDocuments(SourceDocuments As Variant)
 		  Dim Documents() As Beacon.Document = SourceDocuments
 		  DocumentMergerWindow.Present(Self, Documents, Self.Document, WeakAddressOf MergeCallback)
 		End Sub

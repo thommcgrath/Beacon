@@ -871,7 +871,7 @@ End
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
 		    Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		    Dim Parsed As Auto
+		    Dim Parsed As Variant
 		    Try
 		      Parsed = Beacon.ParseJSON(Contents)
 		    Catch Err As UnsupportedFormatException
@@ -884,7 +884,7 @@ End
 		    If Info.FullName = "Dictionary" Then
 		      Dicts.Append(Parsed)
 		    ElseIf Info.FullName = "Auto()" Then
-		      Dim Values() As Auto = Parsed
+		      Dim Values() As Variant = Parsed
 		      For Each Dict As Dictionary In Values
 		        Dicts.Append(Dict)
 		      Next

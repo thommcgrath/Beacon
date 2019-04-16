@@ -219,9 +219,9 @@ Inherits Beacon.ConfigGroup
 		  End If
 		  
 		  Dim PlayerExperience As Boolean = True
-		  Dim Values As Auto = ParsedData.Value("LevelExperienceRampOverrides")
+		  Dim Values As Variant = ParsedData.Value("LevelExperienceRampOverrides")
 		  Dim ValuesInfo As Introspection.TypeInfo = Introspection.GetType(Values)
-		  Dim Overrides() As Auto
+		  Dim Overrides() As Variant
 		  If ValuesInfo.FullName = "Auto()" Then
 		    Overrides = Values
 		  ElseIf ValuesInfo.FullName = "Dictionary" Then

@@ -973,7 +973,7 @@ End
 		  End If
 		  
 		  Dim Dict As Dictionary = Details
-		  Dim Files() As Auto = Dict.Value("files")
+		  Dim Files() As Variant = Dict.Value("files")
 		  Dim Children() As String
 		  For Each Child As String In Files
 		    Children.Append(Child)

@@ -218,7 +218,7 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function FromTextLegacy(Parsed As Auto, Identity As Beacon.Identity) As Beacon.Document
+		Private Shared Function FromTextLegacy(Parsed As Variant, Identity As Beacon.Identity) As Beacon.Document
 		  Dim Doc As New Beacon.Document
 		  Dim LootSources() As Variant
 		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Parsed)

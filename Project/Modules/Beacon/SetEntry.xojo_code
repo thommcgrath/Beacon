@@ -296,7 +296,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  End If
 		  Entry.ChanceToBeBlueprint = Chance
 		  
-		  Dim ClassWeights() As Auto
+		  Dim ClassWeights() As Variant
 		  If Dict.HasKey("ItemsWeights") Then
 		    ClassWeights = Dict.Value("ItemsWeights")
 		  End If
