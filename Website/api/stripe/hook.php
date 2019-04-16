@@ -22,12 +22,12 @@ foreach ($signature_parts as $part) {
 	$signature_values[$key] = $value;
 }
 $time = $signature_values['t'];
-$signature_hex = $signature_values['v1'];
+$expected_signature = $signature_values['v1'];
 
 $signed_payload = $time . '.' . $body;
-$expected_signature = hash_hmac('sha256', $time . '.' . $body, $endpoint_secret);
-if ($signature_hex != $expected_signature) {
-	echo 'Invalid signature';
+$computed_signature = hash_hmac('sha256', $signed_payload, $endpoint_secret);
+if ($computed_signature != $expected_signature) {
+	echo "Invalid signature, expected $expected_signature but computed $computed_signature";
 	exit;
 }
 
@@ -42,7 +42,7 @@ $data = $json['data'];
 $type = $json['type'];
 $api = new BeaconStripeAPI($api_secret);
 switch ($type) {
-case 'checkout_beta.session_succeeded':
+case 'checkout.session.completed':
 	$obj = $data['object'];
 	$items = $obj['display_items'];
 	$purchased_products = array();
@@ -51,7 +51,7 @@ case 'checkout_beta.session_succeeded':
 			continue;
 		}
 		
-		$sku = $item['sku'];
+		$sku = $item['sku']['id'];
 		
 		$results = $database->Query('SELECT product_id, retail_price FROM products WHERE stripe_sku = $1;', $sku);
 		if ($results->RecordCount() == 1) {
@@ -72,6 +72,11 @@ case 'checkout_beta.session_succeeded':
 	if (is_null($email)) {
 		echo 'Unable to find email address for this payment intent';
 		exit;
+	}
+	
+	$user = BeaconUser::GetByEmail($email);
+	if (is_null($user)) {
+		BeaconLogin::SendVerification($email);
 	}
 	
 	$purchase_subtotal = 0;

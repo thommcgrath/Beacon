@@ -40,10 +40,11 @@ function check_purchase_status(client_reference_id) {
 			account_url += '#create';
 			if (email == null) {
 				document.getElementById('confirmed_text').innerText = 'You will need to create an account with the email address used to purchase to activate Omni in Beacon.';
+				document.getElementById('activate_button').innerText = 'Create Account';
 			} else {
-				document.getElementById('confirmed_text').innerText = 'You will need to create an account with the email address ' + email + ' to activate Omni in Beacon.';
+				document.getElementById('confirmed_text').innerText = 'An email was sent to ' + email + ' to confirm your email address. Follow the included link to finish setting up your account.';
+				document.getElementById('activate_button').className = 'hidden';
 			}
-			document.getElementById('activate_button').innerText = 'Create Account';
 		} else {
 			document.getElementById('confirmed_text').innerText = 'Your account is ready to use Omni. Simply relaunch Beacon to have Beacon refresh your account status, or visit your account control panel for more instructions.';
 			document.getElementById('activate_button').innerText = 'Account Control Panel';

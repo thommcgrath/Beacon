@@ -1,8 +1,10 @@
 <?php
+	
+define('OMNI_UUID', '972f9fc5-ad64-4f9c-940d-47062e705cc5');
+define('STW_UUID', 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015');
 
 require(dirname(__FILE__, 3) . '/framework/loader.php');
 BeaconTemplate::AddHeaderLine('<script src="https://js.stripe.com/v3/"></script>');
-BeaconTemplate::StartScript();
 
 BeaconCommon::StartSession();
 if (!isset($_SESSION['client_reference_id'])) {
@@ -14,7 +16,7 @@ if (!isset($_SESSION['client_reference_id'])) {
 
 $database = BeaconCommon::Database();
 
-$results = $database->Query('SELECT stripe_sku, retail_price FROM products WHERE product_id = $1;', '972f9fc5-ad64-4f9c-940d-47062e705cc5');
+$results = $database->Query('SELECT stripe_sku, retail_price FROM products WHERE product_id = $1;', OMNI_UUID);
 if ($results->RecordCount() != 1) {
 	throw new Exception('Unable to find Omni product');
 	exit;
@@ -23,11 +25,67 @@ $omni_sku = $results->Field('stripe_sku');
 $omni_price = $results->Field('retail_price');
 $omni_price_formatted = '$' . number_format($omni_price, 2, '.', ',');
 
-$results = $database->Query('SELECT stripe_sku, retail_price FROM products WHERE product_id = $1;', 'f2a99a9e-e27f-42cf-91a8-75a7ef9cf015');
+$results = $database->Query('SELECT stripe_sku, retail_price FROM products WHERE product_id = $1;', STW_UUID);
 $stw_sku = $results->Field('stripe_sku');
 $stw_price = $results->Field('retail_price');
 $stw_price_formatted = '$' . number_format($stw_price, 2, '.', ',');
 
+BeaconTemplate::StartStyles(); ?>
+<style type="text/css">
+
+table.generic .bullet-column {
+	width: 100px;
+}
+
+#cart_back_paragraph {
+	float: left;
+}
+
+.price_column {
+	width: 75px;
+	text-align: right;
+}
+
+.quantity_column {
+	width: 75px;
+	text-align: center;
+}
+
+</style>
+<?php
+BeaconTemplate::FinishStyles();
+
+$session = BeaconSession::GetFromCookie();
+if (!is_null($session)) {
+	$user = BeaconUser::GetByUserID($session->UserID());
+	$results = $database->Query('SELECT purchases.merchant_reference FROM purchased_products INNER JOIN purchases ON (purchased_products.purchase_id = purchases.purchase_id) INNER JOIN users ON (purchased_products.purchaser_email = users.email_id) WHERE purchased_products.product_id = $1 AND users.user_id = $2 LIMIT 1;', OMNI_UUID, $user->UserID());
+} else {
+	$user = null;
+	$results = $database->Query('SELECT purchases.merchant_reference FROM purchased_products INNER JOIN purchases ON (purchased_products.purchase_id = purchases.purchase_id) WHERE purchased_products.product_id = $1 AND purchased_products.client_reference_id = $2 LIMIT 1;', OMNI_UUID, $client_reference_id);
+}
+
+$purchased = false;
+$subtext = 'Already purchased?';
+$buy_button_caption = 'Buy Omni';
+$purchase_email = null;
+if ($results->RecordCount() == 1) {
+	$purchased = true;
+	$subtext = 'You have already purchased Beacon Omni.';
+	$buy_button_caption = 'Buy Share The Wealth Licenses';
+	
+	$merchant_reference = $results->Field('merchant_reference');
+	if (substr($merchant_reference, 0, 3) == 'pi_') {
+		// Stripe PaymentIntent
+		$api = new BeaconStripeAPI(BeaconCommon::GetGlobal('Stripe_Secret_Key'));
+		$purchase_email = $api->EmailForPaymentIntent($merchant_reference);
+		if (!empty($purchase_email)) {
+			$subtext = 'Your Beacon Omni purchase is tied to ' . $purchase_email . '.';
+			$user = BeaconUser::GetByEmail($purchase_email);
+		}
+	}
+}
+
+BeaconTemplate::StartScript();
 ?>
 <script>
 var update_total = function() {
@@ -84,16 +142,21 @@ document.addEventListener('DOMContentLoaded', function() {
 			items.push({sku: <?php echo json_encode($stw_sku); ?>, quantity: stw_quantity});
 		}
 		
-		var stripe = Stripe(<?php echo json_encode(BeaconCommon::GetGlobal('Stripe_Public_Key')); ?>, {
-			betas: ['checkout_beta_4']
-		});
+		var stripe = Stripe(<?php echo json_encode(BeaconCommon::GetGlobal('Stripe_Public_Key')); ?>, {});
 		
-		stripe.redirectToCheckout({
+		var checkout = {
 			items: items,
 			successUrl: <?php echo json_encode(BeaconCommon::AbsoluteURL('/omni/welcome/')); ?>,
 			cancelUrl: <?php echo json_encode(BeaconCommon::AbsoluteURL('/omni/')); ?>,
-			clientReferenceId: <?php echo json_encode($client_reference_id); ?>
-		}).then(function (result) {
+			clientReferenceId: <?php echo json_encode($client_reference_id); ?> 
+		};
+		<?php
+		if (!is_null($purchase_email)) {
+			echo 'checkout.customerEmail = ' . json_encode($purchase_email) . ';';
+		}
+		?>
+		
+		stripe.redirectToCheckout(checkout).then(function (result) {
 			if (result.error) {
 				dialog.show('Unable to start Stripe checkout', result.error.message);
 			}
@@ -103,41 +166,17 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <?php
 BeaconTemplate::FinishScript();
-BeaconTemplate::StartStyles(); ?>
-<style type="text/css">
 
-table.generic .bullet-column {
-	width: 100px;
+$account_link = '/account/#omni';
+if (is_null($session)) {
+	$account_link = '/account/login/?return=' . urlencode($account_link);
+	if (!is_null($purchase_email)) {
+		$account_link .= '&email=' . urlencode($purchase_email);
+		if (is_null($user)) {
+			$account_link .= '#create';
+		}
+	}
 }
-
-#cart_back_paragraph {
-	float: left;
-}
-
-.price_column {
-	width: 75px;
-	text-align: right;
-}
-
-.quantity_column {
-	width: 75px;
-	text-align: center;
-}
-
-</style>
-<?php
-BeaconTemplate::FinishStyles();
-
-$session = BeaconSession::GetFromCookie();
-if (!is_null($session)) {
-	$user = BeaconUser::GetByUserID($session->UserID());
-} else {
-	$user = null;
-}
-
-$purchased = (is_null($user) == false && $user->OmniVersion() >= 1);
-$subtext = ($purchased ? 'You have already purchased Beacon Omni.' : 'Already purchased?');
-$buy_button_caption = ($purchased ? 'Buy Share The Wealth Licenses' : 'Buy Omni');
 
 ?>
 <div id="page_landing">
@@ -145,7 +184,7 @@ $buy_button_caption = ($purchased ? 'Buy Share The Wealth Licenses' : 'Buy Omni'
 	<p>Beacon does a lot for free. Loot drops, server control, file sharing, and more. But when it's time to get into more advanced configuration like crafting costs and player experience, then it's time to upgrade to Beacon Omni.</p>
 	<p>All users of Beacon can use all features, however Omni-only config types will not be included in generated Game.ini and GameUserSettings.ini files.</p>
 	<div class="double_column">
-		<div class="column text-center"><button id="buy-button" class="default"><?php echo htmlentities($buy_button_caption); ?></button><br><span class="smaller"><?php echo htmlentities($subtext); ?> See <a href="/account/#omni">your account control panel</a> for more details.</span></div>
+		<div class="column text-center"><button id="buy-button" class="default"><?php echo htmlentities($buy_button_caption); ?></button><br><span class="smaller"><?php echo htmlentities($subtext); ?> See <a href="<?php echo $account_link; ?>">your account control panel</a> for more details.</span></div>
 		<div class="column text-center">Unable to purchase for some reason? Learn more about Beacon's <em><a href="stw">Share The Wealth</a></em> program.</div>
 	</div>
 	<table class="generic">
@@ -193,7 +232,7 @@ $buy_button_caption = ($purchased ? 'Buy Share The Wealth Licenses' : 'Buy Omni'
 				<td class="text-center bullet-column">&#10687;</td>
 			</tr>
 			<tr>
-				<td>Stack Sizes (Experimental)<br><span class="smaller text-lighter">Ark finally allows admins to customize stack sizes, so Beacon Omni has an editor ready to go.</span></td>
+				<td>Stack Sizes<br><span class="smaller text-lighter">Ark finally allows admins to customize stack sizes, so Beacon Omni has an editor ready to go.</span></td>
 				<td class="text-center bullet-column">&nbsp;</td>
 				<td class="text-center bullet-column">&#10687;</td>
 			</tr>

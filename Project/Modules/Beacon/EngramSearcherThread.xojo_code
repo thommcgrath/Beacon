@@ -117,8 +117,10 @@ Inherits Beacon.Thread
 		    End Try
 		  End If
 		  
+		  Const QuotationCharacters = "'‘’""“”"
+		  
 		  Dim Regex As New Regex
-		  Regex.SearchPattern = "(cheat giveitem ['""]Blueprint['""](/Game/[^\<\>\:'""\\\|\?\*]+)['""]['""])|(cheat giveitem ['""]BlueprintGeneratedClass['""](/Game/[^\<\>\:'""\\\|\?\*]+)_C['""]['""])|(cheat giveitem ['""](/Game/[^\<\>\:'""\\\|\?\*]+)['""])"
+		  Regex.SearchPattern = "(cheat giveitem [" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|(cheat giveitem [" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|(cheat giveitem [" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])"
 		  
 		  Dim Match As RegexMatch = Regex.Search(Self.mContents)
 		  Dim Paths As New Dictionary

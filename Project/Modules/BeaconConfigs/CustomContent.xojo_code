@@ -98,7 +98,7 @@ Inherits Beacon.ConfigGroup
 		      AES.SetInitialVector(Vector)
 		      Dim Encrypted As Global.MemoryBlock = AES.EncryptCBC(Input)
 		      
-		      Dim SecureDict As New Dictionary
+		      Dim SecureDict As New Xojo.Core.Dictionary
 		      SecureDict.Value("Key") = EncodeHex(Identity.Encrypt(Key))
 		      SecureDict.Value("Vector") = EncodeHex(Vector)
 		      SecureDict.Value("Content") = EncodeHex(Encrypted)
@@ -272,7 +272,7 @@ Inherits Beacon.ConfigGroup
 		      SkippedKeys = Self.GetSkippedKeys(CurrentHeader, ExistingConfigs)
 		    End If
 		    
-		    If CurrentHeader = "" Then
+		    If CurrentHeader = "" Or CurrentHeader = "Beacon" Then
 		      Continue
 		    End If
 		    

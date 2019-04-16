@@ -677,7 +677,7 @@ Begin BeaconContainer EntryPropertiesEditor
       LockRight       =   True
       LockTop         =   True
       Maximum         =   1000
-      Minimum         =   0
+      Minimum         =   1
       PageStep        =   25
       Scope           =   2
       TabIndex        =   18
@@ -690,7 +690,7 @@ Begin BeaconContainer EntryPropertiesEditor
       Visible         =   True
       Width           =   139
    End
-   Begin UITweaks.ResizedTextField WeightField
+   Begin RangeField WeightField
       AcceptTabs      =   False
       Alignment       =   3
       AutoDeactivate  =   False
@@ -708,13 +708,13 @@ Begin BeaconContainer EntryPropertiesEditor
       Index           =   -2147483648
       Italic          =   False
       Left            =   325
-      LimitText       =   3
+      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   False
       LockRight       =   True
       LockTop         =   True
-      Mask            =   "99#"
+      Mask            =   ""
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
@@ -836,7 +836,7 @@ End
 		      Entry.ChanceToBeBlueprint = ChanceSlider.Value / 100
 		    End If
 		    If EditWeightCheck.Value Then
-		      Entry.RawWeight = WeightSlider.Value
+		      Entry.RawWeight = WeightField.Value
 		    End If
 		    If EditMaxQualityCheck.Value Then
 		      Entry.MaxQuality = MaxQuality
@@ -940,6 +940,7 @@ End
 		  MinQualityMenu.SelectByTag(MinQualities(0))
 		  MaxQualityMenu.SelectByTag(MaxQualities(MaxQualities.Ubound))
 		  WeightSlider.Value = TotalWeight / (Entries.Ubound + 1)
+		  WeightField.Value = TotalWeight / (Entries.Ubound + 1)
 		  Self.mIgnoreChanges = False
 		  
 		  If UBound(Entries) > 0 Then
@@ -1065,7 +1066,7 @@ End
 	#tag Event
 		Sub ValueChanged()
 		  If Self.Focus <> WeightField Then
-		    WeightField.Text = Str(Me.Value, "-0")
+		    WeightField.Value = Me.Value
 		  End If
 		  
 		  If Not Self.mIgnoreChanges Then
@@ -1079,19 +1080,24 @@ End
 	#tag Event
 		Sub TextChange()
 		  If Self.Focus = Me Then
-		    WeightSlider.Value = Max(Min(Val(Me.Text), WeightSlider.Maximum), WeightSlider.Minimum)
+		    WeightSlider.Value = Round(Me.Value)
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub LostFocus()
-		  Me.Text = Str(WeightSlider.Value, "-0")
 		  WeightSlider.Enabled = True
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub GotFocus()
 		  WeightSlider.Enabled = False
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = 0.00001
+		  MaxValue = 1000000
 		End Sub
 	#tag EndEvent
 #tag EndEvents
