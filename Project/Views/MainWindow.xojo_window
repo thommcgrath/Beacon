@@ -605,7 +605,10 @@ End
 		  If TabIndex = 0 Then
 		    Return DashboardPane1
 		  Else
-		    Return Self.mSubviews(TabIndex - 1)
+		    TabIndex = TabIndex - 1
+		    If TabIndex >= 0 And TabIndex <= Self.mSubviews.Ubound Then
+		      Return Self.mSubviews(TabIndex)
+		    End If
 		  End If
 		End Function
 	#tag EndEvent
