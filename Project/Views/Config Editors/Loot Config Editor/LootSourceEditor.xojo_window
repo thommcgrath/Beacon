@@ -1295,7 +1295,7 @@ End
 		          Dim Idx As Integer = Source.IndexOf(Target)
 		          If Idx > -1 Then
 		            Dim NewSet As New Beacon.ItemSet(Target)
-		            NewSet.ReconfigureWithPreset(NewPreset, Source, Self.Document)
+		            Call NewSet.ReconfigureWithPreset(NewPreset, Source, Self.Document)
 		            Source(Idx) = NewSet
 		            Updated = True
 		          End If
@@ -1308,35 +1308,34 @@ End
 		      End If
 		    End If
 		  Case "reconfigure"
-		    Dim Presets() As Beacon.Preset = Beacon.Data.Presets
 		    Dim Updated As Boolean
 		    For Each Set As Beacon.ItemSet In Targets
-		      For Each Preset As Beacon.Preset In Presets
-		        If Set.SourcePresetID <> Preset.PresetID Then
+		      If Set.SourcePresetID = "" Then
+		        Continue
+		      End If
+		      
+		      // Yes, ItemSet.ReconfigureWithPreset can get its own preset. But thanks to multi-editing, it is faster to grab it once first.
+		      Dim Preset As Beacon.Preset = Beacon.Data.GetPreset(Set.SourcePresetID)
+		      If Preset = Nil Then
+		        Continue
+		      End If
+		      
+		      For Each Source As Beacon.LootSource In Self.mSources
+		        Dim NewSet As New Beacon.ItemSet(Set)
+		        If Not NewSet.ReconfigureWithPreset(Preset, Source, Self.Document) Then
 		          Continue
 		        End If
 		        
-		        For Each Source As Beacon.LootSource In Self.mSources
-		          Dim OriginalHash As Text = Set.Hash
-		          Dim NewSet As Beacon.ItemSet = New Beacon.ItemSet(Set)
-		          NewSet.ReconfigureWithPreset(Preset, Source, Self.Document)
-		          If NewSet.Hash = OriginalHash Then
-		            Continue
-		          End If
-		          
-		          Dim Idx As Integer = Source.IndexOf(Set)
-		          If Idx > -1 Then
-		            Source(Idx) = NewSet
-		            Updated = True
-		          End If
-		        Next
-		        
-		        Continue For Set
+		        Dim Idx As Integer = Source.IndexOf(Set)
+		        If Idx > -1 Then
+		          Source(Idx) = NewSet
+		          Updated = True
+		        End If
 		      Next
 		    Next
 		    
 		    If Not Updated Then
-		      If UBound(Targets) = 0 Then
+		      If Targets.Ubound = 0 Then
 		        Self.ShowAlert("No changes made", "This item set is already identical to the preset.")
 		      Else
 		        Self.ShowAlert("No changes made", "All item sets already match their preset.")
@@ -1347,7 +1346,7 @@ End
 		    Self.RebuildSetList()
 		    RaiseEvent Updated
 		    
-		    If UBound(Targets) > 0 Then
+		    If Targets.Ubound > 0 Then
 		      // Editor will be disabled, so it won't be obvious something happened.
 		      Self.ShowAlert("Rebuild complete", "All selected item sets have been rebuilt according to their preset.")
 		    End If

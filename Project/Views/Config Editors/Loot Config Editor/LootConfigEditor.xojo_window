@@ -517,9 +517,20 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RebuildAllItemSets()
-		  Self.Document.ReconfigurePresets()
+		  Dim NumChanges As UInteger = Self.Document.ReconfigurePresets()
+		  If NumChanges = 0 Then
+		    Self.ShowAlert("No item sets changed", "All item sets are already configured according to their presets.")
+		    Return
+		  End If
+		  
 		  Self.UpdateSourceList()
 		  Self.ContentsChanged = Self.ContentsChanged Or Self.Document.Modified
+		  
+		  If NumChanges = 1 Then
+		    Self.ShowAlert("1 item set changed", "Rebuilding changed 1 item set to match its preset.")
+		  Else
+		    Self.ShowAlert(Str(NumChanges, "-0") + " item sets changed", "Rebuilding changed " + Str(NumChanges, "-0") + " item sets to match their presets.")
+		  End If
 		End Sub
 	#tag EndMethod
 

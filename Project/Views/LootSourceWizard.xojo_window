@@ -1530,7 +1530,7 @@ End
 		    
 		    // Rebuild if necessary
 		    If ReconfigurePresets Then
-		      Destination.ReconfigurePresets(Mask, ConsoleSafe)
+		      Call Destination.ReconfigurePresets(Mask, ConsoleSafe)
 		    End If
 		    
 		    // Apply basic settings
