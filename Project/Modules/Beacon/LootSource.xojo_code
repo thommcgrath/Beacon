@@ -483,7 +483,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Continue
 		    End If
 		    
-		    If Set.ReconfigureWithPreset(Self, Mask, ConsoleSafe) Then
+		    If Set.ReconfigureWithPreset(Self, Mask, Mods) Then
 		      NumChanged = NumChanged + 1
 		    End If
 		  Next
