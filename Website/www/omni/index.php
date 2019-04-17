@@ -142,9 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			items.push({sku: <?php echo json_encode($stw_sku); ?>, quantity: stw_quantity});
 		}
 		
-		var stripe = Stripe(<?php echo json_encode(BeaconCommon::GetGlobal('Stripe_Public_Key')); ?>, {
-			betas: ['checkout_beta_4']
-		});
+		var stripe = Stripe(<?php echo json_encode(BeaconCommon::GetGlobal('Stripe_Public_Key')); ?>, {});
 		
 		var checkout = {
 			items: items,

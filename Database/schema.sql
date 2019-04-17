@@ -347,10 +347,10 @@ $$;
 ALTER FUNCTION public.generic_update_trigger() OWNER TO thommcgrath;
 
 --
--- Name: group_key_for_email(public.email); Type: FUNCTION; Schema: public; Owner: thommcgrath
+-- Name: group_key_for_email(public.email, integer); Type: FUNCTION; Schema: public; Owner: thommcgrath
 --
 
-CREATE FUNCTION public.group_key_for_email(p_address public.email) RETURNS public.hex
+CREATE FUNCTION public.group_key_for_email(p_address public.email, p_precision integer) RETURNS public.hex
     LANGUAGE plpgsql IMMUTABLE
     AS $_$
 DECLARE
@@ -361,10 +361,10 @@ BEGIN
 	v_user := SUBSTRING(p_address, '^([^@]+)@.+$');
 	v_domain := SUBSTRING(p_address, '^[^@]+@(.+)$');
 	
-	IF LENGTH(v_user) <= 2 THEN
+	IF LENGTH(v_user) <= p_precision THEN
 		v_kvalue := '@' || v_domain;
 	ELSE
-		v_kvalue := SUBSTRING(v_user, 1, 2) || '*@' || v_domain;
+		v_kvalue := SUBSTRING(v_user, 1, p_precision) || '*@' || v_domain;
 	END IF;
 	
 	RETURN MD5(LOWER(v_kvalue));
@@ -372,7 +372,7 @@ END;
 $_$;
 
 
-ALTER FUNCTION public.group_key_for_email(p_address public.email) OWNER TO thommcgrath;
+ALTER FUNCTION public.group_key_for_email(p_address public.email, p_precision integer) OWNER TO thommcgrath;
 
 --
 -- Name: loot_source_icons_update_loot_source(); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -493,13 +493,59 @@ ALTER FUNCTION public.set_slug_from_video_title() OWNER TO thommcgrath;
 CREATE FUNCTION public.slugify(p_input text) RETURNS text
     LANGUAGE plpgsql IMMUTABLE
     AS $$
+DECLARE
+	v_simplified TEXT;
+	v_words TEXT[];
+	v_slug TEXT;
 BEGIN
-	RETURN regexp_replace(TRIM(LEFT(regexp_replace(LOWER(unaccent(p_input)), '[^a-z0-9 \\-]+', ' ', 'gi'), 20)), '\s+', '_', 'g');
+	v_simplified := LOWER(unaccent(p_input));
+	v_simplified := regexp_replace(v_simplified, '(\S)''(\S)', '\1\2');
+	v_simplified := TRIM(regexp_replace(v_simplified, '[^a-z0-9 \\-]+', ' ', 'gi'));
+	v_simplified := replace(v_simplified, '\s-\s', ' ');
+	v_words := regexp_split_to_array(v_simplified, '\s+');
+	LOOP
+		v_slug := array_to_string(v_words, '_');
+		EXIT WHEN LENGTH(v_slug) <= 32;
+		v_words = (SELECT v_words[1:array_upper(v_words, 1) - 1]);
+	END LOOP;
+	RETURN v_slug;
 END;
 $$;
 
 
 ALTER FUNCTION public.slugify(p_input text) OWNER TO thommcgrath;
+
+--
+-- Name: update_blog_article_hash(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.update_blog_article_hash() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.article_hash := MD5(NEW.subject || '::' || COALESCE(NEW.content_markdown, '') || '::' || COALESCE(NEW.preview, ''));
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.update_blog_article_hash() OWNER TO thommcgrath;
+
+--
+-- Name: update_blog_article_timestamp(); Type: FUNCTION; Schema: public; Owner: thommcgrath
+--
+
+CREATE FUNCTION public.update_blog_article_timestamp() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.last_updated = CURRENT_TIMESTAMP(0);
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION public.update_blog_article_timestamp() OWNER TO thommcgrath;
 
 --
 -- Name: update_support_article_hash(); Type: FUNCTION; Schema: public; Owner: thommcgrath
@@ -525,14 +571,18 @@ CREATE FUNCTION public.uuid_for_email(p_address public.email) RETURNS uuid
     LANGUAGE plpgsql STABLE
     AS $$
 DECLARE
+	v_row RECORD;
 	v_uuid UUID;
 BEGIN
-	SELECT email_id INTO v_uuid FROM email_addresses WHERE group_key = group_key_for_email(p_address) AND CRYPT(LOWER(p_address), address) = address;
-	IF FOUND THEN
-		RETURN v_uuid;
-	ELSE
-		RETURN NULL;
-	END IF;
+	FOR v_row IN SELECT DISTINCT group_key_precision FROM email_addresses ORDER BY group_key_precision DESC
+	LOOP
+		SELECT email_id INTO v_uuid FROM email_addresses WHERE group_key = group_key_for_email(p_address, v_row.group_key_precision) AND CRYPT(LOWER(p_address), address) = address;
+		IF FOUND THEN
+			RETURN v_uuid;
+		END IF;
+	END LOOP;
+	
+	RETURN NULL;
 END;
 $$;
 
@@ -548,12 +598,21 @@ CREATE FUNCTION public.uuid_for_email(p_address public.email, p_create boolean) 
     AS $$
 DECLARE
 	v_uuid UUID;
+	v_precision INTEGER;
+	k_target_precision CONSTANT INTEGER := 5;
 BEGIN
 	v_uuid := uuid_for_email(p_address);
-	IF v_uuid IS NULL AND p_create = TRUE THEN
-		INSERT INTO email_addresses (address, group_key) VALUES (CRYPT(LOWER(p_address), GEN_SALT('bf')), group_key_for_email(p_address)) RETURNING email_id INTO v_uuid;
+	IF v_uuid IS NULL THEN
+		IF p_create = TRUE THEN
+			INSERT INTO email_addresses (address, group_key, group_key_precision) VALUES (CRYPT(LOWER(p_address), GEN_SALT('bf')), group_key_for_email(p_address, k_target_precision), k_target_precision) RETURNING email_id INTO v_uuid;
+		END IF;
+	ELSE
+		SELECT group_key_precision INTO v_precision FROM email_addresses WHERE email_id = v_uuid;
+		IF v_precision != k_target_precision THEN
+			UPDATE email_addresses SET group_key = group_key_for_email(p_address, k_target_precision), group_key_precision = k_target_precision WHERE email_id = v_uuid;
+		END IF;
 	END IF;
-	RETURN v_uuid;
+	RETURN v_uuid;	
 END;
 $$;
 
@@ -565,20 +624,22 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: articles; Type: TABLE; Schema: public; Owner: thommcgrath
+-- Name: blog_articles; Type: TABLE; Schema: public; Owner: thommcgrath
 --
 
-CREATE TABLE public.articles (
+CREATE TABLE public.blog_articles (
     article_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    publish_time timestamp with time zone DEFAULT now() NOT NULL,
-    last_update timestamp with time zone DEFAULT now() NOT NULL,
-    title text NOT NULL,
-    body text NOT NULL,
-    type public.article_type NOT NULL
+    article_slug character varying(32) NOT NULL,
+    subject public.citext NOT NULL,
+    content_markdown public.citext NOT NULL,
+    preview public.citext NOT NULL,
+    article_hash public.hex NOT NULL,
+    publish_date timestamp with time zone,
+    last_updated timestamp with time zone NOT NULL
 );
 
 
-ALTER TABLE public.articles OWNER TO thommcgrath;
+ALTER TABLE public.blog_articles OWNER TO thommcgrath;
 
 --
 -- Name: objects; Type: TABLE; Schema: public; Owner: thommcgrath
@@ -829,7 +890,8 @@ ALTER TABLE public.documents OWNER TO thommcgrath;
 CREATE TABLE public.email_addresses (
     email_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
     address text NOT NULL,
-    group_key public.hex NOT NULL
+    group_key public.hex NOT NULL,
+    group_key_precision integer NOT NULL
 );
 
 
@@ -1080,7 +1142,7 @@ ALTER TABLE public.purchased_products OWNER TO thommcgrath;
 
 CREATE TABLE public.support_articles (
     article_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    article_slug character varying(20) NOT NULL,
+    article_slug character varying(32) NOT NULL,
     subject public.citext NOT NULL,
     content_markdown public.citext,
     preview public.citext NOT NULL,
@@ -1100,7 +1162,7 @@ ALTER TABLE public.support_articles OWNER TO thommcgrath;
 
 CREATE TABLE public.support_videos (
     video_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
-    video_slug character varying(20) NOT NULL,
+    video_slug character varying(32) NOT NULL,
     video_title public.citext NOT NULL,
     host public.video_host NOT NULL,
     host_video_id text NOT NULL
@@ -1225,6 +1287,7 @@ ALTER TABLE public.support_article_groups OWNER TO thommcgrath;
 
 CREATE TABLE public.support_images (
     image_id uuid DEFAULT public.gen_random_uuid() NOT NULL,
+    hint text,
     image_data bytea NOT NULL,
     image_data_2x bytea,
     image_data_3x bytea,
@@ -1551,11 +1614,27 @@ ALTER TABLE ONLY public.presets ALTER COLUMN tags SET DEFAULT '{}'::public.citex
 
 
 --
--- Name: articles articles_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+-- Name: blog_articles blog_articles_article_hash_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
 --
 
-ALTER TABLE ONLY public.articles
-    ADD CONSTRAINT articles_pkey PRIMARY KEY (article_id);
+ALTER TABLE ONLY public.blog_articles
+    ADD CONSTRAINT blog_articles_article_hash_key UNIQUE (article_hash);
+
+
+--
+-- Name: blog_articles blog_articles_article_slug_key; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.blog_articles
+    ADD CONSTRAINT blog_articles_article_slug_key UNIQUE (article_slug);
+
+
+--
+-- Name: blog_articles blog_articles_pkey; Type: CONSTRAINT; Schema: public; Owner: thommcgrath
+--
+
+ALTER TABLE ONLY public.blog_articles
+    ADD CONSTRAINT blog_articles_pkey PRIMARY KEY (article_id);
 
 
 --
@@ -2014,6 +2093,13 @@ CREATE UNIQUE INDEX creatures_classstring_mod_id_uidx ON public.creatures USING 
 
 
 --
+-- Name: email_addresses_group_key_idx; Type: INDEX; Schema: public; Owner: thommcgrath
+--
+
+CREATE INDEX email_addresses_group_key_idx ON public.email_addresses USING btree (group_key);
+
+
+--
 -- Name: engrams_classstring_mod_id_uidx; Type: INDEX; Schema: public; Owner: thommcgrath
 --
 
@@ -2053,6 +2139,13 @@ CREATE UNIQUE INDEX stw_purchases_original_purchase_id_generated_purchase_id_idx
 --
 
 CREATE TRIGGER client_notices_before_update_trigger BEFORE INSERT OR UPDATE ON public.client_notices FOR EACH ROW EXECUTE PROCEDURE public.generic_update_trigger();
+
+
+--
+-- Name: blog_articles create_slug_from_article_subject_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER create_slug_from_article_subject_trigger BEFORE INSERT ON public.blog_articles FOR EACH ROW WHEN ((new.article_slug IS NULL)) EXECUTE PROCEDURE public.set_slug_from_article_subject();
 
 
 --
@@ -2270,6 +2363,20 @@ CREATE TRIGGER presets_before_update_trigger BEFORE UPDATE ON public.presets FOR
 --
 
 CREATE TRIGGER presets_json_sync_trigger BEFORE INSERT OR UPDATE ON public.presets FOR EACH ROW EXECUTE PROCEDURE public.presets_json_sync_function();
+
+
+--
+-- Name: blog_articles update_blog_article_hash_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER update_blog_article_hash_trigger BEFORE INSERT OR UPDATE ON public.blog_articles FOR EACH ROW EXECUTE PROCEDURE public.update_blog_article_hash();
+
+
+--
+-- Name: blog_articles update_blog_article_timestamp_trigger; Type: TRIGGER; Schema: public; Owner: thommcgrath
+--
+
+CREATE TRIGGER update_blog_article_timestamp_trigger BEFORE INSERT OR UPDATE ON public.blog_articles FOR EACH ROW EXECUTE PROCEDURE public.update_blog_article_timestamp();
 
 
 --
@@ -2560,10 +2667,10 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: TABLE articles; Type: ACL; Schema: public; Owner: thommcgrath
+-- Name: TABLE blog_articles; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT ON TABLE public.articles TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.blog_articles TO thezaz_website;
 
 
 --
@@ -2661,7 +2768,7 @@ GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.documents TO thezaz_website;
 -- Name: TABLE email_addresses; Type: ACL; Schema: public; Owner: thommcgrath
 --
 
-GRANT SELECT,INSERT,DELETE ON TABLE public.email_addresses TO thezaz_website;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE public.email_addresses TO thezaz_website;
 
 
 --

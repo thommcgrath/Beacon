@@ -283,8 +283,12 @@ class BeaconUser implements JsonSerializable {
 	}
 	
 	public static function GetByEmail(string $email) {
+		// When doing a SELECT with uuid_for_email(email, create), you must wrap it in its own SELECT statement.
+		// This is because the function is VOLATILE and will be executed for every row in the user table unless
+		// treated as a subquery. Or omit the second parameter, which is a STABLE function and performs fine.
+		// The second parameter should only be used when updating the email row is desired.
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id IS NOT NULL AND email_id = uuid_for_email($1);', $email);
+		$results = $database->Query('SELECT ' . implode(', ', static::SQLColumns()) . ' FROM users WHERE email_id IS NOT NULL AND email_id = (SELECT uuid_for_email($1, FALSE));', $email);
 		$users = static::GetFromResults($results);
 		if (count($users) == 1) {
 			return $users[0];

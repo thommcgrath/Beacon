@@ -41,8 +41,6 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		Sub Constructor(Source As Beacon.ItemSet)
 		  Self.Constructor()
 		  
-		  Redim Self.mEntries(UBound(Source.mEntries))
-		  
 		  Self.mItemsRandomWithoutReplacement = Source.mItemsRandomWithoutReplacement
 		  Self.mMaxNumItems = Source.mMaxNumItems
 		  Self.mMinNumItems = Source.mMinNumItems
@@ -55,7 +53,8 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Self.mLastHashTime = Source.mLastHashTime
 		  Self.mLastModifiedTime = Source.mLastModifiedTime
 		  
-		  For I As Integer = 0 To UBound(Source.mEntries)
+		  Redim Self.mEntries(Source.mEntries.Ubound)
+		  For I As Integer = 0 To Source.mEntries.Ubound
 		    Self.mEntries(I) = New Beacon.SetEntry(Source.mEntries(I))
 		  Next
 		End Sub
@@ -173,11 +172,11 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Hash() As Text
-		  If Self.HashIsStale Then
+		Function Hash(ForPreset As Boolean = False) As Text
+		  If Self.HashIsStale Or ForPreset Then
 		    Dim Entries() As Text
-		    Redim Entries(UBound(Self.mEntries))
-		    For I As Integer = 0 To UBound(Entries)
+		    Redim Entries(Self.mEntries.Ubound)
+		    For I As Integer = 0 To Entries.Ubound
 		      Entries(I) = Self.mEntries(I).Hash
 		    Next
 		    Entries.Sort
@@ -187,12 +186,15 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		    
 		    Dim Parts(6) As Text
 		    Parts(0) = Beacon.MD5(Entries.Join(",")).Lowercase
-		    Parts(1) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
-		    Parts(2) = Self.MaxNumItems.ToText(Locale, Format)
-		    Parts(3) = Self.MinNumItems.ToText(Locale, Format)
-		    Parts(4) = Self.NumItemsPower.ToText(Locale, Format)
-		    Parts(5) = Self.RawWeight.ToText(Locale, Format)
-		    Parts(6) = Self.Label.Lowercase
+		    Parts(1) = Self.MaxNumItems.ToText(Locale, Format)
+		    Parts(2) = Self.MinNumItems.ToText(Locale, Format)
+		    If ForPreset Then
+		      Return Beacon.MD5(Parts.Join(",")).Lowercase
+		    End If
+		    Parts(3) = Self.NumItemsPower.ToText(Locale, Format)
+		    Parts(4) = Self.RawWeight.ToText(Locale, Format)
+		    Parts(5) = Self.Label.Lowercase  
+		    Parts(6) = if(Self.ItemsRandomWithoutReplacement, "1", "0")
 		    
 		    Self.mHash = Beacon.MD5(Parts.Join(",")).Lowercase
 		    Self.mLastHashTime = Microseconds
@@ -413,21 +415,31 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReconfigureWithPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Document As Beacon.Document)
-		  Self.ReconfigureWithPreset(Preset, ForLootSource, Document.MapCompatibility, Document.Mods)
-		End Sub
+		Function ReconfigureWithPreset(Preset As Beacon.Preset = Nil, ForLootSource As Beacon.LootSource, Document As Beacon.Document) As Boolean
+		  Return Self.ReconfigureWithPreset(Preset, ForLootSource, Document.MapCompatibility, Document.Mods)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReconfigureWithPreset(Preset As Beacon.Preset, ForLootSource As Beacon.LootSource, Mask As UInt64, Mods As Beacon.TextList)
+		Function ReconfigureWithPreset(Preset As Beacon.Preset = Nil, ForLootSource As Beacon.LootSource, Mask As UInt64, Mods As Beacon.TextList) As Boolean
+		  If Preset = Nil And Self.mSourcePresetID <> "" Then
+		    Preset = Beacon.Data.GetPreset(Self.mSourcePresetID)
+		  End If
+		  If Preset = Nil Then
+		    Return False
+		  End If
+		  
+		  // Don't compare hashes because it includes more data than presets will change.
 		  Dim Clone As Beacon.ItemSet = Beacon.ItemSet.FromPreset(Preset, ForLootSource, Mask, Mods)
-		  If Self.SourcePresetID = Preset.PresetID And Self.Hash = Clone.Hash Then
-		    Return
+		  If Self.SourcePresetID = Preset.PresetID And Self.Hash(True) = Clone.Hash(True) Then
+		    Return False
 		  End If
 		  Self.mEntries = Clone.mEntries
-		  Self.mSourcePresetID = Clone.mSourcePresetID
+		  Self.mMinNumItems = Clone.mMinNumItems
+		  Self.MaxNumItems = Clone.mMaxNumItems
 		  Self.Modified = True
-		End Sub
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
