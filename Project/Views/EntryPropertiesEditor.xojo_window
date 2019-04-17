@@ -730,6 +730,7 @@ Begin BeaconContainer EntryPropertiesEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      Value           =   0.0
       Visible         =   True
       Width           =   53
    End
@@ -958,13 +959,15 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Setup(Entry As Beacon.SetEntry)
+		  Dim Arr(0) As Beacon.SetEntry
 		  If Entry = Nil Then
-		    Self.Setup()
+		    Dim Default As New Beacon.SetEntry()
+		    Default.Append(New Beacon.SetEntryOption(New Beacon.MutableEngram("/Game/Mods/Default.Default"), 1.0))
+		    Arr(0) = Default
 		  Else
-		    Dim Arr(0) As Beacon.SetEntry
 		    Arr(0) = Entry
-		    Self.Setup(Arr)
-		  End If
+		  End If  
+		  Self.Setup(Arr)
 		End Sub
 	#tag EndMethod
 

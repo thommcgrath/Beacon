@@ -1531,7 +1531,7 @@ End
 		    
 		    // Rebuild if necessary
 		    If ReconfigurePresets Then
-		      Destination.ReconfigurePresets(Mask, Mods)
+		      Call Destination.ReconfigurePresets(Mask, Mods)
 		    End If
 		    
 		    // Apply basic settings

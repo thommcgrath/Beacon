@@ -346,7 +346,7 @@ Implements Beacon.DocumentItem
 		                Next
 		                
 		                // Reconfigure
-		                Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.Mods)
+		                Call Set.ReconfigureWithPreset(Preset, Source, Beacon.Maps.TheIsland.Mask, Doc.Mods)
 		                
 		                // Now "deconfigure" it
 		                Redim Set(Entries.Ubound)
@@ -637,18 +637,20 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReconfigurePresets()
+		Function ReconfigurePresets() As UInteger
 		  If Self.mMapCompatibility = 0 Then
-		    Return
+		    Return 0
 		  End If
 		  
+		  Dim NumChanged As UInteger
 		  Dim Drops As BeaconConfigs.LootDrops = Self.Drops
 		  If Drops <> Nil Then
 		    For Each Source As Beacon.LootSource In Drops
-		      Source.ReconfigurePresets(Self.mMapCompatibility, Self.Mods)
+		      NumChanged = NumChanged + Source.ReconfigurePresets(Self.mMapCompatibility, Self.Mods)
 		    Next
 		  End If
-		End Sub
+		  Return NumChanged
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

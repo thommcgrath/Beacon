@@ -510,20 +510,19 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ReconfigurePresets(Mask As UInt64, Mods As Beacon.StringList)
+		Function ReconfigurePresets(Mask As UInt64, Mods As Beacon.StringList) As UInteger
+		  Dim NumChanged As UInteger
 		  For Each Set As Beacon.ItemSet In Self.mSets
 		    If Set.SourcePresetID = "" Then
 		      Continue
 		    End If
 		    
-		    Dim Preset As Beacon.Preset = Beacon.Data.GetPreset(Set.SourcePresetID)
-		    If Preset = Nil Then
-		      Continue
+		    If Set.ReconfigureWithPreset(Self, Mask, Mods) Then
+		      NumChanged = NumChanged + 1
 		    End If
-		    
-		    Set.ReconfigureWithPreset(Preset, Self, Mask, Mods)
 		  Next
-		End Sub
+		  Return NumChanged
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
