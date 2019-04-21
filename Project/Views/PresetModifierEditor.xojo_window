@@ -98,7 +98,7 @@ Begin BeaconDialog PresetModifierEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      Value           =   0
+      Value           =   0.0
       Visible         =   True
       Width           =   80
    End
@@ -574,16 +574,16 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Preset As Beacon.MutablePreset, EditModifierID As Text)
+		Private Sub Constructor(Preset As Beacon.MutablePreset, EditModifierID As String)
 		  // Calling the overridden superclass constructor.
 		  Self.mPreset = Preset
 		  Self.mEditID = EditModifierID
 		  
-		  Self.mSources = LocalData.SharedInstance.SearchForLootSources("", New Beacon.TextList, Preferences.ShowExperimentalLootSources)
+		  Self.mSources = LocalData.SharedInstance.SearchForLootSources("", New Beacon.StringList, Preferences.ShowExperimentalLootSources)
 		  
 		  Dim Win As MainWindow = MainWindow
 		  If Win <> Nil Then
-		    Dim Classes() As Text
+		    Dim Classes() As String
 		    For Each Source As Beacon.LootSource In Self.mSources
 		      Classes.Append(Source.ClassString)
 		    Next
@@ -613,7 +613,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Preset As Beacon.MutablePreset, EditModifierID As Text = "") As Boolean
+		Shared Function Present(Parent As Window, Preset As Beacon.MutablePreset, EditModifierID As String = "") As Boolean
 		  If Parent = Nil Then
 		    Return False
 		  End If
@@ -654,7 +654,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEditID As Text
+		Private mEditID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -676,7 +676,7 @@ End
 	#tag Event
 		Sub Open()
 		  Dim Modifiers() As Beacon.PresetModifier = LocalData.SharedInstance.AllPresetModifiers
-		  Dim Actives() As Text = Self.mPreset.ActiveModifierIDs()
+		  Dim Actives() As String = Self.mPreset.ActiveModifierIDs()
 		  For Each Modifier As Beacon.PresetModifier In Modifiers
 		    Dim Editing As Boolean = Modifier.ModifierID = Self.mEditID
 		    If Editing = True Or Actives.IndexOf(Modifier.ModifierID) = -1 Then
@@ -725,7 +725,7 @@ End
 #tag Events GroupPatternField
 	#tag Event
 		Sub TextChange()
-		  Dim Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Text.ToText)
+		  Dim Modifier As New Beacon.PresetModifier("", Self.GroupPatternField.Text)
 		  Dim Matches() As Beacon.LootSource = Modifier.Matches(Self.mSources)
 		  
 		  Self.MatchesList.DeleteAllRows()
@@ -762,7 +762,7 @@ End
 		      Return
 		    End If
 		    
-		    Modifier = New Beacon.PresetModifier(Self.GroupNameField.Text.ToText, Self.GroupPatternField.Text.ToText)
+		    Modifier = New Beacon.PresetModifier(Self.GroupNameField.Text, Self.GroupPatternField.Text)
 		    LocalData.SharedInstance.AddPresetModifier(Modifier)
 		  End If
 		  

@@ -53,8 +53,8 @@ Inherits Beacon.SetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Export() As Xojo.Core.Dictionary
-		  Dim Dict As Xojo.Core.Dictionary = Super.Export
+		Function Export() As Dictionary
+		  Dim Dict As Dictionary = Super.Export
 		  Dict.Value("Availability") = Self.mAvailability
 		  Dict.Value("RespectQualityModifier") = Self.mRespectQualityModifier
 		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultiplier
@@ -63,7 +63,7 @@ Inherits Beacon.SetEntry
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ImportFromBeacon(Dict As Xojo.Core.Dictionary) As Beacon.PresetEntry
+		Shared Function ImportFromBeacon(Dict As Dictionary) As Beacon.PresetEntry
 		  Dim SetEntry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
 		  If SetEntry = Nil Then
 		    Return Nil
@@ -145,6 +145,11 @@ Inherits Beacon.SetEntry
 
 	#tag ViewBehavior
 		#tag ViewProperty
+			Name="RawWeight"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
 			Name="ChanceToBeBlueprint"
 			Group="Behavior"
 			Type="Double"
@@ -196,11 +201,6 @@ Inherits Beacon.SetEntry
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Weight"
-			Group="Behavior"
-			Type="Double"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -1,8 +1,8 @@
 #tag Class
-Protected Class TextList
+Protected Class StringList
 Implements Xojo.Core.Iterable
 	#tag Method, Flags = &h0
-		Sub Append(Item As Text)
+		Sub Append(Item As String)
 		  If Self.mItems.IndexOf(Item) = -1 Then
 		    Self.mItems.Append(Item)
 		    Self.Modified = True
@@ -11,7 +11,7 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Beacon.TextList)
+		Sub Constructor(Source As Beacon.StringList)
 		  Redim Self.mItems(Source.mItems.Ubound)
 		  For I As Integer = 0 To Source.mItems.Ubound
 		    Self.mItems(I) = Source.mItems(I)
@@ -33,23 +33,28 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromAuto(Source As Auto) As Beacon.TextList
-		  Dim SourceArray() As Auto
-		  Try
-		    SourceArray = Source
-		  Catch Err As TypeMismatchException
+		Shared Function FromVariant(Source As Variant) As Beacon.StringList
+		  If Source = Nil Or Source.IsArray = False Then
 		    Return Nil
-		  End Try
+		  End If
 		  
-		  Dim List As New Beacon.TextList
-		  For Each Item As Auto In SourceArray
-		    Try
+		  If Source.ArrayElementType = Variant.TypeString Then
+		    Dim Items() As String = Source
+		    Dim List As New Beacon.StringList
+		    For Each Item As String In Items
 		      List.Append(Item)
-		    Catch Err As TypeMismatchException
-		      Continue
-		    End Try
-		  Next
-		  Return List
+		    Next
+		    Return List
+		  ElseIf Source.ArrayElementType = Variant.TypeText Then
+		    Dim Items() As String = Source
+		    Dim List As New Beacon.StringList
+		    For Each Item As String In Items
+		      List.Append(Item)
+		    Next
+		    Return List
+		  Else
+		    Return Nil
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -57,18 +62,18 @@ Implements Xojo.Core.Iterable
 		Function GetIterator() As Xojo.Core.Iterator
 		  // Part of the Xojo.Core.Iterable interface.
 		  
-		  Return New Beacon.TextListIterator(Self)
+		  Return New Beacon.StringListIterator(Self)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IndexOf(Item As Text) As Integer
+		Function IndexOf(Item As String) As Integer
 		  Return Self.mItems.IndexOf(Item)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Insert(Index As Integer, Item As Text)
+		Sub Insert(Index As Integer, Item As String)
 		  If Self.mItems.IndexOf(Item) = -1 Then
 		    Self.mItems.Insert(Index, Item)
 		    Self.Modified = True
@@ -77,13 +82,13 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Item(Index As Integer) As Text
+		Function Item(Index As Integer) As String
 		  Return Self.mItems(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Item(Index As Integer, Assigns Value As Text)
+		Sub Item(Index As Integer, Assigns Value As String)
 		  If Self.mItems.IndexOf(Value) = -1 Then
 		    Self.mItems(Index) = Value
 		    Self.Modified = True
@@ -92,13 +97,13 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Join(Delimiter As Text) As Text
-		  Return Self.mItems.Join(Delimiter)
+		Function Join(Delimiter As String) As String
+		  Return Join(Self.mItems, Delimiter)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Other As Beacon.TextList) As Integer
+		Function Operator_Compare(Other As Beacon.StringList) As Integer
 		  If Other = Nil Then
 		    Return 1
 		  End If
@@ -108,16 +113,16 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Compare(Others() As Text) As Integer
-		  Dim CompareLeft As Text = Self.mItems.Join("|")
-		  Dim CompareRight As Text = Others.Join("|")
-		  Return CompareLeft.Compare(CompareRight)
+		Function Operator_Compare(Others() As String) As Integer
+		  Dim CompareLeft As String = Join(Self.mItems, "|")
+		  Dim CompareRight As String = Join(Others, "|")
+		  Return StrComp(CompareLeft, CompareRight, 0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Convert() As Text()
-		  Dim Items() As Text
+		Function Operator_Convert() As String()
+		  Dim Items() As String
 		  Redim Items(Self.mItems.Ubound)
 		  For I As Integer = 0 To Self.mItems.Ubound
 		    Items(I) = Self.mItems(I)
@@ -127,7 +132,7 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Convert(Source() As Text)
+		Sub Operator_Convert(Source() As String)
 		  Redim Self.mItems(Source.Ubound)
 		  For I As Integer = 0 To Source.Ubound
 		    Self.mItems(I) = Source(I)
@@ -143,13 +148,13 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Subscript(Index As Integer) As Text
+		Function Operator_Subscript(Index As Integer) As String
 		  Return Self.Item(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Subscript(Index As Integer, Assigns Item As Text)
+		Sub Operator_Subscript(Index As Integer, Assigns Item As String)
 		  Self.Item(Index) = Item
 		End Sub
 	#tag EndMethod
@@ -162,7 +167,7 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Remove(Item As Text)
+		Sub Remove(Item As String)
 		  Dim Idx As Integer = Self.mItems.IndexOf(Item)
 		  If Idx > -1 Then
 		    Self.mItems.Remove(Idx)
@@ -186,7 +191,7 @@ Implements Xojo.Core.Iterable
 
 
 	#tag Property, Flags = &h21
-		Private mItems() As Text
+		Private mItems() As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -229,9 +234,9 @@ Implements Xojo.Core.Iterable
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mItems()"
+			Name="Modified"
 			Group="Behavior"
-			Type="Integer"
+			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Request
 	#tag Method, Flags = &h0
-		Sub Authenticate(Token As Text)
+		Sub Authenticate(Token As String)
 		  Self.mAuthHeader = "Session " + Token
 		  Self.mAuthUser = ""
 		  Self.mAuthPassword = ""
@@ -9,8 +9,8 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Authenticate(Username As Text, Password As Text)
-		  Self.mAuthHeader = "Basic " + Beacon.EncodeBase64(Username + ":" + Password, Xojo.Core.TextEncoding.UTF8)
+		Sub Authenticate(Username As String, Password As String)
+		  Self.mAuthHeader = "Basic " + EncodeBase64(Username + ":" + Password, 0)
 		End Sub
 	#tag EndMethod
 
@@ -21,44 +21,50 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AuthHeader() As Text
+		Function AuthHeader() As String
 		  Return Self.mAuthHeader
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AuthPassword() As Text
+		Function AuthPassword() As String
 		  Return Self.mAuthPassword
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AuthUser() As Text
+		Function AuthUser() As String
 		  Return Self.mAuthUser
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As Text, Method As Text, Callback As BeaconAPI.Request.ReplyCallback)
-		  Self.Constructor(Path, Method, New Xojo.Core.Dictionary, Callback)
+		Sub Constructor(Path As String, Method As String, Callback As BeaconAPI.Request.ReplyCallback)
+		  Self.Constructor(Path, Method, New Dictionary, Callback)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As Text, Method As Text, Payload As Text, ContentType As Text, Callback As BeaconAPI.Request.ReplyCallback)
+		Sub Constructor(Path As String, Method As String, Payload As Dictionary, Callback As BeaconAPI.Request.ReplyCallback)
+		  Self.Constructor(Path, Method, Self.URLEncodeFormData(Payload), "application/x-www-form-urlencoded", Callback)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Path As String, Method As String, Payload As String, ContentType As String, Callback As BeaconAPI.Request.ReplyCallback)
 		  If Path.IndexOf("://") = -1 Then
 		    Path = BeaconAPI.URL(Path)
 		  End If
 		  If Path.Length >= 8 And Path.Left(8) <> "https://" Then
 		    Dim Err As New UnsupportedOperationException
-		    Err.Reason = "Only https links are supported"
+		    Err.Message = "Only https links are supported"
 		    Raise Err
 		  End If
 		  
 		  If Method = "GET" Or ContentType = "application/x-www-form-urlencoded" Then
 		    Dim QueryIndex As Integer = Path.IndexOf("?")
 		    If QueryIndex <> -1 Then
-		      Dim Query As Text = Path.Mid(QueryIndex + 1)
+		      Dim Query As String = Path.SubString(QueryIndex + 1)
 		      If Payload <> "" Then
 		        Payload = Payload + "&" + Query
 		      Else
@@ -78,89 +84,86 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As Text, Method As Text, Payload As Xojo.Core.Dictionary, Callback As BeaconAPI.Request.ReplyCallback)
-		  Self.Constructor(Path, Method, Self.URLEncodeFormData(Payload), "application/x-www-form-urlencoded", Callback)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ContentType() As Text
+		Function ContentType() As String
 		  Return Self.mContentType
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub InvokeCallback(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		Sub InvokeCallback(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
 		  Self.mCallback.Invoke(Success, Message, Details, HTTPStatus, RawReply)
 		  Self.mCallback = Nil
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Method() As Text
+		Function Method() As String
 		  Return Self.mMethod
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Payload() As Xojo.Core.MemoryBlock
-		  Return Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Self.mPayload)
+		Function Payload() As MemoryBlock
+		  Return Self.mPayload
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Query() As Text
+		Function Query() As String
 		  Return Self.mPayload
 		End Function
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ReplyCallback(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo . Core . MemoryBlock)
+		Delegate Sub ReplyCallback(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
 		Sub Sign(Identity As Beacon.Identity)
-		  Dim Content As Text = Self.mMethod + Text.FromUnicodeCodepoint(10) + Self.mURL
+		  Dim Content As String = Self.mMethod + &u10 + Self.mURL
 		  If Self.mMethod = "GET" Then
 		    If Self.mPayload <> "" Then
 		      Content = Content + "?"
 		    End If
 		  Else
-		    Content = Content + Text.FromUnicodeCodepoint(10)
+		    Content = Content + &u10
 		  End If
-		  Content = Content + Self.mPayload
+		  If Self.mPayload <> Nil And Self.mPayload.Size > 0 Then
+		    Content = Content + Self.mPayload.StringValue(0, Self.mPayload.Size)
+		  End If
 		  
-		  Self.Authenticate(Identity.Identifier, Beacon.EncodeHex(Identity.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Content))))
+		  Self.Authenticate(Identity.Identifier, EncodeHex(Identity.Sign(Content)))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function URL() As Text
+		Function URL() As String
 		  Return Self.mURL
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function URLEncodeFormData(FormData As Xojo.Core.Dictionary) As Text
-		  Dim Parts() As Text
-		  For Each Entry As Xojo.Core.DictionaryEntry In FormData
-		    Parts.Append(Beacon.EncodeURLComponent(Entry.Key) + "=" + Beacon.EncodeURLComponent(Entry.Value))
+		Shared Function URLEncodeFormData(FormData As Dictionary) As String
+		  Dim Parts() As String
+		  Dim Fields() As Variant = FormData.Keys
+		  For Each Field As Variant In Fields
+		    Parts.Append(Beacon.URLEncode(Field) + "=" + Beacon.URLEncode(FormData.Value(Field)))
 		  Next
-		  Return Parts.Join("&")
+		  Return Join(Parts, "&")
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h1
-		Protected mAuthHeader As Text
+		Protected mAuthHeader As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mAuthPassword As Text
+		Protected mAuthPassword As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mAuthUser As Text
+		Protected mAuthUser As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
@@ -168,19 +171,19 @@ Protected Class Request
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mContentType As Text
+		Protected mContentType As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mMethod As Text
+		Protected mMethod As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mPayload As Text
+		Protected mPayload As MemoryBlock
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mURL As Text
+		Protected mURL As String
 	#tag EndProperty
 
 

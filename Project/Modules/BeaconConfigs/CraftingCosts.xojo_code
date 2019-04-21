@@ -6,19 +6,18 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused SourceDocument
 		  
 		  For Each Cost As Beacon.CraftingCost In Self.mCosts
-		    Dim TextValue As Text = Cost.TextValue
-		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", TextValue))
+		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideItemCraftingCosts", Cost.StringValue))
 		  Next
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  If Dict.HasKey("Costs") Then
-		    Dim Costs() As Auto = Dict.Value("Costs")
-		    For Each CostData As Xojo.Core.Dictionary In Costs
+		    Dim Costs() As Variant = Dict.Value("Costs")
+		    For Each CostData As Dictionary In Costs
 		      Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(CostData)
 		      If Cost <> Nil Then
 		        Self.mCosts.Append(Cost)
@@ -29,10 +28,10 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  Dim Costs() As Xojo.Core.Dictionary
+		  Dim Costs() As Dictionary
 		  For Each Cost As Beacon.CraftingCost In Self.mCosts
 		    Costs.Append(Cost.Export)
 		  Next
@@ -56,13 +55,13 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As Text
+		Shared Function ConfigName() As String
 		  Return "CraftingCosts"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.CraftingCosts
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.CraftingCosts
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused QualityMultiplier
@@ -71,19 +70,19 @@ Inherits Beacon.ConfigGroup
 		    Return Nil
 		  End If
 		  
-		  Dim Values As Auto = ParsedData.Value("ConfigOverrideItemCraftingCosts")
-		  Dim ValuesInfo As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Values)
-		  Dim Overrides() As Auto
+		  Dim Values As Variant = ParsedData.Value("ConfigOverrideItemCraftingCosts")
+		  Dim ValuesInfo As Introspection.TypeInfo = Introspection.GetType(Values)
+		  Dim Overrides() As Variant
 		  If ValuesInfo.FullName = "Auto()" Then
 		    Overrides = Values
-		  ElseIf ValuesInfo.FullName = "Xojo.Core.Dictionary" Then
+		  ElseIf ValuesInfo.FullName = "Dictionary" Then
 		    Overrides.Append(Values)
 		  Else
 		    Return Nil
 		  End If
 		  
 		  Dim Config As New BeaconConfigs.CraftingCosts
-		  For Each Dict As Xojo.Core.Dictionary In Overrides
+		  For Each Dict As Dictionary In Overrides
 		    Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromConfig(Dict)
 		    If Cost <> Nil Then
 		      Config.Append(Cost)
@@ -129,7 +128,7 @@ Inherits Beacon.ConfigGroup
 		  #Pragma Unused Document
 		  
 		  Dim Issues() As Beacon.Issue
-		  Dim ConfigName As Text = "CraftingCosts"
+		  Dim ConfigName As String = "CraftingCosts"
 		  For I As Integer = 0 To Self.mCosts.Ubound
 		    If Self.mCosts(I).IsValid Then
 		      Continue

@@ -11,37 +11,68 @@ Implements Xojo.Core.Iterable
 		  End If
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Dim TextValue As Text = Source.TextValue(DifficultyConfig)
+		    Dim TextValue As String = Source.StringValue(DifficultyConfig)
 		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", TextValue))
 		  Next
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  If Dict.HasKey("Contents") Then
-		    Dim Contents() As Auto = Dict.Value("Contents")
-		    For Each DropDict As Xojo.Core.Dictionary In Contents
-		      Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(DropDict)
-		      If Source <> Nil Then
-		        Self.mSources.Append(Source)
+		  Dim ItemSetCache As New Dictionary
+		  If Dict.HasKey("ItemSets") Then
+		    Dim CacheData As Dictionary = Dict.Value("ItemSets")
+		    For Each Entry As DictionaryMember In CacheData.Members
+		      Dim SetDict As Dictionary = Entry.Value
+		      Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(SetDict)
+		      If Set <> Nil Then
+		        ItemSetCache.Value(Entry.Key) = Set
 		      End If
 		    Next
 		  End If
+		  
+		  Dim Sources() As Object
+		  If Dict.HasKey("Sources") Then
+		    Sources = Dict.Value("Sources")
+		  ElseIf Dict.HasKey("Contents") Then
+		    Sources = Dict.Value("Contents")
+		  End If
+		  
+		  For Each DropDict As Object In Sources
+		    If Not DropDict IsA Dictionary Then
+		      Continue
+		    End If
+		    
+		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromBeacon(Dictionary(DropDict), ItemSetCache)
+		    If Source <> Nil Then
+		      Self.mSources.Append(Source)
+		    End If
+		  Next
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  Dim Contents() As Xojo.Core.Dictionary
+		  Dim ItemSets As New Dictionary
+		  Dim Sources() As Dictionary
 		  For Each Source As Beacon.LootSource In Self.mSources
-		    Contents.Append(Source.Export)
+		    For Each Set As Beacon.ItemSet In Source
+		      If ItemSets.HasKey(Set.Hash) Then
+		        Continue
+		      End If
+		      
+		      ItemSets.Value(Set.Hash) = Set.Export()
+		    Next
+		    
+		    Sources.Append(Source.Export)
 		  Next
-		  Dict.Value("Contents") = Contents
+		  
+		  Dict.Value("ItemSets") = ItemSets
+		  Dict.Value("Sources") = Sources
 		End Sub
 	#tag EndEvent
 
@@ -54,8 +85,8 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function AssembleLocationDict(Source As Beacon.LootSource, ItemSet As Beacon.ItemSet = Nil, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Xojo.Core.Dictionary
-		  Dim Dict As New Xojo.Core.Dictionary
+		Private Shared Function AssembleLocationDict(Source As Beacon.LootSource, ItemSet As Beacon.ItemSet = Nil, Entry As Beacon.SetEntry = Nil, Option As Beacon.SetEntryOption = Nil) As Dictionary
+		  Dim Dict As New Dictionary
 		  Dict.Value("LootSource") = Source
 		  If ItemSet <> Nil Then
 		    Dict.Value("ItemSet") = ItemSet
@@ -71,13 +102,13 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As Text
+		Shared Function ConfigName() As String
 		  Return "LootDrops"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.LootDrops
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.LootDrops
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  
@@ -85,7 +116,7 @@ Implements Xojo.Core.Iterable
 		    Return Nil
 		  End If
 		  
-		  Dim Dicts() As Auto
+		  Dim Dicts() As Variant
 		  Try
 		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
 		  Catch Err As TypeMismatchException
@@ -93,7 +124,7 @@ Implements Xojo.Core.Iterable
 		  End Try
 		  
 		  Dim LootDrops As New BeaconConfigs.LootDrops
-		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
+		  For Each ConfigDict As Dictionary In Dicts
 		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, QualityMultiplier)
 		    If Source <> Nil Then
 		      LootDrops.Append(Source)
@@ -134,7 +165,7 @@ Implements Xojo.Core.Iterable
 	#tag Method, Flags = &h0
 		Function Issues(Document As Beacon.Document) As Beacon.Issue()
 		  Dim Issues() As Beacon.Issue
-		  Dim ConfigName As Text = "LootDrops"
+		  Dim ConfigName As String = "LootDrops"
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
 		    If Not Document.SupportsLootSource(Source) Then
@@ -146,7 +177,7 @@ Implements Xojo.Core.Iterable
 		    End If
 		    
 		    If Source.Count < Source.RequiredItemSets Then
-		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " +Source.RequiredItemSets.ToText + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.", Source))
+		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " needs at least " + Str(Source.RequiredItemSets, "-0") + " " + if(Source.RequiredItemSets = 1, "item set", "item sets") + " to work correctly.", Source))
 		    Else
 		      For Each Set As Beacon.ItemSet In Source
 		        If Set.IsValid(Document) Then
@@ -294,7 +325,7 @@ Implements Xojo.Core.Iterable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub TryToResolveIssues(InputContent As Text, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
+		Sub TryToResolveIssues(InputContent As String, Callback As Beacon.ConfigGroup.ResolveIssuesCallback)
 		  Self.mResolveIssuesCallback = Callback
 		  
 		  Dim Searcher As New Beacon.EngramSearcherThread

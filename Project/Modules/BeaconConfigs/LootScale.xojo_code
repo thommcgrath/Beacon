@@ -5,16 +5,17 @@ Inherits Beacon.ConfigGroup
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
 		  #Pragma Unused SourceDocument
 		  
-		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", Self.mMultiplier.PrettyText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", Self.mMultiplier.PrettyString))
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  If Dict.Lookup("App Version", 40) < Self.DiscardBeforeVersion Then
-		    App.Log("Discarding loot scale config because saved version " + App.NonReleaseVersion.ToText + " < " + Self.DiscardBeforeVersion.ToText + ".")
+		  Dim SavedWithVersion As Integer = Dict.Lookup("App Version", 40)
+		  If SavedWithVersion < Self.DiscardBeforeVersion Then
+		    App.Log("Discarding loot scale config because saved version " + Str(SavedWithVersion, "-0") + " < " + Str(Self.DiscardBeforeVersion, "-0") + ".")
 		    Self.mMultiplier = 1.0
 		    Return
 		  End If
@@ -26,7 +27,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  Dict.Value("Multiplier") = Self.mMultiplier
@@ -36,7 +37,7 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As Text
+		Shared Function ConfigName() As String
 		  Return "LootScale"
 		End Function
 	#tag EndMethod
@@ -50,7 +51,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.LootScale
+		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.LootScale
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused QualityMultiplier

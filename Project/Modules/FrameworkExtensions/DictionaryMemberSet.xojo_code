@@ -1,37 +1,44 @@
 #tag Class
-Protected Class Notification
+Protected Class DictionaryMemberSet
+Implements Global.Xojo.Core.Iterable,Global.Xojo.Core.Iterator
 	#tag Method, Flags = &h0
-		Sub Constructor(Name As String)
-		  Self.Constructor(Name, Nil)
+		Sub Constructor(Source As Dictionary)
+		  Dim Keys() As Variant = Source.Keys
+		  For Each Key As Variant In Keys
+		    Self.mMembers.Append(New FrameworkExtensions.DictionaryMember(Key, Source.Value(Key)))
+		  Next
+		  Self.mIndex = -1
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Name As String, UserData As Variant)
-		  Self.mName = Name
-		  Self.mUserData = UserData
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function Name() As String
-		  Return Self.mName
+		Function GetIterator() As Xojo.Core.Iterator
+		  // Part of the Global.Xojo.Core.Iterable interface.
+		  
+		  Return Self
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UserData() As Variant
-		  Return Self.mUserData
+		Function MoveNext() As Boolean
+		  Self.mIndex = Self.mIndex + 1
+		  Return Self.mIndex <= Self.mMembers.Ubound
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Value() As Auto
+		  Return Self.mMembers(Self.mIndex)
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mName As String
+		Private mIndex As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUserData As Variant
+		Private mMembers() As FrameworkExtensions.DictionaryMember
 	#tag EndProperty
 
 

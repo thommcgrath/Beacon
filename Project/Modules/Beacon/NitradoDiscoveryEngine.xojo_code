@@ -8,7 +8,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_DownloadGameIni(URL As String, Status As Integer, Content As String, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -17,18 +17,17 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.SetError("Could not download Game.ini")
 		      Return
 		    End If
 		    
-		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
-		    Dim TokenDict As Xojo.Core.Dictionary = Data.Value("token")
+		    Dim Data As Dictionary = Response.Value("data")
+		    Dim TokenDict As Dictionary = Data.Value("token")
 		    
-		    Dim Headers As New Xojo.Core.Dictionary
+		    Dim Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadGameIni_Content, Nil, Headers)
@@ -40,7 +39,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_DownloadGameIni_Content(URL As String, Status As Integer, Content As String, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -49,8 +48,7 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Content.ToText
-		    Self.mGameIniContent = TextContent.Trim
+		    Self.mGameIniContent = Trim(Content)
 		    Self.DownloadGameUserSettingsIni
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)
@@ -60,7 +58,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameUserSettingsIni(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_DownloadGameUserSettingsIni(URL As String, Status As Integer, Content As String, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -69,18 +67,17 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
 		    
 		    If Response.Value("status") <> "success" Then
 		      Self.SetError("Could not download GameUserSettings.ini")
 		      Return
 		    End If
 		    
-		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
-		    Dim TokenDict As Xojo.Core.Dictionary = Data.Value("token")
+		    Dim Data As Dictionary = Response.Value("data")
+		    Dim TokenDict As Dictionary = Data.Value("token")
 		    
-		    Dim Headers As New Xojo.Core.Dictionary
+		    Dim Headers As New Dictionary
 		    Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		    
 		    SimpleHTTP.Get(TokenDict.Value("url"), AddressOf Callback_DownloadGameUserSettingsIni_Content, Nil, Headers)
@@ -92,7 +89,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameUserSettingsIni_Content(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_DownloadGameUserSettingsIni_Content(URL As String, Status As Integer, Content As String, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -101,8 +98,7 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Content.ToText
-		    Self.mGameUserSettingsIniContent = TextContent.Trim
+		    Self.mGameUserSettingsIniContent = Trim(Content)
 		    
 		    Self.mStatus = "Finished"
 		    Self.mErrored = False
@@ -115,7 +111,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_GetServerStatus(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
+		Private Sub Callback_GetServerStatus(URL As String, Status As Integer, Content As String, Tag As Variant)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -124,21 +120,20 @@ Implements Beacon.DiscoveryEngine
 		  End If
 		  
 		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
-		    Dim Response As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(TextContent)
-		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
-		    Dim GameServer As Xojo.Core.Dictionary = Data.Value("gameserver")
+		    Dim Response As Dictionary = Beacon.ParseJSON(Content)
+		    Dim Data As Dictionary = Response.Value("data")
+		    Dim GameServer As Dictionary = Data.Value("gameserver")
 		    
-		    Dim Settings As Xojo.Core.Dictionary = GameServer.Value("settings")
+		    Dim Settings As Dictionary = GameServer.Value("settings")
 		    
 		    Self.mCommandLineOptions = Settings.Value("start-param")
 		    
-		    Dim GameSpecific As Xojo.Core.Dictionary = GameServer.Value("game_specific")
+		    Dim GameSpecific As Dictionary = GameServer.Value("game_specific")
 		    Self.mProfile.ConfigPath = GameSpecific.Value("path") + "ShooterGame/Saved/Config/WindowsServer"
 		    
-		    Dim Config As Xojo.Core.Dictionary = Settings.Value("config")
-		    Dim MapText As Text = Config.Value("map")
-		    Dim MapParts() As Text = MapText.Split(",")
+		    Dim Config As Dictionary = Settings.Value("config")
+		    Dim MapText As String = Config.Value("map")
+		    Dim MapParts() As String = MapText.Split(",")
 		    Select Case MapParts(MapParts.Ubound)
 		    Case "ScorchedEarth_P"
 		      Self.mMap = Beacon.Maps.ScorchedEarth
@@ -185,13 +180,13 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CommandLineOptions() As Xojo.Core.Dictionary
+		Function CommandLineOptions() As Dictionary
 		  Return Self.mCommandLineOptions
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Profile As Beacon.NitradoServerProfile, AccessToken As Text)
+		Sub Constructor(Profile As Beacon.NitradoServerProfile, AccessToken As String)
 		  Self.mProfile = Profile
 		  Self.mAccessToken = AccessToken
 		End Sub
@@ -201,12 +196,12 @@ Implements Beacon.DiscoveryEngine
 		Private Sub DownloadGameIni()
 		  Self.mStatus = "Downloading Game.ini…"
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FilePath As Text = Self.mProfile.ConfigPath + "/Game.ini"
+		  Dim FilePath As String = Self.mProfile.ConfigPath + "/Game.ini"
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Str(Self.mProfile.ServiceID, "-0") + "/gameservers/file_server/download?file=" + Beacon.URLEncode(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -214,12 +209,12 @@ Implements Beacon.DiscoveryEngine
 		Private Sub DownloadGameUserSettingsIni()
 		  Self.mStatus = "Downloading GameUserSettings.ini…"
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  Dim FilePath As Text = Self.mProfile.ConfigPath + "/GameUserSettings.ini"
+		  Dim FilePath As String = Self.mProfile.ConfigPath + "/GameUserSettings.ini"
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Str(Self.mProfile.ServiceID, "-0") + "/gameservers/file_server/download?file=" + Beacon.URLEncode(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -236,13 +231,13 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniContent() As Text
+		Function GameIniContent() As String
 		  Return Self.mGameIniContent
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameUserSettingsIniContent() As Text
+		Function GameUserSettingsIniContent() As String
 		  Return Self.mGameUserSettingsIniContent
 		End Function
 	#tag EndMethod
@@ -251,9 +246,9 @@ Implements Beacon.DiscoveryEngine
 		Private Sub GetServerStatus()
 		  Self.mStatus = "Getting server status…"
 		  
-		  Dim Headers As New Xojo.Core.Dictionary
+		  Dim Headers As New Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers", AddressOf Callback_GetServerStatus, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Str(Self.mProfile.ServiceID, "-0") + "/gameservers", AddressOf Callback_GetServerStatus, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -264,7 +259,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As Text
+		Function Name() As String
 		  Return Self.mProfile.Name
 		End Function
 	#tag EndMethod
@@ -277,12 +272,12 @@ Implements Beacon.DiscoveryEngine
 
 	#tag Method, Flags = &h21
 		Private Sub SetError(Err As RuntimeException)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Err)
-		  Dim Reason As Text
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Err)
+		  Dim Reason As String
 		  If Err.Reason <> "" Then
 		    Reason = Err.Reason
 		  ElseIf Err.Message <> "" Then
-		    Reason = Err.Message.ToText
+		    Reason = Err.Message
 		  Else
 		    Reason = "No details available"
 		  End If
@@ -292,7 +287,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub SetError(Message As Text)
+		Private Sub SetError(Message As String)
 		  Self.mStatus = "Error: " + Message
 		  Self.mErrored = True
 		  Self.mFinished = True
@@ -300,18 +295,18 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Status() As Text
+		Function Status() As String
 		  Return Self.mStatus
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mAccessToken As Text
+		Private mAccessToken As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCommandLineOptions As Xojo.Core.Dictionary
+		Private mCommandLineOptions As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -323,11 +318,11 @@ Implements Beacon.DiscoveryEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniContent As Text
+		Private mGameIniContent As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniContent As Text
+		Private mGameUserSettingsIniContent As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -339,7 +334,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mStatus As Text
+		Private mStatus As String
 	#tag EndProperty
 
 

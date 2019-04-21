@@ -1,24 +1,6 @@
 #tag Class
 Protected Class PreferencesManager
 	#tag Method, Flags = &h0
-		Function AutoValue(Key As Text, Default As Auto = Nil) As Auto
-		  If Not Self.mValues.HasKey(Key) Then
-		    Return Default
-		  End If
-		  
-		  Return Self.mValues.Value(Key)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub AutoValue(Key As Text, Assigns Value As Auto)
-		  Self.BeginTransaction()
-		  Self.mValues.Value(Key) = Value
-		  Self.Commit()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub BeginTransaction()
 		  If Self.mTransactionLevel = 0 Then
 		    Self.mSavedValues = Self.CloneDictionary(Self.mValues)
@@ -29,47 +11,62 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BinaryValue(Key As Text, Default As Xojo.Core.MemoryBlock = Nil) As Xojo.Core.MemoryBlock
+		Function BinaryValue(Key As String, Default As MemoryBlock = Nil) As MemoryBlock
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
 		  End If
 		  
-		  Dim Value As Auto = Self.mValues.Value(Key)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		  If Info.FullName <> "Text" Then
+		  Dim Value As Variant = Self.mValues.Value(Key)
+		  If Value = Nil Then
 		    Return Default
 		  End If
 		  
-		  Return Self.DecodeHex(Value)
+		  Dim Encoded As String
+		  If Value.Type = Variant.TypeString Then
+		    Encoded = Value.StringValue
+		  ElseIf Value.Type = Variant.TypeText Then
+		    Encoded = Value.TextValue
+		  End If
+		  
+		  If Encoded <> "" Then
+		    Return DecodeHex(Encoded)
+		  Else
+		    Return New MemoryBlock(0)
+		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub BinaryValue(Key As Text, Assigns Value As Xojo.Core.MemoryBlock)
-		  Self.BeginTransaction()
-		  Self.mValues.Value(Key) = Self.EncodeHex(Value)
-		  Self.Commit()
+		Sub BinaryValue(Key As String, Assigns Value As MemoryBlock)
+		  If Value <> Nil Then
+		    Self.StringValue(Key) = EncodeHex(Value)
+		  Else
+		    Self.StringValue(Key) = ""
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BooleanValue(Key As Text, Default As Boolean = False) As Boolean
+		Function BooleanValue(Key As String, Default As Boolean = False) As Boolean
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
 		  End If
 		  
-		  Dim Value As Auto = Self.mValues.Value(Key)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		  If Info.FullName <> "Boolean" Then
+		  Dim Value As Variant = Self.mValues.Value(Key)
+		  If Value = Nil Then
 		    Return Default
 		  End If
 		  
-		  Return Value
+		  Try
+		    Return Value.BooleanValue
+		  Catch Err As TypeMismatchException
+		    Return Default
+		  End Try
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub BooleanValue(Key As Text, Assigns Value As Boolean)
+		Sub BooleanValue(Key As String, Assigns Value As Boolean)
 		  Self.BeginTransaction()
 		  Self.mValues.Value(Key) = Value
 		  Self.Commit()
@@ -85,7 +82,7 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ClearValue(Key As Text)
+		Sub ClearValue(Key As String)
 		  If Self.mValues.HasKey(Key) Then
 		    Self.BeginTransaction()
 		    Self.mValues.Remove(Key)
@@ -95,19 +92,18 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function CloneDictionary(Source As Xojo.Core.Dictionary) As Xojo.Core.Dictionary
+		Private Shared Function CloneDictionary(Source As Dictionary) As Dictionary
 		  If Source = Nil Then
 		    Return Nil
 		  End If
 		  
-		  Dim Clone As New Xojo.Core.Dictionary
+		  Dim Clone As New Dictionary
 		  
-		  For Each Entry As Xojo.Core.DictionaryEntry In Source
-		    Dim Key As Auto = Entry.Key
-		    Dim Value As Auto = Entry.Value
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		    If Info.FullName = "Xojo.Core.Dictionary" Then
-		      Value = CloneDictionary(Value)
+		  For Each Entry As DictionaryMember In Source.Members
+		    Dim Key As Variant = Entry.Key
+		    Dim Value As Variant = Entry.Value
+		    If Value <> Nil And Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary Then
+		      Value = CloneDictionary(Dictionary(Value.ObjectValue))
 		    End If
 		    Clone.Value(Key) = Value
 		  Next
@@ -117,41 +113,19 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ColorValue(Key As Text, Assigns Value As Color)
-		  Dim RedHex As Text = Value.Red.ToHex(2)
-		  Dim GreenHex As Text = Value.Green.ToHex(2)
-		  Dim BlueHex As Text = Value.Blue.ToHex(2)
-		  Dim AlphaHex As Text = Value.Alpha.ToHex(2)
-		  
-		  Self.BeginTransaction()
-		  Self.mValues.Value(Key) = RedHex + GreenHex + BlueHex + AlphaHex
-		  Self.Commit()
+		Sub ColorValue(Key As String, Assigns Value As Color)
+		  Self.StringValue(Key) = Value.ToString
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ColorValue(Key As Text, Default As Color) As Color
+		Function ColorValue(Key As String, Default As Color) As Color
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
 		  End If
 		  
-		  Dim Value As Auto = Self.mValues.Value(Key)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		  If Info.FullName <> "Text" Then
-		    Return Default
-		  End If
-		  
-		  Dim TextValue As Text = Value
-		  If TextValue.Length < 8 Then
-		    Return Default
-		  End If
-		  
-		  Dim RedHex As Text = TextValue.Mid(0, 2)
-		  Dim GreenHex As Text = TextValue.Mid(2, 2)
-		  Dim BlueHex As Text = TextValue.Mid(4, 2)
-		  Dim AlphaHex As Text = TextValue.Mid(6, 2)
-		  
-		  Return Color.RGBA(Integer.FromHex(RedHex), Integer.FromHex(GreenHex), Integer.FromHex(BlueHex), Integer.FromHex(AlphaHex))
+		  Dim StringValue As String = Self.StringValue(Key, Default.ToString)
+		  Return StringValue.ToColor
 		End Function
 	#tag EndMethod
 
@@ -167,15 +141,11 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Sub Constructor(File As Global.FolderItem)
+		Sub Constructor(File As FolderItem)
 		  Self.mFile = File
 		  
 		  If Self.mFile.Exists Then
-		    Dim Stream As TextInputStream = TextInputStream.Open(Self.mFile)
-		    Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
-		    Stream.Close
-		    
-		    Self.Constructor(Contents.ToText)
+		    Self.Constructor(Self.mFile.Read(Encodings.UTF8))
 		  Else
 		    Self.Constructor("")
 		  End If
@@ -183,66 +153,38 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Constructor(Contents As Text)
+		Protected Sub Constructor(Contents As String)
 		  If Contents <> "" Then
 		    Try
-		      Self.mValues = Xojo.Data.ParseJSON(Contents)
+		      Self.mValues = Beacon.ParseJSON(Contents)
 		    Catch Err As RuntimeException
-		      Self.mValues = New Xojo.Core.Dictionary
+		      Self.mValues = New Dictionary
 		    End Try
 		    Self.mValues.Value("Existing User") = True
 		  Else
-		    Self.mValues = New Xojo.Core.Dictionary
+		    Self.mValues = New Dictionary
 		    Self.mValues.Value("Existing User") = False
 		  End If
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h0, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Sub Constructor(File As Xojo.IO.FolderItem)
-		  Self.mFile = File
-		  
-		  If Self.mFile.Exists Then
-		    Dim Stream As Xojo.IO.TextInputStream = Xojo.IO.TextInputStream.Open(Self.mFile, Xojo.Core.TextEncoding.UTF8)
-		    Dim Contents As Text = Stream.ReadAll
-		    Stream.Close
-		    
-		    Self.Constructor(Contents)
-		  Else
-		    Self.Constructor("")
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function DecodeHex(Source As Text) As Xojo.Core.MemoryBlock
-		  Dim Bytes() As UInt8
-		  For I As Integer = 0 To Source.Length - 2 Step 2
-		    Dim Value As UInt8 = UInt8.FromHex(Source.Mid(I, 2))
-		    Bytes.Append(Value)
-		  Next
-		  Return New Xojo.Core.MemoryBlock(Bytes)
-		End Function
-	#tag EndMethod
-
 	#tag Method, Flags = &h0
-		Function DictionaryValue(Key As Text, Default As Xojo.Core.Dictionary = Nil) As Xojo.Core.Dictionary
+		Function DictionaryValue(Key As String, Default As Dictionary = Nil) As Dictionary
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
 		  End If
 		  
-		  Dim Value As Auto = Self.mValues.Value(Key)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		  If Info.FullName <> "Xojo.Core.Dictionary" Then
-		    Return Default
+		  Dim Value As Variant = Self.mValues.Value(Key)
+		  If Value <> Nil And Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary Then
+		    Return Self.CloneDictionary(Dictionary(Value.ObjectValue))
 		  End If
 		  
-		  Return Self.CloneDictionary(Value)
+		  Return Default
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DictionaryValue(Key As Text, Assigns Value As Xojo.Core.Dictionary)
+		Sub DictionaryValue(Key As String, Assigns Value As Dictionary)
 		  Self.BeginTransaction()
 		  Self.mValues.Value(Key) = Self.CloneDictionary(Value)
 		  Self.Commit()
@@ -250,7 +192,26 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DoubleValue(Key As Text, Assigns Value As Boolean)
+		Function DoubleValue(Key As String, Default As Double = 0) As Double
+		  If Not Self.mValues.HasKey(Key) Then
+		    Return Default
+		  End If
+		  
+		  Dim Value As Variant = Self.mValues.Value(Key)
+		  If Value = Nil Then
+		    Return Default
+		  End If
+		  
+		  Try
+		    Return Value.DoubleValue
+		  Catch Err As TypeMismatchException
+		    Return Default
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DoubleValue(Key As String, Assigns Value As Double)
 		  Self.BeginTransaction()
 		  Self.mValues.Value(Key) = Value
 		  Self.Commit()
@@ -258,50 +219,26 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DoubleValue(Key As Text, Default As Double = 0) As Double
+		Function IntegerValue(Key As String, Default As Int32 = 0) As Int32
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
 		  End If
 		  
-		  Dim Value As Auto = Self.mValues.Value(Key)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		  If Info.FullName <> "Double" Then
+		  Dim Value As Variant = Self.mValues.Value(Key)
+		  If Value = Nil Then
 		    Return Default
 		  End If
 		  
-		  Return Value
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function EncodeHex(Block As Xojo.Core.MemoryBlock) As Text
-		  Dim Chars() As Text
-		  For I As Integer = 0 To Block.Size - 1
-		    Dim Value As UInt8 = Block.UInt8Value(I)
-		    Chars.Append(Value.ToHex(2))
-		  Next
-		  Return Chars.Join("")
+		  Try
+		    Return Value.IntegerValue
+		  Catch Err As TypeMismatchException
+		    Return Default
+		  End Try
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IntegerValue(Key As Text, Default As Int32 = 0) As Int32
-		  If Not Self.mValues.HasKey(Key) Then
-		    Return Default
-		  End If
-		  
-		  Dim Value As Auto = Self.mValues.Value(Key)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		  If Info.FullName <> "Int32" Then
-		    Return Default
-		  End If
-		  
-		  Return Value
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub IntegerValue(Key As Text, Assigns Value As Int32)
+		Sub IntegerValue(Key As String, Assigns Value As Int32)
 		  Self.BeginTransaction()
 		  Self.mValues.Value(Key) = Value
 		  Self.Commit()
@@ -309,25 +246,24 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PointValue(Key As Text, Default As Xojo.Core.Point = Nil) As Xojo.Core.Point
+		Function PointValue(Key As String, Default As REALbasic.Point = Nil) As REALbasic.Point
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
 		  End If
 		  
-		  Dim Value As Auto = Self.mValues.Value(Key)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		  If Info.FullName <> "Xojo.Core.Dictionary" Then
-		    Return Default
+		  Dim Value As Variant = Self.mValues.Value(Key)
+		  If Value <> Nil And Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary And Dictionary(Value.ObjectValue).HasAllKeys("Left", "Top") Then
+		    Dim Dict As Dictionary = Value
+		    Return New REALbasic.Point(Dict.Value("Left"), Dict.Value("Top"))
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = Value
-		  Return New Xojo.Core.Point(Dict.Value("Left"), Dict.Value("Top"))
+		  Return Default
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub PointValue(Key As Text, Assigns Value As Xojo.Core.Point)
-		  Dim Dict As New Xojo.Core.Dictionary
+		Sub PointValue(Key As String, Assigns Value As REALbasic.Point)
+		  Dim Dict As New Dictionary
 		  Dict.Value("Left") = Value.X
 		  Dict.Value("Top") = Value.Y
 		  
@@ -338,25 +274,24 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function RectValue(Key As Text, Default As Xojo.Core.Rect = Nil) As Xojo.Core.Rect
+		Function RectValue(Key As String, Default As REALbasic.Rect = Nil) As REALbasic.Rect
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
 		  End If
 		  
-		  Dim Value As Auto = Self.mValues.Value(Key)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		  If Info.FullName <> "Xojo.Core.Dictionary" Then
-		    Return Default
+		  Dim Value As Variant = Self.mValues.Value(Key)
+		  If Value <> Nil And Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary And Dictionary(Value.ObjectValue).HasAllKeys("Left", "Top", "Width", "Height") Then
+		    Dim Dict As Dictionary = Value
+		    Return New REALbasic.Rect(Dict.Value("Left"), Dict.Value("Top"), Dict.Value("Width"), Dict.Value("Height"))
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = Value
-		  Return New Xojo.Core.Rect(Dict.Value("Left"), Dict.Value("Top"), Dict.Value("Width"), Dict.Value("Height"))
+		  Return Default
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RectValue(Key As Text, Assigns Value As Xojo.Core.Rect)
-		  Dim Dict As New Xojo.Core.Dictionary
+		Sub RectValue(Key As String, Assigns Value As REALbasic.Rect)
+		  Dim Dict As New Dictionary
 		  Dict.Value("Left") = Value.Left
 		  Dict.Value("Top") = Value.Top
 		  Dict.Value("Width") = Value.Width
@@ -380,25 +315,24 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SizeValue(Key As Text, Default As Xojo.Core.Size = Nil) As Xojo.Core.Size
+		Function SizeValue(Key As String, Default As REALbasic.Size = Nil) As REALbasic.Size
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
 		  End If
 		  
-		  Dim Value As Auto = Self.mValues.Value(Key)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		  If Info.FullName <> "Xojo.Core.Dictionary" Then
-		    Return Default
+		  Dim Value As Variant = Self.mValues.Value(Key)
+		  If Value <> Nil And Value.Type = Variant.TypeObject And Value.ObjectValue IsA Dictionary And Dictionary(Value.ObjectValue).HasAllKeys("Width", "Height") Then
+		    Dim Dict As Dictionary = Value
+		    Return New REALbasic.Size(Dict.Value("Width"), Dict.Value("Height"))
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = Value
-		  Return New Xojo.Core.Size(Dict.Value("Width"), Dict.Value("Height"))
+		  Return Default
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub SizeValue(Key As Text, Assigns Value As Xojo.Core.Size)
-		  Dim Dict As New Xojo.Core.Dictionary
+		Sub SizeValue(Key As String, Assigns Value As REALbasic.Size)
+		  Dim Dict As New Dictionary
 		  Dict.Value("Width") = Value.Width
 		  Dict.Value("Height") = Value.Height
 		  
@@ -409,23 +343,46 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function TextValue(Key As Text, Default As Text = "") As Text
+		Function StringValue(Key As String, Default As String = "") As String
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
 		  End If
 		  
-		  Dim Value As Auto = Self.mValues.Value(Key)
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
-		  If Info.FullName <> "Text" Then
+		  Dim Value As Variant = Self.mValues.Value(Key)
+		  If Value = Nil Then
 		    Return Default
 		  End If
 		  
-		  Return Value
+		  If Value.Type = Variant.TypeString Then
+		    Return Value.StringValue
+		  ElseIf Value.Type = Variant.TypeText Then
+		    Return Value.TextValue
+		  Else
+		    Return Default
+		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub TextValue(Key As Text, Assigns Value As Text)
+		Sub StringValue(Key As String, Assigns Value As String)
+		  Self.BeginTransaction()
+		  Self.mValues.Value(Key) = Value
+		  Self.Commit()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function VariantValue(Key As String, Default As Variant = Nil) As Variant
+		  If Not Self.mValues.HasKey(Key) Then
+		    Return Default
+		  End If
+		  
+		  Return Self.mValues.Value(Key)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub VariantValue(Key As String, Assigns Value As Variant)
 		  Self.BeginTransaction()
 		  Self.mValues.Value(Key) = Value
 		  Self.Commit()
@@ -434,22 +391,17 @@ Protected Class PreferencesManager
 
 	#tag Method, Flags = &h1
 		Protected Sub Write()
-		  Dim Writer As New Beacon.JSONWriter(Self.mValues, Self.mFile)
-		  Writer.Run
+		  Self.mFile.Write(Beacon.GenerateJSON(Self.mValues, True))
 		End Sub
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
-		Private mFile As Global.FolderItem
-	#tag EndProperty
-
-	#tag Property, Flags = &h21, CompatibilityFlags = (TargetIOS and (Target32Bit or Target64Bit))
-		Private mFile As Xojo.IO.FolderItem
+		Private mFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSavedValues As Xojo.Core.Dictionary
+		Private mSavedValues As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -457,7 +409,7 @@ Protected Class PreferencesManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mValues As Xojo.Core.Dictionary
+		Protected mValues As Dictionary
 	#tag EndProperty
 
 

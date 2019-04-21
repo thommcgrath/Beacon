@@ -372,13 +372,13 @@ End
 		    Return
 		  End If
 		  
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Issue.UserData)
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Issue.UserData)
 		  Select Case Info.FullName
 		  Case "Beacon.LootSource"
 		    Dim Source As Beacon.LootSource = Issue.UserData
 		    Call Self.GoToChild(Source)
-		  Case "Xojo.Core.Dictionary"
-		    Dim Dict As Xojo.Core.Dictionary = Issue.UserData
+		  Case "Dictionary"
+		    Dim Dict As Dictionary = Issue.UserData
 		    Dim Source As Beacon.LootSource
 		    Dim Set As Beacon.ItemSet
 		    Dim Entry As Beacon.SetEntry
@@ -481,13 +481,13 @@ End
 		  Self.UpdateSourceList(Sources)
 		  
 		  If IgnoredSources.Ubound > -1 And Not Silent Then
-		    Dim SourcesList() As Text
+		    Dim SourcesList() As String
 		    For Each IgnoredSource As Beacon.LootSource In IgnoredSources
 		      SourcesList.Append(IgnoredSource.Label)
 		    Next
 		    
 		    Dim IgnoredCount As Integer = IgnoredSources.Ubound + 1
-		    Self.ShowAlert(IgnoredCount.ToText + if(IgnoredCount = 1, " loot source was", " loot sources were") + " not added because " + if(IgnoredCount = 1, "it is", "they are") + " not compatible with the selected maps.", "The following " + if(IgnoredCount = 1, "loot source was", "loot sources were") + " skipped: " + SourcesList.Join(", "))
+		    Self.ShowAlert(Str(IgnoredCount, "-0") + if(IgnoredCount = 1, " loot source was", " loot sources were") + " not added because " + if(IgnoredCount = 1, "it is", "they are") + " not compatible with the selected maps.", "The following " + if(IgnoredCount = 1, "loot source was", "loot sources were") + " skipped: " + Join(SourcesList, ", "))
 		  End If
 		  
 		  Self.List.EnsureSelectionIsVisible()
@@ -495,7 +495,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.LootDrops.ConfigName)
 		End Function
 	#tag EndMethod
@@ -602,7 +602,7 @@ End
 		  End If
 		  
 		  Dim CurrentSources() As Beacon.LootSource = Self.Document.LootSources
-		  Dim Map As New Xojo.Core.Dictionary
+		  Dim Map As New Dictionary
 		  For Each Source As Beacon.LootSource In CurrentSources
 		    Map.Value(Source.ClassString) = True
 		  Next
@@ -631,7 +631,7 @@ End
 		  Dim VisibleSources() As Beacon.LootSource = Self.Document.LootSources
 		  Beacon.Sort(VisibleSources)
 		  
-		  Dim SelectedClasses() As Text
+		  Dim SelectedClasses() As String
 		  If SelectedSources <> Nil Then
 		    For Each Source As Beacon.LootSource In SelectedSources
 		      SelectedClasses.Append(Source.ClassString)
@@ -855,48 +855,48 @@ End
 		    Return
 		  End If
 		  
-		  Dim Lines() As Text
-		  Dim Dicts() As Xojo.Core.Dictionary
+		  Dim Lines() As String
+		  Dim Dicts() As Dictionary
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Me.Selected(I) Then
 		      Dim Source As Beacon.LootSource = Me.RowTag(I)
 		      Dicts.Append(Source.Export)
 		      If Source.IsValid(Self.Document) Then
-		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.TextValue(Self.Document.Difficulty))
+		        Lines.Append("ConfigOverrideSupplyCrateItems=" + Source.StringValue(Self.Document.Difficulty))
 		      End If
 		    End If
 		  Next
 		  
-		  Dim RawData As Text
+		  Dim RawData As String
 		  If UBound(Dicts) = 0 Then
-		    RawData = Xojo.Data.GenerateJSON(Dicts(0))
+		    RawData = Beacon.GenerateJSON(Dicts(0))
 		  Else
-		    RawData = Xojo.Data.GenerateJSON(Dicts)
+		    RawData = Beacon.GenerateJSON(Dicts)
 		  End If
 		  
 		  Board.AddRawData(RawData, Self.kClipboardType)
-		  Board.Text = Lines.Join(Text.FromUnicodeCodepoint(10))
+		  Board.Text = Join(Lines, &u10)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
 		    Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		    Dim Parsed As Auto
+		    Dim Parsed As Variant
 		    Try
-		      Parsed = Xojo.Data.ParseJSON(Contents.ToText)
-		    Catch Err As Xojo.Data.InvalidJSONException
+		      Parsed = Beacon.ParseJSON(Contents)
+		    Catch Err As UnsupportedFormatException
 		      Beep
 		      Return
 		    End Try
 		    
-		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
-		    Dim Dicts() As Xojo.Core.Dictionary
-		    If Info.FullName = "Xojo.Core.Dictionary" Then
+		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
+		    Dim Dicts() As Dictionary
+		    If Info.FullName = "Dictionary" Then
 		      Dicts.Append(Parsed)
 		    ElseIf Info.FullName = "Auto()" Then
-		      Dim Values() As Auto = Parsed
-		      For Each Dict As Xojo.Core.Dictionary In Values
+		      Dim Values() As Variant = Parsed
+		      For Each Dict As Dictionary In Values
 		        Dicts.Append(Dict)
 		      Next
 		    Else
@@ -905,8 +905,9 @@ End
 		    End If
 		    
 		    Dim Sources() As Beacon.LootSource
-		    For Each Dict As Xojo.Core.Dictionary In Dicts
-		      Sources.Append(Beacon.LootSource.ImportFromBeacon(Dict))
+		    Dim Cache As New Dictionary
+		    For Each Dict As Dictionary In Dicts
+		      Sources.Append(Beacon.LootSource.ImportFromBeacon(Dict, Cache))
 		    Next
 		    Self.AddLootSources(Sources)
 		  End If

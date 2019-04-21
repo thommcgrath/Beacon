@@ -13,61 +13,61 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConsoleSafeMods() As Text()
+		Function ConsoleSafeMods() As String()
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetBooleanVariable(Key As Text) As Boolean
+		Function GetBooleanVariable(Key As String) As Boolean
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetDoubleVariable(Key As Text) As Double
+		Function GetDoubleVariable(Key As String) As Double
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByClass(ClassString As Text) As Beacon.Engram
+		Function GetEngramByClass(ClassString As String) As Beacon.Engram
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetEngramByPath(Path As Text) As Beacon.Engram
+		Function GetEngramByPath(Path As String) As Beacon.Engram
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetIntegerVariable(Key As Text) As Integer
+		Function GetIntegerVariable(Key As String) As Integer
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetLootSource(ClassString As Text) As Beacon.LootSource
+		Function GetLootSource(ClassString As String) As Beacon.LootSource
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetPreset(PresetID As Text) As Beacon.Preset
+		Function GetPreset(PresetID As String) As Beacon.Preset
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetPresetModifier(ModifierID As Text) As Beacon.PresetModifier
+		Function GetPresetModifier(ModifierID As String) As Beacon.PresetModifier
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GetTextVariable(Key As Text) As Text
+		Function GetStringVariable(Key As String) As String
 		  
 		End Function
 	#tag EndMethod
@@ -109,13 +109,13 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As Text, Mods As Beacon.TextList, Tags() As Text) As Beacon.Engram()
+		Function SearchForEngrams(SearchText As String, Mods As Beacon.StringList, Tags() As String) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForLootSources(SearchText As Text, Mods As Beacon.TextList, IncludeExperimental As Boolean) As Beacon.LootSource()
+		Function SearchForLootSources(SearchText As String, Mods As Beacon.StringList, IncludeExperimental As Boolean) As Beacon.LootSource()
 		  
 		End Function
 	#tag EndMethod

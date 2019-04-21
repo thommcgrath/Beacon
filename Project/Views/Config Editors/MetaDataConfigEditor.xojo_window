@@ -414,7 +414,7 @@ End
 
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As Text
+		Function ConfigLabel() As String
 		  Return Language.LabelForConfig(BeaconConfigs.Metadata.ConfigName)
 		End Function
 	#tag EndMethod
@@ -430,7 +430,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.Title = Trim(Me.Text).ToText
+		  Self.Document.Title = Trim(Me.Text)
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
@@ -447,7 +447,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Document.Description = Self.SanitizeText(Trim(Me.Text), False).ToText
+		  Self.Document.Description = Self.SanitizeText(Trim(Me.Text), False)
 		  Self.Document.Metadata.IsImplicit = False
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
@@ -478,6 +478,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
+		  #Pragma Unused Row
+		  
 		  If Self.SettingUp Or Column <> 0 Then
 		    Return
 		  End If

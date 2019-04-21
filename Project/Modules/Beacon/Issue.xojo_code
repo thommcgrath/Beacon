@@ -1,13 +1,13 @@
 #tag Class
 Protected Class Issue
 	#tag Method, Flags = &h0
-		Function ConfigName() As Text
+		Function ConfigName() As String
 		  Return Self.mConfigName
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ConfigName As Text, Description As Text, UserData As Auto = Nil)
+		Sub Constructor(ConfigName As String, Description As String, UserData As Variant = Nil)
 		  Self.mConfigName = ConfigName
 		  Self.mDescription = Description
 		  Self.mUserData = UserData
@@ -15,28 +15,28 @@ Protected Class Issue
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Description() As Text
+		Function Description() As String
 		  Return Self.mDescription
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UserData() As Auto
+		Function UserData() As Variant
 		  Return Self.mUserData
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mConfigName As Text
+		Private mConfigName As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDescription As Text
+		Private mDescription As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUserData As Auto
+		Private mUserData As String
 	#tag EndProperty
 
 

@@ -55,7 +55,7 @@ End
 		Sub Close()
 		  RemoveHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		  
-		  If App.Identity = Nil Then
+		  If App.IdentityManager.CurrentIdentity = Nil Then
 		    Quit
 		  Else
 		    App.NextLaunchQueueTask()
@@ -68,7 +68,7 @@ End
 		  AddHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		  
 		  Self.mBaseURL = Beacon.WebURL("inapp/")
-		  Dim Fields() As Text
+		  Dim Fields() As String
 		  If Self.mLoginOnly Then
 		    Fields.Append("login_only=true")
 		  Else
@@ -79,7 +79,7 @@ End
 		  End If
 		  Dim Path As String = Self.mBaseURL + "welcome.php"
 		  If Fields.Ubound > -1 Then
-		    Path = Path + "?" + Fields.Join("&")
+		    Path = Path + "?" + Join(Fields, "&")
 		  End If
 		  Self.ContentView.LoadURL(Path)
 		End Sub
@@ -113,7 +113,7 @@ End
 		Private Sub IdentityManager_Finished(Sender As IdentityManager)
 		  If Sender.CurrentIdentity = Nil Then
 		    // Error
-		    Dim Message As Text = Sender.LastError
+		    Dim Message As String = Sender.LastError
 		    If Message = "" Then
 		      Message = "Please try again. If the problem persists help, see " + Beacon.WebURL("/help") + " for more help options."
 		    End If
@@ -165,8 +165,8 @@ End
 		  Dim Parts() As String = Split(Query, "&")
 		  For Each Part As String In Parts
 		    Pos = Part.InStr("=")
-		    Dim Key As String = DecodeURLComponent(Part.Left(Pos - 1)).DefineEncoding(Encodings.UTF8)
-		    Dim Value As String = DecodeURLComponent(Part.Mid(Pos + 1)).DefineEncoding(Encodings.UTF8)
+		    Dim Key As String = Beacon.URLDecode(Part.Left(Pos - 1)).DefineEncoding(Encodings.UTF8)
+		    Dim Value As String = Beacon.URLDecode(Part.Mid(Pos + 1)).DefineEncoding(Encodings.UTF8)
 		    Params.Value(Key) = Value
 		  Next
 		  
@@ -186,9 +186,9 @@ End
 		    Dim StringPassword As String = Params.Lookup("password", "")
 		    
 		    Preferences.OnlineEnabled = True
-		    Preferences.OnlineToken = StringToken.ToText
+		    Preferences.OnlineToken = StringToken
 		    
-		    App.IdentityManager.RefreshUserDetails(StringPassword.ToText)
+		    App.IdentityManager.RefreshUserDetails(StringPassword)
 		  Case "dismiss_me"
 		    Self.Close()
 		  Else

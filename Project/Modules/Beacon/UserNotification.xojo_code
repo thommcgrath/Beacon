@@ -7,23 +7,23 @@ Protected Class UserNotification
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Message As Text)
+		Sub Constructor(Message As String)
 		  Self.Constructor()
 		  Self.Message = Message
-		  Self.Timestamp = New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970, New Xojo.Core.TimeZone(0))
+		  Self.Timestamp = New Date
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Identifier() As Text
-		  Dim Raw As Text = Self.Message + Self.SecondaryMessage + Self.ActionURL
-		  Return Beacon.EncodeHex(Xojo.Crypto.SHA1(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Raw.Lowercase))).Lowercase
+		Function Identifier() As String
+		  Dim Raw As String = Self.Message + Self.SecondaryMessage + Self.ActionURL
+		  Return EncodeHex(Crypto.SHA1(Raw.Lowercase)).Lowercase
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h0
-		ActionURL As Text
+		ActionURL As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -31,7 +31,7 @@ Protected Class UserNotification
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Message As Text
+		Message As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -39,15 +39,15 @@ Protected Class UserNotification
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		SecondaryMessage As Text
+		SecondaryMessage As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Timestamp As Xojo.Core.Date
+		Timestamp As Date
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		UserData As Xojo.Core.Dictionary
+		UserData As Dictionary
 	#tag EndProperty
 
 
@@ -88,17 +88,14 @@ Protected Class UserNotification
 		#tag ViewProperty
 			Name="Message"
 			Group="Behavior"
-			Type="Text"
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ActionURL"
 			Group="Behavior"
-			Type="Text"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Identifier"
-			Group="Behavior"
-			Type="Text"
+			Type="String"
+			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Read"
@@ -108,7 +105,13 @@ Protected Class UserNotification
 		#tag ViewProperty
 			Name="SecondaryMessage"
 			Group="Behavior"
-			Type="Text"
+			Type="String"
+			EditorType="MultiLineEditor"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="DoNotResurrect"
+			Group="Behavior"
+			Type="Boolean"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

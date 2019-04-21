@@ -452,7 +452,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowPage(Index As Integer, UserData As Auto = Nil)
+		Sub ShowPage(Index As Integer, UserData As Variant = Nil)
 		  If Self.ViewShelf.SelectedIndex <> Index Then
 		    Self.ViewShelf.SelectedIndex = Index
 		  End If

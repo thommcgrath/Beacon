@@ -220,7 +220,7 @@ End
 		    Return
 		  End If
 		  
-		  Static LootSourceInfo, ItemSetInfo As Xojo.Introspection.TypeInfo
+		  Static LootSourceInfo, ItemSetInfo As Introspection.TypeInfo
 		  If LootSourceInfo = Nil Then
 		    LootSourceInfo = GetTypeInfo(Beacon.LootSource)
 		  End If
@@ -229,7 +229,7 @@ End
 		  End If
 		  
 		  Dim Selections() As Beacon.SimulatedSelection
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Self.mTarget)
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Self.mTarget)
 		  If Info.IsSubclassOf(LootSourceInfo) Then
 		    Selections = Beacon.LootSource(Self.mTarget).Simulate()
 		  ElseIf Info.IsSubclassOf(ItemSetInfo) Then
@@ -238,9 +238,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim GroupedItems As New Xojo.Core.Dictionary
+		  Dim GroupedItems As New Dictionary
 		  For Each Selection As Beacon.SimulatedSelection In Selections
-		    Dim Description As Text = Selection.Description
+		    Dim Description As String = Selection.Description
 		    Dim Quantity As Integer
 		    If GroupedItems.HasKey(Description) Then
 		      Quantity = GroupedItems.Value(Description)
@@ -248,8 +248,8 @@ End
 		    GroupedItems.Value(Description) = Quantity + 1
 		  Next
 		  
-		  For Each Item As Xojo.Core.DictionaryEntry In GroupedItems
-		    Dim Description As Text = Item.Key
+		  For Each Item As DictionaryMember In GroupedItems.Members
+		    Dim Description As String = Item.Key
 		    Dim Quantity As Integer = Item.Value
 		    List.AddRow(Str(Quantity, "0") + "x " + Description)
 		  Next
@@ -291,7 +291,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mTarget As Auto
+		Private mTarget As Variant
 	#tag EndProperty
 
 

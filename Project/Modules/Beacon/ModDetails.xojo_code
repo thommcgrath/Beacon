@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ModDetails
 	#tag Method, Flags = &h0
-		Sub Constructor(ModID As Text, Name As Text, ConsoleSafe As Boolean)
+		Sub Constructor(ModID As String, Name As String, ConsoleSafe As Boolean)
 		  Self.mModID = ModID
 		  Self.mName = Name
 		  Self.mConsoleSafe = ConsoleSafe
@@ -23,11 +23,11 @@ Protected Class ModDetails
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModID As Text
+		Private mModID As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mName As Text
+		Private mName As String
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -36,7 +36,7 @@ Protected Class ModDetails
 			  Return Self.mModID
 			End Get
 		#tag EndGetter
-		ModID As Text
+		ModID As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -45,7 +45,7 @@ Protected Class ModDetails
 			  Return Self.mName
 			End Get
 		#tag EndGetter
-		Name As Text
+		Name As String
 	#tag EndComputedProperty
 
 
@@ -84,9 +84,14 @@ Protected Class ModDetails
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mModID"
+			Name="ConsoleSafe"
 			Group="Behavior"
-			Type="Integer"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ModID"
+			Group="Behavior"
+			Type="Text"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

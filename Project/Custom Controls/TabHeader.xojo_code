@@ -126,7 +126,7 @@ Inherits ControlCanvas
 		    G.DrawPicture(Shadow, NextLeft, 6)
 		    G.DrawPicture(Foreground, NextLeft, 5)
 		    
-		    Self.mRegions(I) = New Xojo.Core.Rect(NextLeft, 5, Cell.Graphics.Width, Cell.Graphics.Height)
+		    Self.mRegions(I) = New REALbasic.Rect(NextLeft, 5, Cell.Graphics.Width, Cell.Graphics.Height)
 		    
 		    NextLeft = NextLeft + Cell.Graphics.Width + CellSpacing
 		  Next
@@ -147,7 +147,7 @@ Inherits ControlCanvas
 
 	#tag Method, Flags = &h0
 		Function CellAtXY(X As Integer, Y As Integer) As Integer
-		  Dim Point As New Xojo.Core.Point(X, Y)
+		  Dim Point As New REALbasic.Point(X, Y)
 		  For I As Integer = 0 To UBound(Self.mRegions)
 		    If Self.mRegions(I).Contains(Point) Then
 		      Return I
@@ -257,7 +257,7 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mRegions() As Xojo.Core.Rect
+		Private mRegions() As REALbasic.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

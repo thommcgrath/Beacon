@@ -297,7 +297,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEntryList(SelectEntries() As Beacon.SetEntry)
-		  Dim Selected() As Text
+		  Dim Selected() As String
 		  Dim ScrollToSelection As Boolean
 		  If SelectEntries <> Nil Then
 		    For Each Entry As Beacon.SetEntry In SelectEntries
@@ -351,9 +351,9 @@ End
 		    
 		    Dim QuantityText As String
 		    If Entry.MinQuantity = Entry.MaxQuantity Then
-		      QuantityText = Entry.MinQuantity.ToText
+		      QuantityText = Str(Entry.MinQuantity, "-0")
 		    Else
-		      QuantityText = Entry.MinQuantity.ToText + " - " + Entry.MaxQuantity.ToText
+		      QuantityText = Str(Entry.MinQuantity, "-0") + " - " + Str(Entry.MaxQuantity, "-0")
 		    End If
 		    
 		    Dim FiguresText As String
@@ -478,7 +478,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Entries() As Xojo.Core.Dictionary
+		  Dim Entries() As Dictionary
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Me.Selected(I) Then
 		      Entries.Append(Beacon.SetEntry(Me.RowTag(I)).Export)
@@ -489,11 +489,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim Contents As Text
+		  Dim Contents As String
 		  If UBound(Entries) = 0 Then
-		    Contents = Xojo.Data.GenerateJSON(Entries(0))
+		    Contents = Beacon.GenerateJSON(Entries(0))
 		  Else
-		    Contents = Xojo.Data.GenerateJSON(Entries)
+		    Contents = Beacon.GenerateJSON(Entries)
 		  End If
 		  
 		  Board.AddRawData(Contents, Self.kClipboardType)
@@ -506,17 +506,17 @@ End
 		  End If
 		  
 		  Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		  Dim Parsed As Auto
+		  Dim Parsed As Variant
 		  Try
-		    Parsed = Xojo.Data.ParseJSON(Contents.ToText)
-		  Catch Err As Xojo.Data.InvalidJSONException
+		    Parsed = Beacon.ParseJSON(Contents)
+		  Catch Err As UnsupportedFormatException
 		    Beep
 		    Return
 		  End Try
 		  
 		  Dim Modified As Boolean
-		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
-		  If Info.FullName = "Xojo.Core.Dictionary" Then
+		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
+		  If Info.FullName = "Dictionary" Then
 		    // Single item
 		    Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Parsed)
 		    If Entry <> Nil Then
@@ -525,8 +525,8 @@ End
 		    End If
 		  ElseIf Info.FullName = "Auto()" Then
 		    // Multiple items
-		    Dim Dicts() As Auto = Parsed
-		    For Each Dict As Xojo.Core.Dictionary In Dicts
+		    Dim Dicts() As Variant = Parsed
+		    For Each Dict As Dictionary In Dicts
 		      Dim Entry As Beacon.SetEntry = Beacon.SetEntry.ImportFromBeacon(Dict)
 		      If Entry <> Nil Then
 		        Self.mSet.Append(Entry)

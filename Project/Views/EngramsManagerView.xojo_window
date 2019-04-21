@@ -94,6 +94,7 @@ Begin BeaconSubview EngramsManagerView
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   1
@@ -141,11 +142,12 @@ Begin BeaconSubview EngramsManagerView
       Width           =   594
    End
    Begin Beacon.EngramSearcherThread Searcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
-      StackSize       =   "0"
+      StackSize       =   0
       State           =   ""
       TabPanelIndex   =   0
    End
@@ -209,10 +211,7 @@ End
 		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
 		  If File <> Nil Then
 		    Dim Engrams() As Beacon.Engram = LocalData.SharedInstance.GetCustomEngrams()
-		    Dim CSV As Text = Beacon.Engram.CreateCSV(Engrams)
-		    Dim Stream As TextOutputStream = TextOutputStream.Create(File)
-		    Stream.Write(CSV)
-		    Stream.Close
+		    File.Write(Beacon.Engram.CreateCSV(Engrams))
 		  End If
 		End Sub
 	#tag EndMethod
@@ -225,7 +224,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RebuildList()
-		  Dim SelectedPaths() As Text
+		  Dim SelectedPaths() As String
 		  For I As Integer = 0 To List.ListCount - 1
 		    If List.Selected(I) Then
 		      Dim Engram As Beacon.Engram = List.RowTag(I)
@@ -264,7 +263,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub ShowEngramInRow(Engram As Beacon.Engram, Index As Integer)
 		  List.Cell(Index, Self.ColumnLabel) = Engram.Label
-		  List.CellCheck(Index, Self.ColumnBlueprintable) = Engram.CanBeBlueprint
+		  List.CellCheck(Index, Self.ColumnBlueprintable) = Engram.IsTagged("blueprintable")
 		  List.CellCheck(Index, Self.ColumnIsland) = Engram.ValidForMap(Beacon.Maps.TheIsland)
 		  List.CellCheck(Index, Self.ColumnScorched) = Engram.ValidForMap(Beacon.Maps.ScorchedEarth)
 		  List.CellCheck(Index, Self.ColumnCenter) = Engram.ValidForMap(Beacon.Maps.TheCenter)
@@ -371,9 +370,9 @@ End
 		  Dim Editable As New Beacon.MutableEngram(Engram)
 		  Select Case Column
 		  Case Self.ColumnLabel
-		    Editable.Label = Me.Cell(Row, Column).ToText
+		    Editable.Label = Me.Cell(Row, Column)
 		  Case Self.ColumnBlueprintable
-		    Editable.CanBeBlueprint = Me.CellCheck(Row, Column)
+		    Editable.IsTagged("blueprintable") = Me.CellCheck(Row, Column)
 		  Case Self.ColumnIsland
 		    Editable.ValidForMap(Beacon.Maps.TheIsland) = Me.CellCheck(Row, Column)
 		  Case Self.ColumnScorched

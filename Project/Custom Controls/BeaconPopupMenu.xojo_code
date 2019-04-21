@@ -13,7 +13,7 @@ Inherits ControlCanvas
 		    Self.mPressed = True
 		    Self.Invalidate
 		    
-		    Dim Position As Xojo.Core.Point = Self.Window.GlobalPosition
+		    Dim Position As REALbasic.Point = Self.Window.GlobalPosition
 		    Dim MenuPosX As Integer = Position.X + Self.Left + Self.mHitRect.Left
 		    Dim MenuPosY As Integer = Position.Y + Self.Top + Self.mHitRect.Top
 		    

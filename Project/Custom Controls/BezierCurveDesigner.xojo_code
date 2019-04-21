@@ -3,7 +3,7 @@ Protected Class BezierCurveDesigner
 Inherits ControlCanvas
 	#tag Event
 		Function MouseDown(X As Integer, Y As Integer) As Boolean
-		  Dim Point As New Xojo.Core.Point(X, Y)
+		  Dim Point As New REALbasic.Point(X, Y)
 		  
 		  If Self.mHandle1Rect <> Nil And Self.mHandle1Rect.Contains(Point) Then
 		    Self.mHandle1DownPoint = Point
@@ -32,11 +32,11 @@ Inherits ControlCanvas
 		    If DeltaX = 0 And DeltaY = 0 Then
 		      Return
 		    End If
-		    Self.mHandle1DownPoint = New Xojo.Core.Point(X, Y)
+		    Self.mHandle1DownPoint = New REALbasic.Point(X, Y)
 		    
-		    Dim Point1 As Xojo.Core.Point = Self.Curve.Point(1)
-		    Dim Point2 As Xojo.Core.Point = Self.Curve.Point(2)
-		    Point1 = New Xojo.Core.Point(Point1.X + DeltaX, Point1.Y - DeltaY)
+		    Dim Point1 As REALbasic.Point = Self.Curve.Point(1)
+		    Dim Point2 As REALbasic.Point = Self.Curve.Point(2)
+		    Point1 = New REALbasic.Point(Point1.X + DeltaX, Point1.Y - DeltaY)
 		    
 		    Self.Curve = New Beacon.Curve(Point1, Point2)
 		  ElseIf Self.mHandle2DownPoint <> Nil Then
@@ -45,11 +45,11 @@ Inherits ControlCanvas
 		    If DeltaX = 0 And DeltaY = 0 Then
 		      Return
 		    End If
-		    Self.mHandle2DownPoint = New Xojo.Core.Point(X, Y)
+		    Self.mHandle2DownPoint = New REALbasic.Point(X, Y)
 		    
-		    Dim Point1 As Xojo.Core.Point = Self.Curve.Point(1)
-		    Dim Point2 As Xojo.Core.Point = Self.Curve.Point(2)
-		    Point2 = New Xojo.Core.Point(Point2.X + DeltaX, Point2.Y - DeltaY)
+		    Dim Point1 As REALbasic.Point = Self.Curve.Point(1)
+		    Dim Point2 As REALbasic.Point = Self.Curve.Point(2)
+		    Point2 = New REALbasic.Point(Point2.X + DeltaX, Point2.Y - DeltaY)
 		    
 		    Self.Curve = New Beacon.Curve(Point1, Point2)
 		  End If
@@ -58,7 +58,7 @@ Inherits ControlCanvas
 
 	#tag Event
 		Sub MouseMove(X As Integer, Y As Integer)
-		  Dim Point As New Xojo.Core.Point(X, Y)
+		  Dim Point As New REALbasic.Point(X, Y)
 		  If (Self.mHandle1Rect <> Nil And Self.mHandle1Rect.Contains(Point)) Or (Self.mHandle2Rect <> Nil And Self.mHandle2Rect.Contains(Point)) Then
 		    #if BeaconUI.CursorsEnabled
 		      Self.MouseCursor = System.Cursors.ArrowAllDirections
@@ -102,7 +102,7 @@ Inherits ControlCanvas
 		  G.TextFont = "SmallSystem"
 		  G.TextSize = 0
 		  
-		  Dim Viewport As Xojo.Core.Rect = Self.Viewport
+		  Dim Viewport As REALbasic.Rect = Self.Viewport
 		  
 		  Dim YLegend As New StringShape
 		  YLegend.Text = "Level"
@@ -134,11 +134,11 @@ Inherits ControlCanvas
 		  If Self.Curve <> Nil Then
 		    #if Self.ShowCrosshair
 		      If Self.mHoverPoint <> Nil And Viewport.Contains(Self.mHoverPoint) Then
-		        Dim Localized As Xojo.Core.Point = Viewport.Localize(Self.mHoverPoint)
+		        Dim Localized As REALbasic.Point = Viewport.Localize(Self.mHoverPoint)
 		        
 		        #if false
 		          Dim Time As Double = Localized.X / Viewport.Width
-		          Dim Intersect As Xojo.Core.Point = Self.Curve.Evaluate(Time, Viewport.Localize(Viewport))
+		          Dim Intersect As REALbasic.Point = Self.Curve.Evaluate(Time, Viewport.Localize(Viewport))
 		        #endif
 		        Dim X As Integer = Localized.X
 		        Dim Y As Integer = Self.Curve.Evaluate(X / Viewport.Width, 0, Viewport.Width)
@@ -200,8 +200,8 @@ Inherits ControlCanvas
 		    Handle1.BorderColor = Path1.BorderColor
 		    Handle1.Border = 100
 		    G.DrawObject(Handle1, Viewport.Left, Viewport.Top)
-		    Self.mHandle1Rect = New Xojo.Core.Rect(Handle1.X - Floor(Handle1.Width / 2), Handle1.Y - Floor(Handle1.Height / 2), Handle1.Width, Handle1.Height)
-		    Self.mHandle1Rect = Self.mHandle1Rect.Offset(Viewport.Left, Viewport.Top)
+		    Self.mHandle1Rect = New REALbasic.Rect(Handle1.X - Floor(Handle1.Width / 2), Handle1.Y - Floor(Handle1.Height / 2), Handle1.Width, Handle1.Height)
+		    Self.mHandle1Rect.Offset(Viewport.Left, Viewport.Top)
 		    
 		    Dim Handle2 As New OvalShape
 		    Handle2.X = Path2.X2
@@ -213,8 +213,8 @@ Inherits ControlCanvas
 		    Handle2.Border = Handle1.Border
 		    G.DrawObject(Handle2, Viewport.Left, Viewport.Top)
 		    
-		    Self.mHandle2Rect = New Xojo.Core.Rect(Handle2.X - Floor(Handle2.Width / 2), Handle2.Y - Floor(Handle2.Height / 2), Handle2.Width, Handle2.Height)
-		    Self.mHandle2Rect = Self.mHandle2Rect.Offset(Viewport.Left, Viewport.Top)
+		    Self.mHandle2Rect = New REALbasic.Rect(Handle2.X - Floor(Handle2.Width / 2), Handle2.Y - Floor(Handle2.Height / 2), Handle2.Width, Handle2.Height)
+		    Self.mHandle2Rect.Offset(Viewport.Left, Viewport.Top)
 		  Else
 		    Self.mHandle1Rect = Nil
 		    Self.mHandle2Rect = Nil
@@ -224,13 +224,13 @@ Inherits ControlCanvas
 
 
 	#tag Method, Flags = &h21
-		Private Function Viewport() As Xojo.Core.Rect
+		Private Function Viewport() As REALbasic.Rect
 		  Const LeftGutter = 21
 		  Const TopGutter = 11
 		  Const BottomGutter = 21
 		  Const RightGutter = 11
 		  
-		  Return New Xojo.Core.Rect(LeftGutter, TopGutter, Self.Width - (LeftGutter + RightGutter), Self.Height - (TopGutter + BottomGutter))
+		  Return New REALbasic.Rect(LeftGutter, TopGutter, Self.Width - (LeftGutter + RightGutter), Self.Height - (TopGutter + BottomGutter))
 		End Function
 	#tag EndMethod
 
@@ -263,23 +263,23 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHandle1DownPoint As Xojo.Core.Point
+		Private mHandle1DownPoint As REALbasic.Point
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHandle1Rect As Xojo.Core.Rect
+		Private mHandle1Rect As REALbasic.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHandle2DownPoint As Xojo.Core.Point
+		Private mHandle2DownPoint As REALbasic.Point
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHandle2Rect As Xojo.Core.Rect
+		Private mHandle2Rect As REALbasic.Rect
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHoverPoint As Xojo.Core.Point
+		Private mHoverPoint As REALbasic.Point
 	#tag EndProperty
 
 

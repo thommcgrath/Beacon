@@ -43,6 +43,7 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   52
       Transparent     =   False
       Value           =   0
@@ -85,6 +86,7 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       Width           =   410
    End
    Begin Timer RevealTimer
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   1
@@ -157,18 +159,21 @@ End
 		  Case LocalData.Notification_ImportSuccess, LocalData.Notification_ImportFailed
 		    Self.RevealTimer.Mode = Timer.ModeOff
 		    
-		    Dim Date As Xojo.Core.Date
-		    If Notification.UserData <> Nil And Notification.UserData IsA Xojo.Core.Date Then
+		    Dim Date As Date
+		    If Notification.UserData <> Nil And Notification.UserData IsA Date Then
 		      Date = Notification.UserData
 		    Else
 		      Date = LocalData.SharedInstance.LastSync
+		    End If
+		    If Date <> Nil And Date.GMTOffset <> 0 Then
+		      Date.GMTOffset = 0
 		    End If
 		    
 		    Dim Dialog As New MessageDialog
 		    Dialog.Title = ""
 		    If Date <> Nil Then
 		      Dialog.Message = "Engram definitions have been updated"
-		      Dialog.Explanation = "Engrams, loot sources, and presets are current as of " + Date.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC."
+		      Dialog.Explanation = "Engrams, loot sources, and presets are current as of " + Date.LongDate + " at " + Date.LongTime + " UTC."
 		    Else
 		      Dialog.Message = "Engram definitions have not been updated"
 		      Dialog.Explanation = "No engram definitions are currently loaded into Beacon. Try relaunching Beacon. If the problem persists, see the website at " + Beacon.WebURL("/help/") + " for more support options."

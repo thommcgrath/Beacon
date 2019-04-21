@@ -14,7 +14,7 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ClearModifier(ModifierID As Text)
+		Sub ClearModifier(ModifierID As String)
 		  If Self.mModifierValues <> Nil And Self.mModifierValues.HasKey(ModifierID) Then
 		    Self.mModifierValues.Remove(ModifierID)
 		  End If
@@ -34,7 +34,7 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Grouping(Assigns Value As Text)
+		Sub Grouping(Assigns Value As String)
 		  Self.mGrouping = Value
 		End Sub
 	#tag EndMethod
@@ -46,7 +46,7 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Label(Assigns Value As Text)
+		Sub Label(Assigns Value As String)
 		  Self.mLabel = Value
 		End Sub
 	#tag EndMethod
@@ -88,12 +88,12 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub QualityModifier(ModifierID As Text, Assigns Value As Integer)
+		Sub QualityModifier(ModifierID As String, Assigns Value As Integer)
 		  If Self.mModifierValues = Nil Then
-		    Self.mModifierValues = New Xojo.Core.Dictionary
+		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  Dict.Value("Quality") = Value
 		  Self.mModifierValues.Value(ModifierID) = Dict
 		End Sub
@@ -106,12 +106,12 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub QuantityMultiplier(ModifierID As Text, Assigns Value As Double)
+		Sub QuantityMultiplier(ModifierID As String, Assigns Value As Double)
 		  If Self.mModifierValues = Nil Then
-		    Self.mModifierValues = New Xojo.Core.Dictionary
+		    Self.mModifierValues = New Dictionary
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  Dim Dict As Dictionary = Self.mModifierValues.Lookup(ModifierID, New Dictionary)
 		  Dict.Value("Quantity") = Value
 		  Self.mModifierValues.Value(ModifierID) = Dict
 		End Sub

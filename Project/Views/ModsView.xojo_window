@@ -27,6 +27,7 @@ Begin BeaconSubview ModsView
    Visible         =   False
    Width           =   1100
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -68,6 +69,7 @@ Begin BeaconSubview ModsView
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -126,6 +128,7 @@ Begin BeaconSubview ModsView
       HasBackColor    =   False
       Height          =   419
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   236
       LockBottom      =   True
@@ -244,7 +247,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Shown(UserData As Auto = Nil)
+		Sub Shown(UserData As Variant = Nil)
 		  #Pragma Unused UserData
 		  
 		  Self.RefreshMods()
@@ -253,7 +256,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DeleteMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		Private Sub APICallback_DeleteMod(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
 		  #Pragma Unused Details
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
@@ -268,7 +271,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ListMods(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
+		Private Sub APICallback_ListMods(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
 		  
@@ -284,8 +287,8 @@ End
 		  
 		  ModList.DeleteAllRows()
 		  
-		  Dim Arr() As Auto = Details
-		  For Each Dict As Xojo.Core.Dictionary In Arr
+		  Dim Arr() As Variant = Details
+		  For Each Dict As Dictionary In Arr
 		    Dim UserMod As New BeaconAPI.WorkshopMod(Dict)
 		    
 		    ModList.AddRow(UserMod.Name)
@@ -305,7 +308,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub RefreshMods()
 		  Dim Request As New BeaconAPI.Request("mod.php", "GET", AddressOf APICallback_ListMods)
-		  Request.Sign(App.Identity)
+		  Request.Sign(App.IdentityManager.CurrentIdentity)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndMethod
@@ -363,7 +366,7 @@ End
 		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
 		    If Choice = Dialog.ActionButton Then
 		      Dim Request As New BeaconAPI.Request(Self.SelectedMod.ResourceURL, "DELETE", AddressOf APICallback_DeleteMod)
-		      Request.Sign(App.Identity)
+		      Request.Sign(App.IdentityManager.CurrentIdentity)
 		      Self.Socket.Start(Request)
 		    End If
 		  Case "SettingsButton"
