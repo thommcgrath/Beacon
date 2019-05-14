@@ -63,7 +63,29 @@ class BeaconFTPConnection implements BeaconFTPProvider {
 				$files[] = $filename . ($dir ? '/' : '');
 			}
 			break;
+		case 'UNIX':
+			foreach ($lines as $line) {
+				if (preg_match('/^(?<dir>[\-ld])(?<permission>([\-r][\-w][\-xs]){3})\s+(?<filecode>\d+)\s+(?<owner>\w+)\s+(?<group>\w+)\s+(?<size>\d+)\s+(?<timestamp>((?<month>\w{3})\s+(?<day>\d{1,2})\s+(?<hour>\d{1,2}):(?<minute>\d{2}))|((?<monthb>\w{3})\s+(?<dayb>\d{1,2})\s+(?<year>\d{4})))\s+(?<name>.+)$/', $line, $matches) == 0) {
+					continue;
+				}
+				
+				$filename = $matches['name'];
+				$dir = $matches['dir'] == 'd';
+				
+				$files[] = $filename . ($dir ? '/' : '');
+			}
+			break;
 		default:
+			$message = array(
+				'text' => 'A user has found an unsupported FTP server: ' . $systype,
+				'attachments' => array(
+					array(
+						'title' => 'ftp_rawlist',
+						'text' => implode("\n", $lines)
+					)
+				)
+			);
+			BeaconCommon::PostSlackRaw(json_encode($message));
 			return null;
 		}
 		return $files;
