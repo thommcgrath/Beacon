@@ -1,8 +1,8 @@
 <?php
 
 abstract class BeaconEncryption {
-	const BlowfishMagicByte = 0x8A;
-	const BlowfishVersion = 1;
+	const SymmetricMagicByte = 0x8A;
+	const SymmetricVersion = 2;
 	
 	public static function GenerateSalt() {
 		return random_bytes(128);
@@ -38,32 +38,33 @@ abstract class BeaconEncryption {
 		return $status == 1;
 	}
 	
-	public static function BlowfishEncrypt(string $key, string $data) {
-		$iv_size = openssl_cipher_iv_length('bf-cbc');
+	public static function SymmetricEncrypt(string $key, string $data) {
+		$iv_size = openssl_cipher_iv_length('aes-256-cbc');
 		$iv = random_bytes($iv_size);
-		$encrypted = openssl_encrypt(str_pad($data, ceil(strlen($data) / 8) * 8, chr(0)), 'bf-cbc', $key, OPENSSL_RAW_DATA, $iv);
+		$encrypted = openssl_encrypt(str_pad($data, ceil(strlen($data) / 8) * 8, chr(0)), 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
 		if ($encrypted === false) {
 			throw new Exception('Unable to encrypt: ' . openssl_error_string());
 		}
-		return pack('C', self::BlowfishMagicByte) . pack('C', self::BlowfishVersion) . $iv . pack('N', strlen($data)) . pack('N', crc32($data)) . $encrypted;
+		return pack('C', self::SymmetricMagicByte) . pack('C', self::SymmetricVersion) . $iv . pack('N', strlen($data)) . pack('N', crc32($data)) . $encrypted;
 	}
 	
-	public static function BlowfishDecrypt(string $key, string $data) {
+	public static function SymmetricDecrypt(string $key, string $data) {
 		$magic_byte = unpack('C', $data[0])[1];
 		$version = unpack('C', $data[1])[1];
-		$iv = substr($data, 2, 8);
-		$len = self::UnpackUInt32(substr($data, 10, 4));
-		$expected_checksum = self::UnpackUInt32(substr($data, 14, 4));
-		$data = substr($data, 18);
+		$iv_size = ($version == 2) ? 16 : 8;
+		$iv = substr($data, 2, $iv_size);
+		$len = self::UnpackUInt32(substr($data, 2 + $iv_size, 4));
+		$expected_checksum = self::UnpackUInt32(substr($data, 6 + $iv_size, 4));
+		$data = substr($data, 10 + $iv_size);
 		
-		if ($magic_byte != self::BlowfishMagicByte) {
+		if ($magic_byte != self::SymmetricMagicByte) {
 			throw new Exception('Data not encrypted properly: ' . bin2hex($magic_byte) . '(' . strlen($magic_byte) . ')');
 		}
-		if ($version > self::BlowfishVersion) {
+		if ($version > self::SymmetricVersion) {
 			throw new Exception('Encryption is too new');
 		}
 		
-		$decrypted = openssl_decrypt($data, 'bf-cbc', $key, OPENSSL_RAW_DATA, $iv);
+		$decrypted = openssl_decrypt($data, ($version == 2) ? 'aes-256-cbc' : 'bf-cbc', $key, OPENSSL_RAW_DATA, $iv);
 		if ($decrypted === false) {
 			throw new Exception('Unable to decrypt: ' . openssl_error_string());
 		}
@@ -77,6 +78,14 @@ abstract class BeaconEncryption {
 			throw new Exception('CRC32 checksum failed on decrypted data: ' . $expected_checksum . ' expected, ' . $computed_checksum . ' computed');
 		}
 		return $decrypted;
+	}
+	
+	public static function BlowfishDecrypt(string $key, string $data) {
+		return static::SymmetricDecrypt($key, $data);
+	}
+	
+	public static function BlowfishEncrypt(string $key, string $data) {
+		return static::SymmetricEncrypt($key, $data);
 	}
 	
 	public static function PublicKeyToPEM(string $public_key) {

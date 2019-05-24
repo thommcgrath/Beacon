@@ -29,7 +29,7 @@ if ($results->RecordCount() == 0) {
 $applicant_id = $results->Field('applicant_id');
 $email_id = $results->Field('email_id');
 try {
-	$email = BeaconEncryption::BlowfishDecrypt(BeaconCommon::GetGlobal('Email_Encryption_Key'), base64_decode($results->Field('encrypted_email')));
+	$email = BeaconEncryption::SymmetricDecrypt(BeaconCommon::GetGlobal('Email_Encryption_Key'), base64_decode($results->Field('encrypted_email')));
 } catch (Exception $e) {
 	echo "Something went wrong, unable to decrypt email address.\n";
 	exit;

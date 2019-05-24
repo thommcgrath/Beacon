@@ -154,7 +154,7 @@ Protected Class Identity
 		      Dim Salt As Xojo.Core.MemoryBlock = Beacon.DecodeHex(Dict.Value("private_key_salt"))
 		      Dim Iterations As Integer = Dict.Value("private_key_iterations")
 		      Dim Key As Xojo.Core.MemoryBlock = Xojo.Crypto.PBKDF2(Salt, Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Password), Iterations, 56, Xojo.Crypto.HashAlgorithms.SHA512)
-		      Dim Decrypted As Xojo.Core.MemoryBlock = BeaconEncryption.BlowfishDecrypt(Key, Beacon.DecodeHex(Dict.Value("private_key")))
+		      Dim Decrypted As Xojo.Core.MemoryBlock = BeaconEncryption.SymmetricDecrypt(Key, Beacon.DecodeHex(Dict.Value("private_key")))
 		      PrivateKey = BeaconEncryption.PEMDecodePrivateKey(Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Decrypted, False))
 		    Catch Err As Xojo.Crypto.CryptoException
 		      Return Nil

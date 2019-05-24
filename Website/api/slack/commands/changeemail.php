@@ -50,7 +50,7 @@ try {
 	$database->Query('DELETE FROM email_verification WHERE email_id = $1;', $old_email_id);
 	$results = $database->Query('SELECT applicant_id FROM stw_applicants WHERE email_id = $1;', $new_email_id);
 	if ($results->RecordCount() == 0) {
-		$encrypted_email = BeaconEncryption::BlowfishEncrypt(BeaconCommon::GetGlobal('Email_Encryption_Key'), $to_address);
+		$encrypted_email = BeaconEncryption::SymmetricEncrypt(BeaconCommon::GetGlobal('Email_Encryption_Key'), $to_address);
 		$database->Query('UPDATE stw_applicants SET email_id = $1, encrypted_email = $2 WHERE email_id = $3;', $new_email_id, bin2hex($encrypted_email), $old_email_id);
 	}
 	$results = $database->Query('SELECT user_id FROM users WHERE email_id = $1;', $new_email_id);

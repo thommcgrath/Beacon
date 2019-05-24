@@ -125,7 +125,16 @@ class BeaconUser implements JsonSerializable {
 	public function TestPassword(string $password) {
 		$hash = BeaconEncryption::HashFromPassword($password, hex2bin($this->private_key_salt), $this->private_key_iterations);
 		try {
-			BeaconEncryption::BlowfishDecrypt($hash, hex2bin($this->private_key));
+			$decrypted = BeaconEncryption::SymmetricDecrypt($hash, hex2bin($this->private_key));
+			if (strtolower(substr($this->private_key, 0, 4)) === '8a01') {
+				$encrypted = bin2hex(BeaconEncryption::SymmetricEncrypt($hash, $decrypted));
+				$database = BeaconCommon::Database();
+				$database->BeginTransaction();
+				$database->Query('UPDATE users SET private_key = $2 WHERE user_id = $1;', $this->user_id, $encrypted);
+				$database->Commit();
+				unset($encrypted);
+			}
+			unset($decrypted);
 			return true;
 		} catch (Exception $e) {
 			return false;
@@ -168,7 +177,7 @@ class BeaconUser implements JsonSerializable {
 			$salt = BeaconEncryption::GenerateSalt();
 			$iterations = 12000;
 			$hash = BeaconEncryption::HashFromPassword($password, $salt, $iterations);
-			$encrypted_private_key = bin2hex(BeaconEncryption::BlowfishEncrypt($hash, $private_key));
+			$encrypted_private_key = bin2hex(BeaconEncryption::SymmetricEncrypt($hash, $private_key));
 			$salt = bin2hex($salt);
 			
 			$this->username = $username;
@@ -186,11 +195,11 @@ class BeaconUser implements JsonSerializable {
 	public function ChangePassword(string $old_password, string $new_password) {
 		try {
 			$old_hash = BeaconEncryption::HashFromPassword($old_password, hex2bin($this->private_key_salt), $this->private_key_iterations);
-			$private_key = BeaconEncryption::BlowfishDecrypt($old_hash, hex2bin($this->private_key));
+			$private_key = BeaconEncryption::SymmetricDecrypt($old_hash, hex2bin($this->private_key));
 			$salt = BeaconEncryption::GenerateSalt();
 			$iterations = 12000;
 			$new_hash = BeaconEncryption::HashFromPassword($new_password, $salt, $iterations);
-			$encrypted_private_key = bin2hex(BeaconEncryption::BlowfishEncrypt($new_hash, $private_key));
+			$encrypted_private_key = bin2hex(BeaconEncryption::SymmetricEncrypt($new_hash, $private_key));
 			$salt = bin2hex($salt);
 			unset($private_key, $old_hash);
 			

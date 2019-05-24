@@ -34,7 +34,7 @@ Protected Class KeyPair
 		    Key = Self.mPrivateKey
 		  End If
 		  
-		  Return Beacon.EncodeHex(BeaconEncryption.BlowfishEncrypt(Password, Key))
+		  Return Beacon.EncodeHex(BeaconEncryption.SymmetricEncrypt(Password, Key))
 		End Function
 	#tag EndMethod
 
