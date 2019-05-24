@@ -142,16 +142,16 @@ class BeaconUser implements JsonSerializable {
 		}
 	}
 	
-	public function ReplacePassword(string $password, string $private_key) {
+	public function ReplacePassword(string $password, string $private_key, bool $upgradedEncryption = false) {
 		if (empty($this->email_id)) {
 			return false;
 		}
 		
 		unset($this->private_key);
-		return $this->AddAuthentication($this->username, $this->email_id, $password, $private_key);
+		return $this->AddAuthentication($this->username, $this->email_id, $password, $private_key, $upgradedEncryption);
 	}
 	
-	public function AddAuthentication(string $username, string $email, string $password, string $private_key) {
+	public function AddAuthentication(string $username, string $email, string $password, string $private_key, bool $upgradedEncryption = false) {
 		if (empty($this->private_key) == false) {
 			return false;
 		}
@@ -178,7 +178,7 @@ class BeaconUser implements JsonSerializable {
 			$salt = BeaconEncryption::GenerateSalt();
 			$iterations = 12000;
 			$hash = BeaconEncryption::HashFromPassword($password, $salt, $iterations);
-			$encrypted_private_key = bin2hex(BeaconEncryption::SymmetricEncrypt($hash, $private_key));
+			$encrypted_private_key = bin2hex(BeaconEncryption::SymmetricEncrypt($hash, $private_key, !$upgradedEncryption));
 			$salt = bin2hex($salt);
 			
 			$this->username = $username;
@@ -193,14 +193,14 @@ class BeaconUser implements JsonSerializable {
 		}
 	}
 	
-	public function ChangePassword(string $old_password, string $new_password) {
+	public function ChangePassword(string $old_password, string $new_password, bool $upgradedEncryption = false) {
 		try {
 			$old_hash = BeaconEncryption::HashFromPassword($old_password, hex2bin($this->private_key_salt), $this->private_key_iterations);
 			$private_key = BeaconEncryption::SymmetricDecrypt($old_hash, hex2bin($this->private_key));
 			$salt = BeaconEncryption::GenerateSalt();
 			$iterations = 12000;
 			$new_hash = BeaconEncryption::HashFromPassword($new_password, $salt, $iterations);
-			$encrypted_private_key = bin2hex(BeaconEncryption::SymmetricEncrypt($new_hash, $private_key));
+			$encrypted_private_key = bin2hex(BeaconEncryption::SymmetricEncrypt($new_hash, $private_key, $upgradedEncryption));
 			$salt = bin2hex($salt);
 			unset($private_key, $old_hash);
 			

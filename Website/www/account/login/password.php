@@ -81,8 +81,9 @@ $public_key = null;
 $private_key = null;
 BeaconEncryption::GenerateKeyPair($public_key, $private_key);
 
+$useUpgradedEncryption = isset($_SERVER['HTTP_X_BEACON_UPGRADE_ENCRYPTION']) && boolval($_SERVER['HTTP_X_BEACON_UPGRADE_ENCRYPTION']);
 $user->SetPublicKey($public_key);
-if ($user->AddAuthentication($username, $email, $password, $private_key) == false && $user->ReplacePassword($password, $private_key) == false) {
+if ($user->AddAuthentication($username, $email, $password, $private_key, $useUpgradedEncryption) == false && $user->ReplacePassword($password, $private_key, $useUpgradedEncryption) == false) {
 	http_response_code(500);
 	echo json_encode(array('message' => 'There was an error updating authentication parameters.'), JSON_PRETTY_PRINT);
 	exit;
