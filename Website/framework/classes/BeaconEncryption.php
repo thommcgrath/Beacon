@@ -38,14 +38,16 @@ abstract class BeaconEncryption {
 		return $status == 1;
 	}
 	
-	public static function SymmetricEncrypt(string $key, string $data) {
-		$iv_size = openssl_cipher_iv_length('aes-256-cbc');
+	public static function SymmetricEncrypt(string $key, string $data, bool $legacy = true) {
+		$cipher = $legacy ? 'bf-cbc' : 'aes-256-cbc';
+		$version = $legacy ? 1 : 2;
+		$iv_size = openssl_cipher_iv_length($cipher);
 		$iv = random_bytes($iv_size);
-		$encrypted = openssl_encrypt(str_pad($data, ceil(strlen($data) / 8) * 8, chr(0)), 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
+		$encrypted = openssl_encrypt(str_pad($data, ceil(strlen($data) / 8) * 8, chr(0)), $cipher, $key, OPENSSL_RAW_DATA, $iv);
 		if ($encrypted === false) {
 			throw new Exception('Unable to encrypt: ' . openssl_error_string());
 		}
-		return pack('C', self::SymmetricMagicByte) . pack('C', self::SymmetricVersion) . $iv . pack('N', strlen($data)) . pack('N', crc32($data)) . $encrypted;
+		return pack('C', self::SymmetricMagicByte) . pack('C', $version) . $iv . pack('N', strlen($data)) . pack('N', crc32($data)) . $encrypted;
 	}
 	
 	public static function SymmetricDecrypt(string $key, string $data) {
@@ -81,7 +83,7 @@ abstract class BeaconEncryption {
 	}
 	
 	public static function BlowfishDecrypt(string $key, string $data) {
-		return static::SymmetricDecrypt($key, $data);
+		return static::SymmetricDecrypt($key, $data, true);
 	}
 	
 	public static function BlowfishEncrypt(string $key, string $data) {

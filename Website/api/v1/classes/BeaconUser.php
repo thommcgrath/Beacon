@@ -122,12 +122,12 @@ class BeaconUser implements JsonSerializable {
 		}
 	}
 	
-	public function TestPassword(string $password) {
+	public function TestPassword(string $password, bool $upgradeEncryption = false) {
 		$hash = BeaconEncryption::HashFromPassword($password, hex2bin($this->private_key_salt), $this->private_key_iterations);
 		try {
 			$decrypted = BeaconEncryption::SymmetricDecrypt($hash, hex2bin($this->private_key));
-			if (strtolower(substr($this->private_key, 0, 4)) === '8a01') {
-				$encrypted = bin2hex(BeaconEncryption::SymmetricEncrypt($hash, $decrypted));
+			if ($upgradeEncryption && strtolower(substr($this->private_key, 0, 4)) === '8a01') {
+				$encrypted = bin2hex(BeaconEncryption::SymmetricEncrypt($hash, $decrypted, false));
 				$database = BeaconCommon::Database();
 				$database->BeginTransaction();
 				$database->Query('UPDATE users SET private_key = $2 WHERE user_id = $1;', $this->user_id, $encrypted);
