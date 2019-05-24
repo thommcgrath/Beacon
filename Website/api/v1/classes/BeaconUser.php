@@ -132,6 +132,7 @@ class BeaconUser implements JsonSerializable {
 				$database->BeginTransaction();
 				$database->Query('UPDATE users SET private_key = $2 WHERE user_id = $1;', $this->user_id, $encrypted);
 				$database->Commit();
+				$this->private_key = $encrypted;
 				unset($encrypted);
 			}
 			unset($decrypted);
