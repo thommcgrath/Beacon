@@ -366,11 +366,15 @@ End
 		    Return Nil
 		  End If
 		  
-		  Dim Folder As FolderItem = App.AutosaveFolder(CreateFolder)
-		  If Folder = Nil Then
-		    Return Nil
+		  If Self.mAutosaveFile = Nil Or Not Self.mAutosaveFile.Exists Then
+		    Dim Folder As FolderItem = App.AutosaveFolder(CreateFolder)
+		    If Folder = Nil Then
+		      Return Nil
+		    End If
+		    Self.mAutosaveFile = Folder.Child(Self.Document.DocumentID + BeaconFileTypes.BeaconDocument.PrimaryExtension)
 		  End If
-		  Return Folder.Child(Self.Document.DocumentID + BeaconFileTypes.BeaconDocument.PrimaryExtension)
+		  
+		  Return Self.mAutosaveFile
 		End Function
 	#tag EndMethod
 
@@ -400,9 +404,10 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CleanupAutosave()
-		  Dim AutosaveFile As FolderItem = Self.AutosaveFile()
+		  Dim AutosaveFile As FolderItem = Self.mAutosaveFile
 		  If AutosaveFile <> Nil And AutosaveFile.Exists Then
 		    AutosaveFile.Delete
+		    Self.mAutosaveFile = Nil
 		  End If
 		End Sub
 	#tag EndMethod
@@ -746,6 +751,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private CurrentPanel As ConfigEditor
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mAutosaveFile As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
