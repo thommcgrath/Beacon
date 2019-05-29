@@ -97,6 +97,7 @@ Protected Class Engram
 		    Engram.mIsValid = True
 		  End If
 		  Engram.mPath = Path
+		  Engram.mConsoleSafe = True
 		  Return Engram
 		End Function
 	#tag EndMethod
