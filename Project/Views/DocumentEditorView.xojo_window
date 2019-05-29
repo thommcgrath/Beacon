@@ -404,7 +404,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub CleanupAutosave()
-		  Dim AutosaveFile As FolderItem = Self.mAutosaveFile
+		  Dim AutosaveFile As FolderItem = Self.AutosaveFile()
 		  If AutosaveFile <> Nil And AutosaveFile.Exists Then
 		    AutosaveFile.Delete
 		    Self.mAutosaveFile = Nil
