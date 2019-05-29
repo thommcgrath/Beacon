@@ -9,7 +9,7 @@ Begin BeaconDialog PresetModifierEditor
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   400
+   Height          =   434
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -38,7 +38,7 @@ Begin BeaconDialog PresetModifierEditor
       InitialParent   =   ""
       InitialValue    =   ""
       Italic          =   False
-      Left            =   152
+      Left            =   212
       ListIndex       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -52,11 +52,11 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   122
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   428
+      Width           =   368
    End
    Begin RangeField QualityField
       AcceptTabs      =   False
@@ -75,7 +75,7 @@ Begin BeaconDialog PresetModifierEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   152
+      Left            =   212
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -98,7 +98,7 @@ Begin BeaconDialog PresetModifierEditor
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
-      Value           =   0
+      Value           =   0.0
       Visible         =   True
       Width           =   80
    End
@@ -135,7 +135,7 @@ Begin BeaconDialog PresetModifierEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   120
+      Width           =   180
    End
    Begin UITweaks.ResizedTextField QuantityField
       AcceptTabs      =   False
@@ -154,7 +154,7 @@ Begin BeaconDialog PresetModifierEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   152
+      Left            =   212
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -213,7 +213,7 @@ Begin BeaconDialog PresetModifierEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   120
+      Width           =   180
    End
    Begin UITweaks.ResizedLabel GroupLabel
       AutoDeactivate  =   True
@@ -244,11 +244,11 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   122
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   120
+      Width           =   180
    End
    Begin UITweaks.ResizedTextField GroupNameField
       AcceptTabs      =   False
@@ -267,7 +267,7 @@ Begin BeaconDialog PresetModifierEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   152
+      Left            =   212
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -286,12 +286,12 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   120
+      Top             =   154
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   428
+      Width           =   368
    End
    Begin DelayedTextField GroupPatternField
       AcceptTabs      =   False
@@ -310,7 +310,7 @@ Begin BeaconDialog PresetModifierEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   152
+      Left            =   212
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -329,12 +329,12 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   154
+      Top             =   188
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   428
+      Width           =   368
    End
    Begin UITweaks.ResizedLabel GroupNameLabel
       AutoDeactivate  =   True
@@ -365,11 +365,11 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   120
+      Top             =   154
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   120
+      Width           =   180
    End
    Begin UITweaks.ResizedLabel GroupPatternLabel
       AutoDeactivate  =   True
@@ -400,11 +400,11 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   154
+      Top             =   188
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   120
+      Width           =   180
    End
    Begin BeaconListbox MatchesList
       AutoDeactivate  =   True
@@ -431,7 +431,7 @@ Begin BeaconDialog PresetModifierEditor
       InitialParent   =   ""
       InitialValue    =   ""
       Italic          =   False
-      Left            =   152
+      Left            =   212
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -442,6 +442,7 @@ Begin BeaconDialog PresetModifierEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   11
@@ -450,12 +451,12 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   188
+      Top             =   222
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   428
+      Width           =   368
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -488,11 +489,11 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   188
+      Top             =   222
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   120
+      Width           =   180
    End
    Begin UITweaks.ResizedPushButton ActionButton
       AutoDeactivate  =   True
@@ -520,7 +521,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   360
+      Top             =   394
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -552,9 +553,87 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   360
+      Top             =   394
       Transparent     =   False
       Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedLabel BlueprintLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   14
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Blueprint Chance Multiplier:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   88
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   180
+   End
+   Begin UITweaks.ResizedTextField BlueprintField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   212
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "1.00"
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   88
+      Transparent     =   False
+      Underline       =   False
+      UseFocusRing    =   True
       Visible         =   True
       Width           =   80
    End
@@ -568,6 +647,7 @@ End
 		  
 		  Self.QualityField.Value = Self.mPreset.QualityModifier(Self.mEditID)
 		  Self.QuantityField.Text = Format(Self.mPreset.QuantityMultiplier(Self.mEditID), "0.00")
+		  Self.BlueprintField.Text = Format(Self.mPreset.BlueprintMultiplier(Self.mEditID), "0.00")
 		End Sub
 	#tag EndEvent
 
@@ -740,8 +820,9 @@ End
 		  Self.QualityField.CheckValue
 		  Dim QualityModifier As Integer = Self.QualityField.Value
 		  Dim QuantityMultiplier As Double = CDbl(Self.QuantityField.Text)
+		  Dim BlueprintMultiplier As Double = CDbl(Self.BlueprintField.Text)
 		  
-		  If QualityModifier = 0 And QuantityMultiplier = 1 Then
+		  If QualityModifier = 0 And QuantityMultiplier = 1 And BlueprintMultiplier = 1 Then
 		    BeaconUI.ShowAlert("This modifier has no effect", "There's no reason to add this modifier, because it does not change the quality or quantity of items.")
 		    Return
 		  End If
@@ -768,6 +849,7 @@ End
 		  Self.mPreset.ClearModifier(Self.mEditID)
 		  Self.mPreset.QualityModifier(Modifier) = QualityModifier
 		  Self.mPreset.QuantityMultiplier(Modifier) = QuantityMultiplier
+		  Self.mPreset.BlueprintMultiplier(Modifier) = BlueprintMultiplier
 		  
 		  Self.mCancelled = False
 		  Self.Hide

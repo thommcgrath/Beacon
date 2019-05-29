@@ -8,6 +8,24 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub BlueprintMultiplier(Modifier As Beacon.PresetModifier, Assigns Value As Double)
+		  Self.BlueprintMultiplier(Modifier.ModifierID) = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub BlueprintMultiplier(ModifierID As Text, Assigns Value As Double)
+		  If Self.mModifierValues = Nil Then
+		    Self.mModifierValues = New Xojo.Core.Dictionary
+		  End If
+		  
+		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  Dict.Value("Blueprint") = Value
+		  Self.mModifierValues.Value(ModifierID) = Dict
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ClearModifier(Modifier As Beacon.PresetModifier)
 		  Self.ClearModifier(Modifier.ModifierID)
 		End Sub

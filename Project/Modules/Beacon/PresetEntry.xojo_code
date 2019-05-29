@@ -19,6 +19,7 @@ Inherits Beacon.SetEntry
 		  Self.mAvailability = Beacon.Maps.All.Mask
 		  Self.mRespectQualityModifier = True
 		  Self.mRespectQuantityMultiplier = True
+		  Self.mRespectBlueprintMultiplier = True
 		End Sub
 	#tag EndMethod
 
@@ -33,6 +34,7 @@ Inherits Beacon.SetEntry
 		  Self.mAvailability = Source.mAvailability
 		  Self.mRespectQualityModifier = Source.mRespectQualityModifier
 		  Self.mRespectQuantityMultiplier = Source.mRespectQuantityMultiplier
+		  Self.mRespectBlueprintMultiplier = Source.mRespectBlueprintMultiplier
 		End Sub
 	#tag EndMethod
 
@@ -58,6 +60,7 @@ Inherits Beacon.SetEntry
 		  Dict.Value("Availability") = Self.mAvailability
 		  Dict.Value("RespectQualityModifier") = Self.mRespectQualityModifier
 		  Dict.Value("RespectQuantityMultiplier") = Self.mRespectQuantityMultiplier
+		  Dict.Value("RespectBlueprintMultiplier") = Self.mRespectBlueprintMultiplier
 		  Return Dict
 		End Function
 	#tag EndMethod
@@ -73,8 +76,21 @@ Inherits Beacon.SetEntry
 		  Entry.mAvailability = Dict.Lookup("Availability", Entry.mAvailability)
 		  Entry.mRespectQualityModifier = Dict.Lookup("RespectQualityModifier", Entry.mRespectQualityModifier)
 		  Entry.mRespectQuantityMultiplier = Dict.Lookup("RespectQuantityMultiplier", Entry.mRespectQuantityMultiplier)
+		  Entry.mRespectBlueprintMultiplier = Dict.Lookup("RespectBlueprintMultiplier", Entry.mRespectBlueprintMultiplier)
 		  Return Entry
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function RespectBlueprintMultiplier() As Boolean
+		  Return Self.mRespectBlueprintMultiplier
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RespectBlueprintMultiplier(Assigns Value As Boolean)
+		  Self.mRespectBlueprintMultiplier = Value
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -135,6 +151,10 @@ Inherits Beacon.SetEntry
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mRespectBlueprintMultiplier As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mRespectQualityModifier As Boolean
 	#tag EndProperty
 
@@ -144,6 +164,11 @@ Inherits Beacon.SetEntry
 
 
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="RawWeight"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="ChanceToBeBlueprint"
 			Group="Behavior"
@@ -196,11 +221,6 @@ Inherits Beacon.SetEntry
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Weight"
-			Group="Behavior"
-			Type="Double"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

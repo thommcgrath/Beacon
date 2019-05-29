@@ -107,11 +107,13 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim ActiveModifiers() As Text = Preset.ActiveModifierIDs
 		  Dim QuantityMultipliers() As Double
 		  Dim QualityModifiers() As Integer
+		  Dim BlueprintMultipliers() As Double
 		  For Each ModifierID As Text In ActiveModifiers
 		    Dim Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
 		    If Modifier <> Nil And Modifier.Matches(ForLootSource) Then
 		      QuantityMultipliers.Append(Preset.QuantityMultiplier(ModifierID))
 		      QualityModifiers.Append(Preset.QualityModifier(ModifierID))
+		      BlueprintMultipliers.Append(Preset.BlueprintMultiplier(ModifierID))
 		    End If
 		  Next
 		  
@@ -152,6 +154,14 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		      Next
 		      Entry.MinQuantity = Round(MinQuantityRaw)
 		      Entry.MaxQuantity = Round(MaxQuantityRaw)
+		    End If
+		    
+		    If Entry.CanBeBlueprint And Entry.RespectBlueprintMultiplier Then
+		      Dim BlueprintChanceRaw As Double = Entry.ChanceToBeBlueprint
+		      For Each Multiplier As Double In BlueprintMultipliers
+		        BlueprintChanceRaw = BlueprintChanceRaw * Multiplier
+		      Next
+		      Entry.ChanceToBeBlueprint = Max(Min(BlueprintChanceRaw, 1.0), 0.0)
 		    End If
 		    
 		    Set.Append(New Beacon.SetEntry(Entry))

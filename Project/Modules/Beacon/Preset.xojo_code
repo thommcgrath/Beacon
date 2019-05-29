@@ -12,6 +12,23 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function BlueprintMultiplier(Modifier As Beacon.PresetModifier) As Double
+		  Return Self.BlueprintMultiplier(Modifier.ModifierID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function BlueprintMultiplier(ModifierID As Text) As Double
+		  If Self.mModifierValues = Nil Then
+		    Return 1.0
+		  End If
+		  
+		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  Return Dict.Lookup("Blueprint", 1.0)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mLabel = "Untitled Preset"
 		  Self.mGrouping = "Miscellaneous"
@@ -126,8 +143,9 @@ Implements Beacon.Countable
 		      Dim ModifierID As Text = Set.Key
 		      Dim Quality As Integer = Item.Lookup("Quality", 0)
 		      Dim Quantity As Double = Item.Lookup("Quantity", 1.0)
+		      Dim Blueprint As Double = Item.Lookup("Blueprint", 1.0)
 		      
-		      If Quality = 0 And Quantity = 1 Then
+		      If Quality = 0 And Quantity = 1 And Blueprint = 1 Then
 		        Continue
 		      End If
 		      
@@ -140,6 +158,7 @@ Implements Beacon.Countable
 		        Dim ModifierDict As New Xojo.Core.Dictionary
 		        ModifierDict.Value("Quality") = Quality
 		        ModifierDict.Value("Quantity") = Quantity
+		        ModifierDict.Value("Blueprint") = Blueprint
 		        Preset.mModifierValues.Value(ID) = ModifierDict
 		      Next
 		    Next
