@@ -257,6 +257,7 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
+		    Self.mExpertMode = True
 		    Self.RunNextTask()
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)
@@ -311,7 +312,11 @@ Implements Beacon.DeploymentEngine
 		      Return
 		    End If
 		    
-		    Self.RunNextTask()
+		    If Not Self.mExpertMode Then
+		      Self.mWatchForStatusStopCallbackKey = CallLater.Schedule(10000, AddressOf WatchStatusForStop)
+		    Else
+		      Self.RunNextTask()
+		    End If
 		  Catch Err As RuntimeException
 		    Self.SetError(Err)
 		    Return
@@ -335,23 +340,28 @@ Implements Beacon.DeploymentEngine
 		    Dim GameServer As Xojo.Core.Dictionary = Data.Value("gameserver")
 		    
 		    Self.mServerStatus = GameServer.Value("status")
+		    If Self.mInitialServerStatus = "" Then
+		      Self.mInitialServerStatus = Self.mServerStatus
+		    End If
 		    Select Case Self.mServerStatus
 		    Case "started"
 		      // Stop
-		      Self.mStartOnFinish = True
-		      Self.StopServer()
-		    Case "starting"
-		      // Wait
-		      Self.mStartOnFinish = True
-		      Self.mWatchForStatusStopCallbackKey = CallLater.Schedule(5000, AddressOf WatchStatusForStop)
-		    Case "stopping"
+		      Self.mWatchForStatusStopCallbackKey = CallLater.Schedule(5000, AddressOf StopServer)
+		    Case "starting", "restarting", "stopping"
 		      // Wait
 		      Self.mWatchForStatusStopCallbackKey = CallLater.Schedule(5000, AddressOf WatchStatusForStop)
 		    Case "stopped"
-		      // Ok to continue
+		      // Ok to continue... maybe
 		      Dim Settings As Xojo.Core.Dictionary = GameServer.Value("settings")
 		      Dim GeneralSettings As Xojo.Core.Dictionary = Settings.Value("general")
 		      Self.mExpertMode = GeneralSettings.Value("expertMode") = "true"
+		      
+		      If Self.mDidRebuildStart = False And Self.mExpertMode = False Then
+		        // Since the server is not in expert mode, issue a start to rebuild the ini, just in case
+		        Self.mDidRebuildStart = True
+		        Self.StartServer(True)
+		        Return
+		      End If
 		      
 		      Dim StartParams As Xojo.Core.Dictionary = Settings.Value("start-param")
 		      For Each ConfigValue As Beacon.ConfigValue In Self.mCommandLineOptions
@@ -595,7 +605,7 @@ Implements Beacon.DeploymentEngine
 		  Self.mServiceID = ServiceID
 		  Self.mAccessToken = OAuthData.Value("Access Token")
 		  
-		  Self.AppendTask(AddressOf WatchStatusForStop, AddressOf DownloadLogFile, AddressOf WaitNitradoIdle, AddressOf MakeConfigBackup, AddressOf EnableExpertMode, AddressOf SetNextCommandLineParam, AddressOf DownloadGameIni, AddressOf DownloadGameUserSettingsIni, AddressOf UploadGameIni, AddressOf UploadGameUserSettingsIni, AddressOf StartServer)
+		  Self.AppendTask(AddressOf WatchStatusForStop, AddressOf DownloadLogFile, AddressOf WaitNitradoIdle, AddressOf MakeConfigBackup, AddressOf EnableExpertMode, AddressOf SetNextCommandLineParam, AddressOf DownloadGameIni, AddressOf DownloadGameUserSettingsIni, AddressOf UploadGameIni, AddressOf UploadGameUserSettingsIni, AddressOf StartServerIfNeeded)
 		End Sub
 	#tag EndMethod
 
@@ -704,7 +714,7 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h0
 		Function ServerIsStarting() As Boolean
-		  Return Self.mStartOnFinish
+		  Return Self.mInitialServerStatus = "started" Or Self.mInitialServerStatus = "starting"
 		End Function
 	#tag EndMethod
 
@@ -749,8 +759,8 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub StartServer()
-		  If Not Self.mStartOnFinish Then
+		Private Sub StartServer(Force As Boolean)
+		  If Force = False And Not Self.ServerIsStarting Then
 		    Self.RunNextTask()
 		    Return
 		  End If
@@ -764,6 +774,12 @@ Implements Beacon.DeploymentEngine
 		  FormData.Value("message") = "Server started by Beacon (https://beaconapp.cc)"
 		  
 		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers/restart", FormData, AddressOf Callback_ServerStart, Nil, Headers)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub StartServerIfNeeded()
+		  Self.StartServer(False)
 		End Sub
 	#tag EndMethod
 
@@ -888,6 +904,10 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDidRebuildStart As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mErrored As Boolean
 	#tag EndProperty
 
@@ -916,6 +936,14 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mHasBeenStartedRecently As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mInitialServerStatus As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mLabel As Text
 	#tag EndProperty
 
@@ -937,10 +965,6 @@ Implements Beacon.DeploymentEngine
 
 	#tag Property, Flags = &h21
 		Private mServiceID As Integer
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mStartOnFinish As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
