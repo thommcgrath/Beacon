@@ -173,7 +173,7 @@ case 'GET':
 			echo '</div>';
 		}
 	} else {
-		BeaconCommon::Redirect('https://github.com/thommcgrath/Beacon/issues', true);
+		BeaconCommon::Redirect(BeaconCommon::AbsoluteURL('/help/contact'), true);
 	}
 	break;
 case 'POST':
