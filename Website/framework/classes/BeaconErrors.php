@@ -32,6 +32,10 @@ abstract class BeaconErrors {
 	}
 	
 	public static function HandleError(int $errno, string $errstr, string $errfile, int $errline) {
+		if ((error_reporting() & $errno) !== $errno) {
+			return true;
+		}
+		
 		if (static::$secure_mode) {
 			switch ($errno) {
 			case E_NOTICE:
