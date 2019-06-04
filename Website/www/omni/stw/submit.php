@@ -41,7 +41,7 @@ if ($results->RecordCount() >= 1) {
 // Encrypt the address symmetrically
 $key = BeaconCommon::GetGlobal('Email_Encryption_Key');
 try {
-	$encrypted_email = BeaconEncryption::BlowfishEncrypt($key, $decrypted_email);
+	$encrypted_email = BeaconEncryption::SymmetricEncrypt($key, $decrypted_email);
 } catch (Exception $e) {
 	http_response_code(400);
 	echo json_encode(array('error' => 'Failed to encrypt email address.'));
@@ -50,7 +50,7 @@ try {
 
 // Confirm we can decrypt the email
 try {
-	$test = BeaconEncryption::BlowfishDecrypt($key, $encrypted_email);
+	$test = BeaconEncryption::SymmetricDecrypt($key, $encrypted_email);
 } catch (Exception $e) {
 	http_response_code(400);
 	echo json_encode(array('error' => 'There was a problem verifying the email address encryption status.'));

@@ -94,6 +94,18 @@ document.addEventListener('DOMContentLoaded', function(event) {
 	document.getElementById('username_field').addEventListener('input', function(ev) {
 		document.getElementById('username_action_button').disabled = this.value.trim() == '';
 	});
+	
+	var passwordConfirmCheck = function(ev) {
+		var currentPasswordField = document.getElementById('password_current_field');
+		var newPasswordField = document.getElementById('password_initial_field');
+		var confirmPasswordField = document.getElementById('password_confirm_field');
+		var passwordActionButton = document.getElementById('password_action_button');
+		passwordActionButton.disabled = currentPasswordField.value.trim() == '' || newPasswordField.value.trim() == '' || newPasswordField.value != confirmPasswordField.value;
+	};
+	
+	document.getElementById('password_current_field').addEventListener('input', passwordConfirmCheck);
+	document.getElementById('password_initial_field').addEventListener('input', passwordConfirmCheck);
+	document.getElementById('password_confirm_field').addEventListener('input', passwordConfirmCheck);
 });
 </script>
 <?php

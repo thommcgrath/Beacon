@@ -28,7 +28,7 @@ abstract class BeaconEmail {
 		);
 		$body = "--$boundary\r\n" . implode("\r\n--$boundary\r\n", $parts) . "\r\n--$boundary--";
 		
-		return mail($recipient, $subject, $body, $headers, '-f forgotmyparachute@beaconapp.cc');
+		return mail($recipient, $subject, $body, $headers, '-f noreply@beaconapp.cc');
 	}
 }
 

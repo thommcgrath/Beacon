@@ -33,6 +33,7 @@ Inherits Beacon.Engram
 		  
 		  Self.mPath = Path
 		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
+		  Self.mConsoleSafe = True // We don't know this for sure, but responsibility is on the user
 		End Sub
 	#tag EndMethod
 

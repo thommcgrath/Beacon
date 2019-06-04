@@ -1,66 +1,6 @@
 #tag Module
 Protected Module BeaconEncryption
 	#tag Method, Flags = &h1
-		Protected Function BlowfishDecrypt(Key As Xojo.Core.MemoryBlock, Data As Xojo.Core.MemoryBlock) As Xojo.Core.MemoryBlock
-		  If Data.Size < BeaconEncryption.BlowfishHeader.Size Then
-		    Dim Err As New Xojo.Crypto.CryptoException
-		    Err.Reason = "Data is too short"
-		    Raise Err
-		  End If
-		  
-		  Dim Header As BeaconEncryption.BlowfishHeader = Data.Left(BeaconEncryption.BlowfishHeader.Size)
-		  If Header.MagicByte <> BeaconEncryption.BlowfishMagicByte Then
-		    Dim Err As New Xojo.Crypto.CryptoException
-		    Err.Reason = "Data is not properly encrypted"
-		    Raise Err
-		  End If
-		  If Header.Version > BeaconEncryption.BlowfishVersion Then
-		    Dim Err As New Xojo.Crypto.CryptoException
-		    Err.Reason = "Encryption is too new"
-		    Raise Err
-		  End If
-		  
-		  Data = Data.Mid(Header.Size)
-		  
-		  Dim Crypt As New M_Crypto.Blowfish_MTC(Beacon.ConvertMemoryBlock(Key))
-		  Crypt.SetInitialVector(Beacon.ConvertMemoryBlock(Header.Vector))
-		  Data = Beacon.ConvertMemoryBlock(Crypt.DecryptCBC(Beacon.ConvertMemoryBlock(Data)))
-		  If Data.Size > Header.Length Then
-		    Data = Data.Left(Header.Length)
-		  End If
-		  
-		  Dim ComputedChecksum As UInt32 = Beacon.CRC32(Data)
-		  If ComputedChecksum <> Header.Checksum Then
-		    Dim Err As New Xojo.Crypto.CryptoException
-		    Err.Reason = "CRC32 checksum failed on decrypted data."
-		    Raise Err
-		  End If
-		  
-		  Return Data
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
-		Protected Function BlowfishEncrypt(Key As Xojo.Core.MemoryBlock, Data As Xojo.Core.MemoryBlock) As Xojo.Core.MemoryBlock
-		  Dim Header As New BeaconEncryption.BlowfishHeader
-		  Header.MagicByte = BlowfishMagicByte
-		  Header.Version = BlowfishVersion
-		  Header.Vector = Xojo.Crypto.GenerateRandomBytes(8)
-		  Header.Length = Data.Size
-		  Header.Checksum = Beacon.CRC32(Data)
-		  
-		  Dim Output As New Xojo.Core.MutableMemoryBlock(0)
-		  Output.Append(Header)
-		  
-		  Dim Crypt As New M_Crypto.Blowfish_MTC(Beacon.ConvertMemoryBlock(Key))
-		  Crypt.SetInitialVector(Beacon.ConvertMemoryBlock(Header.Vector))
-		  Output.Append(Beacon.ConvertMemoryBlock(Crypt.EncryptCBC(Beacon.ConvertMemoryBlock(Data))))
-		  
-		  Return Output
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h1
 		Protected Sub GenerateKeyPair()
 		  
 		End Sub
@@ -156,14 +96,65 @@ Protected Module BeaconEncryption
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function SymmetricDecrypt(Key As Xojo.Core.MemoryBlock, Data As Xojo.Core.MemoryBlock) As Xojo.Core.MemoryBlock
+		  Dim Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
+		  If Header = Nil Then
+		    Dim Err As New Xojo.Crypto.CryptoException
+		    Err.Reason = "Data is not properly encrypted"
+		    Raise Err
+		  End If
+		  
+		  Data = Data.Mid(Header.Size)
+		  
+		  Select Case Header.Version
+		  Case 1
+		    Dim Crypt As New M_Crypto.Blowfish_MTC(Beacon.ConvertMemoryBlock(Key))
+		    Crypt.SetInitialVector(Beacon.ConvertMemoryBlock(Header.Vector))
+		    Data = Beacon.ConvertMemoryBlock(Crypt.DecryptCBC(Beacon.ConvertMemoryBlock(Data)))
+		  Case 2
+		    Dim Crypt As New M_Crypto.AES_MTC(Beacon.ConvertMemoryBlock(Key), M_Crypto.AES_MTC.EncryptionBits.Bits256)
+		    Crypt.SetInitialVector(Beacon.ConvertMemoryBlock(Header.Vector))
+		    Data = Beacon.ConvertMemoryBlock(Crypt.DecryptCBC(Beacon.ConvertMemoryBlock(Data)))
+		  End Select
+		  If Data.Size > Header.Length Then
+		    Data = Data.Left(Header.Length)
+		  End If
+		  
+		  Dim ComputedChecksum As UInt32 = Beacon.CRC32(Data)
+		  If ComputedChecksum <> Header.Checksum Then
+		    Dim Err As New Xojo.Crypto.CryptoException
+		    Err.Reason = "CRC32 checksum failed on decrypted data."
+		    Raise Err
+		  End If
+		  
+		  Return Data
+		End Function
+	#tag EndMethod
 
-	#tag Constant, Name = BlowfishLittleEndian, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
+	#tag Method, Flags = &h1
+		Protected Function SymmetricEncrypt(Key As Xojo.Core.MemoryBlock, Data As Xojo.Core.MemoryBlock) As Xojo.Core.MemoryBlock
+		  Dim Header As New BeaconEncryption.SymmetricHeader(Data)
+		  
+		  Dim Output As New Xojo.Core.MutableMemoryBlock(0)
+		  Output.Append(Header.Encoded)
+		  
+		  Dim Crypt As New M_Crypto.AES_MTC(Beacon.ConvertMemoryBlock(Key), M_Crypto.AES_MTC.EncryptionBits.Bits256)
+		  Crypt.SetInitialVector(Beacon.ConvertMemoryBlock(Header.Vector))
+		  Output.Append(Beacon.ConvertMemoryBlock(Crypt.EncryptCBC(Beacon.ConvertMemoryBlock(Data))))
+		  
+		  Return Output
+		End Function
+	#tag EndMethod
+
+
+	#tag Constant, Name = SymmetricLittleEndian, Type = Boolean, Dynamic = False, Default = \"False", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = BlowfishMagicByte, Type = Double, Dynamic = False, Default = \"&h8A", Scope = Private
+	#tag Constant, Name = SymmetricMagicByte, Type = Double, Dynamic = False, Default = \"&h8A", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = BlowfishVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag Constant, Name = SymmetricVersion, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 

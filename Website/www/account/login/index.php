@@ -110,7 +110,7 @@ function SetupPrivateKeyImport(string $user_id, string $encrypted_private_key, s
 	
 	try {
 		$key = BeaconEncryption::RSADecrypt(Beacon::GetConfig('Beacon_Private_Key'), $secret);
-		$decrypted_private_key = BeaconEncryption::BlowfishDecrypt($key, $encrypted_private_key);
+		$decrypted_private_key = BeaconEncryption::SymmetricDecrypt($key, $encrypted_private_key);
 		$test_value = BeaconCommon::GenerateUUID();
 		$encrypted_test_value = BeaconEncryption::RSAEncrypt($user->PublicKey(), $test_value);
 		$decrypted_test_value = BeaconEncryption::RSADecrypt($decrypted_private_key, $encrypted_test_value);

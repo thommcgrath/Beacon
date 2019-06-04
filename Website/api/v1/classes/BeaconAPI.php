@@ -130,7 +130,8 @@ abstract class BeaconAPI {
 				} elseif (BeaconUser::ValidateEmail($username)) {
 					// password authorization
 					$user = BeaconUser::GetByEmail($username);
-					if (is_null($user) == false && $user->TestPassword($password)) {
+					$upgrade = isset($_SERVER['HTTP_X_BEACON_UPGRADE_ENCRYPTION']) && boolval($_SERVER['HTTP_X_BEACON_UPGRADE_ENCRYPTION']);
+					if (is_null($user) == false && $user->TestPassword($password, $upgrade)) {
 						self::$user_id = $user->UserID();
 						self::$auth_style = self::AUTH_STYLE_EMAIL_WITH_PASSWORD;
 						$authorized = true;

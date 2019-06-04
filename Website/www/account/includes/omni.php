@@ -4,7 +4,7 @@ $has_purchased = $user->OmniVersion() >= BeaconCommon::CurrentOmniVersion();
 
 if (!$has_purchased) {
 	echo '<div class="small_section"><p>You have not purchased Beacon Omni. <a href="/omni/">Learn more about Beacon Omni here.</a></p></div>';
-	exit;
+	return;
 }
 
 BeaconTemplate::StartStyles(); ?>

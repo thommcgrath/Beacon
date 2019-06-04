@@ -140,7 +140,7 @@ Begin BeaconSubview PresetEditorView
       TabStop         =   True
       Top             =   61
       Transparent     =   False
-      Value           =   2
+      Value           =   1
       Visible         =   True
       Width           =   740
       BeginSegmented SegmentedControl MapSelector
@@ -171,9 +171,9 @@ Begin BeaconSubview PresetEditorView
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   True
-         ColumnCount     =   4
+         ColumnCount     =   5
          ColumnsResizable=   False
-         ColumnWidths    =   "30,*,100,120"
+         ColumnWidths    =   "30,*,100,120,100"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
@@ -189,7 +189,7 @@ Begin BeaconSubview PresetEditorView
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   " 	Engram	Quantity	Quality"
+         InitialValue    =   " 	Engram	Quantity	Quality	Blueprint %"
          Italic          =   False
          Left            =   20
          LockBottom      =   True
@@ -243,7 +243,7 @@ Begin BeaconSubview PresetEditorView
          TabIndex        =   2
          TabPanelIndex   =   2
          TabStop         =   True
-         Text            =   "Checking the box next to a quantity or quality will allow the values to be adjusted by modifiers."
+         Text            =   "Checking the box next to a quantity, quality, or blueprint chance will allow the values to be adjusted by modifiers."
          TextAlign       =   1
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
@@ -622,9 +622,9 @@ Begin BeaconSubview PresetEditorView
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   True
-         ColumnCount     =   3
+         ColumnCount     =   4
          ColumnsResizable=   False
-         ColumnWidths    =   "50%,25%,25%"
+         ColumnWidths    =   "40%,20%,20%,20%"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   -1
@@ -640,7 +640,7 @@ Begin BeaconSubview PresetEditorView
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   "Group	Quality Change	Quantity Multiplier"
+         InitialValue    =   "Group	Quality Change	Quantity Multiplier	Blueprint % Multiplier"
          Italic          =   False
          Left            =   20
          LockBottom      =   True
@@ -1015,8 +1015,10 @@ End
 		  Self.ContentsList.Cell(Index, Self.ColumnDescription) = Entry.Label
 		  Self.ContentsList.Cell(Index, Self.ColumnQuantity) = if(Entry.MinQuantity = Entry.MaxQuantity, Format(Entry.MinQuantity, "0"), Format(Entry.MinQuantity, "0") + "-" + Format(Entry.MaxQuantity, "0"))
 		  Self.ContentsList.Cell(Index, Self.ColumnQuality) = if(Entry.MinQuality = Entry.MaxQuality, Language.LabelForQuality(Entry.MinQuality), Language.LabelForQuality(Entry.MinQuality, True) + "-" + Language.LabelForQuality(Entry.MaxQuality, True))
+		  Self.ContentsList.Cell(Index, Self.ColumnBlueprint) = if(Entry.CanBeBlueprint, Str(Entry.ChanceToBeBlueprint, "0%"), "N/A")
 		  Self.ContentsList.CellCheck(Index, Self.ColumnQuantity) = Entry.RespectQuantityMultiplier
 		  Self.ContentsList.CellCheck(Index, Self.ColumnQuality) = Entry.RespectQualityModifier
+		  Self.ContentsList.CellCheck(Index, Self.ColumnBlueprint) = Entry.RespectBlueprintMultiplier
 		  
 		  If SelectIt Then
 		    Self.ContentsList.Selected(Index) = True
@@ -1142,8 +1144,10 @@ End
 		    
 		    Dim QuantityMultiplier As Double = Self.mPreset.QuantityMultiplier(Modifier)
 		    Dim QualityModifier As Integer = Self.mPreset.QualityModifier(Modifier)
+		    Dim BlueprintMultiplier As Double = Self.mPreset.BlueprintMultiplier(Modifier)
 		    
 		    Dim QuantityLabel As Text = "x " + QuantityMultiplier.ToText(Xojo.Core.Locale.Current)
+		    Dim BlueprintLabel As Text = "x " + BlueprintMultiplier.ToText(Xojo.Core.Locale.Current)
 		    Dim QualityLabel As Text
 		    If QualityModifier = 0 Then
 		      QualityLabel = "No Change"
@@ -1151,7 +1155,7 @@ End
 		      QualityLabel = QualityModifier.ToText(Xojo.Core.Locale.Current, "+0;-0") + " Tier" + If(Xojo.Math.Abs(QualityModifier) <> 1, "s", "")
 		    End If
 		    
-		    Self.ModifiersList.AddRow(Modifier.Label, QualityLabel, QuantityLabel)
+		    Self.ModifiersList.AddRow(Modifier.Label, QualityLabel, QuantityLabel, BlueprintLabel)
 		    Self.ModifiersList.RowTag(Self.ModifiersList.LastIndex) = Modifier.ModifierID
 		  Next
 		  
@@ -1182,6 +1186,9 @@ End
 		Private mUpdating As Boolean
 	#tag EndProperty
 
+
+	#tag Constant, Name = ColumnBlueprint, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = ColumnDescription, Type = Double, Dynamic = False, Default = \"1", Scope = Private
 	#tag EndConstant
@@ -1280,6 +1287,7 @@ End
 		  Me.ColumnType(Self.ColumnIncluded) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnQuantity) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnQuality) = Listbox.TypeCheckbox
+		  Me.ColumnType(Self.ColumnBlueprint) = Listbox.TypeCheckbox
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -1354,6 +1362,25 @@ End
 		      Dim Entry As Beacon.PresetEntry = Me.RowTag(Row)
 		      If Entry.RespectQualityModifier <> Checked Then
 		        Entry.RespectQualityModifier = Checked
+		        Self.ContentsChanged = True
+		      End If
+		    End If
+		  Case Self.ColumnBlueprint
+		    Dim Checked As Boolean = Me.CellCheck(Row, Column)
+		    
+		    If ChangeAll Then
+		      For I As Integer = Me.ListCount - 1 DownTo 0
+		        Dim Entry As Beacon.PresetEntry = Me.RowTag(I)
+		        If Entry.RespectBlueprintMultiplier <> Checked Then
+		          Entry.RespectBlueprintMultiplier = Checked
+		          Me.CellCheck(I, Column) = Checked
+		          Self.ContentsChanged = True
+		        End If
+		      Next
+		    Else
+		      Dim Entry As Beacon.PresetEntry = Me.RowTag(Row)
+		      If Entry.RespectBlueprintMultiplier <> Checked Then
+		        Entry.RespectBlueprintMultiplier = Checked
 		        Self.ContentsChanged = True
 		      End If
 		    End If
@@ -1624,6 +1651,7 @@ End
 		    Dim Dict As New Xojo.Core.Dictionary
 		    Dict.Value("Quantity") = Self.mPreset.QuantityMultiplier(ModifierID)
 		    Dict.Value("Quality") = Self.mPreset.QualityModifier(ModifierID)
+		    Dict.Value("Blueprint") = Self.mPreset.BlueprintMultiplier(ModifierID)
 		    Modifiers.Value(ModifierID) = Dict
 		  Next
 		  
@@ -1644,8 +1672,15 @@ End
 		      Dim ModifierID As Text = Entry.Key
 		      Dim Dict As Xojo.Core.Dictionary = Entry.Value
 		      
-		      Self.mPreset.QuantityMultiplier(ModifierID) = Dict.Value("Quantity")
-		      Self.mPreset.QualityModifier(ModifierID) = Dict.Value("Quality")
+		      If Dict.HasKey("Quantity") Then
+		        Self.mPreset.QuantityMultiplier(ModifierID) = Dict.Value("Quantity")
+		      End If
+		      If Dict.HasKey("Quality") Then
+		        Self.mPreset.QualityModifier(ModifierID) = Dict.Value("Quality")
+		      End If
+		      If Dict.HasKey("Blueprint") Then
+		        Self.mPreset.BlueprintMultiplier(ModifierID) = Dict.Value("Blueprint")
+		      End If
 		    Next
 		    
 		    Self.UpdateUI()

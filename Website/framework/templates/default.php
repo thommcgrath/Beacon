@@ -64,7 +64,7 @@ if (empty($description)) {
 				<p><a class="external_logo" href="https://thezaz.com/"><img class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('thezaz-color.svg'); ?>" height="120"></a></p>
 				<p>Copyright 2016-<?php echo date('Y'); ?></p>
 				<p><a class="external_logo" href="https://github.com/thommcgrath/Beacon" title="GitHub"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('github-color.svg'); ?>"></a><a class="external_logo" href="/discord.php" title="Discord"><img height="24" class="white-on-dark" src="<?php echo BeaconCommon::AssetURI('discord-color.svg'); ?>"></a></p>
-				<p>Get in touch using <a href="mailto:forgotmyparachute@beaconapp.cc">forgotmyparachute@beaconapp.cc</a>.<span class="smaller"><br><a href="/help/about_user_privacy">Privacy Policy</a></span></p>
+				<p>Get in touch using <a href="/help/contact">our support form</a>.<span class="smaller"><br><a href="/help/about_user_privacy">Privacy Policy</a></span></p>
 			</div>
 		</div>
 		<div id="explore_container">
