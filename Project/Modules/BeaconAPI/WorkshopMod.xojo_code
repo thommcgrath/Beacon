@@ -1,8 +1,8 @@
 #tag Class
 Protected Class WorkshopMod
 	#tag Method, Flags = &h0
-		Function AsDictionary() As Dictionary
-		  Dim Dict As New Dictionary
+		Function AsDictionary() As Xojo.Core.Dictionary
+		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("mod_id") = Self.mModID
 		  If Self.mPullURL <> "" Then
 		    Dict.Value("pull_url") = Self.mPullURL
@@ -12,7 +12,7 @@ Protected Class WorkshopMod
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfirmationCode() As String
+		Function ConfirmationCode() As Text
 		  Return Self.mConfirmationCode
 		End Function
 	#tag EndMethod
@@ -24,13 +24,13 @@ Protected Class WorkshopMod
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfirmURL() As String
+		Function ConfirmURL() As Text
 		  Return Self.mConfirmURL
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Dictionary)
+		Sub Constructor(Source As Xojo.Core.Dictionary)
 		  Self.mConfirmationCode = Source.Value("confirmation_code")
 		  Self.mConfirmed = Source.Value("confirmed")
 		  Self.mConfirmURL = Source.Value("confirm_url")
@@ -46,19 +46,19 @@ Protected Class WorkshopMod
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function EngramsURL() As String
+		Function EngramsURL() As Text
 		  Return Self.mEngramsURL
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModID() As String
+		Function ModID() As Text
 		  Return Self.mModID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As String
+		Function Name() As Text
 		  Return Self.mName
 		End Function
 	#tag EndMethod
@@ -69,25 +69,25 @@ Protected Class WorkshopMod
 		    Return 1
 		  End If
 		  
-		  Return StrComp(Self.mModID, Other.mModID, 0)
+		  Return Self.mModID.Compare(Other.mModID)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ResourceURL() As String
+		Function ResourceURL() As Text
 		  Return Self.mResourceURL
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function WorkshopURL() As String
+		Function WorkshopURL() As Text
 		  Return Self.mWorkshopURL
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mConfirmationCode As String
+		Private mConfirmationCode As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -95,31 +95,31 @@ Protected Class WorkshopMod
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mConfirmURL As String
+		Private mConfirmURL As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEngramsURL As String
+		Private mEngramsURL As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModID As String
+		Private mModID As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mName As String
+		Private mName As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPullURL As String
+		Private mPullURL As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mResourceURL As String
+		Private mResourceURL As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mWorkshopURL As String
+		Private mWorkshopURL As Text
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -136,7 +136,7 @@ Protected Class WorkshopMod
 			  End If
 			End Set
 		#tag EndSetter
-		PullURL As String
+		PullURL As Text
 	#tag EndComputedProperty
 
 
@@ -173,11 +173,6 @@ Protected Class WorkshopMod
 			Group="Position"
 			InitialValue="0"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="PullURL"
-			Group="Behavior"
-			Type="Text"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

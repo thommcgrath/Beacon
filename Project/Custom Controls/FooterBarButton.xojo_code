@@ -2,14 +2,14 @@
 Protected Class FooterBarButton
 Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
-		Sub AddObserver(Observer As ObservationKit.Observer, Key As String)
+		Sub AddObserver(Observer As ObservationKit.Observer, Key As Text)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
-		    Self.mObservers = New Dictionary
+		    Self.mObservers = New Xojo.Core.Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Dim Refs() As Xojo.Core.WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -26,8 +26,9 @@ Implements ObservationKit.Observable
 		    End If
 		  Next
 		  
-		  Refs.Append(New WeakRef(Observer))
+		  Refs.Append(Xojo.Core.WeakRef.Create(Observer))
 		  Self.mObservers.Value(Key) = Refs
+		  
 		End Sub
 	#tag EndMethod
 
@@ -57,14 +58,14 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotifyObservers(Key As String, Value As Variant)
+		Sub NotifyObservers(Key As Text, Value As Auto)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
-		    Self.mObservers = New Dictionary
+		    Self.mObservers = New Xojo.Core.Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Dim Refs() As Xojo.Core.WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -82,14 +83,14 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As String)
+		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As Text)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
-		    Self.mObservers = New Dictionary
+		    Self.mObservers = New Xojo.Core.Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Dim Refs() As Xojo.Core.WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -102,6 +103,7 @@ Implements ObservationKit.Observable
 		  Next
 		  
 		  Self.mObservers.Value(Key) = Refs
+		  
 		End Sub
 	#tag EndMethod
 
@@ -197,7 +199,7 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mObservers As Dictionary
+		Private mObservers As Xojo.Core.Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -207,7 +209,7 @@ Implements ObservationKit.Observable
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return New REALbasic.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
+			  Return New Xojo.Core.Rect(Self.Left, Self.Top, Self.Width, Self.Height)
 			End Get
 		#tag EndGetter
 		#tag Setter
@@ -218,7 +220,7 @@ Implements ObservationKit.Observable
 			  Self.Height = Value.Height
 			End Set
 		#tag EndSetter
-		Rect As REALbasic.Rect
+		Rect As Xojo.Core.Rect
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h0
@@ -272,37 +274,6 @@ Implements ObservationKit.Observable
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Alignment"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Caption"
-			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Enabled"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Height"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Icon"
-			Group="Behavior"
-			Type="Picture"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Width"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior

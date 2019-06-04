@@ -44,7 +44,6 @@ Begin DiscoveryView FTPDiscoveryView
       Scope           =   2
       TabIndex        =   17
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -555,7 +554,6 @@ Begin DiscoveryView FTPDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   True
          Top             =   161
          Transparent     =   False
          Value           =   0
@@ -790,7 +788,6 @@ Begin DiscoveryView FTPDiscoveryView
          HasBackColor    =   False
          Height          =   204
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Left            =   21
          LockBottom      =   True
@@ -896,7 +893,6 @@ Begin DiscoveryView FTPDiscoveryView
       End
    End
    Begin BeaconAPI.Socket BrowseSocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -921,14 +917,14 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DetectPath(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
+		Private Sub APICallback_DetectPath(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused RawReply
 		  
-		  Dim Info As Introspection.TypeInfo
-		  Dim Dict As Dictionary
+		  Dim Info As Xojo.Introspection.TypeInfo
+		  Dim Dict As Xojo.Core.Dictionary
 		  If Details <> Nil Then
-		    Info = Introspection.GetType(Details)
-		    If Info.FullName = "Dictionary" Then
+		    Info = Xojo.Introspection.GetType(Details)
+		    If Info.FullName = "Xojo.Core.Dictionary" Then
 		      Dict = Details
 		    End If
 		  End If
@@ -939,10 +935,10 @@ End
 		  
 		  If Success Then
 		    // Discovery was able to find the path and the user doesn't need to do any further work.
-		    Dim Path As String = Dict.Value("path")
+		    Dim Path As Text = Dict.Value("path")
 		    
 		    Dim Engines(0) As Beacon.DiscoveryEngine
-		    Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, Path, App.IdentityManager.CurrentIdentity)
+		    Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, Path, App.Identity)
 		    Self.ShouldFinish(Engines)
 		    
 		    Return
@@ -963,7 +959,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ListPath(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
+		Private Sub APICallback_ListPath(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
 		  
@@ -972,10 +968,10 @@ End
 		    Return
 		  End If
 		  
-		  Dim Dict As Dictionary = Details
-		  Dim Files() As Variant = Dict.Value("files")
+		  Dim Dict As Xojo.Core.Dictionary = Details
+		  Dim Files() As Auto = Dict.Value("files")
 		  Dim Children() As String
-		  For Each Child As String In Files
+		  For Each Child As Text In Files
 		    Children.Append(Child)
 		  Next
 		  Self.Browser.AppendChildren(Children)
@@ -989,7 +985,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function FormDataFromProfile() As Dictionary
+		Private Function FormDataFromProfile() As Xojo.Core.Dictionary
 		  If Self.mProfile = Nil Then
 		    Return Nil
 		  End If
@@ -1063,9 +1059,9 @@ End
 		  Components(Components.Ubound) = "" // Remove Config but retain trailing slash
 		  
 		  // Should now equal the "Saved" directory
-		  Dim InitialPath As String = Join(Components, "/")
+		  Dim InitialPath As String = Components.Join("/")
 		  Dim Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath, App.IdentityManager.CurrentIdentity)
+		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath.ToText, App.Identity)
 		  Self.ShouldFinish(Engines)
 		End Sub
 	#tag EndEvent
@@ -1080,18 +1076,18 @@ End
 #tag Events Browser
 	#tag Event
 		Sub NeedsChildrenForPath(Path As String)
-		  Dim Fields As Dictionary = Self.FormDataFromProfile()
+		  Dim Fields As Xojo.Core.Dictionary = Self.FormDataFromProfile()
 		  If Fields = Nil Then
 		    Return
 		  End If
-		  Fields.Value("path") = Path
+		  Fields.Value("path") = Path.ToText
 		  
 		  // For now, append an empty list
 		  Dim Empty() As String
 		  Me.AppendChildren(Empty)
 		  
 		  Dim Request As New BeaconAPI.Request("ftp", "GET", Fields, WeakAddressOf APICallback_ListPath)
-		  Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Request.Sign(App.Identity)
 		  Self.BrowseSocket.Start(Request)
 		End Sub
 	#tag EndEvent
@@ -1112,10 +1108,10 @@ End
 	#tag Event
 		Sub Action()
 		  Self.mProfile = New Beacon.FTPServerProfile()
-		  Self.mProfile.Host = Self.ServerHostField.Text
+		  Self.mProfile.Host = Self.ServerHostField.Text.ToText
 		  Self.mProfile.Port = Val(Self.ServerPortField.Text)
-		  Self.mProfile.Username = Self.ServerUserField.Text
-		  Self.mProfile.Password = Self.ServerPassField.Text
+		  Self.mProfile.Username = Self.ServerUserField.Text.ToText
+		  Self.mProfile.Password = Self.ServerPassField.Text.ToText
 		  
 		  Select Case Self.ServerModeMenu.ListIndex
 		  Case 1
@@ -1130,9 +1126,9 @@ End
 		  
 		  Self.ViewPanel.Value = Self.PageDiscovering
 		  
-		  Dim Fields As Dictionary = Self.FormDataFromProfile()
+		  Dim Fields As Xojo.Core.Dictionary = Self.FormDataFromProfile()
 		  Dim Request As New BeaconAPI.Request("ftp/path", "GET", Fields, WeakAddressOf APICallback_DetectPath)
-		  Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Request.Sign(App.Identity)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndEvent

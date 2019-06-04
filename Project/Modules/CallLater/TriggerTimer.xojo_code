@@ -17,7 +17,7 @@ Inherits Timer
 
 
 	#tag Property, Flags = &h0
-		Argument As Variant
+		Argument As Auto
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -74,12 +74,6 @@ Inherits Timer
 			Group="Behavior"
 			InitialValue="1000"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Key"
-			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

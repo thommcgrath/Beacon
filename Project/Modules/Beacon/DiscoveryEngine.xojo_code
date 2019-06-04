@@ -7,7 +7,7 @@ Protected Interface DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CommandLineOptions() As Dictionary
+		Function CommandLineOptions() As Xojo.Core.DIctionary
 		  
 		End Function
 	#tag EndMethod
@@ -25,13 +25,13 @@ Protected Interface DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniContent() As String
+		Function GameIniContent() As Text
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameUserSettingsIniContent() As String
+		Function GameUserSettingsIniContent() As Text
 		  
 		End Function
 	#tag EndMethod
@@ -43,7 +43,7 @@ Protected Interface DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As String
+		Function Name() As Text
 		  
 		End Function
 	#tag EndMethod
@@ -55,7 +55,7 @@ Protected Interface DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Status() As String
+		Function Status() As Text
 		  
 		End Function
 	#tag EndMethod

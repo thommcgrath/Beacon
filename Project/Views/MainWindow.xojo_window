@@ -44,7 +44,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   25
       Transparent     =   False
       Value           =   0
@@ -62,7 +61,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          HasBackColor    =   False
          Height          =   375
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Views"
          Left            =   41
          LockBottom      =   True
@@ -157,7 +155,6 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       HasBackColor    =   False
       Height          =   400
       HelpTag         =   ""
-      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   -259
       LockBottom      =   True
@@ -201,7 +198,7 @@ End
 		    
 		    Dim Dialog As New MessageDialog
 		    Dialog.Title = ""
-		    Dialog.Message = "You have " + Str(NumChanges, "-0") + " documents with unsaved changes. Do you want to review these changes before quitting?"
+		    Dialog.Message = "You have " + NumChanges.ToText + " documents with unsaved changes. Do you want to review these changes before quitting?"
 		    Dialog.Explanation = "If you don't review your documents, all your changes will be lost."
 		    Dialog.ActionButton.Caption = "Review Changes…"
 		    Dialog.CancelButton.Visible = True
@@ -237,22 +234,22 @@ End
 		Sub Moved()
 		  If Self.mOpened Then
 		    Dim Bounds As REALbasic.Rect = Self.Bounds
-		    Preferences.MainWindowPosition = New REALbasic.Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
+		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
-		  Dim Bounds As REALbasic.Rect = Preferences.MainWindowPosition
+		  Dim Bounds As Xojo.Core.Rect = Preferences.MainWindowPosition
 		  If Bounds <> Nil Then
 		    // Find the best screen
 		    Dim IdealScreen As Screen = Screen(0)
 		    If ScreenCount > 1 Then
 		      Dim MaxArea As Integer
 		      For I As Integer = 0 To ScreenCount - 1
-		        Dim ScreenBounds As New REALbasic.Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
-		        Dim Intersection As REALbasic.Rect = ScreenBounds.Intersection(Bounds)
+		        Dim ScreenBounds As New Xojo.Core.Rect(Screen(I).AvailableLeft, Screen(I).AvailableTop, Screen(I).AvailableWidth, Screen(I).AvailableHeight)
+		        Dim Intersection As Xojo.Core.Rect = ScreenBounds.Intersection(Bounds)
 		        If Intersection = Nil Then
 		          Continue
 		        End If
@@ -267,7 +264,7 @@ End
 		      Next
 		    End If
 		    
-		    Dim AvailableBounds As New REALbasic.Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
+		    Dim AvailableBounds As New Xojo.Core.Rect(IdealScreen.AvailableLeft, IdealScreen.AvailableTop, IdealScreen.AvailableWidth, IdealScreen.AvailableHeight)
 		    
 		    Dim Width As Integer = Min(Max(Bounds.Width, Self.MinWidth), Self.MaxWidth, AvailableBounds.Width)
 		    Dim Height As Integer = Min(Max(Bounds.Height, Self.MinHeight), Self.MaxHeight, AvailableBounds.Height)
@@ -286,7 +283,7 @@ End
 		Sub Resized()
 		  If Self.mOpened Then
 		    Dim Bounds As REALbasic.Rect = Self.Bounds
-		    Preferences.MainWindowPosition = New REALbasic.Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
+		    Preferences.MainWindowPosition = New Xojo.Core.Rect(Bounds.Left, Bounds.Top, Bounds.Width, Bounds.Height)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -416,7 +413,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source

@@ -154,7 +154,7 @@ Implements NotificationKit.Receiver
 			Dim Dialog As New OpenDialog
 			Dialog.Filter = BeaconFileTypes.IniFile + BeaconFileTypes.BeaconPreset + BeaconFileTypes.JsonFile + BeaconFileTypes.BeaconIdentity
 			
-			Dim File As FolderItem = Dialog.ShowModal
+			Dim File As Beacon.FolderItem = Dialog.ShowModal
 			If File <> Nil Then
 			Self.OpenFile(File, True)
 			End If
@@ -215,16 +215,17 @@ Implements NotificationKit.Receiver
 			Return True
 			End If
 			
-			Dim Identity As Beacon.Identity = Self.IdentityManager.CurrentIdentity
-			Dim HardwareID As String = Beacon.HardwareID
-			Dim Signed As MemoryBlock = Identity.Sign(HardwareID)
+			Dim HardwareID As Text = Beacon.HardwareID
+			Dim SigningData As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(HardwareID)
+			Dim Signed As Xojo.Core.MemoryBlock = Identity.Sign(SigningData)
 			
-			Dim Dict As New Dictionary
+			Dim Identity As Beacon.Identity = Self.Identity
+			Dim Dict As New Xojo.Core.Dictionary
 			Dict.Value("UserID") = Identity.Identifier
-			Dict.Value("Signed") = EncodeHex(Signed)
+			Dict.Value("Signed") = Beacon.EncodeHex(Signed)
 			Dict.Value("Device") = HardwareID
 			
-			Dim JSON As String = Beacon.GenerateJSON(Dict)
+			Dim JSON As Text = Xojo.Data.GenerateJSON(Dict)
 			Dim Stream As TextOutputStream = TextOutputStream.Create(File)
 			Stream.Write(JSON)
 			Stream.Close
@@ -412,15 +413,15 @@ Implements NotificationKit.Receiver
 		    Return
 		  End If
 		  
-		  Dim Info As Introspection.TypeInfo = Introspection.GetType(Error)
-		  Dim Stack() As String = Error.Stack
-		  While Stack.Ubound >= 0 And (Stack(0) = "RuntimeRaiseException" Or (Stack(0).BeginsWith("Raise") And Stack(0).EndsWith("Exception")))
+		  Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Error)
+		  Dim Stack() As Xojo.Core.StackFrame = Error.CallStack
+		  While Stack.Ubound >= 0 And (Stack(0).Name = "RuntimeRaiseException" Or (Stack(0).Name.BeginsWith("Raise") And Stack(0).Name.EndsWith("Exception")))
 		    Stack.Remove(0)
 		  Wend
 		  
 		  Dim Location As String = "Unknown"
 		  If Stack.Ubound >= 0 Then
-		    Location = Stack(0)
+		    Location = Stack(0).Name
 		  End If
 		  Dim Reason As String = Error.Reason
 		  If Reason = "" Then
@@ -429,10 +430,10 @@ Implements NotificationKit.Receiver
 		  
 		  Self.Log("Unhandled " + Info.FullName + " in " + Location + ": " + Reason)
 		  
-		  Dim Dict As New Dictionary
+		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("Object") = Error
 		  Dict.Value("Reason") = Error.Explanation
-		  Dict.Value("Location") = Location
+		  Dict.Value("Location") = Location.ToText
 		  Dict.Value("Type") = Info.FullName
 		  Dict.Value("Trace") = Stack
 		  If Self.IdentityManager <> Nil And Self.IdentityManager.CurrentIdentity <> Nil Then
@@ -453,7 +454,7 @@ Implements NotificationKit.Receiver
 		    Return False
 		  End If
 		  
-		  If Beacon.OAuth2Client.HandleURL(URL) Then
+		  If Beacon.OAuth2Client.HandleURL(URL.ToText) Then
 		    Return True
 		  End If
 		  
@@ -497,16 +498,16 @@ Implements NotificationKit.Receiver
 		      Break
 		    End Select
 		  Else
-		    Dim LegacyURL As String = "thezaz.com/beacon/documents.php/"
-		    Dim TextURL As String = URL
+		    Dim LegacyURL As Text = "thezaz.com/beacon/documents.php/"
+		    Dim TextURL As Text = URL.ToText
 		    Dim Idx As Integer = TextURL.IndexOf(LegacyURL)
 		    If Idx > -1 Then
-		      Dim DocID As String = TextURL.Mid(Idx + LegacyURL.Length)
+		      Dim DocID As Text = TextURL.Mid(Idx + LegacyURL.Length)
 		      URL = BeaconAPI.URL("/document.php/" + DocID)
 		    End If
 		    
 		    Dim FileURL As String = "https://" + URL
-		    MainWindow.Documents.OpenURL(FileURL)
+		    MainWindow.Documents.OpenURL(FileURL.ToText)
 		  End If
 		  
 		  Return True
@@ -537,6 +538,18 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Attributes( Deprecated = "App.IdentityManager.CurrentIdentity" )  Function Identity() As Beacon.Identity
+		  Return Self.mIdentityManager.CurrentIdentity
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "App.IdentityManager.CurrentIdentity" )  Sub Identity(Assigns Value As Beacon.Identity)
+		  Self.mIdentityManager.CurrentIdentity = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IdentityManager() As IdentityManager
 		  Return Self.mIdentityManager
 		End Function
@@ -552,9 +565,9 @@ Implements NotificationKit.Receiver
 		  Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
 		  Stream.Close
 		  
-		  Dim Dict As Dictionary
+		  Dim Dict As Xojo.Core.Dictionary
 		  Try
-		    Dict = Beacon.ParseJSON(Contents)
+		    Dict = Xojo.Data.ParseJSON(Contents.ToText)
 		  Catch Err As RuntimeException
 		    ParentWindow.ShowAlert("Cannot import identity", "File is not an identity file.")
 		    Return
@@ -575,7 +588,7 @@ Implements NotificationKit.Receiver
 		    End If
 		  End If
 		  
-		  Self.IdentityManager.CurrentIdentity = Identity
+		  Self.Identity = Identity
 		End Sub
 	#tag EndMethod
 
@@ -686,8 +699,8 @@ Implements NotificationKit.Receiver
 		  
 		  Self.mLogLock.Enter
 		  
-		  Dim Now As New Date
-		  Dim DetailedMessage As String = Now.SQLDateTimeWithOffset + " " + &u9 + Message
+		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
+		  Dim DetailedMessage As String = Now.ToText + Str(Now.Nanosecond / 1000000000, ".0000000000") + " " + Now.TimeZone.Abbreviation + Chr(9) + Message
 		  
 		  #if DebugBuild
 		    System.DebugLog(DetailedMessage)
@@ -768,14 +781,14 @@ Implements NotificationKit.Receiver
 		Private Sub mUpdateChecker_UpdateAvailable(Sender As UpdateChecker, Version As String, PreviewText As String, Notes As String, URL As String, Signature As String)
 		  #Pragma Unused Sender
 		  
-		  Dim Data As New Dictionary
-		  Data.Value("Version") = Version
-		  Data.Value("Notes") = Notes
-		  Data.Value("Download") = URL
-		  Data.Value("Signature") = Signature
+		  Dim Data As New Xojo.Core.Dictionary
+		  Data.Value("Version") = Version.ToText
+		  Data.Value("Notes") = Notes.ToText
+		  Data.Value("Download") = URL.ToText
+		  Data.Value("Signature") = Signature.ToText
 		  
-		  Dim Notification As New Beacon.UserNotification("Beacon " + Version + " is now available!")
-		  Notification.SecondaryMessage = PreviewText
+		  Dim Notification As New Beacon.UserNotification("Beacon " + Version.ToText + " is now available!")
+		  Notification.SecondaryMessage = PreviewText.ToText
 		  Notification.ActionURL = "beacon://action/checkforupdate"
 		  Notification.UserData = Data
 		  Notification.DoNotResurrect = True
@@ -813,7 +826,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenFile(File As FolderItem, Import As Boolean)
+		Sub OpenFile(File As Beacon.FolderItem, Import As Boolean)
 		  If Self.mIdentityManager = Nil Or Self.mIdentityManager.CurrentIdentity = Nil Then
 		    Return
 		  End If
@@ -824,7 +837,7 @@ Implements NotificationKit.Receiver
 		  
 		  If File.IsType(BeaconFileTypes.JsonFile) Then
 		    Try
-		      Dim Content As String = File.Read(Encodings.UTF8)
+		      Dim Content As Text = File.Read(Xojo.Core.TextEncoding.UTF8)
 		      LocalData.SharedInstance.Import(Content)
 		    Catch Err As RuntimeException
 		      
@@ -864,7 +877,7 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub PresentException(Details As Variant)
+		Private Sub PresentException(Details As Auto)
 		  ExceptionWindow.Present(Details)
 		End Sub
 	#tag EndMethod
@@ -915,8 +928,8 @@ Implements NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowBugReporter(ExceptionHash As String = "")
-		  Dim Path As String = "/reportaproblem.php?build=" + Str(Self.BuildNumber, "0")
+		Sub ShowBugReporter(ExceptionHash As Text = "")
+		  Dim Path As Text = "/reportaproblem.php?build=" + Self.BuildNumber.ToText
 		  If ExceptionHash <> "" Then
 		    Path = Path + "&exception=" + ExceptionHash
 		  End If
@@ -950,7 +963,7 @@ Implements NotificationKit.Receiver
 
 	#tag Method, Flags = &h0
 		Sub ShowReleaseNotes()
-		  ShowURL(Beacon.WebURL("/history.php?stage=" + Str(Self.StageCode, "-0") + "#build" + Str(Self.BuildNumber, "-0")))
+		  ShowURL(Beacon.WebURL("/history.php?stage=" + Self.StageCode.ToText(Xojo.Core.Locale.Raw, "0") + "#build" + Self.BuildNumber.ToText(Xojo.Core.Locale.Raw, "0")))
 		End Sub
 	#tag EndMethod
 

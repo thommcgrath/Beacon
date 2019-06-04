@@ -225,19 +225,19 @@ Begin BeaconDialog DeveloperImportURLDialog
       Visible         =   False
       Width           =   16
    End
-   Begin URLConnection Socket
-      HTTPStatusCode  =   0
+   Begin Xojo.Net.HTTPSocket Socket
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
    End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window) As String
+		Shared Function Present(Parent As Window) As Text
 		  Dim Win As New DeveloperImportURLDialog
 		  Dim C As New Clipboard
 		  If C.TextAvailable And C.Text.Left(4) = "http" Then
@@ -245,7 +245,7 @@ End
 		  End If
 		  Win.SwapButtons()
 		  Win.ShowModalWithin(Parent.TrueWindow)
-		  Dim Content As String = Win.mContent
+		  Dim Content As Text = Win.mContent
 		  Win.Close
 		  Return Content
 		End Function
@@ -253,7 +253,7 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mContent As String
+		Private mContent As Text
 	#tag EndProperty
 
 
@@ -269,13 +269,13 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim URL As String = Trim(URLField.Text)
+		  Dim URL As Text = Trim(URLField.Text).ToText
 		  If URL.IndexOf("pasted.co/") > -1 Then
 		    Self.ShowAlert("Can't import from this url", "TinyPaste/pasted.co prevent pulling content from their pages. Instead, copy and paste the spawn codes into a text file and import that.")
 		    Return
 		  End If
 		  
-		  Self.Socket.Send("GET", Trim(URLField.Text))
+		  Self.Socket.Send("GET", Trim(URLField.Text).ToText)
 		  Spinner.Visible = True
 		  ActionButton.Enabled = False
 		  URLField.Enabled = False
@@ -292,16 +292,16 @@ End
 #tag EndEvents
 #tag Events Socket
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(err as RuntimeException)
 		  Spinner.Visible = False
 		  ActionButton.Enabled = True
 		  URLField.Enabled = True
 		  
-		  MsgBox("Error: " + e.Reason)
+		  MsgBox("Error: " + Err.Reason)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
 		  URLField.Text = URL
 		  
 		  Spinner.Visible = False
@@ -309,11 +309,11 @@ End
 		  URLField.Enabled = True
 		  
 		  If HTTPStatus <> 200 Then
-		    MsgBox("The content was not loaded correctly. HTTP status " + Str(HTTPStatus, "-0"))
+		    MsgBox("The content was not loaded correctly. HTTP status " + HTTPStatus.ToText)
 		    Return
 		  End If
 		  
-		  Self.mContent = Content
+		  Self.mContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
 		  
 		  // This could be a lot better.
 		  Self.mContent = Self.mContent.ReplaceAll("&apos;", "'")

@@ -190,12 +190,12 @@ Begin BeaconDialog LibraryEngramsURLDialog
       Visible         =   False
       Width           =   16
    End
-   Begin URLConnection Downloader
-      HTTPStatusCode  =   0
+   Begin Xojo.Net.HTTPSocket Downloader
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
    End
 End
 #tag EndWindow
@@ -239,7 +239,8 @@ End
 		  URLField.Enabled = False
 		  
 		  Downloader.ClearRequestHeaders
-		  Downloader.Send("GET", Trim(URLField.Text))
+		  Downloader.ValidateCertificates = True
+		  Downloader.Send("GET", Trim(URLField.Text).ToText)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -262,16 +263,16 @@ End
 #tag EndEvents
 #tag Events Downloader
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(err as RuntimeException)
 		  Spinner.Visible = False
 		  ActionButton.Enabled = True
 		  URLField.Enabled = True
 		  
-		  Self.ShowAlert("Unable to download", e.Reason)
+		  Self.ShowAlert("Unable to download", Err.Reason)
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
 		  URLField.Text = URL
 		  
 		  Spinner.Visible = False
@@ -279,11 +280,11 @@ End
 		  URLField.Enabled = True
 		  
 		  If HTTPStatus <> 200 Then
-		    Self.ShowAlert("Unable to download", "The content was not loaded correctly. HTTP status " + Str(HTTPStatus, "-0"))
+		    Self.ShowAlert("Unable to download", "The content was not loaded correctly. HTTP status " + HTTPStatus.ToText)
 		    Return
 		  End If
 		  
-		  Self.mContent = Content
+		  Self.mContent = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
 		  
 		  // This could be a lot better.
 		  Self.mContent = ReplaceAll(Self.mContent, "&apos;", "'")

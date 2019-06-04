@@ -62,7 +62,6 @@ Begin LibrarySubview LibraryPaneTools Implements NotificationKit.Receiver
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   2
@@ -260,12 +259,6 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
-	#tag ViewProperty
-		Name="Progress"
-		Group="Behavior"
-		InitialValue="ProgressNone"
-		Type="Double"
-	#tag EndViewProperty
 	#tag ViewProperty
 		Name="MinimumWidth"
 		Visible=true

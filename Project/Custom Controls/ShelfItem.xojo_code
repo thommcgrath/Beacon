@@ -2,14 +2,14 @@
 Protected Class ShelfItem
 Implements ObservationKit.Observable
 	#tag Method, Flags = &h0
-		Sub AddObserver(Observer As ObservationKit.Observer, Key As String)
+		Sub AddObserver(Observer As ObservationKit.Observer, Key As Text)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
-		    Self.mObservers = New Dictionary
+		    Self.mObservers = New Xojo.Core.Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Dim Refs() As Xojo.Core.WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -26,7 +26,7 @@ Implements ObservationKit.Observable
 		    End If
 		  Next
 		  
-		  Refs.Append(New WeakRef(Observer))
+		  Refs.Append(Xojo.Core.WeakRef.Create(Observer))
 		  Self.mObservers.Value(Key) = Refs
 		End Sub
 	#tag EndMethod
@@ -71,14 +71,14 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotifyObservers(Key As String, Value As Variant)
+		Sub NotifyObservers(Key As Text, Value As Auto)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
-		    Self.mObservers = New Dictionary
+		    Self.mObservers = New Xojo.Core.Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Dim Refs() As Xojo.Core.WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -96,14 +96,14 @@ Implements ObservationKit.Observable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As String)
+		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As Text)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
-		    Self.mObservers = New Dictionary
+		    Self.mObservers = New Xojo.Core.Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Dim Refs() As Xojo.Core.WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -159,7 +159,7 @@ Implements ObservationKit.Observable
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mObservers As Dictionary
+		Private mObservers As Xojo.Core.Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -328,19 +328,6 @@ Implements ObservationKit.Observable
 			Name="NotificationColor"
 			Group="Behavior"
 			Type="ShelfItem.NotificationColors"
-			EditorType="Enum"
-			#tag EnumValues
-				"0 - None"
-				"1 - Blue"
-				"2 - Brown"
-				"3 - Gray"
-				"4 - Green"
-				"5 - Orange"
-				"6 - Pink"
-				"7 - Purple"
-				"8 - Red"
-				"9 - Yellow"
-			#tag EndEnumValues
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="PulseAmount"

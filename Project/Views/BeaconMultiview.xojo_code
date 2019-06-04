@@ -23,7 +23,7 @@ Inherits BeaconWindow
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ShowPage(Index As Integer, UserData As Variant = Nil)
+		Sub ShowPage(Index As Integer, UserData As Auto = Nil)
 		  If Self.mCurrentIndex = Index Then
 		    Self.Show()
 		    Return

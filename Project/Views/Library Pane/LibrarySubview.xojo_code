@@ -13,10 +13,10 @@ Inherits BeaconSubview
 		    Return
 		  End If
 		  
-		  Dim ViewsToRemove() As String
+		  Dim ViewsToRemove() As Text
 		  Dim ViewsToAdd() As BeaconSubview
-		  For Each Entry As DictionaryMember In Self.mViews.Members
-		    Dim ID As String = Entry.Key
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mViews
+		    Dim ID As Text = Entry.Key
 		    Dim View As BeaconSubview = Entry.Value
 		    
 		    If View = Nil Or View.Closed Then
@@ -27,7 +27,7 @@ Inherits BeaconSubview
 		    End If
 		  Next
 		  
-		  For Each ID As String In ViewsToRemove
+		  For Each ID As Text In ViewsToRemove
 		    Self.mViews.Remove(ID)
 		  Next
 		  For Each View As BeaconSubview In ViewsToAdd
@@ -52,7 +52,7 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function HasView(ViewID As String) As Boolean
+		Function HasView(ViewID As Text) As Boolean
 		  If Self.mViews = Nil Then
 		    Return False
 		  End If
@@ -65,7 +65,7 @@ Inherits BeaconSubview
 	#tag Method, Flags = &h1
 		Protected Sub ShowView(View As BeaconSubview)
 		  If Self.mViews = Nil Then
-		    Self.mViews = New Dictionary
+		    Self.mViews = New Xojo.Core.Dictionary
 		  End If
 		  Self.mViews.Value(View.ViewID) = View
 		  RaiseEvent ShouldShowView(View)
@@ -73,7 +73,7 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function View(ViewID As String) As BeaconSubview
+		Function View(ViewID As Text) As BeaconSubview
 		  If Self.mViews = Nil Then
 		    Return Nil
 		  End If
@@ -98,7 +98,7 @@ Inherits BeaconSubview
 
 
 	#tag Property, Flags = &h21
-		Private mViews As Dictionary
+		Private mViews As Xojo.Core.Dictionary
 	#tag EndProperty
 
 

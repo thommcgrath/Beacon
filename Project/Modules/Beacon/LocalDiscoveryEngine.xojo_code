@@ -10,15 +10,15 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function CommandLineOptions() As Dictionary
+		Function CommandLineOptions() As Xojo.Core.DIctionary
 		  // Part of the Beacon.DiscoveryEngine interface.
 		  
-		  Return New Dictionary
+		  Return New Xojo.Core.Dictionary
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(GameIniContent As String, GameUserSettingsIniContent As String)
+		Sub Constructor(GameIniContent As Text, GameUserSettingsIniContent As Text)
 		  Self.mGameIniContent = GameIniContent
 		  Self.mGameUserSettingsIniContent = GameUserSettingsIniContent
 		End Sub
@@ -41,7 +41,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameIniContent() As String
+		Function GameIniContent() As Text
 		  // Part of the Beacon.DiscoveryEngine interface.
 		  
 		  Return Self.mGameIniContent
@@ -49,7 +49,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function GameUserSettingsIniContent() As String
+		Function GameUserSettingsIniContent() As Text
 		  // Part of the Beacon.DiscoveryEngine interface.
 		  
 		  Return Self.mGameUserSettingsIniContent
@@ -65,7 +65,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As String
+		Function Name() As Text
 		  Return "Local Content"
 		End Function
 	#tag EndMethod
@@ -77,7 +77,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Status() As String
+		Function Status() As Text
 		  Return "Finished"
 		End Function
 	#tag EndMethod
@@ -90,11 +90,11 @@ Implements Beacon.DiscoveryEngine
 
 
 	#tag Property, Flags = &h21
-		Private mGameIniContent As String
+		Private mGameIniContent As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniContent As String
+		Private mGameUserSettingsIniContent As Text
 	#tag EndProperty
 
 

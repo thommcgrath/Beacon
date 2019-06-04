@@ -68,7 +68,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function ShowURL(URL As String) As MiniBrowser
+		Shared Function ShowURL(URL As Text) As MiniBrowser
 		  Dim Win As New MiniBrowser
 		  Win.View.LoadURL(URL)
 		  Return Win
@@ -116,7 +116,7 @@ End
 		    Return False
 		  End If
 		  
-		  If Self.mHandler <> Nil And Self.mHandler.Invoke(URL) Then
+		  If Self.mHandler <> Nil And Self.mHandler.Invoke(URL.ToText) Then
 		    Return True
 		  End If
 		  

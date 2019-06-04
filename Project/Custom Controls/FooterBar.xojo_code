@@ -35,7 +35,7 @@ Implements ObservationKit.Observer
 		  Self.mMouseX = X
 		  Self.mMouseY = Y
 		  
-		  Dim Point As New REALbasic.Point(X, Y)
+		  Dim Point As New Xojo.Core.Point(X, Y)
 		  
 		  If Self.mPressTarget.Rect.Contains(Point) Then
 		    If Not Self.mMouseDown Then
@@ -70,7 +70,7 @@ Implements ObservationKit.Observer
 		    Self.Invalidate
 		  End If
 		  
-		  Dim Point As New REALbasic.Point(X, Y)
+		  Dim Point As New Xojo.Core.Point(X, Y)
 		  If Self.mPressTarget.Rect.Contains(Point) And Not Self.mNoActionOnRelease Then
 		    RaiseEvent Action(Self.mPressTarget)
 		  End If
@@ -97,7 +97,7 @@ Implements ObservationKit.Observer
 		    Button.Top = Button.Top + ContentTop
 		  Next
 		  
-		  Dim MousePoint As New REALbasic.Point(Self.mMouseX, Self.mMouseY)
+		  Dim MousePoint As New Xojo.Core.Point(Self.mMouseX, Self.mMouseY)
 		  If Self.mMouseDown And Self.mPressTarget <> Nil And Self.mPressTarget.Rect.Contains(MousePoint) Then
 		    G.ForeColor = &c000000CC
 		    G.FillRect(Self.mPressTarget.Left + 1, Self.mPressTarget.Top + 1, Self.mPressTarget.Width - 2, Self.mPressTarget.Height - 2)
@@ -133,7 +133,7 @@ Implements ObservationKit.Observer
 
 	#tag Method, Flags = &h0
 		Function Button(X As Integer, Y As Integer) As FooterBarButton
-		  Dim Point As New REALbasic.Point(X, Y)
+		  Dim Point As New Xojo.Core.Point(X, Y)
 		  For Each Button As FooterBarButton In Self.mButtons
 		    If Button.Rect.Contains(Point) Then
 		      Return Button
@@ -267,7 +267,7 @@ Implements ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source
@@ -332,7 +332,7 @@ Implements ObservationKit.Observer
 		  If UBound(LeftButtons) > -1 Then
 		    NextLeft = 0
 		    For Each Button As FooterBarButton In LeftButtons
-		      Dim Rect As New REALbasic.Rect(NextLeft, 0, Button.Width, G.Height)
+		      Dim Rect As New Xojo.Core.Rect(NextLeft, 0, Button.Width, G.Height)
 		      Dim Clip As Graphics = G.Clip(Rect.Left, Rect.Top, Rect.Width, Rect.Height)
 		      Self.DrawButton(Clip, Button, Enabled)
 		      Button.Rect = Rect
@@ -355,7 +355,7 @@ Implements ObservationKit.Observer
 		    NextLeft = NextLeft + 1
 		    
 		    For Each Button As FooterBarButton In CenterButtons
-		      Dim Rect As New REALbasic.Rect(NextLeft, 0, Button.Width, G.Height)
+		      Dim Rect As New Xojo.Core.Rect(NextLeft, 0, Button.Width, G.Height)
 		      Dim Clip As Graphics = G.Clip(Rect.Left, Rect.Top, Rect.Width, Rect.Height)
 		      Self.DrawButton(Clip, Button, Enabled)
 		      Button.Rect = Rect
@@ -378,7 +378,7 @@ Implements ObservationKit.Observer
 		      G.DrawLine(NextLeft, 0, NextLeft, G.Height)
 		      NextLeft = NextLeft + 1
 		      
-		      Dim Rect As New REALbasic.Rect(NextLeft, 0, Button.Width, G.Height)
+		      Dim Rect As New Xojo.Core.Rect(NextLeft, 0, Button.Width, G.Height)
 		      Dim Clip As Graphics = G.Clip(Rect.Left, Rect.Top, Rect.Width, Rect.Height)
 		      Self.DrawButton(Clip, Button, Enabled)
 		      Button.Rect = Rect

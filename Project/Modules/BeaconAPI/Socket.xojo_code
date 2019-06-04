@@ -2,7 +2,7 @@
 Protected Class Socket
 	#tag Method, Flags = &h1
 		Protected Sub AdvanceQueue()
-		  If Self.Queue.Ubound = -1 Then
+		  If UBound(Self.Queue) = -1 Then
 		    Self.Working = False
 		    Return
 		  End If
@@ -12,12 +12,18 @@ Protected Class Socket
 		  
 		  Self.ActiveRequest = Request
 		  
-		  Self.Socket = New URLConnection
-		  AddHandler Self.Socket.Error, WeakAddressOf Socket_Error
-		  AddHandler Self.Socket.ContentReceived, WeakAddressOf Socket_ContentReceived
-		  AddHandler Self.Socket.ReceivingProgressed, WeakAddressOf Socket_ReceivingProgressed
+		  #if TargetWin32
+		    // The socket does not reset itself correctly on Windows, so create a new one
+		    Self.Socket = New Xojo.Net.HTTPSocket
+		    Self.Socket.ValidateCertificates = True
+		    AddHandler Self.Socket.Error, WeakAddressOf Socket_Error
+		    AddHandler Self.Socket.PageReceived, WeakAddressOf Socket_PageReceived
+		    AddHandler Self.Socket.ReceiveProgress, WeakAddressOf Socket_ReceiveProgress
+		  #else
+		    Self.Socket.ClearRequestHeaders()
+		  #endif
 		  
-		  Dim URL As String = Request.URL
+		  Dim URL As Text = Request.URL
 		  If Request.Authenticated Then
 		    Self.Socket.RequestHeader("Authorization") = Request.AuthHeader
 		  End If
@@ -25,7 +31,7 @@ Protected Class Socket
 		  Self.Socket.RequestHeader("Cache-Control") = "no-cache"
 		  
 		  If Request.Method = "GET" Then
-		    Dim Query As String = Request.Query
+		    Dim Query As Text = Request.Query
 		    If Query <> "" Then
 		      URL = URL + "?" + Query
 		    End If
@@ -38,34 +44,53 @@ Protected Class Socket
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Constructor()
+		  Self.Socket = New Xojo.Net.HTTPSocket
+		  Self.Socket.ValidateCertificates = True
+		  AddHandler Self.Socket.Error, WeakAddressOf Socket_Error
+		  AddHandler Self.Socket.PageReceived, WeakAddressOf Socket_PageReceived
+		  AddHandler Self.Socket.ReceiveProgress, WeakAddressOf Socket_ReceiveProgress
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Destructor()
 		  CallLater.Cancel(Self.mAdvanceQueueCallbackKey)
 		  
-		  If Self.Socket <> Nil Then
-		    Self.Socket.Disconnect
-		    Self.Socket = Nil
-		  End If
+		  Self.Socket.Disconnect
+		  Self.Socket = Nil
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Socket_ContentReceived(Sender As URLConnection, URL As String, HTTPStatus As Integer, Content As String)
+		Private Sub Socket_Error(Sender As Xojo.Net.HTTPSocket, Err As RuntimeException)
+		  #Pragma Unused Sender
+		  
+		  Self.ActiveRequest.InvokeCallback(False, Err.Reason, Nil, 0, Nil)
+		  Self.ActiveRequest = Nil
+		  Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Socket_PageReceived(Sender As Xojo.Net.HTTPSocket, URL As Text, HTTPStatus As Integer, Content As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
-		  Dim Details As Variant
-		  If Content <> "" Then
+		  Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
+		  Dim Details As Auto
+		  If TextContent <> "" Then
 		    Try
-		      Details = Beacon.ParseJSON(Content)
-		    Catch Err As UnsupportedFormatException
-		      Dim Dict As New Dictionary
+		      Details = Xojo.Data.ParseJSON(TextContent)
+		    Catch Err As Xojo.Data.InvalidJSONException
+		      Dim Dict As New Xojo.Core.Dictionary
 		      Dict.Value("message") = "Invalid JSON"
-		      Dict.Value("details") = Content
+		      Dict.Value("details") = TextContent
 		      Details = Dict
 		      HTTPStatus = 500
 		    End Try
 		  Else
-		    Details = New Dictionary
+		    Details = New Xojo.Core.Dictionary
 		  End If
 		  
 		  If HTTPStatus = 200 Then
@@ -75,8 +100,8 @@ Protected Class Socket
 		      NotificationKit.Post(Self.Notification_Unauthorized, Self.ActiveRequest)
 		    End If
 		    
-		    Dim Dict As Dictionary = Details
-		    Dim Message As String = Dict.Lookup("message", "")
+		    Dim Dict As Xojo.Core.Dictionary = Details
+		    Dim Message As Text = Dict.Lookup("message", "")
 		    Details = Dict.Lookup("details", Nil)
 		    Self.ActiveRequest.InvokeCallback(False, Message, Details, HTTPStatus, Content)
 		  End If
@@ -87,17 +112,7 @@ Protected Class Socket
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Socket_Error(Sender As URLConnection, Err As RuntimeException)
-		  #Pragma Unused Sender
-		  
-		  Self.ActiveRequest.InvokeCallback(False, Err.Reason, Nil, 0, "")
-		  Self.ActiveRequest = Nil
-		  Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Socket_ReceivingProgressed(Sender As URLConnection, BytesReceived As Int64, BytesTotal As Int64, NewData As String)
+		Private Sub Socket_ReceiveProgress(Sender As Xojo.Net.HTTPSocket, BytesReceived As Int64, BytesTotal As Int64, NewData As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Sender
 		  #Pragma Unused NewData
 		  
@@ -108,7 +123,7 @@ Protected Class Socket
 	#tag Method, Flags = &h0
 		Sub Start(Request As BeaconAPI.Request)
 		  Self.Queue.Append(Request)
-		  If Self.Queue.Ubound = 0 And Self.Working = False Then
+		  If UBound(Self.Queue) = 0 And Self.Working = False Then
 		    Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
 		    Self.Working = True
 		  End If
@@ -167,11 +182,11 @@ Protected Class Socket
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private Socket As URLConnection
+		Private Socket As Xojo.Net.HTTPSocket
 	#tag EndProperty
 
 
-	#tag Constant, Name = Notification_Unauthorized, Type = String, Dynamic = False, Default = \"Beacon API Unauthorized", Scope = Public
+	#tag Constant, Name = Notification_Unauthorized, Type = Text, Dynamic = False, Default = \"Beacon API Unauthorized", Scope = Public
 	#tag EndConstant
 
 

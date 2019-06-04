@@ -1,19 +1,37 @@
 #tag Class
-Class DictionaryMember
+Protected Class TextListIterator
+Implements Xojo.Core.Iterator
 	#tag Method, Flags = &h0
-		Sub Constructor(Key As Variant, Value As Variant)
-		  Self.Key = Key
-		  Self.Value = Value
+		Sub Constructor(List As Beacon.TextList)
+		  Self.mItems = List
+		  Self.mIndex = -1
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function MoveNext() As Boolean
+		  // Part of the Xojo.Core.Iterator interface.
+		  
+		  Self.mIndex = Self.mIndex + 1
+		  Return Self.mIndex <= Self.mItems.Ubound
+		End Function
+	#tag EndMethod
 
-	#tag Property, Flags = &h0
-		Key As Variant
+	#tag Method, Flags = &h0
+		Function Value() As Auto
+		  // Part of the Xojo.Core.Iterator interface.
+		  
+		  Return Self.mItems(Self.mIndex)
+		End Function
+	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mIndex As Integer
 	#tag EndProperty
 
-	#tag Property, Flags = &h0
-		Value As Variant
+	#tag Property, Flags = &h21
+		Private mItems() As Text
 	#tag EndProperty
 
 
@@ -52,7 +70,7 @@ Class DictionaryMember
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Key"
+			Name="mIndex"
 			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty

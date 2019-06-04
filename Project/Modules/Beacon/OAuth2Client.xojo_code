@@ -1,7 +1,7 @@
 #tag Class
 Protected Class OAuth2Client
 	#tag Method, Flags = &h0
-		Function AccessToken() As String
+		Function AccessToken() As Text
 		  If Not Self.IsAuthenticated Then
 		    Return ""
 		  End If
@@ -11,8 +11,8 @@ Protected Class OAuth2Client
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AuthData() As Dictionary
-		  Dim Dict As New Dictionary
+		Function AuthData() As Xojo.Core.Dictionary
+		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("Access Token") = Self.mAccessToken
 		  Dict.Value("Refresh Token") = Self.mRefreshToken
 		  If Self.mExpiration = Nil Then
@@ -25,14 +25,14 @@ Protected Class OAuth2Client
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub AuthData(Assigns Dict As Dictionary)
+		Sub AuthData(Assigns Dict As Xojo.Core.Dictionary)
 		  If Dict = Nil Or Not Dict.HasAllKeys("Access Token", "Refresh Token", "Expiration") Then
 		    Return
 		  End If
 		  
 		  Self.mAccessToken = Dict.Value("Access Token")
 		  Self.mRefreshToken = Dict.Value("Refresh Token")
-		  Self.mExpiration = NewDateFromSecondsFrom1970(Dict.Value("Expiration"))
+		  Self.mExpiration = New Xojo.Core.Date(Dict.Value("Expiration"), New Xojo.Core.TimeZone(0))
 		End Sub
 	#tag EndMethod
 
@@ -49,7 +49,7 @@ Protected Class OAuth2Client
 		    Return
 		  End If
 		  
-		  Dim QueryParams As New Dictionary
+		  Dim QueryParams As New Xojo.Core.Dictionary
 		  QueryParams.Value("grant_type") = "refresh_token"
 		  QueryParams.Value("client_id") = Self.mClientID
 		  QueryParams.Value("refresh_token") = Self.mRefreshToken
@@ -60,7 +60,7 @@ Protected Class OAuth2Client
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function Authorization_Handler(URL As String) As Boolean
+		Private Function Authorization_Handler(URL As Text) As Boolean
 		  If Not URL.BeginsWith("oauth") Then
 		    Return False
 		  End If
@@ -76,7 +76,7 @@ Protected Class OAuth2Client
 		    Self.mBrowser = Nil
 		  End If
 		  
-		  Dim AccessToken, RefreshToken As String
+		  Dim AccessToken, RefreshToken As Text
 		  Dim Expires As UInteger
 		  
 		  Dim QueryPos As Integer = URL.IndexOf("?")
@@ -85,23 +85,23 @@ Protected Class OAuth2Client
 		    Return True
 		  End If
 		  
-		  Dim Path As String = URL.Left(QueryPos)
+		  Dim Path As Text = URL.Left(QueryPos)
 		  If Path <> "oauth/" + Self.mProvider Then
 		    Break
 		    RaiseEvent AuthenticationError
 		    Return True
 		  End If
 		  
-		  Dim QueryString As String = URL.SubString(QueryPos + 1)
-		  Dim Parts() As String = QueryString.Split("&")
-		  For Each Part As String In Parts
+		  Dim QueryString As Text = URL.Mid(QueryPos + 1)
+		  Dim Parts() As Text = QueryString.Split("&")
+		  For Each Part As Text In Parts
 		    Dim Idx As Integer = Part.IndexOf("=")
 		    If Idx = -1 Then
 		      Continue
 		    End If
 		    
-		    Dim Key As String = Beacon.URLDecode(Part.Left(Idx))
-		    Dim Value As String = Beacon.URLDecode(Part.SubString(Idx + 1))
+		    Dim Key As Text = Beacon.DecodeURLComponent(Part.Left(Idx))
+		    Dim Value As Text = Beacon.DecodeURLComponent(Part.Mid(Idx + 1))
 		    
 		    Select Case Key
 		    Case "access_token"
@@ -109,7 +109,7 @@ Protected Class OAuth2Client
 		    Case "refresh_token"
 		      RefreshToken = Value
 		    Case "expires_in"
-		      Expires = Val(Value)
+		      Expires = UInteger.FromText(Value)
 		    Else
 		      Break
 		    End Select
@@ -120,12 +120,9 @@ Protected Class OAuth2Client
 		    Return True
 		  End If
 		  
-		  Dim Now As New Date
-		  Now.TotalSeconds = Now.TotalSeconds + Expires
-		  
 		  Self.mAccessToken = AccessToken
 		  Self.mRefreshToken = RefreshToken
-		  Self.mExpiration = Now
+		  Self.mExpiration = New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970 + Expires, New Xojo.Core.TimeZone(0))
 		  
 		  RaiseEvent Authenticated
 		  
@@ -134,7 +131,7 @@ Protected Class OAuth2Client
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function AuthURL() As String
+		Private Function AuthURL() As Text
 		  Return Beacon.WebURL("/oauth/").Replace("https://", "https://api.")
 		End Function
 	#tag EndMethod
@@ -148,7 +145,7 @@ Protected Class OAuth2Client
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function HandleURL(URL As String) As Boolean
+		Shared Function HandleURL(URL As Text) As Boolean
 		  If Not URL.BeginsWith("oauth/") Then
 		    Return False
 		  End If
@@ -169,9 +166,9 @@ Protected Class OAuth2Client
 		    EndPos = URL.Length
 		  End If
 		  
-		  Dim RequestID As String = Beacon.URLDecode(URL.SubString(StartPos, EndPos - StartPos))
+		  Dim RequestID As Text = Beacon.DecodeURLComponent(URL.Mid(StartPos, EndPos - StartPos))
 		  If References.HasKey(RequestID) Then
-		    Dim Ref As WeakRef = References.Value(RequestID)
+		    Dim Ref As Xojo.Core.WeakRef = References.Value(RequestID)
 		    Call OAuth2Client(Ref.Value).Authorization_Handler(URL)
 		  End If
 		  
@@ -195,8 +192,8 @@ Protected Class OAuth2Client
 		    Return False
 		  End If
 		  
-		  Dim Now As New Date
-		  If Self.mExpiration.TotalSeconds <= Now.TotalSeconds Then
+		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
+		  If Self.mExpiration.SecondsFrom1970 <= Now.SecondsFrom1970 Then
 		    #If DebugBuild
 		      System.DebugLog("Not authenticated because expiration has passed")
 		    #EndIf
@@ -209,18 +206,18 @@ Protected Class OAuth2Client
 
 	#tag Method, Flags = &h21
 		Private Sub NewAuthorization()
-		  Dim URL As String = Self.AuthURL + "?provider=" + Beacon.URLEncode(Self.mProvider)
+		  Dim URL As Text = Self.AuthURL + "?provider=" + Beacon.EncodeURLComponent(Self.mProvider)
 		  Dim Browser As Beacon.WebView = RaiseEvent ShowURL(URL)
 		  If Browser = Nil Then
 		    If Self.References = Nil Then
-		      Self.References = New Dictionary
+		      Self.References = New Xojo.Core.Dictionary
 		    End If
 		    
 		    Self.mRequestID = Beacon.CreateUUID
-		    Dim Ref As WeakRef = New WeakRef(Self)
+		    Dim Ref As Xojo.Core.WeakRef = Xojo.Core.WeakRef.Create(Self)
 		    Self.References.Value(Self.mRequestID) = Ref
 		    
-		    ShowURL(URL + "&requestid=" + Beacon.URLEncode(Self.mRequestID))
+		    ShowURL(URL + "&requestid=" + Beacon.EncodeURLComponent(Self.mRequestID))
 		    Return
 		  End If
 		  Browser.URLHandler = AddressOf Authorization_Handler
@@ -229,13 +226,13 @@ Protected Class OAuth2Client
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function RedirectURI() As String
+		Private Function RedirectURI() As Text
 		  Return Self.AuthURL() + "callback.php"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Refresh_Callback(URL As String, Status As Integer, Content As String, Tag As Variant)
+		Private Sub Refresh_Callback(URL As Text, Status As Integer, Content As Xojo.Core.MemoryBlock, Tag As Auto)
 		  #Pragma Unused URL
 		  #Pragma Unused Tag
 		  
@@ -244,18 +241,18 @@ Protected Class OAuth2Client
 		    Return
 		  End If
 		  
+		  Dim Dict As Xojo.Core.Dictionary
 		  Try
-		    Dim Reply As Dictionary = Beacon.ParseJSON(Content)
-		    Dim Expiration As New Date
-		    Expiration.TotalSeconds = Expiration.TotalSeconds + Reply.Value("expires_in").IntegerValue
+		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content, False)
+		    Dict = Xojo.Data.ParseJSON(TextContent)
 		    
-		    Self.mAccessToken = Reply.Value("access_token").StringValue
-		    Self.mRefreshToken = Reply.Value("refresh_token").StringValue
-		    Self.mExpiration = Expiration
+		    Self.mAccessToken = Dict.Value("access_token")
+		    Self.mRefreshToken = Dict.Value("refresh_token")
+		    Self.mExpiration = New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970 + Dict.Value("expires_in"), New Xojo.Core.TimeZone(0))
 		    
-		    RaiseEvent Authenticated()
+		    RaiseEvent Authenticated
 		  Catch Err As RuntimeException
-		    RaiseEvent AuthenticationError()
+		    RaiseEvent AuthenticationError
 		  End Try
 		End Sub
 	#tag EndMethod
@@ -270,16 +267,16 @@ Protected Class OAuth2Client
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ShowURL(URL As String) As Beacon.WebView
+		Event ShowURL(URL As Text) As Beacon.WebView
 	#tag EndHook
 
 
 	#tag Property, Flags = &h21
-		Private mAccessToken As String
+		Private mAccessToken As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mAuthState As String
+		Private mAuthState As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -287,27 +284,27 @@ Protected Class OAuth2Client
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mClientID As String
+		Private mClientID As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEndpoint As String
+		Private mEndpoint As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExpiration As Date
+		Private mExpiration As Xojo.Core.Date
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mProvider As String
+		Private mProvider As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mRefreshToken As String
+		Private mRefreshToken As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mRequestID As String
+		Private mRequestID As Text
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -333,15 +330,15 @@ Protected Class OAuth2Client
 			  Self.mProvider = Value
 			End Set
 		#tag EndSetter
-		Provider As String
+		Provider As Text
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private Shared References As Dictionary
+		Private Shared References As Xojo.Core.Dictionary
 	#tag EndProperty
 
 
-	#tag Constant, Name = ProviderNitrado, Type = String, Dynamic = False, Default = \"Nitrado", Scope = Public
+	#tag Constant, Name = ProviderNitrado, Type = Text, Dynamic = False, Default = \"Nitrado", Scope = Public
 	#tag EndConstant
 
 
@@ -382,8 +379,7 @@ Protected Class OAuth2Client
 		#tag ViewProperty
 			Name="Provider"
 			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
+			Type="Text"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

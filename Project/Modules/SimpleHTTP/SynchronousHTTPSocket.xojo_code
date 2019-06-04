@@ -1,8 +1,21 @@
 #tag Class
 Protected Class SynchronousHTTPSocket
-Inherits URLConnection
+Inherits Xojo.Net.HTTPSocket
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub Error(err as RuntimeException)
+		  Self.mLastContent = Nil
+		  Self.mLastHTTPStatus = 0
+		  Self.mLastException = Err
+		  RaiseEvent Error(Err)
+		  If Self.mOriginThread <> Nil Then
+		    Self.mOriginThread.Resume
+		  End If
+		  Self.mOriginThread = Nil
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
 		  Self.mLastContent = Content
 		  Self.mLastHTTPStatus = HTTPStatus
 		  Self.mLastException = Nil
@@ -14,22 +27,9 @@ Inherits URLConnection
 		End Sub
 	#tag EndEvent
 
-	#tag Event
-		Sub Error(e As RuntimeException)
-		  Self.mLastContent = Nil
-		  Self.mLastHTTPStatus = 0
-		  Self.mLastException = e
-		  RaiseEvent Error(e)
-		  If Self.mOriginThread <> Nil Then
-		    Self.mOriginThread.Resume
-		  End If
-		  Self.mOriginThread = Nil
-		End Sub
-	#tag EndEvent
-
 
 	#tag Method, Flags = &h0
-		Function LastContent() As MemoryBlock
+		Function LastContent() As Xojo.Core.MemoryBlock
 		  Return Self.mLastContent
 		End Function
 	#tag EndMethod
@@ -47,7 +47,7 @@ Inherits URLConnection
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Send(Method As String, URL As String)
+		Sub Send(Method as Text, URL as Text)
 		  Self.mOriginThread = App.CurrentThread
 		  Super.Send(Method, URL)
 		  If Self.mOriginThread <> Nil Then
@@ -62,12 +62,12 @@ Inherits URLConnection
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event PageReceived(URL As String, HTTPStatus As Integer, Content As MemoryBlock)
+		Event PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
 	#tag EndHook
 
 
 	#tag Property, Flags = &h21
-		Private mLastContent As MemoryBlock
+		Private mLastContent As Xojo.Core.MemoryBlock
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -84,16 +84,6 @@ Inherits URLConnection
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="AllowCertificateValidation"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="HTTPStatusCode"
-			Group="Behavior"
-			Type="Integer"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Index"
 			Visible=true
@@ -125,6 +115,16 @@ Inherits URLConnection
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="ValidateCertificates"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="mLastHTTPStatus"
+			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior

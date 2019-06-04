@@ -10,7 +10,7 @@ Implements AnimationKit.Scrollable
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Listbox)
-		  Self.TargetRef = New WeakRef(Source)
+		  Self.TargetRef = Xojo.Core.WeakRef.Create(Source)
 		End Sub
 	#tag EndMethod
 
@@ -68,7 +68,7 @@ Implements AnimationKit.Scrollable
 
 
 	#tag Property, Flags = &h21
-		Private TargetRef As WeakRef
+		Private TargetRef As Xojo.Core.WeakRef
 	#tag EndProperty
 
 

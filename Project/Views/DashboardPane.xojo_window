@@ -353,8 +353,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DashboardURL() As String
-		  Return Beacon.WebURL("/inapp/dashboard.php/" + Beacon.URLEncode(Preferences.OnlineToken) + "?build=" + Str(App.BuildNumber, "-0"))
+		Function DashboardURL() As Text
+		  Return Beacon.WebURL("/inapp/dashboard.php/" + Beacon.EncodeURLComponent(Preferences.OnlineToken) + "?build=" + App.BuildNumber.ToText)
 		End Function
 	#tag EndMethod
 
@@ -364,17 +364,14 @@ End
 		  
 		  Select Case Notification.Name
 		  Case LocalData.Notification_DatabaseUpdated
-		    Dim LastSync As Date = Notification.UserData
+		    Dim LastSync As Xojo.Core.Date = Notification.UserData
 		    If LastSync = Nil Then
 		      LastSync = LocalData.SharedInstance.LastSync
-		    End If
-		    If LastSync.GMTOffset <> 0 Then
-		      LastSync.GMTOffset = 0
 		    End If
 		    If LastSync = Nil Then
 		      Self.SyncLabel.Text = "No engram data available"
 		    Else
-		      Self.SyncLabel.Text = "Engrams updated " + LastSync.LongDate + " at " + LastSync.LongTime + " UTC"
+		      Self.SyncLabel.Text = "Engrams updated " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC"
 		    End If
 		  Case IdentityManager.Notification_IdentityChanged
 		    Self.TitleCanvas.Invalidate
@@ -427,14 +424,11 @@ End
 #tag Events SyncLabel
 	#tag Event
 		Sub Open()
-		  Dim LastSync As Date = LocalData.SharedInstance.LastSync
-		  If LastSync.GMTOffset <> 0 Then
-		    LastSync.GMTOffset = 0
-		  End If
+		  Dim LastSync As Xojo.Core.Date = LocalData.SharedInstance.LastSync
 		  If LastSync = Nil Then
 		    Me.Text = "No engram data available"
 		  Else
-		    Me.Text = "Engrams updated " + LastSync.LongDate + " at " + LastSync.LongTime + " UTC"
+		    Me.Text = "Engrams updated " + LastSync.ToText(Xojo.Core.Locale.Current, Xojo.Core.Date.FormatStyles.Long, Xojo.Core.Date.FormatStyles.Short) + " UTC"
 		  End If
 		End Sub
 	#tag EndEvent
@@ -445,7 +439,7 @@ End
 		  #Pragma Unused Areas
 		  
 		  Dim TitleIcon As Picture
-		  If App.IdentityManager.CurrentIdentity <> Nil And App.IdentityManager.CurrentIdentity.OmniVersion > 0 Then
+		  If App.Identity <> Nil And App.Identity.OmniVersion > 0 Then
 		    TitleIcon = IconBeaconOmniText
 		  Else
 		    TitleIcon = IconBeaconText

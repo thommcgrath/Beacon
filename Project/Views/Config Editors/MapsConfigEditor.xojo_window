@@ -250,7 +250,7 @@ End
 
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As String
+		Function ConfigLabel() As Text
 		  Return "Maps"
 		End Function
 	#tag EndMethod

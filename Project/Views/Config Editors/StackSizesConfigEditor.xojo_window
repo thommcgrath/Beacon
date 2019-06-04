@@ -253,21 +253,21 @@ End
 
 #tag WindowCode
 	#tag Event
-		Sub ParsingFinished(ParsedData As Dictionary)
+		Sub ParsingFinished(ParsedData As Xojo.Core.Dictionary)
 		  // Don't import the global multiplier, it would likely be confusing for users
 		  
 		  If ParsedData = Nil Then
 		    Return
 		  End If
 		  
-		  Dim OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.DifficultyValue)
+		  Dim OtherConfig As BeaconConfigs.StackSizes = BeaconConfigs.StackSizes.FromImport(ParsedData, New Xojo.Core.Dictionary, Self.Document.MapCompatibility, Self.Document.DifficultyValue)
 		  If OtherConfig = Nil Or OtherConfig.Count = 0 Then
 		    Return
 		  End If
 		  
 		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
-		  Dim Classes() As String = OtherConfig.Classes
-		  For Each ClassString As String In Classes
+		  Dim Classes() As Text = OtherConfig.Classes
+		  For Each ClassString As Text In Classes
 		    Config.Override(ClassString) = OtherConfig.Override(ClassString)
 		  Next
 		  Self.ContentsChanged = True
@@ -291,7 +291,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.StackSizes
-		  Static ConfigName As String = BeaconConfigs.StackSizes.ConfigName
+		  Static ConfigName As Text = BeaconConfigs.StackSizes.ConfigName
 		  
 		  Dim Document As Beacon.Document = Self.Document
 		  Dim Config As BeaconConfigs.StackSizes
@@ -315,7 +315,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As String
+		Function ConfigLabel() As Text
 		  Return Language.LabelForConfig(BeaconConfigs.StackSizes.ConfigName)
 		End Function
 	#tag EndMethod
@@ -324,8 +324,8 @@ End
 		Private Sub ShowAddOverride()
 		  Dim CurrentEngrams() As Beacon.Engram
 		  Dim Config As BeaconConfigs.StackSizes = Self.Config(False)
-		  Dim Classes() As String = Config.Classes
-		  For Each ClassString As String In Classes
+		  Dim Classes() As Text = Config.Classes
+		  For Each ClassString As Text In Classes
 		    Dim Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
 		    If Engram = Nil Then
 		      Continue
@@ -358,8 +358,8 @@ End
 		  
 		  Dim CurrentEngrams() As Beacon.Engram
 		  Dim Config As BeaconConfigs.StackSizes = Self.Config(False)
-		  Dim Classes() As String = Config.Classes
-		  For Each ClassString As String In Classes
+		  Dim Classes() As Text = Config.Classes
+		  For Each ClassString As Text In Classes
 		    Dim Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
 		    If Engram = Nil Then
 		      Continue
@@ -373,7 +373,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim SourceClass As String = Self.List.RowTag(Self.List.ListIndex)
+		  Dim SourceClass As Text = Self.List.RowTag(Self.List.ListIndex)
 		  Dim Size As Integer = Config.Override(SourceClass)
 		  
 		  Config = Self.Config(True)
@@ -389,7 +389,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
-		  Dim Classes() As String
+		  Dim Classes() As Text
 		  For I As Integer = 0 To Self.List.ListCount - 1
 		    If Not Self.List.Selected(I) Then
 		      Continue
@@ -403,26 +403,26 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateList(SelectEngrams() As Beacon.Engram)
-		  Dim Classes() As String
+		  Dim Classes() As Text
 		  For Each Engram As Beacon.Engram In SelectEngrams
 		    Classes.Append(Engram.ClassString)
 		  Next
-		  Self.UpdateList(Classes)
+		  Self.UpdateList(Classes) 
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateList(SelectClasses() As String)
+		Private Sub UpdateList(SelectClasses() As Text)
 		  Dim Config As BeaconConfigs.StackSizes = Self.Config(False)
-		  Dim Classes() As String = Config.Classes
+		  Dim Classes() As Text = Config.Classes
 		  
 		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.SelectionChangeBlocked = True
 		  
 		  Self.List.DeleteAllRows()
-		  For Each ClassString As String In Classes
+		  For Each ClassString As Text In Classes
 		    Dim Engram As Beacon.Engram = LocalData.SharedInstance.GetEngramByClass(ClassString)
-		    Dim EngramName As String
+		    Dim EngramName As Text
 		    If Engram <> Nil Then
 		      EngramName = Engram.Label
 		    Else
@@ -430,7 +430,7 @@ End
 		    End If
 		    
 		    Dim Size As Integer = Config.Override(ClassString)
-		    Self.List.AddRow(EngramName, Str(Size, "-0"))
+		    Self.List.AddRow(EngramName, Size.ToText)
 		    Self.List.RowTag(Self.List.LastIndex) = ClassString
 		    Self.List.Selected(Self.List.LastIndex) = SelectClasses.IndexOf(ClassString) > -1
 		  Next
@@ -517,7 +517,7 @@ End
 		  End If
 		  
 		  Dim Size As Integer = Val(Me.Cell(Row, Column))
-		  Dim ClassString As String = Me.RowTag(Row)
+		  Dim ClassString As Text = Me.RowTag(Row)
 		  
 		  Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
 		  Config.Override(ClassString) = Size
@@ -560,7 +560,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim ClassString As String = Me.RowTag(I)
+		    Dim ClassString As Text = Me.RowTag(I)
 		    Config.Override(ClassString) = 0
 		  Next
 		  Self.ContentsChanged = True
@@ -569,30 +569,30 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Items As New Dictionary
+		  Dim Items As New Xojo.Core.Dictionary
 		  Dim Config As BeaconConfigs.StackSizes = Self.Config(False)
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
-		    Dim ClassString As String = Me.RowTag(I)
+		    Dim ClassString As Text = Me.RowTag(I)
 		    Dim Size As Integer = Config.Override(ClassString)
 		    Items.Value(ClassString) = Size
 		  Next
 		  
-		  Board.AddRawData(Beacon.GenerateJSON(Items), Self.kClipboardType)
+		  Board.AddRawData(Xojo.Data.GenerateJSON(Items), Self.kClipboardType)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
-		    Dim JSON As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		    Dim Items As Dictionary
+		    Dim JSON As Text = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8).ToText
+		    Dim Items As Xojo.Core.Dictionary
 		    Try
-		      Items = Beacon.ParseJSON(JSON)
-		    Catch Err As UnsupportedFormatException
-		      Items = New Dictionary
+		      Items = Xojo.Data.ParseJSON(JSON)
+		    Catch Err As Xojo.Data.InvalidJSONException
+		      Items = New Xojo.Core.Dictionary
 		    End Try
 		    
 		    If Items.Count = 0 Then
@@ -600,9 +600,9 @@ End
 		    End If
 		    
 		    Dim Config As BeaconConfigs.StackSizes = Self.Config(True)
-		    Dim SelectClasses() As String
-		    For Each Entry As DictionaryMember In Items.Members
-		      Dim ClassString As String = Entry.Key
+		    Dim SelectClasses() As Text
+		    For Each Entry As Xojo.Core.DictionaryEntry In Items
+		      Dim ClassString As Text = Entry.Key
 		      Dim Size As Integer = Entry.Value
 		      SelectClasses.Append(ClassString)
 		      Config.Override(ClassString) = Size
@@ -614,7 +614,7 @@ End
 		  
 		  If Board.TextAvailable Then
 		    Dim ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse(ImportText, "Clipboard")
+		    Self.Parse(ImportText.ToText, "Clipboard")
 		    Return
 		  End If
 		End Sub

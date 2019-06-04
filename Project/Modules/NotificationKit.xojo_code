@@ -1,24 +1,24 @@
 #tag Module
 Protected Module NotificationKit
 	#tag Method, Flags = &h1
-		Protected Sub Ignore(Receiver As NotificationKit.Receiver, ParamArray Keys() As String)
+		Protected Sub Ignore(Receiver As NotificationKit.Receiver, ParamArray Keys() As Text)
 		  If mReceivers = Nil Then
 		    Return
 		  End If
 		  
-		  For Each Key As String In Keys
-		    Dim Refs() As WeakRef
+		  For Each Key As Text In Keys
+		    Dim Refs() As Xojo.Core.WeakRef
 		    If mReceivers.HasKey(Key) Then
 		      Refs = mReceivers.Value(Key)
 		    End If
 		    
-		    For I As Integer = Refs.Ubound DownTo 0
+		    For I As Integer = UBound(Refs) DownTo 0
 		      If Refs(I).Value = Nil Or Refs(I).Value = Receiver Then
 		        Refs.Remove(I)
 		      End If
 		    Next
 		    
-		    If Refs.Ubound > -1 Then
+		    If UBound(Refs) > -1 Then
 		      mReceivers.Value(Key) = Refs
 		    ElseIf mReceivers.HasKey(Key) Then
 		      mReceivers.Remove(Key)
@@ -28,9 +28,9 @@ Protected Module NotificationKit
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub mQueueTimer_Action(Sender As Timer)
-		  If mPendingNotifications.Ubound = -1 Then
-		    Sender.Mode = Timer.ModeOff
+		Private Sub mQueueTimer_Action(Sender As Xojo.Core.Timer)
+		  If UBound(mPendingNotifications) = -1 Then
+		    Sender.Mode = Xojo.Core.Timer.Modes.Off
 		    Return
 		  End If
 		  
@@ -47,61 +47,61 @@ Protected Module NotificationKit
 		    Return
 		  End If
 		  
-		  Dim Refs() As WeakRef = mReceivers.Value(Notification.Name)
-		  For I As Integer = Refs.Ubound DownTo 0
+		  Dim Refs() As Xojo.Core.WeakRef = mReceivers.Value(Notification.Name)
+		  For I As Integer = UBound(Refs) DownTo 0
 		    If Refs(I).Value = Nil Then
 		      Refs.Remove(I)
 		    End If
 		  Next
 		  
-		  If Refs.Ubound = -1 Then
+		  If UBound(Refs) = -1 Then
 		    mReceivers.Remove(Notification.Name)
 		    Return
 		  End If
 		  
-		  For Each Ref As WeakRef In Refs
+		  For Each Ref As Xojo.Core.WeakRef In Refs
 		    Dim Receiver As NotificationKit.Receiver = NotificationKit.Receiver(Ref.Value)
 		    mPendingNotifications.Append(New NotificationKit.Invocation(Notification, Receiver))
 		  Next
 		  
 		  If mQueueTimer = Nil Then
-		    mQueueTimer = New Timer
-		    mQueueTimer.Mode = Timer.ModeMultiple
+		    mQueueTimer = New Xojo.Core.Timer
+		    mQueueTimer.Mode = Xojo.Core.Timer.Modes.Multiple
 		    mQueueTimer.Period = 1
 		    AddHandler mQueueTimer.Action, AddressOf mQueueTimer_Action
 		  End If
 		  
-		  If mQueueTimer.Mode = Timer.ModeOff Then
-		    mQueueTimer.Mode = Timer.ModeMultiple
+		  If mQueueTimer.Mode = Xojo.Core.Timer.Modes.Off Then
+		    mQueueTimer.Mode = Xojo.Core.Timer.Modes.Multiple
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Post(Notification As String, UserData As Variant)
+		Protected Sub Post(Notification As Text, UserData As Auto)
 		  NotificationKit.Post(New NotificationKit.Notification(Notification, UserData))
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Watch(Receiver As NotificationKit.Receiver, ParamArray Keys() As String)
+		Protected Sub Watch(Receiver As NotificationKit.Receiver, ParamArray Keys() As Text)
 		  If mReceivers = Nil Then
-		    mReceivers = New Dictionary
+		    mReceivers = New Xojo.Core.Dictionary
 		  End If
 		  
-		  For Each Key As String In Keys
-		    Dim Refs() As WeakRef
+		  For Each Key As Text In Keys
+		    Dim Refs() As Xojo.Core.WeakRef
 		    If mReceivers.HasKey(Key) Then
 		      Refs = mReceivers.Value(Key)
 		    End If
 		    
-		    For I As Integer = Refs.Ubound DownTo 0
+		    For I As Integer = UBound(Refs) DownTo 0
 		      If Refs(I).Value = Nil Then
 		        Refs.Remove(I)
 		      End If
 		    Next
 		    
-		    Refs.Append(New WeakRef(Receiver))
+		    Refs.Append(Xojo.Core.WeakRef.Create(Receiver))
 		    
 		    mReceivers.Value(Key) = Refs
 		  Next
@@ -114,11 +114,11 @@ Protected Module NotificationKit
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mQueueTimer As Timer
+		Private mQueueTimer As Xojo.Core.Timer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mReceivers As Dictionary
+		Private mReceivers As Xojo.Core.Dictionary
 	#tag EndProperty
 
 

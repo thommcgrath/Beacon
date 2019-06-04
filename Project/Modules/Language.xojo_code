@@ -1,13 +1,13 @@
 #tag Module
 Protected Module Language
 	#tag Method, Flags = &h1
-		Protected Function LabelForConfig(Config As Beacon.ConfigGroup) As String
+		Protected Function LabelForConfig(Config As Beacon.ConfigGroup) As Text
 		  Return Language.LabelForConfig(Config.ConfigName)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function LabelForConfig(ConfigName As String) As String
+		Protected Function LabelForConfig(ConfigName As Text) As Text
 		  Select Case ConfigName
 		  Case BeaconConfigs.Difficulty.ConfigName
 		    Return "Difficulty"
@@ -53,7 +53,7 @@ Protected Module Language
 		  Case Beacon.Qualities.Tier10.Key
 		    Return If(Abbreviated, QualityTier10Abbreviated, QualityTier10)
 		  Else
-		    Return Quality.BaseValue.PrettyString(2)
+		    Return Quality.BaseValue.PrettyText(2)
 		  End Select
 		End Function
 	#tag EndMethod

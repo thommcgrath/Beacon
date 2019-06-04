@@ -2,7 +2,7 @@
 Protected Class MutableEngram
 Inherits Beacon.Engram
 	#tag Method, Flags = &h0
-		Sub AddTag(Tag As String)
+		Sub AddTag(Tag As Text)
 		  Tag = Self.NormalizeTag(Tag)
 		  If Self.mTags.IndexOf(Tag) = -1 Then
 		    Self.mTags.Append(Tag)
@@ -18,7 +18,17 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As String)
+		Attributes( Deprecated = "IsTagged(""blueprintable"")" )  Sub CanBeBlueprint(Assigns Value As Boolean)
+		  If Value Then
+		    Self.AddTag("blueprintable")
+		  Else
+		    Self.RemoveTag("blueprintable")
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Path As Text)
 		  Super.Constructor()
 		  
 		  Self.mPath = Path
@@ -27,42 +37,32 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub IsTagged(Tag As String, Assigns Value As Boolean)
-		  If Value Then
-		    Self.AddTag(Tag)
-		  Else
-		    Self.RemoveTag(Tag)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub Label(Assigns Value As String)
+		Sub Label(Assigns Value As Text)
 		  Self.mLabel = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModID(Assigns Value As String)
+		Sub ModID(Assigns Value As Text)
 		  Self.mModID = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ModName(Assigns Value As String)
+		Sub ModName(Assigns Value As Text)
 		  Self.mModName = Value
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Path(Assigns Value As String)
+		Sub Path(Assigns Value As Text)
 		  Self.mPath = Value
 		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveTag(Tag As String)
+		Sub RemoveTag(Tag As Text)
 		  Tag = Self.NormalizeTag(Tag)
 		  Dim Idx As Integer = Self.mTags.IndexOf(Tag)
 		  If Idx > -1 Then
@@ -72,10 +72,10 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Tags(Assigns Tags() As String)
+		Sub Tags(Assigns Tags() As Text)
 		  Redim Self.mTags(-1)
 		  
-		  For Each Tag As String In Tags
+		  For Each Tag As Text In Tags
 		    Tag = Self.NormalizeTag(Tag)
 		    Self.mTags.Append(Tag)
 		  Next
@@ -84,8 +84,8 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub TagString(Assigns Value As String)
-		  Dim Tags() As String = Value.Split(",")
+		Sub TagString(Assigns Value As Text)
+		  Dim Tags() As Text = Value.Split(",")
 		  Self.Tags = Tags
 		End Sub
 	#tag EndMethod

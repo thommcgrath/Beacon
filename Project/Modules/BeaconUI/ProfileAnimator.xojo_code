@@ -1,7 +1,7 @@
 #tag Interface
 Protected Interface ProfileAnimator
 	#tag Method, Flags = &h0
-		Sub AnimationStep(Identifier As String, Profile As BeaconUI.ColorProfile)
+		Sub AnimationStep(Identifier As Text, Profile As BeaconUI.ColorProfile)
 		  
 		End Sub
 	#tag EndMethod

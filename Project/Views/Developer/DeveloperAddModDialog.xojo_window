@@ -226,7 +226,6 @@ Begin BeaconDialog DeveloperAddModDialog
       Width           =   16
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
@@ -237,7 +236,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub APICallback_RegisterMod(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
+		Private Sub APICallback_RegisterMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Details
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
@@ -300,12 +299,12 @@ End
 		    ModID = Matches.SubExpressionString(1)
 		  End If
 		  
-		  Dim Dict As New Dictionary
-		  Dict.Value("mod_id") = ModID
-		  Dim Payload As String = Beacon.GenerateJSON(Dict)
+		  Dim Dict As New Xojo.Core.Dictionary
+		  Dict.Value("mod_id") = ModID.ToText
+		  Dim Payload As Text = Xojo.Data.GenerateJSON(Dict)
 		  
 		  Dim Request As New BeaconAPI.Request("mod.php", "POST", Payload, "application/json", AddressOf APICallback_RegisterMod)
-		  Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent

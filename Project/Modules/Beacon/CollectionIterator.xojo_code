@@ -34,7 +34,7 @@ Implements Xojo.Core.Iterator
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mItems() As Variant
+		Private mItems() As Auto
 	#tag EndProperty
 
 
@@ -51,6 +51,11 @@ Implements Xojo.Core.Iterator
 			Visible=true
 			Group="Position"
 			InitialValue="0"
+			Type="Integer"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="mItems()"
+			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 		#tag ViewProperty

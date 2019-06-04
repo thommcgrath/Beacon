@@ -88,7 +88,8 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockedInPosition=   False
       Priority        =   0
       Scope           =   0
-      StackSize       =   0
+      StackSize       =   ""
+      State           =   ""
       TabPanelIndex   =   0
    End
    Begin BeaconToolbar Header
@@ -454,8 +455,6 @@ End
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
-		  #Pragma Unused Initial
-		  
 		  If Self.mSavePositions Then
 		    Self.SetListWidth(Self.Header.Width)
 		  End If
@@ -512,7 +511,7 @@ End
 		Private Sub BuildPresetMenu(Parent As MenuItem)
 		  Dim Presets() As Beacon.Preset = Beacon.Data.Presets
 		  Dim Groups As New Dictionary
-		  Dim GroupNames() As String
+		  Dim GroupNames() As Text
 		  For Each Preset As Beacon.Preset In Presets
 		    Dim Arr() As Beacon.Preset
 		    If Groups.HasKey(Preset.Grouping) Then
@@ -537,7 +536,7 @@ End
 		  
 		  Dim HasTarget As Boolean = Self.mSources.Ubound > -1
 		  
-		  For Each Group As String In GroupNames
+		  For Each Group As Text In GroupNames
 		    Dim Arr() As Beacon.Preset = Groups.Value(Group)
 		    Dim Names() As String
 		    Dim Items() As Beacon.Preset
@@ -692,7 +691,7 @@ End
 		  Self.ImportProgress.CancelAction = WeakAddressOf Self.CancelImport
 		  Self.ImportProgress.ShowWithin(Self.TrueWindow)
 		  Self.Importer.Clear
-		  Self.Importer.GameIniContent = Content
+		  Self.Importer.GameIniContent = Content.ToText
 		  Self.Importer.Run
 		End Sub
 	#tag EndMethod
@@ -758,7 +757,7 @@ End
 		  #if false
 		    If Self.mSources.Ubound > -1 Then
 		      Dim DuplicatesState As CheckBox.CheckedStates = if(Self.mSources(0).SetsRandomWithoutReplacement, CheckBox.CheckedStates.Checked, CheckBox.CheckedStates.Unchecked)
-		      Dim Label As String = Self.mSources(0).Label
+		      Dim Label As Text = Self.mSources(0).Label
 		      Dim MinSets As Integer = Self.mSources(0).MinItemSets
 		      Dim MaxSets As Integer = Self.mSources(0).MaxItemSets
 		      
@@ -1109,14 +1108,14 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Dicts() As Dictionary
+		  Dim Dicts() As Xojo.Core.Dictionary
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
 		    End If
 		    
 		    Dim Set As Beacon.ItemSet = Me.RowTag(I)
-		    Dim Dict As Dictionary = Set.Export
+		    Dim Dict As Xojo.Core.Dictionary = Set.Export
 		    If Dict <> Nil Then
 		      Dicts.Append(Dict)
 		    End If
@@ -1125,11 +1124,11 @@ End
 		    Return
 		  End If
 		  
-		  Dim Contents As String
+		  Dim Contents As Text
 		  If UBound(Dicts) = 0 Then
-		    Contents = Beacon.GenerateJSON(Dicts(0))
+		    Contents = Xojo.Data.GenerateJSON(Dicts(0))
 		  Else
-		    Contents = Beacon.GenerateJSON(Dicts)
+		    Contents = Xojo.Data.GenerateJSON(Dicts)
 		  End If
 		  
 		  Board.AddRawData(Contents, Self.kClipboardType)
@@ -1143,21 +1142,21 @@ End
 		  
 		  If Board.RawDataAvailable(Self.kClipboardType) Then
 		    Dim Contents As String = DefineEncoding(Board.RawData(Self.kClipboardType), Encodings.UTF8)
-		    Dim Parsed As Variant
+		    Dim Parsed As Auto
 		    Try
-		      Parsed = Beacon.ParseJSON(Contents)
-		    Catch Err As UnsupportedFormatException
+		      Parsed = Xojo.Data.ParseJSON(Contents.ToText)
+		    Catch Err As Xojo.Data.InvalidJSONException
 		      Beep
 		      Return
 		    End Try
 		    
-		    Dim Info As Introspection.TypeInfo = Introspection.GetType(Parsed)
-		    Dim Dicts() As Dictionary
-		    If Info.FullName = "Dictionary" Then
+		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Parsed)
+		    Dim Dicts() As Xojo.Core.Dictionary
+		    If Info.FullName = "Xojo.Core.Dictionary" Then
 		      Dicts.Append(Parsed)
 		    ElseIf Info.FullName = "Auto()" Then
-		      Dim Values() As Variant = Parsed
-		      For Each Dict As Dictionary In Values
+		      Dim Values() As Auto = Parsed
+		      For Each Dict As Xojo.Core.Dictionary In Values
 		        Dicts.Append(Dict)
 		      Next
 		    Else
@@ -1168,7 +1167,7 @@ End
 		    Dim Updated As Boolean
 		    Dim SetNames() As String
 		    For Each Source As Beacon.LootSource In Self.mSources
-		      For Each Dict As Dictionary In Dicts
+		      For Each Dict As Xojo.Core.Dictionary In Dicts
 		        Dim Set As Beacon.ItemSet = Beacon.ItemSet.ImportFromBeacon(Dict)
 		        If Set <> Nil Then
 		          Source.Append(Set)
@@ -1361,16 +1360,16 @@ End
 		    End If
 		  Case "copyjson"
 		    If Targets.Ubound = 0 Then
-		      Dim Dict As Dictionary = Targets(0).Export()
+		      Dim Dict As Xojo.Core.Dictionary = Targets(0).Export()
 		      Dim Board As New Clipboard
-		      Board.Text = Beacon.GenerateJSON(Dict)
+		      Board.Text = Xojo.Data.GenerateJSON(Dict)
 		    Else
-		      Dim Arr() As Dictionary
+		      Dim Arr() As Xojo.Core.Dictionary
 		      For Each Target As Beacon.ItemSet In Targets
 		        Arr.Append(Target.Export())
 		      Next
 		      Dim Board As New Clipboard
-		      Board.Text = Beacon.GenerateJSON(Arr)
+		      Board.Text = Xojo.Data.GenerateJSON(Arr)
 		    End If
 		  Case "copyconfig"
 		    Dim Multipliers As Beacon.Range
@@ -1384,16 +1383,16 @@ End
 		      UseBlueprints = False
 		    End If
 		    
-		    Dim Parts() As String
+		    Dim Parts() As Text
 		    For Each Target As Beacon.ItemSet In Targets
-		      Parts.Append(Target.StringValue(Multipliers, UseBlueprints, Difficulty))
+		      Parts.Append(Target.TextValue(Multipliers, UseBlueprints, Difficulty))
 		    Next
 		    
 		    Dim Board As New Clipboard
 		    If Parts.Ubound = 0 Then
 		      Board.Text = Parts(0)
 		    Else
-		      Board.Text = "ItemSets=(" + Join(Parts, ",") + ")"
+		      Board.Text = "ItemSets=(" + Parts.Join(",") + ")"
 		    End If
 		  End Select
 		  
@@ -1416,13 +1415,13 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub Finished(ParsedData As Dictionary)
+		Sub Finished(ParsedData As Xojo.Core.Dictionary)
 		  If Self.ImportProgress <> Nil Then
 		    Self.ImportProgress.Close
 		    Self.ImportProgress = Nil
 		  End If
 		  
-		  Dim Dicts() As Variant
+		  Dim Dicts() As Auto
 		  Try
 		    Dicts = ParsedData.Value("ConfigOverrideSupplyCrateItems")
 		  Catch Err As TypeMismatchException
@@ -1432,7 +1431,7 @@ End
 		  Dim Difficulty As BeaconConfigs.Difficulty = Self.Document.Difficulty
 		  
 		  Dim SourceLootSources() As Beacon.LootSource
-		  For Each ConfigDict As Dictionary In Dicts
+		  For Each ConfigDict As Xojo.Core.Dictionary In Dicts
 		    Dim Source As Beacon.LootSource = Beacon.LootSource.ImportFromConfig(ConfigDict, Difficulty.DifficultyValue)
 		    If Source <> Nil Then
 		      SourceLootSources.Append(Source)

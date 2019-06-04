@@ -9,11 +9,17 @@ Protected Class Curve
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(P1 As REALbasic.Point, P2 As REALbasic.Point)
-		  Self.C0 = New REALbasic.Point(0, 0)
-		  Self.C1 = New REALbasic.Point(Max(Min(P1.X, 1), 0), Max(Min(P1.Y, 1), 0))
-		  Self.C2 = New REALbasic.Point(Max(Min(P2.X, 1), 0), Max(Min(P2.Y, 1), 0))
-		  Self.C3 = New REALbasic.Point(1, 1)
+		Sub Constructor(P1X As Single, P1Y As Single, P2X As Single, P2Y As Single)
+		  Self.Constructor(New Xojo.Core.Point(P1X, P1Y), New Xojo.Core.Point(P2X, P2Y))
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(P1 As Xojo.Core.Point, P2 As Xojo.Core.Point)
+		  Self.C0 = New Xojo.Core.Point(0, 0)
+		  Self.C1 = New Xojo.Core.Point(Max(Min(P1.X, 1), 0), Max(Min(P1.Y, 1), 0))
+		  Self.C2 = New Xojo.Core.Point(Max(Min(P2.X, 1), 0), Max(Min(P2.Y, 1), 0))
+		  Self.C3 = New Xojo.Core.Point(1, 1)
 		  
 		  Const NumFigures = 1000
 		  
@@ -46,12 +52,6 @@ Protected Class Curve
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(P1X As Single, P1Y As Single, P2X As Single, P2Y As Single)
-		  Self.Constructor(New REALbasic.Point(P1X, P1Y), New REALbasic.Point(P2X, P2Y))
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Evaluate(XValue As Double, RangeBeginValue As Double, RangeEndValue As Double) As Double
 		  If RangeBeginValue = RangeEndValue Then
 		    Return RangeBeginValue
@@ -63,20 +63,20 @@ Protected Class Curve
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Evaluate(Time As Double, Rect As REALbasic.Rect) As REALbasic.Point
+		Function Evaluate(Time As Double, Rect As Xojo.Core.Rect) As Xojo.Core.Point
 		  Dim X As Double = Self.XForT(Time)
 		  Dim Y As Double = Self.YForT(Time)
 		  
 		  X = Rect.Left + (Rect.Width * X)
 		  Y = Rect.Top + (Rect.Height * Y)
 		  
-		  Return New REALbasic.Point(X, Y)
+		  Return New Xojo.Core.Point(X, Y)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Export() As Dictionary
-		  Dim Dict As New Dictionary
+		Function Export() As Xojo.Core.Dictionary
+		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("C1X") = Self.C1.X
 		  Dict.Value("C1Y") = Self.C1.Y
 		  Dict.Value("C2X") = Self.C2.X
@@ -86,7 +86,7 @@ Protected Class Curve
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Import(Dict As Dictionary) As Beacon.Curve
+		Shared Function Import(Dict As Xojo.Core.Dictionary) As Beacon.Curve
 		  If Not Dict.HasAllKeys("C1X", "C1Y", "C2X", "C2Y") Then
 		    Return Nil
 		  End If
@@ -115,7 +115,7 @@ Protected Class Curve
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Point(Index As Integer) As REALbasic.Point
+		Function Point(Index As Integer) As Xojo.Core.Point
 		  Select Case Index
 		  Case 0
 		    Return Self.C0
@@ -167,19 +167,19 @@ Protected Class Curve
 
 
 	#tag Property, Flags = &h21
-		Private C0 As REALbasic.Point
+		Private C0 As Xojo.Core.Point
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private C1 As REALbasic.Point
+		Private C1 As Xojo.Core.Point
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private C2 As REALbasic.Point
+		Private C2 As Xojo.Core.Point
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private C3 As REALbasic.Point
+		Private C3 As Xojo.Core.Point
 	#tag EndProperty
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))

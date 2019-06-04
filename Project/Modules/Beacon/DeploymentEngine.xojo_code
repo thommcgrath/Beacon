@@ -1,19 +1,19 @@
 #tag Interface
 Protected Interface DeploymentEngine
 	#tag Method, Flags = &h0
-		Function BackupGameIni() As String
+		Function BackupGameIni() As Text
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function BackupGameUserSettingsIni() As String
+		Function BackupGameUserSettingsIni() As Text
 		  
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(Label As String, CommandLineOptions() As Beacon.ConfigValue, GameIniDict As Dictionary, GameUserSettingsIniDict As Dictionary)
+		Sub Begin(Label As Text, CommandLineOptions() As Beacon.ConfigValue, GameIniDict As Xojo.Core.Dictionary, GameUserSettingsIniDict As Xojo.Core.Dictionary)
 		  
 		End Sub
 	#tag EndMethod
@@ -37,7 +37,7 @@ Protected Interface DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As String
+		Function Name() As Text
 		  
 		End Function
 	#tag EndMethod
@@ -49,7 +49,7 @@ Protected Interface DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Status() As String
+		Function Status() As Text
 		  
 		End Function
 	#tag EndMethod

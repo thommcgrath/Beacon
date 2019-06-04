@@ -2,7 +2,7 @@
 Protected Class FTPServerProfile
 Inherits Beacon.ServerProfile
 	#tag Event
-		Sub ReadFromDictionary(Dict As Dictionary)
+		Sub ReadFromDictionary(Dict As Xojo.Core.Dictionary)
 		  If Not Dict.HasAllKeys("Host", "Port", "User", "Pass", "Game.ini Path", "GameUserSettings.ini Path") Then
 		    Dim Err As KeyNotFoundException
 		    Err.Message = "Missing FTPServerProfile keys"
@@ -20,7 +20,7 @@ Inherits Beacon.ServerProfile
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteToDictionary(Dict As Dictionary)
+		Sub WriteToDictionary(Dict As Xojo.Core.Dictionary)
 		  Dict.Value("Provider") = "FTP"
 		  Dict.Value("Host") = Self.mHost
 		  Dict.Value("Port") = Self.mPort
@@ -34,10 +34,10 @@ Inherits Beacon.ServerProfile
 
 
 	#tag Method, Flags = &h0
-		Function AsFormData() As Dictionary
-		  Dim Fields As New Dictionary
+		Function AsFormData() As Xojo.Core.Dictionary
+		  Dim Fields As New Xojo.Core.Dictionary
 		  Fields.Value("host") = Self.Host
-		  Fields.Value("port") = Str(Self.Port, "0")
+		  Fields.Value("port") = Self.Port.ToText
 		  Fields.Value("user") = Self.Username
 		  Fields.Value("pass") = Self.Password
 		  Fields.Value("mode") = Self.Mode
@@ -62,18 +62,18 @@ Inherits Beacon.ServerProfile
 		    Return Super.Operator_Compare(Other)
 		  End If
 		  
-		  Return StrComp(Self.ServerID, Beacon.FTPServerProfile(Other).ServerID, 0)
+		  Return Self.ServerID.Compare(Beacon.FTPServerProfile(Other).ServerID, Text.CompareCaseSensitive)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SecondaryName() As String
-		  Return Self.Username + "@" + Self.Host + ":" + Str(Self.Port, "-0")
+		Function SecondaryName() As Text
+		  Return Self.Username + "@" + Self.Host + ":" + Self.Port.ToText
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ServerID() As String
+		Function ServerID() As Text
 		  Return Self.mUsername.Lowercase + "@" + Self.mHost.Lowercase + If(Self.mGameIniPath.BeginsWith("/"), "", "/") + Self.mGameIniPath
 		End Function
 	#tag EndMethod
@@ -87,13 +87,13 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mGameIniPath, Value, 0) <> 0 Then
+			  If Self.mGameIniPath.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
 			    Self.mGameIniPath = Value
 			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
-		GameIniPath As String
+		GameIniPath As Text
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -104,13 +104,13 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mGameUserSettingsIniPath, Value, 0) <> 0 Then
+			  If Self.mGameUserSettingsIniPath.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
 			    Self.mGameUserSettingsIniPath = Value
 			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
-		GameUserSettingsIniPath As String
+		GameUserSettingsIniPath As Text
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -121,29 +121,29 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mHost, Value, 0) <> 0 Then
+			  If Self.mHost.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
 			    Self.mHost = Value
 			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
-		Host As String
+		Host As Text
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniPath As String
+		Private mGameIniPath As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniPath As String
+		Private mGameUserSettingsIniPath As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mHost As String
+		Private mHost As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMode As String
+		Private mMode As Text
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -161,7 +161,7 @@ Inherits Beacon.ServerProfile
 			    Value = Self.ModeAuto
 			  End Select
 			  
-			  If StrComp(Self.mMode, Value, 0) = 0 Then
+			  If Self.mMode.Compare(Value, Text.CompareCaseSensitive) = 0 Then
 			    Return
 			  End If
 			  
@@ -169,11 +169,11 @@ Inherits Beacon.ServerProfile
 			  Self.Modified = True
 			End Set
 		#tag EndSetter
-		Mode As String
+		Mode As Text
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mPassword As String
+		Private mPassword As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -181,7 +181,7 @@ Inherits Beacon.ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUsername As String
+		Private mUsername As Text
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -192,13 +192,13 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mPassword, Value, 0) <> 0 Then
+			  If Self.mPassword.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
 			    Self.mPassword = Value
 			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
-		Password As String
+		Password As Text
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -232,26 +232,26 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mUsername, Value, 0) <> 0 Then
+			  If Self.mUsername.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
 			    Self.mUsername = Value
 			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
-		Username As String
+		Username As Text
 	#tag EndComputedProperty
 
 
-	#tag Constant, Name = ModeAuto, Type = String, Dynamic = False, Default = \"auto", Scope = Public
+	#tag Constant, Name = ModeAuto, Type = Text, Dynamic = False, Default = \"auto", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = ModeFTP, Type = String, Dynamic = False, Default = \"ftp", Scope = Public
+	#tag Constant, Name = ModeFTP, Type = Text, Dynamic = False, Default = \"ftp", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = ModeFTPTLS, Type = String, Dynamic = False, Default = \"ftp+tls", Scope = Public
+	#tag Constant, Name = ModeFTPTLS, Type = Text, Dynamic = False, Default = \"ftp+tls", Scope = Public
 	#tag EndConstant
 
-	#tag Constant, Name = ModeSFTP, Type = String, Dynamic = False, Default = \"sftp", Scope = Public
+	#tag Constant, Name = ModeSFTP, Type = Text, Dynamic = False, Default = \"sftp", Scope = Public
 	#tag EndConstant
 
 

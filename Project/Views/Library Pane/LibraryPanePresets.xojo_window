@@ -156,7 +156,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim File As FolderItem = Obj.FolderItem
+		    Dim File As Beacon.FolderItem = Obj.FolderItem
 		    If Not File.IsType(BeaconFileTypes.BeaconPreset) Then
 		      Continue
 		    End If
@@ -189,7 +189,7 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub Shown(UserData As Variant = Nil)
+		Sub Shown(UserData As Auto = Nil)
 		  NotificationKit.Watch(Self, "Preset Saved")
 		  
 		  If UserData <> Nil Then
@@ -208,8 +208,8 @@ End
 		  Clone.Grouping = Source.Grouping
 		  Clone.MaxItems = Source.MaxItems
 		  Clone.MinItems = Source.MinItems
-		  Dim Modifiers() As String = Clone.ActiveModifierIDs
-		  For Each ModifierID As String In Modifiers
+		  Dim Modifiers() As Text = Clone.ActiveModifierIDs
+		  For Each ModifierID As Text In Modifiers
 		    Clone.QualityModifier(ModifierID) = Source.QualityModifier(ModifierID)
 		    Clone.QuantityMultiplier(ModifierID) = Source.QuantityMultiplier(ModifierID)
 		  Next
@@ -396,7 +396,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim ViewID As String = Beacon.MD5(File.NativePath)
+		  Dim ViewID As Text = EncodeHex(Crypto.MD5(File.NativePath)).ToText
 		  Dim View As BeaconSubview = Self.View(ViewID)
 		  If View = Nil Then
 		    View = New PresetEditorView(Preset, File)
@@ -418,7 +418,7 @@ End
 		    Next
 		  End If
 		  
-		  Dim SelectIDs() As String
+		  Dim SelectIDs() As Text
 		  For Each Preset As Beacon.Preset In SelectPresets
 		    SelectIDs.Append(Preset.PresetID)
 		  Next

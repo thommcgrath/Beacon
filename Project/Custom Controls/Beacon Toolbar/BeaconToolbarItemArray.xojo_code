@@ -2,14 +2,14 @@
 Protected Class BeaconToolbarItemArray
 Implements Xojo.Core.Iterable,ObservationKit.Observable,ObservationKit.Observer
 	#tag Method, Flags = &h0
-		Sub AddObserver(Observer As ObservationKit.Observer, Key As String)
+		Sub AddObserver(Observer As ObservationKit.Observer, Key As Text)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
-		    Self.mObservers = New Dictionary
+		    Self.mObservers = New Xojo.Core.Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Dim Refs() As Xojo.Core.WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -26,7 +26,7 @@ Implements Xojo.Core.Iterable,ObservationKit.Observable,ObservationKit.Observer
 		    End If
 		  Next
 		  
-		  Refs.Append(New WeakRef(Observer))
+		  Refs.Append(Xojo.Core.WeakRef.Create(Observer))
 		  Self.mObservers.Value(Key) = Refs
 		  
 		End Sub
@@ -82,14 +82,14 @@ Implements Xojo.Core.Iterable,ObservationKit.Observable,ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub NotifyObservers(Key As String, Value As Variant)
+		Sub NotifyObservers(Key As Text, Value As Auto)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
-		    Self.mObservers = New Dictionary
+		    Self.mObservers = New Xojo.Core.Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Dim Refs() As Xojo.Core.WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -107,7 +107,7 @@ Implements Xojo.Core.Iterable,ObservationKit.Observable,ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As String, Value As Variant)
+		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
 		  // Part of the ObservationKit.Observer interface.
 		  
 		  #Pragma Unused Source
@@ -172,14 +172,14 @@ Implements Xojo.Core.Iterable,ObservationKit.Observable,ObservationKit.Observer
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As String)
+		Sub RemoveObserver(Observer As ObservationKit.Observer, Key As Text)
 		  // Part of the ObservationKit.Observable interface.
 		  
 		  If Self.mObservers = Nil Then
-		    Self.mObservers = New Dictionary
+		    Self.mObservers = New Xojo.Core.Dictionary
 		  End If
 		  
-		  Dim Refs() As WeakRef
+		  Dim Refs() As Xojo.Core.WeakRef
 		  If Self.mObservers.HasKey(Key) Then
 		    Refs = Self.mObservers.Value(Key)
 		  End If
@@ -208,7 +208,7 @@ Implements Xojo.Core.Iterable,ObservationKit.Observable,ObservationKit.Observer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mObservers As Dictionary
+		Private mObservers As Xojo.Core.Dictionary
 	#tag EndProperty
 
 

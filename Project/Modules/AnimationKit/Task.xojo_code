@@ -95,14 +95,14 @@ Protected Class Task
 			    Return
 			  End If
 			  
-			  Self.ItemRef = New WeakRef(Value)
+			  Self.ItemRef = Xojo.Core.WeakRef.Create(Value)
 			End Set
 		#tag EndSetter
 		Item As Object
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private ItemRef As WeakRef
+		Private ItemRef As Xojo.Core.WeakRef
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0

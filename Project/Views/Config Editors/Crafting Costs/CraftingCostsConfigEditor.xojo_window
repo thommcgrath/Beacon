@@ -219,7 +219,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -267,7 +266,6 @@ Begin ConfigEditor CraftingCostsConfigEditor
          HasBackColor    =   False
          Height          =   396
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -327,12 +325,12 @@ End
 	#tag EndEvent
 
 	#tag Event
-		Sub ParsingFinished(ParsedData As Dictionary)
+		Sub ParsingFinished(ParsedData As Xojo.Core.Dictionary)
 		  If ParsedData = Nil Then
 		    Return
 		  End If
 		  
-		  Dim OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts.FromImport(ParsedData, New Dictionary, Self.Document.MapCompatibility, Self.Document.DifficultyValue)
+		  Dim OtherConfig As BeaconConfigs.CraftingCosts = BeaconConfigs.CraftingCosts.FromImport(ParsedData, New Xojo.Core.Dictionary, Self.Document.MapCompatibility, Self.Document.DifficultyValue)
 		  If OtherConfig = Nil Or OtherConfig.Ubound = -1 Then
 		    Return
 		  End If
@@ -398,7 +396,7 @@ End
 
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.CraftingCosts
-		  Static ConfigName As String = BeaconConfigs.CraftingCosts.ConfigName
+		  Static ConfigName As Text = BeaconConfigs.CraftingCosts.ConfigName
 		  
 		  Dim Document As Beacon.Document = Self.Document
 		  Dim Config As BeaconConfigs.CraftingCosts
@@ -422,7 +420,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As String
+		Function ConfigLabel() As Text
 		  Return Language.LabelForConfig(BeaconConfigs.CraftingCosts.ConfigName)
 		End Function
 	#tag EndMethod
@@ -537,7 +535,7 @@ End
 		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.SelectionChangeBlocked = True
 		  
-		  Dim ObjectIDs() As String
+		  Dim ObjectIDs() As Text
 		  For Each Item As Beacon.CraftingCost In SelectItems
 		    ObjectIDs.Append(Item.ObjectID)
 		  Next
@@ -714,7 +712,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Dicts() As Dictionary
+		  Dim Dicts() As Xojo.Core.Dictionary
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
@@ -724,25 +722,25 @@ End
 		    Dicts.Append(Cost.Export)
 		  Next
 		  
-		  Board.AddRawData(Beacon.GenerateJSON(Dicts), Self.kClipboardType)
+		  Board.AddRawData(Xojo.Data.GenerateJSON(Dicts), Self.kClipboardType)
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub PerformPaste(Board As Clipboard)
 		  If Board.TextAvailable And Board.Text.IndexOf("ConfigOverrideItemCraftingCosts") > -1 Then
 		    Dim ImportText As String = Board.Text.GuessEncoding
-		    Self.Parse(ImportText, "Clipboard")
+		    Self.Parse(ImportText.ToText, "Clipboard")
 		    Return
 		  End If
 		  
 		  If Not Board.RawDataAvailable(Self.kClipboardType) Then
-		    Dim Dicts() As Variant
+		    Dim Dicts() As Auto
 		    Try
 		      Dim Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		      Dicts = Beacon.ParseJSON(Contents)
+		      Dicts = Xojo.Data.ParseJSON(Contents.ToText)
 		      
 		      Dim Costs() As Beacon.CraftingCost
-		      For Each Dict As Dictionary In Dicts
+		      For Each Dict As Xojo.Core.Dictionary In Dicts
 		        Dim Cost As Beacon.CraftingCost = Beacon.CraftingCost.ImportFromBeacon(Dict)
 		        If Cost <> Nil Then
 		          Self.Config(False).Append(Cost)
@@ -775,7 +773,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function GetActiveMods() As Beacon.StringList
+		Function GetActiveMods() As Beacon.TextList
 		  If Self.Document <> Nil Then
 		    Return Self.Document.Mods
 		  End If

@@ -3,8 +3,8 @@ Protected Class ItemSetIterator
 Implements xojo.Core.Iterator
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.ItemSet)
-		  Redim Self.mItems(Source.Ubound)
-		  For I As Integer = 0 To Self.mItems.Ubound
+		  Redim Self.mItems(UBound(Source))
+		  For I As Integer = 0 To UBound(Self.mItems)
 		    Self.mItems(I) = Source(I)
 		  Next
 		  Self.mIndex = -1
@@ -16,7 +16,7 @@ Implements xojo.Core.Iterator
 		  // Part of the xojo.Core.Iterator interface.
 		  
 		  Self.mIndex = Self.mIndex + 1
-		  Return Self.mIndex <= Self.mItems.Ubound
+		  Return Self.mIndex <= UBound(Self.mItems)
 		End Function
 	#tag EndMethod
 

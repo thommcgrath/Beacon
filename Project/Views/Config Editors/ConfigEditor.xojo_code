@@ -36,7 +36,7 @@ Inherits BeaconSubview
 
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As String
+		Function ConfigLabel() As Text
 		  
 		End Function
 	#tag EndMethod
@@ -82,7 +82,7 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Parse(Content As String, Source As String)
+		Protected Sub Parse(Content As Text, Source As Text)
 		  Dim Parser As New Beacon.ImportThread
 		  AddHandler Parser.Finished, AddressOf Parser_Finished
 		  AddHandler Parser.UpdateUI, AddressOf Parser_UpdateUI
@@ -92,7 +92,7 @@ Inherits BeaconSubview
 		  Win.ShowWithin(Self.TrueWindow)
 		  
 		  If Self.mParserWindows = Nil Then
-		    Self.mParserWindows = New Dictionary
+		    Self.mParserWindows = New Xojo.Core.Dictionary
 		  End If
 		  Self.mParserWindows.Value(Parser) = Win
 		  
@@ -102,7 +102,7 @@ Inherits BeaconSubview
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Parser_Finished(Sender As Beacon.ImportThread, ParsedData As Dictionary)
+		Private Sub Parser_Finished(Sender As Beacon.ImportThread, ParsedData As Xojo.Core.Dictionary)
 		  RemoveHandler Sender.Finished, AddressOf Parser_Finished
 		  RemoveHandler Sender.UpdateUI, AddressOf Parser_UpdateUI
 		  
@@ -148,7 +148,7 @@ Inherits BeaconSubview
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
-		Event ParsingFinished(ParsedData As Dictionary)
+		Event ParsingFinished(ParsedData As Xojo.Core.Dictionary)
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
@@ -169,7 +169,7 @@ Inherits BeaconSubview
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mParserWindows As Dictionary
+		Private mParserWindows As Xojo.Core.Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

@@ -55,8 +55,8 @@ Protected Module UITweaks
 		  
 		  Dim LeftButton As PushButton = if(DefaultButton.Left < CancelButton.Left, DefaultButton, CancelButton)
 		  Dim RightButton As PushButton = if(DefaultButton.Left < CancelButton.Left, CancelButton, DefaultButton)
-		  Dim LeftRect As New REALbasic.Rect(LeftButton.Left, LeftButton.Top, LeftButton.Width, LeftButton.Height)
-		  Dim RightRect As New REALbasic.Rect(RightButton.Left, RightButton.Top, RightButton.Width, RightButton.Height)
+		  Dim LeftRect As New Xojo.Core.Rect(LeftButton.Left, LeftButton.Top, LeftButton.Width, LeftButton.Height)
+		  Dim RightRect As New Xojo.Core.Rect(RightButton.Left, RightButton.Top, RightButton.Width, RightButton.Height)
 		  
 		  #if TargetWindows
 		    DefaultButton.Left = LeftRect.Left

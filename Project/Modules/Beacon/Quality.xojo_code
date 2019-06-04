@@ -7,14 +7,14 @@ Protected Class Quality
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(BaseValue As Double, Key As String)
+		Sub Constructor(BaseValue As Double, Key As Text)
 		  Self.mKey = Key
 		  Self.mBaseValue = BaseValue
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Key() As String
+		Function Key() As Text
 		  Return Self.mKey
 		End Function
 	#tag EndMethod
@@ -50,7 +50,7 @@ Protected Class Quality
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mKey As String
+		Private mKey As Text
 	#tag EndProperty
 
 

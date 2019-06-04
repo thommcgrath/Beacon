@@ -10,7 +10,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  If Dict.HasKey("Title") Then
@@ -26,7 +26,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
+		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  Dict.Value("Title") = Self.Title
@@ -37,13 +37,13 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
+		Shared Function ConfigName() As Text
 		  Return "Metadata"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Dictionary, CommandLineOptions As Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.Metadata
+		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.Metadata
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused QualityMultiplier
@@ -74,13 +74,13 @@ Inherits Beacon.ConfigGroup
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mDescription, Value, 0) <> 0 Then
+			  If Self.mDescription.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
 			    Self.mDescription = Value
 			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
-		Description As String
+		Description As Text
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -101,7 +101,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mDescription As String
+		Private mDescription As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -109,7 +109,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mTitle As String
+		Private mTitle As Text
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -120,13 +120,13 @@ Inherits Beacon.ConfigGroup
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mTitle, Value, 0) <> 0 Then
+			  If Self.mTitle.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
 			    Self.mTitle = Value
 			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
-		Title As String
+		Title As Text
 	#tag EndComputedProperty
 
 
@@ -172,8 +172,7 @@ Inherits Beacon.ConfigGroup
 		#tag ViewProperty
 			Name="Description"
 			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
+			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="IsPublic"
@@ -183,8 +182,7 @@ Inherits Beacon.ConfigGroup
 		#tag ViewProperty
 			Name="Title"
 			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
+			Type="Text"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

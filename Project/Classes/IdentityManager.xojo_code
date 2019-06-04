@@ -1,7 +1,7 @@
 #tag Class
 Protected Class IdentityManager
 	#tag Method, Flags = &h21
-		Private Sub APICallback_CreateUser(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
+		Private Sub APICallback_CreateUser(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
 		  #Pragma Unused Message
@@ -10,15 +10,15 @@ Protected Class IdentityManager
 		  // We should consider this a success though. So if the creation failed but the
 		  // UserID and PublicKey match what we're saving, then manually consider it a success
 		  Try
-		    If Success = False And Details IsA Dictionary Then
-		      Dim Dict As Dictionary = Details
-		      Dim PublicKey As String = Dict.Value("public_key")
-		      Dim UserID As String = Dict.Value("user_id")
+		    If Success = False And Details IsA Xojo.Core.Dictionary Then
+		      Dim Dict As Xojo.Core.Dictionary = Details
+		      Dim PublicKey As Text = Dict.Value("public_key")
+		      Dim UserID As Text = Dict.Value("user_id")
 		      
-		      Dim ConvertedPublicKey As MemoryBlock = BeaconEncryption.PEMDecodePublicKey(PublicKey)
-		      Dim TestValue As MemoryBlock = Crypto.GenerateRandomBytes(12)
-		      Dim Encrypted As MemoryBlock = Crypto.RSAEncrypt(TestValue, ConvertedPublicKey)
-		      Dim Decrypted As MemoryBlock = Crypto.RSADecrypt(Encrypted, Self.mPendingIdentity.PrivateKey)
+		      Dim ConvertedPublicKey As Xojo.Core.MemoryBlock = BeaconEncryption.PEMDecodePublicKey(PublicKey)
+		      Dim TestValue As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(12)
+		      Dim Encrypted As Xojo.Core.MemoryBlock = Xojo.Crypto.RSAEncrypt(TestValue, ConvertedPublicKey)
+		      Dim Decrypted As Xojo.Core.MemoryBlock = Xojo.Crypto.RSADecrypt(Encrypted, Self.mPendingIdentity.PrivateKey)
 		      
 		      If Self.mPendingIdentity.Identifier = UserID And TestValue = Decrypted Then
 		        Success = True
@@ -38,15 +38,15 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_GetSessionToken(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
+		Private Sub APICallback_GetSessionToken(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Message
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
 		  
 		  If Success Then
 		    Try
-		      Dim Dict As Dictionary = Details
-		      Dim Token As String = Dict.Value("session_id")
+		      Dim Dict As Xojo.Core.Dictionary = Details
+		      Dim Token As Text = Dict.Value("session_id")
 		      Preferences.OnlineToken = Token
 		      
 		      Self.RefreshUserDetails()
@@ -60,7 +60,7 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_MergeUser(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
+		Private Sub APICallback_MergeUser(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Success
 		  #Pragma Unused Message
 		  #Pragma Unused Details
@@ -72,7 +72,7 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_RefreshUserDetails(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
+		Private Sub APICallback_RefreshUserDetails(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Message
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
@@ -109,7 +109,7 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(File As FolderItem)
+		Sub Constructor(File As Beacon.FolderItem)
 		  Self.mFile = File
 		  
 		  If Self.mFile = Nil Then
@@ -125,7 +125,7 @@ Protected Class IdentityManager
 		    Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
 		    Stream.Close
 		    
-		    Dim Dict As Dictionary = Beacon.ParseJSON(Contents)
+		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents.ToText)
 		    Self.mCurrentIdentity = Beacon.Identity.Import(Dict)
 		  Catch Err As RuntimeException
 		  End Try
@@ -148,11 +148,11 @@ Protected Class IdentityManager
 		  Self.StartProcess()
 		  Self.mPendingIdentity = New Beacon.Identity()
 		  
-		  Dim Params As New Dictionary
+		  Dim Params As New Xojo.Core.Dictionary
 		  Params.Value("user_id") = Self.mPendingIdentity.Identifier
-		  Params.Value("public_key") = Self.mPendingIdentity.PublicKey
+		  Params.Value("public_key") = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mPendingIdentity.PublicKey)
 		  
-		  Dim Body As String = Beacon.GenerateJSON(Params)
+		  Dim Body As Text = Xojo.Data.GenerateJSON(Params)
 		  Dim Request As New BeaconAPI.Request("user", "POST", Body, "application/json", AddressOf APICallback_CreateUser)
 		  BeaconAPI.Send(Request)
 		End Sub
@@ -178,7 +178,7 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LastError() As String
+		Function LastError() As Text
 		  Return Self.mLastError
 		End Function
 	#tag EndMethod
@@ -196,23 +196,23 @@ Protected Class IdentityManager
 		  
 		  Self.StartProcess()
 		  
-		  Dim SignedValue As String = Beacon.CreateUUID
-		  Dim Signature As String = EncodeHex(Source.Sign(SignedValue))
+		  Dim SignedValue As Text = Beacon.CreateUUID
+		  Dim Signature As Text = Beacon.EncodeHex(Source.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(SignedValue)))
 		  
-		  Dim MergeKeys As New Dictionary
+		  Dim MergeKeys As New Xojo.Core.Dictionary
 		  MergeKeys.Value("user_id") = Destination.Identifier
 		  MergeKeys.Value("login_key") = Destination.LoginKey
 		  MergeKeys.Value("signed_value") = SignedValue
 		  MergeKeys.Value("signature") = Signature
 		  
-		  Dim Request As New BeaconAPI.Request("user", "POST", Beacon.GenerateJSON(MergeKeys), "application/json", AddressOf APICallback_MergeUser)
+		  Dim Request As New BeaconAPI.Request("user", "POST", Xojo.Data.GenerateJSON(MergeKeys), "application/json", AddressOf APICallback_MergeUser)
 		  Request.Sign(Destination)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RefreshUserDetails(UserPassword As String = "")
+		Sub RefreshUserDetails(UserPassword As Text = "")
 		  If Preferences.OnlineEnabled = False Then
 		    Return
 		  End If
@@ -225,7 +225,7 @@ Protected Class IdentityManager
 		  Self.StartProcess()
 		  Self.mUserPassword = UserPassword
 		  
-		  Dim Fields As New Dictionary
+		  Dim Fields As New Xojo.Core.Dictionary
 		  Fields.Value("hardware_id") = Beacon.HardwareID
 		  
 		  Dim Request As New BeaconAPI.Request("user", "GET", Fields, AddressOf APICallback_RefreshUserDetails)
@@ -250,7 +250,8 @@ Protected Class IdentityManager
 		  End If
 		  
 		  If Self.mCurrentIdentity <> Nil Then
-		    Self.mFile.Write(Beacon.GenerateJSON(Self.mCurrentIdentity.Export))
+		    Dim Writer As New Beacon.JSONWriter(Self.mCurrentIdentity.Export, Self.mFile)
+		    Writer.Run
 		  Else
 		    If Self.mFile.Exists Then
 		      Self.mFile.Delete
@@ -281,8 +282,8 @@ Protected Class IdentityManager
 			    Return
 			  End If
 			  
-			  Dim OldUserID As String = If(Self.mCurrentIdentity <> Nil, Self.mCurrentIdentity.Identifier, "")
-			  Dim NewUserID As String = If(Value <> Nil, Value.Identifier, "")
+			  Dim OldUserID As Text = If(Self.mCurrentIdentity <> Nil, Self.mCurrentIdentity.Identifier, "")
+			  Dim NewUserID As Text = If(Value <> Nil, Value.Identifier, "")
 			  Dim ReplaceToken As Boolean = OldUserID <> NewUserID
 			  
 			  Self.MergeIdentities(Value, Self.mCurrentIdentity)
@@ -309,11 +310,11 @@ Protected Class IdentityManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mFile As FolderItem
+		Private mFile As Beacon.FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLastError As String
+		Private mLastError As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -325,7 +326,7 @@ Protected Class IdentityManager
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUserPassword As String
+		Private mUserPassword As Text
 	#tag EndProperty
 
 

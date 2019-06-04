@@ -43,7 +43,7 @@ Protected Module Maps
 	#tag Method, Flags = &h1
 		Protected Function GuessMap(Sources() As Beacon.LootSource) As UInt64
 		  Dim List() As Beacon.Map = All
-		  Dim Counts As New Dictionary
+		  Dim Counts As New Xojo.Core.Dictionary
 		  
 		  For Each Map As Beacon.Map In List
 		    For Each Source As Beacon.LootSource In Sources
@@ -58,10 +58,9 @@ Protected Module Maps
 		  
 		  Dim BestMask As UInt64
 		  Dim MaxCount As UInteger
-		  Dim Keys() As Variant = Counts.Keys
-		  For Each Key As Variant In Keys
-		    Dim Mask As UInt64 = Key
-		    Dim Count As UInteger = Counts.Value(Key)
+		  For Each Entry As Xojo.Core.DictionaryEntry In Counts
+		    Dim Mask As UInt64 = Entry.Key
+		    Dim Count As UInteger = Entry.Value
 		    
 		    If Count > MaxCount Then
 		      BestMask = Mask

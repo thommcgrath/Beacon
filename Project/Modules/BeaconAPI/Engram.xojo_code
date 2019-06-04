@@ -1,8 +1,8 @@
 #tag Class
 Protected Class Engram
 	#tag Method, Flags = &h0
-		Function AsDictionary() As Dictionary
-		  Dim Environments() As String
+		Function AsDictionary() As Xojo.Core.Dictionary
+		  Dim Environments() As Text
 		  If Self.ValidForMap(Beacon.Maps.TheIsland) Then
 		    Environments.Append("Island")
 		  End If
@@ -22,7 +22,7 @@ Protected Class Engram
 		    Environments.Append("Extinction")
 		  End If
 		  
-		  Dim Dict As New Dictionary
+		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("path") = Self.Path
 		  Dict.Value("label") = Self.Label
 		  Dict.Value("mod_id") = Self.ModID
@@ -33,12 +33,12 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ClassString() As String
+		Function ClassString() As Text
 		  If Self.mPath.IndexOf("/") > -1 And Self.mPath.IndexOf(".") > -1 Then
-		    Dim Components() As String = Self.mPath.Split("/")
-		    Dim Tail As String = Components(Components.Ubound)
+		    Dim Components() As Text = Self.mPath.Split("/")
+		    Dim Tail As Text = Components(UBound(Components))
 		    Components = Tail.Split(".")
-		    Return Components(Components.Ubound) + "_C"
+		    Return Components(UBound(Components)) + "_C"
 		  End If
 		End Function
 	#tag EndMethod
@@ -52,7 +52,7 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.Engram)
-		  Self.CanBeBlueprint = Source.IsTagged("blueprintable")
+		  Self.CanBeBlueprint = Source.CanBeBlueprint
 		  Self.Label = Source.Label
 		  Self.mAvailability = Source.Availability
 		  Self.mPath = Source.Path
@@ -75,7 +75,7 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Dictionary)
+		Sub Constructor(Source As Xojo.Core.Dictionary)
 		  Self.CanBeBlueprint = Source.Value("can_blueprint")
 		  Self.Label = Source.Value("label")
 		  Self.mAvailability = 0
@@ -91,8 +91,8 @@ Protected Class Engram
 		    Self.ModID = Source.Value("mod_id")
 		  End If
 		  
-		  Dim Environments() As String = Source.Value("environments")
-		  For Each Environment As String In Environments
+		  Dim Environments() As Auto = Source.Value("environments")
+		  For Each Environment As Text In Environments
 		    Dim Map As Beacon.Map
 		    Select Case Environment
 		    Case "island"
@@ -116,20 +116,21 @@ Protected Class Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Hash() As String
-		  Dim Value As String = Self.mPath.Lowercase + ":" + Self.Label.Lowercase + ":" + Str(Self.mAvailability, "-0") + ":" + if(Self.CanBeBlueprint, "true", "false")
-		  Return EncodeHex(Value)
+		Function Hash() As Text
+		  Dim Value As Text = Self.mPath.Lowercase + ":" + Self.Label.Lowercase + ":" + Self.mAvailability.ToText + ":" + if(Self.CanBeBlueprint, "true", "false")
+		  Dim Hash As Xojo.Core.MemoryBlock = Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Value))
+		  Return Beacon.EncodeHex(Hash)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ID() As String
+		Function ID() As Text
 		  Return Self.mID
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ModName() As String
+		Function ModName() As Text
 		  Return Self.mModName
 		End Function
 	#tag EndMethod
@@ -140,25 +141,25 @@ Protected Class Engram
 		    Return 1
 		  End If
 		  
-		  Return StrComp(Self.mID, Other.mID, 0)
+		  Return Self.mID.Compare(Other.mID)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ResourceURL() As String
+		Function ResourceURL() As Text
 		  Return Self.mResourceURL
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SpawnCode() As String
+		Function SpawnCode() As Text
 		  Return Self.mSpawnCode
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UID() As String
-		  Return Beacon.MD5(Self.mPath.Lowercase)
+		Function UID() As Text
+		  Return Beacon.EncodeHex(Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Self.mPath.Lowercase))).Lowercase
 		End Function
 	#tag EndMethod
 
@@ -198,7 +199,7 @@ Protected Class Engram
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		Label As String
+		Label As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -206,27 +207,27 @@ Protected Class Engram
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mID As String
+		Private mID As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mModName As String
+		Private mModName As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
-		ModID As String
+		ModID As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPath As String
+		Private mPath As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mResourceURL As String
+		Private mResourceURL As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mSpawnCode As String
+		Private mSpawnCode As Text
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -240,7 +241,7 @@ Protected Class Engram
 			  Self.mPath = Value
 			End Set
 		#tag EndSetter
-		Path As String
+		Path As Text
 	#tag EndComputedProperty
 
 
@@ -266,8 +267,7 @@ Protected Class Engram
 		#tag ViewProperty
 			Name="Label"
 			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
+			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Left"
@@ -279,8 +279,7 @@ Protected Class Engram
 		#tag ViewProperty
 			Name="ModID"
 			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
+			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Name"
@@ -291,8 +290,7 @@ Protected Class Engram
 		#tag ViewProperty
 			Name="Path"
 			Group="Behavior"
-			Type="String"
-			EditorType="MultiLineEditor"
+			Type="Text"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Super"

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class ConfigValue
 	#tag Method, Flags = &h0
-		Sub Constructor(Header As String, Key As String, Value As String)
+		Sub Constructor(Header As Text, Key As Text, Value As Text)
 		  Self.mHeader = Header
 		  Self.mKey = Key
 		  Self.mValue = Value
@@ -9,22 +9,22 @@ Protected Class ConfigValue
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Sub FillConfigDict(Dict As Dictionary, Values() As Beacon.ConfigValue)
+		Shared Sub FillConfigDict(Dict As Xojo.Core.Dictionary, Values() As Beacon.ConfigValue)
 		  If Values = Nil Then
 		    Return
 		  End If
 		  
 		  For Each Value As Beacon.ConfigValue In Values
-		    Dim SimplifiedKey As String = Value.SimplifiedKey
+		    Dim SimplifiedKey As Text = Value.SimplifiedKey
 		    
-		    Dim Section As Dictionary
+		    Dim Section As Xojo.Core.Dictionary
 		    If Dict.HasKey(Value.Header) Then
 		      Section = Dict.Value(Value.Header)
 		    Else
-		      Section = New Dictionary
+		      Section = New Xojo.Core.Dictionary
 		    End If
 		    
-		    Dim Arr() As String
+		    Dim Arr() As Text
 		    If Section.HasKey(SimplifiedKey) Then
 		      Arr = Section.Value(SimplifiedKey)
 		    End If
@@ -43,7 +43,7 @@ Protected Class ConfigValue
 			  Return Self.mHeader
 			End Get
 		#tag EndGetter
-		Header As String
+		Header As Text
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -52,19 +52,19 @@ Protected Class ConfigValue
 			  Return Self.mKey
 			End Get
 		#tag EndGetter
-		Key As String
+		Key As Text
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mHeader As String
+		Private mHeader As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mKey As String
+		Private mKey As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mValue As String
+		Private mValue As Text
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -78,7 +78,7 @@ Protected Class ConfigValue
 			  End If
 			End Get
 		#tag EndGetter
-		SimplifiedKey As String
+		SimplifiedKey As Text
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -87,7 +87,7 @@ Protected Class ConfigValue
 			  Return Self.mValue
 			End Get
 		#tag EndGetter
-		Value As String
+		Value As Text
 	#tag EndComputedProperty
 
 

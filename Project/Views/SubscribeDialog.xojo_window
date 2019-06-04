@@ -496,12 +496,13 @@ Begin Window SubscribeDialog
       Visible         =   True
       Width           =   110
    End
-   Begin URLConnection SubscribeSocket
-      HTTPStatusCode  =   0
+   Begin Xojo.Net.HTTPSocket SubscribeSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
    End
 End
 #tag EndWindow
@@ -547,9 +548,11 @@ End
 		Sub Action()
 		  Self.Hide()
 		  
-		  Dim FormString As String = "email=" + Beacon.URLEncode(Trim(AddressField.Text)) + "&first_name=" + Beacon.URLEncode(Trim(FirstNameField.Text)) + "&last_name=" + Beacon.URLEncode(Trim(LastNameField.Text))
+		  Dim FormString As String = "email=" + EncodeURLComponent(Trim(AddressField.Text)) + "&first_name=" + EncodeURLComponent(Trim(FirstNameField.Text)) + "&last_name=" + EncodeURLComponent(Trim(LastNameField.Text))
+		  Dim Content As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(FormString.ToText)
 		  
-		  SubscribeSocket.SetRequestContent(FormString, "application/x-www-form-urlencoded")
+		  SubscribeSocket.ValidateCertificates = True
+		  SubscribeSocket.SetRequestContent(Content, "application/x-www-form-urlencoded")
 		  SubscribeSocket.Send("POST", Beacon.WebURL("/subscribe.php"))
 		End Sub
 	#tag EndEvent
@@ -570,14 +573,14 @@ End
 #tag EndEvents
 #tag Events SubscribeSocket
 	#tag Event
-		Sub Error(e As RuntimeException)
-		  #Pragma Unused e
+		Sub Error(err as RuntimeException)
+		  #Pragma Unused err
 		  
 		  Self.Close
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
 		  #Pragma Unused URL
 		  #Pragma Unused Content
 		  #Pragma Unused HTTPStatus

@@ -2,10 +2,10 @@
 Protected Class KeyPair
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Dim PublicKey, PrivateKey As String
-		  If Not Crypto.RSAGenerateKeyPair(2048, PrivateKey, PublicKey) Then
-		    Dim Err As New CryptoException
-		    Err.Message = "Unable to generate new key pair"
+		  Dim PublicKey, PrivateKey As Xojo.Core.MemoryBlock
+		  If Not Xojo.Crypto.RSAGenerateKeyPair(2048, PrivateKey, PublicKey) Then
+		    Dim Err As New Xojo.Crypto.CryptoException
+		    Err.Reason = "Unable to generate new key pair"
 		    Raise Err
 		  End If
 		  Self.Constructor(PublicKey, PrivateKey)
@@ -13,10 +13,10 @@ Protected Class KeyPair
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(PublicKey As MemoryBlock, PrivateKey As MemoryBlock)
-		  If Not (Crypto.RSAVerifyKey(PublicKey) And Crypto.RSAVerifyKey(PrivateKey)) Then
-		    Dim Err As New CryptoException
-		    Err.Message = "Key pair not valid"
+		Sub Constructor(PublicKey As Xojo.Core.MemoryBlock, PrivateKey As Xojo.Core.MemoryBlock)
+		  If Not (Xojo.Crypto.RSAVerifyKey(PublicKey) And Xojo.Crypto.RSAVerifyKey(PrivateKey)) Then
+		    Dim Err As New Xojo.Crypto.CryptoException
+		    Err.Reason = "Key pair not valid"
 		    Raise Err
 		  End If
 		  
@@ -26,47 +26,47 @@ Protected Class KeyPair
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PrivateKey(Password As MemoryBlock, PEMFormat As Boolean) As String
-		  Dim Key As MemoryBlock
+		Function PrivateKey(Password As Xojo.Core.MemoryBlock, PEMFormat As Boolean) As Text
+		  Dim Key As Xojo.Core.MemoryBlock
 		  If PEMFormat Then
-		    Key = BeaconEncryption.PEMEncodePrivateKey(Self.mPrivateKey)
+		    Key = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(BeaconEncryption.PEMEncodePrivateKey(Self.mPrivateKey))
 		  Else
 		    Key = Self.mPrivateKey
 		  End If
 		  
-		  Return EncodeHex(BeaconEncryption.BlowfishEncrypt(Password, Key))
+		  Return Beacon.EncodeHex(BeaconEncryption.BlowfishEncrypt(Password, Key))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function PublicKey(PEMFormat As Boolean) As String
+		Function PublicKey(PEMFormat As Boolean) As Text
 		  If PEMFormat Then
 		    Return BeaconEncryption.PEMEncodePublicKey(Self.mPublicKey)
 		  Else
-		    Return EncodeHex(Self.mPublicKey)
+		    Return Beacon.EncodeHex(Self.mPublicKey)
 		  End If
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Sign(Data As MemoryBlock) As MemoryBlock
-		  Return Crypto.RSASign(Data, Self.mPrivateKey)
+		Function Sign(Data As Xojo.Core.MemoryBlock) As Xojo.Core.MemoryBlock
+		  Return Xojo.Crypto.RSASign(Data, Self.mPrivateKey)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Verify(Data As MemoryBlock, Signature As MemoryBlock) As Boolean
-		  Return Crypto.RSAVerifySignature(Data, Signature, Self.mPublicKey)
+		Function Verify(Data As Xojo.Core.MemoryBlock, Signature As Xojo.Core.MemoryBlock) As Boolean
+		  Return Xojo.Crypto.RSAVerifySignature(Data, Signature, Self.mPublicKey)
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mPrivateKey As MemoryBlock
+		Private mPrivateKey As Xojo.Core.MemoryBlock
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mPublicKey As MemoryBlock
+		Private mPublicKey As Xojo.Core.MemoryBlock
 	#tag EndProperty
 
 

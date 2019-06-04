@@ -1,7 +1,7 @@
 #tag Class
 Protected Class Map
 	#tag Method, Flags = &h0
-		Sub Constructor(Name As String, Mask As UInt64, DifficultyScale As Double)
+		Sub Constructor(Name As Text, Mask As UInt64, DifficultyScale As Double)
 		  Self.mName = Name
 		  Self.mMask = Mask
 		  Self.mDifficultyScale = DifficultyScale
@@ -40,7 +40,7 @@ Protected Class Map
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As String
+		Function Name() As Text
 		  Return Self.mName
 		End Function
 	#tag EndMethod
@@ -77,7 +77,7 @@ Protected Class Map
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mName As String
+		Private mName As Text
 	#tag EndProperty
 
 

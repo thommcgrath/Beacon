@@ -44,6 +44,7 @@ Begin BeaconWindow UpdateWindow
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -101,6 +102,7 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   1
+         TabStop         =   True
          Top             =   52
          Transparent     =   False
          Value           =   0
@@ -453,6 +455,7 @@ Begin BeaconWindow UpdateWindow
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   3
+         TabStop         =   True
          Top             =   52
          Transparent     =   False
          Value           =   0
@@ -493,17 +496,19 @@ Begin BeaconWindow UpdateWindow
       End
    End
    Begin UpdateChecker Checker
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin URLConnection Downloader
-      HTTPStatusCode  =   0
+   Begin Xojo.Net.HTTPSocket Downloader
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
       TabPanelIndex   =   0
+      ValidateCertificates=   False
    End
 End
 #tag EndWindow
@@ -688,7 +693,7 @@ End
 		    End If
 		  End If
 		  
-		  Self.Downloader.Send("GET", Self.mURL)
+		  Self.Downloader.Send("GET", Self.mURL.ToText)
 		  Self.DownloadProgressBar.Maximum = 0
 		  Self.ViewPanel.Value = Self.ViewDownload
 		End Sub
@@ -760,20 +765,20 @@ End
 #tag EndEvents
 #tag Events Downloader
 	#tag Event
-		Sub Error(e As RuntimeException)
+		Sub Error(err as RuntimeException)
 		  Me.Disconnect
 		  
 		  Dim Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = "Unable to Download Update"
-		  Dialog.Explanation = e.Explanation
+		  Dialog.Explanation = Err.Reason
 		  Call Dialog.ShowModalWithin(Self)
 		  
 		  Self.Close
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub HeadersReceived(URL As String, HTTPStatus As Integer)
+		Sub HeadersReceived(URL as Text, HTTPStatus as Integer)
 		  If HTTPStatus <> 200 Then
 		    Me.Disconnect
 		    
@@ -788,12 +793,23 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ContentReceived(URL As String, HTTPStatus As Integer, content As String)
+		Sub ReceiveProgress(BytesReceived as Int64, TotalBytes as Int64, NewData as xojo.Core.MemoryBlock)
+		  #Pragma Unused NewData
+		  
+		  If Self.DownloadProgressBar.Maximum <> 1000 Then
+		    Self.DownloadProgressBar.Maximum = 1000
+		  End If
+		  Self.DownloadProgressBar.Value = (BytesReceived / TotalBytes) * Self.DownloadProgressBar.Maximum
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
 		  #Pragma Unused URL
 		  #Pragma Unused HTTPStatus
 		  
-		  
-		  Self.mFile.Write(Content)
+		  Dim Stream As BinaryStream = BinaryStream.Create(Self.mFile, True)
+		  Stream.Write(Beacon.ConvertMemoryBlock(Content))
+		  Stream.Close
 		  
 		  If UpdateChecker.VerifyFile(Self.mFile, Self.mSignature) Then
 		    Self.Hide
@@ -840,16 +856,6 @@ End
 		  End If
 		  
 		  Self.Close
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub ReceivingProgressed(bytesReceived As Int64, totalBytes As Int64, newData As String)
-		  #Pragma Unused NewData
-		  
-		  If Self.DownloadProgressBar.Maximum <> 1000 Then
-		    Self.DownloadProgressBar.Maximum = 1000
-		  End If
-		  Self.DownloadProgressBar.Value = (BytesReceived / TotalBytes) * Self.DownloadProgressBar.Maximum
 		End Sub
 	#tag EndEvent
 #tag EndEvents

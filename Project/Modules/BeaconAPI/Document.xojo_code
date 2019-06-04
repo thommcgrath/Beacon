@@ -1,11 +1,11 @@
 #tag Class
 Protected Class Document
 	#tag Method, Flags = &h0
-		Sub Constructor(Source As Dictionary)
+		Sub Constructor(Source As Xojo.Core.Dictionary)
 		  Self.mDescription = Source.Value("description")
 		  Self.mDocumentID = Source.Value("document_id")
 		  Self.mDownloadCount = Source.Value("download_count")
-		  Self.mLastUpdated = NewDateFromSQLDateTime(Source.Value("last_updated"))
+		  Self.mLastUpdated = Beacon.ParseSQLDate(Source.Value("last_updated"))
 		  Self.mName = Source.Value("name")
 		  Self.mResourceURL = Source.Value("resource_url")
 		  Self.mRevision = Source.Value("revision")
@@ -14,13 +14,13 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Description() As String
+		Function Description() As Text
 		  Return Self.mDescription
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function DocumentID() As String
+		Function DocumentID() As Text
 		  Return Self.mDocumentID
 		End Function
 	#tag EndMethod
@@ -32,13 +32,13 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function LastUpdated() As Date
+		Function LastUpdated() As Xojo.Core.Date
 		  Return Self.mLastUpdated
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As String
+		Function Name() As Text
 		  Return Self.mName
 		End Function
 	#tag EndMethod
@@ -49,12 +49,12 @@ Protected Class Document
 		    Return 1
 		  End If
 		  
-		  Return StrComp(Self.mDocumentID, Other.mDocumentID, 0)
+		  Return Self.mDocumentID.Compare(Other.mDocumentID)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ResourceURL() As String
+		Function ResourceURL() As Text
 		  Return Self.mResourceURL
 		End Function
 	#tag EndMethod
@@ -66,7 +66,7 @@ Protected Class Document
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UserID() As String
+		Function UserID() As Text
 		  Return Self.mUserID
 		End Function
 	#tag EndMethod
@@ -79,11 +79,11 @@ Protected Class Document
 
 
 	#tag Property, Flags = &h21
-		Private mDescription As String
+		Private mDescription As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDocumentID As String
+		Private mDocumentID As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -91,15 +91,15 @@ Protected Class Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mLastUpdated As Date
+		Private mLastUpdated As Xojo.Core.Date
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mName As String
+		Private mName As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mResourceURL As String
+		Private mResourceURL As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -107,7 +107,7 @@ Protected Class Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUserID As String
+		Private mUserID As Text
 	#tag EndProperty
 
 

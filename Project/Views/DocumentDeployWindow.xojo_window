@@ -463,8 +463,8 @@ End
 		  Next
 		  Self.ServerSelectionList.Sort
 		  
-		  Self.mGameIniOptions = New Dictionary
-		  Self.mGameUserSettingsIniOptions = New Dictionary
+		  Self.mGameIniOptions = New Xojo.Core.Dictionary
+		  Self.mGameUserSettingsIniOptions = New Xojo.Core.Dictionary
 		  
 		  Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
 		  For Each Group As Beacon.ConfigGroup In Groups
@@ -472,13 +472,13 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, App.IdentityManager.CurrentIdentity)
+		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, App.Identity)
 		    For Each Option As Beacon.ConfigValue In Options
 		      Self.mCommandLineOptions.Append(Option)
 		    Next
 		    
-		    Beacon.ConfigValue.FillConfigDict(Self.mGameIniOptions, Group.GameIniValues(Self.mDocument, App.IdentityManager.CurrentIdentity))
-		    Beacon.ConfigValue.FillConfigDict(Self.mGameUserSettingsIniOptions, Group.GameUserSettingsIniValues(Self.mDocument, App.IdentityManager.CurrentIdentity))
+		    Beacon.ConfigValue.FillConfigDict(Self.mGameIniOptions, Group.GameIniValues(Self.mDocument, App.Identity))
+		    Beacon.ConfigValue.FillConfigDict(Self.mGameUserSettingsIniOptions, Group.GameUserSettingsIniValues(Self.mDocument, App.Identity))
 		  Next
 		  
 		  Dim CustomContent As BeaconConfigs.CustomContent
@@ -497,9 +497,9 @@ End
 		    // Move to the next step
 		    Self.DeployingList.DeleteAllRows
 		    
-		    Dim Now As New Date
-		    Now.GMTOffset = 0
-		    Self.mDeployLabel = Str(Now.Year, "0000") + "-" + Str(Now.Month, "00") + "-" + Str(Now.Day, "00") + " " + Str(Now.Hour, "00") + "." + Str(Now.Minute, "00") + "." + Str(Now.Second, "00") + " GMT"
+		    Dim Now As New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970, New Xojo.Core.TimeZone(0))
+		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Current
+		    Self.mDeployLabel = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + "." + Now.Minute.ToText(Locale, "00") + "." + Now.Second.ToText(Locale, "00") + " GMT"
 		    
 		    For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
 		      Dim Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
@@ -512,7 +512,7 @@ End
 		      Case IsA Beacon.NitradoServerProfile
 		        DeploymentEngine = New Beacon.NitradoDeploymentEngine(Profile.Name, Beacon.NitradoServerProfile(Profile).ServiceID, Self.mDocument.OAuthData(Profile.OAuthProvider))
 		      Case IsA Beacon.FTPServerProfile
-		        DeploymentEngine = New Beacon.FTPDeploymentEngine(Beacon.FTPServerProfile(Profile), App.IdentityManager.CurrentIdentity)
+		        DeploymentEngine = New Beacon.FTPDeploymentEngine(Beacon.FTPServerProfile(Profile), App.Identity)
 		      Else
 		        Continue
 		      End Select
@@ -530,7 +530,7 @@ End
 		    Return
 		  End If
 		  
-		  Dim Provider As String = Self.mOAuthQueue(0)
+		  Dim Provider As Text = Self.mOAuthQueue(0)
 		  Self.mOAuthQueue.Remove(0)
 		  
 		  Self.Auth.Provider = Provider
@@ -547,15 +547,15 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Backup(Engine As Beacon.DeploymentEngine, Folder As FolderItem)
+		Private Sub Backup(Engine As Beacon.DeploymentEngine, Folder As Beacon.FolderItem)
 		  If Engine.Errored Then
 		    Return
 		  End If
 		  
-		  Dim ServerFolder As FolderItem = Folder.Child(Beacon.SanitizeFilename(Engine.Name))
+		  Dim ServerFolder As Beacon.FolderItem = Folder.Child(Beacon.FolderItem.SanitizeFilename(Engine.Name))
 		  
-		  Dim GameIniContent As String = Engine.BackupGameIni.Trim
-		  Dim GameUserSettingsIniContent As String = Engine.BackupGameUserSettingsIni.Trim
+		  Dim GameIniContent As Text = Engine.BackupGameIni.Trim
+		  Dim GameUserSettingsIniContent As Text = Engine.BackupGameUserSettingsIni.Trim
 		  If GameIniContent = "" And GameUserSettingsIniContent = "" Then
 		    Return
 		  End If
@@ -564,20 +564,20 @@ End
 		    ServerFolder.CreateAsFolder
 		  End If
 		  
-		  Dim Subfolder As FolderItem = ServerFolder.Child(Self.mDeployLabel)
+		  Dim Subfolder As Beacon.FolderItem = ServerFolder.Child(Self.mDeployLabel)
 		  Dim Counter As Integer = 1
 		  While Subfolder.Exists
-		    Subfolder = ServerFolder.Child(Self.mDeployLabel + "-" + Str(Counter, "0"))
+		    Subfolder = ServerFolder.Child(Self.mDeployLabel + "-" + Counter.ToText)
 		    Counter = Counter + 1
 		  Wend
 		  
 		  Subfolder.CreateAsFolder
 		  
 		  If GameIniContent <> "" Then
-		    Subfolder.Child("Game.ini").Write(GameIniContent)
+		    Subfolder.Child("Game.ini").Write(GameIniContent, Xojo.Core.TextEncoding.UTF8)
 		  End If
 		  If GameUserSettingsIniContent <> "" Then
-		    Subfolder.Child("GameUserSettings.ini").Write(GameUserSettingsIniContent)
+		    Subfolder.Child("GameUserSettings.ini").Write(GameUserSettingsIniContent, Xojo.Core.TextEncoding.UTF8)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -646,11 +646,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mCurrentProvider As String
+		Private mCurrentProvider As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mDeployLabel As String
+		Private mDeployLabel As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -662,15 +662,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameIniOptions As Dictionary
+		Private mGameIniOptions As Xojo.Core.Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniOptions As Dictionary
+		Private mGameUserSettingsIniOptions As Xojo.Core.Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOAuthQueue() As String
+		Private mOAuthQueue() As Text
 	#tag EndProperty
 
 
@@ -759,7 +759,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Provider As String = Profile.OAuthProvider
+		    Dim Provider As Text = Profile.OAuthProvider
 		    If Provider <> "" And Self.mOAuthQueue.IndexOf(Provider) = -1 Then
 		      Self.mOAuthQueue.Append(Provider)
 		    End If
@@ -817,7 +817,7 @@ End
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Function ShowURL(URL As String) As Beacon.WebView
+		Function ShowURL(URL As Text) As Beacon.WebView
 		  Return MiniBrowser.ShowURL(URL)
 		End Function
 	#tag EndEvent
@@ -831,7 +831,7 @@ End
 		  Next
 		  
 		  If Finished Then
-		    Dim BackupsFolder As FolderItem = App.ApplicationSupport.Child("Backups")
+		    Dim BackupsFolder As Beacon.FolderItem = App.ApplicationSupport.Child("Backups")
 		    If Not BackupsFolder.Exists Then
 		      BackupsFolder.CreateAsFolder
 		    End If

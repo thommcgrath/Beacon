@@ -415,7 +415,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.ToolbarCaption = "Identity"
-		  Self.UpdateUI(App.IdentityManager.CurrentIdentity)
+		  Self.UpdateUI(App.Identity)
 		  NotificationKit.Watch(Self, IdentityManager.Notification_IdentityChanged)
 		End Sub
 	#tag EndEvent
@@ -444,8 +444,9 @@ End
 		    Return
 		  End If
 		  
-		  Dim Dict As Dictionary = App.IdentityManager.CurrentIdentity.Export
-		  File.Write(Beacon.GenerateJSON(Dict))
+		  Dim Dict As Xojo.Core.Dictionary = App.Identity.Export
+		  Dim Writer As New Beacon.JSONWriter(Dict, File)
+		  Writer.Run
 		End Sub
 	#tag EndMethod
 

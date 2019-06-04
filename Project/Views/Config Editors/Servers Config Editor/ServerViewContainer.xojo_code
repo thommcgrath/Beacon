@@ -3,12 +3,6 @@ Protected Class ServerViewContainer
 Inherits BeaconSubview
 	#tag ViewBehavior
 		#tag ViewProperty
-			Name="Progress"
-			Group="Behavior"
-			InitialValue="ProgressNone"
-			Type="Double"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="ToolbarCaption"
 			Group="Behavior"
 			Type="String"

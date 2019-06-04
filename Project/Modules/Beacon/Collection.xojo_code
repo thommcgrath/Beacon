@@ -1,9 +1,18 @@
 #tag Class
 Protected Class Collection
-Implements Countable
+Implements  Countable
 	#tag Method, Flags = &h0
-		Sub Append(Item As Variant)
+		Sub Append(Item As Auto)
 		  Self.mItems.Append(Item)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Items() As Auto)
+		  Self.Constructor(Items.Ubound)
+		  For I As Integer = 0 To Items.Ubound
+		    Self.mItems(I) = Items(I)
+		  Next
 		End Sub
 	#tag EndMethod
 
@@ -14,18 +23,9 @@ Implements Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Items() As Variant)
-		  Self.Constructor(Items.Ubound)
-		  For I As Integer = 0 To Items.Ubound
-		    Self.mItems(I) = Items(I)
-		  Next
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor(Source As Xojo.Core.Iterable)
 		  Self.Constructor(-1)
-		  For Each Item As Variant In Source
+		  For Each Item As Auto In Source
 		    Self.mItems.Append(Item)
 		  Next
 		End Sub
@@ -46,7 +46,7 @@ Implements Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IndexOf(Item As Variant) As Integer
+		Function IndexOf(Item As Auto) As Integer
 		  For I As Integer = 0 To Self.mItems.Ubound
 		    If Self.mItems(I) = Item Then
 		      Return I
@@ -57,7 +57,7 @@ Implements Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Insert(Index As Integer, Item As Variant)
+		Sub Insert(Index As Integer, Item As Auto)
 		  Self.mItems.Insert(Index, Item)
 		End Sub
 	#tag EndMethod
@@ -69,13 +69,13 @@ Implements Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Operator_Subscript(Index As Integer) As Variant
+		Function Operator_Subscript(Index As Integer) As Auto
 		  Return Self.mItems(Index)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Operator_Subscript(Index As Integer, Assigns Value As Variant)
+		Sub Operator_Subscript(Index As Integer, Assigns Value As Auto)
 		  Self.mItems(Index) = Value
 		End Sub
 	#tag EndMethod
@@ -94,44 +94,11 @@ Implements Countable
 
 
 	#tag Property, Flags = &h1
-		Protected mItems() As Variant
+		Protected mItems() As Auto
 	#tag EndProperty
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="Name"
-			Visible=true
-			Group="ID"
-			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Index"
-			Visible=true
-			Group="ID"
-			InitialValue="-2147483648"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Super"
-			Visible=true
-			Group="ID"
-			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Top"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class
 #tag EndClass

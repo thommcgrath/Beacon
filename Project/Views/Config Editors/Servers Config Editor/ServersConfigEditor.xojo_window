@@ -62,7 +62,6 @@ Begin ConfigEditor ServersConfigEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -226,14 +225,14 @@ End
 
 
 	#tag Method, Flags = &h0
-		Function ConfigLabel() As String
+		Function ConfigLabel() As Text
 		  Return "Servers"
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Controller As Beacon.DocumentController)
-		  Self.mViews = New Dictionary
+		  Self.mViews = New Xojo.Core.Dictionary
 		  Super.Constructor(Controller)
 		End Sub
 	#tag EndMethod
@@ -280,7 +279,7 @@ End
 			  Self.mCurrentProfileID = Value
 			End Set
 		#tag EndSetter
-		CurrentProfileID As String
+		CurrentProfileID As Text
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -295,11 +294,11 @@ End
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mCurrentProfileID As String
+		Private mCurrentProfileID As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mViews As Dictionary
+		Private mViews As Xojo.Core.Dictionary
 	#tag EndProperty
 
 
@@ -314,7 +313,7 @@ End
 		  End If
 		  
 		  Dim Profile As Beacon.ServerProfile = Me.RowTag(Me.ListIndex)
-		  Dim ProfileID As String = Profile.ProfileID
+		  Dim ProfileID As Text = Profile.ProfileID
 		  If Not Self.mViews.HasKey(ProfileID) Then
 		    // Create the view
 		    Dim View As ServerViewContainer
@@ -349,7 +348,7 @@ End
 		  
 		  If Warn Then
 		    Dim Subject As String = If(SelCount = 1, "server", "servers")
-		    Dim DemonstrativeAdjective As String = If(SelCount = 1, "this", "these " + Str(SelCount, "-0"))
+		    Dim DemonstrativeAdjective As String = If(SelCount = 1, "this", "these " + SelCount.ToText)
 		    If Not Self.ShowConfirm("Are you sure you want to delete " + DemonstrativeAdjective + " " + Subject + "?", "The " + Subject + " can be added again later using the ""Import"" feature next to the ""Config Type"" menu.", "Delete", "Cancel") Then
 		      Return
 		    End If
@@ -376,7 +375,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
-		  Dim BackupsRoot As FolderItem = App.ApplicationSupport.Child("Backups")
+		  Dim BackupsRoot As Beacon.FolderItem = App.ApplicationSupport.Child("Backups")
 		  
 		  Dim RowIndex As Integer = Me.RowFromXY(X, Y)
 		  If RowIndex = -1 Then
@@ -386,7 +385,7 @@ End
 		  
 		  Try
 		    Dim Profile As Beacon.ServerProfile = Me.RowTag(RowIndex)
-		    Dim Folder As FolderItem = BackupsRoot.Child(Beacon.SanitizeFilename(Profile.Name))
+		    Dim Folder As Beacon.FolderItem = BackupsRoot.Child(Beacon.FolderItem.SanitizeFilename(Profile.Name))
 		    Base.Append(New MenuItem("Show Config Backups", Folder))
 		  Catch Err As RuntimeException
 		    Dim Item As New MenuItem("Show Config Backups", BackupsRoot)
@@ -401,7 +400,7 @@ End
 		Function ContextualMenuAction(HitItem As MenuItem) As Boolean
 		  Select Case HitItem.Text
 		  Case "Show Config Backups"
-		    Dim Folder As FolderItem = HitItem.Tag
+		    Dim Folder As Beacon.FolderItem = HitItem.Tag
 		    If Folder = Nil Then
 		      Return True
 		    End If
@@ -632,7 +631,6 @@ End
 	#tag ViewProperty
 		Name="CurrentProfileID"
 		Group="Behavior"
-		Type="String"
-		EditorType="MultiLineEditor"
+		Type="Text"
 	#tag EndViewProperty
 #tag EndViewBehavior

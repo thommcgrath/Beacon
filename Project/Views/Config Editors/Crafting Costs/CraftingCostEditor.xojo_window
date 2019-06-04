@@ -200,7 +200,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateList()
 		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
-		  Dim Paths() As String
+		  Dim Paths() As Text
 		  For I As Integer = 0 To Self.List.ListCount - 1
 		    If Self.List.Selected(I) Then
 		      Dim Resource As Beacon.Engram = Self.List.RowTag(I)
@@ -238,7 +238,7 @@ End
 
 
 	#tag Hook, Flags = &h0
-		Event GetActiveMods() As Beacon.StringList
+		Event GetActiveMods() As Beacon.TextList
 	#tag EndHook
 
 
@@ -361,7 +361,7 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PerformCopy(Board As Clipboard)
-		  Dim Dicts() As Dictionary
+		  Dim Dicts() As Xojo.Core.Dictionary
 		  For I As Integer = 0 To Me.ListCount - 1
 		    If Not Me.Selected(I) Then
 		      Continue
@@ -370,14 +370,14 @@ End
 		    Dim Engram As Beacon.Engram = Me.RowTag(I)
 		    Dim Idx As Integer = Self.mTarget.IndexOf(Engram)
 		    
-		    Dim Dict As New Dictionary
+		    Dim Dict As New Xojo.Core.Dictionary
 		    Dict.Value("Class") = Engram.ClassString
 		    Dict.Value("Quantity") = Self.mTarget.Quantity(Idx)
 		    Dict.Value("Exact") = Self.mTarget.RequireExactResource(Idx)
 		    Dicts.Append(Dict)
 		  Next
 		  
-		  Board.AddRawData(Beacon.GenerateJSON(Dicts), Self.kClipboardType)
+		  Board.AddRawData(Xojo.Data.GenerateJSON(Dicts), Self.kClipboardType)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -386,13 +386,13 @@ End
 		    Return
 		  End If
 		  
-		  Dim Dicts() As Variant
+		  Dim Dicts() As Auto
 		  Try
 		    Dim Contents As String = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8)
-		    Dicts = Beacon.ParseJSON(Contents)
+		    Dicts = Xojo.Data.ParseJSON(Contents.ToText)
 		    
-		    For Each Dict As Dictionary In Dicts
-		      Dim ClassString As String = Dict.Value("Class")
+		    For Each Dict As Xojo.Core.Dictionary In Dicts
+		      Dim ClassString As Text = Dict.Value("Class")
 		      Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByClass(ClassString)
 		      If Engram = Nil Then
 		        Engram = Beacon.Engram.CreateUnknownEngram(ClassString)

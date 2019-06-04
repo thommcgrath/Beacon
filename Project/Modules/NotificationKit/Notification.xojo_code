@@ -1,74 +1,39 @@
 #tag Class
 Protected Class Notification
 	#tag Method, Flags = &h0
-		Sub Constructor(Name As String)
+		Sub Constructor(Name As Text)
 		  Self.Constructor(Name, Nil)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Name As String, UserData As Variant)
+		Sub Constructor(Name As Text, UserData As Auto)
 		  Self.mName = Name
 		  Self.mUserData = UserData
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Name() As String
+		Function Name() As Text
 		  Return Self.mName
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function UserData() As Variant
+		Function UserData() As Auto
 		  Return Self.mUserData
 		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mName As String
+		Private mName As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mUserData As Variant
+		Private mUserData As Auto
 	#tag EndProperty
 
 
-	#tag ViewBehavior
-		#tag ViewProperty
-			Name="Name"
-			Visible=true
-			Group="ID"
-			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Index"
-			Visible=true
-			Group="ID"
-			InitialValue="-2147483648"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Super"
-			Visible=true
-			Group="ID"
-			Type="String"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Left"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="Top"
-			Visible=true
-			Group="Position"
-			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-	#tag EndViewBehavior
 End Class
 #tag EndClass

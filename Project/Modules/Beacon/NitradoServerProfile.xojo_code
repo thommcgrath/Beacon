@@ -2,7 +2,7 @@
 Protected Class NitradoServerProfile
 Inherits Beacon.ServerProfile
 	#tag Event
-		Sub ReadFromDictionary(Dict As Dictionary)
+		Sub ReadFromDictionary(Dict As Xojo.Core.Dictionary)
 		  Self.Address = Dict.Value("Address")
 		  Self.ServiceID = Dict.Value("Service ID")
 		  Self.ConfigPath = Dict.Value("Path")
@@ -11,7 +11,7 @@ Inherits Beacon.ServerProfile
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteToDictionary(Dict As Dictionary)
+		Sub WriteToDictionary(Dict As Xojo.Core.Dictionary)
 		  Dict.Value("Address") = Self.Address
 		  Dict.Value("Service ID") = Self.ServiceID
 		  Dict.Value("Path") = Self.ConfigPath
@@ -28,7 +28,7 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function OAuthProvider() As String
+		Function OAuthProvider() As Text
 		  Return "Nitrado"
 		End Function
 	#tag EndMethod
@@ -55,7 +55,7 @@ Inherits Beacon.ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SecondaryName() As String
+		Function SecondaryName() As Text
 		  Return Self.Address
 		End Function
 	#tag EndMethod
@@ -75,13 +75,13 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mAddress, Value, 0) <> 0 Then
+			  If Self.mAddress.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
 			    Self.mAddress = Value
 			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
-		Address As String
+		Address As Text
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -92,13 +92,13 @@ Inherits Beacon.ServerProfile
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If StrComp(Self.mConfigPath, Value, 0) <> 0 Then
+			  If Self.mConfigPath.Compare(Value, Text.CompareCaseSensitive) <> 0 Then
 			    Self.mConfigPath = Value
 			    Self.Modified = True
 			  End If
 			End Set
 		#tag EndSetter
-		ConfigPath As String
+		ConfigPath As Text
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -130,15 +130,15 @@ Inherits Beacon.ServerProfile
 			  End Select
 			End Set
 		#tag EndSetter
-		GameShortcode As String
+		GameShortcode As Text
 	#tag EndComputedProperty
 
 	#tag Property, Flags = &h21
-		Private mAddress As String
+		Private mAddress As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mConfigPath As String
+		Private mConfigPath As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -146,7 +146,7 @@ Inherits Beacon.ServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mShortcode As String
+		Private mShortcode As Text
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h0
@@ -168,11 +168,6 @@ Inherits Beacon.ServerProfile
 
 
 	#tag ViewBehavior
-		#tag ViewProperty
-			Name="IsConsole"
-			Group="Behavior"
-			Type="Boolean"
-		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Enabled"
 			Group="Behavior"
@@ -230,11 +225,6 @@ Inherits Beacon.ServerProfile
 			Name="ServiceID"
 			Group="Behavior"
 			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="GameShortcode"
-			Group="Behavior"
-			Type="Text"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

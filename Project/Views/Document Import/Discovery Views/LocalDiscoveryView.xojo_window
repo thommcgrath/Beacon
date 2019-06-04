@@ -303,7 +303,6 @@ Begin DiscoveryView LocalDiscoveryView
       Width           =   560
    End
    Begin ClipboardWatcher Watcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -572,7 +571,7 @@ End
 	#tag Event
 		Sub Action()
 		  Dim Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.LocalDiscoveryEngine(Self.mGameIniContent, Self.mGameUserSettingsIniContent)
+		  Engines(0) = New Beacon.LocalDiscoveryEngine(Self.mGameIniContent.ToText, Self.mGameUserSettingsIniContent.ToText)
 		  Self.ShouldFinish(Engines)
 		End Sub
 	#tag EndEvent

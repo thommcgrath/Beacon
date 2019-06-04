@@ -44,7 +44,6 @@ Begin BeaconContainer ModDetailView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   2
@@ -245,7 +244,6 @@ Begin BeaconContainer ModDetailView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
-         TabStop         =   True
          Top             =   199
          Transparent     =   False
          Value           =   0
@@ -288,7 +286,6 @@ Begin BeaconContainer ModDetailView
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
-         SelectionChangeBlocked=   False
          SelectionType   =   1
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -436,7 +433,6 @@ Begin BeaconContainer ModDetailView
       End
    End
    Begin BeaconAPI.Socket Socket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -472,12 +468,11 @@ Begin BeaconContainer ModDetailView
       Width           =   864
    End
    Begin Beacon.EngramSearcherThread Searcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
-      StackSize       =   0
+      StackSize       =   "0"
       State           =   ""
       TabPanelIndex   =   0
    End
@@ -493,7 +488,7 @@ End
 
 	#tag Event
 		Sub Open()
-		  Self.mEngramSets = New Dictionary
+		  Self.mEngramSets = New Xojo.Core.Dictionary
 		End Sub
 	#tag EndEvent
 
@@ -520,7 +515,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ConfirmMod(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
+		Private Sub APICallback_ConfirmMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
 		  
@@ -541,7 +536,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_EngramsDelete(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
+		Private Sub APICallback_EngramsDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Details
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
@@ -561,7 +556,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_EngramsLoad(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
+		Private Sub APICallback_EngramsLoad(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Success
 		  #Pragma Unused Message
 		  #Pragma Unused HTTPStatus
@@ -574,7 +569,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_EngramsPost(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
+		Private Sub APICallback_EngramsPost(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Details
 		  #Pragma Unused HTTPStatus
 		  #Pragma Unused RawReply
@@ -612,13 +607,13 @@ End
 		  
 		  Panel.Value = PageLoading
 		  
-		  Dim UIDs() As String
+		  Dim UIDs() As Text
 		  For Each Engram As BeaconAPI.Engram In DeletedEngrams
 		    UIDs.Append(Engram.UID)
 		  Next
 		  
-		  Dim Request As New BeaconAPI.Request("engram.php", "DELETE", Join(UIDs, ","), "text/plain", AddressOf APICallback_EngramsDelete)
-		  Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Dim Request As New BeaconAPI.Request("engram.php", "DELETE", UIDs.Join(","), "text/plain", AddressOf APICallback_EngramsDelete)
+		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		  
 		  Return True
@@ -632,11 +627,11 @@ End
 		  End If
 		  
 		  If Self.mEngramSets = Nil Then
-		    Self.mEngramSets = New Dictionary
+		    Self.mEngramSets = New Xojo.Core.Dictionary
 		  End If
 		  
 		  If Not Self.mEngramSets.HasKey(Self.mCurrentMod.ModID) Then
-		    Dim Placeholder() As Dictionary
+		    Dim Placeholder() As Auto
 		    Self.mEngramSets.Value(Self.mCurrentMod.ModID) = New BeaconAPI.EngramSet(Placeholder)
 		  End If
 		  
@@ -719,14 +714,14 @@ End
 		  
 		  Panel.Value = PageLoading
 		  
-		  Dim Dicts() As Dictionary
+		  Dim Dicts() As Xojo.Core.Dictionary
 		  For Each Engram As BeaconAPI.Engram In NewEngrams
 		    Dicts.Append(Engram.AsDictionary)
 		  Next
 		  
-		  Dim Content As String = Beacon.GenerateJSON(Dicts)
+		  Dim Content As Text = Xojo.Data.GenerateJSON(Dicts)
 		  Dim Request As New BeaconAPI.Request("engram.php", "POST", Content, "application/json", AddressOf APICallback_EngramsPost)
-		  Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		  
 		  Return True
@@ -790,7 +785,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub ShowURLImport()
-		  Dim Contents As String = DeveloperImportURLDialog.Present(Self)
+		  Dim Contents As Text = DeveloperImportURLDialog.Present(Self)
 		  If Contents <> "" Then
 		    Self.ImportText(Contents)
 		  End If
@@ -858,7 +853,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mEngramSets As Dictionary
+		Private mEngramSets As Xojo.Core.Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -898,7 +893,7 @@ End
 		  Panel.Value = PageLoading
 		  
 		  Dim Request As New BeaconAPI.Request(Self.CurrentMod.ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
-		  Request.Sign(App.IdentityManager.CurrentIdentity)
+		  Request.Sign(App.Identity)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent
@@ -931,9 +926,9 @@ End
 		  
 		  Select Case Column
 		  Case 0
-		    Engram.Path = Me.Cell(Row, Column)
+		    Engram.Path = Me.Cell(Row, Column).ToText
 		  Case 1
-		    Engram.Label = Me.Cell(Row, Column)
+		    Engram.Label = Me.Cell(Row, Column).ToText
 		  Case 2
 		    Engram.CanBeBlueprint = Me.CellCheck(Row, Column)
 		  Case 3
@@ -1022,7 +1017,7 @@ End
 		  
 		  Dim Set As BeaconAPI.EngramSet = Self.EngramSet
 		  Dim CurrentEngrams() As BeaconAPI.Engram = Set.ActiveEngrams
-		  Dim EngramDict As New Dictionary
+		  Dim EngramDict As New Xojo.Core.Dictionary
 		  For Each Engram As BeaconAPI.Engram In CurrentEngrams
 		    EngramDict.Value(Engram.Path) = True
 		  Next

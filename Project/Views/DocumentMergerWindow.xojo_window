@@ -202,7 +202,7 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, SourceDocuments() As Beacon.Document, DestinationDocument As Beacon.Document, Callback As MergeFinishedCallback = Nil)
-		  Dim OAuthData As New Dictionary
+		  Dim OAuthData As New Xojo.Core.Dictionary
 		  For Each Document As Beacon.Document In SourceDocuments
 		    For I As Integer = 0 To Document.ServerProfileCount - 1
 		      Dim Profile As Beacon.ServerProfile = Document.ServerProfile(I)
@@ -303,7 +303,7 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOAuthData As Dictionary
+		Private mOAuthData As Xojo.Core.Dictionary
 	#tag EndProperty
 
 
@@ -334,7 +334,7 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Dim PreviousMods As New Beacon.StringList(Self.mDestination.Mods)
+		  Dim PreviousMods As New Beacon.TextList(Self.mDestination.Mods)
 		  
 		  For I As Integer = 0 To Self.List.ListCount - 1
 		    If Not Self.List.CellCheck(I, 0) Or Self.List.RowTag(I) = Nil Then
@@ -353,7 +353,7 @@ End
 		        Self.mDestination.Add(Profile)
 		        
 		        If Profile.OAuthProvider <> "" And Self.mOAuthData.HasKey(Profile.OAuthProvider) Then
-		          Dim OAuthData As Dictionary = Self.mOAuthData.Value(Profile.OAuthProvider)
+		          Dim OAuthData As Xojo.Core.Dictionary = Self.mOAuthData.Value(Profile.OAuthProvider)
 		          If OAuthData <> Nil Then
 		            Self.mDestination.OAuthData(Profile.OAuthProvider) = OAuthData
 		          End If

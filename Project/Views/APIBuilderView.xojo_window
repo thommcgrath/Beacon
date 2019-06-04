@@ -620,7 +620,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DoNothing(Success As Boolean, Message As String, Details As Variant, HTTPStatus As Integer, RawReply As String)
+		Private Sub APICallback_DoNothing(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
 		  #Pragma Unused Success
 		  #Pragma Unused Message
 		  #Pragma Unused Details
@@ -630,8 +630,8 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function BuildCURLCode(Request As BeaconAPI.Request) As String
-		  Dim Cmd As String = "curl"
+		Private Shared Function BuildCURLCode(Request As BeaconAPI.Request) As Text
+		  Dim Cmd As Text = "curl"
 		  If Request.Method <> "GET" Then
 		    Cmd = Cmd + " --request '" + Request.Method + "'"
 		    If Request.Query <> "" Then
@@ -653,16 +653,17 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function BuildHTTPCode(Request As BeaconAPI.Request) As String
-		  Dim EOL As String = EndOfLine
+		Private Shared Function BuildHTTPCode(Request As BeaconAPI.Request) As Text
+		  Dim StringEOL As String = EndOfLine
+		  Dim EOL As Text = StringEOL.ToText // Really hate that it takes 2 lines of code to do this
 		  
-		  Dim URL As String = Request.URL
+		  Dim URL As Text = Request.URL
 		  Dim SchemeEnd As Integer = URL.IndexOf("://")
 		  URL = URL.Mid(SchemeEnd + 3)
 		  
 		  Dim HostEnd As Integer = URL.IndexOf("/")
-		  Dim Host As String = URL.Left(HostEnd)
-		  Dim Path As String = URL.Mid(HostEnd)
+		  Dim Host As Text = URL.Left(HostEnd)
+		  Dim Path As Text = URL.Mid(HostEnd)
 		  
 		  If Request.Method = "GET" Then
 		    If Request.Query <> "" Then
@@ -670,7 +671,7 @@ End
 		    End If
 		  End If
 		  
-		  Dim Lines() As String
+		  Dim Lines() As Text
 		  Lines.Append(Request.Method + " " + Path + " HTTP/1.1")
 		  Lines.Append("Host: " + Host)
 		  
@@ -686,18 +687,19 @@ End
 		    Lines.Append(Request.Query)
 		  End If
 		  
-		  Return Join(Lines, EOL)
+		  Return Lines.Join(EOL)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Shared Function BuildPHPCode(Request As BeaconAPI.Request) As String
-		  Dim EOL As String = EndOfLine
+		Private Shared Function BuildPHPCode(Request As BeaconAPI.Request) As Text
+		  Dim StringEOL As String = EndOfLine
+		  Dim EOL As Text = StringEOL.ToText // Really hate that it takes 2 lines of code to do this
 		  Dim Authenticated As Boolean = Request.Authenticated
 		  
-		  Dim Lines() As String
+		  Dim Lines() As Text
 		  
-		  Dim URL As String = Request.URL
+		  Dim URL As Text = Request.URL
 		  If Request.Method = "GET" Then
 		    If Request.Query <> "" Then
 		      URL = URL + "?" + Request.Query
@@ -753,7 +755,7 @@ End
 		  Lines.Append("$http_status = curl_getinfo($http, CURLINFO_HTTP_CODE);")
 		  Lines.Append("curl_close($http);")
 		  
-		  Return Join(Lines, EOL)
+		  Return Lines.Join(EOL)
 		End Function
 	#tag EndMethod
 
@@ -763,10 +765,10 @@ End
 #tag Events BuildButton
 	#tag Event
 		Sub Action()
-		  Dim Path As String = PathField.Text
-		  Dim Method As String = MethodMenu.Text
-		  Dim Body As String = BodyField.Text
-		  Dim ContentType As String = ContentTypeField.Text
+		  Dim Path As Text = PathField.Text.ToText
+		  Dim Method As Text = MethodMenu.Text.ToText
+		  Dim Body As Text = BodyField.Text.ToText
+		  Dim ContentType As Text = ContentTypeField.Text.ToText
 		  
 		  Dim Request As BeaconAPI.Request
 		  Try
@@ -776,7 +778,7 @@ End
 		      Request = New BeaconAPI.Request(Path, Method, AddressOf APICallback_DoNothing)
 		    End If
 		    If AuthenticatedCheck.Value Then
-		      Request.Sign(App.IdentityManager.CurrentIdentity)
+		      Request.Sign(App.Identity)
 		    End If
 		  Catch Err As UnsupportedOperationException
 		    Self.ShowAlert("Cannot build the request", Err.Reason)

@@ -20,7 +20,7 @@ Protected Module Qualities
 	#tag Method, Flags = &h1
 		Protected Function ForBaseValue(BaseValue As Double) As Beacon.Quality
 		  Dim List() As Beacon.Quality = All
-		  For I As Integer = 0 To List.Ubound
+		  For I As Integer = 0 To UBound(List)
 		    If BaseValue < List(I).BaseValue Then
 		      If I = 0 Then
 		        Return List(0)
@@ -29,12 +29,12 @@ Protected Module Qualities
 		      End If
 		    End If
 		  Next
-		  Return List(List.Ubound)
+		  Return List(UBound(List))
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function ForKey(Key As String) As Beacon.Quality
+		Protected Function ForKey(Key As Text) As Beacon.Quality
 		  Dim List() As Beacon.Quality = All
 		  For Each Quality As Beacon.Quality In List
 		    If Quality.Key = Key Then
@@ -52,7 +52,7 @@ Protected Module Qualities
 		  Dim Quality As Double = Value * Multiplier
 		  
 		  // Thanks to math, we can get the quality as 15.99999 instead of 16. So rounding it is.
-		  Quality = Round(Quality * 10000) / 10000
+		  Quality = Xojo.Math.Round(Quality * 10000) / 10000
 		  
 		  Return ForBaseValue(Quality)
 		End Function

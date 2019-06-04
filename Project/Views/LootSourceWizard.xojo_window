@@ -1153,7 +1153,7 @@ End
 		  Next
 		  Beacon.Sort(AllowedLootSources)
 		  
-		  Dim Selections() As String
+		  Dim Selections() As Text
 		  For I As Integer = 0 To Self.SourceList.ListCount - 1
 		    If Not Self.SourceList.Selected(I) Then
 		      Continue
@@ -1421,7 +1421,7 @@ End
 #tag Events DefineActionButton
 	#tag Event
 		Sub Action()
-		  Dim ClassString As String = Trim(Self.DefineClassField.Text)
+		  Dim ClassString As Text = Self.DefineClassField.Text.ToText.Trim
 		  If Not ClassString.EndsWith("_C") Then
 		    Self.ShowAlert("Invalid class string", "Ark class strings always end in _C. Check your class string and try again.")
 		    Return
@@ -1432,7 +1432,7 @@ End
 		  If Source <> Nil Then
 		    Destination = New Beacon.MutableLootSource(Source)
 		  Else
-		    Dim Label As String = Trim(Self.DefineNameField.Text)
+		    Dim Label As Text = Self.DefineNameField.Text.ToText.Trim
 		    If Label = "" Then
 		      Self.ShowAlert("No label provided", "A loot source without a name isn't very useful is it? Enter a name and try again.")
 		      Return
@@ -1482,9 +1482,9 @@ End
 		  Dim AppendMode As Boolean = False
 		  Dim ReconfigurePresets As Boolean = Self.CustomizeReconfigureCheckbox.Value
 		  Dim Mask As UInt64 = Self.mDocument.MapCompatibility
-		  Dim Mods As Beacon.StringList = Self.mDocument.Mods
+		  Dim Mods As Beacon.TextList = Self.mDocument.Mods
 		  
-		  Dim AllowedPresets(), AdditionalPresets() As String
+		  Dim AllowedPresets(), AdditionalPresets() As Text
 		  For I As Integer = 0 To Self.CustomizePresetsList.ListCount - 1
 		    If Not Self.CustomizePresetsList.CellCheck(I, 0) Then
 		      Continue
@@ -1519,7 +1519,7 @@ End
 		    Next
 		    
 		    // Add newly selected presets
-		    For Each PresetID As String In AdditionalPresets
+		    For Each PresetID As Text In AdditionalPresets
 		      Dim Preset As Beacon.Preset = LocalData.SharedInstance.GetPreset(PresetID)
 		      If Preset = Nil Then
 		        Continue

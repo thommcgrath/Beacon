@@ -3,9 +3,8 @@ Protected Class EngramSet
 	#tag Method, Flags = &h0
 		Function ActiveEngrams() As BeaconAPI.Engram()
 		  Dim Engrams() As BeaconAPI.Engram
-		  Dim Keys() As Variant = Self.mNewEngrams.Keys
-		  For Each Key As Variant In Keys
-		    Dim Engram As BeaconAPI.Engram = Self.mNewEngrams.Value(Key)
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mNewEngrams
+		    Dim Engram As BeaconAPI.Engram = Entry.Value
 		    Engrams.Append(New BeaconAPI.Engram(Engram))
 		  Next
 		  Return Engrams
@@ -32,7 +31,7 @@ Protected Class EngramSet
 
 	#tag Method, Flags = &h0
 		Sub ClearModifications(Revert As Boolean = True)
-		  Dim Source, Destination As Dictionary
+		  Dim Source, Destination As Xojo.Core.Dictionary
 		  If Revert Then
 		    Source = Self.mOriginalEngrams
 		    Destination = Self.mNewEngrams
@@ -42,20 +41,19 @@ Protected Class EngramSet
 		  End If
 		  
 		  Destination.RemoveAll
-		  Dim Keys() As Variant = Source.Keys
-		  For Each Key As Variant In Keys
-		    Dim Engram As BeaconAPI.Engram = Source.Value(Key)
-		    Destination.Value(Key) = New BeaconAPI.Engram(Engram)
+		  For Each Entry As Xojo.Core.DictionaryEntry In Source
+		    Dim Engram As BeaconAPI.Engram = Entry.Value
+		    Destination.Value(Entry.Key) = New BeaconAPI.Engram(Engram)
 		  Next
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Sources() As Dictionary)
-		  Self.mOriginalEngrams = New Dictionary
-		  Self.mNewEngrams = New Dictionary
+		Sub Constructor(Sources() As Auto)
+		  Self.mOriginalEngrams = New Xojo.Core.Dictionary
+		  Self.mNewEngrams = New Xojo.Core.Dictionary
 		  
-		  For Each Source As Dictionary In Sources
+		  For Each Source As Xojo.Core.Dictionary In Sources
 		    Dim Engram As New BeaconAPI.Engram(Source)
 		    Self.mOriginalEngrams.Value(Engram.ID) = Engram
 		    Self.mNewEngrams.Value(Engram.ID) = Engram
@@ -65,16 +63,14 @@ Protected Class EngramSet
 
 	#tag Method, Flags = &h0
 		Function EngramsToDelete() As BeaconAPI.Engram()
-		  Dim NewClasses() As String
-		  Dim Keys() As Variant = Self.mNewEngrams.Keys
-		  For Each Key As Variant In Keys
-		    NewClasses.Append(BeaconAPI.Engram(Self.mNewEngrams.Value(Key)).Path)
+		  Dim NewClasses() As Text
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mNewEngrams
+		    NewClasses.Append(BeaconAPI.Engram(Entry.Value).Path)
 		  Next
 		  
 		  Dim DeleteEngrams() As BeaconAPI.Engram
-		  Keys = Self.mOriginalEngrams.Keys
-		  For Each Key As Variant In Keys
-		    Dim Engram As BeaconAPI.Engram = Self.mOriginalEngrams.Value(Key)
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOriginalEngrams
+		    Dim Engram As BeaconAPI.Engram = Entry.Value
 		    If NewClasses.IndexOf(Engram.Path) = -1 Then
 		      DeleteEngrams.Append(New BeaconAPI.Engram(Engram))
 		    End If
@@ -86,17 +82,14 @@ Protected Class EngramSet
 
 	#tag Method, Flags = &h0
 		Function EngramsToSave() As BeaconAPI.Engram()
-		  Dim OriginalClasses As New Dictionary
-		  Dim Keys() As Variant = Self.mOriginalEngrams.Keys
-		  For Each Key As Variant In Keys
-		    Dim Engram As BeaconAPI.Engram = Self.mOriginalEngrams.Value(Key)
-		    OriginalClasses.Value(Engram.Path) = Engram
+		  Dim OriginalClasses As New Xojo.Core.Dictionary
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOriginalEngrams
+		    OriginalClasses.Value(BeaconAPI.Engram(Entry.Value).Path) = BeaconAPI.Engram(Entry.Value)
 		  Next
 		  
 		  Dim NewEngrams() As BeaconAPI.Engram
-		  Keys = Self.mNewEngrams.Keys
-		  For Each Key As Variant In Keys
-		    Dim Engram As BeaconAPI.Engram = Self.mNewEngrams.Value(Key)
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mNewEngrams
+		    Dim Engram As BeaconAPI.Engram = Entry.Value
 		    If OriginalClasses.HasKey(Engram.Path) Then
 		      // Might be changed
 		      Dim OriginalEngram As BeaconAPI.Engram = OriginalClasses.Value(Engram.Path)
@@ -138,11 +131,11 @@ Protected Class EngramSet
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mNewEngrams As Dictionary
+		Private mNewEngrams As Xojo.Core.Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mOriginalEngrams As Dictionary
+		Private mOriginalEngrams As Xojo.Core.Dictionary
 	#tag EndProperty
 
 

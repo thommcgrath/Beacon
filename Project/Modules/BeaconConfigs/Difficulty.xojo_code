@@ -5,7 +5,7 @@ Inherits Beacon.ConfigGroup
 		Sub CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
 		  #Pragma Unused SourceDocument
 		  
-		  Values.Append(New Beacon.ConfigValue("?", "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyString(1)))
+		  Values.Append(New Beacon.ConfigValue("?", "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(1)))
 		End Sub
 	#tag EndEvent
 
@@ -13,13 +13,13 @@ Inherits Beacon.ConfigGroup
 		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
 		  #Pragma Unused SourceDocument
 		  
-		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", Self.DifficultyOffset.PrettyString))
-		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyString(1)))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", Self.DifficultyOffset.PrettyText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(1)))
 		End Sub
 	#tag EndEvent
 
 	#tag Event
-		Sub ReadDictionary(Dict As Dictionary, Identity As Beacon.Identity)
+		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  If Dict.HasKey("MaxDinoLevel") Then
@@ -29,7 +29,7 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
-		Sub WriteDictionary(Dict As Dictionary, Identity As Beacon.Identity)
+		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
 		  Dict.Value("MaxDinoLevel") = Self.MaxDinoLevel
@@ -38,7 +38,7 @@ Inherits Beacon.ConfigGroup
 
 
 	#tag Method, Flags = &h0
-		Shared Function ConfigName() As String
+		Shared Function ConfigName() As Text
 		  Return "Difficulty"
 		End Function
 	#tag EndMethod
