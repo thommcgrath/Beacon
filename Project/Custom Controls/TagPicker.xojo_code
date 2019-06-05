@@ -62,6 +62,16 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 	#tag Event
+		Function MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Integer, PixelsY As Integer, WheelData As BeaconUI.ScrollEvent) As Boolean
+		  Dim ScrollPosition As Integer = Min(Max(Self.mScrollPosition + PixelsY, 0), Self.mOverflowHeight)
+		  If Self.mScrollPosition <> ScrollPosition Then
+		    Self.mScrollPosition = ScrollPosition
+		    Self.Invalidate
+		  End If
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
@@ -80,9 +90,10 @@ Inherits ControlCanvas
 		  
 		  Dim XPos As Integer = HorizontalSpacing + ContentArea.Left
 		  Dim YPos As Integer = VerticalSpacing + ContentArea.Top
-		  Dim MaxCellWidth As Integer = ContentArea.Width - (HorizontalSpacing * 2)
+		  Dim MaxCellWidth As Integer = ContentArea.Width - ((HorizontalSpacing * 2) + 10)
 		  Dim CapHeight As Integer = Ceil(G.CapHeight)
 		  Dim CellHeight As Integer = CapHeight + (VerticalPadding * 2)
+		  Dim Clip As Graphics = G.Clip(ContentArea.Left, ContentArea.Top, ContentArea.Width, ContentArea.Height)
 		  
 		  For I As Integer = 0 To Self.mTags.Ubound
 		    Dim Tag As String = Self.mTags(I)
@@ -91,14 +102,14 @@ Inherits ControlCanvas
 		    Dim Pressed As Boolean = Self.mMousePressedIndex = I
 		    Tag = Titlecase(Tag)
 		    
-		    Dim CaptionWidth As Integer = Ceil(G.StringWidth(Tag))
+		    Dim CaptionWidth As Integer = Ceil(Clip.StringWidth(Tag))
 		    Dim CellWidth As Integer = Min(MaxCellWidth, CaptionWidth + (HorizontalPadding * 2))
 		    If XPos + CellWidth > ContentArea.Right - HorizontalSpacing Then
 		      XPos = ContentArea.Left + HorizontalSpacing
 		      YPos = YPos + VerticalSpacing + CellHeight
 		    End If
 		    
-		    Dim CellRect As New REALbasic.Rect(XPos, YPos, CellWidth, CellHeight)
+		    Dim CellRect As New REALbasic.Rect(XPos, YPos - Self.mScrollPosition, CellWidth, CellHeight)
 		    Self.mCells(I) = CellRect
 		    
 		    Dim CaptionLeft As Integer = CellRect.Left + HorizontalPadding
@@ -115,21 +126,33 @@ Inherits ControlCanvas
 		      CellColor = SystemColors.UnemphasizedSelectedTextBackgroundColor
 		      CellTextColor = SystemColors.UnemphasizedSelectedTextColor
 		    End If
-		    G.ForeColor = CellColor
-		    G.FillRoundRect(CellRect.Left, CellRect.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
-		    G.ForeColor = CellTextColor
-		    G.DrawString(Tag, CaptionLeft, CaptionBottom, CellWidth - (HorizontalPadding * 2), True)
+		    Clip.ForeColor = CellColor
+		    Clip.FillRoundRect(CellRect.Left - ContentArea.Left, CellRect.Top - ContentArea.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
+		    Clip.ForeColor = CellTextColor
+		    Clip.DrawString(Tag, CaptionLeft - ContentArea.Left, CaptionBottom - ContentArea.Top, CellWidth - (HorizontalPadding * 2), True)
 		    If Excluded Then
-		      G.FillRect(CaptionLeft, CellRect.VerticalCenter, CellRect.Width - (HorizontalPadding * 2), 2)
+		      Clip.FillRect(CaptionLeft - ContentArea.Left, CellRect.VerticalCenter - ContentArea.Top, CellRect.Width - (HorizontalPadding * 2), 2)
 		    End If
 		    
 		    If Pressed Then
-		      G.ForeColor = &c00000080
-		      G.FillRoundRect(CellRect.Left, CellRect.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
+		      Clip.ForeColor = &c00000080
+		      Clip.FillRoundRect(CellRect.Left - ContentArea.Left, CellRect.Top - ContentArea.Top, CellRect.Width, CellRect.Height, CellRect.Height, CellRect.Height)
 		    End If
 		    
 		    XPos = XPos + HorizontalSpacing + CellRect.Width
 		  Next
+		  
+		  Self.mContentHeight = YPos + CellHeight + VerticalSpacing
+		  Self.mOverflowHeight = Max(Self.mContentHeight - ContentArea.Height, 0)
+		  
+		  If Self.mOverflowHeight > 0 Then
+		    Dim TrackHeight As Integer = ContentArea.Height - 10  
+		    Dim ThumbHeight As Integer = Round(TrackHeight * (ContentArea.Height / Self.mContentHeight))
+		    Dim ThumbTop As Integer = 5 + ((TrackHeight - ThumbHeight) * (Self.mScrollPosition / Self.mOverflowHeight))
+		    
+		    G.ForeColor = SystemColors.LabelColor.AtOpacity(0.1)
+		    G.FillRoundRect(ContentArea.Right - 10, ThumbTop, 5, ThumbHeight, 5, 5)
+		  End If
 		End Sub
 	#tag EndEvent
 
@@ -323,6 +346,10 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mContentHeight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mExcludeTags() As String
 	#tag EndProperty
 
@@ -335,7 +362,15 @@ Inherits ControlCanvas
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mOverflowHeight As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mRequireTags() As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mScrollPosition As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
