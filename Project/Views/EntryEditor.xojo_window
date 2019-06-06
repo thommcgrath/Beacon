@@ -72,7 +72,7 @@ Begin BeaconDialog EntryEditor
          Index           =   -2147483648
          InitialParent   =   "EngramsGroup"
          Italic          =   False
-         Left            =   182
+         Left            =   40
          LimitText       =   0
          LockBottom      =   False
          LockedInPosition=   False
@@ -96,7 +96,7 @@ Begin BeaconDialog EntryEditor
          Underline       =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   170
+         Width           =   312
       End
       Begin BeaconListbox EngramList
          AutoDeactivate  =   True
@@ -116,7 +116,7 @@ Begin BeaconDialog EntryEditor
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   1
-         Height          =   340
+         Height          =   269
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -143,7 +143,7 @@ Begin BeaconDialog EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   90
+         Top             =   161
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -207,37 +207,35 @@ Begin BeaconDialog EntryEditor
          Visible         =   True
          Width           =   16
       End
-      Begin UITweaks.ResizedPopupMenu TagMenu
+      Begin TagPicker Picker
+         AcceptFocus     =   False
+         AcceptTabs      =   False
          AutoDeactivate  =   True
-         Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
+         Backdrop        =   0
+         Border          =   15
+         DoubleBuffer    =   False
          Enabled         =   True
-         Height          =   20
+         EraseBackground =   True
+         Height          =   59
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "EngramsGroup"
-         InitialValue    =   ""
-         Italic          =   False
          Left            =   40
-         ListIndex       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
-         LockRight       =   False
+         LockRight       =   True
          LockTop         =   True
          Scope           =   2
+         ScrollSpeed     =   20
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
-         TextFont        =   "System"
-         TextSize        =   0.0
-         TextUnit        =   0
-         Top             =   57
-         Transparent     =   False
-         Underline       =   False
+         Top             =   90
+         Transparent     =   True
+         UseFocusRing    =   True
          Visible         =   True
-         Width           =   130
+         Width           =   340
       End
    End
    Begin GroupBox SettingsGroup
@@ -482,8 +480,7 @@ Begin BeaconDialog EntryEditor
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
-      StackSize       =   "0"
-      State           =   ""
+      StackSize       =   0
       TabPanelIndex   =   0
    End
 End
@@ -498,26 +495,16 @@ End
 
 	#tag Event
 		Sub Open()
-		  Dim SelectedTag As String = Preferences.SelectedTag
-		  Self.TagMenu.AddRow("All Engrams", "")
-		  Dim Tags() As String = LocalData.SharedInstance.AllTags
-		  For Each Tag As String In Tags
-		    Self.TagMenu.AddRow(Tag.TitleCase, Tag)
-		    If Tag = SelectedTag Then
-		      Self.TagMenu.ListIndex = Self.TagMenu.ListCount - 1
-		    End If
-		  Next
-		  If SelectedTag = "" Then
-		    Self.TagMenu.ListIndex = 0
-		  End If
-		  
 		  Dim PreferredSize As Xojo.Core.Size = Preferences.EntryEditorSize
 		  
+		  Self.Picker.Tags = LocalData.SharedInstance.AllTags
+		  Self.Picker.Spec = Preferences.SelectedTag
 		  Self.Width = Max(PreferredSize.Width, Self.MinWidth)
 		  Self.Height = Max(PreferredSize.Height, Self.MinHeight)
 		  Self.SearchSpinnerVisible = False
 		  
 		  Self.SwapButtons()
+		  Self.mSettingUp = False
 		End Sub
 	#tag EndEvent
 
@@ -538,6 +525,7 @@ End
 		Private Sub Constructor(Mods As Beacon.TextList)
 		  Self.mSelectedEngrams = New Xojo.Core.Dictionary
 		  Self.mMods = Mods
+		  Self.mSettingUp = True
 		  Super.Constructor
 		End Sub
 	#tag EndMethod
@@ -625,8 +613,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
 		  Dim SearchText As String = Self.FilterField.Text
-		  Dim Tags As Text
-		  #Pragma Warning "Does not respect tags"
+		  Dim Tags As Text = Self.Picker.Spec.ToText
 		  
 		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mMods, Tags)
 		  EngramList.DeleteAllRows
@@ -731,6 +718,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mSelectedEngrams As Xojo.Core.Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSettingUp As Boolean
 	#tag EndProperty
 
 	#tag ComputedProperty, Flags = &h21
@@ -861,15 +852,15 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events TagMenu
+#tag Events Picker
 	#tag Event
 		Sub Change()
-		  If Me.ListIndex = -1 Then
+		  If Self.mSettingUp Then
 		    Return
 		  End If
 		  
-		  Preferences.SelectedTag = Me.RowTag(Me.ListIndex).StringValue.ToText
-		  Self.UpdateFilter()
+		  Preferences.SelectedTag = Me.Spec.ToText
+		  Self.UpdateFilter
 		End Sub
 	#tag EndEvent
 #tag EndEvents

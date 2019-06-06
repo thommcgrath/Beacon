@@ -9,7 +9,7 @@ Begin BeaconDialog EngramSelectorDialog
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   400
+   Height          =   471
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -18,7 +18,7 @@ Begin BeaconDialog EngramSelectorDialog
    MaxWidth        =   32000
    MenuBar         =   0
    MenuBarVisible  =   True
-   MinHeight       =   400
+   MinHeight       =   471
    MinimizeButton  =   False
    MinWidth        =   600
    Placement       =   1
@@ -78,7 +78,7 @@ Begin BeaconDialog EngramSelectorDialog
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   212
+      Left            =   20
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -102,7 +102,7 @@ Begin BeaconDialog EngramSelectorDialog
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   368
+      Width           =   560
    End
    Begin BeaconListbox List
       AutoDeactivate  =   True
@@ -149,7 +149,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   86
+      Top             =   157
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -184,7 +184,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   360
+      Top             =   431
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -216,7 +216,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   360
+      Top             =   431
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -267,7 +267,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   86
+      Top             =   157
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -302,7 +302,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   191
+      Top             =   262
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -334,43 +334,41 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   223
+      Top             =   294
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   40
    End
-   Begin UITweaks.ResizedPopupMenu TagMenu
+   Begin TagPicker Picker
+      AcceptFocus     =   False
+      AcceptTabs      =   False
       AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
+      Backdrop        =   0
+      Border          =   15
+      DoubleBuffer    =   False
       Enabled         =   True
-      Height          =   20
+      EraseBackground =   True
+      Height          =   59
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   ""
-      Italic          =   False
       Left            =   20
-      ListIndex       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   53
-      Transparent     =   False
-      Underline       =   False
+      Top             =   86
+      Transparent     =   True
+      UseFocusRing    =   True
       Visible         =   True
-      Width           =   180
+      Width           =   560
    End
 End
 #tag EndWindow
@@ -378,23 +376,13 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Dim SelectedTag As String = Preferences.SelectedTag
-		  Self.TagMenu.AddRow("All Engrams", "")
-		  Dim Tags() As String = LocalData.SharedInstance.AllTags
-		  For Each Tag As String In Tags
-		    Self.TagMenu.AddRow(Tag.TitleCase, Tag)
-		    If Tag = SelectedTag Then
-		      Self.TagMenu.ListIndex = Self.TagMenu.ListCount - 1
-		    End If
-		  Next
-		  If SelectedTag = "" Then
-		    Self.TagMenu.ListIndex = 0
-		  End If
-		  
+		  Self.Picker.Tags = LocalData.SharedInstance.AllTags
+		  Self.Picker.Spec = Preferences.SelectedTag
 		  Self.UpdateFilter()
 		  Self.SwapButtons()
 		  Self.ActionButton.Enabled = False
 		  Self.Resize()
+		  Self.mSettingUp = False
 		End Sub
 	#tag EndEvent
 
@@ -413,6 +401,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Constructor(ExcludeEngrams() As Beacon.Engram, Mods As Beacon.TextList, AllowMultipleSelection As Boolean)
+		  Self.mSettingUp = True
 		  For Each Engram As Beacon.Engram In ExcludeEngrams
 		    Self.mExcludedEngrams.Append(Engram.Path)
 		  Next
@@ -528,8 +517,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
 		  Dim SearchText As String = Self.FilterField.Text
-		  Dim Tags As Text
-		  #Pragma Warning "Does not respect tags"
+		  Dim Tags As Text = Self.Picker.Spec.ToText
 		  
 		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mMods, Tags)
 		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
@@ -561,6 +549,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mMods As Beacon.TextList
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSettingUp As Boolean
 	#tag EndProperty
 
 
@@ -648,14 +640,14 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events TagMenu
+#tag Events Picker
 	#tag Event
 		Sub Change()
-		  If Me.ListIndex = -1 Then
+		  If Self.mSettingUp Then
 		    Return
 		  End If
 		  
-		  Preferences.SelectedTag = Me.RowTag(Me.ListIndex).StringValue.ToText
+		  Preferences.SelectedTag = Me.Spec.ToText
 		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent
