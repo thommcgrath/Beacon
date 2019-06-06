@@ -13,6 +13,7 @@ class BeaconUser implements JsonSerializable {
 	protected $signatures = array();
 	protected $purchased_omni_version = 0;
 	protected $expiration = '';
+	protected $usercloud_key = null;
 	
 	public function __construct($source = null) {
 		if ($source instanceof BeaconRecordSet) {
@@ -23,6 +24,7 @@ class BeaconUser implements JsonSerializable {
 			$this->private_key = $source->Field('private_key');
 			$this->private_key_salt = $source->Field('private_key_salt');
 			$this->private_key_iterations = intval($source->Field('private_key_iterations'));
+			$this->usercloud_key = $source->Field('usercloud_key');
 			
 			if (self::OmniFree) {
 				$this->purchased_omni_version = 1;
@@ -70,6 +72,14 @@ class BeaconUser implements JsonSerializable {
 		return $this->public_key;
 	}
 	
+	public function SetPublicKey(string $public_key) {
+		if (is_null($this->public_key) || $public_key !== $this->public_key) {
+			$this->public_key = $public_key;
+			$this->usercloud_key = null;
+			$this->AssignUsercloudKey();
+		}
+	}
+	
 	public function PrivateKey() {
 		return $this->private_key;
 	}
@@ -100,7 +110,8 @@ class BeaconUser implements JsonSerializable {
 			'private_key_salt' => $this->private_key_salt,
 			'private_key_iterations' => $this->private_key_iterations,
 			'signatures' => $this->signatures,
-			'omni_version' => $this->purchased_omni_version
+			'omni_version' => $this->purchased_omni_version,
+			'usercloud_key' => $this->usercloud_key
 		);
 		if (!empty($this->expiration)) {
 			$arr['expiration'] = $this->expiration;
@@ -208,10 +219,6 @@ class BeaconUser implements JsonSerializable {
 			$this->private_key_iterations = $iterations;
 			$this->private_key = $encrypted_private_key;
 			
-			$changes['private_key'] = $this->private_key;
-			$changes['private_key_salt'] = $this->private_key_salt;
-			$changes['private_key_iterations'] = $this->private_key_iterations;
-			
 			return true;
 		} catch (Exception $e) {
 			return false;
@@ -236,10 +243,6 @@ class BeaconUser implements JsonSerializable {
 		}
 	}
 	
-	public function SetPublicKey(string $public_key) {
-		$this->public_key = $public_key;
-	}
-	
 	public function Commit() {
 		$original_user = BeaconUser::GetByUserID($this->user_id);
 		$changes = array();
@@ -253,13 +256,14 @@ class BeaconUser implements JsonSerializable {
 			$changes['private_key'] = $this->private_key;
 			$changes['private_key_salt'] = $this->private_key_salt;
 			$changes['private_key_iterations'] = $this->private_key_iterations;
+			$changes['usercloud_key'] = $this->usercloud_key;
 			try {
 				$database->Insert('users', $changes);
 			} catch (Exception $e) {
 				return false;
 			}
 		} else {
-			$keys = array('username', 'email_id', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations');
+			$keys = array('username', 'email_id', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key');
 			foreach ($keys as $key) {
 				if ($this->$key !== $original_user->$key) {
 					$changes[$key] = $this->$key;
@@ -288,8 +292,16 @@ class BeaconUser implements JsonSerializable {
 		return BeaconEncryption::RSAVerify($this->public_key, $data, $signature);
 	}
 	
+	public function AssignUsercloudKey() {
+		if (is_null($this->usercloud_key)) {
+			$this->usercloud_key = bin2hex(BeaconEncryption::RSAEncrypt($this->public_key, 'sha512:50000:' . bin2hex(random_bytes(64))));
+			return true;
+		}
+		return false;
+	}
+	
 	private static function SQLColumns() {
-		return array('user_id', 'email_id', 'username', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations');
+		return array('user_id', 'email_id', 'username', 'public_key', 'private_key', 'private_key_salt', 'private_key_iterations', 'usercloud_key');
 	}
 	
 	public static function GetByEmail(string $email) {
