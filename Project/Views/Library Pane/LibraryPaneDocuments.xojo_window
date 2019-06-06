@@ -31,9 +31,9 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   False
-      ColumnCount     =   1
+      ColumnCount     =   2
       ColumnsResizable=   False
-      ColumnWidths    =   "*"
+      ColumnWidths    =   "22,*"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
@@ -81,7 +81,6 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -140,7 +139,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       LockRight       =   True
       LockTop         =   True
       RequiresSelection=   True
-      Scope           =   0
+      Scope           =   2
       ScrollSpeed     =   20
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -599,7 +598,7 @@ End
 		  
 		  For I As Integer = 0 To Documents.Ubound
 		    Dim URL As Beacon.DocumentURL = Documents(I)
-		    Self.List.Cell(I, 0) = URL.Name
+		    Self.List.Cell(I, Self.ColumnName) = URL.Name
 		    Self.List.RowTag(I) = URL
 		    Self.List.Selected(I) = SelectedURLs.IndexOf(URL) > -1
 		  Next
@@ -679,6 +678,12 @@ End
 		View As Integer
 	#tag EndComputedProperty
 
+
+	#tag Constant, Name = ColumnIcon, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = ViewCloudDocuments, Type = Double, Dynamic = False, Default = \"3", Scope = Public
 	#tag EndConstant
@@ -811,6 +816,49 @@ End
 		    
 		    Controller.Delete()
 		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CellTextPaint(G As Graphics, Row As Integer, Column As Integer, Line As String, ByRef TextColor As Color, HorizontalPosition As Integer, VerticalPosition As Integer, IsHighlighted As Boolean) As Boolean
+		  #Pragma Unused G
+		  #Pragma Unused Row
+		  #Pragma Unused Line
+		  #Pragma Unused TextColor
+		  #Pragma Unused HorizontalPosition
+		  #Pragma Unused VerticalPosition
+		  #Pragma Unused IsHighlighted
+		  
+		  Return Column = Self.ColumnIcon
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub CellBackgroundPaint(G As Graphics, Row As Integer, Column As Integer, BackgroundColor As Color, TextColor As Color, IsHighlighted As Boolean)
+		  #Pragma Unused BackgroundColor
+		  #Pragma Unused IsHighlighted
+		  
+		  If Column <> Self.ColumnIcon Or Row >= Me.ListCount Then
+		    Return
+		  End If
+		  
+		  Dim URL As Beacon.DocumentURL = Me.RowTag(Row)
+		  If URL = Nil Then
+		    Return
+		  End If
+		  
+		  Dim IconColor As Color = TextColor.AtOpacity(0.5)
+		  Dim Icon As Picture
+		  Select Case URL.Scheme
+		  Case Beacon.DocumentURL.TypeCloud
+		    Icon = BeaconUI.IconWithColor(IconCloudDocument, IconColor)
+		  Case Beacon.DocumentURL.TypeWeb
+		    Icon = BeaconUI.IconWithColor(IconCommunityDocument, IconColor)
+		  End Select
+		  
+		  If Icon = Nil Then
+		    Return
+		  End If
+		  
+		  G.DrawPicture(Icon, (Me.Column(Column).WidthActual - Icon.Width) / 2, (Me.DefaultRowHeight - Icon.Height) / 2)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
