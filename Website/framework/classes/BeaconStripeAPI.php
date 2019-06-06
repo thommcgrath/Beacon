@@ -10,6 +10,11 @@ class BeaconStripeAPI {
 	}
 	
 	public function GetPaymentIntent(string $intent_id) {
+		$pi_json = BeaconCache::Get($intent_id);
+		if (!is_null($pi_json)) {
+			return $pi_json;
+		}
+		
 		$curl = curl_init('https://api.stripe.com/v1/payment_intents/' . $intent_id);
 		$headers = array('Authorization: Bearer ' . $this->api_secret, 'Stripe-Version: ' . self::StripeVersion);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
@@ -26,6 +31,7 @@ class BeaconStripeAPI {
 			return null;
 		}
 		
+		BeaconCache::Set($intent_id, $pi_json, 300);
 		return $pi_json;
 	}
 	
@@ -48,6 +54,37 @@ class BeaconStripeAPI {
 		
 		return $customer_json;
 	}
+	
+	public function GetBillingLocality(string $intent_id) {
+		$intent = $this->GetPaymentIntent($intent_id);
+		if (is_null($intent)) {
+			return null;
+		}
+		
+		$charges = $intent['charges']['data'];
+		if (is_array($charges) == false || count($charges) == 0) {
+			return null;
+		}
+		
+		$charge = $charges[0];
+		
+		if (array_key_exists('billing_details', $charge) == false) {
+			return null;
+		}
+		$billing = $charge['billing_details'];
+		
+		if (array_key_exists('address', $billing) == false) {
+			return null;
+		}
+		
+		$address = $billing['address'];
+		if (array_key_exists('country', $address) == false || array_key_exists('state', $address) == false || is_null($address['country']) || is_null($address['state'])) {
+			return null;
+		}
+		
+		return $address['country'] . ' ' . $address['state'];
+	}
+			
 	
 	public function UpdateCustomer(string $customer_id, array $fields) {
 		$curl = curl_init('https://api.stripe.com/v1/customers/' . $customer_id);

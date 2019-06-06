@@ -148,7 +148,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			items: items,
 			successUrl: <?php echo json_encode(BeaconCommon::AbsoluteURL('/omni/welcome/')); ?>,
 			cancelUrl: <?php echo json_encode(BeaconCommon::AbsoluteURL('/omni/')); ?>,
-			clientReferenceId: <?php echo json_encode($client_reference_id); ?> 
+			clientReferenceId: <?php echo json_encode($client_reference_id); ?>,
+			billingAddressCollection: 'required'
 		};
 		<?php
 		if (!is_null($purchase_email)) {
