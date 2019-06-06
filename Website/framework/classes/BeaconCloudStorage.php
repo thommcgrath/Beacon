@@ -38,13 +38,26 @@ abstract class BeaconCloudStorage {
 		$database = BeaconCommon::Database();
 		$target_bytes = max(static::STORAGE_LIMIT - $required_bytes, 0);
 		
+		$database->BeginTransaction();
+		$results = $database->Query('SELECT cache_id, remote_path FROM usercloud_cache WHERE last_accessed < CURRENT_TIMESTAMP - \'2 days\'::INTERVAL AND remote_path NOT IN (SELECT remote_path FROM usercloud_queue);');
+		while (!results->EOF()) {
+			$remote_path = $results->Field('remote_path');
+			
+			if (file_exists($local_path)) {
+				unlink($local_path);
+				$database->Query('DELETE FROM usercloud_cache WHERE cache_id = $1;', $cache_id);
+			}
+			
+			$results->MoveNext();
+		}
+		
 		$results = $database->Query('SELECT SUM(size_in_bytes) AS consumed_bytes FROM usercloud_cache WHERE hostname = $1;', $hostname);
 		$consumed_bytes = $results->Field('consumed_bytes');
 		if ($consumed_bytes < $target_bytes) {
+			$database->Commit();
 			return;
 		}
 		
-		$database->BeginTransaction();
 		$results = $database->Query('SELECT usercloud.remote_path, usercloud_cache.size_in_bytes, usercloud_cache.cache_id FROM usercloud_cache INNER JOIN usercloud ON (usercloud_cache.remote_path = usercloud.remote_path) WHERE usercloud_cache.hostname = $1 AND usercloud_cache.remote_path NOT IN (SELECT remote_path FROM usercloud_queue) ORDER BY last_accessed ASC, size_in_bytes DESC;', $hostname);
 		while (!$results->EOF() && $consumed_bytes >= $target_bytes) {
 			$cache_id = $results->Field('cache_id');
@@ -217,6 +230,8 @@ abstract class BeaconCloudStorage {
 			
 			$database->Commit();
 		}
+		
+		static::CleanupLocalCache(0);
 	}
 	
 	public static function ListFiles(string $remote_path) {
@@ -226,14 +241,15 @@ abstract class BeaconCloudStorage {
 		}
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT * FROM usercloud WHERE remote_path LIKE $1;', "$remote_path%");
+		$results = $database->Query('SELECT remote_path, content_type, size_in_bytes, modified, deleted FROM usercloud WHERE remote_path LIKE $1;', "$remote_path%");
 		$files = array();
 		while (!$results->EOF()) {
 			$files[] = array(
 				'path' => $results->Field('remote_path'),
 				'type' => $results->Field('content_type'),
 				'size' => $results->Field('size_in_bytes'),
-				'sha256' => $results->Field('hash')
+				'modified' => $results->Field('modified'),
+				'deleted' => $results->Field('deleted')
 			);
 			$results->MoveNext();
 		}
@@ -340,9 +356,9 @@ abstract class BeaconCloudStorage {
 		// update the database
 		$database->BeginTransaction();
 		if ($file_exists) {
-			$database->Query('UPDATE usercloud SET content_type = $2, size_in_bytes = $3, hash = $4 WHERE remote_path = $1;', $remote_path, $content_type, $filesize, $hash);
+			$database->Query('UPDATE usercloud SET content_type = $2, size_in_bytes = $3, hash = $4, modified = CURRENT_TIMESTAMP WHERE remote_path = $1;', $remote_path, $content_type, $filesize, $hash);
 		} else {
-			$database->Query('INSERT INTO usercloud (remote_path, content_type, size_in_bytes, hash) VALUES ($1, $2, $3, $4);', $remote_path, $content_type, $filesize, $hash);
+			$database->Query('INSERT INTO usercloud (remote_path, content_type, size_in_bytes, hash, modified) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP);', $remote_path, $content_type, $filesize, $hash);
 		}
 		if (is_null($cache_id)) {
 			$database->Query('INSERT INTO usercloud_cache (hostname, remote_path, size_in_bytes, hash) VALUES ($1, $2, $3, $4);', $hostname, $remote_path, $filesize, $hash); 
@@ -365,7 +381,7 @@ abstract class BeaconCloudStorage {
 		$hostname = gethostname();
 		$database = BeaconCommon::Database();
 		$database->BeginTransaction();
-		$database->Query('DELETE FROM usercloud WHERE remote_path = $1;', $remote_path);
+		$database->Query('UPDATE usercloud SET modified = CURRENT_TIMESTAMP, deleted = TRUE WHERE remote_path = $1;', $remote_path);
 		$database->Query('DELETE FROM usercloud_queue WHERE hostname = $1 AND remote_path = $2;', $hostname, $remote_path);
 		$database->Query('DELETE FROM usercloud_cache WHERE hostname = $1 AND remote_path = $2;', $hostname, $remote_path);
 		$database->Query('INSERT INTO usercloud_queue (hostname, remote_path, request_method) VALUES ($1, $2, $3);', $hostname, $remote_path, 'DELETE');

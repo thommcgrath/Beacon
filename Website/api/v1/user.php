@@ -52,6 +52,9 @@ case 'GET':
 		if (isset($_GET['hardware_id'])) {
 			$user->PrepareSignatures(trim($_GET['hardware_id']));
 		}
+		if ($user->AssignUsercloudKey()) {
+			$user->Commit();
+		}
 		BeaconAPI::ReplySuccess($user);
 	} else {
 		// legacy support
