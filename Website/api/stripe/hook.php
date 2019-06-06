@@ -73,6 +73,7 @@ case 'checkout.session.completed':
 		echo 'Unable to find email address for this payment intent';
 		exit;
 	}
+	$billing_locality = $api->GetBillingLocality($intent_id);
 	
 	$user = BeaconUser::GetByEmail($email);
 	if (is_null($user)) {
@@ -103,7 +104,7 @@ case 'checkout.session.completed':
 		
 		$database->Query('INSERT INTO purchase_items (purchase_id, product_id, retail_price, discount, quantity, line_total) VALUES ($1, $2, $3, $4, $5, $6);', $purchase_id, $product_id, $full_unit_price, $discount_per_unit, $quantity, $line_total);
 	}
-	$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, client_reference_id) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7, $8);', $purchase_id, $email, $purchase_subtotal, $purchase_discount, 0, $purchase_total, $intent_id, $client_reference_id);
+	$database->Query('INSERT INTO purchases (purchase_id, purchaser_email, subtotal, discount, tax, total_paid, merchant_reference, client_reference_id, tax_locality) VALUES ($1, uuid_for_email($2::email, TRUE), $3, $4, $5, $6, $7, $8, $9);', $purchase_id, $email, $purchase_subtotal, $purchase_discount, 0, $purchase_total, $intent_id, $client_reference_id, $billing_locality);
 	
 	// Make sure the user's email is removed from the raffle
 	$database->Query('DELETE FROM stw_applicants WHERE email_id = uuid_for_email($1);', $email);
