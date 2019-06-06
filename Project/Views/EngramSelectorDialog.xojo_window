@@ -528,10 +528,8 @@ End
 	#tag Method, Flags = &h21
 		Private Sub UpdateFilter()
 		  Dim SearchText As String = Self.FilterField.Text
-		  Dim Tags() As Text
-		  If Self.TagMenu.ListIndex > 0 Then
-		    Tags.Append(Self.TagMenu.RowTag(Self.TagMenu.ListIndex).StringValue.ToText)
-		  End If
+		  Dim Tags As Text
+		  #Pragma Warning "Does not respect tags"
 		  
 		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mMods, Tags)
 		  Dim ScrollPosition As Integer = Self.List.ScrollPosition

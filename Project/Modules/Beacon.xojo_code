@@ -930,8 +930,7 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h0
 		Function SearchForEngrams(Extends Source As Beacon.DataSource, SearchText As Text, Mods As Beacon.TextList) As Beacon.Engram()
-		  Dim Tags() As Text
-		  Return Source.SearchForEngrams(SearchText, Mods, Tags)
+		  Return Source.SearchForEngrams(SearchText, Mods, "")
 		End Function
 	#tag EndMethod
 

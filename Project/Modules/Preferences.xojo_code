@@ -263,7 +263,7 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
-			  Return mManager.TextValue("Selected Tag", "")
+			  Return mManager.TextValue("Selected Tag", "(""engram"") NOT (""deprecated"" OR ""cheat"")")
 			End Get
 		#tag EndGetter
 		#tag Setter

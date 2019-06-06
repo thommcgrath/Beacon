@@ -157,6 +157,17 @@ Inherits ControlCanvas
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Shared Function ArrayToString(Source() As String) As String
+		  Dim Clone() As String
+		  For Each Value As String In Source
+		    Clone.Append(Value)
+		  Next
+		  Clone.Sort
+		  Return Join(Clone, ",")
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.Border = Self.BorderTop Or Self.BorderLeft Or Self.BorderBottom Or Self.BorderRight
@@ -197,6 +208,34 @@ Inherits ControlCanvas
 		  End If
 		  If (Self.Border And Self.BorderLeft) = Self.BorderLeft Then
 		    X = X + 1
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetSelections(RequiredTags() As String, ExcludedTags() As String)
+		  Dim RequireCurrentString As String = Self.ArrayToString(Self.mRequireTags)
+		  Dim RequireNewString As String = Self.ArrayToString(RequiredTags)
+		  Dim Changed As Boolean = RequireCurrentString <> RequireNewString
+		  
+		  If Not Changed Then
+		    Dim ExcludeCurrentString As String = Self.ArrayToString(Self.mExcludeTags)
+		    Dim ExcludeNewString As String = Self.ArrayToString(ExcludedTags)
+		    Changed = ExcludeCurrentString <> ExcludeNewString
+		  End If
+		  
+		  If Not Changed Then
+		    Return
+		  End If
+		  
+		  Self.mRequireTags = RequiredTags
+		  Self.mExcludeTags = ExcludedTags
+		  
+		  If App.CurrentThread = Nil Then
+		    RaiseEvent Change
+		    Self.Invalidate
+		  Else
+		    Call CallLater.Schedule(0, AddressOf TriggerChange)
 		  End If
 		End Sub
 	#tag EndMethod
@@ -308,6 +347,7 @@ Inherits ControlCanvas
 	#tag Method, Flags = &h21
 		Private Sub TriggerChange()
 		  RaiseEvent Change
+		  Self.Invalidate
 		End Sub
 	#tag EndMethod
 
@@ -382,14 +422,43 @@ Inherits ControlCanvas
 			Get
 			  Dim Value As String
 			  If Self.mRequireTags.Ubound > -1 Then
-			    Value = """" + Join(Self.mRequireTags, """ """) + """"
+			    Value = "(""" + Join(Self.mRequireTags, """ AND """) + """)"
 			  End If
 			  If Self.mExcludeTags.Ubound > -1 Then
-			    Value = Trim(Value + " -""" + Join(Self.mExcludeTags, """ -""") + """")
+			    If Value = "" Then
+			      Value = "engram"
+			    End If
+			    Value = Value + " NOT (""" + Join(Self.mExcludeTags, """ OR """) + """)"
 			  End If
 			  Return Value
 			End Get
 		#tag EndGetter
+		#tag Setter
+			Set
+			  Dim RequirePhrase, ExcludePhrase, RequiredTags(), ExcludedTags() As String
+			  
+			  Try
+			    Dim RequireStartPos As Integer = Value.IndexOf("(")
+			    Dim RequireEndPos As Integer = Value.IndexOf(RequireStartPos, ")")
+			    RequirePhrase = Value.SubString(RequireStartPos + 2, RequireEndPos - (RequireStartPos + 3))
+			    
+			    If RequireStartPos > -1 And RequireEndPos > -1 Then
+			      Dim ExcludeStartPos As Integer = Value.IndexOf(RequireEndPos, "(")
+			      If ExcludeStartPos > -1 Then
+			        Dim ExcludeEndPos As Integer = Value.IndexOf(ExcludeStartPos, ")")
+			        ExcludePhrase = Value.SubString(ExcludeStartPos + 2, ExcludeEndPos - (ExcludeStartPos + 3))
+			      End If
+			      
+			      RequiredTags = RequirePhrase.Split(""" AND """)
+			      ExcludedTags = ExcludePhrase.Split(""" OR """)
+			    End If
+			  Catch Err As RuntimeException
+			    
+			  End Try
+			  
+			  Self.SetSelections(RequiredTags, ExcludedTags)
+			End Set
+		#tag EndSetter
 		Spec As String
 	#tag EndComputedProperty
 

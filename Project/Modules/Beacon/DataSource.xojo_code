@@ -109,7 +109,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As Text, Mods As Beacon.TextList, Tags() As Text) As Beacon.Engram()
+		Function SearchForEngrams(SearchText As Text, Mods As Beacon.TextList, Tags As Text) As Beacon.Engram()
 		  
 		End Function
 	#tag EndMethod

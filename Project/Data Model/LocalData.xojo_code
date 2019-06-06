@@ -56,7 +56,9 @@ Implements Beacon.DataSource
 		  While Not Results.EOF
 		    Dim Tags() As String = Results.Field("tags").StringValue.Split(",")
 		    For Each Tag As String In Tags
-		      Dict.Value(Tag) = True
+		      If Tag <> "engram" Then
+		        Dict.Value(Tag) = True
+		      End If
 		    Next
 		    Results.MoveNext
 		  Wend
@@ -105,7 +107,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
 		  
-		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts4(tags, object_id, source_table);")
+		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
 		  
 		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX engrams_path_idx ON engrams(path);")
@@ -842,6 +844,7 @@ Implements Beacon.DataSource
 		      Try
 		        Dim Tags() As Text
 		        Dim Temp() As Auto = Dict.Value("tags")
+		        Tags.Append("engram")
 		        For Each Tag As Text In Temp
 		          Tags.Append(Tag)
 		        Next
@@ -1463,7 +1466,7 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As Text, Mods As Beacon.TextList, Tags() As Text) As Beacon.Engram()
+		Function SearchForEngrams(SearchText As Text, Mods As Beacon.TextList, Tags As Text) As Beacon.Engram()
 		  // Part of the Beacon.DataSource interface.
 		  
 		  Dim Engrams() As Beacon.Engram
@@ -1488,10 +1491,10 @@ Implements Beacon.DataSource
 		      Next
 		      Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
-		    If Tags.Ubound > -1 Then
+		    If Tags <> "" Then
 		      SQL = SQL.Replace("engrams INNER JOIN mods", "engrams INNER JOIN searchable_tags ON (searchable_tags.object_id = engrams.object_id AND searchable_tags.source_table = 'engrams') INNER JOIN mods")
 		      Clauses.Append("searchable_tags.tags MATCH ?" + Str(NextPlaceholder))
-		      Values.Value(NextPlaceholder) = Tags.Join(" OR ")
+		      Values.Value(NextPlaceholder) = Tags
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    
