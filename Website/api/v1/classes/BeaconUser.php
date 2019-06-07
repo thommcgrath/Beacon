@@ -294,7 +294,7 @@ class BeaconUser implements JsonSerializable {
 	
 	public function AssignUsercloudKey() {
 		if (is_null($this->usercloud_key)) {
-			$this->usercloud_key = bin2hex(BeaconEncryption::RSAEncrypt($this->public_key, 'sha512:50000:' . bin2hex(random_bytes(64))));
+			$this->usercloud_key = bin2hex(BeaconEncryption::RSAEncrypt($this->public_key, random_bytes(128)));
 			return true;
 		}
 		return false;
