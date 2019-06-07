@@ -128,6 +128,20 @@ abstract class BeaconEncryption {
 		$public_key = $public_key['key'];
 		openssl_pkey_free($handle);
 	}
+	
+	public static function IsEncrypted(string $data) {
+		return (unpack('C', $data[0])[1] === self::SymmetricMagicByte);
+	}
+	
+	public static function HeaderBytes(string $data) {
+		$magic_byte = unpack('C', $data[0])[1];
+		if ($magic_byte !== self::SymmetricMagicByte) {
+			return null;
+		}
+		$version = unpack('C', $data[1])[1];
+		$iv_size = ($version == 2) ? 16 : 8;
+		return substr($data, 0, 10 + $iv_size);
+	}
 }
 
 ?>

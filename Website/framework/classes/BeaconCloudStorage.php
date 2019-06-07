@@ -40,7 +40,7 @@ abstract class BeaconCloudStorage {
 		
 		$database->BeginTransaction();
 		$results = $database->Query('SELECT cache_id, remote_path FROM usercloud_cache WHERE last_accessed < CURRENT_TIMESTAMP - \'2 days\'::INTERVAL AND remote_path NOT IN (SELECT remote_path FROM usercloud_queue);');
-		while (!results->EOF()) {
+		while (!$results->EOF()) {
 			$remote_path = $results->Field('remote_path');
 			
 			if (file_exists($local_path)) {
@@ -241,7 +241,7 @@ abstract class BeaconCloudStorage {
 		}
 		
 		$database = BeaconCommon::Database();
-		$results = $database->Query('SELECT remote_path, content_type, size_in_bytes, modified, deleted FROM usercloud WHERE remote_path LIKE $1;', "$remote_path%");
+		$results = $database->Query('SELECT remote_path, content_type, size_in_bytes, modified, deleted, header FROM usercloud WHERE remote_path LIKE $1;', "$remote_path%");
 		$files = array();
 		while (!$results->EOF()) {
 			$files[] = array(
@@ -249,7 +249,8 @@ abstract class BeaconCloudStorage {
 				'type' => $results->Field('content_type'),
 				'size' => $results->Field('size_in_bytes'),
 				'modified' => $results->Field('modified'),
-				'deleted' => $results->Field('deleted')
+				'deleted' => $results->Field('deleted'),
+				'header' => $results->Field('header')
 			);
 			$results->MoveNext();
 		}
@@ -318,10 +319,10 @@ abstract class BeaconCloudStorage {
 		$hash = hash('sha256', $file_contents);
 		$database = BeaconCommon::Database();
 		$file_exists = false;
-		$results = $database->Query('SELECT hash FROM usercloud WHERE remote_path = $1;', $remote_path);
+		$results = $database->Query('SELECT hash, deleted FROM usercloud WHERE remote_path = $1;', $remote_path);
 		if ($results->RecordCount() == 1) {
 			$file_exists = true;
-			if ($results->Field('hash') === $hash) {
+			if ($results->Field('hash') === $hash && $results->Field('deleted') === false) {
 				// nope, same file
 				return true;
 			}
@@ -353,12 +354,18 @@ abstract class BeaconCloudStorage {
 		file_put_contents($local_path, $file_contents);
 		chmod($local_path, 0660);
 		
+		// get the header, if the file is encrypted
+		$header_bytes = BeaconEncryption::HeaderBytes($file_contents);
+		if (!is_null($header_bytes)) {
+			$header_bytes = bin2hex($header_bytes);
+		}
+		
 		// update the database
 		$database->BeginTransaction();
 		if ($file_exists) {
-			$database->Query('UPDATE usercloud SET content_type = $2, size_in_bytes = $3, hash = $4, modified = CURRENT_TIMESTAMP, deleted = FALSE WHERE remote_path = $1;', $remote_path, $content_type, $filesize, $hash);
+			$database->Query('UPDATE usercloud SET content_type = $2, size_in_bytes = $3, hash = $4, modified = CURRENT_TIMESTAMP, deleted = FALSE, header = $5 WHERE remote_path = $1;', $remote_path, $content_type, $filesize, $hash, $header_bytes);
 		} else {
-			$database->Query('INSERT INTO usercloud (remote_path, content_type, size_in_bytes, hash, modified) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP);', $remote_path, $content_type, $filesize, $hash);
+			$database->Query('INSERT INTO usercloud (remote_path, content_type, size_in_bytes, hash, modified, header) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, $5);', $remote_path, $content_type, $filesize, $hash, $header_bytes);
 		}
 		if (is_null($cache_id)) {
 			$database->Query('INSERT INTO usercloud_cache (hostname, remote_path, size_in_bytes, hash) VALUES ($1, $2, $3, $4);', $hostname, $remote_path, $filesize, $hash); 
