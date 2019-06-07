@@ -84,6 +84,15 @@ Protected Class Identity
 		    Self.mSignature = Nil
 		  End Try
 		  
+		  Try
+		    If Dict.HasKey("usercloud_key") And Dict.Value("usercloud_key") <> Nil Then
+		      Dim EncryptedCloudKey As Text = Dict.Value("usercloud_key")
+		      Self.mUsercloudKey = Self.Decrypt(Beacon.DecodeHex(EncryptedCloudKey))
+		    End If
+		  Catch Err As RuntimeException
+		    
+		  End Try
+		  
 		  Return True
 		End Function
 	#tag EndMethod
@@ -136,6 +145,9 @@ Protected Class Identity
 		  End If
 		  If Self.mExpirationText <> "" Then
 		    Dict.Value("Expiration") = Self.mExpirationText
+		  End If
+		  If Self.mUsercloudKey <> Nil Then
+		    Dict.Value("Cloud Key") = Beacon.EncodeHex(Self.mUsercloudKey)
 		  End If
 		  Return Dict
 		End Function
@@ -227,6 +239,10 @@ Protected Class Identity
 		    Identity.mExpirationText = Source.Value("Expiration")
 		  End If
 		  
+		  If Source.HasKey("Cloud Key") Then
+		    Identity.mUsercloudKey = Beacon.DecodeHex(Source.Value("Cloud Key"))
+		  End If
+		  
 		  Identity.Validate()
 		  
 		  Return Identity
@@ -314,6 +330,11 @@ Protected Class Identity
 		  End If
 		  
 		  Result = Self.Compare(Self.mSignature, Other.mSignature)
+		  If Result <> 0 Then
+		    Return Result
+		  End If
+		  
+		  Result = Self.Compare(Self.mUsercloudKey, Other.mUsercloudKey)
 		  If Result <> 0 Then
 		    Return Result
 		  End If
@@ -420,6 +441,10 @@ Protected Class Identity
 
 	#tag Property, Flags = &h21
 		Private mSignature As Xojo.Core.MemoryBlock
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUsercloudKey As Xojo.Core.MemoryBlock
 	#tag EndProperty
 
 
