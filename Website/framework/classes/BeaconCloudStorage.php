@@ -356,7 +356,7 @@ abstract class BeaconCloudStorage {
 		// update the database
 		$database->BeginTransaction();
 		if ($file_exists) {
-			$database->Query('UPDATE usercloud SET content_type = $2, size_in_bytes = $3, hash = $4, modified = CURRENT_TIMESTAMP WHERE remote_path = $1;', $remote_path, $content_type, $filesize, $hash);
+			$database->Query('UPDATE usercloud SET content_type = $2, size_in_bytes = $3, hash = $4, modified = CURRENT_TIMESTAMP, deleted = FALSE WHERE remote_path = $1;', $remote_path, $content_type, $filesize, $hash);
 		} else {
 			$database->Query('INSERT INTO usercloud (remote_path, content_type, size_in_bytes, hash, modified) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP);', $remote_path, $content_type, $filesize, $hash);
 		}
