@@ -111,6 +111,18 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Convert(Extends Source As Date) As Xojo.Core.Date
+		  Return New Xojo.Core.Date(Source.Year, Source.Month, Source.Day, Source.Hour, Source.Minute, Source.Second, 0, New Xojo.Core.TimeZone(Source.GMTOffset * 3600))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Convert(Extends Source As Xojo.Core.Date) As Date
+		  Return New Date(Source.Year, Source.Month, Source.Day, Source.Hour, Source.Minute, Source.Second, Source.TimeZone.SecondsFromGMT / 3600)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub CorrectWindowPlacement(Extends Win As Window, Parent As Window)
 		  #if TargetWin32
 		    If Win = Nil Or Parent = Nil Then
@@ -221,6 +233,15 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function LocalTime(Extends Source As Date) As Date
+		  Dim Now As New Date
+		  Source = New Date(Source)
+		  Source.GMTOffset = Now.GMTOffset
+		  Return Source
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function NearestMultiple(Original As Double, Factor As Double) As Double
 		  Dim Whole As Integer = Floor(Original)
 		  If Whole = Original Then
@@ -239,6 +260,68 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function NewDateFromSQLDateTime(SQLDateTime As String) As Date
+		  Dim Now As New Date
+		  Now.SQLDateTimeWithOffset = SQLDateTime
+		  Return Now
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SQLDateTimeWithOffset(Extends Source As Date) As String
+		  Dim Offset As Double = Abs(Source.GMTOffset)
+		  Dim Hours As Integer = Floor(Offset)
+		  Dim Minutes As Integer = (Offset - Floor(Offset)) * 60
+		  
+		  Return Str(Source.Year, "0000") + "-" + Str(Source.Month, "00") + "-" + Str(Source.Day, "00") + " " + Str(Source.Hour, "00") + ":" + Str(Source.Minute, "00") + ":" + Str(Source.Second, "00") + If(Source.GMTOffset < 0, "-", "+") + Str(Hours, "00") + ":" + Str(Minutes, "00")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SQLDateTimeWithOffset(Extends Source As Date, Assigns Value As String)
+		  Dim Validator As New Regex
+		  Validator.SearchPattern = "^(\d{4})-(\d{2})-(\d{2})( (\d{2}):(\d{2}):(\d{2})(\.\d+)?\s*((\+|-)(\d{1,2})(:?(\d{2}))?)?)?$"
+		  
+		  Dim Matches As RegexMatch = Validator.Search(Value)
+		  If Matches = Nil Then
+		    Dim Err As New UnsupportedFormatException
+		    Err.Message = "Invalid SQL timestamp"
+		    Raise Err
+		    Return
+		  End If
+		  
+		  Dim Year As Integer = Val(Matches.SubExpressionString(1))
+		  Dim Month As Integer = Val(Matches.SubExpressionString(2))
+		  Dim Day As Integer = Val(Matches.SubExpressionString(3))
+		  Dim Hour As Integer
+		  Dim Minute As Integer
+		  Dim Second As Integer
+		  Dim Offset As Double
+		  Dim ExpressionCount As Integer = Matches.SubExpressionCount
+		  
+		  If ExpressionCount >= 8 And Matches.SubExpressionString(4) <> "" Then
+		    Hour = Val(Matches.SubExpressionString(5))
+		    Minute = Val(Matches.SubExpressionString(6))
+		    Second = Val(Matches.SubExpressionString(7))
+		    
+		    If ExpressionCount >= 12 And Matches.SubExpressionString(9) <> "" Then
+		      Dim OffsetHour As Integer = Val(Matches.SubExpressionString(11))
+		      Dim OffsetMinute As Integer
+		      If ExpressionCount >= 14 And Matches.SubExpressionString(13) <> "" Then
+		        OffsetMinute = Val(Matches.SubExpressionString(13))
+		      End If
+		      Offset = OffsetHour + (OffsetMinute / 60)
+		      If Matches.SubExpressionString(10) = "-" Then
+		        Offset = Offset * -1
+		      End If
+		    End If
+		  End If
+		  
+		  Source.Constructor(Year, Month, Day, Hour, Minute, Second, Offset)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SubString(Extends Source As String, Start As Integer, Length As Integer = -1) As String
 		  If Length = -1 Then
 		    Return Mid(Source, Start + 1)
@@ -249,7 +332,7 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function ToDate(Extends Source As Text, FallbackTimezone As Xojo.Core.TimeZone = Nil) As Xojo.Core.Date
+		Attributes( Deprecated = "NewDateFromSQLDateTime" )  Function ToDate(Extends Source As Text, FallbackTimezone As Xojo.Core.TimeZone = Nil) As Xojo.Core.Date
 		  // YYYY-MM-DD HH:MM:SS+0000
 		  
 		  If Source.Length < 19 Then
