@@ -27,6 +27,7 @@ Begin BeaconSubview ModsView
    Visible         =   False
    Width           =   1100
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -68,6 +69,7 @@ Begin BeaconSubview ModsView
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   3
@@ -126,6 +128,7 @@ Begin BeaconSubview ModsView
       HasBackColor    =   False
       Height          =   419
       HelpTag         =   ""
+      Index           =   -2147483648
       InitialParent   =   ""
       Left            =   236
       LockBottom      =   True
@@ -253,27 +256,20 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DeleteMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Success Then
+		Private Sub APICallback_DeleteMod(Response As BeaconAPI.Response)
+		  If Response.Success Then
 		    Self.RefreshMods
 		    Return
 		  End If
 		  
-		  Self.ShowAlert("Unable to delete mod", Message)
+		  Self.ShowAlert("Unable to delete mod", Response.Message)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ListMods(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Not Success Then
-		    MsgBox("Unable to load mods: " + Message)
+		Private Sub APICallback_ListMods(Response As BeaconAPI.Response)
+		  If Not Response.Success Then
+		    MsgBox("Unable to load mods: " + Response.Message)
 		    Return
 		  End If
 		  
@@ -284,7 +280,7 @@ End
 		  
 		  ModList.DeleteAllRows()
 		  
-		  Dim Arr() As Auto = Details
+		  Dim Arr() As Auto = Response.JSON
 		  For Each Dict As Xojo.Core.Dictionary In Arr
 		    Dim UserMod As New BeaconAPI.WorkshopMod(Dict)
 		    

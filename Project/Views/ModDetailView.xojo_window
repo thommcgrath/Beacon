@@ -44,6 +44,7 @@ Begin BeaconContainer ModDetailView
       Scope           =   2
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   2
@@ -244,6 +245,7 @@ Begin BeaconContainer ModDetailView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
+         TabStop         =   True
          Top             =   199
          Transparent     =   False
          Value           =   0
@@ -286,6 +288,7 @@ Begin BeaconContainer ModDetailView
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   1
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -433,6 +436,7 @@ Begin BeaconContainer ModDetailView
       End
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -468,11 +472,12 @@ Begin BeaconContainer ModDetailView
       Width           =   864
    End
    Begin Beacon.EngramSearcherThread Searcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
-      StackSize       =   "0"
+      StackSize       =   0
       State           =   ""
       TabPanelIndex   =   0
    End
@@ -515,12 +520,9 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ConfirmMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Success Then
-		    Self.CurrentMod.Constructor(Details)
+		Private Sub APICallback_ConfirmMod(Response As BeaconAPI.Response)
+		  If Response.Success Then
+		    Self.CurrentMod.Constructor(Response.JSON)
 		    If Self.CurrentMod.Confirmed Then
 		      Panel.Value = PageEngrams
 		      Self.ShowAlert("Mod ownership confirmed.", "You may now remove the confirmation code from your Steam page.")
@@ -530,20 +532,16 @@ End
 		    End If
 		  Else
 		    Panel.Value = PageNeedsConfirmation
-		    Self.ShowAlert("Mod ownership has not been confirmed.", Message)
+		    Self.ShowAlert("Mod ownership has not been confirmed.", Response.Message)
 		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_EngramsDelete(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Not Success Then
+		Private Sub APICallback_EngramsDelete(Response As BeaconAPI.Response)
+		  If Not Response.Success Then
 		    Panel.Value = PageEngrams
-		    Self.ShowAlert("Unable to delete engrams.", Message)
+		    Self.ShowAlert("Unable to delete engrams.", Response.Message)
 		    Return
 		  End If
 		  
@@ -556,27 +554,18 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_EngramsLoad(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Success
-		  #Pragma Unused Message
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  Self.mEngramSets.Value(Self.CurrentMod.ModID) = New BeaconAPI.EngramSet(Details)
+		Private Sub APICallback_EngramsLoad(Response As BeaconAPI.Response)
+		  Self.mEngramSets.Value(Self.CurrentMod.ModID) = New BeaconAPI.EngramSet(Response.JSON)
 		  Self.ShowCurrentEngrams()
 		  Panel.Value = PageEngrams
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_EngramsPost(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Not Success Then
+		Private Sub APICallback_EngramsPost(Response As BeaconAPI.Response)
+		  If Not Response.Success Then
 		    Panel.Value = PageEngrams
-		    Self.ShowAlert("Unable to save engrams.", Message)
+		    Self.ShowAlert("Unable to save engrams.", Response.Message)
 		    Return
 		  End If
 		  

@@ -18,16 +18,13 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DiscoverServer(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Not Success Then
-		    Self.SetError(Message)
+		Private Sub Callback_DiscoverServer(Response As BeaconAPI.Response)
+		  If Not Response.Success Then
+		    Self.SetError(Response.Message)
 		    Return
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = Details
+		  Dim Dict As Xojo.Core.Dictionary = Response.JSON
 		  If Not Dict.HasAllKeys("Game.ini", "GameUserSettings.ini") Then
 		    Self.SetError("Unable to find Game.ini and GameUserSettings.ini files")
 		    Return
@@ -70,17 +67,14 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameIni(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Success = False Then
-		    Self.SetError(Message)
+		Private Sub Callback_DownloadGameIni(Response As BeaconAPI.Response)
+		  If Response.Success = False Then
+		    Self.SetError(Response.Message)
 		    Return
 		  End If
 		  
 		  Try
-		    Dim Dict As Xojo.Core.Dictionary = Details
+		    Dim Dict As Xojo.Core.Dictionary = Response.JSON
 		    
 		    Dim TextContent As Text = Dict.Value("content")
 		    Self.mGameIniContent = TextContent.Trim
@@ -94,17 +88,14 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameUserSettingsIni(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Success = False Then
-		    Self.SetError(Message)
+		Private Sub Callback_DownloadGameUserSettingsIni(Response As BeaconAPI.Response)
+		  If Response.Success = False Then
+		    Self.SetError(Response.Message)
 		    Return
 		  End If
 		  
 		  Try
-		    Dim Dict As Xojo.Core.Dictionary = Details
+		    Dim Dict As Xojo.Core.Dictionary = Response.JSON
 		    
 		    Dim TextContent As Text = Dict.Value("content")
 		    Self.mGameUserSettingsIniContent = TextContent.Trim

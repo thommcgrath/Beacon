@@ -81,6 +81,7 @@ Begin LibrarySubview LibraryPaneDocuments Implements NotificationKit.Receiver
       _ScrollWidth    =   -1
    End
    Begin BeaconAPI.Socket APISocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -217,15 +218,11 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_CloudDocumentsList(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Message
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
+		Private Sub APICallback_CloudDocumentsList(Response As BeaconAPI.Response)
 		  Redim Self.mCloudDocuments(-1)
 		  
-		  If Success Then
-		    Dim Dicts() As Auto = Details
+		  If Response.Success Then
+		    Dim Dicts() As Auto = Response.JSON
 		    For Each Dict As Xojo.Core.Dictionary In Dicts
 		      Dim Document As New BeaconAPI.Document(Dict)
 		      Dim URL As Text = Beacon.DocumentURL.TypeCloud + "://" + Document.ResourceURL.Mid(Document.ResourceURL.IndexOf("://") + 3)
@@ -240,15 +237,11 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_CommunityDocumentsList(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Message
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
+		Private Sub APICallback_CommunityDocumentsList(Response As BeaconAPI.Response)
 		  Redim Self.mCommunityDocuments(-1)
 		  
-		  If Success Then
-		    Dim Dicts() As Auto = Details
+		  If Response.Success Then
+		    Dim Dicts() As Auto = Response.JSON
 		    For Each Dict As Xojo.Core.Dictionary In Dicts
 		      Dim Document As New BeaconAPI.Document(Dict)
 		      Self.mCommunityDocuments.Append(Document.ResourceURL)

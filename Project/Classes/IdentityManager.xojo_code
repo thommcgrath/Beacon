@@ -1,17 +1,14 @@
 #tag Class
 Protected Class IdentityManager
 	#tag Method, Flags = &h21
-		Private Sub APICallback_CreateUser(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  #Pragma Unused Message
-		  
+		Private Sub APICallback_CreateUser(Response As BeaconAPI.Response)
 		  // When trying to save the current user, the server will reply with a failure.
 		  // We should consider this a success though. So if the creation failed but the
 		  // UserID and PublicKey match what we're saving, then manually consider it a success
+		  Dim Success As Boolean = Response.Success
 		  Try
-		    If Success = False And Details IsA Xojo.Core.Dictionary Then
-		      Dim Dict As Xojo.Core.Dictionary = Details
+		    If Success = False And Response.JSON IsA Xojo.Core.Dictionary Then
+		      Dim Dict As Xojo.Core.Dictionary = Response.JSON
 		      Dim PublicKey As Text = Dict.Value("public_key")
 		      Dim UserID As Text = Dict.Value("user_id")
 		      
@@ -38,14 +35,10 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_GetSessionToken(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Message
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Success Then
+		Private Sub APICallback_GetSessionToken(Response As BeaconAPI.Response)
+		  If Response.Success Then
 		    Try
-		      Dim Dict As Xojo.Core.Dictionary = Details
+		      Dim Dict As Xojo.Core.Dictionary = Response.JSON
 		      Dim Token As Text = Dict.Value("session_id")
 		      Preferences.OnlineToken = Token
 		      
@@ -60,40 +53,33 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_MergeUser(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Success
-		  #Pragma Unused Message
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
+		Private Sub APICallback_MergeUser(Response As BeaconAPI.Response)
+		  #Pragma Unused Response
 		  
 		  Self.FinishProcess()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_RefreshUserDetails(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Message
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Success Then
+		Private Sub APICallback_RefreshUserDetails(Response As BeaconAPI.Response)
+		  If Response.Success Then
 		    Try
 		      Dim Identity As Beacon.Identity
 		      If Self.mUserPassword <> "" Then
-		        Identity = Beacon.Identity.FromUserDictionary(Details, Self.mUserPassword)
+		        Identity = Beacon.Identity.FromUserDictionary(Response.JSON, Self.mUserPassword)
 		        Self.CurrentIdentity = Identity
 		      ElseIf Self.CurrentIdentity <> Nil Then
 		        Identity = Self.CurrentIdentity.Clone
-		        If Identity.ConsumeUserDictionary(Details) Then
+		        If Identity.ConsumeUserDictionary(Response.JSON) Then
 		          Identity.Validate()
 		          Self.CurrentIdentity = Identity
 		        End If
 		      End If
+		      UserCloud.Sync() // Will only trigger is necessary
 		    Catch Err As RuntimeException
 		      
 		    End Try
-		  ElseIf HTTPStatus = 401 Then
+		  ElseIf Response.HTTPStatus = 401 Then
 		    // Need to get a new token
 		    Self.GetSessionToken()
 		  End If

@@ -98,6 +98,19 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub CheckIsFolder(Extends Folder As FolderItem)
+		  If Folder.Exists Then
+		    If Not Folder.Directory Then
+		      Folder.Delete
+		      Folder.CreateAsFolder
+		    End If
+		  Else
+		    Folder.CreateAsFolder
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub CorrectWindowPlacement(Extends Win As Window, Parent As Window)
 		  #if TargetWin32
 		    If Win = Nil Or Parent = Nil Then

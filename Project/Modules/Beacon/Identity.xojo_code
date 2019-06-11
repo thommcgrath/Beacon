@@ -363,6 +363,14 @@ Protected Class Identity
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function UserCloudKey() As Xojo.Core.MemoryBlock
+		  If Self.mUsercloudKey <> Nil Then
+		    Return New Xojo.Core.MemoryBlock(Self.mUsercloudKey)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Validate()
 		  If Self.mSignature <> Nil Then
 		    Dim Fields(2) As Text

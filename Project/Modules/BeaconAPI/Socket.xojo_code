@@ -66,7 +66,7 @@ Protected Class Socket
 		Private Sub Socket_Error(Sender As Xojo.Net.HTTPSocket, Err As RuntimeException)
 		  #Pragma Unused Sender
 		  
-		  Self.ActiveRequest.InvokeCallback(False, Err.Reason, Nil, 0, Nil)
+		  Self.ActiveRequest.InvokeCallback(New BeaconAPI.Response(Err))
 		  Self.ActiveRequest = Nil
 		  Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
 		End Sub
@@ -77,36 +77,10 @@ Protected Class Socket
 		  #Pragma Unused Sender
 		  #Pragma Unused URL
 		  
-		  Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Content)
-		  Dim Details As Auto
-		  If TextContent <> "" Then
-		    Try
-		      Details = Xojo.Data.ParseJSON(TextContent)
-		    Catch Err As Xojo.Data.InvalidJSONException
-		      Dim Dict As New Xojo.Core.Dictionary
-		      Dict.Value("message") = "Invalid JSON"
-		      Dict.Value("details") = TextContent
-		      Details = Dict
-		      HTTPStatus = 500
-		    End Try
-		  Else
-		    Details = New Xojo.Core.Dictionary
-		  End If
-		  
-		  If HTTPStatus = 200 Then
-		    Self.ActiveRequest.InvokeCallback(True, "", Details, HTTPStatus, Content)
-		  Else
-		    If HTTPStatus = 401 Or HTTPStatus = 403 Then
-		      NotificationKit.Post(Self.Notification_Unauthorized, Self.ActiveRequest)
-		    End If
-		    
-		    Dim Dict As Xojo.Core.Dictionary = Details
-		    Dim Message As Text = Dict.Lookup("message", "")
-		    Details = Dict.Lookup("details", Nil)
-		    Self.ActiveRequest.InvokeCallback(False, Message, Details, HTTPStatus, Content)
-		  End If
-		  
+		  Dim Response As New BeaconAPI.Response(URL, HTTPStatus, Content)
+		  Self.ActiveRequest.InvokeCallback(Response)
 		  Self.ActiveRequest = Nil
+		  
 		  Self.mAdvanceQueueCallbackKey = CallLater.Schedule(50, WeakAddressOf AdvanceQueue)
 		End Sub
 	#tag EndMethod

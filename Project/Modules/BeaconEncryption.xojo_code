@@ -7,6 +7,13 @@ Protected Module BeaconEncryption
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function IsEncrypted(Data As Xojo.Core.MemoryBlock) As Boolean
+		  Dim Header As BeaconEncryption.SymmetricHeader = BeaconEncryption.SymmetricHeader.FromMemoryBlock(Data)
+		  Return Header <> Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function PEMDecodePrivateKey(Key As Text) As Xojo.Core.MemoryBlock
 		  Key = Key.Trim
 		  Key = Key.ReplaceAll(Text.FromUnicodeCodepoint(13) + Text.FromUnicodeCodepoint(10), Text.FromUnicodeCodepoint(10))

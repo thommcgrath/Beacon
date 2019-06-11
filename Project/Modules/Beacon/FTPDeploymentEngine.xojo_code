@@ -43,19 +43,16 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameIni(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
+		Private Sub Callback_DownloadGameIni(Response As BeaconAPI.Response)
 		  If Self.mCancelled Then
 		    Return
-		  ElseIf Success = False Then
-		    Self.SetError(Message)
+		  ElseIf Response.Success = False Then
+		    Self.SetError(Response.Message)
 		    Return
 		  End If
 		  
 		  Try
-		    Dim Dict As Xojo.Core.Dictionary = Details
+		    Dim Dict As Xojo.Core.Dictionary = Response.JSON
 		    If Dict.HasKey("ftp_mode") Then
 		      Self.mProfile.Mode = Dict.Value("ftp_mode")
 		    End If
@@ -70,19 +67,16 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameUserSettingsIni(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
+		Private Sub Callback_DownloadGameUserSettingsIni(Response As BeaconAPI.Response)
 		  If Self.mCancelled Then
 		    Return
-		  ElseIf Success = False Then
-		    Self.SetError(Message)
+		  ElseIf Response.Success = False Then
+		    Self.SetError(Response.Message)
 		    Return
 		  End If
 		  
 		  Try
-		    Dim Dict As Xojo.Core.Dictionary = Details
+		    Dim Dict As Xojo.Core.Dictionary = Response.JSON
 		    If Dict.HasKey("ftp_mode") Then
 		      Self.mProfile.Mode = Dict.Value("ftp_mode")
 		    End If
@@ -97,15 +91,11 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_UploadGameIni(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
+		Private Sub Callback_UploadGameIni(Response As BeaconAPI.Response)
 		  If Self.mCancelled Then
 		    Return
-		  ElseIf Success = False Then
-		    Self.SetError(Message)
+		  ElseIf Response.Success = False Then
+		    Self.SetError(Response.Message)
 		    Return
 		  End If
 		  
@@ -114,15 +104,11 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_UploadGameUserSettingsIni(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
+		Private Sub Callback_UploadGameUserSettingsIni(Response As BeaconAPI.Response)
 		  If Self.mCancelled Then
 		    Return
-		  ElseIf Success = False Then
-		    Self.SetError(Message)
+		  ElseIf Response.Success = False Then
+		    Self.SetError(Response.Message)
 		    Return
 		  End If
 		  

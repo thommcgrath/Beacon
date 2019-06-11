@@ -261,6 +261,7 @@ Begin BeaconDialog DeveloperModSettingsDialog
       Width           =   16
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -271,17 +272,13 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub APICallback_SaveMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Success Then
+		Private Sub APICallback_SaveMod(Response As BeaconAPI.Response)
+		  If Response.Success Then
 		    Self.Close
 		    Return
 		  End If
 		  
-		  Self.ShowAlert("Unable to save mod", Message)
+		  Self.ShowAlert("Unable to save mod", Response.Message)
 		End Sub
 	#tag EndMethod
 

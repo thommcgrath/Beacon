@@ -46,6 +46,18 @@ Protected Class Request
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Path As Text, Method As Text, Payload As Text, ContentType As Text, Callback As BeaconAPI.Request.ReplyCallback)
+		  Self.Constructor(Path, Method, Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Payload), ContentType, Callback)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Path As Text, Method As Text, Payload As Xojo.Core.Dictionary, Callback As BeaconAPI.Request.ReplyCallback)
+		  Self.Constructor(Path, Method, Self.URLEncodeFormData(Payload), "application/x-www-form-urlencoded", Callback)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Constructor(Path As Text, Method As Text, Payload As Xojo.Core.MemoryBlock, ContentType As Text, Callback As BeaconAPI.Request.ReplyCallback)
 		  If Path.IndexOf("://") = -1 Then
 		    Path = BeaconAPI.URL(Path)
 		  End If
@@ -59,10 +71,12 @@ Protected Class Request
 		    Dim QueryIndex As Integer = Path.IndexOf("?")
 		    If QueryIndex <> -1 Then
 		      Dim Query As Text = Path.Mid(QueryIndex + 1)
-		      If Payload <> "" Then
-		        Payload = Payload + "&" + Query
+		      If Payload <> Nil Then
+		        Dim Mutable As New Xojo.Core.MutableMemoryBlock(Payload)
+		        Mutable.Append(Xojo.Core.TextEncoding.UTF8.ConvertTextToData("&" + Query))
+		        Payload = Mutable
 		      Else
-		        Payload = Query
+		        Payload = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Query)
 		      End If
 		      Path = Path.Left(QueryIndex)
 		    End If
@@ -78,20 +92,14 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As Text, Method As Text, Payload As Xojo.Core.Dictionary, Callback As BeaconAPI.Request.ReplyCallback)
-		  Self.Constructor(Path, Method, Self.URLEncodeFormData(Payload), "application/x-www-form-urlencoded", Callback)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ContentType() As Text
 		  Return Self.mContentType
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub InvokeCallback(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  Self.mCallback.Invoke(Success, Message, Details, HTTPStatus, RawReply)
+		Sub InvokeCallback(Response As BeaconAPI.Response)
+		  Self.mCallback.Invoke(Response)
 		  Self.mCallback = Nil
 		End Sub
 	#tag EndMethod
@@ -104,33 +112,36 @@ Protected Class Request
 
 	#tag Method, Flags = &h0
 		Function Payload() As Xojo.Core.MemoryBlock
-		  Return Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Self.mPayload)
+		  Return Self.mPayload
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Query() As Text
-		  Return Self.mPayload
+		  Return Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Self.mPayload, True)
 		End Function
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ReplyCallback(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo . Core . MemoryBlock)
+		Delegate Sub ReplyCallback(Response As BeaconAPI.Response)
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h0
 		Sub Sign(Identity As Beacon.Identity)
 		  Dim Content As Text = Self.mMethod + Text.FromUnicodeCodepoint(10) + Self.mURL
 		  If Self.mMethod = "GET" Then
-		    If Self.mPayload <> "" Then
+		    If Self.mPayload <> Nil Then
 		      Content = Content + "?"
 		    End If
 		  Else
 		    Content = Content + Text.FromUnicodeCodepoint(10)
 		  End If
-		  Content = Content + Self.mPayload
 		  
-		  Self.Authenticate(Identity.Identifier, Beacon.EncodeHex(Identity.Sign(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Content))))
+		  Dim Payload As New Xojo.Core.MutableMemoryBlock(0)
+		  Payload.Append(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Content))
+		  Payload.Append(Self.mPayload)
+		  
+		  Self.Authenticate(Identity.Identifier, Beacon.EncodeHex(Payload))
 		End Sub
 	#tag EndMethod
 
@@ -176,7 +187,7 @@ Protected Class Request
 	#tag EndProperty
 
 	#tag Property, Flags = &h1
-		Protected mPayload As Text
+		Protected mPayload As Xojo.Core.MemoryBlock
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

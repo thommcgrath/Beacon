@@ -226,6 +226,7 @@ Begin BeaconDialog DeveloperAddModDialog
       Width           =   16
    End
    Begin BeaconAPI.Socket Socket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   0
@@ -236,12 +237,8 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub APICallback_RegisterMod(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused Details
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Success Then
+		Private Sub APICallback_RegisterMod(Response As BeaconAPI.Response)
+		  If Response.Success Then
 		    Self.mRegistered = True
 		    Self.Hide
 		    
@@ -251,7 +248,7 @@ End
 		  Dim Dialog As New MessageDialog
 		  Dialog.Title = ""
 		  Dialog.Message = "Mod was not registered"
-		  Dialog.Explanation = Message
+		  Dialog.Explanation = Response.Message
 		  Call Dialog.ShowModal()
 		End Sub
 	#tag EndMethod

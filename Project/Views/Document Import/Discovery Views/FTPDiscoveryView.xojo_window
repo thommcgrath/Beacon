@@ -44,6 +44,7 @@ Begin DiscoveryView FTPDiscoveryView
       Scope           =   2
       TabIndex        =   17
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -554,6 +555,7 @@ Begin DiscoveryView FTPDiscoveryView
          Scope           =   2
          TabIndex        =   1
          TabPanelIndex   =   2
+         TabStop         =   True
          Top             =   161
          Transparent     =   False
          Value           =   0
@@ -788,6 +790,7 @@ Begin DiscoveryView FTPDiscoveryView
          HasBackColor    =   False
          Height          =   204
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "ViewPanel"
          Left            =   21
          LockBottom      =   True
@@ -893,6 +896,7 @@ Begin DiscoveryView FTPDiscoveryView
       End
    End
    Begin BeaconAPI.Socket BrowseSocket
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -917,15 +921,13 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DetectPath(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused RawReply
-		  
+		Private Sub APICallback_DetectPath(Response As BeaconAPI.Response)
 		  Dim Info As Xojo.Introspection.TypeInfo
 		  Dim Dict As Xojo.Core.Dictionary
-		  If Details <> Nil Then
-		    Info = Xojo.Introspection.GetType(Details)
+		  If Response.JSON <> Nil Then
+		    Info = Xojo.Introspection.GetType(Response.JSON)
 		    If Info.FullName = "Xojo.Core.Dictionary" Then
-		      Dict = Details
+		      Dict = Response.JSON
 		    End If
 		  End If
 		  
@@ -933,7 +935,7 @@ End
 		    Self.mProfile.Mode = Dict.Value("ftp_mode")
 		  End If
 		  
-		  If Success Then
+		  If Response.Success Then
 		    // Discovery was able to find the path and the user doesn't need to do any further work.
 		    Dim Path As Text = Dict.Value("path")
 		    
@@ -944,7 +946,7 @@ End
 		    Return
 		  End If
 		  
-		  If HTTPStatus = 404 Then
+		  If Response.HTTPStatus = 404 Then
 		    // Server was connected, but the path could not be determined, so time to show the browser.
 		    Self.ViewPanel.Value = Self.PageBrowse
 		    Self.Browser.Reset()
@@ -954,21 +956,18 @@ End
 		  // The connection was not succesful
 		  Self.ViewPanel.Value = Self.PageGeneral
 		  
-		  Self.ShowAlert("Beacon was unable to discover the server.", "Reason: " + Message)
+		  Self.ShowAlert("Beacon was unable to discover the server.", "Reason: " + Response.Message)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ListPath(Success As Boolean, Message As Text, Details As Auto, HTTPStatus As Integer, RawReply As Xojo.Core.MemoryBlock)
-		  #Pragma Unused HTTPStatus
-		  #Pragma Unused RawReply
-		  
-		  If Not Success Then
-		    Self.ShowAlert("Unable to list contents of " + Self.Browser.CurrentPath, Message)
+		Private Sub APICallback_ListPath(Response As BeaconAPI.Response)
+		  If Not Response.Success Then
+		    Self.ShowAlert("Unable to list contents of " + Self.Browser.CurrentPath, Response.Message)
 		    Return
 		  End If
 		  
-		  Dim Dict As Xojo.Core.Dictionary = Details
+		  Dim Dict As Xojo.Core.Dictionary = Response.JSON
 		  Dim Files() As Auto = Dict.Value("files")
 		  Dim Children() As String
 		  For Each Child As Text In Files
