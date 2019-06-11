@@ -23,7 +23,10 @@ case 'GET':
 case 'POST':
 case 'PUT':
 	if (BeaconCloudStorage::PutFile($remote_path, BeaconAPI::Body())) {
-		BeaconAPI::ReplySuccess();
+		$prefix_len = strlen('/' . BeaconAPI::UserID());
+		$details = BeaconCloudStorage::DetailsForFile($remote_path);
+		$details['path'] = substr($details['path'], $prefix_len);
+		BeaconAPI::ReplySuccess($details);
 	} else {
 		BeaconAPI::ReplyError('Something went wrong');
 	}

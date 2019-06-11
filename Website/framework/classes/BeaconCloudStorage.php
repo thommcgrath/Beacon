@@ -168,6 +168,24 @@ abstract class BeaconCloudStorage {
 		return $local_path;
 	}
 	
+	public static function DetailsForFile(string $remote_path) {
+		$database = BeaconCommon::Database();
+		$remote_path = static::CleanupRemotePath($remote_path);
+		$results = $database->Query('SELECT remote_path, content_type, size_in_bytes, modified, deleted, header FROM usercloud WHERE remote_path = $1;', $remote_path);
+		if ($results->RecordCount() !== 1) {
+			return false;
+		}
+		
+		return array(
+			'path' => $results->Field('remote_path'),
+			'type' => $results->Field('content_type'),
+			'size' => intval($results->Field('size_in_bytes')),
+			'modified' => $results->Field('modified'),
+			'deleted' => $results->Field('deleted'),
+			'header' => $results->Field('header')
+		);
+	}
+	
 	public static function RunQueue() {
 		$hostname = gethostname();
 		$database = BeaconCommon::Database();
@@ -247,7 +265,7 @@ abstract class BeaconCloudStorage {
 			$files[] = array(
 				'path' => $results->Field('remote_path'),
 				'type' => $results->Field('content_type'),
-				'size' => $results->Field('size_in_bytes'),
+				'size' => intval($results->Field('size_in_bytes')),
 				'modified' => $results->Field('modified'),
 				'deleted' => $results->Field('deleted'),
 				'header' => $results->Field('header')
