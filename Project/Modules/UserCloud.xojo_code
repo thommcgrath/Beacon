@@ -1,15 +1,18 @@
 #tag Module
 Protected Module UserCloud
 	#tag Method, Flags = &h21
-		Private Sub Callback_DeleteFile(Response As BeaconAPI.Response)
+		Private Sub Callback_DeleteFile(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  CleanupRequest(Request)
+		  
 		  Break
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_GetFile(Response As BeaconAPI.Response)
+		Private Sub Callback_GetFile(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Not Response.Success Then
 		    // Do what?
+		    CleanupRequest(Request)
 		    Return
 		  End If
 		  
@@ -19,6 +22,7 @@ Protected Module UserCloud
 		      Content = BeaconEncryption.SymmetricDecrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Content)
 		    Catch Err As Xojo.Crypto.CryptoException
 		      // Ok?
+		      CleanupRequest(Request)
 		      Return
 		    End Try
 		    
@@ -31,6 +35,7 @@ Protected Module UserCloud
 		  Dim BaseURL As Text = BeaconAPI.URL("/file")
 		  If Not URL.BeginsWith(BaseURL) Then
 		    // What the hell is going on here?
+		    CleanupRequest(Request)
 		    Return
 		  End If
 		  
@@ -51,77 +56,23 @@ Protected Module UserCloud
 		    Stream.Write(Beacon.ConvertMemoryBlock(Content))
 		    Stream.Close
 		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Sub Callback_ListFiles(Response As BeaconAPI.Response)
-		  If Not Response.Success Then
-		    App.Log("UserCloud was unable to list files: " + Response.Message)
-		    mSyncing = False
-		    Return
-		  End If
 		  
-		  Try
-		    Dim TextContent As Text = Xojo.Core.TextEncoding.UTF8.ConvertDataToText(Response.Content)
-		    Dim List() As Auto = Xojo.Data.ParseJSON(TextContent)
-		    Dim SyncedPaths As New Dictionary
-		    For Each Dict As Xojo.Core.Dictionary In List
-		      Dim RemotePath As String = Dict.Value("path")
-		      SyncedPaths.Value(RemotePath) = True
-		      
-		      Dim LocalFile As FolderItem = LocalFile(RemotePath)
-		      
-		      Dim IsDeleted As Boolean = Dict.Value("deleted")
-		      If LocalFile.Exists = False And IsDeleted Then
-		        Continue
-		      End If
-		      
-		      Dim ServerModifiedText As Text = Dict.Value("modified")
-		      Dim ServerModified As Date = NewDateFromSQLDateTime(ServerModifiedText).LocalTime
-		      
-		      If LocalFile.Exists And LocalFile.ModificationDate <> Nil Then
-		        Dim LocalModified As Date = LocalFile.ModificationDate
-		        Dim FilesAreDifferent As Boolean = LocalModified <> ServerModified
-		        Dim LocalIsNewer As Boolean = LocalModified > ServerModified
-		        If LocalIsNewer Then
-		          // Put the file
-		          UploadFileTo(LocalFile, RemotePath)
-		        ElseIf LocalIsNewer = False And IsDeleted = True Then
-		          // Delete the file
-		          LocalFile.Delete
-		        ElseIf FilesAreDifferent = True And LocalIsNewer = False Then
-		          // Retrieve the file
-		          RequestFileFrom(LocalFile, RemotePath, ServerModified)
-		        End If
-		      ElseIf IsDeleted = False Then
-		        // Retrieve the file
-		        RequestFileFrom(LocalFile, RemotePath, ServerModified)
-		      End If
-		    Next
-		    
-		    Dim Paths As New Dictionary
-		    DiscoverPaths("", LocalFile("/"), Paths)
-		    
-		    Dim Keys() As Variant = Paths.Keys
-		    For Each Path As String In Keys
-		      If SyncedPaths.HasKey(Path) Then
-		        Continue
-		      End If
-		      
-		      Dim File As FolderItem = Paths.Value(Path)
-		      UploadFileTo(File, Path)
-		    Next
-		  Catch Err As RuntimeException
-		    App.Log("UserCloud was unable to list files due to exception: " + Err.Explanation)
-		  End Try
+		  CleanupRequest(Request)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_PutFile(Response As BeaconAPI.Response)
+		Private Sub Callback_ListFiles(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  Dim Th As New SyncThread(Request, Response)
+		  Th.Run
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub Callback_PutFile(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Not Response.Success Then
 		    // Do what?
+		    CleanupRequest(Request)
 		    Return
 		  End If
 		  
@@ -130,6 +81,7 @@ Protected Module UserCloud
 		  Dim BaseURL As Text = BeaconAPI.URL("/file")
 		  If Not URL.BeginsWith(BaseURL) Then
 		    // What the hell is going on here?
+		    CleanupRequest(Request)
 		    Return
 		  End If
 		  
@@ -143,7 +95,62 @@ Protected Module UserCloud
 		      
 		    End Try
 		  End If
+		  
+		  CleanupRequest(Request)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CleanupEmptyFolders(Folder As FolderItem)
+		  If Folder = Nil Or Folder.Exists = False Or Folder.Directory = False Then
+		    Return
+		  End If
+		  
+		  For I As Integer = Folder.Count DownTo 1
+		    Dim Child As FolderItem = Folder.Item(I)
+		    If Not Child.Directory Then
+		      Continue
+		    End If
+		    If Child.Count > 0 Then
+		      CleanupEmptyFolders(Child)
+		    End If
+		    If Child.Count = 0 Then
+		      Child.Delete
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CleanupRequest(Request As BeaconAPI.Request)
+		  If PendingRequests = Nil Then
+		    Return
+		  End If
+		  
+		  If PendingRequests.HasKey(Request.RequestID) Then
+		    PendingRequests.Remove(Request.RequestID)
+		    If Not IsBusy Then
+		      CleanupEmptyFolders(LocalFile("/"))
+		      
+		      NotificationKit.Post(Notification_SyncFinished, Nil)
+		      
+		      If SyncWhenFinished Then
+		        SyncWhenFinished = False
+		        Sync()
+		      End If
+		    End If
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function Delete(RemotePath As String) As Boolean
+		  Dim LocalFile As FolderItem = LocalFile(RemotePath)
+		  If LocalFile.DeepDelete Then
+		    SendRequest(New BeaconAPI.Request("file" + RemotePath.ToText, "DELETE", AddressOf Callback_DeleteFile))
+		    Sync()
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -165,6 +172,15 @@ Protected Module UserCloud
 		    End If
 		  Next
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function IsBusy() As Boolean
+		  If PendingRequests = Nil Then
+		    PendingRequests = New Dictionary
+		  End If
+		  Return PendingRequests.Count > 0
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -201,19 +217,13 @@ Protected Module UserCloud
 		    Return Nil
 		  End If
 		  
-		  Dim Stream As BinaryStream = BinaryStream.Open(LocalFile, False)
-		  Dim Content As MemoryBlock = Stream.Read(Stream.Length)
-		  Stream.Close
-		  
-		  Return Content
+		  Return LocalFile.Read
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub RequestFileFrom(LocalFile As FolderItem, RemotePath As String, ModificationDate As Date)
-		  Dim Request As New BeaconAPI.Request("file" + RemotePath.ToText, "GET", AddressOf Callback_GetFile)
-		  Request.Authenticate(Preferences.OnlineToken)
-		  BeaconAPI.Send(Request)
+		  SendRequest(New BeaconAPI.Request("file" + RemotePath.ToText, "GET", AddressOf Callback_GetFile))
 		  
 		  If Not LocalFile.Exists Then
 		    Dim Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
@@ -229,17 +239,49 @@ Protected Module UserCloud
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub SendRequest(Request As BeaconAPI.Request)
+		  If PendingRequests = Nil Then
+		    PendingRequests = New Dictionary
+		  End If
+		  
+		  Dim Fresh As Boolean = PendingRequests.Count = 0
+		  
+		  Request.Authenticate(Preferences.OnlineToken)
+		  PendingRequests.Value(Request.RequestID) = Request
+		  BeaconAPI.Send(Request)
+		  
+		  If Fresh Then
+		    NotificationKit.Post(Notification_SyncStarted, Nil)
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Sync()
-		  If mSyncing Or Not Preferences.OnlineEnabled Or Preferences.OnlineToken = "" Then
+		  If Preferences.OnlineEnabled = False Or Preferences.OnlineToken = "" Then
+		    Return
+		  End If
+		  If IsBusy Then
+		    If SyncKey = "" Then
+		      SyncWhenFinished = True
+		    End If
 		    Return
 		  End If
 		  
-		  mSyncing = True
+		  If SyncKey <> "" Then
+		    CallLater.Cancel(SyncKey)
+		    SyncKey = ""
+		  End If
 		  
-		  Dim Request As New BeaconAPI.Request("file", "GET", AddressOf Callback_ListFiles)
-		  Request.Authenticate(Preferences.OnlineToken)
-		  BeaconAPI.Send(Request)
+		  SyncKey = CallLater.Schedule(3000, AddressOf SyncActual)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SyncActual()
+		  SyncKey = ""
+		  SendRequest(New BeaconAPI.Request("file", "GET", AddressOf Callback_ListFiles))
 		End Sub
 	#tag EndMethod
 
@@ -254,9 +296,7 @@ Protected Module UserCloud
 		  
 		  Dim EncryptedContents As Xojo.Core.MemoryBlock = BeaconEncryption.SymmetricEncrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Beacon.ConvertMemoryBlock(Contents))
 		  
-		  Dim Request As New BeaconAPI.Request("file" + RemotePath.ToText, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile)
-		  Request.Authenticate(Preferences.OnlineToken)
-		  BeaconAPI.Send(Request)
+		  SendRequest(New BeaconAPI.Request("file" + RemotePath.ToText, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile))
 		  
 		  #if DebugBuild
 		    App.Log("Uploading " + RemotePath)
@@ -265,19 +305,34 @@ Protected Module UserCloud
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Write(RemotePath As String, Content As MemoryBlock)
+		Protected Function Write(RemotePath As String, Content As MemoryBlock) As Boolean
 		  Dim LocalFile As FolderItem = LocalFile(RemotePath)
-		  Dim Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
-		  Stream.Write(Content)
-		  Stream.Close
-		  Sync()
-		End Sub
+		  If LocalFile.Write(Content) Then
+		    Sync()
+		    Return True
+		  End If
+		End Function
 	#tag EndMethod
 
 
 	#tag Property, Flags = &h21
-		Private mSyncing As Boolean
+		Private PendingRequests As Dictionary
 	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private SyncKey As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private SyncWhenFinished As Boolean
+	#tag EndProperty
+
+
+	#tag Constant, Name = Notification_SyncFinished, Type = Text, Dynamic = False, Default = \"Cloud Sync Finished", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_SyncStarted, Type = Text, Dynamic = False, Default = \"Cloud Sync Started", Scope = Protected
+	#tag EndConstant
 
 
 	#tag ViewBehavior

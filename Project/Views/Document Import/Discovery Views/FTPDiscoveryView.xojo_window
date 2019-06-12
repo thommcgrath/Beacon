@@ -921,7 +921,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_DetectPath(Response As BeaconAPI.Response)
+		Private Sub APICallback_DetectPath(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  Dim Info As Xojo.Introspection.TypeInfo
 		  Dim Dict As Xojo.Core.Dictionary
 		  If Response.JSON <> Nil Then
@@ -961,7 +961,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_ListPath(Response As BeaconAPI.Response)
+		Private Sub APICallback_ListPath(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Not Response.Success Then
 		    Self.ShowAlert("Unable to list contents of " + Self.Browser.CurrentPath, Response.Message)
 		    Return

@@ -237,7 +237,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub APICallback_RegisterMod(Response As BeaconAPI.Response)
+		Private Sub APICallback_RegisterMod(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Response.Success Then
 		    Self.mRegistered = True
 		    Self.Hide

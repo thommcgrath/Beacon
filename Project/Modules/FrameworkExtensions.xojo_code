@@ -141,6 +141,31 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DeepDelete(Extends File As FolderItem) As Boolean
+		  If Not File.Exists Then
+		    Return True
+		  End If
+		  
+		  If File.Directory Then
+		    For I As Integer = File.Count DownTo 1
+		      If Not File.Item(I).DeepDelete Then
+		        Return False
+		      End If
+		    Next
+		  End If
+		  
+		  Try
+		    File.Delete
+		    Return True
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		  
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function DoubleValue(Extends Dict As Xojo.Core.Dictionary, Key As Auto, ResolveWithFirst As Boolean = False) As Double
 		  Dim Value As Auto = Dict.Value(Key)
 		  Return AutoToDouble(Value, ResolveWithFirst)
@@ -268,6 +293,19 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Read(Extends File As FolderItem) As MemoryBlock
+		  Try
+		    Dim Stream As BinaryStream = BinaryStream.Open(File, False)
+		    Dim Contents As MemoryBlock = Stream.Read(Stream.Length)
+		    Stream.Close
+		    Return Contents
+		  Catch Err As RuntimeException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SQLDateTimeWithOffset(Extends Source As Date) As String
 		  Dim Offset As Double = Abs(Source.GMTOffset)
 		  Dim Hours As Integer = Floor(Offset)
@@ -379,6 +417,26 @@ Protected Module FrameworkExtensions
 		  Dim Content As String = CType(Source.Data, Global.MemoryBlock).StringValue(0, Source.Size)
 		  Content = Content.GuessEncoding
 		  Return Content.ToText
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Write(Extends File As FolderItem, Contents As MemoryBlock) As Boolean
+		  Try
+		    Dim Stream As BinaryStream
+		    If File.Exists Then
+		      Stream = BinaryStream.Open(File, True)
+		      Stream.Position = 0
+		      Stream.Length = 0
+		    Else
+		      Stream = BinaryStream.Create(File, True)
+		    End If
+		    Stream.Write(Contents)
+		    Stream.Close
+		    Return True
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
 		End Function
 	#tag EndMethod
 

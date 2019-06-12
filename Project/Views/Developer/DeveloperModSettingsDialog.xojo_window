@@ -272,7 +272,7 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub APICallback_SaveMod(Response As BeaconAPI.Response)
+		Private Sub APICallback_SaveMod(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Response.Success Then
 		    Self.Close
 		    Return

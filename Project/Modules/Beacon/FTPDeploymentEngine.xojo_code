@@ -43,7 +43,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameIni(Response As BeaconAPI.Response)
+		Private Sub Callback_DownloadGameIni(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Self.mCancelled Then
 		    Return
 		  ElseIf Response.Success = False Then
@@ -67,7 +67,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameUserSettingsIni(Response As BeaconAPI.Response)
+		Private Sub Callback_DownloadGameUserSettingsIni(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Self.mCancelled Then
 		    Return
 		  ElseIf Response.Success = False Then
@@ -91,7 +91,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_UploadGameIni(Response As BeaconAPI.Response)
+		Private Sub Callback_UploadGameIni(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Self.mCancelled Then
 		    Return
 		  ElseIf Response.Success = False Then
@@ -104,7 +104,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_UploadGameUserSettingsIni(Response As BeaconAPI.Response)
+		Private Sub Callback_UploadGameUserSettingsIni(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Self.mCancelled Then
 		    Return
 		  ElseIf Response.Success = False Then

@@ -1,7 +1,7 @@
 #tag Class
 Protected Class IdentityManager
 	#tag Method, Flags = &h21
-		Private Sub APICallback_CreateUser(Response As BeaconAPI.Response)
+		Private Sub APICallback_CreateUser(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  // When trying to save the current user, the server will reply with a failure.
 		  // We should consider this a success though. So if the creation failed but the
 		  // UserID and PublicKey match what we're saving, then manually consider it a success
@@ -35,7 +35,7 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_GetSessionToken(Response As BeaconAPI.Response)
+		Private Sub APICallback_GetSessionToken(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Response.Success Then
 		    Try
 		      Dim Dict As Xojo.Core.Dictionary = Response.JSON
@@ -53,7 +53,7 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_MergeUser(Response As BeaconAPI.Response)
+		Private Sub APICallback_MergeUser(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  #Pragma Unused Response
 		  
 		  Self.FinishProcess()
@@ -61,7 +61,7 @@ Protected Class IdentityManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_RefreshUserDetails(Response As BeaconAPI.Response)
+		Private Sub APICallback_RefreshUserDetails(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Response.Success Then
 		    Try
 		      Dim Identity As Beacon.Identity

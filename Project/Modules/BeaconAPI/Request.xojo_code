@@ -83,6 +83,7 @@ Protected Class Request
 		    ContentType = "application/x-www-form-urlencoded"
 		  End If
 		  
+		  Self.mRequestID = Beacon.CreateUUID
 		  Self.mURL = Path
 		  Self.mMethod = Method.Uppercase
 		  Self.mCallback = Callback
@@ -99,7 +100,7 @@ Protected Class Request
 
 	#tag Method, Flags = &h0
 		Sub InvokeCallback(Response As BeaconAPI.Response)
-		  Self.mCallback.Invoke(Response)
+		  Self.mCallback.Invoke(Self, Response)
 		  Self.mCallback = Nil
 		End Sub
 	#tag EndMethod
@@ -123,8 +124,14 @@ Protected Class Request
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h0
-		Delegate Sub ReplyCallback(Response As BeaconAPI.Response)
+		Delegate Sub ReplyCallback(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h0
+		Function RequestID() As Text
+		  Return Self.mRequestID
+		End Function
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Sign(Identity As Beacon.Identity)
@@ -188,6 +195,10 @@ Protected Class Request
 
 	#tag Property, Flags = &h1
 		Protected mPayload As Xojo.Core.MemoryBlock
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mRequestID As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

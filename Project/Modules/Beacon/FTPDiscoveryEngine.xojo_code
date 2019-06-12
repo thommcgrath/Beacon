@@ -18,7 +18,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DiscoverServer(Response As BeaconAPI.Response)
+		Private Sub Callback_DiscoverServer(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Not Response.Success Then
 		    Self.SetError(Response.Message)
 		    Return
@@ -67,7 +67,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameIni(Response As BeaconAPI.Response)
+		Private Sub Callback_DownloadGameIni(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Response.Success = False Then
 		    Self.SetError(Response.Message)
 		    Return
@@ -88,7 +88,7 @@ Implements Beacon.DiscoveryEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Callback_DownloadGameUserSettingsIni(Response As BeaconAPI.Response)
+		Private Sub Callback_DownloadGameUserSettingsIni(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  If Response.Success = False Then
 		    Self.SetError(Response.Message)
 		    Return

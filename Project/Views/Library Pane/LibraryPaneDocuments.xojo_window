@@ -218,7 +218,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_CloudDocumentsList(Response As BeaconAPI.Response)
+		Private Sub APICallback_CloudDocumentsList(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  Redim Self.mCloudDocuments(-1)
 		  
 		  If Response.Success Then
@@ -237,7 +237,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub APICallback_CommunityDocumentsList(Response As BeaconAPI.Response)
+		Private Sub APICallback_CommunityDocumentsList(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  Redim Self.mCommunityDocuments(-1)
 		  
 		  If Response.Success Then
