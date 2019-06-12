@@ -10,60 +10,14 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_GetFile(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
-		  If Not Response.Success Then
-		    // Do what?
-		    CleanupRequest(Request)
-		    Return
-		  End If
-		  
-		  Dim Content As Xojo.Core.MemoryBlock = Response.Content
-		  If BeaconEncryption.IsEncrypted(Content) Then
-		    Try
-		      Content = BeaconEncryption.SymmetricDecrypt(App.IdentityManager.CurrentIdentity.UserCloudKey, Content)
-		    Catch Err As Xojo.Crypto.CryptoException
-		      // Ok?
-		      CleanupRequest(Request)
-		      Return
-		    End Try
-		    
-		    Dim Decompressor As New _GZipString
-		    Content = Beacon.ConvertMemoryBlock(Decompressor.Decompress(Beacon.ConvertMemoryBlock(Content)))
-		  End If
-		  
-		  // So where do we put the file now?
-		  Dim URL As Text = Response.URL
-		  Dim BaseURL As Text = BeaconAPI.URL("/file")
-		  If Not URL.BeginsWith(BaseURL) Then
-		    // What the hell is going on here?
-		    CleanupRequest(Request)
-		    Return
-		  End If
-		  
-		  Dim RemotePath As Text = URL.Mid(BaseURL.Length)
-		  Dim LocalFile As FolderItem = LocalFile(RemotePath)
-		  If LocalFile.Exists Then
-		    Dim CreationDate As Date = LocalFile.CreationDate
-		    Dim ModificationDate As Date = LocalFile.ModificationDate
-		    Dim Stream As BinaryStream = BinaryStream.Open(LocalFile, True)
-		    Stream.Position = 0
-		    Stream.Length = 0
-		    Stream.Write(Beacon.ConvertMemoryBlock(Content))
-		    Stream.Close
-		    LocalFile.CreationDate = CreationDate
-		    LocalFile.ModificationDate = ModificationDate
-		  Else
-		    Dim Stream As BinaryStream = BinaryStream.Create(LocalFile, True)
-		    Stream.Write(Beacon.ConvertMemoryBlock(Content))
-		    Stream.Close
-		  End If
-		  
-		  CleanupRequest(Request)
+		  Dim Th As New GetThread(Request, Response)
+		  Th.Run
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_ListFiles(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
-		  Dim Th As New SyncThread(Request, Response)
+		  Dim Th As New ListThread(Request, Response)
 		  Th.Run
 		End Sub
 	#tag EndMethod

@@ -1,5 +1,5 @@
 #tag Class
-Private Class SyncThread
+Private Class ListThread
 Inherits Thread
 	#tag Event
 		Sub Run()
