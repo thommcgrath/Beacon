@@ -119,9 +119,9 @@ Protected Module UserCloud
 		    End If
 		    
 		    If Child.Directory Then
-		      DiscoverPaths(BasePath + "/" + Child.Name, Child, Destination)
+		      DiscoverPaths(BasePath + "/" + EncodeURLComponent(Child.Name), Child, Destination)
 		    Else
-		      Destination.Value(BasePath + "/" + Child.Name) = Child
+		      Destination.Value(BasePath + "/" + EncodeURLComponent(Child.Name)) = Child
 		    End If
 		  Next
 		End Sub
@@ -161,13 +161,13 @@ Protected Module UserCloud
 		  End If
 		  
 		  For I As Integer = 0 To Components.Ubound - 1
-		    LocalFolder = LocalFolder.Child(Components(I))
+		    LocalFolder = LocalFolder.Child(DecodeURLComponent(Components(I)).DefineEncoding(Encodings.UTF8))
 		    If Not LocalFolder.CheckIsFolder(Create) Then
 		      Return Nil
 		    End If
 		  Next
 		  
-		  Return LocalFolder.Child(Components(Components.Ubound))
+		  Return LocalFolder.Child(DecodeURLComponent(Components(Components.Ubound)).DefineEncoding(Encodings.UTF8))
 		End Function
 	#tag EndMethod
 

@@ -22,7 +22,9 @@ Inherits Thread
 		      If (LocalFile = Nil Or LocalFile.Exists = False) And IsDeleted Then
 		        Continue
 		      End If
-		      LocalFile = LocalFile(RemotePath, True)
+		      If LocalFile = Nil Then
+		        LocalFile = LocalFile(RemotePath, True)
+		      End If
 		      
 		      Dim ServerModifiedText As Text = Dict.Value("modified")
 		      Dim ServerModified As Date = NewDateFromSQLDateTime(ServerModifiedText).LocalTime
