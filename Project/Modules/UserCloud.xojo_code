@@ -128,8 +128,8 @@ Protected Module UserCloud
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Function IsBusy() As Boolean
+	#tag Method, Flags = &h1
+		Protected Function IsBusy() As Boolean
 		  If PendingRequests = Nil Then
 		    PendingRequests = New Dictionary
 		  End If
@@ -212,7 +212,7 @@ Protected Module UserCloud
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub Sync()
+		Protected Sub Sync(NoWait As Boolean = False)
 		  If Preferences.OnlineEnabled = False Or Preferences.OnlineToken = "" Then
 		    Return
 		  End If
@@ -228,7 +228,11 @@ Protected Module UserCloud
 		    SyncKey = ""
 		  End If
 		  
-		  SyncKey = CallLater.Schedule(3000, AddressOf SyncActual)
+		  If NoWait Then
+		    SyncActual()
+		  Else
+		    SyncKey = CallLater.Schedule(3000, AddressOf SyncActual)
+		  End If
 		End Sub
 	#tag EndMethod
 

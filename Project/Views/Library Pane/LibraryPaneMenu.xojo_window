@@ -69,14 +69,14 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Close()
-		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineTokenChanged, Preferences.Notification_OnlineStateChanged)
+		  NotificationKit.Ignore(Self, Preferences.Notification_OnlineTokenChanged, Preferences.Notification_OnlineStateChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished)
 		End Sub
 	#tag EndEvent
 
 	#tag Event
 		Sub Open()
 		  Self.RebuildMenu()
-		  NotificationKit.Watch(Self, Preferences.Notification_OnlineTokenChanged, Preferences.Notification_OnlineStateChanged)
+		  NotificationKit.Watch(Self, Preferences.Notification_OnlineTokenChanged, Preferences.Notification_OnlineStateChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished)
 		End Sub
 	#tag EndEvent
 
@@ -86,7 +86,7 @@ End
 		  // Part of the NotificationKit.Receiver interface.
 		  
 		  Select Case Notification.Name
-		  Case Preferences.Notification_OnlineTokenChanged, Preferences.Notification_OnlineStateChanged
+		  Case Preferences.Notification_OnlineTokenChanged, Preferences.Notification_OnlineStateChanged, UserCloud.Notification_SyncStarted, UserCloud.Notification_SyncFinished
 		    Self.RebuildMenu()
 		  End Select
 		End Sub
@@ -97,6 +97,13 @@ End
 		  Dim Links() As Pair
 		  Links.Append("Check for Updates" : "beacon://action/checkforupdate")
 		  Links.Append("Update Engrams" : "beacon://action/checkforengrams")
+		  If Preferences.OnlineEnabled Then
+		    If UserCloud.IsBusy Then
+		      Links.Append("Syncing Cloud Files…" : "")
+		    Else
+		      Links.Append("Sync Cloud Files" : "beacon://syncusercloud")
+		    End If
+		  End If
 		  Links.Append("Release Notes" : "beacon://releasenotes")
 		  Links.Append(Nil)
 		  
@@ -179,6 +186,9 @@ End
 	#tag Event
 		Sub Action(index as Integer)
 		  Dim URL As String = Self.Labels(Index).URL
+		  If URL = "" Then
+		    Return
+		  End If
 		  
 		  Select Case URL
 		  Case "beacon://releasenotes"
@@ -206,6 +216,9 @@ End
 		    Self.RebuildMenu()
 		    Dim WelcomeWindow As New UserWelcomeWindow(False)
 		    WelcomeWindow.ShowModal()
+		  Case "beacon://syncusercloud"
+		    UserCloud.Sync(True)
+		    Return // So the pane doesn't close
 		  Else
 		    If Beacon.IsBeaconURL(URL) Then
 		      Call App.HandleURL(URL, True)
