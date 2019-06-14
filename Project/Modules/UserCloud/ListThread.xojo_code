@@ -17,12 +17,12 @@ Inherits Thread
 		      Dim RemotePath As String = Dict.Value("path")
 		      SyncedPaths.Value(RemotePath) = True
 		      
-		      Dim LocalFile As FolderItem = LocalFile(RemotePath)
-		      
+		      Dim LocalFile As FolderItem = LocalFile(RemotePath, False)
 		      Dim IsDeleted As Boolean = Dict.Value("deleted")
-		      If LocalFile.Exists = False And IsDeleted Then
+		      If (LocalFile = Nil Or LocalFile.Exists = False) And IsDeleted Then
 		        Continue
 		      End If
+		      LocalFile = LocalFile(RemotePath, True)
 		      
 		      Dim ServerModifiedText As Text = Dict.Value("modified")
 		      Dim ServerModified As Date = NewDateFromSQLDateTime(ServerModifiedText).LocalTime

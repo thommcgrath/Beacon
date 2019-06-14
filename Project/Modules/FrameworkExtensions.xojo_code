@@ -98,16 +98,28 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub CheckIsFolder(Extends Folder As FolderItem)
+		Function CheckIsFolder(Extends Folder As FolderItem, Create As Boolean = True) As Boolean
 		  If Folder.Exists Then
-		    If Not Folder.Directory Then
-		      Folder.Delete
-		      Folder.CreateAsFolder
+		    If Folder.Directory Then
+		      Return True
+		    Else
+		      If Create = True Then
+		        Folder.Delete
+		        Folder.CreateAsFolder
+		        Return True
+		      Else
+		        Return False
+		      End If
 		    End If
 		  Else
-		    Folder.CreateAsFolder
+		    If Create = True Then
+		      Folder.CreateAsFolder
+		      Return True
+		    Else
+		      Return False
+		    End If
 		  End If
-		End Sub
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

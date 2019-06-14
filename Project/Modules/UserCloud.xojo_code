@@ -3,8 +3,6 @@ Protected Module UserCloud
 	#tag Method, Flags = &h21
 		Private Sub Callback_DeleteFile(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
 		  CleanupRequest(Request)
-		  
-		  Break
 		End Sub
 	#tag EndMethod
 
@@ -99,10 +97,11 @@ Protected Module UserCloud
 
 	#tag Method, Flags = &h1
 		Protected Function Delete(RemotePath As String) As Boolean
-		  Dim LocalFile As FolderItem = LocalFile(RemotePath)
-		  If LocalFile.DeepDelete Then
+		  Dim LocalFile As FolderItem = LocalFile(RemotePath, False)
+		  If LocalFile <> Nil And LocalFile.DeepDelete Then
 		    SendRequest(New BeaconAPI.Request("file" + RemotePath.ToText, "DELETE", AddressOf Callback_DeleteFile))
 		    Sync()
+		    Return True
 		  End If
 		End Function
 	#tag EndMethod
@@ -138,17 +137,23 @@ Protected Module UserCloud
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function LocalFile(RemotePath As String = "") As FolderItem
+		Private Function LocalFile(RemotePath As String = "", Create As Boolean = True) As FolderItem
 		  If RemotePath.Left(1) = "/" Then
 		    RemotePath = RemotePath.Mid(2)
 		  End If
 		  
 		  Dim LocalFolder As FolderItem = App.ApplicationSupport
-		  LocalFolder.CheckIsFolder
+		  If Not LocalFolder.CheckIsFolder(Create) Then
+		    Return Nil
+		  End If
 		  LocalFolder = LocalFolder.Child("Cloud")
-		  LocalFolder.CheckIsFolder
+		  If Not LocalFolder.CheckIsFolder(Create) Then
+		    Return Nil
+		  End If
 		  LocalFolder = LocalFolder.Child(App.IdentityManager.CurrentIdentity.Identifier)
-		  LocalFolder.CheckIsFolder
+		  If Not LocalFolder.CheckIsFolder(Create) Then
+		    Return Nil
+		  End If
 		  
 		  Dim Components() As String = RemotePath.Split("/")
 		  If Components.Ubound = -1 Then
@@ -157,7 +162,9 @@ Protected Module UserCloud
 		  
 		  For I As Integer = 0 To Components.Ubound - 1
 		    LocalFolder = LocalFolder.Child(Components(I))
-		    LocalFolder.CheckIsFolder
+		    If Not LocalFolder.CheckIsFolder(Create) Then
+		      Return Nil
+		    End If
 		  Next
 		  
 		  Return LocalFolder.Child(Components(Components.Ubound))

@@ -311,6 +311,8 @@ Implements Beacon.DataSource
 		    Self.SQLExecute("DELETE FROM engrams WHERE LOWER(path) = LOWER(?1) AND mod_id = ?2;", Engram.Path, Self.UserModID)
 		    Self.Commit()
 		    
+		    Self.SyncUserEngrams()
+		    
 		    Return True
 		  Catch Err As UnsupportedOperationException
 		    Return False
@@ -327,6 +329,22 @@ Implements Beacon.DataSource
 		  Self.BeginTransaction()
 		  Self.SQLExecute("UPDATE notifications SET deleted = 1 WHERE notification_id = ?1;", Notification.Identifier)
 		  Self.Commit()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeletePreset(Preset As Beacon.Preset)
+		  If Not Self.IsPresetCustom(Preset) Then
+		    Return
+		  End If
+		  
+		  Self.BeginTransaction()
+		  Self.SQLExecute("DELETE FROM custom_presets WHERE LOWER(object_id) = LOWER(?1);", Preset.PresetID)
+		  Self.Commit()
+		  
+		  Call UserCloud.Delete("/Presets/" + Preset.PresetID + BeaconFileTypes.BeaconPreset.PrimaryExtension)
+		  
+		  Self.LoadPresets()
 		End Sub
 	#tag EndMethod
 
@@ -1348,15 +1366,8 @@ Implements Beacon.DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemovePreset(Preset As Beacon.Preset)
-		  If Not Self.IsPresetCustom(Preset) Then
-		    Return
-		  End If
-		  
-		  Self.BeginTransaction()
-		  Self.SQLExecute("DELETE FROM custom_presets WHERE LOWER(object_id) = LOWER(?1);", Preset.PresetID)
-		  Self.Commit()
-		  Self.LoadPresets()
+		Attributes( Deprecated = "DeletePreset" )  Sub RemovePreset(Preset As Beacon.Preset)
+		  Self.DeletePreset(Preset)
 		End Sub
 	#tag EndMethod
 
@@ -1410,6 +1421,8 @@ Implements Beacon.DataSource
 		    End If
 		    Self.Commit()
 		    
+		    Self.SyncUserEngrams()
+		    
 		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
 		  Catch Err As UnsupportedOperationException
 		    Self.RollBack()
@@ -1458,6 +1471,8 @@ Implements Beacon.DataSource
 		  Self.BeginTransaction()
 		  Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (object_id, label, contents) VALUES (LOWER(?1), ?2, ?3);", Preset.PresetID, Preset.Label, Content)
 		  Self.Commit()
+		  
+		  Call UserCloud.Write("/Presets/" + Preset.PresetID + BeaconFileTypes.BeaconPreset.PrimaryExtension, Content)
 		  
 		  If Reload Then
 		    Self.LoadPresets()
@@ -1749,6 +1764,28 @@ Implements Beacon.DataSource
 	#tag Method, Flags = &h0
 		Shared Sub Start()
 		  Call SharedInstance(True)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SyncUserEngrams()
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT * FROM engrams WHERE mod_id = ?1;", Self.UserModID)
+		  Dim Dicts() As Xojo.Core.Dictionary
+		  While Not Results.EOF
+		    Dim Dict As New Xojo.Core.Dictionary  
+		    Dict.Value("class_string") = Results.Field("class_string").StringValue  
+		    Dict.Value("path") = Results.Field("path").StringValue  
+		    Dict.Value("tags") = Results.Field("tags").StringValue
+		    Dict.Value("engram_id") = Results.Field("object_id").StringValue
+		    Dict.Value("label") = Results.Field("label").StringValue
+		    Dict.Value("availability") = Results.Field("availability").IntegerValue
+		    Dicts.Append(Dict)
+		    
+		    Results.MoveNext()
+		  Wend
+		  
+		  Dim Content As Text = Xojo.Data.GenerateJSON(Dicts)
+		  Call UserCloud.Write("Engrams.json", Content)
 		End Sub
 	#tag EndMethod
 
