@@ -4,7 +4,11 @@ require(dirname(__FILE__) . '/loader.php');
 
 BeaconAPI::Authorize(true);
 $method = BeaconAPI::Method();
-$remote_path = '/' . BeaconAPI::UserID() . '/' . substr($_SERVER['PATH_INFO'], 1);
+$remote_path = '/' . BeaconAPI::UserID();
+$components = explode('/', substr($_SERVER['PATH_INFO'], 1));
+foreach ($components as $component) {
+	$remote_path .= '/' . urlencode($component);
+}
 
 switch ($method) {
 case 'GET':
