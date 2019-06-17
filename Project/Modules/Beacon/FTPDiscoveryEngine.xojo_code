@@ -53,7 +53,7 @@ Implements Beacon.DiscoveryEngine
 		        Self.mMap = Self.mMap Or Beacon.Maps.Ragnarok.Mask
 		      Case "Extinction"
 		        Self.mMap = Self.mMap Or Beacon.Maps.Extinction.Mask
-		      Case "Valguero"
+		      Case "Valguero_P"
 		        Self.mMap = Self.mMap Or Beacon.Maps.Valguero.Mask
 		      Else
 		        // Unofficial maps will be tagged as The Island
