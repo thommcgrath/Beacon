@@ -155,7 +155,7 @@ Begin BeaconSubview PresetEditorView
          LockTop         =   True
          MacControlStyle =   0
          Scope           =   2
-         Segments        =   "The Island\n\nFalse\rScorched Earth\n\nFalse\rAberration\n\nFalse\rExtinction\n\nFalse\rThe Center\n\nFalse\rRagnarok\n\nFalse"
+         Segments        =   "The Island\n\nFalse\rScorched Earth\n\nFalse\rAberration\n\nFalse\rExtinction\n\nFalse\rThe Center\n\nFalse\rRagnarok\n\nFalse\rValguero\n\nFalse"
          SelectionType   =   1
          TabIndex        =   0
          TabPanelIndex   =   2
@@ -967,6 +967,8 @@ End
 		      Maps.Append(Beacon.Maps.TheCenter)
 		    Case 5
 		      Maps.Append(Beacon.Maps.Ragnarok)
+		    Case 6
+		      Maps.Append(Beacon.Maps.Valguero)
 		    End Select
 		  Next
 		  Return Maps
@@ -1113,6 +1115,7 @@ End
 		  Self.MapSelector.Items(3).Selected = (Mask And Beacon.Maps.Extinction.Mask) = Beacon.Maps.Extinction.Mask
 		  Self.MapSelector.Items(4).Selected = (Mask And Beacon.Maps.TheCenter.Mask) = Beacon.Maps.TheCenter.Mask
 		  Self.MapSelector.Items(5).Selected = (Mask And Beacon.Maps.Ragnarok.Mask) = Beacon.Maps.Ragnarok.Mask
+		  Self.MapSelector.Items(6).Selected = (Mask And Beacon.Maps.Valguero.Mask) = Beacon.Maps.Valguero.Mask
 		  
 		  Dim Maps() As Beacon.Map = Self.FilteredMaps()
 		  Dim SelectedEntries() As Text

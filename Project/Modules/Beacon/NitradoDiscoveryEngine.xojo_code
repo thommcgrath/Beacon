@@ -150,6 +150,8 @@ Implements Beacon.DiscoveryEngine
 		      Self.mMap = Beacon.Maps.Ragnarok
 		    Case "Extinction"
 		      Self.mMap = Beacon.Maps.Extinction
+		    Case "Valguero"
+		      Self.mMap = Beacon.Maps.Valguero
 		    Else
 		      Self.mMap = Beacon.Maps.TheIsland
 		    End Select

@@ -224,6 +224,39 @@ Begin ConfigEditor MapsConfigEditor
       Visible         =   True
       Width           =   200
    End
+   Begin CheckBox MapCheckboxes
+      AutoDeactivate  =   True
+      Bold            =   False
+      Caption         =   "Valguero"
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   64
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   232
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      State           =   0
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   84
+      Transparent     =   False
+      Underline       =   False
+      Value           =   False
+      Visible         =   True
+      Width           =   200
+   End
 End
 #tag EndWindow
 

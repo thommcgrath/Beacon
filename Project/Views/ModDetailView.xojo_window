@@ -46,7 +46,7 @@ Begin BeaconContainer ModDetailView
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   2
+      Value           =   3
       Visible         =   True
       Width           =   864
       Begin UITweaks.ResizedTextField ConfirmField
@@ -255,9 +255,9 @@ Begin BeaconContainer ModDetailView
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   False
-         ColumnCount     =   9
+         ColumnCount     =   10
          ColumnsResizable=   False
-         ColumnWidths    =   "*,*,100,75,75,75,75,75,75"
+         ColumnWidths    =   "*,*,100,75,75,75,75,75,75,75"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   22
@@ -273,7 +273,7 @@ Begin BeaconContainer ModDetailView
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Panel"
-         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Center	Ragnarok	Aberration	Extinction"
+         InitialValue    =   "Path	Label	Blueprintable	Island	Scorched	Center	Ragnarok	Aberration	Extinction	Valguero"
          Italic          =   False
          Left            =   0
          LockBottom      =   True
@@ -286,6 +286,7 @@ Begin BeaconContainer ModDetailView
          Scope           =   2
          ScrollbarHorizontal=   False
          ScrollBarVertical=   True
+         SelectionChangeBlocked=   False
          SelectionType   =   1
          ShowDropIndicator=   False
          TabIndex        =   1
@@ -472,8 +473,7 @@ Begin BeaconContainer ModDetailView
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
-      StackSize       =   "0"
-      State           =   ""
+      StackSize       =   0
       TabPanelIndex   =   0
    End
 End
@@ -760,6 +760,7 @@ End
 		  EngramList.CellCheck(Index, 6) = Engram.ValidForMap(Beacon.Maps.Ragnarok)
 		  EngramList.CellCheck(Index, 7) = Engram.ValidForMap(Beacon.Maps.Aberration)
 		  EngramList.CellCheck(Index, 8) = Engram.ValidForMap(Beacon.Maps.Extinction)
+		  EngramList.CellCheck(Index, 9) = Engram.ValidForMap(Beacon.Maps.Valguero)
 		  
 		  EngramList.RowTag(Index) = Engram
 		End Sub
@@ -943,6 +944,8 @@ End
 		    Engram.ValidForMap(Beacon.Maps.Aberration) = Me.CellCheck(Row, Column)
 		  Case 8
 		    Engram.ValidForMap(Beacon.Maps.Extinction) = Me.CellCheck(Row, Column)
+		  Case 9
+		    Engram.ValidForMap(Beacon.Maps.Valguero) = Me.CellCheck(Row, Column)
 		  End Select
 		  
 		  Self.EngramSet.Add(Engram)

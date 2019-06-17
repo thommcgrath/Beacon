@@ -63,9 +63,9 @@ Begin BeaconSubview EngramsManagerView
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   False
-      ColumnCount     =   8
+      ColumnCount     =   9
       ColumnsResizable=   False
-      ColumnWidths    =   "*,100,75,75,75,75,75,75"
+      ColumnWidths    =   "*,100,75,75,75,75,75,75,75"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   22
@@ -81,7 +81,7 @@ Begin BeaconSubview EngramsManagerView
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Label	Blueprintable	Island	Scorched	Center	Ragnarok	Aberration	Extinction"
+      InitialValue    =   "Label	Blueprintable	Island	Scorched	Center	Ragnarok	Aberration	Extinction	Valguero"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -94,6 +94,7 @@ Begin BeaconSubview EngramsManagerView
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   1
@@ -145,8 +146,7 @@ Begin BeaconSubview EngramsManagerView
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
-      StackSize       =   "0"
-      State           =   ""
+      StackSize       =   0
       TabPanelIndex   =   0
    End
 End
@@ -271,6 +271,7 @@ End
 		  List.CellCheck(Index, Self.ColumnRagnarok) = Engram.ValidForMap(Beacon.Maps.Ragnarok)
 		  List.CellCheck(Index, Self.ColumnAberration) = Engram.ValidForMap(Beacon.Maps.Aberration)
 		  List.CellCheck(Index, Self.ColumnExtinction) = Engram.ValidForMap(Beacon.Maps.Extinction)
+		  List.CellCheck(Index, Self.ColumnValguero) = Engram.ValidForMap(Beacon.Maps.Valguero)
 		  List.RowTag(Index) = Engram
 		End Sub
 	#tag EndMethod
@@ -303,6 +304,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnScorched, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnValguero, Type = Double, Dynamic = False, Default = \"8", Scope = Private
 	#tag EndConstant
 
 
@@ -348,6 +352,7 @@ End
 		  Me.ColumnType(Self.ColumnRagnarok) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnAberration) = Listbox.TypeCheckbox
 		  Me.ColumnType(Self.ColumnExtinction) = Listbox.TypeCheckbox
+		  Me.ColumnType(Self.ColumnValguero) = Listbox.TypeCheckbox
 		  
 		  Me.ColumnAlignment(Self.ColumnBlueprintable) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnIsland) = Listbox.AlignCenter
@@ -356,6 +361,7 @@ End
 		  Me.ColumnAlignment(Self.ColumnRagnarok) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnAberration) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnExtinction) = Listbox.AlignCenter
+		  Me.ColumnAlignment(Self.ColumnValguero) = Listbox.AlignCenter
 		  
 		  Me.Heading(Self.ColumnIsland) = "Island"
 		  Me.Heading(Self.ColumnScorched) = "Scorched"
@@ -363,6 +369,7 @@ End
 		  Me.Heading(Self.ColumnRagnarok) = "Ragnarok"
 		  Me.Heading(Self.ColumnAberration) = "Aberration"
 		  Me.Heading(Self.ColumnExtinction) = "Extinction"
+		  Me.Heading(Self.ColumnValguero) = "Valguero"
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -386,6 +393,8 @@ End
 		    Editable.ValidForMap(Beacon.Maps.Aberration) = Me.CellCheck(Row, Column)
 		  Case Self.ColumnExtinction
 		    Editable.ValidForMap(Beacon.Maps.Extinction) = Me.CellCheck(Row, Column)
+		  Case Self.ColumnValguero
+		    Editable.ValidForMap(Beacon.Maps.Valguero) = Me.CellCheck(Row, Column)
 		  Else
 		    Return
 		  End Select
