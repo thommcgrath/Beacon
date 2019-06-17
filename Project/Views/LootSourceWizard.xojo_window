@@ -1165,10 +1165,17 @@ End
 		  Dim ScrollPosition As Integer = Self.SourceList.ScrollPosition
 		  Self.SourceList.DeleteAllRows
 		  
+		  Dim MapLabels As New Dictionary
 		  For Each Source As Beacon.LootSource In AllowedLootSources
 		    Dim RowText As String = Source.Label
 		    If Source.Notes <> "" Then
 		      RowText = RowText + EndOfLine + Source.Notes
+		    Else
+		      Dim ComboMask As UInt64 = Source.Availability And Mask
+		      If Not MapLabels.HasKey(ComboMask) Then
+		        MapLabels.Value(ComboMask) = Beacon.Maps.ForMask(ComboMask).Label
+		      End If
+		      RowText = RowText + EndOfLine + "Used by " + MapLabels.Value(ComboMask)
 		    End If
 		    Self.SourceList.AddRow("", RowText)
 		    Self.SourceList.RowTag(Self.SourceList.LastIndex) = Source
