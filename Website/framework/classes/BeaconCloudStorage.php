@@ -42,6 +42,8 @@ abstract class BeaconCloudStorage {
 		$results = $database->Query('SELECT cache_id, remote_path FROM usercloud_cache WHERE last_accessed < CURRENT_TIMESTAMP - \'2 days\'::INTERVAL AND remote_path NOT IN (SELECT remote_path FROM usercloud_queue);');
 		while (!$results->EOF()) {
 			$remote_path = $results->Field('remote_path');
+			$cache_id = $results->Field('cache_id');
+			$local_path = static::LocalPath($remote_path);
 			
 			if (file_exists($local_path)) {
 				unlink($local_path);
