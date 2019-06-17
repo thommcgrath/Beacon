@@ -1,6 +1,6 @@
 #tag Class
 Protected Class LocalData
-Implements Beacon.DataSource
+Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub AddPresetModifier(Modifier As Beacon.PresetModifier)
 		  Self.BeginTransaction()
@@ -296,6 +296,8 @@ Implements Beacon.DataSource
 		  If MigrateFile <> Nil And MigrateFile.Exists And CurrentSchemaVersion < Self.SchemaVersion Then
 		    Self.MigrateData(MigrateFile, CurrentSchemaVersion)
 		  End If
+		  
+		  NotificationKit.Watch(Self, UserCloud.Notification_SyncFinished)
 		End Sub
 	#tag EndMethod
 
@@ -342,7 +344,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("DELETE FROM custom_presets WHERE LOWER(object_id) = LOWER(?1);", Preset.PresetID)
 		  Self.Commit()
 		  
-		  Call UserCloud.Delete("/Presets/" + Preset.PresetID + BeaconFileTypes.BeaconPreset.PrimaryExtension)
+		  Call UserCloud.Delete("/Presets/" + Lowercase(Preset.PresetID) + BeaconFileTypes.BeaconPreset.PrimaryExtension)
 		  
 		  Self.LoadPresets()
 		End Sub
@@ -350,6 +352,7 @@ Implements Beacon.DataSource
 
 	#tag Method, Flags = &h0
 		Sub Destructor()
+		  NotificationKit.Ignore(Self, UserCloud.Notification_SyncFinished)
 		  Self.SQLExecute("PRAGMA optimize;")
 		End Sub
 	#tag EndMethod
@@ -700,6 +703,92 @@ Implements Beacon.DataSource
 		  
 		  If Self.mImportThread.State = Thread.NotRunning Then
 		    Self.mImportThread.Run
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ImportCloudFiles(Actions() As Dictionary)
+		  Dim EngramsUpdated, PresetsUpdated As Boolean
+		  For Each Action As Dictionary In Actions
+		    Dim RemotePath As String = Action.Value("Path")
+		    If RemotePath = "/Engrams.json" Then
+		      Select Case Action.Value("Action")
+		      Case "DELETE"
+		        Self.BeginTransaction()
+		        Self.SQLExecute("DELETE FROM engrams WHERE mod_id = ?1;", Self.UserModID)
+		        Self.Commit()
+		        EngramsUpdated = True
+		      Case "GET"
+		        Dim EngramsContent As MemoryBlock = UserCloud.Read(RemotePath)
+		        If EngramsContent = Nil Then
+		          Continue
+		        End If
+		        Dim Engrams() As Auto = Xojo.Data.ParseJSON(EngramsContent.StringValue(0, EngramsContent.Size).DefineEncoding(Encodings.UTF8).ToText)
+		        Self.BeginTransaction()
+		        Self.SQLExecute("DELETE FROM engrams WHERE mod_id = ?1;", Self.UserModID)
+		        For Each Dict As Xojo.Core.Dictionary In Engrams
+		          Try
+		            Dim Path As String = Dict.Value("path") 
+		            Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM engrams WHERE LOWER(path) = ?1;", Lowercase(Path))
+		            If Results.RecordCount <> 0 Then
+		              Continue
+		            End If
+		            
+		            Dim EngramID As String = Dict.Value("engram_id")
+		            Dim ClassString As String = Dict.Value("class_string")
+		            Dim Label As String = Dict.Value("label")         
+		            Dim Availability As UInt64 = Dict.Value("availability")
+		            Dim Tags As String = Dict.Value("tags")
+		            Self.SQLExecute("INSERT INTO engrams (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  EngramID, ClassString, Label, Path, Availability, Tags, Self.UserModID)      
+		          Catch Err As RuntimeException
+		          End Try
+		        Next
+		        Self.Commit()      
+		        EngramsUpdated = True
+		      End Select
+		    ElseIf RemotePath.BeginsWith("/Presets") Then
+		      Dim PresetID As String = RemotePath.SubString(8, 36)
+		      Select Case Action.Value("Action")
+		      Case "DELETE"
+		        Self.BeginTransaction()
+		        Self.SQLExecute("DELETE FROM custom_presets WHERE LOWER(object_id) = ?1;", Lowercase(PresetID))
+		        Self.Commit()
+		        PresetsUpdated = True
+		      Case "GET"
+		        Dim PresetContents As MemoryBlock = UserCloud.Read(RemotePath)
+		        If PresetContents = Nil Then
+		          Continue
+		        End If
+		        
+		        Dim Contents As String = DefineEncoding(PresetContents, Encodings.UTF8)
+		        Dim Preset As Beacon.Preset
+		        Try
+		          Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents.ToText)
+		          Preset = Beacon.Preset.FromDictionary(Dict)
+		          PresetID = Preset.PresetID
+		        Catch Err As RuntimeException
+		          Continue
+		        End Try
+		        
+		        Self.BeginTransaction()
+		        Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE object_id = ?1;", PresetID)
+		        If Results.RecordCount = 1 Then
+		          Self.SQLExecute("UPDATE custom_presets SET label = ?2, contents = ?3 WHERE object_id = ?1;", PresetID, Preset.Label, Contents)
+		        Else
+		          Self.SQLExecute("INSERT INTO custom_presets (object_id, label, contents) VALUES (?1, ?2, ?3);", PresetID, Preset.Label, Contents)
+		        End If
+		        Self.Commit()
+		        PresetsUpdated = True
+		      End Select
+		    End If
+		  Next
+		  
+		  If EngramsUpdated Then      
+		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
+		  End If
+		  If PresetsUpdated Then
+		    Self.LoadPresets()
 		  End If
 		End Sub
 	#tag EndMethod
@@ -1198,6 +1287,17 @@ Implements Beacon.DataSource
 		    End If
 		  End If
 		  
+		  If FromSchemaVersion < 9 Then
+		    Dim Extension As String = BeaconFileTypes.BeaconPreset.PrimaryExtension
+		    Dim Results As RecordSet = Self.SQLSelect("SELECT object_id, contents FROM custom_presets;")
+		    While Not Results.EOF
+		      Call UserCloud.Write("/Presets/" + Lowercase(Results.Field("object_id").StringValue) + Extension, Results.Field("contents").StringValue)
+		      Results.MoveNext
+		    Wend
+		    
+		    Self.SyncUserEngrams()
+		  End If
+		  
 		  App.Log("Migration complete")
 		End Sub
 	#tag EndMethod
@@ -1267,6 +1367,18 @@ Implements Beacon.DataSource
 		  Self.Import(TextContent)
 		  
 		  Self.mCheckingForUpdates = False
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case UserCloud.Notification_SyncFinished
+		    Dim Actions() As Dictionary = Notification.UserData
+		    Self.ImportCloudFiles(Actions)
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -1472,7 +1584,7 @@ Implements Beacon.DataSource
 		  Self.SQLExecute("INSERT OR REPLACE INTO custom_presets (object_id, label, contents) VALUES (LOWER(?1), ?2, ?3);", Preset.PresetID, Preset.Label, Content)
 		  Self.Commit()
 		  
-		  Call UserCloud.Write("/Presets/" + Preset.PresetID + BeaconFileTypes.BeaconPreset.PrimaryExtension, Content)
+		  Call UserCloud.Write("/Presets/" + Lowercase(Preset.PresetID) + BeaconFileTypes.BeaconPreset.PrimaryExtension, Content)
 		  
 		  If Reload Then
 		    Self.LoadPresets()

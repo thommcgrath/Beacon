@@ -39,6 +39,10 @@ Inherits Thread
 		        ElseIf LocalIsNewer = False And IsDeleted = True Then
 		          // Delete the file
 		          LocalFile.Delete
+		          Dim ActionDict As New Dictionary
+		          ActionDict.Value("Action") = "DELETE"
+		          ActionDict.Value("Path") = RemotePath
+		          SyncActions.Append(ActionDict)
 		        ElseIf FilesAreDifferent = True And LocalIsNewer = False Then
 		          // Retrieve the file
 		          RequestFileFrom(LocalFile, RemotePath, ServerModified)

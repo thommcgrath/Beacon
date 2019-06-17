@@ -84,7 +84,12 @@ Protected Module UserCloud
 		    If Not IsBusy Then
 		      CleanupEmptyFolders(LocalFile("/"))
 		      
-		      NotificationKit.Post(Notification_SyncFinished, Nil)
+		      Dim Actions() As Dictionary
+		      For Each Dict As Dictionary In SyncActions
+		        Actions.Append(Dict)
+		      Next
+		      NotificationKit.Post(Notification_SyncFinished, Actions)
+		      Redim SyncActions(-1)
 		      
 		      If SyncWhenFinished Then
 		        SyncWhenFinished = False
@@ -133,6 +138,26 @@ Protected Module UserCloud
 		    PendingRequests = New Dictionary
 		  End If
 		  Return PendingRequests.Count > 0
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function List(Prefix As String = "/") As String()
+		  Dim Paths As New Dictionary
+		  DiscoverPaths("", LocalFile("/"), Paths)
+		  
+		  Dim Results() As String
+		  
+		  Dim Keys() As Variant
+		  For Each Key As String In Keys
+		    If Not Key.BeginsWith(Prefix) Then
+		      Continue
+		    End If
+		    
+		    Results.Append(Key)
+		  Next
+		  
+		  Return Results
 		End Function
 	#tag EndMethod
 
@@ -194,9 +219,10 @@ Protected Module UserCloud
 		  End If
 		  LocalFile.ModificationDate = ModificationDate
 		  
-		  #if DebugBuild
-		    App.Log("Requesting " + RemotePath)
-		  #endif
+		  Dim ActionDict As New Dictionary
+		  ActionDict.Value("Action") = "GET"
+		  ActionDict.Value("Path") = RemotePath
+		  SyncActions.Append(ActionDict)
 		End Sub
 	#tag EndMethod
 
@@ -246,6 +272,7 @@ Protected Module UserCloud
 	#tag Method, Flags = &h21
 		Private Sub SyncActual()
 		  SyncKey = ""
+		  Redim SyncActions(-1)
 		  SendRequest(New BeaconAPI.Request("file", "GET", AddressOf Callback_ListFiles))
 		End Sub
 	#tag EndMethod
@@ -263,9 +290,10 @@ Protected Module UserCloud
 		  
 		  SendRequest(New BeaconAPI.Request("file" + RemotePath.ToText, "PUT", EncryptedContents, "application/octet-stream", AddressOf Callback_PutFile))
 		  
-		  #if DebugBuild
-		    App.Log("Uploading " + RemotePath)
-		  #endif
+		  Dim ActionDict As New Dictionary
+		  ActionDict.Value("Action") = "PUT"
+		  ActionDict.Value("Path") = RemotePath
+		  SyncActions.Append(ActionDict)
 		End Sub
 	#tag EndMethod
 
@@ -282,6 +310,10 @@ Protected Module UserCloud
 
 	#tag Property, Flags = &h21
 		Private PendingRequests As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private SyncActions() As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

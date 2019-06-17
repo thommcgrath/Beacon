@@ -71,29 +71,39 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function CRC32(Data As MemoryBlock) As UInt32
+		  Try
+		    Dim crcg, c, t, x,b As UInt32
+		    Dim ch As UInt8
+		    crcg = &hffffffff
+		    c = Data.Size - 1
+		    
+		    For x=0 To c
+		      ch = Data.UInt8Value(x)
+		      
+		      t = (crcg And &hFF) Xor ch
+		      
+		      For b=0 To 7
+		        If( (t And &h1) = &h1) Then
+		          t = Beacon.ShiftRight(t, 1) Xor &hEDB88320
+		        Else
+		          t = Beacon.ShiftRight(t, 1)
+		        End If
+		      Next
+		      crcg = Beacon.ShiftRight(crcg, 8) Xor t
+		    Next
+		    
+		    crcg = crcg Xor &hFFFFFFFF
+		    Return crcg
+		  Catch Err As RuntimeException
+		    Return 0
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function CRC32(Data As Xojo.Core.MemoryBlock) As UInt32
-		  dim crcg, c, t, x,b as uint32
-		  dim ch as uint8
-		  crcg = &hffffffff
-		  c = Data.Size - 1
-		  
-		  for x=0 to c
-		    ch = data.uint8value(x)
-		    
-		    t = (crcg and &hFF) xor ch
-		    
-		    for b=0 to 7
-		      if( (t and &h1) = &h1) then
-		        t = Beacon.ShiftRight( t, 1) xor &hEDB88320
-		      else
-		        t = Beacon.ShiftRight(t, 1)
-		      end if
-		    next
-		    crcg = Beacon.ShiftRight(crcg, 8) xor t
-		  next
-		  
-		  crcg = crcg Xor &hFFFFFFFF
-		  return crcg
+		  Return Beacon.CRC32(Beacon.ConvertMemoryBlock(Data))
 		End Function
 	#tag EndMethod
 
@@ -1001,7 +1011,7 @@ Protected Module Beacon
 	#tag EndDelegateDeclaration
 
 	#tag DelegateDeclaration, Flags = &h21
-		Private Delegate Function ValueAdapter(ByRef Value As Auto, Info As Xojo.Introspection.TypeInfo) As Boolean
+		Private Delegate Function ValueAdapter(ByRef Value As Auto, Info As Xojo . Introspection . TypeInfo) As Boolean
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1
