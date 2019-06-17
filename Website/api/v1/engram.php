@@ -167,6 +167,9 @@ case 'POST':
 				if ($key === 'extinction') {
 					$availability = $availability | BeaconMaps::Extinction;
 				}
+				if ($key === 'valguero') {
+					$availability = $availability | BeaconMaps::Valguero;
+				}
 			}
 		}
 		if ($availability === 0) {

@@ -81,6 +81,9 @@ class BeaconBlueprint extends BeaconObject {
 		if ($this->AvailableToExtinction()) {
 			$environments[] = 'Extinction';
 		}
+		if ($this->AvailableToValguero()) {
+			$environments[] = 'Valguero';
+		}
 		
 		$json = parent::jsonSerialize();
 		$json['availability'] = intval($this->availability);
@@ -179,6 +182,14 @@ class BeaconBlueprint extends BeaconObject {
 	
 	public function SetAvailableToExtinction(bool $available) {
 		return $this->SetAvailableTo(BeaconMaps::Extinction, $available);
+	}
+	
+	public function AvailableToValguero() {
+		return $this->AvailableTo(BeaconMaps::Valguero);
+	}
+	
+	public function SetAvailableToValguero(bool $available) {
+		return $this->SetAvailableTo(BeaconMaps::Valguero, $available);
 	}
 	
 	public function SpawnCode() {
