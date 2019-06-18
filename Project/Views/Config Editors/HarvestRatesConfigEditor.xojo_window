@@ -170,9 +170,9 @@ Begin ConfigEditor HarvestRatesConfigEditor
       AutoHideScrollbars=   True
       Bold            =   False
       Border          =   False
-      ColumnCount     =   2
+      ColumnCount     =   3
       ColumnsResizable=   False
-      ColumnWidths    =   "*,150"
+      ColumnWidths    =   "*,150,150"
       DataField       =   ""
       DataSource      =   ""
       DefaultRowHeight=   26
@@ -188,7 +188,7 @@ Begin ConfigEditor HarvestRatesConfigEditor
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Engram	Rate Multiplier"
+      InitialValue    =   "Engram	Rate Multiplier	Effective Multiplier"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
@@ -430,7 +430,8 @@ End
 		    End If
 		    
 		    Dim Rate As Double = Config.Override(ClassString)
-		    Self.List.AddRow(EngramName, Rate.PrettyText)
+		    Dim EffectiveRate As Double = Rate * Config.GlobalMultiplier
+		    Self.List.AddRow(EngramName, Rate.PrettyText, EffectiveRate.PrettyText)
 		    Self.List.RowTag(Self.List.LastIndex) = ClassString
 		    Self.List.Selected(Self.List.LastIndex) = SelectClasses.IndexOf(ClassString) > -1
 		  Next
@@ -446,6 +447,9 @@ End
 		Private mConfigRef As WeakRef
 	#tag EndProperty
 
+
+	#tag Constant, Name = ColumnEffectiveRate, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = ColumnEngram, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
@@ -471,6 +475,7 @@ End
 		  Config.GlobalMultiplier = CDbl(Me.Text)
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
+		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -502,6 +507,7 @@ End
 	#tag Event
 		Sub Open()
 		  Me.ColumnAlignment(Self.ColumnRate) = Listbox.AlignRight
+		  Me.ColumnAlignment(Self.ColumnEffectiveRate) = Listbox.AlignRight
 		  Me.ColumnType(Self.ColumnRate) = Listbox.TypeEditable
 		End Sub
 	#tag EndEvent
@@ -517,11 +523,15 @@ End
 		  End If
 		  
 		  Dim Rate As Double = CDbl(Me.Cell(Row, Column))
+		  If Rate <= 0 Then
+		    Rate = 1
+		  End If
 		  Dim ClassString As Text = Me.RowTag(Row)
 		  
 		  Dim Config As BeaconConfigs.HarvestRates = Self.Config(True)
 		  Config.Override(ClassString) = Rate
 		  Self.ContentsChanged = True
+		  Self.UpdateList()
 		End Sub
 	#tag EndEvent
 	#tag Event
