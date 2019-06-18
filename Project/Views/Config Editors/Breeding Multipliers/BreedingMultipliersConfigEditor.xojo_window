@@ -62,7 +62,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   60
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -98,7 +98,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   60
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -140,7 +140,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   124
+      Top             =   125
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -176,7 +176,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   124
+      Top             =   125
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -218,7 +218,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   188
+      Top             =   189
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -254,7 +254,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   188
+      Top             =   189
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -296,7 +296,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   252
+      Top             =   253
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -332,7 +332,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   252
+      Top             =   253
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -374,7 +374,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   60
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -410,7 +410,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   60
+      Top             =   61
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -452,7 +452,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   124
+      Top             =   125
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -488,7 +488,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   124
+      Top             =   125
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -530,7 +530,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   188
+      Top             =   189
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -566,7 +566,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   188
+      Top             =   189
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -608,7 +608,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   252
+      Top             =   253
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -644,7 +644,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   252
+      Top             =   253
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -668,7 +668,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
-      Height          =   94
+      Height          =   93
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -694,7 +694,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   366
+      Top             =   367
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -720,7 +720,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   316
+      Top             =   317
       Transparent     =   False
       Visible         =   True
       Width           =   704
@@ -762,7 +762,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   332
+      Top             =   333
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -798,7 +798,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   332
+      Top             =   333
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -833,7 +833,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   94
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -868,7 +868,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   158
+      Top             =   159
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -903,7 +903,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   222
+      Top             =   223
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -938,7 +938,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   286
+      Top             =   287
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -973,7 +973,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   94
+      Top             =   95
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1008,7 +1008,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   158
+      Top             =   159
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1043,7 +1043,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   222
+      Top             =   223
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1078,7 +1078,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   286
+      Top             =   287
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1109,6 +1109,35 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   744
+   End
+   Begin FadedSeparator FadedSeparator1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   29
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   40
+      Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
       Width           =   744
