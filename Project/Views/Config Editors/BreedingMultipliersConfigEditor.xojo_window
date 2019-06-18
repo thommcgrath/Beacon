@@ -10,14 +10,14 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   540
+   Height          =   480
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   False
-   LockLeft        =   False
-   LockRight       =   False
-   LockTop         =   False
+   LockBottom      =   True
+   LockLeft        =   True
+   LockRight       =   True
+   LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
@@ -25,7 +25,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   858
+   Width           =   744
    Begin UITweaks.ResizedTextField MatureSpeedField
       AcceptTabs      =   False
       Alignment       =   2
@@ -140,7 +140,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   84
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -176,7 +176,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   84
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -218,7 +218,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   148
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -254,7 +254,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   148
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -296,7 +296,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   122
+      Top             =   212
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -332,7 +332,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   122
+      Top             =   212
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -355,7 +355,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   263
+      Left            =   621
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -374,7 +374,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   156
+      Top             =   20
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -392,7 +392,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   378
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -410,7 +410,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   156
+      Top             =   20
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -433,7 +433,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   263
+      Left            =   621
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -452,7 +452,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   190
+      Top             =   84
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -470,7 +470,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   378
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -488,7 +488,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   190
+      Top             =   84
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -511,7 +511,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   263
+      Left            =   621
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -530,7 +530,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   224
+      Top             =   148
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -548,7 +548,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   378
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -566,7 +566,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   224
+      Top             =   148
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -589,7 +589,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   263
+      Left            =   621
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -608,7 +608,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   258
+      Top             =   212
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -626,7 +626,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   20
+      Left            =   378
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -644,7 +644,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   258
+      Top             =   212
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -668,14 +668,14 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
-      Height          =   500
+      Height          =   134
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   "Creature	Incubation Time	Mature Time	% Per Imprint	Max Imprint %"
       Italic          =   False
-      Left            =   378
+      Left            =   20
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -694,12 +694,12 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   326
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   460
+      Width           =   704
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -714,16 +714,16 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
-      LockRight       =   False
+      LockRight       =   True
       LockTop         =   True
       Scope           =   2
       TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   292
+      Top             =   276
       Transparent     =   False
       Visible         =   True
-      Width           =   346
+      Width           =   704
    End
    Begin UITweaks.ResizedTextField ImprintPeriodPreviewField
       AcceptTabs      =   False
@@ -762,7 +762,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   308
+      Top             =   292
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -798,16 +798,303 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   308
+      Top             =   292
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   231
    End
+   Begin Label MatureSpeedHelp
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   18
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   20
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Greater than 1.0 matures faster"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   54
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   346
+   End
+   Begin Label IncubationSpeedHelp
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   18
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   21
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Greater than 1.0 incubates faster"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   118
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   346
+   End
+   Begin Label EggLayPeriodHelp
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   18
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   22
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Less than 1.0 produces more eggs"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   182
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   346
+   End
+   Begin Label FeedConsumptionHelp
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   18
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   23
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Greater than 1.0 eats more often"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   246
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   346
+   End
+   Begin Label ImprintPeriodHelp
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   18
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   378
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   24
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Less than 1.0 imprints more frequently"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   54
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   346
+   End
+   Begin Label ImprintStatScaleHelp
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   18
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   378
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   25
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Greater than 1.0 increases imprinting stat bonuses"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   118
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   346
+   End
+   Begin Label ImprintGracePeriodHelp
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   18
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   378
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   26
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Greater than 1.0 increases time before decay"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   182
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   346
+   End
+   Begin Label ImprintLossSpeedHelp
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   18
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   378
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   27
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Less than 1.0 reduces imprint decay"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   246
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   346
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Open()
+		  Self.MinimumWidth = 744
+		  Self.MinimumHeight = 480
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub RestoreToDefault()
 		  Self.Document.RemoveConfigGroup(BeaconConfigs.BreedingMultipliers.ConfigName)
