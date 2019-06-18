@@ -223,6 +223,11 @@ if (is_null($session)) {
 				<td class="text-center bullet-column">&#10687;</td>
 			</tr>
 			<tr>
+				<td>Breeding Multipliers<br><span class="smaller text-lighter">Adjust any of the 8 breeding-related multipliers with realtime display of their effects on Ark's creatures and their imprint times.</span></td>
+				<td class="text-center bullet-column">&#10687;</td>
+				<td class="text-center bullet-column">&#10687;</td>
+			</tr>
+			<tr>
 				<td>Crafting Costs<br><span class="smaller text-lighter">Change the cost of any craftable item in Ark.</span></td>
 				<td class="text-center bullet-column">&nbsp;</td>
 				<td class="text-center bullet-column">&#10687;</td>
