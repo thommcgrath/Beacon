@@ -1,5 +1,11 @@
 #tag Module
 Protected Module Beacon
+	#tag Method, Flags = &h0
+		Function Clone(Extends Source As Xojo.Core.DateInterval) As Xojo.Core.DateInterval
+		  Return New Xojo.Core.DateInterval(Source.Years, Source.Months, Source.Days, Source.Hours, Source.Minutes, Source.Seconds, Source.NanoSeconds)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function Clone(Source As Xojo.Core.Dictionary) As Xojo.Core.Dictionary
 		  // This method only exists because the built-in clone method causes crashes.
@@ -543,6 +549,14 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function IntervalToSeconds(Interval As Xojo.Core.DateInterval) As UInt64
+		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
+		  Dim Future As Xojo.Core.Date = Now + Interval
+		  Return Future.SecondsFrom1970 - Now.SecondsFrom1970
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function IsBeaconURL(ByRef Value As String) As Boolean
 		  Dim TextValue As Text = Value.ToText
@@ -605,6 +619,21 @@ Protected Module Beacon
 		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Value)
 		  Dim Hash As Xojo.Core.MemoryBlock = Xojo.Crypto.MD5(Bytes)
 		  Return Beacon.EncodeHex(Hash)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function NormalizeTag(Tag As Text) As Text
+		  #if Not TargetiOS
+		    Dim Sanitizer As New RegEx
+		    Sanitizer.SearchPattern = "[^\w]"
+		    Sanitizer.ReplacementPattern = ""
+		    
+		    Dim TagString As String = Sanitizer.Replace(Tag.Lowercase)
+		    Return TagString.ToText
+		  #else
+		    #Pragma Error "Not implemented"
+		  #endif
 		End Function
 	#tag EndMethod
 
@@ -945,6 +974,28 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function SecondsToInterval(Seconds As UInt64) As Xojo.Core.DateInterval
+		  #if false
+		    Dim Days As Integer = Xojo.Math.Floor(Seconds / 86400)
+		    Seconds = Seconds - (Days * 86400)
+		    
+		    Dim Hours As Integer = Xojo.Math.Floor(Seconds / 3600)
+		    Seconds = Seconds - (Hours * 3600)
+		    
+		    Dim Minutes As Integer = Xojo.Math.Floor(Seconds / 60)
+		    Seconds = Seconds - (Minutes * 60)
+		    
+		    Return New Xojo.Core.DateInterval(0, 0, Days, Hours, Minutes, Seconds, 0)
+		  #endif
+		  
+		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
+		  Dim Future As New Xojo.Core.Date(Now.SecondsFrom1970 + Seconds, Now.TimeZone)
+		  Return Future - Now
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function ShiftLeft(Value As UInt64, NumBits As UInt64) As UInt64
 		  // It is insane that I need to implement this method manually.
 		  
@@ -992,6 +1043,12 @@ Protected Module Beacon
 		  
 		  Order.SortWith(Qualities)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TotalSeconds(Extends Interval As Xojo.Core.DateInterval) As UInt64
+		  Return IntervalToSeconds(Interval)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

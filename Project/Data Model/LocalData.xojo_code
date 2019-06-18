@@ -203,6 +203,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.mEngramCache = New Dictionary
+		  Self.mCreatureCache = New Dictionary
 		  Self.mLock = New CriticalSection
 		  
 		  Dim AppSupport As FolderItem = App.ApplicationSupport
@@ -1436,6 +1437,31 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Shared Function RecordSetToCreature(Results As RecordSet) As Beacon.Creature()
+		  Dim Creatures() As Beacon.Creature
+		  While Not Results.EOF
+		    Dim Creature As New Beacon.MutableCreature(Results.Field("path").StringValue.ToText)
+		    Creature.Label = Results.Field("label").StringValue.ToText
+		    Creature.Availability = Results.Field("availability").IntegerValue
+		    Creature.TagString = Results.Field("tags").StringValue.ToText
+		    Creature.ModID = Results.Field("mod_id").StringValue.ToText
+		    Creature.ModName = Results.Field("mod_name").StringValue.ToText
+		    
+		    If Results.Field("incubation_time") <> Nil Then
+		      Creature.IncubationTime = Beacon.SecondsToInterval(Results.Field("incubation_time").IntegerValue)
+		    End If
+		    If Results.Field("mature_time") <> Nil Then
+		      Creature.MatureTime = Beacon.SecondsToInterval(Results.Field("mature_time").IntegerValue)
+		    End If
+		    
+		    Creatures.Append(Creature)
+		    Results.MoveNext
+		  Wend
+		  Return Creatures
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Shared Function RecordSetToEngram(Results As RecordSet) As Beacon.Engram()
 		  Dim Engrams() As Beacon.Engram
 		  While Not Results.EOF
@@ -1633,6 +1659,63 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.LoadPresets()
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SearchForCreatures(SearchText As Text, Mods As Beacon.TextList, Tags As Text) As Beacon.Creature()
+		  // Part of the Beacon.DataSource interface.
+		  
+		  Dim Creatures() As Beacon.Creature
+		  
+		  Try
+		    Dim NextPlaceholder As Integer = 1
+		    Dim Clauses() As String
+		    Dim Values As New Dictionary
+		    If SearchText <> "" Then
+		      Clauses.Append("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
+		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
+		      NextPlaceholder = NextPlaceholder + 1
+		    End If
+		    
+		    Dim SQL As String = Self.CreatureSelectSQL
+		    If Mods <> Nil And Mods.Ubound > -1 Then
+		      Dim Placeholders() As String
+		      For Each ModID As Text In Mods
+		        Placeholders.Append("?" + Str(NextPlaceholder))
+		        Values.Value(NextPlaceholder) = ModID
+		        NextPlaceholder = NextPlaceholder + 1
+		      Next
+		      Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
+		    End If
+		    If Tags <> "" Then
+		      SQL = SQL.Replace("creatures INNER JOIN mods", "creatures INNER JOIN searchable_tags ON (searchable_tags.object_id = creatures.object_id AND searchable_tags.source_table = 'creatures') INNER JOIN mods")
+		      Clauses.Append("searchable_tags.tags MATCH ?" + Str(NextPlaceholder))
+		      Values.Value(NextPlaceholder) = Tags
+		      NextPlaceholder = NextPlaceholder + 1
+		    End If
+		    
+		    If Clauses.Ubound > -1 Then
+		      SQL = SQL + " WHERE (" + Join(Clauses, ") AND (") + ")"
+		    End If
+		    SQL = SQL + " ORDER BY label;"
+		    
+		    Dim Results As RecordSet
+		    If Values.Count = 0 Then
+		      Results = Self.SQLSelect(SQL)
+		    Else
+		      Results = Self.SQLSelect(SQL, Values)
+		    End If
+		    
+		    Creatures = Self.RecordSetToCreature(Results)
+		    For Each Creature As Beacon.Creature In Creatures
+		      Self.mCreatureCache.Value(Creature.Path) = Creature
+		    Next
+		  Catch Err As UnsupportedOperationException
+		    
+		  End Try
+		  
+		  Return Creatures
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1991,6 +2074,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mCreatureCache As Dictionary
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mEngramCache As Dictionary
 	#tag EndProperty
 
@@ -2022,6 +2109,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Private mUpdater As Xojo.Net.HTTPSocket
 	#tag EndProperty
 
+
+	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.path\x2C creatures.label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.path\x2C engrams.label\x2C engrams.availability\x2C engrams.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant

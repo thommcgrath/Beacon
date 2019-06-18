@@ -105,7 +105,7 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Function IsTagged(Tag As Text) As Boolean
-		  Tag = Self.NormalizeTag(Tag)
+		  Tag = Beacon.NormalizeTag(Tag)
 		  Return Self.mTags.IndexOf(Tag) > -1
 		End Function
 	#tag EndMethod
@@ -194,21 +194,6 @@ Protected Class Engram
 		  Else
 		    Return Self.MakeHumanReadableText(Name)
 		  End Select
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function NormalizeTag(Tag As Text) As Text
-		  #if Not TargetiOS
-		    Dim Sanitizer As New RegEx
-		    Sanitizer.SearchPattern = "[^\w]"
-		    Sanitizer.ReplacementPattern = ""
-		    
-		    Dim TagString As String = Sanitizer.Replace(Tag.Lowercase)
-		    Return TagString.ToText
-		  #else
-		    #Pragma Error "Not implemented"
-		  #endif
 		End Function
 	#tag EndMethod
 
