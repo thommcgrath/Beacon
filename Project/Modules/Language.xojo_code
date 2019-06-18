@@ -25,6 +25,8 @@ Protected Module Language
 		    Return "Crafting Costs"
 		  Case BeaconConfigs.StackSizes.ConfigName
 		    Return "Stack Sizes"
+		  Case BeaconConfigs.BreedingMultipliers.ConfigName
+		    Return "Breeding Multipliers"
 		  End Select
 		End Function
 	#tag EndMethod

@@ -12,6 +12,7 @@ Protected Module BeaconConfigs
 		    Names.Append(BeaconConfigs.CustomContent.ConfigName)
 		    Names.Append(BeaconConfigs.CraftingCosts.ConfigName)
 		    Names.Append(BeaconConfigs.StackSizes.ConfigName)
+		    Names.Append(BeaconConfigs.BreedingMultipliers.ConfigName)
 		  End If
 		  If Human = True Then
 		    Static HumanNames() As Text
@@ -112,6 +113,8 @@ Protected Module BeaconConfigs
 		    Return GetTypeInfo(BeaconConfigs.CraftingCosts)
 		  Case BeaconConfigs.StackSizes.ConfigName
 		    Return GetTypeInfo(BeaconConfigs.StackSizes)
+		  Case BeaconConfigs.BreedingMultipliers.ConfigName
+		    Return GetTypeInfo(BeaconConfigs.BreedingMultipliers)
 		  End Select
 		End Function
 	#tag EndMethod

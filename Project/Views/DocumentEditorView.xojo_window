@@ -999,6 +999,8 @@ End
 		        NewPanel = New CraftingCostsConfigEditor(Self.mController)
 		      Case BeaconConfigs.StackSizes.ConfigName
 		        NewPanel = New StackSizesConfigEditor(Self.mController)
+		      Case BeaconConfigs.BreedingMultipliers.ConfigName
+		        NewPanel = New BreedingMultipliersConfigEditor(Self.mController)
 		      End Select
 		      If NewPanel <> Nil Then
 		        Self.Panels.Value(Tag.StringValue) = NewPanel
