@@ -62,7 +62,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   60
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -98,7 +98,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   60
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -140,7 +140,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   84
+      Top             =   124
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -176,7 +176,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   84
+      Top             =   124
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -218,7 +218,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   148
+      Top             =   188
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -254,7 +254,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   148
+      Top             =   188
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -296,7 +296,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   212
+      Top             =   252
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -332,7 +332,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   212
+      Top             =   252
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -374,7 +374,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   60
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -410,7 +410,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   60
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -452,7 +452,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   84
+      Top             =   124
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -488,7 +488,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   84
+      Top             =   124
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -530,7 +530,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   148
+      Top             =   188
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -566,7 +566,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   148
+      Top             =   188
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -608,7 +608,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   212
+      Top             =   252
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -644,7 +644,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   212
+      Top             =   252
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -668,7 +668,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
-      Height          =   134
+      Height          =   94
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -694,7 +694,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   326
+      Top             =   366
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -720,7 +720,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   276
+      Top             =   316
       Transparent     =   False
       Visible         =   True
       Width           =   704
@@ -762,7 +762,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   292
+      Top             =   332
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -798,7 +798,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   292
+      Top             =   332
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -833,7 +833,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   94
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -868,7 +868,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   118
+      Top             =   158
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -903,7 +903,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   182
+      Top             =   222
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -938,7 +938,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   246
+      Top             =   286
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -973,7 +973,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   94
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1008,7 +1008,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   118
+      Top             =   158
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1043,7 +1043,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   182
+      Top             =   222
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1078,11 +1078,40 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "SmallSystem"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   246
+      Top             =   286
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   346
+   End
+   Begin BeaconToolbar Header
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Caption         =   "Breeding Multipliers"
+      Enabled         =   True
+      Height          =   40
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Resizer         =   "0"
+      ResizerEnabled  =   False
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   28
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   744
    End
 End
 #tag EndWindow
@@ -1117,6 +1146,47 @@ End
 	#tag EndEvent
 
 
+	#tag Method, Flags = &h21
+		Private Sub AutoTuneImprintInterval(Threshold As Double)
+		  Dim MatureMultiplier As Double = Self.Config(False).BabyMatureSpeedMultiplier
+		  Dim OfficialCuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
+		  Dim ImprintMultiplier As Double = 1.0
+		  Dim Found As Boolean
+		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.TextList)
+		  Dim Iterations As Integer
+		  Do
+		    Dim CuddlePeriod As Integer = OfficialCuddlePeriod * ImprintMultiplier
+		    For Each Creature As Beacon.Creature In Creatures
+		      If Creature.IncubationTime = Nil Or Creature.MatureTime = Nil Then
+		        Continue
+		      End If
+		      
+		      Dim MaturePeriod As Xojo.Core.DateInterval = Creature.MatureTime
+		      Dim MatureSeconds As UInt64 = Beacon.IntervalToSeconds(MaturePeriod) / MatureMultiplier
+		      Dim MaxCuddles As Integer = Floor(MatureSeconds / CuddlePeriod)
+		      Dim PerCuddle As Double = CuddlePeriod / MatureSeconds
+		      If PerCuddle > 1.0 Then
+		        PerCuddle = 0
+		      End If
+		      Dim MaxImprint As Double = MaxCuddles * PerCuddle
+		      If MaxImprint < Threshold Then
+		        ImprintMultiplier = ImprintMultiplier * 0.9
+		        Iterations = Iterations + 1
+		        Continue Do
+		      End If
+		    Next
+		    Found = True
+		  Loop Until Found Or Iterations > 100
+		  
+		  If Iterations > 100 Then
+		    Self.ShowAlert("Unable to find the desired imprint period multiplier", "Sorry, Beacon can't find the value you're hoping for. Try reducing the mature speed multiplier and try again.")
+		    Return
+		  End If
+		  
+		  Self.ImprintPeriodField.Text = ImprintMultiplier.PrettyText
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.BreedingMultipliers
 		  Static ConfigName As Text = BeaconConfigs.BreedingMultipliers.ConfigName
@@ -1150,7 +1220,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateStats()
-		  Dim CuddlePeriod As Double = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
+		  Dim CuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
 		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.TextList)
 		  Dim Index As Integer = Self.CreaturesList.ListIndex
 		  Dim Position As Integer = Self.CreaturesList.ScrollPosition
@@ -1365,6 +1435,24 @@ End
 		  Self.Config(True).BabyCuddleLoseImprintQualitySpeedMultiplier = Value
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Header
+	#tag Event
+		Sub Action(Item As BeaconToolbarItem)
+		  Select Case Item.Name
+		  Case "AutoTuneButton"
+		    Dim Threshold As Double = BreedingTunerDialog.Present(Self)
+		    If Threshold > 0 Then
+		      Self.AutoTuneImprintInterval(Threshold)
+		    End If
+		  End Select
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Open()
+		  Me.LeftItems.Append(New BeaconToolbarItem("AutoTuneButton", IconToolbarWizard, "Automatically compute imprint interval to give at least a specified imprinting on all creatures."))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
