@@ -803,6 +803,7 @@ End
 	#tag Event
 		Function ShouldSave() As Boolean
 		  Self.Save()
+		  Return True
 		End Function
 	#tag EndEvent
 
