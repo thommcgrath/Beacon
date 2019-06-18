@@ -106,6 +106,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE TABLE config_help (config_name TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, detail_url TEXT NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE notifications (notification_id TEXT NOT NULL PRIMARY KEY, message TEXT NOT NULL, secondary_message TEXT, user_data TEXT NOT NULL, moment TEXT NOT NULL, read INTEGER NOT NULL, action_url TEXT, deleted INTEGER NOT NULL);")
 		  Self.SQLExecute("CREATE TABLE game_variables (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL);")
+		  Self.SQLExecute("CREATE TABLE creatures (object_id TEXT NOT NULL PRIMARY KEY, mod_id TEXT NOT NULL REFERENCES mods(mod_id) ON DELETE CASCADE, label TEXT NOT NULL, availability INTEGER NOT NULL, path TEXT NOT NULL, class_string TEXT NOT NULL, tags TEXT NOT NULL DEFAULT '', incubation_time INTEGER, mature_time INTEGER);")
 		  
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
 		  
@@ -937,6 +938,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        End If
 		        Self.SQLExecute("INSERT INTO loot_sources (object_id, mod_id, label, availability, path, class_string, multiplier_min, multiplier_max, uicolor, sort_order, icon, experimental, notes, requirements) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14);", ObjectID, ModID, Label, Availability, Path, ClassString, MultiplierMin, MultiplierMax, UIColor, SortOrder, IconID, Experimental, Notes, Requirements)
 		      End If
+		      EngramsChanged = True
 		    Next
 		    
 		    Dim Engrams() As Auto = ChangeDict.Value("engrams")
@@ -974,6 +976,47 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        End If
 		        Self.SQLExecute("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, ModID, Label, Availability, Path, ClassString, TagString)
 		        Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, 'engrams');", ObjectID, TagString)
+		      End If
+		      EngramsChanged = True
+		    Next
+		    
+		    Dim Creatures() As Auto = ChangeDict.Value("creatures")
+		    For Each Dict As Xojo.Core.Dictionary In Creatures
+		      Dim ObjectID As Text = Dict.Value("id")
+		      Dim Label As Text = Dict.Value("label")
+		      Dim ModID As Text = Xojo.Core.Dictionary(Dict.Value("mod")).Value("id")
+		      Dim Availability As Integer = Dict.Value("availability")
+		      Dim Path As Text = Dict.Value("path")
+		      Dim ClassString As Text = Dict.Value("class_string")
+		      Dim IncubationTime As Auto = Dict.Value("incubation_time")
+		      Dim MatureTime As Auto = Dict.Value("mature_time")
+		      Dim TagString As String
+		      Try
+		        Dim Tags() As Text
+		        Dim Temp() As Auto = Dict.Value("tags")
+		        Tags.Append("engram")
+		        For Each Tag As Text In Temp
+		          Tags.Append(Tag)
+		        Next
+		        TagString = Text.Join(Tags, ",")
+		      Catch Err As TypeMismatchException
+		        
+		      End Try
+		      
+		      ObjectID = ObjectID.Lowercase
+		      ModID = ModID.Lowercase
+		      
+		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM creatures WHERE object_id = ?1 OR LOWER(path) = ?2;", ObjectID, Path.Lowercase)
+		      If Results.RecordCount = 1 And ObjectID = Results.Field("object_id").StringValue Then
+		        Self.SQLExecute("UPDATE creatures SET mod_id = ?2, label = ?3, availability = ?4, path = ?5, class_string = ?6, tags = ?7, incubation_time = ?8, mature_time = ?9 WHERE object_id = ?1;", ObjectID, ModID, Label, Availability, Path, ClassString, TagString, IncubationTime, MatureTime)
+		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = 'creatures';", ObjectID, TagString)
+		      Else
+		        If Results.RecordCount = 1 Then
+		          Self.SQLExecute("DELETE FROM creatures WHERE object_id = ?1;", Results.Field("object_id").StringValue)
+		          Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id = ?1 AND source_table = 'creatures';", Results.Field("object_id").StringValue)
+		        End If
+		        Self.SQLExecute("INSERT INTO creatures (object_id, mod_id, label, availability, path, class_string, tags, incubation_time, mature_time) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", ObjectID, ModID, Label, Availability, Path, ClassString, TagString, IncubationTime, MatureTime)
+		        Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, 'creatures');", ObjectID, TagString)
 		      End If
 		      EngramsChanged = True
 		    Next
