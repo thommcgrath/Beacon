@@ -1447,10 +1447,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Creature.ModID = Results.Field("mod_id").StringValue.ToText
 		    Creature.ModName = Results.Field("mod_name").StringValue.ToText
 		    
-		    If Results.Field("incubation_time") <> Nil Then
+		    If Results.Field("incubation_time").Value <> Nil Then
 		      Creature.IncubationTime = Beacon.SecondsToInterval(Results.Field("incubation_time").IntegerValue)
 		    End If
-		    If Results.Field("mature_time") <> Nil Then
+		    If Results.Field("mature_time").Value <> Nil Then
 		      Creature.MatureTime = Beacon.SecondsToInterval(Results.Field("mature_time").IntegerValue)
 		    End If
 		    
@@ -2110,7 +2110,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndProperty
 
 
-	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.path\x2C creatures.label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private
+	#tag Constant, Name = CreatureSelectSQL, Type = String, Dynamic = False, Default = \"SELECT creatures.path\x2C creatures.label\x2C creatures.availability\x2C creatures.tags\x2C creatures.incubation_time\x2C creatures.mature_time\x2C mods.mod_id\x2C mods.name AS mod_name FROM creatures INNER JOIN mods ON (creatures.mod_id \x3D mods.mod_id)", Scope = Private
 	#tag EndConstant
 
 	#tag Constant, Name = EngramSelectSQL, Type = String, Dynamic = False, Default = \"SELECT engrams.path\x2C engrams.label\x2C engrams.availability\x2C engrams.tags\x2C mods.mod_id\x2C mods.name AS mod_name FROM engrams INNER JOIN mods ON (engrams.mod_id \x3D mods.mod_id)", Scope = Private

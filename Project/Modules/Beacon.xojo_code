@@ -557,6 +557,31 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function IntervalToString(Interval As Xojo.Core.DateInterval) As Text
+		  Dim Parts() As Text
+		  If Interval.Years > 0 Then
+		    Parts.Append(Interval.Years.ToText + "y")
+		  End If
+		  If Interval.Months > 0 Then
+		    Parts.Append(Interval.Months.ToText + "m")
+		  End If
+		  If Interval.Days > 0 Then
+		    Parts.Append(Interval.Days.ToText + "d")
+		  End If
+		  If Interval.Hours > 0 Then
+		    Parts.Append(Interval.Hours.ToText + "h")
+		  End If
+		  If Interval.Minutes > 0 Then
+		    Parts.Append(Interval.Minutes.ToText + "m")
+		  End If
+		  If Interval.Seconds > 0 Then
+		    Parts.Append(Interval.Seconds.ToText + "s")
+		  End If
+		  Return Parts.Join(" ")
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
 		Function IsBeaconURL(ByRef Value As String) As Boolean
 		  Dim TextValue As Text = Value.ToText
@@ -964,6 +989,12 @@ Protected Module Beacon
 		  Next
 		  
 		  Return NewLines.Join(EOL)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function SearchForCreatures(Extends Source As Beacon.DataSource, SearchText As Text, Mods As Beacon.TextList) As Beacon.Creature()
+		  Return Source.SearchForCreatures(SearchText, Mods, "")
 		End Function
 	#tag EndMethod
 

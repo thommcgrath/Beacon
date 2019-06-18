@@ -43,7 +43,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   319
+      Left            =   263
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -67,7 +67,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   80
+      Width           =   103
    End
    Begin UITweaks.ResizedLabel MatureSpeedLabel
       AutoDeactivate  =   True
@@ -102,7 +102,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   287
+      Width           =   231
    End
    Begin UITweaks.ResizedTextField IncubationSpeedField
       AcceptTabs      =   False
@@ -121,7 +121,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   319
+      Left            =   263
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -145,7 +145,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   80
+      Width           =   103
    End
    Begin UITweaks.ResizedLabel IncubationSpeedLabel
       AutoDeactivate  =   True
@@ -180,7 +180,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   287
+      Width           =   231
    End
    Begin UITweaks.ResizedTextField EggLayPeriodField
       AcceptTabs      =   False
@@ -199,7 +199,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   319
+      Left            =   263
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -223,7 +223,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   80
+      Width           =   103
    End
    Begin UITweaks.ResizedLabel EggLayPeriodLabel
       AutoDeactivate  =   True
@@ -258,7 +258,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   287
+      Width           =   231
    End
    Begin UITweaks.ResizedTextField FoodConsumptionField
       AcceptTabs      =   False
@@ -277,7 +277,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   319
+      Left            =   263
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -301,7 +301,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   80
+      Width           =   103
    End
    Begin UITweaks.ResizedLabel FoodConsumptionLabel
       AutoDeactivate  =   True
@@ -336,7 +336,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   287
+      Width           =   231
    End
    Begin UITweaks.ResizedTextField ImprintPeriodField
       AcceptTabs      =   False
@@ -355,7 +355,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   319
+      Left            =   263
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -379,7 +379,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   80
+      Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintPeriodLabel
       AutoDeactivate  =   True
@@ -414,7 +414,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   287
+      Width           =   231
    End
    Begin UITweaks.ResizedTextField ImprintStatScaleField
       AcceptTabs      =   False
@@ -433,7 +433,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   319
+      Left            =   263
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -457,7 +457,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   80
+      Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintStatScaleLabel
       AutoDeactivate  =   True
@@ -492,7 +492,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   287
+      Width           =   231
    End
    Begin UITweaks.ResizedTextField ImprintGracePeriodField
       AcceptTabs      =   False
@@ -511,7 +511,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   319
+      Left            =   263
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -535,7 +535,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   80
+      Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintGracePeriodLabel
       AutoDeactivate  =   True
@@ -570,7 +570,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   287
+      Width           =   231
    End
    Begin UITweaks.ResizedTextField ImprintLossSpeedField
       AcceptTabs      =   False
@@ -589,7 +589,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   319
+      Left            =   263
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -613,7 +613,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   80
+      Width           =   103
    End
    Begin UITweaks.ResizedLabel ImprintLossSpeedLabel
       AutoDeactivate  =   True
@@ -648,7 +648,161 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   287
+      Width           =   231
+   End
+   Begin BeaconListbox CreaturesList
+      AutoDeactivate  =   True
+      AutoHideScrollbars=   True
+      Bold            =   False
+      Border          =   True
+      ColumnCount     =   5
+      ColumnsResizable=   False
+      ColumnWidths    =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      DefaultRowHeight=   22
+      Enabled         =   True
+      EnableDrag      =   False
+      EnableDragReorder=   False
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
+      HasHeading      =   True
+      HeadingIndex    =   -1
+      Height          =   500
+      HelpTag         =   ""
+      Hierarchical    =   False
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   "Creature	Incubation Time	Mature Time	% Per Imprint	Max Imprint %"
+      Italic          =   False
+      Left            =   378
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RequiresSelection=   False
+      RowCount        =   0
+      Scope           =   2
+      ScrollbarHorizontal=   False
+      ScrollBarVertical=   True
+      SelectionType   =   0
+      ShowDropIndicator=   False
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   460
+      _ScrollOffset   =   0
+      _ScrollWidth    =   -1
+   End
+   Begin Separator Separator1
+      AutoDeactivate  =   True
+      Enabled         =   True
+      Height          =   4
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   292
+      Transparent     =   False
+      Visible         =   True
+      Width           =   346
+   End
+   Begin UITweaks.ResizedTextField ImprintPeriodPreviewField
+      AcceptTabs      =   False
+      Alignment       =   2
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   263
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "1.0"
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   308
+      Transparent     =   False
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   103
+   End
+   Begin UITweaks.ResizedLabel ImprintPeriodPreviewLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Imprint Frequency:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   308
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   231
    End
 End
 #tag EndWindow
@@ -671,7 +825,7 @@ End
 		  Self.ImprintStatScaleField.Text = Config.BabyImprintingStatScaleMultiplier.PrettyText
 		  Self.IncubationSpeedField.Text = Config.EggHatchSpeedMultiplier.PrettyText
 		  Self.MatureSpeedField.Text = Config.BabyMatureSpeedMultiplier.PrettyText
-		  Self.UpdateCreatureList()
+		  Self.UpdateStats()
 		End Sub
 	#tag EndEvent
 
@@ -708,8 +862,43 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub UpdateCreatureList()
+		Private Sub UpdateStats()
+		  Dim CuddlePeriod As Double = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period") * Self.Config(False).BabyCuddleIntervalMultiplier
+		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.TextList)
+		  Dim Index As Integer = Self.CreaturesList.ListIndex
+		  Dim Position As Integer = Self.CreaturesList.ScrollPosition
+		  Self.CreaturesList.DeleteAllRows
 		  
+		  Dim IncubationMultiplier As Double = Self.Config(False).EggHatchSpeedMultiplier
+		  Dim MatureMultiplier As Double = Self.Config(False).BabyMatureSpeedMultiplier
+		  
+		  For Each Creature As Beacon.Creature In Creatures
+		    If Creature.IncubationTime = Nil Or Creature.MatureTime = Nil Then
+		      Continue
+		    End If
+		    
+		    Dim IncubationPeriod As Xojo.Core.DateInterval = Creature.IncubationTime
+		    Dim IncubationSeconds As UInt64 = Beacon.IntervalToSeconds(IncubationPeriod) / IncubationMultiplier
+		    Dim MaturePeriod As Xojo.Core.DateInterval = Creature.MatureTime
+		    Dim MatureSeconds As UInt64 = Beacon.IntervalToSeconds(MaturePeriod) / MatureMultiplier
+		    
+		    Dim MaxCuddles As Integer = Floor(MatureSeconds / CuddlePeriod)
+		    Dim PerCuddle As Double = CuddlePeriod / MatureSeconds
+		    If PerCuddle > 1.0 Then
+		      PerCuddle = 0
+		    End If
+		    Dim MaxImprint As Double = MaxCuddles * PerCuddle
+		    
+		    IncubationPeriod = Beacon.SecondsToInterval(IncubationSeconds)
+		    MaturePeriod = Beacon.SecondsToInterval(MatureSeconds)
+		    
+		    CreaturesList.AddRow(Creature.Label, Beacon.IntervalToString(IncubationPeriod), Beacon.IntervalToString(MaturePeriod), If(PerCuddle = 0, "Can't Imprint", Format(PerCuddle, "0%")), If(PerCuddle = 0, "", Format(MaxImprint, "0%")))
+		  Next
+		  
+		  CreaturesList.ListIndex = Index
+		  CreaturesList.ScrollPosition = Position
+		  
+		  Self.ImprintPeriodPreviewField.Text = Beacon.IntervalToString(Beacon.SecondsToInterval(CuddlePeriod))
 		End Sub
 	#tag EndMethod
 
@@ -717,6 +906,22 @@ End
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
 	#tag EndProperty
+
+
+	#tag Constant, Name = ColumnBestImprint, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnCreatureName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnIncubationTime, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnMatureTime, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnPerImprint, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -737,7 +942,7 @@ End
 		  Self.Config(True).BabyMatureSpeedMultiplier = Value
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
-		  Self.UpdateCreatureList()
+		  Self.UpdateStats()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -757,7 +962,7 @@ End
 		  Self.Config(True).EggHatchSpeedMultiplier = Value
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
-		  Self.UpdateCreatureList()
+		  Self.UpdateStats()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -815,6 +1020,7 @@ End
 		  Self.Config(True).BabyCuddleIntervalMultiplier = Value
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
+		  Self.UpdateStats()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
