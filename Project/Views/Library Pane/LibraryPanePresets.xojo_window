@@ -282,9 +282,7 @@ End
 		    Preset.Append(New Beacon.PresetEntry(Entry))
 		  Next
 		  
-		  Beacon.Data.SavePreset(Preset)
-		  Self.UpdatePresets(Preset)
-		  Self.OpenPreset(Preset)
+		  Self.OpenPreset(Preset, True)
 		  Return Preset
 		End Function
 	#tag EndMethod
@@ -350,10 +348,7 @@ End
 
 	#tag Method, Flags = &h0
 		Sub NewPreset()
-		  Dim Preset As New Beacon.MutablePreset
-		  Beacon.Data.SavePreset(Preset)
-		  Self.UpdatePresets(Preset)
-		  Self.OpenPreset(Preset)
+		  Self.OpenPreset(New Beacon.MutablePreset)
 		End Sub
 	#tag EndMethod
 
@@ -369,7 +364,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub OpenPreset(Preset As Beacon.Preset)
+		Private Sub OpenPreset(Preset As Beacon.Preset, DefaultModified As Boolean = False)
 		  If Preset = Nil Then
 		    Return
 		  End If
@@ -379,11 +374,14 @@ End
 		    View = New PresetEditorView(Preset)
 		  End If
 		  Self.ShowView(View)
+		  If DefaultModified Then
+		    View.ContentsChanged = True
+		  End If
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub OpenPreset(File As FolderItem, Import As Boolean)
+		Sub OpenPreset(File As FolderItem, Import As Boolean, DefaultModified As Boolean = False)
 		  Dim Preset As Beacon.Preset = Beacon.Preset.FromFile(File)
 		  If Preset = Nil Then
 		    Self.ShowAlert("Unable to open preset file", "The file may be damaged or a newer format.")
@@ -392,7 +390,7 @@ End
 		  
 		  If Import Then
 		    LocalData.SharedInstance.SavePreset(Preset)
-		    Self.OpenPreset(Preset)
+		    Self.OpenPreset(Preset, DefaultModified)
 		    Return
 		  End If
 		  
@@ -402,6 +400,9 @@ End
 		    View = New PresetEditorView(Preset, File)
 		  End If
 		  Self.ShowView(View)
+		  If DefaultModified Then
+		    View.ContentsChanged = True
+		  End If
 		End Sub
 	#tag EndMethod
 
