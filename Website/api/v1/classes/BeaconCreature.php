@@ -13,6 +13,8 @@ class BeaconCreature extends BeaconBlueprint {
 	private $rideable;
 	private $carryable;
 	private $breedable;
+	private $incubation_time;
+	private $mature_time;
 	
 	protected static function SQLColumns() {
 		$columns = parent::SQLColumns();
@@ -23,6 +25,8 @@ class BeaconCreature extends BeaconBlueprint {
 		$columns[] = 'rideable';
 		$columns[] = 'carryable';
 		$columns[] = 'breedable';
+		$columns[] = 'EXTRACT(epoch FROM incubation_time) AS incubation_time';
+		$columns[] = 'EXTRACT(epoch FROM mature_time) AS mature_time';
 		return $columns;
 	}
 	
@@ -63,6 +67,8 @@ class BeaconCreature extends BeaconBlueprint {
 		$obj->rideable = $row->Field('rideable');
 		$obj->carryable = $row->Field('carryable');
 		$obj->breedable = $row->Field('breedable');
+		$obj->incubation_time = is_null($row->Field('incubation_time')) ? null : intval($row->Field('incubation_time'));
+		$obj->mature_time = is_null($row->Field('mature_time')) ? null : intval($row->Field('mature_time'));
 		return $obj;
 	}
 	
@@ -76,6 +82,8 @@ class BeaconCreature extends BeaconBlueprint {
 		$json['carryable'] = $this->carryable;
 		$json['breedable'] = $this->breedable;
 		$json['related_object_ids'] = $this->RelatedObjectIDs();
+		$json['incubation_time'] = $this->incubation_time;
+		$json['mature_time'] = $this->mature_time;
 		return $json;
 	}
 	
@@ -170,6 +178,14 @@ class BeaconCreature extends BeaconBlueprint {
 			$results->MoveNext();
 		}
 		return $arr;
+	}
+	
+	public function IncubationTimeSeconds() {
+		return $this->incubation_time;
+	}
+	
+	public function MatureTimeSeconds() {
+		return $this->mature_time;
 	}
 }
 

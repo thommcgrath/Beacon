@@ -401,6 +401,53 @@ abstract class BeaconCommon {
 		$boolval = (is_string($value) ? filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) : (bool) $value);
 		return ($boolval === null ? false : $boolval);
 	}
+	
+	public static function SecondsToEnglish(int $seconds) {
+		$parts = array();
+		if ($seconds > 86400) {
+			$days = floor($seconds / 86400);
+			$seconds = $seconds - ($days * 86400);
+			if ($days == 1) {
+				$parts[] = '1 day';
+			} else {
+				$parts[] = $days . ' days';
+			}
+		}
+		if ($seconds > 3600) {
+			$hours = floor($seconds / 3600);
+			$seconds = $seconds - ($hours * 3600);
+			if ($hours == 1) {
+				$parts[] = '1 hour';
+			} else {
+				$parts[] = $hours . ' hours';
+			}
+		}
+		if ($seconds > 60) {
+			$minutes = floor($seconds / 60);
+			$seconds = $seconds - ($minutes * 60);
+			if ($minutes == 1) {
+				$parts[] = '1 minute';
+			} else {
+				$parts[] = $minutes . ' minutes';
+			}
+		}
+		if ($seconds == 1) {
+			$parts[] = '1 second';
+		} elseif ($seconds > 0) {
+			$parts[] = $seconds . ' seconds';
+		}
+		
+		if (count($parts) == 1) {
+			return $parts[0];
+		} elseif (count($parts) == 2) {
+			return $parts[0] . ' and ' . $parts[1];
+		} elseif (count($parts) > 2) {
+			$last = 	array_pop($parts);
+			return implode(', ', $parts) . ', and ' . $last;
+		} else {
+			return '';
+		}
+	}
 }
 
 ?>

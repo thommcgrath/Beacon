@@ -120,6 +120,14 @@ function PrepareCreatureTable(BeaconCreature $creature, array &$properties) {
 	$properties['Rideable'] = $creature->Rideable() ? 'Yes' : 'No';
 	$properties['Carryable'] = $creature->Carryable() ? 'Yes' : 'No';
 	$properties['Breedable'] = $creature->Breedable() ? 'Yes' : 'No';*/
+	$incubation_time = $creature->IncubationTimeSeconds();
+	if (!is_null($incubation_time)) {
+		$properties['Incubation Time'] = BeaconCommon::SecondsToEnglish($incubation_time);
+	}
+	$mature_time = $creature->MatureTimeSeconds();
+	if (!is_null($mature_time)) {
+		$properties['Mature Time'] = BeaconCommon::SecondsToEnglish($mature_time);
+	}
 }
 
 function PrepareEngramTable(BeaconEngram $engram, array &$properties) {
