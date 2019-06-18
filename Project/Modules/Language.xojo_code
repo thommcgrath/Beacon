@@ -27,6 +27,8 @@ Protected Module Language
 		    Return "Stack Sizes"
 		  Case BeaconConfigs.BreedingMultipliers.ConfigName
 		    Return "Breeding Multipliers"
+		  Case BeaconConfigs.HarvestRates.ConfigName
+		    Return "Harvest Rates"
 		  End Select
 		End Function
 	#tag EndMethod

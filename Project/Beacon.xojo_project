@@ -344,6 +344,7 @@ Class=BreedingMultipliers;Modules/BeaconConfigs/BreedingMultipliers.xojo_code;&h
 Folder=Breeding Multipliers;Views/Config Editors/Breeding Multipliers;&h0000000010C39FFF;&h00000000434D97FF;false
 Window=BreedingMultipliersConfigEditor;Views/Config Editors/Breeding Multipliers/BreedingMultipliersConfigEditor.xojo_window;&h0000000007D8CFFF;&h0000000010C39FFF;false
 Window=BreedingTunerDialog;Views/Config Editors/Breeding Multipliers/BreedingTunerDialog.xojo_window;&h000000005B44C7FF;&h0000000010C39FFF;false
+Class=HarvestRates;Modules/BeaconConfigs/HarvestRates.xojo_code;&h000000006914D7FF;&h0000000068EBAFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=1
