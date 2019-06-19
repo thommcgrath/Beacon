@@ -97,9 +97,11 @@ Implements Beacon.DocumentItem
 		    End If
 		    
 		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self, Identity, Mask)
-		    For Each Option As Beacon.ConfigValue In Options
-		      CommandLineOptions.Append(Option)
-		    Next
+		    If Options <> Nil Then
+		      For Each Option As Beacon.ConfigValue In Options
+		        CommandLineOptions.Append(Option)
+		      Next
+		    End If
 		    
 		    Beacon.ConfigValue.FillConfigDict(GameIniOptions, Group.GameIniValues(Self, Identity, Mask))
 		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniOptions, Group.GameUserSettingsIniValues(Self, Identity, Mask))

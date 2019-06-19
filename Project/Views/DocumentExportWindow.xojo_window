@@ -30,7 +30,7 @@ Begin BeaconDialog DocumentExportWindow
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
       Bold            =   False
-      Border          =   True
+      Border          =   False
       ColumnCount     =   1
       ColumnsResizable=   False
       ColumnWidths    =   ""
@@ -44,14 +44,14 @@ Begin BeaconDialog DocumentExportWindow
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   502
+      Height          =   439
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
       InitialValue    =   ""
       Italic          =   False
-      Left            =   -1
+      Left            =   0
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -71,12 +71,12 @@ Begin BeaconDialog DocumentExportWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   -1
+      Top             =   61
       Transparent     =   True
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
-      Width           =   222
+      Width           =   229
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -331,6 +331,96 @@ Begin BeaconDialog DocumentExportWindow
       Visible         =   True
       Width           =   110
    End
+   Begin FadedSeparator FadedSeparator1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   1
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   8
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   60
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   229
+   End
+   Begin FadedSeparator FadedSeparator2
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   500
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   229
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      TabIndex        =   9
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   1
+   End
+   Begin PopupMenu MapMenu
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   20
+      ListIndex       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   10
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   189
+   End
 End
 #tag EndWindow
 
@@ -422,50 +512,22 @@ End
 
 	#tag Method, Flags = &h0
 		Shared Sub Present(Parent As Window, Document As Beacon.Document)
-		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
-		  Dim GameIniHeaders As New Xojo.Core.Dictionary
-		  Dim GameUserSettingsIniHeaders As New Xojo.Core.Dictionary
-		  Dim CommandLineHeaders As New Xojo.Core.Dictionary
-		  Dim Mask As UInt64 = Beacon.Maps.All.Mask
+		  Dim Win As New DocumentExportWindow
+		  Win.mDocument = Document
 		  
-		  For Each Config As Beacon.ConfigGroup In Configs
-		    // Hold the custom content until the end so we know what lines Beacon will produce
-		    If Config.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
-		      Continue
-		    End If
-		    
-		    Dim Values() As Beacon.ConfigValue = Config.CommandLineOptions(Document, App.Identity, Mask)
-		    If Values <> Nil Then
-		      For Each Value As Beacon.ConfigValue In Values
-		        Dim Arr() As Text
-		        If CommandLineHeaders.HasKey(Value.Header) Then
-		          Arr = CommandLineHeaders.Value(Value.Header)
-		        End If
-		        If Value.Value = "" Then
-		          Arr.Append(Value.Key)
-		        Else
-		          Arr.Append(Value.Key + "=" + Value.Value)
-		        End If
-		        CommandLineHeaders.Value(Value.Header) = Arr
-		      Next
-		    End If
-		    
-		    Beacon.ConfigValue.FillConfigDict(GameIniHeaders, Config.GameIniValues(Document, App.Identity, Mask))
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniHeaders, Config.GameUserSettingsIniValues(Document, App.Identity, Mask))
-		  Next
-		  
-		  // Now process the custom content
-		  Dim CustomContent As BeaconConfigs.CustomContent
-		  If Document.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
-		    CustomContent = BeaconConfigs.CustomContent(Document.ConfigGroup(BeaconConfigs.CustomContent.ConfigName))
-		    Beacon.ConfigValue.FillConfigDict(GameIniHeaders, CustomContent.GameIniValues(Document, GameIniHeaders))
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniHeaders, CustomContent.GameUserSettingsIniValues(Document, GameUserSettingsIniHeaders))
+		  Dim Maps() As Beacon.Map = Document.Maps
+		  If Maps.Ubound = 0 Then
+		    Win.MapMenu.AddRow(Maps(0).Name, Maps(0).Mask)
+		  ElseIf Maps.Ubound > 0 Then
+		    Win.MapMenu.AddRow("All Maps", Beacon.Maps.All.Mask)
+		    For Each Map As Beacon.Map In Maps
+		      Win.MapMenu.AddRow(Map.Name, Map.Mask)
+		    Next
+		  End If
+		  If Win.MapMenu.ListCount > 0 Then
+		    Win.MapMenu.ListIndex = 0
 		  End If
 		  
-		  Dim Win As New DocumentExportWindow
-		  Win.mCommandLineConfigs = CommandLineHeaders
-		  Win.mGameIniConfigs = GameIniHeaders
-		  Win.mGameUserSettingsConfigs = GameUserSettingsIniHeaders
 		  Win.Setup()
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		End Sub
@@ -473,6 +535,43 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Setup()
+		  If Self.mDocument = Nil Then
+		    Return
+		  End If
+		  
+		  Dim Options() As Beacon.ConfigValue
+		  Dim GameIniOptions As New Xojo.Core.Dictionary
+		  Dim GameUserSettingsIniOptions As New Xojo.Core.Dictionary
+		  Dim Mask As UInt64
+		  If Self.MapMenu.ListIndex = -1 Then
+		    Mask = Beacon.Maps.All.Mask
+		  Else
+		    Mask = Self.MapMenu.RowTag(Self.MapMenu.ListIndex)
+		  End If
+		  Self.mDocument.CreateConfigObjects(Options, GameIniOptions, GameUserSettingsIniOptions, Mask, App.IdentityManager.CurrentIdentity)
+		  
+		  Dim CommandLineHeaders As New Xojo.Core.Dictionary
+		  For Each Value As Beacon.ConfigValue In Options
+		    Dim Arr() As Text
+		    If CommandLineHeaders.HasKey(Value.Header) Then
+		      Arr = CommandLineHeaders.Value(Value.Header)
+		    End If
+		    If Value.Value = "" Then
+		      Arr.Append(Value.Key)
+		    Else
+		      Arr.Append(Value.Key + "=" + Value.Value)
+		    End If
+		    CommandLineHeaders.Value(Value.Header) = Arr
+		  Next
+		  
+		  Self.mCommandLineConfigs = CommandLineHeaders
+		  Self.mGameIniConfigs = GameIniOptions
+		  Self.mGameUserSettingsConfigs = GameUserSettingsIniOptions
+		  
+		  Dim Index As Integer = Self.FileList.ListIndex
+		  Dim Position As Integer = Self.FileList.ScrollPosition
+		  Self.FileList.DeleteAllRows()
+		  
 		  If Self.mCommandLineConfigs.Count > 0 Then
 		    Self.FileList.AddRow("Command Line Options")
 		  End If
@@ -484,6 +583,11 @@ End
 		  If Self.mGameIniConfigs.Count > 0 Then
 		    Self.FileList.AddRow(Beacon.RewriteModeGameIni)
 		  End If
+		  
+		  If Index > -1 And Index < Self.FileList.ListCount Then
+		    Self.FileList.ListIndex = Index
+		  End If
+		  Self.FileList.ScrollPosition = Position
 		End Sub
 	#tag EndMethod
 
@@ -513,6 +617,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mCurrentContent As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDocument As Beacon.Document
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -719,6 +827,13 @@ End
 		    Self.ShowAlert("Unable to write to " + File.DisplayName, "Check file permissions and disk space.")
 		    Return
 		  End Try
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MapMenu
+	#tag Event
+		Sub Change()
+		  Self.Setup()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
