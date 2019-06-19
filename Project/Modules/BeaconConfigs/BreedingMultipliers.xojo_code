@@ -2,7 +2,7 @@
 Protected Class BreedingMultipliers
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
+		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
 		  #Pragma Unused SourceDocument
 		  
 		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyCuddleGracePeriodMultiplier", Self.mBabyCuddleGracePeriodMultiplier.PrettyText))
@@ -362,9 +362,54 @@ Inherits Beacon.ConfigGroup
 			Type="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="mBabyImprintingStatScaleMultiplier"
+			Name="BabyCuddleGracePeriodMultiplier"
 			Group="Behavior"
-			Type="Integer"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BabyCuddleIntervalMultiplier"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BabyCuddleLoseImprintQualitySpeedMultiplier"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BabyFoodConsumptionSpeedMultiplier"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BabyImprintingStatScaleMultiplier"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="BabyMatureSpeedMultiplier"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="EggHatchSpeedMultiplier"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="LayEggIntervalMultiplier"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MatingIntervalMultiplier"
+			Group="Behavior"
+			Type="Double"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="MatingSpeedMultiplier"
+			Group="Behavior"
+			Type="Double"
 		#tag EndViewProperty
 	#tag EndViewBehavior
 End Class

@@ -426,6 +426,7 @@ End
 		  Dim GameIniHeaders As New Xojo.Core.Dictionary
 		  Dim GameUserSettingsIniHeaders As New Xojo.Core.Dictionary
 		  Dim CommandLineHeaders As New Xojo.Core.Dictionary
+		  Dim Mask As UInt64 = Beacon.Maps.All.Mask
 		  
 		  For Each Config As Beacon.ConfigGroup In Configs
 		    // Hold the custom content until the end so we know what lines Beacon will produce
@@ -433,7 +434,7 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Values() As Beacon.ConfigValue = Config.CommandLineOptions(Document, App.Identity)
+		    Dim Values() As Beacon.ConfigValue = Config.CommandLineOptions(Document, App.Identity, Mask)
 		    If Values <> Nil Then
 		      For Each Value As Beacon.ConfigValue In Values
 		        Dim Arr() As Text
@@ -449,8 +450,8 @@ End
 		      Next
 		    End If
 		    
-		    Beacon.ConfigValue.FillConfigDict(GameIniHeaders, Config.GameIniValues(Document, App.Identity))
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniHeaders, Config.GameUserSettingsIniValues(Document, App.Identity))
+		    Beacon.ConfigValue.FillConfigDict(GameIniHeaders, Config.GameIniValues(Document, App.Identity, Mask))
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniHeaders, Config.GameUserSettingsIniValues(Document, App.Identity, Mask))
 		  Next
 		  
 		  // Now process the custom content
@@ -945,5 +946,10 @@ End
 		InitialValue="True"
 		Type="Boolean"
 		EditorType="Boolean"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="CurrentContent"
+		Group="Behavior"
+		Type="String"
 	#tag EndViewProperty
 #tag EndViewBehavior

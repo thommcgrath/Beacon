@@ -2,7 +2,7 @@
 Protected Class LootScale
 Inherits Beacon.ConfigGroup
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
+		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
 		  #Pragma Unused SourceDocument
 		  
 		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "SupplyCrateLootQualityMultiplier", Self.mMultiplier.PrettyText))

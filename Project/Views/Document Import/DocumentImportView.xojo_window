@@ -845,9 +845,10 @@ End
 		  Dim GameIniValues As New Xojo.Core.Dictionary
 		  Dim GameUserSettingsIniValues As New Xojo.Core.Dictionary
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
+		  Dim Mask As UInt64 = Beacon.Maps.All.Mask
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document, App.Identity))
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document, App.Identity))
+		    Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document, App.Identity, Mask))
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document, App.Identity, Mask))
 		  Next
 		  
 		  Dim CustomContent As New BeaconConfigs.CustomContent

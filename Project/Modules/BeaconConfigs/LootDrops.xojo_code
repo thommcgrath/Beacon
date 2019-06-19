@@ -3,7 +3,7 @@ Protected Class LootDrops
 Inherits Beacon.ConfigGroup
 Implements Xojo.Core.Iterable
 	#tag Event
-		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue)
+		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
 		  Dim DifficultyConfig As BeaconConfigs.Difficulty = SourceDocument.Difficulty
 		  If DifficultyConfig = Nil Then
 		    DifficultyConfig = New BeaconConfigs.Difficulty
@@ -11,6 +11,10 @@ Implements Xojo.Core.Iterable
 		  End If
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
+		    If Not Source.ValidForMask(Mask) Then
+		      Continue
+		    End If
+		    
 		    Dim TextValue As Text = Source.TextValue(DifficultyConfig)
 		    Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "ConfigOverrideSupplyCrateItems", TextValue))
 		  Next

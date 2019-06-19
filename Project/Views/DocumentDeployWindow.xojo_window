@@ -462,31 +462,6 @@ End
 		    Self.ServerSelectionList.CellCheck(Self.ServerSelectionList.LastIndex, 0) = Profile.Enabled
 		  Next
 		  Self.ServerSelectionList.Sort
-		  
-		  Self.mGameIniOptions = New Xojo.Core.Dictionary
-		  Self.mGameUserSettingsIniOptions = New Xojo.Core.Dictionary
-		  
-		  Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
-		  For Each Group As Beacon.ConfigGroup In Groups
-		    If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
-		      Continue
-		    End If
-		    
-		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, App.Identity)
-		    For Each Option As Beacon.ConfigValue In Options
-		      Self.mCommandLineOptions.Append(Option)
-		    Next
-		    
-		    Beacon.ConfigValue.FillConfigDict(Self.mGameIniOptions, Group.GameIniValues(Self.mDocument, App.Identity))
-		    Beacon.ConfigValue.FillConfigDict(Self.mGameUserSettingsIniOptions, Group.GameUserSettingsIniValues(Self.mDocument, App.Identity))
-		  Next
-		  
-		  Dim CustomContent As BeaconConfigs.CustomContent
-		  If Self.mDocument.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
-		    CustomContent = BeaconConfigs.CustomContent(Self.mDocument.ConfigGroup(BeaconConfigs.CustomContent.ConfigName))
-		    Beacon.ConfigValue.FillConfigDict(Self.mGameIniOptions, CustomContent.GameIniValues(Self.mDocument, Self.mGameIniOptions))
-		    Beacon.ConfigValue.FillConfigDict(Self.mGameUserSettingsIniOptions, CustomContent.GameUserSettingsIniValues(Self.mDocument, Self.mGameUserSettingsIniOptions))
-		  End If
 		End Sub
 	#tag EndEvent
 
@@ -497,9 +472,11 @@ End
 		    // Move to the next step
 		    Self.DeployingList.DeleteAllRows
 		    
+		    Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
 		    Dim Now As New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970, New Xojo.Core.TimeZone(0))
 		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Current
 		    Self.mDeployLabel = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + "." + Now.Minute.ToText(Locale, "00") + "." + Now.Second.ToText(Locale, "00") + " GMT"
+		    
 		    
 		    For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
 		      Dim Profile As Beacon.ServerProfile = Self.mDocument.ServerProfile(I)
@@ -517,13 +494,37 @@ End
 		        Continue
 		      End Select
 		      
+		      Dim Mask As UInt64 = Profile.Mask
+		      Dim CommandLineOptions() As Beacon.ConfigValue
+		      Dim GameIniOptions As New Xojo.Core.Dictionary
+		      Dim GameUserSettingsIniOptions As New Xojo.Core.Dictionary
+		      
+		      For Each Group As Beacon.ConfigGroup In Groups
+		        If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		          Continue
+		        End If
+		        
+		        Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, App.Identity, Mask)
+		        For Each Option As Beacon.ConfigValue In Options
+		          CommandLineOptions.Append(Option)
+		        Next
+		        
+		        Beacon.ConfigValue.FillConfigDict(GameIniOptions, Group.GameIniValues(Self.mDocument, App.Identity, Mask))
+		        Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniOptions, Group.GameUserSettingsIniValues(Self.mDocument, App.Identity, Mask))
+		      Next
+		      
+		      Dim CustomContent As BeaconConfigs.CustomContent
+		      If Self.mDocument.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
+		        CustomContent = BeaconConfigs.CustomContent(Self.mDocument.ConfigGroup(BeaconConfigs.CustomContent.ConfigName))
+		        Beacon.ConfigValue.FillConfigDict(GameIniOptions, CustomContent.GameIniValues(Self.mDocument, GameIniOptions))
+		        Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniOptions, CustomContent.GameUserSettingsIniValues(Self.mDocument, GameUserSettingsIniOptions))
+		      End If
+		      
 		      Self.mDeploymentEngines.Append(DeploymentEngine)
+		      DeploymentEngine.Begin(Self.mDeployLabel, CommandLineOptions, GameIniOptions, GameUserSettingsIniOptions)
+		      
 		      Self.DeployingList.AddRow(DeploymentEngine.Name + EndOfLine + DeploymentEngine.Status)
 		      Self.DeployingList.RowTag(DeployingList.LastIndex) = DeploymentEngine
-		    Next
-		    
-		    For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
-		      DeploymentEngine.Begin(Self.mDeployLabel, Self.mCommandLineOptions, Beacon.Clone(Self.mGameIniOptions), Beacon.Clone(Self.mGameUserSettingsIniOptions))
 		    Next
 		    
 		    Self.DeployingWatchTimer.Mode = Timer.ModeMultiple
@@ -642,10 +643,6 @@ End
 
 
 	#tag Property, Flags = &h21
-		Private mCommandLineOptions() As Beacon.ConfigValue
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
 		Private mCurrentProvider As Text
 	#tag EndProperty
 
@@ -659,14 +656,6 @@ End
 
 	#tag Property, Flags = &h21
 		Private mDocument As Beacon.Document
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mGameIniOptions As Xojo.Core.Dictionary
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mGameUserSettingsIniOptions As Xojo.Core.Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

@@ -53,6 +53,12 @@ Protected Class ServerProfile
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Mask() As UInt64
+		  Return Beacon.Maps.All.Mask
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function OAuthProvider() As Text
 		  
 		End Function
@@ -260,6 +266,11 @@ Protected Class ServerProfile
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Modified"
+			Group="Behavior"
+			Type="Boolean"
+		#tag EndViewProperty
+		#tag ViewProperty
+			Name="IsConsole"
 			Group="Behavior"
 			Type="Boolean"
 		#tag EndViewProperty
