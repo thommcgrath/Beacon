@@ -139,23 +139,8 @@ Implements Beacon.DiscoveryEngine
 		    Dim Config As Xojo.Core.Dictionary = Settings.Value("config")
 		    Dim MapText As Text = Config.Value("map")
 		    Dim MapParts() As Text = MapText.Split(",")
-		    Select Case MapParts(MapParts.Ubound)
-		    Case "ScorchedEarth_P"
-		      Self.mMap = Beacon.Maps.ScorchedEarth
-		    Case "Aberration_P"
-		      Self.mMap = Beacon.Maps.Aberration
-		    Case "TheCenter"
-		      Self.mMap = Beacon.Maps.TheCenter
-		    Case "Ragnarok"
-		      Self.mMap = Beacon.Maps.Ragnarok
-		    Case "Extinction"
-		      Self.mMap = Beacon.Maps.Extinction
-		    Case "Valguero_P"
-		      Self.mMap = Beacon.Maps.Valguero
-		    Else
-		      Self.mMap = Beacon.Maps.TheIsland
-		    End Select
 		    
+		    Self.mMap = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.Ubound))
 		    Self.mProfile.GameShortcode = GameServer.Value("game")
 		    
 		    Self.DownloadGameIni()

@@ -13,7 +13,7 @@ Protected Interface DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(Label As Text, CommandLineOptions() As Beacon.ConfigValue, GameIniDict As Xojo.Core.Dictionary, GameUserSettingsIniDict As Xojo.Core.Dictionary)
+		Sub Begin(Label As Text, Document As Beacon.Document, Identity As Beacon.Identity)
 		  
 		End Sub
 	#tag EndMethod

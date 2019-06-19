@@ -26,16 +26,10 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(Label As Text, CommandLineOptions() As Beacon.ConfigValue, GameIniDict As Xojo.Core.Dictionary, GameUserSettingsIniDict As Xojo.Core.Dictionary)
+		Sub Begin(Label As Text, Document As Beacon.Document, Identity As Beacon.Identity)
 		  Self.mLabel = Label
-		  Self.mCommandLineOptions = CommandLineOptions
-		  Self.mGameIniDict = GameIniDict
-		  Self.mGameUserSettingsIniDict = GameUserSettingsIniDict
-		  
-		  Dim SessionSettingsValues() As Text = Array("SessionName=" + Self.mServerName)
-		  Dim SessionSettings As New Xojo.Core.Dictionary
-		  SessionSettings.Value("SessionName") = SessionSettingsValues
-		  Self.mGameUserSettingsIniDict.Value("SessionSettings") = SessionSettings
+		  Self.mDocument = Document
+		  Self.mIdentity = Identity
 		  
 		  Self.RunNextTask()
 		End Sub
@@ -339,6 +333,22 @@ Implements Beacon.DeploymentEngine
 		    Dim Data As Xojo.Core.Dictionary = Response.Value("data")
 		    Dim GameServer As Xojo.Core.Dictionary = Data.Value("gameserver")
 		    
+		    If Self.mMask = 0 Then
+		      Dim Settings As Xojo.Core.Dictionary = GameServer.Value("settings")
+		      Dim Config As Xojo.Core.Dictionary = Settings.Value("config")
+		      Dim MapText As Text = Config.Value("map")
+		      Dim MapParts() As Text = MapText.Split(",")
+		      Self.mMask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.Ubound))
+		      Dim Options() As Beacon.ConfigValue
+		      Self.mDocument.CreateConfigObjects(Options, Self.mGameIniDict, Self.mGameUserSettingsIniDict, Self.mMask, Self.mIdentity)
+		      Self.mCommandLineOptions = Options
+		      
+		      Dim SessionSettingsValues() As Text = Array("SessionName=" + Self.mServerName)
+		      Dim SessionSettings As New Xojo.Core.Dictionary
+		      SessionSettings.Value("SessionName") = SessionSettingsValues
+		      Self.mGameUserSettingsIniDict.Value("SessionSettings") = SessionSettings
+		    End If
+		    
 		    Self.mServerStatus = GameServer.Value("status")
 		    If Self.mInitialServerStatus = "" Then
 		      Self.mInitialServerStatus = Self.mServerStatus
@@ -363,8 +373,21 @@ Implements Beacon.DeploymentEngine
 		        Return
 		      End If
 		      
+		      Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
+		      Dim CommandLineOptions() As Beacon.ConfigValue
+		      For Each Group As Beacon.ConfigGroup In Groups
+		        If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		          Continue
+		        End If
+		        
+		        Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, Self.mIdentity, Self.mMask)
+		        For Each Option As Beacon.ConfigValue In Options
+		          CommandLineOptions.Append(Option)
+		        Next
+		      Next
+		      
 		      Dim StartParams As Xojo.Core.Dictionary = Settings.Value("start-param")
-		      For Each ConfigValue As Beacon.ConfigValue In Self.mCommandLineOptions
+		      For Each ConfigValue As Beacon.ConfigValue In CommandLineOptions
 		        Dim Key As Text = ConfigValue.Key
 		        Dim Value As Text = ConfigValue.Value
 		        
@@ -604,6 +627,8 @@ Implements Beacon.DeploymentEngine
 		  Self.mServerName = ServerName
 		  Self.mServiceID = ServiceID
 		  Self.mAccessToken = OAuthData.Value("Access Token")
+		  Self.mGameIniDict = New Xojo.Core.Dictionary
+		  Self.mGameUserSettingsIniDict = New Xojo.Core.Dictionary
 		  
 		  Self.AppendTask(AddressOf WatchStatusForStop, AddressOf DownloadLogFile, AddressOf WaitNitradoIdle, AddressOf MakeConfigBackup, AddressOf EnableExpertMode, AddressOf SetNextCommandLineParam, AddressOf DownloadGameIni, AddressOf DownloadGameUserSettingsIni, AddressOf UploadGameIni, AddressOf UploadGameUserSettingsIni, AddressOf StartServerIfNeeded)
 		End Sub
@@ -908,6 +933,10 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mDocument As Beacon.Document
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mErrored As Boolean
 	#tag EndProperty
 
@@ -940,6 +969,10 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mIdentity As Beacon.Identity
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mInitialServerStatus As Text
 	#tag EndProperty
 
@@ -949,6 +982,10 @@ Implements Beacon.DeploymentEngine
 
 	#tag Property, Flags = &h21
 		Private mLogFilePath As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

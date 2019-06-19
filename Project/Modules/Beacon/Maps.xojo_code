@@ -2,7 +2,7 @@
 Protected Module Maps
 	#tag Method, Flags = &h1
 		Protected Function Aberration() As Beacon.Map
-		  Return New Beacon.Map("Aberration", 16, 4.0)
+		  Return New Beacon.Map("Aberration", "Aberration_P", 16, 4.0)
 		End Function
 	#tag EndMethod
 
@@ -23,7 +23,7 @@ Protected Module Maps
 
 	#tag Method, Flags = &h1
 		Protected Function Extinction() As Beacon.Map
-		  Return New Beacon.Map("Extinction", 32, 4.0)
+		  Return New Beacon.Map("Extinction", "Extinction", 32, 4.0)
 		End Function
 	#tag EndMethod
 
@@ -78,32 +78,45 @@ Protected Module Maps
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function MaskForIdentifier(Identifier As Text) As UInt64
+		  Dim Possibles() As Beacon.Map = All
+		  For Each Map As Beacon.Map In Possibles
+		    If Map.Identifier = Identifier Then
+		      Return Map
+		    End If
+		  Next
+		  
+		  Return Beacon.Maps.All.Mask
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function Ragnarok() As Beacon.Map
-		  Return New Beacon.Map("Ragnarok", 8, 5.0)
+		  Return New Beacon.Map("Ragnarok", "Ragnarok", 8, 5.0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function ScorchedEarth() As Beacon.Map
-		  Return New Beacon.Map("Scorched Earth", 2, 4.0)
+		  Return New Beacon.Map("Scorched Earth", "ScorchedEarth_P", 2, 4.0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function TheCenter() As Beacon.Map
-		  Return New Beacon.Map("The Center", 4, 5.0)
+		  Return New Beacon.Map("The Center", "TheCenter", 4, 5.0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function TheIsland() As Beacon.Map
-		  Return New Beacon.Map("The Island", 1, 4.0)
+		  Return New Beacon.Map("The Island", "TheIsland", 1, 4.0)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
 		Protected Function Valguero() As Beacon.Map
-		  Return New Beacon.Map("Valguero", 64, 5.0)
+		  Return New Beacon.Map("Valguero", "Valguero_P", 64, 5.0)
 		End Function
 	#tag EndMethod
 

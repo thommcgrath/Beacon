@@ -489,42 +489,18 @@ End
 		      Case IsA Beacon.NitradoServerProfile
 		        DeploymentEngine = New Beacon.NitradoDeploymentEngine(Profile.Name, Beacon.NitradoServerProfile(Profile).ServiceID, Self.mDocument.OAuthData(Profile.OAuthProvider))
 		      Case IsA Beacon.FTPServerProfile
-		        DeploymentEngine = New Beacon.FTPDeploymentEngine(Beacon.FTPServerProfile(Profile), App.Identity)
+		        DeploymentEngine = New Beacon.FTPDeploymentEngine(Beacon.FTPServerProfile(Profile), App.IdentityManager.CurrentIdentity)
 		      Else
 		        Continue
 		      End Select
 		      
-		      Dim Mask As UInt64 = Profile.Mask
-		      Dim CommandLineOptions() As Beacon.ConfigValue
-		      Dim GameIniOptions As New Xojo.Core.Dictionary
-		      Dim GameUserSettingsIniOptions As New Xojo.Core.Dictionary
-		      
-		      For Each Group As Beacon.ConfigGroup In Groups
-		        If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
-		          Continue
-		        End If
-		        
-		        Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self.mDocument, App.Identity, Mask)
-		        For Each Option As Beacon.ConfigValue In Options
-		          CommandLineOptions.Append(Option)
-		        Next
-		        
-		        Beacon.ConfigValue.FillConfigDict(GameIniOptions, Group.GameIniValues(Self.mDocument, App.Identity, Mask))
-		        Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniOptions, Group.GameUserSettingsIniValues(Self.mDocument, App.Identity, Mask))
-		      Next
-		      
-		      Dim CustomContent As BeaconConfigs.CustomContent
-		      If Self.mDocument.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
-		        CustomContent = BeaconConfigs.CustomContent(Self.mDocument.ConfigGroup(BeaconConfigs.CustomContent.ConfigName))
-		        Beacon.ConfigValue.FillConfigDict(GameIniOptions, CustomContent.GameIniValues(Self.mDocument, GameIniOptions))
-		        Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniOptions, CustomContent.GameUserSettingsIniValues(Self.mDocument, GameUserSettingsIniOptions))
-		      End If
-		      
 		      Self.mDeploymentEngines.Append(DeploymentEngine)
-		      DeploymentEngine.Begin(Self.mDeployLabel, CommandLineOptions, GameIniOptions, GameUserSettingsIniOptions)
-		      
 		      Self.DeployingList.AddRow(DeploymentEngine.Name + EndOfLine + DeploymentEngine.Status)
 		      Self.DeployingList.RowTag(DeployingList.LastIndex) = DeploymentEngine
+		    Next
+		    
+		    For Each DeploymentEngine As Beacon.DeploymentEngine In Self.mDeploymentEngines
+		      DeploymentEngine.Begin(Self.mDeployLabel, Self.mDocument, App.IdentityManager.CurrentIdentity)
 		    Next
 		    
 		    Self.DeployingWatchTimer.Mode = Timer.ModeMultiple

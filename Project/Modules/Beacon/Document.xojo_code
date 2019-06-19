@@ -89,6 +89,32 @@ Implements Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub CreateConfigObjects(ByRef CommandLineOptions() As Beacon.ConfigValue, GameIniOptions As Xojo.Core.Dictionary, GameUserSettingsIniOptions As Xojo.Core.Dictionary, Mask As UInt64, Identity As Beacon.Identity)
+		  Dim Groups() As Beacon.ConfigGroup = Self.ImplementedConfigs
+		  For Each Group As Beacon.ConfigGroup In Groups
+		    If Group.ConfigName = BeaconConfigs.CustomContent.ConfigName Then
+		      Continue
+		    End If
+		    
+		    Dim Options() As Beacon.ConfigValue = Group.CommandLineOptions(Self, Identity, Mask)
+		    For Each Option As Beacon.ConfigValue In Options
+		      CommandLineOptions.Append(Option)
+		    Next
+		    
+		    Beacon.ConfigValue.FillConfigDict(GameIniOptions, Group.GameIniValues(Self, Identity, Mask))
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniOptions, Group.GameUserSettingsIniValues(Self, Identity, Mask))
+		  Next
+		  
+		  Dim CustomContent As BeaconConfigs.CustomContent
+		  If Self.HasConfigGroup(BeaconConfigs.CustomContent.ConfigName) Then
+		    CustomContent = BeaconConfigs.CustomContent(Self.ConfigGroup(BeaconConfigs.CustomContent.ConfigName))
+		    Beacon.ConfigValue.FillConfigDict(GameIniOptions, CustomContent.GameIniValues(Self, GameIniOptions))
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniOptions, CustomContent.GameUserSettingsIniValues(Self, GameUserSettingsIniOptions))
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Difficulty() As BeaconConfigs.Difficulty
 		  Static GroupName As Text = BeaconConfigs.Difficulty.ConfigName
 		  Return BeaconConfigs.Difficulty(Self.ConfigGroup(GroupName, True))

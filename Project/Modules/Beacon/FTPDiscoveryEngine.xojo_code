@@ -39,23 +39,7 @@ Implements Beacon.DiscoveryEngine
 		  If Dict.HasKey("Maps") Then
 		    Dim Maps() As Auto = Dict.Value("Maps")
 		    For Each Map As Text In Maps
-		      Select Case Map
-		      Case "ScorchedEarth_P"
-		        Self.mMap = Self.mMap Or Beacon.Maps.ScorchedEarth.Mask
-		      Case "Aberration_P"
-		        Self.mMap = Self.mMap Or Beacon.Maps.Aberration.Mask
-		      Case "TheCenter"
-		        Self.mMap = Self.mMap Or Beacon.Maps.TheCenter.Mask
-		      Case "Ragnarok"
-		        Self.mMap = Self.mMap Or Beacon.Maps.Ragnarok.Mask
-		      Case "Extinction"
-		        Self.mMap = Self.mMap Or Beacon.Maps.Extinction.Mask
-		      Case "Valguero_P"
-		        Self.mMap = Self.mMap Or Beacon.Maps.Valguero.Mask
-		      Else
-		        // Unofficial maps will be tagged as The Island
-		        Self.mMap = Self.mMap Or Beacon.Maps.TheIsland.Mask
-		      End Select
+		      Self.mMap = Self.mMap Or Beacon.Maps.MaskForIdentifier(Map)
 		    Next
 		  Else
 		    Self.mMap = Beacon.Maps.TheIsland.Mask
@@ -65,6 +49,7 @@ Implements Beacon.DiscoveryEngine
 		  
 		  Self.mProfile.GameIniPath = Dict.Value("Game.ini")
 		  Self.mProfile.GameUserSettingsIniPath = Dict.Value("GameUserSettings.ini")
+		  Self.mProfile.Mask = Self.mMap
 		  
 		  Self.DownloadGameIni()
 		End Sub

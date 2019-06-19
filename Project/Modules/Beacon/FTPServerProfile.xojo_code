@@ -16,6 +16,7 @@ Inherits Beacon.ServerProfile
 		  Self.mGameIniPath = Dict.Value("Game.ini Path")
 		  Self.mGameUserSettingsIniPath = Dict.Value("GameUserSettings.ini Path")
 		  Self.mMode = Dict.Lookup("Mode", ModeAuto)
+		  Self.mMask = Dict.Lookup("Mask", Beacon.Maps.All.Mask)
 		End Sub
 	#tag EndEvent
 
@@ -29,6 +30,7 @@ Inherits Beacon.ServerProfile
 		  Dict.Value("Game.ini Path") = Self.mGameIniPath
 		  Dict.Value("GameUserSettings.ini Path") = Self.mGameUserSettingsIniPath
 		  Dict.Value("Mode") = Self.mMode
+		  Dict.Value("Mask") = Self.mMask
 		End Sub
 	#tag EndEvent
 
@@ -49,6 +51,21 @@ Inherits Beacon.ServerProfile
 		Sub Constructor()
 		  // Do not call Super.Constructor()
 		  Self.mMode = Self.ModeAuto
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Mask() As UInt64
+		  Return Self.mMask
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Mask(Assigns Value As UInt64)
+		  If Self.mMask <> Value Then
+		    Self.mMask = Value
+		    Self.Modified = True
+		  End If
 		End Sub
 	#tag EndMethod
 
@@ -140,6 +157,10 @@ Inherits Beacon.ServerProfile
 
 	#tag Property, Flags = &h21
 		Private mHost As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMask As UInt64
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

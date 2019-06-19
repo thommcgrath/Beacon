@@ -201,7 +201,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   95
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -237,7 +237,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   95
+      Top             =   127
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -279,7 +279,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   129
+      Top             =   161
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -315,7 +315,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   129
+      Top             =   161
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -357,7 +357,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   163
+      Top             =   195
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -393,7 +393,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   163
+      Top             =   195
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -435,7 +435,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   197
+      Top             =   229
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -471,7 +471,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   197
+      Top             =   229
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -513,7 +513,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   263
+      Top             =   295
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -549,7 +549,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   263
+      Top             =   295
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -591,7 +591,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   297
+      Top             =   329
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -627,7 +627,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   297
+      Top             =   329
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -659,7 +659,7 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   231
+      Top             =   263
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -694,11 +694,113 @@ Begin ServerViewContainer FTPServerView
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   231
+      Top             =   263
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   172
+   End
+   Begin UITweaks.ResizedPopupMenu MapMenu
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   ""
+      Italic          =   False
+      Left            =   204
+      ListIndex       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   95
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   165
+   End
+   Begin UITweaks.ResizedLabel MapLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Build Config For:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   95
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   172
+   End
+   Begin UITweaks.ResizedLabel MapHelp
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   True
+      Left            =   381
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   20
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Does not change the map"
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   95
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   199
    End
 End
 #tag EndWindow
@@ -715,6 +817,7 @@ End
 		  Self.GameIniPathField.Text = Self.mProfile.GameIniPath
 		  Self.GameUserSettingsIniPathField.Text = Self.mProfile.GameUserSettingsIniPath
 		  Self.ModeMenu.SelectByTag(Self.mProfile.Mode)
+		  Self.MapMenu.SelectByTag(Self.mProfile.Mask)
 		End Sub
 	#tag EndEvent
 
@@ -803,6 +906,30 @@ End
 	#tag Event
 		Sub Change()
 		  Self.mProfile.Mode = Me.Tag
+		  Self.ContentsChanged = Self.mProfile.Modified
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MapMenu
+	#tag Event
+		Sub Open()
+		  Me.AddRow("All Maps", Beacon.Maps.All.Mask)
+		  
+		  Dim Maps() As Beacon.Map = Beacon.Maps.All
+		  For Each Map As Beacon.Map In Maps
+		    Me.AddRow(Map.Name, Map.Mask)
+		  Next
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Dim Mask As UInt64
+		  If Me.ListIndex = -1 Then
+		    Mask = Beacon.Maps.All.Mask
+		  Else
+		    Mask = Me.RowTag(Me.ListIndex)
+		  End If
+		  Self.mProfile.Mask = Mask
 		  Self.ContentsChanged = Self.mProfile.Modified
 		End Sub
 	#tag EndEvent

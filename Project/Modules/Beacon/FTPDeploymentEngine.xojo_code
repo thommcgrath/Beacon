@@ -14,14 +14,15 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Begin(Label As Text, CommandLineOptions() As Beacon.ConfigValue, GameIniDict As Xojo.Core.Dictionary, GameUserSettingsIniDict As Xojo.Core.Dictionary)
+		Sub Begin(Label As Text, Document As Beacon.Document, Identity As Beacon.Identity)
 		  // Part of the Beacon.DeploymentEngine interface.
 		  
-		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused Label
 		  
-		  Self.mGameIniDict = GameIniDict
-		  Self.mGameUserSettingsIniDict = GameUserSettingsIniDict
+		  Dim Options() As Beacon.ConfigValue
+		  Self.mGameIniDict = New Xojo.Core.Dictionary
+		  Self.mGameUserSettingsIniDict = New Xojo.Core.Dictionary
+		  Document.CreateConfigObjects(Options, Self.mGameIniDict, Self.mGameUserSettingsIniDict, Self.mProfile.Mask, Identity)
 		  
 		  Dim SessionSettingsValues() As Text = Array("SessionName=" + Self.mProfile.Name)
 		  Dim SessionSettings As New Xojo.Core.Dictionary
