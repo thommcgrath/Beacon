@@ -498,7 +498,7 @@ End
 		    Self.DeployingList.DeleteAllRows
 		    
 		    Dim Now As New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970, New Xojo.Core.TimeZone(0))
-		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Current
+		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
 		    Self.mDeployLabel = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + "." + Now.Minute.ToText(Locale, "00") + "." + Now.Second.ToText(Locale, "00") + " GMT"
 		    
 		    For I As Integer = 0 To Self.mDocument.ServerProfileCount - 1
