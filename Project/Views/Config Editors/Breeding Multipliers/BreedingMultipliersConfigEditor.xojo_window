@@ -10,7 +10,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
    Enabled         =   True
    EraseBackground =   True
    HasBackColor    =   False
-   Height          =   480
+   Height          =   544
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
@@ -694,7 +694,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   367
+      Top             =   431
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -720,7 +720,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   317
+      Top             =   381
       Transparent     =   False
       Visible         =   True
       Width           =   704
@@ -762,7 +762,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   333
+      Top             =   397
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -798,7 +798,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   333
+      Top             =   397
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -1142,6 +1142,232 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Visible         =   True
       Width           =   744
    End
+   Begin UITweaks.ResizedTextField MatingSpeedField
+      AcceptTabs      =   False
+      Alignment       =   2
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   263
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   30
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "1.0"
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   317
+      Transparent     =   False
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   103
+   End
+   Begin UITweaks.ResizedLabel MatingSpeedLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   31
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Mating Speed Multiplier:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   317
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   231
+   End
+   Begin UITweaks.ResizedTextField MatingIntervalField
+      AcceptTabs      =   False
+      Alignment       =   2
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   621
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   32
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "1.0"
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   317
+      Transparent     =   False
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   103
+   End
+   Begin UITweaks.ResizedLabel MatingIntervalLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   378
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   33
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Mating Interval Multiplier:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   317
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   231
+   End
+   Begin Label MatingSpeedHelp
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   18
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   34
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Greater than 1.0 mates faster"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   351
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   346
+   End
+   Begin Label MatingIntervalHelp
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   18
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   378
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   35
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Less than 1.0 mates more often"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   351
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   346
+   End
 End
 #tag EndWindow
 
@@ -1149,7 +1375,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.MinimumWidth = 744
-		  Self.MinimumHeight = 480
+		  Self.MinimumHeight = 544
 		End Sub
 	#tag EndEvent
 
@@ -1170,6 +1396,8 @@ End
 		  Self.ImprintStatScaleField.Text = Config.BabyImprintingStatScaleMultiplier.PrettyText
 		  Self.IncubationSpeedField.Text = Config.EggHatchSpeedMultiplier.PrettyText
 		  Self.MatureSpeedField.Text = Config.BabyMatureSpeedMultiplier.PrettyText
+		  Self.MatingSpeedField.Text = Config.MatingSpeedMultiplier.PrettyText
+		  Self.MatingIntervalField.Text = Config.MatingIntervalMultiplier.PrettyText
 		  Self.UpdateStats()
 		End Sub
 	#tag EndEvent
@@ -1325,10 +1553,9 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).BabyMatureSpeedMultiplier = Value
+		  Self.Config(True).MatingSpeedMultiplier = Value
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
-		  Self.UpdateStats()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1482,6 +1709,44 @@ End
 	#tag Event
 		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("AutoTuneButton", IconToolbarWizard, "Automatically compute imprint interval to give at least a specified imprinting on all creatures."))
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MatingSpeedField
+	#tag Event
+		Sub TextChange()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Dim Value As Double = CDbl(Me.Text)
+		  If Value = 0 Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.Config(True).MatingIntervalMultiplier = Value
+		  Self.ContentsChanged = True
+		  Self.SettingUp = False
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MatingIntervalField
+	#tag Event
+		Sub TextChange()
+		  If Self.SettingUp Then
+		    Return
+		  End If
+		  
+		  Dim Value As Double = CDbl(Me.Text)
+		  If Value = 0 Then
+		    Return
+		  End If
+		  
+		  Self.SettingUp = True
+		  Self.Config(True).BabyCuddleLoseImprintQualitySpeedMultiplier = Value
+		  Self.ContentsChanged = True
+		  Self.SettingUp = False
 		End Sub
 	#tag EndEvent
 #tag EndEvents

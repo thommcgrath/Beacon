@@ -13,6 +13,8 @@ Inherits Beacon.ConfigGroup
 		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "BabyMatureSpeedMultiplier", Self.mBabyMatureSpeedMultiplier.PrettyText))
 		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "EggHatchSpeedMultiplier", Self.mEggHatchSpeedMultiplier.PrettyText))
 		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "LayEggIntervalMultiplier", Self.mLayEggIntervalMultiplier.PrettyText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "MatingIntervalMultiplier", Self.mMatingIntervalMultiplier.PrettyText))
+		  Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "MatingSpeedMultiplier", Self.mMatingSpeedMultiplier.PrettyText))
 		End Sub
 	#tag EndEvent
 
@@ -28,6 +30,8 @@ Inherits Beacon.ConfigGroup
 		  Self.mBabyMatureSpeedMultiplier = Dict.Lookup("BabyMatureSpeedMultiplier", 1.0)
 		  Self.mEggHatchSpeedMultiplier = Dict.Lookup("EggHatchSpeedMultiplier", 1.0)
 		  Self.mLayEggIntervalMultiplier = Dict.Lookup("LayEggIntervalMultiplier", 1.0)
+		  Self.mMatingIntervalMultiplier = Dict.Lookup("MatingIntervalMultiplier", 1.0)
+		  Self.mMatingSpeedMultiplier = Dict.Lookup("MatingSpeedMultiplier", 1.0)
 		End Sub
 	#tag EndEvent
 
@@ -43,6 +47,8 @@ Inherits Beacon.ConfigGroup
 		  Dict.Value("BabyMatureSpeedMultiplier") = Self.mBabyMatureSpeedMultiplier
 		  Dict.Value("EggHatchSpeedMultiplier") = Self.mEggHatchSpeedMultiplier
 		  Dict.Value("LayEggIntervalMultiplier") = Self.mLayEggIntervalMultiplier
+		  Dict.Value("MatingIntervalMultiplier") = Self.mMatingIntervalMultiplier
+		  Dict.Value("MatingSpeedMultiplier") = Self.mMatingSpeedMultiplier
 		End Sub
 	#tag EndEvent
 
@@ -64,6 +70,8 @@ Inherits Beacon.ConfigGroup
 		  Self.mBabyMatureSpeedMultiplier = 1.0
 		  Self.mEggHatchSpeedMultiplier = 1.0
 		  Self.mLayEggIntervalMultiplier = 1.0
+		  Self.mMatingIntervalMultiplier = 1.0
+		  Self.mMatingSpeedMultiplier = 1.0
 		End Sub
 	#tag EndMethod
 
@@ -81,8 +89,10 @@ Inherits Beacon.ConfigGroup
 		  Dim BabyCuddleIntervalMultiplier As Double = ParsedData.DoubleValue("BabyCuddleIntervalMultiplier", 1.0, True)
 		  Dim BabyCuddleLoseImprintQualitySpeedMultiplier As Double = ParsedData.DoubleValue("BabyCuddleLoseImprintQualitySpeedMultiplier", 1.0, True)
 		  Dim BabyImprintingStatScaleMultiplier As Double = ParsedData.DoubleValue("BabyImprintingStatScaleMultiplier", 1.0, True)
+		  Dim MatingIntervalMultiplier As Double = ParsedData.DoubleValue("MatingIntervalMultiplier", 1.0, True)
+		  Dim MatingSpeedMultiplier As Double = ParsedData.DoubleValue("MatingSpeedMultiplier", 1.0, True)
 		  
-		  If BabyMatureSpeedMultiplier = 1.0 And EggHatchSpeedMultiplier = 1.0 And BabyFoodConsumptionSpeedMultiplier = 1.0 And LayEggIntervalMultiplier = 1.0 And BabyCuddleGracePeriodMultiplier = 1.0 And BabyCuddleIntervalMultiplier = 1.0 And BabyCuddleLoseImprintQualitySpeedMultiplier = 1.0 And BabyImprintingStatScaleMultiplier = 1.0 Then
+		  If BabyMatureSpeedMultiplier = 1.0 And EggHatchSpeedMultiplier = 1.0 And BabyFoodConsumptionSpeedMultiplier = 1.0 And LayEggIntervalMultiplier = 1.0 And BabyCuddleGracePeriodMultiplier = 1.0 And BabyCuddleIntervalMultiplier = 1.0 And BabyCuddleLoseImprintQualitySpeedMultiplier = 1.0 And BabyImprintingStatScaleMultiplier = 1.0 And MatingIntervalMultiplier = 1.0 And MatingSpeedMultiplier = 1.0 Then
 		    Return Nil
 		  End If
 		  
@@ -94,6 +104,8 @@ Inherits Beacon.ConfigGroup
 		  Multipliers.mBabyMatureSpeedMultiplier = BabyMatureSpeedMultiplier
 		  Multipliers.mEggHatchSpeedMultiplier = EggHatchSpeedMultiplier
 		  Multipliers.mLayEggIntervalMultiplier = LayEggIntervalMultiplier
+		  Multipliers.mMatingIntervalMultiplier = MatingIntervalMultiplier
+		  Multipliers.mMatingSpeedMultiplier = MatingSpeedMultiplier
 		  Return Multipliers
 		End Function
 	#tag EndMethod
@@ -235,6 +247,40 @@ Inherits Beacon.ConfigGroup
 		LayEggIntervalMultiplier As Double
 	#tag EndComputedProperty
 
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mMatingIntervalMultiplier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mMatingIntervalMultiplier <> Value Then
+			    Self.mMatingIntervalMultiplier = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		MatingIntervalMultiplier As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h0
+		#tag Getter
+			Get
+			  Return Self.mMatingSpeedMultiplier
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mMatingSpeedMultiplier <> Value Then
+			    Self.mMatingSpeedMultiplier = Value
+			    Self.Modified = True
+			  End If
+			End Set
+		#tag EndSetter
+		MatingSpeedMultiplier As Double
+	#tag EndComputedProperty
+
 	#tag Property, Flags = &h21
 		Private mBabyCuddleGracePeriodMultiplier As Double
 	#tag EndProperty
@@ -265,6 +311,14 @@ Inherits Beacon.ConfigGroup
 
 	#tag Property, Flags = &h21
 		Private mLayEggIntervalMultiplier As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMatingIntervalMultiplier As Double
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMatingSpeedMultiplier As Double
 	#tag EndProperty
 
 
