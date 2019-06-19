@@ -178,7 +178,7 @@ End
 		  For I As Integer = 0 To Self.Document.ServerProfileCount - 1
 		    Dim Profile As Beacon.ServerProfile = Self.Document.ServerProfile(I)
 		    
-		    Self.ServerList.AddRow(Profile.Name + EndOfLine + Profile.SecondaryName)
+		    Self.ServerList.AddRow(Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName)
 		    Self.ServerList.RowTag(Self.ServerList.LastIndex) = Profile
 		  Next
 		End Sub
@@ -217,7 +217,7 @@ End
 		    Next
 		    
 		    Self.ServerList.RowTag(I) = Profile
-		    Self.ServerList.Cell(I, 0) = Profile.Name + EndOfLine + Profile.SecondaryName
+		    Self.ServerList.Cell(I, 0) = Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
 		    Self.ServerList.Selected(I) = Selected
 		  Next
 		End Sub
@@ -243,7 +243,7 @@ End
 		  
 		  For I As Integer = 0 To Self.ServerList.ListCount - 1
 		    Dim Profile As Beacon.ServerProfile = Self.ServerList.RowTag(I)
-		    Dim Status As String = Profile.Name + EndOfLine + Profile.SecondaryName
+		    Dim Status As String = Profile.Name + EndOfLine + Profile.ProfileID.Left(8) + "  " + Profile.SecondaryName
 		    If Self.ServerList.Cell(I, 0) <> Status Then
 		      Self.ServerList.Cell(I, 0) = Status
 		    End If
@@ -375,6 +375,10 @@ End
 	#tag EndEvent
 	#tag Event
 		Function ConstructContextualMenu(Base As MenuItem, X As Integer, Y As Integer) As Boolean
+		  Dim CopyProfileMenuItem As New MenuItem("Copy Profile ID")
+		  CopyProfileMenuItem.Enabled = False
+		  Base.Append(CopyProfileMenuItem)
+		  
 		  Dim BackupsRoot As Beacon.FolderItem = App.ApplicationSupport.Child("Backups")
 		  
 		  Dim RowIndex As Integer = Me.RowFromXY(X, Y)
@@ -385,6 +389,9 @@ End
 		  
 		  Try
 		    Dim Profile As Beacon.ServerProfile = Me.RowTag(RowIndex)
+		    CopyProfileMenuItem.Tag = Profile.ProfileID.Left(8)
+		    CopyProfileMenuItem.Enabled = True
+		    
 		    Dim Folder As Beacon.FolderItem = BackupsRoot.Child(Beacon.FolderItem.SanitizeFilename(Profile.Name))
 		    Base.Append(New MenuItem("Show Config Backups", Folder))
 		  Catch Err As RuntimeException
@@ -408,6 +415,10 @@ End
 		      Folder.CreateAsFolder
 		    End If
 		    App.ShowFile(Folder)
+		  Case "Copy Profile ID"
+		    Dim ProfileID As Text = HitItem.Tag
+		    Dim Board As New Clipboard
+		    Board.Text = ProfileID
 		  End Select
 		  
 		  Return True

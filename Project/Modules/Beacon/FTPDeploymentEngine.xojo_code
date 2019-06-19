@@ -22,7 +22,7 @@ Implements Beacon.DeploymentEngine
 		  Dim Options() As Beacon.ConfigValue
 		  Self.mGameIniDict = New Xojo.Core.Dictionary
 		  Self.mGameUserSettingsIniDict = New Xojo.Core.Dictionary
-		  Document.CreateConfigObjects(Options, Self.mGameIniDict, Self.mGameUserSettingsIniDict, Self.mProfile.Mask, Identity)
+		  Document.CreateConfigObjects(Options, Self.mGameIniDict, Self.mGameUserSettingsIniDict, Self.mProfile.Mask, Identity, Self.mProfile)
 		  
 		  Dim SessionSettingsValues() As Text = Array("SessionName=" + Self.mProfile.Name)
 		  Dim SessionSettings As New Xojo.Core.Dictionary

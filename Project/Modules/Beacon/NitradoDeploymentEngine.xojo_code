@@ -340,10 +340,10 @@ Implements Beacon.DeploymentEngine
 		      Dim MapParts() As Text = MapText.Split(",")
 		      Self.mMask = Beacon.Maps.MaskForIdentifier(MapParts(MapParts.Ubound))
 		      Dim Options() As Beacon.ConfigValue
-		      Self.mDocument.CreateConfigObjects(Options, Self.mGameIniDict, Self.mGameUserSettingsIniDict, Self.mMask, Self.mIdentity)
+		      Self.mDocument.CreateConfigObjects(Options, Self.mGameIniDict, Self.mGameUserSettingsIniDict, Self.mMask, Self.mIdentity, Self.mProfile)
 		      Self.mCommandLineOptions = Options
 		      
-		      Dim SessionSettingsValues() As Text = Array("SessionName=" + Self.mServerName)
+		      Dim SessionSettingsValues() As Text = Array("SessionName=" + Self.mProfile.Name)
 		      Dim SessionSettings As New Xojo.Core.Dictionary
 		      SessionSettings.Value("SessionName") = SessionSettingsValues
 		      Self.mGameUserSettingsIniDict.Value("SessionSettings") = SessionSettings
@@ -623,9 +623,8 @@ Implements Beacon.DeploymentEngine
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(ServerName As Text, ServiceID As Integer, OAuthData As Xojo.Core.Dictionary)
-		  Self.mServerName = ServerName
-		  Self.mServiceID = ServiceID
+		Sub Constructor(Profile As Beacon.NitradoServerProfile, OAuthData As Xojo.Core.Dictionary)
+		  Self.mProfile = Profile
 		  Self.mAccessToken = OAuthData.Value("Access Token")
 		  Self.mGameIniDict = New Xojo.Core.Dictionary
 		  Self.mGameUserSettingsIniDict = New Xojo.Core.Dictionary
@@ -649,7 +648,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Dim FilePath As Text = Self.mConfigPath + "/Game.ini"
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -668,7 +667,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Dim FilePath As Text = Self.mConfigPath + "/GameUserSettings.ini"
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(FilePath), AddressOf Callback_DownloadGameUserSettingsIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -679,7 +678,7 @@ Implements Beacon.DeploymentEngine
 		  Dim Headers As New Xojo.Core.Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
 		  
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(Self.mLogFilePath), AddressOf Callback_DownloadLogFile, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/download?file=" + Beacon.EncodeURLComponent(Self.mLogFilePath), AddressOf Callback_DownloadLogFile, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -701,7 +700,7 @@ Implements Beacon.DeploymentEngine
 		  FormData.Value("key") = "expertMode"
 		  FormData.Value("value") = "true"
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers/settings", FormData, AddressOf Callback_EnableExpertMode, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/settings", FormData, AddressOf Callback_EnableExpertMode, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -727,13 +726,13 @@ Implements Beacon.DeploymentEngine
 		  Dim FormData As New Xojo.Core.Dictionary
 		  FormData.Value("name") = "Beacon " + Self.mLabel
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers/settings/sets", FormData, AddressOf Callback_MakeConfigBackup, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/settings/sets", FormData, AddressOf Callback_MakeConfigBackup, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Name() As Text
-		  Return Self.mServerName
+		  Return Self.mProfile.Name
 		End Function
 	#tag EndMethod
 
@@ -779,7 +778,7 @@ Implements Beacon.DeploymentEngine
 		  FormData.Value("key") = Self.mCommandLineChanges(0).Key
 		  FormData.Value("value") = Self.mCommandLineChanges(0).Value
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers/settings", FormData, AddressOf Callback_SetNextCommandLineParam, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/settings", FormData, AddressOf Callback_SetNextCommandLineParam, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -798,7 +797,7 @@ Implements Beacon.DeploymentEngine
 		  Dim FormData As New Xojo.Core.Dictionary
 		  FormData.Value("message") = "Server started by Beacon (https://beaconapp.cc)"
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers/restart", FormData, AddressOf Callback_ServerStart, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/restart", FormData, AddressOf Callback_ServerStart, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -825,7 +824,7 @@ Implements Beacon.DeploymentEngine
 		  FormData.Value("message") = "Server is being updated by Beacon (https://beaconapp.cc)"
 		  FormData.Value("stop_message") = "Server is now stopping for a few minutes for changes."
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers/stop", FormData, AddressOf Callback_ServerStop, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/stop", FormData, AddressOf Callback_ServerStop, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -846,7 +845,7 @@ Implements Beacon.DeploymentEngine
 		  Fields.Value("path") = Self.mConfigPath
 		  Fields.Value("file") = "Game.ini"
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers/file_server/upload", Fields, AddressOf Callback_UploadGameIni, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/upload", Fields, AddressOf Callback_UploadGameIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -867,7 +866,7 @@ Implements Beacon.DeploymentEngine
 		  Fields.Value("path") = Self.mConfigPath
 		  Fields.Value("file") = "GameUserSettings.ini"
 		  
-		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers/file_server/upload", Fields, AddressOf Callback_UploadGameUserSettingsIni, Nil, Headers)
+		  SimpleHTTP.Post("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers/file_server/upload", Fields, AddressOf Callback_UploadGameUserSettingsIni, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -898,7 +897,7 @@ Implements Beacon.DeploymentEngine
 		  
 		  Dim Headers As New Xojo.Core.Dictionary
 		  Headers.Value("Authorization") = "Bearer " + Self.mAccessToken
-		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mServiceID.ToText + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
+		  SimpleHTTP.Get("https://api.nitrado.net/services/" + Self.mProfile.ServiceID.ToText + "/gameservers", AddressOf Callback_ServerStatus, Nil, Headers)
 		End Sub
 	#tag EndMethod
 
@@ -989,7 +988,7 @@ Implements Beacon.DeploymentEngine
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mServerName As Text
+		Private mProfile As Beacon.NitradoServerProfile
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -998,10 +997,6 @@ Implements Beacon.DeploymentEngine
 
 	#tag Property, Flags = &h21
 		Private mServerStopTime As Xojo.Core.Date
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mServiceID As Integer
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

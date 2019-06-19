@@ -548,7 +548,7 @@ End
 		  Else
 		    Mask = Self.MapMenu.RowTag(Self.MapMenu.ListIndex)
 		  End If
-		  Self.mDocument.CreateConfigObjects(Options, GameIniOptions, GameUserSettingsIniOptions, Mask, App.IdentityManager.CurrentIdentity)
+		  Self.mDocument.CreateConfigObjects(Options, GameIniOptions, GameUserSettingsIniOptions, Mask, App.IdentityManager.CurrentIdentity, Nil)
 		  
 		  Dim CommandLineHeaders As New Xojo.Core.Dictionary
 		  For Each Value As Beacon.ConfigValue In Options

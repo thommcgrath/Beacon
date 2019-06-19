@@ -346,6 +346,7 @@ Window=BreedingMultipliersConfigEditor;Views/Config Editors/Breeding Multipliers
 Window=BreedingTunerDialog;Views/Config Editors/Breeding Multipliers/BreedingTunerDialog.xojo_window;&h000000005B44C7FF;&h0000000010C39FFF;false
 Class=HarvestRates;Modules/BeaconConfigs/HarvestRates.xojo_code;&h000000006914D7FF;&h0000000068EBAFFF;false
 Window=HarvestRatesConfigEditor;Views/Config Editors/HarvestRatesConfigEditor.xojo_window;&h0000000004CA3FFF;&h00000000434D97FF;false
+Class=CustomContentParser;Classes/CustomContentParser.xojo_code;&h000000000B7F97FF;&h00000000056D5FFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=1

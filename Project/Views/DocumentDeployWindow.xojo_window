@@ -487,7 +487,7 @@ End
 		      Dim DeploymentEngine As Beacon.DeploymentEngine
 		      Select Case Profile
 		      Case IsA Beacon.NitradoServerProfile
-		        DeploymentEngine = New Beacon.NitradoDeploymentEngine(Profile.Name, Beacon.NitradoServerProfile(Profile).ServiceID, Self.mDocument.OAuthData(Profile.OAuthProvider))
+		        DeploymentEngine = New Beacon.NitradoDeploymentEngine(Beacon.NitradoServerProfile(Profile), Self.mDocument.OAuthData(Profile.OAuthProvider))
 		      Case IsA Beacon.FTPServerProfile
 		        DeploymentEngine = New Beacon.FTPDeploymentEngine(Beacon.FTPServerProfile(Profile), App.IdentityManager.CurrentIdentity)
 		      Else
