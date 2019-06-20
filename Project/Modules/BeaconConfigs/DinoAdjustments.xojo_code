@@ -5,20 +5,6 @@ Inherits Beacon.ConfigGroup
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
-		  Dim Dicts() As Xojo.Core.Dictionary
-		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mBehaviors
-		    Dim Behavior As Beacon.CreatureBehavior = Entry.Value
-		    Dicts.Append(Behavior.ToDictionary)
-		  Next
-		  
-		  Dict.Value("Creatures") = Dicts
-		End Sub
-	#tag EndEvent
-
-	#tag Event
-		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
-		  #Pragma Unused Identity
-		  
 		  Self.mBehaviors = New Xojo.Core.Dictionary
 		  
 		  If Not Dict.HasKey("Creatures") Then
@@ -34,6 +20,20 @@ Inherits Beacon.ConfigGroup
 		    
 		    Self.mBehaviors.Value(Behavior.TargetClass) = Behavior
 		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub WriteDictionary(Dict As Xojo.Core.DIctionary, Identity As Beacon.Identity)
+		  #Pragma Unused Identity
+		  
+		  Dim Dicts() As Xojo.Core.Dictionary
+		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mBehaviors
+		    Dim Behavior As Beacon.CreatureBehavior = Entry.Value
+		    Dicts.Append(Behavior.ToDictionary)
+		  Next
+		  
+		  Dict.Value("Creatures") = Dicts
 		End Sub
 	#tag EndEvent
 

@@ -14,10 +14,10 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   False
-   LockLeft        =   False
-   LockRight       =   False
-   LockTop         =   False
+   LockBottom      =   True
+   LockLeft        =   True
+   LockRight       =   True
+   LockTop         =   True
    TabIndex        =   0
    TabPanelIndex   =   0
    TabStop         =   True
@@ -87,10 +87,70 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       Visible         =   True
       Width           =   730
    End
+   Begin BeaconListbox List
+      AutoDeactivate  =   True
+      AutoHideScrollbars=   True
+      Bold            =   False
+      Border          =   False
+      ColumnCount     =   5
+      ColumnsResizable=   False
+      ColumnWidths    =   "*,120,120,120,120"
+      DataField       =   ""
+      DataSource      =   ""
+      DefaultRowHeight=   34
+      Enabled         =   True
+      EnableDrag      =   False
+      EnableDragReorder=   False
+      GridLinesHorizontal=   0
+      GridLinesVertical=   0
+      HasHeading      =   True
+      HeadingIndex    =   -1
+      Height          =   485
+      HelpTag         =   ""
+      Hierarchical    =   False
+      Index           =   -2147483648
+      InitialParent   =   ""
+      InitialValue    =   "Creature	Wild Damage	Wild Vulnerability	Tamed Damage	Tamed Vulnerability"
+      Italic          =   False
+      Left            =   0
+      LockBottom      =   True
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      RequiresSelection=   False
+      RowCount        =   0
+      Scope           =   2
+      ScrollbarHorizontal=   False
+      ScrollBarVertical=   True
+      SelectionType   =   0
+      ShowDropIndicator=   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   40
+      Transparent     =   False
+      Underline       =   False
+      UseFocusRing    =   False
+      Visible         =   True
+      Width           =   730
+      _ScrollOffset   =   0
+      _ScrollWidth    =   -1
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub SetupUI()
+		  Self.UpdateList()
+		End Sub
+	#tag EndEvent
+
+
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.DinoAdjustments
 		  Static ConfigName As Text = BeaconConfigs.DinoAdjustments.ConfigName
@@ -129,8 +189,60 @@ End
 		  // side effect of doing that
 		  If DinoAdjustmentDialog.Present(Self, "", Self.Config(False)) Then
 		    Call Self.Config(True)
+		    Self.UpdateList()
 		    Self.ContentsChanged = True
 		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList()
+		  Dim Classes() As Text
+		  For I As Integer = 0 To Self.List.ListCount - 1
+		    If Self.List.Selected(I) Then
+		      Classes.Append(Self.List.RowTag(I))
+		    End If
+		  Next
+		  Self.UpdateList(Classes)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub UpdateList(SelectClasses() As Text)
+		  Self.List.DeleteAllRows
+		  
+		  Dim Behaviors() As Beacon.CreatureBehavior = Self.Config(False).All
+		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
+		    Dim Creature As Beacon.Creature = Behavior.TargetCreature
+		    Dim Label As String
+		    If Creature <> Nil Then
+		      Label = Creature.Label
+		    Else
+		      Label = Behavior.TargetClass
+		    End If
+		    
+		    If Behavior.ProhibitSpawning Then
+		      Label = Label + EndOfLine + "Disabled"
+		      Self.List.AddRow(Label)
+		    ElseIf Behavior.ReplacementClass <> "" Then
+		      Creature = Behavior.ReplacementCreature
+		      If Creature <> Nil Then
+		        Label = Label + EndOfLine + "Replaced with " + Creature.Label
+		      Else
+		        Label = Label + EndOfLIne + "Replaced with " + Behavior.ReplacementClass
+		      End If
+		      Self.List.AddRow(Label)
+		    Else
+		      Self.List.AddRow(Label, Format(Behavior.DamageMultiplier, "0.0#####"), Format(Behavior.ResistanceMultiplier, "0.0#####"), Format(Behavior.TamedDamageMultiplier, "0.0#####"), Format(Behavior.TamedResistanceMultiplier, "0.0#####"))
+		    End If
+		    
+		    If SelectClasses.IndexOf(Behavior.TargetClass) > -1 Then
+		      Self.List.Selected(Self.List.LastIndex) = True
+		    End If
+		  Next
+		  
+		  Self.List.Sort()
+		  Self.List.EnsureSelectionIsVisible
 		End Sub
 	#tag EndMethod
 
@@ -138,6 +250,22 @@ End
 	#tag Property, Flags = &h21
 		Private mConfigRef As WeakRef
 	#tag EndProperty
+
+
+	#tag Constant, Name = ColumnName, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnTamedDamage, Type = Double, Dynamic = False, Default = \"3", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnTamedResistance, Type = Double, Dynamic = False, Default = \"4", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnWildDamage, Type = Double, Dynamic = False, Default = \"1", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = ColumnWildResistance, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
 
 
 #tag EndWindowCode
@@ -165,6 +293,16 @@ End
 		    'Case "Duplicate"
 		    'Self.ShowDuplicateOverride()
 		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events List
+	#tag Event
+		Sub Open()
+		  Me.ColumnAlignment(Self.ColumnWildDamage) = Listbox.AlignCenter
+		  Me.ColumnAlignment(Self.ColumnWildResistance) = Listbox.AlignCenter
+		  Me.ColumnAlignment(Self.ColumnTamedDamage) = Listbox.AlignCenter
+		  Me.ColumnAlignment(Self.ColumnTamedResistance) = Listbox.AlignCenter
 		End Sub
 	#tag EndEvent
 #tag EndEvents

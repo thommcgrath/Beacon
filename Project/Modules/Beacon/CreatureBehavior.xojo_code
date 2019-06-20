@@ -94,16 +94,16 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Function ReplacementCreature() As Beacon.Creature
-		  If Self.mReplacementClass = "" Then
-		    Return Nil
-		  End If
-		  
 		  Dim Creatures() As Beacon.Creature = Beacon.Data.SearchForCreatures(Self.mReplacementClass, New Beacon.TextList)
-		  If Creatures = Nil Or Creatures.Ubound <> 0 Then
+		  If Creatures = Nil Then
 		    Return Nil
 		  End If
-		  
-		  Return Creatures(0)
+		  For Each Creature As Beacon.Creature In Creatures
+		    If Creature.ClassString = Self.mReplacementClass Then
+		      Return Creature
+		    End If
+		  Next
+		  Return Nil
 		End Function
 	#tag EndMethod
 
@@ -128,6 +128,21 @@ Protected Class CreatureBehavior
 	#tag Method, Flags = &h0
 		Function TargetClass() As Text
 		  Return Self.mTargetClass
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function TargetCreature() As Beacon.Creature
+		  Dim Creatures() As Beacon.Creature = Beacon.Data.SearchForCreatures(Self.mTargetClass, New Beacon.TextList)
+		  If Creatures = Nil Then
+		    Return Nil
+		  End If
+		  For Each Creature As Beacon.Creature In Creatures
+		    If Creature.ClassString = Self.mTargetClass Then
+		      Return Creature
+		    End If
+		  Next
+		  Return Nil
 		End Function
 	#tag EndMethod
 
@@ -223,11 +238,6 @@ Protected Class CreatureBehavior
 			Visible=true
 			Group="Position"
 			InitialValue="0"
-			Type="Integer"
-		#tag EndViewProperty
-		#tag ViewProperty
-			Name="mTargetClass"
-			Group="Behavior"
 			Type="Integer"
 		#tag EndViewProperty
 	#tag EndViewBehavior

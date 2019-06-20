@@ -1006,8 +1006,8 @@ End
 		  
 		  If EditClass <> "" And TargetClass <> EditClass Then
 		    Config.RemoveBehavior(EditClass)
-		    Config.Behavior(TargetClass) = Behavior
 		  End If
+		  Config.Behavior(TargetClass) = Behavior
 		  
 		  Return True
 		End Function
@@ -1109,6 +1109,40 @@ End
 		  End Select
 		  Dim Delta As Integer = Me.Height - OriginalHeight
 		  Self.Height = Self.Height + Delta
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ActionButton
+	#tag Event
+		Sub Action()
+		  If Self.TargetDinoMenu.ListIndex = -1 Then
+		    Self.ShowAlert("You haven't selected a creature", "That's an important step, right?")
+		    Return
+		  End If
+		  
+		  If Self.ModeReplaceRadio.Value Then
+		    If Self.ReplacementDinoMenu.ListIndex = -1 Then
+		      Self.ShowAlert("You haven't selected a replacement creature", "If you wan to replace the creature with nothing, choose the ""Disable Creature"" button.")
+		      Return
+		    End If
+		  ElseIf Self.ModeMultipliersRadio.Value Then
+		    Dim DamageMultiplier As Double = CDbl(Self.WildDamageField.Text)
+		    Dim ResistanceMultiplier As Double = CDbl(Self.WildResistanceField.Text)
+		    Dim TamedDamageMultiplier As Double = CDbl(Self.TameDamageField.Text)
+		    Dim TamedResistanceMultiplier As Double = CDbl(Self.TameResistanceField.Text)
+		    
+		    If DamageMultiplier < 0 Or ResistanceMultiplier < 0 Or TamedDamageMultiplier < 0 Or TamedResistanceMultiplier < 0 Then
+		      Self.ShowAlert("You have a multiplier that doesn't make sense", "It's ok to make the multipliers really small, but they must be at least zero.")
+		      Return
+		    End If
+		    If DamageMultiplier = 1.0 And ResistanceMultiplier = 1.0 And TamedDamageMultiplier = 1.0 And TamedResistanceMultiplier = 1.0 Then
+		      Self.ShowAlert("You haven't changed any multipliers", "There's no reason to save a creature adjustment with no differences than official.")
+		      Return
+		    End If
+		  End If
+		  
+		  Self.Cancelled = False
+		  Self.Hide
 		End Sub
 	#tag EndEvent
 #tag EndEvents
