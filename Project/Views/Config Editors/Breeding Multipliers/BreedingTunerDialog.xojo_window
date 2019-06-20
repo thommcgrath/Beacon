@@ -477,10 +477,20 @@ End
 		    End If
 		  Next
 		  
+		  Const IterationLimit = 10000
+		  
 		  Dim OfficialCuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
 		  Dim ImprintMultiplier As Double = 1.0
 		  Dim Found As Boolean
 		  
+		  // First, establish a baseline
+		  For Each Creature As Beacon.Creature In Creatures
+		    Dim MaturePeriod As Xojo.Core.DateInterval = Creature.MatureTime
+		    Dim MatureSeconds As UInt64 = Beacon.IntervalToSeconds(MaturePeriod) / Self.mMatureSpeedMultiplier
+		    ImprintMultiplier = Min(ImprintMultiplier, (MatureSeconds * Threshold) / OfficialCuddlePeriod)
+		  Next
+		  
+		  // Now tune it using guesswork
 		  Dim Iterations As Integer
 		  Do
 		    Dim CuddlePeriod As Integer = OfficialCuddlePeriod * ImprintMultiplier
@@ -494,15 +504,15 @@ End
 		      End If
 		      Dim MaxImprint As Double = MaxCuddles * PerCuddle
 		      If MaxImprint < Threshold Then
-		        ImprintMultiplier = ImprintMultiplier * 0.9
+		        ImprintMultiplier = ImprintMultiplier - (1 / IterationLimit)
 		        Iterations = Iterations + 1
 		        Continue Do
 		      End If
 		    Next
 		    Found = True
-		  Loop Until Found Or Iterations > 100
+		  Loop Until Found Or Iterations > IterationLimit
 		  
-		  If Iterations > 100 Then
+		  If Iterations > IterationLimit Then
 		    Self.ShowAlert("Unable to find the desired imprint period multiplier", "Sorry, Beacon can't find the value you're hoping for. Try reducing the mature speed multiplier and try again.")
 		    Return
 		  End If
