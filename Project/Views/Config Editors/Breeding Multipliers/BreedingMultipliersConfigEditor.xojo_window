@@ -1392,16 +1392,16 @@ End
 	#tag Event
 		Sub SetupUI()
 		  Dim Config As BeaconConfigs.BreedingMultipliers = Self.Config(False)
-		  Self.EggLayPeriodField.Text = Config.LayEggIntervalMultiplier.PrettyText
-		  Self.FoodConsumptionField.Text = Config.BabyFoodConsumptionSpeedMultiplier.PrettyText
-		  Self.ImprintGracePeriodField.Text = Config.BabyCuddleGracePeriodMultiplier.PrettyText
-		  Self.ImprintLossSpeedField.Text = Config.BabyCuddleLoseImprintQualitySpeedMultiplier.PrettyText
-		  Self.ImprintPeriodField.Text = Config.BabyCuddleIntervalMultiplier.PrettyText
-		  Self.ImprintStatScaleField.Text = Config.BabyImprintingStatScaleMultiplier.PrettyText
-		  Self.IncubationSpeedField.Text = Config.EggHatchSpeedMultiplier.PrettyText
-		  Self.MatureSpeedField.Text = Config.BabyMatureSpeedMultiplier.PrettyText
-		  Self.MatingSpeedField.Text = Config.MatingSpeedMultiplier.PrettyText
-		  Self.MatingIntervalField.Text = Config.MatingIntervalMultiplier.PrettyText
+		  Self.EggLayPeriodField.Text = Format(Config.LayEggIntervalMultiplier, "0.0#####")
+		  Self.FoodConsumptionField.Text = Format(Config.BabyFoodConsumptionSpeedMultiplier, "0.0#####")
+		  Self.ImprintGracePeriodField.Text = Format(Config.BabyCuddleGracePeriodMultiplier, "0.0#####")
+		  Self.ImprintLossSpeedField.Text = Format(Config.BabyCuddleLoseImprintQualitySpeedMultiplier, "0.0#####")
+		  Self.ImprintPeriodField.Text = Format(Config.BabyCuddleIntervalMultiplier, "0.0#####")
+		  Self.ImprintStatScaleField.Text = Format(Config.BabyImprintingStatScaleMultiplier, "0.0#####")
+		  Self.IncubationSpeedField.Text = Format(Config.EggHatchSpeedMultiplier, "0.0#####")
+		  Self.MatureSpeedField.Text = Format(Config.BabyMatureSpeedMultiplier, "0.0#####")
+		  Self.MatingSpeedField.Text = Format(Config.MatingSpeedMultiplier, "0.0#####")
+		  Self.MatingIntervalField.Text = Format(Config.MatingIntervalMultiplier, "0.0#####")
 		  Self.UpdateStats()
 		End Sub
 	#tag EndEvent

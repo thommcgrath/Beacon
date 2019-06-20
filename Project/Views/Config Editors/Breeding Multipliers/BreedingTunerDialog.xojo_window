@@ -22,7 +22,7 @@ Begin BeaconDialog BreedingTunerDialog
    MinimizeButton  =   True
    MinWidth        =   64
    Placement       =   1
-   Resizeable      =   True
+   Resizeable      =   False
    Title           =   "Breeding Tuner Threshold"
    Visible         =   True
    Width           =   600
