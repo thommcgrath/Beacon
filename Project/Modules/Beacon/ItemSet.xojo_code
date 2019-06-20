@@ -106,13 +106,15 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  
 		  Dim ActiveModifiers() As Text = Preset.ActiveModifierIDs
 		  Dim QuantityMultipliers() As Double
-		  Dim QualityModifiers() As Integer
+		  Dim MinQualityModifiers() As Integer
+		  Dim MaxQualityModifiers() As Integer
 		  Dim BlueprintMultipliers() As Double
 		  For Each ModifierID As Text In ActiveModifiers
 		    Dim Modifier As Beacon.PresetModifier = Beacon.Data.GetPresetModifier(ModifierID)
 		    If Modifier <> Nil And Modifier.Matches(ForLootSource) Then
 		      QuantityMultipliers.Append(Preset.QuantityMultiplier(ModifierID))
-		      QualityModifiers.Append(Preset.QualityModifier(ModifierID))
+		      MinQualityModifiers.Append(Preset.MinQualityModifier(ModifierID))
+		      MaxQualityModifiers.Append(Preset.MaxQualityModifier(ModifierID))
 		      BlueprintMultipliers.Append(Preset.BlueprintMultiplier(ModifierID))
 		    End If
 		  Next
@@ -135,8 +137,10 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		        End If
 		      Next
 		      
-		      For Each Modifier As Integer In QualityModifiers
+		      For Each Modifier As Integer In MinQualityModifiers
 		        MinQualityIndex = MinQualityIndex + Modifier
+		      Next
+		      For Each Modifier As Integer In MaxQualityModifiers
 		        MaxQualityIndex = MaxQualityIndex + Modifier
 		      Next
 		      MinQualityIndex = Max(Min(MinQualityIndex, Qualities.Ubound), 0)

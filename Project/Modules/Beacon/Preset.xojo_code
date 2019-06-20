@@ -55,8 +55,8 @@ Implements Beacon.Countable
 		    Self.mModifierValues.Value(Entry.Key) = Beacon.Clone(Dict)
 		  Next
 		  
-		  Redim Self.mContents(UBound(Source.mContents))
-		  For I As Integer = 0 To UBound(Self.mContents)
+		  Redim Self.mContents(Source.mContents.Ubound)
+		  For I As Integer = 0 To Self.mContents.Ubound
 		    Self.mContents(I) = New Beacon.PresetEntry(Source.mContents(I))
 		  Next
 		End Sub
@@ -64,7 +64,7 @@ Implements Beacon.Countable
 
 	#tag Method, Flags = &h0
 		Function Count() As Integer
-		  Return UBound(Self.mContents) + 1
+		  Return Self.mContents.Ubound + 1
 		End Function
 	#tag EndMethod
 
@@ -141,11 +141,12 @@ Implements Beacon.Countable
 		    For Each Set As Xojo.Core.DictionaryEntry In Modifiers
 		      Dim Item As Xojo.Core.Dictionary = Set.Value
 		      Dim ModifierID As Text = Set.Key
-		      Dim Quality As Integer = Item.Lookup("Quality", 0)
+		      Dim MinQuality As Integer = If(Item.HasKey("MinQuality"), Item.Value("MinQuality"), Item.Lookup("Quality", 0))
+		      Dim MaxQuality As Integer = If(Item.HasKey("MaxQuality"), Item.Value("MaxQuality"), Item.Lookup("Quality", 0))
 		      Dim Quantity As Double = Item.Lookup("Quantity", 1.0)
 		      Dim Blueprint As Double = Item.Lookup("Blueprint", 1.0)
 		      
-		      If Quality = 0 And Quantity = 1 And Blueprint = 1 Then
+		      If MinQuality = 0 And MaxQuality = 0 And Quantity = 1 And Blueprint = 1 Then
 		        Continue
 		      End If
 		      
@@ -156,7 +157,8 @@ Implements Beacon.Countable
 		      
 		      For Each ID As Text In IDs
 		        Dim ModifierDict As New Xojo.Core.Dictionary
-		        ModifierDict.Value("Quality") = Quality
+		        ModifierDict.Value("MinQuality") = MinQuality
+		        ModifierDict.Value("MaxQuality") = MaxQuality
 		        ModifierDict.Value("Quantity") = Quantity
 		        ModifierDict.Value("Blueprint") = Blueprint
 		        Preset.mModifierValues.Value(ID) = ModifierDict
@@ -262,8 +264,50 @@ Implements Beacon.Countable
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MaxQualityModifier(Modifier As Beacon.PresetModifier) As Integer
+		  Return Self.MaxQualityModifier(Modifier.ModifierID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MaxQualityModifier(ModifierID As Text) As Integer
+		  If Self.mModifierValues = Nil Then
+		    Return 0
+		  End If
+		  
+		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  If Dict.HasKey("MaxQuality") Then
+		    Return Dict.Value("MaxQuality")
+		  Else
+		    Return Dict.Lookup("Quality", 0)
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function MinItems() As Integer
 		  Return Max(Self.mMinItems, 1)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinQualityModifier(Modifier As Beacon.PresetModifier) As Integer
+		  Return Self.MinQualityModifier(Modifier.ModifierID)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function MinQualityModifier(ModifierID As Text) As Integer
+		  If Self.mModifierValues = Nil Then
+		    Return 0
+		  End If
+		  
+		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  If Dict.HasKey("MinQuality") Then
+		    Return Dict.Value("MinQuality")
+		  Else
+		    Return Dict.Lookup("Quality", 0)
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -279,23 +323,6 @@ Implements Beacon.Countable
 		    Self.mPresetID = Beacon.CreateUUID
 		  End If
 		  Return Self.mPresetID
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function QualityModifier(Modifier As Beacon.PresetModifier) As Integer
-		  Return Self.QualityModifier(Modifier.ModifierID)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function QualityModifier(ModifierID As Text) As Integer
-		  If Self.mModifierValues = Nil Then
-		    Return 0
-		  End If
-		  
-		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
-		  Return Dict.Lookup("Quality", 0)
 		End Function
 	#tag EndMethod
 

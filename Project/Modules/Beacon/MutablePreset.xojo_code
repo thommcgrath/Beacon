@@ -76,8 +76,44 @@ Inherits Beacon.Preset
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub MaxQualityModifier(Modifier As Beacon.PresetModifier, Assigns Value As Integer)
+		  Self.MaxQualityModifier(Modifier.ModifierID) = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MaxQualityModifier(ModifierID As Text, Assigns Value As Integer)
+		  If Self.mModifierValues = Nil Then
+		    Self.mModifierValues = New Xojo.Core.Dictionary
+		  End If
+		  
+		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  Dict.Value("MaxQuality") = Value
+		  Self.mModifierValues.Value(ModifierID) = Dict
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub MinItems(Assigns Value As Integer)
 		  Self.mMinItems = Max(Value, 1)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MinQualityModifier(Modifier As Beacon.PresetModifier, Assigns Value As Integer)
+		  Self.MinQualityModifier(Modifier.ModifierID) = Value
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub MinQualityModifier(ModifierID As Text, Assigns Value As Integer)
+		  If Self.mModifierValues = Nil Then
+		    Self.mModifierValues = New Xojo.Core.Dictionary
+		  End If
+		  
+		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
+		  Dict.Value("MinQuality") = Value
+		  Self.mModifierValues.Value(ModifierID) = Dict
 		End Sub
 	#tag EndMethod
 
@@ -96,24 +132,6 @@ Inherits Beacon.Preset
 	#tag Method, Flags = &h0
 		Sub Operator_Subscript(Index As Integer, Assigns Item As Beacon.PresetEntry)
 		  Self.mContents(Index) = Item
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub QualityModifier(Modifier As Beacon.PresetModifier, Assigns Value As Integer)
-		  Self.QualityModifier(Modifier.ModifierID) = Value
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub QualityModifier(ModifierID As Text, Assigns Value As Integer)
-		  If Self.mModifierValues = Nil Then
-		    Self.mModifierValues = New Xojo.Core.Dictionary
-		  End If
-		  
-		  Dim Dict As Xojo.Core.Dictionary = Self.mModifierValues.Lookup(ModifierID, New Xojo.Core.Dictionary)
-		  Dict.Value("Quality") = Value
-		  Self.mModifierValues.Value(ModifierID) = Dict
 		End Sub
 	#tag EndMethod
 

@@ -9,7 +9,7 @@ Begin BeaconDialog PresetModifierEditor
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   434
+   Height          =   466
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -46,19 +46,19 @@ Begin BeaconDialog PresetModifierEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   122
+      Top             =   156
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   368
    End
-   Begin RangeField QualityField
+   Begin RangeField MinQualityField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
@@ -102,7 +102,7 @@ Begin BeaconDialog PresetModifierEditor
       Visible         =   True
       Width           =   80
    End
-   Begin UITweaks.ResizedLabel QualityLabel
+   Begin UITweaks.ResizedLabel MinQualityLabel
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
@@ -125,7 +125,7 @@ Begin BeaconDialog PresetModifierEditor
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Quality Tiers:"
+      Text            =   "Min Quality Tiers:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -165,7 +165,7 @@ Begin BeaconDialog PresetModifierEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.00"
@@ -173,7 +173,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   88
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -200,7 +200,7 @@ Begin BeaconDialog PresetModifierEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Quantity Multiplier:"
@@ -209,7 +209,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   54
+      Top             =   88
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -235,7 +235,7 @@ Begin BeaconDialog PresetModifierEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Group:"
@@ -244,7 +244,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   122
+      Top             =   156
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -278,7 +278,7 @@ Begin BeaconDialog PresetModifierEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -286,7 +286,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   154
+      Top             =   188
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -321,7 +321,7 @@ Begin BeaconDialog PresetModifierEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -329,7 +329,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   188
+      Top             =   222
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -356,7 +356,7 @@ Begin BeaconDialog PresetModifierEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Name:"
@@ -365,7 +365,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   154
+      Top             =   188
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -391,7 +391,7 @@ Begin BeaconDialog PresetModifierEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   8
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "RegEx Pattern:"
@@ -400,7 +400,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   188
+      Top             =   222
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -424,7 +424,7 @@ Begin BeaconDialog PresetModifierEditor
       GridLinesVertical=   0
       HasHeading      =   False
       HeadingIndex    =   -1
-      Height          =   160
+      Height          =   158
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -445,13 +445,13 @@ Begin BeaconDialog PresetModifierEditor
       SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
-      TabIndex        =   11
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   222
+      Top             =   256
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -480,7 +480,7 @@ Begin BeaconDialog PresetModifierEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   10
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Matching Sources:"
@@ -489,7 +489,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   222
+      Top             =   256
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -515,13 +515,13 @@ Begin BeaconDialog PresetModifierEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   13
+      TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   394
+      Top             =   426
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -547,13 +547,13 @@ Begin BeaconDialog PresetModifierEditor
       LockRight       =   True
       LockTop         =   False
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   394
+      Top             =   426
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -579,7 +579,7 @@ Begin BeaconDialog PresetModifierEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   14
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Blueprint Chance Multiplier:"
@@ -588,7 +588,7 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   122
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -622,7 +622,7 @@ Begin BeaconDialog PresetModifierEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   15
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.00"
@@ -630,10 +630,89 @@ Begin BeaconDialog PresetModifierEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   122
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
+      Visible         =   True
+      Width           =   80
+   End
+   Begin UITweaks.ResizedLabel MaxQualityLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Max Quality Tiers:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   54
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   180
+   End
+   Begin RangeField MaxQualityField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   212
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   False
+      Scope           =   2
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "0"
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   54
+      Transparent     =   False
+      Underline       =   False
+      UseFocusRing    =   True
+      Value           =   0.0
       Visible         =   True
       Width           =   80
    End
@@ -645,7 +724,8 @@ End
 		Sub Open()
 		  Self.SwapButtons()
 		  
-		  Self.QualityField.Value = Self.mPreset.QualityModifier(Self.mEditID)
+		  Self.MinQualityField.Value = Self.mPreset.MinQualityModifier(Self.mEditID)
+		  Self.MaxQualityField.Value = Self.mPreset.MaxQualityModifier(Self.mEditID)
 		  Self.QuantityField.Text = Format(Self.mPreset.QuantityMultiplier(Self.mEditID), "0.00")
 		  Self.BlueprintField.Text = Format(Self.mPreset.BlueprintMultiplier(Self.mEditID), "0.00")
 		End Sub
@@ -745,7 +825,7 @@ End
 	#tag EndProperty
 
 
-	#tag Constant, Name = HeightDelta, Type = Double, Dynamic = False, Default = \"240", Scope = Private
+	#tag Constant, Name = HeightDelta, Type = Double, Dynamic = False, Default = \"238", Scope = Private
 	#tag EndConstant
 
 
@@ -793,7 +873,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events QualityField
+#tag Events MinQualityField
 	#tag Event
 		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
 		  MinValue = -10
@@ -817,12 +897,14 @@ End
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Self.QualityField.CheckValue
-		  Dim QualityModifier As Integer = Self.QualityField.Value
+		  Self.MinQualityField.CheckValue
+		  Self.MaxQualityField.CheckValue
+		  Dim MinQualityModifier As Integer = Self.MinQualityField.Value
+		  Dim MaxQualityModifier As Integer = Self.MaxQualityField.Value
 		  Dim QuantityMultiplier As Double = CDbl(Self.QuantityField.Text)
 		  Dim BlueprintMultiplier As Double = CDbl(Self.BlueprintField.Text)
 		  
-		  If QualityModifier = 0 And QuantityMultiplier = 1 And BlueprintMultiplier = 1 Then
+		  If MinQualityModifier = 0 And MaxQualityModifier = 0 And QuantityMultiplier = 1 And BlueprintMultiplier = 1 Then
 		    BeaconUI.ShowAlert("This modifier has no effect", "There's no reason to add this modifier, because it does not change the quality or quantity of items.")
 		    Return
 		  End If
@@ -847,7 +929,8 @@ End
 		  End If
 		  
 		  Self.mPreset.ClearModifier(Self.mEditID)
-		  Self.mPreset.QualityModifier(Modifier) = QualityModifier
+		  Self.mPreset.MinQualityModifier(Modifier) = MinQualityModifier
+		  Self.mPreset.MaxQualityModifier(Modifier) = MaxQualityModifier
 		  Self.mPreset.QuantityMultiplier(Modifier) = QuantityMultiplier
 		  Self.mPreset.BlueprintMultiplier(Modifier) = BlueprintMultiplier
 		  
@@ -861,6 +944,14 @@ End
 		Sub Action()
 		  Self.mCancelled = True
 		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MaxQualityField
+	#tag Event
+		Sub GetRange(ByRef MinValue As Double, ByRef MaxValue As Double)
+		  MinValue = -10
+		  MaxValue = 10
 		End Sub
 	#tag EndEvent
 #tag EndEvents

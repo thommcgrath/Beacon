@@ -137,10 +137,9 @@ Begin BeaconSubview PresetEditorView
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   61
       Transparent     =   False
-      Value           =   1
+      Value           =   2
       Visible         =   True
       Width           =   740
       BeginSegmented SegmentedControl MapSelector
@@ -160,7 +159,6 @@ Begin BeaconSubview PresetEditorView
          SelectionType   =   1
          TabIndex        =   0
          TabPanelIndex   =   2
-         TabStop         =   True
          Top             =   81
          Transparent     =   False
          Visible         =   True
@@ -622,9 +620,9 @@ Begin BeaconSubview PresetEditorView
          AutoHideScrollbars=   True
          Bold            =   False
          Border          =   True
-         ColumnCount     =   4
+         ColumnCount     =   5
          ColumnsResizable=   False
-         ColumnWidths    =   "40%,20%,20%,20%"
+         ColumnWidths    =   "40%,15%,15%,15%,15%"
          DataField       =   ""
          DataSource      =   ""
          DefaultRowHeight=   -1
@@ -640,7 +638,7 @@ Begin BeaconSubview PresetEditorView
          Hierarchical    =   False
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   "Group	Quality Change	Quantity Multiplier	Blueprint % Multiplier"
+         InitialValue    =   "Group	Min Quality Change	Max Quality Change	Quantity Multiplier	Blueprint % Multiplier"
          Italic          =   False
          Left            =   20
          LockBottom      =   True
@@ -1147,19 +1145,25 @@ End
 		    End If
 		    
 		    Dim QuantityMultiplier As Double = Self.mPreset.QuantityMultiplier(Modifier)
-		    Dim QualityModifier As Integer = Self.mPreset.QualityModifier(Modifier)
+		    Dim MinQualityModifier As Integer = Self.mPreset.MinQualityModifier(Modifier)
+		    Dim MaxQualityModifier As Integer = Self.mPreset.MaxQualityModifier(Modifier)
 		    Dim BlueprintMultiplier As Double = Self.mPreset.BlueprintMultiplier(Modifier)
 		    
 		    Dim QuantityLabel As Text = "x " + QuantityMultiplier.ToText(Xojo.Core.Locale.Current)
 		    Dim BlueprintLabel As Text = "x " + BlueprintMultiplier.ToText(Xojo.Core.Locale.Current)
-		    Dim QualityLabel As Text
-		    If QualityModifier = 0 Then
-		      QualityLabel = "No Change"
+		    Dim MinQualityLabel, MaxQualityLabel As Text
+		    If MinQualityModifier = 0 Then
+		      MinQualityLabel = "No Change"
 		    Else
-		      QualityLabel = QualityModifier.ToText(Xojo.Core.Locale.Current, "+0;-0") + " Tier" + If(Xojo.Math.Abs(QualityModifier) <> 1, "s", "")
+		      MinQualityLabel = MinQualityModifier.ToText(Xojo.Core.Locale.Current, "+0;-0") + " Tier" + If(Xojo.Math.Abs(MinQualityModifier) <> 1, "s", "")
+		    End If
+		    If MaxQualityModifier = 0 Then
+		      MaxQualityLabel = "No Change"
+		    Else
+		      MaxQualityLabel = MaxQualityModifier.ToText(Xojo.Core.Locale.Current, "+0;-0") + " Tier" + If(Xojo.Math.Abs(MaxQualityModifier) <> 1, "s", "")
 		    End If
 		    
-		    Self.ModifiersList.AddRow(Modifier.Label, QualityLabel, QuantityLabel, BlueprintLabel)
+		    Self.ModifiersList.AddRow(Modifier.Label, MinQualityLabel, MaxQualityLabel, QuantityLabel, BlueprintLabel)
 		    Self.ModifiersList.RowTag(Self.ModifiersList.LastIndex) = Modifier.ModifierID
 		  Next
 		  
@@ -1654,7 +1658,8 @@ End
 		    Dim ModifierID As Text = Me.RowTag(I)
 		    Dim Dict As New Xojo.Core.Dictionary
 		    Dict.Value("Quantity") = Self.mPreset.QuantityMultiplier(ModifierID)
-		    Dict.Value("Quality") = Self.mPreset.QualityModifier(ModifierID)
+		    Dict.Value("MinQuality") = Self.mPreset.MinQualityModifier(ModifierID)
+		    Dict.Value("MaxQuality") = Self.mPreset.MaxQualityModifier(ModifierID)
 		    Dict.Value("Blueprint") = Self.mPreset.BlueprintMultiplier(ModifierID)
 		    Modifiers.Value(ModifierID) = Dict
 		  Next
@@ -1679,8 +1684,12 @@ End
 		      If Dict.HasKey("Quantity") Then
 		        Self.mPreset.QuantityMultiplier(ModifierID) = Dict.Value("Quantity")
 		      End If
-		      If Dict.HasKey("Quality") Then
-		        Self.mPreset.QualityModifier(ModifierID) = Dict.Value("Quality")
+		      If Dict.HasKey("MinQuality") And Dict.HasKey("MaxQuality") Then
+		        Self.mPreset.MinQualityModifier(ModifierID) = Dict.Value("MinQuality")
+		        Self.mPreset.MaxQualityModifier(ModifierID) = Dict.Value("MaxQuality")
+		      ElseIf Dict.HasKey("Quality") Then
+		        Self.mPreset.MinQualityModifier(ModifierID) = Dict.Value("Quality")
+		        Self.mPreset.MaxQualityModifier(ModifierID) = Dict.Value("Quality")
 		      End If
 		      If Dict.HasKey("Blueprint") Then
 		        Self.mPreset.BlueprintMultiplier(ModifierID) = Dict.Value("Blueprint")

@@ -210,7 +210,8 @@ End
 		  Clone.MinItems = Source.MinItems
 		  Dim Modifiers() As Text = Clone.ActiveModifierIDs
 		  For Each ModifierID As Text In Modifiers
-		    Clone.QualityModifier(ModifierID) = Source.QualityModifier(ModifierID)
+		    Clone.MinQualityModifier(ModifierID) = Source.MinQualityModifier(ModifierID)
+		    Clone.MaxQualityModifier(ModifierID) = Source.MaxQualityModifier(ModifierID)
 		    Clone.QuantityMultiplier(ModifierID) = Source.QuantityMultiplier(ModifierID)
 		  Next
 		  For Each Entry As Beacon.PresetEntry In Source
