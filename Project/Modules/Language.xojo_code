@@ -29,6 +29,8 @@ Protected Module Language
 		    Return "Breeding Multipliers"
 		  Case BeaconConfigs.HarvestRates.ConfigName
 		    Return "Harvest Rates"
+		  Case BeaconConfigs.DinoAdjustments.ConfigName
+		    Return "Creature Adjustments"
 		  End Select
 		End Function
 	#tag EndMethod

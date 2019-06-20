@@ -126,6 +126,12 @@ Protected Class CreatureBehavior
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function TargetClass() As Text
+		  Return Self.mTargetClass
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ToDictionary() As Xojo.Core.Dictionary
 		  Dim Dict As New Xojo.Core.Dictionary
 		  Dict.Value("Class") = Self.mTargetClass
