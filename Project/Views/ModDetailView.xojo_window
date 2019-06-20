@@ -900,6 +900,7 @@ End
 		  Me.ColumnType(6) = Listbox.TypeCheckbox
 		  Me.ColumnType(7) = Listbox.TypeCheckbox
 		  Me.ColumnType(8) = Listbox.TypeCheckbox
+		  Me.ColumnType(9) = Listbox.TypeCheckbox
 		  
 		  Me.ColumnAlignment(2) = Listbox.AlignCenter
 		  Me.ColumnAlignment(3) = Listbox.AlignCenter
@@ -908,6 +909,7 @@ End
 		  Me.ColumnAlignment(6) = Listbox.AlignCenter
 		  Me.ColumnAlignment(7) = Listbox.AlignCenter
 		  Me.ColumnAlignment(8) = Listbox.AlignCenter
+		  Me.ColumnAlignment(9) = Listbox.AlignCenter
 		End Sub
 	#tag EndEvent
 	#tag Event
