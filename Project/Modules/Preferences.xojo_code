@@ -107,6 +107,44 @@ Protected Module Preferences
 		#tag Getter
 			Get
 			  Init
+			  Return mManager.TextValue("Breeding Tuner Creatures", "*")
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If BreedingTunerCreatures = Value Then
+			    Return
+			  End If
+			  
+			  mManager.TextValue("Breeding Tuner Creatures") = Value
+			End Set
+		#tag EndSetter
+		Protected BreedingTunerCreatures As Text
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
+			  Return mManager.DoubleValue("Breeding Tuner Threshold", 0.95)
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If BreedingTunerThreshold = Value Then
+			    Return
+			  End If
+			  
+			  mManager.DoubleValue("Breeding Tuner Threshold") = Value
+			End Set
+		#tag EndSetter
+		Protected BreedingTunerThreshold As Double
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h1
+		#tag Getter
+			Get
+			  Init
 			  Return mManager.IntegerValue("Crafting Costs Splitter Position", 250)
 			End Get
 		#tag EndGetter

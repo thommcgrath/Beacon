@@ -1407,47 +1407,6 @@ End
 	#tag EndEvent
 
 
-	#tag Method, Flags = &h21
-		Private Sub AutoTuneImprintInterval(Threshold As Double)
-		  Dim MatureMultiplier As Double = Self.Config(False).BabyMatureSpeedMultiplier
-		  Dim OfficialCuddlePeriod As Integer = LocalData.SharedInstance.GetIntegerVariable("Cuddle Period")
-		  Dim ImprintMultiplier As Double = 1.0
-		  Dim Found As Boolean
-		  Dim Creatures() As Beacon.Creature = LocalData.SharedInstance.SearchForCreatures("", New Beacon.TextList)
-		  Dim Iterations As Integer
-		  Do
-		    Dim CuddlePeriod As Integer = OfficialCuddlePeriod * ImprintMultiplier
-		    For Each Creature As Beacon.Creature In Creatures
-		      If Creature.IncubationTime = Nil Or Creature.MatureTime = Nil Then
-		        Continue
-		      End If
-		      
-		      Dim MaturePeriod As Xojo.Core.DateInterval = Creature.MatureTime
-		      Dim MatureSeconds As UInt64 = Beacon.IntervalToSeconds(MaturePeriod) / MatureMultiplier
-		      Dim MaxCuddles As Integer = Floor(MatureSeconds / CuddlePeriod)
-		      Dim PerCuddle As Double = CuddlePeriod / MatureSeconds
-		      If PerCuddle > 1.0 Then
-		        PerCuddle = 0
-		      End If
-		      Dim MaxImprint As Double = MaxCuddles * PerCuddle
-		      If MaxImprint < Threshold Then
-		        ImprintMultiplier = ImprintMultiplier * 0.9
-		        Iterations = Iterations + 1
-		        Continue Do
-		      End If
-		    Next
-		    Found = True
-		  Loop Until Found Or Iterations > 100
-		  
-		  If Iterations > 100 Then
-		    Self.ShowAlert("Unable to find the desired imprint period multiplier", "Sorry, Beacon can't find the value you're hoping for. Try reducing the mature speed multiplier and try again.")
-		    Return
-		  End If
-		  
-		  Self.ImprintPeriodField.Text = ImprintMultiplier.PrettyText
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h1
 		Protected Function Config(ForWriting As Boolean) As BeaconConfigs.BreedingMultipliers
 		  Static ConfigName As Text = BeaconConfigs.BreedingMultipliers.ConfigName
@@ -1704,9 +1663,10 @@ End
 		Sub Action(Item As BeaconToolbarItem)
 		  Select Case Item.Name
 		  Case "AutoTuneButton"
-		    Dim Threshold As Double = BreedingTunerDialog.Present(Self)
-		    If Threshold > 0 Then
-		      Self.AutoTuneImprintInterval(Threshold)
+		    Dim Interval As Double = BreedingTunerDialog.Present(Self, Self.Config(False).BabyMatureSpeedMultiplier)
+		    If Interval > 0 Then
+		      Self.ImprintPeriodField.Text = Interval.PrettyText
+		      Self.UpdateStats
 		    End If
 		  End Select
 		End Sub
