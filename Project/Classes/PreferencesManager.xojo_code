@@ -250,14 +250,6 @@ Protected Class PreferencesManager
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DoubleValue(Key As Text, Assigns Value As Boolean)
-		  Self.BeginTransaction()
-		  Self.mValues.Value(Key) = Value
-		  Self.Commit()
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function DoubleValue(Key As Text, Default As Double = 0) As Double
 		  If Not Self.mValues.HasKey(Key) Then
 		    Return Default
@@ -271,6 +263,14 @@ Protected Class PreferencesManager
 		  
 		  Return Value
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DoubleValue(Key As Text, Assigns Value As Double)
+		  Self.BeginTransaction()
+		  Self.mValues.Value(Key) = Value
+		  Self.Commit()
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
