@@ -148,7 +148,7 @@ Protected Class Request
 		  Payload.Append(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Content))
 		  Payload.Append(Self.mPayload)
 		  
-		  Self.Authenticate(Identity.Identifier, Beacon.EncodeHex(Payload))
+		  Self.Authenticate(Identity.Identifier, Beacon.EncodeHex(Identity.Sign(Payload)))
 		End Sub
 	#tag EndMethod
 
