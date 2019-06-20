@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationKit.Observer
+Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationKit.Observer, NotificationKit.Receiver
    BackColor       =   &cFFFFFF00
    Backdrop        =   0
    CloseButton     =   True
@@ -26,6 +26,37 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
    Title           =   "Beacon"
    Visible         =   True
    Width           =   800
+   Begin TabBar TabBar1
+      AcceptFocus     =   False
+      AcceptTabs      =   False
+      AutoDeactivate  =   True
+      Backdrop        =   0
+      Count           =   0
+      DoubleBuffer    =   False
+      Enabled         =   True
+      EraseBackground =   True
+      Height          =   25
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Left            =   41
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Scope           =   2
+      ScrollSpeed     =   20
+      SelectedIndex   =   0
+      TabIndex        =   1
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Top             =   0
+      Transparent     =   True
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   759
+   End
    Begin PagePanel Views
       AutoDeactivate  =   True
       Enabled         =   True
@@ -83,12 +114,11 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
          Width           =   759
       End
    End
-   Begin TabBar TabBar1
+   Begin ControlCanvas UpdateBar
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Count           =   0
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
@@ -104,11 +134,10 @@ Begin BeaconWindow MainWindow Implements AnimationKit.ValueAnimator,ObservationK
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      SelectedIndex   =   0
-      TabIndex        =   1
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   0
+      Top             =   -169
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
@@ -223,6 +252,12 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub Close()
+		  NotificationKit.Ignore(Self, App.Notification_UpdateFound)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub EnableMenuItems()
 		  If Self.mCurrentView <> Nil Then
 		    Self.mCurrentView.EnableMenuItems()
@@ -274,6 +309,8 @@ End
 		  End If
 		  
 		  Self.UpdateSizeForView(Self.DashboardPane1)
+		  NotificationKit.Watch(Self, App.Notification_UpdateFound)
+		  Self.SetupUpdateUI()
 		  
 		  Self.mOpened = True
 		End Sub
@@ -413,6 +450,17 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
+		  // Part of the NotificationKit.Receiver interface.
+		  
+		  Select Case Notification.Name
+		  Case App.Notification_UpdateFound
+		    Self.SetupUpdateUI()
+		  End Select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub ObservedValueChanged(Source As ObservationKit.Observable, Key As Text, Value As Auto)
 		  // Part of the ObservationKit.Observer interface.
 		  
@@ -434,6 +482,21 @@ End
 		Function Presets() As LibraryPanePresets
 		  Return Self.LibraryPane1.PresetsPane
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetupUpdateUI()
+		  If App.UpdateAvailable Then
+		    Dim Data As Xojo.Core.Dictionary = App.UpdateDetails
+		    Dim Preview As Text = Data.Value("Preview")
+		    If Preview <> "" Then
+		      Self.mUpdateText = Preview + " Click here to update."
+		    Else
+		      Self.mUpdateText = "Beacon " + Data.Value("Version") + " is now available! Click here to update."
+		    End If
+		    Self.UpdateBarVisible = True
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -575,8 +638,40 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
+		Private mUpdateBarPressed As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpdateText As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mViewsAnimation As AnimationKit.MoveTask
 	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Return Self.UpdateBar.Top + Self.UpdateBar.Height > 0
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.UpdateBarVisible = Value Then
+			    Return
+			  End If
+			  
+			  Dim UpdateBarHeight As Integer = If(Value, Self.UpdateBar.Height, 0)
+			  
+			  Self.Views.Height = Self.Height - (Self.TabBar1.Height + UpdateBarHeight)
+			  Self.Views.Top = Self.Height - Self.Views.Height
+			  Self.TabBar1.Top = UpdateBarHeight
+			  Self.UpdateBar.Top = (Self.UpdateBar.Height * -1) + UpdateBarHeight
+			  Self.UpdateBar.Invalidate
+			End Set
+		#tag EndSetter
+		Private UpdateBarVisible As Boolean
+	#tag EndComputedProperty
 
 
 	#tag Constant, Name = AbsoluteMinHeight, Type = Double, Dynamic = False, Default = \"468", Scope = Private
@@ -632,6 +727,64 @@ End
 		  If ViewIndex <= Self.mSubviews.Ubound Then
 		    Self.ShowView(Self.mSubviews(ViewIndex))
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events UpdateBar
+	#tag Event
+		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		  #Pragma Unused Areas
+		  
+		  G.ForeColor = SystemColors.ControlBackgroundColor
+		  G.FillRect(0, 0, G.Width, G.Height)
+		  G.ForeColor = SystemColors.SystemYellowColor.AtOpacity(0.2)
+		  G.FillRect(0, 0, G.Width, G.Height)
+		  G.ForeColor = SystemColors.SeparatorColor
+		  G.FillRect(0, G.Height - 1, G.Width, 1)
+		  
+		  Dim Caption As String = Self.mUpdateText
+		  Dim MaxCaptionWidth As Integer = G.Width - 40
+		  Dim CaptionWidth As Integer = Min(Ceil(G.StringWidth(Caption)), MaxCaptionWidth)
+		  Dim CaptionLeft As Integer = Round((G.Width - CaptionWidth) / 2)
+		  Dim CaptionBaseline As Double = ((G.Height - 1) / 2) + (G.CapHeight / 2)
+		  
+		  G.ForeColor = SystemColors.LabelColor
+		  G.DrawString(Caption, CaptionLeft, CaptionBaseline, MaxCaptionWidth, True)
+		  
+		  If Self.mUpdateBarPressed Then
+		    G.ForeColor = &c00000080
+		    G.FillRect(0, 0, G.Width, G.Height)
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function MouseDown(X As Integer, Y As Integer) As Boolean
+		  #Pragma Unused X
+		  #Pragma Unused Y
+		  
+		  Self.mUpdateBarPressed = True
+		  Self.UpdateBar.Invalidate
+		  Return True
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub MouseDrag(X As Integer, Y As Integer)
+		  Dim Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
+		  If Inside <> Self.mUpdateBarPressed Then
+		    Self.mUpdateBarPressed = Inside
+		    Self.UpdateBar.Invalidate
+		  End If
+		  
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub MouseUp(X As Integer, Y As Integer)
+		  Dim Inside As Boolean = (X >= 0 And Y >= 0 And X <= Me.Width And Y <= Me.Height - 1)
+		  If Inside Then
+		    Call App.HandleURL("beacon://action/checkforupdate")
+		  End If
+		  Self.mUpdateBarPressed = False
+		  Self.UpdateBar.Invalidate
 		End Sub
 	#tag EndEvent
 #tag EndEvents

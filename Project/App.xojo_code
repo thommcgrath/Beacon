@@ -786,14 +786,10 @@ Implements NotificationKit.Receiver
 		  Data.Value("Notes") = Notes.ToText
 		  Data.Value("Download") = URL.ToText
 		  Data.Value("Signature") = Signature.ToText
+		  Data.Value("Preview") = PreviewText.ToText
+		  Self.mUpdateData = Data
 		  
-		  Dim Notification As New Beacon.UserNotification("Beacon " + Version.ToText + " is now available!")
-		  Notification.SecondaryMessage = PreviewText.ToText
-		  Notification.ActionURL = "beacon://action/checkforupdate"
-		  Notification.UserData = Data
-		  Notification.DoNotResurrect = True
-		  
-		  Beacon.Data.SaveNotification(Notification)
+		  NotificationKit.Post(Self.Notification_UpdateFound, Data)
 		  
 		  Self.NextLaunchQueueTask()
 		End Sub
@@ -1011,6 +1007,20 @@ Implements NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function UpdateAvailable() As Boolean
+		  Return Self.mUpdateData <> Nil
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function UpdateDetails() As Xojo.Core.Dictionary
+		  If Self.mUpdateData <> Nil Then
+		    Return Beacon.Clone(Self.mUpdateData)
+		  End If
+		End Function
+	#tag EndMethod
+
 
 	#tag Property, Flags = &h0
 		LaunchOnQuit As FolderItem
@@ -1048,6 +1058,10 @@ Implements NotificationKit.Receiver
 		Private mUpdateChecker As UpdateChecker
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mUpdateData As Xojo.Core.Dictionary
+	#tag EndProperty
+
 
 	#tag Constant, Name = kEditClear, Type = String, Dynamic = False, Default = \"&Delete", Scope = Public
 		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"&Delete"
@@ -1064,6 +1078,9 @@ Implements NotificationKit.Receiver
 	#tag EndConstant
 
 	#tag Constant, Name = Notification_AppearanceChanged, Type = Text, Dynamic = False, Default = \"Appearance Changed", Scope = Public
+	#tag EndConstant
+
+	#tag Constant, Name = Notification_UpdateFound, Type = Text, Dynamic = False, Default = \"Update Found", Scope = Public
 	#tag EndConstant
 
 
