@@ -268,7 +268,7 @@ Protected Module Preferences
 		#tag EndGetter
 		#tag Setter
 			Set
-			  If OnlineToken = Value Then
+			  If SelectedTag = Value Then
 			    Return
 			  End If
 			  
