@@ -906,6 +906,7 @@ End
 	#tag Method, Flags = &h21
 		Private Sub BuildReplacementMenu()
 		  Dim Menu As PopupMenu = Self.ReplacementDinoMenu
+		  
 		  Dim SelectedClass As Text
 		  If Menu.ListIndex > -1 Then
 		    SelectedClass = Menu.RowTag(Menu.ListIndex)
@@ -917,6 +918,9 @@ End
 		  End If
 		  
 		  Menu.DeleteAllRows
+		  // Stupid workaround for AddRow being slow on this one menu.
+		  Menu.AddRow("")
+		  Menu.ListIndex = 0
 		  
 		  Dim AllCreatures() As Beacon.Creature = Beacon.Data.SearchForCreatures("", New Beacon.TextList)
 		  For Each Creature As Beacon.Creature In AllCreatures
@@ -927,6 +931,8 @@ End
 		    
 		    Menu.AddRow(Creature.Label, ClassString)
 		  Next
+		  Menu.RemoveRow(0)
+		  Menu.SelectByTag(SelectedClass)
 		End Sub
 	#tag EndMethod
 
