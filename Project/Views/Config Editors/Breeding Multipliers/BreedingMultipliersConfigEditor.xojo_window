@@ -54,7 +54,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   0
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -89,7 +89,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   1
+      TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mature Speed Multiplier:"
@@ -132,7 +132,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   2
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -167,7 +167,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   3
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Incubation Speed Multiplier:"
@@ -210,7 +210,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   4
+      TabIndex        =   15
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -245,7 +245,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   5
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Egg Lay Period Multiplier:"
@@ -288,7 +288,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   6
+      TabIndex        =   21
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -323,7 +323,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   7
+      TabIndex        =   20
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Baby Food Consumption Multiplier:"
@@ -366,7 +366,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   8
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -401,7 +401,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Imprint Period Multiplier:"
@@ -444,7 +444,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -479,7 +479,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   11
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Imprint Stat Scale Multiplier:"
@@ -522,7 +522,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   12
+      TabIndex        =   17
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -557,7 +557,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   13
+      TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Imprint Grace Period Multiplier:"
@@ -600,7 +600,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   14
+      TabIndex        =   23
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -635,7 +635,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   15
+      TabIndex        =   22
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Imprint Loss Speed Multiplier:"
@@ -686,9 +686,10 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
-      TabIndex        =   16
+      TabIndex        =   35
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -717,7 +718,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   17
+      TabIndex        =   32
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   381
@@ -754,7 +755,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   True
       Scope           =   2
-      TabIndex        =   18
+      TabIndex        =   34
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -789,7 +790,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   19
+      TabIndex        =   33
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Imprint Frequency:"
@@ -824,7 +825,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   20
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Greater than 1.0 matures faster"
@@ -859,7 +860,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   21
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Greater than 1.0 incubates faster"
@@ -894,7 +895,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   22
+      TabIndex        =   18
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Less than 1.0 produces more eggs"
@@ -929,7 +930,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   23
+      TabIndex        =   24
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Greater than 1.0 eats more often"
@@ -964,7 +965,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   24
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Less than 1.0 imprints more frequently"
@@ -999,7 +1000,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   25
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Greater than 1.0 increases imprinting stat bonuses"
@@ -1034,7 +1035,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   26
+      TabIndex        =   19
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Greater than 1.0 increases time before decay"
@@ -1069,7 +1070,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   27
+      TabIndex        =   25
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Less than 1.0 reduces imprint decay"
@@ -1090,7 +1091,9 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       AutoDeactivate  =   True
       Backdrop        =   0
       Caption         =   "Breeding Multipliers"
+      DoubleBuffer    =   False
       Enabled         =   True
+      EraseBackground =   False
       Height          =   40
       HelpTag         =   ""
       Index           =   -2147483648
@@ -1105,10 +1108,11 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       ResizerEnabled  =   False
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   28
+      TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   0
+      Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   744
@@ -1133,7 +1137,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
-      TabIndex        =   29
+      TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   40
@@ -1170,7 +1174,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   30
+      TabIndex        =   27
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -1205,7 +1209,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   31
+      TabIndex        =   26
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mating Speed Multiplier:"
@@ -1248,7 +1252,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   32
+      TabIndex        =   29
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "1.0"
@@ -1283,7 +1287,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   33
+      TabIndex        =   28
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Mating Interval Multiplier:"
@@ -1318,7 +1322,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   34
+      TabIndex        =   30
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Greater than 1.0 mates faster"
@@ -1353,7 +1357,7 @@ Begin ConfigEditor BreedingMultipliersConfigEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   35
+      TabIndex        =   31
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Less than 1.0 mates more often"
@@ -1553,9 +1557,10 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).MatingSpeedMultiplier = Value
+		  Self.Config(True).BabyMatureSpeedMultiplier = Value
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
+		  Self.UpdateStats()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -1725,7 +1730,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).MatingIntervalMultiplier = Value
+		  Self.Config(True).MatingSpeedMultiplier = Value
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
 		End Sub
@@ -1744,7 +1749,7 @@ End
 		  End If
 		  
 		  Self.SettingUp = True
-		  Self.Config(True).BabyCuddleLoseImprintQualitySpeedMultiplier = Value
+		  Self.Config(True).MatingIntervalMultiplier = Value
 		  Self.ContentsChanged = True
 		  Self.SettingUp = False
 		End Sub
