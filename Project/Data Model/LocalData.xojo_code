@@ -304,6 +304,28 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function DeleteCreature(Creature As Beacon.Creature) As Boolean
+		  Try
+		    Dim Results As RecordSet = Self.SQLSelect("SELECT mod_id FROM creatures WHERE LOWER(path) = LOWER(?1);", Creature.Path)
+		    If Results.RecordCount = 1 And Results.Field("mod_id").StringValue <> Self.UserModID Then
+		      Return False
+		    End If
+		    
+		    Self.BeginTransaction()
+		    Self.SQLExecute("DELETE FROM creatures WHERE LOWER(path) = LOWER(?1) AND mod_id = ?2;", Creature.Path, Self.UserModID)
+		    Self.Commit()
+		    
+		    Self.SyncUserEngrams()
+		    
+		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
+		    Return True
+		  Catch Err As UnsupportedOperationException
+		    Return False
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function DeleteEngram(Engram As Beacon.Engram) As Boolean
 		  Try
 		    Dim Results As RecordSet = Self.SQLSelect("SELECT mod_id FROM engrams WHERE LOWER(path) = LOWER(?1);", Engram.Path)
@@ -317,6 +339,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    
 		    Self.SyncUserEngrams()
 		    
+		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
 		    Return True
 		  Catch Err As UnsupportedOperationException
 		    Return False
@@ -768,7 +791,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Select Case Action.Value("Action")
 		      Case "DELETE"
 		        Self.BeginTransaction()
+		        Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id IN (SELECT object_id FROM engrams WHERE mod_id = ?1 UNION SELECT object_id FROM creatures WHERE mod_id = ?1);", Self.UserModID)
 		        Self.SQLExecute("DELETE FROM engrams WHERE mod_id = ?1;", Self.UserModID)
+		        Self.SQLExecute("DELETE FROM creatures WHERE mod_id = ?1;", Self.UserModID)
 		        Self.Commit()
 		        EngramsUpdated = True
 		      Case "GET"
@@ -776,23 +801,27 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        If EngramsContent = Nil Then
 		          Continue
 		        End If
-		        Dim Engrams() As Auto = Xojo.Data.ParseJSON(EngramsContent.StringValue(0, EngramsContent.Size).DefineEncoding(Encodings.UTF8).ToText)
+		        Dim Blueprints() As Auto = Xojo.Data.ParseJSON(EngramsContent.StringValue(0, EngramsContent.Size).DefineEncoding(Encodings.UTF8).ToText)
 		        Self.BeginTransaction()
+		        Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id IN (SELECT object_id FROM engrams WHERE mod_id = ?1 UNION SELECT object_id FROM creatures WHERE mod_id = ?1);", Self.UserModID)
 		        Self.SQLExecute("DELETE FROM engrams WHERE mod_id = ?1;", Self.UserModID)
-		        For Each Dict As Xojo.Core.Dictionary In Engrams
+		        Self.SQLExecute("DELETE FROM creatures WHERE mod_id = ?1;", Self.UserModID)
+		        For Each Dict As Xojo.Core.Dictionary In Blueprints
 		          Try
+		            Dim Category As String = Dict.Value("category")
 		            Dim Path As String = Dict.Value("path") 
-		            Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM engrams WHERE LOWER(path) = ?1;", Lowercase(Path))
+		            Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE LOWER(path) = ?1;", Lowercase(Path))
 		            If Results.RecordCount <> 0 Then
 		              Continue
 		            End If
 		            
-		            Dim EngramID As String = Dict.Value("engram_id")
+		            Dim ObjectID As String = Dict.Value("object_id")
 		            Dim ClassString As String = Dict.Value("class_string")
 		            Dim Label As String = Dict.Value("label")         
 		            Dim Availability As UInt64 = Dict.Value("availability")
 		            Dim Tags As String = Dict.Value("tags")
-		            Self.SQLExecute("INSERT INTO engrams (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  EngramID, ClassString, Label, Path, Availability, Tags, Self.UserModID)      
+		            Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID, ClassString, Label, Path, Availability, Tags, Self.UserModID)      
+		            Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID, Tags, Category)
 		          Catch Err As RuntimeException
 		          End Try
 		        Next
@@ -1623,6 +1652,44 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function SaveCreature(Creature As Beacon.Creature, Replace As Boolean = True) As Boolean
+		  Self.BeginTransaction()
+		  Try
+		    Dim Results As RecordSet = Self.SQLSelect("SELECT object_id, mod_id FROM creatures WHERE LOWER(path) = LOWER(?1);", Creature.Path)
+		    If Results.RecordCount = 1 Then
+		      If Replace = False Then
+		        Self.Rollback()
+		        Return False
+		      End If
+		      
+		      Dim ModID As String = Results.Field("mod_id").StringValue
+		      If ModID <> Self.UserModID Then
+		        Self.Rollback()
+		        Return False
+		      End If
+		      
+		      Self.SQLExecute("UPDATE creatures SET path = ?1, class_string = ?2, label = ?3, tags = ?4, availability = ?5 WHERE LOWER(path) = LOWER(?1);", Creature.Path, Creature.ClassString, Creature.Label, Creature.TagString, Creature.Availability)
+		      Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = 'creatures';", Results.Field("object_id").StringValue, Creature.TagString)
+		    Else
+		      Dim ObjectID As String = Beacon.CreateUUID
+		      Self.SQLExecute("INSERT INTO creatures (object_id, path, class_string, label, tags, availability, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, Creature.Path, Creature.ClassString, Creature.Label, Creature.TagString, Creature.Availability, Self.UserModID)
+		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, 'creatures');", ObjectID, Creature.TagString)
+		    End If
+		    Self.Commit()
+		    
+		    Self.SyncUserEngrams()
+		    
+		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
+		  Catch Err As UnsupportedOperationException
+		    Self.RollBack()
+		    Return False
+		  End Try
+		  
+		  Return True
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function SaveEngram(Engram As Beacon.Engram, Replace As Boolean = True) As Boolean
 		  If Not Engram.IsValid Then
 		    Return False
@@ -2017,16 +2084,31 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Sub SyncUserEngrams()
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT * FROM engrams WHERE mod_id = ?1;", Self.UserModID)
+		  // This way changing lots of engrams rapidly won't require a write to disk
+		  // after each action
+		  
+		  If Self.mSyncUserEngramsKey <> "" Then
+		    CallLater.Cancel(Self.mSyncUserEngramsKey)
+		    Self.mSyncUserEngramsKey = ""
+		  End If
+		  
+		  Self.mSyncUserEngramsKey = CallLater.Schedule(250, AddressOf SyncUserEngramsActual)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SyncUserEngramsActual()
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT class_string, path, tags, object_id, label, availability, '" + Beacon.CategoryEngrams + "' AS category FROM engrams WHERE mod_id = ?1 UNION SELECT class_string, path, tags, object_id, label, availability, '" + Beacon.CategoryCreatures + "' AS category FROM creatures WHERE mod_id = ?1;", Self.UserModID)
 		  Dim Dicts() As Xojo.Core.Dictionary
 		  While Not Results.EOF
 		    Dim Dict As New Xojo.Core.Dictionary  
 		    Dict.Value("class_string") = Results.Field("class_string").StringValue  
 		    Dict.Value("path") = Results.Field("path").StringValue  
 		    Dict.Value("tags") = Results.Field("tags").StringValue
-		    Dict.Value("engram_id") = Results.Field("object_id").StringValue
+		    Dict.Value("object_id") = Results.Field("object_id").StringValue
 		    Dict.Value("label") = Results.Field("label").StringValue
 		    Dict.Value("availability") = Results.Field("availability").IntegerValue
+		    Dict.Value("category") = Results.Field("category").StringValue
 		    Dicts.Append(Dict)
 		    
 		    Results.MoveNext()
@@ -2109,6 +2191,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mPresets() As Beacon.Preset
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSyncUserEngramsKey As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
