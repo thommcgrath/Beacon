@@ -497,7 +497,7 @@ End
 		Sub Open()
 		  Dim PreferredSize As Xojo.Core.Size = Preferences.EntryEditorSize
 		  
-		  Self.Picker.Tags = LocalData.SharedInstance.AllTags
+		  Self.Picker.Tags = LocalData.SharedInstance.AllTags("engrams")
 		  Self.Picker.Spec = Preferences.SelectedTag
 		  Self.Width = Max(PreferredSize.Width, Self.MinWidth)
 		  Self.Height = Max(PreferredSize.Height, Self.MinHeight)

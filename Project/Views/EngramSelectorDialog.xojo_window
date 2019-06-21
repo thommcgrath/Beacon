@@ -376,7 +376,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.Picker.Tags = LocalData.SharedInstance.AllTags
+		  Self.Picker.Tags = LocalData.SharedInstance.AllTags("engrams")
 		  Self.Picker.Spec = Preferences.SelectedTag
 		  Self.UpdateFilter()
 		  Self.SwapButtons()
