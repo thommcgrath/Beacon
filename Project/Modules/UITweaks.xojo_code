@@ -82,7 +82,7 @@ Protected Module UITweaks
 
 
 	#tag Constant, Name = IdealHeight, Type = Double, Dynamic = False, Default = \"20", Scope = Private
-		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"23"
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"26"
 		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"30"
 	#tag EndConstant
 
