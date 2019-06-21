@@ -25,6 +25,18 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetCreatureByClass(ClassString As Text) As Beacon.Creature
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatureByPath(Path As Text) As Beacon.Creature
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetDoubleVariable(Key As Text) As Double
 		  
 		End Function
@@ -109,13 +121,7 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForCreatures(SearchText As Text, Mods As Beacon.TextList, Tags As Text) As Beacon.Creature()
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As Text, Mods As Beacon.TextList, Tags As Text) As Beacon.Engram()
+		Function SearchForBlueprints(Category As Text, SearchText As Text, Mods As Beacon.TextList, Tags As Text) As Beacon.Blueprint()
 		  
 		End Function
 	#tag EndMethod

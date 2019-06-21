@@ -23,7 +23,7 @@ Begin BeaconDialog EngramSelectorDialog
    MinWidth        =   600
    Placement       =   1
    Resizeable      =   True
-   Title           =   "Select Engram"
+   Title           =   "Select Object"
    Visible         =   True
    Width           =   600
    Begin Label MessageLabel
@@ -49,7 +49,7 @@ Begin BeaconDialog EngramSelectorDialog
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Select an Engram"
+      Text            =   "Select an Object"
       TextAlign       =   0
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -69,7 +69,7 @@ Begin BeaconDialog EngramSelectorDialog
       BackColor       =   &cFFFFFF00
       Bold            =   False
       Border          =   True
-      CueText         =   "Search Engrams"
+      CueText         =   "Search Objects"
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
@@ -127,7 +127,7 @@ Begin BeaconDialog EngramSelectorDialog
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Engram	Mod"
+      InitialValue    =   "Name	Mod"
       Italic          =   False
       Left            =   20
       LockBottom      =   True
@@ -245,7 +245,7 @@ Begin BeaconDialog EngramSelectorDialog
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Selected Engrams"
+      InitialValue    =   "Selected Objects"
       Italic          =   False
       Left            =   714
       LockBottom      =   True
@@ -361,6 +361,7 @@ Begin BeaconDialog EngramSelectorDialog
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
+      Spec            =   ""
       TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
@@ -376,7 +377,7 @@ End
 #tag WindowCode
 	#tag Event
 		Sub Open()
-		  Self.Picker.Tags = LocalData.SharedInstance.AllTags("engrams")
+		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Self.mCategory)
 		  Self.Picker.Spec = Preferences.SelectedTag
 		  Self.UpdateFilter()
 		  Self.SwapButtons()
@@ -400,13 +401,14 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ExcludeEngrams() As Beacon.Engram, Mods As Beacon.TextList, AllowMultipleSelection As Boolean)
+		Private Sub Constructor(Category As Text, Exclude() As Beacon.Blueprint, Mods As Beacon.TextList, AllowMultipleSelection As Boolean)
 		  Self.mSettingUp = True
-		  For Each Engram As Beacon.Engram In ExcludeEngrams
-		    Self.mExcludedEngrams.Append(Engram.Path)
+		  For Each Blueprint As Beacon.Blueprint In Exclude
+		    Self.mExcluded.Append(Blueprint.Path)
 		  Next
 		  Self.mMods = Mods
 		  Self.mAllowMultipleSelection = AllowMultipleSelection
+		  Self.mCategory = Category
 		  Super.Constructor
 		  If AllowMultipleSelection Then
 		    Self.Width = Self.Width + 150
@@ -416,7 +418,7 @@ End
 		    Self.AddToSelectionsButton.Left = Self.List.Left + Self.List.Width + 12
 		    Self.RemoveFromSelectionsButton.Left = Self.AddToSelectionsButton.Left
 		    Self.SelectedList.Left = Self.AddToSelectionsButton.Left + Self.AddToSelectionsButton.Width + 12
-		    Self.MessageLabel.Text = "Select Engrams"
+		    Self.MessageLabel.Text = "Select Objects"
 		  End If
 		End Sub
 	#tag EndMethod
@@ -436,7 +438,7 @@ End
 		      Self.SelectedList.AddRow(Self.List.Cell(I, 0))
 		      Self.SelectedList.RowTag(Self.SelectedList.LastIndex) = Self.List.RowTag(I)
 		      If Self.mAllowMultipleSelection Then
-		        Self.mExcludedEngrams.Append(Beacon.Engram(Self.List.RowTag(I)).Path)
+		        Self.mExcluded.Append(Beacon.Blueprint(Self.List.RowTag(I)).Path)
 		        Self.List.RemoveRow(I)
 		      End If
 		    Next
@@ -444,7 +446,7 @@ End
 		    Self.SelectedList.AddRow(Self.List.Cell(Self.List.ListIndex, 0))
 		    Self.SelectedList.RowTag(Self.SelectedList.LastIndex) = Self.List.RowTag(Self.List.ListIndex)
 		    If Self.mAllowMultipleSelection Then
-		      Self.mExcludedEngrams.Append(Beacon.Engram(Self.List.RowTag(Self.List.ListIndex)).Path)
+		      Self.mExcluded.Append(Beacon.Blueprint(Self.List.RowTag(Self.List.ListIndex)).Path)
 		      Self.List.RemoveRow(Self.List.ListIndex)
 		    End If
 		  End If
@@ -454,25 +456,61 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, ExcludeEngrams() As Beacon.Engram, Mods As Beacon.TextList, AllowMultipleSelection As Boolean) As Beacon.Engram()
+		Shared Function Present(Parent As Window, Exclude() As Beacon.Creature, Mods As Beacon.TextList, AllowMultipleSelection As Boolean) As Beacon.Creature()
+		  Dim ExcludeBlueprints() As Beacon.Blueprint
+		  For Each Creature As Beacon.Creature In Exclude
+		    ExcludeBlueprints.Append(Creature)
+		  Next
+		  
+		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, "creatures", ExcludeBlueprints, Mods, AllowMultipleSelection)
+		  Dim Creatures() As Beacon.Creature
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.Creature Then
+		      Creatures.Append(Beacon.Creature(Blueprint))
+		    End If
+		  Next
+		  Return Creatures
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window, Exclude() As Beacon.Engram, Mods As Beacon.TextList, AllowMultipleSelection As Boolean) As Beacon.Engram()
+		  Dim ExcludeBlueprints() As Beacon.Blueprint
+		  For Each Engram As Beacon.Engram In Exclude
+		    ExcludeBlueprints.Append(Engram)
+		  Next
+		  
+		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, "engrams", ExcludeBlueprints, Mods, AllowMultipleSelection)
 		  Dim Engrams() As Beacon.Engram
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.Engram Then
+		      Engrams.Append(Beacon.Engram(Blueprint))
+		    End If
+		  Next
+		  Return Engrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function Present(Parent As Window, Category As Text, Exclude() As Beacon.Blueprint, Mods As Beacon.TextList, AllowMultipleSelection As Boolean) As Beacon.Blueprint()
+		  Dim Blueprints() As Beacon.Blueprint
 		  If Parent = Nil Then
-		    Return Engrams
+		    Return Blueprints
 		  End If
 		  
-		  Dim Win As New EngramSelectorDialog(ExcludeEngrams, Mods, AllowMultipleSelection)
+		  Dim Win As New EngramSelectorDialog(Category, Exclude, Mods, AllowMultipleSelection)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  If Win.mCancelled Then
 		    Win.Close
-		    Return Engrams
+		    Return Blueprints
 		  End If
 		  
 		  For I As Integer = 0 To Win.SelectedList.ListCount - 1
-		    Engrams.Append(Win.SelectedList.RowTag(I))
+		    Blueprints.Append(Win.SelectedList.RowTag(I))
 		  Next
 		  
 		  Win.Close
-		  Return Engrams
+		  Return Blueprints
 		End Function
 	#tag EndMethod
 
@@ -493,12 +531,12 @@ End
 		      Continue
 		    End If
 		    
-		    Dim Engram As Beacon.Engram = Self.SelectedList.RowTag(I)
-		    Dim Idx As Integer = Self.mExcludedEngrams.IndexOf(Engram.Path)
+		    Dim Blueprint As Beacon.Blueprint = Self.SelectedList.RowTag(I)
+		    Dim Idx As Integer = Self.mExcluded.IndexOf(Blueprint.Path)
 		    If Idx > -1 Then
-		      Self.mExcludedEngrams.Remove(Idx)
+		      Self.mExcluded.Remove(Idx)
 		    End If
-		    SelectPaths.Append(Engram.Path)
+		    SelectPaths.Append(Blueprint.Path)
 		    Self.SelectedList.RemoveRow(I)
 		  Next
 		  Self.ActionButton.Enabled = Self.SelectedList.ListCount > 0
@@ -506,8 +544,8 @@ End
 		  Self.List.SelectionChangeBlocked = True
 		  Self.UpdateFilter()
 		  For I As Integer = 0 To Self.List.ListCount - 1
-		    Dim Engram As Beacon.Engram = Self.List.RowTag(I)
-		    Self.List.Selected(I) = SelectPaths.IndexOf(Engram.Path) > -1
+		    Dim Blueprint As Beacon.Blueprint = Self.List.RowTag(I)
+		    Self.List.Selected(I) = SelectPaths.IndexOf(Blueprint.Path) > -1
 		  Next
 		  Self.List.EnsureSelectionIsVisible
 		  Self.List.SelectionChangeBlocked = False
@@ -519,16 +557,16 @@ End
 		  Dim SearchText As String = Self.FilterField.Text
 		  Dim Tags As Text = Self.Picker.Spec.ToText
 		  
-		  Dim Engrams() As Beacon.Engram = Beacon.Data.SearchForEngrams(SearchText.ToText, Self.mMods, Tags)
+		  Dim Blueprints() As Beacon.Blueprint = Beacon.Data.SearchForBlueprints(Self.mCategory, SearchText.ToText, Self.mMods, Tags)
 		  Dim ScrollPosition As Integer = Self.List.ScrollPosition
 		  Self.List.DeleteAllRows
-		  For Each Engram As Beacon.Engram In Engrams
-		    If Self.mExcludedEngrams.IndexOf(Engram.Path) > -1 Then
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Self.mExcluded.IndexOf(Blueprint.Path) > -1 Then
 		      Continue
 		    End If
 		    
-		    Self.List.AddRow(Engram.Label, Engram.ModName)
-		    Self.List.RowTag(Self.List.LastIndex) = Engram
+		    Self.List.AddRow(Blueprint.Label, Blueprint.ModName)
+		    Self.List.RowTag(Self.List.LastIndex) = Blueprint
 		  Next
 		  Self.List.ScrollPosition = ScrollPosition
 		End Sub
@@ -544,7 +582,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mExcludedEngrams() As Text
+		Private mCategory As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mExcluded() As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h21

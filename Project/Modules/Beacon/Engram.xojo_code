@@ -1,5 +1,6 @@
 #tag Class
 Protected Class Engram
+Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function Availability() As UInt64
 		  Return Self.mAvailability

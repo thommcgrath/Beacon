@@ -353,6 +353,7 @@ Class=DinoAdjustments;Modules/BeaconConfigs/DinoAdjustments.xojo_code;&h00000000
 Folder=Dino Adjustments;Views/Config Editors/Dino Adjustments;&h0000000065DF27FF;&h00000000434D97FF;false
 Window=DinoAdjustmentsConfigEditor;Views/Config Editors/Dino Adjustments/DinoAdjustmentsConfigEditor.xojo_window;&h0000000014C02FFF;&h0000000065DF27FF;false
 Window=DinoAdjustmentDialog;Views/Config Editors/Dino Adjustments/DinoAdjustmentDialog.xojo_window;&h00000000285A5FFF;&h0000000065DF27FF;false
+Interface=Blueprint;Modules/Beacon/Blueprint.xojo_code;&h000000001E1D8FFF;&h0000000055ADDFFF;false
 AppMenuBar=MainMenuBar
 MajorVersion=1
 MinorVersion=1

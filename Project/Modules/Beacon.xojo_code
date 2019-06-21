@@ -1009,14 +1009,34 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForCreatures(Extends Source As Beacon.DataSource, SearchText As Text, Mods As Beacon.TextList) As Beacon.Creature()
-		  Return Source.SearchForCreatures(SearchText, Mods, "")
+		Function SearchForCreatures(Extends Source As Beacon.DataSource, SearchText As Text = "", Mods As Beacon.TextList = Nil, Tags As Text = "") As Beacon.Creature()
+		  If Mods = Nil Then
+		    Mods = New Beacon.TextList
+		  End If
+		  Dim Blueprints() As Beacon.Blueprint = Source.SearchForBlueprints(CategoryCreatures, SearchText, Mods, Tags)
+		  Dim Creatures() As Beacon.Creature
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.Creature Then
+		      Creatures.Append(Beacon.Creature(Blueprint))
+		    End If
+		  Next
+		  Return Creatures
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForEngrams(Extends Source As Beacon.DataSource, SearchText As Text, Mods As Beacon.TextList) As Beacon.Engram()
-		  Return Source.SearchForEngrams(SearchText, Mods, "")
+		Function SearchForEngrams(Extends Source As Beacon.DataSource, SearchText As Text = "", Mods As Beacon.TextList = Nil, Tags As Text = "") As Beacon.Engram()
+		  If Mods = Nil Then
+		    Mods = New Beacon.TextList
+		  End If
+		  Dim Blueprints() As Beacon.Blueprint = Source.SearchForBlueprints(CategoryEngrams, SearchText, Mods, Tags)
+		  Dim Engrams() As Beacon.Engram
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.Engram Then
+		      Engrams.Append(Beacon.Engram(Blueprint))
+		    End If
+		  Next
+		  Return Engrams
 		End Function
 	#tag EndMethod
 
@@ -1147,6 +1167,12 @@ Protected Module Beacon
 		Private mDataSource As Beacon.DataSource
 	#tag EndProperty
 
+
+	#tag Constant, Name = CategoryCreatures, Type = Text, Dynamic = False, Default = \"creatures", Scope = Protected
+	#tag EndConstant
+
+	#tag Constant, Name = CategoryEngrams, Type = Text, Dynamic = False, Default = \"engrams", Scope = Protected
+	#tag EndConstant
 
 	#tag Constant, Name = OmniVersion, Type = Double, Dynamic = False, Default = \"1", Scope = Protected
 	#tag EndConstant

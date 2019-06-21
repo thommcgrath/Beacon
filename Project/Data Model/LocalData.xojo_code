@@ -386,6 +386,56 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function GetCreatureByClass(ClassString As Text) As Beacon.Creature
+		  // Part of the Beacon.DataSource interface.
+		  
+		  Try
+		    If ClassString.Length < 2 Or ClassString.Right(2) <> "_C" Then
+		      ClassString = ClassString + "_C"
+		    End If
+		    
+		    Dim RS As RecordSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE LOWER(class_string) = ?1;", ClassString.Lowercase)
+		    If RS.RecordCount = 0 Then
+		      Return Nil
+		    End If
+		    
+		    Dim Creatures() As Beacon.Creature = Self.RecordSetToCreature(RS)
+		    For Each Creature As Beacon.Creature In Creatures
+		      Self.mCreatureCache.Value(Creature.Path) = Creature
+		    Next
+		    Return Creatures(0)
+		  Catch Err As UnsupportedOperationException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function GetCreatureByPath(Path As Text) As Beacon.Creature
+		  // Part of the Beacon.DataSource interface.
+		  
+		  If Self.mCreatureCache.HasKey(Path) Then
+		    Return Self.mCreatureCache.Value(Path)
+		  End If
+		  
+		  Try
+		    Dim RS As RecordSet = Self.SQLSelect(Self.CreatureSelectSQL + " WHERE LOWER(path) = ?1;", Path.Lowercase)
+		    If RS.RecordCount = 0 Then
+		      Return Nil
+		    End If
+		    
+		    Dim Creatures() As Beacon.Creature = Self.RecordSetToCreature(RS)
+		    For Each Creature As Beacon.Creature In Creatures
+		      Self.mCreatureCache.Value(Creature.Path) = Creature
+		    Next
+		    Return Creatures(0)
+		  Catch Err As UnsupportedOperationException
+		    Return Nil
+		  End Try
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetCustomEngrams() As Beacon.Engram()
 		  Try
 		    Dim RS As RecordSet = Self.SQLSelect(Self.EngramSelectSQL + " WHERE mods.mod_id = ?1;", Self.UserModID)
@@ -1662,10 +1712,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SearchForCreatures(SearchText As Text, Mods As Beacon.TextList, Tags As Text) As Beacon.Creature()
-		  // Part of the Beacon.DataSource interface.
-		  
-		  Dim Creatures() As Beacon.Creature
+		Function SearchForBlueprints(Category As Text, SearchText As Text, Mods As Beacon.TextList, Tags As Text) As Beacon.Blueprint()
+		  Dim Blueprints() As Beacon.Blueprint
 		  
 		  Try
 		    Dim NextPlaceholder As Integer = 1
@@ -1677,7 +1725,16 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
 		    
-		    Dim SQL As String = Self.CreatureSelectSQL
+		    Dim SQL As String
+		    Select Case Category
+		    Case Beacon.CategoryEngrams
+		      SQL = Self.EngramSelectSQL
+		    Case Beacon.CategoryCreatures
+		      SQL = Self.CreatureSelectSQL
+		    Else
+		      Return Blueprints
+		    End Select
+		    
 		    If Mods <> Nil And Mods.Ubound > -1 Then
 		      Dim Placeholders() As String
 		      For Each ModID As Text In Mods
@@ -1688,8 +1745,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
 		    End If
 		    If Tags <> "" Then
-		      SQL = SQL.Replace("creatures INNER JOIN mods", "creatures INNER JOIN searchable_tags ON (searchable_tags.object_id = creatures.object_id AND searchable_tags.source_table = 'creatures') INNER JOIN mods")
-		      Clauses.Append("searchable_tags.tags MATCH ?" + Str(NextPlaceholder))
+		      SQL = SQL.Replace(Category + " INNER JOIN mods", Category + " INNER JOIN searchable_tags ON (searchable_tags.object_id = " + Category + ".object_id AND searchable_tags.source_table = '" + Category + "') INNER JOIN mods")
+		      Clauses.Append("searchable_tags.tags MATCH ?" + Str(NextPlaceholder, "0"))
 		      Values.Value(NextPlaceholder) = Tags
 		      NextPlaceholder = NextPlaceholder + 1
 		    End If
@@ -1706,72 +1763,25 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Results = Self.SQLSelect(SQL, Values)
 		    End If
 		    
-		    Creatures = Self.RecordSetToCreature(Results)
-		    For Each Creature As Beacon.Creature In Creatures
-		      Self.mCreatureCache.Value(Creature.Path) = Creature
-		    Next
-		  Catch Err As UnsupportedOperationException
-		    
-		  End Try
-		  
-		  Return Creatures
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function SearchForEngrams(SearchText As Text, Mods As Beacon.TextList, Tags As Text) As Beacon.Engram()
-		  // Part of the Beacon.DataSource interface.
-		  
-		  Dim Engrams() As Beacon.Engram
-		  
-		  Try
-		    Dim NextPlaceholder As Integer = 1
-		    Dim Clauses() As String
-		    Dim Values As New Dictionary
-		    If SearchText <> "" Then
-		      Clauses.Append("LOWER(label) LIKE LOWER(?" + Str(NextPlaceholder) + ") OR LOWER(class_string) LIKE LOWER(?" + Str(NextPlaceholder) + ")")
-		      Values.Value(NextPlaceholder) = "%" + SearchText + "%"
-		      NextPlaceholder = NextPlaceholder + 1
-		    End If
-		    
-		    Dim SQL As String = Self.EngramSelectSQL
-		    If Mods <> Nil And Mods.Ubound > -1 Then
-		      Dim Placeholders() As String
-		      For Each ModID As Text In Mods
-		        Placeholders.Append("?" + Str(NextPlaceholder))
-		        Values.Value(NextPlaceholder) = ModID
-		        NextPlaceholder = NextPlaceholder + 1
+		    Select Case Category
+		    Case Beacon.CategoryEngrams
+		      Dim Engrams() As Beacon.Engram = Self.RecordSetToEngram(Results)
+		      For Each Engram As Beacon.Engram In Engrams
+		        Self.mEngramCache.Value(Engram.Path) = Engram
+		        Blueprints.Append(Engram)
 		      Next
-		      Clauses.Append("mods.mod_id IN (" + Placeholders.Join(", ") + ")")
-		    End If
-		    If Tags <> "" Then
-		      SQL = SQL.Replace("engrams INNER JOIN mods", "engrams INNER JOIN searchable_tags ON (searchable_tags.object_id = engrams.object_id AND searchable_tags.source_table = 'engrams') INNER JOIN mods")
-		      Clauses.Append("searchable_tags.tags MATCH ?" + Str(NextPlaceholder))
-		      Values.Value(NextPlaceholder) = Tags
-		      NextPlaceholder = NextPlaceholder + 1
-		    End If
-		    
-		    If Clauses.Ubound > -1 Then
-		      SQL = SQL + " WHERE (" + Join(Clauses, ") AND (") + ")"
-		    End If
-		    SQL = SQL + " ORDER BY label;"
-		    
-		    Dim Results As RecordSet
-		    If Values.Count = 0 Then
-		      Results = Self.SQLSelect(SQL)
-		    Else
-		      Results = Self.SQLSelect(SQL, Values)
-		    End If
-		    
-		    Engrams = Self.RecordSetToEngram(Results)
-		    For Each Engram As Beacon.Engram In Engrams
-		      Self.mEngramCache.Value(Engram.Path) = Engram
-		    Next
+		    Case Beacon.CategoryCreatures
+		      Dim Creatures() As Beacon.Creature = Self.RecordSetToCreature(Results)
+		      For Each Creature As Beacon.Creature In Creatures
+		        Self.mCreatureCache.Value(Creature.Path) = Creature
+		        Blueprints.Append(Creature)
+		      Next
+		    End Select
 		  Catch Err As UnsupportedOperationException
 		    
 		  End Try
 		  
-		  Return Engrams
+		  Return Blueprints
 		End Function
 	#tag EndMethod
 

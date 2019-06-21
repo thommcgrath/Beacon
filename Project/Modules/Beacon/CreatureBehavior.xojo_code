@@ -94,16 +94,7 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Function ReplacementCreature() As Beacon.Creature
-		  Dim Creatures() As Beacon.Creature = Beacon.Data.SearchForCreatures(Self.mReplacementClass, New Beacon.TextList)
-		  If Creatures = Nil Then
-		    Return Nil
-		  End If
-		  For Each Creature As Beacon.Creature In Creatures
-		    If Creature.ClassString = Self.mReplacementClass Then
-		      Return Creature
-		    End If
-		  Next
-		  Return Nil
+		  Return Beacon.Data.GetCreatureByClass(Self.mReplacementClass)
 		End Function
 	#tag EndMethod
 
@@ -133,16 +124,7 @@ Protected Class CreatureBehavior
 
 	#tag Method, Flags = &h0
 		Function TargetCreature() As Beacon.Creature
-		  Dim Creatures() As Beacon.Creature = Beacon.Data.SearchForCreatures(Self.mTargetClass, New Beacon.TextList)
-		  If Creatures = Nil Then
-		    Return Nil
-		  End If
-		  For Each Creature As Beacon.Creature In Creatures
-		    If Creature.ClassString = Self.mTargetClass Then
-		      Return Creature
-		    End If
-		  Next
-		  Return Nil
+		  Return Beacon.Data.GetCreatureByClass(Self.mTargetClass)
 		End Function
 	#tag EndMethod
 
