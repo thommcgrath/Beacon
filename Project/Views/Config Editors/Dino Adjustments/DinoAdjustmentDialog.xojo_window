@@ -974,39 +974,6 @@ End
 
 #tag WindowCode
 	#tag Method, Flags = &h21
-		Private Sub BuildReplacementMenu()
-		  Dim Menu As PopupMenu = Self.ReplacementDinoMenu
-		  
-		  Dim SelectedClass As Text
-		  If Menu.ListIndex > -1 Then
-		    SelectedClass = Menu.RowTag(Menu.ListIndex)
-		  End If
-		  
-		  Dim TargetClass As Text
-		  If Self.TargetDinoMenu.ListIndex > -1 Then
-		    TargetClass = Self.TargetDinoMenu.RowTag(Self.TargetDinoMenu.ListIndex)
-		  End If
-		  
-		  Menu.DeleteAllRows
-		  // Stupid workaround for AddRow being slow on this one menu.
-		  Menu.AddRow("")
-		  Menu.ListIndex = 0
-		  
-		  Dim AllCreatures() As Beacon.Creature = Beacon.Data.SearchForCreatures("", New Beacon.TextList)
-		  For Each Creature As Beacon.Creature In AllCreatures
-		    Dim ClassString As Text = Creature.ClassString
-		    If ClassString = TargetClass Or Self.DisabledClasses.IndexOf(ClassString) > -1 Then
-		      Continue
-		    End If
-		    
-		    Menu.AddRow(Creature.Label, ClassString)
-		  Next
-		  Menu.RemoveRow(0)
-		  Menu.SelectByTag(SelectedClass)
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub Constructor(ConfiguredClasses() As Text, DisabledClasses() As Text, Mods As Beacon.TextList)
 		  Self.ConfiguredClasses = ConfiguredClasses
 		  Self.DisabledClasses = DisabledClasses
