@@ -104,7 +104,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       GridLinesHorizontal=   0
       GridLinesVertical=   0
       HasHeading      =   True
-      HeadingIndex    =   -1
+      HeadingIndex    =   0
       Height          =   485
       HelpTag         =   ""
       Hierarchical    =   False
@@ -123,7 +123,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
-      SelectionType   =   0
+      SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   2
       TabPanelIndex   =   0
@@ -144,6 +144,29 @@ End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Event
+		Sub ParsingFinished(ParsedData As Xojo.Core.Dictionary)
+		  If ParsedData = Nil Then
+		    Return
+		  End If
+		  
+		  Dim OtherConfig As BeaconConfigs.DinoAdjustments = BeaconConfigs.DinoAdjustments.FromImport(ParsedData, New Xojo.Core.Dictionary, Self.Document.MapCompatibility, Self.Document.DifficultyValue)
+		  If OtherConfig = Nil Then
+		    Return
+		  End If
+		  
+		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
+		  Dim Behaviors() As Beacon.CreatureBehavior = OtherConfig.All
+		  Dim Classes() As Text
+		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
+		    Config.Behavior(Behavior.TargetClass) = Behavior
+		    Classes.Append(Behavior.TargetClass)
+		  Next
+		  Self.ContentsChanged = True
+		  Self.UpdateList(Classes)
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Sub SetupUI()
 		  Self.UpdateList()
@@ -180,6 +203,22 @@ End
 		Function ConfigLabel() As Text
 		  Return Language.LabelForConfig(BeaconConfigs.DinoAdjustments.ConfigName)
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub EditSelected()
+		  If Self.List.ListIndex = -1 Then
+		    Return
+		  End If
+		  
+		  // See the comment in ShowAdd
+		  Dim ClassString As Text = Self.List.RowTag(Self.List.ListIndex)
+		  If DinoAdjustmentDialog.Present(Self, ClassString, Self.Config(False)) Then
+		    Call Self.Config(True)
+		    Self.UpdateList()
+		    Self.ContentsChanged = True
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -239,6 +278,8 @@ End
 		    If SelectClasses.IndexOf(Behavior.TargetClass) > -1 Then
 		      Self.List.Selected(Self.List.LastIndex) = True
 		    End If
+		    
+		    Self.List.RowTag(Self.List.LastIndex) = Behavior.TargetClass
 		  Next
 		  
 		  Self.List.Sort()
@@ -265,6 +306,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = ColumnWildResistance, Type = Double, Dynamic = False, Default = \"2", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = kClipboardType, Type = String, Dynamic = False, Default = \"com.thezaz.beacon.creatureadjustments", Scope = Private
 	#tag EndConstant
 
 
@@ -303,6 +347,109 @@ End
 		  Me.ColumnAlignment(Self.ColumnWildResistance) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnTamedDamage) = Listbox.AlignCenter
 		  Me.ColumnAlignment(Self.ColumnTamedResistance) = Listbox.AlignCenter
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Function CanCopy() As Boolean
+		  Return Me.SelCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanDelete() As Boolean
+		  Return Me.SelCount > 0
+		End Function
+	#tag EndEvent
+	#tag Event
+		Function CanPaste(Board As Clipboard) As Boolean
+		  Return Board.RawDataAvailable(Self.kClipboardType) Or (Board.TextAvailable And (Board.Text.IndexOf("DinoClassDamageMultipliers") > -1 Or Board.Text.IndexOf("TamedDinoClassDamageMultipliers") > -1 Or Board.Text.IndexOf("DinoClassResistanceMultipliers") > -1 Or Board.Text.IndexOf("TamedDinoClassResistanceMultipliers") > -1 Or Board.Text.IndexOf("NPCReplacements") > -1))
+		End Function
+	#tag EndEvent
+	#tag Event
+		Sub PerformClear(Warn As Boolean)
+		  If Warn Then
+		    Dim Message As String
+		    If Me.SelCount = 1 Then
+		      Message = "Are you sure you want to delete the """ + NthField(Me.Cell(Me.ListIndex, Self.ColumnName), EndOfLine, 1) + """ creature adjustment?"
+		    Else
+		      Message = "Are you sure you want to delete these " + Str(Me.SelCount, "-0") + " creature adjustments?"
+		    End If
+		    
+		    If Not Self.ShowConfirm(Message, "This action cannot be undone.", "Delete", "Cancel") Then
+		      Return
+		    End If
+		  End If
+		  
+		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
+		  For I As Integer = Me.ListCount - 1 DownTo 0
+		    If Me.Selected(I) Then
+		      Dim ClassString As Text = Me.RowTag(I)
+		      Config.RemoveBehavior(ClassString)
+		      Self.ContentsChanged = True
+		    End If
+		  Next
+		  Self.UpdateList()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformCopy(Board As Clipboard)
+		  Dim Dicts() As Xojo.Core.Dictionary
+		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
+		  For I As Integer = 0 To Me.ListCount - 1
+		    If Not Me.Selected(I) Then
+		      Continue
+		    End If
+		    
+		    Dim ClassString As Text = Me.RowTag(I)
+		    Dim Behavior As Beacon.CreatureBehavior = Config.Behavior(ClassString)
+		    If Behavior = Nil Then
+		      Continue
+		    End If
+		    
+		    Dicts.Append(Behavior.ToDictionary)
+		  Next
+		  
+		  Board.AddRawData(Xojo.Data.GenerateJSON(Dicts), Self.kClipboardType)
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub PerformPaste(Board As Clipboard)
+		  If Board.RawDataAvailable(Self.kClipboardType) Then
+		    Dim JSON As Text = Board.RawData(Self.kClipboardType).DefineEncoding(Encodings.UTF8).ToText
+		    Dim Items() As Auto
+		    Try
+		      Items = Xojo.Data.ParseJSON(JSON)
+		    Catch Err As RuntimeException
+		    End Try
+		    
+		    If Items.Ubound = -1 Then
+		      Return
+		    End If
+		    
+		    Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(True)
+		    Dim SelectClasses() As Text
+		    For Each Entry As Xojo.Core.Dictionary In Items
+		      Dim Behavior As Beacon.CreatureBehavior = Beacon.CreatureBehavior.FromDictionary(Entry)
+		      If Behavior = Nil Then
+		        Continue
+		      End If
+		      
+		      Config.Behavior(Behavior.TargetClass) = Behavior
+		    Next
+		    Self.ContentsChanged = True
+		    Self.UpdateList(SelectClasses)
+		    Return
+		  End If
+		  
+		  If Board.TextAvailable Then
+		    Dim ImportText As String = Board.Text.GuessEncoding
+		    Self.Parse(ImportText.ToText, "Clipboard")
+		    Return
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub DoubleClick()
+		  Self.EditSelected()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
