@@ -227,7 +227,8 @@ End
 		  // If this returns true, the config will have changed so we should make sure it gets
 		  // added to the document if it wasn't already. Calling Self.Config(True) has the
 		  // side effect of doing that
-		  If DinoAdjustmentDialog.Present(Self, "", Self.Config(False), Self.Document.Mods) Then
+		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
+		  If DinoAdjustmentDialog.Present(Self, "", Config, Self.Document.Mods) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
 		    Self.ContentsChanged = True
