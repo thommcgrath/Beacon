@@ -102,6 +102,29 @@ Protected Module Preferences
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function SelectedTag(Category As Text) As Text
+		  Dim Key As Text = "Selected " + Category + " Tag"
+		  Dim Default As Text
+		  
+		  Select Case Category
+		  Case Beacon.CategoryEngrams
+		    Default = "(""engram"") NOT (""deprecated"" OR ""cheat"")"
+		  Case Beacon.CategoryCreatures
+		    Default = "(""engram"") NOT (""minon"")"
+		  End Select
+		  
+		  Init
+		  Return mManager.TextValue(Key, Default)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Sub SelectedTag(Category As Text, Assigns Value As Text)
+		  mManager.TextValue("Selected " + Category + " Tag") = Value
+		End Sub
+	#tag EndMethod
+
 
 	#tag ComputedProperty, Flags = &h1
 		#tag Getter
@@ -295,25 +318,6 @@ Protected Module Preferences
 			End Set
 		#tag EndSetter
 		Protected OnlineToken As Text
-	#tag EndComputedProperty
-
-	#tag ComputedProperty, Flags = &h1
-		#tag Getter
-			Get
-			  Init
-			  Return mManager.TextValue("Selected Tag", "(""engram"") NOT (""deprecated"" OR ""cheat"")")
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If SelectedTag = Value Then
-			    Return
-			  End If
-			  
-			  mManager.TextValue("Selected Tag") = Value
-			End Set
-		#tag EndSetter
-		Protected SelectedTag As Text
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h1

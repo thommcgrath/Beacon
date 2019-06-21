@@ -378,7 +378,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Self.mCategory)
-		  Self.Picker.Spec = Preferences.SelectedTag
+		  Self.Picker.Spec = Preferences.SelectedTag(Self.mCategory)
 		  Self.UpdateFilter()
 		  Self.SwapButtons()
 		  Self.ActionButton.Enabled = False
@@ -462,7 +462,7 @@ End
 		    ExcludeBlueprints.Append(Creature)
 		  Next
 		  
-		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, "creatures", ExcludeBlueprints, Mods, AllowMultipleSelection)
+		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryCreatures, ExcludeBlueprints, Mods, AllowMultipleSelection)
 		  Dim Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
@@ -480,7 +480,7 @@ End
 		    ExcludeBlueprints.Append(Engram)
 		  Next
 		  
-		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, "engrams", ExcludeBlueprints, Mods, AllowMultipleSelection)
+		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryEngrams, ExcludeBlueprints, Mods, AllowMultipleSelection)
 		  Dim Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
@@ -693,7 +693,7 @@ End
 		    Return
 		  End If
 		  
-		  Preferences.SelectedTag = Me.Spec.ToText
+		  Preferences.SelectedTag(Self.mCategory) = Me.Spec.ToText
 		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent

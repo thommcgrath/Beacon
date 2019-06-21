@@ -497,8 +497,8 @@ End
 		Sub Open()
 		  Dim PreferredSize As Xojo.Core.Size = Preferences.EntryEditorSize
 		  
-		  Self.Picker.Tags = LocalData.SharedInstance.AllTags("engrams")
-		  Self.Picker.Spec = Preferences.SelectedTag
+		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Beacon.CategoryEngrams)
+		  Self.Picker.Spec = Preferences.SelectedTag(Beacon.CategoryEngrams)
 		  Self.Width = Max(PreferredSize.Width, Self.MinWidth)
 		  Self.Height = Max(PreferredSize.Height, Self.MinHeight)
 		  Self.SearchSpinnerVisible = False
@@ -859,7 +859,7 @@ End
 		    Return
 		  End If
 		  
-		  Preferences.SelectedTag = Me.Spec.ToText
+		  Preferences.SelectedTag(Beacon.CategoryEngrams) = Me.Spec.ToText
 		  Self.UpdateFilter
 		End Sub
 	#tag EndEvent
