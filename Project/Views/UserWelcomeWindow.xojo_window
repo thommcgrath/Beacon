@@ -204,6 +204,15 @@ End
 		  App.IdentityManager.Create()
 		End Sub
 	#tag EndEvent
+	#tag Event
+		Sub DocumentComplete(URL as String)
+		  If URL.BeginsWith("chrome-error://") Then
+		    // It's an error and this is stupid.
+		    App.Log("UserWelcomeWindow Chrome Error")
+		    App.IdentityManager.Create()
+		  End If
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
