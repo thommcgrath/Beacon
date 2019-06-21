@@ -1,6 +1,22 @@
 #tag Module
 Protected Module Beacon
 	#tag Method, Flags = &h0
+		Function AutoArrayValue(Extends Dict As Xojo.Core.Dictionary, Key As Text) As Auto()
+		  Dim Entries() As Auto
+		  If Dict.HasKey(Key) Then
+		    Dim Value As Auto = Dict.Value(Key)
+		    Dim Info As Xojo.Introspection.TypeInfo = Xojo.Introspection.GetType(Value)
+		    If Info.FullName = "Auto()" Then
+		      Entries = Value
+		    Else
+		      Entries.Append(Value)
+		    End If
+		  End If
+		  Return Entries
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Clone(Extends Source As Xojo.Core.DateInterval) As Xojo.Core.DateInterval
 		  Return New Xojo.Core.DateInterval(Source.Years, Source.Months, Source.Days, Source.Hours, Source.Minutes, Source.Seconds, Source.NanoSeconds)
 		End Function

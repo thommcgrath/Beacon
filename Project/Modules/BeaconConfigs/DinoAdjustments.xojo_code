@@ -2,6 +2,32 @@
  Attributes ( OmniVersion = 1 ) Protected Class DinoAdjustments
 Inherits Beacon.ConfigGroup
 	#tag Event
+		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
+		  Dim Behaviors() As Beacon.CreatureBehavior = Self.All
+		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
+		    If Behavior.ProhibitSpawning Then
+		      Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetClass + """,ToClassName="""")"))
+		    ElseIf Behavior.ReplacementClass <> "" Then
+		      Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "NPCReplacements", "(FromClassName=""" + Behavior.TargetClass + """,ToClassName=""" + Behavior.ReplacementClass + """)"))
+		    Else
+		      If Behavior.DamageMultiplier <> 1.0 Then
+		        Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.DamageMultiplier.PrettyText + ")"))
+		      End If
+		      If Behavior.ResistanceMultiplier <> 1.0 Then
+		        Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "DinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.ResistanceMultiplier.PrettyText + ")"))
+		      End If
+		      If Behavior.TamedDamageMultiplier <> 1.0 Then
+		        Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassDamageMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.TamedDamageMultiplier.PrettyText + ")"))
+		      End If
+		      If Behavior.TamedResistanceMultiplier <> 1.0 Then
+		        Values.Append(New Beacon.ConfigValue(Beacon.ShooterGameHeader, "TamedDinoClassResistanceMultipliers", "(ClassName=""" + Behavior.TargetClass + """,Multiplier=" + Behavior.TamedResistanceMultiplier.PrettyText + ")"))
+		      End If
+		    End If
+		  Next
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
@@ -82,10 +108,110 @@ Inherits Beacon.ConfigGroup
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.HarvestRates
+		Shared Function FromImport(ParsedData As Xojo.Core.Dictionary, CommandLineOptions As Xojo.Core.Dictionary, MapCompatibility As UInt64, QualityMultiplier As Double) As BeaconConfigs.DinoAdjustments
 		  #Pragma Unused CommandLineOptions
 		  #Pragma Unused MapCompatibility
 		  #Pragma Unused QualityMultiplier
+		  
+		  Dim Config As New BeaconConfigs.DinoAdjustments()
+		  
+		  Dim Replacements() As Auto = ParsedData.AutoArrayValue("NPCReplacements")
+		  For Each Entry As Auto In Replacements
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Entry
+		      If Dict.HasKey("FromClassName") = False Or Dict.HasKey("ToClassName") = False Then
+		        Continue
+		      End If
+		      
+		      Dim TargetClass As Text = Dict.Value("FromClassName")
+		      Dim ReplacementClass As Text = Dict.Value("ToClassName")
+		      
+		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      If ReplacementClass = "" Then
+		        Behavior.ProhibitSpawning = True
+		      Else
+		        Behavior.ReplacementClass = ReplacementClass
+		      End If
+		      Config.Behavior(TargetClass) = Behavior
+		    Catch Err As TypeMismatchException
+		    End Try
+		  Next
+		  
+		  Dim WildDamageMultipliers() As Auto = ParsedData.AutoArrayValue("DinoClassDamageMultipliers")
+		  For Each Entry As Auto In WildDamageMultipliers
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Entry
+		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
+		        Continue
+		      End If
+		      
+		      Dim TargetClass As Text = Dict.Value("ClassName")
+		      Dim Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
+		      
+		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Behavior.DamageMultiplier = Multiplier
+		      Config.Behavior(TargetClass) = Behavior
+		    Catch Err As TypeMismatchException
+		    End Try
+		  Next
+		  
+		  Dim WildResistanceMultipliers() As Auto = ParsedData.AutoArrayValue("DinoClassResistanceMultipliers")
+		  For Each Entry As Auto In WildResistanceMultipliers
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Entry
+		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
+		        Continue
+		      End If
+		      
+		      Dim TargetClass As Text = Dict.Value("ClassName")
+		      Dim Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
+		      
+		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Behavior.ResistanceMultiplier = Multiplier
+		      Config.Behavior(TargetClass) = Behavior
+		    Catch Err As TypeMismatchException
+		    End Try
+		  Next
+		  
+		  Dim TamedDamageMultipliers() As Auto = ParsedData.AutoArrayValue("TamedDinoClassDamageMultipliers")
+		  For Each Entry As Auto In TamedDamageMultipliers
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Entry
+		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
+		        Continue
+		      End If
+		      
+		      Dim TargetClass As Text = Dict.Value("ClassName")
+		      Dim Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
+		      
+		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Behavior.TamedDamageMultiplier = Multiplier
+		      Config.Behavior(TargetClass) = Behavior
+		    Catch Err As TypeMismatchException
+		    End Try
+		  Next
+		  
+		  Dim TamedResistanceMultipliers() As Auto = ParsedData.AutoArrayValue("TamedDinoClassResistanceMultipliers")
+		  For Each Entry As Auto In TamedResistanceMultipliers
+		    Try
+		      Dim Dict As Xojo.Core.Dictionary = Entry
+		      If Dict.HasKey("ClassName") = False Or Dict.HasKey("Multiplier") = False Then
+		        Continue
+		      End If
+		      
+		      Dim TargetClass As Text = Dict.Value("ClassName")
+		      Dim Multiplier As Double = Dict.DoubleValue("Multiplier", 1.0, True)
+		      
+		      Dim Behavior As Beacon.MutableCreatureBehavior = MutableBehavior(Config, TargetClass)
+		      Behavior.TamedResistanceMultiplier = Multiplier
+		      Config.Behavior(TargetClass) = Behavior
+		    Catch Err As TypeMismatchException
+		    End Try
+		  Next
+		  
+		  If Config.Modified Then
+		    Return Config
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -115,6 +241,17 @@ Inherits Beacon.ConfigGroup
 		    Next
 		  End If
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Shared Function MutableBehavior(Config As BeaconConfigs.DinoAdjustments, ClassString As Text) As Beacon.MutableCreatureBehavior
+		  Dim Behavior As Beacon.CreatureBehavior = Config.Behavior(ClassString)
+		  If Behavior <> Nil Then
+		    Return New Beacon.MutableCreatureBehavior(Behavior)
+		  Else
+		    Return New Beacon.MutableCreatureBehavior(ClassString)
+		  End If
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
