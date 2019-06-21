@@ -104,14 +104,14 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Function SelectedTag(Category As Text) As Text
-		  Dim Key As Text = "Selected " + Category + " Tag"
+		  Dim Key As Text = "Selected " + Category.TitleCase + " Tag"
 		  Dim Default As Text
 		  
 		  Select Case Category
 		  Case Beacon.CategoryEngrams
-		    Default = "(""engram"") NOT (""deprecated"" OR ""cheat"")"
+		    Default = "(""engram"") NOT (""deprecated"" OR ""cheat"" OR ""event"" OR ""reward"")"
 		  Case Beacon.CategoryCreatures
-		    Default = "(""engram"") NOT (""minon"")"
+		    Default = "(""engram"") NOT (""minion"" OR ""boss"" OR ""event"")"
 		  End Select
 		  
 		  Init
@@ -121,7 +121,7 @@ Protected Module Preferences
 
 	#tag Method, Flags = &h1
 		Protected Sub SelectedTag(Category As Text, Assigns Value As Text)
-		  mManager.TextValue("Selected " + Category + " Tag") = Value
+		  mManager.TextValue("Selected " + Category.TitleCase + " Tag") = Value
 		End Sub
 	#tag EndMethod
 
