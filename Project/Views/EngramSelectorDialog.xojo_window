@@ -456,7 +456,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Exclude() As Beacon.Creature, Mods As Beacon.TextList, AllowMultipleSelection As Boolean) As Beacon.Creature()
+		Shared Function Present(Parent As Window, Exclude() As Beacon.Creature, Mods As Beacon.TextList = Nil, AllowMultipleSelection As Boolean) As Beacon.Creature()
 		  Dim ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Creature As Beacon.Creature In Exclude
 		    ExcludeBlueprints.Append(Creature)
@@ -474,7 +474,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Exclude() As Beacon.Engram, Mods As Beacon.TextList, AllowMultipleSelection As Boolean) As Beacon.Engram()
+		Shared Function Present(Parent As Window, Exclude() As Beacon.Engram, Mods As Beacon.TextList = Nil, AllowMultipleSelection As Boolean) As Beacon.Engram()
 		  Dim ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Engram As Beacon.Engram In Exclude
 		    ExcludeBlueprints.Append(Engram)
@@ -492,10 +492,14 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Category As Text, Exclude() As Beacon.Blueprint, Mods As Beacon.TextList, AllowMultipleSelection As Boolean) As Beacon.Blueprint()
+		Shared Function Present(Parent As Window, Category As Text, Exclude() As Beacon.Blueprint, Mods As Beacon.TextList = Nil, AllowMultipleSelection As Boolean) As Beacon.Blueprint()
 		  Dim Blueprints() As Beacon.Blueprint
 		  If Parent = Nil Then
 		    Return Blueprints
+		  End If
+		  
+		  If Mods = Nil Then
+		    Mods = New Beacon.TextList
 		  End If
 		  
 		  Dim Win As New EngramSelectorDialog(Category, Exclude, Mods, AllowMultipleSelection)

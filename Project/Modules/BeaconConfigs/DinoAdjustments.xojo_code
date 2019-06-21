@@ -89,7 +89,7 @@ Inherits Beacon.ConfigGroup
 	#tag Method, Flags = &h0
 		Sub Behavior(TargetClass As Text, Assigns Behavior As Beacon.CreatureBehavior)
 		  Self.mBehaviors.Value(TargetClass) = New Beacon.CreatureBehavior(Behavior)
-		  Self.Modified = Self.Modified Or Behavior.Modified
+		  Self.Modified = True
 		End Sub
 	#tag EndMethod
 

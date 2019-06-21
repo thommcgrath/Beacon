@@ -235,6 +235,44 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub ShowDuplicate()
+		  If Self.List.SelCount <> 1 Then
+		    Return
+		  End If
+		  
+		  Dim Config As BeaconConfigs.DinoAdjustments = Self.Config(False)
+		  Dim SelectedClass As Text = Self.List.RowTag(Self.List.ListIndex)
+		  Dim SelectedBehavior As Beacon.CreatureBehavior = Config.Behavior(SelectedClass)
+		  If SelectedBehavior = Nil Then
+		    Return
+		  End If
+		  
+		  Dim Behaviors() As Beacon.CreatureBehavior = Config.All
+		  Dim CurrentCreatures() As Beacon.Creature
+		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
+		    Dim Creature As Beacon.Creature = Behavior.TargetCreature
+		    If Creature <> Nil Then
+		      CurrentCreatures.Append(Creature)
+		    End If
+		  Next
+		  
+		  Dim Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, CurrentCreatures, True)
+		  If Creatures.Ubound = -1 Then
+		    Return
+		  End If
+		  Config = Self.Config(True)
+		  Dim SelectClasses() As Text
+		  For Each Creature As Beacon.Creature In Creatures
+		    Dim Behavior As Beacon.CreatureBehavior = SelectedBehavior.Clone(Creature.ClassString)
+		    Config.Behavior(Behavior.TargetClass) = Behavior
+		    SelectClasses.Append(Behavior.TargetClass)
+		  Next
+		  Self.UpdateList(SelectClasses)
+		  Self.ContentsChanged = True
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub UpdateList()
 		  Dim Classes() As Text
 		  For I As Integer = 0 To Self.List.ListCount - 1
@@ -322,11 +360,11 @@ End
 		  Dim AddButton As New BeaconToolbarItem("AddCreature", IconAdd)
 		  AddButton.HelpTag = "Define new creature adjustments"
 		  
-		  'Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
-		  'DuplicateButton.HelpTag = "Duplicate the selected harvest rate override."
+		  Dim DuplicateButton As New BeaconToolbarItem("Duplicate", IconToolbarClone, False)
+		  DuplicateButton.HelpTag = "Duplicate the selected creature adjustments."
 		  
 		  Me.LeftItems.Append(AddButton)
-		  'Me.LeftItems.Append(DuplicateButton)
+		  Me.LeftItems.Append(DuplicateButton)
 		End Sub
 	#tag EndEvent
 	#tag Event
@@ -334,8 +372,8 @@ End
 		  Select Case Item.Name
 		  Case "AddCreature"
 		    Self.ShowAdd()
-		    'Case "Duplicate"
-		    'Self.ShowDuplicateOverride()
+		  Case "Duplicate"
+		    Self.ShowDuplicate()
 		  End Select
 		End Sub
 	#tag EndEvent
@@ -450,6 +488,11 @@ End
 	#tag Event
 		Sub DoubleClick()
 		  Self.EditSelected()
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Change()
+		  Self.Header.Duplicate.Enabled = Me.SelCount = 1
 		End Sub
 	#tag EndEvent
 #tag EndEvents
