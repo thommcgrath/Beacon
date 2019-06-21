@@ -123,6 +123,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   1
       ShowDropIndicator=   False
       TabIndex        =   2
@@ -213,7 +214,7 @@ End
 		  
 		  // See the comment in ShowAdd
 		  Dim ClassString As Text = Self.List.RowTag(Self.List.ListIndex)
-		  If DinoAdjustmentDialog.Present(Self, ClassString, Self.Config(False)) Then
+		  If DinoAdjustmentDialog.Present(Self, ClassString, Self.Config(False), Self.Document.Mods) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
 		    Self.ContentsChanged = True
@@ -226,7 +227,7 @@ End
 		  // If this returns true, the config will have changed so we should make sure it gets
 		  // added to the document if it wasn't already. Calling Self.Config(True) has the
 		  // side effect of doing that
-		  If DinoAdjustmentDialog.Present(Self, "", Self.Config(False)) Then
+		  If DinoAdjustmentDialog.Present(Self, "", Self.Config(False), Self.Document.Mods) Then
 		    Call Self.Config(True)
 		    Self.UpdateList()
 		    Self.ContentsChanged = True

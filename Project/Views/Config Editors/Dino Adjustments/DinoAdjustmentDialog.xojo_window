@@ -96,38 +96,6 @@ Begin BeaconDialog DinoAdjustmentDialog
       Visible         =   True
       Width           =   586
    End
-   Begin UITweaks.ResizedPopupMenu TargetDinoMenu
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   ""
-      Italic          =   False
-      Left            =   152
-      ListIndex       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   2
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   100
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   194
-   End
    Begin UITweaks.ResizedLabel TargetDinoLabel
       AutoDeactivate  =   True
       Bold            =   False
@@ -308,7 +276,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabPanelIndex   =   0
       Top             =   158
       Transparent     =   False
-      Value           =   0
+      Value           =   1
       Visible         =   True
       Width           =   626
       Begin UITweaks.ResizedTextField WildDamageField
@@ -802,20 +770,20 @@ Begin BeaconDialog DinoAdjustmentDialog
          Visible         =   True
          Width           =   120
       End
-      Begin UITweaks.ResizedPopupMenu ReplacementDinoMenu
+      Begin UITweaks.ResizedPushButton ChooseReplacementButton
          AutoDeactivate  =   True
          Bold            =   False
-         DataField       =   ""
-         DataSource      =   ""
+         ButtonStyle     =   "0"
+         Cancel          =   False
+         Caption         =   "Choose…"
+         Default         =   False
          Enabled         =   True
          Height          =   20
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         InitialValue    =   ""
          Italic          =   False
          Left            =   152
-         ListIndex       =   0
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -832,7 +800,42 @@ Begin BeaconDialog DinoAdjustmentDialog
          Transparent     =   False
          Underline       =   False
          Visible         =   True
-         Width           =   194
+         Width           =   86
+      End
+      Begin UITweaks.ResizedLabel ReplacementDinoNameLabel
+         AutoDeactivate  =   True
+         Bold            =   False
+         DataField       =   ""
+         DataSource      =   ""
+         Enabled         =   True
+         Height          =   20
+         HelpTag         =   ""
+         Index           =   -2147483648
+         InitialParent   =   "Pages"
+         Italic          =   True
+         Left            =   250
+         LockBottom      =   False
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         Multiline       =   False
+         Scope           =   2
+         Selectable      =   False
+         TabIndex        =   2
+         TabPanelIndex   =   2
+         TabStop         =   True
+         Text            =   "Not Selected"
+         TextAlign       =   0
+         TextColor       =   &c00000000
+         TextFont        =   "System"
+         TextSize        =   0.0
+         TextUnit        =   0
+         Top             =   164
+         Transparent     =   False
+         Underline       =   False
+         Visible         =   True
+         Width           =   356
       End
    End
    Begin UITweaks.ResizedPushButton ActionButton
@@ -899,6 +902,73 @@ Begin BeaconDialog DinoAdjustmentDialog
       Visible         =   True
       Width           =   80
    End
+   Begin UITweaks.ResizedPushButton ChooseTargetButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Choose…"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   152
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   11
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   100
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   86
+   End
+   Begin UITweaks.ResizedLabel TargetDinoNameLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   True
+      Left            =   250
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   12
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Not Selected"
+      TextAlign       =   0
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   100
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   356
+   End
 End
 #tag EndWindow
 
@@ -937,16 +1007,16 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(ConfiguredClasses() As Text, DisabledClasses() As Text)
+		Private Sub Constructor(ConfiguredClasses() As Text, DisabledClasses() As Text, Mods As Beacon.TextList)
 		  Self.ConfiguredClasses = ConfiguredClasses
 		  Self.DisabledClasses = DisabledClasses
+		  Self.Mods = Mods
 		  Super.Constructor
-		  
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, EditClass As Text, Config As BeaconConfigs.DinoAdjustments) As Boolean
+		Shared Function Present(Parent As Window, EditClass As Text, Config As BeaconConfigs.DinoAdjustments, Mods As Beacon.TextList) As Boolean
 		  // This one needs the whole config because there are a lot of factors to showing the creatures in the menus
 		  
 		  If Parent = Nil Then
@@ -965,16 +1035,16 @@ End
 		    End If
 		  Next
 		  
-		  Dim Win As New DinoAdjustmentDialog(ConfiguredClasses, DisabledClasses)
+		  Dim Win As New DinoAdjustmentDialog(ConfiguredClasses, DisabledClasses, Mods)
 		  If EditClass <> "" Then
-		    Win.TargetDinoMenu.SelectByTag(EditClass)
+		    Win.SelectedClass = EditClass
 		    
 		    Dim Behavior As Beacon.CreatureBehavior = Config.Behavior(EditClass)
 		    If Behavior <> Nil Then
 		      If Behavior.ProhibitSpawning Then
 		        Win.ModeDisableRadio.Value = True
 		      ElseIf Behavior.ReplacementClass <> "" Then
-		        Win.ReplacementDinoMenu.SelectByTag(Behavior.ReplacementClass)
+		        Win.SelectedReplacement = Behavior.ReplacementClass
 		        Win.ModeReplaceRadio.Value = True
 		      Else
 		        Win.WildDamageField.Text = Format(Behavior.DamageMultiplier, "0.0#####")
@@ -991,12 +1061,12 @@ End
 		    Return False
 		  End If
 		  
-		  Dim TargetClass As Text = Win.TargetDinoMenu.RowTag(Win.TargetDinoMenu.ListIndex)
+		  Dim TargetClass As Text = Win.SelectedClass
 		  Dim Behavior As New Beacon.MutableCreatureBehavior(TargetClass)
 		  If Win.ModeDisableRadio.Value Then
 		    Behavior.ProhibitSpawning = True
 		  ElseIf Win.ModeReplaceRadio.Value Then
-		    Behavior.ReplacementClass = Win.ReplacementDinoMenu.RowTag(Win.ReplacementDinoMenu.ListIndex)
+		    Behavior.ReplacementClass = Win.SelectedReplacement
 		  Else
 		    Behavior.DamageMultiplier = CDbl(Win.WildDamageField.Text)
 		    Behavior.ResistanceMultiplier = CDbl(Win.WildResistanceField.Text)
@@ -1026,6 +1096,84 @@ End
 		Private DisabledClasses() As Text
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private Mods As Beacon.TextList
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSelectedClass As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mSelectedReplacement As Text
+	#tag EndProperty
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Return Self.mSelectedClass
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mSelectedClass = Value Then
+			    Return
+			  End If
+			  
+			  Self.mSelectedClass = Value
+			  If Self.mSelectedClass = "" Then
+			    Self.TargetDinoNameLabel.Italic = True
+			    Self.TargetDinoNameLabel.Text = "No Selection"
+			  Else
+			    Self.TargetDinoNameLabel.Italic = False
+			    
+			    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedClass)
+			    If Creature <> Nil Then
+			      Self.TargetDinoNameLabel.Text = Creature.Label
+			    Else
+			      Self.TargetDinoNameLabel.Text = Self.mSelectedClass
+			    End If
+			  End If
+			  
+			  If Self.mSelectedReplacement = Self.mSelectedClass Then
+			    Self.SelectedReplacement = ""
+			  End If
+			End Set
+		#tag EndSetter
+		Private SelectedClass As Text
+	#tag EndComputedProperty
+
+	#tag ComputedProperty, Flags = &h21
+		#tag Getter
+			Get
+			  Return Self.mSelectedReplacement
+			End Get
+		#tag EndGetter
+		#tag Setter
+			Set
+			  If Self.mSelectedReplacement = Value Then
+			    Return
+			  End If
+			  
+			  Self.mSelectedReplacement = Value
+			  If Self.mSelectedReplacement = "" Then
+			    Self.ReplacementDinoNameLabel.Italic = True
+			    Self.ReplacementDinoNameLabel.Text = "No Selection"
+			  Else
+			    Self.ReplacementDinoNameLabel.Italic = False
+			    
+			    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedReplacement)
+			    If Creature <> Nil Then
+			      Self.ReplacementDinoNameLabel.Text = Creature.Label
+			    Else
+			      Self.ReplacementDinoNameLabel.Text = Self.mSelectedReplacement
+			    End If
+			  End If
+			End Set
+		#tag EndSetter
+		Private SelectedReplacement As Text
+	#tag EndComputedProperty
+
 
 	#tag Constant, Name = HeightDisable, Type = Double, Dynamic = False, Default = \"0", Scope = Private
 	#tag EndConstant
@@ -1048,26 +1196,6 @@ End
 
 #tag EndWindowCode
 
-#tag Events TargetDinoMenu
-	#tag Event
-		Sub Open()
-		  Dim AllCreatures() As Beacon.Creature = Beacon.Data.SearchForCreatures("", New Beacon.TextList)
-		  For Each Creature As Beacon.Creature In AllCreatures
-		    Dim ClassString As Text = Creature.ClassString
-		    If Self.ConfiguredClasses.IndexOf(ClassString) > -1 Then
-		      Continue
-		    End If
-		    
-		    Me.AddRow(Creature.Label, ClassString)
-		  Next
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub Change()
-		  Self.BuildReplacementMenu()
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events ModeMultipliersRadio
 	#tag Event
 		Sub Action()
@@ -1112,16 +1240,39 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events ChooseReplacementButton
+	#tag Event
+		Sub Action()
+		  Dim Exclude() As Beacon.Creature
+		  Dim SelectedCreature As Beacon.Creature = Beacon.Data.GetCreatureByClass(Self.mSelectedClass)
+		  If SelectedCreature <> Nil Then
+		    Exclude.Append(SelectedCreature)
+		  End If
+		  For Each ClassString As Text In Self.DisabledClasses
+		    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
+		    If Creature <> Nil Then
+		      Exclude.Append(Creature)
+		    End If
+		  Next
+		  
+		  // Do include mods here, because only dinos actually present in game files should be selectable
+		  Dim Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, Exclude, Self.Mods, False)
+		  If Creatures <> Nil And Creatures.Ubound = 0 Then
+		    Self.SelectedReplacement = Creatures(0).ClassString
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  If Self.TargetDinoMenu.ListIndex = -1 Then
+		  If Self.SelectedClass = "" Then
 		    Self.ShowAlert("You haven't selected a creature", "That's an important step, right?")
 		    Return
 		  End If
 		  
 		  If Self.ModeReplaceRadio.Value Then
-		    If Self.ReplacementDinoMenu.ListIndex = -1 Then
+		    If Self.SelectedReplacement = "" Then
 		      Self.ShowAlert("You haven't selected a replacement creature", "If you wan to replace the creature with nothing, choose the ""Disable Creature"" button.")
 		      Return
 		    End If
@@ -1151,6 +1302,25 @@ End
 		Sub Action()
 		  Self.Cancelled = True
 		  Self.Hide
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ChooseTargetButton
+	#tag Event
+		Sub Action()
+		  Dim Exclude() As Beacon.Creature
+		  For Each ClassString As Text In Self.ConfiguredClasses
+		    Dim Creature As Beacon.Creature = Beacon.Data.GetCreatureByClass(ClassString)
+		    If Creature <> Nil Then
+		      Exclude.Append(Creature)
+		    End If
+		  Next
+		  
+		  // Do not include the mods list here, we intentionally want all creatures available
+		  Dim Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, Exclude, False)
+		  If Creatures <> Nil And Creatures.Ubound = 0 Then
+		    Self.SelectedClass = Creatures(0).ClassString
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
