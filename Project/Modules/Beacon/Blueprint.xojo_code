@@ -25,7 +25,19 @@ Protected Interface Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ObjectID() As Text
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Path() As Text
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Tags() As Text()
 		  
 		End Function
 	#tag EndMethod

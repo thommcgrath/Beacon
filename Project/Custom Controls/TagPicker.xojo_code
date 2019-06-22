@@ -426,7 +426,7 @@ Inherits ControlCanvas
 			  End If
 			  If Self.mExcludeTags.Ubound > -1 Then
 			    If Value = "" Then
-			      Value = "engram"
+			      Value = "object"
 			    End If
 			    Value = Value + " NOT (""" + Join(Self.mExcludeTags, """ OR """) + """)"
 			  End If

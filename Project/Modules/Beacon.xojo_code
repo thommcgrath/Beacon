@@ -1,6 +1,22 @@
 #tag Module
 Protected Module Beacon
 	#tag Method, Flags = &h0
+		Sub AddTag(Extends Blueprint As Beacon.MutableBlueprint, Tag As Text)
+		  Tag = Beacon.NormalizeTag(Tag)
+		  If Tag = "engram" Then
+		    Return
+		  End If
+		  
+		  Dim Tags() As Text = Blueprint.Tags
+		  If Tags.IndexOf(Tag) = -1 Then
+		    Tags.Append(Tag)
+		    Tags.Sort
+		    Blueprint.Tags = Tags
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function AutoArrayValue(Extends Dict As Xojo.Core.Dictionary, Key As Text) As Auto()
 		  Dim Entries() As Auto
 		  If Dict.HasKey(Key) Then
@@ -130,8 +146,10 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function CreateUUID() As Text
-		  Dim Bytes As Xojo.Core.MemoryBlock = Xojo.Crypto.GenerateRandomBytes(16)
+		Protected Function CreateUUID(Bytes As Xojo.Core.MemoryBlock = Nil) As Text
+		  If Bytes = Nil Or Bytes.Size <> 16 Then
+		    Bytes = Xojo.Crypto.GenerateRandomBytes(16)
+		  End If
 		  Dim Id As New Xojo.Core.MutableMemoryBlock(Bytes)
 		  Dim Value As UInt8
 		  
@@ -626,6 +644,13 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsTagged(Extends Blueprint As Beacon.Blueprint, Tag As Text) As Boolean
+		  Tag = Beacon.NormalizeTag(Tag)
+		  Return Blueprint.Tags.IndexOf(Tag) > -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Label(Extends Maps() As Beacon.Map) As Text
 		  Dim Names() As Text
 		  For Each Map As Beacon.Map In Maps
@@ -762,6 +787,18 @@ Protected Module Beacon
 		  
 		  Return Extension
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveTag(Extends Blueprint As Beacon.MutableBlueprint, Tag As Text)
+		  Tag = Beacon.NormalizeTag(Tag)
+		  Dim Tags() As Text = Blueprint.Tags
+		  Dim Idx As Integer = Tags.IndexOf(Tag)
+		  If Idx > -1 Then
+		    Tags.Remove(Idx)
+		    Blueprint.Tags = Tags
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -1113,6 +1150,27 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function TagString(Extends Blueprint As Beacon.Blueprint) As Text
+		  Dim Tags() As Text = Blueprint.Tags
+		  If Tags.IndexOf("object") = -1 Then
+		    Tags.Insert(0, "object")
+		  End If
+		  Return Text.Join(Tags, ",")
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub TagString(Extends Blueprint As Beacon.MutableBlueprint, Assigns Value As Text)
+		  Dim Tags() As Text = Value.Split(",")
+		  Dim Idx As Integer = Tags.IndexOf("object")
+		  If Idx > -1 Then
+		    Tags.Remove(Idx)
+		  End If
+		  Blueprint.Tags = Tags
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function TotalSeconds(Extends Interval As Xojo.Core.DateInterval) As UInt64
 		  Return IntervalToSeconds(Interval)
 		End Function
@@ -1133,6 +1191,40 @@ Protected Module Beacon
 	#tag DelegateDeclaration, Flags = &h1
 		Protected Delegate Function URLHandler(URL As Text) As Boolean
 	#tag EndDelegateDeclaration
+
+	#tag Method, Flags = &h0
+		Function ValidForMap(Extends Blueprint As Beacon.Blueprint, Map As Beacon.Map) As Boolean
+		  Return Map = Nil Or Blueprint.ValidForMask(Map.Mask)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ValidForMap(Extends Blueprint As Beacon.MutableBlueprint, Map As Beacon.Map, Assigns Value As Boolean)
+		  If Map <> Nil Then
+		    Blueprint.ValidForMask(Map.Mask) = Value
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function ValidForMask(Extends Blueprint As Beacon.Blueprint, Mask As UInt64) As Boolean
+		  Return Mask = 0 Or (Blueprint.Availability And Mask) = Mask
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ValidForMask(Extends Blueprint As Beacon.MutableBlueprint, Mask As UInt64, Assigns Value As Boolean)
+		  Dim Availability As UInt64 = Blueprint.Availability
+		  If Value Then
+		    Availability = Availability Or Mask
+		  Else
+		    Availability = Availability And Not Mask
+		  End If
+		  If Availability <> Blueprint.Availability Then
+		    Blueprint.Availability = Availability
+		  End If
+		End Sub
+	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h21
 		Private Delegate Function ValueAdapter(ByRef Value As Auto, Info As Xojo . Introspection . TypeInfo) As Boolean

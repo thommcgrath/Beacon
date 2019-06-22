@@ -8,6 +8,18 @@ Protected Module PopupMenuExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub SelectByCaption(Extends Menu As PopupMenu, Caption As String)
+		  For I As Integer = 0 To Menu.ListCount - 1
+		    If Menu.List(I) = Caption Then
+		      Menu.ListIndex = I
+		      Return
+		    End If
+		  Next
+		  Menu.ListIndex = -1
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub SelectByTag(Extends Menu As PopupMenu, Tag As Variant)
 		  For I As Integer = 0 To Menu.ListCount - 1
 		    If Menu.RowTag(I) = Tag Then

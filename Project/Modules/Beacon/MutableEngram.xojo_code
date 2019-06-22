@@ -1,16 +1,7 @@
 #tag Class
 Protected Class MutableEngram
 Inherits Beacon.Engram
-	#tag Method, Flags = &h0
-		Sub AddTag(Tag As Text)
-		  Tag = Beacon.NormalizeTag(Tag)
-		  If Self.mTags.IndexOf(Tag) = -1 Then
-		    Self.mTags.Append(Tag)
-		    Self.mTags.Sort
-		  End If
-		End Sub
-	#tag EndMethod
-
+Implements Beacon.MutableBlueprint
 	#tag Method, Flags = &h0
 		Sub Availability(Assigns Value As UInt64)
 		  Self.mAvailability = Value
@@ -28,11 +19,12 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub Constructor(Path As Text)
+		Sub Constructor(Path As Text, ObjectID As Text)
 		  Super.Constructor()
 		  
 		  Self.mPath = Path
 		  Self.mIsValid = Self.mPath.Length > 6 And Self.mPath.Left(6) = "/Game/"
+		  Self.mObjectID = ObjectID
 		End Sub
 	#tag EndMethod
 
@@ -62,16 +54,6 @@ Inherits Beacon.Engram
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveTag(Tag As Text)
-		  Tag = Beacon.NormalizeTag(Tag)
-		  Dim Idx As Integer = Self.mTags.IndexOf(Tag)
-		  If Idx > -1 Then
-		    Self.mTags.Remove(Idx)
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Tags(Assigns Tags() As Text)
 		  Redim Self.mTags(-1)
 		  
@@ -80,23 +62,6 @@ Inherits Beacon.Engram
 		    Self.mTags.Append(Tag)
 		  Next
 		  Self.mTags.Sort
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub TagString(Assigns Value As Text)
-		  Dim Tags() As Text = Value.Split(",")
-		  Self.Tags = Tags
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ValidForMap(Map As Beacon.Map, Assigns Value As Boolean)
-		  If Value Then
-		    Self.mAvailability = Self.mAvailability Or Map.Mask
-		  Else
-		    Self.mAvailability = Self.mAvailability And Not Map.Mask
-		  End If
 		End Sub
 	#tag EndMethod
 

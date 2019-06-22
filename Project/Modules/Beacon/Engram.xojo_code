@@ -94,6 +94,7 @@ Implements Beacon.Blueprint
 		    Engram.mIsValid = True
 		  End If
 		  Engram.mPath = Path
+		  Engram.mObjectID = Beacon.CreateUUID(Xojo.Crypto.MD5(Xojo.Core.TextEncoding.UTF8.ConvertTextToData(Path.Lowercase)))
 		  Return Engram
 		End Function
 	#tag EndMethod
@@ -101,13 +102,6 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function GeneratedClassBlueprintPath() As Text
 		  Return "BlueprintGeneratedClass'" + Self.mPath + "_C'"
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsTagged(Tag As Text) As Boolean
-		  Tag = Beacon.NormalizeTag(Tag)
-		  Return Self.mTags.IndexOf(Tag) > -1
 		End Function
 	#tag EndMethod
 
@@ -199,6 +193,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function ObjectID() As Text
+		  Return Self.mObjectID
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.Engram) As Integer
 		  If Other = Nil Then
 		    Return 1
@@ -222,25 +222,12 @@ Implements Beacon.Blueprint
 
 	#tag Method, Flags = &h0
 		Function Tags() As Text()
-		  Return Self.mTags
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function TagString() As Text
-		  Return Text.Join(Self.mTags, ",")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ValidForMap(Map As Beacon.Map) As Boolean
-		  Return Map = Nil Or Map.Matches(Self.mAvailability)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function ValidForMask(Mask As UInt64) As Boolean
-		  Return Mask = 0 Or (Self.mAvailability And Mask) > 0
+		  Dim Clone() As Text
+		  Redim Clone(Self.mTags.Ubound)
+		  For I As Integer = 0 To Self.mTags.Ubound
+		    Clone(I) = Self.mTags(I)
+		  Next
+		  Return Clone
 		End Function
 	#tag EndMethod
 
@@ -263,6 +250,10 @@ Implements Beacon.Blueprint
 
 	#tag Property, Flags = &h1
 		Protected mModName As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h1
+		Protected mObjectID As Text
 	#tag EndProperty
 
 	#tag Property, Flags = &h1

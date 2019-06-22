@@ -87,7 +87,7 @@ Inherits Beacon.Thread
 		        Dim Availability As UInt64 = UInt64.FromText(Columns(2).ToText)
 		        Dim CanBlueprint As Boolean = If(Columns(3) = "True", True, False)
 		        
-		        Dim Engram As New Beacon.MutableEngram(Path)
+		        Dim Engram As New Beacon.MutableEngram(Path, Beacon.CreateUUID)
 		        Engram.Availability = Availability
 		        Engram.CanBeBlueprint = CanBlueprint
 		        Engram.Label = Label

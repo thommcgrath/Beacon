@@ -109,9 +109,9 @@ Protected Module Preferences
 		  
 		  Select Case Category
 		  Case Beacon.CategoryEngrams
-		    Default = "(""engram"") NOT (""deprecated"" OR ""cheat"" OR ""event"" OR ""reward"")"
+		    Default = "(""object"") NOT (""deprecated"" OR ""cheat"" OR ""event"" OR ""reward"")"
 		  Case Beacon.CategoryCreatures
-		    Default = "(""engram"") NOT (""minion"" OR ""boss"" OR ""event"")"
+		    Default = "(""object"") NOT (""minion"" OR ""boss"" OR ""event"")"
 		  End Select
 		  
 		  Init

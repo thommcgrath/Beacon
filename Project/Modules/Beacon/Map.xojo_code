@@ -1,11 +1,12 @@
 #tag Class
 Protected Class Map
 	#tag Method, Flags = &h0
-		Sub Constructor(HumanName As Text, Identifier As Text, Mask As UInt64, DifficultyScale As Double)
+		Sub Constructor(HumanName As Text, Identifier As Text, Mask As UInt64, DifficultyScale As Double, Official As Boolean)
 		  Self.mName = HumanName
 		  Self.mIdentifier = Identifier
 		  Self.mMask = Mask
 		  Self.mDifficultyScale = DifficultyScale
+		  Self.mOfficial = Official
 		End Sub
 	#tag EndMethod
 
@@ -53,6 +54,12 @@ Protected Class Map
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Official() As Boolean
+		  Return Self.mOfficial
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Operator_Compare(Other As Beacon.Map) As Integer
 		  If Other = Nil Then
 		    Return 1
@@ -89,6 +96,10 @@ Protected Class Map
 
 	#tag Property, Flags = &h21
 		Private mName As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mOfficial As Boolean
 	#tag EndProperty
 
 

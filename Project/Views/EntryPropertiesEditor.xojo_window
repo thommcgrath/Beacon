@@ -962,7 +962,7 @@ End
 		  Dim Arr(0) As Beacon.SetEntry
 		  If Entry = Nil Then
 		    Dim Default As New Beacon.SetEntry()
-		    Default.Append(New Beacon.SetEntryOption(New Beacon.MutableEngram("/Game/Mods/Default.Default"), 1.0))
+		    Default.Append(New Beacon.SetEntryOption(Beacon.Engram.CreateUnknownEngram("/Game/Mods/Default.Default"), 1.0))
 		    Arr(0) = Default
 		  Else
 		    Arr(0) = Entry
