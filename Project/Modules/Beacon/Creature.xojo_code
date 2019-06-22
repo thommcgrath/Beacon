@@ -16,6 +16,12 @@ Implements Beacon.Blueprint
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Clone() As Beacon.Blueprint
+		  Return New Beacon.Creature(Self)
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Sub Constructor()
 		  Self.mAvailability = Beacon.Maps.All.Mask

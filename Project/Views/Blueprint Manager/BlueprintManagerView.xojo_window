@@ -31,7 +31,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   "Your Objects"
+      Caption         =   "Objects"
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
@@ -289,6 +289,22 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Visible         =   True
       Width           =   270
    End
+   Begin Beacon.EngramSearcherThread Searcher
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Priority        =   5
+      Scope           =   2
+      StackSize       =   0
+      TabPanelIndex   =   0
+   End
+   Begin Timer ClipboardWatcher
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Mode            =   0
+      Period          =   500
+      Scope           =   2
+      TabPanelIndex   =   0
+   End
 End
 #tag EndWindow
 
@@ -296,6 +312,12 @@ End
 	#tag Event
 		Sub Close()
 		  NotificationKit.Ignore(Self, LocalData.Notification_EngramsChanged)
+		End Sub
+	#tag EndEvent
+
+	#tag Event
+		Sub Hidden()
+		  Self.ClipboardWatcher.Mode = Timer.ModeOff
 		End Sub
 	#tag EndEvent
 
@@ -316,12 +338,30 @@ End
 		End Function
 	#tag EndEvent
 
+	#tag Event
+		Sub Shown(UserData As Auto = Nil)
+		  Self.ClipboardWatcher.Mode = Timer.ModeMultiple
+		End Sub
+	#tag EndEvent
+
 
 	#tag Method, Flags = &h21
 		Private Sub AddObject()
 		  Self.Editor.ObjectID = Beacon.CreateUUID
 		  Self.Pages.Value = Self.PageEditor
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function ClipboardHasCodes() As Boolean
+		  Dim Board As New Clipboard
+		  If Not Board.TextAvailable Then
+		    Return False
+		  End If
+		  
+		  Dim Content As String = Board.Text
+		  Return Content.IndexOf("Blueprint") > -1 Or Content.IndexOf("giveitem") > -1 Or Content.IndexOf("spawndino") > -1
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
@@ -341,6 +381,38 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ImportFromClipboard()
+		  Dim Board As New Clipboard
+		  If Board.TextAvailable Then
+		    Self.ImportText(Board.Text)
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ImportFromFile(File As FolderItem = Nil)
+		  If File = Nil Then
+		    File = Self.PromptForImportFile(Self)
+		  End If
+		  If File = Nil Then
+		    Return
+		  End If
+		  
+		  Self.ImportText(File.Read)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub ImportText(Content As String)
+		  If Content = "" Then
+		    Return
+		  End If
+		  
+		  Self.Searcher.Search(Content)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub NotificationKit_NotificationReceived(Notification As NotificationKit.Notification)
 		  // Part of the NotificationKit.Receiver interface.
 		  
@@ -349,6 +421,20 @@ End
 		    Self.SetupUI()
 		  End Select
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function PromptForImportFile(Parent As Window) As FolderItem
+		  Dim Dialog As New OpenDialog
+		  Dialog.Filter = BeaconFileTypes.Text + BeaconFileTypes.CSVFile
+		  Return Dialog.ShowModalWithin(Parent.TrueWindow)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Shared Function PromptForImportURL(Parent As Window) As String
+		  Return LibraryEngramsURLDialog.Present(Parent)
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -408,6 +494,10 @@ End
 
 
 	#tag Property, Flags = &h21
+		Private mProgress As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
 		Private mSettingUp As Boolean
 	#tag EndProperty
 
@@ -427,12 +517,22 @@ End
 		  Select Case Item.Name
 		  Case "AddObject"
 		    Self.AddObject()
+		  Case "ImportClipboard"
+		    Self.ImportFromClipboard()
+		  Case "ImportURL"
+		    Self.ImportText(Self.PromptForImportURL(Self))
+		  Case "ImportFile"
+		    Self.ImportFromFile()
 		  End Select
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Open()
 		  Me.LeftItems.Append(New BeaconToolbarItem("AddObject", IconToolbarAdd, "Define a new creature or engram"))
+		  
+		  Me.RightItems.Append(New BeaconToolbarItem("ImportFile", IconToolbarFile, "Import from file"))
+		  Me.RightItems.Append(New BeaconToolbarItem("ImportURL", IconToolbarLink, "Import from website"))
+		  Me.RightItems.Append(New BeaconToolbarItem("ImportClipboard", IconToolbarCopied, Self.ClipboardHasCodes, "Import from copied text"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -479,6 +579,48 @@ End
 		  Next
 		  
 		  LocalData.SharedInstance.DeleteBlueprints(Objects)
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events Searcher
+	#tag Event
+		Sub Finished()
+		  Self.Progress = BeaconSubview.ProgressNone
+		  
+		  Dim Blueprints() As Beacon.Blueprint = Me.Blueprints(True)
+		  Dim ImportedCount As Integer = LocalData.SharedInstance.SaveBlueprints(Blueprints, False)
+		  Dim SkippedCount As Integer = (Blueprints.Ubound + 1) - ImportedCount
+		  
+		  Self.SetupUI()
+		  
+		  Dim Messages() As String
+		  If ImportedCount = 1 Then
+		    Messages.Append("1 object was added.")
+		  ElseIf ImportedCount > 1 Then
+		    Messages.Append(Str(ImportedCount, "-0") + " objects were added.")
+		  End If
+		  If SkippedCount = 1 Then
+		    Messages.Append("1 object was skipped because it already exists in the database.")
+		  ElseIf SkippedCount > 1 Then
+		    Messages.Append(Str(SkippedCount, "-0") + " objects were skipped because they already exist in the database.")
+		  End If
+		  If ImportedCount = 0 And SkippedCount = 0 Then
+		    Messages.Append("No objects were found to import.")
+		  End If
+		  
+		  Self.ShowAlert("Object import has finished", Join(Messages, " "))
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Started()
+		  Self.Progress = BeaconSubview.ProgressIndeterminate
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ClipboardWatcher
+	#tag Event
+		Sub Action()
+		  Self.ListHeader.ImportClipboard.Enabled = Self.ClipboardHasCodes
 		End Sub
 	#tag EndEvent
 #tag EndEvents

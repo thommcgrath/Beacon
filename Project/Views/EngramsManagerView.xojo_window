@@ -25,7 +25,7 @@ Begin BeaconSubview EngramsManagerView
    Transparent     =   True
    UseFocusRing    =   False
    Visible         =   True
-   Width           =   594
+   Width           =   804
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
@@ -56,7 +56,7 @@ Begin BeaconSubview EngramsManagerView
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   594
+      Width           =   804
    End
    Begin BeaconListbox List
       AutoDeactivate  =   True
@@ -108,7 +108,7 @@ Begin BeaconSubview EngramsManagerView
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
-      Width           =   594
+      Width           =   804
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -139,7 +139,7 @@ Begin BeaconSubview EngramsManagerView
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   594
+      Width           =   804
    End
    Begin Beacon.EngramSearcherThread Searcher
       Index           =   -2147483648
@@ -456,35 +456,36 @@ End
 	#tag Event
 		Sub Finished()
 		  Self.Progress = BeaconSubview.ProgressNone
-		  
-		  Dim Engrams() As Beacon.Engram = Me.Engrams(True)
-		  Dim ImportedCount, SkippedCount As Integer
-		  For Each Engram As Beacon.Engram In Engrams
-		    If LocalData.SharedInstance.SaveEngram(Engram, False) Then
-		      ImportedCount = ImportedCount + 1
-		    Else
-		      SkippedCount = SkippedCount + 1
+		  #if false
+		    Dim Engrams() As Beacon.Engram = Me.Engrams(True)
+		    Dim ImportedCount, SkippedCount As Integer
+		    For Each Engram As Beacon.Engram In Engrams
+		      If LocalData.SharedInstance.SaveEngram(Engram, False) Then
+		        ImportedCount = ImportedCount + 1
+		      Else
+		        SkippedCount = SkippedCount + 1
+		      End If
+		    Next
+		    
+		    Self.RebuildList()
+		    
+		    Dim Messages() As String
+		    If ImportedCount = 1 Then
+		      Messages.Append("1 engram was added.")
+		    ElseIf ImportedCount > 1 Then
+		      Messages.Append(Str(ImportedCount, "-0") + " engrams were added.")
 		    End If
-		  Next
-		  
-		  Self.RebuildList()
-		  
-		  Dim Messages() As String
-		  If ImportedCount = 1 Then
-		    Messages.Append("1 engram was added.")
-		  ElseIf ImportedCount > 1 Then
-		    Messages.Append(Str(ImportedCount, "-0") + " engrams were added.")
-		  End If
-		  If SkippedCount = 1 Then
-		    Messages.Append("1 engram was skipped because it already exists in the database.")
-		  ElseIf SkippedCount > 1 Then
-		    Messages.Append(Str(SkippedCount, "-0") + " engrams were skipped because they already exist in the database.")
-		  End If
-		  If ImportedCount = 0 And SkippedCount = 0 Then
-		    Messages.Append("No engrams were found to import.")
-		  End If
-		  
-		  Self.ShowAlert("Engram import has finished", Join(Messages, " "))
+		    If SkippedCount = 1 Then
+		      Messages.Append("1 engram was skipped because it already exists in the database.")
+		    ElseIf SkippedCount > 1 Then
+		      Messages.Append(Str(SkippedCount, "-0") + " engrams were skipped because they already exist in the database.")
+		    End If
+		    If ImportedCount = 0 And SkippedCount = 0 Then
+		      Messages.Append("No engrams were found to import.")
+		    End If
+		    
+		    Self.ShowAlert("Engram import has finished", Join(Messages, " "))
+		  #endif
 		End Sub
 	#tag EndEvent
 	#tag Event

@@ -279,7 +279,9 @@ Implements Xojo.Core.Iterable
 
 	#tag Method, Flags = &h21
 		Private Sub Searcher_EngramsFound(Sender As Beacon.EngramSearcherThread)
-		  Dim Engrams() As Beacon.Engram = Sender.Engrams(True)
+		  Dim Blueprints() As Beacon.Blueprint = Sender.Blueprints(True)
+		  Dim Engrams() As Beacon.Engram = Blueprints.Engrams
+		  
 		  For Each Source As Beacon.LootSource In Self
 		    Source.ConsumeMissingEngrams(Engrams)
 		  Next

@@ -228,6 +228,7 @@ Begin BeaconDialog EntryEditor
          LockTop         =   True
          Scope           =   2
          ScrollSpeed     =   20
+         Spec            =   ""
          TabIndex        =   4
          TabPanelIndex   =   0
          TabStop         =   True
@@ -278,6 +279,7 @@ Begin BeaconDialog EntryEditor
          HasBackColor    =   False
          Height          =   209
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   422
          LockBottom      =   True
@@ -476,11 +478,13 @@ Begin BeaconDialog EntryEditor
       Width           =   80
    End
    Begin Beacon.EngramSearcherThread EngramSearcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
-      StackSize       =   0
+      StackSize       =   "0"
+      State           =   ""
       TabPanelIndex   =   0
    End
 End
@@ -951,11 +955,13 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub EngramsFound()
-		  Dim ParsedEngrams() As Beacon.Engram = Me.Engrams(True)
-		  For Each Engram As Beacon.Engram In ParsedEngrams
-		    #if DebugBuild
-		      System.DebugLog("Found engram " + Engram.Path)
-		    #endif
+		  Dim ParsedBlueprints() As Beacon.Blueprint = Me.Blueprints(True)
+		  For Each Blueprint As Beacon.Blueprint In ParsedBlueprints
+		    If Not (Blueprint IsA Beacon.Engram) Then
+		      Continue
+		    End If
+		    
+		    Dim Engram As Beacon.Engram = Beacon.Engram(Blueprint)
 		    Dim Weight As String = ""
 		    If Self.mSelectedEngrams.HasKey(Engram.Path) Then
 		      Dim WeightValue As Double = Beacon.SetEntryOption(Self.mSelectedEngrams.Value(Engram.Path)).Weight * 100

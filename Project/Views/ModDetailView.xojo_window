@@ -1003,7 +1003,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub EngramsFound()
-		  Dim Engrams() As Beacon.Engram = Me.Engrams(True)
+		  Dim Blueprints() As Beacon.Blueprint = Me.Blueprints(True)
+		  Dim Engrams() As Beacon.Engram = Blueprints.Engrams
 		  
 		  If Engrams.Ubound = -1 Then
 		    Return

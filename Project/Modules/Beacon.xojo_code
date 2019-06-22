@@ -177,6 +177,18 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function Creatures(Extends Blueprints() As Beacon.Blueprint) As Beacon.Creature()
+		  Dim Creatures() As Beacon.Creature
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.Creature Then
+		      Creatures.Append(Beacon.Creature(Blueprint))
+		    End If
+		  Next
+		  Return Creatures
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h1
 		Protected Function Data() As Beacon.DataSource
 		  Return mDataSource
@@ -426,6 +438,18 @@ Protected Module Beacon
 		    Dim StringValue As String = Value
 		    Return EncodeURLComponent(StringValue).ReplaceAll(" ", "%20").ToText
 		  #endif
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Engrams(Extends Blueprints() As Beacon.Blueprint) As Beacon.Engram()
+		  Dim Engrams() As Beacon.Engram
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    If Blueprint IsA Beacon.Engram Then
+		      Engrams.Append(Beacon.Engram(Blueprint))
+		    End If
+		  Next
+		  Return Engrams
 		End Function
 	#tag EndMethod
 

@@ -7,6 +7,12 @@ Protected Interface Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Clone() As Beacon.Blueprint
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Label() As Text
 		  
 		End Function

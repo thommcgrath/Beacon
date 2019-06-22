@@ -224,7 +224,7 @@ Begin LibrarySubview LibraryPaneEngrams
    Begin Timer ClipboardWatcher
       Index           =   -2147483648
       LockedInPosition=   False
-      Mode            =   2
+      Mode            =   0
       Period          =   500
       Scope           =   2
       TabPanelIndex   =   0
@@ -234,22 +234,34 @@ End
 
 #tag WindowCode
 	#tag Event
+		Sub Hidden()
+		  Self.ClipboardWatcher.Mode = Timer.ModeOff
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Open()
 		  Self.ToolbarCaption = "Engrams"
 		End Sub
 	#tag EndEvent
 
-
-	#tag Method, Flags = &h21
-		Private Sub ImportWithDialog(Contents As String)
-		  Dim View As BeaconSubview = Self.View("EngramsManagerView")
-		  If View = Nil Then
-		    View = New EngramsManagerView()
-		  End If
-		  Self.ShowView(View)
-		  
-		  EngramsManagerView(View).ImportText(Contents)
+	#tag Event
+		Sub Shown(UserData As Auto = Nil)
+		  Self.ClipboardWatcher.Mode = Timer.ModeMultiple
 		End Sub
+	#tag EndEvent
+
+
+	#tag Method, Flags = &h0
+		Function ManagerView(Create As Boolean = True) As BlueprintManagerView
+		  Dim View As BeaconSubview = Self.View("BlueprintManagerView")
+		  If View = Nil And Create Then
+		    View = New BlueprintManagerView()
+		  Else
+		    Return Nil
+		  End If
+		  Return BlueprintManagerView(View)
+		End Function
 	#tag EndMethod
 
 
@@ -263,9 +275,11 @@ End
 #tag Events ImportURLButton
 	#tag Event
 		Sub Action()
-		  Dim Content As String = LibraryEngramsURLDialog.Present(Self)
+		  Dim Content As String = BlueprintManagerView.PromptForImportURL(Self)
 		  If Content <> "" Then
-		    Self.ImportWithDialog(Content)
+		    Dim View As BlueprintManagerView = Self.ManagerView
+		    Self.ShowView(View)
+		    View.ImportText(Content)
 		  End If
 		End Sub
 	#tag EndEvent
@@ -273,39 +287,28 @@ End
 #tag Events ImportClipboardButton
 	#tag Event
 		Sub Action()
-		  Dim Board As New Clipboard
-		  If Board.TextAvailable Then
-		    Self.ImportWithDialog(Board.Text)
-		  End If
+		  Dim View As BlueprintManagerView = Self.ManagerView
+		  Self.ShowView(View)
+		  View.ImportFromClipboard()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ImportFileButton
 	#tag Event
 		Sub Action()
-		  Dim Dialog As New OpenDialog
-		  Dialog.Filter = BeaconFileTypes.Text + BeaconFileTypes.CSVFile
-		  
-		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
-		  If File = Nil Then
-		    Return
+		  Dim File As FolderItem = BlueprintManagerView.PromptForImportFile(Self)
+		  If File <> Nil Then
+		    Dim View As BlueprintManagerView = Self.ManagerView
+		    Self.ShowView(View)
+		    View.ImportFromFile(File)
 		  End If
-		  
-		  Dim Stream As TextInputStream = TextInputStream.Open(File)
-		  Dim Content As String = Stream.ReadAll(Encodings.UTF8)
-		  Stream.Close
-		  
-		  Self.ImportWithDialog(Content)
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ManageEngramsButton
 	#tag Event
 		Sub Action()
-		  Dim View As BeaconSubview = Self.View("EngramsManagerView")
-		  If View = Nil Then
-		    View = New EngramsManagerView()
-		  End If
+		  Dim View As BlueprintManagerView = Self.ManagerView
 		  Self.ShowView(View)
 		End Sub
 	#tag EndEvent
@@ -320,8 +323,7 @@ End
 #tag Events ClipboardWatcher
 	#tag Event
 		Sub Action()
-		  Dim Board As New Clipboard
-		  Self.ImportClipboardButton.Enabled = Board.TextAvailable And (InStr(Board.Text, "Blueprint") > 0 Or InStr(Board.Text, "cheat giveitem") > 0)
+		  Self.ImportClipboardButton.Enabled = BlueprintManagerView.ClipboardHasCodes
 		End Sub
 	#tag EndEvent
 #tag EndEvents

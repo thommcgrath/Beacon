@@ -1707,80 +1707,97 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveCreature(Creature As Beacon.Creature, Replace As Boolean = True) As Boolean
-		  Self.BeginTransaction()
-		  Try
-		    Dim Results As RecordSet = Self.SQLSelect("SELECT object_id, mod_id FROM creatures WHERE LOWER(path) = LOWER(?1);", Creature.Path)
-		    If Results.RecordCount = 1 Then
-		      If Replace = False Then
-		        Self.Rollback()
-		        Return False
-		      End If
-		      
-		      Dim ModID As String = Results.Field("mod_id").StringValue
-		      If ModID <> Self.UserModID Then
-		        Self.Rollback()
-		        Return False
-		      End If
-		      
-		      Self.SQLExecute("UPDATE creatures SET path = ?1, class_string = ?2, label = ?3, tags = ?4, availability = ?5 WHERE LOWER(path) = LOWER(?1);", Creature.Path, Creature.ClassString, Creature.Label, Creature.TagString, Creature.Availability)
-		      Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = 'creatures';", Results.Field("object_id").StringValue, Creature.TagString)
-		    Else
-		      Self.SQLExecute("INSERT INTO creatures (object_id, path, class_string, label, tags, availability, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", Creature.ObjectID, Creature.Path, Creature.ClassString, Creature.Label, Creature.TagString, Creature.Availability, Self.UserModID)
-		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, 'creatures');", Creature.ObjectID, Creature.TagString)
-		    End If
-		    Self.Commit()
-		    
-		    Self.SyncUserEngrams()
-		    
-		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
-		  Catch Err As UnsupportedOperationException
-		    Self.RollBack()
-		    Return False
-		  End Try
-		  
-		  Return True
+		Function SaveBlueprint(Blueprint As Beacon.Blueprint, Replace As Boolean = True) As Boolean
+		  Dim Arr(0) As Beacon.Blueprint
+		  Arr(0) = Blueprint
+		  Return (Self.SaveBlueprints(Arr) = 1)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function SaveEngram(Engram As Beacon.Engram, Replace As Boolean = True) As Boolean
-		  If Not Engram.IsValid Then
-		    Return False
-		  End If
+		Function SaveBlueprints(Blueprints() As Beacon.Blueprint, Replace As Boolean = True) As Integer
+		  Dim CountSaved As Integer
 		  
 		  Self.BeginTransaction()
-		  Try
-		    Dim Results As RecordSet = Self.SQLSelect("SELECT object_id, mod_id FROM engrams WHERE LOWER(path) = LOWER(?1);", Engram.Path)
-		    If Results.RecordCount = 1 Then
-		      If Replace = False Then
-		        Self.Rollback()
-		        Return False
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    Try
+		      Dim Update As Boolean
+		      Dim ObjectID As String
+		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR LOWER(path) = ?1;", Blueprint.ObjectID, Blueprint.Path.Lowercase)
+		      If Results.RecordCount > 0 Then
+		        If Replace = False Then
+		          Continue
+		        End If
+		        
+		        Dim ModID As String = Results.Field("mod_id").StringValue
+		        If ModID <> Self.UserModID Then
+		          Continue
+		        End If
+		        
+		        Update = True
+		        ObjectID = Results.Field("object_id").StringValue
+		      Else
+		        Update = False
+		        ObjectID = Blueprint.ObjectID
 		      End If
 		      
-		      Dim ModID As String = Results.Field("mod_id").StringValue
-		      If ModID <> Self.UserModID Then
-		        Self.Rollback()
-		        Return False
+		      Dim Category As String
+		      Select Case Blueprint
+		      Case IsA Beacon.Engram
+		        Dim Engram As Beacon.Engram = Beacon.Engram(Blueprint)
+		        If Update Then
+		          Self.SQLExecute("UPDATE engrams SET path = ?2, class_string = ?3, label = ?4, tags = ?5, availability = ?6 WHERE object_id = ?1;", ObjectID, Engram.Path, Engram.ClassString, Engram.Label, Engram.TagString, Engram.Availability)
+		        Else
+		          Self.SQLExecute("INSERT INTO engrams (object_id, path, class_string, label, tags, availability, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", ObjectID, Engram.Path, Engram.ClassString, Engram.Label, Engram.TagString, Engram.Availability, Self.UserModID)
+		        End If
+		        Category = Beacon.CategoryEngrams
+		      Case IsA Beacon.Creature
+		        Dim Creature As Beacon.Creature = Beacon.Creature(Blueprint)
+		        Dim IncubationSeconds, MatureSeconds As Variant
+		        If Creature.IncubationTime <> Nil And Creature.MatureTime <> Nil Then
+		          IncubationSeconds = Beacon.IntervalToSeconds(Creature.IncubationTime)
+		          MatureSeconds = Beacon.IntervalToSeconds(Creature.MatureTime)
+		        End If
+		        If Update Then
+		          Self.SQLExecute("UPDATE creatures SET path = ?2, class_string = ?3, label = ?4, tags = ?5, availability = ?6, incubation_time = ?7, mature_time = ?8 WHERE object_id = ?1;", ObjectID, Creature.Path, Creature.ClassString, Creature.Label, Creature.TagString, Creature.Availability, IncubationSeconds, MatureSeconds)
+		        Else
+		          Self.SQLExecute("INSERT INTO creatures (object_id, path, class_string, label, tags, availability, incubation_time, mature_time, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);", ObjectID, Creature.Path, Creature.ClassString, Creature.Label, Creature.TagString, Creature.Availability, IncubationSeconds, MatureSeconds, Self.UserModID)
+		        End If
+		        Category = Beacon.CategoryCreatures
+		      End Select
+		      
+		      If Update Then
+		        Self.SQLExecute("UPDATE searchable_tags SET tags = ?3 WHERE object_id = ?2 AND source_table = ?1;", Category, ObjectID, Blueprint.TagString)
+		      Else
+		        Self.SQLExecute("INSERT INTO searchable_tags (source_table, object_id, tags) VALUES (?1, ?2, ?3);", Category, ObjectID, Blueprint.TagString)
 		      End If
 		      
-		      Self.SQLExecute("UPDATE engrams SET path = ?1, class_string = ?2, label = ?3, tags = ?4, availability = ?5 WHERE LOWER(path) = LOWER(?1);", Engram.Path, Engram.ClassString, Engram.Label, Engram.TagString, Engram.Availability)
-		      Self.SQLExecute("UPDATE searchable_tags SET tags = ?2 WHERE object_id = ?1 AND source_table = 'engrams';", Results.Field("object_id").StringValue, Engram.TagString)
-		    Else
-		      Self.SQLExecute("INSERT INTO engrams (object_id, path, class_string, label, tags, availability, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);", Engram.ObjectID, Engram.Path, Engram.ClassString, Engram.Label, Engram.TagString, Engram.Availability, Self.UserModID)
-		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, 'engrams');", Engram.ObjectID, Engram.TagString)
-		    End If
-		    Self.Commit()
-		    
-		    Self.SyncUserEngrams()
-		    
-		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
-		  Catch Err As UnsupportedOperationException
-		    Self.RollBack()
-		    Return False
-		  End Try
+		      CountSaved = CountSaved + 1
+		    Catch Err As RuntimeException
+		      Self.Rollback()
+		      Return 0
+		    End Try
+		  Next
+		  Self.Commit()
 		  
-		  Return True
+		  If CountSaved > 0 Then
+		    Self.SyncUserEngrams()
+		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
+		  End If
+		  
+		  Return CountSaved
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "SaveBlueprint" )  Function SaveCreature(Creature As Beacon.Creature, Replace As Boolean = True) As Boolean
+		  Return Self.SaveBlueprint(Creature, Replace)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Attributes( Deprecated = "SaveBlueprint" )  Function SaveEngram(Engram As Beacon.Engram, Replace As Boolean = True) As Boolean
+		  Return Self.SaveBlueprint(Engram, Replace)
 		End Function
 	#tag EndMethod
 

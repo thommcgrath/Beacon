@@ -11,6 +11,7 @@ Inherits Beacon.Thread
 		  
 		  // First try to parse as a csv
 		  If Self.mTryAsCSV Then
+		    #Pragma BreakOnExceptions False
 		    Try
 		      Dim CarriageReturn As String = Chr(13)
 		      
@@ -92,12 +93,12 @@ Inherits Beacon.Thread
 		        Engram.CanBeBlueprint = CanBlueprint
 		        Engram.Label = Label
 		        
-		        Self.mEngramsLock.Enter
+		        Self.mBlueprintsLock.Enter
 		        If Self.ShouldStop Then
 		          Return
 		        End If
-		        Self.mEngrams.Append(New Beacon.Engram(Engram))
-		        Self.mEngramsLock.Leave
+		        Self.mBlueprints.Append(New Beacon.Engram(Engram))
+		        Self.mBlueprintsLock.Leave
 		        FoundSinceLastPush = True
 		        
 		        If Microseconds - LastPushTime > 1000000 Then
@@ -107,7 +108,7 @@ Inherits Beacon.Thread
 		        End If
 		      Next
 		      
-		      If Self.mEngrams.Ubound > -1 Then
+		      If Self.mBlueprints.Ubound > -1 Then
 		        Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFound))
 		      End If
 		      Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerFinished))
@@ -115,12 +116,14 @@ Inherits Beacon.Thread
 		    Catch Err As RuntimeException
 		      // Probably not a CSV
 		    End Try
+		    #Pragma BreakOnExceptions Default
 		  End If
 		  
 		  Const QuotationCharacters = "'‘’""“”"
 		  
 		  Dim Regex As New Regex
-		  Regex.SearchPattern = "(giveitem [" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|(giveitem [" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|(giveitem [" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])"
+		  Regex.Options.CaseSensitive = False
+		  Regex.SearchPattern = "(giveitem|spawndino)\s+([" + QuotationCharacters + "]Blueprint[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "]BlueprintGeneratedClass[" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)_C[" + QuotationCharacters + "]{2})|([" + QuotationCharacters + "](/Game/[^\<\>\:" + QuotationCharacters + "\\\|\?\*]+)[" + QuotationCharacters + "])"
 		  
 		  Dim Match As RegexMatch = Regex.Search(Self.mContents)
 		  Dim Paths As New Dictionary
@@ -137,18 +140,21 @@ Inherits Beacon.Thread
 		      Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		    End If
 		    
+		    Dim Command As String = Match.SubExpressionString(1)
 		    Dim Path As String
-		    If Match.SubExpressionString(2) <> "" Then
-		      Path = Match.SubExpressionString(2)
-		    ElseIf Match.SubExpressionString(4) <> "" Then
-		      Path = Match.SubExpressionString(4)
-		    ElseIf Match.SubExpressionString(6) <> "" Then
-		      Path = Match.SubExpressionString(6)
-		    Else
-		      Continue
+		    If Match.SubExpressionCount >= 3 And Match.SubExpressionString(3) <> "" Then
+		      Path = Match.SubExpressionString(3)
+		    ElseIf Match.SubExpressionCount >= 5 And Match.SubExpressionString(5) <> "" Then
+		      Path = Match.SubExpressionString(5)
+		    ElseIf Match.SubExpressionCount >= 7 And Match.SubExpressionString(7) <> "" Then
+		      Path = Match.SubExpressionString(7)
 		    End If
-		    
-		    Paths.Value(Path) = True
+		    If Path <> "" Then
+		      If Path.EndsWith("_C") Then
+		        Path = Path.Left(Path.Length - 2)
+		      End If
+		      Paths.Value(Path) = Command
+		    End If
 		    
 		    Match = Regex.Search
 		  Loop Until Match Is Nil
@@ -175,18 +181,29 @@ Inherits Beacon.Thread
 		      Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		    End If
 		    
+		    Dim Command As String = Paths.Value(Key)
 		    Dim Path As Text = Key.ToText
-		    Dim Engram As Beacon.Engram = Beacon.Data.GetEngramByPath(Path)
-		    If Engram = Nil Then
-		      Engram = Beacon.Engram.CreateUnknownEngram(Path)
+		    Dim Blueprint As Beacon.Blueprint
+		    Select Case Command
+		    Case "giveitem"
+		      Blueprint = Beacon.Data.GetEngramByPath(Path)
+		      If Blueprint = Nil Then
+		        Blueprint = Beacon.Engram.CreateUnknownEngram(Path)
+		      End If
+		    Case "spawndino"
+		      Blueprint = New Beacon.MutableCreature(Path, Beacon.CreateUUID)
+		    End Select
+		    
+		    If Blueprint = Nil Then
+		      Continue
 		    End If
 		    
-		    Self.mEngramsLock.Enter
+		    Self.mBlueprintsLock.Enter
 		    If Self.ShouldStop Then
 		      Return
 		    End If
-		    Self.mEngrams.Append(Engram)
-		    Self.mEngramsLock.Leave
+		    Self.mBlueprints.Append(Blueprint)
+		    Self.mBlueprintsLock.Leave
 		    FoundSinceLastPush = True
 		    
 		    If Microseconds - LastPushTime > 1000000 Then
@@ -210,6 +227,27 @@ Inherits Beacon.Thread
 
 
 	#tag Method, Flags = &h0
+		Function Blueprints(ClearList As Boolean) As Beacon.Blueprint()
+		  Dim Arr() As Beacon.Blueprint
+		  Redim Arr(Self.mBlueprints.Ubound)
+		  
+		  Self.mBlueprintsLock.Enter
+		  
+		  For I As Integer = 0 To Self.mBlueprints.Ubound
+		    Arr(I) = Self.mBlueprints(I).Clone
+		  Next
+		  
+		  If ClearList Then
+		    Redim Self.mBlueprints(-1)
+		  End If
+		  
+		  Self.mBlueprintsLock.Leave
+		  
+		  Return Arr
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Cancel()
 		  For I As Integer = Self.mPendingTriggers.Ubound DownTo 0
 		    CallLater.Cancel(Self.mPendingTriggers(I))
@@ -226,7 +264,7 @@ Inherits Beacon.Thread
 
 	#tag Method, Flags = &h0
 		Sub Constructor()
-		  Self.mEngramsLock = New CriticalSection
+		  Self.mBlueprintsLock = New CriticalSection
 		End Sub
 	#tag EndMethod
 
@@ -237,34 +275,13 @@ Inherits Beacon.Thread
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function Engrams(ClearList As Boolean) As Beacon.Engram()
-		  Dim Arr() As Beacon.Engram
-		  Redim Arr(Self.mEngrams.Ubound)
-		  
-		  Self.mEngramsLock.Enter
-		  
-		  For I As Integer = 0 To Self.mEngrams.Ubound
-		    Arr(I) = New Beacon.Engram(Self.mEngrams(I))
-		  Next
-		  
-		  If ClearList Then
-		    Redim Self.mEngrams(-1)
-		  End If
-		  
-		  Self.mEngramsLock.Leave
-		  
-		  Return Arr
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Search(Content As String, TryCSV As Boolean = True)
 		  Self.Cancel
 		  Self.mContents = Content
 		  Self.mTryAsCSV = TryCSV
-		  Self.mEngramsLock.Enter
-		  Redim Self.mEngrams(-1)
-		  Self.mEngramsLock.Leave
+		  Self.mBlueprintsLock.Enter
+		  Redim Self.mBlueprints(-1)
+		  Self.mBlueprintsLock.Leave
 		  Self.Run
 		End Sub
 	#tag EndMethod
@@ -302,15 +319,15 @@ Inherits Beacon.Thread
 
 
 	#tag Property, Flags = &h21
-		Private mContents As String
-	#tag EndProperty
-
-	#tag Property, Flags = &h21
-		Private mEngrams() As Beacon.Engram
+		Private mBlueprints() As Beacon.Blueprint
 	#tag EndProperty
 
 	#tag Property, Flags = &h21, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit)) or  (TargetIOS and (Target32Bit or Target64Bit))
-		Private mEngramsLock As CriticalSection
+		Private mBlueprintsLock As CriticalSection
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mContents As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
