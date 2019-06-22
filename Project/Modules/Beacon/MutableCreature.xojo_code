@@ -13,6 +13,7 @@ Implements Beacon.MutableBlueprint
 		  Super.Constructor()
 		  Self.mPath = Path
 		  Self.mObjectID = ObjectID
+		  Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
 		End Sub
 	#tag EndMethod
 

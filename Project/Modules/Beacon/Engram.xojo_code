@@ -52,6 +52,7 @@ Implements Beacon.Blueprint
 		Sub Constructor(Source As Beacon.Engram)
 		  Self.Constructor()
 		  
+		  Self.mObjectID = Source.mObjectID
 		  Self.mAvailability = Source.mAvailability
 		  Self.mPath = Source.mPath
 		  Self.mLabel = Source.mLabel
@@ -120,42 +121,10 @@ Implements Beacon.Blueprint
 	#tag Method, Flags = &h0
 		Function Label() As Text
 		  If Self.mLabel = "" Then
-		    // Create a label from the class String
-		    Dim ClassString As Text = Self.ClassString
-		    Dim Parts() As Text = ClassString.Split("_")
-		    If UBound(Parts) <= 1 Then
-		      Return ClassString
-		    End If
-		    Parts.Remove(0)
-		    Parts.Remove(UBound(Parts))
-		    
-		    Self.mLabel = Self.MakeHumanReadableText(Parts.Join(" "))
+		    Self.mLabel = Beacon.LabelFromClassString(Self.ClassString)
 		  End If
 		  
 		  Return Self.mLabel
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Shared Function MakeHumanReadableText(Value As Text) As Text
-		  Dim Chars() As Text
-		  For Each Codepoint As Integer In Value.Codepoints
-		    If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
-		      Chars.Append(Text.FromUnicodeCodepoint(Codepoint))
-		    ElseIf CodePoint >= 65 And Codepoint <= 90 Then
-		      Chars.Append(" ")
-		      Chars.Append(Text.FromUnicodeCodepoint(Codepoint))
-		    ElseIf CodePoint = 95 Then
-		      Chars.Append(" ")
-		    End If
-		  Next
-		  Value = Chars.Join("")
-		  
-		  While Value.IndexOf("  ") > -1
-		    Value = Value.ReplaceAll("  ", " ")
-		  Wend
-		  
-		  Return Value.Trim
 		End Function
 	#tag EndMethod
 
@@ -191,9 +160,9 @@ Implements Beacon.Blueprint
 		    If EndAt = -1 Then
 		      EndAt = Self.mPath.Length
 		    End If
-		    Return Self.MakeHumanReadableText(Self.mPath.Mid(StartAt, EndAt - StartAt))
+		    Return Beacon.MakeHumanReadable(Self.mPath.Mid(StartAt, EndAt - StartAt))
 		  Else
-		    Return Self.MakeHumanReadableText(Name)
+		    Return Beacon.MakeHumanReadable(Name)
 		  End Select
 		End Function
 	#tag EndMethod

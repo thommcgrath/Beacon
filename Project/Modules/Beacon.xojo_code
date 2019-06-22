@@ -694,6 +694,72 @@ Protected Module Beacon
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h1
+		Protected Function LabelFromClassString(ClassString As Text) As Text
+		  Dim Parts() As Text = ClassString.Split("_")
+		  If Parts.Ubound <= 1 Then
+		    Return ClassString
+		  End If
+		  If ClassString.IndexOf("PrimalItem") > -1 Then
+		    Parts.Remove(0)
+		    Parts.Remove(Parts.Ubound)
+		  ElseIf ClassString.IndexOf("Character") > -1 Then
+		    For I As Integer = Parts.Ubound DownTo 0
+		      If Parts(I) = "C" Or Parts(I) = "BP" Or Parts(I) = "Character" Then
+		        Parts.Remove(I)
+		      End If
+		    Next
+		  End If
+		  Return Beacon.MakeHumanReadable(Parts.Join(" "))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
+		Protected Function MakeHumanReadable(Source As Text) As Text
+		  #if Not TargetIOS
+		    Dim SourceChars() As String = Split(Source, "")
+		    Dim Chars() As String
+		    For Each Char As String In SourceChars
+		      Dim Codepoint As Integer = Asc(Char)
+		      If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
+		        Chars.Append(Char)
+		      ElseIf Codepoint >= 65 And Codepoint <= 99 Then
+		        Chars.Append(" ")
+		        Chars.Append(Char)
+		      ElseIf Codepoint = 95 Then
+		        Chars.Append(" ")
+		      End If
+		    Next
+		    Dim StrVer As String = Join(Chars, "")
+		    
+		    While InStr(StrVer, "  ") > 0
+		      StrVer = StrVer.ReplaceAll("  ", " ")
+		    Wend
+		    
+		    Return Trim(StrVer).ToText
+		  #else
+		    Dim Chars() As Text
+		    For Each Codepoint As Integer In Source.Codepoints
+		      If Codepoint = 32 Or (Codepoint >= 48 And Codepoint <= 57) Or (Codepoint >= 97 And Codepoint <= 122) Then
+		        Chars.Append(Text.FromUnicodeCodepoint(Codepoint))
+		      ElseIf CodePoint >= 65 And Codepoint <= 90 Then
+		        Chars.Append(" ")
+		        Chars.Append(Text.FromUnicodeCodepoint(Codepoint))
+		      ElseIf CodePoint = 95 Then
+		        Chars.Append(" ")
+		      End If
+		    Next
+		    Source = Chars.Join("")
+		    
+		    While Source.IndexOf("  ") > -1
+		      Source = Source.ReplaceAll("  ", " ")
+		    Wend
+		    
+		    Return Source.Trim
+		  #endif
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Mask(Extends Maps() As Beacon.Map) As UInt64
 		  Dim Bits As UInt64

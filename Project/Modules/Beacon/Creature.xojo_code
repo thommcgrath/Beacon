@@ -32,6 +32,7 @@ Implements Beacon.Blueprint
 		Sub Constructor(Source As Beacon.Creature)
 		  Self.Constructor()
 		  
+		  Self.mObjectID = Source.mObjectID
 		  Self.mAvailability = Source.mAvailability
 		  Self.mPath = Source.mPath
 		  Self.mLabel = Source.mLabel
