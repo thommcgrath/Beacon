@@ -1,0 +1,46 @@
+#tag MultiImage
+Image IconToolbarRevert
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAGkAAAAAAGkAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8VSWNvblRvb2xiYXJSZXZlcnQucG5nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFAvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkljb25Ub29sYmFyUmV2ZXJ0LnBuZwAOACwAFQBJAGMAbwBuAFQAbwBvAGwAYgBhAHIAUgBlAHYAZQByAHQALgBwAG4AZwAPABoADABNAGEAYwBpAG4AdABvAHMAaAAgAEgARAASAE5Vc2Vycy90aG9tbWNncmF0aC9Eb2N1bWVudHMvVGhlIFpBWiBTb3VyY2VzL0JlYWNvbi9JY29ucy9JY29uVG9vbGJhclJldmVydC5wbmcAEwABLwAAFQACABL//wAAAAAAAAAA
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconToolbarRevert.png
+		PartialPath = ..\Icons\IconToolbarRevert.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 16.00
+			Orientation = Any
+			Platform = 15
+			PPI = 72
+			VSize = 16.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAGyAAAAAAGyAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8YSWNvblRvb2xiYXJSZXZlcnRAMngucG5nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFMvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkljb25Ub29sYmFyUmV2ZXJ0QDJ4LnBuZwAADgAyABgASQBjAG8AbgBUAG8AbwBsAGIAYQByAFIAZQB2AGUAcgB0AEAAMgB4AC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBRVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvSWNvblRvb2xiYXJSZXZlcnRAMngucG5nAAATAAEvAAAVAAIAEv//AAAAAAAAAAA=
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconToolbarRevert@2x.png
+		PartialPath = ..\Icons\IconToolbarRevert@2x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 16.00
+			Orientation = Any
+			Platform = 15
+			PPI = 144
+			VSize = 16.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+	#tag ImageRepresentation
+		SaveInfo = APHRcwECAQAAAAGyAAAAAAGyAAIAAAxNYWNpbnRvc2ggSEQAAAAAAAAAAAAAAAAAAAAAAAAAQkQAAf////8YSWNvblRvb2xiYXJSZXZlcnRAM3gucG5nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/////wAAAAAAAAAAAAAAAP////8AAAogY3UAAAAAAAAAAAAAAAAABUljb25zAAACAFMvOlVzZXJzOnRob21tY2dyYXRoOkRvY3VtZW50czpUaGUgWkFaIFNvdXJjZXM6QmVhY29uOkljb25zOkljb25Ub29sYmFyUmV2ZXJ0QDN4LnBuZwAADgAyABgASQBjAG8AbgBUAG8AbwBsAGIAYQByAFIAZQB2AGUAcgB0AEAAMwB4AC4AcABuAGcADwAaAAwATQBhAGMAaQBuAHQAbwBzAGgAIABIAEQAEgBRVXNlcnMvdGhvbW1jZ3JhdGgvRG9jdW1lbnRzL1RoZSBaQVogU291cmNlcy9CZWFjb24vSWNvbnMvSWNvblRvb2xiYXJSZXZlcnRAM3gucG5nAAATAAEvAAAVAAIAEv//AAAAAAAAAAA=
+		FullPath = /Users/thommcgrath/Documents/The ZAZ Sources/Beacon/Icons/IconToolbarRevert@3x.png
+		PartialPath = ..\Icons\IconToolbarRevert@3x.png
+		#tag ImageSpecification
+			Comment = 
+			Device = 31
+			HSize = 16.00
+			Orientation = Any
+			Platform = 15
+			PPI = 216
+			VSize = 16.00
+		#tag EndImageSpecification
+	#tag EndImageRepresentation
+End Image
+#tag EndMultiImage

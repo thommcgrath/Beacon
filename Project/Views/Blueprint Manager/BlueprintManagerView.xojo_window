@@ -110,40 +110,6 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Value           =   1
       Visible         =   True
       Width           =   535
-      Begin BlueprintEditor Editor
-         AcceptFocus     =   False
-         AcceptTabs      =   True
-         AutoDeactivate  =   True
-         BackColor       =   &cFFFFFF00
-         Backdrop        =   0
-         DoubleBuffer    =   False
-         Enabled         =   True
-         EraseBackground =   True
-         HasBackColor    =   False
-         Height          =   592
-         HelpTag         =   ""
-         InitialParent   =   "Pages"
-         Left            =   271
-         LockBottom      =   True
-         LockedInPosition=   False
-         LockLeft        =   True
-         LockRight       =   True
-         LockTop         =   True
-         MinimumHeight   =   300
-         MinimumWidth    =   400
-         ObjectID        =   ""
-         Progress        =   0.0
-         Scope           =   2
-         TabIndex        =   0
-         TabPanelIndex   =   2
-         TabStop         =   True
-         ToolbarCaption  =   ""
-         Top             =   0
-         Transparent     =   True
-         UseFocusRing    =   False
-         Visible         =   True
-         Width           =   535
-      End
       Begin FadedSeparator EditorHeaderSeparator
          AcceptFocus     =   False
          AcceptTabs      =   False
@@ -202,6 +168,40 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          Top             =   0
          Transparent     =   False
          UseFocusRing    =   True
+         Visible         =   True
+         Width           =   535
+      End
+      Begin BlueprintEditor Editor
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   592
+         HelpTag         =   ""
+         InitialParent   =   "Pages"
+         Left            =   271
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         ObjectID        =   ""
+         Progress        =   0.0
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   2
+         TabStop         =   True
+         ToolbarCaption  =   ""
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   False
          Visible         =   True
          Width           =   535
       End

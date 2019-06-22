@@ -528,6 +528,20 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub Revert(Confirm As Boolean)
+		  If Confirm And Not Self.ShowConfirm("Revert this object?", "Unsaved changes will be lost. That's the point.", "Revert", "Cancel") Then
+		    Return
+		  End If
+		  
+		  Self.Modified = False
+		  
+		  Dim ObjID As Text = Self.ObjectID
+		  Self.ObjectID = ""
+		  Self.ObjectID = ObjID
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Save()
 		  Dim Tags() As Text = Self.TagsField.Text.ToText.Split(",")
 		  For I As Integer = Tags.Ubound DownTo 0
@@ -657,18 +671,14 @@ End
 		  Case "SaveButton"
 		    Self.Save()
 		  Case "RevertButton"
-		    Self.Modified = False
-		    
-		    Dim ObjID As Text = Self.ObjectID
-		    Self.ObjectID = ""
-		    Self.ObjectID = ObjID
+		    Self.Revert(True)
 		  End Select
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub Open()
-		  Me.LeftItems.Append(New BeaconToolbarItem("SaveButton", IconToolbarPublish, False, "Save Object"))
-		  Me.LeftItems.Append(New BeaconToolbarItem("RevertButton", IconToolbarClose, False, "Revert Changes"))
+		  Me.LeftItems.Append(New BeaconToolbarItem("SaveButton", IconToolbarSave, False, "Save Object"))
+		  Me.LeftItems.Append(New BeaconToolbarItem("RevertButton", IconToolbarRevert, False, "Revert Changes"))
 		End Sub
 	#tag EndEvent
 #tag EndEvents
