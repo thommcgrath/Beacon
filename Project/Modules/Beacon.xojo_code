@@ -691,11 +691,18 @@ Protected Module Beacon
 	#tag Method, Flags = &h1
 		Protected Function NormalizeTag(Tag As Text) As Text
 		  #if Not TargetiOS
+		    Dim TagString As String = Tag.Lowercase.Trim
+		    
 		    Dim Sanitizer As New RegEx
+		    Sanitizer.Options.ReplaceAllMatches = True
+		    Sanitizer.SearchPattern = "\s+"
+		    Sanitizer.ReplacementPattern = "_"
+		    TagString = Sanitizer.Replace(TagString)
+		    
 		    Sanitizer.SearchPattern = "[^\w]"
 		    Sanitizer.ReplacementPattern = ""
+		    TagString = Sanitizer.Replace(TagString)
 		    
-		    Dim TagString As String = Sanitizer.Replace(Tag.Lowercase)
 		    Return TagString.ToText
 		  #else
 		    #Pragma Error "Not implemented"

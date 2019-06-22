@@ -111,6 +111,12 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("CREATE VIRTUAL TABLE searchable_tags USING fts5(tags, object_id, source_table);")
 		  
 		  Self.SQLExecute("CREATE VIEW blueprints AS SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryEngrams + "' AS category FROM engrams UNION SELECT object_id, class_string, path, label, tags, availability, mod_id, '" + Beacon.CategoryCreatures + "' AS category FROM creatures;")
+		  Dim Categories() As Text = Array(Beacon.CategoryCreatures, Beacon.CategoryEngrams)
+		  Dim DeleteStatements() As String
+		  For Each Category As Text In Categories
+		    DeleteStatements.Append("DELETE FROM " + Category + " WHERE object_id = OLD.object_id;")
+		  Next
+		  Self.SQLExecute("CREATE TRIGGER blueprints_delete_trigger INSTEAD OF DELETE ON blueprints FOR EACH ROW BEGIN " + DeleteStatements.Join(" ") + " DELETE FROM searchable_tags WHERE object_id = OLD.object_id; END;")
 		  
 		  Self.SQLExecute("CREATE INDEX engrams_class_string_idx ON engrams(class_string);")
 		  Self.SQLExecute("CREATE UNIQUE INDEX engrams_path_idx ON engrams(path);")
@@ -302,6 +308,30 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  NotificationKit.Watch(Self, UserCloud.Notification_SyncFinished)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeleteBlueprint(Blueprint As Beacon.Blueprint)
+		  Dim Arr(0) As Beacon.Blueprint
+		  Arr(0) = Blueprint
+		  Self.DeleteBlueprints(Arr)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DeleteBlueprints(Blueprints() As Beacon.Blueprint)
+		  Dim ObjectIDs() As String
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    ObjectIDs.Append("'" + Blueprint.ObjectID + "'")
+		  Next
+		  
+		  Self.BeginTransaction()
+		  Self.SQLExecute("DELETE FROM blueprints WHERE mod_id = '" + Self.UserModID + "' AND object_id IN (" + ObjectIDs.Join(",") + ");")
+		  Self.Commit()
+		  
+		  Self.SyncUserEngrams()
+		  NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
 		End Sub
 	#tag EndMethod
 

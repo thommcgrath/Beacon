@@ -100,7 +100,7 @@ Inherits ControlCanvas
 		    Dim Required As Boolean = Self.mRequireTags.IndexOf(Tag) > -1
 		    Dim Excluded As Boolean = Self.mExcludeTags.IndexOf(Tag) > -1
 		    Dim Pressed As Boolean = Self.mMousePressedIndex = I
-		    Tag = Titlecase(Tag)
+		    Tag = Tag.ReplaceAll("_", " ").Titlecase
 		    
 		    Dim CaptionWidth As Integer = Ceil(Clip.StringWidth(Tag))
 		    Dim CellWidth As Integer = Min(MaxCellWidth, CaptionWidth + (HorizontalPadding * 2))
