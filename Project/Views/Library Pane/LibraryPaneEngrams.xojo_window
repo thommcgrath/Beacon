@@ -74,7 +74,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   55
+      Left            =   35
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -91,7 +91,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   190
+      Width           =   230
    End
    Begin UITweaks.ResizedPushButton ImportClipboardButton
       AutoDeactivate  =   True
@@ -106,7 +106,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   55
+      Left            =   35
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -123,7 +123,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   190
+      Width           =   230
    End
    Begin UITweaks.ResizedPushButton ImportFileButton
       AutoDeactivate  =   True
@@ -138,7 +138,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   55
+      Left            =   35
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -155,14 +155,14 @@ Begin LibrarySubview LibraryPaneEngrams
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   190
+      Width           =   230
    End
    Begin UITweaks.ResizedPushButton ManageEngramsButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
       Cancel          =   False
-      Caption         =   "Manage Engrams"
+      Caption         =   "Manage Database"
       Default         =   False
       Enabled         =   True
       Height          =   20
@@ -170,7 +170,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   55
+      Left            =   35
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -187,14 +187,14 @@ Begin LibrarySubview LibraryPaneEngrams
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   190
+      Width           =   230
    End
    Begin BeaconToolbar Header
       AcceptFocus     =   False
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   "Engrams"
+      Caption         =   "Database"
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
