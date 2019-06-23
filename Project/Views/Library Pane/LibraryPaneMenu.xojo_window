@@ -122,7 +122,6 @@ End
 		  
 		  Links.Append("Admin Spawn Codes" : "beacon://spawncodes")
 		  Links.Append("Report a Problem" : "beacon://reportproblem")
-		  Links.Append("Make a Donation" : "beacon://makedonation")
 		  
 		  Self.SetContents(Links)
 		End Sub
@@ -205,8 +204,6 @@ End
 		    App.ShowSpawnCodes()
 		  Case "beacon://reportproblem"
 		    App.ShowBugReporter()
-		  Case "beacon://makedonation"
-		    App.ShowDonation()
 		  Case "beacon://exit"
 		    Quit
 		  Case "beacon://signout"

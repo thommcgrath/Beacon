@@ -453,13 +453,6 @@ Begin Menu MainMenuBar
          AutoEnable = True
          Visible = True
       End
-      Begin MenuItem HelpMakeADonation
-         SpecialMenu = 0
-         Text = "Make a Donation…"
-         Index = -2147483648
-         AutoEnable = True
-         Visible = True
-      End
       Begin MenuItem HelpOpenDataFolder
          SpecialMenu = 0
          Text = "Open Data Folder"

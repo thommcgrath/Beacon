@@ -235,13 +235,6 @@ Implements NotificationKit.Receiver
 	#tag EndMenuHandler
 
 	#tag MenuHandler
-		Function HelpMakeADonation() As Boolean Handles HelpMakeADonation.Action
-			Self.ShowDonation()
-			Return True
-		End Function
-	#tag EndMenuHandler
-
-	#tag MenuHandler
 		Function HelpOpenDataFolder() As Boolean Handles HelpOpenDataFolder.Action
 			Self.ShowFile(Self.ApplicationSupport)
 			Return True
@@ -931,12 +924,6 @@ Implements NotificationKit.Receiver
 		  End If
 		  
 		  ShowURL(Beacon.WebURL(Path))
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub ShowDonation()
-		  ShowURL(Beacon.WebURL("/donate.php"))
 		End Sub
 	#tag EndMethod
 
