@@ -247,7 +247,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       ColumnWidths    =   ""
       DataField       =   ""
       DataSource      =   ""
-      DefaultRowHeight=   34
+      DefaultRowHeight=   26
       Enabled         =   True
       EnableDrag      =   False
       EnableDragReorder=   False
