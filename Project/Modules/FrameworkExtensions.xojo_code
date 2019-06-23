@@ -122,6 +122,28 @@ Protected Module FrameworkExtensions
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function Clone(Extends Source() As String) As String()
+		  Dim Result() As String
+		  Redim Result(Source.Ubound)
+		  For I As Integer = 0 To Source.Ubound
+		    Result(I) = Source(I)
+		  Next
+		  Return Result
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function Clone(Extends Source() As Text) As Text()
+		  Dim Result() As Text
+		  Redim Result(Source.Ubound)
+		  For I As Integer = 0 To Source.Ubound
+		    Result(I) = Source(I)
+		  Next
+		  Return Result
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Convert(Extends Source As Date) As Xojo.Core.Date
 		  Return New Xojo.Core.Date(Source.Year, Source.Month, Source.Day, Source.Hour, Source.Minute, Source.Second, 0, New Xojo.Core.TimeZone(Source.GMTOffset * 3600))
@@ -421,6 +443,28 @@ Protected Module FrameworkExtensions
 	#tag Method, Flags = &h0
 		Function ToHex(Extends Source As Color) As Text
 		  Return Source.Red.ToHex(2).Lowercase + Source.Green.ToHex(2).Lowercase + Source.Blue.ToHex(2).Lowercase + Source.Alpha.ToHex(2).Lowercase
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function ToString(Extends Source() As Text) As String()
+		  Dim Result() As String
+		  Redim Result(Source.Ubound)
+		  For I As Integer = 0 To Source.Ubound
+		    Result(I) = Source(I)
+		  Next
+		  Return Result
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0, CompatibilityFlags = (TargetConsole and (Target32Bit or Target64Bit)) or  (TargetWeb and (Target32Bit or Target64Bit)) or  (TargetDesktop and (Target32Bit or Target64Bit))
+		Function ToText(Extends Source() As String) As Text()
+		  Dim Result() As Text
+		  Redim Result(Source.Ubound)
+		  For I As Integer = 0 To Source.Ubound
+		    Result(I) = Source(I).ToText
+		  Next
+		  Return Result
 		End Function
 	#tag EndMethod
 

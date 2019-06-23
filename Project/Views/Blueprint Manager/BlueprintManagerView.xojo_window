@@ -56,7 +56,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   271
+      Width           =   296
    End
    Begin FadedSeparator ListSeparator
       AcceptFocus     =   False
@@ -70,7 +70,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   270
+      Left            =   295
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
@@ -94,22 +94,22 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   271
+      Left            =   296
       LockBottom      =   True
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      PanelCount      =   2
+      PanelCount      =   3
       Panels          =   ""
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
       Top             =   0
       Transparent     =   False
-      Value           =   1
+      Value           =   2
       Visible         =   True
-      Width           =   535
+      Width           =   510
       Begin FadedSeparator EditorHeaderSeparator
          AcceptFocus     =   False
          AcceptTabs      =   False
@@ -122,7 +122,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         Left            =   271
+         Left            =   296
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -137,7 +137,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          Transparent     =   True
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   535
+         Width           =   510
       End
       Begin BeaconToolbar EditorHeader
          AcceptFocus     =   False
@@ -152,7 +152,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "Pages"
-         Left            =   271
+         Left            =   296
          LockBottom      =   False
          LockedInPosition=   False
          LockLeft        =   True
@@ -169,7 +169,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          Transparent     =   False
          UseFocusRing    =   True
          Visible         =   True
-         Width           =   535
+         Width           =   510
       End
       Begin BlueprintEditor Editor
          AcceptFocus     =   False
@@ -184,7 +184,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          Height          =   592
          HelpTag         =   ""
          InitialParent   =   "Pages"
-         Left            =   271
+         Left            =   296
          LockBottom      =   True
          LockedInPosition=   False
          LockLeft        =   True
@@ -203,7 +203,38 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          Transparent     =   True
          UseFocusRing    =   False
          Visible         =   True
-         Width           =   535
+         Width           =   510
+      End
+      Begin BlueprintMultiEditor MultiEditor
+         AcceptFocus     =   False
+         AcceptTabs      =   True
+         AutoDeactivate  =   True
+         BackColor       =   &cFFFFFF00
+         Backdrop        =   0
+         DoubleBuffer    =   False
+         Enabled         =   True
+         EraseBackground =   True
+         HasBackColor    =   False
+         Height          =   592
+         HelpTag         =   ""
+         InitialParent   =   "Pages"
+         Left            =   296
+         LockBottom      =   True
+         LockedInPosition=   False
+         LockLeft        =   True
+         LockRight       =   True
+         LockTop         =   True
+         MinimumHeight   =   300
+         MinimumWidth    =   400
+         Scope           =   2
+         TabIndex        =   0
+         TabPanelIndex   =   3
+         TabStop         =   True
+         Top             =   0
+         Transparent     =   True
+         UseFocusRing    =   False
+         Visible         =   True
+         Width           =   510
       End
    End
    Begin BeaconListbox List
@@ -256,7 +287,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Underline       =   False
       UseFocusRing    =   False
       Visible         =   True
-      Width           =   270
+      Width           =   295
       _ScrollOffset   =   0
       _ScrollWidth    =   -1
    End
@@ -287,7 +318,7 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
       Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   270
+      Width           =   295
    End
    Begin Beacon.EngramSearcherThread Searcher
       Index           =   -2147483648
@@ -332,8 +363,10 @@ End
 
 	#tag Event
 		Function ShouldSave() As Boolean
-		  If Self.Editor.ObjectID <> "" Then
+		  If Self.Pages.Value = Self.PageEditor And Self.Editor.Modified Then
 		    Self.Editor.Save()
+		  ElseIf Self.Pages.Value = Self.PageMulti And Self.MultiEditor.Modified Then
+		    Self.MultiEditor.Save()
 		  End If
 		End Function
 	#tag EndEvent
@@ -366,7 +399,7 @@ End
 
 	#tag Method, Flags = &h0
 		Function ConfirmClose(Callback As BeaconSubview.BringToFrontDelegate) As Boolean
-		  If Not Self.Editor.Modified Then
+		  If Self.Pages.Value = Self.PageEmpty Or (Self.Pages.Value = Self.PageEditor And Not Self.Editor.Modified) Or (Self.Pages.Value = Self.PageMulti And Not Self.MultiEditor.Modified) Then
 		    Return True
 		  End If
 		  
@@ -374,9 +407,13 @@ End
 		    Callback.Invoke(Self)
 		  End If
 		  
-		  Self.Editor.ObjectID = ""
-		  
-		  Return Not Self.Editor.Modified
+		  If Self.Pages.Value = Self.PageEditor Then
+		    Self.Editor.ObjectID = ""
+		    Return Not Self.Editor.Modified
+		  ElseIf Self.Pages.Value = Self.PageMulti Then
+		    Self.MultiEditor.Blueprints = Nil
+		    Return Not Self.MultiEditor.Modified
+		  End If
 		End Function
 	#tag EndMethod
 
@@ -480,15 +517,52 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateEditorWithSelection()
-		  If Self.List.SelCount <> 1 Then  
-		    Self.Editor.ObjectID = ""
-		    Self.Pages.Value = Self.PageEmpty
-		    Return
+		  If Self.List.SelCount = 0 Then
+		    If Self.Pages.Value = Self.PageEditor Then
+		      Self.Editor.ObjectID = ""
+		      If Not Self.Editor.Modified Then
+		        Self.Pages.Value = Self.PageEmpty
+		      End If
+		    ElseIf Self.Pages.Value = Self.PageMulti Then
+		      Self.MultiEditor.Blueprints = Nil
+		      If Not Self.MultiEditor.Modified Then
+		        Self.Pages.Value = Self.PageEmpty
+		      End If
+		    End If
+		  ElseIf Self.List.SelCount = 1 Then
+		    If Self.Pages.Value = Self.PageMulti Then
+		      Self.MultiEditor.Blueprints = Nil
+		      If Self.MultiEditor.Modified Then
+		        Return
+		      End If
+		    End If
+		    
+		    Dim Blueprint As Beacon.Blueprint = Self.List.RowTag(Self.List.ListIndex)
+		    Self.Editor.ObjectID = Blueprint.ObjectID
+		    
+		    If Self.Pages.Value <> Self.PageEditor Then
+		      Self.Pages.Value = Self.PageEditor
+		    End If
+		  ElseIf Self.List.SelCount > 1 Then
+		    If Self.Pages.Value = Self.PageEditor Then
+		      Self.Editor.ObjectID = ""
+		      If Self.Editor.Modified Then
+		        Return
+		      End If
+		    End If
+		    
+		    Dim Blueprints() As Beacon.Blueprint
+		    For I As Integer = 0 To Self.List.ListCount - 1
+		      If Self.List.Selected(I) Then
+		        Blueprints.Append(Beacon.Blueprint(Self.List.RowTag(I)))
+		      End If
+		    Next
+		    Self.MultiEditor.Blueprints = Blueprints
+		    
+		    If Self.Pages.Value <> Self.PageMulti Then
+		      Self.Pages.Value = Self.PageMulti
+		    End If
 		  End If
-		  
-		  Dim Blueprint As Beacon.Blueprint = Self.List.RowTag(Self.List.ListIndex)
-		  Self.Editor.ObjectID = Blueprint.ObjectID
-		  Self.Pages.Value = Self.PageEditor
 		End Sub
 	#tag EndMethod
 
@@ -506,6 +580,9 @@ End
 	#tag EndConstant
 
 	#tag Constant, Name = PageEmpty, Type = Double, Dynamic = False, Default = \"0", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = PageMulti, Type = Double, Dynamic = False, Default = \"2", Scope = Private
 	#tag EndConstant
 
 
@@ -536,10 +613,35 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
+#tag Events Pages
+	#tag Event
+		Sub Change()
+		  Select Case Me.Value
+		  Case Self.PageEmpty
+		    Self.ContentsChanged = False
+		  Case Self.PageEditor
+		    Self.ContentsChanged = Self.Editor.ContentsChanged
+		  Case Self.PageMulti
+		    Self.ContentsChanged = Self.Editor.ContentsChanged
+		  End Select
+		End Sub
+	#tag EndEvent
+#tag EndEvents
 #tag Events Editor
 	#tag Event
 		Sub ContentsChanged()
-		  Self.ContentsChanged = Me.ContentsChanged
+		  If Self.Pages.Value = Self.PageEditor Then
+		    Self.ContentsChanged = Me.ContentsChanged
+		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MultiEditor
+	#tag Event
+		Sub ContentsChanged()
+		  If Self.Pages.Value = Self.PageMulti Then
+		    Self.ContentsChanged = Me.ContentsChanged
+		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents

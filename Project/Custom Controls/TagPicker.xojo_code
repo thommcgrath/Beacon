@@ -169,6 +169,13 @@ Inherits ControlCanvas
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub ClearSelections()
+		  Dim Arr() As String
+		  Self.SetSelections(Arr, Arr)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Constructor()
 		  Self.Border = Self.BorderTop Or Self.BorderLeft Or Self.BorderBottom Or Self.BorderRight
 		  Super.Constructor
@@ -201,6 +208,16 @@ Inherits ControlCanvas
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h0
+		Function ExcludedTags() As String()
+		  Dim Tags() As String
+		  For Each Tag As String In Self.mExcludeTags
+		    Tags.Append(Tag)
+		  Next
+		  Return Tags
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub LocalizeCoordinates(ByRef X As Integer, ByRef Y As Integer)
 		  If (Self.Border And Self.BorderTop) = Self.BorderTop Then
@@ -212,8 +229,27 @@ Inherits ControlCanvas
 		End Sub
 	#tag EndMethod
 
-	#tag Method, Flags = &h21
-		Private Sub SetSelections(RequiredTags() As String, ExcludedTags() As String)
+	#tag Method, Flags = &h0
+		Function RequiredTags() As String()
+		  Dim Tags() As String
+		  For Each Tag As String In Self.mRequireTags
+		    Tags.Append(Tag)
+		  Next
+		  Return Tags
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub SetSelections(RequiredTags() As String, ExcludedTags() As String)
+		  If RequiredTags = Nil Then
+		    Dim Temp() As String
+		    RequiredTags = Temp
+		  End If
+		  If ExcludedTags = Nil Then
+		    Dim Temp() As String
+		    ExcludedTags = Temp
+		  End If
+		  
 		  Dim RequireCurrentString As String = Self.ArrayToString(Self.mRequireTags)
 		  Dim RequireNewString As String = Self.ArrayToString(RequiredTags)
 		  Dim Changed As Boolean = RequireCurrentString <> RequireNewString
@@ -228,8 +264,8 @@ Inherits ControlCanvas
 		    Return
 		  End If
 		  
-		  Self.mRequireTags = RequiredTags
-		  Self.mExcludeTags = ExcludedTags
+		  Self.mRequireTags = RequiredTags.Clone
+		  Self.mExcludeTags = ExcludedTags.Clone
 		  
 		  If App.CurrentThread = Nil Then
 		    RaiseEvent Change

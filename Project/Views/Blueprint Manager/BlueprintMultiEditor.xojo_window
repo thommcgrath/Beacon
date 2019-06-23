@@ -1,5 +1,5 @@
 #tag Window
-Begin BeaconSubview BlueprintEditor
+Begin BeaconSubview BlueprintMultiEditor
    AcceptFocus     =   False
    AcceptTabs      =   True
    AutoDeactivate  =   True
@@ -14,7 +14,7 @@ Begin BeaconSubview BlueprintEditor
    HelpTag         =   ""
    InitialParent   =   ""
    Left            =   0
-   LockBottom      =   False
+   LockBottom      =   True
    LockLeft        =   True
    LockRight       =   True
    LockTop         =   True
@@ -31,7 +31,7 @@ Begin BeaconSubview BlueprintEditor
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      Caption         =   "New Object"
+      Caption         =   "Edit Multiple"
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   False
@@ -87,228 +87,35 @@ Begin BeaconSubview BlueprintEditor
       Visible         =   True
       Width           =   510
    End
-   Begin UITweaks.ResizedTextField PathField
+   Begin TagPicker Picker
+      AcceptFocus     =   False
       AcceptTabs      =   False
-      Alignment       =   0
       AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
+      Backdrop        =   0
+      Border          =   15
+      DoubleBuffer    =   False
       Enabled         =   True
-      Format          =   ""
-      Height          =   22
+      EraseBackground =   True
+      Height          =   100
       HelpTag         =   ""
       Index           =   -2147483648
-      Italic          =   False
+      InitialParent   =   ""
       Left            =   152
-      LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
       LockRight       =   True
       LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
       Scope           =   2
+      ScrollSpeed     =   20
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   93
-      Transparent     =   False
-      Underline       =   False
+      Top             =   61
+      Transparent     =   True
       UseFocusRing    =   True
       Visible         =   True
       Width           =   338
-   End
-   Begin UITweaks.ResizedLabel TypeLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Type:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   61
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   120
-   End
-   Begin UITweaks.ResizedLabel PathLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   4
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Blueprint Path:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   93
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   120
-   End
-   Begin UITweaks.ResizedPopupMenu TypeMenu
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      InitialValue    =   "Engram\nCreature"
-      Italic          =   False
-      Left            =   152
-      ListIndex       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   5
-      TabPanelIndex   =   0
-      TabStop         =   True
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   61
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   159
-   End
-   Begin UITweaks.ResizedTextField NameField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   152
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   6
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   127
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   338
-   End
-   Begin UITweaks.ResizedLabel NameLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   7
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Name:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   127
-      Transparent     =   False
-      Underline       =   False
-      Visible         =   True
-      Width           =   120
    End
    Begin CheckBox MapCheckboxes
       AutoDeactivate  =   True
@@ -330,13 +137,13 @@ Begin BeaconSubview BlueprintEditor
       LockTop         =   True
       Scope           =   2
       State           =   0
-      TabIndex        =   8
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   195
+      Top             =   173
       Transparent     =   False
       Underline       =   False
       Value           =   False
@@ -363,7 +170,7 @@ Begin BeaconSubview BlueprintEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   9
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Map Availability:"
@@ -372,62 +179,19 @@ Begin BeaconSubview BlueprintEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   195
+      Top             =   173
       Transparent     =   False
       Underline       =   False
       Visible         =   True
       Width           =   120
    End
-   Begin UITweaks.ResizedTextField TagsField
-      AcceptTabs      =   False
-      Alignment       =   0
-      AutoDeactivate  =   True
-      AutomaticallyCheckSpelling=   False
-      BackColor       =   &cFFFFFF00
-      Bold            =   False
-      Border          =   True
-      CueText         =   ""
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Format          =   ""
-      Height          =   22
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Italic          =   False
-      Left            =   152
-      LimitText       =   0
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Mask            =   ""
-      Password        =   False
-      ReadOnly        =   False
-      Scope           =   2
-      TabIndex        =   10
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   ""
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   161
-      Transparent     =   False
-      Underline       =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   338
-   End
-   Begin UITweaks.ResizedLabel TagsLabel
+   Begin UITweaks.ResizedLabel PickerLabel
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
       DataSource      =   ""
       Enabled         =   True
-      Height          =   22
+      Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -441,7 +205,7 @@ Begin BeaconSubview BlueprintEditor
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   11
+      TabIndex        =   5
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Tags:"
@@ -450,7 +214,42 @@ Begin BeaconSubview BlueprintEditor
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   161
+      Top             =   61
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   120
+   End
+   Begin Label PickerHelp
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   74
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   True
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   6
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Selected tags will be added to all, crossed out tags will be removed from all."
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "SmallSystem"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   87
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -501,10 +300,57 @@ End
 		    ThirdPartyNextTop = ThirdPartyNextTop + Check.Height + 12
 		    Self.mMapCheckboxes.Append(Check)
 		  Next
-		  
 		End Sub
 	#tag EndEvent
 
+
+	#tag Method, Flags = &h0
+		Function Blueprints() As Beacon.Blueprint()
+		  Dim Blueprints() As Beacon.Blueprint
+		  Redim Blueprints(Self.mBlueprints.Ubound)
+		  For I As Integer = 0 To Self.mBlueprints.Ubound
+		    Blueprints(I) = Self.mBlueprints(I).Clone
+		  Next
+		  Return Blueprints
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub Blueprints(Assigns Blueprints() As Beacon.Blueprint)
+		  If Self.Modified Then
+		    Dim Dialog As New MessageDialog
+		    Dialog.Title = ""
+		    Dialog.Message = "Do you want to save changes to these objects"
+		    Dialog.Explanation = "If you do not save now, your changes will be lost."
+		    Dialog.ActionButton.Caption = "Save"
+		    Dialog.CancelButton.Visible = True
+		    Dialog.AlternateActionButton.Caption = "Don't Save"
+		    Dialog.AlternateActionButton.Visible = True
+		    
+		    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
+		    Select Case Choice
+		    Case Dialog.ActionButton
+		      // Build and save the object
+		      Self.Save()
+		    Case Dialog.AlternateActionButton
+		      // Do nothing
+		    Case Dialog.CancelButton
+		      Return
+		    End Select
+		  End If
+		  
+		  If Blueprints <> Nil Then
+		    Redim Self.mBlueprints(Blueprints.Ubound)
+		    For I As Integer = 0 To Blueprints.Ubound
+		      Self.mBlueprints(I) = Blueprints(I).MutableClone
+		    Next
+		  Else
+		    Redim Self.mBlueprints(-1)
+		  End If
+		  
+		  Self.SetupUI()
+		End Sub
+	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Function Modified() As Boolean
@@ -527,59 +373,90 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Revert(Confirm As Boolean)
-		  If Confirm And Not Self.ShowConfirm("Revert this object?", "Unsaved changes will be lost. That's the point.", "Revert", "Cancel") Then
-		    Return
-		  End If
-		  
-		  Self.Modified = False
-		  
-		  Dim ObjID As Text = Self.ObjectID
-		  Self.ObjectID = ""
-		  Self.ObjectID = ObjID
+		  #Pragma Warning "Not Implemented"
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
 		Sub Save()
-		  Dim Tags() As Text = Self.TagsField.Text.ToText.Split(",")
-		  For I As Integer = Tags.Ubound DownTo 0
-		    Tags(I) = Tags(I).Trim
-		    If Tags(I) = "" Then
-		      Tags.Remove(I)
-		    End If
-		  Next
+		  Dim AddTags() As Text = Self.Picker.RequiredTags.ToText
+		  Dim RemoveTags() As Text = Self.Picker.ExcludedTags.ToText
 		  
-		  Dim Availability As UInt64
+		  Dim AddMask, ClearMask As UInt64
 		  For Each Check As Checkbox In Self.mMapCheckboxes
-		    If Check.Value Then
-		      Availability = Availability Or Check.Index
+		    If Check.State = Checkbox.CheckedStates.Checked Then
+		      AddMask = AddMask Or Check.Index
+		    ElseIf Check.State = Checkbox.CheckedStates.Unchecked Then
+		      ClearMask = ClearMask Or Check.Index
 		    End If
 		  Next
 		  
-		  Dim Path As String = Self.PathField.Text
-		  Select Case Self.TypeMenu.ListIndex
-		  Case 0
-		    Dim Engram As New Beacon.MutableEngram(Path.ToText, Self.mObjectID)
-		    Engram.Label = Self.NameField.Text.ToText
-		    Engram.Tags = Tags
-		    Engram.Availability = Availability
-		    If Not LocalData.SharedInstance.SaveEngram(Engram, True) Then
-		      Break
-		    End If
-		  Case 1
-		    Dim Creature As New Beacon.MutableCreature(Path.ToText, Self.mObjectID)
-		    Creature.Label = Self.NameField.Text.ToText
-		    Creature.Tags = Tags
-		    Creature.Availability = Availability
-		    If Not LocalData.SharedInstance.SaveCreature(Creature, True) Then
-		      Break
-		    End If
-		  End Select
+		  For Each Blueprint As Beacon.MutableBlueprint In Self.mBlueprints
+		    Blueprint.Availability = (Blueprint.Availability Or AddMask) And Not ClearMask
+		    Blueprint.AddTags(AddTags)
+		    Blueprint.RemoveTags(RemoveTags)
+		  Next
 		  
+		  If LocalData.SharedInstance.SaveBlueprints(Self.mBlueprints) <> (Self.mBlueprints.Ubound + 1) Then
+		    Break
+		  Else
+		    Self.Modified = False
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub SetupUI()
+		  Self.mSettingUp = True
+		  
+		  Self.Picker.ClearSelections()
+		  Self.Picker.Tags = LocalData.SharedInstance.AllTags()
+		  
+		  Dim Masks As New Dictionary
+		  Dim Tags As New Dictionary
+		  For Each Blueprint As Beacon.Blueprint In Self.mBlueprints
+		    For Each Check As Checkbox In Self.mMapCheckboxes
+		      If Blueprint.ValidForMask(Check.Index) Then
+		        Masks.Value(Check.Index) = Masks.Lookup(Check.Index, 0) + 1
+		      End If
+		    Next
+		    
+		    Dim BlueprintTags() As Text = Blueprint.Tags
+		    For Each Tag As String In BlueprintTags
+		      Tags.Value(Tag) = Tags.Lookup(Tag, 0) + 1
+		    Next
+		  Next
+		  
+		  Dim BlueprintCount As Integer = Self.mBlueprints.Ubound + 1
+		  For Each Check As Checkbox In Self.mMapCheckboxes
+		    Dim Count As Integer = Masks.Lookup(Check.Index, 0)
+		    If Count = 0 Then
+		      Check.State = Checkbox.CheckedStates.Unchecked
+		    ElseIf Count = BlueprintCount Then
+		      Check.State = Checkbox.CheckedStates.Checked
+		    Else
+		      Check.State = Checkbox.CheckedStates.Indeterminate
+		    End If
+		  Next
+		  
+		  Dim CommonTags() As String
+		  For I As Integer = 0 To Tags.Count - 1
+		    Dim Tag As String = Tags.Key(I)
+		    If Tags.Lookup(Tag, 0) = BlueprintCount Then
+		      CommonTags.Append(Tag)
+		    End If
+		  Next
+		  Self.Picker.SetSelections(CommonTags, Nil)
+		  
+		  Self.mSettingUp = False
 		  Self.Modified = False
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mBlueprints() As Beacon.MutableBlueprint
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mMapCheckboxes() As Checkbox
@@ -590,74 +467,8 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mObjectID As Text
+		Private mSettingUp As Boolean
 	#tag EndProperty
-
-	#tag ComputedProperty, Flags = &h0
-		#tag Getter
-			Get
-			  Return Self.mObjectID
-			End Get
-		#tag EndGetter
-		#tag Setter
-			Set
-			  If Self.mObjectID = Value Then
-			    Return
-			  End If
-			  
-			  If Self.Modified Then
-			    Dim Dialog As New MessageDialog
-			    Dialog.Title = ""
-			    Dialog.Message = "Do you want to save changes to this object?"
-			    Dialog.Explanation = "If you do not save now, your changes will be lost."
-			    Dialog.ActionButton.Caption = "Save"
-			    Dialog.CancelButton.Visible = True
-			    Dialog.AlternateActionButton.Caption = "Don't Save"
-			    Dialog.AlternateActionButton.Visible = True
-			    
-			    Dim Choice As MessageDialogButton = Dialog.ShowModalWithin(Self.TrueWindow)
-			    Select Case Choice
-			    Case Dialog.ActionButton
-			      // Build and save the object
-			      Self.Save()
-			    Case Dialog.AlternateActionButton
-			      // Do nothing
-			    Case Dialog.CancelButton
-			      Return
-			    End Select
-			  End If
-			  
-			  Self.mObjectID = Value
-			  
-			  Dim Blueprint As Beacon.Blueprint = LocalData.SharedInstance.GetBlueprintByObjectID(Self.mObjectID)
-			  If Blueprint <> Nil Then
-			    Select Case Blueprint
-			    Case IsA Beacon.Creature
-			      Self.TypeMenu.SelectByCaption("Creature")
-			    Case IsA Beacon.Engram
-			      Self.TypeMenu.SelectByCaption("Engram")
-			    End Select
-			    Self.PathField.Text = Blueprint.Path
-			    Self.NameField.Text = Blueprint.Label
-			    Self.TagsField.Text = Blueprint.Tags.Join(", ")
-			    For Each Check As Checkbox In Self.mMapCheckboxes
-			      Check.Value = (Blueprint.Availability And Check.Index) = Check.Index
-			    Next
-			  Else
-			    Self.TypeMenu.ListIndex = -1
-			    Self.PathField.Text = ""
-			    Self.NameField.Text = ""
-			    Self.TagsField.Text = ""
-			    For Each Check As Checkbox In Self.mMapCheckboxes
-			      Check.Value = False
-			    Next
-			  End If
-			  
-			  Self.Modified = False
-			End Set
-		#tag EndSetter
-		ObjectID As Text
-	#tag EndComputedProperty
 
 
 #tag EndWindowCode
@@ -680,42 +491,22 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events PathField
-	#tag Event
-		Sub TextChange()
-		  Self.Modified = True
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events TypeMenu
+#tag Events Picker
 	#tag Event
 		Sub Change()
-		  Self.Modified = True
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events NameField
-	#tag Event
-		Sub TextChange()
-		  If Trim(Me.Text) = "" Then
-		    Header.Caption = "New Object"
-		  Else
-		    Header.Caption = Trim(Me.Text)
+		  If Not Self.mSettingUp Then
+		    Self.Modified = True
 		  End If
-		  Self.Modified = True
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events MapCheckboxes
 	#tag Event
 		Sub Action(index as Integer)
-		  Self.Modified = True
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events TagsField
-	#tag Event
-		Sub TextChange()
+		  If Self.mSettingUp Then
+		    Return
+		  End If
+		  
 		  Self.Modified = True
 		End Sub
 	#tag EndEvent
@@ -933,10 +724,5 @@ End
 		InitialValue="False"
 		Type="Boolean"
 		EditorType="Boolean"
-	#tag EndViewProperty
-	#tag ViewProperty
-		Name="ObjectID"
-		Group="Behavior"
-		Type="Text"
 	#tag EndViewProperty
 #tag EndViewBehavior

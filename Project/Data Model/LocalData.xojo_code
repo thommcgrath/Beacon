@@ -50,8 +50,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function AllTags(Category As String) As String()
-		  Dim Results As RecordSet = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE source_table = $1 AND tags != '';", Category)
+		Function AllTags(Category As String = "") As String()
+		  Dim Results As RecordSet
+		  If Category <> "" Then
+		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE source_table = $1 AND tags != '';", Category)
+		  Else
+		    Results = Self.SQLSelect("SELECT DISTINCT tags FROM searchable_tags WHERE tags != '';")
+		  End If
 		  Dim Dict As New Dictionary
 		  While Not Results.EOF
 		    Dim Tags() As String = Results.Field("tags").StringValue.Split(",")

@@ -83,6 +83,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function MutableClone() As Beacon.MutableBlueprint
+		  Return New Beacon.MutableCreature(Self)
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ObjectID() As Text
 		  Return Self.mObjectID
 		End Function

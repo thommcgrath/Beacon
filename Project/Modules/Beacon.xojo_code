@@ -1,18 +1,36 @@
 #tag Module
 Protected Module Beacon
 	#tag Method, Flags = &h0
-		Sub AddTag(Extends Blueprint As Beacon.MutableBlueprint, Tag As Text)
-		  Tag = Beacon.NormalizeTag(Tag)
-		  If Tag = "engram" Then
+		Sub AddTag(Extends Blueprint As Beacon.MutableBlueprint, ParamArray TagsToAdd() As Text)
+		  Blueprint.AddTags(TagsToAdd)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub AddTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToAdd() As Text)
+		  Dim Tags() As Text = Blueprint.Tags
+		  Dim Changed As Boolean
+		  For I As Integer = 0 To TagsToAdd.Ubound
+		    Dim Tag As Text  = Beacon.NormalizeTag(TagsToAdd(I))
+		    
+		    If Tag = "object" Then
+		      Continue
+		    End If
+		    
+		    If Tags.IndexOf(Tag) <> -1 Then
+		      Continue
+		    End If
+		    
+		    Tags.Append(Tag)
+		    Changed = True
+		  Next
+		  
+		  If Not Changed Then
 		    Return
 		  End If
 		  
-		  Dim Tags() As Text = Blueprint.Tags
-		  If Tags.IndexOf(Tag) = -1 Then
-		    Tags.Append(Tag)
-		    Tags.Sort
-		    Blueprint.Tags = Tags
-		  End If
+		  Tags.Sort
+		  Blueprint.Tags = Tags
 		End Sub
 	#tag EndMethod
 
@@ -887,14 +905,37 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub RemoveTag(Extends Blueprint As Beacon.MutableBlueprint, Tag As Text)
-		  Tag = Beacon.NormalizeTag(Tag)
+		Sub RemoveTag(Extends Blueprint As Beacon.MutableBlueprint, ParamArray TagsToRemove() As Text)
+		  Blueprint.RemoveTags(TagsToRemove)
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub RemoveTags(Extends Blueprint As Beacon.MutableBlueprint, TagsToRemove() As Text)
 		  Dim Tags() As Text = Blueprint.Tags
-		  Dim Idx As Integer = Tags.IndexOf(Tag)
-		  If Idx > -1 Then
+		  Dim Changed As Boolean
+		  For I As Integer = 0 To TagsToRemove.Ubound
+		    Dim Tag As Text  = Beacon.NormalizeTag(TagsToRemove(I))
+		    
+		    If Tag = "object" Then
+		      Continue
+		    End If
+		    
+		    Dim Idx As Integer = Tags.IndexOf(Tag)
+		    If Idx = -1 Then
+		      Continue
+		    End If
+		    
 		    Tags.Remove(Idx)
-		    Blueprint.Tags = Tags
+		    Changed = True
+		  Next
+		  
+		  If Not Changed Then
+		    Return
 		  End If
+		  
+		  // No, you don't need to sort here
+		  Blueprint.Tags = Tags
 		End Sub
 	#tag EndMethod
 
