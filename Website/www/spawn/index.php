@@ -28,62 +28,93 @@ if ($results->RecordCount() == 1) {
 $results = $database->Query("SELECT MAX(last_update) FROM objects WHERE min_version <= $1;", array($build));
 $last_database_update = new DateTime($results->Field("max"), new DateTimeZone('UTC'));
 $include_mod_names = true;
+$cache_key = 'spawn_' . (is_null($mod_id) ? 'all' : $mod_id) . '_' . $build . '_' . $last_database_update->format('U');
 
-if ($mod_id === null) {
-	$title = 'All Spawn Codes';
-	$engrams = BeaconEngram::GetAll();
-} else {
-	$engrams = BeaconEngram::Get($mod_id);
-	$mod_names = array();
-	foreach ($engrams as $engram) {
-		if (in_array($engram->ModName(), $mod_names) === false) {
-			$mod_names[] = $engram->ModName();
-		}
-	}
-	asort($mod_names);
-	
-	if (count($mod_names) == 0) {
-		echo 'Mod is not registered with Beacon.';
-		exit;
-	} elseif (count($mod_names) == 1) {
-		$title = $mod_names[0];
-		$include_mod_names = false;
-	} elseif (count($mod_names) == 2) {
-		$title = $mod_names[0] . ' and ' . $mod_names[1];
+$cached = BeaconCache::Get($cache_key);
+if (is_null($cached)) {
+	ob_start();
+	if ($mod_id === null) {
+		$title = 'All Spawn Codes';
+		$engrams = BeaconEngram::GetAll();
+		$creatures = BeaconCreature::GetAll();
 	} else {
-		$last = array_pop($mod_names);
-		$title = implode(', ', $mod_names) . ', and ' . $last;
-	}
-	$title = 'Spawn codes for ' . $title;
-	BeaconTemplate::SetTitle($title);
-}
-?><h1><?php echo htmlentities($title); ?><br><span class="subtitle">Up to date as of <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?></span></h1>
-<p><input type="search" id="beacon-filter-field" placeholder="Filter Engrams" autocomplete="off"></p>
-<table id="spawntable" class="generic">
-	<thead>
-		<tr>
-			<td>Item Name</td>
-			<td>Spawn Code</td>
-			<td>Copy</td>
-		</tr>
-	</thead>
-	<tbody>
-	<?php
-	
-	foreach ($engrams as $engram) {
-		$id = $engram->ObjectID();
-		$class = $engram->ClassString();
-		$label = $engram->Label();
-		$spawn = $engram->SpawnCode();
-		$mod = $engram->ModName();
+		$engrams = BeaconEngram::Get($mod_id);
+		$creatures = BeaconCreature::Get($mod_id);
+		$mod_names = array();
+		foreach ($engrams as $engram) {
+			if (in_array($engram->ModName(), $mod_names) === false) {
+				$mod_names[] = $engram->ModName();
+			}
+		}
+		foreach ($creatures as $creature) {
+			if (in_array($creature->ModName(), $mod_names) === false) {
+				$mod_names[] = $creature->ModName();
+			}
+		}
+		asort($mod_names);
 		
-		echo '<tr id="spawn_' . htmlentities($id) . '" class="beacon-engram" beacon-label="' . htmlentities(strtolower($label)) . '" beacon-spawn-code="' . htmlentities($spawn) . '" beacon-uuid="' . $id . '">';
-		echo '<td>' . htmlentities($label) . ($include_mod_names ? '<span class="beacon-engram-mod-name"><br>' . htmlentities($mod) . '</span>' : '') . '<div class="beacon-spawn-code-small source-code-font">' . htmlentities($spawn) . '</div></td>';
-		echo '<td class="source-code-font">' . htmlentities($spawn) . '</td>';
-		echo '<td><button class="beacon-engram-copy" beacon-uuid="' . htmlentities($id) . '">Copy</button></td>';
-		echo '</tr>';
+		if (count($mod_names) == 0) {
+			echo 'Mod is not registered with Beacon.';
+			exit;
+		} elseif (count($mod_names) == 1) {
+			$title = $mod_names[0];
+			$include_mod_names = false;
+		} elseif (count($mod_names) == 2) {
+			$title = $mod_names[0] . ' and ' . $mod_names[1];
+		} else {
+			$last = array_pop($mod_names);
+			$title = implode(', ', $mod_names) . ', and ' . $last;
+		}
+		$title = 'Spawn codes for ' . $title;
+		BeaconTemplate::SetTitle($title);
+	}
+	?><h1><?php echo htmlentities($title); ?><br><span class="subtitle">Up to date as of <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?></span></h1>
+	<p><input type="search" id="beacon-filter-field" placeholder="Filter Engrams" autocomplete="off"></p>
+	<table id="spawntable" class="generic">
+		<thead>
+			<tr>
+				<td>Item Name</td>
+				<td>Spawn Code</td>
+				<td>Copy</td>
+			</tr>
+		</thead>
+		<tbody>
+		<?php
+			
+		$blueprints = array_merge($engrams, $creatures);
+		uasort($blueprints, 'CompareBlueprints');
+		
+		foreach ($blueprints as $blueprint) {
+			$id = $blueprint->ObjectID();
+			$class = $blueprint->ClassString();
+			$label = $blueprint->Label();
+			$spawn = $blueprint->SpawnCode();
+			$mod = $blueprint->ModName();
+			
+			echo '<tr id="spawn_' . htmlentities($id) . '" class="beacon-engram" beacon-label="' . htmlentities(strtolower($label)) . '" beacon-spawn-code="' . htmlentities($spawn) . '" beacon-uuid="' . $id . '">';
+			echo '<td>' . htmlentities($label) . ($include_mod_names ? '<span class="beacon-engram-mod-name"><br>' . htmlentities($mod) . '</span>' : '') . '<div class="beacon-spawn-code-small source-code-font">' . htmlentities($spawn) . '</div></td>';
+			echo '<td class="source-code-font">' . htmlentities($spawn) . '</td>';
+			echo '<td><button class="beacon-engram-copy" beacon-uuid="' . htmlentities($id) . '">Copy</button></td>';
+			echo '</tr>';
+		}
+		
+		?>
+		</tbody>
+	</table><?php
+	$cached = ob_get_contents();
+	ob_end_clean();
+	BeaconCache::Set($cache_key, $cached);
+}
+echo $cached;
+
+function CompareBlueprints($left, $right) {
+	$left_label = strtolower($left->Label());
+	$right_label = strtolower($right->Label());
+	if ($left_label === $right_label) {
+		return 0;
 	}
 	
-	?>
-	</tbody>
-</table>
+	return ($left_label < $right_label) ? -1 : 1;
+}
+
+?>
