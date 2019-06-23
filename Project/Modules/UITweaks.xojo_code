@@ -1,8 +1,8 @@
 #tag Module
 Protected Module UITweaks
 	#tag Method, Flags = &h0
-		Sub ResizeForPlatform(Extends Target As Global.RectControl)
-		  Dim Diff As Integer = Max(UITweaks.IdealHeight - Target.Height, 0)
+		Sub ResizeForPlatform(Extends Target As Global.RectControl, IdealHeight As Integer)
+		  Dim Diff As Integer = Max(IdealHeight - Target.Height, 0)
 		  If Diff = 0 Then
 		    Return
 		  End If
@@ -79,12 +79,6 @@ Protected Module UITweaks
 		  #endif
 		End Sub
 	#tag EndMethod
-
-
-	#tag Constant, Name = IdealHeight, Type = Double, Dynamic = False, Default = \"20", Scope = Private
-		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"26"
-		#Tag Instance, Platform = Linux, Language = Default, Definition  = \"30"
-	#tag EndConstant
 
 
 	#tag ViewBehavior

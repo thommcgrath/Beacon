@@ -3,7 +3,7 @@ Protected Class ResizedLabel
 Inherits Label
 	#tag Event
 		Sub Open()
-		  Self.ResizeForPlatform()
+		  Self.ResizeForPlatform(Self.IdealHeight)
 		  
 		  RaiseEvent Open
 		End Sub
@@ -15,7 +15,18 @@ Inherits Label
 	#tag EndHook
 
 
+	#tag Constant, Name = IdealHeight, Type = Double, Dynamic = False, Default = \"20", Scope = Private
+	#tag EndConstant
+
+
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="TabStop"
+			Visible=true
+			Group="Position"
+			InitialValue="True"
+			Type="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AutoDeactivate"
 			Visible=true
@@ -220,6 +231,7 @@ Inherits Label
 			Group="Appearance"
 			InitialValue="True"
 			Type="Boolean"
+			EditorType="Boolean"
 		#tag EndViewProperty
 		#tag ViewProperty
 			Name="Underline"

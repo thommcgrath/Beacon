@@ -3,7 +3,7 @@ Protected Class ResizedPushButton
 Inherits PushButton
 	#tag Event
 		Sub Open()
-		  Self.ResizeForPlatform()
+		  Self.ResizeForPlatform(Self.IdealHeight)
 		  
 		  RaiseEvent Open
 		End Sub
@@ -15,7 +15,20 @@ Inherits PushButton
 	#tag EndHook
 
 
+	#tag Constant, Name = IdealHeight, Type = Double, Dynamic = False, Default = \"20", Scope = Private
+		#Tag Instance, Platform = Windows, Language = Default, Definition  = \"26"
+	#tag EndConstant
+
+
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Transparent"
+			Visible=true
+			Group="Appearance"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AutoDeactivate"
 			Visible=true

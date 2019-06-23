@@ -3,7 +3,7 @@ Protected Class ResizedTextField
 Inherits TextField
 	#tag Event
 		Sub Open()
-		  Self.ResizeForPlatform()
+		  Self.ResizeForPlatform(Self.IdealHeight)
 		  
 		  RaiseEvent Open
 		End Sub
@@ -15,7 +15,19 @@ Inherits TextField
 	#tag EndHook
 
 
+	#tag Constant, Name = IdealHeight, Type = Double, Dynamic = False, Default = \"22", Scope = Private
+	#tag EndConstant
+
+
 	#tag ViewBehavior
+		#tag ViewProperty
+			Name="Transparent"
+			Visible=true
+			Group="Appearance"
+			InitialValue="False"
+			Type="Boolean"
+			EditorType="Boolean"
+		#tag EndViewProperty
 		#tag ViewProperty
 			Name="AcceptTabs"
 			Visible=true
