@@ -1355,7 +1355,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  ElseIf FromSchemaVersion >= 6 Then
 		    Commands.Append("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, '' AS tags FROM legacy.engrams WHERE mod_id = '" + Self.UserModID + "' AND can_blueprint = 0;")
 		    Commands.Append("INSERT INTO engrams (object_id, mod_id, label, availability, path, class_string, tags) SELECT object_id, mod_id, label, availability, path, class_string, 'blueprintable' AS tags FROM legacy.engrams WHERE mod_id = '" + Self.UserModID + "' AND can_blueprint = 1;")
-		    Commands.Append("INSERT INTO searchable_tags (object_id, source_table, tags) SELECT object_id, 'engrams' AS source_table, ASE tags WHEN '' THEN 'object' ELSE 'object,' || tags END tags FROM engrams WHERE mod_id = '" + Self.UserModID + "';")
+		    Commands.Append("INSERT INTO searchable_tags (object_id, source_table, tags) SELECT object_id, 'engrams' AS source_table, CASE tags WHEN '' THEN 'object' ELSE 'object,' || tags END tags FROM engrams WHERE mod_id = '" + Self.UserModID + "';")
 		  End If
 		  
 		  // Variables
@@ -1391,6 +1391,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  // Custom Presets
 		  If FromSchemaVersion >= 3 Then
 		    Commands.Append("INSERT INTO custom_presets SELECT * FROM legacy.custom_presets;")
+		  End If
+		  
+		  // Creatures
+		  If FromSchemaVersion >= 9 Then
+		    Commands.Append("INSERT INTO creatures SELECT * FROM legacy.creatures;")
 		  End If
 		  
 		  // Searchable Tags
