@@ -243,6 +243,16 @@ if (is_null($session)) {
 				<td class="text-center bullet-column">&#10687;</td>
 			</tr>
 			<tr>
+				<td>Harvest Rates<br><span class="smaller text-lighter">Change the harvest multiplier for any harvestable item in the game. Tip: this is a great way to improve server performance.</span></td>
+				<td class="text-center bullet-column">&nbsp;</td>
+				<td class="text-center bullet-column">&#10687;</td>
+			</tr>
+			<tr>
+				<td>Creature Adjustments<br><span class="smaller text-lighter">Adjust creature-specific damage and vulnerability multipliers, replace creatures with others, or disable specific creatures entirely.</span></td>
+				<td class="text-center bullet-column">&nbsp;</td>
+				<td class="text-center bullet-column">&#10687;</td>
+			</tr>
+			<tr>
 				<td>More config types on the way<br><span class="smaller text-lighter">Support for more config control such as spawn map, breeding timers, and detailed harvest rates are planned for Omni.</span></td>
 				<td class="text-center bullet-column">&nbsp;</td>
 				<td class="text-center bullet-column">&#10687;</td>
