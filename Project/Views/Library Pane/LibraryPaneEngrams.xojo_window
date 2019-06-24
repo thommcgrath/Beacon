@@ -255,10 +255,12 @@ End
 	#tag Method, Flags = &h0
 		Function ManagerView(Create As Boolean = True) As BlueprintManagerView
 		  Dim View As BeaconSubview = Self.View("BlueprintManagerView")
-		  If View = Nil And Create Then
-		    View = New BlueprintManagerView()
-		  Else
-		    Return Nil
+		  If View = Nil Then
+		    If Create Then
+		      View = New BlueprintManagerView()
+		    Else
+		      Return Nil
+		    End If
 		  End If
 		  Return BlueprintManagerView(View)
 		End Function
