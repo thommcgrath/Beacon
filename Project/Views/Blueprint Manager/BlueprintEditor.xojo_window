@@ -541,6 +541,17 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Save()
+		  Dim Label As Text = Trim(Self.NameField.Text).ToText
+		  Dim Path As Text = Trim(Self.PathField.Text).ToText
+		  If Label = "" Then
+		    Self.ShowAlert("This object has no name", "You'll want to correct this, it will be hard to find this object again without a name.")
+		    Return
+		  End If
+		  If Not Path.BeginsWith("/Game/") Then
+		    Self.ShowAlert("The blueprint path is required", "Beacon requires the full blueprint path to the object in order to function correctly.")
+		    Return
+		  End If
+		  
 		  Dim Tags() As Text = Self.TagsField.Text.ToText.Split(",")
 		  For I As Integer = Tags.Ubound DownTo 0
 		    Tags(I) = Tags(I).Trim
@@ -556,23 +567,29 @@ End
 		    End If
 		  Next
 		  
-		  Dim Path As String = Self.PathField.Text
+		  If Availability = 0 Then
+		    Self.ShowAlert("Object is not available to any maps", "This object should be usable on at least one map.")
+		    Return
+		  End If
+		  
 		  Select Case Self.TypeMenu.ListIndex
 		  Case 0
-		    Dim Engram As New Beacon.MutableEngram(Path.ToText, Self.mObjectID)
-		    Engram.Label = Self.NameField.Text.ToText
+		    Dim Engram As New Beacon.MutableEngram(Path, Self.mObjectID)
+		    Engram.Label = Label
 		    Engram.Tags = Tags
 		    Engram.Availability = Availability
 		    If Not LocalData.SharedInstance.SaveBlueprint(Engram, True) Then
-		      Break
+		      Self.ShowAlert("This engram did not save", "Its blueprint path may already be in the database.")
+		      Return
 		    End If
 		  Case 1
-		    Dim Creature As New Beacon.MutableCreature(Path.ToText, Self.mObjectID)
-		    Creature.Label = Self.NameField.Text.ToText
+		    Dim Creature As New Beacon.MutableCreature(Path, Self.mObjectID)
+		    Creature.Label = Label
 		    Creature.Tags = Tags
 		    Creature.Availability = Availability
 		    If Not LocalData.SharedInstance.SaveBlueprint(Creature, True) Then
-		      Break
+		      Self.ShowAlert("This creature did not save", "Its blueprint path may already be in the database.")
+		      Return
 		    End If
 		  End Select
 		  
