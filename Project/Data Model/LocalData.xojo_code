@@ -1727,9 +1727,11 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Try
 		      Dim Update As Boolean
 		      Dim ObjectID As String
-		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR LOWER(path) = ?1;", Blueprint.ObjectID, Blueprint.Path.Lowercase)
-		      If Results.RecordCount > 0 Then
-		        If Replace = False Then
+		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id, mod_id FROM blueprints WHERE object_id = ?1 OR LOWER(path) = ?2;", Blueprint.ObjectID, Blueprint.Path.Lowercase)
+		      If Results.RecordCount = 1 Then
+		        ObjectID = Results.Field("object_id").StringValue
+		        
+		        If Replace = False Or ObjectID <> Blueprint.ObjectID Then
 		          Continue
 		        End If
 		        
@@ -1739,7 +1741,9 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        End If
 		        
 		        Update = True
-		        ObjectID = Results.Field("object_id").StringValue
+		      ElseIf Results.RecordCount > 1 Then
+		        // What the hell?
+		        Continue
 		      Else
 		        Update = False
 		        ObjectID = Blueprint.ObjectID
