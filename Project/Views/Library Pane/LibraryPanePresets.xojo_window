@@ -298,7 +298,7 @@ End
 		    If List.Selected(I) Then
 		      Dim Preset As Beacon.Preset = List.RowTag(I)
 		      If Self.ClosePreset(Preset) Then
-		        Beacon.Data.RemovePreset(Preset)
+		        Beacon.Data.DeletePreset(Preset)
 		      End If
 		    End If
 		  Next    

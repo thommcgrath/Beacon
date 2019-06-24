@@ -14,12 +14,6 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "IsTagged(""blueprintable"")" )  Function CanBeBlueprint() As Boolean
-		  Return Self.IsTagged("blueprintable")
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ClassString() As Text
 		  If Self.IsValid Then
 		    Dim Components() As Text = Self.mPath.Split("/")

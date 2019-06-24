@@ -9,16 +9,6 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "IsTagged(""blueprintable"")" )  Sub CanBeBlueprint(Assigns Value As Boolean)
-		  If Value Then
-		    Self.AddTag("blueprintable")
-		  Else
-		    Self.RemoveTag("blueprintable")
-		  End If
-		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Sub Constructor(Path As Text, ObjectID As Text)
 		  Super.Constructor()
 		  

@@ -19,6 +19,12 @@ Protected Interface DataSource
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub DeletePreset(Preset As Beacon.Preset)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetBooleanVariable(Key As Text) As Boolean
 		  
 		End Function
@@ -100,12 +106,6 @@ Protected Interface DataSource
 		Function Presets() As Beacon.Preset()
 		  
 		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Sub RemovePreset(Preset As Beacon.Preset)
-		  
-		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

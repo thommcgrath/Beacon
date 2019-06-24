@@ -1690,12 +1690,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Function
 	#tag EndMethod
 
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "DeletePreset" )  Sub RemovePreset(Preset As Beacon.Preset)
-		  Self.DeletePreset(Preset)
-		End Sub
-	#tag EndMethod
-
 	#tag Method, Flags = &h21
 		Private Sub Rollback()
 		  If UBound(Self.mTransactions) = -1 Then
@@ -1796,18 +1790,6 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  Return CountSaved
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "SaveBlueprint" )  Function SaveCreature(Creature As Beacon.Creature, Replace As Boolean = True) As Boolean
-		  Return Self.SaveBlueprint(Creature, Replace)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Attributes( Deprecated = "SaveBlueprint" )  Function SaveEngram(Engram As Beacon.Engram, Replace As Boolean = True) As Boolean
-		  Return Self.SaveBlueprint(Engram, Replace)
 		End Function
 	#tag EndMethod
 

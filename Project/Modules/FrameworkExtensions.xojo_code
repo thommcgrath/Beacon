@@ -404,43 +404,6 @@ Protected Module FrameworkExtensions
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Attributes( Deprecated = "NewDateFromSQLDateTime" )  Function ToDate(Extends Source As Text, FallbackTimezone As Xojo.Core.TimeZone = Nil) As Xojo.Core.Date
-		  // YYYY-MM-DD HH:MM:SS+0000
-		  
-		  If Source.Length < 19 Then
-		    Dim Err As New UnsupportedFormatException
-		    Err.Reason = "Expected YYYY-MM-DD HH:MM:SS+0000 format datetime"
-		    Raise Err
-		  End If
-		  
-		  Dim Year As Integer = Integer.FromText(Source.Mid(0, 4))
-		  Dim Month As Integer = Integer.FromText(Source.Mid(5, 2))
-		  Dim Day As Integer = Integer.FromText(Source.Mid(8, 2))
-		  Dim Hour As Integer = Integer.FromText(Source.Mid(11, 2))
-		  Dim Minute As Integer = Integer.FromText(Source.Mid(14, 2))
-		  Dim Second As Integer = Integer.FromText(Source.Mid(17, 2))
-		  Dim Zone As Xojo.Core.TimeZone
-		  
-		  If Source.Length = 24 Then
-		    Dim Sign As Text = Source.Mid(19, 1)
-		    Dim OffsetHours As Integer = Integer.FromText(Source.Mid(20, 2))
-		    Dim OffsetMinutes As Integer = Integer.FromText(Source.Mid(22, 2))
-		    Dim OffsetSeconds As Integer = (OffsetHours * 3600) + (OffsetMinutes * 60)
-		    If Sign = "-" Then
-		      OffsetSeconds = OffsetSeconds * -1
-		    End If
-		    Zone = New Xojo.Core.TimeZone(OffsetSeconds)
-		  ElseIf FallbackTimezone <> Nil Then
-		    Zone = FallbackTimezone
-		  Else
-		    Zone = Xojo.Core.TimeZone.Current
-		  End If
-		  
-		  Return New Xojo.Core.Date(Year, Month, Day, Hour, Minute, Second, 0, Zone)
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function ToHex(Extends Source As Color) As Text
 		  Return Source.Red.ToHex(2).Lowercase + Source.Green.ToHex(2).Lowercase + Source.Blue.ToHex(2).Lowercase + Source.Alpha.ToHex(2).Lowercase
 		End Function
