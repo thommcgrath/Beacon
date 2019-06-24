@@ -5,15 +5,6 @@ abstract class BeaconCloudStorage {
 	const FAILED_TO_WARM_CACHE = 500;
 	const STORAGE_LIMIT = 2147483648;
 	
-	private static $curl = array();
-	
-	private static function cURLHandle(string $id) {
-		if (!array_key_exists($id, static::$curl)) {
-			static::$curl[$id] = curl_init();
-		}
-		return static::$curl[$id];
-	}
-	
 	private static function BucketName() {
 		return BeaconCommon::InProduction() ? 'beacon-usercloud' : 'beacon-usercloud-dev';
 	}
@@ -191,6 +182,11 @@ abstract class BeaconCloudStorage {
 	public static function RunQueue() {
 		$hostname = gethostname();
 		$database = BeaconCommon::Database();
+		
+		$curl = curl_init();
+		if ($curl === false) {
+			throw new Exception('Unable to get curl handle');
+		}
 		while (true) {
 			$database->BeginTransaction();
 			$results = $database->Query('SELECT usercloud_queue.remote_path, usercloud_queue.request_method, usercloud.content_type FROM usercloud_queue LEFT JOIN usercloud ON (usercloud_queue.remote_path = usercloud.remote_path) WHERE usercloud_queue.hostname = $1 AND usercloud_queue.http_status IS NULL ORDER BY usercloud_queue.queue_time ASC LIMIT 1 FOR UPDATE OF usercloud_queue SKIP LOCKED;', $hostname);
@@ -208,7 +204,6 @@ abstract class BeaconCloudStorage {
 			$str_to_sign = implode("\n", array($request_method, '', $content_type, $date, $resource_path));
 			$signature = base64_encode(hash_hmac('sha1', $str_to_sign, BeaconCommon::GetGlobal('Storage_Password'), true));
 			
-			$curl = static::cURLHandle($request_method);
 			curl_setopt($curl, CURLOPT_URL, 'https://' . BeaconCommon::GetGlobal('Storage_Host') . $resource_path);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($curl, CURLOPT_HTTPHEADER, array(
@@ -239,7 +234,6 @@ abstract class BeaconCloudStorage {
 				$http_status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 				$success = $http_status >= 200 && $http_status < 300;
 			}
-			curl_close($curl);
 			
 			if ($success) {
 				$database->Query('DELETE FROM usercloud_queue WHERE remote_path = $1 AND hostname = $2;', $remote_path, $hostname);
@@ -250,6 +244,7 @@ abstract class BeaconCloudStorage {
 			
 			$database->Commit();
 		}
+		curl_close($curl);
 		
 		static::CleanupLocalCache(0);
 	}
