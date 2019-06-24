@@ -98,6 +98,11 @@ Implements NotificationKit.Receiver
 		    #EndIf
 		  End If
 		  
+		  Dim UpdatesFolder As FolderItem = Self.ApplicationSupport.Child("Updates")
+		  If UpdatesFolder <> Nil And UpdatesFolder.Exists Then
+		    Call UpdatesFolder.DeepDelete
+		  End If
+		  
 		  #If TargetMacOS
 		    UntitledSeparator6.Visible = False
 		  #EndIf
