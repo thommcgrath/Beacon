@@ -3,6 +3,7 @@
 Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
+		  #Pragma Unused Mask
 		  #Pragma Unused SourceDocument
 		  
 		  For Each Entry As Xojo.Core.DictionaryEntry In Self.mOverrides
@@ -15,6 +16,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Event
 		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
+		  #Pragma Unused Mask
 		  #Pragma Unused SourceDocument
 		  
 		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "ItemStackSizeMultiplier", Self.mGlobalMultiplier.PrettyText))

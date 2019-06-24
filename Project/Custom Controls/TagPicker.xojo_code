@@ -63,6 +63,11 @@ Inherits ControlCanvas
 
 	#tag Event
 		Function MouseWheel(MouseX As Integer, MouseY As Integer, PixelsX As Integer, PixelsY As Integer, WheelData As BeaconUI.ScrollEvent) As Boolean
+		  #Pragma Unused WheelData
+		  #Pragma Unused PixelsX
+		  #Pragma Unused MouseY
+		  #Pragma Unused MouseX
+		  
 		  Dim ScrollPosition As Integer = Min(Max(Self.mScrollPosition + PixelsY, 0), Self.mOverflowHeight)
 		  If Self.mScrollPosition <> ScrollPosition Then
 		    Self.mScrollPosition = ScrollPosition

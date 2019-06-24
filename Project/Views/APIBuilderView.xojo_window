@@ -621,6 +621,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DoNothing(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
 		  #Pragma Unused Response
 		End Sub
 	#tag EndMethod

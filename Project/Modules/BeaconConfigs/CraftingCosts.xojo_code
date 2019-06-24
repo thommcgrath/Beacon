@@ -3,6 +3,7 @@
 Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
+		  #Pragma Unused Mask
 		  #Pragma Unused SourceDocument
 		  
 		  For Each Cost As Beacon.CraftingCost In Self.mCosts

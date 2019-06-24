@@ -45,6 +45,8 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameIni(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Self.mCancelled Then
 		    Return
 		  ElseIf Response.Success = False Then
@@ -69,6 +71,8 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_DownloadGameUserSettingsIni(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Self.mCancelled Then
 		    Return
 		  ElseIf Response.Success = False Then
@@ -93,6 +97,8 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_UploadGameIni(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Self.mCancelled Then
 		    Return
 		  ElseIf Response.Success = False Then
@@ -106,6 +112,8 @@ Implements Beacon.DeploymentEngine
 
 	#tag Method, Flags = &h21
 		Private Sub Callback_UploadGameUserSettingsIni(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Self.mCancelled Then
 		    Return
 		  ElseIf Response.Success = False Then

@@ -47,11 +47,6 @@ Protected Class SimulatedSelection
 			Type="String"
 		#tag EndViewProperty
 		#tag ViewProperty
-			Name="Quality"
-			Group="Behavior"
-			Type="Beacon.Qualities"
-		#tag EndViewProperty
-		#tag ViewProperty
 			Name="Super"
 			Visible=true
 			Group="ID"

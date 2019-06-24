@@ -3,6 +3,7 @@ Protected Class Difficulty
 Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub CommandLineOptions(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
+		  #Pragma Unused Mask
 		  #Pragma Unused SourceDocument
 		  
 		  Values.Append(New Beacon.ConfigValue("?", "OverrideOfficialDifficulty", Self.OverrideOfficialDifficulty.PrettyText(1)))
@@ -11,6 +12,7 @@ Inherits Beacon.ConfigGroup
 
 	#tag Event
 		Sub GameUserSettingsIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
+		  #Pragma Unused Mask
 		  #Pragma Unused SourceDocument
 		  
 		  Values.Append(New Beacon.ConfigValue(Beacon.ServerSettingsHeader, "DifficultyOffset", Self.DifficultyOffset.PrettyText))

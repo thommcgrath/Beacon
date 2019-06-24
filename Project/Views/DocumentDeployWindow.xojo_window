@@ -472,7 +472,6 @@ End
 		    // Move to the next step
 		    Self.DeployingList.DeleteAllRows
 		    
-		    Dim Groups() As Beacon.ConfigGroup = Self.mDocument.ImplementedConfigs
 		    Dim Now As New Xojo.Core.Date(Xojo.Core.Date.Now.SecondsFrom1970, New Xojo.Core.TimeZone(0))
 		    Dim Locale As Xojo.Core.Locale = Xojo.Core.Locale.Raw
 		    Self.mDeployLabel = Now.Year.ToText(Locale, "0000") + "-" + Now.Month.ToText(Locale, "00") + "-" + Now.Day.ToText(Locale, "00") + " " + Now.Hour.ToText(Locale, "00") + "." + Now.Minute.ToText(Locale, "00") + "." + Now.Second.ToText(Locale, "00") + " GMT"

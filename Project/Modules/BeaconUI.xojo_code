@@ -141,7 +141,7 @@ Protected Module BeaconUI
 		    
 		    Return New Picture(Win.Width, Win.Height, Pics)
 		  #else
-		    #pragma Unused Win
+		    #Pragma Unused Win
 		    Return Nil
 		  #endif
 		End Function

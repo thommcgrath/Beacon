@@ -8,7 +8,7 @@ Protected Class Task
 
 	#tag Method, Flags = &h0
 		Function Completed(Time As Double) As Boolean
-		  #pragma Unused Time
+		  #Pragma Unused Time
 		  
 		  Dim Err As New UnsupportedOperationException
 		  Err.Reason = "Subclasses of AnimationKit.Task must override the Completed method."

@@ -2,6 +2,8 @@
 Protected Module UserCloud
 	#tag Method, Flags = &h21
 		Private Sub Callback_DeleteFile(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Response
+		  
 		  CleanupRequest(Request)
 		End Sub
 	#tag EndMethod

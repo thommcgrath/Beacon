@@ -25,7 +25,7 @@ Implements AnimationKit.Scrollable
 	#tag Method, Flags = &h0
 		Sub ScrollMaximum(Assigns Value As Double)
 		  // Ignored
-		  #pragma Unused Value
+		  #Pragma Unused Value
 		End Sub
 	#tag EndMethod
 
@@ -38,7 +38,7 @@ Implements AnimationKit.Scrollable
 	#tag Method, Flags = &h0
 		Sub ScrollMinimum(Assigns Value As Double)
 		  // Ignored
-		  #pragma Unused Value
+		  #Pragma Unused Value
 		End Sub
 	#tag EndMethod
 

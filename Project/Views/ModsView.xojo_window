@@ -257,6 +257,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DeleteMod(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Response.Success Then
 		    Self.RefreshMods
 		    Return
@@ -268,6 +270,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ListMods(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Not Response.Success Then
 		    MsgBox("Unable to load mods: " + Response.Message)
 		    Return

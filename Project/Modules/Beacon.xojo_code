@@ -76,6 +76,8 @@ Protected Module Beacon
 
 	#tag Method, Flags = &h21
 		Private Function CoerceToDouble(ByRef Value As Auto, Info As Xojo.Introspection.TypeInfo) As Boolean
+		  #Pragma Unused Info
+		  
 		  #Pragma BreakOnExceptions False
 		  Try
 		    Dim DoubleValue As Double = Value
@@ -1365,7 +1367,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h21
-		Private Delegate Function ValueAdapter(ByRef Value As Auto, Info As Xojo . Introspection . TypeInfo) As Boolean
+		Private Delegate Function ValueAdapter(ByRef Value As Auto, Info As Xojo.Introspection.TypeInfo) As Boolean
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1

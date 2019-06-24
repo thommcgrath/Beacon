@@ -222,6 +222,7 @@ Begin LibrarySubview LibraryPaneEngrams
       Width           =   300
    End
    Begin Timer ClipboardWatcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   0
@@ -247,6 +248,8 @@ End
 
 	#tag Event
 		Sub Shown(UserData As Auto = Nil)
+		  #Pragma Unused UserData
+		  
 		  Self.ClipboardWatcher.Mode = Timer.ModeMultiple
 		End Sub
 	#tag EndEvent

@@ -922,6 +922,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_DetectPath(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  Dim Info As Xojo.Introspection.TypeInfo
 		  Dim Dict As Xojo.Core.Dictionary
 		  If Response.JSON <> Nil Then
@@ -962,6 +964,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ListPath(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Not Response.Success Then
 		    Self.ShowAlert("Unable to list contents of " + Self.Browser.CurrentPath, Response.Message)
 		    Return

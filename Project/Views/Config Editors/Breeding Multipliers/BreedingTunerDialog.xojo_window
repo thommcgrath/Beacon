@@ -239,6 +239,7 @@ Begin BeaconDialog BreedingTunerDialog
       Scope           =   2
       ScrollbarHorizontal=   False
       ScrollBarVertical=   True
+      SelectionChangeBlocked=   False
       SelectionType   =   0
       ShowDropIndicator=   False
       TabIndex        =   6
@@ -527,6 +528,8 @@ End
 #tag Events CreaturesList
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
+		  #Pragma Unused row
+		  
 		  If Self.mAutoCheckingCreatures Or Column <> Self.ColumnChecked Then
 		    Return
 		  End If

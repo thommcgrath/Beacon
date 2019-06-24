@@ -219,6 +219,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_CloudDocumentsList(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  Redim Self.mCloudDocuments(-1)
 		  
 		  If Response.Success Then
@@ -238,6 +240,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_CommunityDocumentsList(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  Redim Self.mCommunityDocuments(-1)
 		  
 		  If Response.Success Then
@@ -354,6 +358,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Controller_LoadError(Sender As Beacon.DocumentController, Reason As Text)
+		  #Pragma Unused Reason
+		  
 		  Self.DetachControllerEvents(Sender)
 		  
 		  Dim RecentIdx As Integer = -1

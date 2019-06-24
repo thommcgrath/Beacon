@@ -226,10 +226,12 @@ Begin BeaconSubview BlueprintManagerView Implements NotificationKit.Receiver
          LockTop         =   True
          MinimumHeight   =   300
          MinimumWidth    =   400
+         Progress        =   0.0
          Scope           =   2
          TabIndex        =   0
          TabPanelIndex   =   3
          TabStop         =   True
+         ToolbarCaption  =   ""
          Top             =   0
          Transparent     =   True
          UseFocusRing    =   False
@@ -373,6 +375,8 @@ End
 
 	#tag Event
 		Sub Shown(UserData As Auto = Nil)
+		  #Pragma Unused UserData
+		  
 		  Self.ClipboardWatcher.Mode = Timer.ModeMultiple
 		End Sub
 	#tag EndEvent

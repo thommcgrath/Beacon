@@ -1720,7 +1720,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		Function SaveBlueprint(Blueprint As Beacon.Blueprint, Replace As Boolean = True) As Boolean
 		  Dim Arr(0) As Beacon.Blueprint
 		  Arr(0) = Blueprint
-		  Return (Self.SaveBlueprints(Arr) = 1)
+		  Return (Self.SaveBlueprints(Arr, Replace) = 1)
 		End Function
 	#tag EndMethod
 

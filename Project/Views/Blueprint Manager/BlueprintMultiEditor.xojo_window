@@ -108,6 +108,7 @@ Begin BeaconSubview BlueprintMultiEditor
       LockTop         =   True
       Scope           =   2
       ScrollSpeed     =   20
+      Spec            =   ""
       TabIndex        =   2
       TabPanelIndex   =   0
       TabStop         =   True
@@ -373,7 +374,13 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Revert(Confirm As Boolean)
-		  #Pragma Warning "Not Implemented"
+		  #Pragma Unused Confirm
+		  
+		  #if Not DebugBuild
+		    #Pragma Error "Not Implemented"
+		  #else
+		    #Pragma Warning "Not Implemented"
+		  #endif
 		End Sub
 	#tag EndMethod
 

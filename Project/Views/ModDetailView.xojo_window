@@ -521,6 +521,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_ConfirmMod(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Response.Success Then
 		    Self.CurrentMod.Constructor(Response.JSON)
 		    If Self.CurrentMod.Confirmed Then
@@ -539,6 +541,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_EngramsDelete(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Not Response.Success Then
 		    Panel.Value = PageEngrams
 		    Self.ShowAlert("Unable to delete engrams.", Response.Message)
@@ -555,6 +559,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_EngramsLoad(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  Self.mEngramSets.Value(Self.CurrentMod.ModID) = New BeaconAPI.EngramSet(Response.JSON)
 		  Self.ShowCurrentEngrams()
 		  Panel.Value = PageEngrams
@@ -563,6 +569,8 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub APICallback_EngramsPost(Request As BeaconAPI.Request, Response As BeaconAPI.Response)
+		  #Pragma Unused Request
+		  
 		  If Not Response.Success Then
 		    Panel.Value = PageEngrams
 		    Self.ShowAlert("Unable to save engrams.", Response.Message)

@@ -3,6 +3,9 @@
 Inherits Beacon.ConfigGroup
 	#tag Event
 		Sub GameIniValues(SourceDocument As Beacon.Document, Values() As Beacon.ConfigValue, Mask As UInt64)
+		  #Pragma Unused Mask
+		  #Pragma Unused SourceDocument
+		  
 		  Dim Behaviors() As Beacon.CreatureBehavior = Self.All
 		  For Each Behavior As Beacon.CreatureBehavior In Behaviors
 		    If Behavior.ProhibitSpawning Then

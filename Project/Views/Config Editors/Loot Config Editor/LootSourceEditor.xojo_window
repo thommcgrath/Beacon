@@ -88,7 +88,7 @@ Begin BeaconContainer LootSourceEditor Implements AnimationKit.ValueAnimator
       LockedInPosition=   False
       Priority        =   0
       Scope           =   0
-      StackSize       =   ""
+      StackSize       =   0
       State           =   ""
       TabPanelIndex   =   0
    End
@@ -455,6 +455,8 @@ End
 
 	#tag Event
 		Sub Resize(Initial As Boolean)
+		  #Pragma Unused Initial
+		  
 		  If Self.mSavePositions Then
 		    Self.SetListWidth(Self.Header.Width)
 		  End If

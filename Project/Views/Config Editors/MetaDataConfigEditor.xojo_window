@@ -478,6 +478,8 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub CellAction(row As Integer, column As Integer)
+		  #Pragma Unused row
+		  
 		  If Self.SettingUp Or Column <> 0 Then
 		    Return
 		  End If
