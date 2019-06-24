@@ -90,7 +90,11 @@ Inherits Beacon.Thread
 		        
 		        Dim Engram As New Beacon.MutableEngram(Path, Beacon.CreateUUID)
 		        Engram.Availability = Availability
-		        Engram.CanBeBlueprint = CanBlueprint
+		        If CanBlueprint Then
+		          Engram.AddTag("blueprintable")
+		        Else
+		          Engram.RemoveTag("blueprintable")
+		        End If
 		        Engram.Label = Label
 		        
 		        Self.mBlueprintsLock.Enter

@@ -297,17 +297,16 @@ Protected Class Identity
 		  
 		  // Compare expirations
 		  Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
-		  Dim Zone As New Xojo.Core.TimeZone(0)
 		  Dim Period As New Xojo.Core.DateInterval(30)
 		  Dim SelfExpiration As Xojo.Core.Date
 		  If Self.mExpirationText <> "" Then
-		    SelfExpiration = Self.mExpirationText.ToDate(Zone)
+		    SelfExpiration = NewDateFromSQLDateTime(Self.mExpirationText).Convert
 		  Else
 		    SelfExpiration = Now + Period
 		  End If
 		  Dim OtherExpiration As Xojo.Core.Date
 		  If Other.mExpirationText <> "" Then
-		    OtherExpiration = Other.mExpirationText.ToDate(Zone)
+		    OtherExpiration = NewDateFromSQLDateTime(Other.mExpirationText).Convert
 		  Else
 		    OtherExpiration = Now + Period
 		  End If
@@ -379,7 +378,7 @@ Protected Class Identity
 		    Fields(2) = Self.mPurchasedOmniVersion.ToText(Xojo.Core.Locale.Raw)
 		    
 		    If Self.mExpirationText <> "" Then
-		      Dim Expires As Xojo.Core.Date = Self.mExpirationText.ToDate(New Xojo.Core.TimeZone(0))
+		      Dim Expires As Xojo.Core.Date = NewDateFromSQLDateTime(Self.mExpirationText).Convert()
 		      Dim Now As Xojo.Core.Date = Xojo.Core.Date.Now
 		      If Now.SecondsFrom1970 < Expires.SecondsFrom1970 Then
 		        // Not Expired

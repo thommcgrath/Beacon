@@ -110,10 +110,10 @@ End
 		  If Not Preferences.OnlineEnabled Then
 		    Links.Append("Enable Cloud && Community" : "beacon://enableonline")
 		  Else
-		    If App.Identity = Nil Or App.Identity.LoginKey = "" Then
+		    If App.IdentityManager.CurrentIdentity = Nil Or App.IdentityManager.CurrentIdentity.LoginKey = "" Then
 		      Links.Append("Sign In" : "beacon://signin")
 		    Else
-		      Links.Append(App.Identity.LoginKey : "")
+		      Links.Append(App.IdentityManager.CurrentIdentity.LoginKey : "")
 		      Links.Append("Manage Account" : "beacon://showaccount")
 		      Links.Append("Sign Out" : "beacon://signout")
 		    End If
@@ -209,7 +209,7 @@ End
 		  Case "beacon://signout"
 		    Preferences.OnlineEnabled = False
 		    Preferences.OnlineToken = ""
-		    App.Identity = Nil
+		    App.IdentityManager.CurrentIdentity = Nil
 		    Self.RebuildMenu()
 		    Dim WelcomeWindow As New UserWelcomeWindow(False)
 		    WelcomeWindow.ShowModal()

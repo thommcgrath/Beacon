@@ -2,7 +2,7 @@
 Protected Class SimulatedSelection
 	#tag Method, Flags = &h0
 		Function Description() As Text
-		  Return Engram.Label + if(Self.IsBlueprint And Engram.CanBeBlueprint, " Blueprint", "")
+		  Return Engram.Label + if(Self.IsBlueprint And Engram.IsTagged("blueprintable"), " Blueprint", "")
 		End Function
 	#tag EndMethod
 

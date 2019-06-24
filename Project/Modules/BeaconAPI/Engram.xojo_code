@@ -55,7 +55,7 @@ Protected Class Engram
 
 	#tag Method, Flags = &h0
 		Sub Constructor(Source As Beacon.Engram)
-		  Self.CanBeBlueprint = Source.CanBeBlueprint
+		  Self.CanBeBlueprint = Source.IsTagged("blueprintable")
 		  Self.Label = Source.Label
 		  Self.mAvailability = Source.Availability
 		  Self.mPath = Source.Path

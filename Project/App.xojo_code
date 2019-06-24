@@ -220,11 +220,12 @@ Implements NotificationKit.Receiver
 			Return True
 			End If
 			
+			Dim Identity As Beacon.Identity = Self.IdentityManager.CurrentIdentity
+			
 			Dim HardwareID As Text = Beacon.HardwareID
 			Dim SigningData As Xojo.Core.MemoryBlock = Xojo.Core.TextEncoding.UTF8.ConvertTextToData(HardwareID)
 			Dim Signed As Xojo.Core.MemoryBlock = Identity.Sign(SigningData)
 			
-			Dim Identity As Beacon.Identity = Self.Identity
 			Dim Dict As New Xojo.Core.Dictionary
 			Dict.Value("UserID") = Identity.Identifier
 			Dict.Value("Signed") = Beacon.EncodeHex(Signed)
@@ -586,7 +587,7 @@ Implements NotificationKit.Receiver
 		    End If
 		  End If
 		  
-		  Self.Identity = Identity
+		  Self.IdentityManager.CurrentIdentity = Identity
 		End Sub
 	#tag EndMethod
 

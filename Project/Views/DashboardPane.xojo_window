@@ -439,7 +439,7 @@ End
 		  #Pragma Unused Areas
 		  
 		  Dim TitleIcon As Picture
-		  If App.Identity <> Nil And App.Identity.OmniVersion > 0 Then
+		  If App.IdentityManager.CurrentIdentity <> Nil And App.IdentityManager.CurrentIdentity.OmniVersion > 0 Then
 		    TitleIcon = IconBeaconOmniText
 		  Else
 		    TitleIcon = IconBeaconText

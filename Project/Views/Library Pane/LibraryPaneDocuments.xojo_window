@@ -540,12 +540,12 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub UpdateCloudDocuments()
-		  If App.Identity <> Nil Then
+		  If App.IdentityManager.CurrentIdentity <> Nil Then
 		    Dim Params As New Xojo.Core.Dictionary
-		    Params.Value("user_id") = App.Identity.Identifier
+		    Params.Value("user_id") = App.IdentityManager.CurrentIdentity.Identifier
 		    
 		    Dim Request As New BeaconAPI.Request("document.php", "GET", Params, AddressOf APICallback_CloudDocumentsList)
-		    Request.Sign(App.Identity)
+		    Request.Sign(App.IdentityManager.CurrentIdentity)
 		    Self.APISocket.Start(Request)
 		  Else
 		    Redim Self.mCloudDocuments(-1)

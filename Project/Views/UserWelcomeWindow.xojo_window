@@ -55,7 +55,7 @@ End
 		Sub Close()
 		  RemoveHandler App.IdentityManager.Finished, AddressOf IdentityManager_Finished
 		  
-		  If App.Identity = Nil Then
+		  If App.IdentityManager.CurrentIdentity = Nil Then
 		    Quit
 		  Else
 		    App.NextLaunchQueueTask()

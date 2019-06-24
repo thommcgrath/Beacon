@@ -610,7 +610,7 @@ End
 		  Next
 		  
 		  Dim Request As New BeaconAPI.Request("engram.php", "DELETE", UIDs.Join(","), "text/plain", AddressOf APICallback_EngramsDelete)
-		  Request.Sign(App.Identity)
+		  Request.Sign(App.IdentityManager.CurrentIdentity)
 		  Self.Socket.Start(Request)
 		  
 		  Return True
@@ -718,7 +718,7 @@ End
 		  
 		  Dim Content As Text = Xojo.Data.GenerateJSON(Dicts)
 		  Dim Request As New BeaconAPI.Request("engram.php", "POST", Content, "application/json", AddressOf APICallback_EngramsPost)
-		  Request.Sign(App.Identity)
+		  Request.Sign(App.IdentityManager.CurrentIdentity)
 		  Self.Socket.Start(Request)
 		  
 		  Return True
@@ -891,7 +891,7 @@ End
 		  Panel.Value = PageLoading
 		  
 		  Dim Request As New BeaconAPI.Request(Self.CurrentMod.ConfirmURL, "GET", AddressOf APICallback_ConfirmMod)
-		  Request.Sign(App.Identity)
+		  Request.Sign(App.IdentityManager.CurrentIdentity)
 		  Self.Socket.Start(Request)
 		End Sub
 	#tag EndEvent

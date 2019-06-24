@@ -942,7 +942,7 @@ End
 		    Dim Path As Text = Dict.Value("path")
 		    
 		    Dim Engines(0) As Beacon.DiscoveryEngine
-		    Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, Path, App.Identity)
+		    Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, Path, App.IdentityManager.CurrentIdentity)
 		    Self.ShouldFinish(Engines)
 		    
 		    Return
@@ -1064,7 +1064,7 @@ End
 		  // Should now equal the "Saved" directory
 		  Dim InitialPath As String = Components.Join("/")
 		  Dim Engines(0) As Beacon.DiscoveryEngine
-		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath.ToText, App.Identity)
+		  Engines(0) = New Beacon.FTPDiscoveryEngine(Self.mProfile, InitialPath.ToText, App.IdentityManager.CurrentIdentity)
 		  Self.ShouldFinish(Engines)
 		End Sub
 	#tag EndEvent
@@ -1090,7 +1090,7 @@ End
 		  Me.AppendChildren(Empty)
 		  
 		  Dim Request As New BeaconAPI.Request("ftp", "GET", Fields, WeakAddressOf APICallback_ListPath)
-		  Request.Sign(App.Identity)
+		  Request.Sign(App.IdentityManager.CurrentIdentity)
 		  Self.BrowseSocket.Start(Request)
 		End Sub
 	#tag EndEvent
@@ -1131,7 +1131,7 @@ End
 		  
 		  Dim Fields As Xojo.Core.Dictionary = Self.FormDataFromProfile()
 		  Dim Request As New BeaconAPI.Request("ftp/path", "GET", Fields, WeakAddressOf APICallback_DetectPath)
-		  Request.Sign(App.Identity)
+		  Request.Sign(App.IdentityManager.CurrentIdentity)
 		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndEvent

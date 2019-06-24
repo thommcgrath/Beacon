@@ -11,7 +11,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag Method, Flags = &h0
 		Function CanBeBlueprint() As Boolean
 		  For Each Option As Beacon.SetEntryOption In Self.mOptions
-		    If Option.Engram.CanBeBlueprint Then
+		    If Option.Engram.IsTagged("blueprintable") Then
 		      Return True
 		    End If
 		  Next
@@ -110,7 +110,7 @@ Implements Beacon.Countable,Beacon.DocumentItem
 		  Dim Options As New Xojo.Core.Dictionary
 		  For Each Entry As Beacon.SetEntry In Entries
 		    For Each Option As Beacon.SetEntryOption In Entry
-		      If Option.Engram = Nil Or Option.Engram.IsValid = False Or Option.Engram.CanBeBlueprint = False Then
+		      If Option.Engram = Nil Or Option.Engram.IsValid = False Or Option.Engram.IsTagged("blueprintable") = False Then
 		        Continue
 		      End If
 		      

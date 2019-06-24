@@ -563,7 +563,7 @@ End
 		    Engram.Label = Self.NameField.Text.ToText
 		    Engram.Tags = Tags
 		    Engram.Availability = Availability
-		    If Not LocalData.SharedInstance.SaveEngram(Engram, True) Then
+		    If Not LocalData.SharedInstance.SaveBlueprint(Engram, True) Then
 		      Break
 		    End If
 		  Case 1
@@ -571,7 +571,7 @@ End
 		    Creature.Label = Self.NameField.Text.ToText
 		    Creature.Tags = Tags
 		    Creature.Availability = Availability
-		    If Not LocalData.SharedInstance.SaveCreature(Creature, True) Then
+		    If Not LocalData.SharedInstance.SaveBlueprint(Creature, True) Then
 		      Break
 		    End If
 		  End Select

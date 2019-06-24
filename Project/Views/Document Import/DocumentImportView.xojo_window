@@ -847,8 +847,8 @@ End
 		  Dim Configs() As Beacon.ConfigGroup = Document.ImplementedConfigs
 		  Dim Mask As UInt64 = Beacon.Maps.All.Mask
 		  For Each Config As Beacon.ConfigGroup In Configs
-		    Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document, App.Identity, Mask))
-		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document, App.Identity, Mask))
+		    Beacon.ConfigValue.FillConfigDict(GameIniValues, Config.GameIniValues(Document, App.IdentityManager.CurrentIdentity, Mask))
+		    Beacon.ConfigValue.FillConfigDict(GameUserSettingsIniValues, Config.GameUserSettingsIniValues(Document, App.IdentityManager.CurrentIdentity, Mask))
 		  Next
 		  
 		  Dim CustomContent As New BeaconConfigs.CustomContent
