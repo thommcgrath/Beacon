@@ -374,13 +374,19 @@ End
 
 	#tag Method, Flags = &h0
 		Sub Revert(Confirm As Boolean)
-		  #Pragma Unused Confirm
+		  If Confirm And Not Self.ShowConfirm("Revert these objects?", "Unsaved changes will be lost. That's the point.", "Revert", "Cancel") Then
+		    Return
+		  End If
 		  
-		  #if Not DebugBuild
-		    #Pragma Error "Not Implemented"
-		  #else
-		    #Pragma Warning "Not Implemented"
-		  #endif
+		  Dim Blueprints() As Beacon.Blueprint
+		  For Each Blueprint As Beacon.Blueprint In Self.mBlueprints
+		    Dim Saved As Beacon.Blueprint = LocalData.SharedInstance.GetBlueprintByObjectID(Blueprint.ObjectID)
+		    If Saved <> Nil Then
+		      Blueprints.Append(Saved)
+		    End If
+		  Next
+		  Self.Modified = False
+		  Self.Blueprints = Blueprints
 		End Sub
 	#tag EndMethod
 
