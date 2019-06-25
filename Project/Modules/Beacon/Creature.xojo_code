@@ -8,6 +8,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Category() As Text
+		  Return Beacon.CategoryCreatures
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ClassString() As Text
 		  Dim Components() As Text = Self.mPath.Split("/")
 		  Dim Tail As Text = Components(Components.Ubound)

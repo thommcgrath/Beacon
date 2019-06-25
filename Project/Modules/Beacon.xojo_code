@@ -166,6 +166,31 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
+		Protected Function CreateCSV(Blueprints() As Beacon.Blueprint) As Text
+		  Dim Columns(4) As Text
+		  Columns(0) = """Path"""
+		  Columns(1) = """Label"""
+		  Columns(2) = """Availability Mask"""
+		  Columns(3) = """Tags"""
+		  Columns(4) = """Group"""
+		  
+		  Dim Lines(0) As Text
+		  Lines(0) = Columns.Join(",")
+		  
+		  For Each Blueprint As Beacon.Blueprint In Blueprints
+		    Columns(0) = """" + Blueprint.Path + """"
+		    Columns(1) = """" + Blueprint.Label + """"
+		    Columns(2) = Blueprint.Availability.ToText(Xojo.Core.Locale.Raw)
+		    Columns(3) = """" + Blueprint.Tags.Join(",") + """"
+		    Columns(4) = """" + Blueprint.Category + """"
+		    Lines.Append(Columns.Join(","))
+		  Next
+		  
+		  Return Lines.Join(Text.FromUnicodeCodepoint(13) + Text.FromUnicodeCodepoint(10))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h1
 		Protected Function CreateUUID(Bytes As Xojo.Core.MemoryBlock = Nil) As Text
 		  If Bytes = Nil Or Bytes.Size <> 16 Then
 		    Bytes = Xojo.Crypto.GenerateRandomBytes(16)
@@ -1367,7 +1392,7 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag DelegateDeclaration, Flags = &h21
-		Private Delegate Function ValueAdapter(ByRef Value As Auto, Info As Xojo.Introspection.TypeInfo) As Boolean
+		Private Delegate Function ValueAdapter(ByRef Value As Auto, Info As Xojo . Introspection . TypeInfo) As Boolean
 	#tag EndDelegateDeclaration
 
 	#tag Method, Flags = &h1

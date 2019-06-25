@@ -349,6 +349,14 @@ End
 	#tag EndEvent
 
 	#tag Event
+		Sub EnableMenuItems()
+		  If Self.List.ListCount > 0 Then
+		    FileExport.Enable
+		  End If
+		End Sub
+	#tag EndEvent
+
+	#tag Event
 		Sub Hidden()
 		  Self.ClipboardWatcher.Mode = Timer.ModeOff
 		End Sub
@@ -380,6 +388,15 @@ End
 		  Self.ClipboardWatcher.Mode = Timer.ModeMultiple
 		End Sub
 	#tag EndEvent
+
+
+	#tag MenuHandler
+		Function FileExport() As Boolean Handles FileExport.Action
+			Self.ExportAll()
+			Return True
+			
+		End Function
+	#tag EndMenuHandler
 
 
 	#tag Method, Flags = &h21
@@ -419,6 +436,36 @@ End
 		    Return Not Self.MultiEditor.Modified
 		  End If
 		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ExportAll()
+		  Dim Dialog As New SaveAsDialog
+		  Dialog.SuggestedFileName = "Beacon Objects.csv"
+		  Dialog.PromptText = "Export objects to CSV"
+		  Dialog.Filter = BeaconFileTypes.CSVFile
+		  
+		  Dim File As FolderItem = Dialog.ShowModalWithin(Self.TrueWindow)
+		  If File <> Nil Then
+		    Dim Mods As New Beacon.TextList
+		    Mods.Append(LocalData.UserModID.ToText)
+		    
+		    Dim Engrams() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryEngrams, "", Mods, "")
+		    Dim Creatures() As Beacon.Blueprint = LocalData.SharedInstance.SearchForBlueprints(Beacon.CategoryCreatures, "", Mods, "")
+		    Dim Blueprints() As Beacon.Blueprint
+		    For Each Engram As Beacon.Blueprint In Engrams
+		      Blueprints.Append(Engram)
+		    Next
+		    For Each Creature As Beacon.Blueprint In Creatures
+		      Blueprints.Append(Creature)
+		    Next
+		    
+		    Dim CSV As Text = Beacon.CreateCSV(Blueprints)
+		    Dim Stream As TextOutputStream = TextOutputStream.Create(File)
+		    Stream.Write(CSV)
+		    Stream.Close
+		  End If
+		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h0

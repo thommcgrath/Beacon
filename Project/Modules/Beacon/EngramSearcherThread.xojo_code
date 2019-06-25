@@ -63,6 +63,28 @@ Inherits Beacon.Thread
 		      
 		      Dim LastPushTime As Double = Microseconds
 		      Dim FoundSinceLastPush As Boolean
+		      
+		      Dim HeaderColumns() As String
+		      If Lines.Ubound >= 0 Then
+		        HeaderColumns = Lines(0)
+		        Lines.Remove(0)
+		      End If
+		      Dim PathColumnIdx, LabelColumnIdx, MaskColumnIdx, BlueprintColumnIdx, TagsColumnIndx, GroupColumnIdx As Integer
+		      PathColumnIdx = HeaderColumns.IndexOf("Path")
+		      LabelColumnIdx = HeaderColumns.IndexOf("Label")
+		      MaskColumnIdx = HeaderColumns.IndexOf("Availability Mask")
+		      TagsColumnIndx = HeaderColumns.IndexOf("Tags")
+		      GroupColumnIdx = HeaderColumns.IndexOf("Group")
+		      BlueprintColumnIdx = HeaderColumns.IndexOf("Can Blueprint")
+		      
+		      Dim AllAvailabilityMask As UInt64 = Beacon.Maps.All.Mask
+		      
+		      If PathColumnIdx = -1 Or LabelColumnIdx = -1 Then
+		        Dim Err As New UnsupportedFormatException
+		        Err.Message = "CSV import requires at least Path and Label columns. Make sure the data includes a header row."
+		        Raise Err
+		      End If
+		      
 		      For Each Columns In Lines
 		        If Self.ShouldStop Then
 		          Return
@@ -72,36 +94,48 @@ Inherits Beacon.Thread
 		          Self.mPendingTriggers.Append(CallLater.Schedule(DebugEventDelay, AddressOf TriggerStarted))
 		        End If
 		        
-		        If Columns.Ubound <> 3 Then
-		          Dim Err As New UnsupportedFormatException
-		          Err.Reason = "Incorrect number of columns"
-		          Raise Err
-		        End If
-		        
-		        If Columns(0) = "Path" And Columns(1) = "Label" And Columns(2) = "Availability Mask" And Columns(3) = "Can Blueprint" Then
-		          // Header
-		          Continue
-		        End If
-		        
-		        Dim Path As Text = Columns(0).ToText
-		        Dim Label As Text = Columns(1).ToText
-		        Dim Availability As UInt64 = UInt64.FromText(Columns(2).ToText)
-		        Dim CanBlueprint As Boolean = If(Columns(3) = "True", True, False)
-		        
-		        Dim Engram As New Beacon.MutableEngram(Path, Beacon.CreateUUID)
-		        Engram.Availability = Availability
-		        If CanBlueprint Then
-		          Engram.AddTag("blueprintable")
+		        Dim Path As Text = Columns(PathColumnIdx).ToText
+		        Dim Label As Text = Columns(LabelColumnIdx).ToText
+		        Dim Availability As UInt64
+		        Dim Tags() As Text
+		        If MaskColumnIdx > -1 Then
+		          Availability = UInt64.FromText(Columns(MaskColumnIdx).ToText)
 		        Else
-		          Engram.RemoveTag("blueprintable")
+		          Availability = AllAvailabilityMask
 		        End If
-		        Engram.Label = Label
+		        If TagsColumnIndx > -1 Then
+		          Tags = Columns(TagsColumnIndx).ToText.Split(",")
+		        ElseIf BlueprintColumnIdx > -1 Then
+		          Dim CanBlueprint As Boolean = If(Columns(BlueprintColumnIdx) = "True", True, False)
+		          If CanBlueprint Then
+		            Tags.Append("blueprintable")
+		          End If
+		        End If
+		        
+		        Dim Category As Text = "engrams"
+		        If GroupColumnIdx > -1 Then
+		          Category = Columns(GroupColumnIdx).ToText
+		        End If
+		        
+		        Dim Blueprint As Beacon.MutableBlueprint
+		        Select Case Category
+		        Case Beacon.CategoryEngrams
+		          Blueprint = New Beacon.MutableEngram(Path, Beacon.CreateUUID)
+		        Case Beacon.CategoryCreatures
+		          Blueprint = New Beacon.MutableCreature(Path, Beacon.CreateUUID)
+		        Else
+		          Continue
+		        End Select
+		        
+		        Blueprint.Tags = Tags
+		        Blueprint.Availability = Availability
+		        Blueprint.Label = Label
 		        
 		        Self.mBlueprintsLock.Enter
 		        If Self.ShouldStop Then
 		          Return
 		        End If
-		        Self.mBlueprints.Append(New Beacon.Engram(Engram))
+		        Self.mBlueprints.Append(Blueprint.Clone)
 		        Self.mBlueprintsLock.Leave
 		        FoundSinceLastPush = True
 		        

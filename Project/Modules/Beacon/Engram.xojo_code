@@ -14,6 +14,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function Category() As Text
+		  Return Beacon.CategoryEngrams
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ClassString() As Text
 		  If Self.IsValid Then
 		    Dim Components() As Text = Self.mPath.Split("/")
@@ -59,29 +65,6 @@ Implements Beacon.Blueprint
 		    Self.mTags.Append(Tag)
 		  Next
 		End Sub
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Shared Function CreateCSV(Engrams() As Beacon.Engram) As Text
-		  Dim Columns(3) As Text
-		  Columns(0) = """Path"""
-		  Columns(1) = """Label"""
-		  Columns(2) = """Availability Mask"""
-		  Columns(3) = """Tags"""
-		  
-		  Dim Lines(0) As Text
-		  Lines(0) = Columns.Join(",")
-		  
-		  For Each Engram As Beacon.Engram In Engrams
-		    Columns(0) = """" + Engram.mPath + """"
-		    Columns(1) = """" + Engram.mLabel + """"
-		    Columns(2) = Engram.mAvailability.ToText
-		    Columns(3) = Engram.TagString
-		    Lines.Append(Columns.Join(","))
-		  Next
-		  
-		  Return Lines.Join(Text.FromUnicodeCodepoint(13) + Text.FromUnicodeCodepoint(10))
-		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
