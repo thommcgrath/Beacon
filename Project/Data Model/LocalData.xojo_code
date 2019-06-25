@@ -930,7 +930,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Method, Flags = &h21
 		Private Function ImportInner(Content As Text) As Boolean
-		  Dim ChangeDict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Content)
+		  Dim ChangeDict As Xojo.Core.Dictionary
+		  Try
+		    ChangeDict = Xojo.Data.ParseJSON(Content)
+		  Catch Err As Xojo.Data.InvalidJSONException
+		    App.Log("Cannot import classes because the data is not valid JSON.")
+		    Return False
+		  End Try
 		  
 		  Dim RequiredKeys() As Text = Array("mods", "loot_source_icons", "loot_sources", "engrams", "presets", "preset_modifiers", "timestamp", "is_full", "beacon_version")
 		  For Each RequiredKey As Text In RequiredKeys

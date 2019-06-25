@@ -127,6 +127,24 @@ End
 		  Return False
 		End Function
 	#tag EndEvent
+	#tag Event
+		Sub DocumentComplete(URL as String)
+		  If URL.BeginsWith("chrome-error://") Then
+		    Self.ShowAlert("Beacon was unable to load the page.", "Unfortunately, no details are available.")
+		    Self.Close()
+		  End If
+		End Sub
+	#tag EndEvent
+	#tag Event
+		Sub Error(errorNumber as Integer, errorMessage as String)
+		  Dim Message As String = "Error " + Str(errorNumber, "-0")
+		  If Trim(errorMessage) <> "" Then
+		    Message = Message + ":" + EndOfLine + errorMessage
+		  End If
+		  Self.ShowAlert("Beacon was unable to load the page.", Message)
+		  Self.Close()
+		End Sub
+	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
 	#tag ViewProperty
