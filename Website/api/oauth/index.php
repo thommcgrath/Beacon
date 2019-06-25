@@ -28,8 +28,11 @@ $redirect_uri = 'https://' . $_SERVER['HTTP_HOST'] . '/oauth/callback.php';
 switch ($provider) {
 case 'nitrado':
 	$url = 'https://oauth.nitrado.net/oauth/v2/auth?redirect_uri=' . urlencode($redirect_uri) . '&client_id=' . urlencode(BeaconCommon::GetGlobal('Nitrado_Client_ID')) . '&response_type=code&scope=service&state=' . urlencode($auth_state);
+	echo 'Redirecting to Nitrado…';
 	break;
 default:
+	http_response_code(400);
+	echo 'There is nowhere to redirect to because provider "' . $provider . '" is not known!';
 	exit;
 }
 
