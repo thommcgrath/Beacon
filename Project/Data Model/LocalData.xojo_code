@@ -1979,8 +1979,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  If mInstance = Nil And Create = True Then
 		    mInstance = New LocalData
 		    Beacon.Data = mInstance
-		    Dim Results As RecordSet = mInstance.SQLSelect("SELECT COUNT(class_string) AS source_count FROM loot_sources;")
-		    If Results.Field("source_count").IntegerValue = 0 Then
+		    Dim Results As RecordSet = mInstance.SQLSelect("SELECT EXISTS(SELECT 1 FROM blueprints) AS populated;")
+		    If Results.Field("populated").BooleanValue = False Then
 		      mInstance.ImportLocalClasses()
 		    End If
 		    If Preferences.OnlineEnabled Then
