@@ -92,7 +92,7 @@ Begin Window EngramsUpdateWindow Implements NotificationKit.Receiver
       Scope           =   2
       TabPanelIndex   =   0
    End
-   Begin PushButton CancelButton
+   Begin UITweaks.ResizedPushButton CancelButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
