@@ -150,7 +150,7 @@ Protected Module UserCloud
 		  
 		  Dim Results() As String
 		  
-		  Dim Keys() As Variant
+		  Dim Keys() As Variant = Paths.Keys
 		  For Each Key As String In Keys
 		    If Not Key.BeginsWith(Prefix) Then
 		      Continue
