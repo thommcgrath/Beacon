@@ -220,6 +220,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.mLock = New CriticalSection
 		  
 		  Dim AppSupport As FolderItem = App.ApplicationSupport
+		  Dim ShouldImportCloud As Boolean
 		  
 		  Dim LegacyFile As FolderItem = AppSupport.Child("Beacon.sqlite")
 		  If LegacyFile.Exists Then
@@ -239,6 +240,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    End If
 		    
 		    Self.BuildSchema()
+		    ShouldImportCloud = True
 		  End If
 		  
 		  Dim CurrentSchemaVersion As Integer = Self.mBase.UserVersion
@@ -301,6 +303,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Self.mBase.DatabaseFile = App.ApplicationSupport.Child("Library.sqlite")
 		    Call Self.mBase.CreateDatabaseFile
 		    Self.BuildSchema()
+		    ShouldImportCloud = True
 		  End If
 		  
 		  Self.mBase.SQLExecute("PRAGMA cache_size = -100000;")
@@ -308,8 +311,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  Self.SQLExecute("UPDATE mods SET console_safe = ?2 WHERE mod_id = ?1 AND console_safe != ?2;", Self.UserModID, True)
 		  Self.Commit()
 		  
+		  Dim Migrated As Boolean
 		  If MigrateFile <> Nil And MigrateFile.Exists And CurrentSchemaVersion < Self.SchemaVersion Then
-		    Self.MigrateData(MigrateFile, CurrentSchemaVersion)
+		    Migrated = Self.MigrateData(MigrateFile, CurrentSchemaVersion)
+		  End If
+		  If ShouldImportCloud And Migrated = False Then
+		    // Per https://github.com/thommcgrath/Beacon/issues/191 cloud data should be imported
+		    Self.mNextSyncImportAll = True
 		  End If
 		  
 		  NotificationKit.Watch(Self, UserCloud.Notification_SyncFinished)
@@ -837,6 +845,65 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function ImportCloudEngrams() As Boolean
+		  Dim EngramsUpdated As Boolean = False
+		  Dim EngramsContent As MemoryBlock = UserCloud.Read("/Engrams.json")
+		  If EngramsContent = Nil Then
+		    Return False
+		  End If
+		  Dim Blueprints() As Auto = Xojo.Data.ParseJSON(EngramsContent.StringValue(0, EngramsContent.Size).DefineEncoding(Encodings.UTF8).ToText)
+		  Self.BeginTransaction()
+		  Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id IN (SELECT object_id FROM engrams WHERE mod_id = ?1 UNION SELECT object_id FROM creatures WHERE mod_id = ?1);", Self.UserModID)
+		  Self.SQLExecute("DELETE FROM engrams WHERE mod_id = ?1;", Self.UserModID)
+		  Self.SQLExecute("DELETE FROM creatures WHERE mod_id = ?1;", Self.UserModID)
+		  For Each Dict As Xojo.Core.Dictionary In Blueprints
+		    Try
+		      Dim Category As String = Dict.Value("category")
+		      Dim Path As String = Dict.Value("path") 
+		      Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE LOWER(path) = ?1;", Lowercase(Path))
+		      If Results.RecordCount <> 0 Then
+		        Continue
+		      End If
+		      
+		      Dim ObjectID As String = Dict.Value("object_id")
+		      Dim ClassString As String = Dict.Value("class_string")
+		      Dim Label As String = Dict.Value("label")         
+		      Dim Availability As UInt64 = Dict.Value("availability")
+		      Dim Tags As String = Dict.Value("tags")
+		      Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID, ClassString, Label, Path, Availability, Tags, Self.UserModID)      
+		      Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID, Tags, Category)
+		      EngramsUpdated = True
+		    Catch Err As RuntimeException
+		    End Try
+		  Next
+		  Self.Commit()
+		  Return EngramsUpdated
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub ImportCloudFiles()
+		  // Imports all cloud files
+		  
+		  If Self.ImportCloudEngrams Then
+		    NotificationKit.Post(Self.Notification_EngramsChanged, Nil)
+		  End If
+		  
+		  Dim PresetPaths() As String = UserCloud.List("/Presets/")
+		  Dim PresetsUpdated As Boolean
+		  For Each RemotePath As String In PresetPaths
+		    Dim PresetContents As MemoryBlock = UserCloud.Read(RemotePath)
+		    If PresetContents <> Nil Then
+		      PresetsUpdated = Self.ImportPreset(PresetContents) Or PresetsUpdated
+		    End If
+		  Next
+		  If PresetsUpdated Then
+		    Self.LoadPresets()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ImportCloudFiles(Actions() As Dictionary)
 		  Dim EngramsUpdated, PresetsUpdated As Boolean
 		  For Each Action As Dictionary In Actions
@@ -851,36 +918,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        Self.Commit()
 		        EngramsUpdated = True
 		      Case "GET"
-		        Dim EngramsContent As MemoryBlock = UserCloud.Read(RemotePath)
-		        If EngramsContent = Nil Then
-		          Continue
-		        End If
-		        Dim Blueprints() As Auto = Xojo.Data.ParseJSON(EngramsContent.StringValue(0, EngramsContent.Size).DefineEncoding(Encodings.UTF8).ToText)
-		        Self.BeginTransaction()
-		        Self.SQLExecute("DELETE FROM searchable_tags WHERE object_id IN (SELECT object_id FROM engrams WHERE mod_id = ?1 UNION SELECT object_id FROM creatures WHERE mod_id = ?1);", Self.UserModID)
-		        Self.SQLExecute("DELETE FROM engrams WHERE mod_id = ?1;", Self.UserModID)
-		        Self.SQLExecute("DELETE FROM creatures WHERE mod_id = ?1;", Self.UserModID)
-		        For Each Dict As Xojo.Core.Dictionary In Blueprints
-		          Try
-		            Dim Category As String = Dict.Value("category")
-		            Dim Path As String = Dict.Value("path") 
-		            Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM " + Category + " WHERE LOWER(path) = ?1;", Lowercase(Path))
-		            If Results.RecordCount <> 0 Then
-		              Continue
-		            End If
-		            
-		            Dim ObjectID As String = Dict.Value("object_id")
-		            Dim ClassString As String = Dict.Value("class_string")
-		            Dim Label As String = Dict.Value("label")         
-		            Dim Availability As UInt64 = Dict.Value("availability")
-		            Dim Tags As String = Dict.Value("tags")
-		            Self.SQLExecute("INSERT INTO " + Category + " (object_id, class_string, label, path, availability, tags, mod_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7);",  ObjectID, ClassString, Label, Path, Availability, Tags, Self.UserModID)      
-		            Self.SQLExecute("INSERT INTO searchable_tags (object_id, tags, source_table) VALUES (?1, ?2, ?3);", ObjectID, Tags, Category)
-		          Catch Err As RuntimeException
-		          End Try
-		        Next
-		        Self.Commit()      
-		        EngramsUpdated = True
+		        EngramsUpdated = Self.ImportCloudEngrams() Or EngramsUpdated
 		      End Select
 		    ElseIf RemotePath.BeginsWith("/Presets") Then
 		      Dim PresetID As String = RemotePath.SubString(8, 36)
@@ -895,26 +933,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		        If PresetContents = Nil Then
 		          Continue
 		        End If
-		        
-		        Dim Contents As String = DefineEncoding(PresetContents, Encodings.UTF8)
-		        Dim Preset As Beacon.Preset
-		        Try
-		          Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents.ToText)
-		          Preset = Beacon.Preset.FromDictionary(Dict)
-		          PresetID = Preset.PresetID
-		        Catch Err As RuntimeException
-		          Continue
-		        End Try
-		        
-		        Self.BeginTransaction()
-		        Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE object_id = ?1;", PresetID)
-		        If Results.RecordCount = 1 Then
-		          Self.SQLExecute("UPDATE custom_presets SET label = ?2, contents = ?3 WHERE object_id = ?1;", PresetID, Preset.Label, Contents)
-		        Else
-		          Self.SQLExecute("INSERT INTO custom_presets (object_id, label, contents) VALUES (?1, ?2, ?3);", PresetID, Preset.Label, Contents)
-		        End If
-		        Self.Commit()
-		        PresetsUpdated = True
+		        PresetsUpdated = Self.ImportPreset(PresetContents) Or PresetsUpdated
 		      End Select
 		    End If
 		  Next
@@ -1280,6 +1299,34 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Function ImportPreset(PresetContents As MemoryBlock) As Boolean
+		  Dim Contents As String = DefineEncoding(PresetContents, Encodings.UTF8)
+		  Dim Preset As Beacon.Preset
+		  Dim PresetID As String
+		  Try
+		    Dim Dict As Xojo.Core.Dictionary = Xojo.Data.ParseJSON(Contents.ToText)
+		    Preset = Beacon.Preset.FromDictionary(Dict)
+		    PresetID = Preset.PresetID
+		  Catch Err As RuntimeException
+		    Return False
+		  End Try
+		  
+		  Dim Imported As Boolean
+		  Self.BeginTransaction()
+		  Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE object_id = ?1;", PresetID)
+		  If Results.RecordCount = 1 Then
+		    Dim Changes As RecordSet = Self.SQLSelect("UPDATE custom_presets SET label = ?2, contents = ?3 WHERE object_id = ?1 AND label != ?2 AND contents != ?3;", PresetID, Preset.Label, Contents)
+		    Imported = Changes.RecordCount = 1
+		  Else
+		    Self.SQLExecute("INSERT INTO custom_presets (object_id, label, contents) VALUES (?1, ?2, ?3);", PresetID, Preset.Label, Contents)
+		    Imported = True
+		  End If
+		  Self.Commit()
+		  Return Imported
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function IsPresetCustom(Preset As Beacon.Preset) As Boolean
 		  Dim Results As RecordSet = Self.SQLSelect("SELECT object_id FROM custom_presets WHERE LOWER(object_id) = LOWER(?1);", Preset.PresetID)
@@ -1333,10 +1380,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub MigrateData(Source As FolderItem, FromSchemaVersion As Integer)
+		Private Function MigrateData(Source As FolderItem, FromSchemaVersion As Integer) As Boolean
 		  If Not Self.mBase.AttachDatabase(Source, "legacy") Then
 		    App.Log("Unable to attach database " + Source.NativePath)
-		    Return
+		    Return False
 		  End If
 		  
 		  App.Log("Migrating data from schema " + Str(FromSchemaVersion, "-0") + " at " + Source.NativePath)
@@ -1409,7 +1456,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		    Commands.Append("INSERT INTO searchable_tags SELECT * FROM legacy.searchable_tags;")
 		  End If
 		  
-		  If UBound(Commands) > -1 Then
+		  If Commands.Ubound > -1 Then
 		    Self.BeginTransaction()
 		    Try
 		      For Each Command As String In Commands
@@ -1419,7 +1466,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		      Self.Rollback()
 		      Self.mBase.DetachDatabase("legacy")
 		      App.Log("Unable to migrate data: " + Err.Message)
-		      Return
+		      Return False
 		    End Try
 		    
 		    If MigrateLegacyCustomEngrams Then
@@ -1434,7 +1481,7 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		          Self.Rollback()
 		          Self.mBase.DetachDatabase("legacy")
 		          App.Log("Unable to migrate data: " + Err.Message)
-		          Return
+		          Return False
 		        End Try
 		        
 		        Results.MoveNext
@@ -1493,7 +1540,8 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  End If
 		  
 		  App.Log("Migration complete")
-		End Sub
+		  Return True
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -1570,8 +1618,13 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 		  
 		  Select Case Notification.Name
 		  Case UserCloud.Notification_SyncFinished
-		    Dim Actions() As Dictionary = Notification.UserData
-		    Self.ImportCloudFiles(Actions)
+		    If Self.mNextSyncImportAll Then
+		      Self.mNextSyncImportAll = False
+		      Self.ImportCloudFiles()
+		    Else
+		      Dim Actions() As Dictionary = Notification.UserData
+		      Self.ImportCloudFiles(Actions)
+		    End If
 		  End Select
 		End Sub
 	#tag EndMethod
@@ -2255,6 +2308,10 @@ Implements Beacon.DataSource,NotificationKit.Receiver
 
 	#tag Property, Flags = &h21
 		Private mLock As CriticalSection
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNextSyncImportAll As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
