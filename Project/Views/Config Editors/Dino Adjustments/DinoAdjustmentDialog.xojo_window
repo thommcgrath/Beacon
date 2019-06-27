@@ -276,7 +276,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       TabPanelIndex   =   0
       Top             =   158
       Transparent     =   False
-      Value           =   1
+      Value           =   0
       Visible         =   True
       Width           =   626
       Begin UITweaks.ResizedTextField WildDamageField
@@ -425,7 +425,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabIndex        =   3
          TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "Wild Vulnerability:"
+         Text            =   "Wild Resistance:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
@@ -495,7 +495,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabIndex        =   5
          TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "Greater than 1.0 increases amount of damage taken"
+         Text            =   "Less than 1.0 increases amount of damage taken"
          TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"
@@ -653,7 +653,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabIndex        =   9
          TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "Tame Vulnerability:"
+         Text            =   "Tame Resistance:"
          TextAlign       =   2
          TextColor       =   &c00000000
          TextFont        =   "System"
@@ -723,7 +723,7 @@ Begin BeaconDialog DinoAdjustmentDialog
          TabIndex        =   11
          TabPanelIndex   =   1
          TabStop         =   True
-         Text            =   "Greater than 1.0 increases amount of damage taken"
+         Text            =   "Less than 1.0 increases amount of damage taken"
          TextAlign       =   0
          TextColor       =   &c00000000
          TextFont        =   "SmallSystem"

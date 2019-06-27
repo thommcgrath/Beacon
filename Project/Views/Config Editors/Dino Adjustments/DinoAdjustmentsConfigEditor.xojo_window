@@ -110,7 +110,7 @@ Begin ConfigEditor DinoAdjustmentsConfigEditor
       Hierarchical    =   False
       Index           =   -2147483648
       InitialParent   =   ""
-      InitialValue    =   "Creature	Wild Damage	Wild Vulnerability	Tamed Damage	Tamed Vulnerability"
+      InitialValue    =   "Creature	Wild Damage	Wild Resistance	Tamed Damage	Tamed Resistance"
       Italic          =   False
       Left            =   0
       LockBottom      =   True
