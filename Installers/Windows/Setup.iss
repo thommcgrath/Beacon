@@ -20,7 +20,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\{#MyAppName}
+DefaultDirName={commonpf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 OutputBaseFilename=Install_{#MyAppName}
@@ -31,12 +31,13 @@ ChangesAssociations=yes
 ArchitecturesAllowed=x86 x64
 ArchitecturesInstallIn64BitMode=x64
 SignTool=TheZAZ /d $qBeacon$q /du $qhttps://beaconapp.cc$q $f
+WizardStyle=modern
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [InstallDelete]
-Type: filesandordirs; Name: "{pf32}\Beacon"; Check: Is64BitInstallMode;
+Type: filesandordirs; Name: "{commonpf32}\Beacon"; Check: Is64BitInstallMode;
 
 [Files]
 Source: "..\..\Project\Builds - Beacon.xojo_project\Windows 64 bit\Beacon\*"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
