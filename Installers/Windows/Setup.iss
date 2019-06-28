@@ -30,6 +30,7 @@ MinVersion=6.1.7601
 ChangesAssociations=yes
 ArchitecturesAllowed=x86 x64
 ArchitecturesInstallIn64BitMode=x64
+SignTool=TheZAZ /d $qBeacon$q /du $qhttps://beaconapp.cc$q $f
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
