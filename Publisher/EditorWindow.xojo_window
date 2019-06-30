@@ -23,7 +23,7 @@ Begin Window EditorWindow
    MinWidth        =   720
    Placement       =   2
    Resizeable      =   True
-   Title           =   "Release Tool"
+   Title           =   "Publisher"
    Visible         =   True
    Width           =   720
    Begin TextField MacURLField
@@ -52,7 +52,7 @@ Begin Window EditorWindow
       LockTop         =   True
       Mask            =   ""
       Password        =   False
-      ReadOnly        =   False
+      ReadOnly        =   True
       Scope           =   2
       TabIndex        =   1
       TabPanelIndex   =   0
@@ -67,7 +67,7 @@ Begin Window EditorWindow
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   568
+      Width           =   476
    End
    Begin Label MacURLLabel
       AutoDeactivate  =   True
@@ -92,7 +92,7 @@ Begin Window EditorWindow
       TabIndex        =   0
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Mac URL:"
+      Text            =   "Mac File:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -124,10 +124,10 @@ Begin Window EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Windows URL:"
+      Text            =   "Windows File:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -165,9 +165,9 @@ Begin Window EditorWindow
       LockTop         =   True
       Mask            =   ""
       Password        =   False
-      ReadOnly        =   False
+      ReadOnly        =   True
       Scope           =   2
-      TabIndex        =   3
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -180,7 +180,7 @@ Begin Window EditorWindow
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   568
+      Width           =   476
    End
    Begin TextField BuildNumberField
       AcceptTabs      =   False
@@ -210,7 +210,7 @@ Begin Window EditorWindow
       Password        =   False
       ReadOnly        =   True
       Scope           =   2
-      TabIndex        =   7
+      TabIndex        =   9
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -245,7 +245,7 @@ Begin Window EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   6
+      TabIndex        =   8
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Build:"
@@ -288,7 +288,7 @@ Begin Window EditorWindow
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   5
+      TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -323,7 +323,7 @@ Begin Window EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   4
+      TabIndex        =   6
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   "Short Version:"
@@ -337,27 +337,6 @@ Begin Window EditorWindow
       Underline       =   False
       Visible         =   True
       Width           =   100
-   End
-   Begin HTMLViewer PreviewArea
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   279
-      HelpTag         =   ""
-      Index           =   -2147483648
-      Left            =   283
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Renderer        =   0
-      Scope           =   2
-      TabIndex        =   14
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   231
-      Visible         =   True
-      Width           =   437
    End
    Begin TextArea NotesArea
       AcceptTabs      =   False
@@ -392,7 +371,7 @@ Begin Window EditorWindow
       ScrollbarHorizontal=   False
       ScrollbarVertical=   True
       Styled          =   True
-      TabIndex        =   12
+      TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -405,7 +384,7 @@ Begin Window EditorWindow
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   271
+      Width           =   720
    End
    Begin PushButton ActionButton
       AutoDeactivate  =   True
@@ -427,7 +406,7 @@ Begin Window EditorWindow
       LockRight       =   False
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   10
+      TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
       TextFont        =   "System"
@@ -458,7 +437,7 @@ Begin Window EditorWindow
       LockRight       =   True
       LockTop         =   True
       Scope           =   2
-      TabIndex        =   11
+      TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
       Top             =   230
@@ -466,34 +445,6 @@ Begin Window EditorWindow
       UseFocusRing    =   True
       Visible         =   True
       Width           =   720
-   End
-   Begin Canvas VerticalSeparator
-      AcceptFocus     =   False
-      AcceptTabs      =   False
-      AutoDeactivate  =   True
-      Backdrop        =   0
-      DoubleBuffer    =   True
-      Enabled         =   True
-      EraseBackground =   False
-      Height          =   279
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   271
-      LockBottom      =   True
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Scope           =   2
-      TabIndex        =   13
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   231
-      Transparent     =   False
-      UseFocusRing    =   True
-      Visible         =   True
-      Width           =   12
    End
    Begin Xojo.Net.HTTPSocket MacSocket
       Index           =   -2147483648
@@ -537,7 +488,7 @@ Begin Window EditorWindow
       Password        =   False
       ReadOnly        =   False
       Scope           =   2
-      TabIndex        =   9
+      TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
       Text            =   ""
@@ -572,10 +523,10 @@ Begin Window EditorWindow
       Multiline       =   False
       Scope           =   2
       Selectable      =   False
-      TabIndex        =   8
+      TabIndex        =   10
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Short Preview:"
+      Text            =   "Banner Text:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -587,10 +538,153 @@ Begin Window EditorWindow
       Visible         =   True
       Width           =   100
    End
+   Begin PushButton WinSelectButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Select"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   620
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   5
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   55
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin PushButton MacSelectButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Select"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   620
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   21
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
+	#tag Method, Flags = &h21
+		Private Sub Begin()
+		  Dim Stream As BinaryStream = BinaryStream.Open(Self.mMacFile, False)
+		  Dim MacContent As MemoryBlock = Stream.Read(Stream.Length)
+		  Stream.Close
+		  
+		  Stream = BinaryStream.Open(Self.mWinFile, False)
+		  Dim WinContent As MemoryBlock = Stream.Read(Stream.Length)
+		  Stream.Close
+		  
+		  Dim Host As String
+		  #if DebugBuild
+		    Host = "private-anon-166a449bae-bunnycdnstorage.apiary-mock.com"
+		  #else
+		    Host = "storage.bunnycdn.com"
+		  #endif
+		  
+		  Dim ParentURL As String = "https://" + Host + "/beacon-releases/" + EncodeURLComponent(Self.mDisplayVersion)
+		  Dim MacUploadURL As String = ParentURL + "/" + EncodeURLComponent(Self.mMacFile.Name)
+		  Dim WinUploadURL As String = ParentURL + "/" + EncodeURLComponent(Self.mWinFile.Name)
+		  
+		  Self.mMacUploading = True
+		  Self.mWinUploading = True
+		  
+		  Dim APIKey As Text = App.APIKey.ToText
+		  Self.MacSocket.SetRequestContent(MacContent.Convert, "application/octet-stream")
+		  Self.MacSocket.RequestHeader("AccessKey") = APIKey
+		  Self.MacSocket.Send("PUT", MacUploadURL.ToText)
+		  
+		  Self.WinSocket.SetRequestContent(WinContent.Convert, "application/octet-stream")
+		  Self.WinSocket.RequestHeader("AccessKey") = APIKey
+		  Self.WinSocket.Send("PUT", WinUploadURL.ToText)
+		  
+		  Dim PrivateKey As String = App.PrivateKey
+		  Self.mMacSignature = EncodeHex(Crypto.RSASign(MacContent, PrivateKey)).Lowercase
+		  Self.mWinSignature = EncodeHex(Crypto.RSASign(WinContent, PrivateKey)).Lowercase
+		  
+		  Self.mProgress = New ProgressSheet
+		  Self.mProgress.ShowWithin(Self)
+		  
+		  Self.CheckEnabled()
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub CheckEnabled()
+		  Dim Enabled As Boolean = True
+		  
+		  If Self.mMacUploading Or Self.mWinUploading Then
+		    Enabled = False
+		  End If
+		  If Enabled And (Self.mMacFile = Nil Or Self.mMacFile.Exists = False) Then
+		    Enabled = False
+		  End If
+		  If Enabled And (Self.mWinFile = Nil Or Self.mWinFile.Exists = False) Then
+		    Enabled = False
+		  End If
+		  If Enabled And Self.mBannerText = "" Then
+		    Enabled = False
+		  End If
+		  If Enabled And Self.mBuildNumber = 0 Then
+		    Enabled = False
+		  End If
+		  If Enabled And Self.mStageCode = 0 Then
+		    Enabled = False
+		  End If
+		  If Enabled And Self.mDisplayVersion = "" Then
+		    Enabled = False
+		  End If
+		  If Enabled And Self.mNotesText = "" Then
+		    Enabled = False
+		  End If
+		  
+		  If Self.ActionButton.Enabled <> Enabled Then
+		    Self.ActionButton.Enabled = Enabled
+		  End If
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h21
 		Private Sub Error(Message As String)
 		  If Self.mProgress <> Nil Then
@@ -598,10 +692,14 @@ End
 		    Self.mProgress = Nil
 		  End If
 		  
-		  Self.mValues = Nil
+		  #if false
+		    Self.mValues = Nil
+		  #endif
 		  MacSocket.Disconnect
 		  WinSocket.Disconnect
-		  ActionButton.Enabled = True
+		  Self.mMacUploading = False
+		  Self.mWinUploading = False
+		  Self.CheckEnabled()
 		  
 		  MsgBox(Message)
 		End Sub
@@ -609,7 +707,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Finish()
-		  If Self.mValues = Nil Or Self.mValues.HasKey("mac_signature") = False Or Self.mValues.HasKey("win_signature") = False Then
+		  If Self.mMacUploading Or Self.mWinUploading Then
 		    Return
 		  End If
 		  
@@ -618,27 +716,55 @@ End
 		    Self.mProgress = Nil
 		  End If
 		  
-		  ActionButton.Enabled = True
-		  
 		  Dim Values(8) As String
-		  Values(0) = Str(Self.mValues.Value("build_number").IntegerValue, "-0")
-		  Values(1) = "'" + Self.mValues.Value("build_display").StringValue + "'"
-		  Values(2) = "convert_from(decode('" + EncodeHex(Self.mValues.Value("notes").StringValue) + "', 'hex'), 'UTF8')"
-		  Values(3) = "'" + ReplaceAll(Self.mValues.Value("mac_url").StringValue, "'", "''") + "'"
-		  Values(4) = "'" + Self.mValues.Value("mac_signature").StringValue + "'"
-		  Values(5) = "'" + ReplaceAll(Self.mValues.Value("win_url").StringValue, "'", "''") + "'"
-		  Values(6) = "'" + Self.mValues.Value("win_signature").StringValue + "'"
-		  Values(7) = Str(Self.mValues.Value("stage").IntegerValue, "-0")
-		  Values(8) = "'" + ReplaceAll(Self.mValues.Value("preview").StringValue, "'", "''") + "'"
+		  Values(0) = Str(Self.mBuildNumber, "-0")
+		  Values(1) = "'" + Self.mDisplayVersion + "'"
+		  Values(2) = "convert_from(decode('" + EncodeHex(Self.mNotesText) + "', 'hex'), 'UTF8')"
+		  Values(3) = "'https://releases.beaconapp.cc/" + Self.mDisplayVersion + "/" + ReplaceAll(Self.mMacFile.Name, "'", "''") + "'"
+		  Values(4) = "'" + Self.mMacSignature + "'"
+		  Values(5) = "'https://releases.beaconapp.cc/" + Self.mDisplayVersion + "/" + ReplaceAll(Self.mWinFile.Name, "'", "''") + "'"
+		  Values(6) = "'" + Self.mWinSignature + "'"
+		  Values(7) = Str(Self.mStageCode, "-0")
+		  Values(8) = "'" + ReplaceAll(Self.mBannerText, "'", "''") + "'"
 		  
 		  Dim SQL As String = "INSERT INTO ""updates"" (""build_number"", ""build_display"", ""notes"", ""mac_url"", ""mac_signature"", ""win_url"", ""win_signature"", ""stage"", ""preview"") VALUES (" + Join(Values, ", ") + ");"
 		  Dim Board As New Clipboard
 		  Board.Text = SQL
 		  
 		  MsgBox("Insert statement has been copied to the clipboard.")
+		  
+		  Self.CheckEnabled
 		End Sub
 	#tag EndMethod
 
+
+	#tag Property, Flags = &h21
+		Private mBannerText As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mBuildNumber As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mDisplayVersion As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMacFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMacSignature As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mMacUploading As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mNotesText As String
+	#tag EndProperty
 
 	#tag Property, Flags = &h21
 		Private mProgress As ProgressSheet
@@ -649,7 +775,15 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mValues As Dictionary
+		Private mWinFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWinSignature As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWinUploading As Boolean
 	#tag EndProperty
 
 
@@ -663,8 +797,10 @@ End
 		  
 		  Dim Matches As RegexMatch = Parser.Search(Me.Text.Trim)
 		  If Matches = Nil Then
-		    Self.BuildNumberField.Text = ""
-		    Self.ActionButton.Enabled = False
+		    Self.mDisplayVersion = ""
+		    Self.mBuildNumber = 0
+		    Self.mStageCode = 0
+		    Self.CheckEnabled
 		    Return
 		  End If
 		  
@@ -688,38 +824,23 @@ End
 		  Dim BuildNumber As Integer = (MajorVersion * 10000000) + (MinorVersion * 100000) + (BugVersion * 1000) + (StageCode * 100) + NonReleaseVersion
 		  Self.BuildNumberField.Text = Str(BuildNumber, "0")
 		  Self.mStageCode = StageCode
-		  Self.ActionButton.Enabled = True
+		  Self.mDisplayVersion = Me.Text.Trim
+		  Self.mBuildNumber = BuildNumber
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events NotesArea
 	#tag Event
 		Sub TextChange()
-		  Static Temp As FolderItem = GetTemporaryFolderItem
-		  
-		  PreviewArea.LoadPage(Me.Text, Temp)
+		  Self.mNotesText = Me.Text.Trim
+		  Self.CheckEnabled
 		End Sub
 	#tag EndEvent
 #tag EndEvents
 #tag Events ActionButton
 	#tag Event
 		Sub Action()
-		  Self.mValues = New Dictionary
-		  Self.mValues.Value("build_number") = Val(BuildNumberField.Text)
-		  Self.mValues.Value("build_display") = VersionField.Text
-		  Self.mValues.Value("notes") = NotesArea.Text
-		  Self.mValues.Value("mac_url") = MacURLField.Text
-		  Self.mValues.Value("win_url") = WinURLField.Text
-		  Self.mValues.Value("stage") = Self.mStageCode
-		  Self.mValues.Value("preview") = Self.ShortPreviewField.Text
-		  
-		  MacSocket.Send("GET", Self.mValues.Value("mac_url").StringValue.ToText) // Is this not one of the most ridiculous lines of code?
-		  WinSocket.Send("GET", Self.mValues.Value("win_url").StringValue.ToText)
-		  
-		  Me.Enabled = False
-		  
-		  Self.mProgress = New ProgressSheet
-		  Self.mProgress.ShowWithin(Self)
+		  Self.Begin()
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -731,18 +852,6 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events VerticalSeparator
-	#tag Event
-		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-		  G.ForeColor = &cF2F2F2
-		  G.FillRect(0, 0, G.Width, G.Height)
-		  
-		  G.ForeColor = &cCCCCCC
-		  G.DrawLine(0, -1, 0, G.Height + 1)
-		  G.DrawLine(G.Width - 1, -1, G.Width - 1, G.Height + 1)
-		End Sub
-	#tag EndEvent
-#tag EndEvents
 #tag Events MacSocket
 	#tag Event
 		Sub Error(err as RuntimeException)
@@ -751,27 +860,18 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
-		  If HTTPStatus <> 200 Then
-		    Self.Error("Mac url returned http status " + Str(HTTPStatus, "-0"))
-		    Return
+		  Self.mMacUploading = False
+		  If HTTPStatus = 201 Then
+		    Self.Finish()
+		  Else
+		    Self.Error("Unable to upload mac build: " + Str(HTTPStatus, "-0"))
 		  End If
-		  
-		  If Self.mProgress <> Nil Then
-		    Self.mProgress.MacProgress = 1
-		  End If
-		  
-		  Dim Data As MemoryBlock = Content.Convert
-		  Dim Key As String = App.PrivateKey
-		  Dim Signature As MemoryBlock = Crypto.RSASign(Data, Key)
-		  Self.mValues.Value("mac_signature") = EncodeHex(Signature)
-		  
-		  Self.Finish
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ReceiveProgress(BytesReceived as Int64, TotalBytes as Int64, NewData as xojo.Core.MemoryBlock)
+		Sub SendProgress(BytesSent as Int64, BytesLeft as Int64)
 		  If Self.mProgress <> Nil Then
-		    Self.mProgress.MacProgress = BytesReceived / TotalBytes
+		    Self.mProgress.MacProgress = BytesSent / BytesLeft
 		  End If
 		End Sub
 	#tag EndEvent
@@ -784,28 +884,63 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
-		  If HTTPStatus <> 200 Then
-		    Self.Error("Win url returned http status " + Str(HTTPStatus, "-0"))
-		    Return
+		  Self.mWinUploading = False
+		  If HTTPStatus = 201 Then
+		    Self.Finish()
+		  Else
+		    Self.Error("Unable to upload windows build: " + Str(HTTPStatus, "-0"))
 		  End If
-		  
-		  If Self.mProgress <> Nil Then
-		    Self.mProgress.WinProgress = 1
-		  End If
-		  
-		  Dim Data As MemoryBlock = Content.Convert
-		  Dim Key As String = App.PrivateKey
-		  Dim Signature As MemoryBlock = Crypto.RSASign(Data, Key)
-		  Self.mValues.Value("win_signature") = EncodeHex(Signature)
-		  
-		  Self.Finish
 		End Sub
 	#tag EndEvent
 	#tag Event
-		Sub ReceiveProgress(BytesReceived as Int64, TotalBytes as Int64, NewData as xojo.Core.MemoryBlock)
+		Sub SendProgress(BytesSent as Int64, BytesLeft as Int64)
 		  If Self.mProgress <> Nil Then
-		    Self.mProgress.WinProgress = BytesReceived / TotalBytes
+		    Self.mProgress.WinProgress = BytesSent / BytesLeft
 		  End If
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ShortPreviewField
+	#tag Event
+		Sub TextChange()
+		  Self.mBannerText = Me.Text.Trim
+		  Self.CheckEnabled
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events WinSelectButton
+	#tag Event
+		Sub Action()
+		  Dim Dialog As New OpenDialog
+		  Dialog.SuggestedFileName = "Install_Beacon.exe"
+		  Dialog.Filter = AppFileTypes.WindowsExecutable
+		  
+		  Dim File As FolderItem = Dialog.ShowModalWithin(Self)
+		  If File = Nil Then
+		    Return
+		  End If
+		  
+		  Self.mWinFile = File
+		  Self.WinURLField.Text = File.NativePath
+		  Self.CheckEnabled
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events MacSelectButton
+	#tag Event
+		Sub Action()
+		  Dim Dialog As New OpenDialog
+		  Dialog.SuggestedFileName = "Beacon.dmg"
+		  Dialog.Filter = AppFileTypes.DiskImage
+		  
+		  Dim File As FolderItem = Dialog.ShowModalWithin(Self)
+		  If File = Nil Then
+		    Return
+		  End If
+		  
+		  Self.mMacFile = File
+		  Self.MacURLField.Text = File.NativePath
+		  Self.CheckEnabled
 		End Sub
 	#tag EndEvent
 #tag EndEvents

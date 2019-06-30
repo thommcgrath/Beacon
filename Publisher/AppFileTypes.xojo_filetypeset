@@ -1,0 +1,30 @@
+#tag FileTypeSet
+	#tag FileType
+		CodeName=DiskImage
+		Extension=.dmg
+		Flags=&h0
+		MacCreator=
+		MacType=
+		Name=Apple Disk Image
+		UTI=com.apple.disk-image
+		UTIConformsTo=
+		Description=
+		MimeType=application/x-apple-diskimage
+		Imported=True
+	#tag EndFileType
+
+	#tag FileType
+		CodeName=WindowsExecutable
+		Extension=.exe
+		Flags=&h0
+		MacCreator=
+		MacType=
+		Name=Windows Executable
+		UTI=
+		UTIConformsTo=
+		Description=
+		MimeType=application/vnd.microsoft.portable-executable
+		Imported=True
+	#tag EndFileType
+
+#tag EndFileTypeSet
