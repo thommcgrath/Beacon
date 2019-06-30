@@ -48,6 +48,7 @@ Begin Window ProgressSheet
       Selectable      =   False
       TabIndex        =   0
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Mac:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -82,6 +83,7 @@ Begin Window ProgressSheet
       Selectable      =   False
       TabIndex        =   1
       TabPanelIndex   =   0
+      TabStop         =   True
       Text            =   "Windows:"
       TextAlign       =   2
       TextColor       =   &c00000000
@@ -109,8 +111,11 @@ Begin Window ProgressSheet
       LockTop         =   True
       Maximum         =   1000
       Scope           =   2
+      TabIndex        =   2
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   20
+      Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   382
@@ -130,8 +135,11 @@ Begin Window ProgressSheet
       LockTop         =   True
       Maximum         =   1000
       Scope           =   2
+      TabIndex        =   3
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   52
+      Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   382
@@ -401,5 +409,15 @@ End
 		Group="Size"
 		InitialValue="600"
 		Type="Integer"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="MacProgress"
+		Group="Behavior"
+		Type="Double"
+	#tag EndViewProperty
+	#tag ViewProperty
+		Name="WinProgress"
+		Group="Behavior"
+		Type="Double"
 	#tag EndViewProperty
 #tag EndViewBehavior

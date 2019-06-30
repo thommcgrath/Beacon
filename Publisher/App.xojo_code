@@ -2,6 +2,22 @@
 Protected Class App
 Inherits Application
 	#tag Method, Flags = &h0
+		Function APIKey() As String
+		  Dim File As FolderItem = Self.ApplicationSupport.Child("Key.json")
+		  If File.Exists Then
+		    Dim Stream As TextInputStream = TextInputStream.Open(File)
+		    Dim Contents As String = Stream.ReadAll(Encodings.UTF8)
+		    Stream.Close
+		    
+		    Dim Item As New JSONItem(Contents)
+		    If Item.HasName("apikey") Then
+		      Return Item.Value("apikey").StringValue
+		    End If
+		  End If
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function ApplicationSupport() As FolderItem
 		  Dim AppSupport As FolderItem = SpecialFolder.ApplicationData
 		  Dim CompanyFolder As FolderItem = AppSupport.Child("The ZAZ")
