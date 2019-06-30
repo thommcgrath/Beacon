@@ -26,7 +26,17 @@ Protected Class UpdateChecker
 		  AddHandler Self.mSocket.HeadersReceived, WeakAddressOf Self.mSocket_HeadersReceived
 		  AddHandler Self.mSocket.PageReceived, WeakAddressOf Self.mSocket_PageReceived
 		  Self.mSocket.RequestHeader("Cache-Control") = "no-cache"
-		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?build=" + App.BuildNumber.ToText + "&stage=" + App.StageCode.ToText))
+		  
+		  Dim Params As New Xojo.Core.Dictionary
+		  Params.Value("build") = App.BuildNumber.ToText
+		  Params.Value("stage") = App.StageCode.ToText
+		  #if Target64Bit
+		    Params.Value("arch") = "x86_64"
+		  #else
+		    Params.Value("arch") = "x86"
+		  #endif
+		  
+		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?" + BeaconAPI.Request.URLEncodeFormData(Params)))
 		End Sub
 	#tag EndMethod
 
