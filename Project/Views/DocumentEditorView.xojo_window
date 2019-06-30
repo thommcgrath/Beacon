@@ -634,7 +634,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Function ReadyToDeploy() As Boolean
-		  Return Self.Document <> Nil And Self.Document.IsValid And Self.Document.ServerProfileCount > 0
+		  Return Self.Document <> Nil And Self.Document.ServerProfileCount > 0 And Self.Document.IsValid
 		End Function
 	#tag EndMethod
 

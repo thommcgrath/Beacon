@@ -22,6 +22,19 @@ Implements Xojo.Core.Iterable
 	#tag EndEvent
 
 	#tag Event
+		Function HasIssues(Document As Beacon.Document) As Boolean
+		  For Each Source As Beacon.LootSource In Self.mSources
+		    If Not Document.SupportsLootSource(Source) Then
+		      Return True
+		    End If
+		    If Not Source.IsValid(Document) Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
@@ -189,21 +202,6 @@ Implements Xojo.Core.Iterable
 		  Next
 		  
 		  Return Issues
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsValid(Document As Beacon.Document) As Boolean
-		  For Each Source As Beacon.LootSource In Self.mSources
-		    If Not Document.SupportsLootSource(Source) Then
-		      Return False
-		    End If
-		    If Not Source.IsValid(Document) Then
-		      Return False
-		    End If
-		  Next
-		  
-		  Return Super.IsValid(Document)
 		End Function
 	#tag EndMethod
 

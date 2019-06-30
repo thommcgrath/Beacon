@@ -14,6 +14,18 @@ Inherits Beacon.ConfigGroup
 	#tag EndEvent
 
 	#tag Event
+		Function HasIssues(Document As Beacon.Document) As Boolean
+		  #Pragma Unused Document
+		  
+		  For I As Integer = 0 To Self.mCosts.Ubound
+		    If Not Self.mCosts(I).IsValid Then
+		      Return True
+		    End If
+		  Next
+		End Function
+	#tag EndEvent
+
+	#tag Event
 		Sub ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 		  #Pragma Unused Identity
 		  
@@ -145,20 +157,6 @@ Inherits Beacon.ConfigGroup
 		    End If
 		  Next
 		  Return Issues
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
-		Function IsValid(Document As Beacon.Document) As Boolean
-		  #Pragma Unused Document
-		  
-		  For I As Integer = 0 To Self.mCosts.Ubound
-		    If Not Self.mCosts(I).IsValid Then
-		      Return False
-		    End If
-		  Next
-		  
-		  Return True
 		End Function
 	#tag EndMethod
 

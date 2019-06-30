@@ -83,8 +83,11 @@ Protected Class ConfigGroup
 
 	#tag Method, Flags = &h0
 		Function IsValid(Document As Beacon.Document) As Boolean
-		  #Pragma Unused Document
-		  Return True
+		  If Not Self.mIsValidCached Then
+		    Self.mIsValid = Not RaiseEvent HasIssues(Document)
+		    Self.mIsValidCached = True
+		  End If
+		  Return Self.mIsValid
 		End Function
 	#tag EndMethod
 
@@ -97,6 +100,7 @@ Protected Class ConfigGroup
 	#tag Method, Flags = &h0
 		Sub Modified(Assigns Value As Boolean)
 		  Self.mModified = Value
+		  Self.mIsValidCached = False
 		End Sub
 	#tag EndMethod
 
@@ -143,6 +147,10 @@ Protected Class ConfigGroup
 	#tag EndHook
 
 	#tag Hook, Flags = &h0
+		Event HasIssues(Document As Beacon.Document) As Boolean
+	#tag EndHook
+
+	#tag Hook, Flags = &h0
 		Event ReadDictionary(Dict As Xojo.Core.Dictionary, Identity As Beacon.Identity)
 	#tag EndHook
 
@@ -170,6 +178,14 @@ Protected Class ConfigGroup
 
 	#tag Property, Flags = &h21
 		Private mIsImplicit As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIsValid As Boolean
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mIsValidCached As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
