@@ -735,9 +735,7 @@ End
 		Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		  #Pragma Unused Areas
 		  
-		  G.ForeColor = SystemColors.ControlBackgroundColor
-		  G.FillRect(0, 0, G.Width, G.Height)
-		  G.ForeColor = SystemColors.SystemYellowColor.AtOpacity(0.2)
+		  G.ForeColor = SystemColors.SelectedContentBackgroundColor
 		  G.FillRect(0, 0, G.Width, G.Height)
 		  G.ForeColor = SystemColors.SeparatorColor
 		  G.FillRect(0, G.Height - 1, G.Width, 1)
@@ -748,7 +746,7 @@ End
 		  Dim CaptionLeft As Integer = Round((G.Width - CaptionWidth) / 2)
 		  Dim CaptionBaseline As Double = ((G.Height - 1) / 2) + (G.CapHeight / 2)
 		  
-		  G.ForeColor = SystemColors.LabelColor
+		  G.ForeColor = SystemColors.AlternateSelectedControlTextColor
 		  G.DrawString(Caption, CaptionLeft, CaptionBaseline, MaxCaptionWidth, True)
 		  
 		  If Self.mUpdateBarPressed Then
