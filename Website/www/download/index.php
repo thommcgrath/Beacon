@@ -41,19 +41,19 @@ if (BeaconCommon::IsMacOS()) {
 <h1>Current Version</h1>
 <p class="text-center">Version <?php echo $version; ?></p>
 <?php if ($mode == MODE_NA) { ?>
-<p class="text-center"><a class="button" href="<?php echo $mac_url; ?>"><?php echo htmlentities($mac_label); ?></a><a class="button" href="<?php echo $win_url; ?>"><?php echo htmlentities($win_label); ?></a><br><span class="mini"><a href="#requirements">System Requirements</a></span></p>
+<p class="text-center"><a class="button" href="<?php echo $mac_url; ?>" rel="nofollow"><?php echo htmlentities($mac_label); ?></a><a class="button" href="<?php echo $win_url; ?>" rel="nofollow"><?php echo htmlentities($win_label); ?></a><br><span class="mini"><a href="#requirements">System Requirements</a></span></p>
 <?php } else { ?>
-<p class="text-center"><a class="button" href="<?php echo $primary_url; ?>"><?php echo htmlentities($primary_label); ?></a><br><span class="mini">Or <a href="<?php echo $alternate_url; ?>"><?php echo htmlentities($alternate_label); ?></a> | <a href="#requirements">System Requirements</a></span></p>
+<p class="text-center"><a class="button" href="<?php echo $primary_url; ?>" rel="nofollow"><?php echo htmlentities($primary_label); ?></a><br><span class="mini">Or <a href="<?php echo $alternate_url; ?>" rel="nofollow"><?php echo htmlentities($alternate_label); ?></a> | <a href="#requirements">System Requirements</a></span></p>
 <?php } ?>
 <h3>Engrams Database</h3>
 <div class="indent">
-	<p><a href="classes.php?version=<?php echo $build; ?>">Download Engrams Database</a><br>Last updated <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?>.</p>
+	<p><a href="classes.php?version=<?php echo $build; ?>" rel="nofollow">Download Engrams Database</a><br>Last updated <?php echo '<time datetime="' . $last_database_update->format('c') . '">' . $last_database_update->format('F jS, Y') . ' at ' . $last_database_update->format('g:i A') . ' UTC</time>'; ?>.</p>
 </div>
 <?php if ($prerelease->RecordCount() == 1) { ?>
 <h3 id="preview">Preview Release</h3>
 <div class="indent">
 	<p>Beacon <?php echo htmlentities($prerelease->Field('build_display')); ?> is available for testing. Preview releases may not be stable and users should make backups of any data they are not willing to lose. To create a backup, launch Beacon and choose &quot;Open Data Folder&quot; from the &quot;Help&quot; menu. The folder shown contains valuable user data. Copy the folder to a safe location, along with any Beacon files desired.</p>
-	<p>Links: <a href="<?php echo htmlentities($prerelease->Field('mac_url')); ?>">Mac Download</a>, <a href="<?php echo htmlentities($prerelease->Field('win_url')); ?>">Windows Download</a>, <a href="/history.php?stage=<?php echo htmlentities($prerelease->Field('stage')); ?>#build<?php echo htmlentities($prerelease->Field('build_number')); ?>">Release Notes</a>, <a href="classes.php?version=<?php echo $prerelease->Field('build_number'); ?>">Engrams Database</a></p>
+	<p>Links: <a href="<?php echo htmlentities($prerelease->Field('mac_url')); ?>" rel="nofollow">Mac Download</a>, <a href="<?php echo htmlentities($prerelease->Field('win_url')); ?>" rel="nofollow">Windows Download</a>, <a href="/history.php?stage=<?php echo htmlentities($prerelease->Field('stage')); ?>#build<?php echo htmlentities($prerelease->Field('build_number')); ?>">Release Notes</a>, <a href="classes.php?version=<?php echo $prerelease->Field('build_number'); ?>" rel="nofollow">Engrams Database</a></p>
 </div>
 <?php } ?>
 <h3 id="requirements">System Requirements</h3>
