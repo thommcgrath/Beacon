@@ -185,6 +185,17 @@ abstract class BeaconCommon {
 		return stristr($_SERVER['HTTP_USER_AGENT'], 'Windows NT') !== false;
 	}
 	
+	public static function IsWindows64() {
+		$agent = $_SERVER['HTTP_USER_AGENT'];
+		$possibles = array('x86_64', 'x86-64', 'Win64', 'x64;', 'amd64', 'AMD64', 'WOW64', 'x64_64');
+		foreach ($possibles as $possible) {
+			if (strpos($agent, $possible) !== false) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static function IsLinux() {
 		return (stristr($_SERVER['HTTP_USER_AGENT'], 'Linux') !== false) && (stristr($_SERVER['HTTP_USER_AGENT'], 'Android') === false);
 	}

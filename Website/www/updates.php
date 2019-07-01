@@ -5,6 +5,7 @@ header('Cache-Control: no-cache');
 
 $stage = 3;
 $current_build = 0;
+$arch_priority = array('combo', '64', '32');
 if (isset($_GET['build'])) {
 	$current_build = intval($_GET['build']);
 }
@@ -17,6 +18,16 @@ if (isset($_GET['html'])) {
 } else {
 	$html_mode = false;
 	header('Content-Type: application/json');
+}
+if (isset($_GET['arch'])) {
+	switch ($_GET['arch']) {
+	case 'x86_64':
+		$arch_priority = array('64', 'combo');
+		break;
+	case 'x86':
+		$arch_priority = array('32', 'combo');
+		break;
+	}
 }
 
 $include_notices = $current_build > 33;
@@ -59,12 +70,19 @@ $values = array(
 	'mac' => array(
 		'url' => $results->Field('mac_url'),
 		'signature' => $results->Field('mac_signature')
-	),
-	'win' => array(
-		'url' => $results->Field('win_url'),
-		'signature' => $results->Field('win_signature')
 	)
 );
+
+foreach ($arch_priority as $part) {
+	if (is_null($results->Field('win_' . $part . '_url')) === false) {
+		$values['win'] = array(
+			'url' => $results->Field('win_' . $part . '_url'),
+			'signature' => $results->Field('win_' . $part . '_signature')
+		);
+		break;
+	}
+}
+
 if ($include_notices) {
 	$values['notices'] = $notices;
 }
