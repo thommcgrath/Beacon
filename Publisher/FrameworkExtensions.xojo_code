@@ -1,5 +1,11 @@
 #tag Module
-Protected Module MemoryBlockExtensions
+Protected Module FrameworkExtensions
+	#tag Method, Flags = &h0
+		Function BeginsWith(Extends Haystack As String, Needle As String) As Boolean
+		  Return Haystack.Left(Needle.Len) = Needle
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function Convert(Extends Source As Global.MemoryBlock) As Xojo.Core.MemoryBlock
 		  Dim Data As New Xojo.Core.MutableMemoryBlock(Source.Size)
