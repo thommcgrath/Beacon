@@ -1,7 +1,7 @@
 <?php
 
 require(dirname(__FILE__, 2) . '/framework/loader.php');
-BeaconTemplate::SetPageDescription('Using Ark\'s ConfigOverrideSupplyCrateItems to modify loot crate contents by hand is a maddening experience. Beacon makes it easy.');
+BeaconTemplate::SetPageDescription('Beacon is Ark\'s easiest server manager that can update and control your Xbox, PS4, and PC Ark servers with a couple clicks.');
 
 $hero_suffix = BeaconCommon::IsWindows() ? 'windows' : 'mac';
 
