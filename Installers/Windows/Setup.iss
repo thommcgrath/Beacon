@@ -61,12 +61,16 @@ Type: filesandordirs; Name: "{commonpf32}\Beacon"; Check: Is64BitInstallMode;
 
 [Files]
 #ifdef x64
-Source: "..\..\Project\Builds - Beacon.xojo_project\Windows 64 bit\Beacon\*"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\Project\Builds - Beacon.xojo_project\Windows 64 bit\Beacon\*.exe"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "..\..\Project\Builds - Beacon.xojo_project\Windows 64 bit\Beacon\*.dll"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "..\..\Project\Builds - Beacon.xojo_project\Windows 64 bit\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Files\VC_redist.x64.exe"; DestDir: "{tmp}"; Check: Is64BitInstallMode;
 Source: "Files\windows6.1-kb3140245-x64.msu"; DestDir: "{tmp}"; Check: Is64BitInstallMode;
 #endif
 #ifdef x86
-Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\*"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\*.exe"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\*.dll"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs signonce
+Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\*"; Excludes: "*.exe,*.dll"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Files\vc_redist.x86.exe"; DestDir: "{tmp}"; Check: not Is64BitInstallMode;
 Source: "Files\windows6.1-kb3140245-x86.msu"; DestDir: "{tmp}"; Check: not Is64BitInstallMode;
 #endif
