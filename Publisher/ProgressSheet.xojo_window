@@ -26,84 +26,14 @@ Begin Window ProgressSheet
    Title           =   "Progress"
    Visible         =   True
    Width           =   500
-   Begin Label MacLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   0
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Mac:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   20
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   66
-   End
-   Begin Label WindowsLabel
-      AutoDeactivate  =   True
-      Bold            =   False
-      DataField       =   ""
-      DataSource      =   ""
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Italic          =   False
-      Left            =   20
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   False
-      LockTop         =   True
-      Multiline       =   False
-      Scope           =   2
-      Selectable      =   False
-      TabIndex        =   1
-      TabPanelIndex   =   0
-      TabStop         =   True
-      Text            =   "Windows:"
-      TextAlign       =   2
-      TextColor       =   &c00000000
-      TextFont        =   "System"
-      TextSize        =   0.0
-      TextUnit        =   0
-      Top             =   52
-      Transparent     =   True
-      Underline       =   False
-      Visible         =   True
-      Width           =   66
-   End
-   Begin ProgressBar MacProgressBar
+   Begin ProgressBar Bar
       AutoDeactivate  =   True
       Enabled         =   True
       Height          =   20
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
-      Left            =   98
+      Left            =   59
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -113,36 +43,46 @@ Begin Window ProgressSheet
       Scope           =   2
       TabIndex        =   2
       TabPanelIndex   =   0
-      TabStop         =   True
-      Top             =   20
-      Transparent     =   False
-      Value           =   0
-      Visible         =   True
-      Width           =   382
-   End
-   Begin ProgressBar WinProgressBar
-      AutoDeactivate  =   True
-      Enabled         =   True
-      Height          =   20
-      HelpTag         =   ""
-      Index           =   -2147483648
-      InitialParent   =   ""
-      Left            =   98
-      LockBottom      =   False
-      LockedInPosition=   False
-      LockLeft        =   True
-      LockRight       =   True
-      LockTop         =   True
-      Maximum         =   1000
-      Scope           =   2
-      TabIndex        =   3
-      TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   52
       Transparent     =   False
       Value           =   0
       Visible         =   True
       Width           =   382
+   End
+   Begin Label CaptionLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Uploading"
+      TextAlign       =   1
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   20
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   460
    End
 End
 #tag EndWindow
@@ -151,35 +91,34 @@ End
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return MacProgressBar.Value / MacProgressBar.Maximum
+			  Return Self.CaptionLabel.Text
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim IntValue As Integer = Max(Min(MacProgressBar.Maximum * Value, MacProgressBar.Maximum), 0)
-			  If MacProgressBar.Value <> IntValue Then
-			    MacProgressBar.Value = IntValue
+			  If Self.CaptionLabel.Text <> Value Then
+			    Self.CaptionLabel.Text = Value
 			  End If
 			End Set
 		#tag EndSetter
-		MacProgress As Double
+		Caption As String
 	#tag EndComputedProperty
 
 	#tag ComputedProperty, Flags = &h0
 		#tag Getter
 			Get
-			  Return WinProgressBar.Value / WinProgressBar.Maximum
+			  Return Bar.Value / Bar.Maximum
 			End Get
 		#tag EndGetter
 		#tag Setter
 			Set
-			  Dim IntValue As Integer = Max(Min(WinProgressBar.Maximum * Value, WinProgressBar.Maximum), 0)
-			  If WinProgressBar.Value <> IntValue Then
-			    WinProgressBar.Value = IntValue
+			  Dim IntValue As Integer = Max(Min(Bar.Maximum * Value, Bar.Maximum), 0)
+			  If Bar.Value <> IntValue Then
+			    Bar.Value = IntValue
 			  End If
 			End Set
 		#tag EndSetter
-		WinProgress As Double
+		Progress As Double
 	#tag EndComputedProperty
 
 
@@ -411,7 +350,7 @@ End
 		Type="Integer"
 	#tag EndViewProperty
 	#tag ViewProperty
-		Name="MacProgress"
+		Name="Progress"
 		Group="Behavior"
 		Type="Double"
 	#tag EndViewProperty

@@ -9,7 +9,7 @@ Begin Window EditorWindow
    FullScreen      =   False
    FullScreenButton=   False
    HasBackColor    =   False
-   Height          =   510
+   Height          =   578
    ImplicitInstance=   False
    LiveResize      =   True
    MacProcID       =   0
@@ -18,7 +18,7 @@ Begin Window EditorWindow
    MaxWidth        =   32000
    MenuBar         =   1391144959
    MenuBarVisible  =   True
-   MinHeight       =   510
+   MinHeight       =   578
    MinimizeButton  =   True
    MinWidth        =   720
    Placement       =   2
@@ -26,7 +26,7 @@ Begin Window EditorWindow
    Title           =   "Publisher"
    Visible         =   True
    Width           =   720
-   Begin TextField MacURLField
+   Begin TextField MacPathField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
@@ -43,7 +43,7 @@ Begin Window EditorWindow
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   132
+      Left            =   179
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -67,9 +67,9 @@ Begin Window EditorWindow
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   476
+      Width           =   429
    End
-   Begin Label MacURLLabel
+   Begin Label MacPathLabel
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
@@ -102,9 +102,9 @@ Begin Window EditorWindow
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   147
    End
-   Begin Label WinURLLabel
+   Begin Label WinComboPathLabel
       AutoDeactivate  =   True
       Bold            =   False
       DataField       =   ""
@@ -127,7 +127,7 @@ Begin Window EditorWindow
       TabIndex        =   3
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Windows File:"
+      Text            =   "Windows Combo File:"
       TextAlign       =   2
       TextColor       =   &c00000000
       TextFont        =   "System"
@@ -137,9 +137,9 @@ Begin Window EditorWindow
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   147
    End
-   Begin TextField WinURLField
+   Begin TextField WinComboPathField
       AcceptTabs      =   False
       Alignment       =   0
       AutoDeactivate  =   True
@@ -156,7 +156,7 @@ Begin Window EditorWindow
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   132
+      Left            =   179
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -180,7 +180,7 @@ Begin Window EditorWindow
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   476
+      Width           =   429
    End
    Begin TextField BuildNumberField
       AcceptTabs      =   False
@@ -199,7 +199,7 @@ Begin Window EditorWindow
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   132
+      Left            =   179
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -218,7 +218,7 @@ Begin Window EditorWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   122
+      Top             =   190
       Transparent     =   True
       Underline       =   False
       UseFocusRing    =   True
@@ -254,11 +254,11 @@ Begin Window EditorWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   122
+      Top             =   190
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   147
    End
    Begin TextField VersionField
       AcceptTabs      =   False
@@ -277,7 +277,7 @@ Begin Window EditorWindow
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   132
+      Left            =   179
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -296,7 +296,7 @@ Begin Window EditorWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   156
       Transparent     =   True
       Underline       =   False
       UseFocusRing    =   True
@@ -332,11 +332,11 @@ Begin Window EditorWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   88
+      Top             =   156
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   147
    End
    Begin TextArea NotesArea
       AcceptTabs      =   False
@@ -379,7 +379,7 @@ Begin Window EditorWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   231
+      Top             =   299
       Transparent     =   True
       Underline       =   False
       UseFocusRing    =   True
@@ -412,7 +412,7 @@ Begin Window EditorWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   190
+      Top             =   258
       Transparent     =   True
       Underline       =   False
       Visible         =   True
@@ -440,20 +440,13 @@ Begin Window EditorWindow
       TabIndex        =   13
       TabPanelIndex   =   0
       TabStop         =   True
-      Top             =   230
+      Top             =   298
       Transparent     =   False
       UseFocusRing    =   True
       Visible         =   True
       Width           =   720
    End
-   Begin Xojo.Net.HTTPSocket MacSocket
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-      ValidateCertificates=   False
-   End
-   Begin Xojo.Net.HTTPSocket WinSocket
+   Begin Xojo.Net.HTTPSocket UploadSocket
       Index           =   -2147483648
       LockedInPosition=   False
       Scope           =   2
@@ -477,7 +470,7 @@ Begin Window EditorWindow
       HelpTag         =   ""
       Index           =   -2147483648
       Italic          =   False
-      Left            =   132
+      Left            =   179
       LimitText       =   0
       LockBottom      =   False
       LockedInPosition=   False
@@ -496,12 +489,12 @@ Begin Window EditorWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   156
+      Top             =   224
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
       Visible         =   True
-      Width           =   568
+      Width           =   521
    End
    Begin Label ShortPreviewLabel
       AutoDeactivate  =   True
@@ -532,13 +525,13 @@ Begin Window EditorWindow
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   156
+      Top             =   224
       Transparent     =   True
       Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   147
    End
-   Begin PushButton WinSelectButton
+   Begin PushButton SelectWinComboButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -570,7 +563,7 @@ Begin Window EditorWindow
       Visible         =   True
       Width           =   80
    End
-   Begin PushButton MacSelectButton
+   Begin PushButton SelectMacButton
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
@@ -602,65 +595,311 @@ Begin Window EditorWindow
       Visible         =   True
       Width           =   80
    End
+   Begin PushButton SelectFolderButton
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Select Installers Folder"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   179
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   15
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   258
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   169
+   End
+   Begin Label Win64PathLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   16
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Windows 64-bit File:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   88
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   147
+   End
+   Begin TextField Win64PathField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   179
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   17
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   88
+      Transparent     =   True
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   429
+   End
+   Begin PushButton SelectWin64Button
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Select"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   620
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   18
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   89
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
+   Begin Label Win32PathLabel
+      AutoDeactivate  =   True
+      Bold            =   False
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   20
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   2
+      Selectable      =   False
+      TabIndex        =   19
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Windows 32-bit File:"
+      TextAlign       =   2
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   122
+      Transparent     =   True
+      Underline       =   False
+      Visible         =   True
+      Width           =   147
+   End
+   Begin TextField Win32PathField
+      AcceptTabs      =   False
+      Alignment       =   0
+      AutoDeactivate  =   True
+      AutomaticallyCheckSpelling=   False
+      BackColor       =   &cFFFFFF00
+      Bold            =   False
+      Border          =   True
+      CueText         =   ""
+      DataField       =   ""
+      DataSource      =   ""
+      Enabled         =   True
+      Format          =   ""
+      Height          =   22
+      HelpTag         =   ""
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   179
+      LimitText       =   0
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Mask            =   ""
+      Password        =   False
+      ReadOnly        =   True
+      Scope           =   2
+      TabIndex        =   20
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   ""
+      TextColor       =   &c00000000
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   122
+      Transparent     =   True
+      Underline       =   False
+      UseFocusRing    =   True
+      Visible         =   True
+      Width           =   429
+   End
+   Begin PushButton SelectWin32Button
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "Select"
+      Default         =   False
+      Enabled         =   True
+      Height          =   20
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   620
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   2
+      TabIndex        =   21
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   123
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   80
+   End
 End
 #tag EndWindow
 
 #tag WindowCode
 	#tag Method, Flags = &h21
 		Private Sub Begin()
-		  Dim Stream As BinaryStream = BinaryStream.Open(Self.mMacFile, False)
-		  Dim MacContent As MemoryBlock = Stream.Read(Stream.Length)
-		  Stream.Close
+		  Self.mMacPath = ""
+		  Self.mMacSignature = ""
+		  Self.mWinComboPath = ""
+		  Self.mWinComboSignature = ""
+		  Self.mWin64Path = ""
+		  Self.mWin64Signature = ""
+		  Self.mWin32Path = ""
+		  Self.mWin32Signature = ""
 		  
-		  Stream = BinaryStream.Open(Self.mWinFile, False)
-		  Dim WinContent As MemoryBlock = Stream.Read(Stream.Length)
-		  Stream.Close
-		  
-		  Dim Host As String
-		  #if DebugBuild
-		    Host = "private-anon-166a449bae-bunnycdnstorage.apiary-mock.com"
-		  #else
-		    Host = "storage.bunnycdn.com"
-		  #endif
-		  
-		  Dim ParentURL As String = "https://" + Host + "/beacon-releases/" + EncodeURLComponent(Self.mDisplayVersion)
-		  Dim MacUploadURL As String = ParentURL + "/" + EncodeURLComponent(Self.mMacFile.Name)
-		  Dim WinUploadURL As String = ParentURL + "/" + EncodeURLComponent(Self.mWinFile.Name)
-		  
-		  Self.mMacUploading = True
-		  Self.mWinUploading = True
-		  
-		  Dim APIKey As Text = App.APIKey.ToText
-		  Self.MacSocket.SetRequestContent(MacContent.Convert, "application/octet-stream")
-		  Self.MacSocket.RequestHeader("AccessKey") = APIKey
-		  Self.MacSocket.Send("PUT", MacUploadURL.ToText)
-		  
-		  Self.WinSocket.SetRequestContent(WinContent.Convert, "application/octet-stream")
-		  Self.WinSocket.RequestHeader("AccessKey") = APIKey
-		  Self.WinSocket.Send("PUT", WinUploadURL.ToText)
-		  
-		  Dim PrivateKey As String = App.PrivateKey
-		  Self.mMacSignature = EncodeHex(Crypto.RSASign(MacContent, PrivateKey)).Lowercase
-		  Self.mWinSignature = EncodeHex(Crypto.RSASign(WinContent, PrivateKey)).Lowercase
+		  Self.mUploadQueue = New Dictionary
+		  If Self.mMacFile <> Nil And Self.mMacFile.Exists Then
+		    Self.mMacPath = EncodeURLComponent(Self.mMacFile.Name)
+		    Self.mUploadQueue.Value(Self.mMacPath) = Self.mMacFile
+		  End If
+		  If Self.mWinComboFile <> Nil And Self.mWinComboFile.Exists Then
+		    Self.mWinComboPath = EncodeURLComponent(Self.mWinComboFile.Name)
+		    Self.mUploadQueue.Value(Self.mWinComboPath) = Self.mWinComboFile
+		  End If
+		  If Self.mWin64File <> Nil And Self.mWin64File.Exists Then
+		    Self.mWin64Path = "x86_64/" + EncodeURLComponent(Self.mWin64File.Name)
+		    Self.mUploadQueue.Value(Self.mWin64Path) = Self.mWin64File
+		  End If
+		  If Self.mWin32File <> Nil And Self.mWin32File.Exists Then
+		    Self.mWin32Path = "x86/" + EncodeURLComponent(Self.mWin32File.Name)
+		    Self.mUploadQueue.Value(Self.mWin32Path) = Self.mWin32File
+		  End If
 		  
 		  Self.mProgress = New ProgressSheet
 		  Self.mProgress.ShowWithin(Self)
 		  
 		  Self.CheckEnabled()
+		  Self.NextQueueItem()
 		End Sub
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
 		Private Sub CheckEnabled()
 		  Dim Enabled As Boolean = True
+		  Dim HasWindowsFile As Boolean = (Self.mWinComboFile <> Nil And Self.mWinComboFile.Exists) Or (Self.mWin64File <> Nil And Self.mWin64File.Exists) Or (Self.mWin32File <> Nil And Self.mWin32File.Exists)
 		  
-		  If Self.mMacUploading Or Self.mWinUploading Then
+		  If Self.mUploadQueue <> Nil And Self.mUploadQueue.Count > 0 Then
 		    Enabled = False
 		  End If
 		  If Enabled And (Self.mMacFile = Nil Or Self.mMacFile.Exists = False) Then
 		    Enabled = False
 		  End If
-		  If Enabled And (Self.mWinFile = Nil Or Self.mWinFile.Exists = False) Then
+		  If Enabled And HasWindowsFile = False Then
 		    Enabled = False
 		  End If
 		  If Enabled And Self.mBannerText = "" Then
@@ -692,13 +931,8 @@ End
 		    Self.mProgress = Nil
 		  End If
 		  
-		  #if false
-		    Self.mValues = Nil
-		  #endif
-		  MacSocket.Disconnect
-		  WinSocket.Disconnect
-		  Self.mMacUploading = False
-		  Self.mWinUploading = False
+		  Self.UploadSocket.Disconnect
+		  Self.mUploadQueue = New Dictionary
 		  Self.CheckEnabled()
 		  
 		  MsgBox(Message)
@@ -707,7 +941,7 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub Finish()
-		  If Self.mMacUploading Or Self.mWinUploading Then
+		  If Self.mUploadQueue <> Nil And Self.mUploadQueue.Count > 0 Then
 		    Return
 		  End If
 		  
@@ -716,24 +950,93 @@ End
 		    Self.mProgress = Nil
 		  End If
 		  
-		  Dim Values(8) As String
-		  Values(0) = Str(Self.mBuildNumber, "-0")
-		  Values(1) = "'" + Self.mDisplayVersion + "'"
-		  Values(2) = "convert_from(decode('" + EncodeHex(Self.mNotesText) + "', 'hex'), 'UTF8')"
-		  Values(3) = "'https://releases.beaconapp.cc/" + Self.mDisplayVersion + "/" + ReplaceAll(Self.mMacFile.Name, "'", "''") + "'"
-		  Values(4) = "'" + Self.mMacSignature + "'"
-		  Values(5) = "'https://releases.beaconapp.cc/" + Self.mDisplayVersion + "/" + ReplaceAll(Self.mWinFile.Name, "'", "''") + "'"
-		  Values(6) = "'" + Self.mWinSignature + "'"
-		  Values(7) = Str(Self.mStageCode, "-0")
-		  Values(8) = "'" + ReplaceAll(Self.mBannerText, "'", "''") + "'"
+		  Dim Root As String = "https://releases.beaconapp.cc/" + EncodeURLComponent(Self.mDisplayVersion)
 		  
-		  Dim SQL As String = "INSERT INTO ""updates"" (""build_number"", ""build_display"", ""notes"", ""mac_url"", ""mac_signature"", ""win_url"", ""win_signature"", ""stage"", ""preview"") VALUES (" + Join(Values, ", ") + ");"
+		  Dim InsertData As New Dictionary
+		  InsertData.Value("build_number") = Str(Self.mBuildNumber, "-0")
+		  InsertData.Value("build_display") = "'" + Self.mDisplayVersion + "'"
+		  InsertData.Value("notes") = "convert_from(decode('" + EncodeHex(Self.mNotesText) + "', 'hex'), 'UTF8')"
+		  InsertData.Value("stage") = Str(Self.mStageCode, "-0")
+		  InsertData.Value("preview") = "'" + ReplaceAll(Self.mBannerText, "'", "''") + "'"
+		  
+		  If Self.mMacFile <> Nil And Self.mMacFile.Exists And Self.mMacSignature <> "" And Self.mMacPath <> "" Then
+		    InsertData.Value("mac_url") = "'" + ReplaceAll(Root + "/" + Self.mMacPath, "'", "''") + "'"
+		    InsertData.Value("mac_signature") = "'" + Self.mMacSignature + "'"
+		  End If
+		  If Self.mWinComboFile <> Nil And Self.mWinComboFile.Exists And Self.mWinComboSignature <> "" And Self.mWinComboPath <> "" Then
+		    InsertData.Value("win_combo_url") = "'" + ReplaceAll(Root + "/" + Self.mWinComboPath, "'", "''") + "'"
+		    InsertData.Value("win_combo_signature") = "'" + Self.mWinComboSignature + "'"
+		  End If
+		  If Self.mWin64File <> Nil And Self.mWin64File.Exists And Self.mWin64Signature <> "" And Self.mWin64Path <> "" Then
+		    InsertData.Value("win_64_url") = "'" + ReplaceAll(Root + "/" + Self.mWin64Path, "'", "''") + "'"
+		    InsertData.Value("win_64_signature") = "'" + Self.mWin64Signature + "'"
+		  End If
+		  If Self.mWin32File <> Nil And Self.mWin32File.Exists And Self.mWin32Signature <> "" And Self.mWin32Path <> "" Then
+		    InsertData.Value("win_32_url") = "'" + ReplaceAll(Root + "/" + Self.mWin32Path, "'", "''") + "'"
+		    InsertData.Value("win_32_signature") = "'" + Self.mWin32Signature + "'"
+		  End If
+		  
+		  Dim Columns(), Values() As String
+		  For I As Integer = 0 To InsertData.Count - 1
+		    Columns.Append("""" + InsertData.Key(I) + """")
+		    Values.Append(InsertData.Value(InsertData.Key(I)))
+		  Next
+		  
+		  Dim SQL As String = "INSERT INTO ""updates"" (" + Join(Columns, ", ") + ") VALUES (" + Join(Values, ", ") + ");"
 		  Dim Board As New Clipboard
 		  Board.Text = SQL
 		  
 		  MsgBox("Insert statement has been copied to the clipboard.")
 		  
 		  Self.CheckEnabled
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub NextQueueItem()
+		  If Self.mUploadQueue.Count = 0 Then
+		    Self.Finish()
+		    Return
+		  End If
+		  
+		  Dim Path As String = Self.mUploadQueue.Key(0)
+		  Dim File As FolderItem = Self.mUploadQueue.Value(Path)
+		  Self.mUploadQueue.Remove(Path)
+		  
+		  Dim Stream As BinaryStream = BinaryStream.Open(File, False)
+		  Dim Contents As MemoryBlock = Stream.Read(Stream.Length)
+		  Stream.Close
+		  
+		  Dim Host As String
+		  #if DebugBuild
+		    Host = "private-anon-166a449bae-bunnycdnstorage.apiary-mock.com"
+		  #else
+		    Host = "storage.bunnycdn.com"
+		  #endif
+		  
+		  Dim ParentURL As String = "https://" + Host + "/beacon-releases/" + EncodeURLComponent(Self.mDisplayVersion)
+		  Dim UploadURL As String = ParentURL + "/" + Path
+		  
+		  Self.mProgress.Caption = "Uploading " + Path
+		  
+		  Self.UploadSocket.ClearRequestHeaders()
+		  Self.UploadSocket.SetRequestContent(Contents.Convert, "application/octet-stream")
+		  Self.UploadSocket.RequestHeader("AccessKey") = App.APIKey.ToText
+		  Self.UploadSocket.Send("PUT", UploadURL.ToText)
+		  System.DebugLog("Uploading to " + UploadURL)
+		  
+		  Dim Signature As String = EncodeHex(Crypto.RSASign(Contents, App.PrivateKey)).Lowercase
+		  
+		  Select Case Path
+		  Case Self.mMacPath
+		    Self.mMacSignature = Signature
+		  Case Self.mWinComboPath
+		    Self.mWinComboSignature = Signature
+		  Case Self.mWin64Path
+		    Self.mWin64Signature = Signature
+		  Case Self.mWin32Path
+		    Self.mWin32Signature = Signature
+		  End Select
 		End Sub
 	#tag EndMethod
 
@@ -755,11 +1058,11 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMacSignature As String
+		Private mMacPath As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mMacUploading As Boolean
+		Private mMacSignature As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
@@ -775,15 +1078,43 @@ End
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mWinFile As FolderItem
+		Private mUploadQueue As Dictionary
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mWinSignature As String
+		Private mWin32File As FolderItem
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
-		Private mWinUploading As Boolean
+		Private mWin32Path As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWin32Signature As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWin64File As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWin64Path As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWin64Signature As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWinComboFile As FolderItem
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWinComboPath As String
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mWinComboSignature As String
 	#tag EndProperty
 
 
@@ -852,7 +1183,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events MacSocket
+#tag Events UploadSocket
 	#tag Event
 		Sub Error(err as RuntimeException)
 		  Self.Error(Err.Reason)
@@ -860,42 +1191,17 @@ End
 	#tag EndEvent
 	#tag Event
 		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
-		  Self.mMacUploading = False
 		  If HTTPStatus = 201 Then
-		    Self.Finish()
+		    Xojo.Core.Timer.CallLater(10, AddressOf NextQueueItem)
 		  Else
-		    Self.Error("Unable to upload mac build: " + Str(HTTPStatus, "-0"))
+		    Self.Error("Unable to upload build to " + URL + ": " + Str(HTTPStatus, "-0"))
 		  End If
 		End Sub
 	#tag EndEvent
 	#tag Event
 		Sub SendProgress(BytesSent as Int64, BytesLeft as Int64)
 		  If Self.mProgress <> Nil Then
-		    Self.mProgress.MacProgress = BytesSent / BytesLeft
-		  End If
-		End Sub
-	#tag EndEvent
-#tag EndEvents
-#tag Events WinSocket
-	#tag Event
-		Sub Error(err as RuntimeException)
-		  Self.Error(Err.Reason)
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub PageReceived(URL as Text, HTTPStatus as Integer, Content as xojo.Core.MemoryBlock)
-		  Self.mWinUploading = False
-		  If HTTPStatus = 201 Then
-		    Self.Finish()
-		  Else
-		    Self.Error("Unable to upload windows build: " + Str(HTTPStatus, "-0"))
-		  End If
-		End Sub
-	#tag EndEvent
-	#tag Event
-		Sub SendProgress(BytesSent as Int64, BytesLeft as Int64)
-		  If Self.mProgress <> Nil Then
-		    Self.mProgress.WinProgress = BytesSent / BytesLeft
+		    Self.mProgress.Progress = BytesSent / BytesLeft
 		  End If
 		End Sub
 	#tag EndEvent
@@ -908,7 +1214,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events WinSelectButton
+#tag Events SelectWinComboButton
 	#tag Event
 		Sub Action()
 		  Dim Dialog As New OpenDialog
@@ -920,13 +1226,13 @@ End
 		    Return
 		  End If
 		  
-		  Self.mWinFile = File
-		  Self.WinURLField.Text = File.NativePath
+		  Self.mWinComboFile = File
+		  Self.WinComboPathField.Text = File.NativePath
 		  Self.CheckEnabled
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events MacSelectButton
+#tag Events SelectMacButton
 	#tag Event
 		Sub Action()
 		  Dim Dialog As New OpenDialog
@@ -939,7 +1245,90 @@ End
 		  End If
 		  
 		  Self.mMacFile = File
-		  Self.MacURLField.Text = File.NativePath
+		  Self.MacPathField.Text = File.NativePath
+		  Self.CheckEnabled
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SelectFolderButton
+	#tag Event
+		Sub Action()
+		  Dim Dialog As New SelectFolderDialog
+		  Dialog.SuggestedFileName = "Installers"
+		  
+		  Dim Folder As FolderItem = Dialog.ShowModalWithin(Self)
+		  If Folder = Nil Then
+		    Return
+		  End If
+		  
+		  Try
+		    Self.mMacFile = Folder.Child("Mac").Child("Output").Child("Beacon.dmg")
+		    Self.MacPathField.Text = Self.mMacFile.NativePath
+		  Catch Err As RuntimeException
+		    Self.mMacFile = Nil
+		    Self.MacPathField.Text = ""
+		  End Try
+		  
+		  Try
+		    Self.mWinComboFile = Folder.Child("Windows").Child("Output").Child("Combo").Child("Install_Beacon.exe")
+		    Self.WinComboPathField.Text = Self.mWinComboFile.NativePath
+		  Catch Err As RuntimeException
+		    Self.mWinComboFile = Nil
+		    Self.WinComboPathField.Text = ""
+		  End Try
+		  
+		  Try
+		    Self.mWin64File = Folder.Child("Windows").Child("Output").Child("x64").Child("Install_Beacon.exe")
+		    Self.Win64PathField.Text = Self.mWin64File.NativePath
+		  Catch Err As RuntimeException
+		    Self.mWin64File = Nil
+		    Self.Win64PathField.Text = ""
+		  End Try
+		  
+		  Try
+		    Self.mWin32File = Folder.Child("Windows").Child("Output").Child("x86").Child("Install_Beacon.exe")
+		    Self.Win32PathField.Text = Self.mWin32File.NativePath
+		  Catch Err As RuntimeException
+		    Self.mWin32File = Nil
+		    Self.Win32PathField.Text = ""
+		  End Try
+		  
+		  Self.CheckEnabled()
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SelectWin64Button
+	#tag Event
+		Sub Action()
+		  Dim Dialog As New OpenDialog
+		  Dialog.SuggestedFileName = "Install_Beacon.exe"
+		  Dialog.Filter = AppFileTypes.WindowsExecutable
+		  
+		  Dim File As FolderItem = Dialog.ShowModalWithin(Self)
+		  If File = Nil Then
+		    Return
+		  End If
+		  
+		  Self.mWin64File = File
+		  Self.Win64PathField.Text = File.NativePath
+		  Self.CheckEnabled
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events SelectWin32Button
+	#tag Event
+		Sub Action()
+		  Dim Dialog As New OpenDialog
+		  Dialog.SuggestedFileName = "Install_Beacon.exe"
+		  Dialog.Filter = AppFileTypes.WindowsExecutable
+		  
+		  Dim File As FolderItem = Dialog.ShowModalWithin(Self)
+		  If File = Nil Then
+		    Return
+		  End If
+		  
+		  Self.mWin32File = File
+		  Self.Win32PathField.Text = File.NativePath
 		  Self.CheckEnabled
 		End Sub
 	#tag EndEvent
