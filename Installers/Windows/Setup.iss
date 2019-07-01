@@ -28,8 +28,23 @@ Compression=lzma
 SolidCompression=yes
 MinVersion=6.1.7601
 ChangesAssociations=yes
+#ifdef x64
+ArchitecturesAllowed=x64
+OutputDir=Output\x64
+#else
+#ifdef x86
+ArchitecturesAllowed=x86
+OutputDir=Output\x86
+#else
 ArchitecturesAllowed=x86 x64
+OutputDir=Output\Combo
+#define x64 1
+#define x86 1
+#endif
+#endif
+#ifdef x64
 ArchitecturesInstallIn64BitMode=x64
+#endif
 SignTool=TheZAZ /d $qBeacon$q /du $qhttps://beaconapp.cc$q $f
 WizardStyle=modern
 
@@ -37,19 +52,28 @@ WizardStyle=modern
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [InstallDelete]
+#ifdef x86
+Type: filesandordirs; Name: "{commonpf64}\Beacon"; Check: Not Is64BitInstallMode;
+#endif
+#ifdef x64
 Type: filesandordirs; Name: "{commonpf32}\Beacon"; Check: Is64BitInstallMode;
+#endif
 
 [Files]
+#ifdef x64
 Source: "..\..\Project\Builds - Beacon.xojo_project\Windows 64 bit\Beacon\*"; DestDir: "{app}"; Check: Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Files\VC_redist.x64.exe"; DestDir: "{tmp}"; Check: Is64BitInstallMode;
+Source: "Files\windows6.1-kb3140245-x64.msu"; DestDir: "{tmp}"; Check: Is64BitInstallMode;
+#endif
+#ifdef x86
 Source: "..\..\Project\Builds - Beacon.xojo_project\Windows\Beacon\*"; DestDir: "{app}"; Check: not Is64BitInstallMode; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Files\vc_redist.x86.exe"; DestDir: "{tmp}"; Check: not Is64BitInstallMode;
+Source: "Files\windows6.1-kb3140245-x86.msu"; DestDir: "{tmp}"; Check: not Is64BitInstallMode;
+#endif
 Source: "..\..\Project\Builds - Beacon.xojo_project\OS X 64 bit\Beacon.app\Contents\Resources\Classes.json"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 Source: "..\..\Artwork\BeaconDocument.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 Source: "..\..\Artwork\BeaconIdentity.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
 Source: "..\..\Artwork\BeaconPreset.ico"; DestDir: "{app}\{#MyAppResources}"; Flags: ignoreversion
-Source: "Files\VC_redist.x64.exe"; DestDir: "{tmp}"; Check: Is64BitInstallMode;
-Source: "Files\windows6.1-kb3140245-x64.msu"; DestDir: "{tmp}"; Check: Is64BitInstallMode;
-Source: "Files\vc_redist.x86.exe"; DestDir: "{tmp}"; Check: not Is64BitInstallMode;
-Source: "Files\windows6.1-kb3140245-x86.msu"; DestDir: "{tmp}"; Check: not Is64BitInstallMode;
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -83,11 +107,14 @@ Root: HKCR; Subkey: "beacon\shell\open\command"; ValueType: "string"; ValueData:
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+#ifdef x64
 Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 64-bit runtime..."; Check: Is64BitInstallMode; Flags: waituntilterminated
-Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 32-bit runtime..."; Check: not Is64BitInstallMode; Flags: waituntilterminated
 Filename: "wusa.exe"; Parameters: "{tmp}\windows6.1-kb3140245-x64.msu /quiet /norestart"; StatusMsg: "Installing KB3140245..."; Flags: waituntilterminated; OnlyBelowVersion: 6.2; Check: Is64BitInstallMode And IsKBNeeded('KB3140245')
+#endif
+#ifdef x86
+Filename: "{tmp}\VC_redist.x86.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing 32-bit runtime..."; Check: not Is64BitInstallMode; Flags: waituntilterminated
 Filename: "wusa.exe"; Parameters: "{tmp}\windows6.1-kb3140245-x86.msu /quiet /norestart"; StatusMsg: "Installing KB3140245..."; Flags: waituntilterminated; OnlyBelowVersion: 6.2; Check: not Is64BitInstallMode And IsKBNeeded('KB3140245')
-
+#endif
 
 [Code]
 var
