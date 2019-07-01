@@ -30,14 +30,35 @@ Protected Class UpdateChecker
 		  Dim Params As New Xojo.Core.Dictionary
 		  Params.Value("build") = App.BuildNumber.ToText
 		  Params.Value("stage") = App.StageCode.ToText
-		  #if Target64Bit
+		  If Self.Is64Bit Then
 		    Params.Value("arch") = "x86_64"
-		  #else
+		  Else
 		    Params.Value("arch") = "x86"
-		  #endif
+		  End If
 		  
 		  Self.mSocket.Send("GET", Beacon.WebURL("/updates.php?" + BeaconAPI.Request.URLEncodeFormData(Params)))
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function Is64Bit() As Boolean
+		  #If TargetWin32 Then
+		    Soft Declare Function GetCurrentProcess Lib "kernel32"  As Integer
+		    Dim ProcessID As Integer = GetCurrentProcess
+		    
+		    Soft Declare Function IsWow64Process Lib "kernel32" (Handle As Integer, ByRef Result As Boolean) As Integer
+		    
+		    If System.IsFunctionAvailable("IsWow64Process", "Kernel32") Then
+		      Dim Value As Boolean
+		      Call IsWow64Process(ProcessID, Value)
+		      Return Value
+		    Else
+		      Return False
+		    End If
+		  #ElseIf TargetMacOS
+		    Return True
+		  #Endif
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
