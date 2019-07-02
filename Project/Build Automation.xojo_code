@@ -71,7 +71,7 @@
 					Call DoShellCommand("powershell -Command ""Invoke-WebRequest https://beaconapp.cc/download/classes.php?version=" + PropertyValue("App.ShortVersion") + " -OutFile '" + ResourcesPath + "\Classes.json'""")
 					#elseif TargetMacOS
 					Dim ResourcesPath As String = CurrentBuildLocationNative + "/" + AppName + " Resources"
-					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/classes.php?version=" + PropertyValue("App.ShortVersion") + " > '" + ResourcesPath + "\Classes.json'")
+					Call DoShellCommand("/usr/bin/curl https://beaconapp.cc/download/classes.php?version=" + PropertyValue("App.ShortVersion") + " > '" + ResourcesPath + "/Classes.json'")
 					#endif
 				End
 			End
