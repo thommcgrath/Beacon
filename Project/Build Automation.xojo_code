@@ -10,6 +10,7 @@
 					Dim App As String = CurrentBuildLocation + "/""" + CurrentBuildAppName + ".app"""
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""CFBundleURLTypes"" ""( { CFBundleURLName = Beacon; CFBundleTypeRole = Editor; CFBundleURLSchemes = (" + ConstantValue("Beacon.URLScheme") + "); } )""")
 					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""ATSApplicationFontsPath"" ""Fonts/""")
+					Call DoShellCommand("/usr/bin/defaults write " + App + "/Contents/Info ""LSMinimumSystemVersion"" ""10.11.0""")
 				End
 				Begin CopyFilesBuildStep CopyResourcesMac
 					AppliesTo = 0
