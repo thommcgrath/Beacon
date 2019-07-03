@@ -116,7 +116,7 @@ Begin BeaconDialog EntryEditor
          GridLinesVertical=   0
          HasHeading      =   True
          HeadingIndex    =   1
-         Height          =   269
+         Height          =   261
          HelpTag         =   ""
          Hierarchical    =   False
          Index           =   -2147483648
@@ -143,7 +143,7 @@ Begin BeaconDialog EntryEditor
          TextFont        =   "System"
          TextSize        =   0.0
          TextUnit        =   0
-         Top             =   161
+         Top             =   169
          Transparent     =   False
          Underline       =   False
          UseFocusRing    =   True
@@ -216,7 +216,7 @@ Begin BeaconDialog EntryEditor
          DoubleBuffer    =   False
          Enabled         =   True
          EraseBackground =   True
-         Height          =   59
+         Height          =   67
          HelpTag         =   ""
          Index           =   -2147483648
          InitialParent   =   "EngramsGroup"
@@ -279,7 +279,6 @@ Begin BeaconDialog EntryEditor
          HasBackColor    =   False
          Height          =   209
          HelpTag         =   ""
-         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   422
          LockBottom      =   True
@@ -478,13 +477,11 @@ Begin BeaconDialog EntryEditor
       Width           =   80
    End
    Begin Beacon.EngramSearcherThread EngramSearcher
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
-      StackSize       =   "0"
-      State           =   ""
+      StackSize       =   0
       TabPanelIndex   =   0
    End
 End

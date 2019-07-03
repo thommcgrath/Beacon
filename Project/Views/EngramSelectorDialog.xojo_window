@@ -122,7 +122,7 @@ Begin BeaconDialog EngramSelectorDialog
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
-      Height          =   262
+      Height          =   254
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -149,7 +149,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   157
+      Top             =   165
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -240,7 +240,7 @@ Begin BeaconDialog EngramSelectorDialog
       GridLinesVertical=   0
       HasHeading      =   True
       HeadingIndex    =   -1
-      Height          =   262
+      Height          =   254
       HelpTag         =   ""
       Hierarchical    =   False
       Index           =   -2147483648
@@ -267,7 +267,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   157
+      Top             =   165
       Transparent     =   False
       Underline       =   False
       UseFocusRing    =   True
@@ -302,7 +302,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   262
+      Top             =   266
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -334,7 +334,7 @@ Begin BeaconDialog EngramSelectorDialog
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   294
+      Top             =   298
       Transparent     =   False
       Underline       =   False
       Visible         =   True
@@ -349,7 +349,7 @@ Begin BeaconDialog EngramSelectorDialog
       DoubleBuffer    =   False
       Enabled         =   True
       EraseBackground =   True
-      Height          =   59
+      Height          =   67
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
