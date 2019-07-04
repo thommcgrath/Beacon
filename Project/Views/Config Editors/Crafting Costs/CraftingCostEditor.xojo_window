@@ -183,7 +183,7 @@ End
 		    Engrams.Append(Self.mTarget.Resource(I))
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, Engrams, RaiseEvent GetActiveMods, True)
+		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Resources", Engrams, RaiseEvent GetActiveMods, True)
 		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
 		    Return
 		  End If

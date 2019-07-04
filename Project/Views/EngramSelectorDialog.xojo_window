@@ -378,7 +378,7 @@ End
 	#tag Event
 		Sub Open()
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Self.mCategory)
-		  Self.Picker.Spec = Preferences.SelectedTag(Self.mCategory)
+		  Self.Picker.Spec = Preferences.SelectedTag(Self.mCategory, Self.mSubgroup)
 		  Self.UpdateFilter()
 		  Self.SwapButtons()
 		  Self.ActionButton.Enabled = False
@@ -401,7 +401,7 @@ End
 
 
 	#tag Method, Flags = &h21
-		Private Sub Constructor(Category As Text, Exclude() As Beacon.Blueprint, Mods As Beacon.TextList, AllowMultipleSelection As Boolean)
+		Private Sub Constructor(Category As Text, Subgroup As Text, Exclude() As Beacon.Blueprint, Mods As Beacon.TextList, AllowMultipleSelection As Boolean)
 		  Self.mSettingUp = True
 		  For Each Blueprint As Beacon.Blueprint In Exclude
 		    Self.mExcluded.Append(Blueprint.Path)
@@ -409,6 +409,7 @@ End
 		  Self.mMods = Mods
 		  Self.mAllowMultipleSelection = AllowMultipleSelection
 		  Self.mCategory = Category
+		  Self.mSubgroup = Subgroup
 		  Super.Constructor
 		  If AllowMultipleSelection Then
 		    Self.Width = Self.Width + 150
@@ -456,13 +457,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Exclude() As Beacon.Creature, Mods As Beacon.TextList = Nil, AllowMultipleSelection As Boolean) As Beacon.Creature()
+		Shared Function Present(Parent As Window, Subgroup As Text, Exclude() As Beacon.Creature, Mods As Beacon.TextList = Nil, AllowMultipleSelection As Boolean) As Beacon.Creature()
 		  Dim ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Creature As Beacon.Creature In Exclude
 		    ExcludeBlueprints.Append(Creature)
 		  Next
 		  
-		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryCreatures, ExcludeBlueprints, Mods, AllowMultipleSelection)
+		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryCreatures, Subgroup, ExcludeBlueprints, Mods, AllowMultipleSelection)
 		  Dim Creatures() As Beacon.Creature
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Creature Then
@@ -474,13 +475,13 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Exclude() As Beacon.Engram, Mods As Beacon.TextList = Nil, AllowMultipleSelection As Boolean) As Beacon.Engram()
+		Shared Function Present(Parent As Window, Subgroup As Text, Exclude() As Beacon.Engram, Mods As Beacon.TextList = Nil, AllowMultipleSelection As Boolean) As Beacon.Engram()
 		  Dim ExcludeBlueprints() As Beacon.Blueprint
 		  For Each Engram As Beacon.Engram In Exclude
 		    ExcludeBlueprints.Append(Engram)
 		  Next
 		  
-		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryEngrams, ExcludeBlueprints, Mods, AllowMultipleSelection)
+		  Dim Blueprints() As Beacon.Blueprint = Present(Parent, Beacon.CategoryEngrams, Subgroup, ExcludeBlueprints, Mods, AllowMultipleSelection)
 		  Dim Engrams() As Beacon.Engram
 		  For Each Blueprint As Beacon.Blueprint In Blueprints
 		    If Blueprint IsA Beacon.Engram Then
@@ -492,7 +493,7 @@ End
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Shared Function Present(Parent As Window, Category As Text, Exclude() As Beacon.Blueprint, Mods As Beacon.TextList = Nil, AllowMultipleSelection As Boolean) As Beacon.Blueprint()
+		Shared Function Present(Parent As Window, Category As Text, Subgroup As Text, Exclude() As Beacon.Blueprint, Mods As Beacon.TextList = Nil, AllowMultipleSelection As Boolean) As Beacon.Blueprint()
 		  Dim Blueprints() As Beacon.Blueprint
 		  If Parent = Nil Then
 		    Return Blueprints
@@ -502,7 +503,7 @@ End
 		    Mods = New Beacon.TextList
 		  End If
 		  
-		  Dim Win As New EngramSelectorDialog(Category, Exclude, Mods, AllowMultipleSelection)
+		  Dim Win As New EngramSelectorDialog(Category, Subgroup, Exclude, Mods, AllowMultipleSelection)
 		  Win.ShowModalWithin(Parent.TrueWindow)
 		  If Win.mCancelled Then
 		    Win.Close
@@ -601,6 +602,10 @@ End
 		Private mSettingUp As Boolean
 	#tag EndProperty
 
+	#tag Property, Flags = &h21
+		Private mSubgroup As Text
+	#tag EndProperty
+
 
 #tag EndWindowCode
 
@@ -693,7 +698,7 @@ End
 		    Return
 		  End If
 		  
-		  Preferences.SelectedTag(Self.mCategory) = Me.Spec.ToText
+		  Preferences.SelectedTag(Self.mCategory, Self.mSubgroup) = Me.Spec.ToText
 		  Self.UpdateFilter()
 		End Sub
 	#tag EndEvent

@@ -219,6 +219,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
       Scope           =   2
       TabIndex        =   5
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   0
       Transparent     =   False
       Value           =   1
@@ -266,6 +267,7 @@ Begin ConfigEditor CraftingCostsConfigEditor
          HasBackColor    =   False
          Height          =   396
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "Panel"
          Left            =   251
          LockBottom      =   True
@@ -460,7 +462,7 @@ End
 		    CurrentEngrams.Append(Config(I).Engram)
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, CurrentEngrams, Self.Document.Mods, False)
+		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, False)
 		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
 		    Return
 		  End If
@@ -495,7 +497,7 @@ End
 		    CurrentEngrams.Append(Config(I).Engram)
 		  Next
 		  
-		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, CurrentEngrams, Self.Document.Mods, True)
+		  Dim NewEngrams() As Beacon.Engram = EngramSelectorDialog.Present(Self, "Crafting", CurrentEngrams, Self.Document.Mods, True)
 		  If NewEngrams = Nil Or NewEngrams.Ubound = -1 Then
 		    Return
 		  End If

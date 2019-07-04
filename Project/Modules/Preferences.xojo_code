@@ -103,13 +103,27 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Function SelectedTag(Category As Text) As Text
-		  Dim Key As Text = "Selected " + Category.TitleCase + " Tag"
+		Protected Function SelectedTag(Category As Text, Subgroup As Text) As Text
+		  Dim Key As Text = "Selected " + Category.TitleCase
+		  If Subgroup <> "" Then
+		    Key = Key + "." + Subgroup.TitleCase
+		  End If
+		  Key = Key + " Tag"
+		  
 		  Dim Default As Text
 		  
 		  Select Case Category
 		  Case Beacon.CategoryEngrams
-		    Default = "(""object"") NOT (""deprecated"" OR ""cheat"" OR ""event"" OR ""reward"" OR ""generic"")"
+		    Select Case Subgroup
+		    Case "Harvesting"
+		      Default = "(""object"" AND ""harvestable"") NOT (""deprecated"" OR ""cheat"")"
+		    Case "Crafting"
+		      Default = "(""object"") NOT (""deprecated"" OR ""cheat"")"
+		    Case "Resources"
+		      Default = "(""object"" AND ""resource"") NOT (""deprecated"" OR ""cheat"")"
+		    Else
+		      Default = "(""object"") NOT (""deprecated"" OR ""cheat"" OR ""event"" OR ""reward"" OR ""generic"")"
+		    End Select
 		  Case Beacon.CategoryCreatures
 		    Default = "(""object"") NOT (""minion"" OR ""boss"" OR ""event"")"
 		  End Select
@@ -120,8 +134,14 @@ Protected Module Preferences
 	#tag EndMethod
 
 	#tag Method, Flags = &h1
-		Protected Sub SelectedTag(Category As Text, Assigns Value As Text)
-		  mManager.TextValue("Selected " + Category.TitleCase + " Tag") = Value
+		Protected Sub SelectedTag(Category As Text, Subgroup As Text, Assigns Value As Text)
+		  Dim Key As Text = "Selected " + Category.TitleCase
+		  If Subgroup <> "" Then
+		    Key = Key + "." + Subgroup.TitleCase
+		  End If
+		  Key = Key + " Tag"
+		  
+		  mManager.TextValue(Key) = Value
 		End Sub
 	#tag EndMethod
 

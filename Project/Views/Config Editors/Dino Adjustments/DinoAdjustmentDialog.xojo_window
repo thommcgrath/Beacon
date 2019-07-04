@@ -274,6 +274,7 @@ Begin BeaconDialog DinoAdjustmentDialog
       Scope           =   2
       TabIndex        =   8
       TabPanelIndex   =   0
+      TabStop         =   True
       Top             =   158
       Transparent     =   False
       Value           =   0
@@ -1223,7 +1224,7 @@ End
 		  Next
 		  
 		  // Do include mods here, because only dinos actually present in game files should be selectable
-		  Dim Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, Exclude, Self.Mods, False)
+		  Dim Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, Self.Mods, False)
 		  If Creatures <> Nil And Creatures.Ubound = 0 Then
 		    Self.SelectedReplacement = Creatures(0).ClassString
 		  End If
@@ -1284,7 +1285,7 @@ End
 		  Next
 		  
 		  // Do not include the mods list here, we intentionally want all creatures available
-		  Dim Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, Exclude, False)
+		  Dim Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", Exclude, False)
 		  If Creatures <> Nil And Creatures.Ubound = 0 Then
 		    Self.SelectedClass = Creatures(0).ClassString
 		  End If

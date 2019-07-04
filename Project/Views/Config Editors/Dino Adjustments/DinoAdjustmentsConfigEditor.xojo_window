@@ -258,7 +258,7 @@ End
 		    End If
 		  Next
 		  
-		  Dim Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, CurrentCreatures, True)
+		  Dim Creatures() As Beacon.Creature = EngramSelectorDialog.Present(Self, "", CurrentCreatures, True)
 		  If Creatures.Ubound = -1 Then
 		    Return
 		  End If

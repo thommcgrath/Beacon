@@ -279,6 +279,7 @@ Begin BeaconDialog EntryEditor
          HasBackColor    =   False
          Height          =   209
          HelpTag         =   ""
+         Index           =   -2147483648
          InitialParent   =   "SettingsGroup"
          Left            =   422
          LockBottom      =   True
@@ -477,11 +478,13 @@ Begin BeaconDialog EntryEditor
       Width           =   80
    End
    Begin Beacon.EngramSearcherThread EngramSearcher
+      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Priority        =   5
       Scope           =   2
-      StackSize       =   0
+      StackSize       =   "0"
+      State           =   ""
       TabPanelIndex   =   0
    End
 End
@@ -499,7 +502,7 @@ End
 		  Dim PreferredSize As Xojo.Core.Size = Preferences.EntryEditorSize
 		  
 		  Self.Picker.Tags = LocalData.SharedInstance.AllTags(Beacon.CategoryEngrams)
-		  Self.Picker.Spec = Preferences.SelectedTag(Beacon.CategoryEngrams)
+		  Self.Picker.Spec = Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting")
 		  Self.Width = Max(PreferredSize.Width, Self.MinWidth)
 		  Self.Height = Max(PreferredSize.Height, Self.MinHeight)
 		  Self.SearchSpinnerVisible = False
@@ -860,7 +863,7 @@ End
 		    Return
 		  End If
 		  
-		  Preferences.SelectedTag(Beacon.CategoryEngrams) = Me.Spec.ToText
+		  Preferences.SelectedTag(Beacon.CategoryEngrams, "Looting") = Me.Spec.ToText
 		  Self.UpdateFilter
 		End Sub
 	#tag EndEvent
