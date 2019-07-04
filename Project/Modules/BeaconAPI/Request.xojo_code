@@ -137,7 +137,7 @@ Protected Class Request
 		Sub Sign(Identity As Beacon.Identity)
 		  Dim Content As Text = Self.mMethod + Text.FromUnicodeCodepoint(10) + Self.mURL
 		  If Self.mMethod = "GET" Then
-		    If Self.mPayload <> Nil Then
+		    If Self.mPayload <> Nil And Self.mPayload.Size > 0 Then
 		      Content = Content + "?"
 		    End If
 		  Else

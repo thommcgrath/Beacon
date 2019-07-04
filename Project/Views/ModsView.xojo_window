@@ -26,13 +26,6 @@ Begin BeaconSubview ModsView
    UseFocusRing    =   False
    Visible         =   False
    Width           =   1100
-   Begin BeaconAPI.Socket Socket
-      Enabled         =   True
-      Index           =   -2147483648
-      LockedInPosition=   False
-      Scope           =   2
-      TabPanelIndex   =   0
-   End
    Begin BeaconListbox ModList
       AutoDeactivate  =   True
       AutoHideScrollbars=   True
@@ -304,9 +297,9 @@ End
 
 	#tag Method, Flags = &h21
 		Private Sub RefreshMods()
-		  Dim Request As New BeaconAPI.Request("mod.php", "GET", AddressOf APICallback_ListMods)
+		  Dim Request As New BeaconAPI.Request("mod", "GET", AddressOf APICallback_ListMods)
 		  Request.Sign(App.IdentityManager.CurrentIdentity)
-		  Self.Socket.Start(Request)
+		  BeaconAPI.Send(Request)
 		End Sub
 	#tag EndMethod
 
@@ -364,7 +357,7 @@ End
 		    If Choice = Dialog.ActionButton Then
 		      Dim Request As New BeaconAPI.Request(Self.SelectedMod.ResourceURL, "DELETE", AddressOf APICallback_DeleteMod)
 		      Request.Sign(App.IdentityManager.CurrentIdentity)
-		      Self.Socket.Start(Request)
+		      BeaconAPI.Send(Request)
 		    End If
 		  Case "SettingsButton"
 		    Dim WorkshopMod As BeaconAPI.WorkshopMod = Self.SelectedMod()
