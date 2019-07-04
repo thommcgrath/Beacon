@@ -55,10 +55,18 @@ Private Class ConfigParser
 		        Self.Buffer.Append(Char)
 		      End If
 		    Case "="
-		      Self.Key = Self.Buffer.Join("").Trim.ToText
-		      Redim Self.Buffer(-1)
-		      Self.Type = Self.TypePair
-		      Self.SubParser = New Beacon.ConfigParser(Self.Level) // Same level
+		      If Not Self.KeyFound Then
+		        Self.Key = Self.Buffer.Join("").Trim.ToText
+		        Redim Self.Buffer(-1)
+		        Self.Type = Self.TypePair
+		        Self.SubParser = New Beacon.ConfigParser(Self.Level) // Same level
+		        // We want the subparser to know the key was found too. The ( will start a new
+		        // parser whose KeyFound will be false
+		        Self.SubParser.KeyFound = True
+		        Self.KeyFound = True
+		      Else
+		        Self.Buffer.Append(Char)
+		      End If
 		    Case ")", ",", LineEndingChar
 		      If Self.Level = 0 And Char <> LineEndingChar Then
 		        Self.Buffer.Append(Char)
@@ -66,6 +74,7 @@ Private Class ConfigParser
 		        Self.ConsumedLastChar = False
 		        Self.mValue = Self.Buffer.Join("").ToText
 		        Redim Self.Buffer(-1)
+		        Self.KeyFound = False
 		        Return True
 		      End If
 		    Case """"
@@ -112,6 +121,10 @@ Private Class ConfigParser
 
 	#tag Property, Flags = &h21
 		Private Key As Text
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private KeyFound As Boolean
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
