@@ -44,7 +44,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Scope           =   2
       TabIndex        =   3
       TabPanelIndex   =   0
-      TabStop         =   True
       Top             =   41
       Transparent     =   False
       Value           =   1
@@ -204,7 +203,6 @@ Begin BeaconSubview DocumentEditorView Implements ObservationKit.Observer,Notifi
       Width           =   300
    End
    Begin Timer AutosaveTimer
-      Enabled         =   True
       Index           =   -2147483648
       LockedInPosition=   False
       Mode            =   2
@@ -311,6 +309,12 @@ End
 
 	#tag Event
 		Function ShouldSave() As Boolean
+		  If Self.mUpdateUITag <> "" Then
+		    CallLater.Cancel(Self.mUpdateUITag)
+		    Self.mUpdateUITag = ""
+		    Self.UpdateUI()
+		  End If
+		  
 		  If Self.mController.CanWrite And Self.mController.URL.Scheme <> Beacon.DocumentURL.TypeTransient Then  
 		    Self.Progress = BeaconSubview.ProgressIndeterminate
 		    Self.mController.Save()
@@ -621,14 +625,16 @@ End
 		Private Sub Panel_ContentsChanged(Sender As ConfigEditor)
 		  #Pragma Unused Sender
 		  
-		  Self.ToolbarCaption = Self.mController.Name
-		  Self.Title = Self.mController.Name
-		  Self.ContentsChanged = Self.Document.Modified
-		  Self.BeaconToolbar1.ExportButton.Enabled = Self.ReadyToExport
-		  #if DeployEnabled
-		    Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToDeploy
-		  #endif
-		  Self.BeaconToolbar1.IssuesButton.Enabled = Not Self.Document.IsValid
+		  If Self.ContentsChanged <> Self.Document.Modified Then
+		    Self.ContentsChanged = Self.Document.Modified
+		  End If
+		  
+		  If Self.mUpdateUITag <> "" Then
+		    CallLater.Cancel(Self.mUpdateUITag)
+		    Self.mUpdateUITag = ""
+		  End If
+		  
+		  Self.mUpdateUITag = CallLater.Schedule(500, AddressOf UpdateUI)
 		End Sub
 	#tag EndMethod
 
@@ -736,6 +742,18 @@ End
 		End Sub
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub UpdateUI()
+		  Self.ToolbarCaption = Self.mController.Name
+		  Self.Title = Self.mController.Name
+		  Self.BeaconToolbar1.ExportButton.Enabled = Self.ReadyToExport
+		  #if DeployEnabled
+		    Self.BeaconToolbar1.DeployButton.Enabled = Self.ReadyToDeploy
+		  #endif
+		  Self.BeaconToolbar1.IssuesButton.Enabled = Not Self.Document.IsValid
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Function URL() As Beacon.DocumentURL
 		  Return Self.mController.URL
@@ -787,6 +805,10 @@ End
 
 	#tag Property, Flags = &h21
 		Private mPagesAnimation As AnimationKit.MoveTask
+	#tag EndProperty
+
+	#tag Property, Flags = &h21
+		Private mUpdateUITag As String
 	#tag EndProperty
 
 	#tag Property, Flags = &h21
