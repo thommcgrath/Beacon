@@ -180,6 +180,21 @@ Implements Beacon.Countable,Beacon.DocumentItem
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub GetDistinctEngrams(Dict As Xojo.Core.Dictionary)
+		  If Dict = Nil Then
+		    Return
+		  End If
+		  
+		  For Each Option As Beacon.SetEntryOption In Self.mOptions
+		    Dim Engram As Beacon.Engram = Option.Engram
+		    If Not Dict.HasKey(Engram.Path) Then
+		      Dict.Value(Engram.Path) = Engram
+		    End If
+		  Next
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function GetIterator() As Xojo.Core.Iterator
 		  Return New Beacon.SetEntryIterator(Self)
 		End Function

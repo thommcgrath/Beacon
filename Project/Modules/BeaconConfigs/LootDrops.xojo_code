@@ -152,8 +152,11 @@ Implements Xojo.Core.Iterable
 		Function Issues(Document As Beacon.Document) As Beacon.Issue()
 		  Dim Issues() As Beacon.Issue
 		  Dim ConfigName As Text = "LootDrops"
+		  Dim DistinctEngrams As New Xojo.Core.Dictionary
 		  
 		  For Each Source As Beacon.LootSource In Self.mSources
+		    Source.GetDistinctEngrams(DistinctEngrams)
+		    
 		    If Not Document.SupportsLootSource(Source) Then
 		      Issues.Append(New Beacon.Issue(ConfigName, "Loot source " + Source.Label + " is not supported by the selected maps.", Source))
 		    End If
@@ -198,6 +201,13 @@ Implements Xojo.Core.Iterable
 		          Next
 		        End If
 		      Next
+		    End If
+		  Next
+		  
+		  For Each Entry As Xojo.Core.DictionaryEntry In DistinctEngrams
+		    Dim Engram As Beacon.Engram = Entry.Value
+		    If Engram.IsTagged("blueprint") Or Engram.IsTagged("generic") Then
+		      Issues.Append(New Beacon.Issue(ConfigName, "You cannot put '" + Engram.Label + "' in drops because it is not an actual item."))
 		    End If
 		  Next
 		  

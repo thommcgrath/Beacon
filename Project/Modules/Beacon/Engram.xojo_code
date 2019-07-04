@@ -90,6 +90,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsTagged(Tag As Text) As Boolean
+		  Return Self.mTags.IndexOf(Beacon.NormalizeTag(Tag)) > -1
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function IsValid() As Boolean
 		  Return Self.mIsValid
 		End Function

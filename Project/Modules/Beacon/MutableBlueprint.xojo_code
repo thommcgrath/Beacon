@@ -8,6 +8,12 @@ Implements Beacon.Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub IsTagged(Tag As Text, Assigns Value As Boolean)
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As Text)
 		  
 		End Sub

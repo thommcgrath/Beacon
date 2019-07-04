@@ -713,13 +713,6 @@ Protected Module Beacon
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Function IsTagged(Extends Blueprint As Beacon.Blueprint, Tag As Text) As Boolean
-		  Tag = Beacon.NormalizeTag(Tag)
-		  Return Blueprint.Tags.IndexOf(Tag) > -1
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h0
 		Function Label(Extends Maps() As Beacon.Map) As Text
 		  Dim Names() As Text
 		  For Each Map As Beacon.Map In Maps

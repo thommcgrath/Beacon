@@ -19,6 +19,12 @@ Protected Interface Blueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Function IsTagged(Tag As Text) As Boolean
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Function Label() As Text
 		  
 		End Function

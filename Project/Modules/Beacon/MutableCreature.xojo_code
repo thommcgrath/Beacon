@@ -28,6 +28,19 @@ Implements Beacon.MutableBlueprint
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
+		Sub IsTagged(Tag As Text, Assigns Value As Boolean)
+		  Tag = Beacon.NormalizeTag(Tag)
+		  Dim Idx As Integer = Self.mTags.IndexOf(Tag)
+		  If Idx > -1 And Value = False Then
+		    Self.mTags.Remove(Idx)
+		  ElseIf Idx = -1 And Value = True Then
+		    Self.mTags.Append(Tag)
+		    Self.mTags.Sort()
+		  End If
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
 		Sub Label(Assigns Value As Text)
 		  Self.mLabel = Value
 		End Sub
